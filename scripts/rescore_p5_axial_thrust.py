@@ -41,22 +41,24 @@ def defensible(family, combo):
 
 
 def load(path):
+    """All rows, INCLUDING failed runs: dropping failures before selection would leak the held-out outcome into the
+    leave-one-out choice (a set that fits the calibration points but fails at the blind point must still be selectable)."""
     by = collections.defaultdict(dict)
     for r in csv.DictReader(open(path)):
-        if r["retcode"] == "success":
-            by[(r["hypothesis"], r["combo"])][r["point"]] = r
+        by[(r["hypothesis"], r["combo"])][r["point"]] = r
     return by
 
 
 def score(by, factors, rel):
-    """Per (hyp, combo, point): dI, dT (axial-corrected, relative), dT/sigma_T, rms."""
+    """Per (hyp, combo, point): None for a failed or missing run, else dI, dT (axial-corrected, relative), dT/sigma_T, rms."""
     out = {}
     for key, d in by.items():
-        if any(p not in d for p in P):
-            continue
         e = {}
         for p in P:
-            r = d[p]
+            r = d.get(p)
+            if r is None or r["retcode"] != "success":
+                e[p] = None
+                continue
             T = fnum(r["T_mN"]) * factors[p]; Tt = fnum(r["T_target_mN"])
             sig = math.hypot(SIGMA_STAND_MN, T * rel[p])
             e[p] = {"dI": fnum(r["Id_err_rel"]), "dT": (T - Tt) / Tt, "dTs": (T - Tt) / sig, "rms": fnum(r["Id_rms_rel"])}
@@ -65,12 +67,14 @@ def score(by, factors, rel):
 
 
 def loo(sc, family, h, quiet_only):
+    """Selection uses ONLY the calibration points (they must have run successfully, and be quiet if quiet_only). The
+    held-out point is evaluated afterwards; a failed held-out run is a failed blind prediction, not a reason to reselect."""
     rounds = []
     for hold in P:
         cal = [p for p in P if p != hold]
         best = None
-        for (hh, c), e in sc.items():
-            if hh != h:
+        for (hh, c), e in sorted(sc.items()):
+            if hh != h or any(e[p] is None for p in cal):
                 continue
             if quiet_only and any(e[p]["rms"] >= RMS_QUIET for p in cal):
                 continue
@@ -78,16 +82,29 @@ def loo(sc, family, h, quiet_only):
             if best is None or J < best[0]:
                 best = (J, c)
         if best is None:
-            rounds.append({"holdout": hold, "combo": None, "pass": False, "pass_except_defensible": False})
+            rounds.append({"holdout": hold, "combo": None, "hold_failed": None, "pass": False,
+                           "pass_except_defensible": False})
             continue
         J, c = best; e = sc[(h, c)]
+        dfn = defensible(family, c)
+        if e[hold] is None:            # selected on calibration, but the blind simulation itself failed
+            rounds.append({"holdout": hold, "combo": c, "J": J, "hold_failed": True, "hold_dI": None,
+                           "hold_dT_sigma": None, "rms": [None if e[p] is None else e[p]["rms"] for p in P],
+                           "quiet_all": False, "defensible": dfn, "pass_except_defensible": False, "pass": False})
+            continue
         quiet_all = all(e[p]["rms"] < RMS_QUIET for p in P)
         ok_pred = abs(e[hold]["dI"]) <= ID_TOL and abs(e[hold]["dTs"]) <= T_SIG_TOL
-        dfn = defensible(family, c)
-        rounds.append({"holdout": hold, "combo": c, "J": J, "hold_dI": e[hold]["dI"], "hold_dT_sigma": e[hold]["dTs"],
-                       "rms": [e[p]["rms"] for p in P], "quiet_all": quiet_all, "defensible": dfn,
-                       "pass_except_defensible": ok_pred and quiet_all, "pass": ok_pred and quiet_all and dfn})
+        rounds.append({"holdout": hold, "combo": c, "J": J, "hold_failed": False, "hold_dI": e[hold]["dI"],
+                       "hold_dT_sigma": e[hold]["dTs"], "rms": [e[p]["rms"] for p in P], "quiet_all": quiet_all,
+                       "defensible": dfn, "pass_except_defensible": ok_pred and quiet_all,
+                       "pass": ok_pred and quiet_all and dfn})
     return rounds
+
+
+def same_combo(rounds):
+    """True only if every round selected a set and all three selections are identical ({None} is not 'same')."""
+    combos = [r["combo"] for r in rounds]
+    return all(c is not None for c in combos) and len(set(combos)) == 1
 
 
 def main():
@@ -110,12 +127,12 @@ def main():
                         results[f"{family}|{mode}|{reading}|{sel}|{h}"] = {
                             "rounds": rs, "pass": all(r["pass"] for r in rs),
                             "pass_except_defensible": all(r["pass_except_defensible"] for r in rs),
-                            "same_combo": len({r["combo"] for r in rs}) == 1}
+                            "same_combo": same_combo(rs)}
     json.dump({"thresholds": {"Id_tol": ID_TOL, "T_sigma_tol": T_SIG_TOL, "rms_quiet": RMS_QUIET, "bohm": BOHM},
                "results": results}, open(os.path.join(IDN, "p5_xe_axial_thrust_v2_rescore.json"), "w"), indent=1)
     print(f"{'family|mode|reading|selection|hyp':38s} pass  pass-ex-def  same  held-out dI% / dT(sigma) / rms-max% per round")
     for k, v in results.items():
-        rr = "; ".join("—" if r["combo"] is None else
+        rr = "; ".join("—" if r["combo"] is None else "blind run FAILED" if r["hold_failed"] else
                        f"{100 * r['hold_dI']:+.0f}/{r['hold_dT_sigma']:+.1f}/{100 * max(r['rms']):.0f}" for r in v["rounds"])
         print(f"{k:38s} {str(v['pass']):5s} {str(v['pass_except_defensible']):12s} {str(v['same_combo']):5s} {rr}")
 

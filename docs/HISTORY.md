@@ -1363,7 +1363,9 @@ stand measurement. **Superseded v1 statement:** "every quiet solution fails on t
   (RMS 28–30 %) and its blind thrust is within 2σ (A: −0.4 / −1.8 / −1.7σ; B: +1.0 / 0.0 / +0.2σ). Blind I_d is
   −2.8 / **−15.6** / +0.9 %: the Xe2 hold-out misses the pre-registered 15 % threshold by 0.6 points. Other quiet
   selections miss held-out Xe2 by −16 to −25 % or Xe3 by +15 to +26 %, or need super-Bohm a = 1/8.
-- **MultiLogBohm (3 nodes):** quiet solutions miss I_d by 17–58 %. No advantage demonstrated, confirmed.
+- **MultiLogBohm (3 nodes):** quiet solutions miss I_d by 17–58 %; in H1a (vacuum, both readings) the set selected on
+  the Xe1/Xe2 calibration points has a *failed* blind Xe3 simulation (corrected 2026-09-25, see below). No advantage
+  demonstrated, confirmed.
 
 **3. Secondary (facility) check:** two ScaledGaussianBohm passes, H2a under reading A and H1a under reading B (the latter
 at 49 % RMS). They don't hold under both readings, so they're **reading-dependent** and don't count as a verdict. Facility
@@ -1386,3 +1388,31 @@ conversion) but **blind I_d at Xe2**. Xe2 is the setpoint whose measured I_d is 
 **Carried forward:** no closure frozen from P5. The Hall response model should carry transport uncertainty. The
 ScaledGaussianBohm family near (a = 1/16, b = 0.8, c = 0.9 L, w = 0.25 L) is the best-supported candidate region,
 together with the geometry and coil-shape hypotheses and the Ψ_b reading ambiguity.
+
+## Correction: v2 rescoring leave-one-out bookkeeping (2026-09-25, no new simulations)
+A post-merge review of `scripts/rescore_p5_axial_thrust.py` found two bookkeeping bugs, not physics bugs; the simulation
+campaign is unaffected.
+1. **Failed runs were discarded before selection.** This leaks the held-out outcome into model selection: a set that fits
+   the calibration points best but whose blind run failed was skipped, and another set could be substituted. Fixed: failed
+   rows are kept, only calibration-point success (and quietness, for the quiet selection) controls eligibility, and a
+   failed held-out run is recorded as a failed blind prediction (`hold_failed`).
+2. **`same_combo` was true when every round had no selection**, because `{None}` has one element. Fixed: true only if
+   all three rounds selected a set and the sets are identical.
+
+**Regenerated** `p5_xe_axial_thrust_v2_rescore.json`. 12 of 96 entries change, all MultiLogBohm, and **no pass or
+pass-except-defensibility outcome changes**:
+- **Blind failures now recorded:** vacuum/quiet/H1a (readings A and B) holding out Xe3, and facility/quiet/H1b (A and B)
+  holding out Xe2. The selected sets' blind runs failed, where previously a different set was substituted or nothing was
+  selected.
+- **`same_combo` true → false:** vacuum/quiet/H1a and the quiet H3a/H3b entries (no selection in any round), in both modes
+  and both readings.
+- **ScaledGaussianBohm entries are unchanged.** The best vacuum case (H2a, L32-anode/1.6 kW) keeps the same defensible set
+  in all rounds under both readings (a = 1/16, b = 0.8, c = 0.9 L, w = 0.25 L): blind I_d −2.78 / −15.56 / +0.92 %, max
+  RMS 30.3 %, thrust within 2σ. Facility passes stay reading-dependent (H2a under A, H1a under B).
+- **The v2 verdict, Gate 3 and the stopping-rule conclusion are unchanged.**
+- The ad-hoc v1 post-hoc quiet analyses (`*_posthoc_quiet_loo.json`) used the same success filter. Re-evaluated with the
+  corrected semantics, only MultiLogBohm H1b holding out Xe2 changes (no selection → a set whose blind run failed). The v1
+  files are left as recorded; no v1 conclusion changes.
+
+Regression tests: `test_rescore_loo_holdout_failure_is_a_blind_failure` and
+`test_rescore_same_combo_requires_actual_selections`. Both fail on the previous script and pass on the fix.
