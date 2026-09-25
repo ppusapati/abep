@@ -1,14 +1,14 @@
 {
  "source": "Brabston et al., JPP 2025, doi:10.2514/1.B39623, Table 4 (anode Xe 5 mg/s, cathode Xe 0.44 mg/s, peak radial B 162.5 G at channel centre / exit plane, all constant across Xe1-Xe3; chamber pressure varies); Eq. (13)-(14) ingestion model (A_en = 488 cm2, T0 = 300 K, zeta_A = 1.0). Channel radii: OD 173 mm, width 25 mm (Hofer 2004 Sec. 5.3.1; J. Electr. Propuls. 2026, doi:10.1007/s44205-026-00179-9). Channel depth: 32 mm (Brabston) vs 38 mm (Peterson 2001, Hofer 2004) - UNRESOLVED, both carried. B(z) shape: Peterson, Gallimore & Haas, AIAA 2001-3890, Figs. 11/12 centreline vacuum field (hallthruster_bridge/bfield/)",
  "assumptions": "Brabston coil currents not published; coil shape from Peterson 2001 (1.6 kW or 3.0 kW setting). Measured Id_A = Pd/Vd (Table 4). Cathode flow not modelled (1-D domain). Ingested flow enters at the anode boundary in HallThruster.jl; Eq. (13) is a plume-entrainment estimate. Transport: HallThruster.jl defaults (TwoZoneBohm(1/160, 1/16), transition length 0.1 L), deliberately not tuned.",
- "role": "geometry-registration candidates (1.6 kW coil shape)",
+ "role": "sensitivity: 3.0 kW coil shape",
  "cases": [
   {
    "id": "Xe1-L38-hist",
    "point": "Xe1",
    "registration": "L38-hist",
    "geometry_hypothesis": "historical 38 mm P5 (Peterson 2001 / Hofer 2004); field in original coordinates",
-   "role": "geometry-registration candidates (1.6 kW coil shape)",
+   "role": "sensitivity: 3.0 kW coil shape",
    "thruster": "P5",
    "gas": "Xe",
    "Vd": 230.8,
@@ -19,7 +19,7 @@
    "domain_m": 0.1,
    "B_ref_T": 0.01625,
    "B_profile": {
-    "file": "bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+    "file": "bfield/p5_vacuum_Br_centerline_3p0kW.csv",
     "align": "anode",
     "z_ref_in_file_mm": 0.0,
     "scale_to": "exit"
@@ -43,7 +43,7 @@
    "point": "Xe2",
    "registration": "L38-hist",
    "geometry_hypothesis": "historical 38 mm P5 (Peterson 2001 / Hofer 2004); field in original coordinates",
-   "role": "geometry-registration candidates (1.6 kW coil shape)",
+   "role": "sensitivity: 3.0 kW coil shape",
    "thruster": "P5",
    "gas": "Xe",
    "Vd": 250.3,
@@ -54,7 +54,7 @@
    "domain_m": 0.1,
    "B_ref_T": 0.01625,
    "B_profile": {
-    "file": "bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+    "file": "bfield/p5_vacuum_Br_centerline_3p0kW.csv",
     "align": "anode",
     "z_ref_in_file_mm": 0.0,
     "scale_to": "exit"
@@ -78,7 +78,7 @@
    "point": "Xe3",
    "registration": "L38-hist",
    "geometry_hypothesis": "historical 38 mm P5 (Peterson 2001 / Hofer 2004); field in original coordinates",
-   "role": "geometry-registration candidates (1.6 kW coil shape)",
+   "role": "sensitivity: 3.0 kW coil shape",
    "thruster": "P5",
    "gas": "Xe",
    "Vd": 274.3,
@@ -89,7 +89,7 @@
    "domain_m": 0.1,
    "B_ref_T": 0.01625,
    "B_profile": {
-    "file": "bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+    "file": "bfield/p5_vacuum_Br_centerline_3p0kW.csv",
     "align": "anode",
     "z_ref_in_file_mm": 0.0,
     "scale_to": "exit"
@@ -113,7 +113,7 @@
    "point": "Xe1",
    "registration": "L32-anode",
    "geometry_hypothesis": "32 mm channel (Brabston 2025), anode and magnetic circuit unchanged",
-   "role": "geometry-registration candidates (1.6 kW coil shape)",
+   "role": "sensitivity: 3.0 kW coil shape",
    "thruster": "P5",
    "gas": "Xe",
    "Vd": 230.8,
@@ -124,7 +124,7 @@
    "domain_m": 0.1,
    "B_ref_T": 0.01625,
    "B_profile": {
-    "file": "bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+    "file": "bfield/p5_vacuum_Br_centerline_3p0kW.csv",
     "align": "anode",
     "z_ref_in_file_mm": 0.0,
     "scale_to": "exit"
@@ -148,7 +148,7 @@
    "point": "Xe2",
    "registration": "L32-anode",
    "geometry_hypothesis": "32 mm channel (Brabston 2025), anode and magnetic circuit unchanged",
-   "role": "geometry-registration candidates (1.6 kW coil shape)",
+   "role": "sensitivity: 3.0 kW coil shape",
    "thruster": "P5",
    "gas": "Xe",
    "Vd": 250.3,
@@ -159,7 +159,7 @@
    "domain_m": 0.1,
    "B_ref_T": 0.01625,
    "B_profile": {
-    "file": "bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+    "file": "bfield/p5_vacuum_Br_centerline_3p0kW.csv",
     "align": "anode",
     "z_ref_in_file_mm": 0.0,
     "scale_to": "exit"
@@ -183,7 +183,7 @@
    "point": "Xe3",
    "registration": "L32-anode",
    "geometry_hypothesis": "32 mm channel (Brabston 2025), anode and magnetic circuit unchanged",
-   "role": "geometry-registration candidates (1.6 kW coil shape)",
+   "role": "sensitivity: 3.0 kW coil shape",
    "thruster": "P5",
    "gas": "Xe",
    "Vd": 274.3,
@@ -194,7 +194,7 @@
    "domain_m": 0.1,
    "B_ref_T": 0.01625,
    "B_profile": {
-    "file": "bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+    "file": "bfield/p5_vacuum_Br_centerline_3p0kW.csv",
     "align": "anode",
     "z_ref_in_file_mm": 0.0,
     "scale_to": "exit"
@@ -218,7 +218,7 @@
    "point": "Xe1",
    "registration": "L32-exit",
    "geometry_hypothesis": "32 mm channel (Brabston 2025), anode 6 mm downstream, exit planes aligned",
-   "role": "geometry-registration candidates (1.6 kW coil shape)",
+   "role": "sensitivity: 3.0 kW coil shape",
    "thruster": "P5",
    "gas": "Xe",
    "Vd": 230.8,
@@ -229,7 +229,7 @@
    "domain_m": 0.1,
    "B_ref_T": 0.01625,
    "B_profile": {
-    "file": "bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+    "file": "bfield/p5_vacuum_Br_centerline_3p0kW.csv",
     "align": "exit",
     "z_ref_in_file_mm": 38.0,
     "scale_to": "exit"
@@ -253,7 +253,7 @@
    "point": "Xe2",
    "registration": "L32-exit",
    "geometry_hypothesis": "32 mm channel (Brabston 2025), anode 6 mm downstream, exit planes aligned",
-   "role": "geometry-registration candidates (1.6 kW coil shape)",
+   "role": "sensitivity: 3.0 kW coil shape",
    "thruster": "P5",
    "gas": "Xe",
    "Vd": 250.3,
@@ -264,7 +264,7 @@
    "domain_m": 0.1,
    "B_ref_T": 0.01625,
    "B_profile": {
-    "file": "bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+    "file": "bfield/p5_vacuum_Br_centerline_3p0kW.csv",
     "align": "exit",
     "z_ref_in_file_mm": 38.0,
     "scale_to": "exit"
@@ -288,7 +288,7 @@
    "point": "Xe3",
    "registration": "L32-exit",
    "geometry_hypothesis": "32 mm channel (Brabston 2025), anode 6 mm downstream, exit planes aligned",
-   "role": "geometry-registration candidates (1.6 kW coil shape)",
+   "role": "sensitivity: 3.0 kW coil shape",
    "thruster": "P5",
    "gas": "Xe",
    "Vd": 274.3,
@@ -299,7 +299,7 @@
    "domain_m": 0.1,
    "B_ref_T": 0.01625,
    "B_profile": {
-    "file": "bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+    "file": "bfield/p5_vacuum_Br_centerline_3p0kW.csv",
     "align": "exit",
     "z_ref_in_file_mm": 38.0,
     "scale_to": "exit"

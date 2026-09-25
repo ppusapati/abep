@@ -35,18 +35,32 @@ end
 
 const TORR_TO_PA = 133.322368
 
-# Measured B(z) from a cited CSV (z_mm, B_G; '#' comments, one header line). The file's exit plane is aligned with the
-# case's exit plane (z = L_m) and B is scaled so that B at the exit plane ("exit") or its maximum ("max") equals B_ref_T.
+# Measured B(z) from a cited CSV (z_mm, B_G; '#' comments, one header line), placed on the model axis by an explicit
+# rigid registration (never stretched):
+#   align = "exit":  file point z_ref_in_file_mm sits at the model exit plane, z = L_m
+#   align = "anode": file point z_ref_in_file_mm sits at the model anode, z = 0
+# B is then scaled so that B at the model exit plane ("exit") or its maximum ("max") equals B_ref_T.
 # HallThruster.jl holds B constant beyond the data ends (no tail is invented here).
 function measured_bfield(c)
     bp = c.B_profile
     rows = [split(l, ",") for l in eachline(joinpath(@__DIR__, bp.file)) if !startswith(l, "#") && !isempty(strip(l))]
     zf = [parse(Float64, r[1]) for r in rows[2:end]] .* 1e-3
     Bf = [parse(Float64, r[2]) for r in rows[2:end]] .* 1e-4
-    z = zf .- bp.z_exit_in_file_mm * 1e-3 .+ c.L_m
+    z0 = bp.align == "exit" ? c.L_m : bp.align == "anode" ? 0.0 : error("B_profile.align must be \"exit\" or \"anode\"")
+    z = zf .- bp.z_ref_in_file_mm * 1e-3 .+ z0
     Bref = bp.scale_to == "exit" ? het.LinearInterpolation(z, Bf)(c.L_m) :
            bp.scale_to == "max" ? maximum(Bf) : error("B_profile.scale_to must be \"exit\" or \"max\"")
-    return het.MagneticField(file = bp.file, z = z, B = Bf .* (c.B_ref_T / Bref)), c.B_ref_T / Bref
+    return het.MagneticField(file = bp.file, z = z, B = Bf .* (c.B_ref_T / Bref)), c.B_ref_T / Bref, z[argmax(Bf)]
+end
+
+# Dominant frequency of the averaging-window I_d trace (mean removed; plain DFT, frames are evenly spaced in time).
+function dominant_frequency(t, y)
+    n = length(y); dt = (t[end] - t[1]) / (n - 1)
+    maximum(abs.(diff(t) .- dt)) < 1e-6 * dt || error("saved frames are not evenly spaced")
+    yc = y .- sum(y) / n
+    amp = [abs(sum(yc[j] * cis(-2π * k * (j - 1) / n) for j in 1:n)) for k in 1:(n ÷ 2)]
+    k = argmax(amp)
+    return k / (n * dt), 2 * amp[k] / n
 end
 
 # Facility neutral ingestion, Brabston et al. JPP 2025 Eq. (13): mdot_en = A_en P sqrt(m / (2 pi k T0)).
@@ -54,9 +68,9 @@ entrained_flow(c, m) = c.entrainment_area_m2 * c.background_pressure_Torr * TORR
 
 function run_case(c)
     geom = het.Geometry1D(channel_length=c.L_m, inner_radius=c.r_in_m, outer_radius=c.r_out_m)
-    bscale = 1.0
+    bscale, zpeak = 1.0, NaN
     if haskey(c, :B_profile)
-        bfield, bscale = measured_bfield(c)
+        bfield, bscale, zpeak = measured_bfield(c)
     else
         bpath = bfield_gaussian(joinpath(tempdir(), "b_$(c.id).csv"), c.L_m, c.B_max_T, c.B_sigma_in_m, c.B_sigma_out_m, c.domain_m)
         bfield = het.load_magnetic_field(bpath)
@@ -95,6 +109,7 @@ function run_case(c)
     out["model_facility_ingestion"] = ingest
     out["B_scale"] = bscale
     out["B_max_T"] = maximum(bfield.B)
+    out["B_peak_minus_exit_m"] = zpeak - c.L_m
     if sol.retcode != :success
         out["error"] = sol.error
         return out
@@ -102,17 +117,18 @@ function run_case(c)
 
     avg = het.time_average(sol, c.average_start_s)
     Id_t = het.discharge_current(sol)
-    tail = Id_t[findfirst(>=(c.average_start_s), sol.t):end]
+    i0 = findfirst(>=(c.average_start_s), sol.t)
+    tail = Id_t[i0:end]
     Id = het.discharge_current(avg)[1]
     out["discharge_current_A"] = Id
     out["discharge_power_W"] = Id * c.Vd
     out["thrust_N"] = het.thrust(avg)[1]
-    out["Id_osc_rel"] = (maximum(tail) - minimum(tail)) / Id
-    out["Id_rms_rel"] = sqrt(sum(abs2, tail .- Id) / length(tail)) / Id
+    out["Id_osc_rel"] = (maximum(tail) - minimum(tail)) / Id          # peak-to-peak / mean
+    out["Id_rms_rel"] = sqrt(sum(abs2, tail .- Id) / length(tail)) / Id  # RMS / mean
     out["Id_min_A"], out["Id_max_A"] = minimum(tail), maximum(tail)
-    # retcode :success only means no NaN/Inf. A deep relaxation oscillation (I_d swinging from ~0 to several times its
-    # mean) averages to a number that is not an operating point, so it is not a validation comparison. Classification
-    # threshold: RMS < 50 % of mean (observed runs fall at < 1 % or > 70 %, so the split is insensitive to it).
+    out["Id_f_dominant_Hz"], out["Id_amp_dominant_A"] = dominant_frequency(sol.t[i0:end], tail)
+    # Internal diagnostic only, not a validation criterion (50 % has no experimental meaning): runs so far fall at
+    # < 1 % or > 65 % RMS. Validation compares the RMS, peak-to-peak and frequency above with measured traces.
     out["quasi_steady"] = out["Id_rms_rel"] < 0.5
     for f in (:ion_current, :anode_eff, :mass_eff, :voltage_eff, :current_eff, :divergence_eff)
         out[string(f)] = getfield(het, f)(avg)[1]
@@ -159,7 +175,8 @@ results = Any[]
 for c in cases.cases
     r = run_case(c)
     msg = r["retcode"] != "success" ? "FAILED ($(r["retcode"]))" :
-          "Id = $(round(r["discharge_current_A"]; digits=3)) A (rms $(round(100 * r["Id_rms_rel"]; digits=0)) %" *
+          "Id = $(round(r["discharge_current_A"]; digits=3)) A (rms $(round(100 * r["Id_rms_rel"]; digits=0)) %, " *
+          "p-p $(round(100 * r["Id_osc_rel"]; digits=0)) %, f $(round(r["Id_f_dominant_Hz"] / 1e3; digits=1)) kHz" *
           (r["quasi_steady"] ? ")" : ", NOT QUASI-STEADY: I_d $(round(r["Id_min_A"]; digits=2))-$(round(r["Id_max_A"]; digits=1)) A)")
     haskey(r, "Id_err_rel") && (msg *= ", error vs measured $(round(100 * r["Id_err_rel"]; digits=1)) %")
     haskey(r, "Id_err_rel_vs_corr") && (msg *= ", vs vacuum-corrected $(round(100 * r["Id_err_rel_vs_corr"]; digits=1)) %")

@@ -29,7 +29,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 |---|---|
 | 1 clean-install reproducibility | pass (frozen atmosphere; pinned deps; runs with pymsis absent) |
 | 2 grid-life consistency | pass (optimiser degeneracy flagged; perveance-window tests) |
-| 3 multi-point Hall validation | **FAIL** — 0-D Hall model superseded; HallThruster.jl validation ladder not yet run |
+| 3 multi-point Hall validation | **FAIL** — P5-Xe blocked on geometry/B(z) registration; transport not yet identified |
 | 4 cross-family mission UQ | done but **conditional on gate 3** (all absolute Hall numbers withdrawn) |
 | 5 numerical convergence | pass |
 | 6 golden benchmarks | pass (near-zero `ledger_resid` compared with an absolute tolerance, 2026-09-25) |
@@ -43,11 +43,18 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
   magnetic nozzles excluded by energy per particle even at the energy bound; RF/helicon pre-ionisers add nothing.
 
 ## Next work (in order)
-1. P5 on **xenon** in HallThruster.jl (`cases/p5_xenon.json`, Brabston et al. JPP 2025 Table 4) — tests geometry, field,
-   settings with no molecular chemistry. Rerun 2026-09-25 with measured B(z) (Peterson 2001, scaled to Table 4) and
-   Eq. (13) facility ingestion: default TwoZoneBohm puts P5-Xe into a deep breathing mode (I_d RMS > 100 %, not a
-   validation point). The earlier −13/−20/−4 % agreement came from the placeholder B. Next: decide the anomalous-transport
-   treatment (step 8 of the plan); verify the 38 vs 32 mm anode offset in the field map. See docs/HISTORY.md.
+1. P5 on **xenon** in HallThruster.jl (`cases/p5_xenon.json`, Brabston et al. JPP 2025 Table 4). **Do not tune anomalous
+   transport yet** (project decision 2026-09-25); the Gaussian-B agreement is superseded. Order:
+   a. Resolve P5 geometry: 32 mm (Brabston 2025) vs 38 mm (Peterson 2001, Hofer 2004) channel, and how the 2001 B(z) is
+      registered. Ask HPEPL (questions in docs/HISTORY.md). Until then carry `L38-hist`, `L32-anode`, `L32-exit` as separate
+      cases, rigid shifts only (`scripts/make_p5_xenon_cases.py`). At default transport all breathe and underpredict
+      corrected I_d by 25–56 %; registration moves I_d ~30 %.
+   b. Then calibrate transport as parameter identification: ONE TwoZoneBohm set (c₁, c₂, transition length) for all Xe
+      points, fitted against I_d, thrust, anode and current efficiency and oscillation (RMS, peak-to-peak, frequency;
+      the 50 % RMS flag is an internal diagnostic, not a criterion). Keep facility ingestion on. Hold one Xe point out as a
+      blind test (more historical P5 Xe points if available).
+   c. Freeze the Xe transport closure before N₂; run P5-N₂ with it unchanged first.
+   File the HallThruster.jl ingestion-units issue (`hallthruster_bridge/upstream/`).
 2. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited LXCat cross sections: N ionisation, N₂
    dissociation (Cosby 1993 / Itikawa 2006), N₂ excitation, N elastic.
 3. P5 on N₂ (`cases/p5_n2.json`, Table 2) and ECHT on N₂ (`cases/echt_n2.json`) with ONE transport parameter set.
