@@ -1226,3 +1226,45 @@ uniquely"**. That uncertainty is then carried into the Hall response model.
 and 1.5 L (scaled to each hypothesis's channel length), with c constant beyond the end nodes. Grid: c_up ∈ {1/160, 1/64,
 1/25}, c_exit ∈ {1/800, 1/300, 1/100}, c_plume ∈ {1/32, 1/16, 1/8}, giving 27 combinations × 6 hypotheses × 3 points =
 486 runs. Defensible flag: all c ≤ 1/16. It runs only if ScaledGaussianBohm fails the criteria.
+
+## ScaledGaussianBohm identification: results (2026-09-25)
+Pre-registered protocol and grid as above. 972 runs, 1 failure (H3b/Xe2, a=1/32, b=0.97, c=1.1L, w=0.25L). Files:
+`hallthruster_bridge/identification/p5_xe_identification_sgb_v1_{runs.csv,summary.json}` and the post-hoc analysis
+`..._posthoc_quiet_loo.json`.
+
+**Pre-registered leave-one-out (objective ignores oscillation).** Selections are mostly a = 1/16 (defensible) but deep
+breathing (RMS 55–380 %). H1a and H3b pick the same set in all rounds. Blind I_d errors are −20 % to +27 %; blind thrust
+is within ±3.8σ. One exception: H2a round "hold Xe2" selects a quiet set (a = 1/8, b = 0.97, c = 0.9 L, w = 0.25 L; RMS
+2–3 %).
+
+**Quiet solutions exist, unlike TwoZoneBohm.** Every hypothesis has combinations below 50 % RMS at all three points:
+22 (H1a), 23 (H1b), 28 (H2a), 28 (H2b), 15 (H3a) and 16 (H3b) of 54. Most sit below 5 %. Almost all need a = 1/8
+(super-Bohm, grid edge). The one quiet and defensible set (a = 1/16, b = 0.9, c = 0.9 L, w = 0.25 L; RMS < 0.5 %) exists
+only for L32-anode (H2a, H2b): I_d −9 / −19 / −6 %, thrust +4.4 / +2.7 / +2.8σ.
+
+**Post-hoc analysis (not pre-registered):** leave-one-out restricted to sets that are quiet (RMS < 50 %, internal
+diagnostic) at the calibration points.
+
+| hyp. | selected | same all rounds | held-out I_d (Xe1/2/3 held out) | held-out thrust | held-out RMS |
+|---|---|---|---|---|---|
+| H1a L38/1.6 kW | a = 1/16, b = 0.8, c = 0.9 L, w = 0.25 L | yes | −7 / −14 / 0 % | +3.2 / +2.7 / +2.8σ | 28–49 % |
+| H1b L38/3.0 kW | mixed (a = 1/8 or 1/16) | no | −7 / −28 / −3 % | +3.8 / −0.4 / +3.1σ | 1–34 % |
+| H2a L32-anode/1.6 kW | a = 1/8, b = 0.97, c = 0.9 L, w = 0.25 L | yes | −3 / −13 / +3 % | +3.6 / +2.0 / +2.2σ | 2–3 % |
+| H2b L32-anode/3.0 kW | same | yes | −3 / −13 / +3 % | +3.6 / +2.0 / +2.2σ | 2 % |
+| H3a L32-exit/1.6 kW | mixed (c = 0.9 or 1.1 L) | no | −4 / −17 / 0 % | +4.2 / +1.1 / +2.6σ | 0–67 % |
+| H3b L32-exit/3.0 kW | a = 1/8, b = 0.97, c = 0.9 L, w = 0.25 L | yes | −4 / −14 / +1 % | +4.1 / +2.4 / +2.5σ | 0 % |
+
+**Evaluation against the stopping-rule criteria.**
+- *Reasonable I_d:* yes in the quiet regime (blind −3 to −14 %, with Xe2 always worst).
+- *No deep relaxation:* achievable, but only with super-Bohm a = 1/8. The one defensible quiet-selected set (H1a) sits at
+  28–49 % RMS.
+- *Reasonable thrust:* **no.** Every quiet solution under every hypothesis overpredicts raw thrust by +2 to +4.5σ (10–20 mN).
+  It's systematic and independent of the I_d fit. Candidate cause (not tested; fixed physics in this exercise): the 1-D
+  thrust counts all ion momentum as axial (`apply_thrust_divergence_correction=false`, no plume solve), whereas the stand
+  measures axial thrust. Brabston's per-point divergence isn't published numerically, so no correction is applied.
+- *Geometry:* still not discriminated. The same quiet set gives near-identical results for H2a, H2b and H3b, and coil
+  shape barely matters in the quiet regime.
+
+**Verdict:** ScaledGaussianBohm fails the pre-registered criteria (thrust, defensible bounds), so the pre-registered 3-node
+MultiLogBohm runs next. It's a clear improvement on TwoZoneBohm: it shows that a transport trough near the exit can produce
+the experimentally quiet regime with blind I_d within ~15 %.
