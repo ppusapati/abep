@@ -80,5 +80,10 @@ class HallMap:
         idx = [np.clip(np.searchsorted(self.axes[n], v) - 1, 0, len(self.axes[n]) - 2) for n, v in zip(self.names, pt)]
         cube = self.bad[tuple(slice(i, i + 2) for i in idx)]
         out["trustworthy"] = bool(not cube.any()) and out["sustained"] > 0.999
+        # Performance trust is not erosion trust: wall flux/energy are erosion-grade only if every surrounding node is
+        # wall_life_trustworthy (which requires ion_wall_losses=true in the solve) and the map says so in its meta.
+        wl = self.fields["wall_life_trustworthy"][tuple(slice(i, i + 2) for i in idx)]
+        out["wall_life_trustworthy"] = (out["trustworthy"] and self.meta["ion_wall_losses"] is True
+                                        and bool((wl > 0.5).all()))
         out["hallthruster_commit"] = pinned_commit()
         return out

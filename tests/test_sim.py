@@ -598,6 +598,8 @@ def test_v17_hall_map_loader_enforces_pin_schema_and_bounds(tmp_path):
     p = tmp_path / "m.json"; p.write_text(json.dumps(good))
     m = HallMap(str(p))                                              # SYNTHETIC map: tests the loader only
     assert m(Vd=260.0, mdot_kgps=1.2e-6)["trustworthy"] is False    # touches the unconverged node
+    q = m(Vd=255.0, mdot_kgps=1.1e-6)
+    assert q["wall_life_trustworthy"] is False                       # meta ion_wall_losses is the string "synthetic", not True
     with pytest.raises(ValueError):
         m(Vd=350.0, mdot_kgps=1.2e-6)                                # no extrapolation
     bad = dict(good); bad["meta"] = dict(meta, pinned="commit = \"deadbeef\"")
@@ -661,3 +663,22 @@ def test_bridge_and_0d_chemistry_are_not_unified():
     from abep_sim.plasma_chem import CHEM_PROVENANCE, RATE_TABLES
     assert set(RATE_TABLES) == {("N2", "iz")}
     assert all("propellants" not in v for v in CHEM_PROVENANCE.values())
+
+
+def test_wall_life_trust_is_separate_from_performance_trust(tmp_path):
+    """map_ready/trustworthy never imply erosion-grade wall flux: that needs ion_wall_losses=true in the map meta AND
+    wall_life_trustworthy on every surrounding node."""
+    import json, numpy as np
+    from abep_sim.hall_map import HallMap, REQUIRED_FIELDS, REQUIRED_META, pinned_commit
+    axes = {"Vd": [250.0, 300.0], "mdot_kgps": [1e-6, 2e-6]}
+    def make(ion_wall_losses, wl):
+        f = {k: (np.ones((2, 2)) * 0.02).tolist() for k in REQUIRED_FIELDS}
+        f["converged"] = [[1, 1], [1, 1]]; f["sustained"] = [[1, 1], [1, 1]]; f["wall_life_trustworthy"] = wl
+        meta = {k: "synthetic" for k in REQUIRED_META}
+        meta.update(schema="hall_map_schema_v1", pinned=f"commit = \"{pinned_commit()}\"", ion_wall_losses=ion_wall_losses)
+        p = tmp_path / f"m{ion_wall_losses}{wl}.json"; p.write_text(json.dumps({"meta": meta, "axes": axes, "fields": f}))
+        return HallMap(str(p))(Vd=275.0, mdot_kgps=1.5e-6)
+    assert make(False, [[1, 1], [1, 1]])["trustworthy"] is True
+    assert make(False, [[1, 1], [1, 1]])["wall_life_trustworthy"] is False
+    assert make(True, [[1, 1], [1, 0]])["wall_life_trustworthy"] is False
+    assert make(True, [[1, 1], [1, 1]])["wall_life_trustworthy"] is True

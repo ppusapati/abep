@@ -255,6 +255,11 @@ function run_case(c, mode)
             (startswith(k, "profile_") || k == "z_m") && delete!(out, k)
         end
     end
+    out["ion_wall_losses"] = config.ion_wall_losses
+    # Schema-complete (map_ready) is not the same as erosion-grade: wall flux is only dynamically self-consistent when the
+    # solver actually removes it from the ion fluid.
+    out["wall_life_trustworthy"] = out["converged"] && out["sustained"] && config.ion_wall_losses &&
+                                   haskey(out, "wall_ion_flux_m2s") && haskey(out, "wall_ion_energy_eV")
     out["schema"] = String(SCHEMA.schema)
     out["schema_missing"] = schema_missing(out)
     out["map_ready"] = isempty(out["schema_missing"])

@@ -74,7 +74,10 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    derives `REQUIRED_FIELDS` from it, a test checks both). All fields now have producers: wall ion flux/energy are
    re-evaluated from the solver's WallSheath Bohm-flux model (`bridge_lib.jl`, checked against the solver's own
    `nu_wall` by `checks/wall_flux_consistency.jl`). With `ion_wall_losses=false` that flux is not removed from the ion
-   fluid (`wall_ion_basis` says so). Never fill missing fields with placeholders.
+   fluid (`wall_ion_basis` says so). `map_ready` = schema-complete only. Erosion/lifetime use requires
+   `wall_life_trustworthy` (converged ∧ sustained ∧ `ion_wall_losses=true` ∧ WallSheath, unshielded), which `HallMap`
+   reports separately from performance `trustworthy`; map meta must carry `ion_wall_losses`. Never fill missing fields
+   with placeholders.
    Then generate frozen Hall maps (all fields in `hall_map.REQUIRED_FIELDS`), wire `archengine` Hall branch to `HallMap`,
    rerun the architecture trade and gate-4 UQ.
 6. Replace the remaining unverified Arrhenius rates (O, O₂, N ionisation; dissociation; excitation) in `plasma_chem.py`

@@ -1191,3 +1191,9 @@ candidates, none tested yet, are:
 - other fixed physics (wall model, anode boundary condition, 1-D limits).
 
 Gate 3 stays FAIL. Carry geometry uncertainty forward; don't freeze a transport closure.
+
+**Wall-life trust (2026-09-25, before merge).** Schema-complete isn't erosion-grade. `hall_map_schema_v1` now requires map
+meta `ion_wall_losses` and a per-point `wall_life_trustworthy` = converged ∧ sustained ∧ `ion_wall_losses=true` ∧ both wall
+fields present (so WallSheath, unshielded). `HallMap` returns it separately from performance `trustworthy`. It's true
+only if the map meta says `ion_wall_losses` is exactly `True` and every surrounding node is wall-life-trustworthy.
+Current P5 runs: `map_ready` true, `wall_life_trustworthy` false (`ion_wall_losses=false`).

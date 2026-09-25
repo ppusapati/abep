@@ -11,7 +11,8 @@
   "grid": "grid specification (e.g. 'EvenGrid(200)')",
   "dt_s": "base timestep [s]",
   "duration_s": "simulated duration [s]",
-  "average_start_s": "start of the time-averaging window [s]"
+  "average_start_s": "start of the time-averaging window [s]",
+  "ion_wall_losses": "bool; true only if ion wall losses were removed from the ion fluid in the solve (HallThruster.jl Config.ion_wall_losses). With false, wall_ion_flux_m2s/wall_ion_energy_eV are diagnostic, not erosion-grade"
  },
  "conventions": {
   "sustained_min_Id_fraction": 0.01,
@@ -131,6 +132,12 @@
    "type": "bool",
    "status": "computed",
    "definition": "converged and min I_d over the window > sustained_min_Id_fraction * mean"
+  },
+  "wall_life_trustworthy": {
+   "unit": "-",
+   "type": "bool",
+   "status": "computed",
+   "definition": "converged AND sustained AND ion_wall_losses=true AND wall model is WallSheath AND unshielded AND both wall fields present. map_ready means schema-complete only; lifetime/erosion use requires wall_life_trustworthy"
   }
  }
 }
