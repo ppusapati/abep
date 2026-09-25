@@ -1,0 +1,23 @@
+{
+ "file": "atmosphere_msis21_v1.csv",
+ "sha256_16": "5e108c6e5cb7c03e",
+ "model": "NRLMSIS 2.1",
+ "pymsis": "0.13.0",
+ "epoch": "2028-03-21T12:00",
+ "ap": 15.0,
+ "f107a": "= f107",
+ "averaging": "lat -60..60 (7) x lon 0..270 (4) at fixed UT",
+ "alt_km": [
+  150,
+  300,
+  2
+ ],
+ "f107": [
+  70.0,
+  100.0,
+  150.0,
+  190.0,
+  230.0
+ ],
+ "species_dropped": "He, H, Ar, N (<2 % by mass at 180-230 km); rho includes them"
+}

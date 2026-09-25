@@ -1,0 +1,72 @@
+{
+ "source": "Brabston et al. JPP 2025 Table 4; B peak 162.5 G; ranges T 72.8-86.8 mN, Isp 1485-1770 s, eta 32.9-39.6 %",
+ "assumptions": "B(z) Gaussian peaked at the exit plane (widths assumed; replace with measured profiles)",
+ "cases": [
+  {
+   "cells": 200,
+   "dt_s": 5e-09,
+   "duration_s": 0.002,
+   "average_start_s": 0.001,
+   "thruster": "P5",
+   "r_in_m": 0.0615,
+   "r_out_m": 0.0865,
+   "L_m": 0.032,
+   "domain_m": 0.1,
+   "B_sigma_in_m": 0.012,
+   "B_sigma_out_m": 0.02,
+   "id": "Xe1",
+   "gas": "Xe",
+   "Vd": 230.8,
+   "mdot_kgps": 4.9999999999999996e-06,
+   "B_max_T": 0.01625,
+   "measured": {
+    "Pd_W": 1750.0,
+    "Id_A": 7.582322357019064
+   }
+  },
+  {
+   "cells": 200,
+   "dt_s": 5e-09,
+   "duration_s": 0.002,
+   "average_start_s": 0.001,
+   "thruster": "P5",
+   "r_in_m": 0.0615,
+   "r_out_m": 0.0865,
+   "L_m": 0.032,
+   "domain_m": 0.1,
+   "B_sigma_in_m": 0.012,
+   "B_sigma_out_m": 0.02,
+   "id": "Xe2",
+   "gas": "Xe",
+   "Vd": 250.3,
+   "mdot_kgps": 4.9999999999999996e-06,
+   "B_max_T": 0.01625,
+   "measured": {
+    "Pd_W": 2150.0,
+    "Id_A": 8.589692369157012
+   }
+  },
+  {
+   "cells": 200,
+   "dt_s": 5e-09,
+   "duration_s": 0.002,
+   "average_start_s": 0.001,
+   "thruster": "P5",
+   "r_in_m": 0.0615,
+   "r_out_m": 0.0865,
+   "L_m": 0.032,
+   "domain_m": 0.1,
+   "B_sigma_in_m": 0.012,
+   "B_sigma_out_m": 0.02,
+   "id": "Xe3",
+   "gas": "Xe",
+   "Vd": 274.3,
+   "mdot_kgps": 4.9999999999999996e-06,
+   "B_max_T": 0.01625,
+   "measured": {
+    "Pd_W": 2029.9999999999998,
+    "Id_A": 7.400656215822091
+   }
+  }
+ ]
+}

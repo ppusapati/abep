@@ -1,0 +1,8 @@
+# Locked environment for ABEP Physics Candidate v1.5 (reference behaviour; tested 2026-09-25)
+numpy==2.4.4
+scipy==1.17.1
+pandas==3.0.2
+matplotlib==3.10.8
+PyYAML==6.0.3
+pytest==9.1.1
+pymsis==0.13.0   # only for live NRLMSIS / point evaluations; the frozen scenario dataset needs no pymsis

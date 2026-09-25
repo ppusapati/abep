@@ -1,0 +1,17 @@
+# HallThruster.jl is the authoritative Hall-discharge solver (offline). Every generated map must carry this block.
+[hallthruster]
+package = "HallThruster.jl"
+repository = "https://github.com/UM-PEPL/HallThruster.jl"
+version = "0.23.1"
+commit = "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5"   # recovered from the release tarball (git get-tar-commit-id)
+licence = "MIT"
+molecular_support = "propellant_config TOML; electron-impact dissociation / ionization / dissociative ionization (docs/src/howto/new_propellant.md)"
+defaults_used = "anom_model TwoZoneBohm(1/160, 1/16); wall_loss_model WallSheath(BNSiO2, 1.0)"
+
+[julia]
+minimum = "1.10"
+install = "https://julialang.org/downloads  (sandbox: julialang-s3.julialang.org is not on the network allow-list)"
+
+[reaction_set]
+version = "abep-n2n-0.1"
+status = "INCOMPLETE — N2 ionisation + N2 elastic from Itikawa 2006 (shipped with HallThruster.jl); N ionisation, N2 dissociation, N2 excitation, N elastic still required (LXCat)"

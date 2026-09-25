@@ -1,0 +1,94 @@
+{
+ "source": "Marchioni & Cappelli JAP 2021; geometry Sec. 3; B_max NOT in our sources \u2014 must be obtained; voltages placeholders until the per-point data are digitised",
+ "assumptions": "B(z) Gaussian peaked at the exit plane (widths assumed; replace with measured profiles)",
+ "cases": [
+  {
+   "cells": 200,
+   "dt_s": 5e-09,
+   "duration_s": 0.002,
+   "average_start_s": 0.001,
+   "thruster": "ECHT",
+   "r_in_m": 0.04,
+   "r_out_m": 0.05,
+   "L_m": 0.086,
+   "domain_m": 0.15,
+   "B_sigma_in_m": 0.03,
+   "B_sigma_out_m": 0.02,
+   "id": "ECHT_200V",
+   "propellant_config": "propellants/n2_n.toml",
+   "rate_dir": "propellants",
+   "Vd": 200.0,
+   "mdot_kgps": 2e-06,
+   "B_max_T": null,
+   "measured": {
+    "range": "17-22 mN, 500-800 W anode, 1000-1100 s, 14-18 % over the voltage sweep"
+   }
+  },
+  {
+   "cells": 200,
+   "dt_s": 5e-09,
+   "duration_s": 0.002,
+   "average_start_s": 0.001,
+   "thruster": "ECHT",
+   "r_in_m": 0.04,
+   "r_out_m": 0.05,
+   "L_m": 0.086,
+   "domain_m": 0.15,
+   "B_sigma_in_m": 0.03,
+   "B_sigma_out_m": 0.02,
+   "id": "ECHT_225V",
+   "propellant_config": "propellants/n2_n.toml",
+   "rate_dir": "propellants",
+   "Vd": 225.0,
+   "mdot_kgps": 2e-06,
+   "B_max_T": null,
+   "measured": {
+    "range": "17-22 mN, 500-800 W anode, 1000-1100 s, 14-18 % over the voltage sweep"
+   }
+  },
+  {
+   "cells": 200,
+   "dt_s": 5e-09,
+   "duration_s": 0.002,
+   "average_start_s": 0.001,
+   "thruster": "ECHT",
+   "r_in_m": 0.04,
+   "r_out_m": 0.05,
+   "L_m": 0.086,
+   "domain_m": 0.15,
+   "B_sigma_in_m": 0.03,
+   "B_sigma_out_m": 0.02,
+   "id": "ECHT_250V",
+   "propellant_config": "propellants/n2_n.toml",
+   "rate_dir": "propellants",
+   "Vd": 250.0,
+   "mdot_kgps": 2e-06,
+   "B_max_T": null,
+   "measured": {
+    "range": "17-22 mN, 500-800 W anode, 1000-1100 s, 14-18 % over the voltage sweep"
+   }
+  },
+  {
+   "cells": 200,
+   "dt_s": 5e-09,
+   "duration_s": 0.002,
+   "average_start_s": 0.001,
+   "thruster": "ECHT",
+   "r_in_m": 0.04,
+   "r_out_m": 0.05,
+   "L_m": 0.086,
+   "domain_m": 0.15,
+   "B_sigma_in_m": 0.03,
+   "B_sigma_out_m": 0.02,
+   "id": "ECHT_275V",
+   "propellant_config": "propellants/n2_n.toml",
+   "rate_dir": "propellants",
+   "Vd": 275.0,
+   "mdot_kgps": 2e-06,
+   "B_max_T": null,
+   "measured": {
+    "range": "17-22 mN, 500-800 W anode, 1000-1100 s, 14-18 % over the voltage sweep"
+   }
+  }
+ ]
+}

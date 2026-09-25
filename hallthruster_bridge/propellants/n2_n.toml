@@ -1,0 +1,49 @@
+# N2/N propellant for HallThruster.jl v0.23.1 (Stage A). Rate files are Maxwellian tables vs mean energy (3/2 Te).
+[[species]]
+symbol = "N"
+name = "Nitrogen"
+max_charge = 1
+gamma = 1.666667
+mass = 14.0067
+flow_rate_kg_s = 0.0
+temperature_K = 500.0
+
+[[species]]
+symbol = "N2"
+name = "Molecular Nitrogen"
+max_charge = 1
+gamma = 1.4
+mass = 28.0134
+flow_rate_kg_s = 5e-6
+temperature_K = 500.0
+
+[[reactions]]
+type = "elastic"
+target_species = "N2"
+rate_coeff_file = "elastic_N2.dat"                  # Itikawa 2006 (shipped)
+
+[[reactions]]
+type = "electron_impact"
+equation = "N2 + e -> N2(+) + 2e"
+rate_coeff_file = "ionization_N2_N2+.dat"           # Itikawa 2006 (shipped)
+
+[[reactions]]
+type = "electron_impact"
+equation = "N2 + e -> N + N + e"
+rate_coeff_file = "dissociation_N2.dat"             # REQUIRED: Cosby 1993 / Itikawa 2006 via LXCat — not yet generated
+
+[[reactions]]
+type = "excitation"
+energy_eV = 9.37
+target_species = "N2"
+rate_coeff_file = "excitation_N2.dat"               # REQUIRED: lumped electronic + vibrational (Itikawa 2006) — not yet generated
+
+[[reactions]]
+type = "elastic"
+target_species = "N"
+rate_coeff_file = "elastic_N.dat"                   # REQUIRED — not yet generated
+
+[[reactions]]
+type = "electron_impact"
+equation = "N + e -> N(+) + 2e"
+rate_coeff_file = "ionization_N.dat"                # REQUIRED: Kim & Desclaux / BEB — not yet generated

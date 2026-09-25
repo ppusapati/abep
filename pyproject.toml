@@ -1,0 +1,13 @@
+[project]
+name = "abep-sim"
+version = "0.1.0"
+description = "System-closure simulator for air-breathing electric propulsion (DRDO TDF DTDF/06/13516)"
+requires-python = ">=3.10"
+dependencies = ["numpy", "pandas", "pyyaml", "matplotlib", "scipy", "pymsis>=0.13"]
+[project.optional-dependencies]
+msis = ["pymsis"]
+[project.scripts]
+abep-sim = "abep_sim.sweep:main"
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"

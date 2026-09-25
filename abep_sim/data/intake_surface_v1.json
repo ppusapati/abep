@@ -1,0 +1,41 @@
+{
+ "file": "intake_surface_v1.csv",
+ "sha256_16": "62b804924d801f91",
+ "n_per_point": 12000,
+ "atmosphere": "NRLMSIS 2.1, 200 km, F10.7=150, orbit-averaged",
+ "species": [
+  "O",
+  "N2",
+  "O2"
+ ],
+ "scattering": [
+  "maxwell",
+  "cll"
+ ],
+ "grid": {
+  "L_over_d": [
+   3,
+   5,
+   10,
+   20
+  ],
+  "phi": [
+   0.8,
+   0.9
+  ],
+  "alpha": [
+   0,
+   0.2,
+   0.5,
+   0.8,
+   1.0
+  ],
+  "theta_deg": [
+   0,
+   2,
+   5
+  ]
+ },
+ "max_unresolved": 0.0008333333333333,
+ "built_by": "python -m abep_sim.intake_tpmc build (chunked)"
+}
