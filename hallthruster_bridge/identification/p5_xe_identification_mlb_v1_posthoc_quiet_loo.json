@@ -1,0 +1,116 @@
+{
+ "H1a": [
+  {
+   "hold": "Xe1",
+   "combo": "c_up=1/25_c_exit=1/800_c_plume=1/8",
+   "hold_dI": -0.42022278402946484,
+   "hold_dT": -5.49379366427369,
+   "hold_rms": 0.3296679816360637
+  },
+  {
+   "hold": "Xe2",
+   "combo": "c_up=1/25_c_exit=1/800_c_plume=1/8",
+   "hold_dI": -0.49164589437365264,
+   "hold_dT": -6.47745296007457,
+   "hold_rms": 0.35523468954333637
+  },
+  {
+   "hold": "Xe3",
+   "combo": "c_up=1/25_c_exit=1/800_c_plume=1/8",
+   "hold_dI": -0.40807809696574127,
+   "hold_dT": -5.924290545129346,
+   "hold_rms": 0.425445255880092
+  }
+ ],
+ "H1b": [
+  {
+   "hold": "Xe1",
+   "combo": "c_up=1/25_c_exit=1/800_c_plume=1/32",
+   "hold_dI": -0.42722722695892174,
+   "hold_dT": -7.053804907370428,
+   "hold_rms": 0.7075987496415094
+  },
+  {
+   "hold": "Xe2",
+   "combo": null
+  },
+  {
+   "hold": "Xe3",
+   "combo": null
+  }
+ ],
+ "H2a": [
+  {
+   "hold": "Xe1",
+   "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+   "hold_dI": 0.00412225984089534,
+   "hold_dT": 4.3015900571828265,
+   "hold_rms": 0.43549364122124035
+  },
+  {
+   "hold": "Xe2",
+   "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+   "hold_dI": -0.109805453638072,
+   "hold_dT": 2.5838468323148844,
+   "hold_rms": 0.48036882987608653
+  },
+  {
+   "hold": "Xe3",
+   "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+   "hold_dI": 0.044986887743462406,
+   "hold_dT": 2.8211519115004218,
+   "hold_rms": 0.41422264090781374
+  }
+ ],
+ "H2b": [
+  {
+   "hold": "Xe1",
+   "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+   "hold_dI": -0.2755209441787517,
+   "hold_dT": 1.4555332044026594,
+   "hold_rms": 0.14635512753665608
+  },
+  {
+   "hold": "Xe2",
+   "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+   "hold_dI": -0.3482768818003851,
+   "hold_dT": 0.4687593712852196,
+   "hold_rms": 0.1515818153748877
+  },
+  {
+   "hold": "Xe3",
+   "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+   "hold_dI": -0.23650541613555418,
+   "hold_dT": 1.02028520437866,
+   "hold_rms": 0.15403918840695763
+  }
+ ],
+ "H3a": [
+  {
+   "hold": "Xe1",
+   "combo": null
+  },
+  {
+   "hold": "Xe2",
+   "combo": null
+  },
+  {
+   "hold": "Xe3",
+   "combo": null
+  }
+ ],
+ "H3b": [
+  {
+   "hold": "Xe1",
+   "combo": null
+  },
+  {
+   "hold": "Xe2",
+   "combo": null
+  },
+  {
+   "hold": "Xe3",
+   "combo": null
+  }
+ ]
+}

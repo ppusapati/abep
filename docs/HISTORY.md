@@ -1268,3 +1268,31 @@ diagnostic) at the calibration points.
 **Verdict:** ScaledGaussianBohm fails the pre-registered criteria (thrust, defensible bounds), so the pre-registered 3-node
 MultiLogBohm runs next. It's a clear improvement on TwoZoneBohm: it shows that a transport trough near the exit can produce
 the experimentally quiet regime with blind I_d within ~15 %.
+
+## 3-node MultiLogBohm identification: results; stopping rule triggered (2026-09-25)
+Pre-registered nodes 0.5/1.0/1.5 L and grid as above. 486 runs, 5 failures (all at c_up = 1/25 with c_exit = 1/800 or
+1/300; logged). Files: `p5_xe_identification_mlb_v1_{runs.csv,summary.json,posthoc_quiet_loo.json}`.
+- **Pre-registered leave-one-out:** every hypothesis selects grid-edge sets (c_up = 1/25, c_exit = 1/100, c_plume = 1/16
+  or 1/8), all breathing (RMS 41–258 %). Blind I_d −0.2 to −28.6 %.
+- **Quiet sets** (all points below 50 % RMS): 3 (H1a), 0 (H1b), 4 (H2a), 2 (H2b), 0 (H3a), 0 (H3b) of 27. Those with RMS
+  ≤ 31 % miss I_d by −24 to −51 %. The one quiet set with good I_d (H2a, c_up = 1/25, c_exit = 1/100, c_plume = 1/8;
+  RMS 41–48 %, I_d 0 / −11 / +4 %) overpredicts thrust by +2.6 to +4.3σ, the same systematic seen with ScaledGaussianBohm.
+
+**Stopping rule applied.** Neither ScaledGaussianBohm nor the pre-registered 3-node MultiLogBohm simultaneously gives
+reasonable I_d, reasonable thrust, successful blind prediction and no deep relaxation within defensible transport.
+**Conclusion: published P5 information is insufficient to identify Hall anomalous transport uniquely.**
+Calibration against P5 stops. No transport closure is frozen from P5, and P5 geometry (32 vs 38 mm) and coil shape stay
+undiscriminated. The Hall response model must carry transport, geometry and coil-shape uncertainty explicitly rather than
+a single calibrated closure.
+
+**What the three families did establish** (usable as constraints, not calibration):
+1. A two-level Bohm profile cannot produce the reported quiet regime with the measured P5 field under any hypothesis.
+2. A transport trough near the exit (ScaledGaussianBohm) *can* produce quiet discharges with blind I_d within ~15 %, but
+   only with peak transport at or above Bohm (a = 1/8) in all but one set.
+3. **Every quiet solution in every family and hypothesis overpredicts raw thrust by +2 to +4.5σ (10–20 mN).** That's
+   systematic and independent of the transport shape. It points at a fixed-physics or output-definition issue, not
+   transport. The leading candidate is that the 1-D thrust counts all ion momentum as axial (no divergence correction,
+   no plume model), whereas the stand measures axial thrust. **This was not tested** (fixed physics in this exercise), and
+   it's the only identified item that could reopen P5 calibration. That would be a separate, pre-registered test.
+4. Xe2 is consistently the worst I_d point in every quiet solution. It's also the point whose measured I_d is anomalous
+   even after the Eq. (14) correction.
