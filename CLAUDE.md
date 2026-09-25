@@ -29,7 +29,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 |---|---|
 | 1 clean-install reproducibility | pass (frozen atmosphere; pinned deps; runs with pymsis absent) |
 | 2 grid-life consistency | pass (optimiser degeneracy flagged; perveance-window tests) |
-| 3 multi-point Hall validation | **FAIL** — P5-Xe blocked on geometry/B(z) registration; transport not yet identified |
+| 3 multi-point Hall validation | **FAIL** — P5-Xe: TwoZoneBohm can't produce the quiet regime under any geometry hypothesis (2026-09-25) |
 | 4 cross-family mission UQ | done but **conditional on gate 3** (all absolute Hall numbers withdrawn) |
 | 5 numerical convergence | pass |
 | 6 golden benchmarks | pass (near-zero `ledger_resid` compared with an absolute tolerance, 2026-09-25) |
@@ -49,7 +49,11 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
       registered, **from published sources only: no contact with authors or labs** (project decision 2026-09-25). Carry `L38-hist`, `L32-anode`, `L32-exit` as separate
       cases, rigid shifts only (`scripts/make_p5_xenon_cases.py`). At default transport all breathe and underpredict
       corrected I_d by 25–56 %; registration moves I_d ~30 %.
-   b. Then calibrate transport as parameter identification: ONE TwoZoneBohm set (c₁, c₂, transition length) for all Xe
+   Identification run 2026-09-25 (`scripts/identify_p5_transport.py`, 783 runs, leave-one-out): with TwoZoneBohm in the
+      pre-registered bounds, NO geometry gives a quiet discharge. The mean-value fits are breathing solutions at the grid
+      edge (c₁ = 1/50, super-Bohm c₂). Geometry is not discriminated; no closure is frozen. Next step is a project
+      decision (see docs/HISTORY.md): transport family, coil-shape uncertainty, or other fixed physics.
+   b. Calibrate transport as parameter identification: ONE TwoZoneBohm set (c₁, c₂, transition length) for all Xe
       points, fitted against I_d, thrust, anode and current efficiency and oscillation (RMS, peak-to-peak, frequency;
       the 50 % RMS flag is an internal diagnostic, not a criterion). Keep facility ingestion on. Hold one Xe point out as a
       blind test (more historical P5 Xe points if available).
