@@ -43,7 +43,7 @@ def cases(coil, role):
                 "r_in_m": 0.0615, "r_out_m": 0.0865, "L_m": L, "domain_m": 0.1,
                 "B_ref_T": 0.01625,
                 "B_profile": {"file": COILS[coil], "align": align, "z_ref_in_file_mm": zref, "scale_to": "exit"},
-                "model_facility_ingestion": True, "background_pressure_Torr": P, "background_temperature_K": 300.0,
+                "comparison_modes": ["facility", "vacuum"], "background_pressure_Torr": P, "background_temperature_K": 300.0,
                 "entrainment_area_m2": 0.0488, "zeta_A": 1.0,
                 "cells": 200, "dt_s": 5e-9, "duration_s": 0.002, "average_start_s": 0.001,
                 "measured": {"Pd_W": Pd, "Id_A": Pd / Vd},

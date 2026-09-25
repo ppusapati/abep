@@ -588,17 +588,19 @@ def test_v17_itikawa_n2_table_is_authoritative():
 
 def test_v17_hall_map_loader_enforces_pin_schema_and_bounds(tmp_path):
     import json, numpy as np, pytest
-    from abep_sim.hall_map import HallMap, REQUIRED_FIELDS, pinned_commit
+    from abep_sim.hall_map import HallMap, REQUIRED_FIELDS, REQUIRED_META, pinned_commit
     axes = {"Vd": [250.0, 300.0], "mdot_kgps": [1e-6, 2e-6]}
     f = {k: (np.ones((2, 2)) * 0.02).tolist() for k in REQUIRED_FIELDS}
     f["converged"] = [[1, 1], [1, 0]]; f["sustained"] = [[1, 1], [1, 1]]
-    good = {"meta": {"pinned": f"commit = \"{pinned_commit()}\""}, "axes": axes, "fields": f}
+    meta = {k: "synthetic" for k in REQUIRED_META}
+    meta.update(schema="hall_map_schema_v1", pinned=f"commit = \"{pinned_commit()}\"")
+    good = {"meta": meta, "axes": axes, "fields": f}
     p = tmp_path / "m.json"; p.write_text(json.dumps(good))
     m = HallMap(str(p))                                              # SYNTHETIC map: tests the loader only
     assert m(Vd=260.0, mdot_kgps=1.2e-6)["trustworthy"] is False    # touches the unconverged node
     with pytest.raises(ValueError):
         m(Vd=350.0, mdot_kgps=1.2e-6)                                # no extrapolation
-    bad = dict(good); bad["meta"] = {"pinned": "commit = \"deadbeef\""}
+    bad = dict(good); bad["meta"] = dict(meta, pinned="commit = \"deadbeef\"")
     p2 = tmp_path / "b.json"; p2.write_text(json.dumps(bad))
     with pytest.raises(ValueError):
         HallMap(str(p2))
@@ -615,3 +617,22 @@ def test_golden_comparator_near_zero_tolerance():
     errs = []
     _compare({"rho": 0.0}, {"rho": 1.8e-16}, "c", 1e-6, errs)   # not in ATOL: still caught
     assert len(errs) == 1
+
+
+def test_hall_map_schema_v1_shared_by_producer_and_consumer(tmp_path):
+    """One schema: hall_map.py derives its fields from it, and run_cases.jl emits exactly the 'computed' ones
+    (no placeholders for 'not_computed' fields). Rejects maps without the schema tag."""
+    import json, os, re, pytest
+    from abep_sim.hall_map import SCHEMA, REQUIRED_FIELDS, HallMap, missing_fields
+    root = os.path.dirname(os.path.dirname(__file__))
+    src = open(os.path.join(root, "hallthruster_bridge", "run_cases.jl")).read()
+    assert "hall_map_schema_v1.json" in src
+    for name, spec in SCHEMA["fields"].items():
+        emitted = re.search(rf'"{name}"|:{name}\b', src) is not None
+        assert emitted == (spec["status"] == "computed"), (name, spec["status"])
+    assert set(missing_fields({k: 0 for k in REQUIRED_FIELDS})) == set()
+    assert missing_fields({}) == list(REQUIRED_FIELDS)
+    p = tmp_path / "old.json"
+    p.write_text(json.dumps({"meta": {"pinned": ""}, "axes": {}, "fields": {}}))
+    with pytest.raises(ValueError, match="hall_map_schema_v1"):
+        HallMap(str(p))

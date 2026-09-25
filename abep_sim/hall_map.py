@@ -1,6 +1,8 @@
 """Frozen Hall-discharge response maps produced offline by HallThruster.jl (the authoritative Hall solver).
 
-A map is a JSON file with:
+A map is a JSON file following hall_map_schema_v1 (hallthruster_bridge/hall_map_schema_v1.json, shared with the Julia
+driver; field names, units and definitions live there, not here):
+  meta.schema      — must be "hall_map_schema_v1"
   meta.pinned      — must contain the pinned commit of hallthruster_bridge/PINNED.toml
   meta.reaction_set, meta.grid, meta.dt_s, meta.duration_s
   axes             — names and values of the regular grid (e.g. Vd, mdot_kgps, x_O, ...)
@@ -12,9 +14,26 @@ from __future__ import annotations
 import json, os
 import numpy as np
 
-REQUIRED_FIELDS = ("thrust_N", "discharge_current_A", "ion_current_A", "discharge_power_W", "anode_eff", "mass_eff",
-                   "Te_max_eV", "ne_max_m3", "divergence_eff", "wall_ion_flux_m2s", "wall_ion_energy_eV",
-                   "ion_species_fraction_atomic", "Id_osc_rel", "sustained", "converged")
+SCHEMA_NAME = "hall_map_schema_v1"
+SCHEMA_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "hallthruster_bridge", f"{SCHEMA_NAME}.json")
+
+
+def load_schema(path: str = SCHEMA_FILE) -> dict:
+    """The one interchange schema shared with hallthruster_bridge/run_cases.jl (field names, units, definitions)."""
+    s = json.load(open(path))
+    if s.get("schema") != SCHEMA_NAME:
+        raise ValueError(f"{path} is not {SCHEMA_NAME}")
+    return s
+
+
+SCHEMA = load_schema()
+REQUIRED_FIELDS = tuple(SCHEMA["fields"])
+REQUIRED_META = tuple(SCHEMA["meta_required"])
+
+
+def missing_fields(record: dict) -> list[str]:
+    """Schema fields absent from one operating-point record (a record with any missing is not map-ready)."""
+    return [f for f in REQUIRED_FIELDS if f not in record]
 
 
 def pinned_commit(bridge_dir: str | None = None) -> str:
@@ -29,6 +48,11 @@ class HallMap:
     def __init__(self, path: str, bridge_dir: str | None = None):
         d = json.load(open(path))
         meta = d["meta"]
+        if meta.get("schema") != SCHEMA_NAME:
+            raise ValueError(f"Hall map {path} is not {SCHEMA_NAME} (meta.schema = {meta.get('schema')!r})")
+        missing_meta = [k for k in REQUIRED_META if k not in meta]
+        if missing_meta:
+            raise ValueError(f"Hall map {path} missing required meta: {missing_meta}")
         if pinned_commit(bridge_dir) not in meta.get("pinned", ""):
             raise ValueError(f"Hall map {path} was not produced with the pinned HallThruster.jl commit")
         missing = [f for f in REQUIRED_FIELDS if f not in d["fields"]]

@@ -1040,3 +1040,40 @@ in the pressure-shift anomalous model. The same code is on upstream `main`. Mini
 **Status.** Gate 3 still FAIL. Transport calibration waits for the geometry answer. When it comes, identify ONE TwoZoneBohm
 set (c₁, c₂, transition length) across Xe points, fit against I_d, thrust, anode and current efficiency and the qualitative
 oscillation constraint, and hold one Xe point out blind. Freeze it before N₂.
+
+## Validation-record correction: matched comparison modes; hall_map_schema_v1 (2026-09-25)
+**Correction.** The registration table in the previous entry ran with facility ingestion ON but scored the errors against
+the Eq. (14) *vacuum-corrected* I_d. That crossed the modes. The rule now enforced by the driver: facility ingestion ON
+(anode + Eq. 13 flow) is compared with **raw P_d/V_d**; ingestion OFF is compared with the **Eq. (14)-corrected** I_d.
+Every case runs in both modes and the driver prints them side by side. The table below replaces the previous one as the
+canonical record. Transport is still the default TwoZoneBohm(1/160, 1/16) with a 0.1 L transition.
+
+| coil | registration | I_d error facility (vs raw) Xe1/2/3 | I_d error vacuum (vs corrected) Xe1/2/3 | RMS fac / vac | f_dom |
+|---|---|---|---|---|---|
+| 1.6 kW | L38-hist | −55.1 / −53.9 / −40.2 % | −49.2 / −53.4 / −44.2 % | 96–241 / 50–107 % | 6–11 kHz |
+| 1.6 kW | L32-anode | −37.0 / −39.1 / −29.2 % | −38.1 / −44.9 / −33.6 % | 34–185 / 27–40 % | 6–10 kHz |
+| 1.6 kW | L32-exit | −56.2 / −55.4 / −46.3 % | −83.2 / −68.4 / −55.8 % | 106–120 / 72–122 % | 2–8 kHz |
+| 3.0 kW | L38-hist | −59.4 / −55.8 / −48.4 % | −56.8 / −61.3 / −53.4 % | 310–349 / 271–326 % | 4–9 kHz |
+| 3.0 kW | L32-anode | −46.2 / −47.9 / −37.3 % | −52.4 / −57.9 / −38.8 % | 272–317 / 159–314 % | 5–16 kHz |
+| 3.0 kW | L32-exit | −48.4 / −54.3 / −42.2 % | −65.4 / −60.4 / −49.4 % | 91–113 / 103–131 % | 6–8 kHz |
+
+The conclusion is unchanged: no registration reproduces the quiet measured discharge at default transport. L32-anode
+(1.6 kW coils) stays closest in both modes: −29 to −39 % vs raw, −34 to −45 % vs corrected. Its vacuum runs are the least
+oscillatory (RMS 27–40 %). Geometry first, transport second; c₁, c₂ are not being fitted.
+
+**Project status (Hall).** Solver execution validated; numerical convergence acceptable; facility correction understood
+and worked around; historical measured P5 topology available; 2025 geometry and B-field registration unresolved;
+anomalous transport not identified; absolute Hall prediction not validated. Gate 3 FAIL.
+
+**hall_map_schema_v1** (`hallthruster_bridge/hall_map_schema_v1.json`). This is the one interchange definition: field
+names, units, definitions, required meta (schema, pin, installed commit, reaction set, transport, facility_ingestion,
+numerics) and the `sustained` convention. `run_cases.jl` emits the fields named there and attaches `schema_missing` /
+`map_ready` to every point. `hall_map.py` derives `REQUIRED_FIELDS` / `REQUIRED_META` from the same file and rejects maps
+without `meta.schema`. A test checks that the driver emits exactly the fields marked `computed`. Renames: `ion_current` →
+`ion_current_A`, `Id_osc_rel` → `Id_pp_rel`. New fields: `Id_rms_rel`, `Id_f_dominant_Hz`, `current_eff`, `voltage_eff`,
+`ion_species_fraction_atomic` (exit ion number flux carried by single-atom species; 1.0 for Xe). Still **not computed:**
+`wall_ion_flux_m2s`, `wall_ion_energy_eV`. No point is map-ready until they have a producer.
+
+**Upstream / pin.** Attaching UM-PEPL/HallThruster.jl from this environment wasn't permitted, so the issue
+(`hallthruster_bridge/upstream/`) still needs filing by a human. `PINNED.toml` now carries an `upgrade_policy`: an upstream
+fix never moves the pin automatically; an upgrade is a model change (rerun P5 in both modes, log, then accept).

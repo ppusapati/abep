@@ -54,16 +54,19 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
       the 50 % RMS flag is an internal diagnostic, not a criterion). Keep facility ingestion on. Hold one Xe point out as a
       blind test (more historical P5 Xe points if available).
    c. Freeze the Xe transport closure before N₂; run P5-N₂ with it unchanged first.
-   File the HallThruster.jl ingestion-units issue (`hallthruster_bridge/upstream/`).
+   Validation modes are never crossed: facility ingestion ON vs raw P_d/V_d, OFF vs Eq. (14)-corrected I_d. The driver
+   runs both per case and prints them side by side.
+   File the HallThruster.jl ingestion-units issue (`hallthruster_bridge/upstream/`, drafted; needs filing by a human).
+   Never move the HallThruster.jl pin automatically; an upgrade is a model change (`PINNED.toml` upgrade_policy).
 2. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited LXCat cross sections: N ionisation, N₂
    dissociation (Cosby 1993 / Itikawa 2006), N₂ excitation, N elastic.
 3. P5 on N₂ (`cases/p5_n2.json`, Table 2) and ECHT on N₂ (`cases/echt_n2.json`) with ONE transport parameter set.
    Blocked by the driver until every rate file in `propellants/n2_n.toml` exists. P5 B(z) shape is now available
    (`hallthruster_bridge/bfield/`, Peterson 2001; N₂ setpoints use 130 G). Still missing: ECHT B(z), B_max, per-point data.
 4. Only if 1–3 succeed: O₂/O chemistry, then intake-delivered mixtures.
-5. First define one versioned interchange schema (`hall_map_schema_v1`) that both `run_cases.jl` and `hall_map.py`
-   validate against. Names don't match yet (driver `ion_current` vs `ion_current_A`; the driver lacks wall ion
-   flux/energy, atomic-ion fraction, `sustained`). Never fill missing fields with placeholders.
+5. Interchange schema `hallthruster_bridge/hall_map_schema_v1.json` is defined and shared (driver emits it, `hall_map.py`
+   derives `REQUIRED_FIELDS` from it, a test checks both). Still `not_computed`: `wall_ion_flux_m2s`,
+   `wall_ion_energy_eV`, so no point is map-ready yet. Add a producer; never fill missing fields with placeholders.
    Then generate frozen Hall maps (all fields in `hall_map.REQUIRED_FIELDS`), wire `archengine` Hall branch to `HallMap`,
    rerun the architecture trade and gate-4 UQ.
 6. Replace the remaining unverified Arrhenius rates (O, O₂, N ionisation; dissociation; excitation) in `plasma_chem.py`

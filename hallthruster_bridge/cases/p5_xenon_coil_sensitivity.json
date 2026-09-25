@@ -24,7 +24,10 @@
     "z_ref_in_file_mm": 0.0,
     "scale_to": "exit"
    },
-   "model_facility_ingestion": true,
+   "comparison_modes": [
+    "facility",
+    "vacuum"
+   ],
    "background_pressure_Torr": 4.49e-05,
    "background_temperature_K": 300.0,
    "entrainment_area_m2": 0.0488,
@@ -59,7 +62,10 @@
     "z_ref_in_file_mm": 0.0,
     "scale_to": "exit"
    },
-   "model_facility_ingestion": true,
+   "comparison_modes": [
+    "facility",
+    "vacuum"
+   ],
    "background_pressure_Torr": 3.94e-05,
    "background_temperature_K": 300.0,
    "entrainment_area_m2": 0.0488,
@@ -94,7 +100,10 @@
     "z_ref_in_file_mm": 0.0,
     "scale_to": "exit"
    },
-   "model_facility_ingestion": true,
+   "comparison_modes": [
+    "facility",
+    "vacuum"
+   ],
    "background_pressure_Torr": 3.28e-05,
    "background_temperature_K": 300.0,
    "entrainment_area_m2": 0.0488,
@@ -129,7 +138,10 @@
     "z_ref_in_file_mm": 0.0,
     "scale_to": "exit"
    },
-   "model_facility_ingestion": true,
+   "comparison_modes": [
+    "facility",
+    "vacuum"
+   ],
    "background_pressure_Torr": 4.49e-05,
    "background_temperature_K": 300.0,
    "entrainment_area_m2": 0.0488,
@@ -164,7 +176,10 @@
     "z_ref_in_file_mm": 0.0,
     "scale_to": "exit"
    },
-   "model_facility_ingestion": true,
+   "comparison_modes": [
+    "facility",
+    "vacuum"
+   ],
    "background_pressure_Torr": 3.94e-05,
    "background_temperature_K": 300.0,
    "entrainment_area_m2": 0.0488,
@@ -199,7 +214,10 @@
     "z_ref_in_file_mm": 0.0,
     "scale_to": "exit"
    },
-   "model_facility_ingestion": true,
+   "comparison_modes": [
+    "facility",
+    "vacuum"
+   ],
    "background_pressure_Torr": 3.28e-05,
    "background_temperature_K": 300.0,
    "entrainment_area_m2": 0.0488,
@@ -234,7 +252,10 @@
     "z_ref_in_file_mm": 38.0,
     "scale_to": "exit"
    },
-   "model_facility_ingestion": true,
+   "comparison_modes": [
+    "facility",
+    "vacuum"
+   ],
    "background_pressure_Torr": 4.49e-05,
    "background_temperature_K": 300.0,
    "entrainment_area_m2": 0.0488,
@@ -269,7 +290,10 @@
     "z_ref_in_file_mm": 38.0,
     "scale_to": "exit"
    },
-   "model_facility_ingestion": true,
+   "comparison_modes": [
+    "facility",
+    "vacuum"
+   ],
    "background_pressure_Torr": 3.94e-05,
    "background_temperature_K": 300.0,
    "entrainment_area_m2": 0.0488,
@@ -304,7 +328,10 @@
     "z_ref_in_file_mm": 38.0,
     "scale_to": "exit"
    },
-   "model_facility_ingestion": true,
+   "comparison_modes": [
+    "facility",
+    "vacuum"
+   ],
    "background_pressure_Torr": 3.28e-05,
    "background_temperature_K": 300.0,
    "entrainment_area_m2": 0.0488,
