@@ -890,3 +890,32 @@ the strict P5 expected-failure stays.
 **Remaining to run the Hall validation ladder:** Julia access (allow julialang-s3.julialang.org, pkg.julialang.org,
 storage.julialang.org, or run offline); N ionisation, N₂ dissociation, N₂ excitation and N elastic cross sections (LXCat
 sets — lxcat.net is also not reachable from the sandbox); measured B(z) for P5 and ECHT; ECHT per-point data and B_max.
+
+## HallThruster.jl driver runs — P5 xenon, untuned (next-work step 1, 2026-09-25)
+Julia 1.11.7; `setup.jl` installs HallThruster.jl 0.23.1 at the pinned commit `bfb3019` (Manifest `repo-rev` checked by
+the driver, which now refuses any other rev/version). `Project.toml` committed with `[compat] HallThruster = "=0.23.1"`
+(it was described above but had never been added).
+
+**Driver fixes vs the real v0.23.1 API** (`src/simulation/{solution,postprocess}.jl`): `Solution.grid` is a plain
+`Vector{Float64}` (no `.cell_centers`); `Frame` is a struct, not a dict, with `potential` (not `ϕ`), and ion velocity /
+neutral density live in `frame.ions[:Xe][Z].u` / `frame.neutrals[:Xe].n`. The old profile and efficiency blocks were
+wrapped in `try … catch end` and so silently dropped every profile. Those were removed (rule 3). Failed runs now come back
+as `converged=false` with the solver's error, with no averaged numbers. Outputs added: I_i, P_d, voltage/current efficiency,
+T_e/n_e peaks, RMS oscillation, measured-vs-simulated I_d error. Config/Geometry1D/Thruster/Propellant/SimParams calls
+were already correct.
+
+**Results** (`cases/p5_xenon.json` as committed, all defaults: TwoZoneBohm(1/160, 1/16), WallSheath(BNSiO2, 1.0),
+Gaussian placeholder B(z), 5 mg/s, 200 cells, 2 ms, averaged over 1–2 ms). All `retcode=success`, quiescent (I_d p-p < 3 %).
+
+| case | V_d | I_d meas | I_d sim | error | P_d sim | T sim | η_anode | η_current |
+|---|---|---|---|---|---|---|---|---|
+| Xe1 | 230.8 | 7.582 | 6.592 | −13.1 % | 1521 W | 81.6 mN | 0.437 | 0.548 |
+| Xe2 | 250.3 | 8.590 | 6.836 | −20.4 % | 1711 W | 85.2 mN | 0.424 | 0.529 |
+| Xe3 | 274.3 | 7.401 | 7.100 | −4.1 % | 1947 W | 89.6 mN | 0.412 | 0.510 |
+
+Grid 400 cells and duration 4 ms change I_d by < 0.2 %, so resolution does not explain the errors. The simulated I_d rises
+monotonically with V_d (I_i ≈ 3.6 A, near full utilisation of 5 mg/s). The case-file "measured" I_d (= P_d/V_d) is
+non-monotonic (8.59 A at 250 V, 7.40 A at 274 V) at the same ṁ and B. No single-parameter tune can fit that, so something
+else must vary between the Table 4 points (magnet setting, background pressure, or ṁ — **verify against Brabston 2025**).
+Thrust is simulated 81.6–89.6 mN against the paper's 72.8–86.8 mN range. The per-point thrust mapping is not in the case
+file. Nothing has been tuned. Gate 3 is still FAIL.
