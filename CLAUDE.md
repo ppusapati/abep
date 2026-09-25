@@ -29,7 +29,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 |---|---|
 | 1 clean-install reproducibility | pass (frozen atmosphere; pinned deps; runs with pymsis absent) |
 | 2 grid-life consistency | pass (optimiser degeneracy flagged; perveance-window tests) |
-| 3 multi-point Hall validation | **FAIL** — TwoZoneBohm rejected; ScaledGaussianBohm unresolved pending divergence-consistent thrust (v2, pre-registered 2026-09-25) |
+| 3 multi-point Hall validation | **FAIL** — v2 (2026-09-25): thrust reconciled via beam efficiency; no family passes blind I_d (best: SGB, Xe2 −15.6 % vs 15 %); P5 transport not uniquely identifiable |
 | 4 cross-family mission UQ | done but **conditional on gate 3** (all absolute Hall numbers withdrawn) |
 | 5 numerical convergence | pass |
 | 6 golden benchmarks | pass (near-zero `ledger_resid` compared with an absolute tolerance, 2026-09-25) |
@@ -51,12 +51,13 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
       corrected I_d by 25–56 %; registration moves I_d ~30 %.
    Identification 2026-09-25 (`scripts/identify_p5_transport.py`, pre-registered grids, leave-one-out, all runs in
       `hallthruster_bridge/identification/`): TwoZoneBohm (783 runs) rejected; ScaledGaussianBohm (972) and 3-node
-      MultiLogBohm (486) over 6 geometry × coil hypotheses scored against total ion momentum. The v1 stopping-rule
-      conclusion is **SUSPENDED**: the stand measures axial thrust (× √Ψ_b, Brabston Eqs. 1, 4). v2 (pre-registered,
-      `scripts/rescore_p5_axial_thrust.py`) rescores with measured beam efficiency under two readings of the paper (A
-      literal, f ≈ 0.78; B consistent with Fig. 8, f ≈ 0.89–0.91). Vacuum mode is primary. Status: TwoZoneBohm rejected;
-      MultiLogBohm no demonstrated advantage; ScaledGaussianBohm unresolved. The v1 commits stay unmerged and unrewritten
-      until v2 results are in; then merge the whole sequence.
+      MultiLogBohm (486) over 6 geometry × coil hypotheses. v2 (pre-registered, `scripts/rescore_p5_axial_thrust.py`,
+      vacuum mode primary, axial thrust = T_1D·√Ψ_b under two readings of Brabston Figs. 8/9): the thrust excess is explained
+      by beam divergence under both readings, but no family passes the pre-registered blind-I_d test. Stopping-rule
+      conclusion stands with corrected reason: **published P5 information is insufficient to identify transport uniquely**;
+      the limiting point is Xe2 (anomalous measured I_d). Best-supported region: ScaledGaussianBohm a = 1/16, b = 0.8,
+      c = 0.9 L, w = 0.25 L (L32-anode, 1.6 kW coils; blind I_d −2.8 / −15.6 / +0.9 %, thrust within 2σ, RMS 28–30 %).
+      No closure frozen; carry transport, geometry, coil and Ψ_b-reading uncertainty into the Hall response model.
    b. (Superseded by the stopping rule unless reopened.) Calibrate transport as parameter identification: ONE TwoZoneBohm set (c₁, c₂, transition length) for all Xe
       points, fitted against I_d, thrust, anode and current efficiency and oscillation (RMS, peak-to-peak, frequency;
       the 50 % RMS flag is an internal diagnostic, not a criterion). Keep facility ingestion on. Hold one Xe point out as a

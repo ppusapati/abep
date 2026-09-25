@@ -1345,3 +1345,44 @@ in **all three** rounds:
 A verdict is stated only if it holds under both readings A and B; otherwise it's reported as reading-dependent.
 HallThruster.jl's plume model stays off, since `solve_plume` would add a model rather than convert an observable.
 The TwoZoneBohm rejection doesn't depend on thrust and isn't rescored.
+
+## v2 results: thrust-observable reconciliation (2026-09-25)
+Pre-registered protocol above, applied unchanged (thresholds not revisited). New full-grid vacuum-mode runs (ingestion OFF):
+ScaledGaussianBohm 972 runs, 0 failed; MultiLogBohm 486 runs, 6 failed (logged). Files:
+`p5_xe_identification_{sgb,mlb}_v1_vacuum_runs.csv` and `p5_xe_axial_thrust_v2_rescore.json` (every combination of
+family × mode × reading × selection × hypothesis, with per-round held-out errors).
+
+**1. The v1 thrust failure is explained by the observable, under both readings.** With T_axial = T_1D·f, the quiet
+ScaledGaussianBohm solutions predict held-out thrust within 2σ almost everywhere, in both modes and under both reading A
+(f ≈ 0.78) and reading B (f ≈ 0.89–0.91). The +2 to +4.5σ excess in v1 came from comparing total ion momentum with an axial
+stand measurement. **Superseded v1 statement:** "every quiet solution fails on thrust". The v1 run data are unchanged.
+
+**2. Primary (vacuum) verdict: no family passes.**
+- **ScaledGaussianBohm** fails now on blind I_d only. Closest case: H2a (L32-anode, 1.6 kW coils), quiet selection. The
+  **same defensible set wins all three rounds under both readings** (a = 1/16, b = 0.8, c = 0.9 L, w = 0.25 L). It's quiet
+  (RMS 28–30 %) and its blind thrust is within 2σ (A: −0.4 / −1.8 / −1.7σ; B: +1.0 / 0.0 / +0.2σ). Blind I_d is
+  −2.8 / **−15.6** / +0.9 %: the Xe2 hold-out misses the pre-registered 15 % threshold by 0.6 points. Other quiet
+  selections miss held-out Xe2 by −16 to −25 % or Xe3 by +15 to +26 %, or need super-Bohm a = 1/8.
+- **MultiLogBohm (3 nodes):** quiet solutions miss I_d by 17–58 %. No advantage demonstrated, confirmed.
+
+**3. Secondary (facility) check:** two ScaledGaussianBohm passes, H2a under reading A and H1a under reading B (the latter
+at 49 % RMS). They don't hold under both readings, so they're **reading-dependent** and don't count as a verdict. Facility
+thrust is also less clean, because HallThruster.jl injects the ingested flow at the anode.
+
+**Outcome under the pre-registered rules.** Neither ScaledGaussianBohm nor the 3-node MultiLogBohm meets all criteria in the
+primary mode. So the stopping-rule conclusion, *"published P5 information is insufficient to identify Hall transport
+uniquely"*, **stands, with its reason corrected**. The limiting observable is no longer thrust (resolved by the beam-efficiency
+conversion) but **blind I_d at Xe2**. Xe2 is the setpoint whose measured I_d is anomalous even after Eq. (14): 8.04 A at
+250 V versus 6.96 / 6.95 A at 231 / 274 V, at the same flow and field.
+
+**What v2 adds to the record:**
+- A near-exit transport trough (ScaledGaussianBohm) at or below Bohm reproduces the quiet regime, thrust within the
+  measurement and beam-efficiency uncertainty, and blind I_d within ~16 %, with one parameter set.
+- That set is selected only under L32-anode/1.6 kW. It's the only hypothesis where one defensible, quiet set wins every
+  round under both readings. That's weak evidence for L32-anode, not a resolution.
+- Brabston's Fig. 9 Ψ_b and Fig. 8 component η_T are mutually inconsistent by 27–38 %. The thrust conclusion holds under
+  both readings, so it doesn't depend on resolving that.
+
+**Carried forward:** no closure frozen from P5. The Hall response model should carry transport uncertainty. The
+ScaledGaussianBohm family near (a = 1/16, b = 0.8, c = 0.9 L, w = 0.25 L) is the best-supported candidate region,
+together with the geometry and coil-shape hypotheses and the Ψ_b reading ambiguity.

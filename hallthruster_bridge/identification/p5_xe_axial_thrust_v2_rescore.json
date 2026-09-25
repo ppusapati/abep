@@ -1,0 +1,4990 @@
+{
+ "thresholds": {
+  "Id_tol": 0.15,
+  "T_sigma_tol": 2.0,
+  "rms_quiet": 0.5,
+  "bohm": 0.0625
+ },
+ "results": {
+  "sgb|vacuum|A|all|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.027222101375796726,
+     "hold_dI": 0.08185918532875351,
+     "hold_dT_sigma": -0.4204370219388086,
+     "rms": [
+      0.017629188056495007,
+      0.031874096928264616,
+      0.05141746287444829
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.9_c=0.9L_w=0.1L",
+     "J": 0.013973313878891292,
+     "hold_dI": -0.12840414497040695,
+     "hold_dT_sigma": -1.7233755799766486,
+     "rms": [
+      1.5394028860971933,
+      1.7402843208194314,
+      1.478066392157515
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.013293354996873112,
+     "hold_dI": 0.15277468150535314,
+     "hold_dT_sigma": -1.4580294492550838,
+     "rms": [
+      0.017629188056495007,
+      0.031874096928264616,
+      0.05141746287444829
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|A|all|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.9_c=1L_w=0.1L",
+     "J": 0.017553460505297894,
+     "hold_dI": 0.035921853618068524,
+     "hold_dT_sigma": -0.1334612742822793,
+     "rms": [
+      1.3218130507621373,
+      1.6543971845691448,
+      1.8931367507951178
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.9_c=0.9L_w=0.1L",
+     "J": 0.008302304547296174,
+     "hold_dI": -0.11890266349849685,
+     "hold_dT_sigma": -1.7889485406337493,
+     "rms": [
+      1.3262412104187946,
+      1.5862619765377892,
+      0.36678532139594494
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.9_c=1L_w=0.1L",
+     "J": 0.005902896838191688,
+     "hold_dI": 0.14836664344536984,
+     "hold_dT_sigma": -0.6571729757833739,
+     "rms": [
+      1.3218130507621373,
+      1.6543971845691448,
+      1.8931367507951178
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|A|all|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.9_c=1L_w=0.1L",
+     "J": 0.021916379133888705,
+     "hold_dI": 0.06868125188663814,
+     "hold_dT_sigma": -0.5601129629467461,
+     "rms": [
+      2.0856093862770466,
+      0.9108033225296571,
+      0.8748037339986685
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.008895359263699353,
+     "hold_dI": -0.15560541080148296,
+     "hold_dT_sigma": -1.8372838110949778,
+     "rms": [
+      0.2862851830779205,
+      0.30280365927885955,
+      0.27706506007444415
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.9_c=1L_w=0.1L",
+     "J": 0.012639156339002575,
+     "hold_dI": 0.09450656052638308,
+     "hold_dT_sigma": -1.6963414150802665,
+     "rms": [
+      2.0856093862770466,
+      0.9108033225296571,
+      0.8748037339986685
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|A|all|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=1L_w=0.25L",
+     "J": 0.010674708483760016,
+     "hold_dI": 0.02742495109642474,
+     "hold_dT_sigma": 0.009753155594152687,
+     "rms": [
+      1.6372676913900623,
+      1.8605744656365455,
+      1.9126317538054274
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.8_c=1L_w=0.25L",
+     "J": 0.005611717750055884,
+     "hold_dI": -0.0672867194281512,
+     "hold_dT_sigma": -0.9700376557412135,
+     "rms": [
+      1.6372676913900623,
+      1.8605744656365455,
+      1.9126317538054274
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=1L_w=0.25L",
+     "J": 0.005815869066743982,
+     "hold_dI": 0.07515092902469514,
+     "hold_dT_sigma": -0.8833559293330261,
+     "rms": [
+      1.6372676913900623,
+      1.8605744656365455,
+      1.9126317538054274
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "sgb|vacuum|A|all|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.9_c=1L_w=0.25L",
+     "J": 0.04044812498544897,
+     "hold_dI": 0.14583931699652106,
+     "hold_dT_sigma": -0.6282933521616223,
+     "rms": [
+      0.7555714995288392,
+      0.6104058541992429,
+      0.38923046668668076
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.016105311428546015,
+     "hold_dI": -0.20503409092193153,
+     "hold_dT_sigma": -1.83348189531011,
+     "rms": [
+      0.006689122033384786,
+      0.0168254044660435,
+      0.04052011249387747
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=1L_w=0.25L",
+     "J": 0.019819048044002988,
+     "hold_dI": 0.2280960011358682,
+     "hold_dT_sigma": -1.5125344912392136,
+     "rms": [
+      0.7555714995288392,
+      0.6104058541992429,
+      0.38923046668668076
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|A|all|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.038198530835059356,
+     "hold_dI": -0.09103579554388867,
+     "hold_dT_sigma": -0.5500821567660896,
+     "rms": [
+      0.0072380782577355415,
+      0.01591690199789678,
+      0.028426672622379627
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.013964906383075654,
+     "hold_dI": -0.19677828378246817,
+     "hold_dT_sigma": -1.7940155320754,
+     "rms": [
+      0.0072380782577355415,
+      0.01591690199789678,
+      0.028426672622379627
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.021415945767534007,
+     "hold_dI": 0.2381446960535961,
+     "hold_dT_sigma": -1.4421996539849722,
+     "rms": [
+      0.3309552786056264,
+      0.2813894964256095,
+      0.18974001581813146
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|A|quiet|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.027222101375796726,
+     "hold_dI": 0.08185918532875351,
+     "hold_dT_sigma": -0.4204370219388086,
+     "rms": [
+      0.017629188056495007,
+      0.031874096928264616,
+      0.05141746287444829
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.021980325476481218,
+     "hold_dI": -0.036071981920119706,
+     "hold_dT_sigma": -1.6422022853537528,
+     "rms": [
+      0.017629188056495007,
+      0.031874096928264616,
+      0.05141746287444829
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.013293354996873112,
+     "hold_dI": 0.15277468150535314,
+     "hold_dT_sigma": -1.4580294492550838,
+     "rms": [
+      0.017629188056495007,
+      0.031874096928264616,
+      0.05141746287444829
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "sgb|vacuum|A|quiet|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.02909188096792701,
+     "hold_dI": 0.087493698583293,
+     "hold_dT_sigma": -0.4630126311219791,
+     "rms": [
+      0.013350521097103427,
+      0.02090313584988737,
+      0.03330451552533847
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.020820492026064293,
+     "hold_dI": -0.24738756076883048,
+     "hold_dT_sigma": -2.2038771386800144,
+     "rms": [
+      0.32673477634188325,
+      0.3328962276766003,
+      0.008287478026629698
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.014134139176039003,
+     "hold_dI": 0.16249643165738922,
+     "hold_dT_sigma": -1.4720630890682895,
+     "rms": [
+      0.013350521097103427,
+      0.02090313584988737,
+      0.03330451552533847
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|A|quiet|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.030760589595138603,
+     "hold_dI": -0.0277920140897581,
+     "hold_dT_sigma": -0.3524849244246852,
+     "rms": [
+      0.2862851830779205,
+      0.30280365927885955,
+      0.27706506007444415
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.008895359263699353,
+     "hold_dI": -0.15560541080148296,
+     "hold_dT_sigma": -1.8372838110949778,
+     "rms": [
+      0.2862851830779205,
+      0.30280365927885955,
+      0.27706506007444415
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.023591688146333833,
+     "hold_dI": 0.009168588377173503,
+     "hold_dT_sigma": -1.6562665050142715,
+     "rms": [
+      0.2862851830779205,
+      0.30280365927885955,
+      0.27706506007444415
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "sgb|vacuum|A|quiet|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.97_c=1L_w=0.1L",
+     "J": 0.043689653635586884,
+     "hold_dI": -0.11870980495762337,
+     "hold_dT_sigma": -0.6790286288907134,
+     "rms": [
+      0.01857609885647273,
+      0.032757183432573424,
+      0.057827173369920354
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.97_c=1L_w=0.1L",
+     "J": 0.018221591087325607,
+     "hold_dI": -0.2148062356192857,
+     "hold_dT_sigma": -1.8879944018593287,
+     "rms": [
+      0.01857609885647273,
+      0.032757183432573424,
+      0.057827173369920354
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=1L_w=0.25L",
+     "J": 0.029501425079378293,
+     "hold_dI": 0.2569033110959545,
+     "hold_dT_sigma": -1.6037724262025275,
+     "rms": [
+      0.04219490156400416,
+      0.051382028463017836,
+      0.056663484052463485
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|A|quiet|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.040689488978192516,
+     "hold_dI": -0.10575981343299101,
+     "hold_dT_sigma": -0.6147912211807125,
+     "rms": [
+      0.006689122033384786,
+      0.0168254044660435,
+      0.04052011249387747
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.016105311428546015,
+     "hold_dI": -0.20503409092193153,
+     "hold_dT_sigma": -1.83348189531011,
+     "rms": [
+      0.006689122033384786,
+      0.0168254044660435,
+      0.04052011249387747
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.020198562314385354,
+     "hold_dI": 0.23312899302875933,
+     "hold_dT_sigma": -1.3700855130415215,
+     "rms": [
+      0.4973049727622743,
+      0.3927083496382227,
+      0.2165395900504091
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|A|quiet|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.038198530835059356,
+     "hold_dI": -0.09103579554388867,
+     "hold_dT_sigma": -0.5500821567660896,
+     "rms": [
+      0.0072380782577355415,
+      0.01591690199789678,
+      0.028426672622379627
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.013964906383075654,
+     "hold_dI": -0.19677828378246817,
+     "hold_dT_sigma": -1.7940155320754,
+     "rms": [
+      0.0072380782577355415,
+      0.01591690199789678,
+      0.028426672622379627
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.021415945767534007,
+     "hold_dI": 0.2381446960535961,
+     "hold_dT_sigma": -1.4421996539849722,
+     "rms": [
+      0.3309552786056264,
+      0.2813894964256095,
+      0.18974001581813146
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|B|all|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.1L",
+     "J": 0.0038140255245335264,
+     "hold_dI": 0.05529262125992947,
+     "hold_dT_sigma": 0.7006318311920273,
+     "rms": [
+      2.2192674542694304,
+      1.9140369468395129,
+      1.3469647868583232
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.9_c=0.9L_w=0.1L",
+     "J": 0.002545412867230346,
+     "hold_dI": -0.12840414497040695,
+     "hold_dT_sigma": 0.15852359002501962,
+     "rms": [
+      1.5394028860971933,
+      1.7402843208194314,
+      1.478066392157515
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.1L",
+     "J": 0.004879094913404101,
+     "hold_dI": 0.04517752613255822,
+     "hold_dT_sigma": -0.6881576076047436,
+     "rms": [
+      2.2192674542694304,
+      1.9140369468395129,
+      1.3469647868583232
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|B|all|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.1L",
+     "J": 0.004824765938649581,
+     "hold_dI": -0.09323709073315088,
+     "hold_dT_sigma": -0.8475013758707266,
+     "rms": [
+      2.5598909736103956,
+      1.4420587135630742,
+      0.7154173816043102
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.9_c=0.9L_w=0.1L",
+     "J": 0.006618809342679598,
+     "hold_dI": -0.11890266349849685,
+     "hold_dT_sigma": 0.09266339770934615,
+     "rms": [
+      1.3262412104187946,
+      1.5862619765377892,
+      0.36678532139594494
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.1L",
+     "J": 0.007473754522044013,
+     "hold_dI": 0.09230250964092786,
+     "hold_dT_sigma": -0.174214951637902,
+     "rms": [
+      2.5598909736103956,
+      1.4420587135630742,
+      0.7154173816043102
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|B|all|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.9_c=1L_w=0.1L",
+     "J": 0.007069530583125726,
+     "hold_dI": 0.06868125188663814,
+     "hold_dT_sigma": 0.7979858742131613,
+     "rms": [
+      2.0856093862770466,
+      0.9108033225296571,
+      0.8748037339986685
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.8_c=1L_w=0.25L",
+     "J": 0.0029887381150097573,
+     "hold_dI": -0.1610267518660319,
+     "hold_dT_sigma": -0.22625561857576226,
+     "rms": [
+      1.083201513673694,
+      1.2333846513233724,
+      1.1523114386304343
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.1L",
+     "J": 0.003492206449114782,
+     "hold_dI": 0.19600071424545573,
+     "hold_dT_sigma": 0.22102144759681477,
+     "rms": [
+      2.02156298170976,
+      1.1434576306659059,
+      0.67194085560776
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|B|all|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.9_c=1L_w=0.1L",
+     "J": 0.004079084025967465,
+     "hold_dI": -0.1257938118676005,
+     "hold_dT_sigma": -1.3882519948782435,
+     "rms": [
+      2.443081064204241,
+      1.8581596869020993,
+      0.6441313284650739
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.8_c=1.1L_w=0.25L",
+     "J": 0.0053116088023614574,
+     "hold_dI": -0.1618532531775685,
+     "hold_dT_sigma": -0.3126021639697152,
+     "rms": [
+      1.2929492851074613,
+      1.8783141880334673,
+      2.12432769140071
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=1.1L_w=0.1L",
+     "J": 0.0082843672901145,
+     "hold_dI": 0.2508032353101653,
+     "hold_dT_sigma": 0.7197485122701585,
+     "rms": [
+      2.7950361220302438,
+      2.087377246998836,
+      1.2163582587394322
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|B|all|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.1L",
+     "J": 0.015376965856984285,
+     "hold_dI": -0.10733734293244414,
+     "hold_dT_sigma": -2.4332785482708763,
+     "rms": [
+      2.4332097144449625,
+      2.2142572821317907,
+      2.147372721941438
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.009336771093418007,
+     "hold_dI": -0.20503409092193153,
+     "hold_dT_sigma": 0.04789227634482635,
+     "rms": [
+      0.006689122033384786,
+      0.0168254044660435,
+      0.04052011249387747
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.011338900153727703,
+     "hold_dI": 0.23312899302875933,
+     "hold_dT_sigma": 0.4331165683981407,
+     "rms": [
+      0.4973049727622743,
+      0.3927083496382227,
+      0.2165395900504091
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|B|all|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=1.1L_w=0.1L",
+     "J": 0.018933410994199883,
+     "hold_dI": -0.0013184091921829206,
+     "hold_dT_sigma": -1.6732275030683288,
+     "rms": [
+      2.3470042405624336,
+      2.019823734080314,
+      2.1299278330478755
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.008133719852618251,
+     "hold_dI": -0.19677828378246817,
+     "hold_dT_sigma": 0.08757109555601651,
+     "rms": [
+      0.0072380782577355415,
+      0.01591690199789678,
+      0.028426672622379627
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=1.1L_w=0.1L",
+     "J": 0.011278081454440156,
+     "hold_dI": 0.0227981143234204,
+     "hold_dT_sigma": -2.505977919648023,
+     "rms": [
+      2.3470042405624336,
+      2.019823734080314,
+      2.1299278330478755
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|B|quiet|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.01294420677328646,
+     "hold_dI": 0.08185918532875351,
+     "hold_dT_sigma": 0.939848529886069,
+     "rms": [
+      0.017629188056495007,
+      0.031874096928264616,
+      0.05141746287444829
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.014625082284846363,
+     "hold_dI": -0.2403074654935078,
+     "hold_dT_sigma": -0.26130992777308176,
+     "rms": [
+      0.030558777889136735,
+      0.2446072178425948,
+      0.19243217739310028
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.007966220096568687,
+     "hold_dI": 0.15277468150535314,
+     "hold_dT_sigma": 0.3450242398450514,
+     "rms": [
+      0.017629188056495007,
+      0.031874096928264616,
+      0.05141746287444829
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|B|quiet|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.014188017533276254,
+     "hold_dI": 0.087493698583293,
+     "hold_dT_sigma": 0.8966341353357853,
+     "rms": [
+      0.013350521097103427,
+      0.02090313584988737,
+      0.03330451552533847
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.013733571841174798,
+     "hold_dI": -0.24738756076883048,
+     "hold_dT_sigma": -0.32582409428854775,
+     "rms": [
+      0.32673477634188325,
+      0.3328962276766003,
+      0.008287478026629698
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.00783875463205885,
+     "hold_dI": 0.16249643165738922,
+     "hold_dT_sigma": 0.3309561587463776,
+     "rms": [
+      0.013350521097103427,
+      0.02090313584988737,
+      0.03330451552533847
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|B|quiet|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.012227442054803106,
+     "hold_dI": -0.0277920140897581,
+     "hold_dT_sigma": 1.0087697328779617,
+     "rms": [
+      0.2862851830779205,
+      0.30280365927885955,
+      0.27706506007444415
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.004843540777316483,
+     "hold_dI": -0.15560541080148296,
+     "hold_dT_sigma": 0.04406846019234878,
+     "rms": [
+      0.2862851830779205,
+      0.30280365927885955,
+      0.27706506007444415
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.01684346545227996,
+     "hold_dI": 0.009168588377173503,
+     "hold_dT_sigma": 0.1460254942088178,
+     "rms": [
+      0.2862851830779205,
+      0.30280365927885955,
+      0.27706506007444415
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "sgb|vacuum|B|quiet|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=0.9L_w=0.25L",
+     "J": 0.020036476189704517,
+     "hold_dI": -0.10456743951732639,
+     "hold_dT_sigma": 0.24991380669692198,
+     "rms": [
+      0.024801099596351125,
+      0.02214585264820416,
+      0.017927720434581358
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=0.9L_w=0.25L",
+     "J": 0.006377464128509415,
+     "hold_dI": -0.1938123720124025,
+     "hold_dT_sigma": -0.4100937452435118,
+     "rms": [
+      0.024801099596351125,
+      0.02214585264820416,
+      0.017927720434581358
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.019085927582980833,
+     "hold_dI": 0.2586912243547745,
+     "hold_dT_sigma": 0.08501103672289366,
+     "rms": [
+      0.016336186677695003,
+      0.017171497439178632,
+      0.01718691084487408
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|B|quiet|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.02247033963689272,
+     "hold_dI": -0.10575981343299101,
+     "hold_dT_sigma": 0.7423802096631155,
+     "rms": [
+      0.006689122033384786,
+      0.0168254044660435,
+      0.04052011249387747
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.009336771093418007,
+     "hold_dI": -0.20503409092193153,
+     "hold_dT_sigma": 0.04789227634482635,
+     "rms": [
+      0.006689122033384786,
+      0.0168254044660435,
+      0.04052011249387747
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.011338900153727703,
+     "hold_dI": 0.23312899302875933,
+     "hold_dT_sigma": 0.4331165683981407,
+     "rms": [
+      0.4973049727622743,
+      0.3927083496382227,
+      0.2165395900504091
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|vacuum|B|quiet|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.020636687515737343,
+     "hold_dI": -0.09103579554388867,
+     "hold_dT_sigma": 0.8081824534433121,
+     "rms": [
+      0.0072380782577355415,
+      0.01591690199789678,
+      0.028426672622379627
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.008133719852618251,
+     "hold_dI": -0.19677828378246817,
+     "hold_dT_sigma": 0.08757109555601651,
+     "rms": [
+      0.0072380782577355415,
+      0.01591690199789678,
+      0.028426672622379627
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.012488911429462415,
+     "hold_dI": 0.2381446960535961,
+     "hold_dT_sigma": 0.36088932775517507,
+     "rms": [
+      0.3309552786056264,
+      0.2813894964256095,
+      0.18974001581813146
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|A|all|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.9_c=0.9L_w=0.1L",
+     "J": 0.017474784402091097,
+     "hold_dI": 0.08373890239980995,
+     "hold_dT_sigma": 0.12569209698649636,
+     "rms": [
+      1.820387623300702,
+      1.9097672841125954,
+      0.8474421339981703
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.8_c=1L_w=0.25L",
+     "J": 0.0032827452207741152,
+     "hold_dI": -0.13479141474107192,
+     "hold_dT_sigma": -1.5232374015752967,
+     "rms": [
+      0.6956137493138624,
+      0.9953820056502634,
+      1.3301890359778026
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.9_c=0.9L_w=0.1L",
+     "J": 0.007223056180567109,
+     "hold_dI": 0.16236940796329163,
+     "hold_dT_sigma": -0.46376912328835357,
+     "rms": [
+      1.820387623300702,
+      1.9097672841125954,
+      0.8474421339981703
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|A|all|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.9_c=0.9L_w=0.1L",
+     "J": 0.017601279003852603,
+     "hold_dI": 0.03861318162111133,
+     "hold_dT_sigma": -0.68236456850279,
+     "rms": [
+      1.5861190880857126,
+      1.7024329318816736,
+      0.31130423974952864
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.8_c=1L_w=0.25L",
+     "J": 0.004976086174863554,
+     "hold_dI": -0.1632935240226598,
+     "hold_dT_sigma": -2.180722057420532,
+     "rms": [
+      0.8476252916271547,
+      1.1901369843733605,
+      0.9607628335460502
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.9_c=0.9L_w=0.1L",
+     "J": 0.010114135609529732,
+     "hold_dI": 0.12523474368347826,
+     "hold_dT_sigma": -0.81956579764309,
+     "rms": [
+      1.5861190880857126,
+      1.7024329318816736,
+      0.31130423974952864
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|A|all|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.01741337744441593,
+     "hold_dI": 0.06387131409929656,
+     "hold_dT_sigma": 0.20466179115033184,
+     "rms": [
+      0.3395729032706167,
+      0.17364126648088354,
+      0.1922978594781658
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.97_c=1L_w=0.1L",
+     "J": 0.0049586282493018045,
+     "hold_dI": -0.14016206537434064,
+     "hold_dT_sigma": -1.4499909296017754,
+     "rms": [
+      0.00995722758335343,
+      0.018990540532784896,
+      0.0542767863040137
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.9_c=0.9L_w=0.1L",
+     "J": 0.011869116613043015,
+     "hold_dI": 0.22175573280728098,
+     "hold_dT_sigma": -0.7391756288296792,
+     "rms": [
+      0.5119029089485361,
+      0.6171217945039107,
+      0.6555575545550097
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|A|all|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.013886279265715623,
+     "hold_dI": 0.05003139610439103,
+     "hold_dT_sigma": -0.022463910794209965,
+     "rms": [
+      0.3678953481134911,
+      0.21551268501733825,
+      0.1634792299010299
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.97_c=1L_w=0.1L",
+     "J": 0.0062594162839488664,
+     "hold_dI": -0.15028084781312337,
+     "hold_dT_sigma": -1.5514122245074127,
+     "rms": [
+      0.006018435736265755,
+      0.010503157179363263,
+      0.02630182181898974
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.007859970489764443,
+     "hold_dI": 0.06855061243565842,
+     "hold_dT_sigma": -1.3443531452169597,
+     "rms": [
+      0.3678953481134911,
+      0.21551268501733825,
+      0.1634792299010299
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|A|all|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.021199771612895317,
+     "hold_dI": -0.029957574170581387,
+     "hold_dT_sigma": -0.13148982206921891,
+     "rms": [
+      0.001706633446263082,
+      0.0029696674489302394,
+      0.010104091019154457
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.005402943691772118,
+     "hold_dI": -0.13997757638300232,
+     "hold_dT_sigma": -1.494002103086793,
+     "rms": [
+      0.001706633446263082,
+      0.0029696674489302394,
+      0.010104091019154457
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.016812242613618515,
+     "hold_dI": 0.004108579812588695,
+     "hold_dT_sigma": -1.338113284979976,
+     "rms": [
+      0.001706633446263082,
+      0.0029696674489302394,
+      0.010104091019154457
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": true,
+   "same_combo": true
+  },
+  "sgb|facility|A|all|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.019231809806290284,
+     "hold_dI": -0.01564956611786579,
+     "hold_dT_sigma": -0.06619315330778971,
+     "rms": [
+      0.003117823605311241,
+      0.003521376111880178,
+      0.010763059652503638
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.004799420732477431,
+     "hold_dI": -0.13025085550888646,
+     "hold_dT_sigma": -1.4417350590472195,
+     "rms": [
+      0.003117823605311241,
+      0.003521376111880178,
+      0.010763059652503638
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.014707347821859276,
+     "hold_dI": 0.00983880998631936,
+     "hold_dT_sigma": -1.2980843863642912,
+     "rms": [
+      0.003117823605311241,
+      0.003521376111880178,
+      0.010763059652503638
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": true,
+   "same_combo": true
+  },
+  "sgb|facility|A|quiet|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.020424987919218415,
+     "hold_dI": -0.06660992380205355,
+     "hold_dT_sigma": -0.8400983316104962,
+     "rms": [
+      0.49334059074900505,
+      0.28198407534405645,
+      0.4622677455360568
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.00925696542066824,
+     "hold_dI": -0.13633465557167707,
+     "hold_dT_sigma": -1.4772595398987718,
+     "rms": [
+      0.49334059074900505,
+      0.28198407534405645,
+      0.4622677455360568
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.01863473881361151,
+     "hold_dI": 0.21931022215344426,
+     "hold_dT_sigma": -1.1881429846053413,
+     "rms": [
+      0.014042381354944641,
+      0.02610652608984122,
+      0.04764504694244692
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|A|quiet|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.029146616867936036,
+     "hold_dI": -0.1022894910014129,
+     "hold_dT_sigma": -0.6521487781379258,
+     "rms": [
+      0.2634136238149569,
+      0.020818811892952635,
+      0.018994950072280165
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.007533938509509576,
+     "hold_dI": -0.18327777474207468,
+     "hold_dT_sigma": -1.8324147962018533,
+     "rms": [
+      0.3398461784702591,
+      0.2428600686551509,
+      0.009232580536056426
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.02005467605838473,
+     "hold_dI": 0.2266643670231432,
+     "hold_dT_sigma": -1.2344429766135216,
+     "rms": [
+      0.010725619775857748,
+      0.017163454446964793,
+      0.02961381942137732
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|A|quiet|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.01741337744441593,
+     "hold_dI": 0.06387131409929656,
+     "hold_dT_sigma": 0.20466179115033184,
+     "rms": [
+      0.3395729032706167,
+      0.17364126648088354,
+      0.1922978594781658
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.97_c=1L_w=0.1L",
+     "J": 0.0049586282493018045,
+     "hold_dI": -0.14016206537434064,
+     "hold_dT_sigma": -1.4499909296017754,
+     "rms": [
+      0.00995722758335343,
+      0.018990540532784896,
+      0.0542767863040137
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.012133907113411155,
+     "hold_dI": 0.07534157810443297,
+     "hold_dT_sigma": -1.3002131205082776,
+     "rms": [
+      0.3395729032706167,
+      0.17364126648088354,
+      0.1922978594781658
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    }
+   ],
+   "pass": true,
+   "pass_except_defensible": true,
+   "same_combo": false
+  },
+  "sgb|facility|A|quiet|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.013886279265715623,
+     "hold_dI": 0.05003139610439103,
+     "hold_dT_sigma": -0.022463910794209965,
+     "rms": [
+      0.3678953481134911,
+      0.21551268501733825,
+      0.1634792299010299
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.97_c=1L_w=0.1L",
+     "J": 0.0062594162839488664,
+     "hold_dI": -0.15028084781312337,
+     "hold_dT_sigma": -1.5514122245074127,
+     "rms": [
+      0.006018435736265755,
+      0.010503157179363263,
+      0.02630182181898974
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.007859970489764443,
+     "hold_dI": 0.06855061243565842,
+     "hold_dT_sigma": -1.3443531452169597,
+     "rms": [
+      0.3678953481134911,
+      0.21551268501733825,
+      0.1634792299010299
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|A|quiet|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.021199771612895317,
+     "hold_dI": -0.029957574170581387,
+     "hold_dT_sigma": -0.13148982206921891,
+     "rms": [
+      0.001706633446263082,
+      0.0029696674489302394,
+      0.010104091019154457
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.005402943691772118,
+     "hold_dI": -0.13997757638300232,
+     "hold_dT_sigma": -1.494002103086793,
+     "rms": [
+      0.001706633446263082,
+      0.0029696674489302394,
+      0.010104091019154457
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.016812242613618515,
+     "hold_dI": 0.004108579812588695,
+     "hold_dT_sigma": -1.338113284979976,
+     "rms": [
+      0.001706633446263082,
+      0.0029696674489302394,
+      0.010104091019154457
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": true,
+   "same_combo": true
+  },
+  "sgb|facility|A|quiet|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.019231809806290284,
+     "hold_dI": -0.01564956611786579,
+     "hold_dT_sigma": -0.06619315330778971,
+     "rms": [
+      0.003117823605311241,
+      0.003521376111880178,
+      0.010763059652503638
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.004799420732477431,
+     "hold_dI": -0.13025085550888646,
+     "hold_dT_sigma": -1.4417350590472195,
+     "rms": [
+      0.003117823605311241,
+      0.003521376111880178,
+      0.010763059652503638
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.014707347821859276,
+     "hold_dI": 0.00983880998631936,
+     "hold_dT_sigma": -1.2980843863642912,
+     "rms": [
+      0.003117823605311241,
+      0.003521376111880178,
+      0.010763059652503638
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": true,
+   "same_combo": true
+  },
+  "sgb|facility|B|all|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.1L",
+     "J": 0.007372905182829676,
+     "hold_dI": 0.16620989379090206,
+     "hold_dT_sigma": 0.47180529191748627,
+     "rms": [
+      2.4207074549000493,
+      1.9718046159658902,
+      1.2913847097656854
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.004604193393132698,
+     "hold_dI": -0.13633465557167707,
+     "hold_dT_sigma": 0.5066070400268571,
+     "rms": [
+      0.49334059074900505,
+      0.28198407534405645,
+      0.4622677455360568
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.9_c=1L_w=0.1L",
+     "J": 0.004005492204428169,
+     "hold_dI": -0.05894230026913867,
+     "hold_dT_sigma": -2.138626637423982,
+     "rms": [
+      1.7801391865635003,
+      2.4380666564293985,
+      2.4508711658729263
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|B|all|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.9_c=1.1L_w=0.1L",
+     "J": 0.008397845151791419,
+     "hold_dI": -0.20258552634094548,
+     "hold_dT_sigma": -3.7012267660990132,
+     "rms": [
+      3.7954921907150307,
+      3.0339629839280535,
+      2.747821634263489
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.004353896096013265,
+     "hold_dI": -0.14798182924091904,
+     "hold_dT_sigma": 0.25728040112436024,
+     "rms": [
+      0.6114195376176834,
+      0.43970347986970054,
+      0.6084638773360757
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.9_c=0.9L_w=0.1L",
+     "J": 0.004589773798000198,
+     "hold_dI": 0.12523474368347826,
+     "hold_dT_sigma": 1.0574370768380879,
+     "rms": [
+      1.5861190880857126,
+      1.7024329318816736,
+      0.31130423974952864
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|B|all|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=1L_w=0.25L",
+     "J": 0.0056051192817584816,
+     "hold_dI": 0.016646621823550683,
+     "hold_dT_sigma": 0.951045709081327,
+     "rms": [
+      0.7686489123980116,
+      1.488025546842639,
+      0.9177546975385361
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=0.9L_w=0.25L",
+     "J": 0.0038655074739506684,
+     "hold_dI": -0.13174402048484546,
+     "hold_dT_sigma": 0.1035863124351702,
+     "rms": [
+      0.027076885268861366,
+      0.023376814419576796,
+      0.021841977845271424
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=1.1L_w=0.25L",
+     "J": 0.0061638840878578014,
+     "hold_dI": 0.09147792686468086,
+     "hold_dT_sigma": 0.43523331468803816,
+     "rms": [
+      1.9897116774375039,
+      2.1487399753932785,
+      2.2270838104095003
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|B|all|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.007285225258693065,
+     "hold_dI": 0.05003139610439103,
+     "hold_dT_sigma": 1.4267350104572516,
+     "rms": [
+      0.3678953481134911,
+      0.21551268501733825,
+      0.1634792299010299
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=0.9L_w=0.25L",
+     "J": 0.0035629543247550806,
+     "hold_dI": -0.13120403078522883,
+     "hold_dT_sigma": 0.06514841593074014,
+     "rms": [
+      0.022728417241139557,
+      0.020273846434245114,
+      0.016255178741691814
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=1.1L_w=0.25L",
+     "J": 0.0038217236638907826,
+     "hold_dI": 0.1157704249971921,
+     "hold_dT_sigma": 0.7853812752904304,
+     "rms": [
+      1.5761721294357491,
+      2.1520993101401587,
+      2.214725831814636
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|B|all|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=1L_w=0.25L",
+     "J": 0.010027672931895699,
+     "hold_dI": -0.18448333186583868,
+     "hold_dT_sigma": -2.135645485903741,
+     "rms": [
+      1.7733570771867315,
+      2.1459997855268185,
+      2.5279851989099345
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.0030173267144525157,
+     "hold_dI": -0.17380670040674187,
+     "hold_dT_sigma": -0.4427494490269238,
+     "rms": [
+      0.4276110158756854,
+      0.6749837949334807,
+      0.16165754365082427
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=1.1L_w=0.1L",
+     "J": 0.015261645837917904,
+     "hold_dI": 0.01902874923683564,
+     "hold_dT_sigma": -3.3807492987005356,
+     "rms": [
+      2.2524701894051726,
+      2.091819358014283,
+      2.2467334666048515
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|B|all|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.010672713853546161,
+     "hold_dI": -0.01564956611786579,
+     "hold_dT_sigma": 1.383232048288827,
+     "rms": [
+      0.003117823605311241,
+      0.003521376111880178,
+      0.010763059652503638
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=0.9L_w=0.25L",
+     "J": 0.006027658733388058,
+     "hold_dI": -0.1443768783013843,
+     "hold_dT_sigma": 0.30441590824907705,
+     "rms": [
+      0.0016805475831219651,
+      0.003139360541481689,
+      0.0027402390496870065
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.9_c=0.9L_w=0.1L",
+     "J": 0.01250433279563715,
+     "hold_dI": 0.20112267149134364,
+     "hold_dT_sigma": 1.6669295232674883,
+     "rms": [
+      2.299966790390234,
+      2.3039780817525095,
+      1.526617532697352
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|B|quiet|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.011231891042571478,
+     "hold_dI": -0.06660992380205355,
+     "hold_dT_sigma": 0.6093838369692418,
+     "rms": [
+      0.49334059074900505,
+      0.28198407534405645,
+      0.4622677455360568
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.004604193393132698,
+     "hold_dI": -0.13633465557167707,
+     "hold_dT_sigma": 0.5066070400268571,
+     "rms": [
+      0.49334059074900505,
+      0.28198407534405645,
+      0.4622677455360568
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.013757567284394435,
+     "hold_dI": 0.003431200852890197,
+     "hold_dT_sigma": 0.5669511867043111,
+     "rms": [
+      0.49334059074900505,
+      0.28198407534405645,
+      0.4622677455360568
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    }
+   ],
+   "pass": true,
+   "pass_except_defensible": true,
+   "same_combo": true
+  },
+  "sgb|facility|B|quiet|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.01904886428220919,
+     "hold_dI": -0.07133277255665002,
+     "hold_dT_sigma": 0.9498629274733214,
+     "rms": [
+      0.3398461784702591,
+      0.2428600686551509,
+      0.009232580536056426
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.008082893165136839,
+     "hold_dI": -0.18327777474207468,
+     "hold_dT_sigma": 0.15723991138470084,
+     "rms": [
+      0.3398461784702591,
+      0.2428600686551509,
+      0.009232580536056426
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.9_c=0.9L_w=0.25L",
+     "J": 0.020791098345735726,
+     "hold_dI": 0.2266643670231432,
+     "hold_dT_sigma": 0.6500463849099254,
+     "rms": [
+      0.010725619775857748,
+      0.017163454446964793,
+      0.02961381942137732
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|B|quiet|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.008144162726553978,
+     "hold_dI": 0.06387131409929656,
+     "hold_dT_sigma": 1.6523042961745857,
+     "rms": [
+      0.3395729032706167,
+      0.17364126648088354,
+      0.1922978594781658
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=0.9L_w=0.25L",
+     "J": 0.0038655074739506684,
+     "hold_dI": -0.13174402048484546,
+     "hold_dT_sigma": 0.1035863124351702,
+     "rms": [
+      0.027076885268861366,
+      0.023376814419576796,
+      0.021841977845271424
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.97_c=0.9L_w=0.25L",
+     "J": 0.01200341433524834,
+     "hold_dI": 0.028746687021577347,
+     "hold_dT_sigma": 0.22887283655206656,
+     "rms": [
+      0.027076885268861366,
+      0.023376814419576796,
+      0.021841977845271424
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": true,
+   "same_combo": false
+  },
+  "sgb|facility|B|quiet|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/16_b=0.8_c=0.9L_w=0.25L",
+     "J": 0.007285225258693065,
+     "hold_dI": 0.05003139610439103,
+     "hold_dT_sigma": 1.4267350104572516,
+     "rms": [
+      0.3678953481134911,
+      0.21551268501733825,
+      0.1634792299010299
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": true,
+     "pass": true
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=0.9L_w=0.25L",
+     "J": 0.0035629543247550806,
+     "hold_dI": -0.13120403078522883,
+     "hold_dT_sigma": 0.06514841593074014,
+     "rms": [
+      0.022728417241139557,
+      0.020273846434245114,
+      0.016255178741691814
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/16_b=0.9_c=0.9L_w=0.1L",
+     "J": 0.009484070530254764,
+     "hold_dI": 0.1643082479118616,
+     "hold_dT_sigma": 0.5375697824651232,
+     "rms": [
+      0.3832035625196727,
+      0.4623930118583279,
+      0.5100900641727342
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|B|quiet|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1L_w=0.25L",
+     "J": 0.011608942394883647,
+     "hold_dI": -0.029957574170581387,
+     "hold_dT_sigma": 1.3182290513424773,
+     "rms": [
+      0.001706633446263082,
+      0.0029696674489302394,
+      0.010104091019154457
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.0030173267144525157,
+     "hold_dI": -0.17380670040674187,
+     "hold_dT_sigma": -0.4427494490269238,
+     "rms": [
+      0.4276110158756854,
+      0.6749837949334807,
+      0.16165754365082427
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.97_c=0.9L_w=0.25L",
+     "J": 0.01747119404762436,
+     "hold_dI": 0.00264783465267052,
+     "hold_dT_sigma": 0.4360829498627883,
+     "rms": [
+      0.0004891751262394453,
+      0.0032729409715858385,
+      0.006007988633584566
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "sgb|facility|B|quiet|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "a=1/8_b=0.97_c=1.1L_w=0.25L",
+     "J": 0.010672713853546161,
+     "hold_dI": -0.01564956611786579,
+     "hold_dT_sigma": 1.383232048288827,
+     "rms": [
+      0.003117823605311241,
+      0.003521376111880178,
+      0.010763059652503638
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "a=1/8_b=0.97_c=0.9L_w=0.25L",
+     "J": 0.006027658733388058,
+     "hold_dI": -0.1443768783013843,
+     "hold_dT_sigma": 0.30441590824907705,
+     "rms": [
+      0.0016805475831219651,
+      0.003139360541481689,
+      0.0027402390496870065
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "a=1/8_b=0.97_c=0.9L_w=0.25L",
+     "J": 0.016310308879456066,
+     "hold_dI": 0.005669090032893447,
+     "hold_dT_sigma": 0.3740213478281742,
+     "rms": [
+      0.0016805475831219651,
+      0.003139360541481689,
+      0.0027402390496870065
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": true,
+   "same_combo": false
+  },
+  "mlb|vacuum|A|all|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.11231105178379686,
+     "hold_dI": -0.23182745111619302,
+     "hold_dT_sigma": -2.645762058706176,
+     "rms": [
+      1.1746230822174755,
+      1.1895675028163128,
+      0.9728814470503186
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.06422916618642677,
+     "hold_dI": -0.3158384381380229,
+     "hold_dT_sigma": -4.2618018005321545,
+     "rms": [
+      1.1746230822174755,
+      1.1895675028163128,
+      0.9728814470503186
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.1480034415081556,
+     "hold_dI": -0.0947582892940457,
+     "hold_dT_sigma": -1.8451026041858765,
+     "rms": [
+      1.1746230822174755,
+      1.1895675028163128,
+      0.9728814470503186
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|A|all|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.06787512496741459,
+     "hold_dI": -0.26313428162370883,
+     "hold_dT_sigma": -2.804218489276964,
+     "rms": [
+      1.4125863981119482,
+      1.025199108183234,
+      0.8069871942719649
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.07144471054170497,
+     "hold_dI": -0.2793011123330931,
+     "hold_dT_sigma": -2.4283394754325216,
+     "rms": [
+      1.4125863981119482,
+      1.025199108183234,
+      0.8069871942719649
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/16",
+     "J": 0.10360601967678565,
+     "hold_dI": -0.17343593555388576,
+     "hold_dT_sigma": -3.159641366000845,
+     "rms": [
+      1.1443403120698907,
+      1.2334021578003955,
+      1.2503877992732606
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "mlb|vacuum|A|all|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.03947485332511051,
+     "hold_dI": -0.07391427133586351,
+     "hold_dT_sigma": -0.6675508974666479,
+     "rms": [
+      0.3317476264439721,
+      0.6982720546161245,
+      0.8123742500789785
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.013121918653653215,
+     "hold_dI": -0.18678324393460072,
+     "hold_dT_sigma": -2.0759091978434547,
+     "rms": [
+      0.3317476264439721,
+      0.6982720546161245,
+      0.8123742500789785
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.03516118658664904,
+     "hold_dI": -0.014832038308275305,
+     "hold_dT_sigma": -1.723374675059923,
+     "rms": [
+      0.3317476264439721,
+      0.6982720546161245,
+      0.8123742500789785
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|A|all|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.04241676234464631,
+     "hold_dI": -0.05200653221781947,
+     "hold_dT_sigma": -0.7335474305694937,
+     "rms": [
+      0.9974720832708168,
+      1.5276000399425689,
+      1.313920790820414
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.007942638907539351,
+     "hold_dI": -0.19889724195021077,
+     "hold_dT_sigma": -2.45202282668866,
+     "rms": [
+      0.9974720832708168,
+      1.5276000399425689,
+      1.313920790820414
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.04119893886255258,
+     "hold_dI": 0.06637988264541868,
+     "hold_dT_sigma": -0.8768132089762628,
+     "rms": [
+      0.9974720832708168,
+      1.5276000399425689,
+      1.313920790820414
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|A|all|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.11035699320593255,
+     "hold_dI": -0.2809411504827188,
+     "hold_dT_sigma": -4.042315994186618,
+     "rms": [
+      1.454844700596032,
+      1.376257303850187,
+      1.908160218780718
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.12133577385145887,
+     "hold_dI": -0.30901326570230997,
+     "hold_dT_sigma": -3.287746417700666,
+     "rms": [
+      1.454844700596032,
+      1.376257303850187,
+      1.908160218780718
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.1676262323408793,
+     "hold_dI": -0.1277697566342714,
+     "hold_dT_sigma": -3.0017556304182365,
+     "rms": [
+      1.454844700596032,
+      1.376257303850187,
+      1.908160218780718
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|A|all|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.14043107008333722,
+     "hold_dI": -0.22541302113465256,
+     "hold_dT_sigma": -4.172096226715372,
+     "rms": [
+      1.5122686874777993,
+      1.3891967200998934,
+      2.150618218605032
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.1452042494923867,
+     "hold_dI": -0.27336979067892814,
+     "hold_dT_sigma": -3.6061340120004575,
+     "rms": [
+      1.5122686874777993,
+      1.3891967200998934,
+      2.150618218605032
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.15150128363109583,
+     "hold_dI": -0.19538107342112185,
+     "hold_dT_sigma": -4.455482727966368,
+     "rms": [
+      1.5122686874777993,
+      1.3891967200998934,
+      2.150618218605032
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|A|quiet|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/32",
+     "J": 0.6431968634277236,
+     "hold_dI": -0.4996282397161637,
+     "hold_dT_sigma": -9.073654517896626,
+     "rms": [
+      0.2789070668395722,
+      0.19815551707421256,
+      0.09753225583100147
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/32",
+     "J": 0.6045837718178251,
+     "hold_dI": -0.5640529194254045,
+     "hold_dT_sigma": -10.295650726297838,
+     "rms": [
+      0.2789070668395722,
+      0.19815551707421256,
+      0.09753225583100147
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/32",
+     "J": 0.697112565427702,
+     "hold_dI": -0.47950237784956284,
+     "hold_dT_sigma": -9.142930567467934,
+     "rms": [
+      0.2789070668395722,
+      0.19815551707421256,
+      0.09753225583100147
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|A|quiet|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/16",
+     "J": 0.5775304229955618,
+     "hold_dI": -0.523691326510482,
+     "hold_dT_sigma": -7.952469689189895,
+     "rms": [
+      0.6982974415905262,
+      0.2660844912518807,
+      0.4646432436064159
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/32",
+     "J": 0.6271599771263014,
+     "hold_dI": -0.5830781488092422,
+     "hold_dT_sigma": -10.22524604742272,
+     "rms": [
+      0.3716400980373938,
+      0.6246134921386266,
+      0.25264622058068986
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "mlb|vacuum|A|quiet|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.17112198399377887,
+     "hold_dI": -0.34148162947891475,
+     "hold_dT_sigma": -2.3238384631560463,
+     "rms": [
+      0.14566665989657898,
+      0.14781843843724865,
+      0.1589624096595109
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/64_c_exit=1/100_c_plume=1/16",
+     "J": 0.13531778717396478,
+     "hold_dI": -0.36486244069511486,
+     "hold_dT_sigma": -4.083527840878285,
+     "rms": [
+      0.2713126499078803,
+      0.5755986234428764,
+      0.3468655536132428
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/64_c_exit=1/100_c_plume=1/8",
+     "J": 0.155561458887804,
+     "hold_dI": -0.16804091902270932,
+     "hold_dT_sigma": -3.2934766593867852,
+     "rms": [
+      0.2472349554743418,
+      0.42226086460799245,
+      0.8772568559410537
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "mlb|vacuum|A|quiet|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.1697980470220211,
+     "hold_dI": -0.35270423092907655,
+     "hold_dT_sigma": -2.494562859456428,
+     "rms": [
+      0.20010428306070474,
+      0.14517934634090454,
+      0.35386838435662105
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.14138984893578177,
+     "hold_dI": -0.40711565728919946,
+     "hold_dT_sigma": -3.156802201691813,
+     "rms": [
+      0.20010428306070474,
+      0.14517934634090454,
+      0.35386838435662105
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.1942337252520718,
+     "hold_dI": -0.27778960209701237,
+     "hold_dT_sigma": -2.713775912611826,
+     "rms": [
+      0.20010428306070474,
+      0.14517934634090454,
+      0.35386838435662105
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|A|quiet|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|A|quiet|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|B|all|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.07235703436787486,
+     "hold_dI": -0.23182745111619302,
+     "hold_dT_sigma": -1.3514964467907533,
+     "rms": [
+      1.1746230822174755,
+      1.1895675028163128,
+      0.9728814470503186
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.0379068494143883,
+     "hold_dI": -0.3158384381380229,
+     "hold_dT_sigma": -2.446612031107659,
+     "rms": [
+      1.1746230822174755,
+      1.1895675028163128,
+      0.9728814470503186
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.10127188351914028,
+     "hold_dI": -0.0947582892940457,
+     "hold_dT_sigma": -0.04408847341133604,
+     "rms": [
+      1.1746230822174755,
+      1.1895675028163128,
+      0.9728814470503186
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|B|all|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.04395514699234675,
+     "hold_dI": -0.26313428162370883,
+     "hold_dT_sigma": -1.5171821360402544,
+     "rms": [
+      1.4125863981119482,
+      1.025199108183234,
+      0.8069871942719649
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.046649328009788896,
+     "hold_dI": -0.2793011123330931,
+     "hold_dT_sigma": -0.5534722160082588,
+     "rms": [
+      1.4125863981119482,
+      1.025199108183234,
+      0.8069871942719649
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/16",
+     "J": 0.07511971275986122,
+     "hold_dI": -0.17343593555388576,
+     "hold_dT_sigma": -1.3826143423910287,
+     "rms": [
+      1.1443403120698907,
+      1.2334021578003955,
+      1.2503877992732606
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "mlb|vacuum|B|all|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.01771384593424851,
+     "hold_dI": -0.07391427133586351,
+     "hold_dT_sigma": 0.688687577698596,
+     "rms": [
+      0.3317476264439721,
+      0.6982720546161245,
+      0.8123742500789785
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.004834630207817294,
+     "hold_dI": -0.18678324393460072,
+     "hold_dT_sigma": -0.19643689997381558,
+     "rms": [
+      0.3317476264439721,
+      0.6982720546161245,
+      0.8123742500789785
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.02228724257525543,
+     "hold_dI": -0.014832038308275305,
+     "hold_dT_sigma": 0.0785250387874572,
+     "rms": [
+      0.3317476264439721,
+      0.6982720546161245,
+      0.8123742500789785
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|B|all|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.026231607317559875,
+     "hold_dI": -0.05200653221781947,
+     "hold_dT_sigma": 0.621471340948734,
+     "rms": [
+      0.9974720832708168,
+      1.5276000399425689,
+      1.313920790820414
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.008237461228311678,
+     "hold_dI": -0.19889724195021077,
+     "hold_dT_sigma": -0.5775435772226969,
+     "rms": [
+      0.9974720832708168,
+      1.5276000399425689,
+      1.313920790820414
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.02389385977154231,
+     "hold_dI": 0.06637988264541868,
+     "hold_dT_sigma": 0.925075426324849,
+     "rms": [
+      0.9974720832708168,
+      1.5276000399425689,
+      1.313920790820414
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|B|all|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.0670656601914419,
+     "hold_dI": -0.2809411504827188,
+     "hold_dT_sigma": -2.823145119748223,
+     "rms": [
+      1.454844700596032,
+      1.376257303850187,
+      1.908160218780718
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.07812398940809528,
+     "hold_dI": -0.30901326570230997,
+     "hold_dT_sigma": -1.4333431038341196,
+     "rms": [
+      1.454844700596032,
+      1.376257303850187,
+      1.908160218780718
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.11989723862861952,
+     "hold_dI": -0.1277697566342714,
+     "hold_dT_sigma": -1.220443070799288,
+     "rms": [
+      1.454844700596032,
+      1.376257303850187,
+      1.908160218780718
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|B|all|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.08637270217334184,
+     "hold_dI": -0.22541302113465256,
+     "hold_dT_sigma": -2.961192925430588,
+     "rms": [
+      1.5122686874777993,
+      1.3891967200998934,
+      2.150618218605032
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.09296924186707475,
+     "hold_dI": -0.27336979067892814,
+     "hold_dT_sigma": -1.7626665001383672,
+     "rms": [
+      1.5122686874777993,
+      1.3891967200998934,
+      2.150618218605032
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.10099523166641458,
+     "hold_dI": -0.19538107342112185,
+     "hold_dT_sigma": -2.728250884567156,
+     "rms": [
+      1.5122686874777993,
+      1.3891967200998934,
+      2.150618218605032
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|B|quiet|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/32",
+     "J": 0.5685463351895848,
+     "hold_dI": -0.4996282397161637,
+     "hold_dT_sigma": -8.319595690046032,
+     "rms": [
+      0.2789070668395722,
+      0.19815551707421256,
+      0.09753225583100147
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/32",
+     "J": 0.5395799902223428,
+     "hold_dI": -0.5640529194254045,
+     "hold_dT_sigma": -9.097064894537185,
+     "rms": [
+      0.2789070668395722,
+      0.19815551707421256,
+      0.09753225583100147
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/32",
+     "J": 0.6305522206705196,
+     "hold_dI": -0.47950237784956284,
+     "hold_dT_sigma": -7.81078782845608,
+     "rms": [
+      0.2789070668395722,
+      0.19815551707421256,
+      0.09753225583100147
+     ],
+     "quiet_all": true,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|B|quiet|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/16",
+     "J": 0.5008957593436564,
+     "hold_dI": -0.523691326510482,
+     "hold_dT_sigma": -7.071451158451605,
+     "rms": [
+      0.6982974415905262,
+      0.2660844912518807,
+      0.4646432436064159
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/32",
+     "J": 0.562409299592031,
+     "hold_dI": -0.5830781488092422,
+     "hold_dT_sigma": -9.016035023210605,
+     "rms": [
+      0.3716400980373938,
+      0.6246134921386266,
+      0.25264622058068986
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "mlb|vacuum|B|quiet|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.13140951349680416,
+     "hold_dI": -0.34148162947891475,
+     "hold_dT_sigma": -1.0159147102229922,
+     "rms": [
+      0.14566665989657898,
+      0.14781843843724865,
+      0.1589624096595109
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/64_c_exit=1/100_c_plume=1/16",
+     "J": 0.09508504254581367,
+     "hold_dI": -0.36486244069511486,
+     "hold_dT_sigma": -2.2598804196379816,
+     "rms": [
+      0.2713126499078803,
+      0.5755986234428764,
+      0.3468655536132428
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/64_c_exit=1/100_c_plume=1/8",
+     "J": 0.11145948907648581,
+     "hold_dI": -0.16804091902270932,
+     "hold_dT_sigma": -1.520384500339767,
+     "rms": [
+      0.2472349554743418,
+      0.42226086460799245,
+      0.8772568559410537
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "mlb|vacuum|B|quiet|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.12963173072137285,
+     "hold_dI": -0.35270423092907655,
+     "hold_dT_sigma": -1.1937103537267453,
+     "rms": [
+      0.20010428306070474,
+      0.14517934634090454,
+      0.35386838435662105
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.10857845202962825,
+     "hold_dI": -0.40711565728919946,
+     "hold_dT_sigma": -1.2984295287632146,
+     "rms": [
+      0.20010428306070474,
+      0.14517934634090454,
+      0.35386838435662105
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.1557651030922048,
+     "hold_dI": -0.27778960209701237,
+     "hold_dT_sigma": -0.9256381366434451,
+     "rms": [
+      0.20010428306070474,
+      0.14517934634090454,
+      0.35386838435662105
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|B|quiet|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|vacuum|B|quiet|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|A|all|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.06879635092335042,
+     "hold_dI": -0.13964195172883542,
+     "hold_dT_sigma": -0.3015389147705625,
+     "rms": [
+      1.1533641999164457,
+      1.1255814346491009,
+      0.6947916196649502
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.01953816590096846,
+     "hold_dI": -0.23805619430403782,
+     "hold_dT_sigma": -3.53014964146876,
+     "rms": [
+      1.1533641999164457,
+      1.1255814346491009,
+      0.6947916196649502
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.0693700918949944,
+     "hold_dI": -0.04427192072081798,
+     "hold_dT_sigma": -1.797080108601705,
+     "rms": [
+      1.1533641999164457,
+      1.1255814346491009,
+      0.6947916196649502
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|A|all|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.0540796162990213,
+     "hold_dI": -0.18572321495123376,
+     "hold_dT_sigma": -3.0307603511715717,
+     "rms": [
+      1.1966583165178515,
+      0.7355237269904611,
+      0.8658083378582998
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.0559899133582779,
+     "hold_dI": -0.20176929313328107,
+     "hold_dT_sigma": -2.7924915171124174,
+     "rms": [
+      1.1966583165178515,
+      0.7355237269904611,
+      0.8658083378582998
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/16",
+     "J": 0.07251003251993862,
+     "hold_dI": -0.14342324489211805,
+     "hold_dT_sigma": -3.690475851150466,
+     "rms": [
+      1.0385747602618385,
+      1.10434547297371,
+      1.1942922014681623
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "mlb|facility|A|all|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.018934404175289736,
+     "hold_dI": 0.00412225984089534,
+     "hold_dT_sigma": -0.1960754173995463,
+     "rms": [
+      0.43549364122124035,
+      0.48036882987608653,
+      0.41422264090781374
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.00593055127072491,
+     "hold_dI": -0.109805453638072,
+     "hold_dT_sigma": -1.5668851218095565,
+     "rms": [
+      0.43549364122124035,
+      0.48036882987608653,
+      0.41422264090781374
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.013281795589462636,
+     "hold_dI": 0.044986887743462406,
+     "hold_dT_sigma": -1.3225424613464258,
+     "rms": [
+      0.43549364122124035,
+      0.48036882987608653,
+      0.41422264090781374
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": true,
+   "same_combo": true
+  },
+  "mlb|facility|A|all|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.010235841274008641,
+     "hold_dI": 0.05009130987783199,
+     "hold_dT_sigma": 0.05825301731728033,
+     "rms": [
+      0.5978441444220579,
+      0.8645330397510654,
+      0.38038862813128915
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.0065046581903338355,
+     "hold_dI": -0.05925654696451263,
+     "hold_dT_sigma": -1.0337622111487086,
+     "rms": [
+      0.5978441444220579,
+      0.8645330397510654,
+      0.38038862813128915
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.006263830389338559,
+     "hold_dI": 0.0647964143324671,
+     "hold_dT_sigma": -1.0605134378204057,
+     "rms": [
+      0.5978441444220579,
+      0.8645330397510654,
+      0.38038862813128915
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|A|all|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.11094703914123606,
+     "hold_dI": -0.21357260346442186,
+     "hold_dT_sigma": -4.380885274802294,
+     "rms": [
+      1.5199364752712727,
+      2.303007482432222,
+      2.435584760383352
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.10740840978309044,
+     "hold_dI": -0.2693001480808433,
+     "hold_dT_sigma": -4.046388648442864,
+     "rms": [
+      1.5199364752712727,
+      2.303007482432222,
+      2.435584760383352
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.14745946510535707,
+     "hold_dI": -0.15157722327243067,
+     "hold_dT_sigma": -3.1728243671305556,
+     "rms": [
+      1.5199364752712727,
+      2.303007482432222,
+      2.435584760383352
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|A|all|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.07365619151347913,
+     "hold_dI": -0.1872020951968321,
+     "hold_dT_sigma": -3.149035076460084,
+     "rms": [
+      1.576114360243167,
+      2.5764323774606046,
+      2.5494351814563734
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.07018783761708339,
+     "hold_dI": -0.2860928925238602,
+     "hold_dT_sigma": -1.599096627908495,
+     "rms": [
+      1.576114360243167,
+      2.5764323774606046,
+      2.5494351814563734
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.09316015263427316,
+     "hold_dI": -0.08602408783876904,
+     "hold_dT_sigma": -2.996890003534155,
+     "rms": [
+      1.576114360243167,
+      2.5764323774606046,
+      2.5494351814563734
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|A|quiet|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/8",
+     "J": 0.42621462595344656,
+     "hold_dI": -0.42022278402946484,
+     "hold_dT_sigma": -7.068798548315161,
+     "rms": [
+      0.3296679816360637,
+      0.35523468954333637,
+      0.425445255880092
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/8",
+     "J": 0.38571607508626904,
+     "hold_dI": -0.49164589437365264,
+     "hold_dT_sigma": -7.947669296378763,
+     "rms": [
+      0.3296679816360637,
+      0.35523468954333637,
+      0.425445255880092
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/8",
+     "J": 0.44065228439126414,
+     "hold_dI": -0.40807809696574127,
+     "hold_dT_sigma": -7.451818462130719,
+     "rms": [
+      0.3296679816360637,
+      0.35523468954333637,
+      0.425445255880092
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|A|quiet|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/32",
+     "J": 0.5755684095695721,
+     "hold_dI": -0.42722722695892174,
+     "hold_dT_sigma": -8.383420448676137,
+     "rms": [
+      0.7075987496415094,
+      0.3732828822384811,
+      0.1898779118933739
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "mlb|facility|A|quiet|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.018934404175289736,
+     "hold_dI": 0.00412225984089534,
+     "hold_dT_sigma": -0.1960754173995463,
+     "rms": [
+      0.43549364122124035,
+      0.48036882987608653,
+      0.41422264090781374
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.00593055127072491,
+     "hold_dI": -0.109805453638072,
+     "hold_dT_sigma": -1.5668851218095565,
+     "rms": [
+      0.43549364122124035,
+      0.48036882987608653,
+      0.41422264090781374
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.013281795589462636,
+     "hold_dI": 0.044986887743462406,
+     "hold_dT_sigma": -1.3225424613464258,
+     "rms": [
+      0.43549364122124035,
+      0.48036882987608653,
+      0.41422264090781374
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": true,
+   "same_combo": true
+  },
+  "mlb|facility|A|quiet|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.12435236325008459,
+     "hold_dI": -0.2755209441787517,
+     "hold_dT_sigma": -1.926148225413362,
+     "rms": [
+      0.14635512753665608,
+      0.1515818153748877,
+      0.15403918840695763
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.09158925527628431,
+     "hold_dI": -0.3482768818003851,
+     "hold_dT_sigma": -2.8432101704346273,
+     "rms": [
+      0.14635512753665608,
+      0.1515818153748877,
+      0.15403918840695763
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.13082855197001614,
+     "hold_dI": -0.23650541613555418,
+     "hold_dT_sigma": -2.408980807412357,
+     "rms": [
+      0.14635512753665608,
+      0.1515818153748877,
+      0.15403918840695763
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|A|quiet|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|A|quiet|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|B|all|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.03623777299715637,
+     "hold_dI": -0.13964195172883542,
+     "hold_dT_sigma": 1.1486957493481451,
+     "rms": [
+      1.1533641999164457,
+      1.1255814346491009,
+      0.6947916196649502
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.015771103506870644,
+     "hold_dI": -0.23805619430403782,
+     "hold_dT_sigma": -1.5409065819617347,
+     "rms": [
+      1.1533641999164457,
+      1.1255814346491009,
+      0.6947916196649502
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.049994744378965714,
+     "hold_dI": -0.04427192072081798,
+     "hold_dT_sigma": 0.09374521604735261,
+     "rms": [
+      1.1533641999164457,
+      1.1255814346491009,
+      0.6947916196649502
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|B|all|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.024929013927383364,
+     "hold_dI": -0.18572321495123376,
+     "hold_dT_sigma": -1.6222086375824574,
+     "rms": [
+      1.1966583165178515,
+      0.7355237269904611,
+      0.8658083378582998
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.027876361739275716,
+     "hold_dI": -0.20176929313328107,
+     "hold_dT_sigma": -0.7972856965887035,
+     "rms": [
+      1.1966583165178515,
+      0.7355237269904611,
+      0.8658083378582998
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/16",
+     "J": 0.04301825337910793,
+     "hold_dI": -0.14342324489211805,
+     "hold_dT_sigma": -1.8114695348234715,
+     "rms": [
+      1.0385747602618385,
+      1.10434547297371,
+      1.1942922014681623
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "mlb|facility|B|all|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.008668619194889274,
+     "hold_dI": 0.00412225984089534,
+     "hold_dT_sigma": 1.2538817733153669,
+     "rms": [
+      0.43549364122124035,
+      0.48036882987608653,
+      0.41422264090781374
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/16",
+     "J": 0.005445238106443373,
+     "hold_dI": -0.15367832551727376,
+     "hold_dT_sigma": 0.46235214774561195,
+     "rms": [
+      0.6088708735864361,
+      0.6197229389581128,
+      0.786423759719557
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.012676532519258954,
+     "hold_dI": 0.044986887743462406,
+     "hold_dT_sigma": 0.5632306576975757,
+     "rms": [
+      0.43549364122124035,
+      0.48036882987608653,
+      0.41422264090781374
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "mlb|facility|B|all|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.009309588045583446,
+     "hold_dI": 0.05009130987783199,
+     "hold_dT_sigma": 1.506971963799007,
+     "rms": [
+      0.5978441444220579,
+      0.8645330397510654,
+      0.38038862813128915
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/16",
+     "J": 0.007660509378079702,
+     "hold_dI": -0.17184549255430712,
+     "hold_dT_sigma": 0.13935207606322886,
+     "rms": [
+      0.74554452408597,
+      0.5307512003990116,
+      1.3591669421942543
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.015158570367042162,
+     "hold_dI": 0.0647964143324671,
+     "hold_dT_sigma": 0.8211259395794467,
+     "rms": [
+      0.5978441444220579,
+      0.8645330397510654,
+      0.38038862813128915
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "mlb|facility|B|all|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.06415442742786209,
+     "hold_dI": -0.21357260346442186,
+     "hold_dT_sigma": -3.028051840564122,
+     "rms": [
+      1.5199364752712727,
+      2.303007482432222,
+      2.435584760383352
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.06427992907623706,
+     "hold_dI": -0.2693001480808433,
+     "hold_dT_sigma": -2.0667107954673583,
+     "rms": [
+      1.5199364752712727,
+      2.303007482432222,
+      2.435584760383352
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.09640144162616755,
+     "hold_dI": -0.15157722327243067,
+     "hold_dT_sigma": -1.2854319110639616,
+     "rms": [
+      1.5199364752712727,
+      2.303007482432222,
+      2.435584760383352
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|B|all|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.048553587366068386,
+     "hold_dI": -0.1872020951968321,
+     "hold_dT_sigma": -1.7444355864357466,
+     "rms": [
+      1.576114360243167,
+      2.5764323774606046,
+      2.5494351814563734
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.03383374461652254,
+     "hold_dI": -0.2860928925238602,
+     "hold_dT_sigma": 0.3869797915576389,
+     "rms": [
+      1.576114360243167,
+      2.5764323774606046,
+      2.5494351814563734
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.06816614688820274,
+     "hold_dI": -0.08602408783876904,
+     "hold_dT_sigma": -1.1075381805987516,
+     "rms": [
+      1.576114360243167,
+      2.5764323774606046,
+      2.5494351814563734
+     ],
+     "quiet_all": false,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|B|quiet|H1a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/8",
+     "J": 0.3509823564399718,
+     "hold_dI": -0.42022278402946484,
+     "hold_dT_sigma": -5.894692771614681,
+     "rms": [
+      0.3296679816360637,
+      0.35523468954333637,
+      0.425445255880092
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/8",
+     "J": 0.3205918808463224,
+     "hold_dI": -0.49164589437365264,
+     "hold_dT_sigma": -6.187781811702724,
+     "rms": [
+      0.3296679816360637,
+      0.35523468954333637,
+      0.425445255880092
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/8",
+     "J": 0.3712659791560483,
+     "hold_dI": -0.40807809696574127,
+     "hold_dT_sigma": -5.753327501645969,
+     "rms": [
+      0.3296679816360637,
+      0.35523468954333637,
+      0.425445255880092
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|B|quiet|H1b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/800_c_plume=1/32",
+     "J": 0.4993880341916761,
+     "hold_dI": -0.42722722695892174,
+     "hold_dT_sigma": -7.327786362458825,
+     "rms": [
+      0.7075987496415094,
+      0.3732828822384811,
+      0.1898779118933739
+     ],
+     "quiet_all": false,
+     "defensible": true,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": false
+  },
+  "mlb|facility|B|quiet|H2a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.008668619194889274,
+     "hold_dI": 0.00412225984089534,
+     "hold_dT_sigma": 1.2538817733153669,
+     "rms": [
+      0.43549364122124035,
+      0.48036882987608653,
+      0.41422264090781374
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.008070739140747699,
+     "hold_dI": -0.109805453638072,
+     "hold_dT_sigma": 0.4186297535961432,
+     "rms": [
+      0.43549364122124035,
+      0.48036882987608653,
+      0.41422264090781374
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/100_c_plume=1/8",
+     "J": 0.012676532519258954,
+     "hold_dI": 0.044986887743462406,
+     "hold_dT_sigma": 0.5632306576975757,
+     "rms": [
+      0.43549364122124035,
+      0.48036882987608653,
+      0.41422264090781374
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": true,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": true,
+   "same_combo": true
+  },
+  "mlb|facility|B|quiet|H2b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.09161256198077547,
+     "hold_dI": -0.2755209441787517,
+     "hold_dT_sigma": -0.489317796201632,
+     "rms": [
+      0.14635512753665608,
+      0.1515818153748877,
+      0.15403918840695763
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.06749595579823778,
+     "hold_dI": -0.3482768818003851,
+     "hold_dT_sigma": -0.8481270174215683,
+     "rms": [
+      0.14635512753665608,
+      0.1515818153748877,
+      0.15403918840695763
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": "c_up=1/25_c_exit=1/300_c_plume=1/8",
+     "J": 0.10161656511066613,
+     "hold_dI": -0.23650541613555418,
+     "hold_dT_sigma": -0.5163313435416474,
+     "rms": [
+      0.14635512753665608,
+      0.1515818153748877,
+      0.15403918840695763
+     ],
+     "quiet_all": true,
+     "defensible": false,
+     "pass_except_defensible": false,
+     "pass": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|B|quiet|H3a": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  },
+  "mlb|facility|B|quiet|H3b": {
+   "rounds": [
+    {
+     "holdout": "Xe1",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe2",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    },
+    {
+     "holdout": "Xe3",
+     "combo": null,
+     "pass": false,
+     "pass_except_defensible": false
+    }
+   ],
+   "pass": false,
+   "pass_except_defensible": false,
+   "same_combo": true
+  }
+ }
+}
