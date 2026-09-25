@@ -985,3 +985,58 @@ topology plus default TwoZoneBohm doesn't reproduce the quiet operating point. P
 needs adjusting) is now reached; nothing has been tuned. Ingestion alone adds 1.1–1.4 A to the simulated quasi-steady I_d
 (Gaussian runs), about 2× the Eq. (14) correction of 0.45–0.62 A, because each ingested ion also brings electron current
 at ≈ 50 % current utilisation. Gate 3 is still FAIL.
+
+## P5 geometry / B(z) registration sensitivity, transport fixed (2026-09-25)
+**Decision (project lead):** don't tune anomalous transport until the P5 geometry and B(z) registration are settled; don't
+let transport absorb geometry or topology error. The earlier Gaussian-field agreement is **superseded as validation
+evidence**.
+
+**Geometry evidence.** Channel depth: 38 mm in Peterson, Gallimore & Haas (AIAA 2001-3890, "channel depth of 38 mm"; the
+field-map exit plane is drawn at 37.99 mm from the anode face) and in Hofer (PhD 2004, Sec. 5.3.1: OD 173 mm, width 25 mm,
+depth 38 mm; anode at z = −38 mm). Brabston 2025 (the validation data) says "32 mm discharge channel length". The 2026
+HPEPL paper on the same Georgia Tech P5 (J. Electr. Propuls., doi:10.1007/s44205-026-00179-9, CC BY) gives OD 173 mm and
+width 25 mm, no depth. It states that the field was measured "near the exit plane where the peak of magnetic field is
+observed". OD and width agree across all sources; only the depth is disputed. **Unresolved. Question for HPEPL
+(Brabston/Walker):** (1) was the 2025 channel 32 mm deep anode-to-exit, and was it a replacement or shortened ceramic;
+(2) did the anode or the magnetic circuit move relative to the historical P5; (3) coil currents for Xe1–Xe3 and any
+measured B(z); (4) discharge-current traces (RMS, peak-to-peak, spectrum) for Xe1–Xe3.
+
+**Registration cases** (`scripts/make_p5_xenon_cases.py` → `cases/p5_xenon.json` and `cases/p5_xenon_coil_sensitivity.json`).
+The field is rigid-shifted only, never stretched:
+- `L38-hist`: 38 mm channel, field in original coordinates;
+- `L32-anode`: 32 mm channel, same anode and magnetic circuit, so the ceramic ends 6 mm earlier;
+- `L32-exit`: 32 mm channel with exit planes aligned, i.e. the anode moved 6 mm downstream.
+
+In all three, B at the model exit plane (centreline) = 162.5 G. Transport is fixed at the defaults (TwoZoneBohm(1/160, 1/16),
+transition 0.1 L) and facility ingestion is on (Eq. 13). Errors are vs the Eq. (14)-corrected I_d (6.96 / 8.04 / 6.95 A).
+Oscillation is reported directly: I_d RMS/mean, peak-to-peak/mean and dominant frequency (DFT of the 1 ms averaging window,
+1 kHz resolution). The `quasi_steady` flag (RMS < 50 %) is an internal diagnostic only.
+
+| coil shape | registration | B peak − exit | B_max | I_d error Xe1 / Xe2 / Xe3 | I_d RMS | f_dom |
+|---|---|---|---|---|---|---|
+| 1.6 kW | L38-hist | −9.8 mm | 186 G | −51 / −51 / −36 % | 96–241 % | 6–11 kHz |
+| 1.6 kW | L32-anode | −3.8 mm | 167 G | −31 / −35 / −25 % | 34–185 % | 7–10 kHz |
+| 1.6 kW | L32-exit | −9.8 mm | 186 G | −52 / −52 / −43 % | 106–120 % | 7–8 kHz |
+| 3.0 kW | L38-hist | −7.6 mm | 178 G | −56 / −53 / −45 % | 310–349 % | 4–9 kHz |
+| 3.0 kW | L32-anode | −1.6 mm | 164 G | −41 / −44 / −33 % | 272–317 % | 5–16 kHz |
+| 3.0 kW | L32-exit | −7.6 mm | 178 G | −44 / −51 / −38 % | 91–113 % | 7–8 kHz |
+
+**Findings.**
+1. Registration matters at fixed transport. L32-anode vs L32-exit shifts the mean I_d by 1.2–1.4 A (~30 %) and moves the
+   field peak relative to the exit by 6 mm. Coil shape (1.6 vs 3.0 kW setting) changes oscillation amplitude by up to 3×.
+2. No registration and no coil shape gives a quiet discharge with default transport. Every case underpredicts corrected
+   I_d by 25–56 % and breathes at 4–16 kHz. The means are averages over limit cycles, so they aren't validation numbers.
+3. Circumstantial support for L32-anode: it's the only registration where B at the exit is close to the peak (167 vs
+   162.5 G, peak 3.8 mm upstream), matching Brabston's "peak radial B … at the exit plane" and the 2026 paper's "peak …
+   near the exit plane". L38-hist and L32-exit put the peak 9.8 mm upstream with B(exit) = 0.88 B_max. Not conclusive:
+   Brabston's coil currents (which set the shape) are unknown.
+4. Brabston publishes no I_d oscillation data. The only oscillation constraint is qualitative: the coils were set for
+   minimum peak-to-peak.
+
+**Upstream.** HallThruster.jl uses `background_pressure_Torr` as Pa for ingestion (and the docstring says Pa) but as Torr
+in the pressure-shift anomalous model. The same code is on upstream `main`. Minimal reproducer and draft issue:
+`hallthruster_bridge/upstream/` (not filed yet).
+
+**Status.** Gate 3 still FAIL. Transport calibration waits for the geometry answer. When it comes, identify ONE TwoZoneBohm
+set (c₁, c₂, transition length) across Xe points, fit against I_d, thrust, anode and current efficiency and the qualitative
+oscillation constraint, and hold one Xe point out blind. Freeze it before N₂.
