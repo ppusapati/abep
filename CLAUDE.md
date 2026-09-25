@@ -46,7 +46,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 1. P5 on **xenon** in HallThruster.jl (`cases/p5_xenon.json`, Brabston et al. JPP 2025 Table 4). **Do not tune anomalous
    transport yet** (project decision 2026-09-25); the Gaussian-B agreement is superseded. Order:
    a. Resolve P5 geometry: 32 mm (Brabston 2025) vs 38 mm (Peterson 2001, Hofer 2004) channel, and how the 2001 B(z) is
-      registered. Ask HPEPL (questions in docs/HISTORY.md). Until then carry `L38-hist`, `L32-anode`, `L32-exit` as separate
+      registered, **from published sources only: no contact with authors or labs** (project decision 2026-09-25). Carry `L38-hist`, `L32-anode`, `L32-exit` as separate
       cases, rigid shifts only (`scripts/make_p5_xenon_cases.py`). At default transport all breathe and underpredict
       corrected I_d by 25–56 %; registration moves I_d ~30 %.
    b. Then calibrate transport as parameter identification: ONE TwoZoneBohm set (c₁, c₂, transition length) for all Xe
@@ -56,7 +56,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    c. Freeze the Xe transport closure before N₂; run P5-N₂ with it unchanged first.
    Validation modes are never crossed: facility ingestion ON vs raw P_d/V_d, OFF vs Eq. (14)-corrected I_d. The driver
    runs both per case and prints them side by side.
-   File the HallThruster.jl ingestion-units issue (`hallthruster_bridge/upstream/`, drafted; needs filing by a human).
+   HallThruster.jl ingestion-units issue: drafted in `hallthruster_bridge/upstream/`, not filed; filing is the owner's call.
    Never move the HallThruster.jl pin automatically; an upgrade is a model change (`PINNED.toml` upgrade_policy).
 2. N₂/N reaction set **v0.1: partial**. Add one provenance-backed table per commit. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited cross sections. Done: N ionisation
    (`ionization_N.dat`, Kim & Desclaux 2002 via NIST, `scripts/build_n_ionization_table.py`). Blocked on source access:
