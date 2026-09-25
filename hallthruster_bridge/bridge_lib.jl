@@ -130,12 +130,17 @@ function run_case(c, mode)
     thruster = het.Thruster(name=c.thruster, geometry=geom, magnetic_field=bfield)
     kw = Dict{Symbol,Any}(:thruster => thruster, :domain => (0.0, c.domain_m), :discharge_voltage => c.Vd)
     # Optional transport override (identification runs). Absent -> HallThruster.jl defaults, TwoZoneBohm(1/160, 1/16),
-    # transition 0.1 L. Only TwoZoneBohm is accepted so that a case can't silently switch model family.
+    # transition 0.1 L. Only the families listed here are accepted, so a case can't silently switch model family.
     if haskey(c, :transport)
         tr = c.transport
-        tr.model == "TwoZoneBohm" || error("case $(c.id): transport.model must be TwoZoneBohm, got $(tr.model)")
-        kw[:anom_model] = het.TwoZoneBohm(tr.c1, tr.c2)
-        kw[:transition_length] = tr.transition_length_m
+        if tr.model == "TwoZoneBohm"
+            kw[:anom_model] = het.TwoZoneBohm(tr.c1, tr.c2)
+            kw[:transition_length] = tr.transition_length_m
+        elseif tr.model == "ScaledGaussianBohm"      # c(z) = anom_scale (1 - barrier_scale exp(-((z - center L)/(width L))^2 / 2))
+            kw[:anom_model] = het.ScaledGaussianBohm(tr.anom_scale, tr.barrier_scale, tr.width, tr.center)
+        else
+            error("case $(c.id): unsupported transport.model $(tr.model)")
+        end
     end
     ingest = mode == "facility"
     ingest && !haskey(c, :background_pressure_Torr) && error("case $(c.id): facility mode needs background_pressure_Torr")

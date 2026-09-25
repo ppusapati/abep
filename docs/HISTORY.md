@@ -1197,3 +1197,27 @@ meta `ion_wall_losses` and a per-point `wall_life_trustworthy` = converged ∧ s
 fields present (so WallSheath, unshielded). `HallMap` returns it separately from performance `trustworthy`. It's true
 only if the map meta says `ion_wall_losses` is exactly `True` and every surrounding node is wall-life-trustworthy.
 Current P5 runs: `map_ready` true, `wall_life_trustworthy` false (`ion_wall_losses=false`).
+
+## Pre-registration: ScaledGaussianBohm identification and stopping rule (2026-09-25, committed before any SGB run)
+**Decision (project lead):** TwoZoneBohm is rejected for P5-Xe validation, and its grid won't be widened. The next test
+is a controlled transport-family test, with coil shape as a discrete hypothesis only.
+- **Hypotheses (6):** 3 registrations (L38-hist, L32-anode, L32-exit) × 2 historical coil shapes (Peterson 2001 1.6 kW
+  and 3.0 kW settings). B(z) is exactly as in `cases/p5_xenon.json` / `cases/p5_xenon_coil_sensitivity.json`, with no
+  rescaling or reshaping.
+- **Family:** HallThruster.jl `ScaledGaussianBohm`, c(z) = a·(1 − b·exp(−½((z − c·L)/(w·L))²)). The profile is fixed after
+  the first iterations.
+- **Grid:** a ∈ {1/32, 1/16, 1/8}, b ∈ {0.8, 0.9, 0.97}, c ∈ {0.9, 1.0, 1.1} L, w ∈ {0.1, 0.25} L. That's 54 combinations
+  × 6 × 3 = 972 runs.
+- **Defensible prior (flag):** a ≤ 1/16.
+- **Unchanged from the TwoZoneBohm protocol:** facility-mode calibration vs raw I_d and raw thrust, the objective,
+  leave-one-out over Xe1–Xe3, the vacuum-mode secondary check on selected fits, and logging of all failed runs.
+
+**Stopping rule.** If ScaledGaussianBohm fails, try only a 3-node MultiLogBohm with node locations fixed in advance and the
+three c values fitted. No StepTrough or 6–7-parameter profiles. If neither family simultaneously gives:
+- reasonable I_d,
+- reasonable thrust,
+- successful blind prediction, and
+- no deep relaxation/current-collapse regime,
+
+then stop calibrating against P5 and record **"published P5 information is insufficient to identify transport
+uniquely"**. That uncertainty is then carried into the Hall response model.
