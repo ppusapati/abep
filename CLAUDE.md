@@ -29,7 +29,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 |---|---|
 | 1 clean-install reproducibility | pass (frozen atmosphere; pinned deps; runs with pymsis absent) |
 | 2 grid-life consistency | pass (optimiser degeneracy flagged; perveance-window tests) |
-| 3 multi-point Hall validation | **FAIL** — P5-Xe: TwoZoneBohm can't produce the quiet regime under any geometry hypothesis (2026-09-25) |
+| 3 multi-point Hall validation | **FAIL** — v2 (2026-09-25): thrust reconciled via beam efficiency; no family passes blind I_d (best: SGB, Xe2 −15.6 % vs 15 %); P5 transport not uniquely identifiable |
 | 4 cross-family mission UQ | done but **conditional on gate 3** (all absolute Hall numbers withdrawn) |
 | 5 numerical convergence | pass |
 | 6 golden benchmarks | pass (near-zero `ledger_resid` compared with an absolute tolerance, 2026-09-25) |
@@ -49,11 +49,16 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
       registered, **from published sources only: no contact with authors or labs** (project decision 2026-09-25). Carry `L38-hist`, `L32-anode`, `L32-exit` as separate
       cases, rigid shifts only (`scripts/make_p5_xenon_cases.py`). At default transport all breathe and underpredict
       corrected I_d by 25–56 %; registration moves I_d ~30 %.
-   Identification run 2026-09-25 (`scripts/identify_p5_transport.py`, 783 runs, leave-one-out): with TwoZoneBohm in the
-      pre-registered bounds, NO geometry gives a quiet discharge. The mean-value fits are breathing solutions at the grid
-      edge (c₁ = 1/50, super-Bohm c₂). Geometry is not discriminated; no closure is frozen. Next step is a project
-      decision (see docs/HISTORY.md): transport family, coil-shape uncertainty, or other fixed physics.
-   b. Calibrate transport as parameter identification: ONE TwoZoneBohm set (c₁, c₂, transition length) for all Xe
+   Identification 2026-09-25 (`scripts/identify_p5_transport.py`, pre-registered grids, leave-one-out, all runs in
+      `hallthruster_bridge/identification/`): TwoZoneBohm (783 runs) rejected; ScaledGaussianBohm (972) and 3-node
+      MultiLogBohm (486) over 6 geometry × coil hypotheses. v2 (pre-registered, `scripts/rescore_p5_axial_thrust.py`,
+      vacuum mode primary, axial thrust = T_1D·√Ψ_b under two readings of Brabston Figs. 8/9): the thrust excess is explained
+      by beam divergence under both readings, but no family passes the pre-registered blind-I_d test. Stopping-rule
+      conclusion stands with corrected reason: **published P5 information is insufficient to identify transport uniquely**;
+      the limiting point is Xe2 (anomalous measured I_d). Best-supported region: ScaledGaussianBohm a = 1/16, b = 0.8,
+      c = 0.9 L, w = 0.25 L (L32-anode, 1.6 kW coils; blind I_d −2.8 / −15.6 / +0.9 %, thrust within 2σ, RMS 28–30 %).
+      No closure frozen; carry transport, geometry, coil and Ψ_b-reading uncertainty into the Hall response model.
+   b. (Superseded by the stopping rule unless reopened.) Calibrate transport as parameter identification: ONE TwoZoneBohm set (c₁, c₂, transition length) for all Xe
       points, fitted against I_d, thrust, anode and current efficiency and oscillation (RMS, peak-to-peak, frequency;
       the 50 % RMS flag is an internal diagnostic, not a criterion). Keep facility ingestion on. Hold one Xe point out as a
       blind test (more historical P5 Xe points if available).

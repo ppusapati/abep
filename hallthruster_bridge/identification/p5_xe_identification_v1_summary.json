@@ -1,5 +1,6 @@
 {
  "meta": {
+  "family": "twozone",
   "grid": {
    "c1": [
     0.001,
@@ -23,9 +24,18 @@
    ]
   },
   "hypotheses": {
-   "H1": "L38-hist",
-   "H2": "L32-anode",
-   "H3": "L32-exit"
+   "H1": [
+    "L38-hist",
+    "1p6kW"
+   ],
+   "H2": [
+    "L32-anode",
+    "1p6kW"
+   ],
+   "H3": [
+    "L32-exit",
+    "1p6kW"
+   ]
   },
   "objective": "mean over calibration points of (dI/I)^2 + (dT/T)^2",
   "calibration_mode": "facility (ingestion ON) vs raw I_d and raw thrust",
@@ -36,6 +46,7 @@
  "summary": {
   "H1": {
    "registration": "L38-hist",
+   "coil": "1p6kW",
    "rounds": [
     {
      "holdout": "Xe1",
@@ -63,7 +74,7 @@
      "hold_T_err_sigma": 1.73640296905875,
      "hold_rms": 2.199092808237133,
      "hold_f_kHz": 12.986999999999998,
-     "defensible_c1_le_c2_le_bohm": false,
+     "defensible": false,
      "at_grid_edge": [
       "c1",
       "lt_frac"
@@ -117,7 +128,7 @@
      "hold_T_err_sigma": -1.3928061935080234,
      "hold_rms": 2.2917269529085154,
      "hold_f_kHz": 14.984999999999996,
-     "defensible_c1_le_c2_le_bohm": false,
+     "defensible": false,
      "at_grid_edge": [
       "c1",
       "c2",
@@ -172,7 +183,7 @@
      "hold_T_err_sigma": 2.7283413811563326,
      "hold_rms": 2.290843410821534,
      "hold_f_kHz": 6.9929999999999986,
-     "defensible_c1_le_c2_le_bohm": false,
+     "defensible": false,
      "at_grid_edge": [
       "c1",
       "lt_frac"
@@ -205,6 +216,7 @@
   },
   "H2": {
    "registration": "L32-anode",
+   "coil": "1p6kW",
    "rounds": [
     {
      "holdout": "Xe1",
@@ -232,7 +244,7 @@
      "hold_T_err_sigma": 0.25547168397620307,
      "hold_rms": 2.251769775171854,
      "hold_f_kHz": 6.9929999999999986,
-     "defensible_c1_le_c2_le_bohm": false,
+     "defensible": false,
      "at_grid_edge": [
       "c1",
       "lt_frac"
@@ -286,7 +298,7 @@
      "hold_T_err_sigma": -0.23593460291542448,
      "hold_rms": 2.333243477506934,
      "hold_f_kHz": 6.9929999999999986,
-     "defensible_c1_le_c2_le_bohm": false,
+     "defensible": false,
      "at_grid_edge": [
       "c1",
       "lt_frac"
@@ -340,7 +352,7 @@
      "hold_T_err_sigma": -0.0003187436103918017,
      "hold_rms": 2.3699168534598463,
      "hold_f_kHz": 6.9929999999999986,
-     "defensible_c1_le_c2_le_bohm": false,
+     "defensible": false,
      "at_grid_edge": [
       "c1",
       "lt_frac"
@@ -373,6 +385,7 @@
   },
   "H3": {
    "registration": "L32-exit",
+   "coil": "1p6kW",
    "rounds": [
     {
      "holdout": "Xe1",
@@ -400,7 +413,7 @@
      "hold_T_err_sigma": 0.10326056659905351,
      "hold_rms": 1.342135527966462,
      "hold_f_kHz": 10.988999999999999,
-     "defensible_c1_le_c2_le_bohm": false,
+     "defensible": false,
      "at_grid_edge": [
       "c1",
       "c2",
@@ -455,7 +468,7 @@
      "hold_T_err_sigma": -0.4407320345926862,
      "hold_rms": 1.5210141768746213,
      "hold_f_kHz": 10.988999999999999,
-     "defensible_c1_le_c2_le_bohm": false,
+     "defensible": false,
      "at_grid_edge": [
       "c1",
       "c2"
@@ -509,7 +522,7 @@
      "hold_T_err_sigma": -0.2848230503427139,
      "hold_rms": 1.3724893202098778,
      "hold_f_kHz": 10.988999999999999,
-     "defensible_c1_le_c2_le_bohm": false,
+     "defensible": false,
      "at_grid_edge": [
       "c1",
       "c2",
