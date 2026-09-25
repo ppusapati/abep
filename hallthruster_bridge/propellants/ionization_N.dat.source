@@ -1,0 +1,1 @@
+e + N(4S) -> N+ + 2e. Cross section: Kim & Desclaux, Phys. Rev. A 66, 012708 (2002), BEB total, ground state 4S, via NIST SRD 107 (https://physics.nist.gov/cgi-bin/Ionization/merge.php?file=NI--&mode=ASCII). Maxwellian-integrated by abep_sim/rate_tables.py (scripts/build_n_ionization_table.py). Energy column = mean electron energy 3/2 Te.

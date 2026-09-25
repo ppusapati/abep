@@ -636,3 +636,20 @@ def test_hall_map_schema_v1_shared_by_producer_and_consumer(tmp_path):
     p.write_text(json.dumps({"meta": {"pinned": ""}, "axes": {}, "fields": {}}))
     with pytest.raises(ValueError, match="hall_map_schema_v1"):
         HallMap(str(p))
+
+
+def test_n_ionization_rate_table_structure():
+    """ionization_N.dat (Kim & Desclaux BEB via NIST, scripts/build_n_ionization_table.py): HallThruster.jl format,
+    N(4S) threshold, zero at zero energy, non-negative and rising over the Hall range, below N2 (smaller cross section)."""
+    import os, numpy as np
+    d = os.path.join(os.path.dirname(os.path.dirname(__file__)), "hallthruster_bridge", "propellants")
+    lines = open(os.path.join(d, "ionization_N.dat")).read().splitlines()
+    assert lines[0] == "Ionization energy (eV): 14.534"
+    a = np.loadtxt(os.path.join(d, "ionization_N.dat"), skiprows=2)
+    b = np.loadtxt(os.path.join(d, "ionization_N2_N2+.dat"), skiprows=2)
+    assert a[0, 1] == 0.0 and (a[:, 1] >= 0).all() and a[-1, 0] >= 255
+    m = a[:, 0] <= 150
+    assert (np.diff(a[m, 1]) > 0).all()
+    r = np.interp([15, 30, 60, 150], a[:, 0], a[:, 1]) / np.interp([15, 30, 60, 150], b[:, 0], b[:, 1])
+    assert ((r > 0.6) & (r < 0.9)).all()
+    assert "Kim & Desclaux" in open(os.path.join(d, "ionization_N.dat.source")).read()
