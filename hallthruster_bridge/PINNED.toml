@@ -8,6 +8,8 @@ licence = "MIT"
 molecular_support = "propellant_config TOML; electron-impact dissociation / ionization / dissociative ionization (docs/src/howto/new_propellant.md)"
 defaults_used = "anom_model TwoZoneBohm(1/160, 1/16); wall_loss_model WallSheath(BNSiO2, 1.0)"
 
+upgrade_policy = "An upstream release (including a fix for the background_pressure_Torr units issue, upstream/ingestion_units_issue.md) never moves this pin automatically. Treat any upgrade as a physics-model change: bump the pin on a branch, rerun the P5 validation cases (both comparison modes), compare with the logged v0.23.1 results, record the differences in docs/HISTORY.md, and only then accept. Drop the 133.322 factor in run_cases.jl only if the new version converts Torr itself."
+
 [julia]
 minimum = "1.10"
 install = "https://julialang.org/downloads  (tested with 1.11.7 from julialang-s3.julialang.org, 2026-09-25)"
