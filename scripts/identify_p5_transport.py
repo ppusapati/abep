@@ -20,10 +20,12 @@ Families (pre-registered grids below; `--family`):
 - sgb (ScaledGaussianBohm, v1): six hypotheses = 3 registrations x 2 historical coil shapes (Peterson 2001 1.6 kW and
   3.0 kW settings), B(z) otherwise exactly as in the case files. Free: anom_scale, barrier_scale, center, width.
   Defensible prior (flag): anom_scale <= 1/16 (peak transport at most Bohm).
+- mlb (3-node MultiLogBohm, v1, only if sgb fails): nodes fixed at 0.5 L, 1.0 L, 1.5 L; only the three c values vary.
+  Defensible prior (flag): all c <= 1/16. Same six hypotheses.
 Stopping rule (pre-registered): if neither ScaledGaussianBohm nor a 3-node MultiLogBohm with fixed node locations gives
 reasonable I_d and thrust, successful blind prediction AND no deep relaxation/current-collapse regime, stop calibrating
 against P5: published P5 information is insufficient to identify transport uniquely.
-Usage: python scripts/identify_p5_transport.py [run|analyse] [--family twozone|sgb] [--workers 4]
+Usage: python scripts/identify_p5_transport.py [run|analyse] [--family twozone|sgb|mlb] [--workers 4]
 """
 import csv, itertools, json, math, os, subprocess, sys
 
@@ -41,6 +43,12 @@ GRID_SGB = {                              # ScaledGaussianBohm v1, pre-registere
     "center": [0.9, 1.0, 1.1],            # trough centre, channel lengths
     "width": [0.1, 0.25],                 # trough standard deviation, channel lengths
 }
+GRID_MLB = {                              # 3-node MultiLogBohm, pre-registered 2026-09-25 before any SGB result was seen
+    "c_up": [1 / 160, 1 / 64, 1 / 25],    # node at 0.5 L (upstream channel)
+    "c_exit": [1 / 800, 1 / 300, 1 / 100],  # node at 1.0 L (exit plane)
+    "c_plume": [1 / 32, 1 / 16, 1 / 8],   # node at 1.5 L (near plume); c constant beyond the end nodes
+}
+MLB_NODES_L = (0.5, 1.0, 1.5)
 HYPOTHESES = {"H1": "L38-hist", "H2": "L32-anode", "H3": "L32-exit"}
 COIL_FILES = {"1p6kW": "p5_xenon.json", "3p0kW": "p5_xenon_coil_sensitivity.json"}
 POINTS = ["Xe1", "Xe2", "Xe3"]
@@ -59,35 +67,43 @@ def combos(family="twozone"):
         for c1, c2, f in itertools.product(GRID["c1"], GRID["c2"], GRID["lt_frac"]):
             if c1 <= c2:
                 yield c1, c2, f
-    else:
+    elif family == "sgb":
         yield from itertools.product(*GRID_SGB.values())
+    else:
+        yield from itertools.product(*GRID_MLB.values())
 
 
 def combo_id(*p, family="twozone"):
     if family == "twozone":
         c1, c2, f = p
         return f"c1=1/{round(1 / c1)}_c2=1/{round(1 / c2)}_lt={f:g}L"
-    a, b, c, w = p
-    return f"a=1/{round(1 / a)}_b={b:g}_c={c:g}L_w={w:g}L"
+    if family == "sgb":
+        a, b, c, w = p
+        return f"a=1/{round(1 / a)}_b={b:g}_c={c:g}L_w={w:g}L"
+    return "_".join(f"{k}=1/{round(1 / v)}" for k, v in zip(GRID_MLB, p))
 
 
 def transport(p, L, family):
     if family == "twozone":
         c1, c2, f = p
         return {"model": "TwoZoneBohm", "c1": c1, "c2": c2, "transition_length_m": f * L}
-    a, b, c, w = p
-    return {"model": "ScaledGaussianBohm", "anom_scale": a, "barrier_scale": b, "center": c, "width": w}
+    if family == "sgb":
+        a, b, c, w = p
+        return {"model": "ScaledGaussianBohm", "anom_scale": a, "barrier_scale": b, "center": c, "width": w}
+    return {"model": "MultiLogBohm", "zs_m": [f * L for f in MLB_NODES_L], "cs": list(p)}
 
 
 def defensible(p, family):
     if family == "twozone":
         c1, c2, _ = p
         return c1 <= c2 <= BOHM
-    return p[0] <= BOHM
+    if family == "sgb":
+        return p[0] <= BOHM
+    return max(p) <= BOHM
 
 
 def grid_of(family):
-    return GRID if family == "twozone" else GRID_SGB
+    return {"twozone": GRID, "sgb": GRID_SGB, "mlb": GRID_MLB}[family]
 
 
 def tag_of(family):

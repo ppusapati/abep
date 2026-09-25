@@ -1221,3 +1221,8 @@ three c values fitted. No StepTrough or 6–7-parameter profiles. If neither fam
 
 then stop calibrating against P5 and record **"published P5 information is insufficient to identify transport
 uniquely"**. That uncertainty is then carried into the Hall response model.
+
+**Pre-registration addendum (before any SGB result):** the fallback 3-node MultiLogBohm has nodes fixed at 0.5 L, 1.0 L
+and 1.5 L (scaled to each hypothesis's channel length), with c constant beyond the end nodes. Grid: c_up ∈ {1/160, 1/64,
+1/25}, c_exit ∈ {1/800, 1/300, 1/100}, c_plume ∈ {1/32, 1/16, 1/8}, giving 27 combinations × 6 hypotheses × 3 points =
+486 runs. Defensible flag: all c ≤ 1/16. It runs only if ScaledGaussianBohm fails the criteria.

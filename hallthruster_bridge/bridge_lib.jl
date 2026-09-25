@@ -138,6 +138,8 @@ function run_case(c, mode)
             kw[:transition_length] = tr.transition_length_m
         elseif tr.model == "ScaledGaussianBohm"      # c(z) = anom_scale (1 - barrier_scale exp(-((z - center L)/(width L))^2 / 2))
             kw[:anom_model] = het.ScaledGaussianBohm(tr.anom_scale, tr.barrier_scale, tr.width, tr.center)
+        elseif tr.model == "MultiLogBohm"            # nodes in metres; log-linear c(z) between nodes, constant outside
+            kw[:anom_model] = het.MultiLogBohm(collect(Float64, tr.zs_m), collect(Float64, tr.cs))
         else
             error("case $(c.id): unsupported transport.model $(tr.model)")
         end
