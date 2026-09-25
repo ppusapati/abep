@@ -1107,3 +1107,7 @@ but its redistribution policy doesn't authorise third parties (commercial intere
 data, and commercial inclusion needs the database owner's written permission. It also requires the user to accept terms
 on download. Not used, pending a decision by the project. Values from memory are not used (rule 6). The driver still
 refuses the N₂ cases, now naming these three files.
+
+**Project decision (2026-09-25): no outreach.** No emails or other contact with authors or labs, HPEPL included. The P5 geometry
+questions above stay open items, to be resolved only from published sources. The three registration hypotheses (`L38-hist`,
+`L32-anode`, `L32-exit`) are carried until published evidence settles them.
