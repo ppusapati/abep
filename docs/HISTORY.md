@@ -1093,8 +1093,12 @@ NIST table and doesn't commit it, because NIST SRD data are copyrighted. Checks:
   larger near threshold). Kim & Desclaux use an open-shell treatment not re-implemented here, so the published values are
   used as-is.
 
-The table stays in `hallthruster_bridge/propellants/`, not `abep_sim/data/rates/`, which `plasma_chem` loads automatically.
-Goldens are unchanged.
+The table lives in `hallthruster_bridge/propellants/` and is used only by HallThruster.jl. *(Wording corrected
+2026-09-25: an earlier version said `plasma_chem` loads `abep_sim/data/rates/` automatically. It doesn't. It loads a single
+hard-coded entry, `("N2", "iz") → rates/ionization_N2_N2+.dat`, and never reads `hallthruster_bridge/propellants/`.)*
+**The HallThruster.jl and Python 0-D chemistry databases aren't unified:** the 0-D model still uses its Arrhenius fit for
+N ionization. That fit gives 3.12×10⁻¹⁵ m³/s at T_e = 10 eV vs 6.38×10⁻¹⁵ m³/s from this table, i.e. **~2× low**, like the
+earlier N₂ finding (next-work item 6). Goldens are unchanged because nothing in the 0-D path changed.
 
 **Blocked: `dissociation_N2.dat`, `excitation_N2.dat`, `elastic_N.dat`.** The primary evaluations (Itikawa, JPCRD 35, 31
 (2006); Song et al., JPCRD 52, 023104 (2023); Cosby, JCP 98, 9544 (1993); Wang, Zatsarinny & Bartschat, PRA 89, 062714

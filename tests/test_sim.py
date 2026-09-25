@@ -653,3 +653,11 @@ def test_n_ionization_rate_table_structure():
     r = np.interp([15, 30, 60, 150], a[:, 0], a[:, 1]) / np.interp([15, 30, 60, 150], b[:, 0], b[:, 1])
     assert ((r > 0.6) & (r < 0.9)).all()
     assert "Kim & Desclaux" in open(os.path.join(d, "ionization_N.dat.source")).read()
+
+
+def test_bridge_and_0d_chemistry_are_not_unified():
+    """HallThruster.jl tables in hallthruster_bridge/propellants/ are NOT read by the 0-D plasma_chem model. If this
+    fails, the databases were unified: that is a model change (goldens, HISTORY), so update this test deliberately."""
+    from abep_sim.plasma_chem import CHEM_PROVENANCE, RATE_TABLES
+    assert set(RATE_TABLES) == {("N2", "iz")}
+    assert all("propellants" not in v for v in CHEM_PROVENANCE.values())

@@ -58,7 +58,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    runs both per case and prints them side by side.
    File the HallThruster.jl ingestion-units issue (`hallthruster_bridge/upstream/`, drafted; needs filing by a human).
    Never move the HallThruster.jl pin automatically; an upgrade is a model change (`PINNED.toml` upgrade_policy).
-2. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited cross sections. Done: N ionisation
+2. N₂/N reaction set **v0.1: partial**. Add one provenance-backed table per commit. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited cross sections. Done: N ionisation
    (`ionization_N.dat`, Kim & Desclaux 2002 via NIST, `scripts/build_n_ionization_table.py`). Blocked on source access:
    N₂ dissociation (Cosby 1993 / Itikawa 2006), N₂ excitation, N elastic. LXCat's redistribution policy restricts
    commercial use, so the source choice is the project's decision (`hallthruster_bridge/propellants/PROVENANCE.md`).
@@ -72,7 +72,9 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    Then generate frozen Hall maps (all fields in `hall_map.REQUIRED_FIELDS`), wire `archengine` Hall branch to `HallMap`,
    rerun the architecture trade and gate-4 UQ.
 6. Replace the remaining unverified Arrhenius rates (O, O₂, N ionisation; dissociation; excitation) in `plasma_chem.py`
-   with cross-section tables — the N₂ fit was off by ~3×, expect similar errors elsewhere.
+   with cross-section tables. The N₂ fit was off by ~3× and the N fit is ~2× below `ionization_N.dat` at T_e = 10 eV.
+   The HallThruster.jl tables (`hallthruster_bridge/propellants/`) and the 0-D chemistry are **not unified**; wiring a
+   table into `plasma_chem` is a model change (goldens move, log it).
 
 ## Key modules
 `atmosphere.py` (frozen NRLMSIS), `intake.py`/`intake_tpmc.py` (TPMC ROM, Maxwell + CLL), `compressor.py`, `reservoir.py`,
