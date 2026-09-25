@@ -44,7 +44,9 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 
 ## Next work (in order)
 1. P5 on **xenon** in HallThruster.jl (`cases/p5_xenon.json`, Brabston et al. JPP 2025 Table 4) — tests geometry, field,
-   settings with no molecular chemistry. The Julia driver is untested; fix it against the real API first.
+   settings with no molecular chemistry. Driver now runs against the real v0.23.1 API (2026-09-25); untuned I_d errors
+   −13.1 / −20.4 / −4.1 % (Xe1–3), grid/time converged. Measured I_d is non-monotonic in V_d at fixed ṁ — check what
+   else varies in Table 4 and get measured B(z) before tuning anything (see docs/HISTORY.md).
 2. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited LXCat cross sections: N ionisation, N₂
    dissociation (Cosby 1993 / Itikawa 2006), N₂ excitation, N elastic.
 3. P5 on N₂ (`cases/p5_n2.json`, Table 2) and ECHT on N₂ (`cases/echt_n2.json`) with ONE transport parameter set.

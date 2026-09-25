@@ -10,7 +10,7 @@ defaults_used = "anom_model TwoZoneBohm(1/160, 1/16); wall_loss_model WallSheath
 
 [julia]
 minimum = "1.10"
-install = "https://julialang.org/downloads  (sandbox: julialang-s3.julialang.org is not on the network allow-list)"
+install = "https://julialang.org/downloads  (tested with 1.11.7 from julialang-s3.julialang.org, 2026-09-25)"
 
 [reaction_set]
 version = "abep-n2n-0.1"
