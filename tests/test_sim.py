@@ -602,3 +602,16 @@ def test_v17_hall_map_loader_enforces_pin_schema_and_bounds(tmp_path):
     p2 = tmp_path / "b.json"; p2.write_text(json.dumps(bad))
     with pytest.raises(ValueError):
         HallMap(str(p2))
+
+
+def test_golden_comparator_near_zero_tolerance():
+    """ledger_resid gets an absolute tolerance (round-off vs a stored 0.0); every other key stays relative-only."""
+    from abep_sim.golden import _compare
+    errs = []
+    _compare({"ledger_resid": 0.0}, {"ledger_resid": 1.8e-16}, "c", 1e-6, errs)
+    assert not errs
+    _compare({"ledger_resid": 0.0}, {"ledger_resid": 1e-9}, "c", 1e-6, errs)
+    assert len(errs) == 1
+    errs = []
+    _compare({"rho": 0.0}, {"rho": 1.8e-16}, "c", 1e-6, errs)   # not in ATOL: still caught
+    assert len(errs) == 1

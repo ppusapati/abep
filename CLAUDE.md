@@ -32,7 +32,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 | 3 multi-point Hall validation | **FAIL** — 0-D Hall model superseded; HallThruster.jl validation ladder not yet run |
 | 4 cross-family mission UQ | done but **conditional on gate 3** (all absolute Hall numbers withdrawn) |
 | 5 numerical convergence | pass |
-| 6 golden benchmarks | pass |
+| 6 golden benchmarks | pass (near-zero `ledger_resid` compared with an absolute tolerance, 2026-09-25) |
 
 ## Superseded / withdrawn (do not quote)
 - All absolute Hall results from the 0-D closure (v1.2–v1.6): ABEP thrust, 2.5 kW closure, 110–120 kg, ECR+Hall
@@ -44,15 +44,20 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 
 ## Next work (in order)
 1. P5 on **xenon** in HallThruster.jl (`cases/p5_xenon.json`, Brabston et al. JPP 2025 Table 4) — tests geometry, field,
-   settings with no molecular chemistry. Driver now runs against the real v0.23.1 API (2026-09-25); untuned I_d errors
-   −13.1 / −20.4 / −4.1 % (Xe1–3), grid/time converged. Measured I_d is non-monotonic in V_d at fixed ṁ — check what
-   else varies in Table 4 and get measured B(z) before tuning anything (see docs/HISTORY.md).
+   settings with no molecular chemistry. Rerun 2026-09-25 with measured B(z) (Peterson 2001, scaled to Table 4) and
+   Eq. (13) facility ingestion: default TwoZoneBohm puts P5-Xe into a deep breathing mode (I_d RMS > 100 %, not a
+   validation point). The earlier −13/−20/−4 % agreement came from the placeholder B. Next: decide the anomalous-transport
+   treatment (step 8 of the plan); verify the 38 vs 32 mm anode offset in the field map. See docs/HISTORY.md.
 2. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited LXCat cross sections: N ionisation, N₂
    dissociation (Cosby 1993 / Itikawa 2006), N₂ excitation, N elastic.
 3. P5 on N₂ (`cases/p5_n2.json`, Table 2) and ECHT on N₂ (`cases/echt_n2.json`) with ONE transport parameter set.
-   Missing inputs: measured B(z) for P5 and ECHT (currently Gaussian placeholders), ECHT B_max and per-point data.
+   Blocked by the driver until every rate file in `propellants/n2_n.toml` exists. P5 B(z) shape is now available
+   (`hallthruster_bridge/bfield/`, Peterson 2001; N₂ setpoints use 130 G). Still missing: ECHT B(z), B_max, per-point data.
 4. Only if 1–3 succeed: O₂/O chemistry, then intake-delivered mixtures.
-5. Generate frozen Hall maps (all fields in `hall_map.REQUIRED_FIELDS`), wire `archengine` Hall branch to `HallMap`,
+5. First define one versioned interchange schema (`hall_map_schema_v1`) that both `run_cases.jl` and `hall_map.py`
+   validate against. Names don't match yet (driver `ion_current` vs `ion_current_A`; the driver lacks wall ion
+   flux/energy, atomic-ion fraction, `sustained`). Never fill missing fields with placeholders.
+   Then generate frozen Hall maps (all fields in `hall_map.REQUIRED_FIELDS`), wire `archengine` Hall branch to `HallMap`,
    rerun the architecture trade and gate-4 UQ.
 6. Replace the remaining unverified Arrhenius rates (O, O₂, N ionisation; dissociation; excitation) in `plasma_chem.py`
    with cross-section tables — the N₂ fit was off by ~3×, expect similar errors elsewhere.

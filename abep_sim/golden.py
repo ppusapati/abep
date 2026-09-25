@@ -140,6 +140,12 @@ def generate() -> dict:
     return data
 
 
+# Absolute tolerances for quantities whose reference value is (near) zero by construction, keyed by the final path
+# element. A relative check against a stored 0.0 turns floating-point noise into an infinite change. Kept per-key
+# (not global) because the golden set also holds legitimately tiny values (e.g. atmospheric densities).
+ATOL = {"ledger_resid": 1e-12}   # relative energy-ledger residual; gate is < 2 %, so 1e-12 is pure round-off
+
+
 def _compare(ref, new, path, rtol, errs):
     if isinstance(ref, dict):
         for k in ref:
@@ -147,7 +153,8 @@ def _compare(ref, new, path, rtol, errs):
                 errs.append(f"{path}/{k}: missing"); continue
             _compare(ref[k], new[k], f"{path}/{k}", rtol, errs)
     elif isinstance(ref, float) and isinstance(new, float):
-        if not (math.isclose(ref, new, rel_tol=rtol, abs_tol=1e-30) or (math.isnan(ref) and math.isnan(new))):
+        atol = ATOL.get(path.rsplit("/", 1)[-1], 1e-30)
+        if not (math.isclose(ref, new, rel_tol=rtol, abs_tol=atol) or (math.isnan(ref) and math.isnan(new))):
             errs.append(f"{path}: {ref!r} -> {new!r} ({(new / ref - 1) if ref else float('inf'):+.2e})")
     elif ref != new:
         errs.append(f"{path}: {ref!r} -> {new!r}")
