@@ -23,6 +23,11 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 8. **No new propulsion families** until the physics baseline is frozen. Stabilise, don't expand.
 9. Tests: `python -m pytest -q tests`. Expected: all pass, 5 skipped (superseded 0-D Hall calibration — do not "fix" them by
    re-tuning), 1 strict xfail (`test_v16_blind_validation_p5_nitrogen`, gate 3 — must turn green only via the new Hall solver).
+10. **Published data are evidence, not immutable truth** (docs/EVIDENCE.md). Preserve reported values and provenance, but
+   distinguish measured, digitized, inferred, reconstructed, model-derived and assumed quantities. Each input carries
+   source, uncertainty, applicability domain and validation status. Don't tune the simulator merely to force agreement
+   with literature. Hardware validation supersedes literature-derived assumptions within the hardware's validated
+   operating domain.
 
 ## Gate status (freeze criteria for "ABEP Physics Baseline 1.0")
 | gate | status |
