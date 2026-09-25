@@ -915,7 +915,73 @@ Gaussian placeholder B(z), 5 mg/s, 200 cells, 2 ms, averaged over 1–2 ms). All
 
 Grid 400 cells and duration 4 ms change I_d by < 0.2 %, so resolution does not explain the errors. The simulated I_d rises
 monotonically with V_d (I_i ≈ 3.6 A, near full utilisation of 5 mg/s). The case-file "measured" I_d (= P_d/V_d) is
-non-monotonic (8.59 A at 250 V, 7.40 A at 274 V) at the same ṁ and B. No single-parameter tune can fit that, so something
-else must vary between the Table 4 points (magnet setting, background pressure, or ṁ — **verify against Brabston 2025**).
+non-monotonic (8.59 A at 250 V, 7.40 A at 274 V). *Corrected 2026-09-25 (see next entry):* anode flow, cathode flow and peak
+magnetic field are documented as constant; facility background pressure varies substantially between Xe1–Xe3 and must be
+included or corrected before using Table 4 discharge current as a clean-vacuum validation target.
 Thrust is simulated 81.6–89.6 mN against the paper's 72.8–86.8 mN range. The per-point thrust mapping is not in the case
 file. Nothing has been tuned. Gate 3 is still FAIL.
+
+## P5 xenon rerun with measured B(z) and facility ingestion; harness fixes (2026-09-25)
+**Harness (no model change, no frozen data regenerated).**
+- `golden.py`: per-key absolute tolerance `ATOL = {"ledger_resid": 1e-12}`. The stored `ledger_resid` is 0.0, so the
+  relative check turned 1.8e-16 of round-off into an infinite change (gate 6 failed on a clean checkout). Every other key
+  keeps the 1e-6 relative check, because the set holds legitimately tiny values such as densities.
+  `golden_v1.json` is unchanged; `golden check` → OK. There's a regression test for the comparator.
+- `hallthruster_bridge/Manifest.toml` is now committed (removed from `.gitignore`), so the exact Julia dependency graph is
+  in the repo and the driver's pinned-rev check works on a fresh clone.
+- `run_cases.jl`: propellant-config and rate-directory paths now resolve from `@__DIR__`, not the launch directory. Any case
+  whose propellant TOML names a missing `rate_coeff_file` is refused before running. **P5-N₂ and ECHT-N₂ are therefore
+  blocked**: `dissociation_N2.dat`, `excitation_N2.dat`, `elastic_N.dat` and `ionization_N.dat` don't exist yet.
+
+**Table 4 (Brabston et al. JPP 2025, doi:10.2514/1.B39623, checked against the paper).** For Xe1–Xe3, anode Xe 5 mg/s,
+cathode Xe 0.44 mg/s and peak radial B 162.5 G (channel centre, exit plane) are constant. The coils were optimised at Xe3
+for minimum I_d and I_d oscillation, then held fixed. Chamber pressure varies: 4.49, 3.94, 3.28 ×10⁻⁵ Torr (Xe). With the
+paper's Eq. (13) (A_en = 488 cm², T₀ = 300 K) the entrained flow is 0.846 / 0.742 / 0.618 mg/s, i.e. 12–17 % of the
+anode flow. Eq. (14) with ζ_A = 1.0 gives vacuum-corrected I_d = 6.961 / 8.044 / 6.947 A (raw P_d/V_d: 7.582 / 8.590 /
+7.401 A). **The corrected I_d is still non-monotonic in V_d, so background pressure doesn't explain the Xe2 point.**
+
+**Ingestion in HallThruster.jl v0.23.1.** The ingested density is computed as m·P/(k_B·T) with P taken straight from
+`background_pressure_Torr`, with no Torr→Pa conversion (`src/utilities/utility_functions.jl`). It also uses the channel
+area (116 cm²), not an entrainment hemisphere. Verified numerically: the built-in flow is 0.00151 mg/s vs 0.201 mg/s from
+Eq. (13) with the channel area (×133.3). The driver passes P in Torr (correct for pressure-dependent anomalous models) and
+sets `neutral_ingestion_multiplier = 133.322·A_en/A_ch`. It asserts at run time that the resulting flow equals Eq. (13).
+The ingested flow enters at the anode boundary in the 1-D model; Eq. (13) is a plume-entrainment estimate.
+
+**Measured B(z).** Brabston gives no profile. Source: Peterson, Gallimore & Haas, AIAA 2001-3890 (P5 vacuum radial field,
+NIST-traceable Hall probe + B-dot, 300 V). Figs. 11 (1.6 kW coils, I_in = 2 A, I_out = 1 A) and 12 (3.0 kW coils, 3 A / 2 A)
+are vector plots, so the centreline traces are read from the PDF drawing commands (`scripts/digitize_p5_bfield.py` →
+`hallthruster_bridge/bfield/*.csv`). Axis check: the drawn pole mid-plane and exit-plane lines read 25.41 mm and 37.99 mm.
+The measured topology differs strongly from the placeholder: the peak is ~10 mm **upstream** of the exit (near the pole
+mid-plane), B(exit)/B(max) ≈ 0.88, B is ~50 % of the exit value only ~20 mm from the anode, and there's a long plume tail.
+The case file uses the 1.6 kW setting (closest power; Brabston's coil currents aren't published), aligns the exit planes,
+and scales B(exit, centreline) to 162.5 G, which gives a 186 G maximum. **VERIFY:** Peterson's exit plane is 38.0 mm from
+the anode face, but the channel length here (Brabston) is 32 mm, so the anode position in the field map is uncertain by 6 mm.
+HallThruster.jl holds B constant beyond the last measured point (88 mm in model coordinates; the domain is 100 mm).
+
+**Results** (default TwoZoneBohm(1/160, 1/16), WallSheath(BNSiO2, 1.0), 200 cells, 2 ms, averaged 1–2 ms; errors vs raw
+P_d/V_d when ingestion is modelled, vs Eq. (14)-corrected I_d when in vacuum; RMS is I_d RMS / mean):
+
+| B(z) | ingestion | Xe1 | Xe2 | Xe3 | I_d RMS |
+|---|---|---|---|---|---|
+| Gaussian placeholder | off (vs corrected) | −5.3 % | −15.0 % | +2.2 % | < 1 % |
+| Gaussian placeholder | on (vs raw) | +5.4 % | −6.0 % | +10.3 % | < 1 % |
+| measured 1.6 kW, B(exit) = 162.5 G | off | −83.3 % | −70.2 % | −55.8 % | 73–123 % |
+| measured 1.6 kW, B(exit) = 162.5 G | **on (canonical case file)** | −56.2 % | −56.1 % | −47.0 % | 108–119 % |
+| measured 1.6 kW, B(max) = 162.5 G | off | −55.4 % | −59.5 % | −42.1 % | 80–121 % |
+| measured 3.0 kW, B(exit) = 162.5 G | off | −65.4 % | −60.4 % | −49.3 % | 102–131 % |
+
+With the measured field and default transport, every run returns `retcode=success` but is in a deep relaxation
+oscillation. I_d swings between ~0.1–0.7 A and 11–17 A, and current utilisation is ≈ 1 (almost no electron current
+between bursts). It persists at 400 cells (RMS 65–79 %) and at 4 ms (RMS 106–115 %). The time-averaged I_d moves by up
+to 21 % between those runs, so **those averages aren't operating points and aren't validation comparisons**. The driver
+now reports `Id_min_A`, `Id_max_A` and `quasi_steady` (I_d RMS < 50 %; observed runs sit at < 1 % or > 65 %). The real
+thruster ran quietly (coils tuned for minimum oscillation).
+
+**Interpretation.** The earlier −13 / −20 / −4 % agreement came from the placeholder, which puts almost no field in the
+upstream channel (B at the anode ≈ 0). With the measured topology, strong inner-channel B throughout the default inner
+Bohm coefficient's zone suppresses cross-field electron transport, and the default coefficients drive the discharge into
+breathing. So the P5-Xe comparison with the default anomalous-transport coefficients isn't meaningful: the measured
+topology plus default TwoZoneBohm doesn't reproduce the quiet operating point. Plan step 8 (decide whether transport
+needs adjusting) is now reached; nothing has been tuned. Ingestion alone adds 1.1–1.4 A to the simulated quasi-steady I_d
+(Gaussian runs), about 2× the Eq. (14) correction of 0.45–0.62 A, because each ingested ion also brings electron current
+at ≈ 50 % current utilisation. Gate 3 is still FAIL.

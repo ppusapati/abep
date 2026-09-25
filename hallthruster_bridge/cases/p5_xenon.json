@@ -1,6 +1,6 @@
 {
- "source": "Brabston et al. JPP 2025 Table 4; B peak 162.5 G; ranges T 72.8-86.8 mN, Isp 1485-1770 s, eta 32.9-39.6 %",
- "assumptions": "B(z) Gaussian peaked at the exit plane (widths assumed; replace with measured profiles)",
+ "source": "Brabston et al., JPP 2025, doi:10.2514/1.B39623, Table 4 (anode Xe 5 mg/s, cathode Xe 0.44 mg/s, peak radial B 162.5 G at channel centre / exit plane, all constant across Xe1-Xe3; chamber pressure varies); Eq. (13)-(14) ingestion model (A_en = 488 cm2, T0 = 300 K, zeta_A = 1.0). B(z) shape: Peterson, Gallimore & Haas, AIAA 2001-3890, Fig. 11 centreline vacuum field",
+ "assumptions": "B(z) shape from the 1.6 kW coil setting of Peterson 2001 (Brabston coil currents not published), exit planes aligned (Peterson figure puts the exit plane 38.0 mm from the anode face vs 32 mm channel length here: VERIFY), scaled so B(exit, centreline) = 162.5 G. Measured Id_A = Pd/Vd (Table 4). Cathode flow not modelled (1-D domain). Ingestion enters at the anode boundary in HallThruster.jl, whereas Eq. (13) is a plume entrainment estimate.",
  "cases": [
   {
    "cells": 200,
@@ -12,17 +12,25 @@
    "r_out_m": 0.0865,
    "L_m": 0.032,
    "domain_m": 0.1,
-   "B_sigma_in_m": 0.012,
-   "B_sigma_out_m": 0.02,
    "id": "Xe1",
    "gas": "Xe",
    "Vd": 230.8,
    "mdot_kgps": 4.9999999999999996e-06,
-   "B_max_T": 0.01625,
    "measured": {
     "Pd_W": 1750.0,
     "Id_A": 7.582322357019064
-   }
+   },
+   "B_ref_T": 0.01625,
+   "B_profile": {
+    "file": "bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+    "z_exit_in_file_mm": 38.0,
+    "scale_to": "exit"
+   },
+   "model_facility_ingestion": true,
+   "background_pressure_Torr": 4.49e-05,
+   "background_temperature_K": 300.0,
+   "entrainment_area_m2": 0.0488,
+   "zeta_A": 1.0
   },
   {
    "cells": 200,
@@ -34,17 +42,25 @@
    "r_out_m": 0.0865,
    "L_m": 0.032,
    "domain_m": 0.1,
-   "B_sigma_in_m": 0.012,
-   "B_sigma_out_m": 0.02,
    "id": "Xe2",
    "gas": "Xe",
    "Vd": 250.3,
    "mdot_kgps": 4.9999999999999996e-06,
-   "B_max_T": 0.01625,
    "measured": {
     "Pd_W": 2150.0,
     "Id_A": 8.589692369157012
-   }
+   },
+   "B_ref_T": 0.01625,
+   "B_profile": {
+    "file": "bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+    "z_exit_in_file_mm": 38.0,
+    "scale_to": "exit"
+   },
+   "model_facility_ingestion": true,
+   "background_pressure_Torr": 3.94e-05,
+   "background_temperature_K": 300.0,
+   "entrainment_area_m2": 0.0488,
+   "zeta_A": 1.0
   },
   {
    "cells": 200,
@@ -56,17 +72,25 @@
    "r_out_m": 0.0865,
    "L_m": 0.032,
    "domain_m": 0.1,
-   "B_sigma_in_m": 0.012,
-   "B_sigma_out_m": 0.02,
    "id": "Xe3",
    "gas": "Xe",
    "Vd": 274.3,
    "mdot_kgps": 4.9999999999999996e-06,
-   "B_max_T": 0.01625,
    "measured": {
     "Pd_W": 2029.9999999999998,
     "Id_A": 7.400656215822091
-   }
+   },
+   "B_ref_T": 0.01625,
+   "B_profile": {
+    "file": "bfield/p5_vacuum_Br_centerline_1p6kW.csv",
+    "z_exit_in_file_mm": 38.0,
+    "scale_to": "exit"
+   },
+   "model_facility_ingestion": true,
+   "background_pressure_Torr": 3.28e-05,
+   "background_temperature_K": 300.0,
+   "entrainment_area_m2": 0.0488,
+   "zeta_A": 1.0
   }
  ]
 }
