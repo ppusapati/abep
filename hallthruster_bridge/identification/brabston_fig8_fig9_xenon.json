@@ -1,0 +1,45 @@
+{
+ "source": "Brabston et al., JPP 2025, doi:10.2514/1.B39623: Fig. 9 (global efficiencies, xenon: eta_E circles, Phi_P triangles, Psi_b squares, error bars from the paper's standard error propagation) and Fig. 8 (component- and thrust-calculated eta_T, xenon). Raster figures; digitized by colour/shape from the embedded images (page 11 image xref 115, page 10 image xref 56), axes calibrated from major ticks (residuals <= 0.0002 in Fig. 9, <= 0.0009 in Fig. 8). Fig. 8 thrust-calculated values reproduce T_corr^2/(2 mdot_a I_d,corr V_d) = 0.330/0.346/0.395 to <= 0.009.",
+ "points": {
+  "Xe1": {
+   "Psi_b_fig9": 0.6136,
+   "Psi_b_fig9_err": 0.071,
+   "eta_E_fig9": 0.4942,
+   "Phi_P_fig9": 0.8941,
+   "eta_T_component_fig8": 0.345,
+   "eta_T_thrust_fig8": 0.3322,
+   "axial_factor_A": 0.7833,
+   "axial_factor_B": 0.8836,
+   "axial_factor_rel_err": 0.0579,
+   "Psi_b_implied_B": 0.7808
+  },
+  "Xe2": {
+   "Psi_b_fig9": 0.601,
+   "Psi_b_fig9_err": 0.075,
+   "eta_E_fig9": 0.4473,
+   "Phi_P_fig9": 0.8674,
+   "eta_T_component_fig8": 0.3219,
+   "eta_T_thrust_fig8": 0.3367,
+   "axial_factor_A": 0.7752,
+   "axial_factor_B": 0.9109,
+   "axial_factor_rel_err": 0.0624,
+   "Psi_b_implied_B": 0.8297
+  },
+  "Xe3": {
+   "Psi_b_fig9": 0.6207,
+   "Psi_b_fig9_err": 0.073,
+   "eta_E_fig9": 0.5274,
+   "Phi_P_fig9": 0.8595,
+   "eta_T_component_fig8": 0.3775,
+   "eta_T_thrust_fig8": 0.3922,
+   "axial_factor_A": 0.7878,
+   "axial_factor_B": 0.9126,
+   "axial_factor_rel_err": 0.0588,
+   "Psi_b_implied_B": 0.8328
+  }
+ },
+ "readings": {
+  "A": "literal Eq. (4) with Fig. 9: axial thrust factor = sqrt(Psi_b as plotted)",
+  "B": "consistent with Fig. 8: Psi_b = eta_T,component(Fig. 8)/(eta_E Phi_P)(Fig. 9); axial factor = sqrt of that"
+ }
+}

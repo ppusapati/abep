@@ -25,7 +25,7 @@ Families (pre-registered grids below; `--family`):
 Stopping rule (pre-registered): if neither ScaledGaussianBohm nor a 3-node MultiLogBohm with fixed node locations gives
 reasonable I_d and thrust, successful blind prediction AND no deep relaxation/current-collapse regime, stop calibrating
 against P5: published P5 information is insufficient to identify transport uniquely.
-Usage: python scripts/identify_p5_transport.py [run|analyse] [--family twozone|sgb|mlb] [--workers 4]
+Usage: python scripts/identify_p5_transport.py [run|analyse] [--family twozone|sgb|mlb] [--calmode facility|vacuum] [--workers 4]
 """
 import csv, itertools, json, math, os, subprocess, sys
 
@@ -221,12 +221,18 @@ def main():
     mode = sys.argv[1] if len(sys.argv) > 1 else "run"
     workers = int(sys.argv[sys.argv.index("--workers") + 1]) if "--workers" in sys.argv else 4
     family = sys.argv[sys.argv.index("--family") + 1] if "--family" in sys.argv else "twozone"
+    calmode = sys.argv[sys.argv.index("--calmode") + 1] if "--calmode" in sys.argv else "facility"
     work = os.path.join(BRIDGE, "out", tag_of(family))
     if mode == "run":
-        run(jobs("facility", family=family), "facility", workers, work)
-    table = flat(load("facility", work), family)
+        run(jobs(calmode, family=family), calmode, workers, work)
+    table = flat(load(calmode, work), family)
     os.makedirs(RESULTS, exist_ok=True)
     pre = prefix_of(family)
+    if calmode == "vacuum":     # v2: full-grid vacuum-mode runs (ingestion OFF) for the matched vacuum comparison
+        with open(os.path.join(RESULTS, f"{pre}_vacuum_runs.csv"), "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=list(table[0])); w.writeheader(); w.writerows(table)
+        print(f"{len(table)} vacuum runs, {sum(1 for r in table if r['retcode'] != 'success')} failed")
+        return
     with open(os.path.join(RESULTS, f"{pre}_runs.csv"), "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(table[0])); w.writeheader(); w.writerows(table)
     summary = analyse(table, family)

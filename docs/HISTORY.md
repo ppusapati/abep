@@ -1296,3 +1296,52 @@ a single calibrated closure.
    it's the only identified item that could reopen P5 calibration. That would be a separate, pre-registered test.
 4. Xe2 is consistently the worst I_d point in every quiet solution. It's also the point whose measured I_d is anomalous
    even after the Eq. (14) correction.
+
+## Pre-registration v2: P5-Xe thrust-observable reconciliation (2026-09-25, committed before any v2 scoring or run)
+**Project decision:** the v1 stopping-rule conclusion is **suspended** (not deleted). The v1 records above stay unchanged
+for provenance. The v1 comparison scored the 1-D total ion momentum flux against a stand thrust that Brabston's own
+efficiency model treats as carrying an off-axis (beam-efficiency) loss. Interim status:
+- TwoZoneBohm: rejected for this validation (no quiet solution anywhere, independent of thrust).
+- 3-node MultiLogBohm: no demonstrated advantage.
+- ScaledGaussianBohm: **unresolved**, pending a divergence-consistent thrust comparison.
+
+**Measured beam efficiency: a discrepancy inside the paper.** Eq. (4) defines Ψ_b = ⟨cos θ⟩²_mv ≈ cos²θ_d, and Eq. (1a)
+gives η_T = η_E Φ_P Ψ_b with T = ṁ⟨v⟩⟨cos θ⟩, so the stand's axial thrust = total ion momentum × √Ψ_b. Digitized xenon
+values (`hallthruster_bridge/identification/brabston_fig8_fig9_xenon.json`; Fig. 9 axes residual ≤ 0.0002, Fig. 8 ≤ 0.0009):
+- **Fig. 9:** Ψ_b = 0.614 ± 0.071, 0.601 ± 0.075, 0.621 ± 0.073; η_E = 0.494 / 0.447 / 0.527; Φ_P = 0.894 / 0.867 / 0.860.
+- **Fig. 8:** component η_T = 0.345 / 0.322 / 0.378; thrust η_T = 0.332 / 0.337 / 0.392. The thrust values reproduce
+  T_corr²/(2ṁ_a I_d,corr V_d) = 0.330 / 0.346 / 0.395.
+- **The discrepancy:** η_E·Φ_P·Ψ_b(Fig. 9) = 0.271 / 0.233 / 0.281, i.e. **27–38 % below** the paper's own component
+  η_T (Fig. 8). The paper says the model matches η_T within 3.3 %. Fig. 8 is reproduced (0.346 / 0.301 / 0.357) only if
+  the efficiency factor is √(plotted Ψ_b) ≈ 0.78.
+
+Both readings are carried, and **neither may be chosen by fit quality**:
+- **A (literal Eq. 4 + Fig. 9):** axial factor f = √Ψ_b = 0.783 / 0.775 / 0.788 (θ_d ≈ 39°).
+- **B (consistent with Fig. 8):** Ψ_b = η_T,comp/(η_E Φ_P) = 0.781 / 0.830 / 0.833, so f = 0.884 / 0.911 / 0.913
+  (θ_d ≈ 25–28°).
+- **Uncertainty:** relative uncertainty of f from the Fig. 9 bars is 5.8–6.2 % (σ_Ψ/2Ψ), in both readings.
+- **Facility caveat:** Ψ_b was measured in the facility, where CEX "artificially increases the beam divergence"
+  (Brabston), and the same f is applied in both modes.
+
+**Rescoring** (`scripts/rescore_p5_axial_thrust.py`): T_axial,pred = T_1D·f(point). Nothing in the simulations changes.
+- **Vacuum mode is primary:** ingestion OFF vs I_d,corr (Eq. 14) and the published T_corr. This needs the ScaledGaussianBohm
+  and MultiLogBohm grids re-run with ingestion off (`identify_p5_transport.py run --family sgb|mlb --calmode vacuum`). Same
+  pre-registered grids, same families, no new exploration: the v1 grids were facility-mode only.
+- **Facility mode is the consistency check:** the existing runs vs raw I_d and raw thrust. Its thrust is less clean,
+  because HallThruster.jl injects the ingested flow at the anode, so it doesn't carry Brabston's ζ_en = 0.8 thrust discount.
+- **Thrust uncertainty:** σ_T = √(4.9² + (T_axial,pred·rel_err(f))²) mN.
+- **Objective:** as in v1, J = mean over calibration points of (ΔI/I)² + (ΔT/T)².
+- **Leave-one-out, two pre-registered selections:** (i) all grid points; (ii) points quiet (RMS < 50 %, internal
+  diagnostic) at the calibration points.
+
+**Pass criteria** (decision thresholds fixed now, before scoring), per family × hypothesis × reading × mode × selection,
+in **all three** rounds:
+- held-out |ΔI_d| ≤ 15 %;
+- held-out |ΔT| ≤ 2σ_T;
+- RMS < 50 % at all three points;
+- defensible parameters (ScaledGaussianBohm a ≤ 1/16; MultiLogBohm all c ≤ 1/16). "Passes except defensibility" is
+  reported separately.
+
+A verdict is stated only if it holds under both readings A and B; otherwise it's reported as reading-dependent.
+HallThruster.jl's plume model stays off, since `solve_plume` would add a model rather than convert an observable.
+The TwoZoneBohm rejection doesn't depend on thrust and isn't rescored.

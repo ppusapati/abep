@@ -29,7 +29,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 |---|---|
 | 1 clean-install reproducibility | pass (frozen atmosphere; pinned deps; runs with pymsis absent) |
 | 2 grid-life consistency | pass (optimiser degeneracy flagged; perveance-window tests) |
-| 3 multi-point Hall validation | **FAIL** — P5 transport not identifiable from published data (TwoZoneBohm, ScaledGaussianBohm, 3-node MultiLogBohm; stopping rule 2026-09-25) |
+| 3 multi-point Hall validation | **FAIL** — TwoZoneBohm rejected; ScaledGaussianBohm unresolved pending divergence-consistent thrust (v2, pre-registered 2026-09-25) |
 | 4 cross-family mission UQ | done but **conditional on gate 3** (all absolute Hall numbers withdrawn) |
 | 5 numerical convergence | pass |
 | 6 golden benchmarks | pass (near-zero `ledger_resid` compared with an absolute tolerance, 2026-09-25) |
@@ -51,10 +51,12 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
       corrected I_d by 25–56 %; registration moves I_d ~30 %.
    Identification 2026-09-25 (`scripts/identify_p5_transport.py`, pre-registered grids, leave-one-out, all runs in
       `hallthruster_bridge/identification/`): TwoZoneBohm (783 runs) rejected; ScaledGaussianBohm (972) and 3-node
-      MultiLogBohm (486) over 6 geometry × coil hypotheses also fail. **Stopping rule applied: published P5 information is
-      insufficient to identify transport uniquely.** No closure frozen; geometry and coil shape undiscriminated. Every
-      quiet solution overpredicts thrust by +2 to +4.5σ (untested candidate: no divergence correction in the 1-D thrust).
-      Reopening P5 calibration needs a new pre-registered test of that item.
+      MultiLogBohm (486) over 6 geometry × coil hypotheses scored against total ion momentum. The v1 stopping-rule
+      conclusion is **SUSPENDED**: the stand measures axial thrust (× √Ψ_b, Brabston Eqs. 1, 4). v2 (pre-registered,
+      `scripts/rescore_p5_axial_thrust.py`) rescores with measured beam efficiency under two readings of the paper (A
+      literal, f ≈ 0.78; B consistent with Fig. 8, f ≈ 0.89–0.91). Vacuum mode is primary. Status: TwoZoneBohm rejected;
+      MultiLogBohm no demonstrated advantage; ScaledGaussianBohm unresolved. The v1 commits stay unmerged and unrewritten
+      until v2 results are in; then merge the whole sequence.
    b. (Superseded by the stopping rule unless reopened.) Calibrate transport as parameter identification: ONE TwoZoneBohm set (c₁, c₂, transition length) for all Xe
       points, fitted against I_d, thrust, anode and current efficiency and oscillation (RMS, peak-to-peak, frequency;
       the 50 % RMS flag is an internal diagnostic, not a criterion). Keep facility ingestion on. Hold one Xe point out as a
