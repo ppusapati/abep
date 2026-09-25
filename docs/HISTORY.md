@@ -1416,3 +1416,17 @@ pass-except-defensibility outcome changes**:
 
 Regression tests: `test_rescore_loo_holdout_failure_is_a_blind_failure` and
 `test_rescore_same_combo_requires_actual_selections`. Both fail on the previous script and pass on the fix.
+
+## P5-Xe identification campaign closed (2026-09-25, project decision)
+After the corrective rescoring (ppusapati/abep#11), the campaign is closed. It reopens only on genuinely new published
+information: the 2025 channel depth, coil currents or measured B(z), per-point divergence, or discharge-current traces.
+Final state:
+- TwoZoneBohm rejected (no quiet regime anywhere).
+- 3-node MultiLogBohm shows no advantage; the corrected bookkeeping exposes genuine blind-run failures.
+- ScaledGaussianBohm shows that a near-exit transport trough at or below Bohm reproduces the quiet regime and, with the
+  beam-efficiency conversion, the thrust. The best set (a = 1/16, b = 0.8, c = 0.9 L, w = 0.25 L; L32-anode/1.6 kW; same in
+  every round under both Ψ_b readings) misses the pre-registered blind-I_d criterion only at Xe2 (−15.56 % vs 15 %).
+- Gate 3 stays FAIL and no closure is frozen.
+
+**Next phase:** a Hall uncertainty ensemble (ScaledGaussianBohm region × geometry × coil shape × Ψ_b reading), carried into
+Hall maps and the architecture trade. The N₂/N chemistry work continues in parallel.

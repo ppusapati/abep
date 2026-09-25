@@ -29,7 +29,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 |---|---|
 | 1 clean-install reproducibility | pass (frozen atmosphere; pinned deps; runs with pymsis absent) |
 | 2 grid-life consistency | pass (optimiser degeneracy flagged; perveance-window tests) |
-| 3 multi-point Hall validation | **FAIL** — v2 (2026-09-25): thrust reconciled via beam efficiency; no family passes blind I_d (best: SGB, Xe2 −15.6 % vs 15 %); P5 transport not uniquely identifiable |
+| 3 multi-point Hall validation | **FAIL** — P5-Xe campaign closed 2026-09-25: transport not uniquely identifiable (best SGB misses blind I_d at Xe2, −15.56 % vs 15 %); carry an uncertainty ensemble |
 | 4 cross-family mission UQ | done but **conditional on gate 3** (all absolute Hall numbers withdrawn) |
 | 5 numerical convergence | pass |
 | 6 golden benchmarks | pass (near-zero `ledger_resid` compared with an absolute tolerance, 2026-09-25) |
@@ -43,30 +43,20 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
   magnetic nozzles excluded by energy per particle even at the energy bound; RF/helicon pre-ionisers add nothing.
 
 ## Next work (in order)
-1. P5 on **xenon** in HallThruster.jl (`cases/p5_xenon.json`, Brabston et al. JPP 2025 Table 4). **Do not tune anomalous
-   transport yet** (project decision 2026-09-25); the Gaussian-B agreement is superseded. Order:
-   a. Resolve P5 geometry: 32 mm (Brabston 2025) vs 38 mm (Peterson 2001, Hofer 2004) channel, and how the 2001 B(z) is
-      registered, **from published sources only: no contact with authors or labs** (project decision 2026-09-25). Carry `L38-hist`, `L32-anode`, `L32-exit` as separate
-      cases, rigid shifts only (`scripts/make_p5_xenon_cases.py`). At default transport all breathe and underpredict
-      corrected I_d by 25–56 %; registration moves I_d ~30 %.
-   Identification 2026-09-25 (`scripts/identify_p5_transport.py`, pre-registered grids, leave-one-out, all runs in
-      `hallthruster_bridge/identification/`): TwoZoneBohm (783 runs) rejected; ScaledGaussianBohm (972) and 3-node
-      MultiLogBohm (486) over 6 geometry × coil hypotheses. v2 (pre-registered, `scripts/rescore_p5_axial_thrust.py`,
-      vacuum mode primary, axial thrust = T_1D·√Ψ_b under two readings of Brabston Figs. 8/9): the thrust excess is explained
-      by beam divergence under both readings, but no family passes the pre-registered blind-I_d test. Stopping-rule
-      conclusion stands with corrected reason: **published P5 information is insufficient to identify transport uniquely**;
-      the limiting point is Xe2 (anomalous measured I_d). Best-supported region: ScaledGaussianBohm a = 1/16, b = 0.8,
-      c = 0.9 L, w = 0.25 L (L32-anode, 1.6 kW coils; blind I_d −2.8 / −15.6 / +0.9 %, thrust within 2σ, RMS 28–30 %).
-      No closure frozen; carry transport, geometry, coil and Ψ_b-reading uncertainty into the Hall response model.
-   b. (Superseded by the stopping rule unless reopened.) Calibrate transport as parameter identification: ONE TwoZoneBohm set (c₁, c₂, transition length) for all Xe
-      points, fitted against I_d, thrust, anode and current efficiency and oscillation (RMS, peak-to-peak, frequency;
-      the 50 % RMS flag is an internal diagnostic, not a criterion). Keep facility ingestion on. Hold one Xe point out as a
-      blind test (more historical P5 Xe points if available).
-   c. Freeze the Xe transport closure before N₂; run P5-N₂ with it unchanged first.
-   Validation modes are never crossed: facility ingestion ON vs raw P_d/V_d, OFF vs Eq. (14)-corrected I_d. The driver
-   runs both per case and prints them side by side.
-   HallThruster.jl ingestion-units issue: drafted in `hallthruster_bridge/upstream/`, not filed; filing is the owner's call.
-   Never move the HallThruster.jl pin automatically; an upgrade is a model change (`PINNED.toml` upgrade_policy).
+1. **P5-Xe identification campaign: CLOSED** (project decision 2026-09-25). Reopen only if genuinely new published
+   information appears (e.g. the 2025 P5 channel depth, coil currents or measured B(z), per-point divergence or I_d traces).
+   Record: `hallthruster_bridge/identification/`, docs/HISTORY.md. TwoZoneBohm rejected (no quiet regime); 3-node
+   MultiLogBohm no advantage; ScaledGaussianBohm reproduces the quiet regime and thrust (via beam efficiency) but misses the
+   pre-registered blind-I_d test at Xe2 (−15.56 % vs 15 %). **P5 transport is not uniquely identifiable; no closure is frozen.**
+   Standing rules that still apply: published sources only, no contact with authors or labs; validation modes are never
+   crossed; never move the HallThruster.jl pin automatically (`PINNED.toml` upgrade_policy); the ingestion-units issue is
+   drafted in `hallthruster_bridge/upstream/`, and filing it is the owner's call.
+   **Next phase: formalize the Hall uncertainty ensemble** instead of a single closure. Its members are:
+   - the ScaledGaussianBohm transport region around a = 1/16, b = 0.8, c = 0.9 L, w = 0.25 L;
+   - the geometry hypotheses (L38-hist, L32-anode, L32-exit);
+   - the coil shapes (1.6 / 3.0 kW);
+   - the beam-efficiency reading (A/B).
+   Carry these as explicit discrete/continuous uncertainty into Hall maps and the architecture trade.
 2. N₂/N reaction set **v0.1: partial**. Add one provenance-backed table per commit. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited cross sections. Done: N ionisation
    (`ionization_N.dat`, Kim & Desclaux 2002 via NIST, `scripts/build_n_ionization_table.py`). Blocked on source access:
    N₂ dissociation (Cosby 1993 / Itikawa 2006), N₂ excitation, N elastic. LXCat's redistribution policy restricts
