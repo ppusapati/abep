@@ -682,3 +682,45 @@ def test_wall_life_trust_is_separate_from_performance_trust(tmp_path):
     assert make(False, [[1, 1], [1, 1]])["wall_life_trustworthy"] is False
     assert make(True, [[1, 1], [1, 0]])["wall_life_trustworthy"] is False
     assert make(True, [[1, 1], [1, 1]])["wall_life_trustworthy"] is True
+
+
+def _rescore_module():
+    import importlib.util, os
+    p = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scripts", "rescore_p5_axial_thrust.py")
+    spec = importlib.util.spec_from_file_location("rescore_p5_axial_thrust", p)
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    return m
+
+
+def _write_runs(path, rows):
+    import csv
+    fields = ["hypothesis", "combo", "point", "retcode", "Id_err_rel", "T_mN", "T_target_mN", "Id_rms_rel"]
+    with open(path, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=fields); w.writeheader(); w.writerows(rows)
+
+
+def test_rescore_loo_holdout_failure_is_a_blind_failure(tmp_path):
+    """A set that fits the calibration points best must be selected even if its held-out run failed, and that round must
+    be recorded as a failed blind prediction (dropping failed runs before selection leaks the holdout outcome)."""
+    m = _rescore_module()
+    good = dict(retcode="success", T_mN="100", T_target_mN="100", Id_rms_rel="0.1")
+    failed = dict(retcode="failure", T_mN="", T_target_mN="", Id_rms_rel="", Id_err_rel="")
+    rows = []
+    for p in ("Xe1", "Xe2", "Xe3"):          # 'best' fits every calibration point exactly but its Xe3 run failed
+        best = dict(failed) if p == "Xe3" else dict(good, Id_err_rel="0.0")
+        rows.append(dict(best, hypothesis="H", combo="a=1/16_b=0.8_c=1L_w=0.1L", point=p))
+        rows.append(dict(good, hypothesis="H", combo="a=1/32_b=0.8_c=1L_w=0.1L", point=p, Id_err_rel="0.05"))
+    f = tmp_path / "runs.csv"; _write_runs(f, rows)
+    sc = m.score(m.load(str(f)), {p: 1.0 for p in m.P}, {p: 0.0 for p in m.P})
+    r = {x["holdout"]: x for x in m.loo(sc, "sgb", "H", quiet_only=False)}
+    assert r["Xe3"]["combo"] == "a=1/16_b=0.8_c=1L_w=0.1L"      # selected on calibration points only
+    assert r["Xe3"]["hold_failed"] is True and r["Xe3"]["pass"] is False
+    assert r["Xe1"]["combo"] == "a=1/32_b=0.8_c=1L_w=0.1L"      # calibration includes the failed Xe3 -> ineligible
+
+
+def test_rescore_same_combo_requires_actual_selections():
+    """same_combo is False when no round selected anything ({None} has one element but is not 'the same set')."""
+    m = _rescore_module()
+    assert m.same_combo([{"combo": None}] * 3) is False
+    assert m.same_combo([{"combo": "x"}, {"combo": None}, {"combo": "x"}]) is False
+    assert m.same_combo([{"combo": "x"}] * 3) is True
