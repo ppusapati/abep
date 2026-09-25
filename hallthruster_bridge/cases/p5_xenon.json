@@ -36,9 +36,13 @@
    "dt_s": 5e-09,
    "duration_s": 0.002,
    "average_start_s": 0.001,
+   "zeta_en": 0.8,
    "measured": {
     "Pd_W": 1750.0,
-    "Id_A": 7.582322357019064
+    "Id_A": 7.582322357019064,
+    "T_corr_mN": 72.8,
+    "T_corr_source": "abstract",
+    "T_sigma_mN": 4.9
    }
   },
   {
@@ -74,9 +78,13 @@
    "dt_s": 5e-09,
    "duration_s": 0.002,
    "average_start_s": 0.001,
+   "zeta_en": 0.8,
    "measured": {
     "Pd_W": 2150.0,
-    "Id_A": 8.589692369157012
+    "Id_A": 8.589692369157012,
+    "T_corr_mN": 83.4,
+    "T_corr_source": "Fig. 5, digitized",
+    "T_sigma_mN": 4.9
    }
   },
   {
@@ -112,9 +120,13 @@
    "dt_s": 5e-09,
    "duration_s": 0.002,
    "average_start_s": 0.001,
+   "zeta_en": 0.8,
    "measured": {
     "Pd_W": 2030.0,
-    "Id_A": 7.400656215822092
+    "Id_A": 7.400656215822092,
+    "T_corr_mN": 86.8,
+    "T_corr_source": "abstract",
+    "T_sigma_mN": 4.9
    }
   },
   {
@@ -150,9 +162,13 @@
    "dt_s": 5e-09,
    "duration_s": 0.002,
    "average_start_s": 0.001,
+   "zeta_en": 0.8,
    "measured": {
     "Pd_W": 1750.0,
-    "Id_A": 7.582322357019064
+    "Id_A": 7.582322357019064,
+    "T_corr_mN": 72.8,
+    "T_corr_source": "abstract",
+    "T_sigma_mN": 4.9
    }
   },
   {
@@ -188,9 +204,13 @@
    "dt_s": 5e-09,
    "duration_s": 0.002,
    "average_start_s": 0.001,
+   "zeta_en": 0.8,
    "measured": {
     "Pd_W": 2150.0,
-    "Id_A": 8.589692369157012
+    "Id_A": 8.589692369157012,
+    "T_corr_mN": 83.4,
+    "T_corr_source": "Fig. 5, digitized",
+    "T_sigma_mN": 4.9
    }
   },
   {
@@ -226,9 +246,13 @@
    "dt_s": 5e-09,
    "duration_s": 0.002,
    "average_start_s": 0.001,
+   "zeta_en": 0.8,
    "measured": {
     "Pd_W": 2030.0,
-    "Id_A": 7.400656215822092
+    "Id_A": 7.400656215822092,
+    "T_corr_mN": 86.8,
+    "T_corr_source": "abstract",
+    "T_sigma_mN": 4.9
    }
   },
   {
@@ -264,9 +288,13 @@
    "dt_s": 5e-09,
    "duration_s": 0.002,
    "average_start_s": 0.001,
+   "zeta_en": 0.8,
    "measured": {
     "Pd_W": 1750.0,
-    "Id_A": 7.582322357019064
+    "Id_A": 7.582322357019064,
+    "T_corr_mN": 72.8,
+    "T_corr_source": "abstract",
+    "T_sigma_mN": 4.9
    }
   },
   {
@@ -302,9 +330,13 @@
    "dt_s": 5e-09,
    "duration_s": 0.002,
    "average_start_s": 0.001,
+   "zeta_en": 0.8,
    "measured": {
     "Pd_W": 2150.0,
-    "Id_A": 8.589692369157012
+    "Id_A": 8.589692369157012,
+    "T_corr_mN": 83.4,
+    "T_corr_source": "Fig. 5, digitized",
+    "T_sigma_mN": 4.9
    }
   },
   {
@@ -340,9 +372,13 @@
    "dt_s": 5e-09,
    "duration_s": 0.002,
    "average_start_s": 0.001,
+   "zeta_en": 0.8,
    "measured": {
     "Pd_W": 2030.0,
-    "Id_A": 7.400656215822092
+    "Id_A": 7.400656215822092,
+    "T_corr_mN": 86.8,
+    "T_corr_source": "abstract",
+    "T_sigma_mN": 4.9
    }
   }
  ]

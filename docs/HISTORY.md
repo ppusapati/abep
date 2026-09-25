@@ -1111,3 +1111,89 @@ refuses the N₂ cases, now naming these three files.
 **Project decision (2026-09-25): no outreach.** No emails or other contact with authors or labs, HPEPL included. The P5 geometry
 questions above stay open items, to be resolved only from published sources. The three registration hypotheses (`L38-hist`,
 `L32-anode`, `L32-exit`) are carried until published evidence settles them.
+
+## Hall-map schema: wall-ion flux and energy producer (2026-09-25)
+`wall_ion_flux_m2s` and `wall_ion_energy_eV` are now computed (`bridge_lib.jl: wall_ion_metrics`). They aren't a new
+model: they re-evaluate the solver's own WallSheath expressions (`physics/wall_losses.jl`):
+- **Flux:** the per-wall Bohm ion flux loss_scale·h·Σ n_s√(Z_s e T_e/m_s), h = edge-to-centre density ratio.
+- **Impact energy:** Z·ϕ_s + T_e/2, where ϕ_s is the solver's space-charge-limited sheath potential with its SEE yield
+  and cap.
+- **Averaging:** evaluated per saved frame in the averaging window over the channel cells (z ≤ L), then time-averaged
+  (flux-weighted for energy). Breathing makes a time-averaged-state evaluation differ.
+- **Gaps:** other wall models, and shielded thrusters (wall T_e needs unsaved solver cache), return no value with a stated
+  reason. There is no placeholder.
+
+**Check** (`hallthruster_bridge/checks/wall_flux_consistency.jl`, P5 Xe1-L32-anode, 11 frames × 62 channel cells outside
+the exit transition): the producer's flux equals the solver's saved electron-wall frequency × Δr·(1−γ)·n_e with a
+median difference of 0.23 %. The maximum is 10 %, only where T_e changes steeply within the breathing cycle, with
+alternating sign. That's consistent with `nu_wall` and the saved T_e/n_e belonging to different stages of a step
+(not verified in the solver source). In the exit transition cells the solver's saved `nu_wall` includes the
+wall-transition factor, so those cells are excluded from the check.
+
+**Caveat.** With the default `ion_wall_losses=false` this flux sets the electron wall energy loss but is **not**
+removed from the ion fluid. `wall_ion_basis` records this on every point. P5-Xe values at default transport:
+2–4×10²⁰ m⁻²s⁻¹ (≈3–6 mA/cm²), 41–61 eV. Every schema field now has a producer, so `map_ready` can be true. Whether a
+point is trustworthy still depends on `converged`/`sustained` and on the transport validation, which hasn't happened yet.
+
+## P5-Xe transport identification under competing geometry hypotheses, leave-one-out (2026-09-25)
+**Protocol** (project decision; `scripts/identify_p5_transport.py`, worker `hallthruster_bridge/identify_worker.jl`):
+- **Hypotheses:** H1 = L38-hist, H2 = L32-anode, H3 = L32-exit (1.6 kW coil shape, B(exit) = 162.5 G). Everything
+  except TwoZoneBohm c₁, c₂ and the transition length is identical and fixed: B(z), WallSheath(BNSiO2, 1.0), cathode
+  coupling, Eq. (13) ingestion, chemistry, numerics (200 cells, 2 ms, average 1–2 ms).
+- **Pre-registered grid** (no optimiser, every point run and logged): c₁ ∈ {1/1000, 1/500, 1/250, 1/160, 1/100, 1/50},
+  c₂ ∈ {1/64, 1/32, 1/16, 1/8, 1/4}, L_t/L ∈ {0.05, 0.1, 0.2}, c₁ ≤ c₂. That's 87 combinations × 3 hypotheses ×
+  3 points = 783 runs.
+- **Calibration data:** facility mode only (ingestion ON). Targets are raw I_d = P_d/V_d (Table 4) and raw stand thrust,
+  recovered by inverting Eq. (16) with the paper's ζ_en = 0.8 from the published corrected thrust.
+  **Per-point thrust source:** Xe1 72.8 and Xe3 86.8 mN are the range end-points in the Brabston abstract. Xe2 = 83.4 mN is
+  read from Fig. 5 (raster image, 2497×934 px). Axes are calibrated from 5 major y ticks and 10 major x ticks
+  (residuals < 0.25 mN, < 0.002 kW). The marker centroids reproduce the text values for Xe1/Xe3 (72.85/87.04 mN).
+  Their x-positions equal the Eq. (14)-corrected powers I_d,corr·V_d to 0.004 kW, which shows Fig. 5 plots
+  ingestion-corrected quantities. Uncertainty ±4.9 mN (Table 5). Raw targets: 82.3 / 93.0 / 95.2 mN.
+- **Objective (stated convention):** J = mean over calibration points of (ΔI/I)² + (ΔT/T)².
+- **Oscillation:** reported as values; no numeric target (Brabston only state that the coils minimised oscillation).
+- **Defensible prior (flag, not filter):** c₁ ≤ c₂ ≤ 1/16 (Bohm).
+- **Leave-one-out:** (Xe1,Xe2)→Xe3, (Xe1,Xe3)→Xe2, (Xe2,Xe3)→Xe1, run as post-processing of the same grid.
+
+**All runs:** `hallthruster_bridge/identification/p5_xe_identification_v1_runs.csv` (783 rows; 1 failure, H3/Xe3/c₁=1/1000,
+c₂=1/64, L_t=0.1L, retcode failure). Summary: `p5_xe_identification_v1_summary.json`. Vacuum-mode check of the selected
+fits: `p5_xe_identification_v1_vacuum_check.csv`.
+
+**Leave-one-out results** (selected by J; errors vs raw facility targets):
+
+| hyp. | selected (c₁, c₂, L_t) per round | same in all rounds | calibration | held-out I_d / thrust | I_d RMS |
+|---|---|---|---|---|---|
+| H1 L38-hist | (1/50, 1/8, 0.05L), (1/50, 1/4, 0.2L), (1/50, 1/8, 0.2L) | no | ≤ 15.5 % I_d, ≤ 1.7σ T | −6.9 / −18.0 / −1.1 %; 1.7 / −1.4 / 2.7σ | 220–243 % |
+| H2 L32-anode | (1/50, 1/8, 0.05L) ×3 | **yes** | ≤ 9.6 % I_d, ≤ 0.3σ T | +4.0 / −5.5 / +9.6 %; 0.3 / −0.2 / 0.0σ | 225–237 % |
+| H3 L32-exit | (1/50, 1/4, 0.2L), (1/50, 1/4, 0.1L), (1/50, 1/4, 0.2L) | no | ≤ 10.4 % I_d, ≤ 0.6σ T | −5.8 / −17.5 / +5.4 %; 0.1 / −0.4 / −0.3σ | 134–152 % |
+
+**Classification.**
+1. *Fits the calibration points (time-averaged I_d, thrust)?* Yes for all three hypotheses.
+2. *Predicts the held-out point?* H2 best (≤ 9.6 % I_d, ≤ 0.3σ thrust, identical parameters in every round). H1 and H3
+   miss one point by ~18 % in I_d.
+3. *Quiet/sustained discharge?* **No, for every hypothesis.** All selected fits are deep relaxation oscillations (RMS
+   134–243 %). Over the whole grid, no combination is below 50 % RMS at all three points under any hypothesis. The
+   quietest combinations (max RMS 58 % H1, 90 % H2, 95 % H3) underpredict I_d by 23–70 % and thrust by up to 17σ.
+4. *Within defensible bounds?* **No.** Every selected fit has c₁ at the grid maximum (1/50, ~3× the default) and super-Bohm
+   c₂ (1/8 or 1/4). The optimum lies at or beyond the pre-registered edge. The grid wasn't extended, because that would
+   change the protocol.
+5. *Secondary vacuum check* (ingestion OFF vs Eq. 14/16-corrected values): the selected fits carry over worse (I_d −28 % to
+   +13 %, thrust up to 3σ, RMS 41–217 %). H2 is the most consistent (+3.6 / −15.7 / +13.4 %).
+
+**Conclusion.** With TwoZoneBohm in the pre-registered bounds and all other physics fixed, **no geometry hypothesis
+reproduces the experimentally quiet operating regime**. Mean I_d and thrust can be matched only by breathing solutions
+at the grid edge with super-Bohm outer transport. **The geometry is therefore not discriminated.** H2's stable,
+predictive leave-one-out behaviour is noted but conditional on an operating regime the experiment didn't show, so it
+isn't counted as evidence for L32-anode. The inadequacy sits in the combination "TwoZoneBohm + fixed inputs". The
+candidates, none tested yet, are:
+- the transport-model family (a two-level Bohm profile may be too coarse for this field topology);
+- the assumed coil shape (Peterson 1.6 kW setting, where Brabston's currents are unknown);
+- other fixed physics (wall model, anode boundary condition, 1-D limits).
+
+Gate 3 stays FAIL. Carry geometry uncertainty forward; don't freeze a transport closure.
+
+**Wall-life trust (2026-09-25, before merge).** Schema-complete isn't erosion-grade. `hall_map_schema_v1` now requires map
+meta `ion_wall_losses` and a per-point `wall_life_trustworthy` = converged ∧ sustained ∧ `ion_wall_losses=true` ∧ both wall
+fields present (so WallSheath, unshielded). `HallMap` returns it separately from performance `trustworthy`. It's true
+only if the map meta says `ion_wall_losses` is exactly `True` and every surrounding node is wall-life-trustworthy.
+Current P5 runs: `map_ready` true, `wall_life_trustworthy` false (`ion_wall_losses=false`).

@@ -29,7 +29,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 |---|---|
 | 1 clean-install reproducibility | pass (frozen atmosphere; pinned deps; runs with pymsis absent) |
 | 2 grid-life consistency | pass (optimiser degeneracy flagged; perveance-window tests) |
-| 3 multi-point Hall validation | **FAIL** — P5-Xe blocked on geometry/B(z) registration; transport not yet identified |
+| 3 multi-point Hall validation | **FAIL** — P5-Xe: TwoZoneBohm can't produce the quiet regime under any geometry hypothesis (2026-09-25) |
 | 4 cross-family mission UQ | done but **conditional on gate 3** (all absolute Hall numbers withdrawn) |
 | 5 numerical convergence | pass |
 | 6 golden benchmarks | pass (near-zero `ledger_resid` compared with an absolute tolerance, 2026-09-25) |
@@ -49,7 +49,11 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
       registered, **from published sources only: no contact with authors or labs** (project decision 2026-09-25). Carry `L38-hist`, `L32-anode`, `L32-exit` as separate
       cases, rigid shifts only (`scripts/make_p5_xenon_cases.py`). At default transport all breathe and underpredict
       corrected I_d by 25–56 %; registration moves I_d ~30 %.
-   b. Then calibrate transport as parameter identification: ONE TwoZoneBohm set (c₁, c₂, transition length) for all Xe
+   Identification run 2026-09-25 (`scripts/identify_p5_transport.py`, 783 runs, leave-one-out): with TwoZoneBohm in the
+      pre-registered bounds, NO geometry gives a quiet discharge. The mean-value fits are breathing solutions at the grid
+      edge (c₁ = 1/50, super-Bohm c₂). Geometry is not discriminated; no closure is frozen. Next step is a project
+      decision (see docs/HISTORY.md): transport family, coil-shape uncertainty, or other fixed physics.
+   b. Calibrate transport as parameter identification: ONE TwoZoneBohm set (c₁, c₂, transition length) for all Xe
       points, fitted against I_d, thrust, anode and current efficiency and oscillation (RMS, peak-to-peak, frequency;
       the 50 % RMS flag is an internal diagnostic, not a criterion). Keep facility ingestion on. Hold one Xe point out as a
       blind test (more historical P5 Xe points if available).
@@ -67,8 +71,13 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    (`hallthruster_bridge/bfield/`, Peterson 2001; N₂ setpoints use 130 G). Still missing: ECHT B(z), B_max, per-point data.
 4. Only if 1–3 succeed: O₂/O chemistry, then intake-delivered mixtures.
 5. Interchange schema `hallthruster_bridge/hall_map_schema_v1.json` is defined and shared (driver emits it, `hall_map.py`
-   derives `REQUIRED_FIELDS` from it, a test checks both). Still `not_computed`: `wall_ion_flux_m2s`,
-   `wall_ion_energy_eV`, so no point is map-ready yet. Add a producer; never fill missing fields with placeholders.
+   derives `REQUIRED_FIELDS` from it, a test checks both). All fields now have producers: wall ion flux/energy are
+   re-evaluated from the solver's WallSheath Bohm-flux model (`bridge_lib.jl`, checked against the solver's own
+   `nu_wall` by `checks/wall_flux_consistency.jl`). With `ion_wall_losses=false` that flux is not removed from the ion
+   fluid (`wall_ion_basis` says so). `map_ready` = schema-complete only. Erosion/lifetime use requires
+   `wall_life_trustworthy` (converged ∧ sustained ∧ `ion_wall_losses=true` ∧ WallSheath, unshielded), which `HallMap`
+   reports separately from performance `trustworthy`; map meta must carry `ion_wall_losses`. Never fill missing fields
+   with placeholders.
    Then generate frozen Hall maps (all fields in `hall_map.REQUIRED_FIELDS`), wire `archengine` Hall branch to `HallMap`,
    rerun the architecture trade and gate-4 UQ.
 6. Replace the remaining unverified Arrhenius rates (O, O₂, N ionisation; dissociation; excitation) in `plasma_chem.py`
