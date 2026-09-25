@@ -46,4 +46,4 @@ rate_coeff_file = "elastic_N.dat"                   # REQUIRED — not yet gener
 [[reactions]]
 type = "electron_impact"
 equation = "N + e -> N(+) + 2e"
-rate_coeff_file = "ionization_N.dat"                # REQUIRED: Kim & Desclaux / BEB — not yet generated
+rate_coeff_file = "ionization_N.dat"                # Kim & Desclaux 2002 BEB via NIST SRD 107 (PROVENANCE.md)

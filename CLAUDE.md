@@ -58,8 +58,10 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    runs both per case and prints them side by side.
    File the HallThruster.jl ingestion-units issue (`hallthruster_bridge/upstream/`, drafted; needs filing by a human).
    Never move the HallThruster.jl pin automatically; an upgrade is a model change (`PINNED.toml` upgrade_policy).
-2. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited LXCat cross sections: N ionisation, N₂
-   dissociation (Cosby 1993 / Itikawa 2006), N₂ excitation, N elastic.
+2. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited cross sections. Done: N ionisation
+   (`ionization_N.dat`, Kim & Desclaux 2002 via NIST, `scripts/build_n_ionization_table.py`). Blocked on source access:
+   N₂ dissociation (Cosby 1993 / Itikawa 2006), N₂ excitation, N elastic. LXCat's redistribution policy restricts
+   commercial use, so the source choice is the project's decision (`hallthruster_bridge/propellants/PROVENANCE.md`).
 3. P5 on N₂ (`cases/p5_n2.json`, Table 2) and ECHT on N₂ (`cases/echt_n2.json`) with ONE transport parameter set.
    Blocked by the driver until every rate file in `propellants/n2_n.toml` exists. P5 B(z) shape is now available
    (`hallthruster_bridge/bfield/`, Peterson 2001; N₂ setpoints use 130 G). Still missing: ECHT B(z), B_max, per-point data.

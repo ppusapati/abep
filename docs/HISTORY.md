@@ -1077,3 +1077,29 @@ without `meta.schema`. A test checks that the driver emits exactly the fields ma
 **Upstream / pin.** Attaching UM-PEPL/HallThruster.jl from this environment wasn't permitted, so the issue
 (`hallthruster_bridge/upstream/`) still needs filing by a human. `PINNED.toml` now carries an `upgrade_policy`: an upstream
 fix never moves the pin automatically; an upgrade is a model change (rerun P5 in both modes, log, then accept).
+
+## N₂/N reaction data: N ionization built; three tables blocked on source access (2026-09-25)
+Scope: build and provenance-check the four missing tables for `propellants/n2_n.toml` only; no P5-N₂ runs or transport
+fitting (transport will be the frozen Xe-identified closure).
+
+**Built: `ionization_N.dat`** (e + N(⁴S) → N⁺ + 2e, threshold 14.534 eV). Cross section: Kim & Desclaux, PRA 66, 012708
+(2002), BEB, ground state, as tabulated by NIST SRD 107 (80 points, 15 eV – 5 keV, peak 1.40×10⁻²⁰ m² at 97 eV).
+Maxwellian-integrated with `abep_sim/rate_tables.py`. The build script (`scripts/build_n_ionization_table.py`) fetches the
+NIST table and doesn't commit it, because NIST SRD data are copyrighted. Checks:
+- The Kim & Desclaux 30 % ²D / 70 % ⁴S curve agrees with the Brook, Harrison & Smith (1978) beam measurement, whose beam
+  contained metastables, to within ~5 % above 17 eV.
+- HallThruster.jl's own loader reads the file; k_N/k_N₂ = 0.67–0.83 over ε = 6–255 eV.
+- A plain Kim–Rudd BEB evaluation with the NIST orbital constants does **not** reproduce the NIST ⁴S curve (+6 % at 1 keV,
+  larger near threshold). Kim & Desclaux use an open-shell treatment not re-implemented here, so the published values are
+  used as-is.
+
+The table stays in `hallthruster_bridge/propellants/`, not `abep_sim/data/rates/`, which `plasma_chem` loads automatically.
+Goldens are unchanged.
+
+**Blocked: `dissociation_N2.dat`, `excitation_N2.dat`, `elastic_N.dat`.** The primary evaluations (Itikawa, JPCRD 35, 31
+(2006); Song et al., JPCRD 52, 023104 (2023); Cosby, JCP 98, 9544 (1993); Wang, Zatsarinny & Bartschat, PRA 89, 062714
+(2014)) are paywalled or behind bot challenges (AIP, APS, UCL Discovery 403) from this environment. LXCat is reachable,
+but its redistribution policy doesn't authorise third parties (commercial interests in particular) to redistribute its
+data, and commercial inclusion needs the database owner's written permission. It also requires the user to accept terms
+on download. Not used, pending a decision by the project. Values from memory are not used (rule 6). The driver still
+refuses the N₂ cases, now naming these three files.
