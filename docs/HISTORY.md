@@ -1111,3 +1111,26 @@ refuses the N₂ cases, now naming these three files.
 **Project decision (2026-09-25): no outreach.** No emails or other contact with authors or labs, HPEPL included. The P5 geometry
 questions above stay open items, to be resolved only from published sources. The three registration hypotheses (`L38-hist`,
 `L32-anode`, `L32-exit`) are carried until published evidence settles them.
+
+## Hall-map schema: wall-ion flux and energy producer (2026-09-25)
+`wall_ion_flux_m2s` and `wall_ion_energy_eV` are now computed (`bridge_lib.jl: wall_ion_metrics`). They aren't a new
+model: they re-evaluate the solver's own WallSheath expressions (`physics/wall_losses.jl`):
+- **Flux:** the per-wall Bohm ion flux loss_scale·h·Σ n_s√(Z_s e T_e/m_s), h = edge-to-centre density ratio.
+- **Impact energy:** Z·ϕ_s + T_e/2, where ϕ_s is the solver's space-charge-limited sheath potential with its SEE yield
+  and cap.
+- **Averaging:** evaluated per saved frame in the averaging window over the channel cells (z ≤ L), then time-averaged
+  (flux-weighted for energy). Breathing makes a time-averaged-state evaluation differ.
+- **Gaps:** other wall models, and shielded thrusters (wall T_e needs unsaved solver cache), return no value with a stated
+  reason. There is no placeholder.
+
+**Check** (`hallthruster_bridge/checks/wall_flux_consistency.jl`, P5 Xe1-L32-anode, 11 frames × 62 channel cells outside
+the exit transition): the producer's flux equals the solver's saved electron-wall frequency × Δr·(1−γ)·n_e with a
+median difference of 0.23 %. The maximum is 10 %, only where T_e changes steeply within the breathing cycle, with
+alternating sign. That's consistent with `nu_wall` and the saved T_e/n_e belonging to different stages of a step
+(not verified in the solver source). In the exit transition cells the solver's saved `nu_wall` includes the
+wall-transition factor, so those cells are excluded from the check.
+
+**Caveat.** With the default `ion_wall_losses=false` this flux sets the electron wall energy loss but is **not**
+removed from the ion fluid. `wall_ion_basis` records this on every point. P5-Xe values at default transport:
+2–4×10²⁰ m⁻²s⁻¹ (≈3–6 mA/cm²), 41–61 eV. Every schema field now has a producer, so `map_ready` can be true. Whether a
+point is trustworthy still depends on `converged`/`sustained` and on the transport validation, which hasn't happened yet.

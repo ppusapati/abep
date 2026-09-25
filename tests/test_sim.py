@@ -625,7 +625,7 @@ def test_hall_map_schema_v1_shared_by_producer_and_consumer(tmp_path):
     import json, os, re, pytest
     from abep_sim.hall_map import SCHEMA, REQUIRED_FIELDS, HallMap, missing_fields
     root = os.path.dirname(os.path.dirname(__file__))
-    src = open(os.path.join(root, "hallthruster_bridge", "run_cases.jl")).read()
+    src = "".join(open(os.path.join(root, "hallthruster_bridge", f)).read() for f in ("bridge_lib.jl", "run_cases.jl"))
     assert "hall_map_schema_v1.json" in src
     for name, spec in SCHEMA["fields"].items():
         emitted = re.search(rf'"{name}"|:{name}\b', src) is not None

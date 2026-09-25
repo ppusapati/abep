@@ -67,8 +67,10 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    (`hallthruster_bridge/bfield/`, Peterson 2001; N₂ setpoints use 130 G). Still missing: ECHT B(z), B_max, per-point data.
 4. Only if 1–3 succeed: O₂/O chemistry, then intake-delivered mixtures.
 5. Interchange schema `hallthruster_bridge/hall_map_schema_v1.json` is defined and shared (driver emits it, `hall_map.py`
-   derives `REQUIRED_FIELDS` from it, a test checks both). Still `not_computed`: `wall_ion_flux_m2s`,
-   `wall_ion_energy_eV`, so no point is map-ready yet. Add a producer; never fill missing fields with placeholders.
+   derives `REQUIRED_FIELDS` from it, a test checks both). All fields now have producers: wall ion flux/energy are
+   re-evaluated from the solver's WallSheath Bohm-flux model (`bridge_lib.jl`, checked against the solver's own
+   `nu_wall` by `checks/wall_flux_consistency.jl`). With `ion_wall_losses=false` that flux is not removed from the ion
+   fluid (`wall_ion_basis` says so). Never fill missing fields with placeholders.
    Then generate frozen Hall maps (all fields in `hall_map.REQUIRED_FIELDS`), wire `archengine` Hall branch to `HallMap`,
    rerun the architecture trade and gate-4 UQ.
 6. Replace the remaining unverified Arrhenius rates (O, O₂, N ionisation; dissociation; excitation) in `plasma_chem.py`

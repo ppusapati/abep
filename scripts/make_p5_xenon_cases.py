@@ -25,6 +25,13 @@ ASSUMPTIONS = ("Brabston coil currents not published; coil shape from Peterson 2
                "in HallThruster.jl; Eq. (13) is a plume-entrainment estimate. Transport: HallThruster.jl defaults "
                "(TwoZoneBohm(1/160, 1/16), transition length 0.1 L), deliberately not tuned.")
 POINTS = [("Xe1", 230.8, 1750.0, 4.49e-5), ("Xe2", 250.3, 2150.0, 3.94e-5), ("Xe3", 274.3, 2030.0, 3.28e-5)]
+# Eq. (16)-corrected thrust per setpoint [mN]. Xe1 and Xe3 are the range end-points stated in the Brabston abstract
+# (72.8-86.8 mN); Xe2 is read from Fig. 5 (raster; extraction in docs/HISTORY.md: axis residuals < 0.25 mN, and the
+# Xe1/Xe3 readings 72.85/87.04 reproduce the text values; the markers' x-positions reproduce the Eq. (14) powers to 0.004 kW).
+# Uncertainty +-4.9 mN (Table 5, xenon).
+THRUST_CORR_MN = {"Xe1": (72.8, "abstract"), "Xe2": (83.4, "Fig. 5, digitized"), "Xe3": (86.8, "abstract")}
+T_SIGMA_MN = 4.9
+ZETA_EN = 0.8    # Brabston thrust entrainment factor (Eq. 16)
 REGISTRATIONS = {   # name: (L_m, align, z_ref_in_file_mm, hypothesis)
     "L38-hist":  (0.038, "anode", 0.0, "historical 38 mm P5 (Peterson 2001 / Hofer 2004); field in original coordinates"),
     "L32-anode": (0.032, "anode", 0.0, "32 mm channel (Brabston 2025), anode and magnetic circuit unchanged"),
@@ -46,7 +53,9 @@ def cases(coil, role):
                 "comparison_modes": ["facility", "vacuum"], "background_pressure_Torr": P, "background_temperature_K": 300.0,
                 "entrainment_area_m2": 0.0488, "zeta_A": 1.0,
                 "cells": 200, "dt_s": 5e-9, "duration_s": 0.002, "average_start_s": 0.001,
-                "measured": {"Pd_W": Pd, "Id_A": Pd / Vd},
+                "zeta_en": ZETA_EN,
+                "measured": {"Pd_W": Pd, "Id_A": Pd / Vd, "T_corr_mN": THRUST_CORR_MN[pid][0],
+                             "T_corr_source": THRUST_CORR_MN[pid][1], "T_sigma_mN": T_SIGMA_MN},
             })
     return out
 

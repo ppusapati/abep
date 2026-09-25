@@ -18,24 +18,119 @@
   "note": "sustained_min_Id_fraction is a bookkeeping convention (discharge treated as extinguished if I_d falls below 1 % of its window mean), not a physical validation criterion. Oscillation acceptability is judged from Id_rms_rel, Id_pp_rel and Id_f_dominant_Hz against measurements."
  },
  "fields": {
-  "thrust_N":                    {"unit": "N",      "type": "float", "status": "computed", "definition": "time-averaged ion momentum flux through the domain exit minus anode (HallThruster.thrust)"},
-  "discharge_current_A":         {"unit": "A",      "type": "float", "status": "computed", "definition": "time-averaged discharge current over the averaging window"},
-  "ion_current_A":               {"unit": "A",      "type": "float", "status": "computed", "definition": "time-averaged ion current at the domain exit (HallThruster.ion_current)"},
-  "discharge_power_W":           {"unit": "W",      "type": "float", "status": "computed", "definition": "discharge_current_A * discharge voltage"},
-  "anode_eff":                   {"unit": "-",      "type": "float", "status": "computed", "definition": "T^2 / (2 mdot_anode P_d) (HallThruster.anode_eff)"},
-  "mass_eff":                    {"unit": "-",      "type": "float", "status": "computed", "definition": "HallThruster.mass_eff"},
-  "current_eff":                 {"unit": "-",      "type": "float", "status": "computed", "definition": "ion_current_A / discharge_current_A"},
-  "voltage_eff":                 {"unit": "-",      "type": "float", "status": "computed", "definition": "HallThruster.voltage_eff"},
-  "divergence_eff":              {"unit": "-",      "type": "float", "status": "computed", "definition": "HallThruster.divergence_eff"},
-  "Te_max_eV":                   {"unit": "eV",     "type": "float", "status": "computed", "definition": "maximum of the time-averaged electron temperature profile"},
-  "ne_max_m3":                   {"unit": "m^-3",   "type": "float", "status": "computed", "definition": "maximum of the time-averaged plasma density profile"},
-  "ion_species_fraction_atomic": {"unit": "-",      "type": "float", "status": "computed", "definition": "fraction of the time-averaged exit ion number flux carried by ions of single-atom species (1.0 for Xe by definition)"},
-  "wall_ion_flux_m2s":           {"unit": "m^-2 s^-1", "type": "float", "status": "not_computed", "definition": "channel-averaged ion flux to the walls; needs a producer (HallThruster.jl 1-D does not report it directly)"},
-  "wall_ion_energy_eV":          {"unit": "eV",     "type": "float", "status": "not_computed", "definition": "mean energy of ions striking the walls; needs a producer"},
-  "Id_rms_rel":                  {"unit": "-",      "type": "float", "status": "computed", "definition": "RMS of I_d over the averaging window / mean"},
-  "Id_pp_rel":                   {"unit": "-",      "type": "float", "status": "computed", "definition": "(max - min) of I_d over the averaging window / mean"},
-  "Id_f_dominant_Hz":            {"unit": "Hz",     "type": "float", "status": "computed", "definition": "frequency of the largest DFT amplitude of the mean-removed I_d window (resolution 1/window length)"},
-  "converged":                   {"unit": "-",      "type": "bool",  "status": "computed", "definition": "solver returned retcode :success (reached duration, no NaN/Inf)"},
-  "sustained":                   {"unit": "-",      "type": "bool",  "status": "computed", "definition": "converged and min I_d over the window > sustained_min_Id_fraction * mean"}
+  "thrust_N": {
+   "unit": "N",
+   "type": "float",
+   "status": "computed",
+   "definition": "time-averaged ion momentum flux through the domain exit minus anode (HallThruster.thrust)"
+  },
+  "discharge_current_A": {
+   "unit": "A",
+   "type": "float",
+   "status": "computed",
+   "definition": "time-averaged discharge current over the averaging window"
+  },
+  "ion_current_A": {
+   "unit": "A",
+   "type": "float",
+   "status": "computed",
+   "definition": "time-averaged ion current at the domain exit (HallThruster.ion_current)"
+  },
+  "discharge_power_W": {
+   "unit": "W",
+   "type": "float",
+   "status": "computed",
+   "definition": "discharge_current_A * discharge voltage"
+  },
+  "anode_eff": {
+   "unit": "-",
+   "type": "float",
+   "status": "computed",
+   "definition": "T^2 / (2 mdot_anode P_d) (HallThruster.anode_eff)"
+  },
+  "mass_eff": {
+   "unit": "-",
+   "type": "float",
+   "status": "computed",
+   "definition": "HallThruster.mass_eff"
+  },
+  "current_eff": {
+   "unit": "-",
+   "type": "float",
+   "status": "computed",
+   "definition": "ion_current_A / discharge_current_A"
+  },
+  "voltage_eff": {
+   "unit": "-",
+   "type": "float",
+   "status": "computed",
+   "definition": "HallThruster.voltage_eff"
+  },
+  "divergence_eff": {
+   "unit": "-",
+   "type": "float",
+   "status": "computed",
+   "definition": "HallThruster.divergence_eff"
+  },
+  "Te_max_eV": {
+   "unit": "eV",
+   "type": "float",
+   "status": "computed",
+   "definition": "maximum of the time-averaged electron temperature profile"
+  },
+  "ne_max_m3": {
+   "unit": "m^-3",
+   "type": "float",
+   "status": "computed",
+   "definition": "maximum of the time-averaged plasma density profile"
+  },
+  "ion_species_fraction_atomic": {
+   "unit": "-",
+   "type": "float",
+   "status": "computed",
+   "definition": "fraction of the time-averaged exit ion number flux carried by ions of single-atom species (1.0 for Xe by definition)"
+  },
+  "wall_ion_flux_m2s": {
+   "unit": "m^-2 s^-1",
+   "type": "float",
+   "status": "computed",
+   "definition": "channel-averaged (z <= L) Bohm ion flux per unit wall area from HallThruster.jl's WallSheath model, loss_scale * h * sum_s n_s sqrt(Z_s e T_e / m_s), evaluated per saved frame in the averaging window and time-averaged. With ion_wall_losses=false (see wall_ion_basis) it sets the electron wall loss but is not removed from the ion fluid. Absent for other wall models or shielded thrusters."
+  },
+  "wall_ion_energy_eV": {
+   "unit": "eV",
+   "type": "float",
+   "status": "computed",
+   "definition": "flux-weighted mean ion impact energy Z phi_s + T_e/2 (WallSheath sheath potential with space-charge-limited SEE yield, plus Bohm presheath), same evaluation as wall_ion_flux_m2s. Excludes the axial ion kinetic energy."
+  },
+  "Id_rms_rel": {
+   "unit": "-",
+   "type": "float",
+   "status": "computed",
+   "definition": "RMS of I_d over the averaging window / mean"
+  },
+  "Id_pp_rel": {
+   "unit": "-",
+   "type": "float",
+   "status": "computed",
+   "definition": "(max - min) of I_d over the averaging window / mean"
+  },
+  "Id_f_dominant_Hz": {
+   "unit": "Hz",
+   "type": "float",
+   "status": "computed",
+   "definition": "frequency of the largest DFT amplitude of the mean-removed I_d window (resolution 1/window length)"
+  },
+  "converged": {
+   "unit": "-",
+   "type": "bool",
+   "status": "computed",
+   "definition": "solver returned retcode :success (reached duration, no NaN/Inf)"
+  },
+  "sustained": {
+   "unit": "-",
+   "type": "bool",
+   "status": "computed",
+   "definition": "converged and min I_d over the window > sustained_min_Id_fraction * mean"
+  }
  }
 }
