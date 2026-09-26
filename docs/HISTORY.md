@@ -1574,3 +1574,4 @@ This replaces the first version (commit d2009b3). That version used the time-ave
 - The HallThruster-shipped `ionization_N2_N2+.dat` and `elastic_N2.dat` are **unresolved**. The package has no cross-section inputs (reactions/CITATIONS.md cites Itikawa 2006 only), and `elastic_N2.dat` ends at 100 eV mean energy, above which the solver holds the last value.
 - Consequence: no N₂ run can be chemistry-trustworthy until these two tables are audited or rebuilt from Song et al. JPCRD 2023 Tables 10/5.
 
+**Driver fix found by the N₂ smoke run:** Gaussian-B cases wrote `B_peak_minus_exit_m = NaN`, which is invalid JSON and aborted the output. It now reads 0: the Gaussian profile peaks at the exit plane by construction.

@@ -196,6 +196,7 @@ function run_case(c, mode)
     else
         bpath = bfield_gaussian(joinpath(tempdir(), "b_$(c.id).csv"), c.L_m, c.B_max_T, c.B_sigma_in_m, c.B_sigma_out_m, c.domain_m)
         bfield = het.load_magnetic_field(bpath)
+        zpeak = c.L_m                    # bfield_gaussian peaks at the exit plane by construction
     end
     thruster = het.Thruster(name=c.thruster, geometry=geom, magnetic_field=bfield)
     kw = Dict{Symbol,Any}(:thruster => thruster, :domain => (0.0, c.domain_m), :discharge_voltage => c.Vd)
