@@ -31,10 +31,10 @@
  "inputs": {
   "hall_sustainment_matrix": {
    "path": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
-   "sha256": "248aef28cfe6ffff90d9ee6d43c388488140547e1ce5659975ce30ca77f415b4",
+   "sha256": "76bba594eb1175b2186a8066b38665a2ce5e4cf77487c90f4af2e187a0b82dcc",
    "lane": "lane_09_hall_sustainment",
-   "branch": "worktree-wf_2bcadd98-5ff-3",
-   "commit": "ac7970917f",
+   "branch": "worktree-wf_2bcadd98-5ff-3 (merged into 49604b6eee)",
+   "commit": "f458811a57",
    "role": "published Hall-only sustainment / ignition evidence (entries E01-E21), read only"
   },
   "feed_envelope": {
@@ -62,6 +62,22 @@
    "role": "M_SPECIES (mass-fraction arithmetic on the feed envelope's own basis) and RFPConstraints"
   }
  },
+ "input_repin_log": [
+  {
+   "date": "2026-09-26",
+   "input": "hall_sustainment_matrix",
+   "from": {
+    "commit": "ac7970917f",
+    "sha256": "248aef28cfe6ffff90d9ee6d43c388488140547e1ce5659975ce30ca77f415b4"
+   },
+   "to": {
+    "commit": "f458811a57",
+    "sha256": "76bba594eb1175b2186a8066b38665a2ce5e4cf77487c90f4af2e187a0b82dcc"
+   },
+   "reason": "lane 09 repair (merged in 49604b6eee): ECHT-N2 items E03/E04 carry repository_status HISTORICAL_UNSUPPORTED (lane 31) with forced assumptions A1/A3/A5/A6; no item id, outcome, level/class, flow/V/B value, implication or derived check changed",
+   "effect_on_this_overlay": "no case status, coverage, finding or count changed (F-9 and the 9 air-case statuses unchanged); the ECHT channel area (E03/E04 flow per channel cross-section) now carries forced assumption A1 as declared_uncertainty, and ECHT-OD-READING names it"
+  }
+ ],
  "rfp_context": {
   "thrust_max": {
    "value": 25.0,
@@ -193,7 +209,7 @@
   },
   "status_bearing_rule": "evidence level <= 3 (docs/EVIDENCE.md: level 5 = second-hand / abstract); level-5 items are reported as corroborating only (PROPOSED rule, owner to confirm)",
   "interpretation_conditions": {
-   "ECHT-OD-READING": "the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+   "ECHT-OD-READING": "the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity). This is forced assumption A1 (inferred ECHT radii) of the repository ECHT disposition (status HISTORICAL_UNSUPPORTED), carried on each ECHT channel area as declared_uncertainty",
    "E20-FLOW-BASIS": "the E20 flow is a review-reported 'total mass flow'; whether it includes the Xe cathode flow (a separate matrix quantity) is not stated (matrix E20)",
    "E02-WINDOW-EDGE": "the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved"
   },
@@ -525,7 +541,16 @@
     "bound": "upper",
     "conditional_on": [
      "ECHT-OD-READING"
-    ]
+    ],
+    "declared_uncertainty": {
+     "forced_assumption": "A1",
+     "text": "A1 channel radii: 100 mm = channel OD (r 40/50 mm) vs BN piece OD (unknown wall thickness)",
+     "evidence_class": "assumed",
+     "repository_status": "HISTORICAL_UNSUPPORTED",
+     "status_file": "hallthruster_bridge/identification/echt_n2/STATUS.json",
+     "source": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json E03.repository_status.forced_assumptions_relevant_to_transfer",
+     "effect": "the ECHT channel radii are inferred, not published; the channel area (and so the flow per channel cross-section) inherits this forced assumption as an unquantified uncertainty; reading A gives the upper-bound area / lower-bound flow density used here"
+    }
    },
    "flow_density": {
     "value": [
@@ -630,7 +655,16 @@
     "bound": "upper",
     "conditional_on": [
      "ECHT-OD-READING"
-    ]
+    ],
+    "declared_uncertainty": {
+     "forced_assumption": "A1",
+     "text": "A1 channel radii: 100 mm = channel OD (r 40/50 mm) vs BN piece OD (unknown wall thickness)",
+     "evidence_class": "assumed",
+     "repository_status": "HISTORICAL_UNSUPPORTED",
+     "status_file": "hallthruster_bridge/identification/echt_n2/STATUS.json",
+     "source": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json E04.repository_status.forced_assumptions_relevant_to_transfer",
+     "effect": "the ECHT channel radii are inferred, not published; the channel area (and so the flow per channel cross-section) inherits this forced assumption as an unquantified uncertainty; reading A gives the upper-bound area / lower-bound flow density used here"
+    }
    },
    "flow_density": {
     "value": [
@@ -3447,7 +3481,7 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity). This is forced assumption A1 (inferred ECHT radii) of the repository ECHT disposition (status HISTORICAL_UNSUPPORTED), carried on each ECHT channel area as declared_uncertainty",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -5042,7 +5076,7 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity). This is forced assumption A1 (inferred ECHT radii) of the repository ECHT disposition (status HISTORICAL_UNSUPPORTED), carried on each ECHT channel area as declared_uncertainty",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -6637,7 +6671,7 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity). This is forced assumption A1 (inferred ECHT radii) of the repository ECHT disposition (status HISTORICAL_UNSUPPORTED), carried on each ECHT channel area as declared_uncertainty",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -8238,7 +8272,7 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity). This is forced assumption A1 (inferred ECHT radii) of the repository ECHT disposition (status HISTORICAL_UNSUPPORTED), carried on each ECHT channel area as declared_uncertainty",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -9842,7 +9876,7 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity). This is forced assumption A1 (inferred ECHT radii) of the repository ECHT disposition (status HISTORICAL_UNSUPPORTED), carried on each ECHT channel area as declared_uncertainty",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -11446,7 +11480,7 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity). This is forced assumption A1 (inferred ECHT radii) of the repository ECHT disposition (status HISTORICAL_UNSUPPORTED), carried on each ECHT channel area as declared_uncertainty",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -13050,7 +13084,7 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity). This is forced assumption A1 (inferred ECHT radii) of the repository ECHT disposition (status HISTORICAL_UNSUPPORTED), carried on each ECHT channel area as declared_uncertainty",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -14654,7 +14688,7 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity). This is forced assumption A1 (inferred ECHT radii) of the repository ECHT disposition (status HISTORICAL_UNSUPPORTED), carried on each ECHT channel area as declared_uncertainty",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -16258,7 +16292,7 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity). This is forced assumption A1 (inferred ECHT radii) of the repository ECHT disposition (status HISTORICAL_UNSUPPORTED), carried on each ECHT channel area as declared_uncertainty",
      "resolved_by": [
       "DM-5",
       "DM-2"

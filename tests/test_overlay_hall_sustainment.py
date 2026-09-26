@@ -3,8 +3,10 @@
 Checks: the committed JSON / Markdown are reproduced by the builder; every case has a status and evidence items or
 blockers; feed-envelope TBD quantities propagate as UNDETERMINED (committed data and synthetic cases); every number
 carries an evidence class and a source; missing design inputs raise; no forbidden wording (no ranking, no setting an
-architecture aside, no screening candidates or closures). Tests that need the pinned inputs (other lanes' files until
-they merge) skip when those are not reachable; the committed JSON and the comparison logic are tested without them.
+architecture aside, no screening candidates or closures). Tests that need the pinned inputs skip ONLY when an input
+file is genuinely absent (OverlayInputError); an input that is present with a different sha256 raises
+OverlayInputMismatchError and FAILS those tests (CLAUDE.md rules 3 and 9: a changed input is never a silent skip). In the
+merged repository every pinned input is present, so nothing here skips.
 Values marked 'synthetic' below exist only inside these tests: they are not design values and not evidence.
 """
 import copy
@@ -55,8 +57,8 @@ def doc():
 def found():
     try:
         return B.resolve_inputs()
-    except B.OverlayInputError as e:
-        pytest.skip(f"pinned inputs not reachable (other lanes not merged): {str(e)[:200]}")
+    except B.OverlayInputError as e:          # genuinely absent only; OverlayInputMismatchError propagates (fails)
+        pytest.skip(f"pinned input files absent: {str(e)[:200]}")
 
 
 def _walk(o, path=""):
@@ -101,7 +103,57 @@ def test_builder_import_reads_no_inputs_and_pins_are_well_formed():
     assert B.ARCH == "hall_only" and B.ARCH_IDS == ["hall_only", "rf_hall", "ecr_hall"]
 
 
+def test_mismatch_is_not_a_skippable_error():
+    assert not issubclass(B.OverlayInputMismatchError, B.OverlayInputError)
+
+
+def test_hash_mismatch_in_checkout_fails_loudly(monkeypatch, tmp_path):
+    for pin in B.INPUTS.values():                                  # every input present, with the wrong content
+        f = tmp_path / pin["path"]
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text("not the pinned content\n")
+    monkeypatch.setattr(B, "ROOT", str(tmp_path))
+    monkeypatch.setattr(B, "candidate_roots", lambda extra: [str(tmp_path)])
+    with pytest.raises(B.OverlayInputMismatchError) as e:
+        B.resolve_inputs()
+    assert "different sha256" in str(e.value)
+    assert B.INPUTS["hall_sustainment_matrix"]["path"] in str(e.value)
+
+
+def test_hash_mismatch_elsewhere_fails_loudly(monkeypatch, tmp_path):
+    empty, other = tmp_path / "checkout", tmp_path / "other"
+    empty.mkdir()
+    f = other / B.INPUTS["feed_envelope"]["path"]
+    f.parent.mkdir(parents=True)
+    f.write_text("{}\n")
+    monkeypatch.setattr(B, "ROOT", str(empty))
+    monkeypatch.setattr(B, "candidate_roots", lambda extra: [str(empty), str(other)])
+    with pytest.raises(B.OverlayInputMismatchError):
+        B.resolve_inputs()
+
+
+def test_checkout_inputs_match_pins_when_present():
+    """Any pinned input that exists in this checkout must carry the pinned sha256 (fail, never skip)."""
+    for k, pin in B.INPUTS.items():
+        p = os.path.join(ROOT, pin["path"])
+        if os.path.isfile(p):
+            assert B.sha256_file(p) == pin["sha256"], f"{k}: {pin['path']} differs from its pin"
+
+
+def test_echt_area_carries_forced_assumption_a1(doc):
+    regs = {r["id"]: r for r in doc["evidence_regions"]}
+    for i in ("E03", "E04"):
+        du = regs[i]["channel_area"]["declared_uncertainty"]
+        assert du["forced_assumption"] == "A1" and du["text"].startswith("A1 ")
+        assert du["repository_status"] == "HISTORICAL_UNSUPPORTED" and du["evidence_class"] == "assumed"
+    assert "forced assumption A1" in doc["definitions"]["interpretation_conditions"]["ECHT-OD-READING"]
+    log = doc["input_repin_log"]
+    assert log[-1]["to"]["sha256"] == B.INPUTS["hall_sustainment_matrix"]["sha256"] == \
+        doc["inputs"]["hall_sustainment_matrix"]["sha256"]
+
+
 def test_missing_inputs_raise_a_clear_error(monkeypatch, tmp_path):
+    monkeypatch.setattr(B, "ROOT", str(tmp_path))
     monkeypatch.setattr(B, "candidate_roots", lambda extra: [str(tmp_path)])
     with pytest.raises(B.OverlayInputError) as e:
         B.resolve_inputs()

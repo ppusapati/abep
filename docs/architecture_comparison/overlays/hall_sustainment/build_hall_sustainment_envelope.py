@@ -29,9 +29,11 @@ Usage:
         {"status": "TBD", "requires": ...}; a missing entry raises MissingDesignInput (no hidden defaults).
 
 Inputs are read READ-ONLY and are pinned by sha256 (INPUTS below). Each is looked up by its repository-relative path,
-first in this checkout, then under every --input-root (and ABEP_OVERLAY_INPUT_ROOTS), then in the sibling git worktrees
-of this checkout; only a file whose sha256 matches the pin is accepted, so the result does not depend on where an input
-was found. A missing input raises OverlayInputError listing the places searched (no silent fallback, CLAUDE.md rule 3).
+first in this checkout, then (only if absent here) under every --input-root (and ABEP_OVERLAY_INPUT_ROOTS), then in the
+sibling git worktrees of this checkout; only a file whose sha256 matches the pin is accepted, so the result does not
+depend on where an input was found. An input present in this checkout with a different sha256 (or present elsewhere but
+never with the pinned sha256) raises OverlayInputMismatchError; a genuinely absent input raises OverlayInputError listing
+the places searched (no silent fallback, CLAUDE.md rule 3).
 Nothing is read at import time. To move to a newer input, change its pin here deliberately and regenerate.
 """
 from __future__ import annotations
@@ -58,13 +60,27 @@ OVERLAY_VERSION = "1.0.0"
 ARCH = "hall_only"
 ARCH_IDS = ["hall_only", "rf_hall", "ecr_hall"]
 PREPARED = "2026-09-26"
+INPUT_REPIN_LOG = [
+    {"date": "2026-09-26", "input": "hall_sustainment_matrix",
+     "from": {"commit": "ac7970917f",
+              "sha256": "248aef28cfe6ffff90d9ee6d43c388488140547e1ce5659975ce30ca77f415b4"},
+     "to": {"commit": "f458811a57",
+            "sha256": "76bba594eb1175b2186a8066b38665a2ce5e4cf77487c90f4af2e187a0b82dcc"},
+     "reason": "lane 09 repair (merged in 49604b6eee): ECHT-N2 items E03/E04 carry repository_status "
+               "HISTORICAL_UNSUPPORTED (lane 31) with forced assumptions A1/A3/A5/A6; no item id, outcome, level/class, "
+               "flow/V/B value, implication or derived check changed",
+     "effect_on_this_overlay": "no case status, coverage, finding or count changed (F-9 and the 9 air-case statuses "
+                               "unchanged); the ECHT channel area (E03/E04 flow per channel cross-section) now carries "
+                               "forced assumption A1 as declared_uncertainty, and ECHT-OD-READING names it"},
+]
 
 # ---------------------------------------------------------------------------------------------------- pinned inputs
 INPUTS = {
     "hall_sustainment_matrix": {
         "path": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
-        "sha256": "248aef28cfe6ffff90d9ee6d43c388488140547e1ce5659975ce30ca77f415b4",
-        "lane": "lane_09_hall_sustainment", "branch": "worktree-wf_2bcadd98-5ff-3", "commit": "ac7970917f",
+        "sha256": "76bba594eb1175b2186a8066b38665a2ce5e4cf77487c90f4af2e187a0b82dcc",
+        "lane": "lane_09_hall_sustainment", "branch": "worktree-wf_2bcadd98-5ff-3 (merged into 49604b6eee)",
+        "commit": "f458811a57",
         "role": "published Hall-only sustainment / ignition evidence (entries E01-E21), read only"},
     "feed_envelope": {
         "path": "docs/architecture_comparison/feed_envelope/feed_envelope_v1.json",
@@ -123,7 +139,12 @@ DESIGN_TBD = {
 
 
 class OverlayInputError(RuntimeError):
-    """A pinned input is missing, differs from its pin, or lacks an expected field (no silent fallback)."""
+    """A pinned input is missing or lacks an expected field (no silent fallback)."""
+
+
+class OverlayInputMismatchError(RuntimeError):
+    """A pinned input is present but its sha256 differs from the pin (a failure, never a skip; not an
+    OverlayInputError subclass so that callers that tolerate absent inputs cannot swallow it)."""
 
 
 class InvalidDesignPoint(ValueError):
@@ -161,8 +182,17 @@ def candidate_roots(extra_roots):
 def resolve_inputs(extra_roots=(), skip=()):
     found, report = {}, {}
     roots = candidate_roots(extra_roots)
+    mismatch = {}
     for key, pin in INPUTS.items():
         if key in skip:
+            continue
+        own = os.path.join(ROOT, pin["path"])
+        if os.path.isfile(own):                 # present in this checkout: it must be the pinned file (no fallback)
+            h = sha256_file(own)
+            if h == pin["sha256"]:
+                found[key] = own
+            else:
+                mismatch[key] = f"{own} (sha256 {h})"
             continue
         tried = []
         for r in roots:
@@ -174,7 +204,15 @@ def resolve_inputs(extra_roots=(), skip=()):
                     found[key] = p
                     break
         if key not in found:
-            report[key] = tried
+            if tried:                           # present somewhere, but never with the pinned content
+                mismatch[key] = "; ".join(tried)
+            else:
+                report[key] = tried
+    if mismatch:
+        lines = [f"  {k}: {INPUTS[k]['path']} pinned sha256 {INPUTS[k]['sha256']} (commit {INPUTS[k]['commit']}); "
+                 f"found {v}" for k, v in mismatch.items()]
+        raise OverlayInputMismatchError("pinned overlay inputs present with a different sha256 (an input changed: "
+                                        "re-pin deliberately and rebuild; never skipped):\n" + "\n".join(lines))
     if report:
         lines = [f"  {k}: {INPUTS[k]['path']} pinned sha256 {INPUTS[k]['sha256'][:12]}... from {INPUTS[k]['lane']} "
                  f"(commit {INPUTS[k]['commit']}); candidates: {v or 'none found'}" for k, v in report.items()]
@@ -261,7 +299,7 @@ HT5K_AREA = {"kind": "missing", "missing": "channel dimensions not reported in t
 XE = {"gas": "Xe", "token": "Xe"}
 P5_AREA = {"kind": "p5_case_file"}
 ECHT_AREA = {"kind": "annulus_od_height", "od": "stated outer diameter of the BN chamber", "h": "channel height",
-             "bound": "upper", "condition": "ECHT-OD-READING"}
+             "bound": "upper", "condition": "ECHT-OD-READING", "forced_assumption": "A1"}
 CAMILA_AREA = {"kind": "mean_diameter_width", "d": "channel mean diameter", "w": "channel width"}
 Z70_AREA = {"kind": "annulus_od_id", "od": "BN channel outer diameter", "id": "BN channel inner diameter"}
 
@@ -357,7 +395,9 @@ CONDITIONS = {
     "ECHT-OD-READING": "the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the "
                        "channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area "
                        "is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT "
-                       "geometry.outer_diameter.ambiguity)",
+                       "geometry.outer_diameter.ambiguity). This is forced assumption A1 (inferred ECHT radii) of the "
+                       "repository ECHT disposition (status HISTORICAL_UNSUPPORTED), carried on each ECHT channel area "
+                       "as declared_uncertainty",
     "E20-FLOW-BASIS": "the E20 flow is a review-reported 'total mass flow'; whether it includes the Xe cathode flow "
                       "(a separate matrix quantity) is not stated (matrix E20)",
     "E02-WINDOW-EDGE": "the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are "
@@ -415,9 +455,27 @@ def area_record(entry, spec, p5):
         qd, d = _num_q(entry, spec["od"], "mm")
         qh, h = _num_q(entry, spec["h"], "mm")
         a = math.pi * (h[0] * 1e-3) * (d[0] * 1e-3 - h[0] * 1e-3)
-        return qrec(a, "m^2", "inferred", f"{_loc(entry, qd)}; {_loc(entry, qh)}",
-                    "annulus pi h (D_out - h) with D_out = the stated OD (reading A); our arithmetic",
-                    bound="upper", conditional_on=[spec["condition"]]), None
+        rec = qrec(a, "m^2", "inferred", f"{_loc(entry, qd)}; {_loc(entry, qh)}",
+                   "annulus pi h (D_out - h) with D_out = the stated OD (reading A); our arithmetic",
+                   bound="upper", conditional_on=[spec["condition"]])
+        fa = spec.get("forced_assumption")
+        if fa:                                  # carried verbatim from the matrix's repository_status (lane 09 / 31)
+            rs = entry.get("repository_status")
+            if not rs:
+                raise OverlayInputError(f"{entry['id']}: expected repository_status carrying forced assumption {fa}")
+            hits = [x for x in rs.get("forced_assumptions_relevant_to_transfer", []) if x.startswith(fa + " ")]
+            if len(hits) != 1:
+                raise OverlayInputError(f"{entry['id']}: forced assumption {fa} not found exactly once in "
+                                        f"repository_status.forced_assumptions_relevant_to_transfer")
+            rec["declared_uncertainty"] = {
+                "forced_assumption": fa, "text": hits[0], "evidence_class": "assumed",
+                "repository_status": rs["status"], "status_file": rs["status_file"],
+                "source": f"{INPUTS['hall_sustainment_matrix']['path']} {entry['id']}.repository_status."
+                          "forced_assumptions_relevant_to_transfer",
+                "effect": "the ECHT channel radii are inferred, not published; the channel area (and so the flow per "
+                          "channel cross-section) inherits this forced assumption as an unquantified uncertainty; "
+                          "reading A gives the upper-bound area / lower-bound flow density used here"}
+        return rec, None
     if kind == "mean_diameter_width":
         qd, d = _num_q(entry, spec["d"], "mm")
         qw, w = _num_q(entry, spec["w"], "mm")
@@ -1617,6 +1675,7 @@ def assemble(found, feed, matrix, regs, rfp, cases, findings, dp, max_tested_wO2
                          "check": f"python {SCRIPT_REL} --check", "test": TEST_REL, "deterministic": True,
                          "output_rounding_significant_digits": 6},
         "inputs": inputs,
+        "input_repin_log": INPUT_REPIN_LOG,
         "rfp_context": rfp,
         "design_point": dp,
         "definitions": {
@@ -1939,7 +1998,10 @@ def render_md(doc):
         if a.get("value") and r["device"] not in seen_dev:
             seen_dev.add(r["device"])
             area_txt.append(f"{r['device']} {fmt(a['value'])} m^2 ({a['derivation']}"
-                            + (f"; {a['bound']} bound" if a.get("bound") else "") + ")")
+                            + (f"; {a['bound']} bound" if a.get("bound") else "")
+                            + (f"; declared uncertainty: forced assumption {a['declared_uncertainty']['text']} "
+                               f"(repository status {a['declared_uncertainty']['repository_status']})"
+                               if a.get("declared_uncertainty") else "") + ")")
     L.append("n/c = not comparable (the missing quantity is named). Flow densities use the channel cross-section: "
              + "; ".join(area_txt) + ".")
     L.append("")
@@ -2114,8 +2176,15 @@ def render_md(doc):
     L.append(f"python -m pytest -q {TEST_REL}")
     L.append("```")
     L.append("")
-    L.append("Inputs are pinned by sha256 (`inputs` in the JSON). A changed input fails the pin and asks for a "
-             "deliberate re-pin and regeneration.")
+    L.append("Inputs are pinned by sha256 (`inputs` in the JSON). An input present with a different sha256 is an "
+             "error (never skipped); it needs a deliberate re-pin and regeneration.")
+    L.append("")
+    L.append("Input re-pins (`input_repin_log` in the JSON):")
+    L.append("")
+    for r in INPUT_REPIN_LOG:
+        L.append(f"- {r['date']} `{r['input']}` {r['from']['commit']} (sha256 {r['from']['sha256'][:12]}...) -> "
+                 f"{r['to']['commit']} (sha256 {r['to']['sha256'][:12]}...): {r['reason']}. Effect: "
+                 f"{r['effect_on_this_overlay']}.")
     L.append("")
     return "\n".join(L)
 
