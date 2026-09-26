@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:abep:schemas:architecture_comparison:electrical_closure_v1",
+  "title": "ABEP electrical-closure evidence data v1 (PPU conversion efficiencies and auxiliary loads per bus-power-boundary component)",
+  "description": "Schema of docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json. Evidence DATA for callers of the common bus-power boundary (bus_power_boundary_v1): every entry carries source ids, locator, evidence class (docs/EVIDENCE.md quantity type), evidence level, applicability and uncertainty, or is an explicit TBD with what it requires. Nothing here is a code default.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "boundary_version", "status", "written_against_commit", "generated_by", "accessed",
+               "milestones", "rules", "evidence_class_enum", "sources", "reference_constants", "components",
+               "open_questions_for_owner"],
+  "properties": {
+    "schema_version": {"const": "electrical_closure_v1"},
+    "boundary_version": {"const": "bus_power_boundary_v1"},
+    "status": {"type": "string", "minLength": 1},
+    "written_against_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "generated_by": {"type": "string", "minLength": 1},
+    "accessed": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "milestones": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["supports", "A", "to_reach_B", "to_reach_C"],
+      "properties": {
+        "supports": {"type": "array", "minItems": 1, "items": {"enum": ["A", "B", "C"]}},
+        "A": {"type": "string", "minLength": 1},
+        "to_reach_B": {"type": "string", "minLength": 1},
+        "to_reach_C": {"type": "string", "minLength": 1}
+      }
+    },
+    "rules": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "evidence_class_enum": {"type": "array", "items": {"$ref": "#/$defs/evidence_class"}},
+    "sources": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {"pattern": "^S-[A-Za-z0-9&-]+$"},
+      "additionalProperties": {"$ref": "#/$defs/source"}
+    },
+    "reference_constants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mu0_N_per_A2", "m_e_kg", "e_C", "source_id"],
+      "properties": {
+        "mu0_N_per_A2": {"type": "number", "exclusiveMinimum": 0},
+        "m_e_kg": {"type": "number", "exclusiveMinimum": 0},
+        "e_C": {"type": "number", "exclusiveMinimum": 0},
+        "source_id": {"type": "string"}
+      }
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hall_discharge", "hall_magnet", "cathode_keeper", "cathode_heater", "flow_control", "compressor",
+                   "thermal_control", "housekeeping", "rf_source", "ecr_source", "ecr_magnet"],
+      "properties": {
+        "hall_discharge": {"$ref": "#/$defs/component"},
+        "hall_magnet": {"$ref": "#/$defs/component"},
+        "cathode_keeper": {"$ref": "#/$defs/component"},
+        "cathode_heater": {"$ref": "#/$defs/component"},
+        "flow_control": {"$ref": "#/$defs/component"},
+        "compressor": {"$ref": "#/$defs/component"},
+        "thermal_control": {"$ref": "#/$defs/component"},
+        "housekeeping": {"$ref": "#/$defs/component"},
+        "rf_source": {"$ref": "#/$defs/component"},
+        "ecr_source": {"$ref": "#/$defs/component"},
+        "ecr_magnet": {"$ref": "#/$defs/component"}
+      }
+    },
+    "open_questions_for_owner": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  },
+  "$defs": {
+    "evidence_class": {
+      "description": "docs/EVIDENCE.md quantity type (six classes) plus 'definition' (a boundary convention or identity), 'qualitative' (non-numeric statement) and 'tbd' (no usable value).",
+      "enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed", "definition", "qualitative", "tbd"]
+    },
+    "architecture": {"enum": ["hall_only", "rf_hall", "ecr_hall"]},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["citation", "url", "access", "accessed", "sha256_accessed"],
+      "properties": {
+        "citation": {"type": "string", "minLength": 10},
+        "url": {"type": "string", "pattern": "^(https://|git:)"},
+        "doi": {"type": "string", "pattern": "^10\\."},
+        "access": {"type": "string", "minLength": 1},
+        "accessed": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+        "sha256_accessed": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["load_plane", "in_architectures", "efficiency_status", "efficiency_evidence", "load_status", "entries"],
+      "properties": {
+        "load_plane": {"type": "string", "minLength": 1},
+        "in_architectures": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/architecture"}},
+        "efficiency_status": {"enum": ["evidence-range", "TBD"]},
+        "efficiency_evidence": {"type": "array", "items": {"type": "string"}},
+        "load_status": {"type": "string", "minLength": 1},
+        "entries": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/entry"}}
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "role", "quantity", "chain_stage", "value_kind", "value", "units", "evidence_class",
+                   "evidence_level", "reporting", "source_ids", "locator", "transformation_chain", "uncertainty",
+                   "validation_status", "applicability", "derivation", "tbd_requires"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Z]{2}-[A-Za-z0-9&-]+$"},
+        "role": {"enum": ["efficiency-candidate", "load-candidate", "load-bracket", "load-model", "load-input",
+                          "load-driver", "analysis-input", "definition", "context-only"]},
+        "quantity": {"type": "string", "minLength": 1},
+        "chain_stage": {"type": "string", "minLength": 1},
+        "value_kind": {"enum": ["number", "range", "series", "list", "qualitative", "tbd"]},
+        "value": {},
+        "units": {"type": ["string", "null"]},
+        "evidence_class": {"$ref": "#/$defs/evidence_class"},
+        "evidence_level": {"type": ["integer", "null"], "minimum": 1, "maximum": 7},
+        "reporting": {"enum": ["measurement", "nominal", "specification", "estimate", "textbook-typical", "derivation", "none"]},
+        "source_ids": {"type": "array", "items": {"type": "string", "pattern": "^S-"}},
+        "locator": {"type": ["string", "null"]},
+        "transformation_chain": {"type": "string", "minLength": 1},
+        "uncertainty": {"type": "string", "minLength": 1},
+        "validation_status": {"type": "string", "minLength": 1},
+        "applicability": {"type": "object"},
+        "derivation": {
+          "anyOf": [
+            {"type": "null"},
+            {"type": "object", "required": ["formula", "inputs"], "properties": {"formula": {"type": "string"}, "inputs": {"type": "object"}}}
+          ]
+        },
+        "tbd_requires": {"type": ["string", "null"]}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"value_kind": {"const": "tbd"}}},
+          "then": {"properties": {"value": {"type": "null"}, "evidence_class": {"const": "tbd"},
+                                  "tbd_requires": {"type": "string", "minLength": 10}}},
+          "else": {"properties": {"source_ids": {"minItems": 1}, "locator": {"type": "string", "minLength": 1},
+                                  "tbd_requires": {"type": "null"},
+                                  "evidence_class": {"enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed", "definition", "qualitative"]}}}
+        },
+        {
+          "if": {"properties": {"value_kind": {"enum": ["number", "range"]}}},
+          "then": {"properties": {"units": {"type": "string", "minLength": 1},
+                                  "evidence_class": {"enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed", "definition"]}}}
+        },
+        {
+          "if": {"properties": {"value_kind": {"const": "number"}}},
+          "then": {"properties": {"value": {"type": "number"}}}
+        },
+        {
+          "if": {"properties": {"value_kind": {"const": "range"}}},
+          "then": {"properties": {"value": {"type": "object", "required": ["min", "max"], "additionalProperties": false,
+                                            "properties": {"min": {"type": "number"}, "max": {"type": "number"}}}}}
+        },
+        {
+          "if": {"properties": {"value_kind": {"const": "series"}}},
+          "then": {"properties": {"value": {"type": "array", "minItems": 2, "items": {"type": "object",
+                   "required": ["P_out_W", "efficiency"], "properties": {"P_out_W": {"type": "number", "exclusiveMinimum": 0},
+                   "efficiency": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}}}}}}
+        },
+        {
+          "if": {"properties": {"value_kind": {"const": "qualitative"}}},
+          "then": {"properties": {"value": {"type": "string", "minLength": 1}}}
+        },
+        {
+          "if": {"properties": {"role": {"const": "efficiency-candidate"}, "value_kind": {"enum": ["number"]}}, "required": ["role", "value_kind"]},
+          "then": {"properties": {"value": {"exclusiveMinimum": 0, "maximum": 1}}}
+        }
+      ]
+    }
+  }
+}
