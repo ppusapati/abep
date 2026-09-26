@@ -1,0 +1,112 @@
+# CI for the ABEP-VLEO simulator: the repository's evidence discipline, enforced mechanically (docs/ci/CI.md).
+#   integrity  scripts/ci_checks.py: parse every JSON/TOML, verify the P5-N2 pre-registration lock and the audit snapshot
+#              MANIFEST, the HallThruster.jl pin, rate-validity coverage, generated artefacts == a fresh in-memory generation,
+#              and the transport-ensemble admission gate. Seconds; writes nothing.
+#   tests      python -m pytest -q tests (+ the CLAUDE.md rule 9 outcome: 5 SUPERSEDED skips, 1 strict xfail) and
+#              python -m abep_sim.golden check, with pymsis present and absent (gate 1: the frozen atmosphere needs no pymsis).
+# No Julia here: HallThruster.jl runs are offline. The optional construction-only smoke is julia-smoke.yml (manual only).
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # requirements-lock.txt (numpy 2.4.4, scipy 1.17.1, pandas 3.0.2) and the scripts' use of tomllib need Python >= 3.11,
+  # although pyproject.toml says >= 3.10 (see docs/ci/CI.md, open points).
+  PYTHON_VERSION: "3.11"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  # The repository is used from its root, as scripts/install_and_test.sh does after installation. `pip install -e .` is
+  # not used: with the current pyproject.toml setuptools refuses the flat layout (abep_sim + hallthruster_bridge), see CI.md.
+  PYTHONPATH: ${{ github.workspace }}
+
+jobs:
+  integrity:
+    name: Repository integrity (scripts/ci_checks.py)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-lock.txt
+
+      - name: Install locked dependencies (pymsis not needed)
+        run: |
+          grep -v '^pymsis' requirements-lock.txt > "$RUNNER_TEMP/requirements-no-pymsis.txt"
+          python -m pip install -r "$RUNNER_TEMP/requirements-no-pymsis.txt"
+
+      - name: Static integrity checks
+        run: python scripts/ci_checks.py
+
+      - name: Working tree unchanged
+        run: |
+          git status --porcelain
+          test -z "$(git status --porcelain)"
+
+  tests:
+    name: Tests + golden benchmarks (pymsis ${{ matrix.pymsis }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        pymsis: [present, absent]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements-lock.txt
+
+      - name: Install locked dependencies
+        run: |
+          if [ "${{ matrix.pymsis }}" = "present" ]; then
+            python -m pip install -r requirements-lock.txt
+          else
+            grep -v '^pymsis' requirements-lock.txt > "$RUNNER_TEMP/requirements-no-pymsis.txt"
+            python -m pip install -r "$RUNNER_TEMP/requirements-no-pymsis.txt"
+          fi
+          python -m pip freeze
+
+      - name: Confirm the pymsis state of this leg
+        env:
+          WANT_PYMSIS: ${{ matrix.pymsis }}
+        run: |
+          python - <<'EOF'
+          import importlib.util, os, sys
+          have = importlib.util.find_spec("pymsis") is not None
+          print("pymsis importable:", have)
+          sys.exit(0 if have == (os.environ["WANT_PYMSIS"] == "present") else 1)
+          EOF
+
+      - name: Tests (python -m pytest -q tests)
+        run: python -m pytest -q tests --junitxml="$RUNNER_TEMP/pytest.xml"
+
+      - name: Expected test outcome (CLAUDE.md rule 9)
+        run: python scripts/ci_checks.py --pytest-junit "$RUNNER_TEMP/pytest.xml"
+
+      - name: Golden benchmarks (python -m abep_sim.golden check)
+        run: |
+          # abep_sim.golden prints "OK" or the list of deviations and exits 0 either way, so gate on its output.
+          out="$(python -m abep_sim.golden check)"
+          printf '%s\n' "$out"
+          [ "$(printf '%s\n' "$out" | tail -n 1)" = "OK" ] || { echo "::error::golden benchmarks moved (CLAUDE.md rule 2)"; exit 1; }
+
+      - name: Working tree unchanged (tests and goldens must not rewrite committed files)
+        run: |
+          git status --porcelain
+          test -z "$(git status --porcelain)"
