@@ -1,7 +1,10 @@
-"""Tests for Bundle 1 (Milestone A, conditional selection): fo_bundle1_conditional_selection.
+"""Tests for Bundle 1 (Milestone A, conditional selection): fo_bundle1_conditional_selection, bundle versions v1 and v2.
 
-Checks that docs/milestones/bundle1/build_bundle1.py reproduces bundle1_v1.json and BUNDLE1.md byte for byte, that the
-JSON validates against its schema, that every architecture x mandatory-field cell carries the full metadata, that the
+v1 (bundle1_v1.json / BUNDLE1.md / bundle1_v1.schema.json) is the historical record of T_BUNDLE1 attempt 2: it is verified
+by its recorded sha256 and never rebuilt. v2: checks that docs/milestones/bundle1/build_bundle1.py reproduces
+bundle1_v2.json and BUNDLE1_v2.md byte for byte from the pinned inputs and the pinned governance snapshot (never the live
+governance files), that the v1 -> v2 change log is consistent, that the ECHT-N2 status is carried, that the JSON
+validates against its schema, that every architecture x mandatory-field cell carries the full metadata, that the
 outcome is one of the two allowed forms, that any ELIMINATED_WITHIN_TESTED_ENVELOPE traces to a lane-24 demonstrated
 gate, that P_feed / T_feed stay EXPLICITLY_UNAVAILABLE, that the input sha256 pins hold (and that a changed or missing
 input raises), and that the forbidden wording is absent.
@@ -71,18 +74,21 @@ def test_schema_rejects_filled_feed_pressure(doc):
     assert bb.validate(bad, schema)
 
 
-def test_field_set_matches_operating_model(doc):
+@pytest.fixture(scope="module")
+def snap():
+    return json.loads((REPO / bb.GOV_SNAPSHOT_REL).read_text(encoding="utf-8"))
+
+
+def test_field_set_matches_operating_model(doc, snap):
     assert FIELDS == ["m_dot_s", "P_feed", "T_feed", "x_s", "V_d", "T", "P_bus", "m", "Q_reject", "life", "startup", "eta_u",
                       "stability"]
-    om = " ".join((REPO / "docs/orchestration/OPERATING_MODEL.md").read_text(encoding="utf-8").split())
-    assert bb.OPERATING_MODEL_FIELD_SET in om
+    assert snap["operating_model_checked"]["field_set"] == bb.OPERATING_MODEL_FIELD_SET
     assert [f["id"] for f in doc["mandatory_fields"]] == FIELDS
 
 
-def test_every_cell_has_full_metadata(doc):
-    reg = json.loads((REPO / "docs/orchestration/lane_registry_v1.json").read_text())
-    known = {l["id"] for l in reg["lanes"]} | {l["id"] for l in reg["follow_ons"]}
-    trig = {t["id"] for t in json.loads((REPO / "docs/orchestration/trigger_registry_v1.json").read_text())["triggers"]}
+def test_every_cell_has_full_metadata(doc, snap):
+    known = set(snap["lane_ids"]) | set(snap["fo_ids"])
+    trig = set(snap["trigger_ids"])
     pinned = {p for _, p, _ in bb.PINS}
     cells = doc["admissibility"]["cells"]
     assert set(cells) == set(bb.ARCHS)
@@ -235,13 +241,26 @@ def test_changed_or_missing_input_raises(tmp_path):
         bb.verify_pins([(lane, rel, digest)], repo=root)
 
 
-def test_claim_identities_match_pins(doc):
-    gov = bb.check_governance()
-    assert doc["claim"]["prerequisite_identities_match_pins"] is True
+def test_claim_identities_and_repin_log(doc, snap):
+    gov = bb.load_governance()
+    claim = snap["claim"]["prerequisites"]
+    differ = sorted(l for l, c in bb.PREREQUISITES.items() if claim[l]["identity"] != c)
+    assert differ == sorted(bb.REPINS) == ["fo_hall_sustainment_envelope", "lane_09_hall_sustainment"]
+    assert doc["claim"]["prerequisite_identities_match_pins"] is False
+    assert sorted(r["lane"] for r in doc["claim"]["repin_log"]) == differ
+    for r in doc["claim"]["repin_log"]:
+        assert r["claim_identity"] == claim[r["lane"]]["identity"] and r["v2_identity"] == bb.PREREQUISITES[r["lane"]]
+        assert r["reason"].strip() and r["verification_record"].strip()
     for i in doc["inputs"]:
         commit = bb.PREREQUISITES.get(i["lane"]) or bb.CONTEXT[i["lane"]]
         assert i["commit"] == commit
         assert i["verification_protocol"] == gov["protocols"][i["lane"]]["protocol"]
+
+
+def test_undocumented_identity_change_raises(monkeypatch):
+    monkeypatch.setitem(bb.PREREQUISITES, "lane_07_rf_evidence", "f" * 40)
+    with pytest.raises(bb.InputError):
+        bb.load_governance()
 
 
 def test_pinned_files_equal_lane_commit_blobs():
@@ -255,9 +274,8 @@ def test_pinned_files_equal_lane_commit_blobs():
         assert hashlib.sha256(r.stdout).hexdigest() == digest, rel
 
 
-def test_evidence_weight_flags(doc):
-    reg = json.loads((REPO / "docs/orchestration/lane_registry_v1.json").read_text())
-    single = {l["id"] for l in reg["lanes"] if l.get("verification_protocol") == "single-lens-v1"}
+def test_evidence_weight_flags(doc, snap):
+    single = set(snap["single_lens_lanes"])
     ew = doc["evidence_weight"]
     assert set(ew["inputs_single_lens"]) == {i["lane"] for i in doc["inputs"] if i["lane"] in single}
     assert set(ew["blocking_lanes_single_lens"]) == set(doc["outcome"]["blocking_lanes"]) & single
@@ -265,12 +283,11 @@ def test_evidence_weight_flags(doc):
         assert i["decisive_for_B_or_C_allowed"] is (i["lane"] not in single)
 
 
-def test_three_questions_and_owner_questions(doc):
+def test_three_questions_and_owner_questions(doc, snap):
     q = doc["three_questions"]
     assert q["i_conditional_selection_now"].startswith(doc["outcome"]["label"])
-    reg = json.loads((REPO / "docs/orchestration/lane_registry_v1.json").read_text())
-    known = {l["id"] for l in reg["lanes"]} | {l["id"] for l in reg["follow_ons"]}
-    trig = {t["id"] for t in json.loads((REPO / "docs/orchestration/trigger_registry_v1.json").read_text())["triggers"]}
+    known = set(snap["lane_ids"]) | set(snap["fo_ids"])
+    trig = set(snap["trigger_ids"])
     for it in q["ii_what_blocks_physics_backed_selection"]:
         for i in it["ids"]:
             assert i in known or i in trig, i
@@ -281,7 +298,7 @@ def test_three_questions_and_owner_questions(doc):
 
 
 def test_forbidden_wording_absent():
-    for p in (JSON_PATH, MD_PATH):
+    for p in (JSON_PATH, MD_PATH, REPO / bb.GOV_SNAPSHOT_REL):
         assert bb.forbidden_hits(p.read_text(encoding="utf-8")) == [], p
 
 
@@ -291,3 +308,106 @@ def test_decision_rule_precedes_tables():
     i_adm = md.index("## 2. Admissibility")
     i_out = md.index("## 4. Outcome")
     assert i_rule < i_adm < i_out
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# v1 historical record, governance snapshot, change log, ECHT status, context lanes (bundle1_v2 repair)
+# ----------------------------------------------------------------------------------------------------------------------
+def test_v1_record_verified_by_sha256():
+    for rel, digest in bb.V1_RECORD["files"].items():
+        assert hashlib.sha256((REPO / rel).read_bytes()).hexdigest() == digest, rel
+    v1 = bb.verify_v1_record()
+    assert v1["id"] == "bundle1_v1" and v1["outcome"]["label"] == "NO_BASELINE_YET"
+
+
+def test_v1_record_change_detected(tmp_path):
+    root = tmp_path / "repo"
+    for rel in bb.V1_RECORD["files"]:
+        (root / Path(rel).parent).mkdir(parents=True, exist_ok=True)
+        shutil.copy(REPO / rel, root / rel)
+    bb.verify_v1_record(root)
+    with open(root / "docs/milestones/bundle1/BUNDLE1.md", "ab") as fh:
+        fh.write(b"\n")
+    with pytest.raises(bb.InputError):
+        bb.verify_v1_record(root)
+
+
+def test_v1_files_equal_their_verified_commit():
+    if shutil.which("git") is None:
+        pytest.skip("git not available")
+    for rel, digest in bb.V1_RECORD["files"].items():
+        r = subprocess.run(["git", "show", f"{bb.V1_RECORD['commit']}:{rel}"], capture_output=True, cwd=REPO)
+        if r.returncode != 0:
+            pytest.skip("v1 commit not available in this clone")
+        assert hashlib.sha256(r.stdout).hexdigest() == digest, rel
+
+
+def test_governance_snapshot_pinned(tmp_path):
+    assert hashlib.sha256((REPO / bb.GOV_SNAPSHOT_REL).read_bytes()).hexdigest() == bb.GOV_SNAPSHOT_SHA256
+    bad = tmp_path / "snap.json"
+    bad.write_bytes((REPO / bb.GOV_SNAPSHOT_REL).read_bytes() + b"\n")
+    with pytest.raises(bb.InputError):
+        bb.load_governance(bad)
+
+
+def test_build_does_not_read_live_governance(monkeypatch, rendered):
+    """Registry / ledger bookkeeping cannot break reproduction: the build never opens the live governance files."""
+    monkeypatch.setattr(bb, "_live_gov_text", lambda rel: (_ for _ in ()).throw(AssertionError(f"live governance read: {rel}")))
+    assert bb.render_all() == rendered
+
+
+def test_governance_snapshot_matches_captured_commit(snap):
+    if shutil.which("git") is None:
+        pytest.skip("git not available")
+    for rel, digest in snap["source_files_sha256"].items():
+        r = subprocess.run(["git", "show", f"{snap['captured_from_commit']}:{rel}"], capture_output=True, cwd=REPO)
+        if r.returncode != 0:
+            pytest.skip("snapshot commit not available in this clone")
+        assert hashlib.sha256(r.stdout).hexdigest() == digest, rel
+
+
+def test_change_log(doc):
+    cl = doc["change_log"]
+    assert cl["from"] == "bundle1_v1" and cl["to"] == "bundle1_v2"
+    assert all(cl["unchanged"].values()), cl["unchanged"]
+    assert cl["decision_relevant_changes"] == []
+    assert {i["lane"] for i in cl["inputs_changed"]} == {"lane_09_hall_sustainment", "fo_hall_sustainment_envelope"}
+    assert {i["lane"] for i in cl["inputs_added"]} == {"fo_aux_bus_comparison", "fo_veto_layer", "fo_experiment_package",
+                                                       "fo_dx5_cross_section_evidence"}
+    changed = {f["path"]: f for i in cl["inputs_changed"] for f in i["files"]}
+    m = changed["docs/evidence/hall_sustainment/hall_sustainment_matrix.json"]
+    assert m["v1_sha256"].startswith("248aef28") and m["v2_sha256"].startswith("76bba594")
+    v1 = json.loads((REPO / "docs/milestones/bundle1/bundle1_v1.json").read_text(encoding="utf-8"))
+    assert bb.change_log(v1, doc) == cl
+    assert doc["outcome"]["label"] == v1["outcome"]["label"] == "NO_BASELINE_YET"
+    assert doc["decision_rule"] == v1["decision_rule"] and doc["decision_rule"]["id"] == "B1-DR-1"
+
+
+def test_echt_status_carried(doc):
+    ec = doc["carried_statuses"]["echt_n2"]
+    m = json.loads((REPO / bb.HSM).read_text())
+    src = {e["id"]: e["repository_status"] for e in m["entries"] if "repository_status" in e}
+    assert [i["item"] for i in ec["lane09_items"]] == sorted(src) == ["E03", "E04"]
+    for i in ec["lane09_items"]:
+        rs = src[i["item"]]
+        assert i["status"] == rs["status"] == "HISTORICAL_UNSUPPORTED"
+        assert i["literature_transfer_use"] == rs["literature_transfer_use"]
+        assert i["score_bearing"] is False and i["transport_discriminator"] is False
+        assert i["forced_assumptions_relevant_to_transfer"] == rs["forced_assumptions_relevant_to_transfer"]
+    assert [d["forced_assumption"] for d in ec["hsenv_declared_uncertainties"]] == ["A1", "A1"]
+    assert "HISTORICAL_UNSUPPORTED" in " ".join(doc["admissibility"]["cells"]["hall_only"]["stability"]["notes"])
+
+
+def test_context_lanes_metadata_only(doc):
+    v1 = json.loads((REPO / "docs/milestones/bundle1/bundle1_v1.json").read_text(encoding="utf-8"))
+    for a in bb.ARCHS:
+        for f in FIELDS:
+            c1, c2 = v1["admissibility"]["cells"][a][f], doc["admissibility"]["cells"][a][f]
+            assert c1["status"] == c2["status"] and c1["value"] == c2["value"]
+            assert [(b["kind"], b["id"]) for b in c1["blocking"]] == [(b["kind"], b["id"]) for b in c2["blocking"]]
+    cx = doc["context_followons"]
+    for lane, trig in bb.CONTEXT_TRIGGERS.items():
+        assert cx[lane]["verified"]["trigger"] == trig and cx[lane]["verified"]["commit"] == bb.CONTEXT[lane]
+    assert cx["fo_veto_layer"]["eliminated_within_tested_envelope"] == [] and cx["fo_veto_layer"]["veto_candidates"] == []
+    for a in bb.ARCHS:
+        assert "fo_aux_bus_comparison" in " ".join(doc["admissibility"]["cells"][a]["P_bus"]["notes"])
