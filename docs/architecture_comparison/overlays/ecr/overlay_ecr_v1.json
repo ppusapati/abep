@@ -172,6 +172,15 @@
    "evidence": {
     "min": 0.7705,
     "max": 0.915,
+    "min_point": {
+     "id": "HD-RH24-400V-25Vin",
+     "P_out_W": 199.9,
+     "lowest_power_of_curve": true
+    },
+    "max_point": {
+     "id": "HD-RH24-400V-25Vin",
+     "P_out_W": 961.6
+    },
     "ids": [
      "HD-RH24-250V-25Vin",
      "HD-RH24-250V-28Vin",
@@ -205,7 +214,7 @@
     "validation_status": "breadboard bench test on resistive/electronic load (load type not stated); not validated for Vyovrinda hardware",
     "n_points": 54
    },
-   "note": "envelope of the lane-20 digitized discharge-supply efficiencies (replaces the single assumed 0.9 of breakeven_v1 as the box axis; 0.9 lies inside). The evidence covers 200-500 V outputs, so V_d = 150 V is an extrapolation of the supply data; the operating-point value is TBD until the admitted discharge load exists"
+   "note": "envelope of the lane-20 digitized discharge-supply efficiencies (replaces the single assumed 0.9 of breakeven_v1 as the box axis; 0.9 lies inside). The evidence covers 200-500 V outputs, so V_d = 150 V is an extrapolation of the supply data; the operating-point value is TBD until the admitted discharge load exists. This change of the PROPOSED box moves its extremes: owner decision D2_eta_ppu_d_axis (owner_decisions_requested)"
   },
   "X_grid": [
    0.01,
@@ -7080,15 +7089,18 @@
     "chain_stage": "GaN HEMT PA device, power-added efficiency (lane 08)",
     "source": "C. Li, Z. Zhang, Y. Pei, C. Chen, G. Feng, Y. Xu, \"Internally Harmonic Matched Compact GaN Power Amplifier with 78.5% PAE for 2.45 GHz Wireless Power Transfer Systems\", Micromachines 15(11) (2024) 1354 (CC BY 4.0)",
     "uncertainty": "device-level measurement; excludes DC-DC conversion, driver stage, isolator/circulator and thermal control"
-   },
+   }
+  ],
+  "stage_only_context_not_a_bound": [
    {
     "id": "ECR-E042",
     "value": 0.7,
-    "value_qualifier": "lower bound on a 5 W breadboard ('> 0.70')",
+    "value_qualifier": "lower bound on the efficiency of one stage ('> 0.70', 5 W breadboard)",
     "evidence_class": "measured",
     "chain_stage": "solid-state amplifier breadboard (lane 08)",
     "source": "D. Packan et al., \"H2020 MINOTOR: Magnetic Nozzle Electron Cyclotron Resonance Thruster\", IEPC-2019-875, 36th IEPC, Vienna, 2019",
-    "uncertainty": "lower bound ('efficiency >70%'); tested at 5 W; 25 W test announced"
+    "uncertainty": "lower bound ('efficiency >70%'); tested at 5 W; 25 W test announced",
+    "bound_on_chain": "none: a lower bound on one stage does not bound the chain from above (the stage value is unknown above 0.70) nor from below (the other stages are unknown); context only, not used numerically"
    }
   ],
   "stage_only_rule": "Stage-only efficiencies (amplifier stage, magnetron tube) are upper bounds on the bus->coupling-plane chain, not chain values.",
@@ -7176,12 +7188,90 @@
  "placement_rules": {
   "status": "PROPOSED classification rules for the owner",
   "declared_basis": "phi as declared per entry (a sourced or definitional upper bound where one exists, else 1, assumed), k = 1 (assumed), omega_f = 0 (permanent-magnet ecr_magnet, zero common deltas)",
-  "CLEARLY_ABOVE_BREAKEVEN": "c_above > Y_max of every case at the most favourable Hall reference of the PROPOSED box, with eta_chain = 1 and eta_t = 1: cannot pay under any declared case at any eta_t in range. c_above is the declared cost when phi is assumed; when the declared value is only an upper bound, c_above is the ionization floor",
-  "CLEARLY_BELOW_BREAKEVEN": "for at least one stated case c: declared upper cost / (reference chain * eta_t,lo) <= Y_min[c] at the least favourable Hall reference of the box: pays under that case everywhere in the box at every eta_t in range, with the stated reference chain",
+  "CLEARLY_ABOVE_BREAKEVEN": "c_above > Y_max of every case at the most favourable Hall reference of the PROPOSED box, with eta_chain = 1 and eta_t = 1: cannot pay under any declared case at any eta_t in range and at any delivered share X (Y_max is the supremum over X). c_above is the declared cost when phi is assumed; when the declared value is only an upper bound, c_above is the ionization floor",
+  "CLEARLY_BELOW": "for at least one stated case c: declared upper cost / (reference chain * eta_t,lo) <= Y_min[c] at the least favourable Hall reference of the box: pays under that case everywhere in the box at every eta_t in range, with the stated reference chain, for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval). Under this rule the category is empty by construction (region.structural.category_empty_by_rule; owner decision D1_clearly_below_rule)",
   "STRADDLES": "numeric and neither of the above; straddles_on names the dimensions over which pay / no-pay flips",
   "NOT_PLACEABLE": "no numeric ion production cost on an ion-current basis for an in-scope gas; the missing quantity is named",
   "no_hard_gate": "no placement is a hard-gate decision; a CLEARLY_ABOVE placement would be a milestone-A candidate for the owner's hard-gate review only, conditional on A1-A8 and the declared basis"
  },
+ "owner_decisions_requested": [
+  {
+   "id": "D1_clearly_below_rule",
+   "question": "Accept the PROPOSED CLEARLY_BELOW rule (whole PROPOSED box, every eta_t in range down to eta_t,lo, with the stated reference chain), or choose a less strict reading of 'can pay under at least the stated case'?",
+   "plain_statement": "under the rule as proposed the CLEARLY_BELOW category is empty by construction of the rule, not because of the evidence: the rule accepts only declared costs up to reference chain * eta_t,lo * Y_min, which is below every ionization floor (region.structural)",
+   "max_declared_cost_accepted_W_per_A": {
+    "add_only": 6.62295,
+    "cost_offset": 7.28525,
+    "optimistic_bound": 7.28525
+   },
+   "ionization_floor_range_W_per_A": [
+    12.1298,
+    14.5341
+   ],
+   "reference_chain_note": "the reference chain is the only system-level DC->RF value in the evidence (Hayabusa TWT system, inferred); it is not a bound on the ABEP chain, which has no sourced lower bound. A strict BELOW placement would need a lower bound on the chain, which does not exist; using the reference chain is itself a stated condition the owner must accept",
+   "alternative_readings": {
+    "as_proposed_reference_chain_eta_t_lo": {
+     "test": "declared upper cost / (reference chain * eta_t,lo) <= Y_min[case]",
+     "outcome": {}
+    },
+    "reference_chain_eta_t_1": {
+     "test": "declared upper cost / reference chain <= Y_min[case] (eta_t = 1)",
+     "outcome": {}
+    },
+    "lossless_chain_eta_t_1": {
+     "test": "declared upper cost <= Y_min[case] (chain 1, eta_t = 1)",
+     "outcome": {
+      "ECR-D018": [
+       "cost_offset",
+       "optimistic_bound"
+      ],
+      "ECR-D019": [
+       "add_only",
+       "cost_offset",
+       "optimistic_bound"
+      ]
+     }
+    }
+   },
+   "alternative_readings_note": "computed on the declared basis at the least favourable corner, omega_f = 0, for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval). Shown for the decision only: evidence_placements use the rule as proposed until the owner decides"
+  },
+  {
+   "id": "D2_eta_ppu_d_axis",
+   "question": "Confirm the eta_ppu,d axis of the PROPOSED box: this overlay uses the lane-20 digitized discharge-supply envelope in place of the single assumed breakeven_v1 value",
+   "used_values": [
+    0.7705,
+    0.915
+   ],
+   "breakeven_v1_value": 0.9,
+   "envelope_basis": "lane-20 hall_discharge.efficiency_evidence (digitized): low end 0.7705 at 199.9 W output (HD-RH24-400V-25Vin, the lowest-power point of that curve, i.e. part load), high end 0.915 at 961.6 W (HD-RH24-400V-25Vin); the evidence covers 200-500 V outputs, so V_d = 150 V extrapolates it",
+   "box_extremes_used_W_per_A": {
+    "Y_max_by_case": {
+     "add_only": 1168.07,
+     "cost_offset": 1752.11,
+     "optimistic_bound": 2208.19
+    },
+    "Y_min_by_case": {
+     "add_only": 182.149,
+     "cost_offset": 200.364,
+     "optimistic_bound": 200.364
+    }
+   },
+   "box_extremes_at_breakeven_v1_value_W_per_A": {
+    "Y_max_by_case": {
+     "add_only": 1000.0,
+     "cost_offset": 1500.0,
+     "optimistic_bound": 1890.46
+    },
+    "Y_min_by_case": {
+     "add_only": 185.185,
+     "cost_offset": 203.704,
+     "optimistic_bound": 203.704
+    }
+   },
+   "placements_that_change_at_breakeven_v1_value": [],
+   "placements_change": false
+  }
+ ],
  "evidence_placements": [
   {
    "id": "ECR-D018",
@@ -7296,9 +7386,17 @@
     "phi_kind": "assumed",
     "definition": "phi as stated above, k = 1 (assumed): the declared cost is the net microwave power the ABEP ecr_source must deliver at its coupling input per ampere of source-exit ions"
    },
+   "evidence_status": "published_value",
+   "evidence_status_note": "published value (inferred, open)",
+   "declared_cost_is_upper_bound": false,
+   "negative_readings_qualifier": "'cannot pay' readings (eta_t_min > 1, an empty eta_t window, could_pay = false) hold on the declared basis only (phi = 1 and k = 1 assumed): a forward/generator power plane (phi <= 1) or a different ion basis can lower the cost; the strict lower bound is the ionization floor (12.1298 W/A)",
    "ionization_floor_W_per_A": 12.1298,
    "bus_cost_W_per_A": {
-    "lower_bound_chain_1": 200.0,
+    "chain_1_on_declared_basis": [
+     200.0,
+     200.0
+    ],
+    "chain_1_bound_type": "lower bound on the bus cost on the declared basis (phi = 1 and k = 1 assumed; any chain efficiency <= 1 raises it)",
     "at_reference_chain": [
      550.055,
      550.055
@@ -7476,7 +7574,7 @@
        "reachable": false
       }
      },
-     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference"
+     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference; for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "bus -> coupling-input efficiency eta_chain of the candidate microwave chain",
@@ -7487,7 +7585,7 @@
     },
     {
      "measurement": "combined eta_chain * eta_t (one bus-to-Hall-channel ion-current test at the declared phi and k)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW_BREAKEVEN for case c if it is at least product_at_least[c]",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW for case c if it is at least product_at_least[c]",
      "if_below": 0.0905719,
      "product_at_least": {
       "add_only": {
@@ -7503,11 +7601,11 @@
        "reachable": true
       }
      },
-     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box"
+     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box. BELOW thresholds hold for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "end-to-end bus cost per delivered ampere C_del,bus = P_bus[ecr_source] / I_delivered into the Hall channel, on the entry's gas at the common feed state (subsumes phi, k, eta_chain and eta_t)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case; CLEARLY_BELOW_BREAKEVEN for case c if C_del,bus <= Y_min[c]; otherwise the Hall reference point (milestone B) decides",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case (at every share X, since Y_max is the supremum over X); CLEARLY_BELOW for case c if C_del,bus <= Y_min[c], for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval); otherwise the Hall reference point (milestone B) decides",
      "thresholds_W_per_A": {
       "Y_max_any_case": 2208.19,
       "Y_min_by_case": {
@@ -7650,9 +7748,17 @@
     "phi_kind": "assumed",
     "definition": "phi as stated above, k = 1 (assumed): the declared cost is the net microwave power the ABEP ecr_source must deliver at its coupling input per ampere of source-exit ions"
    },
+   "evidence_status": "published_value",
+   "evidence_status_note": "published value (inferred, open)",
+   "declared_cost_is_upper_bound": false,
+   "negative_readings_qualifier": "'cannot pay' readings (eta_t_min > 1, an empty eta_t window, could_pay = false) hold on the declared basis only (phi = 1 and k = 1 assumed): a forward/generator power plane (phi <= 1) or a different ion basis can lower the cost; the strict lower bound is the ionization floor (12.1298 W/A)",
    "ionization_floor_W_per_A": 12.1298,
    "bus_cost_W_per_A": {
-    "lower_bound_chain_1": 174.4,
+    "chain_1_on_declared_basis": [
+     174.4,
+     178.0
+    ],
+    "chain_1_bound_type": "lower bound on the bus cost on the declared basis (phi = 1 and k = 1 assumed; any chain efficiency <= 1 raises it)",
     "at_reference_chain": [
      479.648,
      489.549
@@ -7830,7 +7936,7 @@
        "reachable": false
       }
      },
-     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference"
+     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference; for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "bus -> coupling-input efficiency eta_chain of the candidate microwave chain",
@@ -7841,7 +7947,7 @@
     },
     {
      "measurement": "combined eta_chain * eta_t (one bus-to-Hall-channel ion-current test at the declared phi and k)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW_BREAKEVEN for case c if it is at least product_at_least[c]",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW for case c if it is at least product_at_least[c]",
      "if_below": 0.0789787,
      "product_at_least": {
       "add_only": {
@@ -7857,11 +7963,11 @@
        "reachable": true
       }
      },
-     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box"
+     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box. BELOW thresholds hold for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "end-to-end bus cost per delivered ampere C_del,bus = P_bus[ecr_source] / I_delivered into the Hall channel, on the entry's gas at the common feed state (subsumes phi, k, eta_chain and eta_t)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case; CLEARLY_BELOW_BREAKEVEN for case c if C_del,bus <= Y_min[c]; otherwise the Hall reference point (milestone B) decides",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case (at every share X, since Y_max is the supremum over X); CLEARLY_BELOW for case c if C_del,bus <= Y_min[c], for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval); otherwise the Hall reference point (milestone B) decides",
      "thresholds_W_per_A": {
       "Y_max_any_case": 2208.19,
       "Y_min_by_case": {
@@ -7979,9 +8085,17 @@
     "phi_kind": "definitional_upper",
     "definition": "phi as stated above, k = 1 (assumed): the declared cost is the net microwave power the ABEP ecr_source must deliver at its coupling input per ampere of source-exit ions"
    },
+   "evidence_status": "published_value",
+   "evidence_status_note": "published value (inferred, open)",
+   "declared_cost_is_upper_bound": true,
+   "negative_readings_qualifier": "the declared cost is an UPPER bound on the coupling-input cost (phi only upper-bounded): every 'cannot pay' reading on the declared basis (eta_t_min > 1, an empty eta_t window, could_pay = false) holds only once the phi bound is shown to be tight (measure the reflected power at the operating point); until then the only strict lower bound is the ionization floor (12.1298 W/A), which is what the CLEARLY_ABOVE test uses",
    "ionization_floor_W_per_A": 12.1298,
    "bus_cost_W_per_A": {
-    "lower_bound_chain_1": 376.5,
+    "chain_1_on_declared_basis": [
+     376.5,
+     376.5
+    ],
+    "chain_1_bound_type": "not a bound: the coupling-input cost may be lower than the declared value (phi only upper-bounded) and the chain can only raise the bus cost; the strict lower bound on the bus cost is the ionization floor",
     "at_reference_chain": [
      1035.48,
      1035.48
@@ -8159,7 +8273,7 @@
        "reachable": false
       }
      },
-     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference"
+     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference; for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "bus -> coupling-input efficiency eta_chain of the candidate microwave chain",
@@ -8170,7 +8284,7 @@
     },
     {
      "measurement": "combined eta_chain * eta_t (one bus-to-Hall-channel ion-current test at the declared phi and k)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW_BREAKEVEN for case c if it is at least product_at_least[c]",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW for case c if it is at least product_at_least[c]",
      "if_below": 0.00549311,
      "product_at_least": {
       "add_only": {
@@ -8186,11 +8300,11 @@
        "reachable": false
       }
      },
-     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box"
+     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box. BELOW thresholds hold for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "end-to-end bus cost per delivered ampere C_del,bus = P_bus[ecr_source] / I_delivered into the Hall channel, on the entry's gas at the common feed state (subsumes phi, k, eta_chain and eta_t)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case; CLEARLY_BELOW_BREAKEVEN for case c if C_del,bus <= Y_min[c]; otherwise the Hall reference point (milestone B) decides",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case (at every share X, since Y_max is the supremum over X); CLEARLY_BELOW for case c if C_del,bus <= Y_min[c], for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval); otherwise the Hall reference point (milestone B) decides",
      "thresholds_W_per_A": {
       "Y_max_any_case": 2208.19,
       "Y_min_by_case": {
@@ -8325,9 +8439,17 @@
     "phi_kind": "assumed",
     "definition": "phi as stated above, k = 1 (assumed): the declared cost is the net microwave power the ABEP ecr_source must deliver at its coupling input per ampere of source-exit ions"
    },
+   "evidence_status": "published_value",
+   "evidence_status_note": "published value (inferred, abstract_only)",
+   "declared_cost_is_upper_bound": false,
+   "negative_readings_qualifier": "'cannot pay' readings (eta_t_min > 1, an empty eta_t window, could_pay = false) hold on the declared basis only (phi = 1 and k = 1 assumed): a forward/generator power plane (phi <= 1) or a different ion basis can lower the cost; the strict lower bound is the ionization floor (14.5341 W/A)",
    "ionization_floor_W_per_A": 14.5341,
    "bus_cost_W_per_A": {
-    "lower_bound_chain_1": 213.2,
+    "chain_1_on_declared_basis": [
+     213.2,
+     213.2
+    ],
+    "chain_1_bound_type": "lower bound on the bus cost on the declared basis (phi = 1 and k = 1 assumed; any chain efficiency <= 1 raises it)",
     "at_reference_chain": [
      586.359,
      586.359
@@ -8505,7 +8627,7 @@
        "reachable": false
       }
      },
-     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference"
+     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference; for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "bus -> coupling-input efficiency eta_chain of the candidate microwave chain",
@@ -8516,7 +8638,7 @@
     },
     {
      "measurement": "combined eta_chain * eta_t (one bus-to-Hall-channel ion-current test at the declared phi and k)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW_BREAKEVEN for case c if it is at least product_at_least[c]",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW for case c if it is at least product_at_least[c]",
      "if_below": 0.0965496,
      "product_at_least": {
       "add_only": {
@@ -8532,11 +8654,11 @@
        "reachable": false
       }
      },
-     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box"
+     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box. BELOW thresholds hold for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "end-to-end bus cost per delivered ampere C_del,bus = P_bus[ecr_source] / I_delivered into the Hall channel, on the entry's gas at the common feed state (subsumes phi, k, eta_chain and eta_t)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case; CLEARLY_BELOW_BREAKEVEN for case c if C_del,bus <= Y_min[c]; otherwise the Hall reference point (milestone B) decides",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case (at every share X, since Y_max is the supremum over X); CLEARLY_BELOW for case c if C_del,bus <= Y_min[c], for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval); otherwise the Hall reference point (milestone B) decides",
      "thresholds_W_per_A": {
       "Y_max_any_case": 2208.19,
       "Y_min_by_case": {
@@ -8671,9 +8793,17 @@
     "phi_kind": "assumed",
     "definition": "phi as stated above, k = 1 (assumed): the declared cost is the net microwave power the ABEP ecr_source must deliver at its coupling input per ampere of source-exit ions"
    },
+   "evidence_status": "published_value_definition_unresolved",
+   "evidence_status_note": "published value whose definition is unresolved: its consistency check with ECR-E084 fails (consistency_check); the numeric placement is kept on the declared basis but carries no weight in the region and milestone statements beyond that qualifier",
+   "declared_cost_is_upper_bound": false,
+   "negative_readings_qualifier": "'cannot pay' readings (eta_t_min > 1, an empty eta_t window, could_pay = false) hold on the declared basis only (phi = 1 and k = 1 assumed): a forward/generator power plane (phi <= 1) or a different ion basis can lower the cost; the strict lower bound is the ionization floor (14.5341 W/A)",
    "ionization_floor_W_per_A": 14.5341,
    "bus_cost_W_per_A": {
-    "lower_bound_chain_1": 596.2,
+    "chain_1_on_declared_basis": [
+     596.2,
+     596.2
+    ],
+    "chain_1_bound_type": "lower bound on the bus cost on the declared basis (phi = 1 and k = 1 assumed; any chain efficiency <= 1 raises it)",
     "at_reference_chain": [
      1639.71,
      1639.71
@@ -8848,7 +8978,7 @@
        "reachable": false
       }
      },
-     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference"
+     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference; for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "bus -> coupling-input efficiency eta_chain of the candidate microwave chain",
@@ -8859,7 +8989,7 @@
     },
     {
      "measurement": "combined eta_chain * eta_t (one bus-to-Hall-channel ion-current test at the declared phi and k)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW_BREAKEVEN for case c if it is at least product_at_least[c]",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW for case c if it is at least product_at_least[c]",
      "if_below": 0.269995,
      "product_at_least": {
       "add_only": {
@@ -8875,11 +9005,11 @@
        "reachable": false
       }
      },
-     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box"
+     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box. BELOW thresholds hold for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "end-to-end bus cost per delivered ampere C_del,bus = P_bus[ecr_source] / I_delivered into the Hall channel, on the entry's gas at the common feed state (subsumes phi, k, eta_chain and eta_t)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case; CLEARLY_BELOW_BREAKEVEN for case c if C_del,bus <= Y_min[c]; otherwise the Hall reference point (milestone B) decides",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case (at every share X, since Y_max is the supremum over X); CLEARLY_BELOW for case c if C_del,bus <= Y_min[c], for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval); otherwise the Hall reference point (milestone B) decides",
      "thresholds_W_per_A": {
       "Y_max_any_case": 2208.19,
       "Y_min_by_case": {
@@ -8901,7 +9031,8 @@
     "reported_maximum_current_A": 0.0125,
     "consistent": false,
     "evidence_class": "model-derived (arithmetic on lane-08 values)",
-    "reading": "if the 'ion energy loss' were P_input / I_beam at the recorded 8 W, the implied current would exceed the reported maximum; the source's definition of 'ion energy loss' or the input power at each point is therefore not established from the abstract"
+    "reading": "if the 'ion energy loss' were P_input / I_beam at the recorded 8 W, the implied current would exceed the reported maximum; the source's definition of 'ion energy loss' or the input power at each point is therefore not established from the abstract",
+    "possible_reading": "not established (full text not accessed): if the source normalizes by a current larger than the extracted beam current (for example a screen current that includes grid interception), the cost per beam ampere is higher and the reported value is then only a lower bound per beam ampere"
    },
    "missing_quantities": [
     "TBD - requires the source's power measurement plane (forward, reflected, absorbed at the flange)",
@@ -9021,9 +9152,17 @@
     "phi_kind": "assumed",
     "definition": "phi as stated above, k = 1 (assumed): the declared cost is the net microwave power the ABEP ecr_source must deliver at its coupling input per ampere of source-exit ions"
    },
+   "evidence_status": "model_output_not_measurement",
+   "evidence_status_note": "the source's own model output (model-derived), not a measurement; placed for completeness, not counted as published measured/inferred evidence",
+   "declared_cost_is_upper_bound": false,
+   "negative_readings_qualifier": "'cannot pay' readings (eta_t_min > 1, an empty eta_t window, could_pay = false) hold on the declared basis only (phi = 1 and k = 1 assumed): a forward/generator power plane (phi <= 1) or a different ion basis can lower the cost; the strict lower bound is the ionization floor (14.5341 W/A)",
    "ionization_floor_W_per_A": 14.5341,
    "bus_cost_W_per_A": {
-    "lower_bound_chain_1": 443.9,
+    "chain_1_on_declared_basis": [
+     443.9,
+     443.9
+    ],
+    "chain_1_bound_type": "lower bound on the bus cost on the declared basis (phi = 1 and k = 1 assumed; any chain efficiency <= 1 raises it)",
     "at_reference_chain": [
      1220.85,
      1220.85
@@ -9201,7 +9340,7 @@
        "reachable": false
       }
      },
-     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference"
+     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference; for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "bus -> coupling-input efficiency eta_chain of the candidate microwave chain",
@@ -9212,7 +9351,7 @@
     },
     {
      "measurement": "combined eta_chain * eta_t (one bus-to-Hall-channel ion-current test at the declared phi and k)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW_BREAKEVEN for case c if it is at least product_at_least[c]",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW for case c if it is at least product_at_least[c]",
      "if_below": 0.201024,
      "product_at_least": {
       "add_only": {
@@ -9228,11 +9367,11 @@
        "reachable": false
       }
      },
-     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box"
+     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box. BELOW thresholds hold for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "end-to-end bus cost per delivered ampere C_del,bus = P_bus[ecr_source] / I_delivered into the Hall channel, on the entry's gas at the common feed state (subsumes phi, k, eta_chain and eta_t)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case; CLEARLY_BELOW_BREAKEVEN for case c if C_del,bus <= Y_min[c]; otherwise the Hall reference point (milestone B) decides",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case (at every share X, since Y_max is the supremum over X); CLEARLY_BELOW for case c if C_del,bus <= Y_min[c], for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval); otherwise the Hall reference point (milestone B) decides",
      "thresholds_W_per_A": {
       "Y_max_any_case": 2208.19,
       "Y_min_by_case": {
@@ -9351,9 +9490,17 @@
     "phi_kind": "sourced_upper",
     "definition": "phi as stated above, k = 1 (assumed): the declared cost is the net microwave power the ABEP ecr_source must deliver at its coupling input per ampere of source-exit ions"
    },
+   "evidence_status": "published_value",
+   "evidence_status_note": "published value (inferred, open)",
+   "declared_cost_is_upper_bound": true,
+   "negative_readings_qualifier": "the declared cost is an UPPER bound on the coupling-input cost (phi only upper-bounded): every 'cannot pay' reading on the declared basis (eta_t_min > 1, an empty eta_t window, could_pay = false) holds only once the phi bound is shown to be tight (measure the actual chain loss between the directional coupler and the thruster); until then the only strict lower bound is the ionization floor (12.1298 W/A), which is what the CLEARLY_ABOVE test uses",
    "ionization_floor_W_per_A": 12.1298,
    "bus_cost_W_per_A": {
-    "lower_bound_chain_1": 492.054,
+    "chain_1_on_declared_basis": [
+     492.054,
+     492.054
+    ],
+    "chain_1_bound_type": "not a bound: the coupling-input cost may be lower than the declared value (phi only upper-bounded) and the chain can only raise the bus cost; the strict lower bound on the bus cost is the ionization floor",
     "at_reference_chain": [
      1353.28,
      1353.28
@@ -9528,7 +9675,7 @@
        "reachable": false
       }
      },
-     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference"
+     "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means no eta_t <= 1 suffices at the least favourable Hall reference; for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "bus -> coupling-input efficiency eta_chain of the candidate microwave chain",
@@ -9539,7 +9686,7 @@
     },
     {
      "measurement": "combined eta_chain * eta_t (one bus-to-Hall-channel ion-current test at the declared phi and k)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW_BREAKEVEN for case c if it is at least product_at_least[c]",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW for case c if it is at least product_at_least[c]",
      "if_below": 0.00549311,
      "product_at_least": {
       "add_only": {
@@ -9555,11 +9702,11 @@
        "reachable": false
       }
      },
-     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box"
+     "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall reference; the Hall reference (milestone B) must then narrow the box. BELOW thresholds hold for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval)"
     },
     {
      "measurement": "end-to-end bus cost per delivered ampere C_del,bus = P_bus[ecr_source] / I_delivered into the Hall channel, on the entry's gas at the common feed state (subsumes phi, k, eta_chain and eta_t)",
-     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case; CLEARLY_BELOW_BREAKEVEN for case c if C_del,bus <= Y_min[c]; otherwise the Hall reference point (milestone B) decides",
+     "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case (at every share X, since Y_max is the supremum over X); CLEARLY_BELOW for case c if C_del,bus <= Y_min[c], for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in its payable interval, table payable_X_interval); otherwise the Hall reference point (milestone B) decides",
      "thresholds_W_per_A": {
       "Y_max_any_case": 2208.19,
       "Y_min_by_case": {
@@ -10080,7 +10227,7 @@
  },
  "placement_counts": {
   "CLEARLY_ABOVE_BREAKEVEN": 0,
-  "CLEARLY_BELOW_BREAKEVEN": 0,
+  "CLEARLY_BELOW": 0,
   "STRADDLES": 7,
   "NOT_PLACEABLE": 6
  },
@@ -10283,12 +10430,27 @@
     "cost_offset": false,
     "optimistic_bound": false
    },
-   "clearly_below_reachable_basis": "lowest ionization floor of any feed / (reference chain * eta_t,lo) <= Y_min"
+   "clearly_below_reachable_basis": "lowest ionization floor of any feed / (reference chain * eta_t,lo) <= Y_min",
+   "clearly_below_max_declared_cost_W_per_A": {
+    "add_only": 6.62295,
+    "cost_offset": 7.28525,
+    "optimistic_bound": 7.28525
+   },
+   "clearly_below_max_declared_cost_basis": "reference chain * eta_t,lo * Y_min[case]: the largest declared cost the PROPOSED CLEARLY_BELOW rule accepts",
+   "ionization_floor_range_W_per_A": [
+    12.1298,
+    14.5341
+   ],
+   "category_empty_by_rule": true,
+   "category_empty_by_rule_reading": "the PROPOSED CLEARLY_BELOW rule accepts only declared costs below every ionization floor, so the category is empty by construction of the rule, not because of the evidence (owner decision owner_decisions_requested D1)"
   },
   "evidence_in_region": [
    {
     "id": "ECR-D018",
     "mode": "xe",
+    "evidence_status": "published_value",
+    "declared_cost_is_upper_bound": false,
+    "negative_readings_qualifier": "'cannot pay' readings (eta_t_min > 1, an empty eta_t window, could_pay = false) hold on the declared basis only (phi = 1 and k = 1 assumed): a forward/generator power plane (phi <= 1) or a different ion basis can lower the cost; the strict lower bound is the ionization floor (12.1298 W/A)",
     "by_case": {
      "add_only": {
       "could_pay_chain_1": true,
@@ -10302,6 +10464,7 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      },
      "cost_offset": {
@@ -10316,6 +10479,10 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": true,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": [
+       0.00166968,
+       0.00166968
+      ],
       "pays_at_mid_reference_chain_1_eta_t_1": true
      },
      "optimistic_bound": {
@@ -10330,6 +10497,10 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": true,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": [
+       0.00166968,
+       0.00166968
+      ],
       "pays_at_mid_reference_chain_1_eta_t_1": true
      }
     }
@@ -10337,6 +10508,9 @@
    {
     "id": "ECR-D019",
     "mode": "xe",
+    "evidence_status": "published_value",
+    "declared_cost_is_upper_bound": false,
+    "negative_readings_qualifier": "'cannot pay' readings (eta_t_min > 1, an empty eta_t window, could_pay = false) hold on the declared basis only (phi = 1 and k = 1 assumed): a forward/generator power plane (phi <= 1) or a different ion basis can lower the cost; the strict lower bound is the ionization floor (12.1298 W/A)",
     "by_case": {
      "add_only": {
       "could_pay_chain_1": true,
@@ -10350,6 +10524,10 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": true,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": [
+       0.023311,
+       0.0444344
+      ],
       "pays_at_mid_reference_chain_1_eta_t_1": true
      },
      "cost_offset": {
@@ -10364,6 +10542,10 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": true,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": [
+       0.115081,
+       0.136346
+      ],
       "pays_at_mid_reference_chain_1_eta_t_1": true
      },
      "optimistic_bound": {
@@ -10378,6 +10560,10 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": true,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": [
+       0.115081,
+       0.136346
+      ],
       "pays_at_mid_reference_chain_1_eta_t_1": true
      }
     }
@@ -10385,6 +10571,9 @@
    {
     "id": "ECR-D023",
     "mode": "xe",
+    "evidence_status": "published_value",
+    "declared_cost_is_upper_bound": true,
+    "negative_readings_qualifier": "the declared cost is an UPPER bound on the coupling-input cost (phi only upper-bounded): every 'cannot pay' reading on the declared basis (eta_t_min > 1, an empty eta_t window, could_pay = false) holds only once the phi bound is shown to be tight (measure the reflected power at the operating point); until then the only strict lower bound is the ionization floor (12.1298 W/A), which is what the CLEARLY_ABOVE test uses",
     "by_case": {
      "add_only": {
       "could_pay_chain_1": true,
@@ -10398,6 +10587,7 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      },
      "cost_offset": {
@@ -10412,6 +10602,7 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      },
      "optimistic_bound": {
@@ -10426,6 +10617,7 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      }
     }
@@ -10433,6 +10625,9 @@
    {
     "id": "ECR-D020",
     "mode": "air_N2",
+    "evidence_status": "published_value",
+    "declared_cost_is_upper_bound": false,
+    "negative_readings_qualifier": "'cannot pay' readings (eta_t_min > 1, an empty eta_t window, could_pay = false) hold on the declared basis only (phi = 1 and k = 1 assumed): a forward/generator power plane (phi <= 1) or a different ion basis can lower the cost; the strict lower bound is the ionization floor (14.5341 W/A)",
     "by_case": {
      "add_only": {
       "could_pay_chain_1": true,
@@ -10446,6 +10641,7 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      },
      "cost_offset": {
@@ -10460,6 +10656,7 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      },
      "optimistic_bound": {
@@ -10474,6 +10671,7 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      }
     }
@@ -10481,6 +10679,9 @@
    {
     "id": "ECR-E081",
     "mode": "air_N2",
+    "evidence_status": "published_value_definition_unresolved",
+    "declared_cost_is_upper_bound": false,
+    "negative_readings_qualifier": "'cannot pay' readings (eta_t_min > 1, an empty eta_t window, could_pay = false) hold on the declared basis only (phi = 1 and k = 1 assumed): a forward/generator power plane (phi <= 1) or a different ion basis can lower the cost; the strict lower bound is the ionization floor (14.5341 W/A)",
     "by_case": {
      "add_only": {
       "could_pay_chain_1": true,
@@ -10491,6 +10692,7 @@
       "could_pay_reference_chain": false,
       "eta_t_window_reference_chain": null,
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": false
      },
      "cost_offset": {
@@ -10505,6 +10707,7 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      },
      "optimistic_bound": {
@@ -10519,6 +10722,7 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      }
     }
@@ -10526,6 +10730,9 @@
    {
     "id": "ECR-E083",
     "mode": "air_N2",
+    "evidence_status": "model_output_not_measurement",
+    "declared_cost_is_upper_bound": false,
+    "negative_readings_qualifier": "'cannot pay' readings (eta_t_min > 1, an empty eta_t window, could_pay = false) hold on the declared basis only (phi = 1 and k = 1 assumed): a forward/generator power plane (phi <= 1) or a different ion basis can lower the cost; the strict lower bound is the ionization floor (14.5341 W/A)",
     "by_case": {
      "add_only": {
       "could_pay_chain_1": true,
@@ -10536,6 +10743,7 @@
       "could_pay_reference_chain": false,
       "eta_t_window_reference_chain": null,
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      },
      "cost_offset": {
@@ -10550,6 +10758,7 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      },
      "optimistic_bound": {
@@ -10564,6 +10773,7 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      }
     }
@@ -10571,6 +10781,9 @@
    {
     "id": "ECR-D021",
     "mode": "xe",
+    "evidence_status": "published_value",
+    "declared_cost_is_upper_bound": true,
+    "negative_readings_qualifier": "the declared cost is an UPPER bound on the coupling-input cost (phi only upper-bounded): every 'cannot pay' reading on the declared basis (eta_t_min > 1, an empty eta_t window, could_pay = false) holds only once the phi bound is shown to be tight (measure the actual chain loss between the directional coupler and the thruster); until then the only strict lower bound is the ionization floor (12.1298 W/A), which is what the CLEARLY_ABOVE test uses",
     "by_case": {
      "add_only": {
       "could_pay_chain_1": true,
@@ -10581,6 +10794,7 @@
       "could_pay_reference_chain": false,
       "eta_t_window_reference_chain": null,
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": false
      },
      "cost_offset": {
@@ -10595,6 +10809,7 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      },
      "optimistic_bound": {
@@ -10609,23 +10824,65 @@
        1.0
       ],
       "pays_everywhere_chain_1_eta_t_1": false,
+      "X_hi_least_favourable_corner_chain_1_eta_t_1": null,
       "pays_at_mid_reference_chain_1_eta_t_1": true
      }
     }
    }
   ],
+  "evidence_in_region_notes": {
+   "negative_readings": "a false could_pay or an empty window is a 'cannot pay' reading on the declared basis; for entries with declared_cost_is_upper_bound = true it holds only once the phi bound is shown to be tight (negative_readings_qualifier per row)",
+   "pays_everywhere": "pays_everywhere_chain_1_eta_t_1 uses the X -> 0 supremum; X_hi_least_favourable_corner_chain_1_eta_t_1 = [X_hi at the declared upper cost, X_hi at the declared lower cost]: the largest relative delivered share at which the entry still pays at the least favourable corner (the box minimum of Pi_H g_case(X) at every X, self_checks.least_corner_is_box_minimum_at_every_X); null = does not pay there at any X"
+  },
   "answer": {
    "any_evidence_in_could_pay_region_chain_1": true,
    "any_evidence_in_could_pay_region_reference_chain": true,
+   "any_published_value_in_could_pay_region_chain_1": true,
    "all_N2_entries_in_could_pay_region_chain_1_every_case": true,
+   "N2_published_values_with_resolved_definition": [
+    "ECR-D020"
+   ],
+   "all_N2_published_values_in_could_pay_region_chain_1_every_case": true,
+   "N2_entry_status": {
+    "ECR-D020": "published_value",
+    "ECR-E081": "published_value_definition_unresolved",
+    "ECR-E083": "model_output_not_measurement"
+   },
    "any_N2_entry_pays_everywhere_chain_1_eta_t_1": false,
    "any_evidence_pays_everywhere_chain_1_eta_t_1": true,
    "entries_paying_everywhere_chain_1_eta_t_1": [
     "ECR-D018",
     "ECR-D019"
    ],
+   "paying_everywhere_share_limit": {
+    "ECR-D018": {
+     "cost_offset": [
+      0.00166968,
+      0.00166968
+     ],
+     "optimistic_bound": [
+      0.00166968,
+      0.00166968
+     ]
+    },
+    "ECR-D019": {
+     "add_only": [
+      0.023311,
+      0.0444344
+     ],
+     "cost_offset": [
+      0.115081,
+      0.136346
+     ],
+     "optimistic_bound": [
+      0.115081,
+      0.136346
+     ]
+    }
+   },
+   "paying_everywhere_qualifier": "pays everywhere only for small delivered shares: up to the X_hi listed (least favourable corner, chain 1, eta_t = 1, omega_f = 0)",
    "O_O2_mixture": "no ECR evidence exists (GAP-ECR-O-O2-AIR): the air arm cannot be placed for its O / O2 content",
-   "condition": "every 'true' is on the declared basis (phi as declared, k = 1) and holds only inside the stated eta_t window; with the reference chain the windows narrow as listed"
+   "condition": "every 'true' is on the declared basis (phi as declared, k = 1) and holds only inside the stated eta_t window; with the reference chain the windows narrow as listed. Every 'false' of an entry whose declared cost is only an upper bound (declared_cost_is_upper_bound) holds only once its phi bound is shown to be tight"
   }
  },
  "self_checks": {
@@ -10682,6 +10939,12 @@
    "pass": true,
    "note": "synthetic ledgers (analysis numbers only): generator = ecr_source; fixed = ecr_magnet (8 W) + common deltas (thermal_control +1 W, housekeeping +1 W); hall_discharge is excluded from the overhead"
   },
+  "least_corner_is_box_minimum_at_every_X": {
+   "max_rel_excess": 0.0,
+   "tolerance": 1e-12,
+   "pass": true,
+   "note": "Pi_H g_case(X) at the least favourable corner equals the box minimum at every X of X_grid (g increases with r and decreases with p), so X_hi there is the binding share limit of the box"
+  },
   "all_pass": true
  },
  "forbidden_patterns": [
@@ -10703,30 +10966,33 @@
  ],
  "provenance": {
   "script": "docs/architecture_comparison/overlays/ecr/build_overlay_ecr.py",
-  "script_sha256": "8893c81471c919ba4ee185bee71860bc49d3ef9d22089f8bdcc0bef0c79d4027",
+  "script_sha256": "831861cdadcabc438d4655ee3363a7601fded3537dc350348052d9a7138da1b5",
   "reproduce": "python docs/architecture_comparison/overlays/ecr/build_overlay_ecr.py --check"
  },
  "milestone_A_statement": {
   "can_conclude_now": [
-   "placements: 0 CLEARLY_ABOVE_BREAKEVEN, 0 CLEARLY_BELOW_BREAKEVEN, 7 STRADDLES, 6 NOT_PLACEABLE (declared basis, PROPOSED rules)",
+   "placements: 0 CLEARLY_ABOVE_BREAKEVEN, 0 CLEARLY_BELOW, 7 STRADDLES, 6 NOT_PLACEABLE (declared basis, PROPOSED rules)",
    "no published ECR ion cost rules out a bus-power break-even of ecr_hall everywhere in the PROPOSED Hall box: the ECR evidence yields no hard-gate candidate on the power criterion",
    "no published ECR evidence shows that ecr_hall pays in bus power over the whole PROPOSED box and eta_t range",
+   "the CLEARLY_BELOW category is empty by construction of the PROPOSED rule, not because of the evidence: the rule accepts declared costs only up to 6.62295/7.28525/7.28525 W/A (add_only/cost_offset/optimistic_bound), below every ionization floor (12.1298-14.5341 W/A); owner decision D1_clearly_below_rule",
    "the numeric entries straddle on: Hall reference point (PROPOSED box; needs an admitted closure); declared basis (k = 1 assumed; phi assumed); declared basis (k = 1 assumed; phi only upper-bounded); eta_chain (no sourced lower bound); eta_t (lane-18 range); response case (alpha, chi, eta_v_S not measured)",
    "with the stated reference chain, CLEARLY_BELOW over the full lane-18 eta_t range is out of reach for any source (even at the ionization floor) in every case: a pay placement needs a measured eta_t",
-   "air arm: 3 placeable entries (ECR-D020, ECR-E081, ECR-E083), all N2 and all abstract-only; no ECR ion-cost evidence on O2, atomic O or a mixture exists, so the air arm is NOT_PLACEABLE for its O / O2 content",
+   "air arm: 3 placeable entries (ECR-D020, ECR-E081, ECR-E083), all N2 and all abstract-only; of these only ECR-D020 is a published value with a resolved definition; ECR-E081 is definition-unresolved (its consistency check fails); ECR-E083 is the source's own model output, not a measurement; no ECR ion-cost evidence on O2, atomic O or a mixture exists, so the air arm is NOT_PLACEABLE for its O / O2 content",
    "Xe mode: 4 placeable entries (ECR-D018, ECR-D019, ECR-D023, ECR-D021); they describe the Xe mode only",
-   "a delivered ion is worth at most Y = Pi_H (2r - p) bus W/A at omega_f = 0; over the PROPOSED box this spans 182.149-1168.07 W/A (add_only), 200.364-1752.11 W/A (cost_offset) and 200.364-2208.19 W/A (optimistic_bound)",
-   "on the declared basis with a lossless chain, every N2 entry lies in the could-pay region of every case inside its eta_t window (region.evidence_in_region)",
-   "entries that would pay everywhere in the box only with a lossless chain and eta_t = 1: ECR-D018, ECR-D019"
+   "a delivered ion is worth at most Y = Pi_H (2r - p) bus W/A at omega_f = 0 (the X -> 0 supremum); over the PROPOSED box this spans 182.149-1168.07 W/A (add_only), 200.364-1752.11 W/A (cost_offset) and 200.364-2208.19 W/A (optimistic_bound)",
+   "on the declared basis with a lossless chain, every N2 entry lies in the could-pay region of every case inside its eta_t window (region.evidence_in_region); counting only published values with a resolved definition, that is ECR-D020",
+   "entries that would pay everywhere in the box only with a lossless chain and eta_t = 1, and only for small delivered shares (least favourable corner): ECR-D018 (cost_offset X <= 0.00167, optimistic_bound X <= 0.00167); ECR-D019 (add_only X <= 0.0233-0.0444, cost_offset X <= 0.115-0.136, optimistic_bound X <= 0.115-0.136)",
+   "ECR-D023, ECR-D021: the declared cost is only an upper bound (phi only upper-bounded); their 'cannot pay' readings (eta_t_min > 1, empty windows) hold only once the phi bound is shown to be tight"
   ],
-  "condition_set_for_milestone_A": "On the bus-power criterion (necessary, not sufficient), ecr_hall can be named baseline under milestone A only if all of the following are demonstrated: (A) an end-to-end bus cost per delivered ampere C_del,bus <= Pi_H (g_case(X) - omega_f/X) on an air-representative N2/O2/O feed at the common feed state; (B) an interstage transport efficiency eta_t >= Z = C_src,bus / Y on the same charge-current basis; (C) a relative utilization gain X with X_lo(Y, omega_f) <= X <= min(X_hi, (1 - eta_u0)/eta_u0); (D) mass and life break-even (breakeven_v1 Secs. 7-8). (A)-(C) are evaluated at the admitted Hall reference and the measured response case. This overlay does not name a baseline.",
+  "condition_set_for_milestone_A": "On the bus-power criterion (necessary, not sufficient), ecr_hall can be named baseline under milestone A only if all of the following are demonstrated: (A) an end-to-end bus cost per delivered ampere C_del,bus <= Pi_H (g_case(X) - omega_f/X) on an air-representative N2/O2/O feed at the common feed state; (B) an interstage transport efficiency eta_t >= Z = C_src,bus / Y on the same charge-current basis; (C) a relative utilization gain X with X_lo(Y, omega_f) <= X <= min(X_hi, (1 - eta_u0)/eta_u0); (D) mass and life break-even (breakeven_v1 Secs. 7-8). (A)-(C) are evaluated at a Hall reference and a response case that milestone A leaves as stated conditions (inside the PROPOSED box, per case); pinning them to an admitted closure and a measured alpha, chi, eta_v,S is the milestone-B step. This overlay does not name a baseline.",
   "explicit_conditions": [
    "breakeven_v1 assumptions A1-A8 accepted by the owner",
    "declared basis: phi as declared per entry, k = 1 (reported ion current = source-exit ion current)",
-   "Hall reference inside the PROPOSED box (V_d 150-450 V, eta_b 0.5-0.9, eta_ppu,d over the lane-20 evidence envelope, eta_v 0.7-1.0 for the optimistic case)",
+   "Hall reference inside the PROPOSED box (V_d 150-450 V, eta_b 0.5-0.9, eta_ppu,d over the lane-20 evidence envelope 0.7705-0.915 (owner decision D2_eta_ppu_d_axis), eta_v 0.7-1 for the optimistic case)",
    "eta_t in the PROPOSED range 0.1-1 (lane 18 cannot yet compute it for any air or Xe case)",
    "omega_f = 0 (permanent-magnet ecr_magnet and zero common deltas); any fixed overhead lowers Y",
-   "reference bus chain 0.3636 (Hayabusa TWT system, inferred) as the stated chain of the CLEARLY_BELOW test only"
+   "BELOW-side statements hold for small delivered shares only (X -> 0 supremum of the payable cost)",
+   "reference bus chain 0.3636 (Hayabusa TWT system, inferred; not a bound on the ABEP chain) as the stated chain of the CLEARLY_BELOW test only (owner decision D1_clearly_below_rule)"
   ],
   "not_concluded": "no ranking, no hard-gate decision, no architecture named, no comparison with the other pre-ionizer arm"
  }

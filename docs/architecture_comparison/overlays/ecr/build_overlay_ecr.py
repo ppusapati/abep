@@ -10,10 +10,12 @@ prediction, no ranking, no architecture selection, no hard-gate decision, no com
     python docs/architecture_comparison/overlays/ecr/build_overlay_ecr.py            # write overlay_ecr_v1.json + MD tables
     python docs/architecture_comparison/overlays/ecr/build_overlay_ecr.py --check    # rebuild in memory, byte-compare
 
-Inputs are resolved lazily by repository-relative path and pinned by sha256: first the file in this checkout (after
-the input lanes merge), else the git object at the pinned lane commit. A missing or changed input raises
-OverlayInputError (no silent fallback). The pinned modules are executed from their verified bytes under private module
-names; nothing is copied into this lane's paths and nothing is imported at module import time.
+Inputs are resolved lazily by repository-relative path and pinned by sha256. When the file exists in this checkout
+(after the input lanes merge) it is the input: a sha256 different from the pin raises OverlayInputChangedError, with
+no fallback to the pinned commit. Only when the file is ABSENT is the git object at the pinned lane commit used; if
+that object is unreachable, OverlayInputMissingError is raised (the full-rebuild test skips in that case only). The
+pinned modules are executed from their verified bytes under private module names; nothing is copied into this lane's
+paths and nothing is imported at module import time.
 
 The pure functions in this file (closed forms of breakeven_v1 at equal mix, placement rules) need no input;
 tests/test_overlay_ecr.py uses them to recompute the committed JSON from the values recorded in it.
@@ -43,9 +45,13 @@ BOUNDARY_VERSION = "bus_power_boundary_v1"
 ARCH = "ecr_hall"
 REFERENCE_ARCH = "hall_only"
 CASES = ("add_only", "cost_offset", "optimistic_bound")
-PLACEMENTS = ("CLEARLY_ABOVE_BREAKEVEN", "CLEARLY_BELOW_BREAKEVEN", "STRADDLES", "NOT_PLACEABLE")
+PLACEMENTS = ("CLEARLY_ABOVE_BREAKEVEN", "CLEARLY_BELOW", "STRADDLES", "NOT_PLACEABLE")
 SLICE_NAMES = ("most_favourable_corner", "mid_reference", "least_favourable_corner")
 SIG = 6          # significant digits stored in the JSON
+SMALL_SHARE_QUALIFIER = (
+    "for small delivered shares only (Y_min is the X -> 0 supremum at omega_f = 0; at a finite share X the payable "
+    "cost is Pi_H g_case(X), lower than Pi_H (2r - p), e.g. add_only Pi_H/(1 + X), so the entry's X must also lie in "
+    "its payable interval, table payable_X_interval)")
 
 # Analysis grids of this overlay (PROPOSED; dimensionless or bus W/A, not design values)
 X_GRID = (0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 1.0, 1.5, 2.0)
@@ -94,6 +100,14 @@ DOC_REFERENCES = {
 
 class OverlayInputError(RuntimeError):
     """A pinned input is missing, changed, or inconsistent (no silent fallback)."""
+
+
+class OverlayInputMissingError(OverlayInputError):
+    """A pinned input is absent from this checkout and its pinned git object is unreachable."""
+
+
+class OverlayInputChangedError(OverlayInputError):
+    """A pinned input exists but its sha256 differs from the pin (never replaced by the pinned bytes)."""
 
 
 class OverlayCheckError(RuntimeError):
@@ -282,7 +296,7 @@ def classify(c_above: float, c_below: float, y_max: dict, y_min: dict, eta_t_lo:
                  BELOW_c    if c_below / (chain_ref * eta_t_lo) <= y_min[c]  (least favourable Hall reference, the
                             stated reference chain, every eta_t in range);
                  STRADDLES  otherwise.
-    overall: CLEARLY_ABOVE_BREAKEVEN if ABOVE_c for every case; CLEARLY_BELOW_BREAKEVEN if BELOW_c for at least one
+    overall: CLEARLY_ABOVE_BREAKEVEN if ABOVE_c for every case; CLEARLY_BELOW if BELOW_c for at least one
     case (below_cases lists them); STRADDLES otherwise."""
     if c_above > c_below:
         raise ValueError("c_above > c_below")
@@ -298,7 +312,7 @@ def classify(c_above: float, c_below: float, y_max: dict, y_min: dict, eta_t_lo:
     if all(by_case[c] == "ABOVE" for c in CASES):
         overall = "CLEARLY_ABOVE_BREAKEVEN"
     elif below:
-        overall = "CLEARLY_BELOW_BREAKEVEN"
+        overall = "CLEARLY_BELOW"
     else:
         overall = "STRADDLES"
     return {"placement": overall, "by_case": by_case, "below_cases": below}
@@ -338,35 +352,49 @@ def _sha(data: bytes) -> str:
 
 
 def read_input(key: str) -> bytes:
+    """Bytes of a pinned input, verified against its sha256.
+
+    * The file exists in this checkout: it is THE input. A sha256 different from the pin raises
+      OverlayInputChangedError at once; there is no fallback to the pinned commit (a changed input must turn --check
+      and the test red, never be replaced silently by the old bytes).
+    * The file is absent (the input lane is not merged into this checkout): the git object at the pinned lane commit
+      is used if it is reachable and matches the pin; a reachable object with another sha256 raises
+      OverlayInputChangedError; an unreachable one raises OverlayInputMissingError."""
     spec = INPUTS[key]
-    tried = []
     p = REPO / spec["path"]
     if p.is_file():
         data = p.read_bytes()
         if _sha(data) == spec["sha256"]:
             return data
-        tried.append(f"{spec['path']} in this checkout has sha256 {_sha(data)[:12]}... (pinned {spec['sha256'][:12]}...)")
-    else:
-        tried.append(f"{spec['path']} not present in this checkout")
+        raise OverlayInputChangedError(
+            f"input {key!r} ({spec['lane']}): {spec['path']} in this checkout has sha256 {_sha(data)} but the overlay "
+            f"is pinned to {spec['sha256']} (lane commit {spec['commit']}). The input changed: review the change, "
+            "update INPUTS and regenerate the overlay (no fallback to the pinned commit).")
     try:
         res = subprocess.run(["git", "-C", str(REPO), "show", f"{spec['commit']}:{spec['path']}"],
                              capture_output=True, check=False)
-        if res.returncode == 0 and _sha(res.stdout) == spec["sha256"]:
-            return res.stdout
-        tried.append(f"git object {spec['commit']}:{spec['path']} "
-                     + ("sha256 mismatch" if res.returncode == 0 else "not available"))
     except OSError as exc:
-        tried.append(f"git not runnable ({exc})")
-    raise OverlayInputError(
-        f"input {key!r} ({spec['lane']}, {spec['path']}) could not be resolved with the pinned sha256: "
-        + "; ".join(tried) + ". Regenerate the overlay against the current input (update INPUTS) after review.")
+        raise OverlayInputMissingError(
+            f"input {key!r} ({spec['lane']}): {spec['path']} is not in this checkout and git is not runnable "
+            f"({exc})") from exc
+    if res.returncode != 0:
+        raise OverlayInputMissingError(
+            f"input {key!r} ({spec['lane']}): {spec['path']} is not in this checkout and the git object "
+            f"{spec['commit']}:{spec['path']} is not reachable")
+    if _sha(res.stdout) != spec["sha256"]:
+        raise OverlayInputChangedError(
+            f"input {key!r} ({spec['lane']}): git object {spec['commit']}:{spec['path']} has sha256 "
+            f"{_sha(res.stdout)}, not the pinned {spec['sha256']}")
+    return res.stdout
 
 
 def inputs_available() -> bool:
+    """True when every pinned input resolves; False only when an input is ABSENT (not in this checkout and its pinned
+    git object unreachable). A present-but-changed input raises OverlayInputChangedError (never a skip)."""
     try:
         for k in INPUTS:
             read_input(k)
-    except OverlayInputError:
+    except OverlayInputMissingError:
         return False
     return True
 
@@ -555,10 +583,15 @@ def _chain_evidence(ec: dict, midx: dict) -> dict:
              "chain_stage": mag["chain_stage"], "source_ids": mag["source_ids"], "uncertainty": mag["uncertainty"]},
             {"id": e045["id"], "value": e045["value"], "evidence_class": e045["evidence_class"],
              "chain_stage": "GaN HEMT PA device, power-added efficiency (lane 08)", "source": e045["source"]["citation"],
-             "uncertainty": e045.get("uncertainty")},
-            {"id": e042["id"], "value": e042["value"], "value_qualifier": "lower bound on a 5 W breadboard ('> 0.70')",
-             "evidence_class": e042["evidence_class"], "chain_stage": "solid-state amplifier breadboard (lane 08)",
-             "source": e042["source"]["citation"], "uncertainty": e042.get("uncertainty")}],
+             "uncertainty": e045.get("uncertainty")}],
+        "stage_only_context_not_a_bound": [
+            {"id": e042["id"], "value": e042["value"], "value_qualifier": "lower bound on the efficiency of one stage "
+             "('> 0.70', 5 W breadboard)", "evidence_class": e042["evidence_class"],
+             "chain_stage": "solid-state amplifier breadboard (lane 08)", "source": e042["source"]["citation"],
+             "uncertainty": e042.get("uncertainty"),
+             "bound_on_chain": "none: a lower bound on one stage does not bound the chain from above (the stage value "
+                               "is unknown above 0.70) nor from below (the other stages are unknown); context only, "
+                               "not used numerically"}],
         "stage_only_rule": stage_rule[0],
         "missing": [{"id": iso["id"], "quantity": iso["quantity"], "tbd_requires": iso["tbd_requires"]},
                     {"id": load["id"], "quantity": load["quantity"], "tbd_requires": load["tbd_requires"]},
@@ -575,11 +608,17 @@ def _ppu_discharge_range(ec: dict) -> dict:
     comp = ec["components"]["hall_discharge"]
     ids = list(comp["efficiency_evidence"])
     ents = {e["id"]: e for e in comp["entries"]}
-    vals = [float(pt["efficiency"]) for i in ids for pt in ents[i]["value"]]
-    if not vals:
+    pts = [(float(pt["efficiency"]), i, float(pt["P_out_W"])) for i in ids for pt in ents[i]["value"]]
+    if not pts:
         raise OverlayInputError("no hall_discharge supply efficiency evidence")
+    vals = [t[0] for t in pts]
+    lo_pt, hi_pt = min(pts), max(pts)
     e0 = ents[ids[0]]
-    return {"min": min(vals), "max": max(vals), "ids": ids, "evidence_class": e0["evidence_class"],
+    return {"min": min(vals), "max": max(vals),
+            "min_point": {"id": lo_pt[1], "P_out_W": lo_pt[2],
+                          "lowest_power_of_curve": lo_pt[2] == min(float(pt["P_out_W"]) for pt in ents[lo_pt[1]]["value"])},
+            "max_point": {"id": hi_pt[1], "P_out_W": hi_pt[2]},
+            "ids": ids, "evidence_class": e0["evidence_class"],
             "evidence_level": e0["evidence_level"], "source_ids": e0["source_ids"], "locator": e0["locator"],
             "chain_stage": e0["chain_stage"], "applicability": e0["applicability"],
             "validation_status": e0["validation_status"], "n_points": len(vals)}
@@ -909,25 +948,27 @@ def build() -> tuple:
              "moves_to_below": {c: {"eta_t_at_least": c_decl[1] / (chain_ref * Y_min_by_case[c]),
                                     "reachable": c_decl[1] / (chain_ref * Y_min_by_case[c]) <= 1.0} for c in CASES},
              "note_below": "CLEARLY_BELOW from eta_t alone assumes the stated reference chain; reachable = False means "
-                           "no eta_t <= 1 suffices at the least favourable Hall reference"},
+                           "no eta_t <= 1 suffices at the least favourable Hall reference; " + SMALL_SHARE_QUALIFIER},
             {"measurement": "bus -> coupling-input efficiency eta_chain of the candidate microwave chain",
              "moves_to": "CLEARLY_ABOVE_BREAKEVEN", "if_below": t_above,
              "condition": "eta_chain below the threshold, with any eta_t <= 1",
              "threshold_inside_unit_interval": 0.0 < t_above <= 1.0},
             {"measurement": "combined eta_chain * eta_t (one bus-to-Hall-channel ion-current test at the declared phi "
                             "and k)",
-             "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW_BREAKEVEN for case c "
+             "moves_to": "CLEARLY_ABOVE_BREAKEVEN if the product is below if_below; CLEARLY_BELOW for case c "
                          "if it is at least product_at_least[c]",
              "if_below": t_above,
              "product_at_least": {c: {"value": c_decl[1] / Y_min_by_case[c],
                                       "reachable": c_decl[1] / Y_min_by_case[c] <= 1.0} for c in CASES},
              "note": "reachable = False: even a lossless chain with eta_t = 1 does not pay at the least favourable Hall "
-                     "reference; the Hall reference (milestone B) must then narrow the box"},
+                     "reference; the Hall reference (milestone B) must then narrow the box. BELOW thresholds hold "
+                     + SMALL_SHARE_QUALIFIER},
             {"measurement": "end-to-end bus cost per delivered ampere C_del,bus = P_bus[ecr_source] / I_delivered into "
                             "the Hall channel, on the entry's gas at the common feed state (subsumes phi, k, eta_chain "
                             "and eta_t)",
-             "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case; CLEARLY_BELOW_BREAKEVEN for case c if "
-                         "C_del,bus <= Y_min[c]; otherwise the Hall reference point (milestone B) decides",
+             "moves_to": "CLEARLY_ABOVE_BREAKEVEN if C_del,bus > Y_max_any_case (at every share X, since Y_max is the "
+                         "supremum over X); CLEARLY_BELOW for case c if C_del,bus <= Y_min[c], " + SMALL_SHARE_QUALIFIER
+                         + "; otherwise the Hall reference point (milestone B) decides",
              "thresholds_W_per_A": {"Y_max_any_case": Y_max_any, "Y_min_by_case": dict(Y_min_by_case)}},
             {"measurement": "Hall reference point (admitted transport closure, milestone B) and the response case "
                             "(alpha, chi, eta_v_S)",
@@ -936,10 +977,13 @@ def build() -> tuple:
              "status": "not a single measurement: requires the credible closure set (currently empty, gate 3)"},
         ]
         missing = [s["status"] for s in chain_steps if isinstance(s.get("status"), str) and s["status"].startswith("TBD")]
+        phi_tight_needs = None
         if spec["phi_kind"] == "definitional_upper":
+            phi_tight_needs = "the reflected power at the operating point"
             missing.append("reflected power at the operating point (turns the incident-power upper bound into a "
                            "net-power value)")
         elif spec["phi_kind"] == "sourced_upper":
+            phi_tight_needs = "the actual chain loss between the directional coupler and the thruster"
             missing.append("actual chain loss between the directional coupler and the thruster (only '>= 2 dB' is "
                            "reported; turns the upper bound on phi into a value)")
         consistency = None
@@ -960,6 +1004,40 @@ def build() -> tuple:
             if not consistency["consistent"]:
                 missing.append("the source's definition of 'ion energy loss' and the input power at the reported point "
                                f"(consistency check with {ref['id']} fails; full text not accessed)")
+                consistency["possible_reading"] = (
+                    "not established (full text not accessed): if the source normalizes by a current larger than the "
+                    "extracted beam current (for example a screen current that includes grid interception), the cost "
+                    "per beam ampere is higher and the reported value is then only a lower bound per beam ampere")
+        if consistency is not None and not consistency["consistent"]:
+            ev_status = "published_value_definition_unresolved"
+            ev_status_note = ("published value whose definition is unresolved: its consistency check with "
+                              f"{spec['consistency_ref']} fails (consistency_check); the numeric placement is kept on "
+                              "the declared basis but carries no weight in the region and milestone statements beyond "
+                              "that qualifier")
+        elif e["evidence_class"] == "model-derived":
+            ev_status = "model_output_not_measurement"
+            ev_status_note = ("the source's own model output (model-derived), not a measurement; placed for "
+                              "completeness, not counted as published measured/inferred evidence")
+        else:
+            ev_status = "published_value"
+            ev_status_note = f"published value ({e['evidence_class']}, {e['source']['access']})"
+        upper = spec["phi_kind"] != "assumed"
+        if upper:
+            neg_q = ("the declared cost is an UPPER bound on the coupling-input cost (phi only upper-bounded): every "
+                     "'cannot pay' reading on the declared basis (eta_t_min > 1, an empty eta_t window, "
+                     "could_pay = false) holds only once the phi bound is shown to be tight (measure "
+                     f"{phi_tight_needs}); until then the only strict lower bound is the ionization floor "
+                     f"({r6(floor):g} W/A), which is what the CLEARLY_ABOVE test uses")
+            chain1_type = ("not a bound: the coupling-input cost may be lower than the declared value (phi only "
+                           "upper-bounded) and the chain can only raise the bus cost; the strict lower bound on the bus "
+                           "cost is the ionization floor")
+        else:
+            neg_q = ("'cannot pay' readings (eta_t_min > 1, an empty eta_t window, could_pay = false) hold on the "
+                     "declared basis only (phi = 1 and k = 1 assumed): a forward/generator power plane (phi <= 1) or a "
+                     "different ion basis can lower the cost; the strict lower bound is the ionization floor "
+                     f"({r6(floor):g} W/A)")
+            chain1_type = ("lower bound on the bus cost on the declared basis (phi = 1 and k = 1 assumed; any chain "
+                           "efficiency <= 1 raises it)")
         placements.append({
             "id": eid, "matrix_ids_used": [eid] + ([spec["current_ref"]] if spec.get("current_ref") else [])
                                           + ([spec["phi_ref"]] if spec.get("phi_ref") else [])
@@ -976,8 +1054,12 @@ def build() -> tuple:
                                "definition": "phi as stated above, k = 1 (assumed): the declared cost is the net "
                                              "microwave power the ABEP ecr_source must deliver at its coupling input per "
                                              "ampere of source-exit ions"},
+            "evidence_status": ev_status, "evidence_status_note": ev_status_note,
+            "declared_cost_is_upper_bound": upper,
+            "negative_readings_qualifier": neg_q,
             "ionization_floor_W_per_A": floor,
-            "bus_cost_W_per_A": {"lower_bound_chain_1": c_decl[0], "at_reference_chain": bus_ref, "upper_bound": None,
+            "bus_cost_W_per_A": {"chain_1_on_declared_basis": list(c_decl), "chain_1_bound_type": chain1_type,
+                                 "at_reference_chain": bus_ref, "upper_bound": None,
                                  "upper_bound_note": "unbounded: no sourced lower bound on the bus chain efficiency"},
             "eta_t": {"range": [eta_t_lo, eta_t_hi], "basis": "see interstage_eta_t_basis (lane 18)"},
             "placement_test_costs_W_per_A": {"c_above": c_above, "c_below": c_decl[1],
@@ -1105,6 +1187,8 @@ def build() -> tuple:
                                 "Y_max), whatever its chain",
         }
     floor_min = min(v["value_W_per_A"] for v in floors["values"].values())
+    floor_max = max(v["value_W_per_A"] for v in floors["values"].values())
+    below_cap = {c: chain_ref * eta_t_lo * Y_min_by_case[c] for c in CASES}
     region["structural"] = {
         "below_everywhere_needs_eta_t_at_least_with_reference_chain": {
             c: {k: v["value_W_per_A"] / (chain_ref * Y_min_by_case[c]) for k, v in floors["values"].items()}
@@ -1115,13 +1199,28 @@ def build() -> tuple:
         "clearly_below_reachable_over_full_eta_t_range": {
             c: floor_min / (chain_ref * eta_t_lo) <= Y_min_by_case[c] for c in CASES},
         "clearly_below_reachable_basis": "lowest ionization floor of any feed / (reference chain * eta_t,lo) <= Y_min",
+        "clearly_below_max_declared_cost_W_per_A": below_cap,
+        "clearly_below_max_declared_cost_basis": "reference chain * eta_t,lo * Y_min[case]: the largest declared cost "
+                                                 "the PROPOSED CLEARLY_BELOW rule accepts",
+        "ionization_floor_range_W_per_A": [floor_min, floor_max],
+        "category_empty_by_rule": all(below_cap[c] < floor_min for c in CASES),
+        "category_empty_by_rule_reading": "the PROPOSED CLEARLY_BELOW rule accepts only declared costs below every "
+                                          "ionization floor, so the category is empty by construction of the rule, "
+                                          "not because of the evidence (owner decision owner_decisions_requested "
+                                          "D1)",
     }
+    least = slices["least_favourable_corner"]
     ev_in = []
     for pl in placements:
         lo = pl["declared_basis"]["cost_W_per_A"][0]
+        hi = pl["declared_basis"]["cost_W_per_A"][1]
         ref = pl["bus_cost_W_per_A"]["at_reference_chain"][0]
-        row = {"id": pl["id"], "mode": pl["mode"], "by_case": {}}
+        row = {"id": pl["id"], "mode": pl["mode"], "evidence_status": pl["evidence_status"],
+               "declared_cost_is_upper_bound": pl["declared_cost_is_upper_bound"],
+               "negative_readings_qualifier": pl["negative_readings_qualifier"], "by_case": {}}
         for c in CASES:
+            r_l, p_l = case_rp(c, least["eta_b"], least["eta_v"])
+            xs = [share_interval(cv / least["Pi_H_W_per_A"], 0.0, r_l, p_l) for cv in (lo, hi)]
             row["by_case"][c] = {
                 "could_pay_chain_1": lo <= Y_max_by_case[c] * eta_t_hi,
                 "eta_t_window_chain_1": [lo / Y_max_by_case[c], eta_t_hi] if lo <= Y_max_by_case[c] * eta_t_hi else None,
@@ -1129,28 +1228,55 @@ def build() -> tuple:
                 "eta_t_window_reference_chain": ([ref / Y_max_by_case[c], eta_t_hi]
                                                  if ref <= Y_max_by_case[c] * eta_t_hi else None),
                 "pays_everywhere_chain_1_eta_t_1": lo <= Y_min_by_case[c],
+                "X_hi_least_favourable_corner_chain_1_eta_t_1": (None if xs[0] is None else
+                                                                 [None if xs[1] is None else xs[1][1], xs[0][1]]),
                 "pays_at_mid_reference_chain_1_eta_t_1": lo <= mid["Y_W_per_A"][c]}
         ev_in.append(row)
     region["evidence_in_region"] = ev_in
+    region["evidence_in_region_notes"] = {
+        "negative_readings": "a false could_pay or an empty window is a 'cannot pay' reading on the declared basis; for "
+                             "entries with declared_cost_is_upper_bound = true it holds only once the phi bound is "
+                             "shown to be tight (negative_readings_qualifier per row)",
+        "pays_everywhere": "pays_everywhere_chain_1_eta_t_1 uses the X -> 0 supremum; "
+                           "X_hi_least_favourable_corner_chain_1_eta_t_1 = [X_hi at the declared upper cost, X_hi at "
+                           "the declared lower cost]: the largest relative delivered share at which the entry still "
+                           "pays at the least favourable corner (the box minimum of Pi_H g_case(X) at every X, "
+                           "self_checks.least_corner_is_box_minimum_at_every_X); null = does not pay there at any X",
+    }
 
-    def _all(mode, key, c):
-        rows = [r for r in ev_in if r["mode"] == mode]
+    def _all(mode, key, c, statuses=None):
+        rows = [r for r in ev_in if r["mode"] == mode and (statuses is None or r["evidence_status"] in statuses)]
         return bool(rows) and all(r["by_case"][c][key] for r in rows)
 
-    def _any(key, mode=None):
-        return any(r["by_case"][c][key] for r in ev_in if mode is None or r["mode"] == mode for c in CASES)
+    def _any(key, mode=None, statuses=None):
+        return any(r["by_case"][c][key] for r in ev_in if (mode is None or r["mode"] == mode)
+                   and (statuses is None or r["evidence_status"] in statuses) for c in CASES)
+    pub = ("published_value",)
+    paying = sorted({r["id"] for r in ev_in for c in CASES if r["by_case"][c]["pays_everywhere_chain_1_eta_t_1"]})
     region["answer"] = {
         "any_evidence_in_could_pay_region_chain_1": _any("could_pay_chain_1"),
         "any_evidence_in_could_pay_region_reference_chain": _any("could_pay_reference_chain"),
+        "any_published_value_in_could_pay_region_chain_1": _any("could_pay_chain_1", statuses=pub),
         "all_N2_entries_in_could_pay_region_chain_1_every_case": all(_all("air_N2", "could_pay_chain_1", c)
                                                                     for c in CASES),
+        "N2_published_values_with_resolved_definition": [r["id"] for r in ev_in if r["mode"] == "air_N2"
+                                                         and r["evidence_status"] in pub],
+        "all_N2_published_values_in_could_pay_region_chain_1_every_case": all(
+            _all("air_N2", "could_pay_chain_1", c, pub) for c in CASES),
+        "N2_entry_status": {r["id"]: r["evidence_status"] for r in ev_in if r["mode"] == "air_N2"},
         "any_N2_entry_pays_everywhere_chain_1_eta_t_1": _any("pays_everywhere_chain_1_eta_t_1", "air_N2"),
         "any_evidence_pays_everywhere_chain_1_eta_t_1": _any("pays_everywhere_chain_1_eta_t_1"),
-        "entries_paying_everywhere_chain_1_eta_t_1": sorted({r["id"] for r in ev_in for c in CASES
-                                                             if r["by_case"][c]["pays_everywhere_chain_1_eta_t_1"]}),
+        "entries_paying_everywhere_chain_1_eta_t_1": paying,
+        "paying_everywhere_share_limit": {
+            r["id"]: {c: r["by_case"][c]["X_hi_least_favourable_corner_chain_1_eta_t_1"] for c in CASES
+                      if r["by_case"][c]["pays_everywhere_chain_1_eta_t_1"]} for r in ev_in if r["id"] in paying},
+        "paying_everywhere_qualifier": "pays everywhere only for small delivered shares: up to the X_hi listed "
+                                       "(least favourable corner, chain 1, eta_t = 1, omega_f = 0)",
         "O_O2_mixture": "no ECR evidence exists (GAP-ECR-O-O2-AIR): the air arm cannot be placed for its O / O2 content",
         "condition": "every 'true' is on the declared basis (phi as declared, k = 1) and holds only inside the stated "
-                     "eta_t window; with the reference chain the windows narrow as listed",
+                     "eta_t window; with the reference chain the windows narrow as listed. Every 'false' of an entry "
+                     "whose declared cost is only an upper bound (declared_cost_is_upper_bound) holds only once its phi "
+                     "bound is shown to be tight",
     }
 
     # ---------------- self-checks
@@ -1257,9 +1383,83 @@ def build() -> tuple:
         "pass": abs(ovl.generator_W - 50.0) < 1e-12 and abs(ovl.fixed_W - 10.0) < 1e-12 and ovl.boundary_v1_conformant,
         "note": "synthetic ledgers (analysis numbers only): generator = ecr_source; fixed = ecr_magnet (8 W) + common "
                 "deltas (thermal_control +1 W, housekeeping +1 W); hall_discharge is excluded from the overhead"}
+    worst = 0.0
+    for c in CASES:
+        r_l, p_l = case_rp(c, least["eta_b"], least["eta_v"])
+        for x in X_GRID:
+            y_least = least["Pi_H_W_per_A"] * g_payable(x, r_l, p_l)
+            y_box = min(pi_h(V, eb, pp) * g_payable(x, *case_rp(c, eb, ev)) for V, eb, pp, ev in box)
+            worst = max(worst, (y_least - y_box) / y_box)
+    checks["least_corner_is_box_minimum_at_every_X"] = {
+        "max_rel_excess": worst, "tolerance": 1e-12, "pass": worst <= 1e-12,
+        "note": "Pi_H g_case(X) at the least favourable corner equals the box minimum at every X of X_grid (g "
+                "increases with r and decreases with p), so X_hi there is the binding share limit of the box"}
     checks["all_pass"] = all(v["pass"] for v in checks.values() if isinstance(v, dict) and "pass" in v)
     if not checks["all_pass"]:
         raise OverlayCheckError(f"self-checks failed: {checks}")
+
+    # ---------------- owner decisions requested (PROPOSED rules and ranges; outcomes shown, nothing decided here)
+    def _below_outcome(test):
+        return {pl["id"]: [c for c in CASES if test(pl["declared_basis"]["cost_W_per_A"][1], c)] for pl in placements
+                if any(test(pl["declared_basis"]["cost_W_per_A"][1], c) for c in CASES)}
+    alt_readings = {
+        "as_proposed_reference_chain_eta_t_lo": {
+            "test": "declared upper cost / (reference chain * eta_t,lo) <= Y_min[case]",
+            "outcome": _below_outcome(lambda cu, c: cu / (chain_ref * eta_t_lo) <= Y_min_by_case[c])},
+        "reference_chain_eta_t_1": {
+            "test": "declared upper cost / reference chain <= Y_min[case] (eta_t = 1)",
+            "outcome": _below_outcome(lambda cu, c: cu / chain_ref <= Y_min_by_case[c])},
+        "lossless_chain_eta_t_1": {
+            "test": "declared upper cost <= Y_min[case] (chain 1, eta_t = 1)",
+            "outcome": _below_outcome(lambda cu, c: cu <= Y_min_by_case[c])},
+    }
+    box09 = [(V, eb, ppu_mid, ev) for V in V_vals for eb in eb_vals for ev in ev_opt]
+    ymax09 = {c: max(pi_h(V, eb, pp) * (2 * case_rp(c, eb, ev)[0] - case_rp(c, eb, ev)[1]) for V, eb, pp, ev in box09)
+              for c in CASES}
+    ymin09 = {c: min(pi_h(V, eb, pp) * (2 * case_rp(c, eb, ev)[0] - case_rp(c, eb, ev)[1]) for V, eb, pp, ev in box09)
+              for c in CASES}
+    changed09 = []
+    for pl in placements:
+        t = pl["placement_test_costs_W_per_A"]
+        alt = classify(t["c_above"], t["c_below"], ymax09, ymin09, eta_t_lo, chain_ref)
+        if alt["placement"] != pl["placement"] or alt["by_case"] != pl["placement_by_case"]:
+            changed09.append({"id": pl["id"], "placement_at_eta_ppu_d_0.9": alt["placement"],
+                              "by_case_at_eta_ppu_d_0.9": alt["by_case"]})
+    ov = [float(v) for v in ppu["applicability"]["output_V"]]
+    owner_decisions = [
+        {"id": "D1_clearly_below_rule",
+         "question": "Accept the PROPOSED CLEARLY_BELOW rule (whole PROPOSED box, every eta_t in range down to "
+                     "eta_t,lo, with the stated reference chain), or choose a less strict reading of 'can pay under "
+                     "at least the stated case'?",
+         "plain_statement": "under the rule as proposed the CLEARLY_BELOW category is empty by construction of the rule, "
+                            "not because of the evidence: the rule accepts only declared costs up to "
+                            "reference chain * eta_t,lo * Y_min, which is below every ionization floor "
+                            "(region.structural)",
+         "max_declared_cost_accepted_W_per_A": below_cap, "ionization_floor_range_W_per_A": [floor_min, floor_max],
+         "reference_chain_note": "the reference chain is the only system-level DC->RF value in the evidence (Hayabusa "
+                                 "TWT system, inferred); it is not a bound on the ABEP chain, which has no sourced lower "
+                                 "bound. A strict BELOW placement would need a lower bound on the chain, which does not "
+                                 "exist; using the reference chain is itself a stated condition the owner must accept",
+         "alternative_readings": alt_readings,
+         "alternative_readings_note": "computed on the declared basis at the least favourable corner, "
+                                      "omega_f = 0, " + SMALL_SHARE_QUALIFIER + ". Shown for the decision only: "
+                                      "evidence_placements use the rule as proposed until the owner decides"},
+        {"id": "D2_eta_ppu_d_axis",
+         "question": "Confirm the eta_ppu,d axis of the PROPOSED box: this overlay uses the lane-20 digitized "
+                     "discharge-supply envelope in place of the single assumed breakeven_v1 value",
+         "used_values": ppu_vals, "breakeven_v1_value": ppu_mid,
+         "envelope_basis": (f"lane-20 hall_discharge.efficiency_evidence (digitized): low end {ppu['min']:g} at "
+                            f"{ppu['min_point']['P_out_W']:g} W output ({ppu['min_point']['id']}"
+                            + (", the lowest-power point of that curve, i.e. part load"
+                               if ppu["min_point"]["lowest_power_of_curve"] else "")
+                            + f"), high end {ppu['max']:g} at {ppu['max_point']['P_out_W']:g} W "
+                            f"({ppu['max_point']['id']}); the evidence covers {ov[0]:g}-{ov[1]:g} V outputs, so "
+                            f"V_d = {min(V_vals):g} V extrapolates it"),
+         "box_extremes_used_W_per_A": {"Y_max_by_case": Y_max_by_case, "Y_min_by_case": Y_min_by_case},
+         "box_extremes_at_breakeven_v1_value_W_per_A": {"Y_max_by_case": ymax09, "Y_min_by_case": ymin09},
+         "placements_that_change_at_breakeven_v1_value": changed09,
+         "placements_change": bool(changed09)},
+    ]
 
     # ---------------- assemble
     counts = {k: sum(1 for p_ in placements + not_placeable if p_["placement"] == k) for k in PLACEMENTS}
@@ -1309,10 +1509,12 @@ def build() -> tuple:
             "V_d_V": V_vals, "eta_b": eb_vals, "eta_u0": eu_vals, "eta_v_optimistic": ev_opt,
             "eta_v_mid": ev_mid, "omega_f": wf_vals, "eta_t": et_vals,
             "eta_ppu_d": {"values": ppu_vals, "evidence": ppu,
-                          "note": "envelope of the lane-20 digitized discharge-supply efficiencies (replaces the single "
-                                  "assumed 0.9 of breakeven_v1 as the box axis; 0.9 lies inside). The evidence covers "
-                                  "200-500 V outputs, so V_d = 150 V is an extrapolation of the supply data; the "
-                                  "operating-point value is TBD until the admitted discharge load exists"},
+                          "note": f"envelope of the lane-20 digitized discharge-supply efficiencies (replaces the single "
+                                  f"assumed {ppu_mid:g} of breakeven_v1 as the box axis; {ppu_mid:g} lies inside). The "
+                                  f"evidence covers {ov[0]:g}-{ov[1]:g} V outputs, so V_d = {min(V_vals):g} V is an "
+                                  "extrapolation of the supply data; the operating-point value is TBD until the admitted "
+                                  "discharge load exists. This change of the PROPOSED box moves its extremes: owner "
+                                  "decision D2_eta_ppu_d_axis (owner_decisions_requested)"},
             "X_grid": list(X_GRID), "omega_grid": list(OMEGA_GRID), "Y_over_Pi_H_grid": list(Y_OVER_PI_GRID),
             "C_src_bus_grid_W_per_A": list(C_SRC_BUS_GRID), "eta_u0_for_omega_f_Z_table": MID_ETA_U0,
         },
@@ -1370,12 +1572,14 @@ def build() -> tuple:
                               "deltas)",
             "CLEARLY_ABOVE_BREAKEVEN": "c_above > Y_max of every case at the most favourable Hall reference of the "
                                        "PROPOSED box, with eta_chain = 1 and eta_t = 1: cannot pay under any declared "
-                                       "case at any eta_t in range. c_above is the declared cost when phi is assumed; "
-                                       "when the declared value is only an upper bound, c_above is the ionization floor",
-            "CLEARLY_BELOW_BREAKEVEN": "for at least one stated case c: declared upper cost / (reference chain * "
-                                       "eta_t,lo) <= Y_min[c] at the least favourable Hall reference of the box: pays "
-                                       "under that case everywhere in the box at every eta_t in range, with the stated "
-                                       "reference chain",
+                                       "case at any eta_t in range and at any delivered share X (Y_max is the "
+                                       "supremum over X). c_above is the declared cost when phi is assumed; when the "
+                                       "declared value is only an upper bound, c_above is the ionization floor",
+            "CLEARLY_BELOW": "for at least one stated case c: declared upper cost / (reference chain * eta_t,lo) <= "
+                             "Y_min[c] at the least favourable Hall reference of the box: pays under that case "
+                             "everywhere in the box at every eta_t in range, with the stated reference chain, "
+                             + SMALL_SHARE_QUALIFIER + ". Under this rule the category is empty by construction "
+                             "(region.structural.category_empty_by_rule; owner decision D1_clearly_below_rule)",
             "STRADDLES": "numeric and neither of the above; straddles_on names the dimensions over which pay / no-pay "
                          "flips",
             "NOT_PLACEABLE": "no numeric ion production cost on an ion-current basis for an in-scope gas; the missing "
@@ -1384,6 +1588,7 @@ def build() -> tuple:
                             "candidate for the owner's hard-gate review only, conditional on A1-A8 and the declared "
                             "basis",
         },
+        "owner_decisions_requested": owner_decisions,
         "evidence_placements": placements,
         "not_placeable": not_placeable,
         "x_side_context": x_side,
@@ -1405,42 +1610,81 @@ def _milestone_statement(d: dict) -> dict:
     pls = d["evidence_placements"]
     cnt = d["placement_counts"]
     bx = d["breakeven_condition"]["box_extremes_W_per_A"]
+    ar = d["analysis_ranges"]
     n2 = [p["id"] for p in pls if p["mode"] == "air_N2"]
     xe = [p["id"] for p in pls if p["mode"] == "xe"]
     strad = sorted({dim for p in pls for dim in p["straddles_on"]})
     ans = d["region"]["answer"]
-    st = d["region"]["structural"]["clearly_below_reachable_over_full_eta_t_range"]
+    stru = d["region"]["structural"]
+    st = stru["clearly_below_reachable_over_full_eta_t_range"]
+    status = {p["id"]: p["evidence_status"] for p in pls}
+    ub = [p["id"] for p in pls if p["declared_cost_is_upper_bound"]]
     f = lambda v: f"{r6(v):g}"
+    rng = lambda k: f"{f(min(ar[k]))}-{f(max(ar[k]))}"
+    unres = [i for i in n2 if status[i] == "published_value_definition_unresolved"]
+    model = [i for i in n2 if status[i] == "model_output_not_measurement"]
+    pub_n2 = ans["N2_published_values_with_resolved_definition"]
+    lim = ans["paying_everywhere_share_limit"]
+
+    g3 = lambda v: f"{v:.3g}"
+
+    def _lim1(v):
+        if v[0] is None:
+            return f"{g3(v[1])} at the lower declared cost only"
+        return g3(v[0]) if g3(v[0]) == g3(v[1]) else f"{g3(v[0])}-{g3(v[1])}"
+
+    def _lim(eid):
+        return ", ".join(f"{c} X <= {_lim1(v)}" for c, v in lim[eid].items())
     now = [
-        f"placements: {cnt['CLEARLY_ABOVE_BREAKEVEN']} CLEARLY_ABOVE_BREAKEVEN, {cnt['CLEARLY_BELOW_BREAKEVEN']} "
-        f"CLEARLY_BELOW_BREAKEVEN, {cnt['STRADDLES']} STRADDLES, {cnt['NOT_PLACEABLE']} NOT_PLACEABLE (declared basis, "
+        f"placements: {cnt['CLEARLY_ABOVE_BREAKEVEN']} CLEARLY_ABOVE_BREAKEVEN, {cnt['CLEARLY_BELOW']} "
+        f"CLEARLY_BELOW, {cnt['STRADDLES']} STRADDLES, {cnt['NOT_PLACEABLE']} NOT_PLACEABLE (declared basis, "
         "PROPOSED rules)",
         ("no published ECR ion cost rules out a bus-power break-even of ecr_hall everywhere in the PROPOSED Hall box: the "
          "ECR evidence yields no hard-gate candidate on the power criterion" if cnt["CLEARLY_ABOVE_BREAKEVEN"] == 0 else
          "some ECR ion costs are CLEARLY_ABOVE_BREAKEVEN on the declared basis: owner hard-gate review candidates only"),
         ("no published ECR evidence shows that ecr_hall pays in bus power over the whole PROPOSED box and eta_t range"
-         if cnt["CLEARLY_BELOW_BREAKEVEN"] == 0 else
-         "some ECR ion costs are CLEARLY_BELOW_BREAKEVEN under a stated case (declared basis, reference chain)"),
+         if cnt["CLEARLY_BELOW"] == 0 else
+         "some ECR ion costs are CLEARLY_BELOW under a stated case (declared basis, reference chain, small delivered "
+         "shares)"),
+        ("the CLEARLY_BELOW category is empty by construction of the PROPOSED rule, not because of the evidence: the "
+         "rule accepts declared costs only up to "
+         + "/".join(f(stru["clearly_below_max_declared_cost_W_per_A"][c]) for c in CASES)
+         + " W/A (add_only/cost_offset/optimistic_bound), below every ionization floor ("
+         + "-".join(f(v) for v in stru["ionization_floor_range_W_per_A"]) + " W/A); owner decision "
+         "D1_clearly_below_rule" if stru["category_empty_by_rule"] else
+         "the PROPOSED CLEARLY_BELOW rule admits declared costs above the lowest ionization floor"),
         "the numeric entries straddle on: " + "; ".join(strad),
         ("with the stated reference chain, CLEARLY_BELOW over the full lane-18 eta_t range is out of reach for any source "
          "(even at the ionization floor) in every case: a pay placement needs a measured eta_t"
          if not any(st.values()) else "CLEARLY_BELOW over the full eta_t range is reachable in principle for: "
          + ", ".join(c for c, v in st.items() if v)),
-        f"air arm: {len(n2)} placeable entries ({', '.join(n2)}), all N2 and all abstract-only; no ECR ion-cost "
-        "evidence on O2, atomic O or a mixture exists, so the air arm is NOT_PLACEABLE for its O / O2 content",
+        f"air arm: {len(n2)} placeable entries ({', '.join(n2)}), all N2 and all abstract-only"
+        + (f"; of these only {', '.join(pub_n2)} is a published value with a resolved definition" if pub_n2 else "")
+        + (f"; {', '.join(unres)} is definition-unresolved (its consistency check fails)" if unres else "")
+        + (f"; {', '.join(model)} is the source's own model output, not a measurement" if model else "")
+        + "; no ECR ion-cost evidence on O2, atomic O or a mixture exists, so the air arm is NOT_PLACEABLE for its "
+        "O / O2 content",
         f"Xe mode: {len(xe)} placeable entries ({', '.join(xe)}); they describe the Xe mode only",
-        f"a delivered ion is worth at most Y = Pi_H (2r - p) bus W/A at omega_f = 0; over the PROPOSED box this spans "
+        f"a delivered ion is worth at most Y = Pi_H (2r - p) bus W/A at omega_f = 0 (the X -> 0 supremum); over the "
+        f"PROPOSED box this spans "
         f"{f(bx['Y_min_by_case']['add_only'])}-{f(bx['Y_max_by_case']['add_only'])} W/A (add_only), "
         f"{f(bx['Y_min_by_case']['cost_offset'])}-{f(bx['Y_max_by_case']['cost_offset'])} W/A (cost_offset) and "
         f"{f(bx['Y_min_by_case']['optimistic_bound'])}-{f(bx['Y_max_by_case']['optimistic_bound'])} W/A "
         "(optimistic_bound)",
         ("on the declared basis with a lossless chain, every N2 entry lies in the could-pay region of every case inside "
-         "its eta_t window (region.evidence_in_region)" if ans["all_N2_entries_in_could_pay_region_chain_1_every_case"]
+         "its eta_t window (region.evidence_in_region)"
+         + (f"; counting only published values with a resolved definition, that is {', '.join(pub_n2)}"
+            if pub_n2 and ans["all_N2_published_values_in_could_pay_region_chain_1_every_case"] else "")
+         if ans["all_N2_entries_in_could_pay_region_chain_1_every_case"]
          else "not every N2 entry lies in the could-pay region of every case (region.evidence_in_region)"),
-        ("entries that would pay everywhere in the box only with a lossless chain and eta_t = 1: "
-         + ", ".join(ans["entries_paying_everywhere_chain_1_eta_t_1"])
+        ("entries that would pay everywhere in the box only with a lossless chain and eta_t = 1, and only for small "
+         "delivered shares (least favourable corner): "
+         + "; ".join(f"{i} ({_lim(i)})" for i in ans["entries_paying_everywhere_chain_1_eta_t_1"])
          if ans["entries_paying_everywhere_chain_1_eta_t_1"] else
          "no entry pays everywhere in the box even with a lossless chain and eta_t = 1"),
+        (f"{', '.join(ub)}: the declared cost is only an upper bound (phi only upper-bounded); their 'cannot pay' "
+         "readings (eta_t_min > 1, empty windows) hold only once the phi bound is shown to be tight" if ub else
+         "no entry has an upper-bound-only declared cost"),
     ]
     return {
         "can_conclude_now": now,
@@ -1450,17 +1694,22 @@ def _milestone_statement(d: dict) -> dict:
             "<= Pi_H (g_case(X) - omega_f/X) on an air-representative N2/O2/O feed at the common feed state; (B) an "
             "interstage transport efficiency eta_t >= Z = C_src,bus / Y on the same charge-current basis; (C) a "
             "relative utilization gain X with X_lo(Y, omega_f) <= X <= min(X_hi, (1 - eta_u0)/eta_u0); (D) mass and "
-            "life break-even (breakeven_v1 Secs. 7-8). (A)-(C) are evaluated at the admitted Hall reference and the "
-            "measured response case. This overlay does not name a baseline."),
+            "life break-even (breakeven_v1 Secs. 7-8). (A)-(C) are evaluated at a Hall reference and a response case "
+            "that milestone A leaves as stated conditions (inside the PROPOSED box, per case); pinning them to an "
+            "admitted closure and a measured alpha, chi, eta_v,S is the milestone-B step. This overlay does not name a "
+            "baseline."),
         "explicit_conditions": [
             "breakeven_v1 assumptions A1-A8 accepted by the owner",
             "declared basis: phi as declared per entry, k = 1 (reported ion current = source-exit ion current)",
-            "Hall reference inside the PROPOSED box (V_d 150-450 V, eta_b 0.5-0.9, eta_ppu,d over the lane-20 "
-            "evidence envelope, eta_v 0.7-1.0 for the optimistic case)",
-            "eta_t in the PROPOSED range 0.1-1 (lane 18 cannot yet compute it for any air or Xe case)",
+            f"Hall reference inside the PROPOSED box (V_d {rng('V_d_V')} V, eta_b {rng('eta_b')}, eta_ppu,d over the "
+            f"lane-20 evidence envelope {'-'.join(f(v) for v in ar['eta_ppu_d']['values'])} (owner decision "
+            f"D2_eta_ppu_d_axis), eta_v {rng('eta_v_optimistic')} for the optimistic case)",
+            f"eta_t in the PROPOSED range {rng('eta_t')} (lane 18 cannot yet compute it for any air or Xe case)",
             "omega_f = 0 (permanent-magnet ecr_magnet and zero common deltas); any fixed overhead lowers Y",
+            "BELOW-side statements hold for small delivered shares only (X -> 0 supremum of the payable cost)",
             f"reference bus chain {f(d['bus_chain_evidence']['reference_chain']['value'])} (Hayabusa TWT system, "
-            "inferred) as the stated chain of the CLEARLY_BELOW test only",
+            "inferred; not a bound on the ABEP chain) as the stated chain of the CLEARLY_BELOW test only (owner decision "
+            "D1_clearly_below_rule)",
         ],
         "not_concluded": "no ranking, no hard-gate decision, no architecture named, no comparison with the other "
                          "pre-ionizer arm",
@@ -1482,6 +1731,36 @@ def _fmt(v, nd=3):
 
 def _rng(a, b):
     return _fmt(a) if _fmt(a) == _fmt(b) else f"{_fmt(a)}-{_fmt(b)}"
+
+
+def _label(p: dict) -> str:
+    """Entry id with its evidence marker: † upper-bound declared cost, ‡ definition unresolved, § model output."""
+    m = ""
+    if p.get("declared_cost_is_upper_bound"):
+        m += " †"
+    if p.get("evidence_status") == "published_value_definition_unresolved":
+        m += " ‡"
+    if p.get("evidence_status") == "model_output_not_measurement":
+        m += " §"
+    return p["id"] + m
+
+
+def _label_notes(d: dict) -> list:
+    pls = d["evidence_placements"]
+    out = []
+    ub = [p["id"] for p in pls if p["declared_cost_is_upper_bound"]]
+    un = [p["id"] for p in pls if p["evidence_status"] == "published_value_definition_unresolved"]
+    mo = [p["id"] for p in pls if p["evidence_status"] == "model_output_not_measurement"]
+    if ub:
+        out.append(f"† {', '.join(ub)}: declared cost is only an UPPER bound on the coupling-input cost (phi only "
+                   "upper-bounded); 'cannot pay' readings hold only once the phi bound is shown to be tight; the "
+                   "CLEARLY_ABOVE test uses the ionization floor.")
+    if un:
+        out.append(f"‡ {', '.join(un)}: definition unresolved (consistency check fails; "
+                   "evidence_placements[].consistency_check).")
+    if mo:
+        out.append(f"§ {', '.join(mo)}: the source's own model output (model-derived), not a measurement.")
+    return [x + "  " if i < len(out) - 1 else x for i, x in enumerate(out)]
 
 
 def _md_block(d: dict) -> str:
@@ -1543,8 +1822,8 @@ def _md_block(d: dict) -> str:
         L.append(f"| {wf.split('=')[1]} | " + " | ".join(("**>1**" if v is not None and v > 1 else _fmt(v))
                                                         for v in vals) + " |")
     L += ["", "### G6. Evidence placements (declared basis)", "",
-          "| entry | mode | reported [W/A] (class, access) | power reference | declared cost [W/A] | bus cost: chain 1 / "
-          "reference chain [W/A] | placement | per case (add / cost_offset / optimistic) |",
+          "| entry | mode | reported [W/A] (class, access) | power reference | declared cost [W/A] | bus cost: chain 1 on "
+          "the declared basis / reference chain [W/A] | placement | per case (add / cost_offset / optimistic) |",
           "|---|---|---|---|---|---|---|---|"]
     for p in d["evidence_placements"]:
         dc = p["declared_basis"]["cost_W_per_A"]
@@ -1552,16 +1831,19 @@ def _md_block(d: dict) -> str:
         rv = p["reported"]["value"]
         rvs = _rng(min(rv), max(rv)) if isinstance(rv, list) else _fmt(rv)
         pc = " / ".join(p["placement_by_case"][c] for c in CASES)
-        L.append(f"| {p['id']} | {p['mode']} | {rvs} ({p['reported']['evidence_class']}, {p['reported']['access']}) | "
+        L.append(f"| {_label(p)} | {p['mode']} | {rvs} ({p['reported']['evidence_class']}, {p['reported']['access']}) | "
                  f"{p['power_reference']['class']} | {_rng(*dc)} ({p['declared_basis']['phi_kind']}) | "
-                 f"{_rng(*dc)} / {_rng(*bus['at_reference_chain'])} | **{p['placement']}** | {pc} |")
+                 f"{_rng(*bus['chain_1_on_declared_basis'])} / "
+                 f"{_rng(*bus['at_reference_chain'])} | **{p['placement']}** | {pc} |")
     for p in d["not_placeable"]:
         rv = p["reported"]["value"] if p.get("reported") else None
         unit = p["reported"]["unit"] if p.get("reported") else ""
         rvs = "-" if rv is None else (f"{_fmt(rv)} {unit}" if not isinstance(rv, list) else f"{rv} {unit}")
         L.append(f"| {p['id']} | {p['mode']} | {rvs} | - | - | - | **NOT_PLACEABLE** | missing: "
                  f"{p['missing_quantities'][0]} |")
-    L += ["", "### G7. Minimum eta_t per entry (declared cost; chain 1 / reference chain; '>1' = cannot pay there)", "",
+    L += [""] + _label_notes(d)
+    L += ["", "### G7. Minimum eta_t per entry (declared cost; chain 1 / reference chain; '>1' = cannot pay there on the "
+          "declared basis, see the notes)", "",
           "| entry | " + " | ".join(f"{s.split('_')[0]} {c}" for s in SLICE_NAMES for c in CASES) + " |",
           "|---" * (1 + 3 * len(CASES)) + "|"]
     for p in d["evidence_placements"]:
@@ -1571,10 +1853,14 @@ def _md_block(d: dict) -> str:
                 a = p["placement_by_slice"][s]["eta_t_min_chain_1"][c][0]
                 b = p["placement_by_slice"][s]["eta_t_min_reference_chain"][c][0]
                 cells.append(("**>1**" if a > 1 else _fmt(a)) + " / " + ("**>1**" if b > 1 else _fmt(b)))
-        L.append(f"| {p['id']} | " + " | ".join(cells) + " |")
+        L.append(f"| {_label(p)} | " + " | ".join(cells) + " |")
+    L += ["", "'>1' is a 'cannot pay' reading on the declared basis only (negative_readings_qualifier per entry). For "
+              "entries marked † the declared cost is only an upper bound: their '>1' cells establish 'cannot pay' only "
+              "once the phi bound is shown to be tight; until then the ionization floor is the only strict lower bound "
+              "(see the bracketed thresholds in G9)."]
     L += ["", "### G8. Region of (eta_t, C_src,bus) where ecr_hall could pay (omega_f = 0)", "",
           "Upper edge of C_src,bus [W/A] that could pay somewhere in the box (most favourable corner) / everywhere in "
-          "the box (least favourable corner).", "",
+          "the box (least favourable corner, for small delivered shares).", "",
           "| eta_t | " + " | ".join(CASES) + " |", "|---" * (1 + len(CASES)) + "|"]
     reg = d["region"]
     for i, t in enumerate(reg["axes"]["eta_t"]):
@@ -1587,8 +1873,12 @@ def _md_block(d: dict) -> str:
         L.append(f"| {k} ({_fmt(d['ionization_floor']['values'][k]['value_W_per_A'], 6)} W/A) | "
                  + " | ".join(_fmt(reg["by_case"][c]["eta_t_floor_any_source"][k]) for c in CASES) + " |")
     L += ["", "eta_t window per entry inside the could-pay region (chain 1 / reference chain; '-' = outside at every "
-              "eta_t <= 1):", "", "| entry | " + " | ".join(CASES) + " | pays everywhere at chain 1, eta_t 1 |",
+              "eta_t <= 1 on the declared basis). Last column: cases in which the entry pays everywhere in the box at "
+              "chain 1 and eta_t = 1, with the largest relative delivered share X at which it still pays at the least "
+              "favourable corner (range over the declared cost interval).", "",
+          "| entry | " + " | ".join(CASES) + " | pays everywhere at chain 1, eta_t 1 (small shares only) |",
           "|---" * (2 + len(CASES)) + "|"]
+    pls = {p["id"]: p for p in d["evidence_placements"]}
     for r in reg["evidence_in_region"]:
         cells = []
         for c in CASES:
@@ -1597,13 +1887,23 @@ def _md_block(d: dict) -> str:
             w2 = b["eta_t_window_reference_chain"]
             cells.append(("-" if w1 is None else f">= {_fmt(w1[0])}") + " / " + ("-" if w2 is None else
                                                                                f">= {_fmt(w2[0])}"))
-        every = [c for c in CASES if r["by_case"][c]["pays_everywhere_chain_1_eta_t_1"]]
-        L.append(f"| {r['id']} | " + " | ".join(cells) + f" | {', '.join(every) if every else 'no'} |")
+        every = []
+        for c in CASES:
+            if r["by_case"][c]["pays_everywhere_chain_1_eta_t_1"]:
+                xh = r["by_case"][c]["X_hi_least_favourable_corner_chain_1_eta_t_1"]
+                xs = ("?" if xh is None else (f"{_fmt(xh[1])} (lower cost only)" if xh[0] is None
+                                              else _rng(xh[0], xh[1])))
+                every.append(f"{c} (X <= {xs})")
+        L.append(f"| {_label(pls[r['id']])} | " + " | ".join(cells) + f" | {', '.join(every) if every else 'no'} |")
+    L += ["", "A '-' window of an entry marked † is a 'cannot pay' reading on an upper-bound declared cost: it holds "
+              "only once the phi bound is shown to be tight. 'Pays everywhere' uses the X -> 0 supremum; at a finite "
+              "share X above the listed limit the entry no longer pays at the least favourable corner."]
     L += ["", "### G9. Single measurements that make a placement definite", "",
-          "| entry | eta_t or eta_chain below -> CLEARLY_ABOVE (once the phi bound is tight) | eta_t at least -> "
-          "CLEARLY_BELOW with the reference chain (add / cost_offset / optimistic) | eta_chain * eta_t at least -> "
-          "CLEARLY_BELOW (add / cost_offset / optimistic) | end-to-end C_del,bus above -> ABOVE [W/A] | C_del,bus at "
-          "or below -> BELOW (add / cost_offset / optimistic) [W/A] |", "|---|---|---|---|---|---|"]
+          "| entry | eta_t or eta_chain below -> CLEARLY_ABOVE (ionization-floor threshold; in brackets: the threshold "
+          "once the phi upper bound is shown tight) | eta_t at least -> CLEARLY_BELOW with the reference chain (add / "
+          "cost_offset / optimistic) | eta_chain * eta_t at least -> CLEARLY_BELOW (add / cost_offset / optimistic) | "
+          "end-to-end C_del,bus above -> ABOVE [W/A] | C_del,bus at or below -> BELOW, small delivered shares only "
+          "(add / cost_offset / optimistic) [W/A] |", "|---|---|---|---|---|---|"]
     ym = bc["box_extremes_W_per_A"]
     for p in d["evidence_placements"]:
         t = p["to_definite_placement"][0]
@@ -1612,14 +1912,42 @@ def _md_block(d: dict) -> str:
         below = " / ".join(("unreachable" if not t["moves_to_below"][c]["reachable"] else
                             _fmt(t["moves_to_below"][c]["eta_t_at_least"])) for c in CASES)
         pbelow = " / ".join(("unreachable" if not prod[c]["reachable"] else _fmt(prod[c]["value"])) for c in CASES)
-        L.append(f"| {p['id']} | {_fmt(t['if_below'])}" + ("" if conf is None else f" ({_fmt(conf)})") +
+        L.append(f"| {_label(p)} | {_fmt(t['if_below'])}" + ("" if conf is None else f" ({_fmt(conf)})") +
                  f" | {below} | {pbelow} | {_fmt(ym['Y_max_any_case'])} | "
                  + " / ".join(_fmt(ym["Y_min_by_case"][c]) for c in CASES) + " |")
     L += ["", "### G10. Milestone-A statement (generated)", ""]
     ms = d["milestone_A_statement"]
     L += [f"- {s}" for s in ms["can_conclude_now"]]
     L += ["", f"Condition set: {ms['condition_set_for_milestone_A']}", ""]
-    L += ["### G11. Self-checks", ""]
+    L += ["### G11. Owner decisions requested (generated; PROPOSED rules and ranges)", ""]
+    od = {o["id"]: o for o in d["owner_decisions_requested"]}
+    d1 = od["D1_clearly_below_rule"]
+    L += [f"**D1_clearly_below_rule.** {d1['question']}", "", f"- {d1['plain_statement']}.",
+          "- Largest declared cost the rule accepts [W/A]: " + ", ".join(
+              f"{c} {_fmt(v)}" for c, v in d1["max_declared_cost_accepted_W_per_A"].items())
+          + "; ionization floors " + "-".join(f"{v:.4g}" for v in d1["ionization_floor_range_W_per_A"]) + " W/A.",
+          f"- {d1['reference_chain_note']}.", "",
+          "| reading | test | entries that would be CLEARLY_BELOW (cases) |", "|---|---|---|"]
+    for k, v in d1["alternative_readings"].items():
+        oc = "; ".join(f"{i} ({', '.join(cs)})" for i, cs in v["outcome"].items()) or "none"
+        L.append(f"| {k} | {v['test']} | {oc} |")
+    L += ["", f"Outcomes {d1['alternative_readings_note']}.", ""]
+    d2 = od["D2_eta_ppu_d_axis"]
+    L += [f"**D2_eta_ppu_d_axis.** {d2['question']}. Basis: {d2['envelope_basis']}.", "",
+          "| box extreme [W/A] | " + " | ".join(CASES) + " |", "|---" * (1 + len(CASES)) + "|"]
+    used = "-".join(f"{v:.4g}" for v in d2["used_values"])
+    for lab, key in ((f"Y_max, eta_ppu,d {used} (used)", "box_extremes_used_W_per_A"),
+                     (f"Y_max, eta_ppu,d {_fmt(d2['breakeven_v1_value'])} (breakeven_v1)",
+                      "box_extremes_at_breakeven_v1_value_W_per_A")):
+        L.append(f"| {lab} | " + " | ".join(_fmt(d2[key]["Y_max_by_case"][c]) for c in CASES) + " |")
+    for lab, key in ((f"Y_min, eta_ppu,d {used} (used)", "box_extremes_used_W_per_A"),
+                     (f"Y_min, eta_ppu,d {_fmt(d2['breakeven_v1_value'])} (breakeven_v1)",
+                      "box_extremes_at_breakeven_v1_value_W_per_A")):
+        L.append(f"| {lab} | " + " | ".join(_fmt(d2[key]["Y_min_by_case"][c]) for c in CASES) + " |")
+    L += ["", "Placements that would change with the breakeven_v1 value: "
+          + (", ".join(f"{q['id']} -> {q['placement_at_eta_ppu_d_0.9']}" for q in
+                       d2["placements_that_change_at_breakeven_v1_value"]) or "none") + ".", ""]
+    L += ["### G12. Self-checks", ""]
     for k, v in d["self_checks"].items():
         if isinstance(v, dict):
             L.append(f"- `{k}`: pass = {v['pass']}" + (f", n = {v['n']}" if "n" in v else ""))
@@ -1639,7 +1967,11 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--check", action="store_true", help="rebuild in memory and byte-compare with the committed files")
     a = ap.parse_args(argv)
-    text, block = build()
+    try:
+        text, block = build()
+    except OverlayInputError as exc:     # missing or changed input: fail loudly, write nothing
+        print(f"FAILED ({type(exc).__name__}): {exc}")
+        return 2
     md_old = OUT_MD.read_text(encoding="utf-8") if OUT_MD.is_file() else None
     if a.check:
         ok = True
