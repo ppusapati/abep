@@ -89,7 +89,14 @@
    "workflow_key": "HSUS",
    "deps": [],
    "verification_protocol": "two-lens-v2",
-   "answers": "i"
+   "answers": "i",
+   "repairs": [
+    {
+     "workflow_run": "wf_6eb2fc0f-3f2",
+     "workflow_key": "HSUS",
+     "reason": "integration repair: lane_31_echt_disposition (merged) set ECHT-N2 HISTORICAL_UNSUPPORTED and changed docs/EVIDENCE.md, which lane 09 pins and whose ECHT evidence it cites; fast-forward to 15e59db, carry the status, re-pin, regenerate, two-lens re-verification. Downstream: fo_hall_sustainment_envelope and Bundle 1 (bundle1_v2) follow."
+    }
+   ]
   },
   {
    "id": "lane_10_cathode_dossier",
