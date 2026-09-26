@@ -1504,3 +1504,20 @@ block of the RFP architecture:
 - both paths feed that block.
 
 It must never leak upstream, or into Vyovrinda's own thruster geometry.
+
+## 2026-09-26 — Open-literature N₂/N sources ingested; N₂ dissociation table built
+
+**Sources located (no LXCat):**
+- Song et al., J. Phys. Chem. Ref. Data 52, 023104 (2023). The full text is on the NSF Public Access Repository (par.nsf.gov 10526876). It gives numeric recommended tables for dissociation (Table 9) and ionization. For the eight low-lying electronic states it recommends the R-matrix set of Su et al. 2021 (Figs. 11–18). It does not table them.
+- Su, Cheng, Zhang & Tennyson, J. Phys. B 54, 115203 (2021), CC BY 4.0. Its supplementary spreadsheets hold per-state excitation cross sections for A, B, W, B′, a, a′, w and C. **They cover threshold to 20 eV only.**
+- Song et al., Eur. Phys. J. D 77, 105 (2023), CC BY 4.0. It gives figures only (no tables). Its Fig. 4 shifts the theory curves by −1.5 eV to meet the EEL thresholds. JPCRD Table 8 likewise reports theory thresholds 1.5–1.9 eV above the EEL values.
+- Ragimkhanov et al. 2026 (atomic-N elastic): not located by web or arXiv search. Citation or DOI needed.
+
+**Built:** `dissociation_N2.dat` from JPCRD Table 9, which is the Cosby 1993 set (±20 %), via `scripts/build_n2_dissociation_table.py`.
+- Explicit choices: σ = 0 below the first point (12 eV), with no threshold curve constructed.
+- The hold tail above 200 eV is reported per mean energy: < 1 % up to 45 eV, 14 % at 90 eV.
+- Header energy loss is 12.14 eV (the N(²D)+N(⁴S) channel, dominant per Cosby).
+
+`rate_tables.maxwellian_rate` now takes an explicit `tail` (`hold` | `zero`). `hold` is bit-identical to the previous behaviour, so `ionization_N.dat` is unchanged. There is no golden or model change: the bridge tables are not read by the 0-D chemistry.
+
+**Open (owner's decision):** N₂ excitation. The recommended per-state data end at 20 eV, but Maxwellian rates up to T_e ≈ 30 eV need σ well above that. Extending needs a second source, e.g. Johnson et al. 2005 (10–100 eV, measured), Kawaguchi et al. 2021 or Itikawa 2006, or an explicit Born-type extrapolation. That choice is not made here.

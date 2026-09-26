@@ -670,6 +670,42 @@ def test_n_ionization_rate_table_structure():
     assert "Kim & Desclaux" in open(os.path.join(d, "ionization_N.dat.source")).read()
 
 
+def test_rate_table_tail_policy_is_explicit():
+    """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""
+    from abep_sim.rate_tables import maxwellian_rate, tail_sensitivity
+    import numpy as np
+    E = np.array([12.0, 200.0]); s = np.array([1e-20, 1e-20])
+    assert maxwellian_rate(E, s, 100.0, "hold") > maxwellian_rate(E, s, 100.0, "zero")
+    assert abs(maxwellian_rate(E, s, 3.0, "hold") / maxwellian_rate(E, s, 3.0, "zero") - 1) < 1e-9
+    assert tail_sensitivity(E, s, [4.5])[0][1] < 1e-9
+    with _pytest.raises(ValueError):
+        maxwellian_rate(E, s, 10.0, "extrapolate")
+
+
+def test_n2_dissociation_rate_table_reproduces_jpcrd_table9():
+    """dissociation_N2.dat (Song et al. JPCRD 2023 Table 9 = Cosby 1993, scripts/build_n2_dissociation_table.py):
+    header = N(2D)+N(4S) energy loss, zero below the 12 eV first point, and each row equals a fresh integration of the
+    transcribed table with the declared hold tail. The tail share is < 1 % up to 45 eV mean energy."""
+    import importlib.util, os, numpy as np
+    from abep_sim.rate_tables import maxwellian_rate, tail_sensitivity
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_dissociation_table.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    d = os.path.join(root, "hallthruster_bridge", "propellants")
+    lines = open(os.path.join(d, "dissociation_N2.dat")).read().splitlines()
+    assert lines[0] == "Dissociation energy loss (eV): 12.14"
+    a = np.loadtxt(os.path.join(d, "dissociation_N2.dat"), skiprows=2)
+    assert a[0, 1] == 0.0 and (a[:, 1] >= 0).all() and a[-1, 0] >= 255
+    E = np.array([e for e, _ in b.TABLE9]); sig = np.array([x for _, x in b.TABLE9]) * 1e-20
+    assert len(E) == 16 and E[0] == 12 and E[-1] == 200 and abs(sig.max() - 1.23e-20) < 1e-30
+    for eps in (15.0, 30.0, 60.0, 150.0):
+        row = a[a[:, 0] == eps][0, 1]
+        assert abs(row / maxwellian_rate(E, sig, eps / 1.5, b.TAIL) - 1) < 1e-5
+    assert all(dd < 0.01 for eps, dd in tail_sensitivity(E, sig, [15, 30, 45]))
+    src = open(os.path.join(d, "dissociation_N2.dat.source")).read()
+    assert "Table 9" in src and "Cosby" in src and "held" in src
+
+
 def test_bridge_and_0d_chemistry_are_not_unified():
     """HallThruster.jl tables in hallthruster_bridge/propellants/ are NOT read by the 0-D plasma_chem model. If this
     fails, the databases were unified: that is a model change (goldens, HISTORY), so update this test deliberately."""

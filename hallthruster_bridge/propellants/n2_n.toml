@@ -30,7 +30,7 @@ rate_coeff_file = "ionization_N2_N2+.dat"           # Itikawa 2006 (shipped)
 [[reactions]]
 type = "electron_impact"
 equation = "N2 + e -> N + N + e"
-rate_coeff_file = "dissociation_N2.dat"             # REQUIRED: Cosby 1993 / Itikawa 2006 via LXCat — not yet generated
+rate_coeff_file = "dissociation_N2.dat"             # Song et al. JPCRD 2023 Table 9 (Cosby 1993); header 12.14 eV (PROVENANCE.md)
 
 [[reactions]]
 type = "excitation"
