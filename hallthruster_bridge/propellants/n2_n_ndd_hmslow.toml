@@ -1,3 +1,4 @@
+# GENERATED VARIANT of n2_n.toml (direct N -> N^2+ HMS x0.5 sensitivity branch (nominal DI, OPM N elastic)) by scripts/make_n2_variant_configs.py; do not edit by hand.
 # N2/N propellant for HallThruster.jl v0.23.1 (Stage A). Reaction-set version: PINNED.toml [reaction_set]. Rate files are Maxwellian tables vs mean energy (3/2 Te).
 [[species]]
 symbol = "N"
@@ -160,4 +161,4 @@ rate_coeff_file = "ionization_N_Z1plus_to_N_Z2plus.dat"           # Bell et al. 
 [[reactions]]
 type = "electron_impact"
 equation = "N + e -> N(2+) + 3e"
-rate_coeff_file = "ionization_N_to_N_Z2plus_hms2017.dat"          # Hahn, Muller & Savin 2017 Eqs. (2)+(3), direct N -> N^2+ (abep-n2n-0.11); sensitivity x0.5 / x1.3: n2_n_ndd_hmslow/high.toml
+rate_coeff_file = "ionization_N_to_N_Z2plus_hms2017_x0p5.dat"     # HMS 2017 x 0.5: direct N -> N^2+ SENSITIVITY branch (abep-n2n-0.11)

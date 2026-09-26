@@ -1,0 +1,1 @@
+BOUND ONLY (not in any reaction set): e + N^2+ -> N^3+ + 2e, Bell et al. JPCRD 12, 891 (1983) Eq. (1), Table 5 N III (I = 47.45 eV, A = 0.5004, B = 0.2234, 2.2074, -4.1555, 3.7686; +-10 %). Used by hallthruster_bridge/checks/blind_state_envelope.jl.

@@ -1,0 +1,273 @@
+{
+ "audit": "N2 completeness, closure pass",
+ "prereg": "n2_completeness_audit_v1",
+ "status": "CLOSED: every tier-2/3 process has a final verdict (multiply-charged processes from audit/n2_closure_verdicts_v1.json); reaction set abep-n2n-0.11 COMPLETE_FOR_P5_N2_VALIDATION",
+ "reaction_set": "abep-n2n-0.9",
+ "atomic_fraction_x": 0.0,
+ "rot_energy_ceiling_eV": 0.01,
+ "verdict": {
+  "dissociative_ionization": {
+   "final_F_P_max": 0.1744337327263319,
+   "final_F_ion_max": 0.19638924753981615,
+   "verdict": "PROMOTED (included since 0.4); final fractions on the 0.9 denominator"
+  },
+  "vibrational_excitation": {
+   "final_F_P_max": 0.999835561746958,
+   "Te_where_F_P_above_1pct": [
+    0.2,
+    0.3,
+    0.5,
+    0.7,
+    1,
+    1.5,
+    2,
+    3,
+    4,
+    5,
+    7.5
+   ],
+   "verdict": "PROMOTED (included since 0.7); final fractions on the 0.9 denominator; model-form limits unchanged"
+  },
+  "rotational_excitation": {
+   "F_P_upper_max": 0.0352782902788236,
+   "F_P_spectroscopic_max": 0.011305509633809746,
+   "Te_where_spectroscopic_above_1pct": [
+    1,
+    1.5,
+    2
+   ],
+   "reading": "gross loss from j = 0, no superelastic credit (same convention as the vibrational verdict)",
+   "verdict": "PROMOTE (marginal): spectroscopic gross F_P max 1.13 % at T_e 1-2 eV > 1 %; net loss (detailed balance at kT_gas >> dE) would be far smaller - owner may reverse"
+  },
+  "N_Z2plus_to_N_Z3plus": {
+   "x_crit_min": 0.25113339840529086,
+   "reference_state": {
+    "source": "N1 smoke run, abep-n2n-0.9 n2_n.toml, 0.5 ms, default transport (docs/HISTORY.md 2026-09-26)",
+    "max_N_Z2plus_over_N2": 0.00116,
+    "F_ion_N_Z2plus_to_N_Z3plus": 4.72e-07,
+    "F_S_N_Z2plus_destruction": 0.000214
+   },
+   "verdict": "EXCLUDED: reference-state n(N^2+)/n(N2) <= 1.2e-3 vs x_crit >= 0.25 (margin ~200); F_ion 4.7e-7, F_S 2.1e-4. Confirmed EXCLUDED by the 180-case blind state envelope (audit/n2_closure_verdicts_v1.json)"
+  },
+  "N2_Z2plus_molecular": {
+   "F_ion_nominal_max": 0.007924746113887614,
+   "F_ion_upper_max": 0.048153163361007945,
+   "F_ion_upper_th40_max": 0.05078931234087897,
+   "verdict": "BRACKETED on the reference state: nominal (JPCRD ~1 % statement) stays below 1 % (max 0.79 %); the loose upper envelope crosses (4.8 %). Closure (180-case blind state envelope, addendum 1): UNCERTAINTY VARIANT n2_n_n2dication.toml (audit/n2_closure_verdicts_v1.json)"
+  },
+  "N_to_N_Z2plus_direct": {
+   "verdict": "Closure: PROMOTED into nominal chemistry (abep-n2n-0.11) from Hahn, Muller & Savin 2017, by F_S(N^2+ production) in all 180 blind-envelope runs; HMS x0.5 / x1.3 sensitivity branches (audit/n2_closure_verdicts_v1.json)"
+  },
+  "rule": "Promote the omitted process if F_P > 0.01 OR F_ion > 0.01 OR F_S_s > 0.05 anywhere in its applicable Te domain."
+ },
+ "rows": [
+  {
+   "Te_eV": 0.2,
+   "P_total": 1.3649575614856878e-15,
+   "F_P_DI": 6.434152440930734e-16,
+   "F_ion_DI": 4.0064332575668874e-07,
+   "F_P_vib": 0.999835561746958,
+   "F_P_rot_upper": 0.008239983657612766,
+   "F_P_rot_spectroscopic": 0.0012966119094299877,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 1.2001675398110172e+91,
+   "F_ion_N2pp_nominal": 8.402997747850753e-84,
+   "F_ion_N2pp_upper": 9.013590144534421e-82,
+   "F_ion_N2pp_upper_th40": 1.8911566404419899e-75
+  },
+  {
+   "Te_eV": 0.3,
+   "P_total": 2.0474363422285303e-15,
+   "F_P_DI": 6.434152440930737e-16,
+   "F_ion_DI": 4.006433257566887e-07,
+   "F_P_vib": 0.999835561746958,
+   "F_P_rot_upper": 0.008518864299542957,
+   "F_P_rot_spectroscopic": 0.0016489600566726602,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 6.07920161566049e+56,
+   "F_ion_N2pp_nominal": 7.78522572019637e-53,
+   "F_ion_N2pp_upper": 4.975208922803489e-51,
+   "F_ion_N2pp_upper_th40": 7.693726608889229e-47
+  },
+  {
+   "Te_eV": 0.5,
+   "P_total": 3.412393903714218e-15,
+   "F_P_DI": 6.434152440930735e-16,
+   "F_ion_DI": 4.006433257566887e-07,
+   "F_P_vib": 0.999835561746958,
+   "F_P_rot_upper": 0.016404252242773188,
+   "F_P_rot_spectroscopic": 0.005096636913835515,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 2.4306992072217614e+29,
+   "F_ion_N2pp_nominal": 4.1720223524272414e-28,
+   "F_ion_N2pp_upper": 1.4844719910721503e-26,
+   "F_ion_N2pp_upper_th40": 4.6338522502104244e-24
+  },
+  {
+   "Te_eV": 0.7,
+   "P_total": 4.84091285220806e-15,
+   "F_P_DI": 3.719472391836809e-09,
+   "F_ion_DI": 0.00023224414851130552,
+   "F_P_vib": 0.995402514277486,
+   "F_P_rot_upper": 0.02574699864126501,
+   "F_P_rot_spectroscopic": 0.009044277431540711,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 4.722377718000635e+21,
+   "F_ion_N2pp_nominal": 1.504709033417906e-21,
+   "F_ion_N2pp_upper": 3.83393344219549e-20,
+   "F_ion_N2pp_upper_th40": 2.2650188027723463e-18
+  },
+  {
+   "Te_eV": 1,
+   "P_total": 7.460401677510002e-15,
+   "F_P_DI": 2.4134945876509445e-08,
+   "F_ion_DI": 0.0002322638156774961,
+   "F_P_vib": 0.9710703592859311,
+   "F_P_rot_upper": 0.031026171550021114,
+   "F_P_rot_spectroscopic": 0.011259008617883258,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 56728305068699.31,
+   "F_ion_N2pp_nominal": 1.6244115639616408e-14,
+   "F_ion_N2pp_upper": 3.066083444975911e-13,
+   "F_ion_N2pp_upper_th40": 5.212910557057898e-12
+  },
+  {
+   "Te_eV": 1.5,
+   "P_total": 1.1271614814584165e-14,
+   "F_P_DI": 4.724368182982888e-06,
+   "F_ion_DI": 0.001891773481656202,
+   "F_P_vib": 0.882042843640748,
+   "F_P_rot_upper": 0.03274199766391886,
+   "F_P_rot_spectroscopic": 0.011305509633809746,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 221436671.7981961,
+   "F_ion_N2pp_nominal": 7.79202886127282e-10,
+   "F_ion_N2pp_upper": 1.1209467309990709e-08,
+   "F_ion_N2pp_upper_th40": 7.245837237004413e-08
+  },
+  {
+   "Te_eV": 2,
+   "P_total": 1.3973624808133525e-14,
+   "F_P_DI": 1.5166050196556483e-05,
+   "F_ion_DI": 0.001963281833539128,
+   "F_P_vib": 0.7119176554841805,
+   "F_P_rot_upper": 0.0352782902788236,
+   "F_P_rot_spectroscopic": 0.01064710493885765,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 265560.84754756134,
+   "F_ion_N2pp_nominal": 2.6307835861209817e-07,
+   "F_ion_N2pp_upper": 3.2501560527302174e-06,
+   "F_ion_N2pp_upper_th40": 1.2963053382926182e-05
+  },
+  {
+   "Te_eV": 3,
+   "P_total": 2.91723236097952e-14,
+   "F_P_DI": 0.0008689739294023266,
+   "F_ion_DI": 0.010554616449714053,
+   "F_P_vib": 0.27931721907455576,
+   "F_P_rot_upper": 0.028196763510695538,
+   "F_P_rot_spectroscopic": 0.005713169781705452,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 1734.3959154463355,
+   "F_ion_N2pp_nominal": 1.485042122792335e-05,
+   "F_ion_N2pp_upper": 0.00015492244111129367,
+   "F_ion_N2pp_upper_th40": 0.0003815102452591758
+  },
+  {
+   "Te_eV": 4,
+   "P_total": 5.6315365961414587e-14,
+   "F_P_DI": 0.003302226087910318,
+   "F_ion_DI": 0.018923909105257368,
+   "F_P_vib": 0.11495486027851759,
+   "F_P_rot_upper": 0.021991980723692236,
+   "F_P_rot_spectroscopic": 0.003106868249306815,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 116.49309427387011,
+   "F_ion_N2pp_nominal": 0.0001259947340574301,
+   "F_ion_N2pp_upper": 0.0011936599372241164,
+   "F_ion_N2pp_upper_th40": 0.002309628120262879
+  },
+  {
+   "Te_eV": 5,
+   "P_total": 9.610040351078409e-14,
+   "F_P_DI": 0.008967336001074078,
+   "F_ion_DI": 0.0322805683643292,
+   "F_P_vib": 0.05465212113981004,
+   "F_P_rot_upper": 0.017464013445233115,
+   "F_P_rot_spectroscopic": 0.0018895440058891906,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 26.265937766972733,
+   "F_ion_N2pp_nominal": 0.00038551590242617205,
+   "F_ion_N2pp_upper": 0.0034196309705117924,
+   "F_ion_N2pp_upper_th40": 0.005724549172195044
+  },
+  {
+   "Te_eV": 7.5,
+   "P_total": 2.273742223920721e-13,
+   "F_P_DI": 0.02964440121878573,
+   "F_ion_DI": 0.06337064247980692,
+   "F_P_vib": 0.0147714675049983,
+   "F_P_rot_upper": 0.011867050703626059,
+   "F_P_rot_spectroscopic": 0.0008729199896555694,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 3.6254642851833747,
+   "F_ion_N2pp_nominal": 0.0016018270185674554,
+   "F_ion_N2pp_upper": 0.01274992883274251,
+   "F_ion_N2pp_upper_th40": 0.01760178198581721
+  },
+  {
+   "Te_eV": 10,
+   "P_total": 3.8443689111268694e-13,
+   "F_P_DI": 0.05428640381519117,
+   "F_ion_DI": 0.09141177727676572,
+   "F_P_vib": 0.006146678183713513,
+   "F_P_rot_upper": 0.009234467595393705,
+   "F_P_rot_spectroscopic": 0.0005627675540792099,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 1.4053386292740275,
+   "F_ion_N2pp_nominal": 0.003012418003788853,
+   "F_ion_N2pp_upper": 0.022340404340676336,
+   "F_ion_N2pp_upper_th40": 0.02805455435554503
+  },
+  {
+   "Te_eV": 15,
+   "P_total": 7.186943173979191e-13,
+   "F_P_DI": 0.09939968846093848,
+   "F_ion_DI": 0.1344162768879094,
+   "F_P_vib": 0.0019431699873463384,
+   "F_P_rot_upper": 0.006792346441251287,
+   "F_P_rot_spectroscopic": 0.00035004165397188846,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 0.5705403250284347,
+   "F_ion_N2pp_nominal": 0.005215131281570568,
+   "F_ion_N2pp_upper": 0.03535801912643029,
+   "F_ion_N2pp_upper_th40": 0.04053208179114369
+  },
+  {
+   "Te_eV": 20,
+   "P_total": 1.0423068225317498e-12,
+   "F_P_DI": 0.13304893544412708,
+   "F_ion_DI": 0.16310353798662658,
+   "F_P_vib": 0.0009058197642386055,
+   "F_P_rot_upper": 0.005676809593651996,
+   "F_P_rot_spectroscopic": 0.00027276422811065406,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 0.37320188621353545,
+   "F_ion_N2pp_nominal": 0.006568372797569425,
+   "F_ion_N2pp_upper": 0.04220280125782279,
+   "F_ion_N2pp_upper_th40": 0.04633774801487179
+  },
+  {
+   "Te_eV": 25,
+   "P_total": 1.3410549580758274e-12,
+   "F_P_DI": 0.1571823962266588,
+   "F_ion_DI": 0.1827078967979476,
+   "F_P_vib": 0.0005163902809553189,
+   "F_P_rot_upper": 0.005057272196674917,
+   "F_P_rot_spectroscopic": 0.00023446418592499874,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 0.29301064021847983,
+   "F_ion_N2pp_nominal": 0.007397341043313124,
+   "F_ion_N2pp_upper": 0.045937466944562855,
+   "F_ion_N2pp_upper_th40": 0.04921460090141189
+  },
+  {
+   "Te_eV": 30,
+   "P_total": 1.6128209747215448e-12,
+   "F_P_DI": 0.1744337327263319,
+   "F_ion_DI": 0.19638924753981615,
+   "F_P_vib": 0.00033191343486664587,
+   "F_P_rot_upper": 0.004673578994406932,
+   "F_P_rot_spectroscopic": 0.0002122425701709005,
+   "x_crit_N2plus_over_N2_for_1pct_ion": 0.25113339840529086,
+   "F_ion_N2pp_nominal": 0.007924746113887614,
+   "F_ion_N2pp_upper": 0.048153163361007945,
+   "F_ion_N2pp_upper_th40": 0.05078931234087897
+  }
+ ]
+}

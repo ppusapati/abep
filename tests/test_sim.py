@@ -920,6 +920,63 @@ def test_n2_electronic_excitation_tables_su_johnson_splice():
     assert "excitation_N2.dat" not in files and all(os.path.isfile(os.path.join(b.PROP, f)) for f in files)
 
 
+def test_n2_completeness_final_audit():
+    """Final omitted-process pass on abep-n2n-0.9 (prereg v1): DI and vibrational fractions recomputed on the complete
+    denominator; rotational gross bound uses NIST B_0 (0->2 = 1.480 meV, 0->4 = 4.933 meV); N^2+ -> N^3+ excluded on the
+    reference state; direct N -> N^2+ and molecular N2^2+ closed by the blind state envelope (promoted / uncertainty variant)."""
+    import importlib.util, json, os
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("a", os.path.join(root, "scripts", "audit_n2_completeness_final.py"))
+    a = importlib.util.module_from_spec(spec); spec.loader.exec_module(a)
+    assert abs(a.ROT_DE_SPECTRO_EV[1] - 1.480e-3) < 2e-6 and abs(a.ROT_DE_SPECTRO_EV[2] - 4.933e-3) < 5e-6
+    v = json.load(open(os.path.join(root, "hallthruster_bridge", "audit", "n2_completeness_final_v1.json")))["verdict"]
+    assert v["dissociative_ionization"]["final_F_ion_max"] > 0.01 and v["vibrational_excitation"]["final_F_P_max"] > 0.01
+    assert 0.01 < v["rotational_excitation"]["F_P_spectroscopic_max"] < 0.02
+    assert v["N_Z2plus_to_N_Z3plus"]["verdict"].startswith("EXCLUDED") and v["N_Z2plus_to_N_Z3plus"]["x_crit_min"] > 0.2
+    assert v["N_to_N_Z2plus_direct"]["verdict"].startswith("Closure: PROMOTED")
+    assert "UNCERTAINTY VARIANT" in v["N2_Z2plus_molecular"]["verdict"]
+    res = json.load(open(os.path.join(root, "hallthruster_bridge", "audit", "n2_completeness_final_v1.json")))
+    assert res["status"].startswith("CLOSED")
+    m = v["N2_Z2plus_molecular"]
+    assert m["F_ion_nominal_max"] < 0.01 < m["F_ion_upper_max"]           # envelope straddles the criterion
+    up = open(os.path.join(root, "hallthruster_bridge", "propellants", "n2_n.toml")).read()
+    off = open(os.path.join(root, "hallthruster_bridge", "propellants", "n2_n_rot_off.toml")).read()
+    assert "_rot_j0_to_j2" in up and "_rot_" not in off
+
+
+def test_n2_rotational_tables():
+    """abep-n2n-0.10: rotational j 0->2 / 0->4 from JPCRD Table 6 with NIST-B_0 headers; rows = fresh integration."""
+    import importlib.util, os, numpy as np
+    from abep_sim.rate_tables import maxwellian_rate
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_rotational_tables.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    cfg = open(os.path.join(b.PROP, "n2_n.toml")).read()
+    for col, f in b.FILES.items():
+        assert open(os.path.join(b.PROP, f)).readline().strip() == f"Excitation energy (eV): {round(b.aud.ROT_DE_SPECTRO_EV[col], 7)}"
+        a = np.loadtxt(os.path.join(b.PROP, f), skiprows=2); E, s = b.cross_section(col)
+        for eps in (2.0, 15.0):
+            assert abs(a[a[:, 0] == eps][0, 1] / maxwellian_rate(E, s, eps / 1.5, "hold") - 1) < 1e-5
+        assert f'"{f}"' in cfg
+
+
+def test_johnson_low_sensitivity_branch():
+    """Johnson-low branch: Johnson 2005 at all energies with a ramp from the experimental threshold; used only by
+    n2_n_exc_johnsonlow.toml, which differs from n2_n.toml in exactly the eight electronic-excitation files."""
+    import importlib.util, os, numpy as np
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_electronic_excitation_tables.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    for key in b.STATES:
+        E, S = b.cross_section(key, variant="johnsonlow"); Ej, Sj, _ = b.johnson(key)
+        assert E[0] == b.STATES[key][2] and S[0] == 0.0 and np.all(np.isin(Ej, E))
+        assert os.path.isfile(os.path.join(b.PROP, b.fname(key, "johnsonlow")))
+    up = open(os.path.join(b.PROP, "n2_n.toml")).read().splitlines()
+    jl = open(os.path.join(b.PROP, "n2_n_exc_johnsonlow.toml")).read().splitlines()[1:]
+    diff = [(x, y) for x, y in zip(up, jl) if x != y]
+    assert len(up) == len(jl) and len(diff) == 8 and all("_johnsonlow.dat" in y for _, y in diff)
+
+
 def test_variant_configs_are_regenerated_from_n2_n():
     """Every chemistry-variant config equals what scripts/make_n2_variant_configs.py produces from the current n2_n.toml."""
     import importlib.util, os
@@ -933,6 +990,98 @@ def test_variant_configs_are_regenerated_from_n2_n():
             exp = exp.replace(a, c)
         assert open(os.path.join(m.PROP, name)).read().split("\n", 1)[1] == exp, name
 
+
+def test_completeness_ambiguity_addendum_is_frozen():
+    """Addendum 1 to n2_completeness_audit_v1 (registered before the full blind-envelope summary): exclude if upper <
+    threshold, promote if lower > threshold, promote as an uncertainty variant if the threshold lies between."""
+    import json, os
+    p = os.path.join(os.path.dirname(os.path.dirname(__file__)), "hallthruster_bridge", "prereg",
+                     "n2_completeness_audit_v1_addendum1_ambiguity.json")
+    r = json.load(open(p))
+    assert r["amends"] == "n2_completeness_audit_v1" and r["registered"] == "2026-09-26"
+    assert r["rule"]["upper_bound_below_threshold"] == "EXCLUDE"
+    assert r["rule"]["lower_bound_above_threshold"].startswith("PROMOTE")
+    assert r["rule"]["threshold_between_lower_and_upper"].startswith("PROMOTE AS AN UNCERTAINTY VARIANT")
+
+
+def test_completeness_crosscheck_addendum_is_frozen():
+    """Addendum 2: earlier/later envelope run sets are an implementation cross-check, never averaged or selected; the newest
+    set is authoritative; a verdict-altering discrepancy blocks the completeness rule until resolved."""
+    import json, os
+    p = os.path.join(os.path.dirname(os.path.dirname(__file__)), "hallthruster_bridge", "prereg",
+                     "n2_completeness_audit_v1_addendum2_crosscheck.json")
+    r = json.load(open(p))
+    assert r["amends"] == "n2_completeness_audit_v1" and r["registered"] == "2026-09-26"
+    assert "never averaged" in r["rule"]["authoritative_set"]
+    assert r["rule"]["discrepancy"].startswith("Any discrepancy")
+
+def test_multiply_charged_tables_and_closure_status():
+    """abep-n2n-0.11: every multiply-charged table (bound and propellant) equals a fresh build; HMS = Eqs. (2)+(3) with the
+    VizieR N parameters; energy headers close (N: 14.53 + 29.60 = 44.14 eV; N2^2+: both routes give 42.9 eV); the reaction
+    set is COMPLETE_FOR_P5_N2_VALIDATION with the audited domain and every listed variant config present."""
+    import importlib.util, os, tempfile, filecmp, tomllib, numpy as np
+    from abep_sim.rate_tables import write_hallthruster_table
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("m", os.path.join(root, "scripts", "build_multiply_charged_tables.py"))
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    with tempfile.TemporaryDirectory() as t:
+        for d, name, E, sg, th, src in m.tables():
+            p = os.path.join(t, name); write_hallthruster_table(p, E, sg, th, source=src)
+            assert filecmp.cmp(p, os.path.join(d, name), shallow=False), name
+    assert m.HMS_D == (44.1354, 43.0) and m.HMS_IA == (403.0, 0.9926, 3.6, 5.0)
+    u = 2.0; E = np.array([u * 44.1354])
+    assert abs(m.hms_sigma(E)[0] / ((1 - np.exp(-3)) * 43 / 44.1354 ** 3 * 1 / 2.5 ** 2 * 1e-17) - 1) < 1e-12
+    prop = os.path.join(root, "hallthruster_bridge", "propellants")
+    hdr = lambda f: float(open(os.path.join(prop, f)).readline().split(":")[1])
+    assert abs(hdr("ionization_N.dat") + hdr("ionization_N_Z1plus_to_N_Z2plus.dat") - hdr("ionization_N_to_N_Z2plus_hms2017.dat")) < 1e-3
+    assert abs(hdr("ionization_N2_song2023.dat") + hdr("ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat")
+               - hdr("ionization_N2_to_N2_Z2plus_upper.dat")) < 1e-3
+    rs = tomllib.load(open(os.path.join(root, "hallthruster_bridge", "PINNED.toml"), "rb"))["reaction_set"]
+    assert rs["version"] == "abep-n2n-0.11" and rs["status"] == "COMPLETE_FOR_P5_N2_VALIDATION"
+    assert "T_e 2-30 eV" in rs["domain"] and "0.2-30 eV" in rs["domain"]
+    for v in rs["uncertainty_variants"]:
+        for f in v.split(":")[0].split(" / "):
+            assert os.path.exists(os.path.join(prop, f.strip())), f
+    cfg = open(os.path.join(prop, "n2_n.toml")).read()
+    assert '"ionization_N_to_N_Z2plus_hms2017.dat"' in cfg and "N2(2+)" not in cfg
+    dic = open(os.path.join(prop, "n2_n_n2dication.toml")).read()
+    assert "N2 + e -> N2(2+) + 3e" in dic and "N2(+) + e -> N2(2+) + 2e" in dic and "dissociative_ionization_N2_lower.dat" in dic
+
+def test_audit_config_snapshots_are_immutable():
+    """Historical closure calculations read hash-pinned snapshots (audit/configs/MANIFEST.json), never the mutable production
+    TOMLs (PR #25 review P1/P2): each snapshot and every rate table it names match the recorded sha256; the 0.9 snapshot has
+    no rotation; the 0.10 snapshots have no assessed multiply-charged process; both closure scripts point at the snapshots."""
+    import hashlib, json, os, tomllib
+    root = os.path.dirname(os.path.dirname(__file__))
+    d = os.path.join(root, "hallthruster_bridge", "audit", "configs"); prop = os.path.join(root, "hallthruster_bridge", "propellants")
+    man = json.load(open(os.path.join(d, "MANIFEST.json")))
+    h = lambda p: hashlib.sha256(open(p, "rb").read()).hexdigest()
+    for f, m in man["configs"].items():
+        assert h(os.path.join(d, f)) == m["sha256"], f
+        cfg = tomllib.load(open(os.path.join(d, f), "rb"))
+        assert sorted({r["rate_coeff_file"] for r in cfg["reactions"]}) == sorted(m["rate_files"]), f
+        for x, sha in m["rate_files"].items():
+            assert h(os.path.join(prop, x)) == sha, (f, x)
+        files = " ".join(m["rate_files"])
+        assert not any(t in files for t in ("N_to_N_Z2plus", "N_Z2plus_to_N_Z3plus", "N2_to_N2_Z2plus", "N2_Z1plus_to_N2_Z2plus")), f
+    assert "rot_j0" not in " ".join(man["configs"]["n2_n_0p9_pre_rotation.toml"]["rate_files"])
+    env = open(os.path.join(root, "hallthruster_bridge", "checks", "blind_state_envelope.jl")).read()
+    assert env.count("audit/configs/n2_n_0p10_") == 4 and '"propellants/$(cfg)"' not in env
+    fa = open(os.path.join(root, "scripts", "audit_n2_completeness_final.py")).read()
+    assert '"n2_n_0p9_pre_rotation.toml"' in fa
+
+
+def test_p5_n2_run_status_rule_is_frozen():
+    """Owner decision 2026-09-26: four run statuses; chemistry-untrustworthy runs are OUT_OF_DOMAIN (not FAIL); admission
+    needs scoreable runs at every point under the four primary chemistry configs; the f_out = 0 rule is not relaxed."""
+    import json, os
+    r = json.load(open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "hallthruster_bridge", "prereg",
+                                    "p5_n2_run_status_rule_v1.json")))
+    assert list(r["run_status"]) == ["PASS", "FAIL_VALIDATION", "OUT_OF_DOMAIN", "NUMERICAL_FAILURE"]
+    assert r["candidate_status"]["not_all_mandatory_runs_scoreable"].startswith("INCONCLUSIVE")
+    assert r["mandatory_chemistry_for_admission"] == ["n2_n.toml", "n2_n_di_lower.toml", "n2_n_nel_wang.toml",
+                                                      "n2_n_di_lower_nel_wang.toml"]
+    assert r["chemistry_trust_rule"]["f_out_tolerance"] == 1e-12
 
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""

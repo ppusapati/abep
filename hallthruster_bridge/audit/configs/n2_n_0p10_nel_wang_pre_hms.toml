@@ -1,3 +1,4 @@
+# GENERATED VARIANT of n2_n.toml (atomic-N momentum-transfer WANG-BSR chemistry variant) by scripts/make_n2_variant_configs.py; do not edit by hand.
 # N2/N propellant for HallThruster.jl v0.23.1 (Stage A). Reaction-set version: PINNED.toml [reaction_set]. Rate files are Maxwellian tables vs mean energy (3/2 Te).
 [[species]]
 symbol = "N"
@@ -145,7 +146,7 @@ rate_coeff_file = "excitation_N2_rot_j0_to_j4.dat"      # JPCRD 2023 Table 6, dE
 [[reactions]]
 type = "elastic"
 target_species = "N"
-rate_coeff_file = "elastic_N_ragimkhanov2026.dat"    # Ragimkhanov et al. EPJD 2026 Fig. 1b OPM MTCS (abep-n2n-0.8); Wang BSR variant: n2_n_nel_wang.toml
+rate_coeff_file = "elastic_N_wang2014_bsr.dat"        # Wang et al. 2014 BSR MTCS via Ragimkhanov Fig. 1b, OPM above 128 eV: N-elastic VARIANT (abep-n2n-0.8)
 
 [[reactions]]
 type = "electron_impact"
@@ -156,8 +157,3 @@ rate_coeff_file = "ionization_N.dat"                # Kim & Desclaux 2002 BEB vi
 type = "electron_impact"
 equation = "N(+) + e -> N(2+) + 2e"
 rate_coeff_file = "ionization_N_Z1plus_to_N_Z2plus.dat"           # Bell et al. JPCRD 1983 Eq. (1), N II (abep-n2n-0.5)
-
-[[reactions]]
-type = "electron_impact"
-equation = "N + e -> N(2+) + 3e"
-rate_coeff_file = "ionization_N_to_N_Z2plus_hms2017.dat"          # Hahn, Muller & Savin 2017 Eqs. (2)+(3), direct N -> N^2+ (abep-n2n-0.11); sensitivity x0.5 / x1.3: n2_n_ndd_hmslow/high.toml

@@ -1,0 +1,1 @@
+e + N2 -> N2^2+ + 3e loose upper envelope: 0.14e-16 cm^2 flat (maximum total double ionization, Tian & Vidal via JPCRD 2023 Sec. 2.8) from 42.9 eV. Molecular N2^2+ UNCERTAINTY VARIANT only (n2_n_n2dication.toml, abep-n2n-0.11): it represents the threshold-crossing envelope (nominal < 1 % < upper), not asserted physics. Built by scripts/build_multiply_charged_tables.py.

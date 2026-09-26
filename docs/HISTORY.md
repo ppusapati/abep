@@ -1893,3 +1893,138 @@ Renames (the file contents and rates are unchanged; the files were never on main
 - Full-set N1 smoke run (0.5 ms, no measured targets): loads, runs and is chemistry-trustworthy. The limiting file is dissociation (36.2 of 45 eV).
 - The combined variant `n2_n_di_lower_nel_wang.toml` gives the same verdict.
 - `PINNED.toml` stays INCOMPLETE (owner rule). Remaining: the tier-3 bounds (rotational excitation, N → N²⁺ direct, N²⁺ → N³⁺), then re-running audits 1–2 with the complete denominators.
+
+## 2026-09-26 — PR #24 merged; omitted-process audit, final pass on abep-n2n-0.9 (`audit/n2_completeness_final_v1.json`)
+
+**Merged:** PR #24 (0.9). Denominators are built from `n2_n.toml` itself: every N₂-target inelastic reaction, rate times header energy, with x_N = 0.
+
+| process | result | verdict |
+|---|---|---|
+| dissociative ionization (included 0.4) | final F_P max 17.4 %, F_ion max 19.6 % (T_e ≤ 30 eV) | promoted, final |
+| vibrational excitation (included 0.7) | final F_P up to 99.98 % at T_e ≤ 1 eV, > 1 % up to ~9 eV | promoted, final; model-form limits unchanged |
+| rotational excitation (tier 3) | gross from j = 0: ceiling bound (10 meV, σ held at its max) 3.5 %; **spectroscopic** (NIST B₀ = 1.98958 cm⁻¹: 0→2 = 1.480 meV, 0→4 = 4.933 meV; σ held at the 10 eV value) **1.13 % max at T_e 1–2 eV** | **PROMOTE (marginal)**. Same gross convention as the vibrational verdict; the net loss (kT_gas ≫ ΔE) would be far smaller. Owner may reverse |
+| N²⁺ → N³⁺ (tier 3, Bell N III row) | x_crit (n_N²⁺/n_N₂ for F_ion = 1 %) ≥ 0.25 over T_e ≤ 30 eV; reference state max ratio 1.2×10⁻³; F_ion 4.7×10⁻⁷; F_S(N²⁺ destruction) 2.1×10⁻⁴ | **EXCLUDED** (margin ~200) |
+| N → N²⁺ direct (tier 3) | no cross-section source | **UNRESOLVED-BY-SOURCE** (not inferred or scaled) |
+
+- The reference state is the full-set N1 smoke run (0.5 ms, default transport, no measured targets).
+- The driver now writes ion density profiles (`profile_ni_<sym>_Z<Z>_m3`).
+
+## 2026-09-26 — Reaction set abep-n2n-0.10: rotational excitation (marginal promotion)
+
+Two excitation reactions, j = 0 → 2 and 0 → 4, built by `scripts/build_n2_rotational_tables.py`:
+- Cross sections from JPCRD 2023 Table 6 (0.01–10 eV), held at the 10 eV value above.
+- Headers 1.480 meV and 4.933 meV (NIST B₀).
+- Gross loss from j = 0 with no superelastic return. This deliberately over-states net rotational cooling, consistent with the vibrational closure.
+
+The full 28-reaction N1 smoke run is chemistry-trustworthy.
+
+This inclusion follows the pre-registered rule literally (gross F_P 1.13 % > 1 %). If the owner decides the net (detailed-balance) loss is the relevant quantity, it is reversible as a documented model change.
+
+## 2026-09-26 — Johnson-low sensitivity branch (sequential design, owner decision)
+
+- `excitation_N2_<state>_johnsonlow.dat` use Johnson 2005 at all energies, with a linear ramp from σ = 0 at the experimental energy to Johnson's first point and the same power-law continuation.
+- The generated config `n2_n_exc_johnsonlow.toml` (nominal DI, OPM N elastic) differs from `n2_n.toml` in exactly those eight files; a test enforces this.
+- Its N1 smoke run is chemistry-trustworthy.
+
+**Run design:**
+- Primary: 4 chemistry configs × 9 transports = 36 runs.
+- Johnson-low: × 9 transports = +9 runs.
+- Escalation to the full 72 only if the trigger fires. The trigger's definition of "materially" is fixed in the P5-N₂ pre-registration from the audited measurement uncertainties, not a generic number.
+
+## 2026-09-26 — Closure pass (owner decisions): rotational kept; rotational-off branch; status CLOSURE_PENDING; N₂²⁺ envelope; blind state envelope
+
+- **Rotational:** 0.10 stays promoted. The pre-registered F_P is gross; redefining it as net after seeing 1.13 % would be a post-hoc metric change.
+  - The generated `n2_n_rot_off.toml` (the two rotational reactions removed; nominal DI, OPM N elastic) is the lower-bound closure.
+  - Run design: rotational-off × 9 transports, factorialized only if it changes a validation conclusion.
+- **Status:** `audit/n2_completeness_final_v1.json` is marked `CLOSURE_PENDING`. The DI and vibrational fractions are final; the overall completeness verdict is not.
+- **Molecular N₂²⁺ envelope** (appearance energy 42.9 eV per the owner's citation of Märk 1975 — not read here, verify):
+
+  | T_e (eV) | 5 | 10 | 20 | 30 |
+  |---|---|---|---|---|
+  | F_ion, nominal (σ = 1 % of σ_total, JPCRD statement) | 0.04 % | 0.30 % | 0.66 % | 0.79 % |
+  | F_ion, upper (0.14×10⁻¹⁶ cm² flat = maximum total double ionization) | 0.34 % | 2.2 % | 4.2 % | 4.8 % |
+
+  - A 40 eV threshold gives an upper bound of 5.1 %.
+  - **Bracketed, not excludable by bound.** In ion-count terms the DI chemistry variants already bracket it: the upper variant counts N₂²⁺ events as N⁺, the lower removes them.
+  - The primary Märk 1975 (AIP) and Phys. Rev. A 98, 052701 data are not accessible here. JPCRD Fig. 23 is raster.
+- **Direct N → N²⁺:** Deutsch, Becker & Märk, PPCF 42, 489 (2000) is bronze OA, but IOP serves only a JavaScript-gated PDF route and an abstract-only landing page to this environment. Still unresolved-by-source.
+- **Blind state envelope** (`checks/blind_state_envelope.jl`): 5 P5-N₂ points × 9 SGB candidates × 4 chemistry configs, with measured targets removed and only chemistry-state quantities recorded per saved frame (max n_N²⁺/n_N₂, reaction-weighted F_ion and F_S for N²⁺ → N³⁺).
+  - Uses a bound-only Bell N III table in `audit/bound_tables/`.
+  - The driver exposes `LAST_SOL` for check scripts; it is never used for scoring.
+  - Running.
+
+## 2026-09-26 — Pre-registration addendum 1: ambiguity rule (frozen before the full envelope summary)
+
+`prereg/n2_completeness_audit_v1_addendum1_ambiguity.json` (owner decision):
+- upper bound < threshold ⇒ **EXCLUDE**;
+- lower bound > threshold ⇒ **PROMOTE** (nominal chemistry);
+- lower < threshold < upper ⇒ **PROMOTE AS AN UNCERTAINTY VARIANT**. This means omission has not been shown harmless; it does not assert the upper-envelope physics.
+- Bounds are taken over all nuisance choices (operating point, transport, chemistry). A verdict that flips with the nuisance choice is treated as the between-bounds case.
+- Disclosure: early partial records had been seen in the session log. No full-envelope summary, maximum or range had been computed.
+- On promotion, molecular N₂²⁺ requires both N₂ → N₂²⁺ and N₂⁺ → N₂²⁺, with N₂ `max_charge` = 2 and the species-energy link checked. Direct N → N²⁺ goes into nominal chemistry, with the Hahn–Müller–Savin uncertainty as a sensitivity.
+
+### 2026-09-26 — Blind state envelope complete (5 P5-N₂ points × 9 SGB candidates × 4 chemistry configs; measured targets removed)
+180/180 runs succeed; common metrics identical to an independent earlier batch (max rel. diff 6e-16). 100/180 are
+`chemistry_trustworthy`. The 20 unsustained runs are sgb-screen-05 at N1–N4 and sgb-screen-09 at N1. The other 60 untrusted
+runs are every run of sgb-screen-02/03/04, where `dissociation_N2.dat` activity extends beyond its 45 eV mean-energy limit
+(T_e > 30 eV; share ≤ 3.1 % in the 5 reruns of untrusted cases). Omitted-process results (all runs / trusted only are the same
+by verdict):
+N²⁺→N³⁺ F_ion ≤ 1.3e-6, F_S ≤ 4.9e-4; direct N→N²⁺ (HMS 2017) F_ion 0.47–1.10 % (36/180 > 1 %, flips with candidate/point,
+not with chemistry config), F_S(N²⁺ production) 63–85 % in all 180; N₂²⁺ F_ion sequential ≤ 0.25 %, nominal 0.28–0.54 %,
+upper 1.26–2.73 % (all 180 > 1 %). Region reruns (argmax cases): N²⁺ channels weighted to T_e ≈ 19–25 eV, z/L ≈ 0.92–1.05,
+n_e ≈ 0.4–1.7e18 m⁻³; N₂²⁺ channels T_e ≈ 16–20 eV, z/L ≈ 0.75–0.97. Verdicts under addendum 1 await the owner.
+Records: `hallthruster_bridge/audit/blind_state_envelope_v1*.json[l]`.
+
+### 2026-09-26 — Tier-3 closure; reaction set abep-n2n-0.11 COMPLETE_FOR_P5_N2_VALIDATION
+Pre-registration addendum 2 (owner): earlier/later envelope run sets are an implementation cross-check, never averaged or
+selected; the newest set is authoritative; a verdict-altering discrepancy blocks the rule. (It reached the session after the
+v3/older-batch cross-check had been computed: identical, max rel. diff 6e-16; disclosed in the addendum.)
+Authoritative v4 envelope (180 runs; adds the two N₂²⁺ routes separately, F_S(N₂⁺ destruction), and every file beyond its
+validity limit). Process incident, resolved before any verdict: 72 v4 runs picked up the new 0.11 `n2_n.toml` mid-batch and
+were refused by the chemistry guard (no validity entry); they were deleted and rerun from a clean worktree at the 0.10 configs.
+All 2520 values common with v3 then agree exactly; no status differs.
+Closure table (addendum 1 literally; L = min over runs of the lower bound, U = max over runs of the upper bound):
+- direct N → N²⁺ (HMS 2017; no published band): F_S(N²⁺ production) 0.633–0.853 > 0.05 in every run → **PROMOTE** (the rate would
+  have to fall ×33 to reverse); F_ion 0.47–1.10 % flips with transport and point, not chemistry. Region: T_e 19.7–24.9 eV, z/L 0.88–1.06.
+- N²⁺ → N³⁺ (Bell ±10 %): U F_ion 1.5e-6 (frame max 1.1e-5), F_S 5.4e-4 → **EXCLUDE** (×97 margin). N²⁺/N₂ peaks at T_e 2.0–4.7 eV,
+  while the N³⁺-channel activity is weighted to T_e 18.8–25.6 eV, far below its 47.45 eV threshold.
+- N₂ → N₂²⁺ (nominal "~1 %" / upper all-double-ionization): F_ion nominal 0.17–0.39 %, upper ≤ 2.58 % → **UNCERTAINTY VARIANT**.
+- N₂⁺ → N₂²⁺ (Tabata/Bahati, fit/data 0.86–1.11): F_ion ≤ 0.27 %, F_S(N₂⁺ destruction) ≤ 0.60 % → **EXCLUDE** from nominal; inside
+  the N₂²⁺ variant it carries 4.5–55 % of N₂²⁺ production and supplies the energy link, so it is part of the variant.
+Verdicts are identical on the 100 chemistry-trustworthy runs alone, and none changes with the chemistry configuration.
+abep-n2n-0.11: `N + e -> N(2+) + 3e` (HMS Eqs. (2)+(3); header 44.1354 eV closes 14.534 + 29.601) in nominal; generated
+variants `n2_n_ndd_hmslow/high.toml` (×0.5, HMS Sec. 3.7 neutral-O precedent; ×1.3, Sec. 3.19 "~30 %") and
+`n2_n_n2dication.toml` (N2 max_charge 2; upper direct + Tabata sequential; on DI-lower so N₂²⁺ is not counted twice; sequential
+header 27.32 = 42.9 − 15.58 because HallThruster.jl requires one consistent N₂²⁺ energy — the solver refused 15.58 + 27.9 ≠ 42.9).
+Smoke runs (P5-N₂ N3, sgb-screen-01, targets removed) of n2_n, n2_n_n2dication, hmslow, hmshigh: converged, sustained,
+chemistry-trustworthy; N₂²⁺ peak 1.3e16 m⁻³ in the variant. Build: `scripts/build_multiply_charged_tables.py` (also rebuilds the
+audit bound tables byte-for-byte). Table: `scripts/n2_closure_table.py`. Status COMPLETE_FOR_P5_N2_VALIDATION; N₂ chemistry frozen.
+Open for the P5-N₂ pre-registration (owner): all runs of sgb-screen-02/03/04 and 9 of sgb-screen-05 reach T_e > 30 eV, where every
+45-eV-capped table (dissociation, electronic, vibrational, rotational) is used beyond its limit (≤ 4.1 % of dissociation activity);
+they are not chemistry-trustworthy and cannot be scored as is.
+
+### 2026-09-26 — PR #25 review: historical audits pinned to immutable config snapshots (P1, P2)
+Review finding P1: `checks/blind_state_envelope.jl` read the mutable production TOMLs. At 0.11 they contain the promoted HMS
+reaction, so a rerun would both count it twice (F_S capped at 0.5) and generate the plasma state with it present.
+Review finding P2: `scripts/audit_n2_completeness_final.py` read the mutable `n2_n.toml`. Since 0.10 it contains the rotational
+reactions, so `rot_bound()` was added to a denominator that already held rotation.
+Fix: immutable snapshots in `hallthruster_bridge/audit/configs/` (0.9 pre-rotation from 32a919a; the four 0.10 pre-HMS configs from
+763026a), sha256-pinned together with every rate table they name (`MANIFEST.json`, test). The envelope refuses a config that
+already contains an assessed process; the final audit refuses a denominator containing rotation.
+Evidence regenerated from the snapshots, not argued indirectly:
+- Blind envelope, full 180-run rerun: reproduces the committed authoritative records exactly (5829 values, max rel. diff 0, no
+  status, trust or beyond-limit difference); the closure table `n2_closure_verdicts_v1.json` regenerates byte-identical; verdicts
+  unchanged. The committed records were valid (produced on the 0.10 TOMLs before promotion), but the PR head could not reproduce them.
+- Final tier-2/3 audit: the commits 6c9af2a and 653e074 had silently regenerated `n2_completeness_final_v1.json` on the 0.10
+  denominator (rotation counted twice) while still labelled 0.9. Recorded, not replaced silently:
+  | quantity | 0.9 (correct; 32a919a and now) | double-counted (6c9af2a, 653e074) |
+  |---|---|---|
+  | rotational F_P, spectroscopic max | 1.1306 % | 1.1182 % |
+  | rotational F_P, ceiling max | 3.528 % | 3.492 % |
+  | vibrational F_P max | 99.984 % | 99.126 % |
+  | DI F_P max | 17.443 % | 17.440 % |
+  All 16 rows now equal the 32a919a rows on every original column; the N₂²⁺ / N²⁺→N³⁺ columns do not involve rotation and are
+  unchanged. Every verdict is the same under the frozen thresholds (rotation still 1.13 % > 1 % → promoted).
+P5-N₂ run statuses frozen (`prereg/p5_n2_run_status_rule_v1.json`, owner decision): PASS / FAIL_VALIDATION / OUT_OF_DOMAIN /
+NUMERICAL_FAILURE. Chemistry-untrustworthy runs are OUT_OF_DOMAIN, not FAIL. A candidate needs scoreable runs at every point under
+the four primary chemistry configs; otherwise it is INCONCLUSIVE / not eligible for promotion in this campaign. f_out = 0 is not relaxed.

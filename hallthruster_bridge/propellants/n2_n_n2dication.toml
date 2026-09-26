@@ -1,3 +1,4 @@
+# GENERATED VARIANT of n2_n.toml (molecular N2^2+ UNCERTAINTY VARIANT (DI lower, OPM N elastic)) by scripts/make_n2_variant_configs.py; do not edit by hand.
 # N2/N propellant for HallThruster.jl v0.23.1 (Stage A). Reaction-set version: PINNED.toml [reaction_set]. Rate files are Maxwellian tables vs mean energy (3/2 Te).
 [[species]]
 symbol = "N"
@@ -11,7 +12,7 @@ temperature_K = 500.0
 [[species]]
 symbol = "N2"
 name = "Molecular Nitrogen"
-max_charge = 1
+max_charge = 2                                      # molecular N2^2+ UNCERTAINTY VARIANT (abep-n2n-0.11)
 gamma = 1.4
 mass = 28.0134
 flow_rate_kg_s = 5e-6
@@ -30,7 +31,7 @@ rate_coeff_file = "ionization_N2_song2023.dat"      # Song et al. JPCRD 2023 Tab
 [[reactions]]
 type = "electron_impact"
 equation = "N2 + e -> N(+) + N + 2e"
-rate_coeff_file = "dissociative_ionization_N2_upper.dat"  # Song 2023 Table 10 sigma(N+ + N2++), upper variant (abep-n2n-0.4); lower variant: n2_n_di_lower.toml
+rate_coeff_file = "dissociative_ionization_N2_lower.dat"  # Song 2023 Table 10 sigma(N+ + N2++) - 0.01 sigma_total, LOWER variant (abep-n2n-0.4)
 
 [[reactions]]
 type = "electron_impact"
@@ -161,3 +162,13 @@ rate_coeff_file = "ionization_N_Z1plus_to_N_Z2plus.dat"           # Bell et al. 
 type = "electron_impact"
 equation = "N + e -> N(2+) + 3e"
 rate_coeff_file = "ionization_N_to_N_Z2plus_hms2017.dat"          # Hahn, Muller & Savin 2017 Eqs. (2)+(3), direct N -> N^2+ (abep-n2n-0.11); sensitivity x0.5 / x1.3: n2_n_ndd_hmslow/high.toml
+
+[[reactions]]
+type = "electron_impact"
+equation = "N2 + e -> N2(2+) + 3e"
+rate_coeff_file = "ionization_N2_to_N2_Z2plus_upper.dat"           # all double ionization 0.14e-16 cm^2 from 42.9 eV: N2^2+ UNCERTAINTY VARIANT (abep-n2n-0.11)
+
+[[reactions]]
+type = "electron_impact"
+equation = "N2(+) + e -> N2(2+) + 2e"
+rate_coeff_file = "ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat"  # Tabata 2006 n2-69 fit to Bahati 2001: N2^2+ UNCERTAINTY VARIANT (abep-n2n-0.11)
