@@ -17,8 +17,9 @@ Closure limitations (carried as a defined closure uncertainty for P5-N2; NOT a c
   * HallThruster.jl does not track vibrational populations: every N2 is taken in v = 0, so there is no stepwise
     v_i > 0 excitation and no superelastic (de-excitation) return; the model represents gross electron cooling.
   * Resonant excitation only (Laporta cross sections integrated to 15 eV); non-resonant excitation is absent.
-  * Validity domain: Laporta do not state a validated temperature range for the RVE fits (their Fig. 5b shows the
-    calculated rates to 50,000 K = 4.31 eV); see rate_validity.toml and docs/HISTORY.md for the limit carried.
+  * Applicability: Laporta publish the fits without an upper temperature cutoff; project use is capped at the pre-registered
+    domain T_e <= 30 eV (rate_validity.toml). Only 0 -> 1 is independently cross-checked (JPCRD Table 7, <= 6 %); the
+    overtones are model-supported, not independently validated.
 Usage: python scripts/build_n2_vibrational_tables.py
 """
 import importlib.util, os, sys

@@ -1853,3 +1853,9 @@ Renames (the file contents and rates are unchanged; the files were never on main
 **Smoke test (N1, 0.8 minus the electronic-excitation placeholder).** Nominal and Wang variant both run. Neither is chemistry-trustworthy, solely because of the 0.7 vibrational validity limit, which awaits an owner decision.
 
 **Run matrix implied for P5-N₂:** 2 dissociative-ionization variants × 2 N-elastic variants = 4 chemistry configs per transport candidate.
+
+**Owner decision (2026-09-26), vibrational validity domain.** The 6.47 eV mean-energy limit is removed. It was taken from the highest temperature shown in a figure, not from a boundary the source states. Laporta publish the analytical fits without an upper cutoff, and JPCRD 2023 recommends them as the vibrational-rate representation.
+- Project applicability is capped at the pre-registered N₂ domain, T_e ≤ 30 eV (45 eV mean energy).
+- This is documented as source-model applicability, **not** experimental validation. 0→1 is independently cross-checked (≤ 6 % to 30 eV); v_f = 2…10 are model-supported only.
+- `chemistry_trustworthy` = true means no reaction was evaluated outside its declared chemistry-model domain. It does not mean experimental confirmation.
+- The more consequential limitations remain carried as closure uncertainty: v = 0 only, no vibrational population kinetics, no superelastic return.
