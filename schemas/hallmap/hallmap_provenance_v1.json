@@ -1,0 +1,441 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "schemas/hallmap/hallmap_provenance_v1.json",
+ "title": "hallmap_provenance_v1",
+ "description": "Provenance object for ONE frozen design Hall-map set (docs/hallmap/HALLMAP_PRODUCTION_SPEC.md). It is embedded in the map file as meta.provenance next to the meta keys that abep_sim/hall_map.py already requires (hall_map_schema_v1 meta_required). It carries no physics values and no results; it binds a map to the admitted transport member, the admission evidence, the solver pin, the chemistry configuration, Vyovrinda's own geometry and B(z), the numerics, the wall model and the validity domain. Status: specification only. No map exists and none may be generated while the credible set is empty (hallthruster_bridge/ensemble/transport_ensemble_v0.json). Every 'x-' keyword is an annotation for producers, consumers and tests; standard JSON Schema validators ignore it.",
+ "x-status": "SPEC_v1 (2026-09-26); schema only, no instance exists",
+ "x-hall_map_meta_mapping": {
+  "description": "Every key of hall_map_schema_v1.meta_required (abep_sim/hall_map.REQUIRED_META) and the provenance path that must hold the same information. The consumer must refuse a map whose top-level meta disagrees with its provenance (x-consistency_rules).",
+  "schema": "/hall_map_schema/name",
+  "pinned": "/hallthruster/pinned_toml_sha256",
+  "hallthruster_commit": "/hallthruster/installed_commit",
+  "reaction_set": "/chemistry/reaction_set_version",
+  "transport": "/ensemble_member/transport_as_run",
+  "facility_ingestion": "/facility_ingestion",
+  "grid": "/numerics/grid",
+  "dt_s": "/numerics/dt_s",
+  "duration_s": "/numerics/duration_s",
+  "average_start_s": "/numerics/average_start_s",
+  "ion_wall_losses": "/wall/ion_wall_losses",
+  "ensemble_member_id": "/ensemble_member/ensemble_member_id"
+ },
+ "x-consistency_rules": [
+  "meta.schema == provenance.hall_map_schema.name",
+  "sha256(meta.pinned) == provenance.hallthruster.pinned_toml_sha256, and meta.pinned contains provenance.hallthruster.pinned_commit",
+  "meta.hallthruster_commit == provenance.hallthruster.installed_commit == provenance.hallthruster.pinned_commit",
+  "meta.reaction_set == provenance.chemistry.reaction_set_version",
+  "meta.transport == provenance.ensemble_member.transport_as_run",
+  "meta.facility_ingestion == provenance.facility_ingestion == false",
+  "meta.grid, meta.dt_s, meta.duration_s, meta.average_start_s equal the provenance.numerics values",
+  "meta.ion_wall_losses == provenance.wall.ion_wall_losses",
+  "meta.ensemble_member_id == provenance.ensemble_member.ensemble_member_id, and the id passes abep_sim.hall_ensemble.require_admitted at generation AND at load",
+  "list(axes.keys()) == [a.name for a in provenance.axes] (same order: fields are flattened row-major in this axis order)",
+  "set(fields.keys()) == set(provenance.fields_present) == set(abep_sim.hall_map.REQUIRED_FIELDS)",
+  "provenance.ensemble_member.admission equals the 'admission' block of that member in the ensemble file whose sha256 is provenance.ensemble_member.ensemble_file_sha256",
+  "provenance.source_validation.decision_sha256 == provenance.ensemble_member.admission.decision_sha256"
+ ],
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "provenance_schema",
+  "hall_map_schema",
+  "map_set",
+  "ensemble_member",
+  "source_validation",
+  "hallthruster",
+  "chemistry",
+  "propellant",
+  "geometry",
+  "magnetic_field",
+  "numerics",
+  "wall",
+  "facility_ingestion",
+  "axes",
+  "fields_present",
+  "observables_basis",
+  "trust",
+  "validity_domain",
+  "evidence",
+  "raw_records"
+ ],
+ "properties": {
+  "provenance_schema": {"const": "hallmap_provenance_v1"},
+  "hall_map_schema": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["name", "file", "sha256"],
+   "properties": {
+    "name": {"const": "hall_map_schema_v1"},
+    "file": {"const": "hallthruster_bridge/hall_map_schema_v1.json"},
+    "sha256": {"$ref": "#/$defs/sha256"}
+   }
+  },
+  "map_set": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["map_set_id", "status", "generated_utc", "generator"],
+   "properties": {
+    "map_set_id": {"type": "string", "minLength": 1, "description": "unique id; one id per (member x chemistry config x propellant x geometry version x B-field version x wall setting x numerics)"},
+    "status": {"enum": ["CANDIDATE", "FROZEN", "WITHDRAWN"], "description": "CANDIDATE: generated, not yet convergence-checked or not yet accepted by the owner. FROZEN: accepted; requires numerics.convergence.verdict == PASS. WITHDRAWN: member eliminated, pin moved, or inputs superseded; never loaded for the trade/UQ"},
+    "generated_utc": {"type": "string", "minLength": 1},
+    "generator": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["script", "git_commit", "script_sha256", "case_file", "case_file_sha256"],
+     "properties": {
+      "script": {"type": "string", "minLength": 1},
+      "git_commit": {"$ref": "#/$defs/git_commit"},
+      "script_sha256": {"$ref": "#/$defs/sha256"},
+      "case_file": {"type": "string", "minLength": 1, "description": "the generated per-node case file actually run (all nodes)"},
+      "case_file_sha256": {"$ref": "#/$defs/sha256"}
+     }
+    }
+   }
+  },
+  "ensemble_member": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["ensemble_member_id", "transport_family", "transport_parameters", "transport_as_run", "ensemble_file", "ensemble_file_sha256", "admission"],
+   "properties": {
+    "ensemble_member_id": {"type": "string", "minLength": 1, "description": "must be an ADMITTED member (abep_sim.hall_ensemble.require_admitted); screening candidates are refused by the generator and by HallMap"},
+    "transport_family": {"type": "string", "minLength": 1},
+    "transport_parameters": {"type": "object", "description": "exactly the member's transport_parameters from the ensemble file; never retuned for the design geometry"},
+    "transport_as_run": {"type": "string", "minLength": 1, "description": "the solver's own string of the anomalous-transport model as run (bridge 'transport' output); equals meta.transport"},
+    "ensemble_file": {"const": "hallthruster_bridge/ensemble/transport_ensemble_v0.json"},
+    "ensemble_file_sha256": {"$ref": "#/$defs/sha256"},
+    "admission": {"$ref": "#/$defs/admission_record"}
+   }
+  },
+  "source_validation": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["campaign_id", "validation_release_file", "validation_release_sha256", "prereg_lock_file", "prereg_lock_sha256", "decision_sha256"],
+   "properties": {
+    "campaign_id": {"type": "string", "minLength": 1},
+    "validation_release_file": {"type": "string", "minLength": 1, "description": "the post-scoring release manifest (scripts/make_validation_release.py; default hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json)"},
+    "validation_release_sha256": {"$ref": "#/$defs/sha256"},
+    "prereg_lock_file": {"type": "string", "minLength": 1},
+    "prereg_lock_sha256": {"$ref": "#/$defs/sha256"},
+    "decision_sha256": {"$ref": "#/$defs/sha256"}
+   }
+  },
+  "hallthruster": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["package", "version", "pinned_commit", "installed_commit", "pinned_toml_sha256"],
+   "properties": {
+    "package": {"const": "HallThruster.jl"},
+    "version": {"type": "string", "minLength": 1, "x-must-equal": "hallthruster_bridge/PINNED.toml [hallthruster].version"},
+    "pinned_commit": {"$ref": "#/$defs/git_commit", "x-must-equal": "hallthruster_bridge/PINNED.toml [hallthruster].commit"},
+    "installed_commit": {"$ref": "#/$defs/git_commit", "description": "Manifest repo-rev actually installed (bridge check_pin)"},
+    "pinned_toml_sha256": {"$ref": "#/$defs/sha256"}
+   }
+  },
+  "chemistry": {
+   "oneOf": [
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["kind", "reaction_set_version", "reaction_set_status", "chemistry_variant", "config_file", "config_sha256", "rate_validity_file", "rate_validity_sha256", "rate_files", "f_out_tolerance", "declared_domain"],
+     "properties": {
+      "kind": {"const": "project_propellant_config"},
+      "reaction_set_version": {"type": "string", "minLength": 1, "description": "PINNED.toml [reaction_set].version at generation"},
+      "reaction_set_status": {"type": "string", "minLength": 1},
+      "chemistry_variant": {"type": "string", "minLength": 1, "description": "config file name, e.g. n2_n.toml; a discrete map-set label, never an interpolation axis"},
+      "config_file": {"type": "string", "minLength": 1},
+      "config_sha256": {"$ref": "#/$defs/sha256"},
+      "rate_validity_file": {"type": "string", "minLength": 1},
+      "rate_validity_sha256": {"$ref": "#/$defs/sha256"},
+      "rate_files": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["file", "sha256", "validity_status", "max_mean_energy_eV"],
+        "properties": {
+         "file": {"type": "string", "minLength": 1},
+         "sha256": {"$ref": "#/$defs/sha256"},
+         "validity_status": {"const": "verified", "description": "a map set may not use any 'unresolved' table"},
+         "max_mean_energy_eV": {"type": "number", "exclusiveMinimum": 0}
+        }
+       }
+      },
+      "f_out_tolerance": {"const": 1e-12, "description": "per-reaction extrapolated-activity share allowed at a chemistry_trustworthy node (hall_map_schema_v1; CLAUDE.md item 5). Not relaxed for maps"},
+      "declared_domain": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": ["text", "source"],
+       "properties": {
+        "text": {"type": "string", "minLength": 1, "description": "verbatim from PINNED.toml [reaction_set].domain at generation"},
+        "source": {"type": "string", "minLength": 1}
+       }
+      }
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["kind", "reaction_set_version", "limitation"],
+     "properties": {
+      "kind": {"const": "hallthruster_builtin"},
+      "reaction_set_version": {"type": "string", "minLength": 1, "description": "e.g. 'builtin-Xe'"},
+      "limitation": {"type": "string", "minLength": 1, "description": "must state that built-in tables have no project validity manifest, so chemistry_trustworthy reduces to converged AND sustained (hall_map_schema_v1)"}
+     }
+    }
+   ]
+  },
+  "propellant": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["gas", "composition_basis"],
+   "properties": {
+    "gas": {"type": "string", "minLength": 1, "description": "e.g. N2 or Xe; a map-set label. Mixtures need their own reaction set (CLAUDE.md item 4) and a composition axis"},
+    "composition_basis": {"type": "string", "minLength": 1, "description": "for a composition axis: fraction definition (mole or mass) and the intake-delivered composition model it spans; 'single gas' otherwise"}
+   }
+  },
+  "geometry": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["geometry_id", "version", "file", "sha256", "source", "evidence_class", "channel_length_m", "inner_radius_m", "outer_radius_m", "domain_m"],
+   "properties": {
+    "geometry_id": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "minLength": 1},
+    "file": {"type": "string", "minLength": 1, "not": {"pattern": "(^|[^A-Za-z0-9])[Pp]5([^0-9]|$)|[Ee][Cc][Hh][Tt]|[Bb]rabston|[Pp]eterson"}, "x-note": "Vyovrinda's OWN design geometry; P5/ECHT evidence geometry is never a design geometry"},
+    "sha256": {"$ref": "#/$defs/sha256"},
+    "source": {"type": "string", "minLength": 1, "description": "design release (drawing / document id and revision)"},
+    "evidence_class": {"$ref": "#/$defs/evidence_class"},
+    "channel_length_m": {"type": "number", "exclusiveMinimum": 0},
+    "inner_radius_m": {"type": "number", "exclusiveMinimum": 0},
+    "outer_radius_m": {"type": "number", "exclusiveMinimum": 0},
+    "domain_m": {"type": "number", "exclusiveMinimum": 0}
+   }
+  },
+  "magnetic_field": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["bfield_id", "version", "file", "sha256", "source", "evidence_class", "placement", "scale_reference", "B_ref_T", "shape_fixed", "scale_mechanism"],
+   "properties": {
+    "bfield_id": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "minLength": 1},
+    "file": {"type": "string", "minLength": 1, "not": {"pattern": "(^|[^A-Za-z0-9])[Pp]5([^0-9]|$)|[Ee][Cc][Hh][Tt]|[Bb]rabston|[Pp]eterson"}, "x-note": "Vyovrinda's OWN B(z) (magnetic-circuit design or measurement); P5 coil shapes 1p6kW/3p0kW are calibration nuisance and never a design field"},
+    "sha256": {"$ref": "#/$defs/sha256"},
+    "source": {"type": "string", "minLength": 1},
+    "evidence_class": {"$ref": "#/$defs/evidence_class"},
+    "placement": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["align", "z_ref_in_file_mm"],
+     "properties": {
+      "align": {"enum": ["anode", "exit"]},
+      "z_ref_in_file_mm": {"type": "number"}
+     }
+    },
+    "scale_reference": {"enum": ["exit", "max"]},
+    "B_ref_T": {"type": "number", "exclusiveMinimum": 0, "description": "reference field at scale factor 1 (the B_scale axis multiplies it)"},
+    "shape_fixed": {"const": true, "description": "the B(z) shape is fixed within a map set; only its amplitude may be an axis"},
+    "scale_mechanism": {"const": "B_ref_T scaling of the fixed-shape profile (bridge measured_bfield), solver magnetic_field_scale = 1"}
+   }
+  },
+  "numerics": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["grid", "dt_s", "duration_s", "average_start_s", "averaging_window_s", "num_save", "timestepping", "matches_admission_numerics", "convergence"],
+   "properties": {
+    "grid": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["type", "cells"],
+     "properties": {
+      "type": {"enum": ["EvenGrid"], "description": "the grid type used in the P5 validation runs (bridge_lib.jl); another type is a numerics change"},
+      "cells": {"type": "integer", "minimum": 1}
+     }
+    },
+    "dt_s": {"type": "number", "exclusiveMinimum": 0},
+    "duration_s": {"type": "number", "exclusiveMinimum": 0},
+    "average_start_s": {"type": "number", "minimum": 0},
+    "averaging_window_s": {"type": "number", "exclusiveMinimum": 0},
+    "num_save": {"type": "integer", "minimum": 2},
+    "timestepping": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["adaptive", "CFL", "min_dt_s", "max_dt_s", "max_small_steps", "basis"],
+     "properties": {
+      "adaptive": {"type": "boolean"},
+      "CFL": {"type": "number", "exclusiveMinimum": 0},
+      "min_dt_s": {"type": "number", "exclusiveMinimum": 0},
+      "max_dt_s": {"type": "number", "exclusiveMinimum": 0},
+      "max_small_steps": {"type": "integer", "minimum": 1},
+      "basis": {"enum": ["passed explicitly", "solver default at the pinned commit"]}
+     }
+    },
+    "matches_admission_numerics": {"type": "boolean", "description": "true iff grid, dt, duration, averaging window and timestepping equal those under which the member was admitted"},
+    "convergence": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["prereg_file", "prereg_sha256", "verdict"],
+     "properties": {
+      "prereg_file": {"type": "string", "minLength": 1, "not": {"pattern": "DRAFT"}, "description": "the FROZEN convergence pre-registration; the draft in docs/hallmap/drafts/ is never valid here"},
+      "prereg_sha256": {"$ref": "#/$defs/sha256"},
+      "verdict": {"enum": ["PASS", "FAIL", "NOT_RUN"]},
+      "report_file": {"type": "string"},
+      "report_sha256": {"$ref": "#/$defs/sha256"}
+     }
+    }
+   }
+  },
+  "wall": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["wall_loss_model", "ion_wall_losses", "shielded", "basis"],
+   "properties": {
+    "wall_loss_model": {"type": "string", "minLength": 1, "description": "solver string of the wall model as run, e.g. WallSheath(<material>, <loss_scale>)"},
+    "ion_wall_losses": {"type": "boolean"},
+    "shielded": {"type": "boolean"},
+    "basis": {"type": "string", "minLength": 1, "description": "bridge 'wall_ion_basis' text"}
+   }
+  },
+  "facility_ingestion": {"const": false, "description": "design maps are flight (space) maps (hall_map_schema_v1 meta_required.facility_ingestion)"},
+  "axes": {
+   "type": "array",
+   "minItems": 1,
+   "description": "ORDERED like the map's 'axes' object; fields are flattened row-major in this order",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["name", "unit", "values", "bounds_source", "evidence_class"],
+    "properties": {
+     "name": {"type": "string", "minLength": 1, "not": {"$ref": "#/$defs/forbidden_axis_names"}},
+     "unit": {"type": "string", "minLength": 1},
+     "values": {"type": "array", "minItems": 2, "items": {"type": "number"}, "x-rule": "strictly increasing"},
+     "bounds_source": {"type": "string", "minLength": 1},
+     "evidence_class": {"$ref": "#/$defs/evidence_class"}
+    }
+   }
+  },
+  "fields_present": {
+   "type": "array",
+   "uniqueItems": true,
+   "minItems": 21,
+   "maxItems": 21,
+   "items": {"enum": ["thrust_N", "discharge_current_A", "ion_current_A", "discharge_power_W", "anode_eff", "mass_eff", "current_eff", "voltage_eff", "divergence_eff", "Te_max_eV", "ne_max_m3", "ion_species_fraction_atomic", "wall_ion_flux_m2s", "wall_ion_energy_eV", "Id_rms_rel", "Id_pp_rel", "Id_f_dominant_Hz", "converged", "sustained", "wall_life_trustworthy", "chemistry_trustworthy"]},
+   "x-must-equal": "abep_sim.hall_map.REQUIRED_FIELDS (derived from hallthruster_bridge/hall_map_schema_v1.json 'fields'; tests/test_hallmap_spec.py checks the enum)"
+  },
+  "observables_basis": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["thrust", "failed_node_values"],
+   "properties": {
+    "thrust": {"const": "thrust_N as defined in hall_map_schema_v1 (1-D ion momentum flux); solver apply_thrust_divergence_correction not enabled by the bridge; no P5 beam-efficiency reading (A/B) applied"},
+    "failed_node_values": {"const": "null for every non-flag field of a node without solver output; flags false; never a number"}
+   }
+  },
+  "trust": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["performance_rule", "wall_life_rule", "node_counts"],
+   "properties": {
+    "performance_rule": {"const": "HallMap query 'trustworthy': every surrounding grid node converged AND interpolated sustained > 0.999 AND every surrounding node chemistry_trustworthy"},
+    "wall_life_rule": {"const": "HallMap query 'wall_life_trustworthy': performance trustworthy AND meta.ion_wall_losses is true AND every surrounding node wall_life_trustworthy"},
+    "node_counts": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["total", "converged", "sustained", "chemistry_trustworthy", "wall_life_trustworthy"],
+     "properties": {
+      "total": {"type": "integer", "minimum": 1},
+      "converged": {"type": "integer", "minimum": 0},
+      "sustained": {"type": "integer", "minimum": 0},
+      "chemistry_trustworthy": {"type": "integer", "minimum": 0},
+      "wall_life_trustworthy": {"type": "integer", "minimum": 0}
+     }
+    }
+   }
+  },
+  "validity_domain": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["axis_bounds_only", "extrapolation", "chemistry_domain", "member_validation_domain", "transfer_statement"],
+   "properties": {
+    "axis_bounds_only": {"const": true, "description": "queries outside the axes raise (HallMap); the map is valid nowhere else"},
+    "extrapolation": {"const": "forbidden"},
+    "chemistry_domain": {"type": "string", "minLength": 1},
+    "member_validation_domain": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["description", "source"],
+     "properties": {
+      "description": {"type": "string", "minLength": 1, "description": "operating range, gas, thruster and field in which the member was admitted (from its admission evidence)"},
+      "source": {"type": "string", "minLength": 1}
+     }
+    },
+    "transfer_statement": {"type": "string", "minLength": 1, "description": "explicit statement that applying the member's closure to Vyovrinda's geometry/B(z) is a transfer hypothesis (evidence level 7 for the transport form, docs/EVIDENCE.md), not a validation"}
+   }
+  },
+  "evidence": {
+   "type": "object",
+   "additionalProperties": false,
+   "description": "docs/EVIDENCE.md 'Future': Hall-map provenance objects carry these attributes programmatically",
+   "required": ["evidence_level", "quantity_type", "source", "uncertainty", "applicability_domain", "validation_status", "transformation_chain"],
+   "properties": {
+    "evidence_level": {"type": "integer", "minimum": 1, "maximum": 7},
+    "quantity_type": {"const": "model-derived"},
+    "source": {"type": "string", "minLength": 1},
+    "uncertainty": {"type": "string", "minLength": 1, "description": "at least: across-member envelope (reported separately, never merged here), chemistry-variant spread, numerical-convergence deltas"},
+    "applicability_domain": {"type": "string", "minLength": 1},
+    "validation_status": {"type": "string", "minLength": 1},
+    "transformation_chain": {"type": "string", "minLength": 1}
+   }
+  },
+  "raw_records": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["file", "sha256_canonical_jsonl", "per_reaction_chemistry_retained"],
+   "properties": {
+    "file": {"type": "string", "minLength": 1},
+    "sha256_canonical_jsonl": {"$ref": "#/$defs/sha256"},
+    "per_reaction_chemistry_retained": {"const": true, "description": "each node's bridge record keeps chemistry_per_reaction / chemistry_unresolved_rate_files, so f_out can be audited independently of 'sustained'"}
+   }
+  }
+ },
+ "allOf": [
+  {
+   "if": {"properties": {"map_set": {"properties": {"status": {"const": "FROZEN"}}}}},
+   "then": {"properties": {"numerics": {"properties": {"convergence": {"properties": {"verdict": {"const": "PASS"}}}}}}}
+  }
+ ],
+ "$defs": {
+  "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+  "git_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+  "evidence_class": {"enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]},
+  "forbidden_axis_names": {
+   "description": "Layer-1 calibration nuisance (transport_ensemble_v0.json calibration_nuisance keys) and their common spellings: uncertainty in what the P5 experiment WAS; never a Vyovrinda map axis. Also facility-only variables (flight maps) and member/chemistry labels that are discrete map-set labels, not interpolation axes.",
+   "enum": [
+    "p5_registration", "registration",
+    "p5_coil_shape", "coil_shape",
+    "beam_efficiency_reading", "divergence_reading", "reading",
+    "facility_ingestion_interpretation", "facility_ingestion", "comparison_mode",
+    "background_pressure_Torr", "entrainment_area_m2", "zeta_A", "zeta_en",
+    "ensemble_member_id", "anom_scale", "barrier_scale", "center_L", "width_L",
+    "chemistry_variant", "propellant_config"
+   ]
+  },
+  "admission_record": {
+   "type": "object",
+   "additionalProperties": true,
+   "description": "copy of the member's admission block (hallthruster_bridge/ensemble/admission_record_schema_v1.json); required keys = abep_sim.hall_ensemble.ADMISSION_FIELDS",
+   "required": ["promoted_from_screening_id", "campaign_id", "preregistration", "decision_file", "decision_sha256", "scores_provenance_file", "scores_provenance_sha256", "passing_layer1_members", "admitted_utc", "decided_by"],
+   "properties": {
+    "promoted_from_screening_id": {"type": "string", "minLength": 1},
+    "campaign_id": {"type": "string", "minLength": 1},
+    "preregistration": {"type": "string", "minLength": 1},
+    "decision_file": {"type": "string", "minLength": 1},
+    "decision_sha256": {"$ref": "#/$defs/sha256"},
+    "scores_provenance_file": {"type": "string", "minLength": 1},
+    "scores_provenance_sha256": {"$ref": "#/$defs/sha256"},
+    "passing_layer1_members": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "x-note": "calibration nuisance recorded as PROVENANCE of the admission only; never an axis, never a map-set label"},
+    "admitted_utc": {"type": "string", "minLength": 1},
+    "decided_by": {"type": "string", "minLength": 1}
+   }
+  }
+ }
+}
