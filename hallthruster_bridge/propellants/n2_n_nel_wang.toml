@@ -1,4 +1,4 @@
-# GENERATED VARIANT of n2_n.toml (dissociative-ionization LOWER chemistry variant) by scripts/make_n2_variant_configs.py; do not edit by hand.
+# GENERATED VARIANT of n2_n.toml (atomic-N momentum-transfer WANG-BSR chemistry variant) by scripts/make_n2_variant_configs.py; do not edit by hand.
 # N2/N propellant for HallThruster.jl v0.23.1 (Stage A). Reaction-set version: PINNED.toml [reaction_set]. Rate files are Maxwellian tables vs mean energy (3/2 Te).
 [[species]]
 symbol = "N"
@@ -31,7 +31,7 @@ rate_coeff_file = "ionization_N2_song2023.dat"      # Song et al. JPCRD 2023 Tab
 [[reactions]]
 type = "electron_impact"
 equation = "N2 + e -> N(+) + N + 2e"
-rate_coeff_file = "dissociative_ionization_N2_lower.dat"  # Song 2023 Table 10 sigma(N+ + N2++) - 0.01 sigma_total, LOWER variant (abep-n2n-0.4)
+rate_coeff_file = "dissociative_ionization_N2_upper.dat"  # Song 2023 Table 10 sigma(N+ + N2++), upper variant (abep-n2n-0.4); lower variant: n2_n_di_lower.toml
 
 [[reactions]]
 type = "electron_impact"
@@ -102,7 +102,7 @@ rate_coeff_file = "excitation_N2_vib_0_to_10.dat"      # Laporta et al. 2014 Eq.
 [[reactions]]
 type = "elastic"
 target_species = "N"
-rate_coeff_file = "elastic_N_ragimkhanov2026.dat"    # Ragimkhanov et al. EPJD 2026 Fig. 1b OPM MTCS (abep-n2n-0.8); Wang BSR variant: n2_n_nel_wang.toml
+rate_coeff_file = "elastic_N_wang2014_bsr.dat"        # Wang et al. 2014 BSR MTCS via Ragimkhanov Fig. 1b, OPM above 128 eV: N-elastic VARIANT (abep-n2n-0.8)
 
 [[reactions]]
 type = "electron_impact"

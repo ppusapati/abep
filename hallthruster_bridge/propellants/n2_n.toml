@@ -101,7 +101,7 @@ rate_coeff_file = "excitation_N2_vib_0_to_10.dat"      # Laporta et al. 2014 Eq.
 [[reactions]]
 type = "elastic"
 target_species = "N"
-rate_coeff_file = "elastic_N.dat"                   # REQUIRED — not yet generated
+rate_coeff_file = "elastic_N_ragimkhanov2026.dat"    # Ragimkhanov et al. EPJD 2026 Fig. 1b OPM MTCS (abep-n2n-0.8); Wang BSR variant: n2_n_nel_wang.toml
 
 [[reactions]]
 type = "electron_impact"

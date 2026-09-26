@@ -1822,3 +1822,34 @@ Renames (the file contents and rates are unchanged; the files were never on main
   2. Eq. (10)'s T^(−3/2) high-T form is the exact Maxwellian limit for a cross section confined to low energy, which the resonant cross section is.
   3. The same check cannot be made for the overtones, because no cross sections for them are in hand.
 - Only the upper limit is guarded. The 0.2–0.5 eV fit degradation matters only below the Hall range.
+
+## 2026-09-26 — Reaction set abep-n2n-0.8: atomic-N momentum transfer (Ragimkhanov 2026; Wang 2014 BSR variant)
+
+**Source access:**
+- Ragimkhanov et al., EPJD 80, 69 (2026), CC BY 4.0, was served by Springer as a PDF to a plain, honestly identified client (sha256 47489e8a…). No browser or trust-store change was involved.
+- Johnson 2005's Wiley supporting-information file (`jgra18077-sup-0001-t01.txt`) is still behind the Wiley bot challenge (HTTP 403 on all three supplement URL forms). Tier-1 electronic excitation stays open.
+
+**Extraction:**
+- The paper states its data are available only graphically. Fig. 1b (electron MTCS, a₀², log-log) is vector artwork.
+- The present OPM curve (solid red, 2,040 path points, 1 eV–1 MeV) and the "Wang et al. (B-spline R-matrix)/2014" comparison curve (green dashed, 0.95–128 eV) were extracted from the path coordinates.
+- Calibration is on the plot frame (edges = 10⁰/10⁶ eV and 10⁻⁷/10² a₀² ticks). The tick labels centre within 0.03 pt of the frame-derived positions: 0.1 % in E, 0.5 % in σ.
+- The points are committed as `propellants/sources/ragimkhanov2026_fig1b_mtcs.csv`, with CC BY attribution.
+
+**Disagreement, carried rather than resolved (owner rule):**
+
+| | 1 eV | 3 | 5 | 10 | 20 | 23 | 30–60 | 100–128 |
+|---|---|---|---|---|---|---|---|---|
+| σ_OPM / σ_Wang | 0.15 | 0.40 | 0.52 | 0.59 | 0.89 | 1.00 | 1.15–1.19 | 0.80–0.88 |
+
+| T_e (eV) | 2 | 5 | 10 | 20 | 30 |
+|---|---|---|---|---|---|
+| k_OPM / k_Wang-variant | 0.36 | 0.56 | 0.74 | 0.90 | 0.96 |
+
+- BSR resolves the low-energy structure (N⁻ resonance region); the optical-potential model does not aim to.
+- Nominal `n2_n.toml` uses OPM, the committed primary source.
+- Variants `n2_n_nel_wang.toml` and `n2_n_di_lower_nel_wang.toml` (generated) use Wang BSR, spliced to OPM above 128 eV. At T_e = 30 eV about 7 % of the Maxwellian flux lies above 128 eV.
+- The Wang curve is a secondary reproduction; its fidelity to the primary PRA numbers is unverified (that paper is closed).
+
+**Smoke test (N1, 0.8 minus the electronic-excitation placeholder).** Nominal and Wang variant both run. Neither is chemistry-trustworthy, solely because of the 0.7 vibrational validity limit, which awaits an owner decision.
+
+**Run matrix implied for P5-N₂:** 2 dissociative-ionization variants × 2 N-elastic variants = 4 chemistry configs per transport candidate.
