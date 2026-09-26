@@ -36,6 +36,14 @@
    "started_utc": "2026-09-26T12:39:37Z",
    "queue": "3 Johnson-low escalations",
    "log": "<scratchpad>/followon/progress_escalation.log"
+  },
+  {
+   "pid": 8241,
+   "script": "<scratchpad>/followon/run_escalation_rot_off.sh",
+   "launched": "setsid nohup (PPID 1) via T_O4_ESCALATE claim efb02512\u2026",
+   "started_utc": "2026-09-26T14:01:47Z",
+   "queue": "3 rot-off escalations",
+   "log": "<scratchpad>/followon/progress_escalation_rot_off.log"
   }
  ],
  "workflows": {
@@ -58,7 +66,8 @@
  "incidents": [
   "2026-09-26: two earlier session-bound watchers (harness background shells byu2qv4f0 started 12:40Z, bbdjklhst started 11:57Z) died silently (empty output, no exit notice; cause not determined). The detached daemon + Monitor design replaces them; no event was lost (state is derived, not event-sourced).",
   "2026-09-26T12:56:55Z: during the migration to the transactional ledger, the v1 daemon ran the tracker after it had switched to the (still empty) v2 ledger and before the reconstructed claims were written; it announced TRIGGER_READY T_O4_ESCALATE:ds_staged_n2_n_exc_johnsonlow. No action was taken; the reconstructed LAUNCHED claim removed it from the ready set and the claim CLI refuses a second claim. This is the failure mode the transactional rule guards against.",
-  "2026-09-26 ~13:00Z: every workflow agent failed with 'session limit reached' (reset 13:20Z). No lane reached a terminal state; completed builds are preserved (journals + worktrees). Julia runners and the daemon were unaffected (no LLM use). 13:21Z: workflows resumed with resumeFromRunId under the SAME run ids (resume scripts embed the original args verbatim, so cached agents replay); staggered to avoid a repeat: Bundle-1 workflows (wf_2bcadd98-5ff, wf_15f0f2f8-8d4, wf_3da51c0c-3b4, wf_e3c01fb8-eed) and the physics critical path (wf_17c9b0e6-1cb) first; wf_828d7b1a-ca8, wf_22d6b4cf-10a and wf_020ac47f-09d (the latter patched for a null-verdict crash) follow when these finish."
+  "2026-09-26 ~13:00Z: every workflow agent failed with 'session limit reached' (reset 13:20Z). No lane reached a terminal state; completed builds are preserved (journals + worktrees). Julia runners and the daemon were unaffected (no LLM use). 13:21Z: workflows resumed with resumeFromRunId under the SAME run ids (resume scripts embed the original args verbatim, so cached agents replay); staggered to avoid a repeat: Bundle-1 workflows (wf_2bcadd98-5ff, wf_15f0f2f8-8d4, wf_3da51c0c-3b4, wf_e3c01fb8-eed) and the physics critical path (wf_17c9b0e6-1cb) first; wf_828d7b1a-ca8, wf_22d6b4cf-10a and wf_020ac47f-09d (the latter patched for a null-verdict crash) follow when these finish.",
+  "CORRECTION 2026-09-26T14:01Z: harness background watcher byu2qv4f0 delivered its completion notice at 14:01Z when its condition (next O4 'done' line) was met. The earlier record that it had 'died silently' was WRONG: it was a false negative of my process-table check (the harness's background shells were not identified by my ps/cmdline grep). bbdjklhst (condition: 'done staged_n2_n_n2dication') may likewise still be alive; unknown until its condition occurs. The detached daemon + Monitor design stays; its value was not predicated on that diagnosis."
  ],
  "execution_baseline": {
   "pinned": "branch claude/nifty-ramanujan-w68f9z at debce1603de04b79881fef4ae355e6cdbf531436",
@@ -97,5 +106,10 @@
    "note": "the ORIGINAL file is reconstructed by reverting exactly this one-expression replacement; the pipeline crash it fixes is visible in the wf_020ac47f-09d failure list ('null is not an object (evaluating rv.v.issues)')"
   }
  },
- "runtime_claims_note": "PIDs, Monitor tasks and process liveness in this file are snapshots at recorded_utc; current liveness is established only by the daemon heartbeat file and process evidence, never by this committed snapshot"
+ "runtime_claims_note": "PIDs, Monitor tasks and process liveness in this file are snapshots at recorded_utc; current liveness is established only by the daemon heartbeat file and process evidence, never by this committed snapshot",
+ "runner_scripts": {
+  "run_all.sh": "545c9d8fb9d8560500286bbf42c2a613b1d838a1f3175f7e3f6eab9d03bfa622",
+  "run_escalation_johnsonlow.sh": "9cdc7ded9c39e779a4dd51b399d66ac5dc814550afaa4064abbfe210612fd9e7",
+  "run_escalation_rot_off.sh": "7732405d8b4b66325f533b7f2e6dc9e0b4e8c993d879dcb9dbffbc00f3d70c06"
+ }
 }

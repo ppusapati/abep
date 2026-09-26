@@ -2235,3 +2235,16 @@ transactional and idempotent.
 - The daemon was replaced by v2 (PID 29739), which announces READY on transitions and raises alerts.
 - `single-lens-v1` lanes must pass the second lens before becoming decisive evidence for Milestone B or C.
 - No broader governance redesign (owner).
+
+### 2026-09-26 — O4 first stage 2/5: rotational-off — trigger FIRED; escalations launched (transactional lifecycle)
+`staged_n2_n_rot_off` (270 vacuum runs against `n2_n.toml`):
+- structural gate PASS (270/270 success);
+- frozen and scored once (mandatory scores reproduced exactly);
+- ledger: T_O4_SCORE CLAIMED → LAUNCHED → VERIFIED.
+O4 evaluation (mechanical): **trigger fired**.
+- 369 run-level triggers: 148 |ΔI_d| ≥ 7.5 %, 141 |ΔT_axial| ≥ half tolerance, 80 status changes.
+- Verdict changes with the baseline replaced: sgb-screen-09 goes INCONCLUSIVE → FAIL_VALIDATION (L32-exit|1p6kW|A/B become FAIL); in
+  sgb-screen-06 and sgb-screen-08, L32-exit|3p0kW|A/B go INCONCLUSIVE → FAIL.
+This is a sensitivity result, not a v1 change. The pinned rot-off escalations (3 × 270) were launched through T_O4_ESCALATE (claim
+efb02512…, runner PID 8241, launch evidence = runner log start line).
+Also: lane 17 went to operator repair (repair run registered), and the earlier watcher-death diagnosis was corrected in runtime_state.json.
