@@ -1,0 +1,40 @@
+{
+ "schema": "owner_disposition_v1",
+ "id": "od_v2_question_a",
+ "question": "v2 Question A: does independent published evidence justify expanding the admissible N2 chemistry energy domain beyond 45 eV mean energy (T_e 30 eV)?",
+ "decided_by": "owner",
+ "decided_utc": "2026-09-26T14:45:00Z",
+ "brief": {
+  "file": "docs/v2/question_a/question_a_brief.json",
+  "sha256": "0ed0cfcc3882e6ae9ab32be49ac1edad7fec830f7bed4b603972c91b0f1351d4",
+  "verified_by": "fo_v2_domain_question_a (wf_bf10d719-381, two-lens pass)"
+ },
+ "decision": "A-NO",
+ "domain_path": "closed",
+ "statement": "Do not widen the active N2 chemistry validity domain beyond 45 eV mean energy. The only defensible partial extension (dissociation to 60 eV) does not materially unblock validation/admission: with rotational excitation capped at 45 eV, a minimal v2 on the same P5-N2 evidence cannot make any present screening candidate promotable.",
+ "preserved_candidate_evidence": "lane-01 finding: dissociation has process-specific evidence supporting a possible 60 eV limit under its stated 1 % convention. Recorded as candidate evidence for a FUTURE model revision, not as the active domain; it rests materially on two reconstructed points not fully independent of the baseline source set.",
+ "binding_rules": [
+  "A change of a validity limit alone (tables byte-identical) is a CONTROLLED MODEL-DOMAIN CHANGE: it alters admissible solver states, scoreability, OUT_OF_DOMAIN classification and downstream conclusions; if ever adopted it must be versioned, logged in docs/HISTORY.md, separately pre-registered and rerun. Never metadata housekeeping.",
+  "A v2 scored on the same P5-N2 measurements after the v1 results are known is NOT new evidence for promoting a screening transport closure. Promotion requires genuinely new predictive evidence not used in selecting the closure (held-out/previously unused experimental conditions, new independently published measurements, or a new common-condition experiment).",
+  "Question B (fo_v2_excitation_question_b) is BLOCKED_BY_QUESTION_A_DISPOSITION: T_V2_QUESTION_B requires this disposition to leave the domain path open; with A-NO it can never become READY. Johnson-low continues only through the pre-registered O4/escalation path (sensitivity != validation).",
+  "O4 stages 3-5, all escalations, the O4 disposition matrix and Bundle 1 continue unchanged."
+ ],
+ "sub_decisions": {
+  "D-X1_open_v2_now": "NO",
+  "D-X12_reconstructed_Winters_points_sufficient_to_activate_dissociation_60eV": "NO for an active domain change; retained as supporting evidence",
+  "D-X2_evaluated_vs_measured_only": "no change now; measured-only default retained if reopened",
+  "D-X3_relax_or_change_extension_threshold": "NO (no threshold change after seeing results)",
+  "D-X4_alter_join_tolerances": "NO at present",
+  "D-X5_seek_additional_published_evidence": "YES, bounded, priorities below",
+  "D-X6_to_D-X10": "DEFERRED until evidence suffices to reopen the model-domain question",
+  "D-X11_v2_run_scope": "NOT APPLICABLE (v2 not authorized)"
+ },
+ "D-X5_bounded_priorities": [
+  "1. Rotational excitation cross sections above 10 eV (structural blocker: with the rotational cap at most 37 of 714 OOD runs are recoverable)",
+  "2. Electronic excitation above 100 eV (above 200 eV for a1Pi_g), resolving the Johnson / Majeed & Strickland 1997 / Kawaguchi inconsistencies",
+  "3. Non-resonant vibrational excitation / completeness (material missing contribution, not only a range issue)",
+  "4. Additional independent dissociation evidence above ~296-330 eV, only after 1-3 improve"
+ ],
+ "D-X5_rules": "published/open sources only; no contact with laboratories or authors; no LXCat; no paywall/bot-challenge bypass; bounded to the four priorities (not an open-ended literature lane)",
+ "reopening_condition": "Reopen Question A only when genuinely new published evidence materially closes the rotational / electronic / vibrational domain gaps."
+}

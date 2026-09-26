@@ -205,6 +205,14 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    sensitivity until B supports it. **Execution provenance:** running jobs never altered; future campaigns record thread/BLAS
    environment, Julia version and HallThruster commit per run; orchestration runtime (daemon PID, Monitor, restart semantics,
    the 2026-09-26 silent watcher-death incident) in `docs/orchestration/runtime_state.json`.
+   **v2 Question A — OWNER DISPOSITION A-NO (2026-09-26, `docs/v2/question_a/QUESTION_A_DISPOSITION.json`):** the active N₂ domain stays
+   at 45 eV; no P5-N₂ v2 now. Dissociation→60 eV is preserved only as candidate evidence for a future revision (two reconstructed
+   Winters points). Binding: (1) a validity-limit-only change is a controlled model-domain change (version, HISTORY, separate
+   pre-registration, rerun); (2) a v2 scored on the same P5-N₂ measurements is NOT new evidence for promotion — promotion needs genuinely
+   new predictive evidence not used in selection; (3) Question B is BLOCKED_BY_QUESTION_A_DISPOSITION (T_V2_QUESTION_B requires the
+   domain path open); Johnson-low continues only via the pre-registered O4 path. D-X5 = YES, bounded: rotational > 10 eV first, then
+   electronic > 100 eV (a¹Πg > 200 eV), non-resonant vibrational, then dissociation > ~300 eV (published/open only). Reopen A only when new
+   published evidence materially closes the rotational/electronic/vibrational gaps. O4 and Bundle 1 continue unchanged.
    **P5-N₂ measurement audit: done** (`identification/p5_n2_measurement_audit_findings_v1.json`; values in
    `brabston_p5_n2_measurement_audit_v1.json` from `scripts/audit_p5_n2_measurements.py`). Targets: I_d and thrust at N1–N5,
    E×B species V_a at N1–N3, sustainment; Φ_m,n/η_SP,n/ξ_N are model-derived, not targets. Pre-registration decisions D1–D6 are

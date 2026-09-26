@@ -620,6 +620,22 @@
    "id": "fo_absolute_comparison",
    "kind": "follow_on",
    "title": "Absolute comparison grid + design Hall maps + whole-system UQ"
+  },
+  {
+   "id": "fo_dx5_cross_section_evidence",
+   "kind": "follow_on",
+   "title": "D-X5 bounded cross-section evidence acquisition (rotational >10 eV first)"
+  }
+ ],
+ "owner_dispositions": [
+  {
+   "id": "od_v2_question_a",
+   "file": "docs/v2/question_a/QUESTION_A_DISPOSITION.json",
+   "states": {
+    "pending": "no disposition file",
+    "domain_path_closed": "decision A-NO",
+    "domain_path_open": "decision A-PARTIAL or A-YES-WITH-CONDITIONS"
+   }
   }
  ]
 }

@@ -2248,3 +2248,18 @@ O4 evaluation (mechanical): **trigger fired**.
 This is a sensitivity result, not a v1 change. The pinned rot-off escalations (3 × 270) were launched through T_O4_ESCALATE (claim
 efb02512…, runner PID 8241, launch evidence = runner log start line).
 Also: lane 17 went to operator repair (repair run registered), and the earlier watcher-death diagnosis was corrected in runtime_state.json.
+
+### 2026-09-26 — v2 Question A: owner disposition A-NO (binding)
+The verified Question-A brief (fo_v2_domain_question_a) was dispositioned by the owner: **A-NO**. The active N₂ chemistry domain stays
+at 45 eV mean energy, and no P5-N₂ v2 is opened now.
+Why: the only defensible partial extension (dissociation to 60 eV) does not unblock validation. With rotational excitation capped, at
+most 37 of 714 OOD runs are recoverable (≤ 9 per candidate), so a minimal v2 on the same P5 data cannot produce a promotable candidate.
+The dissociation→60 eV finding is kept as candidate evidence for a future revision, not as the active domain; it rests on two
+reconstructed, not fully independent points.
+Binding rules:
+1. A limit-only change is a controlled model-domain change.
+2. The same P5 measurements scored again are not new evidence for promotion (recorded in `admission_record_schema_v1.json`).
+3. Question B is BLOCKED_BY_QUESTION_A_DISPOSITION, enforced in the trigger registry (owner-disposition prerequisite).
+Sub-decisions: D-X1 NO, D-X12 NO (retain as support), D-X2 no change, D-X3 NO, D-X4 NO, D-X5 YES (bounded: rotational > 10 eV first,
+then electronic, non-resonant vibrational, then dissociation), D-X6..10 deferred, D-X11 n/a. Reopen only on genuinely new published
+evidence. O4 (stages 3–5, escalations, disposition matrix) and Bundle 1 continue unchanged.

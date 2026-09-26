@@ -273,11 +273,15 @@
     {
      "id": "fo_johnsonlow_escalation_assessment",
      "state": "verified"
+    },
+    {
+     "id": "od_v2_question_a",
+     "state": "domain_path_open"
     }
    ],
    "produces": "fo_v2_excitation_question_b",
    "kind": "follow_on_launch",
-   "note": "Question B is conditional on Question A; Johnson-low stays a sensitivity/alternative until Question B independently supports it"
+   "note": "Question B is conditional on Question A: it requires the OWNER DISPOSITION (docs/v2/question_a/QUESTION_A_DISPOSITION.json) to leave the domain path open, not merely a verified brief. Owner decision 2026-09-26: A-NO (domain_path closed) => BLOCKED_BY_QUESTION_A_DISPOSITION; never READY while A-NO stands. Johnson-low stays a sensitivity."
   },
   {
    "id": "T_O4_DISPOSITION_MATRIX",
@@ -329,6 +333,18 @@
    "produces": "fo_absolute_comparison",
    "kind": "follow_on_launch",
    "note": "only when hall_ensemble.load_ensemble() returns >= 1 admitted member (admission incl. O4 dispositions)"
+  },
+  {
+   "id": "T_DX5_EVIDENCE",
+   "prerequisites": [
+    {
+     "id": "od_v2_question_a",
+     "state": "domain_path_closed"
+    }
+   ],
+   "produces": "fo_dx5_cross_section_evidence",
+   "kind": "follow_on_launch",
+   "note": "owner D-X5 = YES (bounded): rotational >10 eV, electronic >100 eV (a1Pi_g >200 eV), non-resonant vibrational, then dissociation >~300 eV; published/open only; may lead to reopening Question A"
   }
  ]
 }

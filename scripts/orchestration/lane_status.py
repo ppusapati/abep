@@ -176,6 +176,15 @@ def status(journals_dir, followon_dir):
         st["ensemble_admitted_members"] = "non_empty" if load_ensemble()["members"] else "empty"
     except Exception as e:                                          # an invalid ensemble is reported, never treated as admitted
         st["ensemble_admitted_members"] = f"error: {e}"
+    for O in reg.get("owner_dispositions", []):                   # owner decisions are prerequisites too (never inferred)
+        f = os.path.join(ROOT, O["file"])
+        if not os.path.isfile(f):
+            st[O["id"]] = "pending"
+        else:
+            dec = json.load(open(f)).get("decision")
+            st[O["id"]] = "domain_path_closed" if dec == "A-NO" else "domain_path_open" if dec in ("A-PARTIAL", "A-YES-WITH-CONDITIONS") else f"error: unknown decision {dec!r}"
+    if st.get("od_v2_question_a") == "domain_path_closed" and st.get("fo_v2_excitation_question_b") == "not_started":
+        st["fo_v2_excitation_question_b"] = "BLOCKED_BY_QUESTION_A_DISPOSITION"
     deps = {L["id"]: L.get("deps", []) for L in reg["lanes"]}
 
     def final(i):                                                   # verified only with verified deps

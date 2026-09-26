@@ -18,14 +18,14 @@ def test_registries_are_closed_and_machine_addressable():
     trig = json.load(open(os.path.join(ORCH, "trigger_registry_v1.json")))
     ids = [x["id"] for x in reg["lanes"] + reg["datasets"] + reg["follow_ons"]]
     assert len(ids) == len(set(ids))
-    known = set(ids) | {"ensemble_admitted_members"}
+    known = set(ids) | {"ensemble_admitted_members"} | {o["id"] for o in reg.get("owner_dispositions", [])}
     for L in reg["lanes"]:
         assert set(L["deps"]) <= known
     produced = []
     for T in trig["triggers"]:
         for p in T.get("prerequisites", []):
             assert p["id"] in known, (T["id"], p["id"])
-            assert p["state"] in ("verified", "scored", "structural_pass", "non_empty")
+            assert p["state"] in ("verified", "scored", "structural_pass", "non_empty", "domain_path_open", "domain_path_closed")
         assert set(T.get("family", [])) <= known
         if T.get("produces"):
             assert T["produces"] in known
@@ -167,3 +167,18 @@ def test_stale_claim_and_unconfirmed_launch_alerts(tmp_path, monkeypatch):
     s = m.status(str(tmp_path / "j"), str(tmp_path / "fo"))
     assert s["ready"] == []                                             # both claimed: neither is READY again
     assert any(a.startswith("STALE_CLAIM T1") for a in s["alerts"]) and any(a.startswith("LAUNCH_UNCONFIRMED T2") for a in s["alerts"])
+
+
+def test_question_b_blocked_by_owner_disposition():
+    """Owner decision 2026-09-26 (A-NO): T_V2_QUESTION_B needs the Question-A disposition to leave the domain path open, so it
+    can never be READY under A-NO, whatever else is verified; the bounded D-X5 evidence trigger follows the closed path."""
+    trig = {T["id"]: T for T in json.load(open(os.path.join(ORCH, "trigger_registry_v1.json")))["triggers"]}
+    assert {"id": "od_v2_question_a", "state": "domain_path_open"} in trig["T_V2_QUESTION_B"]["prerequisites"]
+    assert {"id": "od_v2_question_a", "state": "domain_path_closed"} in trig["T_DX5_EVIDENCE"]["prerequisites"]
+    d = json.load(open(os.path.join(ROOT, "docs", "v2", "question_a", "QUESTION_A_DISPOSITION.json")))
+    assert d["decision"] == "A-NO" and d["sub_decisions"]["D-X1_open_v2_now"] == "NO"
+    m = _load()
+    st = m.status(os.path.join(ROOT, "no_such_journals"), os.path.join(ROOT, "no_such_followon"))
+    assert st["state"]["od_v2_question_a"] == "domain_path_closed"
+    assert st["state"]["fo_v2_excitation_question_b"] == "BLOCKED_BY_QUESTION_A_DISPOSITION"
+    assert "T_V2_QUESTION_B" not in st["ready"]
