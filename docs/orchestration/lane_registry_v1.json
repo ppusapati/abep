@@ -5,7 +5,8 @@
   "workflow_lane": "verified = the final verification round passed under the lane's protocol (two-lens-v2: evidence AND rules lenses; single-lens-v1: the single adversarial reviewer) AND every registered dep is verified; 'verified_provisional' (a dep not verified) and 'done_open_issues' never satisfy a trigger",
   "campaign_dataset": "scored = frozen and scored once (provenance manifest present); structural_pass = runner finished and the pinned structural check passed",
   "follow_on": "verified, exactly as a workflow_lane; its workflow run/key is recorded in the fired-trigger ledger when launched",
-  "repairs": "a lane in done_open_issues may carry 'repairs' (operator repair runs, same labels); its state is taken from the latest repair run, which must reach verified under the same two-lens protocol"
+  "repairs": "a lane in done_open_issues may carry 'repairs' (operator repair runs, same labels); its state is taken from the latest repair run, which must reach verified under the same two-lens protocol",
+  "verified_pin": "a lane whose verified terminal state was later disturbed by an unintended re-execution may carry 'verified_pin' (commit + journal evidence); the tracker confirms it from the journal and the lane's worktree is held at that commit"
  },
  "answers_key": {
   "i": "can an architecture be conditionally selected now",
@@ -264,7 +265,14 @@
    "workflow_key": "GATES",
    "deps": [],
    "verification_protocol": "two-lens-v2",
-   "answers": "i"
+   "answers": "i",
+   "verified_pin": {
+    "workflow_run": "wf_e3c01fb8-eed",
+    "workflow_key": "GATES",
+    "commit": "08b9f9bf32a0b34142338b2003f2b2cf02ecaacc",
+    "evidence": "journal wf_e3c01fb8-eed: fix1:GATES -> 08b9f9b, then verify2:GATES:evidence=True and verify2:GATES:rules=True (first resume, ~14:0xZ)",
+    "reason": "2026-09-26 ~14:45Z: the second resume of wf_e3c01fb8-eed re-executed the already-completed fix1:GATES (resume cache prefix broken by a changed agent-call order), adding unverified commit 5d62ba5 whose verify2 evidence lens failed. The lane had already reached its terminal state at 08b9f9b; the worktree branch was reset to 08b9f9b and 5d62ba5 preserved as refs/abep/unverified/lane24-5d62ba5. Only verified content satisfies triggers."
+   }
   },
   {
    "id": "lane_25_min_decisive_experiment",

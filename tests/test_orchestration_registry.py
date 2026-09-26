@@ -182,3 +182,18 @@ def test_question_b_blocked_by_owner_disposition():
     assert st["state"]["od_v2_question_a"] == "domain_path_closed"
     assert st["state"]["fo_v2_excitation_question_b"] == "BLOCKED_BY_QUESTION_A_DISPOSITION"
     assert "T_V2_QUESTION_B" not in st["ready"]
+
+
+def test_verified_pin_is_confirmed_from_the_journal(tmp_path):
+    """A verified terminal state disturbed by an unintended re-execution is kept only if the journal shows the pinned commit
+    followed by a round in which BOTH lenses passed; a later unverified commit never counts."""
+    m = _load()
+    B = lambda c: {"worktree_path": "/w", "branch": "b", "commit": c}
+    P, F = {"pass": True, "issues": []}, {"pass": False, "issues": []}
+    _journal(tmp_path / "j", "wfx", [("build:K", B("aaaaaaa1")), ("verify1:K:evidence", F), ("verify1:K:rules", F),
+                                     ("fix1:K", B("bbbbbbb2")), ("verify2:K:evidence", P), ("verify2:K:rules", P),
+                                     ("fix1:K", B("ccccccc3")), ("verify2:K:evidence", F)])
+    # keys in _journal are positional, so the re-executed fix1/verify2 get their own keys, as a real re-execution does
+    assert m.pinned_verified(str(tmp_path / "j"), {"workflow_run": "wfx", "workflow_key": "K", "commit": "bbbbbbb2"})
+    assert not m.pinned_verified(str(tmp_path / "j"), {"workflow_run": "wfx", "workflow_key": "K", "commit": "ccccccc3"})
+    assert not m.pinned_verified(str(tmp_path / "j"), {"workflow_run": "wfx", "workflow_key": "K", "commit": "aaaaaaa1"})

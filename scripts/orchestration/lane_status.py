@@ -66,6 +66,35 @@ def journal_lanes(journals_dir):
     return out
 
 
+def pinned_verified(journals_dir, pin):
+    """A registered verified pin (owner rule: only verified content satisfies triggers): true iff the journal of
+    pin['workflow_run'] shows a build/fix result with commit pin['commit'] for pin['workflow_key'] followed by a verification
+    round in which BOTH lenses passed, before any later build/fix result for that lane."""
+    path = os.path.join(journals_dir, pin["workflow_run"], "journal.jsonl")
+    if not os.path.isfile(path):
+        return False
+    lab, cur, got = {}, None, {}
+    key = pin["workflow_key"]
+    for line in open(path):
+        j = json.loads(line)
+        if j["type"] == "started":
+            lab[j["key"]] = j.get("label", "")
+            continue
+        if j["type"] != "result":
+            continue
+        L, r = lab.get(j["key"], ""), _obj(j.get("result"))
+        m = re.match(r"^(build|fix\d+):" + re.escape(key) + "$", L)
+        if m and r.get("commit"):
+            cur, got = r["commit"], {}
+            continue
+        m = re.match(r"^verify(\d+):" + re.escape(key) + r":(evidence|rules)$", L)
+        if m and cur and cur.startswith(pin["commit"][:7]):
+            got[m.group(2)] = bool(r.get("pass"))
+            if got.get("evidence") and got.get("rules"):
+                return True
+    return False
+
+
 def lane_state(L):
     if L is None:
         return "not_started"
@@ -159,6 +188,8 @@ def status(journals_dir, followon_dir):
         if L.get("repairs"):                                        # operator repair of done_open_issues: latest repair run rules
             src = (L["repairs"][-1]["workflow_run"], L["repairs"][-1]["workflow_key"])
         st[L["id"]] = lane_state(jl.get(src))
+        if L.get("verified_pin"):                                   # a verified terminal state preserved against re-execution
+            st[L["id"]] = "verified_self" if pinned_verified(journals_dir, L["verified_pin"]) else "error: verified_pin not confirmed by journal"
         b = (jl.get(src) or {}).get("build") or {}
         info[L["id"]] = {k: b.get(k) for k in ("worktree_path", "branch", "commit")}
     for F in reg["follow_ons"]:
