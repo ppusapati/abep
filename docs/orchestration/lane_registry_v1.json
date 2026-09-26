@@ -286,7 +286,15 @@
    "workflow_key": "FTREE",
    "deps": [],
    "verification_protocol": "two-lens-v2",
-   "answers": "iii"
+   "answers": "iii",
+   "repairs": [
+    {
+     "workflow_run": "wf_38063048-6d4",
+     "workflow_key": "FTREE",
+     "reason": "done_open_issues 2026-09-26T14:11Z: rules+evidence majors (decisiveness ranking counts conditional design-branch nodes as baseline; N-UTL-01 vs N-PWR-01 inconsistent evidence status for the same 12 mN / 1.5 kW threshold)",
+     "script": "docs/orchestration/workflow_scripts/repair-lane_26-ftree.js"
+    }
+   ]
   },
   {
    "id": "lane_27_decision_dossier",
