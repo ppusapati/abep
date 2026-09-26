@@ -490,6 +490,24 @@ def test_voltage_set_within_range_and_range_is_the_vr1_span(ref):
         assert all(rlo <= v <= rhi for v in sv), f"{op['device']}: span voltages outside its reported range"
         span += sv
     assert span and lo == min(span) and hi == max(span), "range must be the VR-1 span of span-defining points"
+    # criterion (c) is applied strictly: a thrust-derived figure (e.g. anodic efficiency) with an unstated thrust basis
+    # never counts as a measured thrust (ER-1 holds for an estimated thrust as well)
+    assert "needs a measured thrust" not in rule["statement"] and "not satisfy (c)" in rule["statement"]
+    for op in dv["literature_operating_points"]:
+        if op["span_role"] == "span_defining":
+            assert op["span_voltages_V"]["evidence_class"] == "measured", op["device"]
+        if op["thrust_basis"] != "measured":
+            assert op["span_role"] != "span_defining", op["device"]
+    bht = [op for op in dv["literature_operating_points"] if op["device"].startswith("Busek BHT")]
+    assert len(bht) == 1 and bht[0]["thrust_basis"] == "not_stated" and bht[0]["span_role"] == "recorded_excluded"
+    # the relaxed-(c) alternative is recomputed from the recorded points: span-defining plus 'not_stated' points
+    relaxed = list(span)
+    for op in bht:
+        relaxed.append(_numeric_bounds(_as_list(op["discharge_voltage_V"]["value"]))[1])
+    alt = rule["alternative_spans_on_record"]["VR-1-relaxed-c"]
+    assert alt["status"] == "PROPOSED" and alt["evidence_class"] == "inferred"
+    assert alt["value"] == [min(relaxed), max(relaxed)] == [lo, 350]
+    assert (lo, hi) == (180, 305)
 
 
 def test_every_non_span_point_is_recorded_with_a_reason(ref):

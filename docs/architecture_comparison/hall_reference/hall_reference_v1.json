@@ -24,7 +24,7 @@
    "supported": "YES",
    "contribution": "Fixes what is common to the three arms, so a conditional selection ('architecture X is baseline provided conditions A/B/C are demonstrated') can be phrased entirely in terms of the inlet state at HALL_INLET_Z0 and the arm-specific bus components. It needs no Hall performance number and not Physics Baseline 1.0.",
    "to_reach_next": [
-    "Owner approval (or change) of every PROPOSED item: discharge-voltage range and evaluation set with span rule VR-1 (stated at repair, not pre-declared; unfiltered span '<100'-350 V), inlet-state representation, invariance rules INV-*.",
+    "Owner approval (or change) of every PROPOSED item: discharge-voltage range and evaluation set with span rule VR-1 (stated at repair, not pre-declared; strict (c) gives 180-305 V; relaxed-(c) alternative 180-350 V; unfiltered span '<100'-350 V), inlet-state representation, invariance rules INV-*.",
     "At least one ADMITTED transport member (hallthruster_bridge/ensemble/transport_ensemble_v0.json members; empty at authoring).",
     "Vyovrinda geometry and B(z) design release (document id, revision, sha256, magnetic-circuit computation or measured field).",
     "A pinned-solver capability for ion, electron and excited-state inflow at the anode plane (owner-approved model change plus validation; solver_capability status is GAP).",
@@ -106,7 +106,7 @@
    "access": "OPEN copy of the published article at the URL accessed (publisher page not accessed). Journal page = PDF page + 235.",
    "sha256": "3c97e7cdcce0dc842e4b2b5e562b888a7ba48442dc83ced70cf0cfeb38589ccf",
    "evidence_level": "6",
-   "notes": "Xenon database of 33 thrusters (10 W to 50 kW). The proportionality coefficients are not published in this paper (p. 242, 'sensitive information'). Transfer to air species is extrapolation (level 6)."
+   "notes": "Xenon database of 33 thrusters (10 W to 50 kW). The empirically determined proportionality coefficients are not given in this paper (p. 242: 'not given in this contribution as it is sensitive information'). Transfer to air species is extrapolation (level 6)."
   },
   {
    "id": "SRC-AFG2022",
@@ -198,8 +198,15 @@
   {
    "id": "SRC-ARCHENGINE",
    "kind": "repository_file",
-   "citation": "abep_sim/archengine.py _variables (superseded 0-D Hall grid) and abep_sim/plasma_devices.py LaB6Cathode (superseded 0-D context).",
+   "citation": "abep_sim/archengine.py: _variables (superseded 0-D Hall grid, 225-325 V; not reused) and its import and use of LaB6Cathode from abep_sim/plasma_devices.py (SRC-PLASMADEV).",
    "path": "abep_sim/archengine.py",
+   "access": "repository"
+  },
+  {
+   "id": "SRC-PLASMADEV",
+   "kind": "repository_file",
+   "citation": "abep_sim/plasma_devices.py LaB6Cathode (superseded 0-D context; cathode model only, not a design value).",
+   "path": "abep_sim/plasma_devices.py",
    "access": "repository"
   },
   {
@@ -376,7 +383,7 @@
      "SRC-GK2008",
      "SRC-DM2008"
     ],
-    "locator": "SRC-GK2008 Eqs. (7.2-14) to (7.2-17), pp. 334-335; SRC-DM2008 Eqs. (2.1)-(2.3), p. 6",
+    "locator": "SRC-GK2008 Eqs. (7.2-14) to (7.2-17), pp. 334-335; SRC-DM2008 Eqs. (2.1)-(2.3), p. 6 (names the Melikov-Morozov criterion, Eq. (2.1)); SRC-GK2008 does not use that name",
     "evidence_level": "5",
     "quantity_type": "model-derived (1-D ionization-length argument)",
     "applicability": "xenon-derived; v_n and <sigma_i v_e> are propellant dependent",
@@ -410,7 +417,7 @@
    },
    {
     "id": "EV-G4",
-    "relation": "Across existing (xenon) Hall thrusters the channel width h is proportional to the mean diameter d, with a similar d/h ratio over a broad power range; the proportionality coefficient is not published in the source.",
+    "relation": "Across existing (xenon) Hall thrusters the channel width h is proportional to the mean diameter d, with a similar d/h ratio over a broad power range; the proportionality coefficient is not given in DM2011 (p. 242: 'not given in this contribution').",
     "source": [
      "SRC-DM2011"
     ],
@@ -924,7 +931,7 @@
    "definition": "PROPOSED discharge-voltage range for the architecture comparison (common to all arms)",
    "value": [
     180,
-    350
+    305
    ],
    "unit": "V",
    "status": "PROPOSED",
@@ -935,9 +942,9 @@
     "SRC-P5N2-CASES",
     "SRC-GK2008"
    ],
-   "locator": "span rule VR-1 (span_rule): span of span_voltages_V over literature_operating_points with span_role 'span_defining': lowest 180 V (ECHT, measured thrust), highest 350 V (BHT on air simulant, anodic efficiency 27 %)",
-   "rationale": "Under span rule VR-1 it is the span of discharge voltages at which Hall-channel devices fed with air species (no xenon admixture) had a measured thrust reported in the open sources consulted (180-350 V). The unfiltered span of all reported Hall-channel air-species voltages is '<100' to 350 V (Dukhopelnikov et al. sweep with estimated thrust, recorded and excluded under VR-1(c)); the cusped-field MCFT-2139 (30-2000 V) is recorded and excluded under VR-1(a). VR-1 was stated at repair, not pre-declared (span_rule.provenance_of_rule). The range lies inside the 200-500 V tested range of the xenon SPT family except its 180 V end. Tie to the RFP envelope (ideal_beam_reference_table, model-derived identities only): at the 25 mN upper thrust end an ideal singly charged beam over this range needs a jet power of 0.412 kW (O2+, 180 V) to 0.868 kW (N+, 350 V), i.e. 27.5-57.9 % of the 1.5 kW ceiling before any efficiency loss or cathode, magnet and pre-ionizer power; published light-propellant anodic efficiencies are far below 1 (HT5k 8-18 %, BHT about 27 % (EV-V2), ECHT 13-23 %; SRC-AFG2022 pp. 25-26), so the ceiling is tight across the whole range. The envelope relations ER-1 to ER-6 show that the best V_d is not fixed a priori: at fixed efficiencies the jet-power cost of a given thrust rises as sqrt(V_d) (the <1.5 kW ceiling favours low V_d), the harvested flow sets a floor on V_d, and published light-propellant data show efficiency improving with voltage. Choosing a point would need an admitted closure or hardware; the range is therefore the filtered evidence span, not an optimum. The superseded 0-D grid (225-325 V) is not reused.",
-   "uncertainty": "The range edges are set by what was published and by the span rule VR-1 (stated at repair, owner decision), not by physics limits; the owner may adopt the unfiltered span or a different rule. It must also fit the Vyovrinda PPU design range (TBD).",
+   "locator": "span rule VR-1 (span_rule): span of span_voltages_V over literature_operating_points with span_role 'span_defining': lowest 180 V (ECHT, measured thrust), highest 305 V (PPS1350-TSD on pure N2, measured thrust 19-21 mN)",
+   "rationale": "Under span rule VR-1 it is the span of discharge voltages at which Hall-channel devices fed with air species (no xenon admixture) had a thrust that the consulted source states was measured (180-305 V). The Busek BHT air-simulant point at 350 V (anodic efficiency about 27 %) is recorded but excluded under VR-1(c) because the review does not state its thrust basis; with that point VR-1 would give 180-350 V (span_rule.alternative_spans_on_record). The unfiltered span of all reported Hall-channel air-species voltages is '<100' to 350 V (Dukhopelnikov et al. sweep with estimated thrust, recorded and excluded under VR-1(c)); the cusped-field MCFT-2139 (30-2000 V) is recorded and excluded under VR-1(a). VR-1 was stated at repair, not pre-declared, and its criterion (c) was tightened at a second repair (span_rule.provenance_of_rule). The range lies inside the 200-500 V tested range of the xenon SPT family except its 180 V end. Tie to the RFP envelope (ideal_beam_reference_table, model-derived identities only): at the 25 mN upper thrust end an ideal singly charged beam over this range needs a jet power of 0.412 kW (O2+, 180 V) to 0.81 kW (N+, 305 V), i.e. 27.5-54.0 % of the 1.5 kW ceiling before any efficiency loss or cathode, magnet and pre-ionizer power; published light-propellant anodic efficiencies are far below 1 (HT5k 8-18 %, BHT about 27 % (EV-V2, thrust basis not stated), ECHT 13-23 %; SRC-AFG2022 pp. 25-26), so the ceiling is tight across the whole range. The envelope relations ER-1 to ER-6 show that the best V_d is not fixed a priori: at fixed efficiencies the jet-power cost of a given thrust rises as sqrt(V_d) (the <1.5 kW ceiling favours low V_d), the harvested flow sets a floor on V_d, and published light-propellant data show efficiency improving with voltage. Choosing a point would need an admitted closure or hardware; the range is therefore the filtered evidence span, not an optimum. The superseded 0-D grid (225-325 V) is not reused.",
+   "uncertainty": "The range edges are set by what was published and by the span rule VR-1 (stated at repair, owner decision), not by physics limits; the owner may adopt the relaxed-(c) span (180-350 V), the unfiltered span or a different rule. It must also fit the Vyovrinda PPU design range (TBD).",
    "evidence": [
     "ER-1",
     "ER-2",
@@ -954,7 +961,7 @@
     200,
     250,
     300,
-    350
+    305
    ],
    "unit": "V",
    "status": "PROPOSED",
@@ -963,20 +970,20 @@
     "SRC-AFG2022",
     "SRC-ECHT-AUDIT"
    ],
-   "locator": "range end points from proposed_range_V; interior nodes at 50 V spacing",
-   "rationale": "Includes both ends of proposed_range_V, so no comparison point needs extrapolation (HallMap refuses queries outside its axes), and 50 V spacing in between (a design-of-experiment choice, assumed). The set is what INV-V1 freezes across arms; the owner may change the nodes, but never per arm."
+   "locator": "range end points from proposed_range_V; interior nodes at the multiples of 50 V strictly inside the range",
+   "rationale": "Includes both ends of proposed_range_V, so no comparison point needs extrapolation (HallMap refuses queries outside its axes), plus the multiples of 50 V strictly inside the range (a design-of-experiment choice, assumed). With the 305 V upper end this puts 300 V and 305 V only 5 V apart; the owner may drop the 300 V node (Q1). The set is what INV-V1 freezes across arms; the owner may change the nodes, but never per arm."
   },
   "span_rule": {
    "id": "VR-1",
-   "statement": "proposed_range_V is the span of span_voltages_V over the literature_operating_points with span_role 'span_defining'. An operating point is span-defining only if (a) the device is an annular Hall-channel thruster (radial magnetic field across an annular discharge channel; single- or two-stage), (b) the anode propellant is an air species or air simulant without xenon admixture, and (c) the consulted source reports a measured thrust at that voltage, directly or as an anodic efficiency (which needs a measured thrust, ER-1). Points that fail a criterion are recorded with span_role 'recorded_excluded' or 'context_only' and an exclusion_reason; they never silently disappear.",
+   "statement": "proposed_range_V is the span of span_voltages_V over the literature_operating_points with span_role 'span_defining'. An operating point is span-defining only if (a) the device is an annular Hall-channel thruster (radial magnetic field across an annular discharge channel; single- or two-stage), (b) the anode propellant is an air species or air simulant without xenon admixture, and (c) the consulted source states that the thrust at that voltage was measured (e.g. 'thrust was measured', a thrust stand or balance). An efficiency or other thrust-derived figure whose thrust basis the source does not state does not satisfy (c): ER-1 holds for an estimated thrust as well (cf. the Dukhopelnikov et al. entry). Points that fail a criterion are recorded with span_role 'recorded_excluded' or 'context_only' and an exclusion_reason; they never silently disappear.",
    "criteria": [
     "(a) device_family == 'hall_channel'",
     "(b) propellant_family == 'light' and no xenon admixture at the anode",
-    "(c) thrust_basis == 'measured' at the span_voltages_V"
+    "(c) thrust_basis == 'measured' at the span_voltages_V, stated as measured by the consulted source (not inferred from an efficiency)"
    ],
-   "provenance_of_rule": "Stated on 2026-09-26 in the repair of this reference, AFTER an adversarial review found that the first draft's rationale ('voltages at which published Hall-channel devices were operated on air species') had silently omitted the Dukhopelnikov et al. sweep (<100-350 V) that the draft itself cited as EV-V1, and had not recorded the MCFT-2139. The rule was therefore NOT pre-declared; the range end points (180 V ECHT, 350 V BHT) did not change under it. The owner decides between this filtered span and the unfiltered span below (open question Q1).",
+   "provenance_of_rule": "Stated on 2026-09-26 in the first repair of this reference, AFTER an adversarial review found that the first draft's rationale ('voltages at which published Hall-channel devices were operated on air species') had silently omitted the Dukhopelnikov et al. sweep (<100-350 V) that the draft itself cited as EV-V1, and had not recorded the MCFT-2139. The rule was therefore NOT pre-declared. The first repair wrote criterion (c) as 'a measured thrust, directly or as an anodic efficiency (which needs a measured thrust)', which kept the 350 V end (Busek BHT). A second review found that premise false (an anodic efficiency can rest on an estimated thrust, as the same source shows for Dukhopelnikov et al.) and that the review never states the BHT thrust basis. The second repair (same day) removed the efficiency clause and applied (c) strictly; the upper end moved from 350 V to 305 V (PPS1350-TSD). The owner decides between this filtered span, the alternatives on record and the unfiltered span (open question Q1).",
    "unfiltered_hall_channel_span_V": {
-    "definition": "span of all discharge voltages reported in the consulted sources for Hall-channel devices on air species or air simulant (criteria (a) and (b) only, any thrust basis): lowest from the Dukhopelnikov et al. sweep ('less than 100 V', no number given), highest 350 V (Dukhopelnikov et al.; PPS1350-TSD; BHT)",
+    "definition": "span of all discharge voltages reported in the consulted sources for Hall-channel devices on air species or air simulant (criteria (a) and (b) only, any thrust basis): lowest from the Dukhopelnikov et al. sweep ('less than 100 V', no number given), highest 350 V (Dukhopelnikov et al.; PPS1350-TSD exploration; BHT, thrust basis not stated)",
     "value": [
      "<100",
      350
@@ -991,7 +998,25 @@
     "uncertainty": "the lower end is reported only as 'less than 100 V'"
    },
    "supporting_evidence": "EV-V1: with light propellants the I_d(V_d) plateau of a xenon-designed Hall thruster sits 50-100 V above xenon's, so the sub-200 V part of a sweep includes pre-plateau operation. This supports, but does not define, the lower end.",
-   "excluded_families_considered": "MCFT-2139 (cusped field, 30-2000 V on N2) is recorded and excluded under criterion (a); see its exclusion_reason."
+   "excluded_families_considered": "MCFT-2139 (cusped field, 30-2000 V on N2) is recorded and excluded under criterion (a); see its exclusion_reason.",
+   "alternative_spans_on_record": {
+    "VR-1-relaxed-c": {
+     "definition": "VR-1 with criterion (c) relaxed to accept a reported anodic efficiency whose thrust basis is not stated (the first-repair wording): adds the Busek BHT 350 V point",
+     "value": [
+      180,
+      350
+     ],
+     "unit": "V",
+     "status": "PROPOSED",
+     "evidence_class": "inferred",
+     "source": [
+      "SRC-AFG2022",
+      "SRC-ECHT-AUDIT"
+     ],
+     "locator": "SRC-AFG2022 p. 25 (BHT, anodic efficiency about 27 % at 350 V, thrust basis not stated); lower end as proposed_range_V",
+     "rationale": "Recorded for the owner (Q1). Adopting it is an owner decision, or follows from accessing the primary Busek report (IEPC-2022-446) and finding a measured thrust at 350 V."
+    }
+   }
   },
   "requirements": {
    "thrust_mN": {
@@ -1063,7 +1088,8 @@
       "SRC-AFG2022",
       "SRC-ECHT-AUDIT"
      ],
-     "locator": "SRC-AFG2022 p. 26 ('direct performance measurements were performed at a discharge voltage ranging from 180 V to 220 V', thrust 20-23 mN); ECHT audit README (Table 6.1: 180/200/220 V)"
+     "locator": "SRC-AFG2022 p. 26 ('direct performance measurements were performed at a discharge voltage ranging from 180 V to 220 V', thrust 20-23 mN); ECHT audit README (Table 6.1: 180/200/220 V)",
+     "notes": "Thrust reduction ambiguity (repository ECHT audit, Tables 6.2/6.3 of the Marchioni thesis): 7 thrust runs give 20.6-23.4 mN with the one-side reduction; four also have an averaged reduction that is 6-18 % lower (down to 17.29 mN, Run 5); Runs 1, 3 and 7 are flagged strongly unstable. The review's 20-23 mN is the one-side reading. The span-defining 180 V end rests on Run 2 (180 V, not flagged unstable): 22.76 mN one-side, 21.31 mN averaged (echt_table_checks_v1.json). Either reading is a measured thrust, so criterion (c) holds; the ambiguity affects the thrust value, not the voltage."
     },
     "notes": "The repository audit concludes ECHT-N2 cannot serve as an independent scoreable validation dataset without forced assumptions; used here for the voltage span only."
    },
@@ -1205,23 +1231,10 @@
      "locator": "p. 25"
     },
     "evidence_level": "5",
-    "span_role": "span_defining",
-    "thrust_basis": "measured",
-    "span_voltages_V": {
-     "definition": "discharge voltage of the air-simulant point with a reported anodic efficiency (which requires a thrust measurement, ER-1)",
-     "value": [
-      350
-     ],
-     "unit": "V",
-     "status": "SOURCED",
-     "evidence_class": "measured",
-     "source": [
-      "SRC-AFG2022"
-     ],
-     "locator": "p. 25 ('The highest thruster efficiency with the air simulant was achieved in a 350 V, 2.94 mg/s operating condition, with the anodic efficiency reaching about 27%')",
-     "notes": "the review reports the tested range 200-350 V but a thrust-based quantity explicitly only at 350 V"
-    },
-    "notes": "Highest efficiency with the air simulant at 350 V, 2.94 mg/s, anodic efficiency about 27 % (review p. 25)."
+    "span_role": "recorded_excluded",
+    "thrust_basis": "not_stated",
+    "exclusion_reason": "Fails VR-1 criterion (c) as applied strictly: the review (SRC-AFG2022 p. 25) reports only that 'the highest thruster efficiency with the air simulant was achieved in a 350 V, 2.94 mg/s operating condition, with the anodic efficiency reaching about 27%'. It does not state how the thrust behind that efficiency was obtained. An anodic efficiency does not imply a measured thrust: ER-1 (eta_a = T^2/(2 m_dot P_d)) holds equally with an estimated thrust, and the same review reports Dukhopelnikov et al. performance from a thrust 'estimated assuming a fixed voltage utilization efficiency of 0.75' (p. 26). The thrust basis of the 350 V point is therefore not stated (a measured thrust would be an inference). The primary source (Hruby, Hohman & Szabo, IEPC-2022-446, ref. [44] of the review) was not accessed: an open copy was not found at the attempted electricrocket.org URLs (verify). If the primary report shows a measured thrust at 350 V, this point becomes span-defining and the VR-1 span returns to 180-350 V (alternative_spans_on_record, Q1).",
+    "notes": "Highest efficiency with the air simulant at 350 V, 2.94 mg/s, anodic efficiency about 27 % (review p. 25), thrust basis not stated. The 200-350 V tested range stays in the unfiltered span (criteria (a) and (b)). Re-labelled at the second repair (2026-09-26): the first repair had classed it span-defining on the premise that an anodic efficiency needs a measured thrust, which is false."
    },
    {
     "device": "Z-70",
@@ -1273,7 +1286,7 @@
     "evidence_level": "5",
     "span_role": "recorded_excluded",
     "thrust_basis": "estimated",
-    "exclusion_reason": "Fails VR-1 criterion (c): the review states that 'the thrust value was estimated assuming a fixed voltage utilization efficiency of 0.75' (p. 26), i.e. thrust is model-derived with an assumed efficiency, not measured; only Faraday-probe plume quantities were measured. Its quantitative light/xenon comparisons are reported 'in the 200 V to 350 V voltage range' (p. 27), inside the proposed range. Its sub-200 V sweep lies in the region where the I_d(V_d) plateau with light propellants sits 50-100 V above xenon's (EV-V1), i.e. includes pre-plateau operation.",
+    "exclusion_reason": "Fails VR-1 criterion (c): the review states that 'the thrust value was estimated assuming a fixed voltage utilization efficiency of 0.75' (p. 26), i.e. thrust is model-derived with an assumed efficiency, not measured; only Faraday-probe plume quantities were measured. Its quantitative light/xenon comparisons are reported 'in the 200 V to 350 V voltage range' (p. 27), which overlaps the proposed range and extends above its 305 V end. Its sub-200 V sweep lies in the region where the I_d(V_d) plateau with light propellants sits 50-100 V above xenon's (EV-V1), i.e. includes pre-plateau operation.",
     "notes": "Same passage as EV-V1. Recorded so that the unfiltered published span (<100 to 350 V) is visible to the owner (span_rule.unfiltered_hall_channel_span_V)."
    },
    {
@@ -1335,7 +1348,7 @@
     "span_role": "recorded_excluded",
     "thrust_basis": "measured",
     "exclusion_reason": "Fails VR-1 criterion (a): a cusped-field thruster is a different device family from the annular Hall channel this reference defines (the lane brief and CLAUDE.md rule 8 fix the Hall accelerator; no new propulsion families). Considered because its reported 13.3 mN at 997 W discharge power (1000 V, N2) lies inside the RFP 12-25 mN band and under the 1.5 kW ceiling (discharge power only); it is not the only such light-propellant point in the source (e.g. PPS1350-TSD N2 at 305 V: 19-21 mN, about 1 kW, p. 23).",
-    "notes": "Its 1000 V point shows light-propellant operation far above the proposed range; whether Vyovrinda's Hall channel should be evaluated above 350 V is an owner question (Q1), not settled by a different device family."
+    "notes": "Its 1000 V point shows light-propellant operation far above the proposed range; whether Vyovrinda's Hall channel should be evaluated above the proposed 305 V end is an owner question (Q1), not settled by a different device family."
    },
    {
     "device": "SPT family (Fakel)",
@@ -1401,7 +1414,7 @@
     ],
     "locator": "p. 25",
     "evidence_level": "5",
-    "quantity_type": "measured (as reported by the review)",
+    "quantity_type": "as reported by the review; thrust basis not stated (a measured thrust would be an inference)",
     "applicability": "air simulant with 25 % argon standing in for atomic oxygen",
     "stated_values": {
      "bht_air_simulant_best_anode_efficiency": {
@@ -1409,11 +1422,12 @@
       "value": 0.27,
       "unit": "-",
       "status": "SOURCED",
-      "evidence_class": "measured",
+      "evidence_class": "inferred",
       "source": [
        "SRC-AFG2022"
       ],
-      "locator": "p. 25"
+      "locator": "p. 25",
+      "notes": "Reported anodic efficiency; the review does not say whether the thrust behind it was measured or estimated (primary source IEPC-2022-446 not accessed, verify)."
      }
     },
     "role": "evidence, not a decision"
@@ -1472,7 +1486,7 @@
    },
    {
     "id": "ER-5",
-    "relation": "From ER-2: at fixed thrust T and harvested anode flow m_dot_a, V_d >= (M / (2 e eta_v)) (T / (gamma eta_m m_dot_a))^2; the intake-delivered flow (IF-A5, TBD) therefore sets a floor on V_d that rises as the flow falls.",
+    "relation": "From ER-2: at fixed thrust T, harvested anode flow m_dot_a and fixed efficiencies gamma, eta_m, eta_v, the required voltage is V_d = (M / (2 e eta_v)) (T / (gamma eta_m m_dot_a))^2 (an equality). Because gamma, eta_m, eta_v <= 1, a hard floor independent of the efficiencies is V_d >= (M / (2 e)) (T / m_dot_a)^2; the intake-delivered flow (IF-A5, TBD) therefore sets a floor on V_d that rises as the flow falls.",
     "source": [
      "SRC-GK2008"
     ],
@@ -1534,7 +1548,7 @@
        37126.3,
        41508.5,
        45470.2,
-       49113.5
+       45847.6
       ],
       "unit": "m s^-1",
       "status": "SOURCED",
@@ -1553,7 +1567,7 @@
        53.87,
        48.183,
        43.985,
-       40.722
+       43.623
       ],
       "unit": "mN kW^-1",
       "status": "SOURCED",
@@ -1572,7 +1586,7 @@
        0.223,
        0.249,
        0.273,
-       0.295
+       0.275
       ],
       "unit": "kW",
       "status": "SOURCED",
@@ -1591,7 +1605,7 @@
        0.464,
        0.519,
        0.568,
-       0.614
+       0.573
       ],
       "unit": "kW",
       "status": "SOURCED",
@@ -1610,7 +1624,7 @@
        0.309,
        0.346,
        0.379,
-       0.409
+       0.382
       ],
       "unit": "-",
       "status": "SOURCED",
@@ -1642,7 +1656,7 @@
        52504.5,
        58701.8,
        64304.6,
-       69456.9
+       64838.3
       ],
       "unit": "m s^-1",
       "status": "SOURCED",
@@ -1661,7 +1675,7 @@
        38.092,
        34.07,
        31.102,
-       28.795
+       30.846
       ],
       "unit": "mN kW^-1",
       "status": "SOURCED",
@@ -1680,7 +1694,7 @@
        0.315,
        0.352,
        0.386,
-       0.417
+       0.389
       ],
       "unit": "kW",
       "status": "SOURCED",
@@ -1699,7 +1713,7 @@
        0.656,
        0.734,
        0.804,
-       0.868
+       0.81
       ],
       "unit": "kW",
       "status": "SOURCED",
@@ -1718,7 +1732,7 @@
        0.438,
        0.489,
        0.536,
-       0.579
+       0.54
       ],
       "unit": "-",
       "status": "SOURCED",
@@ -1750,7 +1764,7 @@
        34728.5,
        38827.6,
        42533.5,
-       45941.4
+       42886.5
       ],
       "unit": "m s^-1",
       "status": "SOURCED",
@@ -1769,7 +1783,7 @@
        57.59,
        51.51,
        47.022,
-       43.534
+       46.635
       ],
       "unit": "mN kW^-1",
       "status": "SOURCED",
@@ -1788,7 +1802,7 @@
        0.208,
        0.233,
        0.255,
-       0.276
+       0.257
       ],
       "unit": "kW",
       "status": "SOURCED",
@@ -1807,7 +1821,7 @@
        0.434,
        0.485,
        0.532,
-       0.574
+       0.536
       ],
       "unit": "kW",
       "status": "SOURCED",
@@ -1826,7 +1840,7 @@
        0.289,
        0.324,
        0.354,
-       0.383
+       0.357
       ],
       "unit": "-",
       "status": "SOURCED",
@@ -1858,7 +1872,7 @@
        49113.5,
        54910.5,
        60151.5,
-       64971.0
+       60650.7
       ],
       "unit": "m s^-1",
       "status": "SOURCED",
@@ -1877,7 +1891,7 @@
        40.722,
        36.423,
        33.249,
-       30.783
+       32.976
       ],
       "unit": "mN kW^-1",
       "status": "SOURCED",
@@ -1896,7 +1910,7 @@
        0.295,
        0.329,
        0.361,
-       0.39
+       0.364
       ],
       "unit": "kW",
       "status": "SOURCED",
@@ -1915,7 +1929,7 @@
        0.614,
        0.686,
        0.752,
-       0.812
+       0.758
       ],
       "unit": "kW",
       "status": "SOURCED",
@@ -1934,7 +1948,7 @@
        0.409,
        0.458,
        0.501,
-       0.541
+       0.505
       ],
       "unit": "-",
       "status": "SOURCED",
@@ -1966,7 +1980,7 @@
        17144.6,
        19168.3,
        20997.8,
-       22680.2
+       21172.1
       ],
       "unit": "m s^-1",
       "status": "SOURCED",
@@ -1985,7 +1999,7 @@
        116.655,
        104.339,
        95.248,
-       88.183
+       94.464
       ],
       "unit": "mN kW^-1",
       "status": "SOURCED",
@@ -2004,7 +2018,7 @@
        0.103,
        0.115,
        0.126,
-       0.136
+       0.127
       ],
       "unit": "kW",
       "status": "SOURCED",
@@ -2023,7 +2037,7 @@
        0.214,
        0.24,
        0.262,
-       0.284
+       0.265
       ],
       "unit": "kW",
       "status": "SOURCED",
@@ -2042,7 +2056,7 @@
        0.143,
        0.16,
        0.175,
-       0.189
+       0.176
       ],
       "unit": "-",
       "status": "SOURCED",
@@ -2084,10 +2098,11 @@
     "evidence_class": "assumed",
     "source": [
      "SRC-CLAUDE",
+     "SRC-PLASMADEV",
      "SRC-ARCHENGINE",
      "SRC-GK2008"
     ],
-    "rationale": "Lane brief (Xe-fed LaB6 per the RFP context 'air + Xe'; verify against the RFP text); the repository cathode model is LaB6 (abep_sim/plasma_devices.py LaB6Cathode, superseded 0-D context). LaB6 tolerates gas-feed impurities and air exposure better than BaO dispenser cathodes (SRC-GK2008 p. 255), which matters with ABEP backflow; the cathode lane owns the evidence.",
+    "rationale": "Lane brief (Xe-fed LaB6 per the RFP context 'air + Xe'; verify against the RFP text); the repository cathode model is LaB6 (defined in abep_sim/plasma_devices.py LaB6Cathode, SRC-PLASMADEV; imported and used by abep_sim/archengine.py, SRC-ARCHENGINE; superseded 0-D context). LaB6 tolerates gas-feed impurities and air exposure better than BaO dispenser cathodes (SRC-GK2008 p. 255), which matters with ABEP backflow; the cathode lane owns the evidence.",
     "evidence": [
      "EV-C5"
     ]
@@ -3217,7 +3232,7 @@
   }
  },
  "open_questions_for_owner": [
-  "Q1 Approve or change the PROPOSED discharge-voltage range (180-350 V, span rule VR-1: Hall-channel, air species without xenon, measured thrust) and evaluation set (180, 200, 250, 300, 350 V); VR-1 was stated at repair after review, not pre-declared. Alternatives on record: the unfiltered Hall-channel span ('<100'-350 V, incl. an estimated-thrust sweep) and light-propellant operation far above 350 V in another device family (MCFT-2139, 1000 V). Align the choice with the Vyovrinda PPU design range.",
+  "Q1 Approve or change the PROPOSED discharge-voltage range (180-305 V, span rule VR-1: Hall-channel, air species without xenon, thrust stated as measured) and evaluation set (180, 200, 250, 300, 305 V; the 300 V node may be dropped); VR-1 was stated at repair after review, not pre-declared, and its criterion (c) was tightened at a second repair, which moved the upper end from 350 V to 305 V. Alternatives on record: VR-1 with relaxed (c) (180-350 V, adds the Busek BHT 350 V point whose thrust basis the review does not state; would also follow if the primary Busek report IEPC-2022-446 shows a measured thrust), the unfiltered Hall-channel span ('<100'-350 V, incl. an estimated-thrust sweep) and light-propellant operation far above 350 V in another device family (MCFT-2139, 1000 V). Align the choice with the Vyovrinda PPU design range.",
   "Q2 hall_only hardware: the same anode/gas distributor with no pre-ionizer, or with the pre-ionizer installed but unpowered? (It changes neutral conductance and temperature at HALL_INLET_Z0.)",
   "Q3 Magnet schedule: identical schedule in all arms as the primary comparison (INV-B2); is a per-arm re-optimization wanted as a separately pre-registered sensitivity branch?",
   "Q4 Solver gap: approve a model change for ion, electron and excited-state inflow at the anode (Config.source_heavy_species or a boundary change), with its validation plan and the INV-S1 regression tolerance; the pin is never moved automatically.",

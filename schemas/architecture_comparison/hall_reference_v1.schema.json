@@ -160,6 +160,7 @@
       "criteria": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
       "provenance_of_rule": {"type": "string", "minLength": 1},
       "unfiltered_hall_channel_span_V": {"$ref": "#/$defs/quantity"},
+      "alternative_spans_on_record": {"type": "object", "description": "Other spans the owner may choose instead (e.g. VR-1 with a relaxed criterion), each a quantity with its evidence class; recorded, never silently dropped.", "additionalProperties": {"$ref": "#/$defs/quantity"}},
       "supporting_evidence": {"type": "string"},
       "excluded_families_considered": {"type": "string"}
      },
@@ -500,7 +501,7 @@
     "discharge_voltage_V": {"$ref": "#/$defs/quantity"},
     "evidence_level": {"$ref": "#/$defs/evidence_level"},
     "span_role": {"enum": ["span_defining", "recorded_excluded", "context_only"]},
-    "thrust_basis": {"enum": ["measured", "estimated", "not_reported", "not_applicable"]},
+    "thrust_basis": {"enum": ["measured", "estimated", "not_stated", "not_reported", "not_applicable"], "description": "measured: the source states the thrust was measured; estimated: the source states it was estimated/modelled; not_stated: a thrust-derived figure (e.g. anodic efficiency) is reported but its thrust basis is not stated; not_reported: no thrust or thrust-derived figure."},
     "span_voltages_V": {"$ref": "#/$defs/quantity"},
     "exclusion_reason": {"type": "string", "minLength": 1},
     "notes": {"type": "string"}
