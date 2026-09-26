@@ -1,0 +1,27 @@
+{
+ "id": "n2_completeness_audit_v1",
+ "registered": "2026-09-26",
+ "registered_before": "any P5-N2 or ECHT-N2 simulation is scored; no P5-N2 fit quality has been seen",
+ "decided_by": "project owner",
+ "purpose": "Decide which omitted electron-impact processes must be added to the N2/N reaction set before it may be called complete for validation. Evaluated from cross sections only, without reference to any fit quality.",
+ "domains": {
+  "default": {"Te_eV": [2.0, 30.0], "mean_energy_eV": [3.0, 45.0],
+              "basis": "upper limit = tightest verified table (dissociation_N2, 45 eV mean energy); above it is outside the N2 validation domain, not absorbed into the audit"},
+  "vibrational_excitation": {"Te_eV": [0.2, 30.0], "basis": "vibrational losses concentrate at low energy"},
+  "rotational_excitation": {"Te_eV": [0.2, 30.0], "basis": "bounded over the low-energy window; implemented only if it crosses the rule"}
+ },
+ "fractions": {
+  "F_P": "k_omit(Te) dE_omit / sum_j k_j(Te) dE_j: share of total electron inelastic power",
+  "F_ion": "nu_ions,omit k_omit(Te) / sum_j nu_ions,j k_j(Te): share of total positive-ion production (ionizing channels only)",
+  "F_S_s": "share of the production or destruction of a particular modeled species s due to the omitted channel"
+ },
+ "thresholds": {"F_P": 0.01, "F_ion": 0.01, "F_S_s": 0.05},
+ "rule": "Promote the omitted process if F_P > 0.01 OR F_ion > 0.01 OR F_S_s > 0.05 anywhere in its applicable Te domain.",
+ "denominators": "sum over the best currently available complete set of included processes. Any evaluation made before the 8 electronic-excitation and the vibrational channels are available is PROVISIONAL and must be repeated once they are in place.",
+ "tiers": {
+  "1_required_before_scoring": ["N2 electronic excitation (A, B, W, B', a, a', w, C)", "N momentum transfer"],
+  "2_assess_before_complete": ["N2 vibrational excitation", "N2 dissociative ionization (N2 -> N+ + N)"],
+  "3_assessed_not_included_unless_bound_exceeds": ["N2 rotational excitation", "N2 double ionization"]
+ },
+ "status_rule": "PINNED.toml [reaction_set] status stays INCOMPLETE until every tier-2 and tier-3 process has a final (non-provisional) verdict under this rule."
+}

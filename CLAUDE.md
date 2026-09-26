@@ -90,9 +90,11 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    - Tier 1 (before P5-N₂ scoring): 8 N₂ excitation states, N momentum transfer.
    - Tier 2 (assess before calling the set complete): N₂ vibrational excitation, dissociative ionization.
    - Tier 3 (assessed/not included unless a bound says otherwise): rotational excitation, double ionization.
-   Every omitted process gets a quantitative bound on its maximum share of electron energy loss P_e and of species
-   production/destruction S_s over the intended T_e range. Any exceeding a threshold (e.g. 1–2 %) is promoted into the
-   model. That threshold is **pre-registered before any P5-N₂ fit quality is seen**. Sources are open literature, not LXCat.
+   **Pre-registered** (`hallthruster_bridge/prereg/n2_completeness_audit_v1.json`, frozen 2026-09-26 before any P5-N₂
+   scoring). Domain: T_e 2–30 eV (mean energy 3–45 eV). Vibrational and rotational excitation: T_e 0.2–30 eV. Promote an
+   omitted process if F_P > 1 % of total electron inelastic power, OR F_ion > 1 % of total positive-ion production, OR
+   F_S_s > 5 % of any modeled species' production or destruction, anywhere in its domain. Denominators use the best
+   available included set; results before the excitation and vibrational channels exist are **provisional**. Sources are open literature, not LXCat.
    Open: N₂ excitation (the recommended Su et al. 2021 per-state set ends at 20 eV, and the source for extending it above that is
    the owner's decision); N elastic (Ragimkhanov 2026 not yet located). See docs/HISTORY.md 2026-09-26 and
    `hallthruster_bridge/propellants/PROVENANCE.md`.
