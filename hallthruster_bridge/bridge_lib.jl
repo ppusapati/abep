@@ -55,13 +55,34 @@ function chemistry_reactions(c)
         haskey(val, f) || error("rate file $f has no validity entry in $(c.rate_dir)/rate_validity.toml")
         v = val[f]
         v["status"] in ("verified", "unresolved") || error("rate_validity.toml: $f status must be verified|unresolved")
-        target = haskey(r, "target_species") ? r["target_species"] :
-                 strip(first(t for t in strip.(split(split(r["equation"], "->")[1], "+")) if t != "e"))
+        target, Z = haskey(r, "target_species") ? (r["target_species"], 0) : reactant_term(r["equation"])
         _, k = het.load_rate_coeff_file(joinpath(dir, f), r["type"])
         lim = v["status"] == "verified" ? Float64(v["max_mean_energy_eV"]) : nothing
-        push!(rx, (file=f, target=Symbol(target), k=k, limit=lim, basis=v["basis"]))
+        push!(rx, (file=f, target=Symbol(target), Z=Z, k=k, limit=lim, basis=v["basis"]))
     end
     return rx
+end
+
+# Heavy reactant of an electron-impact equation, e.g. "N2 + e -> ..." -> ("N2", 0), "N(+) + e -> ..." -> ("N", 1),
+# "N(2+) + e -> ..." -> ("N", 2). Terms are separated by " + " (a bare '+' also appears inside charge states).
+function reactant_term(eq)
+    terms = [strip(t) for t in split(split(eq, "->")[1], r"\s\+\s") if strip(t) != "e"]
+    length(terms) == 1 || error("expected one heavy reactant in \"$eq\"")
+    m = match(r"^([A-Za-z0-9]+?)(?:\((\d*)\+\))?$", only(terms))
+    isnothing(m) && error("cannot parse reactant \"$(only(terms))\" in \"$eq\"")
+    return m[1], isnothing(m[2]) ? 0 : (isempty(m[2]) ? 1 : parse(Int, m[2]))
+end
+
+# Reactant density in a saved frame: the neutral fluid (Z = 0) or the ion fluid of charge Z.
+function reactant_density(f, target, Z)
+    if Z == 0
+        haskey(f.neutrals, target) || error("reaction target $target is not a neutral fluid")
+        return f.neutrals[target].n
+    end
+    haskey(f.ions, target) || error("reaction target $target($Z+) has no ion fluids")
+    ions = [ion for ion in f.ions[target] if ion.Z == Z]
+    length(ions) == 1 || error("reaction target $target($Z+) is not an ion fluid")
+    return only(ions).n
 end
 
 # Rate on HallThruster's own 1-eV mean-energy grid, clamped at the ends exactly as the solver does.
@@ -90,8 +111,7 @@ function chemistry_activity(frames, z, rx)
     for r in rx
         acts = Float64[]; epss = Float64[]
         for f in frames
-            haskey(f.neutrals, r.target) || error("reaction target $(r.target) ($(r.file)) is not a neutral fluid")
-            nt = f.neutrals[r.target].n
+            nt = reactant_density(f, r.target, r.Z)
             for i in eachindex(z)
                 eps = 1.5 * f.Tev[i]
                 push!(acts, f.ne[i] * nt[i] * rate_at(r.k, eps) * dz[i]); push!(epss, eps)
@@ -297,7 +317,7 @@ function run_case(c, mode)
         out["profile_nn_$(sym)_m3"] = collect(st.n)
     end
     for (sym, ions) in fr.ions, ion in ions
-        out["profile_ui_$(sym)$(ion.Z)+_ms"] = collect(ion.u)
+        out["profile_ui_$(sym)_Z$(ion.Z)_ms"] = collect(ion.u)    # e.g. N2_Z1 vs N_Z2 (unambiguous)
     end
     if haskey(c, :measured) && haskey(c.measured, :Id_A)
         out["Id_raw_A"] = c.measured.Id_A

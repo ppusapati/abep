@@ -721,8 +721,9 @@ def test_n2_elastic_song2023_table_reproduces_jpcrd_table5():
     cfg = open(os.path.join(d, "n2_n.toml")).read()
     assert '"elastic_N2_song2023.dat"' in cfg and '"elastic_N2.dat"' not in cfg
     pinned = tomllib.load(open(os.path.join(root, "hallthruster_bridge", "PINNED.toml"), "rb"))["reaction_set"]
-    assert pinned["version"] == "abep-n2n-0.3"
-    assert [h.split()[0].rstrip(":") for h in pinned["history"]] == ["abep-n2n-0.1", "abep-n2n-0.2", "abep-n2n-0.3"]
+    assert any(h.startswith("abep-n2n-0.3") and "elastic_N2_song2023.dat" in h for h in pinned["history"])
+    versions = [h.split()[0].rstrip(":") for h in pinned["history"]]
+    assert versions == [f"abep-n2n-0.{i}" for i in range(1, len(versions) + 1)] and pinned["version"] == versions[-1]
 
 
 def test_n2_completeness_audit_preregistration_is_frozen():
@@ -754,6 +755,106 @@ def test_n2_dissociative_ionization_audit_promotes_under_the_preregistered_rule(
     k_iz = a.table_rate("ionization_N2_song2023.dat", 20.0); k_tab = a.omitted_rate(a.TABLE10_NPLUS, 20.0)
     assert abs(k_tab / k_iz - r20["F_ion_lower"]) < 1e-9 and r20["F_ion_lower"] > 0.01
     assert all(r["F_P_lower"] <= r["F_P_upper"] and r["F_ion_lower"] <= r["F_ion_upper"] for r in res["rows"])
+
+
+def test_n2_dissociative_ionization_tables_and_chemistry_variants():
+    """Dissociative ionization (promoted by the pre-registered audit): header = appearance energy 24.284 eV (no fixed
+    kinetic-energy add-on), nominal linear ramp from sigma = 0 at threshold, rows equal a fresh integration, lower <= upper
+    everywhere, and the two chemistry-variant configs differ only in that one rate file."""
+    import importlib.util, os, numpy as np
+    from abep_sim.rate_tables import maxwellian_rate
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_dissociative_ionization_table.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    d = os.path.join(root, "hallthruster_bridge", "propellants")
+    tabs = {}
+    for v, f in b.FILES.items():
+        lines = open(os.path.join(d, f)).read().splitlines()
+        assert lines[0].endswith("(eV): 24.284")
+        a = np.loadtxt(os.path.join(d, f), skiprows=2); tabs[v] = a
+        E, s = b.cross_section(v)
+        assert E[0] == b.E_TH and s[0] == 0.0 and E[1] == 30.0
+        for eps in (15.0, 45.0, 150.0):
+            assert abs(a[a[:, 0] == eps][0, 1] / maxwellian_rate(E, s, eps / 1.5, b.TAIL) - 1) < 1e-5
+    assert (tabs["lower"][:, 1] <= tabs["upper"][:, 1]).all()
+    up = open(os.path.join(d, "n2_n.toml")).read().splitlines()
+    lo = open(os.path.join(d, "n2_n_di_lower.toml")).read().splitlines()
+    diff = [(x, y) for x, y in zip(up, lo[1:]) if x != y]
+    assert lo[0].startswith("# GENERATED VARIANT") and len(up) == len(lo) - 1 and len(diff) == 1
+    assert "dissociative_ionization_N2_upper.dat" in diff[0][0] and "dissociative_ionization_N2_lower.dat" in diff[0][1]
+
+
+def test_n_z1plus_to_z2plus_bell1983_table():
+    """ionization_N_Z1plus_to_N_Z2plus.dat (Bell et al. JPCRD 1983 Eq. (1), N II): the transcribed formula gives the values checked on
+    2026-09-26 (peak ~0.50e-16 cm^2 near 100-150 eV), Bell's N I row agrees with NIST Kim & Desclaux 30 % mix at 100 eV
+    (1.577e-16 cm^2) within 3 %, header = IE(N II), rows equal a fresh integration, and n2_n.toml has N max_charge = 2."""
+    import importlib.util, os, tomllib, numpy as np
+    from abep_sim.rate_tables import maxwellian_rate
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n_z1plus_to_z2plus_table.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    assert abs(b.bell_sigma_m2(100.0) * 1e20 - 0.4995) < 0.001 and abs(b.bell_sigma_m2(150.0) * 1e20 - 0.4944) < 0.001
+    assert b.bell_sigma_m2(29.0) == 0.0
+    assert abs(b.bell_sigma_m2(100.0, "N I") * 1e20 / 1.577 - 1) < 0.03
+    d = os.path.join(root, "hallthruster_bridge", "propellants")
+    assert open(os.path.join(d, "ionization_N_Z1plus_to_N_Z2plus.dat")).readline().strip() == "Ionization energy (eV): 29.60125"
+    a = np.loadtxt(os.path.join(d, "ionization_N_Z1plus_to_N_Z2plus.dat"), skiprows=2)
+    E = b.grid(); s = b.bell_sigma_m2(E)
+    for eps in (30.0, 45.0, 150.0):
+        assert abs(a[a[:, 0] == eps][0, 1] / maxwellian_rate(E, s, eps / 1.5, b.TAIL) - 1) < 1e-5
+    cfg = tomllib.load(open(os.path.join(d, "n2_n.toml"), "rb"))
+    assert next(sp for sp in cfg["species"] if sp["symbol"] == "N")["max_charge"] == 2
+    assert any(r.get("equation") == "N(+) + e -> N(2+) + 2e" for r in cfg["reactions"])
+
+
+def test_n2_to_n_z2plus_table():
+    """dissociative_ionization_N2_to_N_Z2plus.dat (Song 2023 Table 10 sigma(N++)): threshold ramp from 53.885 eV, header = that
+    appearance energy, rows equal a fresh integration, and n2_n.toml carries the charge-balanced equation."""
+    import importlib.util, os, numpy as np
+    from abep_sim.rate_tables import maxwellian_rate
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_to_n_z2plus_table.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    assert b.E_TH == 53.885
+    d = os.path.join(root, "hallthruster_bridge", "propellants")
+    assert open(os.path.join(d, "dissociative_ionization_N2_to_N_Z2plus.dat")).readline().strip() == "Ionization energy (eV): 53.885"
+    a = np.loadtxt(os.path.join(d, "dissociative_ionization_N2_to_N_Z2plus.dat"), skiprows=2)
+    E, s = b.cross_section()
+    assert E[0] == 53.885 and s[0] == 0.0 and E[1] == 70.0
+    for eps in (30.0, 45.0, 150.0):
+        assert abs(a[a[:, 0] == eps][0, 1] / maxwellian_rate(E, s, eps / 1.5, b.TAIL) - 1) < 1e-5
+    assert 'equation = "N2 + e -> N(2+) + N + 3e"' in open(os.path.join(d, "n2_n.toml")).read()
+
+
+def test_n2_vibrational_audit_promotion_is_robust_at_low_te():
+    """Audit 2 (prereg n2_completeness_audit_v1, vibrational domain 0.2-30 eV): Laporta et al. 2014 Eq. (10) with
+    kappa_max in 1e-9 cm^3/s (0->1 peaks at ~8.0e-9 cm^3/s near 1.6 eV, matching JPCRD Table 7), and vibrational power
+    exceeds 1 % of the inelastic power even with the 8 electronic channels in the denominator at T_e <= 3 eV (robust, not a
+    completeness claim: other omitted channels are still being bounded)."""
+    import importlib.util, json, os
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("a", os.path.join(root, "scripts", "audit_n2_vibrational_excitation.py"))
+    a = importlib.util.module_from_spec(spec); spec.loader.exec_module(a)
+    assert abs(a.k_vib(1.585, 1)[0][1] / 8.015e-15 - 1) < 1e-3
+    assert len(a.LAPORTA_V0) == 59 and len(a.EPS_V) == 59 and a.EPS_V[1] == 0.288
+    res = json.load(open(os.path.join(root, "hallthruster_bridge", "audit", "n2_vibrational_excitation_v1.json")))
+    assert res["prereg"] == "n2_completeness_audit_v1" and res["verdict"]["vibrational_excitation"].startswith("PROMOTION ROBUST")
+    fin = [r for r in res["rows"] if r["electronic_in_denominator_trusted"]]
+    assert fin[-1]["Te_eV"] == 3.0 and max(r["F_P_vs_included_plus_electronic"] for r in fin) > 0.01
+
+
+def test_variant_configs_are_regenerated_from_n2_n():
+    """Every chemistry-variant config equals what scripts/make_n2_variant_configs.py produces from the current n2_n.toml."""
+    import importlib.util, os
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("m", os.path.join(root, "scripts", "make_n2_variant_configs.py"))
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    base = open(os.path.join(m.PROP, "n2_n.toml")).read()
+    for name, (what, subs) in m.VARIANTS.items():
+        exp = base
+        for a, c in subs.items():
+            exp = exp.replace(a, c)
+        assert open(os.path.join(m.PROP, name)).read().split("\n", 1)[1] == exp, name
 
 
 def test_rate_table_tail_policy_is_explicit():

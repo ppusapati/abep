@@ -1693,3 +1693,108 @@ This audit was run under `prereg/n2_completeness_audit_v1` (merged in PR #20 bef
 **Implementation note for the promotion.** HallThruster.jl supports dissociative ionization through `electron_impact` equations (`PINNED.toml`, molecular_support). The table would come from the same Table 10 column. Two choices for the owner:
 1. How to treat 24.28–30 eV: the table as published versus a documented threshold treatment.
 2. The header energy loss: threshold versus threshold plus kinetic-energy release.
+
+## 2026-09-26 — Reaction set abep-n2n-0.4: N₂ dissociative ionization added (promoted by audit 1)
+
+**Table.** `scripts/build_n2_dissociative_ionization_table.py` builds from Table 10 σ(N⁺ + N₂²⁺). Owner decisions:
+- Nominal: a linear ramp from σ = 0 at E_th = 24.284 eV up to the published 30 eV point.
+  - Sensitivity bounds (not tables): zero below 30 eV, and σ(30 eV) held down to E_th.
+  - Their rate effect is −42/+75 % at T_e = 3 eV, −4/+4 % at 10 eV, and < 1 % from 20 eV.
+- Header energy loss 24.284 eV (the appearance energy). No fixed kinetic-energy add-on.
+  - Sensitivity: charging +16 eV of fragment kinetic energy per event would add 1.4 % (T_e 5 eV), 5.1 % (10 eV), 10 % (20 eV) and 13 % (30 eV) to P_e (0.4 set, excitation not yet in).
+  - That is material. It is the case for energy-dependent reaction losses if HallThruster ever supports them.
+- Held tail above 1000 eV: < 0.76 % of the rate at 255 eV, so verified to 255 eV.
+
+**The N⁺/N₂²⁺ ambiguity is carried explicitly, not resolved silently.**
+- **upper** (`n2_n.toml`): the published column.
+- **lower** (`n2_n_di_lower.toml`): the column minus 0.01 σ_total. This applies JPCRD Sec. 2.8's "N₂²⁺ ≈ 1 % of total ionization" at all energies (statement-derived, approximate).
+- The variant config is generated and differs in exactly one line; a test enforces this.
+- Molecular N₂²⁺ remains a separate, **unresolved** channel.
+
+**Smoke test (N1, 0.5 ms, reaction subset without excitation or N elastic).**
+- Loads and runs; chemistry_trustworthy; dissociation is still the limiting file (35.3 eV active vs 45).
+- The atomic share of exit ion flux rises from 0.42 (0.3) to 0.53 (0.4). This is a chemistry diagnostic, not a fit comparison.
+
+**Hygiene.** Smoke-test case copies now omit `measured`, so the driver computes no P5-N₂ target comparison before the pre-registration.
+
+## 2026-09-26 — Reaction set abep-n2n-0.5: N²⁺ promoted; sequential ionization N⁺ → N²⁺ (Bell et al. 1983)
+
+**Change:**
+- N `max_charge` 1 → 2, because audit 1 promoted N²⁺ production: the N⁺⁺ column crosses F_ion = 1 % inside T_e ≤ 30 eV.
+- New `ionization_N_Z1plus_to_N_Z2plus.dat`, from Bell, Gilbody, Hughes, Kingston & Smith, JPCRD 12, 891 (1983). Eq. (1) is used with the Table 5 N II parameters, ±10 %.
+  - The parameters were read from the page image of the NIST-hosted reprint; the OCR had dropped a sign in the N I row.
+  - Formula check: Bell's N I row reproduces NIST Kim & Desclaux (30 % ²D mix, i.e. the Brook beam Bell follow) to 1–5 % from 30 eV to 1 keV.
+  - The N II curve peaks at 0.51×10⁻¹⁶ cm² near 118 eV. Header 29.60125 eV (IE(N II), NIST ASD).
+- This reaction is structurally required: HallThruster.jl derives species energies only through one-to-one reactions, so N²⁺ cannot load without an N⁺ → N²⁺ (or N → N²⁺) link. It is also the sequential N²⁺ source route. It is included, not only bounded; its importance relative to the direct N₂ → N²⁺ + N route is evaluated when that route is added (0.6).
+
+**Driver fixes found by the 0.5 smoke run:**
+- The chemistry guard assumed neutral targets and split equations on a bare "+". `reactant_term` / `reactant_density` now parse `N(+)` / `N(2+)` and read the matching ion density per frame (checked in `checks/chemistry_validity_check.jl`).
+- Ion-velocity profile keys are now `profile_ui_<sym>_Z<Z>_ms`. The old `N21+` (N₂, Z = 1) vs `N2+` (N, Z = 2) naming was ambiguous. Historical output files keep the old keys.
+
+**Smoke test (0.5 minus excitation and N elastic).** Loads and runs with an N Z = 2 fluid. All six tables have f_out = 0; chemistry_trustworthy.
+
+**Omitted routes to bound later:** direct N → N²⁺ and N²⁺ → N³⁺ (tier 3).
+
+## 2026-09-26 — Reaction set abep-n2n-0.6: direct N₂ → N²⁺ + N; sequential-route audit
+
+**Change:**
+- New `dissociative_ionization_N2_to_N_Z2plus.dat` from Table 10 σ(N⁺⁺), the total N⁺⁺ yield from N₂. The extra N⁺ produced by triple events is not added.
+- Same threshold rule as single dissociative ionization: a linear ramp from σ = 0 at E_th = D₀ + IE(N I) + IE(N II) = 53.885 eV to the 70 eV point. Header 53.885 eV.
+- Tail 0.95 % at 255 eV, so verified to 255 eV.
+- Threshold sensitivity (table/envelope vs ramp): −10/+16 % at T_e = 10 eV, < 2 % from 20 eV.
+
+**Sequential vs direct N²⁺ route.** The route is included, not merely bounded.
+
+| T_e (eV) | 10 | 15 | 20 | 25 | 30 |
+|---|---|---|---|---|---|
+| k_direct (N₂ → N²⁺) [m³/s] | 3.0e-18 | 4.1e-17 | 1.7e-16 | 3.9e-16 | 7.2e-16 |
+| k_seq (N⁺ → N²⁺) [m³/s] | 6.7e-16 | 2.4e-15 | 4.6e-15 | 6.9e-15 | 9.2e-15 |
+| n_N⁺/n_N₂ where seq = 5 % of direct | 2.2e-4 | 8.7e-4 | 1.8e-3 | 2.9e-3 | 3.9e-3 |
+| n_N⁺/n_N₂ where seq = direct | 0.45 % | 1.7 % | 3.6 % | 5.7 % | 7.8 % |
+
+- The sequential route passes the 5 % species criterion at ion-to-N₂ ratios of order 10⁻³.
+- Once the ion fraction exceeds a few percent, which is typical of a Hall ionization zone, it is the dominant N²⁺ source.
+- Leaving it out would have been a material omission.
+
+**Smoke tests (0.6 minus excitation and N elastic).**
+- Both variants run: upper `n2_n.toml` and lower `n2_n_di_lower.toml`.
+- f_out = 0 for every table; chemistry_trustworthy.
+- Atomic exit-ion-flux share: 0.537 upper vs 0.533 lower. This is a chemistry diagnostic only.
+
+**Still to bound (tier 3):** direct N → N²⁺, and N²⁺ → N³⁺. Molecular N₂²⁺ stays unresolved.
+
+## 2026-09-26 — Omitted-process audit 2: N₂ vibrational excitation → PROMOTE (not yet included)
+
+**Data:** the set JPCRD 2023 recommends, Laporta, Little, Celiberto & Tennyson, PSST 23, 065002 (2014), obtained via arXiv:1402.3814 (green OA). Its IOP supplementary files were downloaded directly.
+- They hold Eq. (10) rate fits, κ(T) = κ_max (T_max/T)^{3/2} e^{−T_max/T}, for v = 0 → v_f = 0…58, with level energies from Table II.
+- Eq. (10) was read from the rendered page. Note that κ_max is a fit parameter, not the peak: the fit peaks at 0.41 κ_max at T = 2T_max/3.
+- Units (10⁻⁹ cm³/s) were confirmed independently: the 0→1 fit reproduces the Maxwellian integral of JPCRD Table 7's recommended σ₀₁ to 1–6 % at T = 0.5–3 eV.
+- The Laporta rates are resonant only (integrated to 15 eV) and from v = 0 only, so the vibrational power is a lower bound.
+
+**Denominator:** abep-n2n-0.6 upper inelastic power, plus Su et al. 2021's 8 electronic channels (σ = 0 above 20 eV) with the owner's experimental energy losses. The electronic channels are trusted in the denominator where the Maxwellian flux above 20 eV is ≤ 1 %, i.e. T_e ≤ 3 eV. This is the presently completed denominator, not a complete one: rotational excitation and the remaining omitted channels are not yet bounded.
+
+| T_e (eV) | 0.5 | 1 | 2 | 3 | 5 | 7.5 | 10 | 20 | 30 |
+|---|---|---|---|---|---|---|---|---|---|
+| P_vib / (P_incl + P_elec) | 1.7e5 | 155 | 2.5 | 0.41 | 0.064 | 0.017 | 0.0071 | 0.0010 | 0.00035 |
+
+- **Verdict: PROMOTION ROBUST.** It exceeds the pre-registered criterion by a large margin over the low-T_e domain, using the presently completed denominator. Final completeness of the reaction set remains pending the remaining omitted-process bounds. Vibrational excitation is the dominant electron energy sink at T_e ≤ 2 eV and exceeds 1 % up to T_e ≈ 9 eV.
+- Power by final level: v_f = 1 carries only ~22 %, v_f ≤ 4 about 77 %, and v_f ≤ 10 about 99.9 % (T_e = 1–10 eV). Implementation therefore needs overtones: one fixed-energy excitation reaction per v_f = 1…10, header ε_vf.
+
+**Residual sanity bound** (TCS − elastic ICS − known inelastic, rate space; a diagnostic only). No pass/fail tolerance is applied, since none was pre-registered.
+- The residual is **negative** at T_e ≤ 0.3 eV: the datasets are inconsistent there, as expected.
+- Σk_vib / k_res is 1.14 at 0.5 eV and 1.01 at 0.7 eV (the residual is a small difference of 10–20 %-uncertain sets), and 0.93 → 0.08 from 1 to 30 eV.
+- So the residual cannot serve as a vibrational dataset.
+
+**Data licences:**
+- Laporta: IOP copyright. The committed data are 59 transcribed fit-parameter pairs plus 59 level energies (factual data, cited); the supplementary file itself is not committed.
+- Su 2021: CC BY 4.0, fetched at run time from IOP (or `--su-dir`).
+
+## 2026-09-26 — Nomenclature: atomic N²⁺ is `N_Z2plus` (owner decision)
+
+Molecular N₂⁺ and atomic N²⁺ now coexist, so "N2+" in names was ambiguous. "N2+" always means molecular N₂⁺. Atomic N²⁺ is written `N_Z2plus`, and atomic N⁺ `N_Z1plus`, in filenames, scripts, comments and metadata. The HallThruster equations such as `N(2+)` were already unambiguous. The molecular dication N₂²⁺ is not modelled.
+
+Renames (the file contents and rates are unchanged; the files were never on main under the old names, and the log entries above were updated to match):
+- `ionization_N+_N2+.dat` → `ionization_N_Z1plus_to_N_Z2plus.dat`
+- `dissociative_ionization_N2_N2+.dat` → `dissociative_ionization_N2_to_N_Z2plus.dat`
+- `scripts/build_n_plus_ionization_table.py` → `scripts/build_n_z1plus_to_z2plus_table.py`
+- `scripts/build_n2_to_n2plus_table.py` → `scripts/build_n2_to_n_z2plus_table.py`

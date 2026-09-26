@@ -7,7 +7,7 @@
 include(joinpath(@__DIR__, "..", "bridge_lib.jl"))
 check_pin()
 _, k = het.load_rate_coeff_file(joinpath(@__DIR__, "..", "propellants", "dissociation_N2.dat"), "electron_impact")
-rx = [(file="dissociation_N2.dat", target=:N2, k=k, limit=45.0, basis="test")]
+rx = [(file="dissociation_N2.dat", target=:N2, Z=0, k=k, limit=45.0, basis="test")]
 z = collect(range(0.0, 0.1; length=11))
 frame(Te, ne, nn) = (Tev=Te, ne=ne, neutrals=Dict(:N2 => (n=nn,)))
 ne = fill(1e17, 11); nn = fill(1e19, 11); cold = fill(20.0, 11)          # 3/2 T_e = 30 eV everywhere
@@ -28,6 +28,11 @@ nel = copy(ne); nel[9] = 5e14; hot2 = copy(cold); hot2[9] = 40.0
 f2 = only(chemistry_activity([frame(hot2, nel, nn) for _ in 1:10], z, rx))
 @assert f2.fout > CHEM_FOUT_TOL "low-density hot cell must be detected"
 @assert f2.eps_active == 60.0
+
+# reactant parsing: neutral, singly and doubly charged targets
+@assert reactant_term("N2 + e -> N(+) + N + 2e") == ("N2", 0)
+@assert reactant_term("N(+) + e -> N(2+) + 2e") == ("N", 1)
+@assert reactant_term("N(2+) + e -> N(3+) + 2e") == ("N", 2)
 
 # unresolved files never produce a fraction
 fu = only(chemistry_activity([frame(cold, ne, nn)], z, [(rx[1]..., limit=nothing)]))
