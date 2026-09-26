@@ -17,10 +17,11 @@ Choices made here, all explicit:
     and 12 eV.
   * Above 200 eV the last value is held ("hold" tail). This is an extrapolation assumption; the script prints how much of
     each rate rests on it (hold vs zero tail). It is < 1 % for mean energy <= 45 eV (T_e <= 30 eV).
-  * Header energy (electron energy loss per event) = 12.14 eV, the N(2D) + N(4S) channel threshold. Cosby concluded
+  * Header energy = 12.14 eV, the N(2D) + N(4S) channel threshold: a representative fixed energy loss for a
+    channel-summed dissociation cross section, NOT a universal measured energy loss per dissociation event. Cosby concluded
     from translational-energy spectra at 48.5 eV that this is the dominant pattern and that N(4S) + N(4S) (9.75 eV) is
-    not significant (JPCRD 2023 Sec. 2.7). The table itself is the channel-summed N + N cross section. Alternatives
-    9.75 / 13.33 eV bracket the energy-loss choice. HallThruster.jl reads the energy only from this header line.
+    not significant (JPCRD 2023 Sec. 2.7). The table itself is the channel-summed N + N cross section. The range
+    9.75-13.33 eV (N(4S)+N(4S) to N(2P)+N(4S)) is carried as a model uncertainty on the energy loss. HallThruster.jl reads the energy only from this header line.
 Usage: python scripts/build_n2_dissociation_table.py
 """
 import os, sys
@@ -50,7 +51,9 @@ def main():
            "Ref. Data 52, 023104 (2023), Table 9 (Cosby 1993 recommended set, +-20 %), transcribed. sigma = 0 below 12 eV; "
            f"held at the 200 eV value above 200 eV (tail sensitivity: " +
            ", ".join(f"{100 * d:.2f} % at {eps:.0f} eV" for eps, d in sens) + "). "
-           f"Header energy {ENERGY_LOSS_EV} eV = N(2D)+N(4S) threshold (dominant channel, Cosby 1993). "
+           f"Header energy {ENERGY_LOSS_EV} eV = N(2D)+N(4S) threshold (dominant channel, Cosby 1993): a representative fixed "
+           "energy loss for a channel-summed cross section, not a universal measured loss per event; model uncertainty "
+           "9.75-13.33 eV. Validity domain: mean energy <= 45 eV (T_e <= 30 eV). "
            "Maxwellian-integrated by abep_sim/rate_tables.py (scripts/build_n2_dissociation_table.py). "
            "Energy column = mean electron energy 3/2 Te. Evidence level 4 (docs/EVIDENCE.md).")
     write_hallthruster_table(OUT, E, sig, ENERGY_LOSS_EV, source=src, tail=TAIL,
