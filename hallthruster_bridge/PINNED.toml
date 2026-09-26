@@ -15,5 +15,12 @@ minimum = "1.10"
 install = "https://julialang.org/downloads  (tested with 1.11.7 from julialang-s3.julialang.org, 2026-09-25)"
 
 [reaction_set]
-version = "abep-n2n-0.1"
-status = "INCOMPLETE — N2 ionisation + N2 elastic from Itikawa 2006 (shipped with HallThruster.jl); N ionisation, N2 dissociation, N2 excitation, N elastic still required (LXCat)"
+# Any change to which rate files n2_n.toml uses, or to their contents, is a reaction-set model change: bump the version
+# and add a history line. A version label never refers to two different chemistry definitions.
+version = "abep-n2n-0.3"
+status = "INCOMPLETE — N2 excitation (8 states) and N elastic (momentum transfer) still required"
+history = [
+  "abep-n2n-0.1: N2 ionization + N2 elastic shipped with HallThruster.jl (Itikawa 2006); N ionization (Kim & Desclaux via NIST, 2026-09-25); N2 dissociation (Song 2023 Table 9, 2026-09-26)",
+  "abep-n2n-0.2 (2026-09-26): N2 ionization -> ionization_N2_song2023.dat (Song et al. JPCRD 2023 Table 10 sigma(N2+)); rest as 0.1",
+  "abep-n2n-0.3 (2026-09-26): N2 elastic -> elastic_N2_song2023.dat (Song et al. JPCRD 2023 Table 5 momentum transfer); rest as 0.2",
+]

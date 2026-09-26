@@ -17,10 +17,20 @@ status = "verified"
 max_mean_energy_eV = 255.0
 basis = "NIST SRD 107 Kim & Desclaux N(4S) tabulation spans 15-5000 eV (audited 2026-09-26); held-tail share 0.0000 % up to 300 eV mean energy"
 
+["ionization_N2_song2023.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "JPCRD 2023 Table 10 sigma(N2+) spans 16-1000 eV; held-tail share 0.96 % at 255 eV mean energy, 0.22 % at 200 eV (scripts/build_n2_ionization_song2023_table.py)"
+
 ["ionization_N2_N2+.dat"]
 status = "unresolved"
-basis = "shipped with HallThruster.jl v0.23.1, citing Itikawa 2006 (reactions/CITATIONS.md); table spans 0-300 eV mean energy, but the cross-section input and its energy extent are not in the package, so the tail cannot be audited. Resolve by rebuilding from Song et al. JPCRD 2023 Table 10"
+basis = "shipped with HallThruster.jl v0.23.1, citing Itikawa 2006 (reactions/CITATIONS.md); table spans 0-300 eV mean energy, but the cross-section input and its energy extent are not in the package, so the tail cannot be audited. Superseded in n2_n.toml by ionization_N2_song2023.dat (abep-n2n-0.2); kept for provenance"
+
+["elastic_N2_song2023.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "JPCRD 2023 Table 5 MTCS spans 0.001 eV-10 keV; held-tail share 0.000000 % at 255 eV mean energy (scripts/build_n2_elastic_song2023_table.py)"
 
 ["elastic_N2.dat"]
 status = "unresolved"
-basis = "shipped with HallThruster.jl v0.23.1, citing Itikawa 2006; table stops at 100 eV mean energy (the solver holds the 100 eV value beyond), and the cross-section input is not in the package. Resolve by rebuilding from Song et al. JPCRD 2023 Table 5 (MTCS, 0.001 eV-10 keV)"
+basis = "shipped with HallThruster.jl v0.23.1, citing Itikawa 2006; table stops at 100 eV mean energy (the solver holds the 100 eV value beyond), and the cross-section input is not in the package. Superseded in n2_n.toml by elastic_N2_song2023.dat (abep-n2n-0.3); kept for provenance"
