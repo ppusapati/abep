@@ -1652,3 +1652,44 @@ This replaces the first version (commit d2009b3). That version used the time-ave
 - **Rule:** promote if F_P > 0.01 (share of total electron inelastic power) ∨ F_ion > 0.01 (share of total positive-ion production) ∨ F_S_s > 0.05 (share of any modeled species' production or destruction), anywhere in the domain.
 - **Denominators:** the best currently available included set. Verdicts made before the 8 excitation and the vibrational channels exist are provisional.
 - A test pins these values.
+
+## 2026-09-26 — Omitted-process audit 1 (provisional): N₂ dissociative ionization → PROMOTE
+
+This audit was run under `prereg/n2_completeness_audit_v1` (merged in PR #20 before any P5-N₂ scoring). The script is `scripts/audit_n2_dissociative_ionization.py` and the result is `hallthruster_bridge/audit/n2_dissociative_ionization_v1.json`. It is provisional: the denominators are abep-n2n-0.3 without the excitation and vibrational channels. That over-estimates F_P; F_ion is unaffected.
+
+**Inputs.** JPCRD 2023 Table 10:
+- σ(N⁺ + N₂²⁺), 38 points from 30 eV. N₂²⁺ can't be separated from N⁺ by mass, so the column is an upper bound on single dissociative ionization.
+- σ(N⁺⁺), 30 points from 70 eV.
+- Both were checked row by row against the PDF text.
+
+**Brackets on the dissociative-ionization rate and fractions.**
+- Threshold: E_th = D₀(N₂) + IE(N) = 9.75 + 14.534 = 24.284 eV.
+- Cross section:
+  - *table*: σ = 0 below 30 eV, as published;
+  - *envelope*: σ held at its 30 eV value from E_th. This is an over-estimate only, not a threshold shape.
+- Energy loss per event: from E_th up to E_th + 16 eV. The 16 eV is kinetic-energy release, twice the largest N⁺ kinetic-energy peak of 8 eV.
+- Ions per event: 1 to 2.
+- Atomic fraction: n_N/n_N₂ = 0. Atomic N only adds to the denominators, so this maximizes the fractions.
+
+**Results, lower / upper bound:**
+
+| T_e (eV) | 3 | 5 | 10 | 20 | 30 |
+|---|---|---|---|---|---|
+| F_P | 0.24 % / 1.2 % | 1.8 / 4.5 % | 8.1 / 15 % | 18 / 31 % | 24 / 40 % |
+| F_ion | 0.43 / 2.6 % | 2.6 / 7.8 % | 9.7 / 21 % | 19 / 40 % | 25 / 50 % |
+
+- **Verdict: PROMOTE.** Promotion is already forced by F_ion, which is independent of the still-incomplete excitation/vibrational power denominator. Its lower bound exceeds 1 % from T_e ≈ 4 eV. F_P is provisional and will be recomputed after the reaction set is complete.
+- Removing an N₂²⁺ share of about 1 % of total ionization from the column changes the lower-bound F_ion at 30 eV only from 24.7 % to 23.5 %.
+- Species-specific shares:
+  - F_S(N₂ destruction) up to 14 %.
+  - F_S(N production) up to 14 %.
+  - Dissociative ionization supplies > 5 % of N⁺ production unless n_N/n_N₂ exceeds x_crit: about 1.6 at T_e = 7.5 eV, 5 at 20 eV and 6.3 at 30 eV.
+
+**Tier-3 side results.**
+- N⁺⁺ production crosses F_ion = 1 % at T_e ≥ 25 eV with one ion per event, or ≥ 19.5 eV with two. By the pre-registered rule it is also flagged.
+- Implementing it needs an N²⁺ species, since N `max_charge` is currently 1. How to handle that is the owner's call.
+- N₂²⁺ has no recommended data: JPCRD says it is about 1 % of total ionization and that measurements disagree. It stays **unresolved**.
+
+**Implementation note for the promotion.** HallThruster.jl supports dissociative ionization through `electron_impact` equations (`PINNED.toml`, molecular_support). The table would come from the same Table 10 column. Two choices for the owner:
+1. How to treat 24.28–30 eV: the table as published versus a documented threshold treatment.
+2. The header energy loss: threshold versus threshold plus kinetic-energy release.
