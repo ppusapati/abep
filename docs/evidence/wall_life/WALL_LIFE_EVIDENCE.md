@@ -9,6 +9,30 @@ sputter and erosion yields of Hall-channel wall ceramics, so that later N/O Hall
 evidence and not from priors. Evidence levels (1-7) and evidence classes (measured / digitized / inferred / reconstructed /
 model-derived / assumed) follow [`docs/EVIDENCE.md`](../../EVIDENCE.md).
 
+## 0. Milestone relevance and operating-model question
+
+This lane is `lane_32_wall_life` (`docs/orchestration/lane_registry_v1.json`: answers **(iii)**, verification protocol
+`single-lens-v1`). The JSON carries the same statement under `milestone_relevance`.
+
+- **Question answered: (iii), an engineering issue that could later overturn the choice.** Hall-channel wall erosion by
+  N⁺, N₂⁺, O⁺ and O₂⁺ is unquantified for every candidate wall ceramic, through physical sputtering and O/N surface
+  chemistry. Until hardware tests H1-H9 close gaps G1-G10, no architecture can show that it meets the > 15,000 h RFP
+  firing requirement. At minimum that needs H1, H3, H4, H6 and H7.
+- **Architectures.** The issue is common to `hall_only`, `rf_hall` and `ecr_hall`, because the downstream Hall
+  accelerator and its wall are common. It doesn't discriminate between them and supports no elimination.
+- **Milestone A: non-decisive.** The database gives no selection input. A conditional baseline may cite it only as a
+  condition to be demonstrated: the chosen wall grade must reach N/O wall-erosion life ≥ the required firing hours,
+  shown by H1, H4 and H6.
+- **Milestone B: evidence only.** It can't give a credible wall-life envelope. No measured N/O yield exists on BN, BN-SiO₂
+  or SiC, and there is no admitted Hall closure (the credible set is empty) to supply the wall flux. Reaching B needs
+  three things: second-lens verification of this lane, N/O coupon yields (H1-H3), and an admitted closure whose wall
+  fields are `wall_life_trustworthy` and validated against near-wall data (H7).
+- **Milestone C: evidence only; it cannot support a life number.** Reaching C needs thruster wear-test erosion profiles on
+  N₂/O₂ with the Vyovrinda channel (H6), plus H1-H5 and H7-H9. These must be integrated through a consumer that meets
+  section 6a.
+- **Verification.** This lane was single-lens-v1 at merge `6bbfeb2`, and this revision is the second-lens repair on top of
+  `e15f66f`. The lane is not decisive for Milestone B or C until that verification is recorded as passed.
+
 ## 1. Use restrictions
 
 These statements gate every use of the database. The JSON carries the same wording under `hard_statements`.
@@ -121,8 +145,9 @@ The IPP values were checked against the rendered page images of the scanned repo
 fluence" and assume flat surfaces.
 
 **Molecular ions.** Treating N₂⁺ or O₂⁺ as two atoms at half the energy each is an assumption (level 7, verify). I
-recall it as common practice but did not check a source. Espy 1993 compared molecular and atomic ions on Al₂O₃ films,
-and hardware test H3 would settle it for the Vyovrinda wall.
+recall it as common practice but did not check a source. The Espy 1993 abstract lists O⁺, O₂⁺, N⁺ and N₂⁺ beams at
+50-200 eV on Al and Al₂O₃. Whether the paper compares molecular and atomic ions at matched energy per atom is *inferred
+from the abstract only* (verify). Hardware test H3 would settle the question for the Vyovrinda wall.
 
 ## 6. Extrapolation policy
 
@@ -146,6 +171,27 @@ wall-thickness number, and never feeds a trade, UQ envelope or life margin as a 
 **No silent fallback.** A lookup for a pair with no entry must raise. It must not substitute xenon data, a proxy target
 or the `materials.py` priors. Today every N/O lookup on BN, BN-SiO₂ or SiC is OUT_OF_DOMAIN.
 
+### 6a. Consumer requirements
+
+These requirements are binding on any code that takes a yield from this database. The JSON has them under
+`consumer_requirements`.
+
+- **Consumer today.** `abep_sim/thermal_life.py` was merged after this lane. Its `_check_hall_discharge` has a
+  `wall_erosion_life` margin check with life = d_allow / (Γ_i · peak/avg · Y_v), where the caller supplies Y_v as
+  `volumetric_sputter_yield_m3_per_ion`. It gates on an admitted ensemble member and on `wall_life_trustworthy`. It does
+  not carry this database's entry id, its extrapolation flags or the OUT_OF_DOMAIN rule, so it can return PASS or FAIL.
+  That code is outside this lane's allowed paths and is logged as gap G11 for the thermal/life lane.
+- **Unit crosswalk.** Y[m³/ion] = Y[mm³/C] · 10⁻⁹ · e, with e = 1.602176634 × 10⁻¹⁹ C (the exact SI value). It holds for
+  singly charged incident ions only. Atomic yields (atoms/ion) need a grade density and a sputtered composition, and no
+  crosswalk is given for them here.
+- **Carry the flags.** A consumer must pass the entry id and its full flag set into its result.
+- **Map flagged results to NOT_DEMONSTRATED.** Any flagged yield makes the erosion-life check OUT_OF_DOMAIN, reported as
+  **NOT_DEMONSTRATED**, never PASS or FAIL.
+- **N/O today.** With this version, N⁺, N₂⁺, O⁺ or O₂⁺ on BN, BN-SiO₂ or SiC must return NOT_DEMONSTRATED.
+- **Missing pairs.** A missing pair raises. Nothing may be substituted for it.
+- **Wall flux source.** Wall flux comes only from an admitted member with `wall_life_trustworthy = true`, never from a
+  screening candidate.
+
 ## 7. In-repo audit (read-only)
 
 | where | what | assessment |
@@ -153,12 +199,15 @@ or the `materials.py` priors. Today every N/O lookup on BN, BN-SiO₂ or SiC is 
 | `abep_sim/materials.py` | `sputter_Eth_eV` / `sputter_Y300` (atoms/ion at 300 eV, "Xe-referenced"): BN 45 / 0.25, BN_SiO2 45 / 0.20, SiC 50 / 0.30, Al2O3_anodised 60 / 0.35, Quartz 40 / 0.30, Graphite 35 / 0.2, with Y(E) ∝ ((E/E_th − 1)/(300/E_th − 1))^1.5 | level 7 / assumed. No citation. The 45 eV BN threshold matches none of the fitted Xe values (18.3, 24 ± 6, 57 eV). Units differ from the mm³/C sources. No dependence on ion species |
 | `abep_sim/plasma_devices.py` HallChannel | Y(5 T_e + 20 V), wall flux 0.2 n_e u_B × shielding | superseded 0-D closure (CLAUDE.md: absolute Hall results withdrawn) |
 | `abep_sim/archengine.py` | Hall life = 6 mm / erosion rate; SiC/Mo cathode-antenna yield at 3 T_e + 10; Mo grid yields scaled by the energy-transfer factor vs Xe | inherits the priors; the scaling is a `PROJECTILE_PROXY` assumption |
-| `abep_sim/life.py`, `mission5.py` | `hall_sputter_um_per_kh` default 300, fallback 150 | assumed |
+| `abep_sim/life.py` | `LifeInputs.hall_sputter_um_per_kh` default 300 (line 22); `hall_channel_life` life = t₀ / rate | assumed |
+| `abep_sim/mission5.py:83` | `base.get("pl_wall_erosion_um_per_kh", 150.0)` fallback | assumed |
+| `abep_sim/system.py:169`, `:292` | line 169 forwards `wall_erosion_um_per_kh` as `pl_wall_erosion_um_per_kh`; line 292 repeats the 150.0 fallback | assumed |
+| `abep_sim/thermal_life.py` (merged after this lane; audited at `e15f66f`) | `wall_erosion_life` check takes a caller-supplied `volumetric_sputter_yield_m3_per_ion`; gated on admitted member + `wall_life_trustworthy` | future consumer; must carry the extrapolation flags and return NOT_DEMONSTRATED for N/O (section 6a, gap G11) |
 
 ## 8. Gaps and required hardware tests
 
 Literature cannot close the N/O gap. The hardware tests below are the only route to IN_DOMAIN yields and a validated
-erosion model. Details are in the JSON (`gaps` G1-G10, `hardware_tests_required` H1-H9).
+erosion model. Details are in the JSON (`gaps` G1-G10 (hardware/literature) and G11 (consumer code), `hardware_tests_required` H1-H9).
 
 | id | test | closes |
 |---|---|---|
@@ -192,7 +241,7 @@ Full citations, access status, retrieval date and the sha256 of every file actua
 | S06 | Abashkin et al., IEPC-2007-133 | open (figures only) | 3 |
 | S07 | Garnier et al., J. Vac. Sci. Technol. A 17, 3246 (1999), doi:10.1116/1.582050 | closed, abstract only | 3 |
 | S08 | Crofton & Young, AIP Adv. 11, 125126 (2021), doi:10.1063/5.0067346 | CC BY but bot-challenged, abstract only | 3 |
-| S09 | Ranjan et al., AIP Adv. 6, 095224 (2016) | bot-challenged, search summary only | 3 |
+| S09 | Ranjan et al., AIP Adv. 6, 095224 (2016), doi:10.1063/1.4964312 (Crossref-checked) | bot-challenged, search summary only | 3 |
 | S10 | Yim, Falk, Boyd, arXiv:0802.1960 (J. Appl. Phys. 104, 123507) | open preprint | 4 |
 | S11 | Yim, IEPC-2017-060 (NTRS 20170009068) | open | 5 |
 | S12 | Eckstein, IPP-Report 9/132 (2002) | open (MPG PuRe) | 4 |
