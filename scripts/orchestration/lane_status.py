@@ -149,8 +149,11 @@ def status(journals_dir, followon_dir):
             alerts.append(f"LAUNCH_UNCONFIRMED {name} attempt {x['attempt']}")
     st, info = {}, {}
     for L in reg["lanes"]:
-        st[L["id"]] = lane_state(jl.get((L["workflow_run"], L["workflow_key"])))
-        b = (jl.get((L["workflow_run"], L["workflow_key"])) or {}).get("build") or {}
+        src = (L["workflow_run"], L["workflow_key"])
+        if L.get("repairs"):                                        # operator repair of done_open_issues: latest repair run rules
+            src = (L["repairs"][-1]["workflow_run"], L["repairs"][-1]["workflow_key"])
+        st[L["id"]] = lane_state(jl.get(src))
+        b = (jl.get(src) or {}).get("build") or {}
         info[L["id"]] = {k: b.get(k) for k in ("worktree_path", "branch", "commit")}
     for F in reg["follow_ons"]:
         a = launched.get(F["id"])

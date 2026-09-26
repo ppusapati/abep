@@ -22,7 +22,8 @@
 * A lane/follow-on satisfies a trigger only in the terminal state **`verified`**: its final verification round passed under its
   protocol (two-lens: evidence AND rules/recompute; lanes built by the first script: one adversarial reviewer, recorded as
   `single-lens-v1`) AND every registered dependency is verified. `verified_provisional`, `done_open_issues` and anything in progress
-  never satisfy a trigger; `done_open_issues` needs operator repair and re-verification.
+  never satisfy a trigger; `done_open_issues` needs operator repair and re-verification (registered as `repairs` on the lane:
+  the latest repair run's two-lens verification decides its state).
 * `single-lens-v1` lanes (the first lanes workflow) are disclosed as such. If one of them becomes **decisive evidence for
   Milestone B or C**, it must first pass the second (two-lens) verification; its weaker review status is never silently promoted.
 * Workflow-internal dependencies (`T_GRID`, `T_DOSSIER`) start the dependent lane at its prerequisites' terminal state and pass

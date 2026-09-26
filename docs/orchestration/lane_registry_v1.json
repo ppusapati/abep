@@ -4,7 +4,8 @@
  "terminal_states": {
   "workflow_lane": "verified = the final verification round passed under the lane's protocol (two-lens-v2: evidence AND rules lenses; single-lens-v1: the single adversarial reviewer) AND every registered dep is verified; 'verified_provisional' (a dep not verified) and 'done_open_issues' never satisfy a trigger",
   "campaign_dataset": "scored = frozen and scored once (provenance manifest present); structural_pass = runner finished and the pinned structural check passed",
-  "follow_on": "verified, exactly as a workflow_lane; its workflow run/key is recorded in the fired-trigger ledger when launched"
+  "follow_on": "verified, exactly as a workflow_lane; its workflow run/key is recorded in the fired-trigger ledger when launched",
+  "repairs": "a lane in done_open_issues may carry 'repairs' (operator repair runs, same labels); its state is taken from the latest repair run, which must reach verified under the same two-lens protocol"
  },
  "answers_key": {
   "i": "can an architecture be conditionally selected now",
@@ -175,7 +176,15 @@
    "workflow_key": "HALLREF",
    "deps": [],
    "verification_protocol": "two-lens-v2",
-   "answers": "i"
+   "answers": "i",
+   "repairs": [
+    {
+     "workflow_run": "wf_78429369-deb",
+     "workflow_key": "HALLREF",
+     "reason": "done_open_issues 2026-09-26T13:57Z: evidence lens major (ideal-beam jet power vs anodic efficiency definitions mixed); operator repair in the existing worktree + two-lens re-verification",
+     "script": "docs/orchestration/workflow_scripts/repair-lane_17-hallref.js"
+    }
+   ]
   },
   {
    "id": "lane_18_interstage",

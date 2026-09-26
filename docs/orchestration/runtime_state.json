@@ -73,11 +73,13 @@
   "location": "docs/orchestration/workflow_scripts",
   "note": "exact copies of the session-local workflow scripts that were executed (the harness stores them outside the repo); resume-*.js = original script + the original run's args embedded verbatim (ARGS_EMBEDDED) so cached agents replay",
   "sha256": {
+   "abep-lane-repair.js": "a4fed7d08d0c1799ca2a2b20d61f6fbe36aff8619e5e10d07928503b9f06a201",
    "abep-lanes-v2-wf_17c9b0e6-1cb.js": "26c98a8b21bbb0efebc3e7a58998104c84b007ca3e301d9545d91bb5b04722db",
    "abep-lanes-v3-deps-wf_3da51c0c-3b4.js": "f50dc479ab51536434ce0f40fdfe3242c02171865a53b9f35b9bb0f77b33a116",
    "abep-parallel-lanes-wf_020ac47f-09d.ORIGINAL.js": "f681e520ba539b3ab9216fe1d530ae4cdfc1ee6c9d44abf2c7304ebd84e17c84",
    "abep-parallel-lanes-wf_020ac47f-09d.PATCHED.js": "57fe4068a44e76e69d2db486afafc1c897be98109c0499261069f0bdee5e17ef",
    "null_verdict_patch.diff": "8fcca479c7afeee12980ad4c4a9443d58ea9fad9181a48db836a3923849a020d",
+   "repair-lane_17-hallref.js": "5c4c905b453d2978cd95aa0f35d9c3864daa87d9d410a407593d7015b13b47e1",
    "resume-wf_020ac47f-09d.js": "d3ac818dc0b937079c7aa869fe793728bbfb86575f839c9df27d0cf9c24ef8c0",
    "resume-wf_15f0f2f8-8d4.js": "5ecc680b8b65a0638bec21992840a6dd2bccedf62c4a3494a835bdc7f16112aa",
    "resume-wf_17c9b0e6-1cb.js": "ae4883744b56219bb6f2bf9376acefbeceb3bfb90c21fecfb82f65f52fe3fe94",
