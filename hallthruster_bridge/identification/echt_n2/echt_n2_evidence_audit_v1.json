@@ -1,0 +1,1195 @@
+{
+ "id": "echt_n2_evidence_audit_v1",
+ "date": "2026-09-26",
+ "status": "EVIDENCE AUDIT ONLY. Nothing simulated, scored or changed in the repository. Candidate second N2 dataset (ECHT) assessed for a no-retuning 1-D Hall validation.",
+ "scope_rules_followed": [
+  "published/openly accessible sources only",
+  "no contact with authors or labs",
+  "no LXCat",
+  "no paywall or bot-challenge bypass (AIP full text 403; author-hosted PDF link on SPPL page is 404 and not archived)",
+  "outputs only in scratchpad echt_audit/"
+ ],
+ "sources": [
+  {
+   "id": "S1",
+   "citation": "F. Marchioni, M. A. Cappelli, 'Extended channel Hall thruster for air-breathing electric propulsion', J. Appl. Phys. 130, 053306 (2021)",
+   "doi": "10.1063/5.0048283",
+   "url": "https://pubs.aip.org/aip/jap/article/130/5/053306/1079086/Extended-channel-Hall-thruster-for-air-breathing",
+   "access": "PAYWALLED. Publisher page returns HTTP 403 to automated fetch; Crossref/OpenAlex/Semantic Scholar: closed, no OA copy. SPPL publications page links https://sppl.stanford.edu/wp-content/uploads/2023/05/MarchioniAirBreathing.pdf but it returns 404 (Wayback CDX: 404 on 2024-07-10, no archived PDF). Only the abstract (Crossref) was read.",
+   "used_for": "abstract ranges only; reference list (Crossref) confirms it cites S2 as its source thesis",
+   "abstract_values": {
+    "anode_power_W": "500-800",
+    "thrust_mN": "17-22",
+    "Isp_s": "1000-1100",
+    "total_thrust_efficiency": "14-18 %",
+    "anode_flow": "constant 2 mg/s pure N2",
+    "trend": "performance degrades with increased voltage"
+   }
+  },
+  {
+   "id": "S2",
+   "citation": "F. Marchioni, 'Design and Performance Measurements of a Long Channel Hall Thruster for Air-Breathing Electric Propulsion', MSc thesis, Politecnico di Torino (co-tutelle Stanford University; advisors L. Casalino, M. A. Cappelli), A.Y. 2019-20, 130 pp.",
+   "url": "https://webthesis.biblio.polito.it/14618/",
+   "pdf": "https://webthesis.biblio.polito.it/14618/1/tesi.pdf",
+   "pdf_sha256": "d3b3ea9927792fedafaec013a9b0db169aeea6901a314933adfc425b9c9d7652",
+   "license": "CC BY-NC-ND 3.0 (repository record)",
+   "access": "OPEN (full text, institutional repository, no login)",
+   "used_for": "all per-point values, geometry, magnetic circuit, B(z) figures, facility, cathode, thrust-stand method and uncertainty",
+   "page_convention": "printed page (pdf page = printed + 8)"
+  },
+  {
+   "id": "S3",
+   "citation": "E. Cha, 'Dynamic Models of Electron Transport in Hall Thruster Simulations', PhD thesis, Stanford 2015 (S2 ref. [35])",
+   "access": "not retrieved; cited by S2 for simulations of the 'N2 optimized thruster' (S2 Figs. 4.13-4.15, Tables 3.3, 4.2)",
+   "used_for": "nothing: model-derived, and it predates the as-built ECHT (verify which geometry it simulated)"
+  },
+  {
+   "id": "S4",
+   "citation": "Stanford Plasma Physics Lab publication list",
+   "url": "https://sppl.stanford.edu/publications/",
+   "access": "OPEN",
+   "used_for": "locating the (dead) author-hosted JAP PDF link; no other ECHT publication listed"
+  },
+  {
+   "id": "S5",
+   "citation": "Citation search (Semantic Scholar graph API, OpenAlex, Crossref) for follow-up ECHT N2/O2/air work",
+   "access": "OPEN metadata",
+   "used_for": "No follow-up measurement paper on the ECHT (N2, O2 or air) found among the 35 citing works; secondary reviews (e.g. doi:10.1007/s44205-022-00024-9) not consulted (level-5, cookie redirect)"
+  }
+ ],
+ "relationship_S1_S2": {
+  "evidence_class": "inferred (verify)",
+  "statement": "S1 cites S2 and its abstract ranges overlap S2 Tables 6.2/6.3: power 540-770 W (Runs 1,2,4-7) vs 500-800 W; S2 'global efficiency' of stable runs 0.14-0.17 vs 14-18 %; one-side Isp 1009-1146 s vs 1000-1100 s; thrust 17.29 (Run 5 averaged) - 22.79 (Run 4 one-side) mN vs 17-22 mN. S1 therefore very probably reports the same 2019-20 SPPL campaign, possibly re-reduced. Which runs and which thrust reduction S1 uses cannot be checked without S1's full text."
+ },
+ "values": {
+  "geometry": {
+   "channel_length": {
+    "value_mm": 86,
+    "source": "S2 Sec. 4.1.1 p.63 ('new chamber measures 86mm in length')",
+    "class": "measured (design dimension)",
+    "uncertainty": "not stated"
+   },
+   "outer_diameter": {
+    "value_mm": 100,
+    "source": "S2 Sec. 4.1.1 p.63 ('100mm in outer diameter')",
+    "class": "measured (design dimension)",
+    "ambiguity": "Stated as the outer diameter of the boron-nitride CHAMBER. Reading A: channel outer wall diameter = 100 mm -> r_out 50 mm, r_in 40 mm (what cases/echt_n2.json uses). Reading B: 100 mm is the BN piece OD -> channel OD = 100 mm - 2 x (BN wall thickness), wall thickness unpublished. Not resolvable from open sources (Fig. 4.3 photo has no scale)."
+   },
+   "channel_height": {
+    "value_mm": 10,
+    "source": "S2 Sec. 4.1.1 p.63 ('10mm channel height')",
+    "class": "measured (design dimension)"
+   },
+   "radii": {
+    "r_in_mm": "40 (reading A) / unknown (reading B)",
+    "r_out_mm": "50 (reading A) / unknown (reading B)",
+    "class": "inferred",
+    "status": "verify"
+   },
+   "wall_material": {
+    "value": "boron nitride (grade not stated)",
+    "source": "S2 Sec. 4.1.1 p.63, Fig. 4.3",
+    "class": "measured (stated)",
+    "gap": "BN grade (HP / AX05 / BN-SiO2) unpublished; sheath/SEE model choice is an assumption"
+   },
+   "magnetic_pole_walls": {
+    "value": "inner and outer pure-iron walls 46 mm long surrounding the BN chamber; BN-coated front faces; pure-iron back plate",
+    "source": "S2 p.63",
+    "class": "measured (design)"
+   },
+   "coils": {
+    "value": "4 outer coils 50 mm long x 17 mm dia; 1 inner coil 45 mm long x 32 mm dia; 240 turns (40 x 6 layers) AWG 20 each; pure-iron cores; circuit R ~ 1.44 ohm (Fig. 4.9 fit); max 3 A",
+    "source": "S2 p.63, p.67-68",
+    "class": "measured (design)"
+   },
+   "anode_gas_distributor": {
+    "value": "a gas distributor is mentioned (sealed with ceramic paste); anode material, geometry and axial position not described",
+    "source": "S2 p.64",
+    "class": "missing"
+   },
+   "exit_plane_on_Bz_axis": {
+    "value_cm": 8.73,
+    "source": "S2 Figs. 4.7/4.8 'exit plane' marker, digitized (+-0.014 cm)",
+    "class": "digitized",
+    "note": "the B(z) axis origin is not defined in the text; exit at 87.3 mm vs 86 mm stated channel length (1.3 mm offset: anode/back-plate reference unknown; verify)"
+   }
+  },
+  "magnetic_field": {
+   "measured_Bz_at_2A": {
+    "points": [
+     {
+      "z_cm": 1.307,
+      "B_G": 14.09,
+      "px": 76
+     },
+     {
+      "z_cm": 1.999,
+      "B_G": 22.15,
+      "px": 75
+     },
+     {
+      "z_cm": 2.801,
+      "B_G": 34.76,
+      "px": 75
+     },
+     {
+      "z_cm": 3.395,
+      "B_G": 52.81,
+      "px": 77
+     },
+     {
+      "z_cm": 3.948,
+      "B_G": 75.05,
+      "px": 75
+     },
+     {
+      "z_cm": 4.695,
+      "B_G": 85.04,
+      "px": 75
+     },
+     {
+      "z_cm": 5.552,
+      "B_G": 85.91,
+      "px": 75
+     },
+     {
+      "z_cm": 6.257,
+      "B_G": 86.09,
+      "px": 75
+     },
+     {
+      "z_cm": 6.755,
+      "B_G": 85.91,
+      "px": 75
+     },
+     {
+      "z_cm": 7.653,
+      "B_G": 84.86,
+      "px": 75
+     },
+     {
+      "z_cm": 8.344,
+      "B_G": 83.81,
+      "px": 75
+     },
+     {
+      "z_cm": 9.049,
+      "B_G": 76.98,
+      "px": 75
+     },
+     {
+      "z_cm": 10.003,
+      "B_G": 63.14,
+      "px": 75
+     },
+     {
+      "z_cm": 10.308,
+      "B_G": 52.8,
+      "px": 75
+     }
+    ],
+    "source": "S2 Fig. 4.7 p.66 (Gauss-probe 'measured magnetic field @2A', red markers)",
+    "class": "digitized (of measured)",
+    "method": "raw embedded raster (pdfimages, 1120x840 px), axis from MATLAB tick pixels (x 0/6/12 cm at px 145.5/579.5/1013.5, y 0/120 G at px 747.5/62.5), marker = centroid of pure-red connected component; 6 cm interior tick residual 0 px; reading +-0.014 cm, +-0.2 G",
+    "plateau_mean_4.7_8.3cm_G": 85.3,
+    "peak_G": 86.09,
+    "gaps": "only one magnet current (2 A) measured; component measured (radial vs |B|) and radial position ('centerline of the chamber', presumably mid-channel) not stated; probe uncertainty not stated"
+   },
+   "FEMM_Bz": {
+    "per_current": {
+     "1.5A": {
+      "B_max_G": 79.8,
+      "z_at_max_cm": 6.35,
+      "plateau_mean_5.2_8.5cm_G": 78.3,
+      "B_at_z0.15cm_G": 1.8,
+      "B_at_last_z_G": 35.3,
+      "z_range_cm": [
+       0.15,
+       10.1
+      ],
+      "samples": [
+       {
+        "z_cm": 0.15,
+        "B_G": 1.8
+       },
+       {
+        "z_cm": 0.5,
+        "B_G": 1.5
+       },
+       {
+        "z_cm": 0.89,
+        "B_G": 4.3
+       },
+       {
+        "z_cm": 1.25,
+        "B_G": 7.7
+       },
+       {
+        "z_cm": 1.67,
+        "B_G": 11.8
+       },
+       {
+        "z_cm": 2.03,
+        "B_G": 16.5
+       },
+       {
+        "z_cm": 2.37,
+        "B_G": 21.3
+       },
+       {
+        "z_cm": 2.72,
+        "B_G": 27.0
+       },
+       {
+        "z_cm": 3.06,
+        "B_G": 34.0
+       },
+       {
+        "z_cm": 3.41,
+        "B_G": 42.5
+       },
+       {
+        "z_cm": 3.75,
+        "B_G": 53.0
+       },
+       {
+        "z_cm": 4.1,
+        "B_G": 63.4
+       },
+       {
+        "z_cm": 4.44,
+        "B_G": 71.2
+       },
+       {
+        "z_cm": 4.82,
+        "B_G": 75.7
+       },
+       {
+        "z_cm": 5.16,
+        "B_G": 77.7
+       },
+       {
+        "z_cm": 5.61,
+        "B_G": 77.9
+       },
+       {
+        "z_cm": 5.95,
+        "B_G": 78.7
+       },
+       {
+        "z_cm": 6.37,
+        "B_G": 79.5
+       },
+       {
+        "z_cm": 6.77,
+        "B_G": 78.5
+       },
+       {
+        "z_cm": 7.11,
+        "B_G": 78.4
+       },
+       {
+        "z_cm": 7.5,
+        "B_G": 78.5
+       },
+       {
+        "z_cm": 7.85,
+        "B_G": 78.1
+       },
+       {
+        "z_cm": 8.22,
+        "B_G": 77.9
+       },
+       {
+        "z_cm": 8.59,
+        "B_G": 77.3
+       },
+       {
+        "z_cm": 8.98,
+        "B_G": 71.9
+       },
+       {
+        "z_cm": 9.32,
+        "B_G": 59.1
+       },
+       {
+        "z_cm": 9.67,
+        "B_G": 47.4
+       },
+       {
+        "z_cm": 10.02,
+        "B_G": 37.3
+       }
+      ]
+     },
+     "2A": {
+      "B_max_G": 98.3,
+      "z_at_max_cm": 6.35,
+      "plateau_mean_5.2_8.5cm_G": 96.8,
+      "B_at_z0.15cm_G": 3.5,
+      "B_at_last_z_G": 44.5,
+      "z_range_cm": [
+       0.13,
+       10.11
+      ],
+      "samples": [
+       {
+        "z_cm": 0.13,
+        "B_G": 3.3
+       },
+       {
+        "z_cm": 0.48,
+        "B_G": 5.8
+       },
+       {
+        "z_cm": 0.84,
+        "B_G": 9.1
+       },
+       {
+        "z_cm": 1.18,
+        "B_G": 12.6
+       },
+       {
+        "z_cm": 1.53,
+        "B_G": 16.6
+       },
+       {
+        "z_cm": 1.87,
+        "B_G": 21.3
+       },
+       {
+        "z_cm": 2.22,
+        "B_G": 26.4
+       },
+       {
+        "z_cm": 2.56,
+        "B_G": 32.5
+       },
+       {
+        "z_cm": 2.91,
+        "B_G": 40.2
+       },
+       {
+        "z_cm": 3.26,
+        "B_G": 49.2
+       },
+       {
+        "z_cm": 3.6,
+        "B_G": 60.4
+       },
+       {
+        "z_cm": 3.95,
+        "B_G": 73.2
+       },
+       {
+        "z_cm": 4.29,
+        "B_G": 84.2
+       },
+       {
+        "z_cm": 4.64,
+        "B_G": 91.3
+       },
+       {
+        "z_cm": 4.98,
+        "B_G": 94.5
+       },
+       {
+        "z_cm": 5.33,
+        "B_G": 96.0
+       },
+       {
+        "z_cm": 5.68,
+        "B_G": 96.5
+       },
+       {
+        "z_cm": 6.02,
+        "B_G": 97.3
+       },
+       {
+        "z_cm": 6.37,
+        "B_G": 98.1
+       },
+       {
+        "z_cm": 6.73,
+        "B_G": 97.1
+       },
+       {
+        "z_cm": 7.07,
+        "B_G": 96.9
+       },
+       {
+        "z_cm": 7.42,
+        "B_G": 96.8
+       },
+       {
+        "z_cm": 7.76,
+        "B_G": 96.7
+       },
+       {
+        "z_cm": 8.11,
+        "B_G": 96.4
+       },
+       {
+        "z_cm": 8.45,
+        "B_G": 96.6
+       },
+       {
+        "z_cm": 8.81,
+        "B_G": 94.0
+       },
+       {
+        "z_cm": 9.16,
+        "B_G": 80.4
+       },
+       {
+        "z_cm": 9.5,
+        "B_G": 65.9
+       },
+       {
+        "z_cm": 9.85,
+        "B_G": 52.8
+       }
+      ]
+     },
+     "2.5A": {
+      "B_max_G": 116.2,
+      "z_at_max_cm": 6.35,
+      "plateau_mean_5.2_8.5cm_G": 114.5,
+      "B_at_z0.15cm_G": 8.6,
+      "B_at_last_z_G": 53.3,
+      "z_range_cm": [
+       0.13,
+       10.11
+      ],
+      "samples": [
+       {
+        "z_cm": 0.13,
+        "B_G": 8.4
+       },
+       {
+        "z_cm": 0.48,
+        "B_G": 11.7
+       },
+       {
+        "z_cm": 0.82,
+        "B_G": 15.1
+       },
+       {
+        "z_cm": 1.17,
+        "B_G": 19.2
+       },
+       {
+        "z_cm": 1.51,
+        "B_G": 23.9
+       },
+       {
+        "z_cm": 1.86,
+        "B_G": 28.8
+       },
+       {
+        "z_cm": 2.21,
+        "B_G": 34.6
+       },
+       {
+        "z_cm": 2.55,
+        "B_G": 41.0
+       },
+       {
+        "z_cm": 2.9,
+        "B_G": 49.4
+       },
+       {
+        "z_cm": 3.24,
+        "B_G": 59.7
+       },
+       {
+        "z_cm": 3.59,
+        "B_G": 71.8
+       },
+       {
+        "z_cm": 3.93,
+        "B_G": 86.5
+       },
+       {
+        "z_cm": 4.28,
+        "B_G": 99.4
+       },
+       {
+        "z_cm": 4.62,
+        "B_G": 107.9
+       },
+       {
+        "z_cm": 4.97,
+        "B_G": 111.6
+       },
+       {
+        "z_cm": 5.32,
+        "B_G": 113.4
+       },
+       {
+        "z_cm": 5.66,
+        "B_G": 113.9
+       },
+       {
+        "z_cm": 6.03,
+        "B_G": 115.4
+       },
+       {
+        "z_cm": 6.38,
+        "B_G": 116.1
+       },
+       {
+        "z_cm": 6.73,
+        "B_G": 114.7
+       },
+       {
+        "z_cm": 7.07,
+        "B_G": 114.6
+       },
+       {
+        "z_cm": 7.42,
+        "B_G": 114.6
+       },
+       {
+        "z_cm": 7.76,
+        "B_G": 114.3
+       },
+       {
+        "z_cm": 8.12,
+        "B_G": 113.8
+       },
+       {
+        "z_cm": 8.47,
+        "B_G": 114.0
+       },
+       {
+        "z_cm": 8.84,
+        "B_G": 110.6
+       },
+       {
+        "z_cm": 9.19,
+        "B_G": 93.8
+       },
+       {
+        "z_cm": 9.53,
+        "B_G": 77.2
+       },
+       {
+        "z_cm": 9.88,
+        "B_G": 61.9
+       }
+      ]
+     },
+     "3A": {
+      "B_max_G": 133.5,
+      "z_at_max_cm": 6.34,
+      "plateau_mean_5.2_8.5cm_G": 131.5,
+      "B_at_z0.15cm_G": 13.8,
+      "B_at_last_z_G": 61.9,
+      "z_range_cm": [
+       0.13,
+       10.11
+      ],
+      "samples": [
+       {
+        "z_cm": 0.13,
+        "B_G": 13.5
+       },
+       {
+        "z_cm": 0.48,
+        "B_G": 17.5
+       },
+       {
+        "z_cm": 0.82,
+        "B_G": 21.6
+       },
+       {
+        "z_cm": 1.17,
+        "B_G": 26.2
+       },
+       {
+        "z_cm": 1.51,
+        "B_G": 31.1
+       },
+       {
+        "z_cm": 1.86,
+        "B_G": 36.7
+       },
+       {
+        "z_cm": 2.21,
+        "B_G": 42.6
+       },
+       {
+        "z_cm": 2.55,
+        "B_G": 50.0
+       },
+       {
+        "z_cm": 2.9,
+        "B_G": 58.9
+       },
+       {
+        "z_cm": 3.24,
+        "B_G": 70.1
+       },
+       {
+        "z_cm": 3.59,
+        "B_G": 83.6
+       },
+       {
+        "z_cm": 3.93,
+        "B_G": 100.0
+       },
+       {
+        "z_cm": 4.28,
+        "B_G": 114.4
+       },
+       {
+        "z_cm": 4.62,
+        "B_G": 123.9
+       },
+       {
+        "z_cm": 4.97,
+        "B_G": 128.1
+       },
+       {
+        "z_cm": 5.32,
+        "B_G": 130.2
+       },
+       {
+        "z_cm": 5.68,
+        "B_G": 130.8
+       },
+       {
+        "z_cm": 6.02,
+        "B_G": 132.2
+       },
+       {
+        "z_cm": 6.37,
+        "B_G": 133.5
+       },
+       {
+        "z_cm": 6.71,
+        "B_G": 131.9
+       },
+       {
+        "z_cm": 7.06,
+        "B_G": 131.6
+       },
+       {
+        "z_cm": 7.4,
+        "B_G": 131.6
+       },
+       {
+        "z_cm": 7.75,
+        "B_G": 131.4
+       },
+       {
+        "z_cm": 8.09,
+        "B_G": 130.8
+       },
+       {
+        "z_cm": 8.45,
+        "B_G": 131.0
+       },
+       {
+        "z_cm": 8.81,
+        "B_G": 127.9
+       },
+       {
+        "z_cm": 9.32,
+        "B_G": 100.8
+       },
+       {
+        "z_cm": 9.67,
+        "B_G": 81.9
+       },
+       {
+        "z_cm": 10.02,
+        "B_G": 65.5
+       }
+      ]
+     }
+    },
+    "source": "S2 Fig. 4.8 p.67 (FEMM, 1.5/2/2.5/3 A) and Fig. 4.7 (FEMM @2 A, identical to Fig. 4.8 2 A curve: max 98.3 G both)",
+    "class": "model-derived + digitized",
+    "note": "FEMM peak vs current is affine, not proportional (~35.8 G/A, intercept ~26 G between 1.5 and 3 A); below 1.5 A no curve (Table 6.1 has a 0.8 A point)"
+   },
+   "measured_over_FEMM_plateau_ratio_at_2A": {
+    "value": 0.881,
+    "class": "reconstructed (digitized measured / digitized FEMM)",
+    "note": "S2 text: 'measured peak values seem to be slightly lower than the simulated ones' (p.65)"
+   },
+   "B_peak_quoted": {
+    "value_G": 130,
+    "source": "S2 p.104 and p.114 ('130G ... the electromagnets generate', 'maximum of 130G peak')",
+    "class": "model-derived (matches FEMM @3 A, 133.5 G digitized)",
+    "note": "if the 2 A measured/FEMM ratio held at 3 A the measured peak would be ~118 G (assumption, not a measurement)"
+   },
+   "shape": "flat-topped plateau from ~4.7 to ~8.6 cm (the 46 mm iron walls), rising from ~2-14 G near z = 0; NOT exit-peaked. cases/echt_n2.json's Gaussian-peaked-at-exit placeholder contradicts the published shape.",
+   "per_run_B": {
+    "class": "missing (must be reconstructed)",
+    "note": "runs are specified by magnet current (0.8-3.0 A); B(z) per run requires interpolating FEMM in current and scaling by the single 2 A measurement"
+   }
+  },
+  "cathode": {
+   "type": {
+    "value": "IonTech HCN-252 BaO-impregnated hollow cathode",
+    "source": "S2 Sec. 5.2.1 p.83",
+    "class": "measured (stated)"
+   },
+   "gas": {
+    "value": "argon (N2 to the anode only; argon to the cathode)",
+    "source": "S2 p.66-67, p.101 ('pure nitrogen inflow to the anode and argon to the cathode')",
+    "class": "measured (stated)"
+   },
+   "flow_mgps": {
+    "value": "0.15-0.74 per point (Table 6.1)",
+    "source": "S2 Table 6.1 p.98",
+    "class": "measured (tabulated; mg/s of argon)",
+    "note": "7-36 % of the anode mass flow; largest (0.65-0.74) at the lowest-current, highest-B points. Cathode flow raised ad hoc to stop keeper-voltage runaway (p.98)."
+   },
+   "heater_keeper": {
+    "value": "heater 8 A, 8.5-9 V (not self-heating); keeper limited to 0.3 A at ignition, keeper 15-20 V, runaway to 30-40 V before quench; per-point keeper values not tabulated",
+    "source": "S2 p.65-66, p.96, p.98",
+    "class": "measured (stated ranges)"
+   },
+   "position_and_coupling": {
+    "class": "missing",
+    "note": "cathode location relative to the thruster not given (photo Fig. 5.11 only); cathode-to-ground voltage not reported; thruster body floating on an insulator, potentials referenced to chamber ground (p.83, p.85)"
+   },
+   "condition": "emitter believed degraded (p.98, p.108): instability, mode changes, quenching"
+  },
+  "operating_points_table_6_1": {
+   "source": "S2 Table 6.1 p.98",
+   "class": "measured (tabulated)",
+   "columns": [
+    "Vd_V",
+    "Id_A",
+    "Imag_A",
+    "mdot_anode_mgps",
+    "mdot_cathode_mgps(Ar)",
+    "Pa_over_Ptot",
+    "p_chamber_Torr"
+   ],
+   "rows": [
+    [
+     180,
+     3.2,
+     0.8,
+     2.06,
+     0.29,
+     0.88,
+     0.0002
+    ],
+    [
+     180,
+     2.6,
+     1.6,
+     2.06,
+     0.29,
+     0.85,
+     0.00022
+    ],
+    [
+     180,
+     2.9,
+     1.7,
+     2.06,
+     0.29,
+     0.88,
+     0.0002
+    ],
+    [
+     180,
+     3.2,
+     1.7,
+     2.06,
+     0.29,
+     0.88,
+     0.00021
+    ],
+    [
+     180,
+     3.0,
+     2.0,
+     2.06,
+     0.29,
+     0.88,
+     0.0002
+    ],
+    [
+     180,
+     1.5,
+     2.5,
+     2.06,
+     0.74,
+     0.74,
+     8.1e-05
+    ],
+    [
+     200,
+     3.9,
+     1.6,
+     2.06,
+     0.33,
+     0.91,
+     0.00012
+    ],
+    [
+     200,
+     3.5,
+     1.6,
+     2.06,
+     0.33,
+     0.9,
+     0.00011
+    ],
+    [
+     200,
+     2.7,
+     2.0,
+     2.06,
+     0.29,
+     0.86,
+     0.0001
+    ],
+    [
+     200,
+     3.3,
+     2.3,
+     2.06,
+     0.15,
+     0.88,
+     0.0001
+    ],
+    [
+     200,
+     2.7,
+     2.6,
+     2.06,
+     0.29,
+     0.85,
+     0.00013
+    ],
+    [
+     200,
+     2.1,
+     3.0,
+     2.06,
+     0.65,
+     0.81,
+     8.5e-05
+    ],
+    [
+     220,
+     3.5,
+     2.2,
+     2.06,
+     0.34,
+     0.89,
+     0.00013
+    ]
+   ],
+   "notes": [
+    "'Anode efficiency' column is P_anode/P_total (power fraction, Eq. 5.3), NOT a thrust efficiency",
+    "I_d to 2 significant figures (rounding +-0.05 A = 1.3-3.3 %); DC multimeter reading (p.83); no uncertainty or oscillation amplitude stated. Figs. 6.2/6.3 plot some values at finer resolution (digitized visually: 1.45, 2.07, 2.65, 2.71 A)",
+    "Vd: nominal 180/200/220 V; Fig. 6.5 legend labels the 220 V run '218V' (verify)",
+    "pressure: hot-cathode ion gauge (p.80-81); gauge location and gas correction not stated; Ar cathode puffs and N2 mixed background; text also reports up to 2.5e-4 Torr (p.114)"
+   ]
+  },
+  "performance_table_6_2": {
+   "source": "S2 Table 6.2 p.101 (one-side calibration reduction) and Table 6.3 p.108 (averaged reduction, Runs 2,4,5,6 only)",
+   "class": "measured (thrust stand) + reduced by the author",
+   "rows": [
+    {
+     "run": "Run 1",
+     "Vd": 180,
+     "Id": 3.2,
+     "Imag": 1.7,
+     "P_anode_W": 576.0,
+     "T_mN": 22.62,
+     "dT_mN": 1.24,
+     "T_avg_mN": null,
+     "dT_avg_mN": null,
+     "one_side_minus_avg_rel": null,
+     "p_Torr": 0.00021
+    },
+    {
+     "run": "Run 2",
+     "Vd": 180,
+     "Id": 3.0,
+     "Imag": 2.0,
+     "P_anode_W": 540.0,
+     "T_mN": 22.76,
+     "dT_mN": 0.66,
+     "T_avg_mN": 21.31,
+     "dT_avg_mN": 2.88,
+     "one_side_minus_avg_rel": 0.064,
+     "p_Torr": 0.0002
+    },
+    {
+     "run": "Run 3",
+     "Vd": 180,
+     "Id": 1.5,
+     "Imag": 2.5,
+     "P_anode_W": 270.0,
+     "T_mN": 23.41,
+     "dT_mN": 0.63,
+     "T_avg_mN": null,
+     "dT_avg_mN": null,
+     "one_side_minus_avg_rel": null,
+     "p_Torr": 8.1e-05
+    },
+    {
+     "run": "Run 4",
+     "Vd": 200,
+     "Id": 3.5,
+     "Imag": 1.6,
+     "P_anode_W": 700.0,
+     "T_mN": 22.79,
+     "dT_mN": 1.19,
+     "T_avg_mN": 20.05,
+     "dT_avg_mN": 2.68,
+     "one_side_minus_avg_rel": 0.12,
+     "p_Torr": 0.00011
+    },
+    {
+     "run": "Run 5",
+     "Vd": 200,
+     "Id": 2.7,
+     "Imag": 2.0,
+     "P_anode_W": 540.0,
+     "T_mN": 20.85,
+     "dT_mN": 1.2,
+     "T_avg_mN": 17.29,
+     "dT_avg_mN": 4.56,
+     "one_side_minus_avg_rel": 0.171,
+     "p_Torr": 0.0001
+    },
+    {
+     "run": "Run 6",
+     "Vd": 200,
+     "Id": 2.7,
+     "Imag": 2.6,
+     "P_anode_W": 540.0,
+     "T_mN": 22.32,
+     "dT_mN": 0.02,
+     "T_avg_mN": 18.22,
+     "dT_avg_mN": 3.82,
+     "one_side_minus_avg_rel": 0.184,
+     "p_Torr": 0.00013
+    },
+    {
+     "run": "Run 7",
+     "Vd": 220,
+     "Id": 3.5,
+     "Imag": 2.2,
+     "P_anode_W": 770.0,
+     "T_mN": 20.62,
+     "dT_mN": 2.66,
+     "T_avg_mN": null,
+     "dT_avg_mN": null,
+     "one_side_minus_avg_rel": null,
+     "p_Torr": 0.00013
+    }
+   ],
+   "unstable_runs": [
+    "Run 1",
+    "Run 3",
+    "Run 7"
+   ],
+   "unstable_source": "S2 Table 6.2 asterisk: 'strong instability during calibration'",
+   "uncertainty_basis": "+- = maximum distance of the 3 calibration points from the best-fit line only (p.94). Excludes thermal drift, cold-gas thrust (<3 % for Xe per [54]; 'may introduce greater errors' for N2, p.111), misalignment, flow leakage, mode changes. Run 6 +-0.02 mN is a fit artefact, not a credible total uncertainty.",
+   "reduction_ambiguity": "one-side (left half of calibration pyramid, author calls conservative) vs averaged (both halves): averaged is 6-18 % lower (Runs 2/4/5/6: 1.45/2.74/3.56/4.10 mN). Analogous to the P5 divergence reading A/B; must be carried as a layer-1 reading if ever scored.",
+   "calibration_masses_mN": [
+    13.35,
+    26.77,
+    40.19
+   ],
+   "stand": "inverted pendulum (AFRL design), LVDT Macro Sensors PR 812, magnetic damper, Arduino DUE via voltage divider (p.85-88)"
+  },
+  "derived_checks": {
+   "source": "scripts/check_echt_tables.py (arithmetic only)",
+   "Isp_uses_mdot_mgps": 2.083,
+   "finding": "Table 6.2 Isp = T/(g0 x 2.083 mg/s), i.e. 100 sccm, while the text states 99 sccm = 2.06 mg/s (p.97; later 'limited to 100 sccm ... 2.06 mg/s', p.104). Anode flow ambiguity 1.0 %; possible feed-line leakage acknowledged (p.111).",
+   "global_efficiency": "reported eta_G reproduces T^2/(2 (mdot_a + mdot_c) P_tot) with P_tot = P_a/(P_a/P_tot) to within 0.01-0.02 (Run 3: 0.266 vs 0.28), i.e. it includes cathode (Ar) flow and heater/keeper/magnet power (Eq. 5.2, 5.7). JAP 'total thrust efficiency 14-18 %' most likely the same quantity (verify).",
+   "anode_efficiency_reconstructed": {
+    "Run 1": 0.213,
+    "Run 2": 0.23,
+    "Run 3": 0.487,
+    "Run 4": 0.178,
+    "Run 5": 0.193,
+    "Run 6": 0.221,
+    "Run 7": 0.133
+   },
+   "anode_efficiency_class": "reconstructed (T^2 / (2 mdot_a Vd Id), mdot_a 2.083 mg/s); Run 3 0.49 is implausible next to 0.13-0.23 and is a flagged unstable run",
+   "ingestion_order_of_magnitude": {
+    "mgps_at_p_Torr": {
+     "8.1e-05": 0.041,
+     "0.0001": 0.05,
+     "0.00022": 0.111,
+     "0.00025": 0.126
+    },
+    "fraction_of_anode_flow": "2.0-6.0 %",
+    "class": "inferred (assumptions: free-molecular N2 at 300 K, gauge reading = local pressure, ingestion area = exit annulus of reading A; no paper correction exists)"
+   }
+  },
+  "facility": {
+   "value": "SPPL Large Vacuum Facility, 1.5 m dia x 3.5 m stainless chamber; 2 roughing + 1 turbo + two-stage cryo (cryopanel ~20 K, rose to 30 K with N2); base 1e-6 Torr; operating 8.1e-5 - 2.5e-4 Torr on 100 sccm N2 ('almost an order of magnitude higher' than Xe operation)",
+   "source": "S2 Sec. 5.1 p.79-82, p.110, p.114",
+   "class": "measured (stated)"
+  },
+  "power_supplies": {
+   "value": "anode Power Ten P62B-3006.6 (300 V limit -> no data above 220 V); keeper Sorensen DCS600-1.7E; heater and magnets Sorensen DLM40-15; Id/Vd by multimeters",
+   "source": "S2 Sec. 5.1.3 p.82-83, p.85",
+   "class": "measured (stated)"
+  },
+  "stability_oscillations": {
+   "value": "qualitative only: mode changes during calibration (Fig. 6.12 LVDT trace), quenching, keeper runaway; discharge unstable/quenches below ~80 sccm (1.6 mg/s). No I_d time traces, spectra, or oscillation amplitudes.",
+   "source": "S2 p.98, p.104, p.107-110",
+   "class": "measured (qualitative)"
+  },
+  "plume_diagnostics": {
+   "value": "none published quantitatively (no Faraday, RPA, ExB, LIF). OES T_e 'approximately 5-8 eV at 1 cm after the exit plane', 'highly approximate', complete results 'not yet available'.",
+   "source": "S2 p.106-107",
+   "class": "measured (approximate, unpublished data) - not usable as a target"
+  },
+  "not_admissible": {
+   "S2 Figs. 4.10-4.15, Tables 3.3/4.1/4.2": "model-derived (0-D eta_u model with assumed gamma 0.75, Vb = 0.8 Vd; Cha 2015 simulations)",
+   "Isp, eta_G": "restatements of T, mdot and power; no independent information"
+  }
+ },
+ "gap_register": [
+  {
+   "need": "channel radii r_in, r_out",
+   "status": "PARTIAL",
+   "published": "86 mm length, 100 mm chamber OD, 10 mm channel height (S2 p.63)",
+   "missing": "whether 100 mm is the channel OD or the BN piece OD (wall thickness)",
+   "forced_assumption": "reading A (r 40-50 mm) or B (unknown)"
+  },
+  {
+   "need": "channel length / anode position / B(z) axis origin",
+   "status": "PARTIAL",
+   "published": "L = 86 mm; exit plane at 87.3 mm on the B(z) axis (digitized)",
+   "missing": "anode axial position, gas-distributor geometry, origin of z",
+   "forced_assumption": "anode at z = 0 of Fig. 4.7, exit at 86 or 87.3 mm"
+  },
+  {
+   "need": "B(z) shape",
+   "status": "PARTIAL (better than P5)",
+   "published": "measured 14-point centreline profile at 2 A; FEMM at 1.5/2/2.5/3 A (Figs. 4.7, 4.8)",
+   "missing": "measured profiles at the run currents; radial position and component; profile beyond 10.3 cm",
+   "forced_assumption": "FEMM shape valid at all currents; plume extrapolation beyond 10.1 cm"
+  },
+  {
+   "need": "B magnitude per operating point",
+   "status": "MISSING (reconstructable)",
+   "published": "magnet currents per run; measured/FEMM = 0.881 at 2 A only; '130 G' is FEMM @3 A",
+   "missing": "measured B at 0.8-3 A",
+   "forced_assumption": "linear interpolation of FEMM in coil current x constant measured/FEMM ratio (or FEMM as-is); 0.8 A point needs extrapolation. Coil heating raises R (p.68): current-controlled supply assumed"
+  },
+  {
+   "need": "anode mass flow",
+   "status": "PUBLISHED (with ambiguity)",
+   "published": "2.06 mg/s N2 (99 sccm, text) vs 2.083 mg/s (100 sccm, used for Isp)",
+   "missing": "controller uncertainty, leakage",
+   "forced_assumption": "choose 2.06 or 2.083 (1 %)"
+  },
+  {
+   "need": "discharge voltage",
+   "status": "PUBLISHED",
+   "published": "180/200/220 V nominal (Table 6.1/6.2)",
+   "missing": "cathode-to-ground voltage (for acceleration potential); '218V' label for Run 7",
+   "forced_assumption": "cathode coupling voltage (1-D boundary)"
+  },
+  {
+   "need": "discharge current",
+   "status": "PUBLISHED (13 points, 2 s.f.)",
+   "published": "Table 6.1",
+   "missing": "uncertainty, oscillation amplitude, whether I_d is simultaneous with the thrust calibration",
+   "forced_assumption": "+-0.05 A rounding as the only measurement uncertainty"
+  },
+  {
+   "need": "thrust with uncertainty",
+   "status": "PARTIAL",
+   "published": "7 runs one-side (Table 6.2), 4 runs averaged (Table 6.3), fit-only +-",
+   "missing": "total uncertainty; cold-flow tare for N2; which reduction is right; 3 of 7 runs flagged unstable",
+   "forced_assumption": "reduction reading (one-side / averaged) and a total uncertainty model"
+  },
+  {
+   "need": "plume divergence / beam current",
+   "status": "MISSING",
+   "published": "none",
+   "missing": "any plume measurement",
+   "forced_assumption": "divergence closure from the model itself (thrust comparison then not independent of the divergence model)"
+  },
+  {
+   "need": "facility pressure and ingestion",
+   "status": "PARTIAL",
+   "published": "ion-gauge 8.1e-5 - 2.2e-4 Torr per point",
+   "missing": "gauge location, gas correction, background composition (N2 + Ar), any ingestion correction",
+   "forced_assumption": "background model (inferred free-molecular ingestion ~2-6 % of anode flow) and facility vs vacuum comparison mode"
+  },
+  {
+   "need": "cathode",
+   "status": "PARTIAL",
+   "published": "HCN-252 BaO, argon, 0.15-0.74 mg/s per point",
+   "missing": "position, coupling voltage, keeper per point",
+   "forced_assumption": "neglect argon cathode flow (7-36 % of anode mass) or add argon to the domain (chemistry not in the N2 set)"
+  },
+  {
+   "need": "wall material / sheath",
+   "status": "PARTIAL",
+   "published": "boron nitride",
+   "missing": "grade, SEE yield",
+   "forced_assumption": "WallSheath material (BN vs BNSiO2)"
+  },
+  {
+   "need": "stability / sustainment",
+   "status": "PARTIAL (qualitative)",
+   "published": "stable discharge on 100 % N2 at 180-220 V, 2.06 mg/s, 0.8-3.0 A magnet; unstable below ~1.6 mg/s; Runs 1,3,7 strongly unstable",
+   "missing": "oscillation data",
+   "forced_assumption": "none for a sustainment check"
+  },
+  {
+   "need": "species / E x B / ion energy",
+   "status": "MISSING",
+   "published": "none",
+   "missing": "all",
+   "forced_assumption": "n/a (no species target possible)"
+  }
+ ],
+ "findings": [
+  "E1 The only openly accessible primary source with per-point data is the 2020 MSc thesis (S2). The JAP paper (S1) is paywalled; the author-hosted copy is dead (404) and not archived. S1 very probably reports the same campaign.",
+  "E2 Per-point data exist: 13 (Vd, Id, Imag, cathode flow, pressure) points and 7 thrust points at 180-220 V, 2.06 mg/s N2. There are NO data at 225-275 V: cases/echt_n2.json's 200/225/250/275 V placeholders and the historical '250 V -> 24 mN, 690 W' calibration point (docs/HISTORY.md) are not supported by any openly accessible source (verify against S1 full text if it ever becomes accessible).",
+  "E3 The published B(z) is a flat plateau over the 46 mm iron walls (~4.7-8.6 cm), not exit-peaked; the Gaussian placeholder in cases/echt_n2.json is contradicted. Measured B exists at one coil current (2 A: plateau ~85.3 G, 12 % below FEMM). The quoted 130 G is FEMM at 3 A.",
+  "E4 Geometry is ambiguous at the radius level (100 mm = chamber OD); anode geometry/position unpublished.",
+  "E5 Thrust uncertainty is fit-only; the two published reductions differ by 6-18 %; 3 of 7 thrust runs are flagged strongly unstable; the thruster changed modes during calibration.",
+  "E6 Facility pressure is 0.8-2.5e-4 Torr, 5-10x higher than P5-N2 (1.1-2.1e-5 Torr) and I_d depends strongly on it (S2 Fig. 6.2: lowest I_d at lowest pressure). No facility correction is published.",
+  "E7 The cathode runs on argon at 7-36 % of the anode mass flow, a degraded BaO emitter; cathode flow co-varies with the best-performing points (Run 3: 0.74 mg/s Ar, lowest pressure, highest B).",
+  "E8 Table 6.2 Isp uses 2.083 mg/s while the text states 2.06 mg/s; 'global efficiency' includes cathode flow and heater/keeper/magnet power; the Table 6.1 'anode efficiency' is a power fraction. Fig. 6.2 colours the 180 V/3.0 A point as 200 V; figures show magnet currents 1.98/2.22/2.55 A vs table 2.0/2.2/2.6 A (minor)."
+ ],
+ "conclusion": {
+  "verdict": "NOT USABLE AS AN INDEPENDENT, SCOREABLE VALIDATION DATASET WITHOUT FORCED ASSUMPTIONS. Usable at most as a supporting, pre-registered qualitative/semi-quantitative check (sustainment at 180-220 V, 2.06 mg/s; I_d magnitude and its decrease with coil current; thrust ~20-23 mN) with every forced assumption carried as a declared layer-1 nuisance, never as a promotion-deciding criterion on its own.",
+  "independence": "Independent of the P5-Xe selection (different thruster, lab, facility), so in principle a valid discriminator; the obstacle is observability, not independence.",
+  "forced_assumptions": [
+   "A1 channel radii: 100 mm = channel OD (r 40/50 mm) vs BN piece OD (unknown wall thickness)",
+   "A2 anode axial position and the B(z) axis origin (exit at 86 vs 87.3 mm)",
+   "A3 B magnitude per run: FEMM interpolated in coil current, scaled (or not) by the single 2 A measured/FEMM ratio; 0.8 A extrapolated; radial position/component of the measured profile",
+   "A4 B(z) beyond 10.1-10.3 cm (plume region of the 1-D domain)",
+   "A5 cathode: neglect the argon cathode flow (7-36 % of anode mass) and choose a cathode coupling voltage/position",
+   "A6 facility: background pressure/ingestion model (0.8-2.5e-4 Torr, no published correction; comparison mode facility vs vacuum)",
+   "A7 thrust reduction reading (one-side vs averaged, 6-18 %) and a total thrust uncertainty (published +- are fit-only)",
+   "A8 plume divergence (no data) for any thrust comparison",
+   "A9 anode flow 2.06 vs 2.083 mg/s (1 %) and I_d uncertainty (rounding only)",
+   "A10 wall material/SEE (BN grade unknown)",
+   "A11 treatment of the strongly unstable runs (1, 3, 7) and of mode changes during calibration (I_d possibly not simultaneous with thrust)"
+  ],
+  "what_would_close_the_gaps": "S1 full text (it may state radii, anode position, cathode position and a thrust uncertainty) - obtain legitimately only (library access or an openly licensed copy); no author contact under the standing rules."
+ },
+ "outputs": {
+  "echt_bfield_digitized_v1.json": "scripts/digitize_echt_bfield.py",
+  "echt_table_checks_v1.json": "scripts/check_echt_tables.py",
+  "this file": "scripts/build_echt_audit.py"
+ }
+}

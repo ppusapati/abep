@@ -1,0 +1,219 @@
+{
+ "sccm_to_mgps_N2": 0.02083,
+ "mdot_99sccm_mgps": 2.0622,
+ "mdot_100sccm_mgps": 2.083,
+ "runs": [
+  {
+   "run": "Run 1",
+   "Vd": 180,
+   "Id": 3.2,
+   "Imag": 1.7,
+   "P_anode_W": 576.0,
+   "T_mN": 22.62,
+   "dT_mN": 1.24,
+   "mdot_implied_by_Isp_mgps": 2.083,
+   "dT_over_dIsp_implied_mdot_mgps": 2.082,
+   "table6_1_match": [
+    [
+     180,
+     3.2,
+     1.7,
+     2.06,
+     0.29,
+     0.88,
+     0.00021
+    ]
+   ],
+   "P_tot_from_PaOverPtot_W": 654.5,
+   "etaG_anode_flow_only": 0.188,
+   "etaG_anode_plus_cathode_flow": 0.165,
+   "etaG_reported": 0.16,
+   "eta_anode_T2_over_2mPa": 0.213,
+   "p_Torr": 0.00021
+  },
+  {
+   "run": "Run 2",
+   "Vd": 180,
+   "Id": 3.0,
+   "Imag": 2.0,
+   "P_anode_W": 540.0,
+   "T_mN": 22.76,
+   "dT_mN": 0.66,
+   "mdot_implied_by_Isp_mgps": 2.083,
+   "dT_over_dIsp_implied_mdot_mgps": 2.083,
+   "table6_1_match": [
+    [
+     180,
+     3.0,
+     2.0,
+     2.06,
+     0.29,
+     0.88,
+     0.0002
+    ]
+   ],
+   "P_tot_from_PaOverPtot_W": 613.6,
+   "etaG_anode_flow_only": 0.203,
+   "etaG_anode_plus_cathode_flow": 0.178,
+   "etaG_reported": 0.17,
+   "eta_anode_T2_over_2mPa": 0.23,
+   "p_Torr": 0.0002,
+   "T_avg_mN": 21.31,
+   "dT_avg_mN": 2.88,
+   "one_side_minus_avg_mN": 1.45,
+   "one_side_minus_avg_rel": 0.064
+  },
+  {
+   "run": "Run 3",
+   "Vd": 180,
+   "Id": 1.5,
+   "Imag": 2.5,
+   "P_anode_W": 270.0,
+   "T_mN": 23.41,
+   "dT_mN": 0.63,
+   "mdot_implied_by_Isp_mgps": 2.083,
+   "dT_over_dIsp_implied_mdot_mgps": 2.083,
+   "table6_1_match": [
+    [
+     180,
+     1.5,
+     2.5,
+     2.06,
+     0.74,
+     0.74,
+     8.1e-05
+    ]
+   ],
+   "P_tot_from_PaOverPtot_W": 364.9,
+   "etaG_anode_flow_only": 0.361,
+   "etaG_anode_plus_cathode_flow": 0.266,
+   "etaG_reported": 0.28,
+   "eta_anode_T2_over_2mPa": 0.487,
+   "p_Torr": 8.1e-05
+  },
+  {
+   "run": "Run 4",
+   "Vd": 200,
+   "Id": 3.5,
+   "Imag": 1.6,
+   "P_anode_W": 700.0,
+   "T_mN": 22.79,
+   "dT_mN": 1.19,
+   "mdot_implied_by_Isp_mgps": 2.083,
+   "dT_over_dIsp_implied_mdot_mgps": 2.083,
+   "table6_1_match": [
+    [
+     200,
+     3.5,
+     1.6,
+     2.06,
+     0.33,
+     0.9,
+     0.00011
+    ]
+   ],
+   "P_tot_from_PaOverPtot_W": 777.8,
+   "etaG_anode_flow_only": 0.16,
+   "etaG_anode_plus_cathode_flow": 0.138,
+   "etaG_reported": 0.14,
+   "eta_anode_T2_over_2mPa": 0.178,
+   "p_Torr": 0.00011,
+   "T_avg_mN": 20.05,
+   "dT_avg_mN": 2.68,
+   "one_side_minus_avg_mN": 2.74,
+   "one_side_minus_avg_rel": 0.12
+  },
+  {
+   "run": "Run 5",
+   "Vd": 200,
+   "Id": 2.7,
+   "Imag": 2.0,
+   "P_anode_W": 540.0,
+   "T_mN": 20.85,
+   "dT_mN": 1.2,
+   "mdot_implied_by_Isp_mgps": 2.083,
+   "dT_over_dIsp_implied_mdot_mgps": 2.083,
+   "table6_1_match": [
+    [
+     200,
+     2.7,
+     2.0,
+     2.06,
+     0.29,
+     0.86,
+     0.0001
+    ]
+   ],
+   "P_tot_from_PaOverPtot_W": 627.9,
+   "etaG_anode_flow_only": 0.166,
+   "etaG_anode_plus_cathode_flow": 0.146,
+   "etaG_reported": 0.15,
+   "eta_anode_T2_over_2mPa": 0.193,
+   "p_Torr": 0.0001,
+   "T_avg_mN": 17.29,
+   "dT_avg_mN": 4.56,
+   "one_side_minus_avg_mN": 3.56,
+   "one_side_minus_avg_rel": 0.171
+  },
+  {
+   "run": "Run 6",
+   "Vd": 200,
+   "Id": 2.7,
+   "Imag": 2.6,
+   "P_anode_W": 540.0,
+   "T_mN": 22.32,
+   "dT_mN": 0.02,
+   "mdot_implied_by_Isp_mgps": 2.083,
+   "dT_over_dIsp_implied_mdot_mgps": 2.081,
+   "table6_1_match": [
+    [
+     200,
+     2.7,
+     2.6,
+     2.06,
+     0.29,
+     0.85,
+     0.00013
+    ]
+   ],
+   "P_tot_from_PaOverPtot_W": 635.3,
+   "etaG_anode_flow_only": 0.188,
+   "etaG_anode_plus_cathode_flow": 0.165,
+   "etaG_reported": 0.17,
+   "eta_anode_T2_over_2mPa": 0.221,
+   "p_Torr": 0.00013,
+   "T_avg_mN": 18.22,
+   "dT_avg_mN": 3.82,
+   "one_side_minus_avg_mN": 4.1,
+   "one_side_minus_avg_rel": 0.184
+  },
+  {
+   "run": "Run 7",
+   "Vd": 220,
+   "Id": 3.5,
+   "Imag": 2.2,
+   "P_anode_W": 770.0,
+   "T_mN": 20.62,
+   "dT_mN": 2.66,
+   "mdot_implied_by_Isp_mgps": 2.083,
+   "dT_over_dIsp_implied_mdot_mgps": 2.083,
+   "table6_1_match": [
+    [
+     220,
+     3.5,
+     2.2,
+     2.06,
+     0.34,
+     0.89,
+     0.00013
+    ]
+   ],
+   "P_tot_from_PaOverPtot_W": 865.2,
+   "etaG_anode_flow_only": 0.118,
+   "etaG_anode_plus_cathode_flow": 0.101,
+   "etaG_reported": 0.1,
+   "eta_anode_T2_over_2mPa": 0.133,
+   "p_Torr": 0.00013
+  }
+ ]
+}

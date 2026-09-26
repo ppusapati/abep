@@ -2104,3 +2104,21 @@ scorer): records complete, 100 samples in the final 10 %.
   layer-1 members) and refuses an id listed as both member and screening candidate; `require_admitted()` is the gate for any
   future Hall-map generator (screening candidates never produce design maps).
 All tested on synthetic data only.
+
+### 2026-09-26 — Result-pipeline hardening; ECHT-N₂ evidence audit (no simulation)
+Pipeline (owner review of a6da974): the freeze and the score-once wrapper refuse to run unless the integrity gate and the scorer
+are byte-identical to their content at fcd6720 / 10842ce (checked before any output); the decision file carries
+`source_scores_sha256` and the provenance reference, and `hall_ensemble._check_admission()` requires it to equal the provenance
+`output_sha256` (raw records → scores → decision → admission is one hash chain); scores and provenance are written to
+temporaries and renamed only when both are complete, so an interrupted attempt leaves no official artifact. No scorer logic,
+threshold or record changed.
+ECHT-N₂ (`hallthruster_bridge/identification/echt_n2/`, published/open sources only; thesis PDF and figures not redistributed,
+CC BY-NC-ND): Marchioni & Cappelli JAP 2021 is paywalled (abstract only); Marchioni's 2020 thesis (open) is the only per-point
+source: geometry (86 mm, 10 mm channel height, "100 mm OD"), one measured centreline B(z) at 2 A (plateau 4.7–8.6 cm, ~85 G,
+12 % below FEMM; the quoted 130 G is FEMM at 3 A), 13 setpoints at 180–220 V with I_d (2 s.f.), argon cathode flow 7–36 % of
+the anode flow and chamber pressure, 7 thrust runs 20.6–23.4 mN (fit-only uncertainties, two reductions differing 6–18 %, three
+runs flagged unstable). Missing: channel radii, anode position, B at the run currents, cathode coupling, total thrust
+uncertainty, plume/divergence, facility correction, anything above 220 V. Conclusion: not an independent scoreable
+discriminator without forced assumptions (A1–A11 in the audit); at most a pre-registered supporting check. Flags:
+`cases/echt_n2.json` (225–275 V, exit-peaked Gaussian B) is unsupported by any open source, and the "250 V, 24 mN, 690 W"
+Marchioni point in the superseded 0-D calibration (above) has no open source. Neither is changed here.
