@@ -1,0 +1,5108 @@
+{
+ "schema": "failure_tree_v1",
+ "id": "failure_trees_v1",
+ "version": "1.0.0",
+ "status": "DRAFT for owner review (2026-09-26). Evidence map and decision structure only: nothing here is a performance prediction, a validation claim or a selection.",
+ "date": "2026-09-26",
+ "base_commit": "c53b75a",
+ "lane": "FTREE (lane 26): architecture-specific failure trees, track 2 (architecture comparison preparation)",
+ "scope": "Ways each candidate thrust architecture (hall_only, rf_hall, ecr_hall) could fail the programme against the RFP hard gates (CLAUDE.md RFP envelope: 180-230 km, 12-25 mN, < 1.5 kW, < 40 kg, 26,000 h mission, > 15,000 h firing, air + Xe). The rf_hall and ecr_hall arms change only the pre-ionization method; the downstream Hall accelerator, feed state, cathode and bus boundary are common, so nodes on the common elements carry all three architecture ids. Built to work without absolute Hall predictions: no node uses a Hall transport closure, screening candidate or withdrawn 0-D Hall result as a performance source. Analysis routes that would need absolute Hall performance are flagged (analysis_requires_admitted_hall_closure) and the one action that needs an admitted closure (A-HALLMAP) is blocked while the credible set is empty. Hall-closure uncertainty is confined to the ionization/discharge -> acceleration/thrust block; upstream nodes (gas supply) are marked upstream_hall_independent.",
+ "no_winner_statement": "This file declares no winner and eliminates no architecture. Every node is decision_state 'open'. Evidence status describes whether published evidence makes a failure path credible; it is not a verdict on any Vyovrinda design. The ranking orders evidence to acquire, not architectures.",
+ "milestones": {
+  "supports": [
+   "A"
+  ],
+  "definitions": {
+   "A": "Conditional selection: 'architecture X is baseline provided conditions A/B/C are demonstrated'; does not require Physics Baseline 1.0.",
+   "B": "Physics-backed selection: credible envelopes from validated Hall transport, chemistry and common-boundary performance.",
+   "C": "Proposal/PDR freeze: mass, power, thermal, life, startup, cathode and mission closure integrated."
+  },
+  "provides_for_A": "For each architecture the open nodes of its tree, each with a milestone_A_condition sentence, are the explicit condition list a conditional selection must carry ('baseline provided that ...'). The per-architecture ranked list says which single piece of evidence would retire the most conditions.",
+  "to_reach_B": [
+   "Every node with resolve_by_milestone = 'B' in the selected architecture's tree moved to resolved_pass (none may be resolved_fail on a hard gate).",
+   "Nodes flagged analysis_requires_admitted_hall_closure resolved either by measurement or by analysis on design Hall maps from ADMITTED closures (credible set non-empty, O4 dispositions complete; CLAUDE.md Next work 1 and 3). Today the credible set is empty, so these nodes can only be resolved by measurement.",
+   "Common-boundary performance from the bus-power boundary (abep_sim/arch_boundary.py) and the comparison harness (abep_sim/arch_compare.py) for the same feed state and bus power.",
+   "Evidence for architecture-specific physics (E-H transition, ECR cutoff and field interaction, interstage transmission) at the Vyovrinda design point, not only at literature devices."
+  ],
+  "to_reach_C": [
+   "Every node with resolve_by_milestone = 'C' resolved_pass: cathode (poisoning, Xe consumption, plume mode, current), thermal (magnets, RF coupler, ECR magnets/resonator), erosion and anode oxidation, mass ledger, start/restart and Xe -> air transition, feed-system start transient.",
+   "Restart count and Xe allocation fixed by the owner (open questions below) so that thresholds marked TBD become numbers.",
+   "Mass (schemas/ledgers/) and thermal/life (abep_sim/thermal_life.py) closures integrated with the electrical closure and mission closure."
+  ]
+ },
+ "architectures": [
+  {
+   "id": "hall_only",
+   "pre_ionization": "none",
+   "description": "Single-stage Hall thruster: ionization and acceleration of the delivered atmospheric (and Xe) feed in one channel, plus the common cathode."
+  },
+  {
+   "id": "rf_hall",
+   "pre_ionization": "rf",
+   "description": "RF (inductive or helicon) pre-ionization stage feeding the common Hall accelerator. Whether the RF stage is magnetized (helicon) is a design choice; nodes that depend on it carry a 'condition'."
+  },
+  {
+   "id": "ecr_hall",
+   "pre_ionization": "ecr",
+   "description": "ECR (microwave or other resonant, magnetized) pre-ionization stage feeding the common Hall accelerator. Frequency and magnet type are design choices; no Vyovrinda value is assumed here."
+  }
+ ],
+ "hard_gates": [
+  {
+   "id": "thrust",
+   "title": "Thrust 12-25 mN (12 mN sustained on air; 25 mN peak)",
+   "threshold": {
+    "text": ">= 12 mN sustained on atmospheric propellant and 25 mN peak capability",
+    "values": [
+     {
+      "name": "thrust_min",
+      "value": 12.0,
+      "unit": "mN",
+      "rfp_constant": "RFP.thrust_min_mN"
+     },
+     {
+      "name": "thrust_max",
+      "value": 25.0,
+      "unit": "mN",
+      "rfp_constant": "RFP.thrust_max_mN"
+     }
+    ]
+   },
+   "threshold_status": "RFP",
+   "source": "RFP Part III Para 2 as transcribed in abep_sim/constants.py RFPConstraints",
+   "existing_checks": [
+    "abep_sim/system.py checks['thrust_air_ge_req']",
+    "abep_sim/system.py checks['thrust_peak_25mN']"
+   ],
+   "matrix_gate_id": "G1_thrust"
+  },
+  {
+   "id": "bus_power",
+   "title": "Bus power < 1.5 kW",
+   "threshold": {
+    "text": "total propulsion bus power on the common bus-power boundary < 1500 W",
+    "values": [
+     {
+      "name": "power_max",
+      "value": 1500.0,
+      "unit": "W",
+      "rfp_constant": "RFP.power_max_W"
+     }
+    ]
+   },
+   "threshold_status": "RFP",
+   "source": "RFP Part III Para 2 as transcribed in abep_sim/constants.py RFPConstraints",
+   "existing_checks": [
+    "abep_sim/system.py checks['power_air']",
+    "abep_sim/system.py checks['power_peak']"
+   ],
+   "matrix_gate_id": "G2_bus_power"
+  },
+  {
+   "id": "mass",
+   "title": "Mass < 40 kg",
+   "threshold": {
+    "text": "propulsion system mass including Xe inventory < 40 kg",
+    "values": [
+     {
+      "name": "mass_max",
+      "value": 40.0,
+      "unit": "kg",
+      "rfp_constant": "RFP.mass_max_kg"
+     }
+    ]
+   },
+   "threshold_status": "RFP",
+   "source": "RFP Part III Para 2 as transcribed in abep_sim/constants.py RFPConstraints",
+   "existing_checks": [
+    "abep_sim/system.py checks['mass']"
+   ],
+   "matrix_gate_id": "G3_mass"
+  },
+  {
+   "id": "firing_life",
+   "title": "Firing life > 15,000 h",
+   "threshold": {
+    "text": "> 15,000 h cumulative firing",
+    "values": [
+     {
+      "name": "firing_hours",
+      "value": 15000.0,
+      "unit": "h",
+      "rfp_constant": "RFP.ignition_hours"
+     }
+    ]
+   },
+   "threshold_status": "RFP",
+   "source": "RFP Part III Para 2 as transcribed in abep_sim/constants.py RFPConstraints",
+   "existing_checks": [
+    "abep_sim/system.py checks['life']"
+   ],
+   "matrix_gate_id": "G4_firing_life"
+  },
+  {
+   "id": "mission_life",
+   "title": "Mission life 26,000 h",
+   "threshold": {
+    "text": "26,000 h mission (calendar), including non-firing exposure",
+    "values": [
+     {
+      "name": "mission_hours",
+      "value": 26000.0,
+      "unit": "h",
+      "rfp_constant": "RFP.mission_hours"
+     }
+    ]
+   },
+   "threshold_status": "RFP",
+   "source": "RFP Part III Para 2 as transcribed in abep_sim/constants.py RFPConstraints",
+   "existing_checks": [
+    "abep_sim/system.py eng_R_26000h (reliability, engineering path)"
+   ],
+   "matrix_gate_id": "G5_mission"
+  },
+  {
+   "id": "restart_sustainment",
+   "title": "Sustained operation and restart capability",
+   "threshold": {
+    "text": "sustained discharge over the delivered feed envelope and every restart the operations concept needs; firing (15,000 h) < mission (26,000 h) implies interruptions",
+    "values": []
+   },
+   "threshold_status": "RFP_with_TBD_count",
+   "source": "Implied by the RFP firing/mission hour pair (abep_sim/constants.py; duty ratio used in abep_sim/system.py); no restart count is stated in the repository",
+   "existing_checks": [],
+   "tbd": "TBD - requires the owner's operations concept (eclipse, safe mode, duty cycling) to fix a restart count and a sustainment margin",
+   "matrix_gate_id": "G6_ignition_sustainment"
+  },
+  {
+   "id": "air_xe",
+   "title": "Operation on air + Xe",
+   "threshold": {
+    "text": "thrust on atmospheric propellant, Xe only in the roles the RFP allows",
+    "values": []
+   },
+   "threshold_status": "RFP_with_TBD_share",
+   "source": "RFP envelope 'air + Xe' (CLAUDE.md); the 12 mN on air requirement is already in abep_sim/system.py checks['thrust_air_ge_req']",
+   "existing_checks": [
+    "abep_sim/system.py checks['thrust_air_ge_req']"
+   ],
+   "tbd": "TBD - allowed Xe roles and share (cathode, ignition, transition, peak augmentation) to be confirmed by the owner from the RFP text",
+   "matrix_gate_id": "G7_air_xenon"
+  }
+ ],
+ "hard_gate_matrix_link": {
+  "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+  "matrix_schema": "hard_gate_matrix_v1",
+  "availability": "built by the hard-gate lane; a DRAFT_PENDING_OWNER version (matrix_version 1.0.0) exists in another worktree at the time of writing; referenced by path only, never imported or copied",
+  "binding_gates": [
+   "G1_thrust",
+   "G2_bus_power",
+   "G3_mass",
+   "G4_firing_life",
+   "G5_mission",
+   "G6_ignition_sustainment",
+   "G7_air_xenon"
+  ],
+  "proposed_gates": [
+   "P1_thermal",
+   "P2_cathode"
+  ],
+  "proposed_gate_note": "P1_thermal and P2_cathode are PROPOSED (non-binding) gates in that matrix. Nodes that bear on them list them in proposed_gate_links; they never enter the ranking's gate count, which uses only the seven binding gates.",
+  "mapping_status": "one-to-one by title (thrust, bus power, mass, firing life, mission, ignition/sustainment, air + Xe); to be confirmed when the matrix is merged (open question for the owner)"
+ },
+ "lanes": [
+  {
+   "id": "bus_power_boundary",
+   "name": "Common bus-power boundary / electrical closure (BOUNDARY_VERSION bus_power_boundary_v1; ledger(arch, loads, efficiencies))",
+   "deliverable": "abep_sim/arch_boundary.py",
+   "availability": "built by another lane; not in this worktree at base c53b75a; referenced by path only"
+  },
+  {
+   "id": "comparison_harness",
+   "name": "Architecture comparison harness (refuses while the credible set is empty)",
+   "deliverable": "abep_sim/arch_compare.py",
+   "availability": "built by another lane; not in this worktree; referenced by path only"
+  },
+  {
+   "id": "break_even",
+   "name": "Break-even surfaces (pre-ionizer cost per delivered ion vs Hall-stage in-channel ionization cost, parametric)",
+   "deliverable": "abep_sim/breakeven.py; docs/architecture_comparison/breakeven/ (breakeven_surfaces_v1.json)",
+   "availability": "built by another lane; a draft exists in another worktree; referenced by path only"
+  },
+  {
+   "id": "interstage_model",
+   "name": "Interstage transport model (ion transmission, wall loss, field-line connection between pre-ionizer and Hall channel)",
+   "deliverable": "abep_sim/interstage.py; schemas/architecture_comparison/interstage_v1.schema.json",
+   "availability": "built by another lane; a draft exists in another worktree; referenced by path only"
+  },
+  {
+   "id": "thermal_life",
+   "name": "Thermal/life framework",
+   "deliverable": "abep_sim/thermal_life.py",
+   "availability": "built by another lane; not in this worktree; referenced by path only"
+  },
+  {
+   "id": "ledgers",
+   "name": "Mass/power ledgers",
+   "deliverable": "schemas/ledgers/",
+   "availability": "built by another lane; not in this worktree; referenced by path only"
+  },
+  {
+   "id": "upstream_icd",
+   "name": "Upstream ICD (gas-supply chain interfaces IF-A0..IF-A5, IF-X1..IF-X2)",
+   "deliverable": "schemas/interfaces/",
+   "availability": "built by another lane; a draft exists in another worktree (schemas/interfaces/upstream_icd_v1.json); referenced by path only"
+  },
+  {
+   "id": "hallmap_spec",
+   "name": "Hall-map production specification (design maps per ADMITTED closure member)",
+   "deliverable": "docs/hallmap/",
+   "availability": "built by another lane; a draft exists in another worktree (docs/hallmap/HALLMAP_PRODUCTION_SPEC.md); referenced by path only"
+  },
+  {
+   "id": "experiment_protocol",
+   "name": "Common-condition experiment protocol / minimum decisive experiment (DRAFT)",
+   "deliverable": "docs/architecture_comparison/experiment_protocol/",
+   "availability": "built by another lane; not in this worktree; referenced by path only"
+  },
+  {
+   "id": "evidence_rf_source",
+   "name": "RF source evidence matrix",
+   "deliverable": "docs/evidence/rf_source/",
+   "availability": "built by another lane; not in this worktree; referenced by path only"
+  },
+  {
+   "id": "evidence_ecr_source",
+   "name": "ECR source evidence matrix",
+   "deliverable": "docs/evidence/ecr_source/",
+   "availability": "built by another lane; not in this worktree; referenced by path only"
+  },
+  {
+   "id": "evidence_hall_sustainment",
+   "name": "Hall-only sustainment evidence matrix",
+   "deliverable": "docs/evidence/hall_sustainment/",
+   "availability": "built by another lane; not in this worktree; referenced by path only"
+  },
+  {
+   "id": "evidence_cathode",
+   "name": "Cathode evidence matrix / cathode integration",
+   "deliverable": "docs/evidence/cathode/",
+   "availability": "built by another lane; not in this worktree; referenced by path only"
+  },
+  {
+   "id": "evidence_wall_life",
+   "name": "Wall-life evidence matrix",
+   "deliverable": "docs/evidence/wall_life/",
+   "availability": "built by another lane; not in this worktree; referenced by path only"
+  },
+  {
+   "id": "mission_ops",
+   "name": "Mission / operations analysis (restart count, eclipse, duty cycle)",
+   "deliverable": "TBD - no lane assigned at base c53b75a (existing models: abep_sim/mission_env.py, abep_sim/transient.py)",
+   "availability": "not assigned; owner decision needed"
+  },
+  {
+   "id": "feed_envelope",
+   "name": "Thruster feed envelope (common feed state IF-A5 / IF-X2 for all three architectures)",
+   "deliverable": "docs/architecture_comparison/feed_envelope/ (feed_envelope_v1.json)",
+   "availability": "built by another lane; a draft exists in another worktree; referenced by path only"
+  },
+  {
+   "id": "minimum_decisive_experiment",
+   "name": "Minimum decisive experiment (hall_only vs rf_hall vs ecr_hall, DRAFT)",
+   "deliverable": "docs/architecture_comparison/minimum_decisive_experiment/",
+   "availability": "built by another lane; a draft exists in another worktree; referenced by path only"
+  },
+  {
+   "id": "cathode_integration",
+   "name": "Cathode / neutralizer system integration",
+   "deliverable": "abep_sim/cathode_integration.py; docs/architecture_comparison/cathode_integration/",
+   "availability": "built by another lane; a draft exists in another worktree; referenced by path only"
+  },
+  {
+   "id": "hard_gates",
+   "name": "Hard-gate matrix",
+   "deliverable": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+   "availability": "built by another lane; a draft exists in another worktree; referenced by path only"
+  }
+ ],
+ "failure_classes": [
+  {
+   "id": "FC-IGN",
+   "name": "ignition",
+   "generic": true,
+   "applies_to": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "description": "The discharge (or pre-ionizer) does not start on the delivered feed without an allowed aid."
+  },
+  {
+   "id": "FC-SUS",
+   "name": "sustainment_extinction",
+   "generic": true,
+   "applies_to": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "description": "The discharge extinguishes, oscillates destructively or leaves its operating window over the delivered feed envelope."
+  },
+  {
+   "id": "FC-UTL",
+   "name": "utilization",
+   "generic": true,
+   "applies_to": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "description": "Too little of the atmospheric feed is ionized and accelerated to meet thrust within bus power; for two-stage arms, the pre-ionizer does not pay for itself."
+  },
+  {
+   "id": "FC-CAT",
+   "name": "cathode_limit",
+   "generic": true,
+   "applies_to": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "description": "Cathode current, flow (Xe inventory), poisoning or life limits the programme."
+  },
+  {
+   "id": "FC-THM",
+   "name": "thermal_limit",
+   "generic": true,
+   "applies_to": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "description": "A component exceeds its temperature limit (Hall magnets and walls; RF coil/coupler; ECR magnets/resonator)."
+  },
+  {
+   "id": "FC-ERO",
+   "name": "erosion_wall_life",
+   "generic": true,
+   "applies_to": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "description": "Erosion, oxidation or coating of plasma-facing parts limits firing life."
+  },
+  {
+   "id": "FC-PWR",
+   "name": "power_limit",
+   "generic": true,
+   "applies_to": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "description": "The bus-power gate cannot be met at the thrust gate."
+  },
+  {
+   "id": "FC-MAS",
+   "name": "mass_limit",
+   "generic": true,
+   "applies_to": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "description": "The mass gate cannot be met (hardware plus Xe inventory)."
+  },
+  {
+   "id": "FC-CTL",
+   "name": "control_startup",
+   "generic": true,
+   "applies_to": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "description": "Start, restart or the Xe -> mixed -> atmosphere transition cannot be controlled."
+  },
+  {
+   "id": "FC-ISL",
+   "name": "interstage_loss",
+   "generic": false,
+   "applies_to": [
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "description": "Ions made in the pre-ionizer are lost before the Hall acceleration zone, or the stages couple unstably."
+  },
+  {
+   "id": "FC-RFS",
+   "name": "rf_source_specific",
+   "generic": false,
+   "applies_to": [
+    "rf_hall"
+   ],
+   "description": "RF-source-specific modes: E-H (capacitive-inductive) transition and hysteresis, impedance matching, magnetized-source field interaction, RF interference."
+  },
+  {
+   "id": "FC-ECR",
+   "name": "ecr_source_specific",
+   "generic": false,
+   "applies_to": [
+    "ecr_hall"
+   ],
+   "description": "ECR-specific modes: cutoff/overdense limit, interaction between ECR and Hall magnetic fields, microwave power chain."
+  }
+ ],
+ "evidence_status_rule": {
+  "meaning": "evidence_status says whether open-literature evidence makes the failure mechanism credible (physically operative in a relevant device or regime). It is not a gate verdict for a Vyovrinda design; that is decision_state, which is 'open' for every node in v1.",
+  "directions": {
+   "supports": "the source shows or states that the mechanism occurs (or limited a relevant device) in its domain",
+   "contradicts": "the source shows the mechanism did not occur, or was avoided, in a relevant device within its domain",
+   "context": "relevant but not decisive in either direction (different regime, design intent, mitigation validated only on another propellant, cause not attributed)"
+  },
+  "rule": [
+   "supported: at least one 'supports' item and no 'contradicts' item",
+   "contradicted: at least one 'contradicts' item and no 'supports' item",
+   "unknown: no 'supports' and no 'contradicts' item (no evidence, or context only), or both present (conflicting)"
+  ],
+  "unknown_basis": {
+   "conflicting": "both supporting and contradicting items exist; applicability decides and is not yet established",
+   "context_only": "only context items",
+   "no_evidence": "no applicable open-literature item was found; evidence_gap says what is missing"
+  }
+ },
+ "elimination_rule": {
+  "status": "PROPOSED",
+  "text": "An architecture is eliminated only through explicit hard-gate logic: a node linked to a hard gate moves to resolved_fail for that architecture, and the supporting evidence is either (a) a measurement on Vyovrinda hardware or essentially identical hardware (EVIDENCE.md levels 1-2, quantity type measured) at the relevant operating condition, or (b) a physics bound that holds for every design of that architecture family independently of any Hall transport closure. Literature on other devices (level >= 3), screening candidates and unadmitted closures never eliminate. Proposed for the owner; not applied in v1 (eliminations = [])."
+ },
+ "eliminations": [],
+ "sources": [
+  {
+   "id": "S-CIFALI2011",
+   "citation": "G. Cifali, T. Misuri, P. Rossetti, M. Andrenucci, D. Valentian, D. Feili, B. Lotz, 'Experimental characterization of HET and RIT with atmospheric propellants', IEPC-2011-224, 32nd International Electric Propulsion Conference, Wiesbaden, 2011",
+   "report_id": "IEPC-2011-224",
+   "access": "full_text_open",
+   "retrieved_via": [
+    "https://electricrocket.org/IEPC/IEPC-2011-224.pdf"
+   ],
+   "accessed": "2026-09-26",
+   "sha256": "44b0fc265f35bbf707b1d99f8cbbdcf938aef48831ad28f97350550803254d11",
+   "notes": "PPS1350-TSD Hall thruster (N2, 1.27N2+O2) and RIT-10 EBB RF ion thruster (N2, O2); 10-h firings. Page numbers are the paper's printed pages."
+  },
+  {
+   "id": "S-ANDREUSSI2017",
+   "citation": "T. Andreussi, G. Cifali, V. Giannetti, A. Piragino, E. Ferrato, A. Rossodivita, M. Andrenucci, J. Longo, L. Walpot, 'Development and Experimental Validation of a Hall Effect Thruster RAM-EP Concept', IEPC-2017-377, 35th International Electric Propulsion Conference, Atlanta, 2017",
+   "report_id": "IEPC-2017-377",
+   "access": "full_text_open",
+   "retrieved_via": [
+    "https://electricrocket.org/IEPC/IEPC_2017_377.pdf"
+   ],
+   "accessed": "2026-09-26",
+   "sha256": "2bc53d83320297735ce7276ba799fd713a1c7c4d629f522f790e18637c8f5398",
+   "notes": "RAM-HET is a double-stage Hall thruster (DC first stage with magnetic plasma confinement), not an RF or ECR pre-ionizer; used as two-stage and air-operation evidence with that applicability."
+  },
+  {
+   "id": "S-BRABSTON2025",
+   "citation": "Brabston, Marino, Lev & Walker, J. Propuls. Power 2025 (P5 Hall thruster on N2)",
+   "doi": "10.2514/1.B39623",
+   "access": "repo_audit",
+   "retrieved_via": [
+    "hallthruster_bridge/identification/p5_n2_measurement_audit_findings_v1.json",
+    "hallthruster_bridge/cases/p5_xenon.json (source field: Table 4, peak radial B 162.5 G)"
+   ],
+   "accessed": "2026-09-26",
+   "notes": "Read only through the repository's frozen measurement audit (no re-reading of the paper in this lane)."
+  },
+  {
+   "id": "S-MARCHIONI2020",
+   "citation": "F. Marchioni, MSc thesis, Politecnico di Torino / Stanford, 2020 (ECHT on N2); journal version Marchioni & Cappelli, J. Appl. Phys. 130, 053306 (2021) (abstract only)",
+   "doi": "10.1063/5.0048283",
+   "access": "repo_audit",
+   "retrieved_via": [
+    "hallthruster_bridge/identification/echt_n2/echt_n2_evidence_audit_v1.json",
+    "hallthruster_bridge/identification/echt_n2/README.md"
+   ],
+   "accessed": "2026-09-26",
+   "notes": "Read only through the repository's ECHT evidence audit."
+  },
+  {
+   "id": "S-SHABSHELOWITZ2014",
+   "citation": "A. Shabshelowitz, A. D. Gallimore, P. Y. Peterson, 'Performance of a Helicon Hall Thruster Operating with Xenon, Argon, and Nitrogen', J. Propuls. Power 30(3), 664-671 (2014)",
+   "doi": "10.2514/1.B35041",
+   "access": "abstract_only",
+   "retrieved_via": [
+    "https://api.crossref.org/works/10.2514/1.B35041",
+    "https://api.openalex.org/works/doi:10.2514/1.B35041"
+   ],
+   "accessed": "2026-09-26",
+   "notes": "Publisher page returned 403; the green-OA copy (hdl.handle.net/2027.42/140449) sits behind a bot challenge and was not accessed. Abstract only."
+  },
+  {
+   "id": "S-ROMANO2020",
+   "citation": "F. Romano et al., 'RF Helicon-based Inductive Plasma Thruster (IPT) Design for an Atmosphere-Breathing Electric Propulsion System (ABEP)', Acta Astronautica 176, 476-483 (2020); accepted manuscript arXiv:2007.06397v2",
+   "arxiv": "2007.06397v2",
+   "access": "full_text_open",
+   "retrieved_via": [
+    "https://arxiv.org/pdf/2007.06397"
+   ],
+   "accessed": "2026-09-26",
+   "sha256": "6076635e30152c61a5cbb7f1e3cb026f00c56d676a11236f507db58ac3952cd2",
+   "license": "CC BY-NC-ND 4.0 (manuscript)",
+   "notes": "Journal volume/pages as cited in IEPC-2024-773 reference 8; journal DOI not verified here, so none is given."
+  },
+  {
+   "id": "S-RABUNAL2024",
+   "citation": "A. Rabunal-Gayo, P. Fajardo, M. R. Inchingolo, J. Navarro-Cavalle, 'Status review of air breathing electric propulsion experimental research at UC3M', IEPC-2024-773, 38th International Electric Propulsion Conference, Toulouse, 2024",
+   "report_id": "IEPC-2024-773",
+   "access": "full_text_open",
+   "retrieved_via": [
+    "https://ep2.uc3m.es/assets/docs/pubs/conference_proceedings/Rabu24a.pdf"
+   ],
+   "accessed": "2026-09-26",
+   "sha256": "632f59019fa619d5162f9c997728595428ab6c0da4d08f6180c3b69b07f61289",
+   "notes": "Helicon plasma thruster (standalone, magnetic nozzle) on air; not a pre-ionizer for a Hall stage."
+  },
+  {
+   "id": "S-ZHOU2024",
+   "citation": "J. Zhou, F. Taccogna, P. Fajardo, E. Ahedo, 'A study of an air-breathing electrodeless plasma thruster discharge', Propulsion and Power Research 13(4), 459-474 (2024); arXiv:2407.19322",
+   "doi": "10.1016/j.jppr.2024.10.001",
+   "arxiv": "2407.19322",
+   "access": "abstract_only",
+   "retrieved_via": [
+    "https://arxiv.org/abs/2407.19322",
+    "https://api.crossref.org/works/10.1016/j.jppr.2024.10.001"
+   ],
+   "accessed": "2026-09-26",
+   "notes": "Hybrid 2D simulation (model-derived)."
+  },
+  {
+   "id": "S-TURNER1999",
+   "citation": "M. M. Turner, M. A. Lieberman, 'Hysteresis and the E-to-H transition in radiofrequency inductive discharges', Plasma Sources Sci. Technol. 8(2), 313-324 (1999)",
+   "doi": "10.1088/0963-0252/8/2/312",
+   "access": "abstract_only",
+   "retrieved_via": [
+    "https://api.openalex.org/works/doi:10.1088/0963-0252/8/2/312"
+   ],
+   "accessed": "2026-09-26"
+  },
+  {
+   "id": "S-WANG2026",
+   "citation": "C. Wang, T. Fang, Y. Zhong, Y. Zhang, P. Zheng, J. Wu, 'Optical diagnosis of the N2-O2 ratio effect on mode transition and asymmetric suppression in helicon plasma', J. Appl. Phys. 139, 183303 (2026)",
+   "doi": "10.1063/5.0331296",
+   "access": "abstract_only",
+   "retrieved_via": [
+    "https://api.crossref.org/works?query.bibliographic=Optical+diagnosis+N2+O2+ratio+helicon"
+   ],
+   "accessed": "2026-09-26",
+   "notes": "Publisher page returned 403; abstract from the Crossref record."
+  },
+  {
+   "id": "S-ZHANG2024",
+   "citation": "T. Zhang, Z. Xia, F. He, B. Zheng, J. Ouyang, 'Influence of N2 admixture on mode transition of discharge in N2-Ar helicon plasma', Phys. Plasmas 31, 090702 (2024)",
+   "doi": "10.1063/5.0227336",
+   "access": "abstract_only",
+   "retrieved_via": [
+    "https://api.crossref.org/works?query.bibliographic=Optical+diagnosis+N2+O2+ratio+helicon"
+   ],
+   "accessed": "2026-09-26",
+   "license": "CC BY 4.0"
+  },
+  {
+   "id": "S-TISAEV2023A",
+   "citation": "M. Tisaev, B. Karadag, A. Lucca Fabris, 'Influence of applied magnetic field in an air-breathing microwave plasma cathode', J. Phys. D: Appl. Phys. 56, 465203 (2023)",
+   "doi": "10.1088/1361-6463/acefe2",
+   "access": "full_text_open",
+   "retrieved_via": [
+    "https://iopscience.iop.org/article/10.1088/1361-6463/acefe2/pdf",
+    "https://api.crossref.org/works/10.1088/1361-6463/acefe2"
+   ],
+   "accessed": "2026-09-26",
+   "sha256": "8758ce87658e3e1a93e39402d3a999624d41160d4a368ca1e05aab5aee2f56f3",
+   "license": "CC BY 4.0"
+  },
+  {
+   "id": "S-TISAEV2023B",
+   "citation": "M. Tisaev, B. Karadag, S. Masillo, A. Lucca Fabris, 'Performance and plasma diagnostics of the Air-breathing Microwave Plasma CAThode (AMPCAT) coupled to a cylindrical Hall thruster', J. Appl. Phys. 134, 193302 (2023)",
+   "doi": "10.1063/5.0176682",
+   "access": "abstract_only",
+   "retrieved_via": [
+    "https://api.crossref.org/works?query.bibliographic=AMPCAT+coupled+cylindrical+Hall+thruster"
+   ],
+   "accessed": "2026-09-26",
+   "license": "CC BY 4.0"
+  },
+  {
+   "id": "S-SUZUKI2024",
+   "citation": "A. Suzuki, S. Cho, H. Watanabe, K. Kinefuchi, 'Plume mode instability enhanced by emitter surface poisoning in hollow cathode', J. Appl. Phys. 135, 103301 (2024)",
+   "doi": "10.1063/5.0188080",
+   "access": "abstract_only",
+   "retrieved_via": [
+    "https://api.crossref.org/works?query.bibliographic=Plume+mode+instability+emitter+surface+poisoning"
+   ],
+   "accessed": "2026-09-26",
+   "license": "CC BY 4.0"
+  },
+  {
+   "id": "S-SCOTT2024",
+   "citation": "A. P. Scott, D. M. Goebel, 'Hollow cathode discharge instability onset in electric thrusters', J. Appl. Phys. 135(12), 123301 (2024)",
+   "doi": "10.1063/5.0188988",
+   "access": "abstract_only",
+   "retrieved_via": [
+    "https://api.semanticscholar.org/graph/v1/paper/search?query=LaB6+hollow+cathodes+for+ion+and+Hall+thrusters",
+    "https://api.crossref.org/works/10.1063/5.0188988"
+   ],
+   "accessed": "2026-09-26",
+   "license": "CC BY-NC-ND 4.0"
+  },
+  {
+   "id": "S-DIAMANT2009",
+   "citation": "K. D. Diamant, 'Microwave Cathode for Air Breathing Electric Propulsion', IEPC-2009-015, 31st International Electric Propulsion Conference, Ann Arbor, 2009",
+   "report_id": "IEPC-2009-015",
+   "access": "full_text_open",
+   "retrieved_via": [
+    "https://electricrocket.org/IEPC/IEPC-2009-015.pdf"
+   ],
+   "accessed": "2026-09-26",
+   "sha256": "08f2e34262200f8e6e76245f3b8f31239c66c48d0d9178e7d8de6284d310e93e"
+  },
+  {
+   "id": "S-DIAMANT2010",
+   "citation": "K. D. Diamant, 'A 2-Stage Cylindrical Hall Thruster for Air Breathing Electric Propulsion', AIAA 2010-6522, 46th AIAA/ASME/SAE/ASEE Joint Propulsion Conference (2010)",
+   "doi": "10.2514/6.2010-6522",
+   "access": "abstract_only",
+   "retrieved_via": [
+    "https://api.openalex.org/works/doi:10.2514/6.2010-6522",
+    "https://api.crossref.org/works/10.2514/6.2010-6522"
+   ],
+   "accessed": "2026-09-26",
+   "notes": "Closed access; abstract only. ECR ionization stage + cylindrical Hall acceleration stage."
+  },
+  {
+   "id": "S-FOSTER2006",
+   "citation": "J. E. Foster, H. Kamhawi, T. Haag, C. Carpenter, G. W. Williams, 'High Power ECR Ion Thruster Discharge Characterization', NASA/TM-2006-214035 (IEPC-2005-272)",
+   "report_id": "NASA/TM-2006-214035; NTRS 20060008936",
+   "access": "full_text_open",
+   "retrieved_via": [
+    "https://ntrs.nasa.gov/api/citations/20060008936/downloads/20060008936.pdf"
+   ],
+   "accessed": "2026-09-26",
+   "sha256": "3b7479247501b89b53a513c73c9c0bbf853950f91f9c3b8026da719f522d4079",
+   "notes": "HiPEP ECR discharge on xenon, 2.45 GHz and 5.85 GHz."
+  },
+  {
+   "id": "S-STASTNY2026",
+   "citation": "M. Stastny, K. Mrozek, K. Jurik, P. Drexler, J. Sedlar, L. Havlicek, M. Novotny, A. Obrusnik, 'Current progress in the development of an ECR plasma source for atmosphere-breathing electric propulsion system', CEAS Space J. 18, 497-505 (2026)",
+   "doi": "10.1007/s12567-026-00700-8",
+   "access": "abstract_only",
+   "retrieved_via": [
+    "https://api.crossref.org/works?query.bibliographic=Current+progress+development+ECR+plasma+atmosphere-breathing+electric+propulsion+CEAS"
+   ],
+   "accessed": "2026-09-26",
+   "license": "CC BY 4.0",
+   "notes": "Full text is CC BY but the publisher link uses a cookie redirect that was not followed; abstract only."
+  },
+  {
+   "id": "S-SIMMONDS2022",
+   "citation": "J. Simmonds, Y. Raitses, A. Smolyakov, 'A Theoretical Thrust Density Limit for Hall Thrusters', arXiv:2212.01486v1 (2022)",
+   "arxiv": "2212.01486v1",
+   "access": "full_text_open",
+   "retrieved_via": [
+    "https://arxiv.org/pdf/2212.01486"
+   ],
+   "accessed": "2026-09-26",
+   "sha256": "973acc4dfacdbd930f4f6e726eeb9dfed853e97b4d5c277b47845e4f8974cb58"
+  },
+  {
+   "id": "S-MYERS2016",
+   "citation": "J. Myers, H. Kamhawi, J. Yim, L. Clayman, 'Hall Thruster Thermal Modeling and Test Data Correlation', NASA NTRS 20170000961 (2016)",
+   "report_id": "NTRS 20170000961",
+   "access": "abstract_only",
+   "retrieved_via": [
+    "https://ntrs.nasa.gov/api/citations/20170000961"
+   ],
+   "accessed": "2026-09-26"
+  },
+  {
+   "id": "S-HOFER2014",
+   "citation": "R. R. Hofer, D. M. Goebel, I. G. Mikellides, I. Katz, 'Magnetic shielding of a laboratory Hall thruster. II. Experiments', J. Appl. Phys. 115, 043304 (2014)",
+   "doi": "10.1063/1.4862314",
+   "access": "abstract_only",
+   "retrieved_via": [
+    "https://api.openalex.org/works/doi:10.1063/1.4862314"
+   ],
+   "accessed": "2026-09-26"
+  },
+  {
+   "id": "S-ANDREUSSI2022",
+   "citation": "T. Andreussi et al., 'The AETHER project: development of air-breathing electric propulsion for VLEO missions', CEAS Space J. 14, 717 (2022)",
+   "doi": "10.1007/s12567-022-00442-3",
+   "access": "identified_not_read",
+   "retrieved_via": [
+    "https://api.crossref.org/works/10.1088/1361-6463/acefe2 (reference list entry 1)"
+   ],
+   "accessed": "2026-09-26",
+   "notes": "Primary source of the LaB6 + 12 % air-mixture cathode erosion result quoted by S-TISAEV2023A; publisher link uses a cookie redirect (not followed). Target of L-SITAEL and L-CATHODE."
+  },
+  {
+   "id": "S-GOEBEL2007",
+   "citation": "D. M. Goebel, R. M. Watkins, K. K. Jameson, 'LaB6 Hollow Cathodes for Ion and Hall Thrusters', J. Propuls. Power 23, 552-558",
+   "doi": "10.2514/1.25475",
+   "access": "identified_not_read",
+   "retrieved_via": [
+    "https://api.semanticscholar.org/graph/v1/paper/search?query=LaB6+hollow+cathodes+for+ion+and+Hall+thrusters"
+   ],
+   "accessed": "2026-09-26",
+   "notes": "Cited by S-DIAMANT2009 (ref. 15) for LaB6 oxygen tolerance; not read. Target of L-CATHODE."
+  },
+  {
+   "id": "S-YANG2025",
+   "citation": "C. Yang et al., 'Influence of propellant oxygen concentration on LaB6 hollow cathode for electric propulsion', Vacuum 237, 114181 (2025)",
+   "doi": "10.1016/j.vacuum.2025.114181",
+   "access": "identified_not_read",
+   "retrieved_via": [
+    "https://api.crossref.org/works?query.bibliographic=Influence+of+propellant+oxygen+concentration+on+LaB6+hollow+cathode"
+   ],
+   "accessed": "2026-09-26",
+   "notes": "Title only (no abstract deposited; publisher page 403). Target of L-CATHODE."
+  },
+  {
+   "id": "S-TISAEV2024",
+   "citation": "M. Tisaev, B. Karadag, E. Ferrato, T. Andreussi, A. Lucca Fabris, 'Development and standalone testing of the Air-breathing Microwave Plasma CAThode (AMPCAT)', Acta Astronautica 214, 722-736 (2024)",
+   "doi": "10.1016/j.actaastro.2023.11.028",
+   "access": "identified_not_read",
+   "retrieved_via": [
+    "https://api.crossref.org/works?query.bibliographic=Development+standalone+testing+AMPCAT"
+   ],
+   "accessed": "2026-09-26",
+   "license": "CC BY 4.0 (per Crossref licence record)",
+   "notes": "Not read. Target of L-CATHODE and L-ECRHALL (microwave antenna material behaviour in air)."
+  },
+  {
+   "id": "S-DOBKEVICIUS2016",
+   "citation": "M. Dobkevicius, D. Feili, 'A coupled performance and thermal model for radio-frequency gridded ion thrusters', Eur. Phys. J. D 70, 227 (2016)",
+   "doi": "10.1140/epjd/e2016-70273-7",
+   "access": "identified_not_read",
+   "retrieved_via": [
+    "https://api.crossref.org/works?query.bibliographic=Dobkevicius+Feili+coupled+performance+thermal+model"
+   ],
+   "accessed": "2026-09-26",
+   "license": "CC BY 4.0 (per Crossref licence record)",
+   "notes": "Not read. Target of L-THERMAL (RF coil loss and thermal)."
+  },
+  {
+   "id": "S-SHABSHELOWITZ2013",
+   "citation": "A. Shabshelowitz, 'Study of RF Plasma Technology Applied to Air-Breathing Electric Propulsion', PhD thesis, University of Michigan (2013)",
+   "access": "identified_not_read",
+   "retrieved_via": [
+    "https://ep2.uc3m.es/assets/docs/pubs/conference_proceedings/Rabu24a.pdf (reference 12)",
+    "arXiv:2007.06397 (reference 18)"
+   ],
+   "accessed": "2026-09-26",
+   "notes": "Repository copy sits behind a bot challenge; not accessed. Target of L-HHT."
+  }
+ ],
+ "actions": [
+  {
+   "id": "L-SITAEL",
+   "kind": "literature",
+   "title": "SITAEL / AETHER air-operation records",
+   "description": "Obtain openly accessible full texts of the SITAEL and AETHER follow-ups to S-ANDREUSSI2017 (e.g. S-ANDREUSSI2022, IEPC-2019-886, AIAA 2019-3996) for: Xe fraction needed against flame-out, air-only ignition conditions, Xe -> N2-O2 transition procedure, cathode behaviour with atmospheric species. Open access only; no author contact.",
+   "lane": "evidence_hall_sustainment",
+   "deliverable": "docs/evidence/hall_sustainment/",
+   "blocked_by": [],
+   "targets": [
+    "S-ANDREUSSI2022"
+   ]
+  },
+  {
+   "id": "L-HHT",
+   "kind": "literature",
+   "title": "Helicon-Hall two-stage records",
+   "description": "Obtain openly accessible full text of S-SHABSHELOWITZ2014 / S-SHABSHELOWITZ2013 (legitimate access only) for two-stage RF-Hall data on N2: ion utilization vs RF power, interstage behaviour, magnetic-field arrangement, mode behaviour.",
+   "lane": "evidence_rf_source",
+   "deliverable": "docs/evidence/rf_source/",
+   "blocked_by": [],
+   "targets": [
+    "S-SHABSHELOWITZ2014",
+    "S-SHABSHELOWITZ2013"
+   ]
+  },
+  {
+   "id": "L-ECRHALL",
+   "kind": "literature",
+   "title": "ECR-stage and ECR-ABEP records",
+   "description": "Obtain openly accessible full texts of S-STASTNY2026 (CC BY), S-TISAEV2024 (CC BY) and any open version of S-DIAMANT2010 for: ECR ignition and density on air, resonator/antenna heating and material behaviour, ECR-Hall field arrangement.",
+   "lane": "evidence_ecr_source",
+   "deliverable": "docs/evidence/ecr_source/",
+   "blocked_by": [],
+   "targets": [
+    "S-STASTNY2026",
+    "S-TISAEV2024",
+    "S-DIAMANT2010"
+   ]
+  },
+  {
+   "id": "L-CATHODE",
+   "kind": "literature",
+   "title": "Cathode oxygen tolerance and plume-mode records",
+   "description": "Obtain openly accessible texts of S-GOEBEL2007, S-YANG2025, S-ANDREUSSI2022 and S-TISAEV2024 for tolerated oxygen partial pressure, emitter erosion with air admixture, and minimum flow before plume mode.",
+   "lane": "evidence_cathode",
+   "deliverable": "docs/evidence/cathode/",
+   "blocked_by": [],
+   "targets": [
+    "S-GOEBEL2007",
+    "S-YANG2025",
+    "S-ANDREUSSI2022",
+    "S-TISAEV2024"
+   ]
+  },
+  {
+   "id": "L-WALL",
+   "kind": "literature",
+   "title": "Wall and anode erosion/oxidation with N and O",
+   "description": "Open literature on sputter and chemical erosion of Hall channel ceramics and anodes by N/O ions and atoms, and on magnetic shielding with non-Xe propellants.",
+   "lane": "evidence_wall_life",
+   "deliverable": "docs/evidence/wall_life/",
+   "blocked_by": []
+  },
+  {
+   "id": "L-RFMODE",
+   "kind": "literature",
+   "title": "RF mode transitions in N2/O2/air",
+   "description": "Full texts behind S-WANG2026 and S-ZHANG2024 and other open E-H / helicon mode-transition data in N2, O2 and air at pre-ionizer-relevant power, pressure and field.",
+   "lane": "evidence_rf_source",
+   "deliverable": "docs/evidence/rf_source/",
+   "blocked_by": [],
+   "targets": [
+    "S-WANG2026",
+    "S-ZHANG2024"
+   ]
+  },
+  {
+   "id": "L-THERMAL",
+   "kind": "literature",
+   "title": "Thermal limits of magnets and couplers",
+   "description": "Open data on permanent-magnet and coil insulation temperature limits, RF coil loss (S-DOBKEVICIUS2016), and ECR resonator heating (S-STASTNY2026 full text).",
+   "lane": "thermal_life",
+   "deliverable": "abep_sim/thermal_life.py",
+   "blocked_by": [],
+   "targets": [
+    "S-DOBKEVICIUS2016",
+    "S-STASTNY2026"
+   ]
+  },
+  {
+   "id": "A-ELEC",
+   "kind": "analysis",
+   "title": "Electrical closure on the common bus boundary",
+   "description": "ledger(arch, loads, efficiencies) on bus_power_boundary_v1 for each architecture with every load explicit (hall_discharge, hall_magnet, cathode_keeper, cathode_heater, flow_control, compressor, thermal_control, housekeeping, rf_source or ecr_source/ecr_magnet) and RF/microwave generator efficiencies as explicit inputs (no defaults). Gives the power left for the Hall discharge at the bus limit.",
+   "lane": "bus_power_boundary",
+   "deliverable": "abep_sim/arch_boundary.py",
+   "blocked_by": []
+  },
+  {
+   "id": "A-BREAKEVEN",
+   "kind": "analysis",
+   "title": "Break-even surfaces",
+   "description": "Parametric surfaces of pre-ionizer energy per delivered ion (source cost / interstage transmission) against the Hall-stage in-channel ionization cost, without any absolute Hall closure; says what transmission and source cost an RF or ECR stage must reach to beat the hall_only arm at equal bus power.",
+   "lane": "break_even",
+   "deliverable": "abep_sim/breakeven.py; docs/architecture_comparison/breakeven/ (breakeven_surfaces_v1.json)",
+   "blocked_by": []
+  },
+  {
+   "id": "A-INTERSTAGE",
+   "kind": "analysis",
+   "title": "Interstage transport model",
+   "description": "Ion transmission fraction from the pre-ionizer to the Hall acceleration zone (wall loss, recombination, cross-field transport, magnetic mirror/connection), and the ion flux the Hall stage needs from the pre-ionizer.",
+   "lane": "interstage_model",
+   "deliverable": "abep_sim/interstage.py; schemas/architecture_comparison/interstage_v1.schema.json",
+   "blocked_by": []
+  },
+  {
+   "id": "A-BFIELD",
+   "kind": "analysis",
+   "title": "Magnetic-field superposition",
+   "description": "Magnetostatic superposition of the pre-ionizer field (ECR magnets or helicon solenoid) with the Vyovrinda Hall magnetic circuit over the magnet-current schedule (Xe and air setpoints): resonance-surface location, Hall B(z) distortion, field-line connection between stages.",
+   "lane": "interstage_model",
+   "deliverable": "abep_sim/interstage.py (interstage lane; magnetic connection) with the Vyovrinda B(z) per docs/hallmap/",
+   "blocked_by": []
+  },
+  {
+   "id": "A-THERMAL",
+   "kind": "analysis",
+   "title": "Thermal/life analysis",
+   "description": "Parametric thermal network of Hall magnets and walls, cathode, RF coil/coupler, ECR magnets/resonator; life extrapolation rules for erosion and oxidation rates measured in short tests.",
+   "lane": "thermal_life",
+   "deliverable": "abep_sim/thermal_life.py",
+   "blocked_by": []
+  },
+  {
+   "id": "A-MASS",
+   "kind": "analysis",
+   "title": "Mass ledger",
+   "description": "Mass ledger per architecture including Xe inventory (cathode over firing hours, ignition, transition, augmentation), tanks, RF or microwave power chain, magnets, radiator.",
+   "lane": "ledgers",
+   "deliverable": "schemas/ledgers/",
+   "blocked_by": []
+  },
+  {
+   "id": "A-FLOWENV",
+   "kind": "analysis",
+   "title": "Delivered-feed envelope and start transient (upstream only)",
+   "description": "Mass flow, pressure and composition at the thruster interface (IF-A5) over 180-230 km and solar states, and the gas-chamber fill transient after start or eclipse, from the frozen atmosphere and the intake/compressor/reservoir models. Uses no Hall input.",
+   "lane": "feed_envelope",
+   "deliverable": "docs/architecture_comparison/feed_envelope/ (delivered state at IF-A5 over the envelope) with schemas/interfaces/ (ICD); the start/eclipse fill transient is not in that envelope yet",
+   "blocked_by": []
+  },
+  {
+   "id": "A-OPS",
+   "kind": "analysis",
+   "title": "Restart count from the operations concept",
+   "description": "Number of starts over 26,000 h from eclipse, safe-mode and duty-cycle assumptions (abep_sim/mission_env.py eclipse model; firing/mission hours); the assumptions themselves are an owner decision.",
+   "lane": "mission_ops",
+   "deliverable": "TBD - no lane assigned (existing models: abep_sim/mission_env.py, abep_sim/transient.py)",
+   "blocked_by": []
+  },
+  {
+   "id": "A-HALLMAP",
+   "kind": "analysis",
+   "title": "Design Hall maps from admitted closures",
+   "description": "Absolute Hall-stage performance (thrust, I_d, utilization, wall flux) on the Vyovrinda geometry and B(z), one map set per ADMITTED ensemble member (docs/hallmap/). Would inform utilization, power, sustainment and wall-life nodes by analysis.",
+   "lane": "hallmap_spec",
+   "deliverable": "docs/hallmap/",
+   "blocked_by": [
+    "credible transport set is empty (CLAUDE.md gate 3 FAIL; P5-N2 v1 all INCONCLUSIVE / NOT ELIGIBLE)",
+    "O4 dispositions incomplete (admission gated, hall_ensemble._check_o4)"
+   ]
+  },
+  {
+   "id": "M-IGN",
+   "kind": "measurement",
+   "title": "Ignition and restart on the atmospheric feed",
+   "description": "Start tests of the Hall stage on atmospheric-only anode flow at the delivered feed state, with and without the RF/ECR seed; record success per attempt and Xe used per start.",
+   "lane": "experiment_protocol",
+   "deliverable": "docs/architecture_comparison/experiment_protocol/",
+   "blocked_by": []
+  },
+  {
+   "id": "M-SUSWIN",
+   "kind": "measurement",
+   "title": "Sustainment-window map",
+   "description": "Map the sustained window (V_d, mass flow, magnet setting, composition) of the common Hall stage over the delivered-flow envelope, with discharge-current oscillation and the extinction boundary.",
+   "lane": "experiment_protocol",
+   "deliverable": "docs/architecture_comparison/experiment_protocol/",
+   "blocked_by": []
+  },
+  {
+   "id": "M-PREION",
+   "kind": "measurement",
+   "title": "Common-condition pre-ionizer A/B/C test",
+   "description": "Same Hall stage, same feed state and same bus power with no pre-ionizer (hall_only arm), RF pre-ionizer and ECR pre-ionizer: thrust, I_d, ion current, acceleration-stage current, interstage ion flux, RF interference. This is the minimum decisive experiment for the two-stage nodes.",
+   "lane": "minimum_decisive_experiment",
+   "deliverable": "docs/architecture_comparison/minimum_decisive_experiment/ (design) with docs/architecture_comparison/experiment_protocol/ (common-condition protocol)",
+   "blocked_by": []
+  },
+  {
+   "id": "M-TRANS",
+   "kind": "measurement",
+   "title": "Xe -> mixed -> air transition",
+   "description": "Transition and restart sequences with flow ramp, V_d, magnet-current and (rf_hall) matching schedules; discharge continuity and current transients.",
+   "lane": "experiment_protocol",
+   "deliverable": "docs/architecture_comparison/experiment_protocol/",
+   "blocked_by": []
+  },
+  {
+   "id": "M-CATHODE",
+   "kind": "measurement",
+   "title": "Cathode integration test",
+   "description": "Minimum cathode Xe flow at the required current before plume-mode onset; emission vs oxygen-bearing partial pressure (feed, backflow, ram exposure when off); heater/ignition cycles; air-fed plasma-cathode alternative at the required current.",
+   "lane": "cathode_integration",
+   "deliverable": "docs/architecture_comparison/cathode_integration/ (requirements and integration relations) with docs/evidence/cathode/ (evidence matrix)",
+   "blocked_by": []
+  },
+  {
+   "id": "M-EROSION",
+   "kind": "measurement",
+   "title": "Short erosion/oxidation test on air",
+   "description": "Wall profilometry or witness samples, anode surface/resistance, RF window and ECR antenna/window inspection after a defined firing on the delivered composition.",
+   "lane": "evidence_wall_life",
+   "deliverable": "docs/evidence/wall_life/",
+   "blocked_by": []
+  },
+  {
+   "id": "M-RFSRC",
+   "kind": "measurement",
+   "title": "RF source standalone on N2/O2",
+   "description": "Breakdown, E-H (or helicon mode) transition and hysteresis vs coil current/power and N2:O2 ratio over the delivered envelope; reflected power across Xe and air.",
+   "lane": "evidence_rf_source",
+   "deliverable": "docs/evidence/rf_source/ (with docs/architecture_comparison/experiment_protocol/)",
+   "blocked_by": []
+  },
+  {
+   "id": "M-ECRSRC",
+   "kind": "measurement",
+   "title": "ECR source standalone on air",
+   "description": "Breakdown at delivered pressure, density vs cutoff, resonance stability under the Hall-circuit stray field, antenna/window condition.",
+   "lane": "evidence_ecr_source",
+   "deliverable": "docs/evidence/ecr_source/ (with docs/architecture_comparison/experiment_protocol/)",
+   "blocked_by": []
+  },
+  {
+   "id": "M-THERMAL",
+   "kind": "measurement",
+   "title": "Thermal balance test",
+   "description": "Component temperatures (magnets, coils, RF coupler, ECR magnets/resonator, walls) at the air operating point in thermal-vacuum conditions.",
+   "lane": "thermal_life",
+   "deliverable": "abep_sim/thermal_life.py (test correlation)",
+   "blocked_by": []
+  }
+ ],
+ "nodes": [
+  {
+   "id": "N-IGN-01",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-IGN",
+   "title": "Hall-stage cold start on atmospheric anode flow fails; start needs Xe",
+   "rfp_blocks": [
+    "ionization_discharge",
+    "operations"
+   ],
+   "mechanism": "Breakdown and transition to a self-sustained Hall discharge need enough neutral density and seed electrons in the channel; N2/O2 at ABEP-delivered density may not start without a noble-gas start.",
+   "physical_cause": "Higher ionization and inelastic (vibrational, dissociation) energy cost of N2/O2 than Xe, and channel neutral density set by the intake rather than a flow controller.",
+   "evidence": [
+    {
+     "source": "S-CIFALI2011",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "'The PPS1350-TSD was always ignited with xenon. After ignition, a smooth transition from 100% xenon to 100% nitrogen or N2/O2 mixture at the anode was carried out; the cathode continued to work with xenon.'",
+     "locator": "Sec. II (pdf p. 2)",
+     "applicability": "Test procedure on a 1.4 kW-limited laboratory Hall thruster; air-only ignition was not reported as attempted."
+    },
+    {
+     "source": "S-ANDREUSSI2017",
+     "direction": "contradicts",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "The integrated RAM-EP system 'was successfully ignited with the atmospheric propellant provided by the PFG (operating at 4.7 mg/s mass flow rate of pure N2-O2)'; the intake let the RAM-HET 'ignite a pure N2-O2 flow at an acceleration voltage equal to 300 V and an ionization voltage equal to 100 V'.",
+     "locator": "Abstract (pdf p. 1); Sec. IV (pdf p. 8)",
+     "applicability": "Double-stage Hall thruster in a ground facility with a Xe-fed cathode (cathode ignition with xenon, Sec. III.F); not a single-stage Hall and not flight density."
+    },
+    {
+     "source": "S-ANDREUSSI2017",
+     "direction": "supports",
+     "evidence_class": "model-derived",
+     "evidence_level": 3,
+     "statement": "'HET ignitions and stable operation are achieved when the neutral gas density is sufficiently high'; estimated thruster-inlet neutral density 1e17-1e18 m^-3, 'from one to two orders of magnitude' below the ionization region of standard HETs.",
+     "locator": "Sec. II.C (pdf p. 4)",
+     "applicability": "Source's design estimate for its intake; the Vyovrinda delivered density is set by the upstream chain (A-FLOWENV)."
+    },
+    {
+     "source": "S-ROMANO2020",
+     "direction": "supports",
+     "evidence_class": "inferred",
+     "evidence_level": 5,
+     "statement": "'the RAM-HET also requires injection of Xe to aid the ignition of the thruster, as well as to operate the neutraliser' (citing the SITAEL RAM-EP papers).",
+     "locator": "Sec. 1 (arXiv:2007.06397v2 pdf p. 3)",
+     "applicability": "Secondary statement about the SITAEL RAM-HET."
+    }
+   ],
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Start success per attempt on atmospheric-only anode flow at the delivered feed state (IF-A5); Xe used per start when a Xe start is used",
+    "threshold": "Every start the operations concept needs succeeds without Xe, or with a Xe per start that fits the air_xe rules and the Xe allocation (see N-CTL-02) (TBD - requires the owner's restart count and Xe allocation)",
+    "threshold_status": "TBD",
+    "requires": "restart count (A-OPS, owner) and allowed Xe roles (air_xe gate TBD)",
+    "gates": [
+     "restart_sustainment",
+     "air_xe"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-IGN",
+     "effect": "decides"
+    },
+    {
+     "action": "L-SITAEL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-IGN"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Demonstrate Hall-stage start on the atmospheric feed state, or a Xe-assisted start whose Xe per start fits the Xe allocation.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-IGN-02",
+   "architectures": [
+    "rf_hall"
+   ],
+   "failure_class": "FC-IGN",
+   "title": "RF pre-ionizer does not break down on N2/O2 at the delivered pressure",
+   "rfp_blocks": [
+    "ionization_discharge",
+    "operations"
+   ],
+   "mechanism": "Inductive/helicon breakdown on molecular gases at low pressure needs higher fields than on noble gases; the source may need a noble-gas start.",
+   "physical_cause": "Higher ionization energy and electron energy losses of N2/O2 relative to Ar/Xe.",
+   "evidence": [
+    {
+     "source": "S-CIFALI2011",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "RIT-10 EBB: 'The argon is used to ignite the thruster, as the ignition with N2/O2 was found to be much more difficult ... xenon ignites even better than argon.'",
+     "locator": "Sec. III (pdf p. 7)",
+     "applicability": "RF (inductive) ion thruster discharge chamber, Giessen facility; a gridded RF discharge, not an RF pre-ionizer feeding a Hall stage."
+    },
+    {
+     "source": "S-ROMANO2020",
+     "direction": "context",
+     "evidence_class": "inferred",
+     "evidence_level": 5,
+     "statement": "A frequency 'equal or higher than 27.12 MHz' was chosen 'as it leads to easier ignition at low pressure' (from literature and preliminary numerics).",
+     "locator": "Sec. 3 (arXiv:2007.06397v2 pdf p. 7)",
+     "applicability": "Design guidance for an inductive plasma thruster; not a measurement."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "RF-source breakdown on the atmospheric feed at the delivered pressure with the available RF power",
+    "threshold": "Breakdown without a noble-gas start, or noble-gas start within the air_xe rules (TBD - requires the owner's air_xe rules on Xe roles)",
+    "threshold_status": "TBD",
+    "requires": "delivered pressure (A-FLOWENV) and allowed Xe roles",
+    "gates": [
+     "restart_sustainment",
+     "air_xe"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-RFSRC",
+     "effect": "decides"
+    },
+    {
+     "action": "M-IGN",
+     "effect": "decides"
+    },
+    {
+     "action": "L-RFMODE",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-IGN"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Demonstrate RF-source breakdown on the atmospheric feed at delivered pressure, or an allowed noble-gas start.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-IGN-03",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "failure_class": "FC-IGN",
+   "title": "ECR pre-ionizer does not break down on air at the delivered pressure",
+   "rfp_blocks": [
+    "ionization_discharge",
+    "operations"
+   ],
+   "mechanism": "Microwave/ECR breakdown needs the resonance condition inside the source and enough neutral density for the electron energy gain to produce ionization.",
+   "physical_cause": "Resonance field, wave coupling and electron energy losses on N2/O2.",
+   "evidence": [
+    {
+     "source": "S-STASTNY2026",
+     "direction": "contradicts",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: 'experimental demonstration of plasma ignition in an electron-cyclotron-resonance atmosphere-breathing electric propulsion source at pressures representative of very low Earth orbit' and 'sustained plasma discharge at pressures consistent with conditions expected after intake compression at altitudes near 200 km'.",
+     "locator": "Abstract",
+     "applicability": "Laboratory ECR ABEP source with a MHz-range birdcage resonator; gas composition as used by the source (abstract does not state it)."
+    },
+    {
+     "source": "S-DIAMANT2009",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Microwave cathode: 'Plasma formation was very reliable and never required the use of any separate ignition' (xenon and argon).",
+     "locator": "Sec. III (pdf p. 3)",
+     "applicability": "Noble gases only; nitrogen-oxygen not attempted (Sec. V)."
+    }
+   ],
+   "evidence_status": "contradicted",
+   "decision_quantity": {
+    "quantity": "ECR-source breakdown on the atmospheric feed at the delivered pressure",
+    "threshold": "Breakdown without a noble-gas start, or noble-gas start within the air_xe rules (TBD - requires the owner's air_xe rules on Xe roles)",
+    "threshold_status": "TBD",
+    "requires": "delivered pressure (A-FLOWENV) and allowed Xe roles",
+    "gates": [
+     "restart_sustainment",
+     "air_xe"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-ECRSRC",
+     "effect": "decides"
+    },
+    {
+     "action": "M-IGN",
+     "effect": "decides"
+    },
+    {
+     "action": "L-ECRHALL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-ECRSRC"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Demonstrate ECR-source breakdown on the atmospheric feed at delivered pressure.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-IGN-04",
+   "architectures": [
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-IGN",
+   "title": "Pre-ionizer seed plasma does not lower the Hall-stage start requirement",
+   "rfp_blocks": [
+    "ionization_discharge",
+    "operations"
+   ],
+   "mechanism": "The two-stage start benefit (seed plasma from the pre-ionizer triggering the Hall discharge at lower feed density) may not materialize if the seed does not reach the Hall channel.",
+   "physical_cause": "Interstage loss of seed charge and field-line connection between the stages.",
+   "evidence": [
+    {
+     "source": "S-ANDREUSSI2017",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Double-stage RAM-HET: 'the first stage showed a good capability to ionize the flow provided by the PFG'.",
+     "locator": "Sec. IV (pdf p. 10)",
+     "applicability": "DC magnetic-confinement first stage, not RF or ECR; does not isolate the start threshold."
+    }
+   ],
+   "evidence_gap": "No open source found that measures the Hall-stage start threshold with vs without an RF or ECR seed on atmospheric gases.",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Minimum feed density (or pressure) for Hall-stage start with the pre-ionizer on vs off",
+    "threshold": "Start at the lowest delivered feed state of the envelope with the pre-ionizer on (PROPOSED form; margin TBD)",
+    "threshold_status": "PROPOSED",
+    "requires": "delivered-feed envelope (A-FLOWENV)",
+    "gates": [
+     "restart_sustainment",
+     "air_xe"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-IGN",
+     "effect": "decides"
+    },
+    {
+     "action": "M-PREION",
+     "effect": "decides"
+    },
+    {
+     "action": "A-INTERSTAGE",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-IGN"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Demonstrate that the pre-ionizer lowers (or at least does not raise) the Hall-stage start requirement at the delivered feed state.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-SUS-01",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-SUS",
+   "title": "Hall stage extinguishes or runs unstably on N2/O2 within the needed window",
+   "rfp_blocks": [
+    "ionization_discharge",
+    "acceleration_thrust"
+   ],
+   "mechanism": "The sustained operating window (voltage, flow, magnetic field) on molecular propellant is narrow; outside it the discharge extinguishes or enters strongly oscillating modes.",
+   "physical_cause": "Ionization balance of N2/O2 at channel density; mode changes with magnetic-field setting.",
+   "evidence": [
+    {
+     "source": "S-BRABSTON2025",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "P5 on N2: the text states the discharge cannot be sustained above 275 V or below 225 V; all five setpoints N1-N5 ran (repo audit finding F4 reads 275 V as an approximate boundary).",
+     "locator": "Repo audit p5_n2_measurement_audit_findings_v1.json: admissible_targets.sustained_discharge, finding F4",
+     "applicability": "5-kW-class P5, 5.0-5.4 mg/s N2 anode, Xe cathode, facility pressure 1.1-2.1e-5 Torr."
+    },
+    {
+     "source": "S-MARCHIONI2020",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "ECHT on N2: 3 of 7 thrust runs flagged strongly unstable; the thruster changed modes during calibration.",
+     "locator": "Repo audit echt_n2_evidence_audit_v1.json finding E5",
+     "applicability": "ECHT, 2.06 mg/s N2, 180-220 V, facility pressure 0.8-2.5e-4 Torr, argon cathode."
+    },
+    {
+     "source": "S-CIFALI2011",
+     "direction": "contradicts",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "PPS1350-TSD on 1.27N2+O2: 'Stable operation occurs with a mass flow rate as low as 2.1 mg/s' and 'The thruster has operated stably during the 10 hours test.'",
+     "locator": "Sec. II.C (pdf p. 5)",
+     "applicability": "Laboratory Hall thruster, Xe cathode, Xe start, 10-h firing."
+    },
+    {
+     "source": "S-ANDREUSSI2017",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "RAM-HET standalone: 'Attempts to operate the thruster with N2-O2 mixture were performed but a certain amount of xenon (~1.5 mg/s) has always been necessary to prevent the flame out'.",
+     "locator": "Sec. III.E (pdf p. 7)",
+     "applicability": "Double-stage RAM-HET in standalone configuration."
+    }
+   ],
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Sustained operating window (V_d, mass flow, magnet setting) of the Hall stage on the delivered composition, with oscillation amplitude and extinction boundary",
+    "threshold": "Sustained at every design operating point on the delivered composition without continuous Xe, with an oscillation bound (PROPOSED; amplitude TBD)",
+    "threshold_status": "PROPOSED",
+    "requires": "delivered composition (A-FLOWENV); owner margin",
+    "gates": [
+     "restart_sustainment",
+     "thrust",
+     "air_xe"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-SUSWIN",
+     "effect": "decides"
+    },
+    {
+     "action": "L-SITAEL",
+     "effect": "informs"
+    },
+    {
+     "action": "A-HALLMAP",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-SUSWIN"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Demonstrate sustained, bounded-oscillation Hall-stage operation on the delivered atmospheric composition without continuous Xe.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-SUS-02",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-SUS",
+   "title": "Delivered-flow range over altitude and solar activity exceeds the sustainment range",
+   "rfp_blocks": [
+    "gas_supply_upstream",
+    "ionization_discharge"
+   ],
+   "mechanism": "The intake-delivered flow varies with altitude (180-230 km) and solar activity; if the ratio of maximum to minimum delivered flow is larger than the flow range over which the discharge is sustained, throttling fails at one end.",
+   "physical_cause": "Atmospheric density variability transmitted through the intake/compressor chain to the thruster interface.",
+   "evidence": [
+    {
+     "source": "S-ANDREUSSI2017",
+     "direction": "supports",
+     "evidence_class": "inferred",
+     "evidence_level": 3,
+     "statement": "'In a RAM-EP system, the properties of the neutral flow inside the thruster channel critically depends on the intake configuration and on the atmospheric conditions outside of the system.'",
+     "locator": "Sec. II.C (pdf p. 4)",
+     "applicability": "General statement by an ABEP developer; the Vyovrinda envelope comes from A-FLOWENV."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "Ratio of maximum to minimum delivered mass flow at IF-A5 over 180-230 km and solar states, against the sustained flow range of the Hall stage (and pre-ionizer)",
+    "threshold": "Sustained flow range contains the delivered-flow envelope, or the flow control keeps the feed inside it (PROPOSED)",
+    "threshold_status": "PROPOSED",
+    "requires": "A-FLOWENV (upstream, Hall-independent) and M-SUSWIN",
+    "gates": [
+     "restart_sustainment",
+     "thrust"
+    ]
+   },
+   "actions": [
+    {
+     "action": "A-FLOWENV",
+     "effect": "contributes"
+    },
+    {
+     "action": "M-SUSWIN",
+     "effect": "contributes"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-FLOWENV",
+    "M-SUSWIN"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Show that the delivered-flow envelope lies inside the demonstrated sustained flow range, or that flow control keeps it there.",
+   "analysis_requires_admitted_hall_closure": true,
+   "upstream_hall_independent": true,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-SUS-03",
+   "architectures": [
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-SUS",
+   "title": "Two-stage coupling: excess acceleration-stage current or unstable interaction limits the Hall stage",
+   "rfp_blocks": [
+    "ionization_discharge",
+    "acceleration_thrust"
+   ],
+   "mechanism": "With a separate ionization stage, electron current into the acceleration stage and the interaction of the two discharges can cap the usable acceleration voltage or destabilize operation.",
+   "physical_cause": "Electron supply and potential distribution between stages; power-supply coupling.",
+   "evidence": [
+    {
+     "source": "S-ANDREUSSI2017",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "'the current circulating in the acceleration stage was always significantly higher than expected. This phenomenon posed a limit to the applicable acceleration voltage and, in turn, to the achievable thrust'; in standalone Xe tests both supplies went to current limitation and both voltages dropped to around 100 V.",
+     "locator": "Sec. IV (pdf p. 10); Sec. III.E (pdf p. 7)",
+     "applicability": "Double-stage Hall (DC first stage); mechanism class is two-stage coupling, not specific to RF or ECR."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "Acceleration-stage current and usable acceleration voltage with the pre-ionizer on, and stability of the coupled discharges",
+    "threshold": "Acceleration voltage and current at the design point reachable with bounded oscillation (PROPOSED)",
+    "threshold_status": "PROPOSED",
+    "gates": [
+     "thrust",
+     "bus_power",
+     "restart_sustainment"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-PREION",
+     "effect": "decides"
+    },
+    {
+     "action": "A-INTERSTAGE",
+     "effect": "informs"
+    },
+    {
+     "action": "L-SITAEL",
+     "effect": "informs"
+    },
+    {
+     "action": "L-HHT",
+     "effect": "informs"
+    },
+    {
+     "action": "L-ECRHALL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-PREION"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Demonstrate the design acceleration voltage and current with the pre-ionizer on, without runaway acceleration-stage current.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-UTL-01",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-UTL",
+   "title": "Low ion utilization of N2/O2 in the Hall stage prevents 12 mN within the bus power",
+   "rfp_blocks": [
+    "ionization_discharge",
+    "acceleration_thrust"
+   ],
+   "mechanism": "A small ionized fraction of the atmospheric feed (and beam divergence) gives low thrust per unit flow and per unit power.",
+   "physical_cause": "Energy sinks of molecular gases (vibrational excitation, dissociation) and low channel neutral density at ABEP flows.",
+   "evidence": [
+    {
+     "source": "S-SHABSHELOWITZ2014",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: 'The helicon Hall thruster performance during operation with argon and nitrogen is characterized by low beam divergence efficiency and low propellant utilization efficiency.'",
+     "locator": "Abstract",
+     "applicability": "Helicon Hall thruster, nitrogen at 200 V."
+    },
+    {
+     "source": "S-CIFALI2011",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "'The computation of the ionisation efficiency shows that this last is lower for nitrogen than for xenon'; conclusion: 'a substantial deterioration of performance with respect to Xe, especially due to the low ionization efficiency of the atmospheric propellants'.",
+     "locator": "Sec. II.B (pdf p. 3); Sec. IV (pdf p. 11)",
+     "applicability": "PPS1350-TSD and RIT-10 in laboratory facilities."
+    },
+    {
+     "source": "S-WANG2026",
+     "direction": "context",
+     "evidence_class": "inferred",
+     "evidence_level": 3,
+     "statement": "Abstract: 'Simplified collision frequency estimations indicate that N2 vibrational losses are likely the dominant electron energy loss channel across the tested ratios.'",
+     "locator": "Abstract",
+     "applicability": "Helicon plasma, N2:O2 1:4 to 4:1; an energy-sink mechanism, not a Hall-stage measurement."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "Ion (current) utilization and resulting thrust on the delivered composition at the discharge power left by the electrical closure",
+    "threshold": ">= 12 mN sustained on air within the 1.5 kW bus (RFP)",
+    "threshold_status": "RFP",
+    "requires": "A-ELEC for the discharge power available",
+    "gates": [
+     "thrust",
+     "bus_power"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-PREION",
+     "effect": "decides"
+    },
+    {
+     "action": "A-ELEC",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-SITAEL",
+     "effect": "informs"
+    },
+    {
+     "action": "A-HALLMAP",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-PREION"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Demonstrate >= 12 mN on the delivered atmospheric composition within the discharge power the common bus boundary leaves.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-UTL-02",
+   "architectures": [
+    "rf_hall"
+   ],
+   "failure_class": "FC-UTL",
+   "title": "RF pre-ionization gains less utilization than its power costs (thrust-to-power falls)",
+   "rfp_blocks": [
+    "ionization_discharge",
+    "power_bus"
+   ],
+   "mechanism": "The RF stage raises the ionized fraction only slightly while adding its full power (and generator loss) to the bus.",
+   "physical_cause": "RF energy per delivered ion (source cost plus interstage loss) above the Hall stage's own ionization cost.",
+   "evidence": [
+    {
+     "source": "S-SHABSHELOWITZ2014",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: 'During two-stage operation, the thrust of the helicon Hall thruster marginally increased with radio frequency power, but the propulsive efficiency and thrust-to-power both decreased with increasing radio frequency power. Probe diagnostics suggest that gains were realized by a slight increase in propellant efficiency, but that the rate of increase was not sufficient to overcome the increase in power.'",
+     "locator": "Abstract",
+     "applicability": "Helicon Hall thruster; the abstract does not state the gas used in two-stage operation."
+    },
+    {
+     "source": "S-RABUNAL2024",
+     "direction": "context",
+     "evidence_class": "inferred",
+     "evidence_level": 5,
+     "statement": "Hall thrusters at low voltage 'suffer from poor propellant utilization efficiency, especially when using alternative propellants, but using an RF-augmented system may increase the propellant utilization efficiency' (citing the Shabshelowitz thesis).",
+     "locator": "Sec. I (pdf p. 2)",
+     "applicability": "Secondary statement of potential, no numbers."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "Thrust at fixed bus power with the RF stage on vs the hall_only arm at the same feed state",
+    "threshold": "rf_hall thrust at 1.5 kW bus >= 12 mN; break-even against the hall_only arm is PROPOSED as the architecture-benefit criterion",
+    "threshold_status": "PROPOSED",
+    "requires": "A-BREAKEVEN surfaces; common bus boundary",
+    "gates": [
+     "thrust",
+     "bus_power"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-PREION",
+     "effect": "decides"
+    },
+    {
+     "action": "A-BREAKEVEN",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-HHT",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-PREION"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Demonstrate that the RF stage raises thrust at fixed bus power, or meets 12 mN within 1.5 kW including its own power.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-UTL-03",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "failure_class": "FC-UTL",
+   "title": "ECR pre-ionization gains less utilization on air than its power costs",
+   "rfp_blocks": [
+    "ionization_discharge",
+    "power_bus"
+   ],
+   "mechanism": "ECR heating raises ionization strongly on Xe, but on air a larger share of electron energy goes into dissociation and molecular excitation, so the gain per watt may not pay for the microwave power.",
+   "physical_cause": "Electron energy losses of N2/O2 and the microwave power chain efficiency.",
+   "evidence": [
+    {
+     "source": "S-TISAEV2023A",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "'the ECR-indicative behaviour seen with xenon is not demonstrated for air, with figure 6(a) showing a general suppression of extracted current from an initial 0.06 A to 0.01 A at increased |B| values'; abstract: the Xe extracted current rises 3.9 times up to about 150 mT at the antenna, 'whereas an applied field does not increase the extracted current with air at nominal conditions' (a non-zero field helps with air at reduced neutral densities).",
+     "locator": "pdf p. 9 (text beside Fig. 6); Abstract",
+     "applicability": "2.45 GHz microwave plasma cathode (electron source), 24-70 W; not an ion pre-ionizer for a Hall stage."
+    },
+    {
+     "source": "S-DIAMANT2010",
+     "direction": "contradicts",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: an ECR-stage 2-stage cylindrical Hall thruster design with 'preliminary data showing favorable comparison to existing cylindrical Hall thrusters'.",
+     "locator": "Abstract (closed access)",
+     "applicability": "Abstract only; gas and operating points not stated in the abstract."
+    }
+   ],
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Thrust at fixed bus power with the ECR stage on vs the hall_only arm at the same feed state",
+    "threshold": "ecr_hall thrust at 1.5 kW bus >= 12 mN; break-even against the hall_only arm is PROPOSED as the architecture-benefit criterion",
+    "threshold_status": "PROPOSED",
+    "requires": "A-BREAKEVEN surfaces; common bus boundary",
+    "gates": [
+     "thrust",
+     "bus_power"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-PREION",
+     "effect": "decides"
+    },
+    {
+     "action": "A-BREAKEVEN",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-ECRHALL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-PREION"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Demonstrate that the ECR stage raises thrust at fixed bus power on air, or meets 12 mN within 1.5 kW including its own power.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-ISL-RF",
+   "architectures": [
+    "rf_hall"
+   ],
+   "failure_class": "FC-ISL",
+   "title": "Ions made in the RF stage are lost before the Hall acceleration zone",
+   "rfp_blocks": [
+    "ionization_discharge"
+   ],
+   "mechanism": "Wall recombination, radial diffusion and field-line geometry between the RF source and the Hall channel remove ions and electrons before they reach the acceleration zone.",
+   "physical_cause": "Interstage geometry and magnetic connection; molecular-ion recombination at walls.",
+   "evidence": [
+    {
+     "source": "S-SHABSHELOWITZ2014",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Two-stage gains came from 'a slight increase in propellant efficiency' (abstract).",
+     "locator": "Abstract",
+     "applicability": "Consistent with interstage loss but does not isolate transmission."
+    }
+   ],
+   "evidence_gap": "No open measurement of RF-to-Hall interstage ion transmission on atmospheric gases was found.",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Interstage ion transmission fraction (ion current entering the acceleration zone / ion current produced in the RF stage)",
+    "threshold": ">= the transmission the break-even surfaces require at the design point (TBD - requires the break-even surfaces evaluated at a Vyovrinda design point)",
+    "threshold_status": "TBD",
+    "requires": "A-BREAKEVEN",
+    "gates": [
+     "thrust",
+     "bus_power"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-PREION",
+     "effect": "decides"
+    },
+    {
+     "action": "A-INTERSTAGE",
+     "effect": "contributes"
+    },
+    {
+     "action": "A-BREAKEVEN",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-HHT",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-PREION"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Show RF-to-Hall interstage transmission at or above the break-even requirement.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-ISL-ECR",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "failure_class": "FC-ISL",
+   "title": "Ions made in the ECR stage are trapped or lost before the Hall acceleration zone",
+   "rfp_blocks": [
+    "ionization_discharge"
+   ],
+   "mechanism": "Strong fields needed for resonance confine the plasma near the production zone and near magnet surfaces, raising wall loss and hindering transport to the next stage.",
+   "physical_cause": "Resonance field magnitude (0.0875 T at 2.45 GHz, derived) and magnet-surface proximity of the resonance zone.",
+   "evidence": [
+    {
+     "source": "S-FOSTER2006",
+     "direction": "supports",
+     "evidence_class": "inferred",
+     "evidence_level": 3,
+     "statement": "Higher frequencies need higher fields; 'These high magnetic fields make it difficult for plasma to diffuse away from ECR plasma production zones. Additionally, ECR zones occur much closer to the magnet surface which gives rise to increases in plasma losses to the walls.'",
+     "locator": "Section 'Basic Design and Discharge Performance Implications' (pdf p. 8)",
+     "applicability": "ECR ion-thruster discharge (xenon); the same transport physics applies to an ECR pre-ionizer feeding a downstream stage."
+    },
+    {
+     "source": "S-DIAMANT2010",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "An ECR ionization stage feeding a cylindrical Hall stage was designed and preliminarily tested (abstract).",
+     "locator": "Abstract (closed access)",
+     "applicability": "Abstract only."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "Interstage ion transmission fraction from the ECR zone to the acceleration zone",
+    "threshold": ">= the transmission the break-even surfaces require at the design point (TBD - requires the break-even surfaces evaluated at a Vyovrinda design point)",
+    "threshold_status": "TBD",
+    "requires": "A-BREAKEVEN",
+    "derived_values": [
+     "D-ECR-B-2.45GHZ"
+    ],
+    "gates": [
+     "thrust",
+     "bus_power"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-PREION",
+     "effect": "decides"
+    },
+    {
+     "action": "A-INTERSTAGE",
+     "effect": "contributes"
+    },
+    {
+     "action": "A-BREAKEVEN",
+     "effect": "contributes"
+    },
+    {
+     "action": "A-BFIELD",
+     "effect": "informs"
+    },
+    {
+     "action": "L-ECRHALL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-PREION"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Show ECR-to-Hall interstage transmission at or above the break-even requirement.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-RF-01",
+   "architectures": [
+    "rf_hall"
+   ],
+   "failure_class": "FC-RFS",
+   "title": "E-H (or helicon) mode transition with hysteresis drops the RF stage to a low-density mode",
+   "rfp_blocks": [
+    "ionization_discharge"
+   ],
+   "mechanism": "Inductive sources have a weak capacitive E mode and a dense inductive H mode; the E->H transition occurs at a higher coil current than H->E, so a power, flow or composition change can drop the source to E mode and recovery needs more power.",
+   "physical_cause": "Nonlinear electron power balance (hysteresis); composition-dependent transition power in N2/O2.",
+   "evidence": [
+    {
+     "source": "S-TURNER1999",
+     "direction": "supports",
+     "evidence_class": "model-derived",
+     "evidence_level": 4,
+     "statement": "Abstract: 'The E-to-H transition occurs at a larger coil current than the H-to-E transition, and a range of currents between these values supports either E or H mode. This effect is called hysteresis', attributed to nonlinear effects in the electron power balance.",
+     "locator": "Abstract",
+     "applicability": "General inductive-discharge physics (processing plasmas)."
+    },
+    {
+     "source": "S-WANG2026",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: with N2:O2 from 1:4 to 4:1, 'mode transition power exhibits notable reduction at N2:O2 = 1:4'; N2:O2 of about 2:3 is a transition region between O2- and N2-dominated behaviour.",
+     "locator": "Abstract",
+     "applicability": "Helicon plasma for air-breathing thrusters; transition power depends on composition."
+    },
+    {
+     "source": "S-ZHANG2024",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: plasma morphology, emission spectrum and spatial profile 'change significantly during mode transitions with the N2-Ar ratio'.",
+     "locator": "Abstract",
+     "applicability": "N2-Ar helicon plasma at fixed power and field."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "RF power / coil current margin above the H->E (or helicon mode) transition over the delivered composition and flow envelope",
+    "threshold": "Operating point above the down-transition everywhere in the envelope with a margin (PROPOSED; margin TBD)",
+    "threshold_status": "PROPOSED",
+    "requires": "composition envelope (A-FLOWENV)",
+    "gates": [
+     "restart_sustainment",
+     "bus_power",
+     "thrust"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-RFSRC",
+     "effect": "decides"
+    },
+    {
+     "action": "A-FLOWENV",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-RFMODE",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-RFSRC"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Demonstrate RF-stage operation above its mode down-transition over the delivered composition envelope with margin.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-RF-02",
+   "architectures": [
+    "rf_hall"
+   ],
+   "failure_class": "FC-RFS",
+   "title": "Impedance mismatch (reflected power) across ignition, Xe <-> air change and flow envelope",
+   "rfp_blocks": [
+    "ionization_discharge",
+    "power_bus"
+   ],
+   "mechanism": "Plasma ignition and gas/flow changes shift the load impedance; a fixed match reflects power, an automatic match must track it.",
+   "physical_cause": "Plasma-dependent antenna load (resistance and reactance).",
+   "evidence": [
+    {
+     "source": "S-ROMANO2020",
+     "direction": "supports",
+     "evidence_class": "inferred",
+     "evidence_level": 5,
+     "statement": "'Once the plasma is ignited, a frequency shift and a corresponding impedance change will happen. This requires tuning to shift back to the original resonance condition.'",
+     "locator": "Sec. 4.1 (arXiv:2007.06397v2 pdf p. 12)",
+     "applicability": "Resonant birdcage-antenna IPT design (citing prior observations)."
+    },
+    {
+     "source": "S-RABUNAL2024",
+     "direction": "contradicts",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "400 W at 13.56 MHz coupled 'via a customized pi-type matching network to maintain system impedance matched across all operational conditions. Reflected power is kept below 2%, for all the tests.'",
+     "locator": "Sec. II (pdf p. 2)",
+     "applicability": "Helicon thruster on air 4.5-27 sccm and on krypton, laboratory matching network."
+    }
+   ],
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Reflected power fraction over ignition, Xe <-> air transition and the flow envelope with the chosen matching approach",
+    "threshold": "Reflected power within the RF generator rating and inside the bus ledger (PROPOSED; value TBD)",
+    "threshold_status": "PROPOSED",
+    "gates": [
+     "bus_power",
+     "restart_sustainment"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-RFSRC",
+     "effect": "decides"
+    },
+    {
+     "action": "M-TRANS",
+     "effect": "contributes"
+    },
+    {
+     "action": "A-ELEC",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-RFSRC"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Demonstrate matched RF operation (bounded reflected power) through ignition and the Xe -> air transition.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-RF-03",
+   "architectures": [
+    "rf_hall"
+   ],
+   "failure_class": "FC-RFS",
+   "title": "Magnetized RF (helicon) source field interacts with the Hall magnetic circuit",
+   "condition": "Applies only if a magnetized (helicon) RF source is chosen.",
+   "rfp_blocks": [
+    "ionization_discharge",
+    "acceleration_thrust"
+   ],
+   "mechanism": "The helicon solenoid field superposes on the Hall circuit field, distorting the Hall B(z) topology or the helicon-region field.",
+   "physical_cause": "Field magnitudes of the same order in adjacent regions.",
+   "evidence": [
+    {
+     "source": "S-RABUNAL2024",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Helicon thrusters use an external solenoid field 'typically in the range between 100 and 1000 G'; 600 G at the magnetic throat in the air test.",
+     "locator": "Sec. I (pdf p. 1); Sec. II (pdf p. 2)",
+     "applicability": "Standalone helicon thruster."
+    },
+    {
+     "source": "S-SIMMONDS2022",
+     "direction": "context",
+     "evidence_class": "inferred",
+     "evidence_level": 5,
+     "statement": "Hall-thruster centreline field 'is typically below 1 kG'.",
+     "locator": "Sec. 6 (arXiv v1 pdf p. 15)",
+     "applicability": "General statement on Hall thrusters."
+    }
+   ],
+   "evidence_gap": "No open source quantifies the helicon-Hall field interaction on atmospheric gases (S-SHABSHELOWITZ2014 full text may; not accessible).",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Deviation of the Hall-channel B(z) and of the helicon-region field under superposition, over the magnet-current schedule",
+    "threshold": "Hall B(z) within the Vyovrinda design tolerance (TBD, docs/hallmap/)",
+    "threshold_status": "TBD",
+    "gates": [
+     "thrust",
+     "restart_sustainment"
+    ]
+   },
+   "actions": [
+    {
+     "action": "A-BFIELD",
+     "effect": "decides"
+    },
+    {
+     "action": "M-PREION",
+     "effect": "informs"
+    },
+    {
+     "action": "L-HHT",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-BFIELD"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Show by field analysis that the helicon field leaves the Hall B(z) within design tolerance (if a magnetized RF source is chosen).",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-RF-04",
+   "architectures": [
+    "rf_hall"
+   ],
+   "failure_class": "FC-RFS",
+   "title": "RF interference coupling into the Hall discharge circuit, cathode or PPU sensing",
+   "rfp_blocks": [
+    "power_bus",
+    "operations"
+   ],
+   "mechanism": "RF fields and currents couple into the discharge supply, cathode keeper and control sensing, disturbing regulation or protection.",
+   "physical_cause": "Near-field coupling from the RF antenna and return paths.",
+   "evidence": [],
+   "evidence_gap": "No open-literature source on RF-to-Hall electromagnetic interference was found in this lane's search; S-RABUNAL2024 uses RF-compensated probes (diagnostic practice), which is not evidence on thruster electronics.",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Disturbance on discharge current/voltage regulation and keeper/cathode supply with RF on",
+    "threshold": "No loss of regulation or protection trips (PROPOSED)",
+    "threshold_status": "PROPOSED",
+    "gates": [
+     "restart_sustainment"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-PREION",
+     "effect": "decides"
+    },
+    {
+     "action": "A-ELEC",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-PREION"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Demonstrate regulated Hall and cathode supplies with the RF stage on.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-ECR-01",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "failure_class": "FC-ECR",
+   "title": "Cutoff (overdense) limit: ECR-stage density saturates below the Hall-stage feed need",
+   "rfp_blocks": [
+    "ionization_discharge"
+   ],
+   "mechanism": "Microwaves launched from the low-field side are reflected where the plasma frequency exceeds the wave frequency, capping density at the cutoff n_c(f) unless another wave mode or launch is used.",
+   "physical_cause": "n_c(f) = epsilon_0 m_e (2 pi f)^2 / e^2 (derived values D-ECR-NC-*).",
+   "evidence": [
+    {
+     "source": "S-FOSTER2006",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "At 2.45 GHz and 750 W the measured near-grid density 'was as high as 6x10^10 #/cm3, very close to the cutoff density at this frequency'; the second-generation engine moved to 5.85 GHz; above cutoff 'the microwaves are no longer absorbed, but reflected to regions of lower field strength'. The same report attributes a later density saturation near the ion grid more likely to high utilization than to cutoff ('The high calculated grid currents suggest that the latter possibility likely prevails').",
+     "locator": "Sections 'Basic Design and Discharge Performance Implications' (pdf p. 8) and 'Early Microwave Ion Source Development' (pdf p. 11); section 'Plasma density' of the discharge results (pdf p. 21)",
+     "applicability": "HiPEP ECR ion-thruster discharge on xenon."
+    },
+    {
+     "source": "S-DIAMANT2009",
+     "direction": "contradicts",
+     "evidence_class": "inferred",
+     "evidence_level": 3,
+     "statement": "Estimated cavity plasma densities 1e18-1e19 m^-3 (xenon) and 6e17-3e18 m^-3 (argon) exceed the stated 'critical density at 5.8 GHz = 4x10^17 m^-3'.",
+     "locator": "Sec. V (pdf p. 4)",
+     "applicability": "Microwave cathode; densities inferred from an ion-migration current limit, not measured."
+    },
+    {
+     "source": "S-TISAEV2023A",
+     "direction": "contradicts",
+     "evidence_class": "inferred",
+     "evidence_level": 3,
+     "statement": "Cut-off density at 2.45 GHz is 7.4e16 m^-3; 'the electron density observed in microwave cathodes is significantly higher than nc', so microwaves do not penetrate the overdense bulk and heating occurs near the antenna.",
+     "locator": "pdf p. 4",
+     "applicability": "Microwave cathodes operate overdense; applicability to an ion-producing pre-ionizer not shown."
+    }
+   ],
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Required ECR-stage density (or ion flux) against n_c(f) for the chosen frequency and launch",
+    "threshold": "n_e <= n_c(f) for low-field-side O/X launch; above it only with a demonstrated overdense heating route (physics bound)",
+    "threshold_status": "physics_bound",
+    "requires": "required ion flux from A-INTERSTAGE",
+    "derived_values": [
+     "D-ECR-NC-2.45GHZ",
+     "D-ECR-NC-5.8GHZ",
+     "D-ECR-NC-5.85GHZ"
+    ],
+    "gates": [
+     "thrust",
+     "bus_power"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-ECRSRC",
+     "effect": "decides"
+    },
+    {
+     "action": "A-INTERSTAGE",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-ECRHALL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-ECRSRC"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Show the ECR stage reaches the ion flux the Hall stage needs, below cutoff or by a demonstrated overdense route.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-ECR-02",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "failure_class": "FC-ECR",
+   "title": "ECR resonance field interacts with the Hall magnetic circuit",
+   "rfp_blocks": [
+    "ionization_discharge",
+    "acceleration_thrust"
+   ],
+   "mechanism": "The resonance surface needs |B| = 2 pi f m_e / e near the source while the Hall channel needs its own B(z); the ECR magnets distort the Hall topology and the Hall circuit (and its current schedule between Xe and air setpoints) moves the resonance surface.",
+   "physical_cause": "Resonance field (0.0875 T at 2.45 GHz, derived) is several times the peak radial field of a Hall channel such as P5 (130-162.5 G).",
+   "evidence": [
+    {
+     "source": "S-TISAEV2023A",
+     "direction": "context",
+     "evidence_class": "inferred",
+     "evidence_level": 3,
+     "statement": "'For f = 2.45 GHz, the corresponding ECR magnetic-field strength BECR is 87.5 mT.'",
+     "locator": "pdf p. 4 (Eq. 2)",
+     "applicability": "Physics statement; reproduced by D-ECR-B-2.45GHZ."
+    },
+    {
+     "source": "S-BRABSTON2025",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "P5 peak radial B 162.5 G at the Xe setpoints and 130 G at the N2 setpoints; coils tuned at N3 and held.",
+     "locator": "hallthruster_bridge/cases/p5_xenon.json source field (Table 4); p5_n2_measurement_audit_findings_v1.json finding F6",
+     "applicability": "A 5-kW-class Hall thruster; illustrative magnitude, not a Vyovrinda design value."
+    },
+    {
+     "source": "S-SIMMONDS2022",
+     "direction": "context",
+     "evidence_class": "inferred",
+     "evidence_level": 5,
+     "statement": "Hall centreline field 'is typically below 1 kG'.",
+     "locator": "Sec. 6 (arXiv v1 pdf p. 15)",
+     "applicability": "General statement."
+    },
+    {
+     "source": "S-STASTNY2026",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: a 'MHz-range birdcage resonator in combination with a tailored magnetic field' sustained an ECR discharge at VLEO-representative pressure.",
+     "locator": "Abstract",
+     "applicability": "A lower resonance frequency lowers the required field; route relevant to the interaction, not a demonstration with a Hall circuit."
+    }
+   ],
+   "evidence_gap": "No open measurement of an ECR stage operating with an adjacent Hall circuit on atmospheric gases (S-DIAMANT2010 full text may contain one; closed).",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Resonance-surface location and Hall B(z) deviation under superposed fields over the magnet-current schedule",
+    "threshold": "Resonance surface inside the ECR region and Hall B(z) within design tolerance at every scheduled setpoint (TBD, docs/hallmap/)",
+    "threshold_status": "TBD",
+    "derived_values": [
+     "D-ECR-B-2.45GHZ",
+     "D-RATIO-BECR-P5N2",
+     "D-RATIO-BECR-P5XE"
+    ],
+    "gates": [
+     "thrust",
+     "restart_sustainment"
+    ]
+   },
+   "actions": [
+    {
+     "action": "A-BFIELD",
+     "effect": "decides"
+    },
+    {
+     "action": "M-ECRSRC",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-ECRHALL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-BFIELD"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Show by field analysis (then test) that the ECR resonance and the Hall B(z) coexist at every scheduled setpoint.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-ECR-03",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "failure_class": "FC-ECR",
+   "title": "Microwave power chain (generator, transmission, coupler) efficiency or life insufficient",
+   "rfp_blocks": [
+    "power_bus"
+   ],
+   "mechanism": "DC-to-microwave conversion and transmission losses add to the bus and to waste heat; the generator must survive the firing and mission hours.",
+   "physical_cause": "Generator technology efficiency and wear-out.",
+   "evidence": [],
+   "evidence_gap": "No open source on flight-rated microwave generator efficiency/life at the relevant power was located in this lane (TBD - requires the ECR evidence matrix and a component survey).",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Microwave chain efficiency (explicit input to the bus ledger) and generator life",
+    "threshold": "Bus ledger closes with the stated efficiency; life > 15,000 h firing within 26,000 h mission (RFP)",
+    "threshold_status": "RFP",
+    "gates": [
+     "bus_power",
+     "firing_life",
+     "mission_life"
+    ]
+   },
+   "actions": [
+    {
+     "action": "A-ELEC",
+     "effect": "contributes"
+    },
+    {
+     "action": "A-THERMAL",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-ECRHALL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-ELEC",
+    "A-THERMAL"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Identify a microwave power chain whose efficiency closes the bus ledger and whose life covers the firing and mission hours.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-CAT-01",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-CAT",
+   "title": "Emitter poisoning by oxygen from the feed, plume backflow or ram exposure",
+   "rfp_blocks": [
+    "cathode"
+   ],
+   "mechanism": "Oxygen on the thermionic emitter raises the work function, cutting emission and destabilizing the cathode (plume mode), with erosion at high temperature.",
+   "physical_cause": "Surface chemistry of BaO-W and LaB6 emitters in oxidizing environments.",
+   "evidence": [
+    {
+     "source": "S-TISAEV2023A",
+     "direction": "supports",
+     "evidence_class": "inferred",
+     "evidence_level": 5,
+     "statement": "'exposure of the emitter materials, such as barium-oxide impregnated tungsten (BaO-W) or lanthanum-hexaboride (LaB6), to oxygen results in poisoning of the material surface and prompts a significant decrease in the current density at even minimal values of air pressure'; operation of a LaB6 hollow cathode on xenon containing a 12% fraction of a 0.48O2 + 0.52N2 mixture 'results in significant erosion of the emitter and cathode structure' (citing refs [9, 10] and [1] = S-ANDREUSSI2022).",
+     "locator": "Sec. 1 Introduction (pdf p. 3)",
+     "applicability": "Secondary statements; primary sources not read (S-ANDREUSSI2022 targeted by L-CATHODE)."
+    },
+    {
+     "source": "S-SUZUKI2024",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: an LaB6 emitter surface showed oxygen and carbon; a work-function increase region appears to increase plasma instability; the unstable plume-mode region expanded, and plume mode 'severely degrades the overall cathode lifetime'.",
+     "locator": "Abstract",
+     "applicability": "Laboratory LaB6 hollow cathode; contamination source not an air feed."
+    },
+    {
+     "source": "S-MARCHIONI2020",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "ECHT tests ran a degraded BaO emitter cathode (IonTech HCN-252) on argon.",
+     "locator": "Repo audit echt_n2_evidence_audit_v1.json finding E7",
+     "applicability": "Degradation cause not attributed."
+    },
+    {
+     "source": "S-ANDREUSSI2017",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "After two days of RAM-HET Xe / N2-O2 testing 'cathode ignition could not be achieved anymore'; inspection showed 'a damaged emitter'.",
+     "locator": "Sec. III.E (pdf p. 7)",
+     "applicability": "Cause not attributed by the source."
+    },
+    {
+     "source": "S-DIAMANT2009",
+     "direction": "context",
+     "evidence_class": "inferred",
+     "evidence_level": 5,
+     "statement": "'Use of a thermionic hollow cathode, perhaps with a relatively oxygen-tolerant LaB6 insert, coupled with a small on-board supply of xenon may be an adequate solution'; for long missions the author assumes hot parts exposed to the oxidizing environment should be avoided.",
+     "locator": "Sec. III (pdf p. 3)",
+     "applicability": "Design judgement citing S-GOEBEL2007."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "Emission and discharge stability vs oxygen-bearing partial pressure at the emitter (from cathode feed, plume backflow and ram exposure during off periods)",
+    "threshold": "Tolerated partial pressure (TBD - requires cathode data) above the predicted exposure over firing and mission life",
+    "threshold_status": "TBD",
+    "gates": [
+     "firing_life",
+     "mission_life",
+     "restart_sustainment"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-CATHODE",
+     "effect": "decides"
+    },
+    {
+     "action": "L-CATHODE",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-CATHODE"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Demonstrate cathode emission and restart after exposure to the predicted oxygen-bearing environment over the firing and mission life.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open",
+   "proposed_gate_links": [
+    "P2_cathode"
+   ]
+  },
+  {
+   "id": "N-CAT-02",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-CAT",
+   "title": "Cathode Xe consumption over the firing life exceeds the Xe allocation in the mass gate",
+   "rfp_blocks": [
+    "cathode",
+    "structure_mass"
+   ],
+   "mechanism": "A Xe-fed cathode consumes Xe for every firing hour (and per start/transition); over 15,000 h this is a large inventory.",
+   "physical_cause": "Cathode flow requirement times firing hours.",
+   "evidence": [
+    {
+     "source": "S-BRABSTON2025",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "P5 on N2 ran its cathode on xenon at 0.44 mg/s (8 % of the anode mass flow).",
+     "locator": "Repo audit p5_n2_measurement_audit_findings_v1.json finding F5",
+     "applicability": "5-kW-class laboratory setpoint, not a Vyovrinda operating point."
+    },
+    {
+     "source": "S-CIFALI2011",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "With N2 or N2/O2 at the anode, 'the cathode continued to work with xenon'.",
+     "locator": "Sec. II (pdf p. 2)",
+     "applicability": "Laboratory practice."
+    },
+    {
+     "source": "S-DIAMANT2009",
+     "direction": "supports",
+     "evidence_class": "model-derived",
+     "evidence_level": 3,
+     "statement": "'If xenon is carried on board, then continuous cathode operation for 5 years at a flow rate of 0.5 sccm would require about 8 kg of gas.'",
+     "locator": "Sec. V (pdf p. 4)",
+     "applicability": "Source's arithmetic for its notional thruster; reproduced by D-XE-DIAMANT-CHECK."
+    },
+    {
+     "source": "S-TISAEV2023B",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: an air-fed microwave cathode coupled to a 100-300 W cylindrical Hall thruster on xenon gave 'Stable thruster operation ... for the AMPCAT running on both propellants'.",
+     "locator": "Abstract",
+     "applicability": "An air-fed cathode route that would remove cathode Xe, shown only at 100-300 W."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "m_Xe,cathode = cathode flow x firing hours (+ Xe per start and per transition)",
+    "threshold": "Within the Xe allocation inside the 40 kg mass gate (allocation TBD from the mass ledger)",
+    "threshold_status": "TBD",
+    "requires": "A-MASS allocation; minimum cathode flow (M-CATHODE)",
+    "derived_values": [
+     "D-XE-PER-0.1MGPS-15000H",
+     "D-XE-DIAMANT-CHECK"
+    ],
+    "gates": [
+     "mass",
+     "air_xe"
+    ]
+   },
+   "actions": [
+    {
+     "action": "A-MASS",
+     "effect": "contributes"
+    },
+    {
+     "action": "M-CATHODE",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-CATHODE",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-MASS",
+    "M-CATHODE"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Show the cathode Xe inventory for 15,000 h (plus starts and transitions) fits the Xe allocation, or qualify an air-fed cathode.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open",
+   "proposed_gate_links": [
+    "P2_cathode"
+   ]
+  },
+  {
+   "id": "N-CAT-03",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-CAT",
+   "title": "Cathode flow minimized for mass drives plume mode and energetic-ion erosion",
+   "rfp_blocks": [
+    "cathode"
+   ],
+   "mechanism": "Lowering cathode flow to save Xe moves the cathode toward plume mode, whose instabilities generate energetic ions that erode the keeper and orifice.",
+   "physical_cause": "Plume-mode instabilities at low flow and high current.",
+   "evidence": [
+    {
+     "source": "S-SCOTT2024",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: in plume mode 'plasma instabilities generate erosive energetic ions'; onset 'occurs at even less than 2 Vpp of the keeper voltage' and 'starts at higher gas flow rates than expected from the traditional 5 Vpp metric'.",
+     "locator": "Abstract",
+     "applicability": "5-75 A LaB6 hollow cathode on xenon."
+    },
+    {
+     "source": "S-SUZUKI2024",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: 'The unstable plume mode of hollow cathodes should be avoided in practical applications because it severely degrades the overall cathode lifetime.'",
+     "locator": "Abstract",
+     "applicability": "Laboratory LaB6 hollow cathode."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "Plume-mode onset flow at the required discharge current vs the chosen cathode flow",
+    "threshold": "Spot-mode operation with a flow margin (PROPOSED; margin TBD)",
+    "threshold_status": "PROPOSED",
+    "gates": [
+     "firing_life",
+     "mass"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-CATHODE",
+     "effect": "decides"
+    },
+    {
+     "action": "L-CATHODE",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-CATHODE"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Demonstrate spot-mode cathode operation at the flow used in the Xe budget.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open",
+   "proposed_gate_links": [
+    "P2_cathode"
+   ]
+  },
+  {
+   "id": "N-CAT-04",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-CAT",
+   "title": "Air-fed cathode route: electron current or coupling insufficient at the discharge current",
+   "condition": "Applies only if the cathode is fed from the atmospheric path (to avoid cathode Xe).",
+   "rfp_blocks": [
+    "cathode"
+   ],
+   "mechanism": "Non-thermionic (microwave/RF) plasma cathodes on air extract less current per unit flow and power than on Xe, and cathode-plume coupling may be worse.",
+   "physical_cause": "Electron energy loss to dissociation/excitation in air; ionization cross sections.",
+   "evidence": [
+    {
+     "source": "S-TISAEV2023A",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Air-fed microwave cathode: extracted current 'in the order of 1 A with 0.1 mg/s of air'; an applied field raises the Xe current 3.9 times but not the air current at nominal conditions.",
+     "locator": "Abstract",
+     "applicability": "2.45 GHz, 24-70 W cathode; required Vyovrinda current not known without Hall performance."
+    },
+    {
+     "source": "S-TISAEV2023B",
+     "direction": "contradicts",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: coupled to a 100-300 W cylindrical Hall thruster, stable thruster operation was demonstrated with the cathode on air; plasma potential near the cathode was 30-40 V lower with xenon than with air.",
+     "locator": "Abstract",
+     "applicability": "100-300 W class only."
+    }
+   ],
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Extracted electron current and coupling voltage of the air-fed cathode at the required discharge current and flow",
+    "threshold": "Extracted current >= maximum discharge current with margin (PROPOSED; margin TBD)",
+    "threshold_status": "PROPOSED",
+    "gates": [
+     "thrust",
+     "restart_sustainment",
+     "air_xe"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-CATHODE",
+     "effect": "decides"
+    },
+    {
+     "action": "L-CATHODE",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-CATHODE"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "If an air-fed cathode is used: demonstrate its current and coupling at the required discharge current.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open",
+   "proposed_gate_links": [
+    "P2_cathode"
+   ]
+  },
+  {
+   "id": "N-THM-01",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-THM",
+   "title": "Hall magnetic circuit (coils or permanent magnets) exceeds its temperature limit",
+   "rfp_blocks": [
+    "thermal",
+    "acceleration_thrust"
+   ],
+   "mechanism": "Discharge losses deposited on the walls flow into the magnetic circuit; magnets and coils lose field or insulation above their limit.",
+   "physical_cause": "Wall heat flux (higher fraction of power lost on molecular propellants) conducted to the magnetic circuit.",
+   "evidence": [
+    {
+     "source": "S-SIMMONDS2022",
+     "direction": "supports",
+     "evidence_class": "inferred",
+     "evidence_level": 5,
+     "statement": "'Limitations on increasing the plasma density and induced field are usually due to thermal management in Hall thrusters, as the heat from the electrons colliding with the channel wall flows to the magnetic circuit and thruster coils/permanent magnet, the latter of which typically have maximum temperatures of ~400 C.'",
+     "locator": "Sec. 6 (arXiv v1 pdf p. 15)",
+     "applicability": "General statement without a primary citation; the limit for Vyovrinda parts comes from their datasheets."
+    },
+    {
+     "source": "S-MYERS2016",
+     "direction": "supports",
+     "evidence_class": "model-derived",
+     "evidence_level": 3,
+     "statement": "Abstract: Hall thruster life is 'primarily limited by plasma erosion and thermal related failures'; 'thruster operational parameters can push some components/materials beyond their temperature limits'; the design reduced temperatures of critical components.",
+     "locator": "Abstract",
+     "applicability": "NASA-JPL xenon Hall thruster thermal model correlated with test."
+    },
+    {
+     "source": "S-CIFALI2011",
+     "direction": "context",
+     "evidence_class": "inferred",
+     "evidence_level": 3,
+     "statement": "The RIT-10 EBB was water-cooled 'as higher power consumption and higher temperatures were expected for atmospheric propellants'.",
+     "locator": "Sec. III.A (pdf p. 7)",
+     "applicability": "Designers' expectation for an RF ion thruster."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "Peak magnet/coil temperature at the worst-case operating point (air and Xe setpoints)",
+    "threshold": "Below the component limit (TBD - datasheet) with margin (PROPOSED)",
+    "threshold_status": "TBD",
+    "gates": [
+     "firing_life",
+     "bus_power",
+     "mass"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-THERMAL",
+     "effect": "decides"
+    },
+    {
+     "action": "A-THERMAL",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-THERMAL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-THERMAL"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Show magnet/coil temperatures below their limits at the worst-case air and Xe setpoints.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open",
+   "proposed_gate_links": [
+    "P1_thermal"
+   ]
+  },
+  {
+   "id": "N-THM-02",
+   "architectures": [
+    "rf_hall"
+   ],
+   "failure_class": "FC-THM",
+   "title": "RF coil/antenna, matching network or discharge tube overheats",
+   "rfp_blocks": [
+    "thermal",
+    "ionization_discharge"
+   ],
+   "mechanism": "Ohmic loss in the antenna and matching network and RF power not absorbed by the plasma become heat at the source.",
+   "physical_cause": "Antenna resistance and coupling efficiency.",
+   "evidence": [
+    {
+     "source": "S-ROMANO2020",
+     "direction": "context",
+     "evidence_class": "inferred",
+     "evidence_level": 5,
+     "statement": "The resonant birdcage antenna is chosen to 'Minimize power losses by providing electrically optimized antenna operating at resonance condition'.",
+     "locator": "Sec. 1 (arXiv:2007.06397v2 pdf p. 3)",
+     "applicability": "Design intent."
+    }
+   ],
+   "evidence_gap": "RF coil loss and thermal data (e.g. S-DOBKEVICIUS2016) not read in this lane.",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Coil, coupler and tube temperatures and the RF loss fraction",
+    "threshold": "Below material limits (TBD) with margin",
+    "threshold_status": "TBD",
+    "gates": [
+     "bus_power",
+     "firing_life"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-THERMAL",
+     "effect": "decides"
+    },
+    {
+     "action": "A-THERMAL",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-THERMAL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-THERMAL"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Show RF coil, coupler and tube temperatures below limits at the design RF power.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open",
+   "proposed_gate_links": [
+    "P1_thermal"
+   ]
+  },
+  {
+   "id": "N-THM-03",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "failure_class": "FC-THM",
+   "title": "ECR magnets lose remanence or the resonator/coupler overheats",
+   "rfp_blocks": [
+    "thermal",
+    "ionization_discharge"
+   ],
+   "mechanism": "Heat from the discharge and microwave losses raises magnet and resonator temperatures; magnets lose field (moving the resonance) and resonators detune or fail.",
+   "physical_cause": "Plasma heat load and resonator losses near permanent magnets.",
+   "evidence": [
+    {
+     "source": "S-STASTNY2026",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: the findings identify 'the engineering limits imposed by resonator heating'.",
+     "locator": "Abstract",
+     "applicability": "ECR ABEP source with a MHz-range birdcage resonator."
+    },
+    {
+     "source": "S-FOSTER2006",
+     "direction": "context",
+     "evidence_class": "inferred",
+     "evidence_level": 3,
+     "statement": "'High-energy product samarium cobalt magnets are capable of generating up to 2.8 kG near the magnets surface. This puts the practical limit on the operating frequency of around 6 GHz.'",
+     "locator": "Section 'Basic Design and Discharge Performance Implications' (pdf p. 8)",
+     "applicability": "Magnet capability, not temperature."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "Magnet and resonator/coupler temperatures at the design microwave power",
+    "threshold": "Below limits (TBD) with the resonance surface held in place",
+    "threshold_status": "TBD",
+    "gates": [
+     "firing_life",
+     "bus_power"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-THERMAL",
+     "effect": "decides"
+    },
+    {
+     "action": "A-THERMAL",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-THERMAL",
+     "effect": "informs"
+    },
+    {
+     "action": "L-ECRHALL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-THERMAL"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Show ECR magnet and resonator temperatures below limits at the design microwave power.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open",
+   "proposed_gate_links": [
+    "P1_thermal"
+   ]
+  },
+  {
+   "id": "N-ERO-01",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-ERO",
+   "title": "Channel-wall erosion (physical and chemical) by N/O species limits firing life",
+   "rfp_blocks": [
+    "acceleration_thrust"
+   ],
+   "mechanism": "Ion sputtering plus chemical attack by oxygen species wears the channel walls; magnetic shielding is validated on xenon only.",
+   "physical_cause": "Wall ion flux and energy on the delivered composition; O chemistry with ceramics.",
+   "evidence": [
+    {
+     "source": "S-CIFALI2011",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "After the N2 and N2/O2 firings, 'The signs of operation with oxygen are also visible on the ceramics'.",
+     "locator": "Sec. II.C (pdf p. 5)",
+     "applicability": "Visual inspection after about 10-h firings; no rate."
+    },
+    {
+     "source": "S-HOFER2014",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: magnetic shielding reduced the wall erosion rate 'by a factor of 1000 relative to the unshielded thruster'.",
+     "locator": "Abstract",
+     "applicability": "Xenon laboratory thruster; applicability to N/O propellants not established."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "Wall erosion rate on the delivered composition x firing hours against the wall allowance",
+    "threshold": "Wall allowance not consumed before 15,000 h firing (RFP) with margin",
+    "threshold_status": "RFP",
+    "gates": [
+     "firing_life"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-EROSION",
+     "effect": "contributes"
+    },
+    {
+     "action": "A-THERMAL",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-WALL",
+     "effect": "informs"
+    },
+    {
+     "action": "A-HALLMAP",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-THERMAL",
+    "M-EROSION"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Show a measured erosion rate on the delivered composition that, by the thermal/life extrapolation rule, leaves wall margin at 15,000 h.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-ERO-02",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-ERO",
+   "title": "Anode oxidation raises electrical resistance",
+   "rfp_blocks": [
+    "acceleration_thrust"
+   ],
+   "mechanism": "Oxygen in the feed oxidizes the anode surface; resistance rises over firing time.",
+   "physical_cause": "Anode material chemistry with O/O2.",
+   "evidence": [
+    {
+     "source": "S-CIFALI2011",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "'The anode seems rusty ... with respect to a future endurance test the anode oxidation with the consequent increase in electrical resistance is the main concern'; pure O2 was replaced by an N2/O2 mixture 'In order to limit anode oxidation'.",
+     "locator": "Sec. II (pdf pp. 2 and 5)",
+     "applicability": "PPS1350-TSD anode after about 10-h firings."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "Anode surface state and resistance vs firing hours on the delivered composition",
+    "threshold": "Discharge unaffected over 15,000 h firing (threshold TBD)",
+    "threshold_status": "TBD",
+    "gates": [
+     "firing_life"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-EROSION",
+     "effect": "decides"
+    },
+    {
+     "action": "L-WALL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-EROSION"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Show an anode material whose oxidation on the delivered composition does not change the discharge over the firing life.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-ERO-03",
+   "architectures": [
+    "rf_hall"
+   ],
+   "failure_class": "FC-ERO",
+   "title": "RF source window/tube erosion or conductive coating degrades coupling",
+   "rfp_blocks": [
+    "ionization_discharge"
+   ],
+   "mechanism": "Sputtered or deposited conductive films on the dielectric window shield the inductive field; oxygen attacks exposed surfaces.",
+   "physical_cause": "Plasma-wall interaction at the RF window.",
+   "evidence": [
+    {
+     "source": "S-RABUNAL2024",
+     "direction": "contradicts",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "'there are no signs of oxidation of surfaces exposed to or nearby to the plasma' and no degradation with time was noticed during the air campaign.",
+     "locator": "Sec. V (pdf p. 12)",
+     "applicability": "Short laboratory campaign on a quartz helicon source; does not bound 15,000 h."
+    }
+   ],
+   "evidence_status": "contradicted",
+   "decision_quantity": {
+    "quantity": "Coupling efficiency drift and window condition vs firing hours",
+    "threshold": "No coupling loss beyond the bus-ledger margin over 15,000 h (TBD)",
+    "threshold_status": "TBD",
+    "gates": [
+     "firing_life"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-EROSION",
+     "effect": "decides"
+    },
+    {
+     "action": "L-WALL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-EROSION"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Show RF window condition and coupling stable over a representative firing on the delivered composition.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-ERO-04",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "failure_class": "FC-ERO",
+   "title": "ECR antenna/window erosion or coating in air plasma",
+   "rfp_blocks": [
+    "ionization_discharge"
+   ],
+   "mechanism": "An antenna or window exposed to air plasma erodes or is coated, changing microwave coupling.",
+   "physical_cause": "Plasma-surface interaction with oxygen species.",
+   "evidence": [],
+   "evidence_gap": "Material behaviour of microwave antennas in air plasma was reported for the AMPCAT (S-TISAEV2024, not read); no other open source located.",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Antenna/window condition and coupling vs firing hours",
+    "threshold": "No coupling loss beyond margin over 15,000 h (TBD)",
+    "threshold_status": "TBD",
+    "gates": [
+     "firing_life"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-EROSION",
+     "effect": "decides"
+    },
+    {
+     "action": "L-ECRHALL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-EROSION"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Show ECR antenna/window condition and coupling stable over a representative firing on the delivered composition.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-PWR-01",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-PWR",
+   "title": "Hall-stage discharge power per unit thrust on air leaves no room in the 1.5 kW bus",
+   "rfp_blocks": [
+    "acceleration_thrust",
+    "power_bus"
+   ],
+   "mechanism": "If discharge power per thrust on the delivered composition is high, 12 mN needs more discharge power than the bus leaves after the other loads.",
+   "physical_cause": "Utilization and energy cost per ion on molecular propellants.",
+   "evidence": [
+    {
+     "source": "S-CIFALI2011",
+     "direction": "contradicts",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "PPS1350-TSD on pure N2: 'the operating point 305 V, 3.48 A, 41.6 W/mN is of particular interest' as fulfilling the RAM-EP power-to-thrust requirement of that study.",
+     "locator": "Sec. II.B (pdf p. 3)",
+     "applicability": "Laboratory facility, Xe cathode, Xe start, flow set by a controller; not the ABEP feed state or composition."
+    },
+    {
+     "source": "S-MARCHIONI2020",
+     "direction": "contradicts",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "ECHT journal abstract: 17-22 mN at 500-800 W anode power on 2 mg/s N2.",
+     "locator": "Repo audit echt_n2_evidence_audit_v1.json source S1 abstract_values",
+     "applicability": "Facility pressure 0.8-2.5e-4 Torr without a published facility correction; argon cathode."
+    }
+   ],
+   "evidence_status": "contradicted",
+   "decision_quantity": {
+    "quantity": "Discharge power per thrust on the delivered composition, against the discharge power the bus ledger leaves",
+    "threshold": "P_discharge(12 mN) <= 1500 W minus all other loads (RFP)",
+    "threshold_status": "RFP",
+    "requires": "A-ELEC",
+    "gates": [
+     "bus_power",
+     "thrust"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-PREION",
+     "effect": "decides"
+    },
+    {
+     "action": "A-ELEC",
+     "effect": "contributes"
+    },
+    {
+     "action": "A-HALLMAP",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-PREION"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Demonstrate 12 mN on the delivered composition at a discharge power within what the common bus boundary leaves.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-PWR-02",
+   "architectures": [
+    "rf_hall"
+   ],
+   "failure_class": "FC-PWR",
+   "title": "RF source power plus generator loss pushes the bus above 1.5 kW at 12 mN",
+   "rfp_blocks": [
+    "power_bus",
+    "ionization_discharge"
+   ],
+   "mechanism": "The RF stage's power and DC-to-RF conversion loss add to the Hall discharge and the other loads.",
+   "physical_cause": "Energy per ion on molecular gases in RF sources; generator efficiency.",
+   "evidence": [
+    {
+     "source": "S-SHABSHELOWITZ2014",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Abstract: in two-stage operation 'thrust-to-power ... decreased with increasing radio frequency power'.",
+     "locator": "Abstract",
+     "applicability": "Helicon Hall thruster."
+    },
+    {
+     "source": "S-ZHOU2024",
+     "direction": "supports",
+     "evidence_class": "model-derived",
+     "evidence_level": 4,
+     "statement": "Abstract: for 1 mg/s, N2 and O performance trends are 'similar to Xe, but displaced to powers between 1250 and 2000W' (Xe reference 300 W).",
+     "locator": "Abstract",
+     "applicability": "Hybrid 2D simulation of an electrodeless thruster, not a pre-ionizer."
+    }
+   ],
+   "evidence_status": "supported",
+   "decision_quantity": {
+    "quantity": "Bus power = P_Hall + P_RF / eta_RF-generator + other loads at 12 mN (eta explicit input)",
+    "threshold": "< 1500 W (RFP)",
+    "threshold_status": "RFP",
+    "requires": "A-ELEC with an explicit generator efficiency",
+    "gates": [
+     "bus_power",
+     "thrust"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-PREION",
+     "effect": "decides"
+    },
+    {
+     "action": "A-ELEC",
+     "effect": "contributes"
+    },
+    {
+     "action": "A-BREAKEVEN",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-HHT",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-PREION"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Show the rf_hall bus ledger (including RF generator loss) closes below 1.5 kW at 12 mN.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-PWR-03",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "failure_class": "FC-PWR",
+   "title": "Microwave source power plus conversion loss (and electromagnet power) pushes the bus above 1.5 kW at 12 mN",
+   "rfp_blocks": [
+    "power_bus",
+    "ionization_discharge"
+   ],
+   "mechanism": "The ECR stage's microwave power, conversion loss and any ECR electromagnet power add to the Hall discharge and other loads.",
+   "physical_cause": "Energy per ion on air in ECR sources; microwave chain efficiency.",
+   "evidence": [
+    {
+     "source": "S-TISAEV2023A",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "The air-fed microwave cathode used 24, 48 and 70 W net input microwave power (30, 60 and 90 W forward) at 2.45 GHz.",
+     "locator": "pdf p. 7",
+     "applicability": "Electron source, not an ion pre-ionizer."
+    }
+   ],
+   "evidence_gap": "No open measurement of ECR pre-ionizer power per delivered ion on air feeding a Hall stage was found.",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Bus power = P_Hall + P_MW / eta_MW-chain + P_ECR-magnet + other loads at 12 mN (eta explicit input)",
+    "threshold": "< 1500 W (RFP)",
+    "threshold_status": "RFP",
+    "requires": "A-ELEC with an explicit microwave chain efficiency",
+    "gates": [
+     "bus_power",
+     "thrust"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-PREION",
+     "effect": "decides"
+    },
+    {
+     "action": "A-ELEC",
+     "effect": "contributes"
+    },
+    {
+     "action": "A-BREAKEVEN",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-ECRHALL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-PREION"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Show the ecr_hall bus ledger (including microwave chain loss and magnet power) closes below 1.5 kW at 12 mN.",
+   "analysis_requires_admitted_hall_closure": true,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-PWR-04",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-PWR",
+   "title": "Non-thruster loads consume the bus margin",
+   "rfp_blocks": [
+    "power_bus"
+   ],
+   "mechanism": "Compressor, magnets, cathode heater/keeper, flow control, thermal control and housekeeping take bus power before the discharge.",
+   "physical_cause": "Load ledger on the common boundary.",
+   "evidence": [],
+   "evidence_gap": "An analysis item on the common boundary, not a literature question (TBD - requires abep_sim/arch_boundary.py ledger with explicit inputs).",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Sum of non-thruster loads on bus_power_boundary_v1",
+    "threshold": "Leaves the discharge power needed for 12 mN below 1500 W (RFP)",
+    "threshold_status": "RFP",
+    "gates": [
+     "bus_power"
+    ]
+   },
+   "actions": [
+    {
+     "action": "A-ELEC",
+     "effect": "decides"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-ELEC"
+   ],
+   "resolve_by_milestone": "B",
+   "milestone_A_condition": "Close the non-thruster load ledger on the common boundary with explicit inputs.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-MAS-01",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-MAS",
+   "title": "Total propulsion-system mass exceeds 40 kg",
+   "rfp_blocks": [
+    "structure_mass"
+   ],
+   "mechanism": "Intake, compressor, thruster, PPU, cathode, tanks, radiator and Xe inventory exceed the mass gate.",
+   "physical_cause": "Mass ledger.",
+   "evidence": [],
+   "evidence_gap": "A ledger item, not a literature question (TBD - requires schemas/ledgers/).",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Propulsion-system mass including Xe inventory",
+    "threshold": "< 40 kg (RFP)",
+    "threshold_status": "RFP",
+    "gates": [
+     "mass"
+    ]
+   },
+   "actions": [
+    {
+     "action": "A-MASS",
+     "effect": "decides"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-MASS"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Close the mass ledger below 40 kg including the Xe inventory.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-MAS-02",
+   "architectures": [
+    "rf_hall"
+   ],
+   "failure_class": "FC-MAS",
+   "title": "RF generator, matching network, coil and shielding exceed the mass margin",
+   "rfp_blocks": [
+    "structure_mass"
+   ],
+   "mechanism": "Additional RF power-chain hardware adds mass.",
+   "physical_cause": "RF chain mass.",
+   "evidence": [],
+   "evidence_gap": "No flight-representative RF pre-ionizer chain mass in open literature was located (TBD - requires a component survey in docs/evidence/rf_source/).",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "RF chain mass in the ledger",
+    "threshold": "Total < 40 kg (RFP)",
+    "threshold_status": "RFP",
+    "gates": [
+     "mass"
+    ]
+   },
+   "actions": [
+    {
+     "action": "A-MASS",
+     "effect": "decides"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-MASS"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Close the rf_hall mass ledger with the RF chain below 40 kg.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-MAS-03",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "failure_class": "FC-MAS",
+   "title": "Microwave generator, waveguide/coupler and ECR magnets exceed the mass margin",
+   "rfp_blocks": [
+    "structure_mass"
+   ],
+   "mechanism": "Additional microwave hardware and resonance magnets add mass.",
+   "physical_cause": "Microwave chain and magnet mass.",
+   "evidence": [
+    {
+     "source": "S-FOSTER2006",
+     "direction": "context",
+     "evidence_class": "inferred",
+     "evidence_level": 3,
+     "statement": "Resonance field grows with frequency; SmCo magnets give up to 2.8 kG near their surface (practical limit about 6 GHz).",
+     "locator": "Section 'Basic Design and Discharge Performance Implications' (pdf p. 8)",
+     "applicability": "Magnet sizing driver, no mass figure."
+    }
+   ],
+   "evidence_gap": "No flight-representative ECR pre-ionizer chain mass in open literature was located.",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Microwave chain and ECR magnet mass in the ledger",
+    "threshold": "Total < 40 kg (RFP)",
+    "threshold_status": "RFP",
+    "gates": [
+     "mass"
+    ]
+   },
+   "actions": [
+    {
+     "action": "A-MASS",
+     "effect": "decides"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-MASS"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Close the ecr_hall mass ledger with the microwave chain and magnets below 40 kg.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-CTL-01",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-CTL",
+   "title": "Xe -> mixed -> atmosphere transition loses the discharge or leaves the operating window",
+   "rfp_blocks": [
+    "operations",
+    "ionization_discharge"
+   ],
+   "mechanism": "Xe and air operating points differ (voltage characteristic, magnet setting); during the transition the discharge can extinguish or overshoot current.",
+   "physical_cause": "Gas-dependent ionization and field optimum.",
+   "evidence": [
+    {
+     "source": "S-CIFALI2011",
+     "direction": "contradicts",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "'After ignition, a smooth transition from 100% xenon to 100% nitrogen or N2/O2 mixture at the anode was carried out'.",
+     "locator": "Sec. II (pdf p. 2)",
+     "applicability": "Laboratory Hall thruster with controlled flows."
+    },
+    {
+     "source": "S-ANDREUSSI2017",
+     "direction": "supports",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "RAM-HET standalone Xe to N2-O2 transition: about 1.5 mg/s of xenon 'has always been necessary to prevent the flame out'.",
+     "locator": "Sec. III.E (pdf p. 7)",
+     "applicability": "Double-stage RAM-HET, standalone."
+    },
+    {
+     "source": "S-BRABSTON2025",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "Peak radial B differs between the Xe (162.5 G) and N2 (130 G) setpoints; coils were tuned at N3 to minimise I_d and its oscillation.",
+     "locator": "hallthruster_bridge/cases/p5_xenon.json source field; audit finding F6",
+     "applicability": "Shows a magnet schedule is part of the transition."
+    },
+    {
+     "source": "S-CIFALI2011",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "The N2 electrical characteristic 'is not vertical as for xenon' and is 'shifted to higher voltages with respect to xenon'.",
+     "locator": "Sec. II.B (pdf p. 3)",
+     "applicability": "Operating point moves with gas."
+    }
+   ],
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Discharge continuity and current transients through the transition schedule (flow ramp, V_d, magnet current)",
+    "threshold": "No extinction; transients within supply limits (PROPOSED; limits TBD)",
+    "threshold_status": "PROPOSED",
+    "gates": [
+     "restart_sustainment",
+     "air_xe"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-TRANS",
+     "effect": "decides"
+    },
+    {
+     "action": "L-SITAEL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-TRANS"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Demonstrate the Xe -> mixed -> air transition without extinction under a defined control schedule.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open"
+  },
+  {
+   "id": "N-CTL-02",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-CTL",
+   "title": "Restart count exceeds cathode heater/ignition cycles or the Xe start budget",
+   "rfp_blocks": [
+    "operations",
+    "cathode"
+   ],
+   "mechanism": "Firing 15,000 h within a 26,000 h mission implies interruptions (eclipse, safe mode, duty cycling); each restart costs a cathode heater cycle, an ignition and possibly Xe.",
+   "physical_cause": "Cycle-limited parts and per-start consumables.",
+   "evidence": [],
+   "evidence_gap": "The restart count is an operations-concept quantity (TBD - owner); cycle-life data for the chosen cathode not yet collected.",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Required starts N_start (operations) against demonstrated start cycles and Xe per start",
+    "threshold": "Demonstrated cycles >= N_start with margin; Xe for N_start within the allocation (TBD)",
+    "threshold_status": "TBD",
+    "requires": "A-OPS (owner assumptions)",
+    "derived_values": [
+     "D-RFP-FIRING-FRACTION"
+    ],
+    "gates": [
+     "restart_sustainment",
+     "firing_life",
+     "mission_life",
+     "mass"
+    ]
+   },
+   "actions": [
+    {
+     "action": "A-OPS",
+     "effect": "contributes"
+    },
+    {
+     "action": "M-IGN",
+     "effect": "contributes"
+    },
+    {
+     "action": "M-CATHODE",
+     "effect": "contributes"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-OPS",
+    "M-IGN",
+    "M-CATHODE"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Fix the restart count and show cathode/ignition cycle capability and start Xe cover it.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open",
+   "proposed_gate_links": [
+    "P2_cathode"
+   ]
+  },
+  {
+   "id": "N-CTL-03",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-CTL",
+   "title": "Feed-system start transient too slow or overshoots after start or eclipse",
+   "rfp_blocks": [
+    "gas_supply_upstream",
+    "operations"
+   ],
+   "mechanism": "After start or eclipse, the atmospheric gas chamber must reach the ignition/operating pressure; a long fill time or overshoot delays or upsets the start.",
+   "physical_cause": "Chamber volume, valve conductance and delivered flow (upstream only).",
+   "evidence": [
+    {
+     "source": "S-ANDREUSSI2017",
+     "direction": "context",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "The RAM-HET used a collector volume, and an auxiliary distributor 'for smooth Xe to N2-O2 mixture transitions'.",
+     "locator": "Sec. II.C (pdf p. 4)",
+     "applicability": "Design practice; no transient data."
+    }
+   ],
+   "evidence_gap": "Start-transient data for an ABEP feed chain not located; an upstream analysis item.",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Gas-chamber pressure trajectory and fill time constant at IF-A5 after start/eclipse",
+    "threshold": "Operating pressure reached within the time the operations concept allows (TBD)",
+    "threshold_status": "TBD",
+    "gates": [
+     "restart_sustainment"
+    ]
+   },
+   "actions": [
+    {
+     "action": "A-FLOWENV",
+     "effect": "decides"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-FLOWENV"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Show the feed chain reaches the operating pressure after start/eclipse within the allowed time.",
+   "analysis_requires_admitted_hall_closure": false,
+   "upstream_hall_independent": true,
+   "decision_state": "open"
+  }
+ ],
+ "ranking_rule": {
+  "id": "decisiveness_lexicographic_v1",
+  "text": "For each architecture, rank every eligible action by how many of that architecture's open nodes it decides, then by how many distinct hard gates those decided nodes link, then by how many nodes it contributes to (needed jointly with other actions), then by how many it informs, then cheapest kind first, then action id. Ties are broken only by these keys. Actions touching no node of the architecture are omitted.",
+  "eligibility": "An action is eligible if blocked_by is empty. Blocked actions (today only A-HALLMAP, blocked by the empty credible set and incomplete O4 dispositions) are listed separately with the nodes they touch and are not ranked.",
+  "key": [
+   "-n_decides",
+   "-n_gates_decided",
+   "-n_contributes",
+   "-n_informs",
+   "cost_rank(kind)",
+   "action id (ascending)"
+  ],
+  "cost_rank": {
+   "literature": 0,
+   "analysis": 1,
+   "measurement": 2
+  },
+  "no_weighting": "No weights, probabilities or expert scores enter the ranking. The only non-count key is the categorical cost rank literature < analysis < measurement, used as a tie-break after all counts."
+ },
+ "derived_values": {
+  "generated_by": "docs/architecture_comparison/failure_tree/derive_failure_tree.py",
+  "constants": {
+   "source": "scipy.constants (CODATA) for m_e, e, epsilon_0, R, zero_Celsius, atm; abep_sim/constants.py for RFP, AMU, M_SPECIES",
+   "rounding": "6 significant figures (ratios and fractions 4)"
+  },
+  "values": [
+   {
+    "id": "D-ECR-B-2.45GHZ",
+    "quantity": "ECR resonance field |B| = 2 pi f m_e / e",
+    "value": 0.0875235,
+    "unit": "T",
+    "evidence_class": "model-derived",
+    "inputs": {
+     "f_Hz": 2450000000.0,
+     "frequency_source": "S-TISAEV2023A (2.45 GHz microwave cathode) and S-FOSTER2006 (first-generation HiPEP)",
+     "constants": "scipy.constants m_e, e"
+    },
+    "cross_check": {
+     "source_stated": 0.0875,
+     "where": "S-TISAEV2023A pdf p. 4: 87.5 mT",
+     "rel_diff": 0.0002683
+    },
+    "note": "Frequency is one used by the cited source, not a Vyovrinda design value."
+   },
+   {
+    "id": "D-ECR-NC-2.45GHZ",
+    "quantity": "Cutoff (critical) electron density n_c = epsilon_0 m_e (2 pi f)^2 / e^2",
+    "value": 7.44576e+16,
+    "unit": "m^-3",
+    "evidence_class": "model-derived",
+    "inputs": {
+     "f_Hz": 2450000000.0,
+     "frequency_source": "S-TISAEV2023A (2.45 GHz microwave cathode) and S-FOSTER2006 (first-generation HiPEP)",
+     "constants": "scipy.constants epsilon_0, m_e, e"
+    },
+    "cross_check": {
+     "source_stated": 7.4e+16,
+     "where": "S-TISAEV2023A pdf p. 4: 7.4e16 m^-3",
+     "rel_diff": 0.006183
+    },
+    "note": "Low-field-side O/X-mode cutoff; right-hand waves launched from the high-field side can propagate above it."
+   },
+   {
+    "id": "D-ECR-NC-5.8GHZ",
+    "quantity": "Cutoff (critical) electron density n_c = epsilon_0 m_e (2 pi f)^2 / e^2",
+    "value": 4.17285e+17,
+    "unit": "m^-3",
+    "evidence_class": "model-derived",
+    "inputs": {
+     "f_Hz": 5800000000.0,
+     "frequency_source": "S-DIAMANT2009 (critical density quoted at 5.8 GHz)",
+     "constants": "scipy.constants epsilon_0, m_e, e"
+    },
+    "cross_check": {
+     "source_stated": 4e+17,
+     "where": "S-DIAMANT2009 Sec. V pdf p. 4: 4x10^17 m^-3",
+     "rel_diff": 0.04321
+    },
+    "note": "Low-field-side O/X-mode cutoff; right-hand waves launched from the high-field side can propagate above it."
+   },
+   {
+    "id": "D-ECR-B-5.85GHZ",
+    "quantity": "ECR resonance field |B| = 2 pi f m_e / e",
+    "value": 0.208985,
+    "unit": "T",
+    "evidence_class": "model-derived",
+    "inputs": {
+     "f_Hz": 5850000000.0,
+     "frequency_source": "S-FOSTER2006 (second-generation HiPEP)",
+     "constants": "scipy.constants m_e, e"
+    },
+    "cross_check": null,
+    "note": "Frequency is one used by the cited source, not a Vyovrinda design value."
+   },
+   {
+    "id": "D-ECR-NC-5.85GHZ",
+    "quantity": "Cutoff (critical) electron density n_c = epsilon_0 m_e (2 pi f)^2 / e^2",
+    "value": 4.2451e+17,
+    "unit": "m^-3",
+    "evidence_class": "model-derived",
+    "inputs": {
+     "f_Hz": 5850000000.0,
+     "frequency_source": "S-FOSTER2006 (second-generation HiPEP)",
+     "constants": "scipy.constants epsilon_0, m_e, e"
+    },
+    "cross_check": null,
+    "note": "Low-field-side O/X-mode cutoff; right-hand waves launched from the high-field side can propagate above it."
+   },
+   {
+    "id": "D-RATIO-BECR-P5N2",
+    "quantity": "Ratio of the 2.45 GHz ECR resonance field to the P5 peak radial field",
+    "value": 6.733,
+    "unit": "1",
+    "evidence_class": "model-derived",
+    "inputs": {
+     "B_ecr_T": 0.0875235,
+     "B_hall_peak_G": 130.0,
+     "B_hall_source": "S-BRABSTON2025 via hallthruster_bridge/cases/p5_n2.json source field: 'peak radial B 130 G' (Brabston 2025 Table 2)"
+    },
+    "cross_check": null,
+    "note": "Illustrative scale only: P5 is a 5-kW-class literature thruster, not the Vyovrinda Hall circuit."
+   },
+   {
+    "id": "D-RATIO-BECR-P5XE",
+    "quantity": "Ratio of the 2.45 GHz ECR resonance field to the P5 peak radial field",
+    "value": 5.386,
+    "unit": "1",
+    "evidence_class": "model-derived",
+    "inputs": {
+     "B_ecr_T": 0.0875235,
+     "B_hall_peak_G": 162.5,
+     "B_hall_source": "S-BRABSTON2025 via hallthruster_bridge/cases/p5_xenon.json source field: 'peak radial B 162.5 G' (Brabston 2025 Table 4)"
+    },
+    "cross_check": null,
+    "note": "Illustrative scale only: P5 is a 5-kW-class literature thruster, not the Vyovrinda Hall circuit."
+   },
+   {
+    "id": "D-XE-PER-0.1MGPS-15000H",
+    "quantity": "Xe mass consumed per 0.1 mg/s of cathode flow over the RFP firing hours",
+    "value": 5.4,
+    "unit": "kg",
+    "evidence_class": "model-derived",
+    "inputs": {
+     "mdot_mg_s": 0.1,
+     "firing_hours": 15000.0,
+     "firing_hours_source": "abep_sim/constants.py RFP.ignition_hours"
+    },
+    "cross_check": null,
+    "note": "Per-unit sensitivity (scales linearly with cathode flow); not an operating point."
+   },
+   {
+    "id": "D-XE-DIAMANT-CHECK",
+    "quantity": "Xe mass for 0.5 sccm continuous cathode flow over 5 years (reproduces the source's estimate)",
+    "value": 7.70262,
+    "unit": "kg",
+    "evidence_class": "model-derived",
+    "inputs": {
+     "flow_sccm": 0.5,
+     "years": 5,
+     "sccm_reference": "273.15 K, 101325 Pa (assumed; not stated by the source)",
+     "year_length_h": 8766.0,
+     "Xe_molar_mass_kg_mol": 0.1313,
+     "flow_source": "S-DIAMANT2009 Sec. V pdf p. 4"
+    },
+    "cross_check": {
+     "source_stated": 8.0,
+     "where": "S-DIAMANT2009 Sec. V pdf p. 4: 'about 8 kg'",
+     "rel_diff": -0.03717
+    },
+    "note": "Checks the source's arithmetic only; 0.5 sccm is the source's notional flow, not a Vyovrinda value."
+   },
+   {
+    "id": "D-RFP-FIRING-FRACTION",
+    "quantity": "Firing hours / mission hours",
+    "value": 0.5769,
+    "unit": "1",
+    "evidence_class": "model-derived",
+    "inputs": {
+     "firing_hours": 15000.0,
+     "mission_hours": 26000.0,
+     "source": "abep_sim/constants.py RFP.ignition_hours, RFP.mission_hours"
+    },
+    "cross_check": null,
+    "note": "Below 1, so the thruster is off for part of the mission and must restart; the restart count is TBD (owner)."
+   }
+  ]
+ },
+ "ranked_next_evidence": {
+  "generated_by": "docs/architecture_comparison/failure_tree/derive_failure_tree.py",
+  "rule_id": "decisiveness_lexicographic_v1",
+  "per_architecture": {
+   "hall_only": {
+    "n_nodes": 17,
+    "ranked": [
+     {
+      "rank": 1,
+      "action": "M-CATHODE",
+      "kind": "measurement",
+      "n_decides": 3,
+      "n_gates_decided": 6,
+      "n_contributes": 2,
+      "n_informs": 0,
+      "gates_decided": [
+       "thrust",
+       "mass",
+       "firing_life",
+       "mission_life",
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-CAT-01",
+       "N-CAT-03",
+       "N-CAT-04"
+      ],
+      "nodes_contributed": [
+       "N-CAT-02",
+       "N-CTL-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 2,
+      "action": "M-PREION",
+      "kind": "measurement",
+      "n_decides": 2,
+      "n_gates_decided": 2,
+      "n_contributes": 0,
+      "n_informs": 0,
+      "gates_decided": [
+       "thrust",
+       "bus_power"
+      ],
+      "nodes_decided": [
+       "N-UTL-01",
+       "N-PWR-01"
+      ],
+      "nodes_contributed": [],
+      "nodes_informed": []
+     },
+     {
+      "rank": 3,
+      "action": "M-SUSWIN",
+      "kind": "measurement",
+      "n_decides": 1,
+      "n_gates_decided": 3,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "thrust",
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-SUS-01"
+      ],
+      "nodes_contributed": [
+       "N-SUS-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 4,
+      "action": "M-THERMAL",
+      "kind": "measurement",
+      "n_decides": 1,
+      "n_gates_decided": 3,
+      "n_contributes": 0,
+      "n_informs": 0,
+      "gates_decided": [
+       "bus_power",
+       "mass",
+       "firing_life"
+      ],
+      "nodes_decided": [
+       "N-THM-01"
+      ],
+      "nodes_contributed": [],
+      "nodes_informed": []
+     },
+     {
+      "rank": 5,
+      "action": "M-IGN",
+      "kind": "measurement",
+      "n_decides": 1,
+      "n_gates_decided": 2,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-IGN-01"
+      ],
+      "nodes_contributed": [
+       "N-CTL-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 6,
+      "action": "M-TRANS",
+      "kind": "measurement",
+      "n_decides": 1,
+      "n_gates_decided": 2,
+      "n_contributes": 0,
+      "n_informs": 0,
+      "gates_decided": [
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-CTL-01"
+      ],
+      "nodes_contributed": [],
+      "nodes_informed": []
+     },
+     {
+      "rank": 7,
+      "action": "A-ELEC",
+      "kind": "analysis",
+      "n_decides": 1,
+      "n_gates_decided": 1,
+      "n_contributes": 2,
+      "n_informs": 0,
+      "gates_decided": [
+       "bus_power"
+      ],
+      "nodes_decided": [
+       "N-PWR-04"
+      ],
+      "nodes_contributed": [
+       "N-UTL-01",
+       "N-PWR-01"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 8,
+      "action": "A-FLOWENV",
+      "kind": "analysis",
+      "n_decides": 1,
+      "n_gates_decided": 1,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "restart_sustainment"
+      ],
+      "nodes_decided": [
+       "N-CTL-03"
+      ],
+      "nodes_contributed": [
+       "N-SUS-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 9,
+      "action": "A-MASS",
+      "kind": "analysis",
+      "n_decides": 1,
+      "n_gates_decided": 1,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "mass"
+      ],
+      "nodes_decided": [
+       "N-MAS-01"
+      ],
+      "nodes_contributed": [
+       "N-CAT-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 10,
+      "action": "M-EROSION",
+      "kind": "measurement",
+      "n_decides": 1,
+      "n_gates_decided": 1,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "firing_life"
+      ],
+      "nodes_decided": [
+       "N-ERO-02"
+      ],
+      "nodes_contributed": [
+       "N-ERO-01"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 11,
+      "action": "A-THERMAL",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 2,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-THM-01",
+       "N-ERO-01"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 12,
+      "action": "A-OPS",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-CTL-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 13,
+      "action": "L-CATHODE",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 4,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-CAT-01",
+       "N-CAT-02",
+       "N-CAT-03",
+       "N-CAT-04"
+      ]
+     },
+     {
+      "rank": 14,
+      "action": "L-SITAEL",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 4,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-IGN-01",
+       "N-SUS-01",
+       "N-UTL-01",
+       "N-CTL-01"
+      ]
+     },
+     {
+      "rank": 15,
+      "action": "L-WALL",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 2,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-ERO-01",
+       "N-ERO-02"
+      ]
+     },
+     {
+      "rank": 16,
+      "action": "L-THERMAL",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 1,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-THM-01"
+      ]
+     }
+    ],
+    "blocked": [
+     {
+      "action": "A-HALLMAP",
+      "blocked_by": [
+       "credible transport set is empty (CLAUDE.md gate 3 FAIL; P5-N2 v1 all INCONCLUSIVE / NOT ELIGIBLE)",
+       "O4 dispositions incomplete (admission gated, hall_ensemble._check_o4)"
+      ],
+      "nodes_touched": [
+       "N-SUS-01",
+       "N-UTL-01",
+       "N-ERO-01",
+       "N-PWR-01"
+      ]
+     }
+    ]
+   },
+   "rf_hall": {
+    "n_nodes": 30,
+    "ranked": [
+     {
+      "rank": 1,
+      "action": "M-PREION",
+      "kind": "measurement",
+      "n_decides": 8,
+      "n_gates_decided": 4,
+      "n_contributes": 0,
+      "n_informs": 1,
+      "gates_decided": [
+       "thrust",
+       "bus_power",
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-IGN-04",
+       "N-SUS-03",
+       "N-UTL-01",
+       "N-UTL-02",
+       "N-ISL-RF",
+       "N-RF-04",
+       "N-PWR-01",
+       "N-PWR-02"
+      ],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-RF-03"
+      ]
+     },
+     {
+      "rank": 2,
+      "action": "M-CATHODE",
+      "kind": "measurement",
+      "n_decides": 3,
+      "n_gates_decided": 6,
+      "n_contributes": 2,
+      "n_informs": 0,
+      "gates_decided": [
+       "thrust",
+       "mass",
+       "firing_life",
+       "mission_life",
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-CAT-01",
+       "N-CAT-03",
+       "N-CAT-04"
+      ],
+      "nodes_contributed": [
+       "N-CAT-02",
+       "N-CTL-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 3,
+      "action": "M-RFSRC",
+      "kind": "measurement",
+      "n_decides": 3,
+      "n_gates_decided": 4,
+      "n_contributes": 0,
+      "n_informs": 0,
+      "gates_decided": [
+       "thrust",
+       "bus_power",
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-IGN-02",
+       "N-RF-01",
+       "N-RF-02"
+      ],
+      "nodes_contributed": [],
+      "nodes_informed": []
+     },
+     {
+      "rank": 4,
+      "action": "M-IGN",
+      "kind": "measurement",
+      "n_decides": 3,
+      "n_gates_decided": 2,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-IGN-01",
+       "N-IGN-02",
+       "N-IGN-04"
+      ],
+      "nodes_contributed": [
+       "N-CTL-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 5,
+      "action": "M-THERMAL",
+      "kind": "measurement",
+      "n_decides": 2,
+      "n_gates_decided": 3,
+      "n_contributes": 0,
+      "n_informs": 0,
+      "gates_decided": [
+       "bus_power",
+       "mass",
+       "firing_life"
+      ],
+      "nodes_decided": [
+       "N-THM-01",
+       "N-THM-02"
+      ],
+      "nodes_contributed": [],
+      "nodes_informed": []
+     },
+     {
+      "rank": 6,
+      "action": "A-MASS",
+      "kind": "analysis",
+      "n_decides": 2,
+      "n_gates_decided": 1,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "mass"
+      ],
+      "nodes_decided": [
+       "N-MAS-01",
+       "N-MAS-02"
+      ],
+      "nodes_contributed": [
+       "N-CAT-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 7,
+      "action": "M-EROSION",
+      "kind": "measurement",
+      "n_decides": 2,
+      "n_gates_decided": 1,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "firing_life"
+      ],
+      "nodes_decided": [
+       "N-ERO-02",
+       "N-ERO-03"
+      ],
+      "nodes_contributed": [
+       "N-ERO-01"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 8,
+      "action": "M-SUSWIN",
+      "kind": "measurement",
+      "n_decides": 1,
+      "n_gates_decided": 3,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "thrust",
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-SUS-01"
+      ],
+      "nodes_contributed": [
+       "N-SUS-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 9,
+      "action": "M-TRANS",
+      "kind": "measurement",
+      "n_decides": 1,
+      "n_gates_decided": 2,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-CTL-01"
+      ],
+      "nodes_contributed": [
+       "N-RF-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 10,
+      "action": "A-BFIELD",
+      "kind": "analysis",
+      "n_decides": 1,
+      "n_gates_decided": 2,
+      "n_contributes": 0,
+      "n_informs": 0,
+      "gates_decided": [
+       "thrust",
+       "restart_sustainment"
+      ],
+      "nodes_decided": [
+       "N-RF-03"
+      ],
+      "nodes_contributed": [],
+      "nodes_informed": []
+     },
+     {
+      "rank": 11,
+      "action": "A-ELEC",
+      "kind": "analysis",
+      "n_decides": 1,
+      "n_gates_decided": 1,
+      "n_contributes": 3,
+      "n_informs": 2,
+      "gates_decided": [
+       "bus_power"
+      ],
+      "nodes_decided": [
+       "N-PWR-04"
+      ],
+      "nodes_contributed": [
+       "N-UTL-01",
+       "N-PWR-01",
+       "N-PWR-02"
+      ],
+      "nodes_informed": [
+       "N-RF-02",
+       "N-RF-04"
+      ]
+     },
+     {
+      "rank": 12,
+      "action": "A-FLOWENV",
+      "kind": "analysis",
+      "n_decides": 1,
+      "n_gates_decided": 1,
+      "n_contributes": 2,
+      "n_informs": 0,
+      "gates_decided": [
+       "restart_sustainment"
+      ],
+      "nodes_decided": [
+       "N-CTL-03"
+      ],
+      "nodes_contributed": [
+       "N-SUS-02",
+       "N-RF-01"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 13,
+      "action": "A-BREAKEVEN",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 3,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-UTL-02",
+       "N-ISL-RF",
+       "N-PWR-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 14,
+      "action": "A-THERMAL",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 3,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-THM-01",
+       "N-THM-02",
+       "N-ERO-01"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 15,
+      "action": "A-INTERSTAGE",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 1,
+      "n_informs": 2,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-ISL-RF"
+      ],
+      "nodes_informed": [
+       "N-IGN-04",
+       "N-SUS-03"
+      ]
+     },
+     {
+      "rank": 16,
+      "action": "A-OPS",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-CTL-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 17,
+      "action": "L-HHT",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 5,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-SUS-03",
+       "N-UTL-02",
+       "N-ISL-RF",
+       "N-RF-03",
+       "N-PWR-02"
+      ]
+     },
+     {
+      "rank": 18,
+      "action": "L-SITAEL",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 5,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-IGN-01",
+       "N-SUS-01",
+       "N-SUS-03",
+       "N-UTL-01",
+       "N-CTL-01"
+      ]
+     },
+     {
+      "rank": 19,
+      "action": "L-CATHODE",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 4,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-CAT-01",
+       "N-CAT-02",
+       "N-CAT-03",
+       "N-CAT-04"
+      ]
+     },
+     {
+      "rank": 20,
+      "action": "L-WALL",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 3,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-ERO-01",
+       "N-ERO-02",
+       "N-ERO-03"
+      ]
+     },
+     {
+      "rank": 21,
+      "action": "L-RFMODE",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 2,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-IGN-02",
+       "N-RF-01"
+      ]
+     },
+     {
+      "rank": 22,
+      "action": "L-THERMAL",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 2,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-THM-01",
+       "N-THM-02"
+      ]
+     },
+     {
+      "rank": 23,
+      "action": "L-ECRHALL",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 1,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-SUS-03"
+      ]
+     }
+    ],
+    "blocked": [
+     {
+      "action": "A-HALLMAP",
+      "blocked_by": [
+       "credible transport set is empty (CLAUDE.md gate 3 FAIL; P5-N2 v1 all INCONCLUSIVE / NOT ELIGIBLE)",
+       "O4 dispositions incomplete (admission gated, hall_ensemble._check_o4)"
+      ],
+      "nodes_touched": [
+       "N-SUS-01",
+       "N-UTL-01",
+       "N-ERO-01",
+       "N-PWR-01"
+      ]
+     }
+    ]
+   },
+   "ecr_hall": {
+    "n_nodes": 29,
+    "ranked": [
+     {
+      "rank": 1,
+      "action": "M-PREION",
+      "kind": "measurement",
+      "n_decides": 7,
+      "n_gates_decided": 4,
+      "n_contributes": 0,
+      "n_informs": 0,
+      "gates_decided": [
+       "thrust",
+       "bus_power",
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-IGN-04",
+       "N-SUS-03",
+       "N-UTL-01",
+       "N-UTL-03",
+       "N-ISL-ECR",
+       "N-PWR-01",
+       "N-PWR-03"
+      ],
+      "nodes_contributed": [],
+      "nodes_informed": []
+     },
+     {
+      "rank": 2,
+      "action": "M-CATHODE",
+      "kind": "measurement",
+      "n_decides": 3,
+      "n_gates_decided": 6,
+      "n_contributes": 2,
+      "n_informs": 0,
+      "gates_decided": [
+       "thrust",
+       "mass",
+       "firing_life",
+       "mission_life",
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-CAT-01",
+       "N-CAT-03",
+       "N-CAT-04"
+      ],
+      "nodes_contributed": [
+       "N-CAT-02",
+       "N-CTL-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 3,
+      "action": "M-IGN",
+      "kind": "measurement",
+      "n_decides": 3,
+      "n_gates_decided": 2,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-IGN-01",
+       "N-IGN-03",
+       "N-IGN-04"
+      ],
+      "nodes_contributed": [
+       "N-CTL-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 4,
+      "action": "M-ECRSRC",
+      "kind": "measurement",
+      "n_decides": 2,
+      "n_gates_decided": 4,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "thrust",
+       "bus_power",
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-IGN-03",
+       "N-ECR-01"
+      ],
+      "nodes_contributed": [
+       "N-ECR-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 5,
+      "action": "M-THERMAL",
+      "kind": "measurement",
+      "n_decides": 2,
+      "n_gates_decided": 3,
+      "n_contributes": 0,
+      "n_informs": 0,
+      "gates_decided": [
+       "bus_power",
+       "mass",
+       "firing_life"
+      ],
+      "nodes_decided": [
+       "N-THM-01",
+       "N-THM-03"
+      ],
+      "nodes_contributed": [],
+      "nodes_informed": []
+     },
+     {
+      "rank": 6,
+      "action": "A-MASS",
+      "kind": "analysis",
+      "n_decides": 2,
+      "n_gates_decided": 1,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "mass"
+      ],
+      "nodes_decided": [
+       "N-MAS-01",
+       "N-MAS-03"
+      ],
+      "nodes_contributed": [
+       "N-CAT-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 7,
+      "action": "M-EROSION",
+      "kind": "measurement",
+      "n_decides": 2,
+      "n_gates_decided": 1,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "firing_life"
+      ],
+      "nodes_decided": [
+       "N-ERO-02",
+       "N-ERO-04"
+      ],
+      "nodes_contributed": [
+       "N-ERO-01"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 8,
+      "action": "M-SUSWIN",
+      "kind": "measurement",
+      "n_decides": 1,
+      "n_gates_decided": 3,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "thrust",
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-SUS-01"
+      ],
+      "nodes_contributed": [
+       "N-SUS-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 9,
+      "action": "A-BFIELD",
+      "kind": "analysis",
+      "n_decides": 1,
+      "n_gates_decided": 2,
+      "n_contributes": 0,
+      "n_informs": 1,
+      "gates_decided": [
+       "thrust",
+       "restart_sustainment"
+      ],
+      "nodes_decided": [
+       "N-ECR-02"
+      ],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-ISL-ECR"
+      ]
+     },
+     {
+      "rank": 10,
+      "action": "M-TRANS",
+      "kind": "measurement",
+      "n_decides": 1,
+      "n_gates_decided": 2,
+      "n_contributes": 0,
+      "n_informs": 0,
+      "gates_decided": [
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-CTL-01"
+      ],
+      "nodes_contributed": [],
+      "nodes_informed": []
+     },
+     {
+      "rank": 11,
+      "action": "A-ELEC",
+      "kind": "analysis",
+      "n_decides": 1,
+      "n_gates_decided": 1,
+      "n_contributes": 4,
+      "n_informs": 0,
+      "gates_decided": [
+       "bus_power"
+      ],
+      "nodes_decided": [
+       "N-PWR-04"
+      ],
+      "nodes_contributed": [
+       "N-UTL-01",
+       "N-ECR-03",
+       "N-PWR-01",
+       "N-PWR-03"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 12,
+      "action": "A-FLOWENV",
+      "kind": "analysis",
+      "n_decides": 1,
+      "n_gates_decided": 1,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [
+       "restart_sustainment"
+      ],
+      "nodes_decided": [
+       "N-CTL-03"
+      ],
+      "nodes_contributed": [
+       "N-SUS-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 13,
+      "action": "A-THERMAL",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 4,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-ECR-03",
+       "N-THM-01",
+       "N-THM-03",
+       "N-ERO-01"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 14,
+      "action": "A-BREAKEVEN",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 3,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-UTL-03",
+       "N-ISL-ECR",
+       "N-PWR-03"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 15,
+      "action": "A-INTERSTAGE",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 2,
+      "n_informs": 2,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-ISL-ECR",
+       "N-ECR-01"
+      ],
+      "nodes_informed": [
+       "N-IGN-04",
+       "N-SUS-03"
+      ]
+     },
+     {
+      "rank": 16,
+      "action": "A-OPS",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 1,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-CTL-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 17,
+      "action": "L-ECRHALL",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 10,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-IGN-03",
+       "N-SUS-03",
+       "N-UTL-03",
+       "N-ISL-ECR",
+       "N-ECR-01",
+       "N-ECR-02",
+       "N-ECR-03",
+       "N-THM-03",
+       "N-ERO-04",
+       "N-PWR-03"
+      ]
+     },
+     {
+      "rank": 18,
+      "action": "L-SITAEL",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 5,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-IGN-01",
+       "N-SUS-01",
+       "N-SUS-03",
+       "N-UTL-01",
+       "N-CTL-01"
+      ]
+     },
+     {
+      "rank": 19,
+      "action": "L-CATHODE",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 4,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-CAT-01",
+       "N-CAT-02",
+       "N-CAT-03",
+       "N-CAT-04"
+      ]
+     },
+     {
+      "rank": 20,
+      "action": "L-THERMAL",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 2,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-THM-01",
+       "N-THM-03"
+      ]
+     },
+     {
+      "rank": 21,
+      "action": "L-WALL",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 2,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-ERO-01",
+       "N-ERO-02"
+      ]
+     },
+     {
+      "rank": 22,
+      "action": "L-HHT",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 1,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-SUS-03"
+      ]
+     }
+    ],
+    "blocked": [
+     {
+      "action": "A-HALLMAP",
+      "blocked_by": [
+       "credible transport set is empty (CLAUDE.md gate 3 FAIL; P5-N2 v1 all INCONCLUSIVE / NOT ELIGIBLE)",
+       "O4 dispositions incomplete (admission gated, hall_ensemble._check_o4)"
+      ],
+      "nodes_touched": [
+       "N-SUS-01",
+       "N-UTL-01",
+       "N-ERO-01",
+       "N-PWR-01"
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "open_questions_for_owner": [
+  "Hard-gate ids: this file uses thrust, bus_power, mass, firing_life, mission_life, restart_sustainment, air_xe and maps them one-to-one to the hard-gate matrix ids G1_thrust ... G7_air_xenon (matrix_gate_id; docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json, DRAFT in another lane). Confirm the mapping when the matrix is merged, and whether the PROPOSED P1_thermal / P2_cathode gates should become binding.",
+  "restart_sustainment: set the restart count (eclipse, safe mode, duty cycling) and a sustainment margin; until then N-IGN-01, N-CTL-02 and N-CTL-03 thresholds stay TBD.",
+  "air_xe: confirm from the RFP text which Xe roles are allowed (cathode, ignition, transition, peak augmentation) and whether a Xe share limit applies.",
+  "Xe allocation inside the 40 kg gate (N-CAT-02, N-CTL-02): owner decision for the mass ledger.",
+  "PROPOSED thresholds (oscillation bound, RF mode-transition margin, reflected power, cathode current and flow margins, break-even criterion): accept, change or replace before any of them decides a node.",
+  "PROPOSED elimination rule (hardware evidence at levels 1-2, or a closure-independent physics bound): accept or amend.",
+  "Lane deliverable paths for break-even, interstage, feed envelope, minimum decisive experiment and cathode integration are taken from drafts in other worktrees; confirm them when those lanes merge.",
+  "mission_ops (A-OPS) has no lane; assign one or fold it into the comparison harness lane.",
+  "CLAUDE.md lists 'RF/helicon pre-ionisers add nothing' as probably robust at mechanism level, from the superseded 0-D work. This lane does not use it as evidence (the section says 'do not quote'); the break-even lane (A-BREAKEVEN) is where it should be re-derived without any Hall closure, and the owner may decide whether it bears on N-UTL-02 / N-PWR-02."
+ ]
+}
