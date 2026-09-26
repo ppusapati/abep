@@ -14,6 +14,14 @@ Rules it enforces (see HARD_GATES.md):
   of ARCHITECTURE scope (it holds for every design of the architecture), covering the part of the envelope the matrix
   requires. A model result from an unadmitted Hall closure (screening candidates included) is never verdict-bearing, and
   neither are point estimates, assumptions, engineering estimates or literature on similar hardware.
+- admitted_members is checked against the transport ensemble (abep_sim.hall_ensemble.require_admitted): a screening
+  candidate or an unknown id raises, and so does evidence that labels a screening candidate as admitted.
+- a basis that needs a derivation script counts only if that script exists as a file inside the repository.
+- open owner readings never decide an elimination: a criterion counts for FAIL (counts_for_fail) only if its FAIL holds
+  under every open reading, and its fail_must_cover spans every reading; criteria that bind under one reading only count
+  for PASS (conservative) and never FAIL their gate.
+- Hall-closure evidence never reaches the closure-independent upstream elements (matrix hall_closure_scope): on a
+  per-element criterion it raises.
 - an architecture is ELIMINATED only when a binding (RFP or owner-adopted) gate is FAIL. PROPOSED gates are evaluated
   and reported ("would eliminate if adopted") but never eliminate.
 - sufficient evidence on both sides of a criterion is a CONFLICT: the verdict stays UNDETERMINED and nothing is
@@ -224,6 +232,9 @@ def _matrix_semantics(m: dict) -> None:
     refs = [r["id"] for r in m["rfp"]["recorded_in"]]
     if len(set(refs)) != len(refs):
         raise ValueError("duplicate RFP record id")
+    ods = {o["id"] for o in m["open_owner_decisions"]}
+    if len(ods) != len(m["open_owner_decisions"]):
+        raise ValueError("duplicate open owner decision id")
     for r in m["rfp_requirements_recorded_not_gated"]:
         if not set(r["recorded_in"]) <= set(refs):
             raise ValueError(f"unknown RFP record in {r['requirement']!r}")
@@ -249,6 +260,15 @@ def _matrix_semantics(m: dict) -> None:
             cids.add(cid)
             if not cid.startswith(prefix):
                 raise ValueError(f"criterion {cid} must start with {prefix}")
+            if c["counts_for_fail"] and not c["counts_toward_gate"]:
+                raise ValueError(f"{cid}: counts_for_fail requires counts_toward_gate")
+            if c["counts_toward_gate"] and not c["counts_for_fail"] and not re.search(
+                    r"\bOD[0-9]+\b", c.get("fail_reading_dependence") or ""):
+                raise ValueError(f"{cid}: a criterion that counts for PASS but not for FAIL must name the open owner "
+                                 "reading(s) its FAIL depends on (fail_reading_dependence, 'ODn')")
+            unknown_od = set(re.findall(r"\bOD[0-9]+\b", c.get("fail_reading_dependence") or "")) - ods
+            if unknown_od:
+                raise ValueError(f"{cid}: fail_reading_dependence names unknown owner decision(s) {sorted(unknown_od)}")
             for side in ("fail_sufficient_bases", "pass_sufficient_bases"):
                 for b in c[side]:
                     if b not in bases:
@@ -330,7 +350,7 @@ def _numbers_finite(value: dict) -> bool:
     return all(math.isfinite(v) for k, v in value.items() if k in ("value", "lo", "hi") and _is_type(v, "number"))
 
 
-def _normalize_evidence(evidence: Any, matrix: dict, schema: dict) -> list[dict]:
+def _normalize_evidence(evidence: Any, matrix: dict, schema: dict, screening: frozenset) -> list[dict]:
     if evidence is None:
         raise TypeError("evidence is required: pass [] (no evidence) or a hard_gate_evidence_v1 bundle")
     if isinstance(evidence, dict):
@@ -384,6 +404,15 @@ def _normalize_evidence(evidence: Any, matrix: dict, schema: dict) -> list[dict]
         if g["hall_closure_dependence"] == "independent" and it["hall_closure"]["status"] != "none":
             raise ValueError(f"evidence {it['id']!r}: gate {g['id']} is independent of the Hall transport closure; "
                              "Hall-closure results must not leak into it")
+        if it["hall_closure"]["status"] == "admitted" and it["hall_closure"]["member_id"] in screening:
+            raise ValueError(f"evidence {it['id']!r}: {it['hall_closure']['member_id']!r} is a SCREENING candidate "
+                             "labelled as an admitted closure; screening candidates are never performance sources")
+        upstream = set(matrix["hall_closure_scope"]["closure_independent_elements"])
+        leaked_el = set(it["conditions"].get("elements", [])) & upstream
+        if (it["hall_closure"]["status"] != "none" and crit.get("elements_semantics") == "per_element"
+                and leaked_el):
+            raise ValueError(f"evidence {it['id']!r}: Hall-closure results must not leak into the closure-independent "
+                             f"upstream element(s) {sorted(leaked_el)} (matrix hall_closure_scope)")
         if not _numbers_finite(it["value"]):
             raise ValueError(f"evidence {it['id']!r}: non-finite value")
         if it["value"]["kind"] == "interval" and it["value"]["lo"] > it["value"]["hi"]:
@@ -394,12 +423,40 @@ def _normalize_evidence(evidence: Any, matrix: dict, schema: dict) -> list[dict]
     return items
 
 
-def _normalize_admitted(admitted_members: Any) -> frozenset:
+REPO_ENSEMBLE_SOURCE = ("abep_sim.hall_ensemble.load_ensemble() "
+                        "(hallthruster_bridge/ensemble/transport_ensemble_v0.json)")
+
+
+def _ensemble_context(ensemble: dict | None) -> tuple:
+    """(ensemble, screening ids, source). The repository ensemble's screening candidates are ALWAYS refused, also when
+    a caller injects its own ensemble (synthetic tests), so no ensemble can turn a screening candidate into a member."""
+    from abep_sim import hall_ensemble as he          # in-repository module, not another lane's contract
+    repo = he.load_ensemble()
+    if ensemble is None:
+        return repo, frozenset(he.screening_ids(repo)), REPO_ENSEMBLE_SOURCE
+    if not isinstance(ensemble, dict) or not isinstance(ensemble.get("members"), list):
+        raise TypeError("ensemble must be a transport-ensemble dict with a 'members' list (as load_ensemble returns)")
+    screening = frozenset(he.screening_ids(ensemble)) | frozenset(he.screening_ids(repo))
+    overlap = {m["ensemble_member_id"] for m in ensemble["members"]} & screening
+    if overlap:
+        raise ValueError(f"injected ensemble lists screening candidate(s) {sorted(overlap)} as members")
+    return ensemble, screening, "caller-supplied ensemble (checked against the repository screening candidates)"
+
+
+def _normalize_admitted(admitted_members: Any, ensemble: dict, screening: frozenset) -> frozenset:
+    """Admitted ids must be members of the ensemble (abep_sim.hall_ensemble.require_admitted); a screening candidate or
+    an unknown id raises. Never a silent drop."""
     if isinstance(admitted_members, (str, bytes)) or admitted_members is None:
         raise TypeError("admitted_members must be an iterable of ensemble_member_id strings (use () for none)")
     out = frozenset(admitted_members)
     if not all(isinstance(m, str) and m for m in out):
         raise TypeError("admitted_members must contain non-empty strings")
+    from abep_sim.hall_ensemble import require_admitted
+    for mid in sorted(out):
+        if mid in screening:
+            raise ValueError(f"{mid} is a SCREENING candidate: screening candidates are never admitted members and "
+                             "never performance sources")
+        require_admitted(mid, ensemble)
     return out
 
 
@@ -413,8 +470,10 @@ def _resolve(values: Any, arch: str) -> Any:
     return values
 
 
-def _side(value: dict, comparator: str, threshold: Any) -> str | None:
-    """'pass' / 'fail' when the bound decides the criterion, else None."""
+def _side(value: dict, comparator: str, threshold: Any, equality_open: bool = False) -> str | None:
+    """'pass' / 'fail' when the bound decides the criterion, else None. equality_open (criterion
+    threshold_equality_open): the owner has not decided whether the limit is strict or inclusive, so a bound AT the
+    threshold decides neither side (PASS needs the strict form, FAIL the violation of the inclusive form)."""
     kind = value["kind"]
     if comparator == "is_true":
         return ("pass" if value["value"] else "fail") if kind == "boolean" else None
@@ -423,6 +482,12 @@ def _side(value: dict, comparator: str, threshold: Any) -> str | None:
     lo = value["value"] if kind == "lower_bound" else value["lo"] if kind == "interval" else None
     hi = value["value"] if kind == "upper_bound" else value["hi"] if kind == "interval" else None
     t = threshold
+    if equality_open:
+        comparator = {">=": ">", "<=": "<"}.get(comparator, comparator)     # PASS strict
+        if comparator == ">":
+            return "pass" if lo is not None and lo > t else "fail" if hi is not None and hi < t else None
+        if comparator == "<":
+            return "pass" if hi is not None and hi < t else "fail" if lo is not None and lo > t else None
     if comparator == ">=":
         if lo is not None and lo >= t:
             return "pass"
@@ -446,11 +511,23 @@ def _side(value: dict, comparator: str, threshold: Any) -> str | None:
     return None
 
 
-def _assess(it: dict, crit: dict, env: dict, fneed: dict, admitted: frozenset, matrix: dict) -> tuple:
+def _script_problem(script: str | None, repo_root: str) -> str | None:
+    """Why a derivation_script does not qualify (None when it is a file inside the repository)."""
+    if not script:
+        return "needs derivation_script (a committed deterministic script)"
+    if os.path.isabs(script) or ".." in re.split(r"[\\/]", script):
+        return f"derivation_script {script!r} must be a repository-relative path"
+    if not os.path.isfile(os.path.join(repo_root, script)):
+        return f"derivation_script {script!r} does not exist in the repository"
+    return None
+
+
+def _assess(it: dict, crit: dict, env: dict, fneed: dict, admitted: frozenset, matrix: dict,
+            repo_root: str) -> tuple:
     """(side, reasons): the item is verdict-bearing for `side` only when reasons is empty."""
     pol = matrix["evidence_policy"]["bases"][it["basis"]]
     reasons: list[str] = []
-    side = _side(it["value"], crit["comparator"], crit["threshold"])
+    side = _side(it["value"], crit["comparator"], crit["threshold"], crit.get("threshold_equality_open", False))
     if not pol["verdict_bearing"]:
         reasons.append(f"basis {it['basis']!r} is never verdict-bearing: {pol['reason']}")
     else:
@@ -462,8 +539,10 @@ def _assess(it: dict, crit: dict, env: dict, fneed: dict, admitted: frozenset, m
                            f"(allowed: {pol['evidence_levels']})")
         if it["value"]["kind"] not in pol["value_kinds"]:
             reasons.append(f"value kind {it['value']['kind']!r} is not accepted for basis {it['basis']!r}")
-        if pol.get("requires_derivation_script") and not it.get("derivation_script"):
-            reasons.append(f"basis {it['basis']!r} needs derivation_script (a committed deterministic script)")
+        if pol.get("requires_derivation_script"):
+            problem = _script_problem(it.get("derivation_script"), repo_root)
+            if problem:
+                reasons.append(f"basis {it['basis']!r}: {problem}")
         if pol.get("requires_validated_for_this_use") and it.get("validated_for_this_use") is not True:
             reasons.append("model not declared validated for this use (validated_for_this_use)")
         if it["basis"] == "model_admitted_closure":
@@ -478,7 +557,8 @@ def _assess(it: dict, crit: dict, env: dict, fneed: dict, admitted: frozenset, m
         reasons.append(f"threshold TBD for {crit['id']}: {crit['threshold_source']}")
     elif side is None:
         reasons.append("inconclusive: the stated bound does not decide the criterion (point estimate, wrong-side "
-                       "bound, or an interval straddling the threshold)")
+                       "bound, an interval straddling the threshold, or a bound AT a threshold whose strict/inclusive "
+                       "form is an open owner decision)")
     else:
         allowed = crit["fail_sufficient_bases"] if side == "fail" else crit["pass_sufficient_bases"]
         if pol["verdict_bearing"] and it["basis"] not in allowed:
@@ -577,20 +657,22 @@ def _establish(items: list, need: dict, admitted: frozenset, matrix: dict) -> tu
     return False, None, [], missing
 
 
-def _eval_criterion(crit: dict, arch: str, items: list, admitted: frozenset, matrix: dict, nvb: list) -> dict:
+def _eval_criterion(crit: dict, arch: str, items: list, admitted: frozenset, matrix: dict, nvb: list,
+                    repo_root: str) -> dict:
     env = {d: _resolve(v, arch) for d, v in crit["envelope"].items()}
     fneed = {d: _resolve(v, arch) for d, v in crit["fail_must_cover"].items()}
     pneed = {d: v for d, v in env.items() if not (d == "elements" and crit["elements_semantics"] == "sum")}
     fails, design_fail_items, passes = [], {}, {}
     for it in items:
-        side, reasons = _assess(it, crit, env, fneed, admitted, matrix)
+        side, reasons = _assess(it, crit, env, fneed, admitted, matrix, repo_root)
         if reasons:
             nvb.append({"id": it["id"], "criterion": crit["id"], "side": side, "reasons": reasons})
         elif side == "fail":
             (fails if it["scope"] == "architecture" else design_fail_items.setdefault(it["design_id"], [])).append(it)
         else:
             passes.setdefault(ARCH_KEY if it["scope"] == "architecture" else it["design_id"], []).append(it)
-    res: dict[str, Any] = {"counts_toward_gate": crit["counts_toward_gate"], "status": crit["status"],
+    res: dict[str, Any] = {"counts_toward_gate": crit["counts_toward_gate"], "counts_for_fail": crit["counts_for_fail"],
+                           "status": crit["status"],
                            "metric": crit["metric"], "comparator": crit["comparator"], "threshold": crit["threshold"],
                            "unit": crit["unit"], "verdict": "UNDETERMINED", "milestone": None, "evidence_used": [],
                            "pass_designs": {}, "design_failures": {}, "conflict": False, "reasons": [],
@@ -658,14 +740,20 @@ def _joint(design_maps: list) -> dict:
     return out
 
 
-def _eval_gate(gate: dict, arch: str, items: list, admitted: frozenset, matrix: dict, nvb: list) -> dict:
+def _eval_gate(gate: dict, arch: str, items: list, admitted: frozenset, matrix: dict, nvb: list,
+               repo_root: str) -> dict:
     crits = {c["id"]: _eval_criterion(c, arch, [it for it in items if it["criterion"] == c["id"]], admitted, matrix,
-                                      nvb) for c in gate["criteria"]}
+                                      nvb, repo_root) for c in gate["criteria"]}
     counted = [crits[c["id"]] for c in gate["criteria"] if c["counts_toward_gate"]]
     res: dict[str, Any] = {"title": gate["title"], "status": gate["status"], "binding": gate["binding"],
                            "verdict": "UNDETERMINED", "milestone": None, "evidence_used": [], "pass_designs": {},
                            "conflict": any(c["conflict"] for c in counted), "reasons": [], "criteria": crits}
-    failing = {cid: c for cid, c in crits.items() if c["counts_toward_gate"] and c["verdict"] == "FAIL"}
+    failing = {cid: c for cid, c in crits.items() if c["counts_for_fail"] and c["verdict"] == "FAIL"}
+    reading_fails = sorted(cid for cid, c in crits.items()
+                           if c["counts_toward_gate"] and not c["counts_for_fail"] and c["verdict"] == "FAIL")
+    if reading_fails:
+        res["reasons"].append(f"{reading_fails} FAIL only under an open owner reading (fail_reading_dependence): the "
+                              "gate cannot PASS, and this never makes the gate FAIL")
     if failing:
         res.update(verdict="FAIL",
                    milestone=min((c["milestone"] for c in failing.values()), key=_RANK.__getitem__),
@@ -690,7 +778,9 @@ def _requirement_text(c: dict) -> str:
     if c["comparator"] == "is_true":
         return f"{c['metric']} is true"
     thr = "TBD" if c["threshold"] is None else f"{c['threshold']:g}"
-    return f"{c['metric']} {c['comparator']} {thr} {c['unit']}"
+    form = " (strict vs inclusive open: a bound at the threshold decides nothing)" \
+        if c.get("threshold_equality_open") else ""
+    return f"{c['metric']} {c['comparator']} {thr} {c['unit']}{form}"
 
 
 def _condition(gate: dict, crit: dict, cres: dict, arch: str, admitted: frozenset, matrix: dict) -> dict:
@@ -706,38 +796,48 @@ def _condition(gate: dict, crit: dict, cres: dict, arch: str, admitted: frozense
                         + " can discharge this condition")
     if cres["conflict"]:
         blockers.append("evidence CONFLICT on this criterion must be resolved by the owner")
+    if not crit["counts_for_fail"]:
+        blockers.append(f"binds only under an open owner reading: {crit['fail_reading_dependence']}")
     return {"gate": gate["id"], "criterion": crit["id"], "requirement": _requirement_text(crit),
             "over": {d: _resolve(v, arch) for d, v in crit["envelope"].items()},
-            "current_verdict": cres["verdict"], "discharged_by": by_ms, "blockers": blockers}
+            "current_verdict": cres["verdict"], "can_eliminate": crit["counts_for_fail"], "discharged_by": by_ms,
+            "blockers": blockers}
 
 
 def evaluate(architecture: str, evidence: Any, *, admitted_members: Iterable[str] = (),
-             matrix: dict | None = None) -> dict:
+             matrix: dict | None = None, ensemble: dict | None = None, repo_root: str = ROOT) -> dict:
     """Evaluate one architecture against the hard-gate matrix.
 
     architecture     : 'hall_only' | 'rf_hall' | 'ecr_hall'
     evidence         : list of evidence items, or a hard_gate_evidence_v1 bundle (schema $defs.evidence_item); [] is
                        allowed and gives UNDETERMINED everywhere. Malformed or rule-violating items raise ValueError.
     admitted_members : ensemble_member_ids of ADMITTED Hall transport closures (abep_sim.hall_ensemble.member_ids();
-                       empty today). Only these make model_admitted_closure evidence verdict-bearing.
+                       empty today). Only these make model_admitted_closure evidence verdict-bearing. Each id is
+                       checked with abep_sim.hall_ensemble.require_admitted: a screening candidate or an id that is not
+                       an admitted member raises ValueError.
     matrix           : a matrix dict (validated here); default the committed hard_gate_matrix_v1.json.
+    ensemble         : transport-ensemble dict the admitted ids are checked against; default the repository ensemble
+                       (hallthruster_bridge/ensemble/transport_ensemble_v0.json). Synthetic tests inject one; the
+                       repository's screening candidates are refused in every case.
+    repo_root        : directory derivation_script paths are resolved against (default: this repository).
     """
     if architecture not in ARCHITECTURES:
         raise ValueError(f"architecture must be one of {ARCHITECTURES}, got {architecture!r}")
     schema = load_schema()
     m = load_matrix() if matrix is None else validate_matrix(copy.deepcopy(matrix), schema)
-    items = copy.deepcopy(_normalize_evidence(evidence, m, schema))
-    admitted = _normalize_admitted(admitted_members)
+    ens, screening, ens_source = _ensemble_context(ensemble)
+    items = copy.deepcopy(_normalize_evidence(evidence, m, schema, screening))
+    admitted = _normalize_admitted(admitted_members, ens, screening)
     rel = [it for it in items if architecture in it["architectures"]]
     nvb: list[dict] = []
-    gates = {g["id"]: _eval_gate(g, architecture, [it for it in rel if it["gate"] == g["id"]], admitted, m, nvb)
-             for g in m["gates"]}
+    gates = {g["id"]: _eval_gate(g, architecture, [it for it in rel if it["gate"] == g["id"]], admitted, m, nvb,
+                                 repo_root) for g in m["gates"]}
     binding = [g["id"] for g in m["gates"] if g["binding"]]
     proposed = [g["id"] for g in m["gates"] if g["status"] == "PROPOSED"]
 
     def failure_record(gid):
         g = gates[gid]
-        crits = sorted(c for c, r in g["criteria"].items() if r["counts_toward_gate"] and r["verdict"] == "FAIL")
+        crits = sorted(c for c, r in g["criteria"].items() if r["counts_for_fail"] and r["verdict"] == "FAIL")
         return {"gate": gid, "criteria": crits, "evidence": g["evidence_used"], "milestone": g["milestone"]}
 
     elimination = [failure_record(g) for g in binding if gates[g]["verdict"] == "FAIL"]
@@ -755,10 +855,13 @@ def evaluate(architecture: str, evidence: Any, *, admitted_members: Iterable[str
             cres = gates[g["id"]]["criteria"][c["id"]]
             if g["binding"] and c["counts_toward_gate"] and cres["verdict"] != "PASS":
                 conditions.append(_condition(g, c, cres, architecture, admitted, m))
-            elif g["binding"] and (not c["counts_toward_gate"] or c["status"] in _OPEN_CRITERION_STATUSES):
+            if g["binding"] and (not c["counts_for_fail"] or c["status"] in _OPEN_CRITERION_STATUSES):
                 open_items.append({"gate": g["id"], "criterion": c["id"], "status": c["status"],
+                                   "counts_toward_gate": c["counts_toward_gate"],
+                                   "counts_for_fail": c["counts_for_fail"],
                                    "requirement": _requirement_text(c), "current_verdict": cres["verdict"],
-                                   "interpretation": c["interpretation"]})
+                                   "interpretation": c["interpretation"],
+                                   "fail_reading_dependence": c.get("fail_reading_dependence")})
     available = not eliminated and not binding_conflict
     if eliminated:
         statement = (f"{architecture} is ELIMINATED by binding gate(s) "
@@ -795,6 +898,7 @@ def evaluate(architecture: str, evidence: Any, *, admitted_members: Iterable[str
         "matrix_status": m["status"],
         "architecture": architecture,
         "admitted_members": sorted(admitted),
+        "admitted_members_checked_against": ens_source,
         "gates": gates,
         "binding_gates": binding,
         "proposed_gates": proposed,
@@ -814,9 +918,12 @@ def evaluate(architecture: str, evidence: Any, *, admitted_members: Iterable[str
     }
 
 
-def evaluate_all(evidence: Any, *, admitted_members: Iterable[str] = (), matrix: dict | None = None) -> dict:
+def evaluate_all(evidence: Any, *, admitted_members: Iterable[str] = (), matrix: dict | None = None,
+                 ensemble: dict | None = None, repo_root: str = ROOT) -> dict:
     """evaluate() for every architecture, in fixed id order. Lists which are eliminated; ranks nothing."""
-    res = {a: evaluate(a, evidence, admitted_members=admitted_members, matrix=matrix) for a in ARCHITECTURES}
+    admitted_members = list(admitted_members) if not isinstance(admitted_members, (str, bytes)) else admitted_members
+    res = {a: evaluate(a, evidence, admitted_members=admitted_members, matrix=matrix, ensemble=ensemble,
+                       repo_root=repo_root) for a in ARCHITECTURES}
     first = res[ARCHITECTURES[0]]
     return {"schema": RESULT_SET_SCHEMA, "matrix_version": first["matrix_version"],
             "matrix_status": first["matrix_status"], "admitted_members": first["admitted_members"],
@@ -877,14 +984,21 @@ def render_table(matrix: dict | None = None) -> str:
             by.setdefault(bases[b]["milestone"], []).append(bases[b]["short"])
         return "; ".join(f"{ms}: {', '.join(v)}" for ms, v in sorted(by.items()))
 
-    rows = ["| gate | gate status | criterion | counts | requirement | threshold status | FAIL may rest on | "
+    def counts(c):
+        if not c["counts_toward_gate"]:
+            return "no"
+        if c["counts_for_fail"]:
+            return "PASS and FAIL"
+        return "PASS only (" + ", ".join(sorted(set(re.findall(r"\bOD[0-9]+\b", c["fail_reading_dependence"])))) + ")"
+
+    rows = ["| gate | gate status | criterion | counts for | requirement | threshold status | FAIL may rest on | "
             "PASS may rest on | earliest FAIL / PASS |",
             "|---|---|---|---|---|---|---|---|---|"]
     for g in m["gates"]:
         for c in g["criteria"]:
             ia = c["issuable_at"]
             rows.append(f"| {g['id']} | {g['status']}{'' if g['binding'] else ' (non-binding)'} | {c['id']} | "
-                        f"{'yes' if c['counts_toward_gate'] else 'no'} | {_requirement_text(c)} | "
+                        f"{counts(c)} | {_requirement_text(c)} | "
                         f"{c['threshold_status']} | {fmt(c['fail_sufficient_bases'])} | "
                         f"{fmt(c['pass_sufficient_bases'])} | {ia['FAIL']} / {ia['PASS']} (C: + integration) |")
     return "\n".join(rows) + "\n"

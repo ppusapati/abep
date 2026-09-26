@@ -5,7 +5,7 @@
  "description": "Validates docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json. $defs.evidence_item / evidence_bundle define the evidence abep_sim/hard_gates.evaluate accepts; $defs.evaluation_result / evaluation_set define what it returns (the contract for consumers such as abep_sim/arch_compare.py). Uses only the JSON Schema keywords implemented by abep_sim.hard_gates.schema_errors (jsonschema is not a project dependency).",
  "type": "object",
  "additionalProperties": false,
- "required": ["schema", "matrix_version", "status", "status_note", "created", "purpose", "supports_milestones", "milestones", "rfp", "architectures", "common_boundary_note", "verdicts", "elimination_rule", "evidence_policy", "coverage_dimensions", "calibration_nuisance_forbidden", "hall_pin", "power_boundary", "shared_contracts", "gates", "rfp_requirements_recorded_not_gated", "not_gates", "open_owner_decisions"],
+ "required": ["schema", "matrix_version", "status", "status_note", "created", "purpose", "supports_milestones", "milestones", "rfp", "architectures", "common_boundary_note", "verdicts", "elimination_rule", "evidence_policy", "coverage_dimensions", "calibration_nuisance_forbidden", "hall_closure_scope", "hall_pin", "power_boundary", "shared_contracts", "gates", "rfp_requirements_recorded_not_gated", "not_gates", "open_owner_decisions"],
  "properties": {
   "schema": {"const": "hard_gate_matrix_v1"},
   "matrix_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
@@ -101,8 +101,8 @@
     "flags": {
      "type": "object",
      "additionalProperties": false,
-     "required": ["hall_map_trustworthy", "wall_life_trustworthy", "numerically_valid", "chemistry_trustworthy"],
-     "properties": {"hall_map_trustworthy": {"$ref": "#/$defs/text"}, "wall_life_trustworthy": {"$ref": "#/$defs/text"}, "numerically_valid": {"$ref": "#/$defs/text"}, "chemistry_trustworthy": {"$ref": "#/$defs/text"}}
+     "required": ["hall_map_trustworthy", "wall_life_trustworthy", "numerically_valid", "chemistry_trustworthy", "mass_margin_free_lower_bound", "mass_includes_max_margin_policy"],
+     "properties": {"hall_map_trustworthy": {"$ref": "#/$defs/text"}, "wall_life_trustworthy": {"$ref": "#/$defs/text"}, "numerically_valid": {"$ref": "#/$defs/text"}, "chemistry_trustworthy": {"$ref": "#/$defs/text"}, "mass_margin_free_lower_bound": {"$ref": "#/$defs/text"}, "mass_includes_max_margin_policy": {"$ref": "#/$defs/text"}}
     }
    }
   },
@@ -117,6 +117,12 @@
    "additionalProperties": false,
    "required": ["keys", "source", "rule"],
    "properties": {"keys": {"$ref": "#/$defs/string_list"}, "source": {"$ref": "#/$defs/text"}, "rule": {"$ref": "#/$defs/text"}}
+  },
+  "hall_closure_scope": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["rule", "source", "closure_independent_elements", "per_element_criteria", "sum_criteria"],
+   "properties": {"rule": {"$ref": "#/$defs/text"}, "source": {"$ref": "#/$defs/text"}, "closure_independent_elements": {"$ref": "#/$defs/string_list"}, "per_element_criteria": {"$ref": "#/$defs/text"}, "sum_criteria": {"$ref": "#/$defs/text"}}
   },
   "hall_pin": {
    "type": "object",
@@ -176,7 +182,7 @@
   "architecture_id": {"enum": ["hall_only", "rf_hall", "ecr_hall"]},
   "quantity_type": {"enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]},
   "basis_name": {"enum": ["hard_physical_bound", "measurement_vyovrinda", "measurement_same_hardware", "model_closure_independent", "model_admitted_closure", "measurement_similar_hardware", "model_unadmitted_closure", "engineering_estimate", "assumption"]},
-  "flag_name": {"enum": ["hall_map_trustworthy", "wall_life_trustworthy", "numerically_valid", "chemistry_trustworthy"]},
+  "flag_name": {"enum": ["hall_map_trustworthy", "wall_life_trustworthy", "numerically_valid", "chemistry_trustworthy", "mass_margin_free_lower_bound", "mass_includes_max_margin_policy"]},
   "value_kind": {"enum": ["lower_bound", "upper_bound", "interval", "point_estimate", "boolean"]},
   "operating_mode": {"enum": ["startup", "steady", "peak"]},
   "propellant": {"enum": ["atmospheric", "xenon", "atmospheric_xenon_mixed", "n2_surrogate"]},
@@ -279,11 +285,13 @@
   "criterion": {
    "type": "object",
    "additionalProperties": false,
-   "required": ["id", "title", "counts_toward_gate", "status", "metric", "unit", "definition", "comparator", "threshold", "threshold_status", "threshold_source", "interpretation", "envelope", "envelope_source", "fail_must_cover", "requires_power_boundary", "fail_sufficient_bases", "pass_sufficient_bases", "fail_evidence", "pass_evidence", "issuable_at"],
+   "required": ["id", "title", "counts_toward_gate", "counts_for_fail", "status", "metric", "unit", "definition", "comparator", "threshold", "threshold_status", "threshold_source", "interpretation", "envelope", "envelope_source", "fail_must_cover", "requires_power_boundary", "fail_sufficient_bases", "pass_sufficient_bases", "fail_evidence", "pass_evidence", "issuable_at"],
    "properties": {
     "id": {"type": "string", "pattern": "^(G[1-9]|P[1-9])\\.[a-z][A-Za-z0-9_]*$"},
     "title": {"$ref": "#/$defs/text"},
-    "counts_toward_gate": {"type": "boolean"},
+    "counts_toward_gate": {"type": "boolean", "description": "Its PASS is required for the gate PASS (conservative: criteria that bind under any open reading count)."},
+    "counts_for_fail": {"type": "boolean", "description": "Its FAIL makes the gate FAIL. True only when the FAIL holds under every open owner reading; implies counts_toward_gate."},
+    "fail_reading_dependence": {"$ref": "#/$defs/text", "description": "Required when the criterion counts for PASS but not for FAIL: the open owner decision(s) (ODn) under which alone it binds."},
     "status": {"enum": ["RFP", "RFP_INTERPRETATION_OPEN", "PROPOSED", "TBD", "OWNER_ADOPTED"]},
     "metric": {"type": "string", "pattern": "^[a-z][A-Za-z0-9_]*$"},
     "unit": {"$ref": "#/$defs/text"},
@@ -292,6 +300,7 @@
     "threshold": {"type": ["number", "null"]},
     "threshold_status": {"enum": ["RFP_AS_RECORDED", "PROPOSED", "TBD", "NOT_APPLICABLE", "OWNER_DEFINED"]},
     "threshold_source": {"$ref": "#/$defs/text"},
+    "threshold_equality_open": {"type": "boolean", "description": "Whether the limit is strict or inclusive is an open owner decision: a bound exactly at the threshold decides neither side."},
     "interpretation": {"$ref": "#/$defs/text"},
     "envelope": {"$ref": "#/$defs/envelope"},
     "envelope_source": {"$ref": "#/$defs/text"},
@@ -321,7 +330,8 @@
    "allOf": [
     {"if": {"properties": {"comparator": {"const": "is_true"}}}, "then": {"properties": {"threshold": {"const": null}, "threshold_status": {"const": "NOT_APPLICABLE"}, "unit": {"const": "boolean"}}}},
     {"if": {"properties": {"threshold_status": {"const": "TBD"}}}, "then": {"properties": {"threshold": {"const": null}, "threshold_source": {"type": "string", "pattern": "^TBD"}}}},
-    {"if": {"properties": {"status": {"const": "RFP_INTERPRETATION_OPEN"}}}, "then": {"properties": {"counts_toward_gate": {"const": false}}}}
+    {"if": {"properties": {"status": {"const": "RFP_INTERPRETATION_OPEN"}}}, "then": {"required": ["fail_reading_dependence"], "properties": {"counts_for_fail": {"const": false}}}},
+    {"if": {"properties": {"counts_toward_gate": {"const": false}}}, "then": {"properties": {"counts_for_fail": {"const": false}}}}
    ]
   },
   "conditions": {
@@ -424,9 +434,10 @@
   "criterion_result": {
    "type": "object",
    "additionalProperties": false,
-   "required": ["counts_toward_gate", "status", "metric", "comparator", "threshold", "unit", "verdict", "milestone", "evidence_used", "pass_designs", "design_failures", "conflict", "reasons", "missing_for_fail", "missing_for_pass"],
+   "required": ["counts_toward_gate", "counts_for_fail", "status", "metric", "comparator", "threshold", "unit", "verdict", "milestone", "evidence_used", "pass_designs", "design_failures", "conflict", "reasons", "missing_for_fail", "missing_for_pass"],
    "properties": {
     "counts_toward_gate": {"type": "boolean"},
+    "counts_for_fail": {"type": "boolean"},
     "status": {"type": "string"},
     "metric": {"type": "string"},
     "comparator": {"type": "string"},
@@ -469,13 +480,14 @@
   "condition": {
    "type": "object",
    "additionalProperties": false,
-   "required": ["gate", "criterion", "requirement", "over", "current_verdict", "discharged_by", "blockers"],
+   "required": ["gate", "criterion", "requirement", "over", "current_verdict", "can_eliminate", "discharged_by", "blockers"],
    "properties": {
     "gate": {"type": "string"},
     "criterion": {"type": "string"},
     "requirement": {"type": "string"},
     "over": {"type": "object"},
     "current_verdict": {"$ref": "#/$defs/verdict"},
+    "can_eliminate": {"type": "boolean"},
     "discharged_by": {"type": "object", "additionalProperties": false, "required": ["A", "B"], "properties": {"A": {"type": "array", "items": {"$ref": "#/$defs/basis_name"}}, "B": {"type": "array", "items": {"$ref": "#/$defs/basis_name"}}}},
     "blockers": {"type": "array", "items": {"type": "string"}}
    }
@@ -485,7 +497,7 @@
    "type": "object",
    "additionalProperties": false,
    "allOf": [{"$ref": "#/$defs/no_winner"}],
-   "required": ["schema", "matrix_schema", "matrix_version", "matrix_status", "architecture", "admitted_members", "gates", "binding_gates", "proposed_gates", "eliminated", "elimination_basis", "proposed_gate_failures", "conflicts", "evidence_considered", "evidence_not_verdict_bearing", "milestones", "note"],
+   "required": ["schema", "matrix_schema", "matrix_version", "matrix_status", "architecture", "admitted_members", "admitted_members_checked_against", "gates", "binding_gates", "proposed_gates", "eliminated", "elimination_basis", "proposed_gate_failures", "conflicts", "evidence_considered", "evidence_not_verdict_bearing", "milestones", "note"],
    "properties": {
     "schema": {"const": "hard_gate_evaluation_v1"},
     "matrix_schema": {"const": "hard_gate_matrix_v1"},
@@ -493,6 +505,7 @@
     "matrix_status": {"type": "string"},
     "architecture": {"$ref": "#/$defs/architecture_id"},
     "admitted_members": {"$ref": "#/$defs/string_list"},
+    "admitted_members_checked_against": {"type": "string", "minLength": 1},
     "gates": {"type": "object", "additionalProperties": {"$ref": "#/$defs/gate_result"}},
     "binding_gates": {"$ref": "#/$defs/string_list"},
     "proposed_gates": {"$ref": "#/$defs/string_list"},
