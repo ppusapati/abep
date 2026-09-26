@@ -1,0 +1,5286 @@
+{
+ "id": "n2_domain_extension_requirements_v1",
+ "status": "DRAFT_PENDING_OWNER",
+ "non_gating": "Evidence audit only. No run is scored, re-scored or re-labelled; no limit, table, criterion or tolerance is changed. The P5-N2 v1 vacuum outcome (all nine candidates INCONCLUSIVE / NOT ELIGIBLE, credible set empty) is permanent and is never rewritten.",
+ "generated_by": "scripts/chemistry/n2_domain_extension_requirements.py",
+ "inputs_sha256": {
+  "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_raw.jsonl.gz": "5b11705cf1afa31df7202bfb12f4e4d99e8f03966373e23652b9066846627b6f",
+  "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores.json": "87895820e21e36fa8f9b07fa7475789f08d91d946d526a09acf142fe509be1bc",
+  "hallthruster_bridge/propellants/rate_validity.toml": "64b51be96ef30d6024a99ad9bc0b47384ba3c2434a4c096403cc2b1aa0290e3a",
+  "docs/chemistry/n2_domain_extension/sources/song2023_fig19_vector_extract.csv": "a060d8a57f1711d310d2b29beeebfb782cdc3d88cd824c583c474ca5e2b20602"
+ },
+ "rate_convention": "k(T_e) = sqrt(8/(pi m_e)) (e T_e)^-3/2 int sigma E exp(-E/T_e) dE tabulated against mean energy 3/2 T_e (abep_sim/rate_tables.py); HallThruster.jl v0.23.1 looks rates up at 3/2 Tev on a 0-255 eV grid (src/collisions/collision_frequencies.jl, reactions.jl)",
+ "candidate_limits_mean_energy_eV": [
+  60.0,
+  75.0,
+  90.0,
+  120.0,
+  150.0
+ ],
+ "v1_inventory": {
+  "n_records": 1080,
+  "n_run_readings_scored": 2160,
+  "official_status_counts_run_readings": {
+   "OUT_OF_DOMAIN": 1428,
+   "PASS": 32,
+   "FAIL_VALIDATION": 700
+  },
+  "n_runs_out_of_domain": 714,
+  "ood_status_reading_independent": true,
+  "check_ood_equals_frozen_fout_predicate": {
+   "equal": true,
+   "n_disagreements": 0,
+   "note": "consistency check of inputs only; statuses are the official ones"
+  },
+  "capped_tables": [
+   "dissociation_N2.dat",
+   "excitation_N2_A3Sigma_u.dat",
+   "excitation_N2_B3Pi_g.dat",
+   "excitation_N2_Bprime3Sigma_u.dat",
+   "excitation_N2_C3Pi_u.dat",
+   "excitation_N2_W3Delta_u.dat",
+   "excitation_N2_a1Pi_g.dat",
+   "excitation_N2_aprime1Sigma_u.dat",
+   "excitation_N2_rot_j0_to_j2.dat",
+   "excitation_N2_rot_j0_to_j4.dat",
+   "excitation_N2_vib_0_to_1.dat",
+   "excitation_N2_vib_0_to_10.dat",
+   "excitation_N2_vib_0_to_2.dat",
+   "excitation_N2_vib_0_to_3.dat",
+   "excitation_N2_vib_0_to_4.dat",
+   "excitation_N2_vib_0_to_5.dat",
+   "excitation_N2_vib_0_to_6.dat",
+   "excitation_N2_vib_0_to_7.dat",
+   "excitation_N2_vib_0_to_8.dat",
+   "excitation_N2_vib_0_to_9.dat",
+   "excitation_N2_w1Delta_u.dat"
+  ],
+  "n_capped_tables": 21,
+  "tables_with_255eV_limit_beyond": [],
+  "n_ood_runs_dissociation_beyond": 714,
+  "n_ood_runs_dissociation_only_beyond": 36,
+  "Te_max_eV_time_averaged": {
+   "ood": {
+    "n": 714,
+    "min": 13.1023,
+    "p50": 17.8099,
+    "p90": 23.6328,
+    "max": 25.2481
+   },
+   "in_domain": {
+    "n": 366,
+    "min": 12.6904,
+    "p50": 19.0868,
+    "p90": 21.5998,
+    "max": 22.9485
+   },
+   "note": "peak of the time-averaged T_e profile; every OOD run stays below T_e = 30 eV here, so every exceedance is in instantaneous saved frames"
+  },
+  "tables": {
+   "dissociation_N2.dat": {
+    "family": "dissociation",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "JPCRD 2023 Table 9 ends at 200 eV; held tail carries 0.95 % of the rate at 45 eV mean energy (T_e = 30 eV), 3.8 % at 60 eV (scripts/build_n2_dissociation_table.py)",
+    "n_runs_beyond_limit": 714,
+    "n_ood_runs_beyond_limit": 714,
+    "n_runs_active_above_limit_any_share": 889,
+    "eps_active_eV_runs_beyond": {
+     "n": 714,
+     "min": 45.1068,
+     "p50": 71.0882,
+     "p90": 94.114,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 714,
+     "min": 1.01236e-12,
+     "p50": 2.82343e-09,
+     "p90": 0.0104699,
+     "max": 0.046152
+    }
+   },
+   "excitation_N2_A3Sigma_u.dat": {
+    "family": "electronic",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+    "n_runs_beyond_limit": 636,
+    "n_ood_runs_beyond_limit": 636,
+    "n_runs_active_above_limit_any_share": 843,
+    "eps_active_eV_runs_beyond": {
+     "n": 636,
+     "min": 45.1068,
+     "p50": 68.5788,
+     "p90": 92.8994,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 636,
+     "min": 1.03094e-12,
+     "p50": 1.93467e-09,
+     "p90": 0.0044776,
+     "max": 0.017035
+    }
+   },
+   "excitation_N2_B3Pi_g.dat": {
+    "family": "electronic",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+    "n_runs_beyond_limit": 633,
+    "n_ood_runs_beyond_limit": 633,
+    "n_runs_active_above_limit_any_share": 839,
+    "eps_active_eV_runs_beyond": {
+     "n": 633,
+     "min": 45.1068,
+     "p50": 68.4561,
+     "p90": 92.908,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 633,
+     "min": 1.00434e-12,
+     "p50": 1.78794e-09,
+     "p90": 0.00422253,
+     "max": 0.0159527
+    }
+   },
+   "excitation_N2_Bprime3Sigma_u.dat": {
+    "family": "electronic",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+    "n_runs_beyond_limit": 651,
+    "n_ood_runs_beyond_limit": 651,
+    "n_runs_active_above_limit_any_share": 856,
+    "eps_active_eV_runs_beyond": {
+     "n": 651,
+     "min": 45.1068,
+     "p50": 68.9565,
+     "p90": 92.885,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 651,
+     "min": 1.00565e-12,
+     "p50": 1.9633e-09,
+     "p90": 0.00507281,
+     "max": 0.0192196
+    }
+   },
+   "excitation_N2_C3Pi_u.dat": {
+    "family": "electronic",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+    "n_runs_beyond_limit": 642,
+    "n_ood_runs_beyond_limit": 642,
+    "n_runs_active_above_limit_any_share": 850,
+    "eps_active_eV_runs_beyond": {
+     "n": 642,
+     "min": 45.1068,
+     "p50": 68.5788,
+     "p90": 92.9109,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 642,
+     "min": 1.01016e-12,
+     "p50": 2.06013e-09,
+     "p90": 0.00478319,
+     "max": 0.0178163
+    }
+   },
+   "excitation_N2_W3Delta_u.dat": {
+    "family": "electronic",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+    "n_runs_beyond_limit": 641,
+    "n_ood_runs_beyond_limit": 641,
+    "n_runs_active_above_limit_any_share": 849,
+    "eps_active_eV_runs_beyond": {
+     "n": 641,
+     "min": 45.1068,
+     "p50": 68.5987,
+     "p90": 92.9137,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 641,
+     "min": 1.00214e-12,
+     "p50": 2.03344e-09,
+     "p90": 0.00469095,
+     "max": 0.0175991
+    }
+   },
+   "excitation_N2_a1Pi_g.dat": {
+    "family": "electronic",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-200 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+    "n_runs_beyond_limit": 674,
+    "n_ood_runs_beyond_limit": 674,
+    "n_runs_active_above_limit_any_share": 868,
+    "eps_active_eV_runs_beyond": {
+     "n": 674,
+     "min": 45.1068,
+     "p50": 69.9856,
+     "p90": 93.1155,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 674,
+     "min": 1.04873e-12,
+     "p50": 2.21022e-09,
+     "p90": 0.00703503,
+     "max": 0.02731
+    }
+   },
+   "excitation_N2_aprime1Sigma_u.dat": {
+    "family": "electronic",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+    "n_runs_beyond_limit": 655,
+    "n_ood_runs_beyond_limit": 655,
+    "n_runs_active_above_limit_any_share": 858,
+    "eps_active_eV_runs_beyond": {
+     "n": 655,
+     "min": 45.1068,
+     "p50": 69.0427,
+     "p90": 92.9022,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 655,
+     "min": 1.013e-12,
+     "p50": 2.07048e-09,
+     "p90": 0.00533409,
+     "max": 0.0202489
+    }
+   },
+   "excitation_N2_rot_j0_to_j2.dat": {
+    "family": "rotational",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "JPCRD 2023 Table 6 (0.01-10 eV), held at the 10 eV value above (declared model), capped at the preregistered T_e <= 30 eV; gross j = 0 loss, no superelastic return",
+    "n_runs_beyond_limit": 677,
+    "n_ood_runs_beyond_limit": 677,
+    "n_runs_active_above_limit_any_share": 866,
+    "eps_active_eV_runs_beyond": {
+     "n": 677,
+     "min": 45.1068,
+     "p50": 70.2205,
+     "p90": 93.1099,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 677,
+     "min": 1.00416e-12,
+     "p50": 2.00468e-09,
+     "p90": 0.00723958,
+     "max": 0.0300483
+    }
+   },
+   "excitation_N2_rot_j0_to_j4.dat": {
+    "family": "rotational",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "JPCRD 2023 Table 6 (0.01-10 eV), held at the 10 eV value above (declared model), capped at the preregistered T_e <= 30 eV; gross j = 0 loss, no superelastic return",
+    "n_runs_beyond_limit": 659,
+    "n_ood_runs_beyond_limit": 659,
+    "n_runs_active_above_limit_any_share": 854,
+    "eps_active_eV_runs_beyond": {
+     "n": 659,
+     "min": 45.1068,
+     "p50": 69.9132,
+     "p90": 93.3083,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 659,
+     "min": 1.00025e-12,
+     "p50": 1.66309e-09,
+     "p90": 0.00579824,
+     "max": 0.0252151
+    }
+   },
+   "excitation_N2_vib_0_to_1.dat": {
+    "family": "vibrational",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+    "n_runs_beyond_limit": 537,
+    "n_ood_runs_beyond_limit": 537,
+    "n_runs_active_above_limit_any_share": 744,
+    "eps_active_eV_runs_beyond": {
+     "n": 537,
+     "min": 45.1068,
+     "p50": 65.3981,
+     "p90": 91.0272,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 537,
+     "min": 1.07979e-12,
+     "p50": 6.12075e-10,
+     "p90": 0.00119041,
+     "max": 0.00473689
+    }
+   },
+   "excitation_N2_vib_0_to_10.dat": {
+    "family": "vibrational",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+    "n_runs_beyond_limit": 543,
+    "n_ood_runs_beyond_limit": 543,
+    "n_runs_active_above_limit_any_share": 755,
+    "eps_active_eV_runs_beyond": {
+     "n": 543,
+     "min": 45.1068,
+     "p50": 66.1676,
+     "p90": 91.9616,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 543,
+     "min": 1.01938e-12,
+     "p50": 6.34963e-10,
+     "p90": 0.00130925,
+     "max": 0.00506908
+    }
+   },
+   "excitation_N2_vib_0_to_2.dat": {
+    "family": "vibrational",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+    "n_runs_beyond_limit": 537,
+    "n_ood_runs_beyond_limit": 537,
+    "n_runs_active_above_limit_any_share": 744,
+    "eps_active_eV_runs_beyond": {
+     "n": 537,
+     "min": 45.1068,
+     "p50": 65.3981,
+     "p90": 91.0272,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 537,
+     "min": 1.07979e-12,
+     "p50": 6.12075e-10,
+     "p90": 0.00119041,
+     "max": 0.00473689
+    }
+   },
+   "excitation_N2_vib_0_to_3.dat": {
+    "family": "vibrational",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+    "n_runs_beyond_limit": 537,
+    "n_ood_runs_beyond_limit": 537,
+    "n_runs_active_above_limit_any_share": 744,
+    "eps_active_eV_runs_beyond": {
+     "n": 537,
+     "min": 45.1068,
+     "p50": 65.3981,
+     "p90": 91.0272,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 537,
+     "min": 1.07979e-12,
+     "p50": 6.12075e-10,
+     "p90": 0.00119041,
+     "max": 0.00473689
+    }
+   },
+   "excitation_N2_vib_0_to_4.dat": {
+    "family": "vibrational",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+    "n_runs_beyond_limit": 537,
+    "n_ood_runs_beyond_limit": 537,
+    "n_runs_active_above_limit_any_share": 744,
+    "eps_active_eV_runs_beyond": {
+     "n": 537,
+     "min": 45.1068,
+     "p50": 65.3981,
+     "p90": 91.0272,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 537,
+     "min": 1.07979e-12,
+     "p50": 6.12075e-10,
+     "p90": 0.00119041,
+     "max": 0.00473689
+    }
+   },
+   "excitation_N2_vib_0_to_5.dat": {
+    "family": "vibrational",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+    "n_runs_beyond_limit": 539,
+    "n_ood_runs_beyond_limit": 539,
+    "n_runs_active_above_limit_any_share": 748,
+    "eps_active_eV_runs_beyond": {
+     "n": 539,
+     "min": 45.1068,
+     "p50": 65.6601,
+     "p90": 91.3138,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 539,
+     "min": 1.00928e-12,
+     "p50": 5.77984e-10,
+     "p90": 0.001211,
+     "max": 0.00481023
+    }
+   },
+   "excitation_N2_vib_0_to_6.dat": {
+    "family": "vibrational",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+    "n_runs_beyond_limit": 539,
+    "n_ood_runs_beyond_limit": 539,
+    "n_runs_active_above_limit_any_share": 748,
+    "eps_active_eV_runs_beyond": {
+     "n": 539,
+     "min": 45.1068,
+     "p50": 65.6601,
+     "p90": 91.3138,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 539,
+     "min": 1.00928e-12,
+     "p50": 5.77984e-10,
+     "p90": 0.001211,
+     "max": 0.00481023
+    }
+   },
+   "excitation_N2_vib_0_to_7.dat": {
+    "family": "vibrational",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+    "n_runs_beyond_limit": 540,
+    "n_ood_runs_beyond_limit": 540,
+    "n_runs_active_above_limit_any_share": 749,
+    "eps_active_eV_runs_beyond": {
+     "n": 540,
+     "min": 45.1068,
+     "p50": 65.8367,
+     "p90": 91.6614,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 540,
+     "min": 1.018e-12,
+     "p50": 6.0109e-10,
+     "p90": 0.00123558,
+     "max": 0.00488967
+    }
+   },
+   "excitation_N2_vib_0_to_8.dat": {
+    "family": "vibrational",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+    "n_runs_beyond_limit": 541,
+    "n_ood_runs_beyond_limit": 541,
+    "n_runs_active_above_limit_any_share": 752,
+    "eps_active_eV_runs_beyond": {
+     "n": 541,
+     "min": 45.1068,
+     "p50": 66.1676,
+     "p90": 91.6351,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 541,
+     "min": 1.00088e-12,
+     "p50": 6.30714e-10,
+     "p90": 0.00126982,
+     "max": 0.00497582
+    }
+   },
+   "excitation_N2_vib_0_to_9.dat": {
+    "family": "vibrational",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+    "n_runs_beyond_limit": 541,
+    "n_ood_runs_beyond_limit": 541,
+    "n_runs_active_above_limit_any_share": 752,
+    "eps_active_eV_runs_beyond": {
+     "n": 541,
+     "min": 45.1068,
+     "p50": 66.1676,
+     "p90": 91.6351,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 541,
+     "min": 1.00088e-12,
+     "p50": 6.30714e-10,
+     "p90": 0.00126982,
+     "max": 0.00497581
+    }
+   },
+   "excitation_N2_w1Delta_u.dat": {
+    "family": "electronic",
+    "limit_mean_energy_eV": 45.0,
+    "basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+    "n_runs_beyond_limit": 659,
+    "n_ood_runs_beyond_limit": 659,
+    "n_runs_active_above_limit_any_share": 858,
+    "eps_active_eV_runs_beyond": {
+     "n": 659,
+     "min": 45.1068,
+     "p50": 69.4774,
+     "p90": 92.9515,
+     "max": 127.935
+    },
+    "f_out_runs_beyond": {
+     "n": 659,
+     "min": 1.00764e-12,
+     "p50": 1.89367e-09,
+     "p90": 0.00557541,
+     "max": 0.0213982
+    }
+   }
+  }
+ },
+ "hypothetical_coverage": {
+  "definition": "COUNTING, NOT SCORING. Run covered at L if every capped table either had f_out <= 1e-12 in v1 or, for tables in the scenario's extended set, max_mean_energy_active_eV <= L; tables outside the set keep 45 eV. Proxy only: eps_active marks the highest mean energy carrying > 1e-12 of the table's PEAK cell-frame activity, whereas f_out is the activity SHARE beyond the limit; the frozen record lacks the frames, so exact f_out at a new limit requires reruns.",
+  "proxy_caveat_n_in_domain_runs_with_eps_active_above_45": 175,
+  "limits": {
+   "60": {
+    "all_capped_tables_at_L": {
+     "covered_runs": 577,
+     "pct_of_1080": 53.4259,
+     "newly_covered_ood_runs": 211,
+     "pct_of_ood_runs": 29.5518,
+     "remaining_ood_runs": 503,
+     "newly_covered_ood_by_chemistry": {
+      "n2_n.toml": {
+       "ood": 174,
+       "newly_covered": 53
+      },
+      "n2_n_di_lower.toml": {
+       "ood": 176,
+       "newly_covered": 51
+      },
+      "n2_n_di_lower_nel_wang.toml": {
+       "ood": 179,
+       "newly_covered": 55
+      },
+      "n2_n_nel_wang.toml": {
+       "ood": 185,
+       "newly_covered": 52
+      }
+     },
+     "newly_covered_ood_by_point": {
+      "N1": {
+       "ood": 184,
+       "newly_covered": 80
+      },
+      "N2": {
+       "ood": 161,
+       "newly_covered": 37
+      },
+      "N3": {
+       "ood": 136,
+       "newly_covered": 27
+      },
+      "N4": {
+       "ood": 117,
+       "newly_covered": 32
+      },
+      "N5": {
+       "ood": 116,
+       "newly_covered": 35
+      }
+     },
+     "newly_covered_ood_by_registration": {
+      "L32-anode": {
+       "ood": 229,
+       "newly_covered": 104
+      },
+      "L32-exit": {
+       "ood": 352,
+       "newly_covered": 51
+      },
+      "L38-hist": {
+       "ood": 133,
+       "newly_covered": 56
+      }
+     }
+    },
+    "all_capped_except_dissociation_at_L": {
+     "covered_runs": 366,
+     "pct_of_1080": 33.8889,
+     "newly_covered_ood_runs": 0,
+     "pct_of_ood_runs": 0.0,
+     "remaining_ood_runs": 714
+    },
+    "all_capped_except_electronic_at_L": {
+     "covered_runs": 373,
+     "pct_of_1080": 34.537,
+     "newly_covered_ood_runs": 7,
+     "pct_of_ood_runs": 0.980392,
+     "remaining_ood_runs": 707
+    },
+    "all_capped_except_rotational_at_L": {
+     "covered_runs": 372,
+     "pct_of_1080": 34.4444,
+     "newly_covered_ood_runs": 6,
+     "pct_of_ood_runs": 0.840336,
+     "remaining_ood_runs": 708
+    },
+    "all_capped_except_vibrational_at_L": {
+     "covered_runs": 420,
+     "pct_of_1080": 38.8889,
+     "newly_covered_ood_runs": 54,
+     "pct_of_ood_runs": 7.56303,
+     "remaining_ood_runs": 660
+    },
+    "dissociation_only_at_L": {
+     "covered_runs": 372,
+     "pct_of_1080": 34.4444,
+     "newly_covered_ood_runs": 6,
+     "pct_of_ood_runs": 0.840336,
+     "remaining_ood_runs": 708
+    },
+    "dissociation_and_electronic_only_at_L": {
+     "covered_runs": 372,
+     "pct_of_1080": 34.4444,
+     "newly_covered_ood_runs": 6,
+     "pct_of_ood_runs": 0.840336,
+     "remaining_ood_runs": 708
+    }
+   },
+   "75": {
+    "all_capped_tables_at_L": {
+     "covered_runs": 789,
+     "pct_of_1080": 73.0556,
+     "newly_covered_ood_runs": 423,
+     "pct_of_ood_runs": 59.2437,
+     "remaining_ood_runs": 291,
+     "newly_covered_ood_by_chemistry": {
+      "n2_n.toml": {
+       "ood": 174,
+       "newly_covered": 104
+      },
+      "n2_n_di_lower.toml": {
+       "ood": 176,
+       "newly_covered": 107
+      },
+      "n2_n_di_lower_nel_wang.toml": {
+       "ood": 179,
+       "newly_covered": 111
+      },
+      "n2_n_nel_wang.toml": {
+       "ood": 185,
+       "newly_covered": 101
+      }
+     },
+     "newly_covered_ood_by_point": {
+      "N1": {
+       "ood": 184,
+       "newly_covered": 131
+      },
+      "N2": {
+       "ood": 161,
+       "newly_covered": 90
+      },
+      "N3": {
+       "ood": 136,
+       "newly_covered": 65
+      },
+      "N4": {
+       "ood": 117,
+       "newly_covered": 71
+      },
+      "N5": {
+       "ood": 116,
+       "newly_covered": 66
+      }
+     },
+     "newly_covered_ood_by_registration": {
+      "L32-anode": {
+       "ood": 229,
+       "newly_covered": 176
+      },
+      "L32-exit": {
+       "ood": 352,
+       "newly_covered": 151
+      },
+      "L38-hist": {
+       "ood": 133,
+       "newly_covered": 96
+      }
+     }
+    },
+    "all_capped_except_dissociation_at_L": {
+     "covered_runs": 366,
+     "pct_of_1080": 33.8889,
+     "newly_covered_ood_runs": 0,
+     "pct_of_ood_runs": 0.0,
+     "remaining_ood_runs": 714
+    },
+    "all_capped_except_electronic_at_L": {
+     "covered_runs": 391,
+     "pct_of_1080": 36.2037,
+     "newly_covered_ood_runs": 25,
+     "pct_of_ood_runs": 3.5014,
+     "remaining_ood_runs": 689
+    },
+    "all_capped_except_rotational_at_L": {
+     "covered_runs": 388,
+     "pct_of_1080": 35.9259,
+     "newly_covered_ood_runs": 22,
+     "pct_of_ood_runs": 3.08123,
+     "remaining_ood_runs": 692
+    },
+    "all_capped_except_vibrational_at_L": {
+     "covered_runs": 471,
+     "pct_of_1080": 43.6111,
+     "newly_covered_ood_runs": 105,
+     "pct_of_ood_runs": 14.7059,
+     "remaining_ood_runs": 609
+    },
+    "dissociation_only_at_L": {
+     "covered_runs": 388,
+     "pct_of_1080": 35.9259,
+     "newly_covered_ood_runs": 22,
+     "pct_of_ood_runs": 3.08123,
+     "remaining_ood_runs": 692
+    },
+    "dissociation_and_electronic_only_at_L": {
+     "covered_runs": 388,
+     "pct_of_1080": 35.9259,
+     "newly_covered_ood_runs": 22,
+     "pct_of_ood_runs": 3.08123,
+     "remaining_ood_runs": 692
+    }
+   },
+   "90": {
+    "all_capped_tables_at_L": {
+     "covered_runs": 975,
+     "pct_of_1080": 90.2778,
+     "newly_covered_ood_runs": 609,
+     "pct_of_ood_runs": 85.2941,
+     "remaining_ood_runs": 105,
+     "newly_covered_ood_by_chemistry": {
+      "n2_n.toml": {
+       "ood": 174,
+       "newly_covered": 148
+      },
+      "n2_n_di_lower.toml": {
+       "ood": 176,
+       "newly_covered": 155
+      },
+      "n2_n_di_lower_nel_wang.toml": {
+       "ood": 179,
+       "newly_covered": 151
+      },
+      "n2_n_nel_wang.toml": {
+       "ood": 185,
+       "newly_covered": 155
+      }
+     },
+     "newly_covered_ood_by_point": {
+      "N1": {
+       "ood": 184,
+       "newly_covered": 151
+      },
+      "N2": {
+       "ood": 161,
+       "newly_covered": 138
+      },
+      "N3": {
+       "ood": 136,
+       "newly_covered": 108
+      },
+      "N4": {
+       "ood": 117,
+       "newly_covered": 105
+      },
+      "N5": {
+       "ood": 116,
+       "newly_covered": 107
+      }
+     },
+     "newly_covered_ood_by_registration": {
+      "L32-anode": {
+       "ood": 229,
+       "newly_covered": 213
+      },
+      "L32-exit": {
+       "ood": 352,
+       "newly_covered": 271
+      },
+      "L38-hist": {
+       "ood": 133,
+       "newly_covered": 125
+      }
+     }
+    },
+    "all_capped_except_dissociation_at_L": {
+     "covered_runs": 366,
+     "pct_of_1080": 33.8889,
+     "newly_covered_ood_runs": 0,
+     "pct_of_ood_runs": 0.0,
+     "remaining_ood_runs": 714
+    },
+    "all_capped_except_electronic_at_L": {
+     "covered_runs": 399,
+     "pct_of_1080": 36.9444,
+     "newly_covered_ood_runs": 33,
+     "pct_of_ood_runs": 4.62185,
+     "remaining_ood_runs": 681
+    },
+    "all_capped_except_rotational_at_L": {
+     "covered_runs": 396,
+     "pct_of_1080": 36.6667,
+     "newly_covered_ood_runs": 30,
+     "pct_of_ood_runs": 4.20168,
+     "remaining_ood_runs": 684
+    },
+    "all_capped_except_vibrational_at_L": {
+     "covered_runs": 515,
+     "pct_of_1080": 47.6852,
+     "newly_covered_ood_runs": 149,
+     "pct_of_ood_runs": 20.8683,
+     "remaining_ood_runs": 565
+    },
+    "dissociation_only_at_L": {
+     "covered_runs": 395,
+     "pct_of_1080": 36.5741,
+     "newly_covered_ood_runs": 29,
+     "pct_of_ood_runs": 4.06162,
+     "remaining_ood_runs": 685
+    },
+    "dissociation_and_electronic_only_at_L": {
+     "covered_runs": 396,
+     "pct_of_1080": 36.6667,
+     "newly_covered_ood_runs": 30,
+     "pct_of_ood_runs": 4.20168,
+     "remaining_ood_runs": 684
+    }
+   },
+   "120": {
+    "all_capped_tables_at_L": {
+     "covered_runs": 1076,
+     "pct_of_1080": 99.6296,
+     "newly_covered_ood_runs": 710,
+     "pct_of_ood_runs": 99.4398,
+     "remaining_ood_runs": 4,
+     "newly_covered_ood_by_chemistry": {
+      "n2_n.toml": {
+       "ood": 174,
+       "newly_covered": 174
+      },
+      "n2_n_di_lower.toml": {
+       "ood": 176,
+       "newly_covered": 176
+      },
+      "n2_n_di_lower_nel_wang.toml": {
+       "ood": 179,
+       "newly_covered": 177
+      },
+      "n2_n_nel_wang.toml": {
+       "ood": 185,
+       "newly_covered": 183
+      }
+     },
+     "newly_covered_ood_by_point": {
+      "N1": {
+       "ood": 184,
+       "newly_covered": 181
+      },
+      "N2": {
+       "ood": 161,
+       "newly_covered": 160
+      },
+      "N3": {
+       "ood": 136,
+       "newly_covered": 136
+      },
+      "N4": {
+       "ood": 117,
+       "newly_covered": 117
+      },
+      "N5": {
+       "ood": 116,
+       "newly_covered": 116
+      }
+     },
+     "newly_covered_ood_by_registration": {
+      "L32-anode": {
+       "ood": 229,
+       "newly_covered": 229
+      },
+      "L32-exit": {
+       "ood": 352,
+       "newly_covered": 348
+      },
+      "L38-hist": {
+       "ood": 133,
+       "newly_covered": 133
+      }
+     }
+    },
+    "all_capped_except_dissociation_at_L": {
+     "covered_runs": 366,
+     "pct_of_1080": 33.8889,
+     "newly_covered_ood_runs": 0,
+     "pct_of_ood_runs": 0.0,
+     "remaining_ood_runs": 714
+    },
+    "all_capped_except_electronic_at_L": {
+     "covered_runs": 406,
+     "pct_of_1080": 37.5926,
+     "newly_covered_ood_runs": 40,
+     "pct_of_ood_runs": 5.60224,
+     "remaining_ood_runs": 674
+    },
+    "all_capped_except_rotational_at_L": {
+     "covered_runs": 403,
+     "pct_of_1080": 37.3148,
+     "newly_covered_ood_runs": 37,
+     "pct_of_ood_runs": 5.18207,
+     "remaining_ood_runs": 677
+    },
+    "all_capped_except_vibrational_at_L": {
+     "covered_runs": 537,
+     "pct_of_1080": 49.7222,
+     "newly_covered_ood_runs": 171,
+     "pct_of_ood_runs": 23.9496,
+     "remaining_ood_runs": 543
+    },
+    "dissociation_only_at_L": {
+     "covered_runs": 402,
+     "pct_of_1080": 37.2222,
+     "newly_covered_ood_runs": 36,
+     "pct_of_ood_runs": 5.04202,
+     "remaining_ood_runs": 678
+    },
+    "dissociation_and_electronic_only_at_L": {
+     "covered_runs": 403,
+     "pct_of_1080": 37.3148,
+     "newly_covered_ood_runs": 37,
+     "pct_of_ood_runs": 5.18207,
+     "remaining_ood_runs": 677
+    }
+   },
+   "150": {
+    "all_capped_tables_at_L": {
+     "covered_runs": 1080,
+     "pct_of_1080": 100.0,
+     "newly_covered_ood_runs": 714,
+     "pct_of_ood_runs": 100.0,
+     "remaining_ood_runs": 0,
+     "newly_covered_ood_by_chemistry": {
+      "n2_n.toml": {
+       "ood": 174,
+       "newly_covered": 174
+      },
+      "n2_n_di_lower.toml": {
+       "ood": 176,
+       "newly_covered": 176
+      },
+      "n2_n_di_lower_nel_wang.toml": {
+       "ood": 179,
+       "newly_covered": 179
+      },
+      "n2_n_nel_wang.toml": {
+       "ood": 185,
+       "newly_covered": 185
+      }
+     },
+     "newly_covered_ood_by_point": {
+      "N1": {
+       "ood": 184,
+       "newly_covered": 184
+      },
+      "N2": {
+       "ood": 161,
+       "newly_covered": 161
+      },
+      "N3": {
+       "ood": 136,
+       "newly_covered": 136
+      },
+      "N4": {
+       "ood": 117,
+       "newly_covered": 117
+      },
+      "N5": {
+       "ood": 116,
+       "newly_covered": 116
+      }
+     },
+     "newly_covered_ood_by_registration": {
+      "L32-anode": {
+       "ood": 229,
+       "newly_covered": 229
+      },
+      "L32-exit": {
+       "ood": 352,
+       "newly_covered": 352
+      },
+      "L38-hist": {
+       "ood": 133,
+       "newly_covered": 133
+      }
+     }
+    },
+    "all_capped_except_dissociation_at_L": {
+     "covered_runs": 366,
+     "pct_of_1080": 33.8889,
+     "newly_covered_ood_runs": 0,
+     "pct_of_ood_runs": 0.0,
+     "remaining_ood_runs": 714
+    },
+    "all_capped_except_electronic_at_L": {
+     "covered_runs": 406,
+     "pct_of_1080": 37.5926,
+     "newly_covered_ood_runs": 40,
+     "pct_of_ood_runs": 5.60224,
+     "remaining_ood_runs": 674
+    },
+    "all_capped_except_rotational_at_L": {
+     "covered_runs": 403,
+     "pct_of_1080": 37.3148,
+     "newly_covered_ood_runs": 37,
+     "pct_of_ood_runs": 5.18207,
+     "remaining_ood_runs": 677
+    },
+    "all_capped_except_vibrational_at_L": {
+     "covered_runs": 537,
+     "pct_of_1080": 49.7222,
+     "newly_covered_ood_runs": 171,
+     "pct_of_ood_runs": 23.9496,
+     "remaining_ood_runs": 543
+    },
+    "dissociation_only_at_L": {
+     "covered_runs": 402,
+     "pct_of_1080": 37.2222,
+     "newly_covered_ood_runs": 36,
+     "pct_of_ood_runs": 5.04202,
+     "remaining_ood_runs": 678
+    },
+    "dissociation_and_electronic_only_at_L": {
+     "covered_runs": 403,
+     "pct_of_1080": 37.3148,
+     "newly_covered_ood_runs": 37,
+     "pct_of_ood_runs": 5.18207,
+     "remaining_ood_runs": 677
+    }
+   }
+  }
+ },
+ "requirements": {
+  "flat_sigma_x_equals_E_req_over_Te": {
+   "0.01": 6.63835,
+   "1e-06": 16.6884,
+   "1e-12": 31.0999
+  },
+  "per_table": {
+   "dissociation_N2.dat": {
+    "family": "dissociation",
+    "source_last_data_point_eV": 200.0,
+    "declared_model_above_last_point": "hold (sigma held at the 200 eV value)",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "share_above_last_point_hold": 0.00953517,
+      "hold_over_zero_tail_minus_1": 0.00962696,
+      "model_rate_over_committed_table_minus_1": -1.42957e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 200.0,
+       "1e-06": 499.922,
+       "1e-12": 932.284
+      }
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "share_above_last_point_hold": 0.0374634,
+      "hold_over_zero_tail_minus_1": 0.0389215,
+      "model_rate_over_committed_table_minus_1": -3.52006e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 262.026,
+       "1e-06": 664.308,
+       "1e-12": 1240.85
+      }
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "share_above_last_point_hold": 0.0834476,
+      "hold_over_zero_tail_minus_1": 0.0910451,
+      "model_rate_over_committed_table_minus_1": -2.98909e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 326.563,
+       "1e-06": 829.493,
+       "1e-12": 1550.2
+      }
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "share_above_last_point_hold": 0.140524,
+      "hold_over_zero_tail_minus_1": 0.1635,
+      "model_rate_over_committed_table_minus_1": -1.85678e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 391.709,
+       "1e-06": 995.238,
+       "1e-12": 1860.09
+      }
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "share_above_last_point_hold": 0.263632,
+      "hold_over_zero_tail_minus_1": 0.358017,
+      "model_rate_over_committed_table_minus_1": -2.35429e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 523.147,
+       "1e-06": 1327.78,
+       "1e-12": 2480.89
+      }
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "share_above_last_point_hold": 0.377465,
+      "hold_over_zero_tail_minus_1": 0.606336,
+      "model_rate_over_committed_table_minus_1": -2.07129e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 655.441,
+       "1e-06": 1661.12,
+       "1e-12": 3102.46
+      }
+     }
+    },
+    "hold_envelope_is_upper_bound": true
+   },
+   "excitation_N2_A3Sigma_u.dat": {
+    "family": "electronic",
+    "source_last_data_point_eV": 100.0,
+    "declared_model_above_last_point": "power law p = 2.2931 from Johnson's last two points to 10 keV, zero beyond",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "share_above_last_point_hold": 0.0248104,
+      "share_above_last_point_declared": 0.0145767,
+      "declared_over_zero_tail_minus_1": 0.0147923,
+      "declared_over_hold_tail_minus_1": -0.010385,
+      "model_rate_over_committed_table_minus_1": 6.2499e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 134.282,
+       "1e-06": 442.271,
+       "1e-12": 876.291
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 108.618,
+       "1e-06": 344.996,
+       "1e-12": 731.783
+      }
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "share_above_last_point_hold": 0.0596082,
+      "share_above_last_point_declared": 0.0310009,
+      "declared_over_zero_tail_minus_1": 0.0319927,
+      "declared_over_hold_tail_minus_1": -0.0295226,
+      "model_rate_over_committed_table_minus_1": 1.11448e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 191.531,
+       "1e-06": 600.656,
+       "1e-12": 1179.01
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 133.136,
+       "1e-06": 446.131,
+       "1e-12": 961.125
+      }
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "share_above_last_point_hold": 0.104226,
+      "share_above_last_point_declared": 0.0490751,
+      "declared_over_zero_tail_minus_1": 0.0516078,
+      "declared_over_hold_tail_minus_1": -0.0579967,
+      "model_rate_over_committed_table_minus_1": 1.35158e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 252.226,
+       "1e-06": 762.169,
+       "1e-12": 1484.77
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 156.328,
+       "1e-06": 545.535,
+       "1e-12": 1188.62
+      }
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "share_above_last_point_hold": 0.154308,
+      "share_above_last_point_declared": 0.0670253,
+      "declared_over_zero_tail_minus_1": 0.0718404,
+      "declared_over_hold_tail_minus_1": -0.0935534,
+      "model_rate_over_committed_table_minus_1": 1.48094e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 315.342,
+       "1e-06": 925.906,
+       "1e-12": 1792.69
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 178.58,
+       "1e-06": 643.69,
+       "1e-12": 1414.79
+      }
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "share_above_last_point_hold": 0.259146,
+      "share_above_last_point_declared": 0.100046,
+      "declared_over_zero_tail_minus_1": 0.111168,
+      "declared_over_hold_tail_minus_1": -0.176787,
+      "model_rate_over_committed_table_minus_1": 1.6229e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 446.203,
+       "1e-06": 1257.67,
+       "1e-12": 2412.71
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 221.059,
+       "1e-06": 837.288,
+       "1e-12": 1864.23
+      }
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "share_above_last_point_hold": 0.359058,
+      "share_above_last_point_declared": 0.128452,
+      "declared_over_zero_tail_minus_1": 0.147384,
+      "declared_over_hold_tail_minus_1": -0.264593,
+      "model_rate_over_committed_table_minus_1": 1.63167e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 580.548,
+       "1e-06": 1592.7,
+       "1e-12": 3035.91
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 261.576,
+       "1e-06": 1028.23,
+       "1e-12": 2310.82
+      }
+     }
+    },
+    "hold_envelope_is_upper_bound": true
+   },
+   "excitation_N2_B3Pi_g.dat": {
+    "family": "electronic",
+    "source_last_data_point_eV": 100.0,
+    "declared_model_above_last_point": "power law p = 2.8675 from Johnson's last two points to 10 keV, zero beyond",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "share_above_last_point_hold": 0.0130133,
+      "share_above_last_point_declared": 0.00683795,
+      "declared_over_zero_tail_minus_1": 0.00688503,
+      "declared_over_hold_tail_minus_1": -0.00621789,
+      "model_rate_over_committed_table_minus_1": 3.43897e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 110.159,
+       "1e-06": 421.568,
+       "1e-12": 856.262
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 100.0,
+       "1e-06": 308.719,
+       "1e-12": 681.225
+      }
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "share_above_last_point_hold": 0.0324423,
+      "share_above_last_point_declared": 0.0146442,
+      "declared_over_zero_tail_minus_1": 0.0148618,
+      "declared_over_hold_tail_minus_1": -0.0180627,
+      "model_rate_over_committed_table_minus_1": 7.99626e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 161.676,
+       "1e-06": 574.666,
+       "1e-12": 1153.84
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 109.61,
+       "1e-06": 393.903,
+       "1e-12": 889.069
+      }
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "share_above_last_point_hold": 0.0587903,
+      "share_above_last_point_declared": 0.0233088,
+      "declared_over_zero_tail_minus_1": 0.0238651,
+      "declared_over_hold_tail_minus_1": -0.0363283,
+      "model_rate_over_committed_table_minus_1": 1.08167e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 217.492,
+       "1e-06": 731.624,
+       "1e-12": 1455.16
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 125.28,
+       "1e-06": 476.572,
+       "1e-12": 1094.12
+      }
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "share_above_last_point_hold": 0.0901047,
+      "share_above_last_point_declared": 0.0319661,
+      "declared_over_zero_tail_minus_1": 0.0330217,
+      "declared_over_hold_tail_minus_1": -0.0600584,
+      "model_rate_over_committed_table_minus_1": 1.28426e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 276.511,
+       "1e-06": 891.495,
+       "1e-12": 1759.32
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 139.799,
+       "1e-06": 557.361,
+       "1e-12": 1297.06
+      }
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "share_above_last_point_hold": 0.161551,
+      "share_above_last_point_declared": 0.0479766,
+      "declared_over_zero_tail_minus_1": 0.0503943,
+      "declared_over_hold_tail_minus_1": -0.119298,
+      "model_rate_over_committed_table_minus_1": 1.49247e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 401.254,
+       "1e-06": 1217.42,
+       "1e-12": 2373.64
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 166.326,
+       "1e-06": 714.694,
+       "1e-12": 1698.21
+      }
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "share_above_last_point_hold": 0.237532,
+      "share_above_last_point_declared": 0.0617944,
+      "declared_over_zero_tail_minus_1": 0.0658645,
+      "declared_over_hold_tail_minus_1": -0.187313,
+      "model_rate_over_committed_table_minus_1": 1.54538e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 531.797,
+       "1e-06": 1548.75,
+       "1e-12": 2993.22
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 190.398,
+       "1e-06": 867.738,
+       "1e-12": 2094.54
+      }
+     }
+    },
+    "hold_envelope_is_upper_bound": true
+   },
+   "excitation_N2_Bprime3Sigma_u.dat": {
+    "family": "electronic",
+    "source_last_data_point_eV": 100.0,
+    "declared_model_above_last_point": "power law p = 2.2306 from Johnson's last two points to 10 keV, zero beyond",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "share_above_last_point_hold": 0.0234137,
+      "share_above_last_point_declared": 0.0139154,
+      "declared_over_zero_tail_minus_1": 0.0141117,
+      "declared_over_hold_tail_minus_1": -0.0096324,
+      "model_rate_over_committed_table_minus_1": 1.21185e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 132.152,
+       "1e-06": 440.415,
+       "1e-12": 874.493
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 107.64,
+       "1e-06": 345.633,
+       "1e-12": 733.733
+      }
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "share_above_last_point_hold": 0.0558678,
+      "share_above_last_point_declared": 0.0294242,
+      "declared_over_zero_tail_minus_1": 0.0303163,
+      "declared_over_hold_tail_minus_1": -0.0272453,
+      "model_rate_over_committed_table_minus_1": 2.07822e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 188.393,
+       "1e-06": 597.891,
+       "1e-12": 1176.33
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 132.006,
+       "1e-06": 447.26,
+       "1e-12": 964.052
+      }
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "share_above_last_point_hold": 0.0977108,
+      "share_above_last_point_declared": 0.0465932,
+      "declared_over_zero_tail_minus_1": 0.0488702,
+      "declared_over_hold_tail_minus_1": -0.0536157,
+      "model_rate_over_committed_table_minus_1": 2.47443e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 248.354,
+       "1e-06": 758.73,
+       "1e-12": 1481.43
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 155.257,
+       "1e-06": 547.425,
+       "1e-12": 1192.82
+      }
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "share_above_last_point_hold": 0.145061,
+      "share_above_last_point_declared": 0.0637676,
+      "declared_over_zero_tail_minus_1": 0.0681109,
+      "declared_over_hold_tail_minus_1": -0.0868306,
+      "model_rate_over_committed_table_minus_1": 2.69874e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 310.924,
+       "1e-06": 921.957,
+       "1e-12": 1788.85
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 177.7,
+       "1e-06": 646.52,
+       "1e-12": 1420.44
+      }
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "share_above_last_point_hold": 0.245472,
+      "share_above_last_point_declared": 0.09567,
+      "declared_over_zero_tail_minus_1": 0.105791,
+      "declared_over_hold_tail_minus_1": -0.16565,
+      "model_rate_over_committed_table_minus_1": 2.86932e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 441.084,
+       "1e-06": 1253.06,
+       "1e-12": 2408.23
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 220.821,
+       "1e-06": 842.36,
+       "1e-12": 1873.2
+      }
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "share_above_last_point_hold": 0.342722,
+      "share_above_last_point_declared": 0.123411,
+      "declared_over_zero_tail_minus_1": 0.140785,
+      "declared_over_hold_tail_minus_1": -0.250187,
+      "model_rate_over_committed_table_minus_1": 2.93844e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 575.086,
+       "1e-06": 1587.75,
+       "1e-12": 3031.1
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 262.206,
+       "1e-06": 1035.87,
+       "1e-12": 2323.47
+      }
+     }
+    },
+    "hold_envelope_is_upper_bound": true
+   },
+   "excitation_N2_C3Pi_u.dat": {
+    "family": "electronic",
+    "source_last_data_point_eV": 100.0,
+    "declared_model_above_last_point": "power law p = 2.4686 from Johnson's last two points to 10 keV, zero beyond",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "share_above_last_point_hold": 0.0178454,
+      "share_above_last_point_declared": 0.0101098,
+      "declared_over_zero_tail_minus_1": 0.0102131,
+      "declared_over_hold_tail_minus_1": -0.00781454,
+      "model_rate_over_committed_table_minus_1": 7.37097e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 122.081,
+       "1e-06": 431.707,
+       "1e-12": 866.065
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 100.239,
+       "1e-06": 329.956,
+       "1e-12": 712.29
+      }
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "share_above_last_point_hold": 0.0436542,
+      "share_above_last_point_declared": 0.0216335,
+      "declared_over_zero_tail_minus_1": 0.0221119,
+      "declared_over_hold_tail_minus_1": -0.0225076,
+      "model_rate_over_committed_table_minus_1": 1.3522e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 176.361,
+       "1e-06": 587.357,
+       "1e-12": 1166.12
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 121.5,
+       "1e-06": 425.006,
+       "1e-12": 933.855
+      }
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "share_above_last_point_hold": 0.0778874,
+      "share_above_last_point_declared": 0.0344987,
+      "declared_over_zero_tail_minus_1": 0.0357314,
+      "declared_over_hold_tail_minus_1": -0.044939,
+      "model_rate_over_committed_table_minus_1": 1.67431e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 234.668,
+       "1e-06": 746.639,
+       "1e-12": 1469.71
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 141.455,
+       "1e-06": 518.223,
+       "1e-12": 1153.44
+      }
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "share_above_last_point_hold": 0.117653,
+      "share_above_last_point_declared": 0.0474312,
+      "declared_over_zero_tail_minus_1": 0.0497929,
+      "declared_over_hold_tail_minus_1": -0.0737182,
+      "model_rate_over_committed_table_minus_1": 1.9086e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 295.873,
+       "1e-06": 908.568,
+       "1e-12": 1775.87
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 160.453,
+       "1e-06": 610.075,
+       "1e-12": 1371.55
+      }
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "share_above_last_point_hold": 0.205152,
+      "share_above_last_point_declared": 0.0715486,
+      "declared_over_zero_tail_minus_1": 0.0770623,
+      "declared_over_hold_tail_minus_1": -0.143899,
+      "model_rate_over_committed_table_minus_1": 2.0811e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 424.075,
+       "1e-06": 1237.78,
+       "1e-12": 2393.39
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 196.346,
+       "1e-06": 790.735,
+       "1e-12": 1804.47
+      }
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "share_above_last_point_hold": 0.293808,
+      "share_above_last_point_declared": 0.0925732,
+      "declared_over_zero_tail_minus_1": 0.102017,
+      "declared_over_hold_tail_minus_1": -0.221764,
+      "model_rate_over_committed_table_minus_1": 2.16257e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 556.966,
+       "1e-06": 1571.38,
+       "1e-12": 3015.19
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 230.16,
+       "1e-06": 968.345,
+       "1e-12": 2234.08
+      }
+     }
+    },
+    "hold_envelope_is_upper_bound": true
+   },
+   "excitation_N2_W3Delta_u.dat": {
+    "family": "electronic",
+    "source_last_data_point_eV": 100.0,
+    "declared_model_above_last_point": "power law p = 2.2526 from Johnson's last two points to 10 keV, zero beyond",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "share_above_last_point_hold": 0.0198343,
+      "share_above_last_point_declared": 0.0117203,
+      "declared_over_zero_tail_minus_1": 0.0118593,
+      "declared_over_hold_tail_minus_1": -0.00821028,
+      "model_rate_over_committed_table_minus_1": 1.66934e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 126.018,
+       "1e-06": 435.096,
+       "1e-12": 869.344
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 103.64,
+       "1e-06": 340.29,
+       "1e-12": 727.671
+      }
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "share_above_last_point_hold": 0.0484627,
+      "share_above_last_point_declared": 0.0252992,
+      "declared_over_zero_tail_minus_1": 0.0259558,
+      "declared_over_hold_tail_minus_1": -0.0237647,
+      "model_rate_over_committed_table_minus_1": 2.76122e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 181.475,
+       "1e-06": 591.82,
+       "1e-12": 1170.45
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 127.274,
+       "1e-06": 440.729,
+       "1e-12": 956.569
+      }
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "share_above_last_point_hold": 0.0862088,
+      "share_above_last_point_declared": 0.0405976,
+      "declared_over_zero_tail_minus_1": 0.0423155,
+      "declared_over_hold_tail_minus_1": -0.0475413,
+      "model_rate_over_committed_table_minus_1": 3.27836e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 240.811,
+       "1e-06": 752.053,
+       "1e-12": 1474.96
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 149.807,
+       "1e-06": 539.712,
+       "1e-12": 1183.92
+      }
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "share_above_last_point_hold": 0.129699,
+      "share_above_last_point_declared": 0.0560827,
+      "declared_over_zero_tail_minus_1": 0.0594149,
+      "declared_over_hold_tail_minus_1": -0.0779901,
+      "model_rate_over_committed_table_minus_1": 3.59459e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 302.894,
+       "1e-06": 914.802,
+       "1e-12": 1781.91
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 171.537,
+       "1e-06": 637.624,
+       "1e-12": 1410.12
+      }
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "share_above_last_point_hold": 0.224013,
+      "share_above_last_point_declared": 0.0851834,
+      "declared_over_zero_tail_minus_1": 0.0931152,
+      "declared_over_hold_tail_minus_1": -0.151757,
+      "model_rate_over_committed_table_minus_1": 3.78308e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 432.426,
+       "1e-06": 1245.27,
+       "1e-12": 2400.66
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 213.234,
+       "1e-06": 831.078,
+       "1e-12": 1860.01
+      }
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "share_above_last_point_hold": 0.317651,
+      "share_above_last_point_declared": 0.110751,
+      "declared_over_zero_tail_minus_1": 0.124544,
+      "declared_over_hold_tail_minus_1": -0.232668,
+      "model_rate_over_committed_table_minus_1": 3.87136e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 566.158,
+       "1e-06": 1579.67,
+       "1e-12": 3023.25
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 253.196,
+       "1e-06": 1022.18,
+       "1e-12": 2307.39
+      }
+     }
+    },
+    "hold_envelope_is_upper_bound": true
+   },
+   "excitation_N2_a1Pi_g.dat": {
+    "family": "electronic",
+    "source_last_data_point_eV": 200.0,
+    "declared_model_above_last_point": "power law p = 1.0702 from Johnson's last two points to 10 keV, zero beyond",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "share_above_last_point_hold": 0.00267114,
+      "share_above_last_point_declared": 0.00230236,
+      "declared_over_zero_tail_minus_1": 0.00230767,
+      "declared_over_hold_tail_minus_1": -0.000369633,
+      "model_rate_over_committed_table_minus_1": 3.99954e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 200.0,
+       "1e-06": 459.358,
+       "1e-12": 892.855
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 200.0,
+       "1e-06": 430.775,
+       "1e-12": 843.89
+      }
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "share_above_last_point_hold": 0.0125383,
+      "share_above_last_point_declared": 0.0103485,
+      "declared_over_zero_tail_minus_1": 0.0104567,
+      "declared_over_hold_tail_minus_1": -0.00221265,
+      "model_rate_over_committed_table_minus_1": 6.62858e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 210.81,
+       "1e-06": 617.792,
+       "1e-12": 1195.63
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 201.354,
+       "1e-06": 567.149,
+       "1e-12": 1117.95
+      }
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "share_above_last_point_hold": 0.0319983,
+      "share_above_last_point_declared": 0.0254061,
+      "declared_over_zero_tail_minus_1": 0.0260684,
+      "declared_over_hold_tail_minus_1": -0.006764,
+      "model_rate_over_committed_table_minus_1": 7.13713e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 270.59,
+       "1e-06": 778.585,
+       "1e-12": 1500.7
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 246.01,
+       "1e-06": 703.212,
+       "1e-12": 1391.7
+      }
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "share_above_last_point_hold": 0.0601528,
+      "share_above_last_point_declared": 0.0461815,
+      "declared_over_zero_tail_minus_1": 0.0484175,
+      "declared_over_hold_tail_minus_1": -0.0146477,
+      "model_rate_over_committed_table_minus_1": 7.09424e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 332.346,
+       "1e-06": 941.173,
+       "1e-12": 1807.51
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 290.499,
+       "1e-06": 839.106,
+       "1e-12": 1665.28
+      }
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "share_above_last_point_hold": 0.133743,
+      "share_above_last_point_declared": 0.0974557,
+      "declared_over_zero_tail_minus_1": 0.107979,
+      "declared_over_hold_tail_minus_1": -0.0402055,
+      "model_rate_over_committed_table_minus_1": 6.69591e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 460.011,
+       "1e-06": 1270.15,
+       "1e-12": 2424.83
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 379.247,
+       "1e-06": 1110.66,
+       "1e-12": 2212.21
+      }
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "share_above_last_point_hold": 0.21705,
+      "share_above_last_point_declared": 0.15271,
+      "declared_over_zero_tail_minus_1": 0.180234,
+      "declared_over_hold_tail_minus_1": -0.0759357,
+      "model_rate_over_committed_table_minus_1": 6.15371e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 591.222,
+       "1e-06": 1602.39,
+       "1e-12": 3045.33
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 467.886,
+       "1e-06": 1382.1,
+       "1e-12": 2759.03
+      }
+     }
+    },
+    "hold_envelope_is_upper_bound": true
+   },
+   "excitation_N2_aprime1Sigma_u.dat": {
+    "family": "electronic",
+    "source_last_data_point_eV": 100.0,
+    "declared_model_above_last_point": "power law p = 1.6741 from Johnson's last two points to 10 keV, zero beyond",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "share_above_last_point_hold": 0.0351887,
+      "share_above_last_point_declared": 0.0235067,
+      "declared_over_zero_tail_minus_1": 0.0240726,
+      "declared_over_hold_tail_minus_1": -0.0119633,
+      "model_rate_over_committed_table_minus_1": 5.12944e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 147.003,
+       "1e-06": 453.457,
+       "1e-12": 887.131
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 122.264,
+       "1e-06": 378.187,
+       "1e-12": 778.764
+      }
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "share_above_last_point_hold": 0.0816343,
+      "share_above_last_point_declared": 0.0498142,
+      "declared_over_zero_tail_minus_1": 0.0524257,
+      "declared_over_hold_tail_minus_1": -0.0334883,
+      "model_rate_over_committed_table_minus_1": 1.0522e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 206.638,
+       "1e-06": 614.063,
+       "1e-12": 1192.01
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 154.692,
+       "1e-06": 495.193,
+       "1e-12": 1029.07
+      }
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "share_above_last_point_hold": 0.1389,
+      "share_above_last_point_declared": 0.0789868,
+      "declared_over_zero_tail_minus_1": 0.0857608,
+      "declared_over_hold_tail_minus_1": -0.0650515,
+      "model_rate_over_committed_table_minus_1": 1.27076e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 269.339,
+       "1e-06": 777.462,
+       "1e-12": 1499.61
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 186.627,
+       "1e-06": 611.632,
+       "1e-12": 1278.8
+      }
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "share_above_last_point_hold": 0.200779,
+      "share_above_last_point_declared": 0.108178,
+      "declared_over_zero_tail_minus_1": 0.1213,
+      "declared_over_hold_tail_minus_1": -0.103834,
+      "model_rate_over_committed_table_minus_1": 1.42152e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 334.056,
+       "1e-06": 942.715,
+       "1e-12": 1809.01
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 218.225,
+       "1e-06": 727.683,
+       "1e-12": 1528.12
+      }
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "share_above_last_point_hold": 0.323349,
+      "share_above_last_point_declared": 0.162334,
+      "declared_over_zero_tail_minus_1": 0.193793,
+      "declared_over_hold_tail_minus_1": -0.192218,
+      "model_rate_over_committed_table_minus_1": 1.48734e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 467.013,
+       "1e-06": 1276.5,
+       "1e-12": 2431.0
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 280.724,
+       "1e-06": 958.989,
+       "1e-12": 2025.95
+      }
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "share_above_last_point_hold": 0.432491,
+      "share_above_last_point_declared": 0.209277,
+      "declared_over_zero_tail_minus_1": 0.264665,
+      "declared_over_hold_tail_minus_1": -0.282291,
+      "model_rate_over_committed_table_minus_1": 1.51059e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 602.302,
+       "1e-06": 1612.47,
+       "1e-12": 3055.13
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 342.567,
+       "1e-06": 1189.55,
+       "1e-12": 2523.01
+      }
+     }
+    },
+    "hold_envelope_is_upper_bound": true
+   },
+   "excitation_N2_rot_j0_to_j2.dat": {
+    "family": "rotational",
+    "source_last_data_point_eV": 10.0,
+    "declared_model_above_last_point": "hold (sigma held at the 10 eV value)",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "share_above_last_point_hold": 0.963085,
+      "hold_over_zero_tail_minus_1": 26.0896,
+      "model_rate_over_committed_table_minus_1": -8.61283e-07,
+      "hold_envelope_E_req_eV": {
+       "0.01": 199.428,
+       "1e-06": 500.908,
+       "1e-12": 933.245
+      }
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "share_above_last_point_hold": 0.978093,
+      "hold_over_zero_tail_minus_1": 44.6479,
+      "model_rate_over_committed_table_minus_1": -3.62592e-07,
+      "hold_envelope_E_req_eV": {
+       "0.01": 265.751,
+       "1e-06": 667.736,
+       "1e-12": 1244.19
+      }
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "share_above_last_point_hold": 0.985514,
+      "hold_over_zero_tail_minus_1": 68.0313,
+      "model_rate_over_committed_table_minus_1": -2.13759e-07,
+      "hold_envelope_E_req_eV": {
+       "0.01": 332.095,
+       "1e-06": 834.585,
+       "1e-12": 1555.15
+      }
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "share_above_last_point_hold": 0.989716,
+      "hold_over_zero_tail_minus_1": 96.2389,
+      "model_rate_over_committed_table_minus_1": 1.73443e-07,
+      "hold_envelope_E_req_eV": {
+       "0.01": 398.452,
+       "1e-06": 1001.44,
+       "1e-12": 1866.13
+      }
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "share_above_last_point_hold": 0.994052,
+      "hold_over_zero_tail_minus_1": 167.125,
+      "model_rate_over_committed_table_minus_1": -9.19131e-08,
+      "hold_envelope_E_req_eV": {
+       "0.01": 531.183,
+       "1e-06": 1335.18,
+       "1e-12": 2488.09
+      }
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "share_above_last_point_hold": 0.996129,
+      "hold_over_zero_tail_minus_1": 257.304,
+      "model_rate_over_committed_table_minus_1": 4.00378e-07,
+      "hold_envelope_E_req_eV": {
+       "0.01": 663.929,
+       "1e-06": 1668.93,
+       "1e-12": 3110.07
+      }
+     }
+    },
+    "hold_envelope_is_upper_bound": false
+   },
+   "excitation_N2_rot_j0_to_j4.dat": {
+    "family": "rotational",
+    "source_last_data_point_eV": 10.0,
+    "declared_model_above_last_point": "hold (sigma held at the 10 eV value)",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "share_above_last_point_hold": 0.918853,
+      "hold_over_zero_tail_minus_1": 11.3232,
+      "model_rate_over_committed_table_minus_1": -4.2777e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 197.804,
+       "1e-06": 499.413,
+       "1e-12": 931.789
+      }
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "share_above_last_point_hold": 0.951565,
+      "hold_over_zero_tail_minus_1": 19.6464,
+      "model_rate_over_committed_table_minus_1": -4.96408e-06,
+      "hold_envelope_E_req_eV": {
+       "0.01": 264.485,
+       "1e-06": 666.571,
+       "1e-12": 1243.05
+      }
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "share_above_last_point_hold": 0.967932,
+      "hold_over_zero_tail_minus_1": 30.1834,
+      "model_rate_over_committed_table_minus_1": 2.68639e-07,
+      "hold_envelope_E_req_eV": {
+       "0.01": 331.059,
+       "1e-06": 833.631,
+       "1e-12": 1554.22
+      }
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "share_above_last_point_hold": 0.977238,
+      "hold_over_zero_tail_minus_1": 42.9328,
+      "model_rate_over_committed_table_minus_1": -6.52953e-07,
+      "hold_envelope_E_req_eV": {
+       "0.01": 397.576,
+       "1e-06": 1000.64,
+       "1e-12": 1865.34
+      }
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "share_above_last_point_hold": 0.986854,
+      "hold_over_zero_tail_minus_1": 75.0669,
+      "model_rate_over_committed_table_minus_1": 3.55314e-07,
+      "hold_envelope_E_req_eV": {
+       "0.01": 530.514,
+       "1e-06": 1334.56,
+       "1e-12": 2487.49
+      }
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "share_above_last_point_hold": 0.991456,
+      "hold_over_zero_tail_minus_1": 116.047,
+      "model_rate_over_committed_table_minus_1": 3.35597e-07,
+      "hold_envelope_E_req_eV": {
+       "0.01": 663.388,
+       "1e-06": 1668.43,
+       "1e-12": 3109.59
+      }
+     }
+    },
+    "hold_envelope_is_upper_bound": true
+   },
+   "excitation_N2_vib_0_to_1.dat": {
+    "family": "vibrational",
+    "source_last_data_point_eV": 15.0,
+    "declared_model_above_last_point": "rate fit (Laporta Eq. 10); resonant cross sections integrated to 15 eV",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     }
+    }
+   },
+   "excitation_N2_vib_0_to_10.dat": {
+    "family": "vibrational",
+    "source_last_data_point_eV": 15.0,
+    "declared_model_above_last_point": "rate fit (Laporta Eq. 10); resonant cross sections integrated to 15 eV",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     }
+    }
+   },
+   "excitation_N2_vib_0_to_2.dat": {
+    "family": "vibrational",
+    "source_last_data_point_eV": 15.0,
+    "declared_model_above_last_point": "rate fit (Laporta Eq. 10); resonant cross sections integrated to 15 eV",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     }
+    }
+   },
+   "excitation_N2_vib_0_to_3.dat": {
+    "family": "vibrational",
+    "source_last_data_point_eV": 15.0,
+    "declared_model_above_last_point": "rate fit (Laporta Eq. 10); resonant cross sections integrated to 15 eV",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     }
+    }
+   },
+   "excitation_N2_vib_0_to_4.dat": {
+    "family": "vibrational",
+    "source_last_data_point_eV": 15.0,
+    "declared_model_above_last_point": "rate fit (Laporta Eq. 10); resonant cross sections integrated to 15 eV",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     }
+    }
+   },
+   "excitation_N2_vib_0_to_5.dat": {
+    "family": "vibrational",
+    "source_last_data_point_eV": 15.0,
+    "declared_model_above_last_point": "rate fit (Laporta Eq. 10); resonant cross sections integrated to 15 eV",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     }
+    }
+   },
+   "excitation_N2_vib_0_to_6.dat": {
+    "family": "vibrational",
+    "source_last_data_point_eV": 15.0,
+    "declared_model_above_last_point": "rate fit (Laporta Eq. 10); resonant cross sections integrated to 15 eV",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     }
+    }
+   },
+   "excitation_N2_vib_0_to_7.dat": {
+    "family": "vibrational",
+    "source_last_data_point_eV": 15.0,
+    "declared_model_above_last_point": "rate fit (Laporta Eq. 10); resonant cross sections integrated to 15 eV",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     }
+    }
+   },
+   "excitation_N2_vib_0_to_8.dat": {
+    "family": "vibrational",
+    "source_last_data_point_eV": 15.0,
+    "declared_model_above_last_point": "rate fit (Laporta Eq. 10); resonant cross sections integrated to 15 eV",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     }
+    }
+   },
+   "excitation_N2_vib_0_to_9.dat": {
+    "family": "vibrational",
+    "source_last_data_point_eV": 15.0,
+    "declared_model_above_last_point": "rate fit (Laporta Eq. 10); resonant cross sections integrated to 15 eV",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "note": "rate fit, no cross section in the repository; the resonant cross sections behind it were integrated to 15 eV by Laporta (negligible beyond). The table-specific tail share is not defined; the flat reference and the independent non-resonant comparison apply."
+     }
+    }
+   },
+   "excitation_N2_w1Delta_u.dat": {
+    "family": "electronic",
+    "source_last_data_point_eV": 100.0,
+    "declared_model_above_last_point": "power law p = 0.5280 from Johnson's last two points to 10 keV, zero beyond",
+    "by_limit": {
+     "45": {
+      "T_e_eV": 30.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 199.15,
+       "1e-06": 500.652,
+       "1e-12": 932.997
+      },
+      "share_above_last_point_hold": 0.0767258,
+      "share_above_last_point_declared": 0.0671149,
+      "declared_over_zero_tail_minus_1": 0.0719433,
+      "declared_over_hold_tail_minus_1": -0.0103024,
+      "model_rate_over_committed_table_minus_1": 1.03674e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 174.758,
+       "1e-06": 478.349,
+       "1e-12": 911.297
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 162.785,
+       "1e-06": 452.142,
+       "1e-12": 875.542
+      }
+     },
+     "60": {
+      "T_e_eV": 40.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 265.534,
+       "1e-06": 667.536,
+       "1e-12": 1244.0
+      },
+      "share_above_last_point_hold": 0.166112,
+      "share_above_last_point_declared": 0.141898,
+      "declared_over_zero_tail_minus_1": 0.165362,
+      "declared_over_hold_tail_minus_1": -0.0282178,
+      "model_rate_over_committed_table_minus_1": 1.4822e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 240.15,
+       "1e-06": 644.286,
+       "1e-12": 1221.37
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 217.869,
+       "1e-06": 603.64,
+       "1e-12": 1168.16
+      }
+     },
+     "75": {
+      "T_e_eV": 50.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 331.918,
+       "1e-06": 834.42,
+       "1e-12": 1555.0
+      },
+      "share_above_last_point_hold": 0.262744,
+      "share_above_last_point_declared": 0.221442,
+      "declared_over_zero_tail_minus_1": 0.284426,
+      "declared_over_hold_tail_minus_1": -0.0530495,
+      "model_rate_over_committed_table_minus_1": 1.57186e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 306.75,
+       "1e-06": 811.339,
+       "1e-12": 1532.53
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 273.455,
+       "1e-06": 755.619,
+       "1e-12": 1461.26
+      }
+     },
+     "90": {
+      "T_e_eV": 60.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 398.301,
+       "1e-06": 1001.3,
+       "1e-12": 1865.99
+      },
+      "share_above_last_point_hold": 0.354322,
+      "share_above_last_point_declared": 0.296796,
+      "declared_over_zero_tail_minus_1": 0.422062,
+      "declared_over_hold_tail_minus_1": -0.0818058,
+      "model_rate_over_committed_table_minus_1": 1.51825e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 373.918,
+       "1e-06": 978.924,
+       "1e-12": 1844.21
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 329.315,
+       "1e-06": 907.858,
+       "1e-12": 1754.61
+      }
+     },
+     "120": {
+      "T_e_eV": 80.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 531.068,
+       "1e-06": 1335.07,
+       "1e-12": 2487.99
+      },
+      "share_above_last_point_hold": 0.506635,
+      "share_above_last_point_declared": 0.424646,
+      "declared_over_zero_tail_minus_1": 0.738059,
+      "declared_over_hold_tail_minus_1": -0.142503,
+      "model_rate_over_committed_table_minus_1": 1.31137e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 508.831,
+       "1e-06": 1314.64,
+       "1e-12": 2468.1
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 441.445,
+       "1e-06": 1212.73,
+       "1e-12": 2341.7
+      }
+     },
+     "150": {
+      "T_e_eV": 100.0,
+      "flat_sigma_E_req_eV": {
+       "0.01": 663.835,
+       "1e-06": 1668.84,
+       "1e-12": 3109.99
+      },
+      "share_above_last_point_hold": 0.618293,
+      "share_above_last_point_declared": 0.522795,
+      "declared_over_zero_tail_minus_1": 1.09554,
+      "declared_over_hold_tail_minus_1": -0.200119,
+      "model_rate_over_committed_table_minus_1": 1.10015e-05,
+      "hold_envelope_E_req_eV": {
+       "0.01": 643.781,
+       "1e-06": 1650.4,
+       "1e-12": 3092.03
+      },
+      "declared_continuation_E_req_eV": {
+       "0.01": 553.823,
+       "1e-06": 1517.84,
+       "1e-12": 2929.02
+      }
+     }
+    },
+    "hold_envelope_is_upper_bound": true
+   }
+  },
+  "note": "E_req = energy up to which a source must provide cross sections so that the part of the Maxwellian rate from higher energies is below the threshold, at T_e = L/1.5. 1e-2 is the rate_validity.toml convention; 1e-6 and 1e-12 are the stricter levels requested for this audit (1e-12 mirrors the numerical f_out tolerance, a different quantity)."
+ },
+ "verdict_criteria": {
+  "rule": {
+   "status": "DRAFT_PENDING_OWNER",
+   "C1_coverage": "share of the table's declared-model Maxwellian rate at L from energies above the last point covered by accessible published cross sections (the table's own sources plus independent sets passing C3) < 1 % (the rate_validity.toml convention, applied to the covered range)",
+   "C2_shape": "for every independent set passing C3, replacing the table's sigma above its own last source point by that set's shape (scaled to the table at the join) changes the rate at L by < 1 %",
+   "C3_join": "the independent set agrees with the table at the table's last source point within the stated uncertainty (combined in quadrature where both are published; the table's alone where the set's is not accessible)",
+   "readings": {
+    "measured": "C1 counts only MEASUREMENT-BASED independent sets: measured, or reconstructed by arithmetic from measured sets (e.g. Winters' neutral points = measured N-atom deposition minus measured dissociative ionization); digitized from a secondary figure allowed",
+    "evaluated": "C1 also counts EVALUATED/recommended sets (secondary reproductions of abstract-only primaries)"
+   },
+   "verdict_map": {
+    "SUPPORTED": "measured reading passes at >= 60 eV; proposal = largest candidate L passing (DRAFT)",
+    "PARTIAL": "only the evaluated reading passes at >= 60 eV, or the table content is supported but a documented omission needs the completeness re-audit",
+    "UNSUPPORTED": "accessible independent evidence passing C3 fails C2 at 60 eV",
+    "UNRESOLVED-BY-SOURCE": "no accessible independent set above the table's last source point passes C3"
+   },
+   "not_a_criterion_change": "C1 re-uses the existing 1 % convention; nothing in v1 (f_out tolerance, limits, criteria) changes"
+  },
+  "per_table": {
+   "dissociation_N2.dat": {
+    "family": "dissociation",
+    "applicable": true,
+    "own_last_source_point_eV": 200.0,
+    "independent_sets": [
+     {
+      "set": "Winters1966_N_points",
+      "class": "reconstructed_from_measured",
+      "end_eV": 296.189,
+      "independence_note": "NOT independent at the join: the Cosby recommended set (Table 9) is a weighted average of Cosby's and Winters' data (JPCRD 2023 Sec. 2.7), so C3 at 200 eV is partly circular. Only the two points above 200 eV (about 246 and 296 eV) are independent coverage. Neutral points = Winters' measured N-atom deposition minus dissociative ionization (Fig. 19 caption: Tian & Vidal 1998; text: Rapp & Englander-Golden 1965)",
+      "join_ratio": 1.24883,
+      "join_tol": 0.282843,
+      "join_tol_basis": "Cosby +-20 % (+) Winters +-20 %",
+      "join_ok": true
+     },
+     {
+      "set": "MS1997_curve",
+      "class": "evaluated",
+      "end_eV": 974.562,
+      "independence_note": "NOT independent at the join: MS1997 used Cosby's recommended values (JPCRD 2023 Sec. 2.7), so C3 at 200 eV holds by construction; how MS1997 built the > 200 eV part is not accessible (TBD - requires the MS1997 full text)",
+      "join_ratio": 0.89999,
+      "join_tol": 0.2,
+      "join_tol_basis": "Cosby +-20 % (MS1997 uncertainty not accessible: TBD)",
+      "join_ok": true
+     },
+     {
+      "set": "Kawaguchi2021_curve",
+      "class": "evaluated",
+      "end_eV": 1001.99,
+      "independence_note": "construction not accessible (TBD - requires the full text)",
+      "join_ratio": 0.748661,
+      "join_tol": 0.2,
+      "join_tol_basis": "Cosby +-20 % (Kawaguchi uncertainty not accessible: TBD)",
+      "join_ok": false
+     }
+    ],
+    "coverage_end_measured_reading_eV": 296.189,
+    "coverage_end_evaluated_reading_eV": 974.562,
+    "L_star_own_sources_eV": 45.3903,
+    "L_star_measured_coverage_eV": 67.9612,
+    "by_limit": {
+     "60": {
+      "coverage_share_measured_reading": 0.00473828,
+      "coverage_share_evaluated_reading": 6.16559e-10,
+      "max_abs_shape_impact_passing_sets": 0.0033773,
+      "passes_measured_reading": true,
+      "passes_evaluated_reading": true
+     },
+     "75": {
+      "coverage_share_measured_reading": 0.0168772,
+      "coverage_share_evaluated_reading": 6.40106e-08,
+      "max_abs_shape_impact_passing_sets": 0.00927776,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": true
+     },
+     "90": {
+      "coverage_share_measured_reading": 0.0387453,
+      "coverage_share_evaluated_reading": 1.38378e-06,
+      "max_abs_shape_impact_passing_sets": 0.0185631,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "120": {
+      "coverage_share_measured_reading": 0.106431,
+      "coverage_share_evaluated_reading": 6.1953e-05,
+      "max_abs_shape_impact_passing_sets": 0.0459021,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "150": {
+      "coverage_share_measured_reading": 0.190509,
+      "coverage_share_evaluated_reading": 0.000584935,
+      "max_abs_shape_impact_passing_sets": 0.0818114,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     }
+    },
+    "max_candidate_L_measured_reading": 60.0,
+    "max_candidate_L_evaluated_reading": 75.0
+   },
+   "excitation_N2_A3Sigma_u.dat": {
+    "family": "electronic",
+    "applicable": true,
+    "own_last_source_point_eV": 100.0,
+    "independent_sets": [
+     {
+      "set": "MS1997_via_QST",
+      "class": "evaluated",
+      "end_eV": 200.0,
+      "join_ratio": 0.351648,
+      "join_tol": 0.179121,
+      "join_tol_basis": "Johnson 2005 relative uncertainty at 100 eV (MS1997 uncertainty not accessible: TBD)",
+      "join_ok": false
+     }
+    ],
+    "coverage_end_measured_reading_eV": 100.0,
+    "coverage_end_evaluated_reading_eV": 100.0,
+    "L_star_own_sources_eV": 39.9781,
+    "L_star_measured_coverage_eV": 39.9781,
+    "by_limit": {
+     "60": {
+      "coverage_share_measured_reading": 0.0310009,
+      "coverage_share_evaluated_reading": 0.0310009,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "75": {
+      "coverage_share_measured_reading": 0.0490751,
+      "coverage_share_evaluated_reading": 0.0490751,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "90": {
+      "coverage_share_measured_reading": 0.0670253,
+      "coverage_share_evaluated_reading": 0.0670253,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "120": {
+      "coverage_share_measured_reading": 0.100046,
+      "coverage_share_evaluated_reading": 0.100046,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "150": {
+      "coverage_share_measured_reading": 0.128452,
+      "coverage_share_evaluated_reading": 0.128452,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     }
+    },
+    "max_candidate_L_measured_reading": null,
+    "max_candidate_L_evaluated_reading": null
+   },
+   "excitation_N2_B3Pi_g.dat": {
+    "family": "electronic",
+    "applicable": true,
+    "own_last_source_point_eV": 100.0,
+    "independent_sets": [
+     {
+      "set": "MS1997_via_QST",
+      "class": "evaluated",
+      "end_eV": 200.0,
+      "join_ratio": 0.691928,
+      "join_tol": 0.181219,
+      "join_tol_basis": "Johnson 2005 relative uncertainty at 100 eV (MS1997 uncertainty not accessible: TBD)",
+      "join_ok": false
+     }
+    ],
+    "coverage_end_measured_reading_eV": 100.0,
+    "coverage_end_evaluated_reading_eV": 100.0,
+    "L_star_own_sources_eV": 51.4429,
+    "L_star_measured_coverage_eV": 51.4429,
+    "by_limit": {
+     "60": {
+      "coverage_share_measured_reading": 0.0146442,
+      "coverage_share_evaluated_reading": 0.0146442,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "75": {
+      "coverage_share_measured_reading": 0.0233088,
+      "coverage_share_evaluated_reading": 0.0233088,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "90": {
+      "coverage_share_measured_reading": 0.0319661,
+      "coverage_share_evaluated_reading": 0.0319661,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "120": {
+      "coverage_share_measured_reading": 0.0479766,
+      "coverage_share_evaluated_reading": 0.0479766,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "150": {
+      "coverage_share_measured_reading": 0.0617944,
+      "coverage_share_evaluated_reading": 0.0617944,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     }
+    },
+    "max_candidate_L_measured_reading": null,
+    "max_candidate_L_evaluated_reading": null
+   },
+   "excitation_N2_Bprime3Sigma_u.dat": {
+    "family": "electronic",
+    "applicable": true,
+    "own_last_source_point_eV": 100.0,
+    "independent_sets": [
+     {
+      "set": "MS1997_via_QST",
+      "class": "evaluated",
+      "end_eV": 200.0,
+      "join_ratio": 1.91336,
+      "join_tol": 0.34657,
+      "join_tol_basis": "Johnson 2005 relative uncertainty at 100 eV (MS1997 uncertainty not accessible: TBD)",
+      "join_ok": false
+     }
+    ],
+    "coverage_end_measured_reading_eV": 100.0,
+    "coverage_end_evaluated_reading_eV": 100.0,
+    "L_star_own_sources_eV": 40.4787,
+    "L_star_measured_coverage_eV": 40.4787,
+    "by_limit": {
+     "60": {
+      "coverage_share_measured_reading": 0.0294242,
+      "coverage_share_evaluated_reading": 0.0294242,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "75": {
+      "coverage_share_measured_reading": 0.0465932,
+      "coverage_share_evaluated_reading": 0.0465932,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "90": {
+      "coverage_share_measured_reading": 0.0637676,
+      "coverage_share_evaluated_reading": 0.0637676,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "120": {
+      "coverage_share_measured_reading": 0.09567,
+      "coverage_share_evaluated_reading": 0.09567,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "150": {
+      "coverage_share_measured_reading": 0.123411,
+      "coverage_share_evaluated_reading": 0.123411,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     }
+    },
+    "max_candidate_L_measured_reading": null,
+    "max_candidate_L_evaluated_reading": null
+   },
+   "excitation_N2_C3Pi_u.dat": {
+    "family": "electronic",
+    "applicable": true,
+    "own_last_source_point_eV": 100.0,
+    "independent_sets": [
+     {
+      "set": "MS1997_via_QST",
+      "class": "evaluated",
+      "end_eV": 200.0,
+      "join_ratio": 1.27306,
+      "join_tol": 0.178967,
+      "join_tol_basis": "Johnson 2005 relative uncertainty at 100 eV (MS1997 uncertainty not accessible: TBD)",
+      "join_ok": false
+     }
+    ],
+    "coverage_end_measured_reading_eV": 100.0,
+    "coverage_end_evaluated_reading_eV": 100.0,
+    "L_star_own_sources_eV": 44.8375,
+    "L_star_measured_coverage_eV": 44.8375,
+    "by_limit": {
+     "60": {
+      "coverage_share_measured_reading": 0.0216335,
+      "coverage_share_evaluated_reading": 0.0216335,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "75": {
+      "coverage_share_measured_reading": 0.0344987,
+      "coverage_share_evaluated_reading": 0.0344987,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "90": {
+      "coverage_share_measured_reading": 0.0474312,
+      "coverage_share_evaluated_reading": 0.0474312,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "120": {
+      "coverage_share_measured_reading": 0.0715486,
+      "coverage_share_evaluated_reading": 0.0715486,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "150": {
+      "coverage_share_measured_reading": 0.0925732,
+      "coverage_share_evaluated_reading": 0.0925732,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     }
+    },
+    "max_candidate_L_measured_reading": null,
+    "max_candidate_L_evaluated_reading": null
+   },
+   "excitation_N2_W3Delta_u.dat": {
+    "family": "electronic",
+    "applicable": true,
+    "own_last_source_point_eV": 100.0,
+    "independent_sets": [
+     {
+      "set": "MS1997_via_QST",
+      "class": "evaluated",
+      "end_eV": 200.0,
+      "join_ratio": 0.455192,
+      "join_tol": 0.194879,
+      "join_tol_basis": "Johnson 2005 relative uncertainty at 100 eV (MS1997 uncertainty not accessible: TBD)",
+      "join_ok": false
+     }
+    ],
+    "coverage_end_measured_reading_eV": 100.0,
+    "coverage_end_evaluated_reading_eV": 100.0,
+    "L_star_own_sources_eV": 42.7676,
+    "L_star_measured_coverage_eV": 42.7676,
+    "by_limit": {
+     "60": {
+      "coverage_share_measured_reading": 0.0252992,
+      "coverage_share_evaluated_reading": 0.0252992,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "75": {
+      "coverage_share_measured_reading": 0.0405976,
+      "coverage_share_evaluated_reading": 0.0405976,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "90": {
+      "coverage_share_measured_reading": 0.0560827,
+      "coverage_share_evaluated_reading": 0.0560827,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "120": {
+      "coverage_share_measured_reading": 0.0851834,
+      "coverage_share_evaluated_reading": 0.0851834,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "150": {
+      "coverage_share_measured_reading": 0.110751,
+      "coverage_share_evaluated_reading": 0.110751,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     }
+    },
+    "max_candidate_L_measured_reading": null,
+    "max_candidate_L_evaluated_reading": null
+   },
+   "excitation_N2_a1Pi_g.dat": {
+    "family": "electronic",
+    "applicable": true,
+    "own_last_source_point_eV": 200.0,
+    "independent_sets": [
+     {
+      "set": "MS1997_via_QST",
+      "class": "evaluated",
+      "end_eV": 1000.0,
+      "join_ratio": 0.821114,
+      "join_tol": 0.255132,
+      "join_tol_basis": "Johnson 2005 relative uncertainty at 200 eV (MS1997 uncertainty not accessible: TBD)",
+      "join_ok": true
+     }
+    ],
+    "coverage_end_measured_reading_eV": 200.0,
+    "coverage_end_evaluated_reading_eV": 1000.0,
+    "L_star_own_sources_eV": 59.5464,
+    "L_star_measured_coverage_eV": 59.5464,
+    "by_limit": {
+     "60": {
+      "coverage_share_measured_reading": 0.0103485,
+      "coverage_share_evaluated_reading": 1.92277e-11,
+      "max_abs_shape_impact_passing_sets": 0.000106512,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": true
+     },
+     "75": {
+      "coverage_share_measured_reading": 0.0254061,
+      "coverage_share_evaluated_reading": 2.58208e-09,
+      "max_abs_shape_impact_passing_sets": 0.000316804,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": true
+     },
+     "90": {
+      "coverage_share_measured_reading": 0.0461815,
+      "coverage_share_evaluated_reading": 6.76661e-08,
+      "max_abs_shape_impact_passing_sets": 0.000671488,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": true
+     },
+     "120": {
+      "coverage_share_measured_reading": 0.0974557,
+      "coverage_share_evaluated_reading": 4.01538e-06,
+      "max_abs_shape_impact_passing_sets": 0.00179604,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": true
+     },
+     "150": {
+      "coverage_share_measured_reading": 0.15271,
+      "coverage_share_evaluated_reading": 4.66227e-05,
+      "max_abs_shape_impact_passing_sets": 0.00336872,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": true
+     }
+    },
+    "max_candidate_L_measured_reading": null,
+    "max_candidate_L_evaluated_reading": 150.0
+   },
+   "excitation_N2_aprime1Sigma_u.dat": {
+    "family": "electronic",
+    "applicable": true,
+    "own_last_source_point_eV": 100.0,
+    "independent_sets": [
+     {
+      "set": "MS1997_via_QST",
+      "class": "evaluated",
+      "end_eV": 1000.0,
+      "join_ratio": 3.8247,
+      "join_tol": 0.318725,
+      "join_tol_basis": "Johnson 2005 relative uncertainty at 100 eV (MS1997 uncertainty not accessible: TBD)",
+      "join_ok": false
+     }
+    ],
+    "coverage_end_measured_reading_eV": 100.0,
+    "coverage_end_evaluated_reading_eV": 100.0,
+    "L_star_own_sources_eV": 34.9005,
+    "L_star_measured_coverage_eV": 34.9005,
+    "by_limit": {
+     "60": {
+      "coverage_share_measured_reading": 0.0498142,
+      "coverage_share_evaluated_reading": 0.0498142,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "75": {
+      "coverage_share_measured_reading": 0.0789868,
+      "coverage_share_evaluated_reading": 0.0789868,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "90": {
+      "coverage_share_measured_reading": 0.108178,
+      "coverage_share_evaluated_reading": 0.108178,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "120": {
+      "coverage_share_measured_reading": 0.162334,
+      "coverage_share_evaluated_reading": 0.162334,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "150": {
+      "coverage_share_measured_reading": 0.209277,
+      "coverage_share_evaluated_reading": 0.209277,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     }
+    },
+    "max_candidate_L_measured_reading": null,
+    "max_candidate_L_evaluated_reading": null
+   },
+   "excitation_N2_rot_j0_to_j2.dat": {
+    "family": "rotational",
+    "applicable": true,
+    "own_last_source_point_eV": 10.0,
+    "independent_sets": [],
+    "coverage_end_measured_reading_eV": 10.0,
+    "coverage_end_evaluated_reading_eV": 10.0,
+    "L_star_own_sources_eV": null,
+    "L_star_measured_coverage_eV": null,
+    "by_limit": {
+     "60": {
+      "coverage_share_measured_reading": 0.978093,
+      "coverage_share_evaluated_reading": 0.978093,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "75": {
+      "coverage_share_measured_reading": 0.985514,
+      "coverage_share_evaluated_reading": 0.985514,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "90": {
+      "coverage_share_measured_reading": 0.989716,
+      "coverage_share_evaluated_reading": 0.989716,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "120": {
+      "coverage_share_measured_reading": 0.994052,
+      "coverage_share_evaluated_reading": 0.994052,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "150": {
+      "coverage_share_measured_reading": 0.996129,
+      "coverage_share_evaluated_reading": 0.996129,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     }
+    },
+    "max_candidate_L_measured_reading": null,
+    "max_candidate_L_evaluated_reading": null
+   },
+   "excitation_N2_rot_j0_to_j4.dat": {
+    "family": "rotational",
+    "applicable": true,
+    "own_last_source_point_eV": 10.0,
+    "independent_sets": [],
+    "coverage_end_measured_reading_eV": 10.0,
+    "coverage_end_evaluated_reading_eV": 10.0,
+    "L_star_own_sources_eV": null,
+    "L_star_measured_coverage_eV": null,
+    "by_limit": {
+     "60": {
+      "coverage_share_measured_reading": 0.951565,
+      "coverage_share_evaluated_reading": 0.951565,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "75": {
+      "coverage_share_measured_reading": 0.967932,
+      "coverage_share_evaluated_reading": 0.967932,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "90": {
+      "coverage_share_measured_reading": 0.977238,
+      "coverage_share_evaluated_reading": 0.977238,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "120": {
+      "coverage_share_measured_reading": 0.986854,
+      "coverage_share_evaluated_reading": 0.986854,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "150": {
+      "coverage_share_measured_reading": 0.991456,
+      "coverage_share_evaluated_reading": 0.991456,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     }
+    },
+    "max_candidate_L_measured_reading": null,
+    "max_candidate_L_evaluated_reading": null
+   },
+   "excitation_N2_vib_0_to_1.dat": {
+    "family": "vibrational",
+    "applicable": false,
+    "reason": "rate fit without a cross section; see the independent non-resonant comparison"
+   },
+   "excitation_N2_vib_0_to_10.dat": {
+    "family": "vibrational",
+    "applicable": false,
+    "reason": "rate fit without a cross section; see the independent non-resonant comparison"
+   },
+   "excitation_N2_vib_0_to_2.dat": {
+    "family": "vibrational",
+    "applicable": false,
+    "reason": "rate fit without a cross section; see the independent non-resonant comparison"
+   },
+   "excitation_N2_vib_0_to_3.dat": {
+    "family": "vibrational",
+    "applicable": false,
+    "reason": "rate fit without a cross section; see the independent non-resonant comparison"
+   },
+   "excitation_N2_vib_0_to_4.dat": {
+    "family": "vibrational",
+    "applicable": false,
+    "reason": "rate fit without a cross section; see the independent non-resonant comparison"
+   },
+   "excitation_N2_vib_0_to_5.dat": {
+    "family": "vibrational",
+    "applicable": false,
+    "reason": "rate fit without a cross section; see the independent non-resonant comparison"
+   },
+   "excitation_N2_vib_0_to_6.dat": {
+    "family": "vibrational",
+    "applicable": false,
+    "reason": "rate fit without a cross section; see the independent non-resonant comparison"
+   },
+   "excitation_N2_vib_0_to_7.dat": {
+    "family": "vibrational",
+    "applicable": false,
+    "reason": "rate fit without a cross section; see the independent non-resonant comparison"
+   },
+   "excitation_N2_vib_0_to_8.dat": {
+    "family": "vibrational",
+    "applicable": false,
+    "reason": "rate fit without a cross section; see the independent non-resonant comparison"
+   },
+   "excitation_N2_vib_0_to_9.dat": {
+    "family": "vibrational",
+    "applicable": false,
+    "reason": "rate fit without a cross section; see the independent non-resonant comparison"
+   },
+   "excitation_N2_w1Delta_u.dat": {
+    "family": "electronic",
+    "applicable": true,
+    "own_last_source_point_eV": 100.0,
+    "independent_sets": [
+     {
+      "set": "MS1997_via_QST",
+      "class": "evaluated",
+      "end_eV": 200.0,
+      "join_ratio": 0.173565,
+      "join_tol": 0.261682,
+      "join_tol_basis": "Johnson 2005 relative uncertainty at 100 eV (MS1997 uncertainty not accessible: TBD)",
+      "join_ok": false
+     }
+    ],
+    "coverage_end_measured_reading_eV": 100.0,
+    "coverage_end_evaluated_reading_eV": 100.0,
+    "L_star_own_sources_eV": 27.5357,
+    "L_star_measured_coverage_eV": 27.5357,
+    "by_limit": {
+     "60": {
+      "coverage_share_measured_reading": 0.141898,
+      "coverage_share_evaluated_reading": 0.141898,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "75": {
+      "coverage_share_measured_reading": 0.221442,
+      "coverage_share_evaluated_reading": 0.221442,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "90": {
+      "coverage_share_measured_reading": 0.296796,
+      "coverage_share_evaluated_reading": 0.296796,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "120": {
+      "coverage_share_measured_reading": 0.424646,
+      "coverage_share_evaluated_reading": 0.424646,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     },
+     "150": {
+      "coverage_share_measured_reading": 0.522795,
+      "coverage_share_evaluated_reading": 0.522795,
+      "max_abs_shape_impact_passing_sets": 0.0,
+      "passes_measured_reading": false,
+      "passes_evaluated_reading": false
+     }
+    },
+    "max_candidate_L_measured_reading": null,
+    "max_candidate_L_evaluated_reading": null
+   }
+  }
+ },
+ "draft_proposed_limits_mean_energy_eV": {
+  "status": "DRAFT_PENDING_OWNER",
+  "limits": {
+   "dissociation_N2.dat": 60.0
+  },
+  "hypothetical_coverage_if_applied": {
+   "covered_runs": 372,
+   "pct_of_1080": 34.4444,
+   "newly_covered_ood_runs": 6,
+   "pct_of_ood_runs": 0.840336,
+   "remaining_ood_runs": 708
+  },
+  "evaluated_reading_limits_not_proposed": {
+   "dissociation_N2.dat": 75.0,
+   "excitation_N2_a1Pi_g.dat": 150.0
+  },
+  "hypothetical_coverage_evaluated_reading": {
+   "covered_runs": 388,
+   "pct_of_1080": 35.9259,
+   "newly_covered_ood_runs": 22,
+   "pct_of_ood_runs": 3.08123,
+   "remaining_ood_runs": 692
+  }
+ },
+ "independent_comparisons": {
+  "dissociation_song2023_fig19": {
+   "calibration_vs_Table9": {
+    "max_rel_dE": 0.0010185,
+    "max_abs_dsigma_1e-16cm2": 0.00087,
+    "n_points": 16
+   },
+   "cosby_errorbar_rel_halfwidth_by_E": {
+    "18": 0.499514,
+    "20": 0.384625,
+    "25": 0.195609,
+    "30": 0.211707,
+    "40": 0.226552,
+    "50": 0.171146,
+    "60": 0.195411,
+    "80": 0.25,
+    "100": 0.258621,
+    "125": 0.199359,
+    "150": 0.172894
+   },
+   "cosby_errorbar_note": "Fig. 19 draws Cosby's bars only up to 150 eV (Cosby measured 18.5-148.5 eV, Crossref abstract); the recommended 175 and 200 eV values carry no bar. JPCRD 2023 Sec. 2.7 states +-20 % for the set.",
+   "series": {
+    "MS1997_curve": {
+     "E_range_eV": [
+      10.9983,
+      974.562
+     ],
+     "n_points": 258,
+     "points": {
+      "50": {
+       "sigma_1e-16cm2": 1.24902,
+       "over_Cosby_Table9": 1.01547,
+       "shape_sigma_over_sigma200": 1.46086
+      },
+      "100": {
+       "sigma_1e-16cm2": 1.11803,
+       "over_Cosby_Table9": 0.963819,
+       "shape_sigma_over_sigma200": 1.30765
+      },
+      "150": {
+       "sigma_1e-16cm2": 0.97056,
+       "over_Cosby_Table9": 0.933231,
+       "shape_sigma_over_sigma200": 1.13517
+      },
+      "200": {
+       "sigma_1e-16cm2": 0.85499,
+       "over_Cosby_Table9": 0.89999,
+       "shape_sigma_over_sigma200": 1.0
+      },
+      "250": {
+       "sigma_1e-16cm2": 0.766025,
+       "shape_sigma_over_sigma200": 0.895946
+      },
+      "300": {
+       "sigma_1e-16cm2": 0.697843,
+       "shape_sigma_over_sigma200": 0.816199
+      },
+      "500": {
+       "sigma_1e-16cm2": 0.517748,
+       "shape_sigma_over_sigma200": 0.60556
+      },
+      "700": {
+       "sigma_1e-16cm2": 0.414521,
+       "shape_sigma_over_sigma200": 0.484825
+      },
+      "900": {
+       "sigma_1e-16cm2": 0.345147,
+       "shape_sigma_over_sigma200": 0.403685
+      }
+     }
+    },
+    "Kawaguchi2021_curve": {
+     "E_range_eV": [
+      14.0092,
+      1001.99
+     ],
+     "n_points": 690,
+     "points": {
+      "50": {
+       "sigma_1e-16cm2": 0.939262,
+       "over_Cosby_Table9": 0.763628,
+       "shape_sigma_over_sigma200": 1.32062
+      },
+      "100": {
+       "sigma_1e-16cm2": 0.96491,
+       "over_Cosby_Table9": 0.831819,
+       "shape_sigma_over_sigma200": 1.35668
+      },
+      "150": {
+       "sigma_1e-16cm2": 0.825068,
+       "over_Cosby_Table9": 0.793334,
+       "shape_sigma_over_sigma200": 1.16006
+      },
+      "200": {
+       "sigma_1e-16cm2": 0.711228,
+       "over_Cosby_Table9": 0.748661,
+       "shape_sigma_over_sigma200": 1.0
+      },
+      "250": {
+       "sigma_1e-16cm2": 0.633039,
+       "shape_sigma_over_sigma200": 0.890065
+      },
+      "300": {
+       "sigma_1e-16cm2": 0.576404,
+       "shape_sigma_over_sigma200": 0.810435
+      },
+      "500": {
+       "sigma_1e-16cm2": 0.441221,
+       "shape_sigma_over_sigma200": 0.620365
+      },
+      "700": {
+       "sigma_1e-16cm2": 0.365378,
+       "shape_sigma_over_sigma200": 0.513729
+      },
+      "900": {
+       "sigma_1e-16cm2": 0.315155,
+       "shape_sigma_over_sigma200": 0.443114
+      }
+     }
+    },
+    "Winters1966_N_points": {
+     "E_range_eV": [
+      22.6161,
+      296.189
+     ],
+     "n_points": 16,
+     "points": {
+      "50": {
+       "sigma_1e-16cm2": 1.3551,
+       "over_Cosby_Table9": 1.10171,
+       "shape_sigma_over_sigma200": 1.1422
+      },
+      "100": {
+       "sigma_1e-16cm2": 1.42753,
+       "over_Cosby_Table9": 1.23063,
+       "shape_sigma_over_sigma200": 1.20325
+      },
+      "150": {
+       "sigma_1e-16cm2": 1.26436,
+       "over_Cosby_Table9": 1.21573,
+       "shape_sigma_over_sigma200": 1.06572
+      },
+      "200": {
+       "sigma_1e-16cm2": 1.18639,
+       "over_Cosby_Table9": 1.24883,
+       "shape_sigma_over_sigma200": 1.0
+      },
+      "250": {
+       "sigma_1e-16cm2": 1.08437,
+       "shape_sigma_over_sigma200": 0.914009
+      }
+     }
+    }
+   },
+   "coverage_ends_eV": {
+    "measured_Winters1966": 296.189,
+    "evaluated_MS1997_and_Kawaguchi2021": 974.562
+   },
+   "rate_consequence_by_limit": {
+    "45": {
+     "share_above_200eV_hold": 0.00953517,
+     "share_beyond_measured_end_hold_envelope": 0.000547765,
+     "share_beyond_evaluated_end_hold_envelope": 2.55061e-13,
+     "MS1997_curve": {
+      "share_above_200eV": 0.00888542,
+      "share_beyond_curve_end_hold": 9.6395e-14,
+      "hold_table_over_shaped_minus_1": 0.000656
+     },
+     "Kawaguchi2021_curve": {
+      "share_above_200eV": 0.00885377,
+      "share_beyond_curve_end_hold": 4.35289e-14,
+      "hold_table_over_shaped_minus_1": 0.000687954
+     },
+     "Winters1966_N_points": {
+      "share_above_200eV": 0.00903022,
+      "share_beyond_curve_end_hold": 0.000466404,
+      "hold_table_over_shaped_minus_1": 0.000509809
+     }
+    },
+    "60": {
+     "share_above_200eV_hold": 0.0374634,
+     "share_beyond_measured_end_hold_envelope": 0.0047383,
+     "share_beyond_evaluated_end_hold_envelope": 6.16559e-10,
+     "MS1997_curve": {
+      "share_above_200eV": 0.0342126,
+      "share_beyond_curve_end_hold": 2.33574e-10,
+      "hold_table_over_shaped_minus_1": 0.0033773
+     },
+     "Kawaguchi2021_curve": {
+      "share_above_200eV": 0.0340839,
+      "share_beyond_curve_end_hold": 1.32667e-10,
+      "hold_table_over_shaped_minus_1": 0.00351105
+     },
+     "Winters1966_N_points": {
+      "share_above_200eV": 0.0350308,
+      "share_beyond_curve_end_hold": 0.00404264,
+      "hold_table_over_shaped_minus_1": 0.00252733
+     }
+    },
+    "75": {
+     "share_above_200eV_hold": 0.0834476,
+     "share_beyond_measured_end_hold_envelope": 0.0168772,
+     "share_beyond_evaluated_end_hold_envelope": 6.40106e-08,
+     "MS1997_curve": {
+      "share_above_200eV": 0.074944,
+      "share_beyond_curve_end_hold": 2.43921e-08,
+      "hold_table_over_shaped_minus_1": 0.00927776
+     },
+     "Kawaguchi2021_curve": {
+      "share_above_200eV": 0.0746838,
+      "share_beyond_curve_end_hold": 1.58889e-08,
+      "hold_table_over_shaped_minus_1": 0.00956164
+     },
+     "Winters1966_N_points": {
+      "share_above_200eV": 0.0773994,
+      "share_beyond_curve_end_hold": 0.0144579,
+      "hold_table_over_shaped_minus_1": 0.00659888
+     }
+    },
+    "90": {
+     "share_above_200eV_hold": 0.140524,
+     "share_beyond_measured_end_hold_envelope": 0.0387454,
+     "share_beyond_evaluated_end_hold_envelope": 1.38378e-06,
+     "MS1997_curve": {
+      "share_above_200eV": 0.12457,
+      "share_beyond_curve_end_hold": 5.32159e-07,
+      "hold_table_over_shaped_minus_1": 0.0185631
+     },
+     "Kawaguchi2021_curve": {
+      "share_above_200eV": 0.124214,
+      "share_beyond_curve_end_hold": 3.79783e-07,
+      "hold_table_over_shaped_minus_1": 0.0189766
+     },
+     "Winters1966_N_points": {
+      "share_above_200eV": 0.129798,
+      "share_beyond_curve_end_hold": 0.0333851,
+      "hold_table_over_shaped_minus_1": 0.0124795
+     }
+    },
+    "120": {
+     "share_above_200eV_hold": 0.263632,
+     "share_beyond_measured_end_hold_envelope": 0.106431,
+     "share_beyond_evaluated_end_hold_envelope": 6.1953e-05,
+     "MS1997_curve": {
+      "share_above_200eV": 0.229831,
+      "share_beyond_curve_end_hold": 2.44646e-05,
+      "hold_table_over_shaped_minus_1": 0.0459021
+     },
+     "Kawaguchi2021_curve": {
+      "share_above_200eV": 0.229567,
+      "share_beyond_curve_end_hold": 1.95625e-05,
+      "hold_table_over_shaped_minus_1": 0.0462609
+     },
+     "Winters1966_N_points": {
+      "share_above_200eV": 0.243411,
+      "share_beyond_curve_end_hold": 0.0930635,
+      "hold_table_over_shaped_minus_1": 0.027461
+     }
+    },
+    "150": {
+     "share_above_200eV_hold": 0.377465,
+     "share_beyond_measured_end_hold_envelope": 0.190509,
+     "share_beyond_evaluated_end_hold_envelope": 0.000584935,
+     "MS1997_curve": {
+      "share_above_200eV": 0.326535,
+      "share_beyond_curve_end_hold": 0.000238916,
+      "hold_table_over_shaped_minus_1": 0.0818114
+     },
+     "Kawaguchi2021_curve": {
+      "share_above_200eV": 0.326752,
+      "share_beyond_curve_end_hold": 0.000204368,
+      "hold_table_over_shaped_minus_1": 0.0814628
+     },
+     "Winters1966_N_points": {
+      "share_above_200eV": 0.35027,
+      "share_beyond_curve_end_hold": 0.169212,
+      "hold_table_over_shaped_minus_1": 0.0436852
+     }
+    }
+   }
+  },
+  "electronic_MS1997_and_Tabata2006": {
+   "excitation_N2_A3Sigma_u.dat": {
+    "johnson_last_point_eV": 100.0,
+    "continuation_p": 2.29311,
+    "MS1997_range_eV": [
+     6.5,
+     200.0
+    ],
+    "Tabata_fit_range_eV": [
+     6.5,
+     200.0
+    ],
+    "points": {
+     "20": {
+      "table_sigma_1e-18cm2": 10.8,
+      "MS1997_over_table": 1.75926,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.74061,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.194444
+     },
+     "30": {
+      "table_sigma_1e-18cm2": 6.88,
+      "MS1997_over_table": 1.33576,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.15611,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.25436
+     },
+     "50": {
+      "table_sigma_1e-18cm2": 4.46,
+      "MS1997_over_table": 0.587444,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.433123,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.311659
+     },
+     "100": {
+      "table_sigma_1e-18cm2": 0.91,
+      "MS1997_over_table": 0.351648,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.320712,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.179121
+     },
+     "150": {
+      "table_sigma_1e-18cm2": 0.359306,
+      "MS1997_over_table": 0.250483,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.279107,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "200": {
+      "table_sigma_1e-18cm2": 0.18569,
+      "MS1997_over_table": 0.215413,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.255981,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "500": {
+      "table_sigma_1e-18cm2": 0.0227221,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "1000": {
+      "table_sigma_1e-18cm2": 0.00463613,
+      "table_basis_at_E": "declared power-law continuation"
+     }
+    },
+    "MS1997_over_table_E_ge_100": {
+     "min": 0.215413,
+     "max": 0.351648
+    },
+    "rate_impact_if_MS1997_above_last_point": {
+     "share_beyond_MS1997_end": {
+      "45": {
+       "declared": 0.000239286,
+       "hold_envelope": 0.00156592
+      },
+      "60": {
+       "declared": 0.00119958,
+       "hold_envelope": 0.0083879
+      },
+      "75": {
+       "declared": 0.00319528,
+       "hold_envelope": 0.023509
+      },
+      "90": {
+       "declared": 0.00619833,
+       "hold_envelope": 0.0473607
+      },
+      "120": {
+       "declared": 0.014448,
+       "hold_envelope": 0.115495
+      },
+      "150": {
+       "declared": 0.0243825,
+       "hold_envelope": 0.198135
+      }
+     },
+     "absolute": {
+      "45": -0.0101622,
+      "60": -0.02186,
+      "75": -0.0349084,
+      "90": -0.0480072,
+      "120": -0.0723974,
+      "150": -0.093634
+     },
+     "shape": {
+      "45": -0.0020228,
+      "60": -0.0050066,
+      "75": -0.00878841,
+      "90": -0.0129425,
+      "120": -0.0214205,
+      "150": -0.0294377
+     }
+    }
+   },
+   "excitation_N2_B3Pi_g.dat": {
+    "johnson_last_point_eV": 100.0,
+    "continuation_p": 2.86754,
+    "MS1997_range_eV": [
+     7.6,
+     200.0
+    ],
+    "Tabata_fit_range_eV": [
+     7.6,
+     200.0
+    ],
+    "points": {
+     "20": {
+      "table_sigma_1e-18cm2": 12.2,
+      "MS1997_over_table": 1.31148,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.27033,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.180328
+     },
+     "30": {
+      "table_sigma_1e-18cm2": 12.0,
+      "MS1997_over_table": 0.810833,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.710338,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.175
+     },
+     "50": {
+      "table_sigma_1e-18cm2": 4.43,
+      "MS1997_over_table": 0.68623,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.731685,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.17833
+     },
+     "100": {
+      "table_sigma_1e-18cm2": 0.607,
+      "MS1997_over_table": 0.691928,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.674222,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.181219
+     },
+     "150": {
+      "table_sigma_1e-18cm2": 0.189916,
+      "MS1997_over_table": 0.631857,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.499818,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "200": {
+      "table_sigma_1e-18cm2": 0.0831828,
+      "MS1997_over_table": 0.360652,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.392868,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "500": {
+      "table_sigma_1e-18cm2": 0.00601431,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "1000": {
+      "table_sigma_1e-18cm2": 0.000824086,
+      "table_basis_at_E": "declared power-law continuation"
+     }
+    },
+    "MS1997_over_table_E_ge_100": {
+     "min": 0.360652,
+     "max": 0.691928
+    },
+    "rate_impact_if_MS1997_above_last_point": {
+     "share_beyond_MS1997_end": {
+      "45": {
+       "declared": 7.8677e-05,
+       "hold_envelope": 0.000821343
+      },
+      "60": {
+       "declared": 0.000399811,
+       "hold_envelope": 0.00456519
+      },
+      "75": {
+       "declared": 0.00107631,
+       "hold_envelope": 0.0132607
+      },
+      "90": {
+       "declared": 0.00210518,
+       "hold_envelope": 0.0276552
+      },
+      "120": {
+       "declared": 0.00496498,
+       "hold_envelope": 0.071999
+      },
+      "150": {
+       "declared": 0.00844353,
+       "hold_envelope": 0.131075
+      }
+     },
+     "absolute": {
+      "45": -0.0023634,
+      "60": -0.0052502,
+      "75": -0.0086277,
+      "90": -0.0121593,
+      "120": -0.0190556,
+      "150": -0.0253499
+     },
+     "shape": {
+      "45": -0.000371163,
+      "60": -0.00106765,
+      "75": -0.00209111,
+      "90": -0.0033406,
+      "120": -0.0061789,
+      "150": -0.00912335
+     }
+    }
+   },
+   "excitation_N2_W3Delta_u.dat": {
+    "johnson_last_point_eV": 100.0,
+    "continuation_p": 2.25256,
+    "MS1997_range_eV": [
+     8.0,
+     200.0
+    ],
+    "Tabata_fit_range_eV": [
+     8.0,
+     200.0
+    ],
+    "points": {
+     "20": {
+      "table_sigma_1e-18cm2": 20.7,
+      "MS1997_over_table": 1.24155,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.18565,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.183575
+     },
+     "30": {
+      "table_sigma_1e-18cm2": 7.54,
+      "MS1997_over_table": 1.28912,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.18912,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.181698
+     },
+     "50": {
+      "table_sigma_1e-18cm2": 3.35,
+      "MS1997_over_table": 0.78209,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.664902,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.173134
+     },
+     "100": {
+      "table_sigma_1e-18cm2": 0.703,
+      "MS1997_over_table": 0.455192,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.482986,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.194879
+     },
+     "150": {
+      "table_sigma_1e-18cm2": 0.28217,
+      "MS1997_over_table": 0.354396,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.356387,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "200": {
+      "table_sigma_1e-18cm2": 0.147538,
+      "MS1997_over_table": 0.271116,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.257957,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "500": {
+      "table_sigma_1e-18cm2": 0.0187366,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "1000": {
+      "table_sigma_1e-18cm2": 0.00393191,
+      "table_basis_at_E": "declared power-law continuation"
+     }
+    },
+    "MS1997_over_table_E_ge_100": {
+     "min": 0.271116,
+     "max": 0.455192
+    },
+    "rate_impact_if_MS1997_above_last_point": {
+     "share_beyond_MS1997_end": {
+      "45": {
+       "declared": 0.000197239,
+       "hold_envelope": 0.00125185
+      },
+      "60": {
+       "declared": 0.00100305,
+       "hold_envelope": 0.00681953
+      },
+      "75": {
+       "declared": 0.00270719,
+       "hold_envelope": 0.0194452
+      },
+      "90": {
+       "declared": 0.00530982,
+       "hold_envelope": 0.0398076
+      },
+      "120": {
+       "declared": 0.0125874,
+       "hold_envelope": 0.099837
+      },
+      "150": {
+       "declared": 0.0215015,
+       "hold_envelope": 0.175286
+      }
+     },
+     "absolute": {
+      "45": -0.00698367,
+      "60": -0.0153332,
+      "75": -0.0249434,
+      "90": -0.0348437,
+      "120": -0.0538338,
+      "150": -0.0708673
+     },
+     "shape": {
+      "45": -0.00131453,
+      "60": -0.00340529,
+      "75": -0.00620733,
+      "90": -0.00942329,
+      "120": -0.0163123,
+      "150": -0.0231318
+     }
+    }
+   },
+   "excitation_N2_Bprime3Sigma_u.dat": {
+    "johnson_last_point_eV": 100.0,
+    "continuation_p": 2.23055,
+    "MS1997_range_eV": [
+     9.0,
+     200.0
+    ],
+    "Tabata_fit_range_eV": [
+     9.0,
+     200.0
+    ],
+    "points": {
+     "20": {
+      "table_sigma_1e-18cm2": 5.82,
+      "MS1997_over_table": 0.927835,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.892536,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.25945
+     },
+     "30": {
+      "table_sigma_1e-18cm2": 3.02,
+      "MS1997_over_table": 1.11589,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.901151,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.258278
+     },
+     "50": {
+      "table_sigma_1e-18cm2": 1.3,
+      "MS1997_over_table": 1.46154,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.51919,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.253846
+     },
+     "100": {
+      "table_sigma_1e-18cm2": 0.277,
+      "MS1997_over_table": 1.91336,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.68087,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.34657
+     },
+     "150": {
+      "table_sigma_1e-18cm2": 0.112178,
+      "MS1997_over_table": 1.33716,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.09051,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "200": {
+      "table_sigma_1e-18cm2": 0.0590276,
+      "MS1997_over_table": 0.67765,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.765633,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "500": {
+      "table_sigma_1e-18cm2": 0.00764888,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "1000": {
+      "table_sigma_1e-18cm2": 0.0016298,
+      "table_basis_at_E": "declared power-law continuation"
+     }
+    },
+    "MS1997_over_table_E_ge_100": {
+     "min": 0.67765,
+     "max": 1.91336
+    },
+    "rate_impact_if_MS1997_above_last_point": {
+     "share_beyond_MS1997_end": {
+      "45": {
+       "declared": 0.00023736,
+       "hold_envelope": 0.00147777
+      },
+      "60": {
+       "declared": 0.00118209,
+       "hold_envelope": 0.00786156
+      },
+      "75": {
+       "declared": 0.00314748,
+       "hold_envelope": 0.0220395
+      },
+      "90": {
+       "declared": 0.00611485,
+       "hold_envelope": 0.0445226
+      },
+      "120": {
+       "declared": 0.0143138,
+       "hold_envelope": 0.109401
+      },
+      "150": {
+       "declared": 0.0242532,
+       "hold_envelope": 0.189121
+      }
+     },
+     "absolute": {
+      "45": 0.00839356,
+      "60": 0.0157585,
+      "75": 0.0223332,
+      "90": 0.0275644,
+      "120": 0.0342932,
+      "150": 0.0374377
+     },
+     "shape": {
+      "45": -0.0022558,
+      "60": -0.00580987,
+      "75": -0.0105694,
+      "90": -0.0160337,
+      "120": -0.0277458,
+      "150": -0.0393446
+     }
+    }
+   },
+   "excitation_N2_a1Pi_g.dat": {
+    "johnson_last_point_eV": 200.0,
+    "continuation_p": 1.07019,
+    "MS1997_range_eV": [
+     10.0,
+     1000.0
+    ],
+    "Tabata_fit_range_eV": [
+     10.0,
+     1000.0
+    ],
+    "points": {
+     "20": {
+      "table_sigma_1e-18cm2": 21.0,
+      "MS1997_over_table": 1.21508,
+      "MS1997_is_tabulated_point": false,
+      "Tabata_fit_over_table": 1.44417,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.17619
+     },
+     "30": {
+      "table_sigma_1e-18cm2": 20.7,
+      "MS1997_over_table": 0.898551,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.952912,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.164251
+     },
+     "50": {
+      "table_sigma_1e-18cm2": 13.0,
+      "MS1997_over_table": 0.861538,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.844344,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.161538
+     },
+     "100": {
+      "table_sigma_1e-18cm2": 7.16,
+      "MS1997_over_table": 0.780726,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.737373,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.180168
+     },
+     "150": {
+      "table_sigma_1e-18cm2": 5.285,
+      "MS1997_over_table": 0.793756,
+      "MS1997_is_tabulated_point": false,
+      "Tabata_fit_over_table": 0.666084,
+      "table_basis_at_E": "Johnson 2005"
+     },
+     "200": {
+      "table_sigma_1e-18cm2": 3.41,
+      "MS1997_over_table": 0.821114,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.77911,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.255132
+     },
+     "500": {
+      "table_sigma_1e-18cm2": 1.27917,
+      "MS1997_over_table": 0.86775,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.86433,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "1000": {
+      "table_sigma_1e-18cm2": 0.609181,
+      "MS1997_over_table": 0.919267,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.944945,
+      "table_basis_at_E": "declared power-law continuation"
+     }
+    },
+    "MS1997_over_table_E_ge_100": {
+     "min": 0.780726,
+     "max": 0.919267
+    },
+    "rate_impact_if_MS1997_above_last_point": {
+     "share_beyond_MS1997_end": {
+      "45": {
+       "declared": 5.4332e-15,
+       "hold_envelope": 3.13776e-14
+      },
+      "60": {
+       "declared": 1.92277e-11,
+       "hold_envelope": 1.11988e-10
+      },
+      "75": {
+       "declared": 2.58208e-09,
+       "hold_envelope": 1.51239e-08
+      },
+      "90": {
+       "declared": 6.76661e-08,
+       "hold_envelope": 3.97187e-07
+      },
+      "120": {
+       "declared": 4.01538e-06,
+       "hold_envelope": 2.34203e-05
+      },
+      "150": {
+       "declared": 4.66227e-05,
+       "hold_envelope": 0.000266978
+      }
+     },
+     "absolute": {
+      "45": -0.00039676,
+      "60": -0.00176375,
+      "75": -0.00428465,
+      "90": -0.00770984,
+      "120": -0.0159587,
+      "150": -0.0245516
+     },
+     "shape": {
+      "45": 1.83891e-05,
+      "60": 0.000106512,
+      "75": 0.000316804,
+      "90": 0.000671488,
+      "120": 0.00179604,
+      "150": 0.00336872
+     }
+    }
+   },
+   "excitation_N2_aprime1Sigma_u.dat": {
+    "johnson_last_point_eV": 100.0,
+    "continuation_p": 1.67411,
+    "MS1997_range_eV": [
+     11.0,
+     1000.0
+    ],
+    "Tabata_fit_range_eV": [
+     11.0,
+     1000.0
+    ],
+    "points": {
+     "20": {
+      "table_sigma_1e-18cm2": 2.31,
+      "MS1997_over_table": 2.07792,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.66439,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.272727
+     },
+     "30": {
+      "table_sigma_1e-18cm2": 2.07,
+      "MS1997_over_table": 1.11111,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.04121,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.231884
+     },
+     "50": {
+      "table_sigma_1e-18cm2": 0.801,
+      "MS1997_over_table": 2.40949,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 2.38362,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.244694
+     },
+     "100": {
+      "table_sigma_1e-18cm2": 0.251,
+      "MS1997_over_table": 3.8247,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 3.86382,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.318725
+     },
+     "150": {
+      "table_sigma_1e-18cm2": 0.127352,
+      "MS1997_over_table": 5.53583,
+      "MS1997_is_tabulated_point": false,
+      "Tabata_fit_over_table": 4.83489,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "200": {
+      "table_sigma_1e-18cm2": 0.0786573,
+      "MS1997_over_table": 5.72102,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 5.68122,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "500": {
+      "table_sigma_1e-18cm2": 0.0169686,
+      "MS1997_over_table": 9.42916,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 9.67273,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "1000": {
+      "table_sigma_1e-18cm2": 0.00531727,
+      "MS1997_over_table": 15.0453,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 14.6523,
+      "table_basis_at_E": "declared power-law continuation"
+     }
+    },
+    "MS1997_over_table_E_ge_100": {
+     "min": 3.8247,
+     "max": 15.0453
+    },
+    "rate_impact_if_MS1997_above_last_point": {
+     "share_beyond_MS1997_end": {
+      "45": {
+       "declared": 5.32562e-16,
+       "hold_envelope": 2.60893e-14
+      },
+      "60": {
+       "declared": 2.10738e-12,
+       "hold_envelope": 1.02601e-10
+      },
+      "75": {
+       "declared": 3.09547e-10,
+       "hold_envelope": 1.48081e-08
+      },
+      "90": {
+       "declared": 8.73828e-09,
+       "hold_envelope": 4.069e-07
+      },
+      "120": {
+       "declared": 5.83363e-07,
+       "hold_envelope": 2.52354e-05
+      },
+      "150": {
+       "declared": 7.41649e-06,
+       "hold_envelope": 0.000293555
+      }
+     },
+     "absolute": {
+      "45": 0.0789744,
+      "60": 0.174493,
+      "75": 0.287139,
+      "90": 0.406636,
+      "120": 0.647073,
+      "150": 0.877462
+     },
+     "shape": {
+      "45": 0.00328783,
+      "60": 0.00883283,
+      "75": 0.0167399,
+      "90": 0.0264247,
+      "120": 0.0492923,
+      "150": 0.0748601
+     }
+    }
+   },
+   "excitation_N2_w1Delta_u.dat": {
+    "johnson_last_point_eV": 100.0,
+    "continuation_p": 0.527994,
+    "MS1997_range_eV": [
+     9.0,
+     200.0
+    ],
+    "Tabata_fit_range_eV": [
+     9.0,
+     200.0
+    ],
+    "points": {
+     "20": {
+      "table_sigma_1e-18cm2": 3.68,
+      "MS1997_over_table": 1.16848,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.17306,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.192935
+     },
+     "30": {
+      "table_sigma_1e-18cm2": 1.87,
+      "MS1997_over_table": 1.23529,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.952867,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.181818
+     },
+     "50": {
+      "table_sigma_1e-18cm2": 1.08,
+      "MS1997_over_table": 0.657407,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.608714,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.212963
+     },
+     "100": {
+      "table_sigma_1e-18cm2": 0.749,
+      "MS1997_over_table": 0.173565,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.175629,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.261682
+     },
+     "150": {
+      "table_sigma_1e-18cm2": 0.604686,
+      "MS1997_over_table": 0.115762,
+      "MS1997_is_tabulated_point": false,
+      "Tabata_fit_over_table": 0.0535706,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "200": {
+      "table_sigma_1e-18cm2": 0.51945,
+      "MS1997_over_table": 0.0192511,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.019003,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "500": {
+      "table_sigma_1e-18cm2": 0.320224,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "1000": {
+      "table_sigma_1e-18cm2": 0.222081,
+      "table_basis_at_E": "declared power-law continuation"
+     }
+    },
+    "MS1997_over_table_E_ge_100": {
+     "min": 0.0192511,
+     "max": 0.173565
+    },
+    "rate_impact_if_MS1997_above_last_point": {
+     "share_beyond_MS1997_end": {
+      "45": {
+       "declared": 0.00314608,
+       "hold_envelope": 0.00484259
+      },
+      "60": {
+       "declared": 0.0151048,
+       "hold_envelope": 0.0233747
+      },
+      "75": {
+       "declared": 0.0384138,
+       "hold_envelope": 0.0592643
+      },
+      "90": {
+       "declared": 0.07111,
+       "hold_envelope": 0.10875
+      },
+      "120": {
+       "declared": 0.151594,
+       "hold_envelope": 0.225794
+      },
+      "150": {
+       "declared": 0.23609,
+       "hold_envelope": 0.341186
+      }
+     },
+     "absolute": {
+      "45": -0.0609968,
+      "60": -0.130673,
+      "75": -0.205913,
+      "90": -0.278029,
+      "120": -0.401962,
+      "150": -0.498305
+     },
+     "shape": {
+      "45": -0.0318653,
+      "60": -0.0772255,
+      "75": -0.13197,
+      "90": -0.188671,
+      "120": -0.293951,
+      "150": -0.381694
+     }
+    }
+   },
+   "excitation_N2_C3Pi_u.dat": {
+    "johnson_last_point_eV": 100.0,
+    "continuation_p": 2.4686,
+    "MS1997_range_eV": [
+     12.0,
+     200.0
+    ],
+    "Tabata_fit_range_eV": [
+     11.3,
+     200.0
+    ],
+    "points": {
+     "20": {
+      "table_sigma_1e-18cm2": 10.6,
+      "MS1997_over_table": 1.63208,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.60624,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.179245
+     },
+     "30": {
+      "table_sigma_1e-18cm2": 6.87,
+      "MS1997_over_table": 1.12082,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.966817,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.164483
+     },
+     "50": {
+      "table_sigma_1e-18cm2": 3.0,
+      "MS1997_over_table": 0.833333,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 0.759269,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.163333
+     },
+     "100": {
+      "table_sigma_1e-18cm2": 0.542,
+      "MS1997_over_table": 1.27306,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.1946,
+      "table_basis_at_E": "Johnson 2005",
+      "Johnson_rel_uncertainty": 0.178967
+     },
+     "150": {
+      "table_sigma_1e-18cm2": 0.199319,
+      "MS1997_over_table": 1.55529,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 1.64326,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "200": {
+      "table_sigma_1e-18cm2": 0.0979317,
+      "MS1997_over_table": 2.04224,
+      "MS1997_is_tabulated_point": true,
+      "Tabata_fit_over_table": 2.09077,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "500": {
+      "table_sigma_1e-18cm2": 0.010204,
+      "table_basis_at_E": "declared power-law continuation"
+     },
+     "1000": {
+      "table_sigma_1e-18cm2": 0.00184353,
+      "table_basis_at_E": "declared power-law continuation"
+     }
+    },
+    "MS1997_over_table_E_ge_100": {
+     "min": 1.27306,
+     "max": 2.04224
+    },
+    "rate_impact_if_MS1997_above_last_point": {
+     "share_beyond_MS1997_end": {
+      "45": {
+       "declared": 0.000148974,
+       "hold_envelope": 0.00112632
+      },
+      "60": {
+       "declared": 0.000753119,
+       "hold_envelope": 0.0061429
+      },
+      "75": {
+       "declared": 0.00202442,
+       "hold_envelope": 0.0175682
+      },
+      "90": {
+       "declared": 0.00395892,
+       "hold_envelope": 0.0361103
+      },
+      "120": {
+       "declared": 0.00934674,
+       "hold_envelope": 0.0914309
+      },
+      "150": {
+       "declared": 0.0159219,
+       "hold_envelope": 0.162129
+      }
+     },
+     "absolute": {
+      "45": 0.00418192,
+      "60": 0.0097453,
+      "75": 0.0166357,
+      "90": 0.0241629,
+      "120": 0.0395785,
+      "150": 0.0542987
+     },
+     "shape": {
+      "45": 0.00111645,
+      "60": 0.00301477,
+      "75": 0.00566773,
+      "90": 0.00880651,
+      "120": 0.0157425,
+      "150": 0.0227957
+     }
+    }
+   }
+  },
+  "vibrational_0to1_Tabata2006_n2-5": {
+   "fit": "Tabata et al. 2006 n2-5 (fit to Itikawa et al. JPCRD 15, 985 (1986)), 1.05-48.5 eV, zero outside",
+   "split_eV": 5.0,
+   "rows": {
+    "1": {
+     "mean_energy_eV": 1.5,
+     "k_Laporta_0to1_m3s": 6.65086e-15,
+     "Tabata_below_5eV_over_Laporta": 0.72715,
+     "Tabata_5_to_48p5eV_over_Laporta": 0.00106353,
+     "Tabata_above_5eV_hold_beyond_48p5_over_Laporta": 0.00106353
+    },
+    "2": {
+     "mean_energy_eV": 3.0,
+     "k_Laporta_0to1_m3s": 7.71912e-15,
+     "Tabata_below_5eV_over_Laporta": 0.767961,
+     "Tabata_5_to_48p5eV_over_Laporta": 0.00860205,
+     "Tabata_above_5eV_hold_beyond_48p5_over_Laporta": 0.00860205
+    },
+    "3": {
+     "mean_energy_eV": 4.5,
+     "k_Laporta_0to1_m3s": 6.24467e-15,
+     "Tabata_below_5eV_over_Laporta": 0.790133,
+     "Tabata_5_to_48p5eV_over_Laporta": 0.0272639,
+     "Tabata_above_5eV_hold_beyond_48p5_over_Laporta": 0.0272639
+    },
+    "5": {
+     "mean_energy_eV": 7.5,
+     "k_Laporta_0to1_m3s": 3.98473e-15,
+     "Tabata_below_5eV_over_Laporta": 0.811815,
+     "Tabata_5_to_48p5eV_over_Laporta": 0.122466,
+     "Tabata_above_5eV_hold_beyond_48p5_over_Laporta": 0.122489
+    },
+    "10": {
+     "mean_energy_eV": 15.0,
+     "k_Laporta_0to1_m3s": 1.7869e-15,
+     "Tabata_below_5eV_over_Laporta": 0.830741,
+     "Tabata_5_to_48p5eV_over_Laporta": 0.582297,
+     "Tabata_above_5eV_hold_beyond_48p5_over_Laporta": 0.587403
+    },
+    "20": {
+     "mean_energy_eV": 30.0,
+     "k_Laporta_0to1_m3s": 7.11508e-16,
+     "Tabata_below_5eV_over_Laporta": 0.84116,
+     "Tabata_5_to_48p5eV_over_Laporta": 1.46794,
+     "Tabata_above_5eV_hold_beyond_48p5_over_Laporta": 1.58794
+    },
+    "30": {
+     "mean_energy_eV": 45.0,
+     "k_Laporta_0to1_m3s": 4.02949e-16,
+     "Tabata_below_5eV_over_Laporta": 0.844785,
+     "Tabata_5_to_48p5eV_over_Laporta": 2.05033,
+     "Tabata_above_5eV_hold_beyond_48p5_over_Laporta": 2.49525
+    },
+    "40": {
+     "mean_energy_eV": 60.0,
+     "k_Laporta_0to1_m3s": 2.6696e-16,
+     "Tabata_below_5eV_over_Laporta": 0.846627,
+     "Tabata_5_to_48p5eV_over_Laporta": 2.437,
+     "Tabata_above_5eV_hold_beyond_48p5_over_Laporta": 3.41924
+    },
+    "50": {
+     "mean_energy_eV": 75.0,
+     "k_Laporta_0to1_m3s": 1.93305e-16,
+     "Tabata_below_5eV_over_Laporta": 0.847742,
+     "Tabata_5_to_48p5eV_over_Laporta": 2.70848,
+     "Tabata_above_5eV_hold_beyond_48p5_over_Laporta": 4.42947
+    },
+    "60": {
+     "mean_energy_eV": 90.0,
+     "k_Laporta_0to1_m3s": 1.48222e-16,
+     "Tabata_below_5eV_over_Laporta": 0.848489,
+     "Tabata_5_to_48p5eV_over_Laporta": 2.90856,
+     "Tabata_above_5eV_hold_beyond_48p5_over_Laporta": 5.56146
+    },
+    "80": {
+     "mean_energy_eV": 120.0,
+     "k_Laporta_0to1_m3s": 9.72315e-17,
+     "Tabata_below_5eV_over_Laporta": 0.849427,
+     "Tabata_5_to_48p5eV_over_Laporta": 3.18272,
+     "Tabata_above_5eV_hold_beyond_48p5_over_Laporta": 8.25957
+    },
+    "100": {
+     "mean_energy_eV": 150.0,
+     "k_Laporta_0to1_m3s": 6.9988e-17,
+     "Tabata_below_5eV_over_Laporta": 0.849993,
+     "Tabata_5_to_48p5eV_over_Laporta": 3.36129,
+     "Tabata_above_5eV_hold_beyond_48p5_over_Laporta": 11.5914
+    }
+   },
+   "reading": "the 5-48.5 eV part is the non-resonant/broad-feature excitation that the Laporta resonant-only table omits; the ratio column is its Maxwellian rate relative to the table's 0->1 rate"
+  },
+  "rotational": {
+   "note": "no accessible independent cross section above the JPCRD 2023 Table 6 end point (10 eV); the Tabata n2-4 fit (to Itikawa et al. 1986) covers 0.0296-2.94 eV only"
+  }
+ },
+ "completeness_indicators": {
+  "note": "indicators only (rate-coefficient ratios at mean energy L from committed tables); the v1 verdicts used T_e <= 30 eV; the closure envelope must be re-run on any extended domain before any verdict",
+  "by_mean_energy_eV": {
+   "45": {
+    "T_e_eV": 30.0,
+    "N2_to_N2dication_nominal_over_N2_ionization": 0.0100928,
+    "N2_to_N2dication_upper_over_N2_ionization": 0.0639188,
+    "N_Z2plus_to_N_Z3plus_rate_over_its_45eV_value": 1.0,
+    "N2plus_to_N2dication_rate_over_its_45eV_value": 1.0
+   },
+   "60": {
+    "T_e_eV": 40.0,
+    "N2_to_N2dication_nominal_over_N2_ionization": 0.0111964,
+    "N2_to_N2dication_upper_over_N2_ionization": 0.0695678,
+    "N_Z2plus_to_N_Z3plus_rate_over_its_45eV_value": 1.60308,
+    "N2plus_to_N2dication_rate_over_its_45eV_value": 1.39623
+   },
+   "75": {
+    "T_e_eV": 50.0,
+    "N2_to_N2dication_nominal_over_N2_ionization": 0.0118291,
+    "N2_to_N2dication_upper_over_N2_ionization": 0.0733337,
+    "N_Z2plus_to_N_Z3plus_rate_over_its_45eV_value": 2.13938,
+    "N2plus_to_N2dication_rate_over_its_45eV_value": 1.72322
+   },
+   "90": {
+    "T_e_eV": 60.0,
+    "N2_to_N2dication_nominal_over_N2_ionization": 0.0122206,
+    "N2_to_N2dication_upper_over_N2_ionization": 0.0763235,
+    "N_Z2plus_to_N_Z3plus_rate_over_its_45eV_value": 2.59929,
+    "N2plus_to_N2dication_rate_over_its_45eV_value": 1.99308
+   },
+   "120": {
+    "T_e_eV": 80.0,
+    "N2_to_N2dication_nominal_over_N2_ionization": 0.0126493,
+    "N2_to_N2dication_upper_over_N2_ionization": 0.0813968,
+    "N_Z2plus_to_N_Z3plus_rate_over_its_45eV_value": 3.32123,
+    "N2plus_to_N2dication_rate_over_its_45eV_value": 2.40589
+   },
+   "150": {
+    "T_e_eV": 100.0,
+    "N2_to_N2dication_nominal_over_N2_ionization": 0.0128549,
+    "N2_to_N2dication_upper_over_N2_ionization": 0.0860168,
+    "N_Z2plus_to_N_Z3plus_rate_over_its_45eV_value": 3.84474,
+    "N2plus_to_N2dication_rate_over_its_45eV_value": 2.70139
+   }
+  }
+ }
+}
