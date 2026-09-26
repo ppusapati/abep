@@ -738,6 +738,24 @@ def test_n2_completeness_audit_preregistration_is_frozen():
     assert r["domains"]["rotational_excitation"]["Te_eV"] == [0.2, 30.0]
 
 
+def test_n2_dissociative_ionization_audit_promotes_under_the_preregistered_rule():
+    """Provisional omitted-process audit (prereg n2_completeness_audit_v1): even the LOWER bound on dissociative
+    ionization (JPCRD Table 10 sigma(N+ + N2++) as published, energy loss at threshold, one ion per event) exceeds the 1 %
+    F_ion and F_P thresholds inside T_e = 2-30 eV, so DI must be promoted. The committed result file matches a re-run."""
+    import importlib.util, json, os
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("a", os.path.join(root, "scripts", "audit_n2_dissociative_ionization.py"))
+    a = importlib.util.module_from_spec(spec); spec.loader.exec_module(a)
+    res = json.load(open(os.path.join(root, "hallthruster_bridge", "audit", "n2_dissociative_ionization_v1.json")))
+    assert res["prereg"] == "n2_completeness_audit_v1" and res["status"] == "PROVISIONAL"
+    assert res["verdict"]["dissociative_ionization"].startswith("PROMOTE")
+    assert abs(a.E_TH_DI - 24.284) < 1e-9
+    r20 = next(r for r in res["rows"] if r["Te_eV"] == 20.0)
+    k_iz = a.table_rate("ionization_N2_song2023.dat", 20.0); k_tab = a.omitted_rate(a.TABLE10_NPLUS, 20.0)
+    assert abs(k_tab / k_iz - r20["F_ion_lower"]) < 1e-9 and r20["F_ion_lower"] > 0.01
+    assert all(r["F_P_lower"] <= r["F_P_upper"] and r["F_ion_lower"] <= r["F_ion_upper"] for r in res["rows"])
+
+
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""
     from abep_sim.rate_tables import maxwellian_rate, tail_sensitivity

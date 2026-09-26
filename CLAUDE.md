@@ -94,7 +94,12 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    scoring). Domain: T_e 2–30 eV (mean energy 3–45 eV). Vibrational and rotational excitation: T_e 0.2–30 eV. Promote an
    omitted process if F_P > 1 % of total electron inelastic power, OR F_ion > 1 % of total positive-ion production, OR
    F_S_s > 5 % of any modeled species' production or destruction, anywhere in its domain. Denominators use the best
-   available included set; results before the excitation and vibrational channels exist are **provisional**. Sources are open literature, not LXCat.
+   available included set; results before the excitation and vibrational channels exist are **provisional**.
+   **Provisional verdicts** (`hallthruster_bridge/audit/`, `scripts/audit_n2_dissociative_ionization.py`):
+   - Dissociative ionization → **PROMOTE**. Lower bound F_ion ≤ 25 % and F_P ≤ 24 % over T_e 2–30 eV; both > 1 % from T_e ≈ 4–4.5 eV.
+     Also F_S(N₂ destruction) up to 14 %, and it dominates N⁺ production unless n_N/n_N₂ > 5 (at T_e 20 eV).
+   - N⁺⁺ production (Table 10 σ(N⁺⁺), tier 3) → **crosses** F_ion 1 % at T_e ≥ 25 eV (≥ 19.5 eV if two ions per event).
+   - N₂²⁺ is not tabulated (≈ 1 % of total ionization per JPCRD; no recommended values) → unresolved. Sources are open literature, not LXCat.
    Open: N₂ excitation (the recommended Su et al. 2021 per-state set ends at 20 eV, and the source for extending it above that is
    the owner's decision); N elastic (Ragimkhanov 2026 not yet located). See docs/HISTORY.md 2026-09-26 and
    `hallthruster_bridge/propellants/PROVENANCE.md`.
