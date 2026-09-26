@@ -1,0 +1,719 @@
+{
+ "schema": "abep_minimum_decisive_experiment_draft_v1",
+ "id": "minexp_hall_rf_ecr_v0",
+ "status": "DRAFT_PENDING_OWNER",
+ "lane": "MINEXP - lane 25 - minimum decisive Hall-only / RF+Hall / ECR+Hall experiment",
+ "created": "2026-09-26",
+ "base_commit": "c53b75a",
+ "companion_document": "docs/architecture_comparison/minimum_decisive_experiment/MINIMUM_DECISIVE_EXPERIMENT_DRAFT.md",
+ "derivation_script": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py",
+ "not_frozen": "Nothing in this file is pre-registered or approved. Every threshold is PROPOSED for the owner. No score-bearing measurement may be taken before the pre-registration step (section 'preregistration') is completed, approved by the owner and hash-locked.",
+ "scope": {
+  "question": "At a common feed state and a common DC bus boundary, does adding an RF or an ECR pre-ionizer in front of the same Hall accelerator raise thrust per bus watt (or enable sustained operation) relative to Hall-only, at the operating points that bound the feed envelope?",
+  "when_to_run": "Only if the literature/model evidence (docs/evidence/rf_source/, docs/evidence/ecr_source/, docs/evidence/hall_sustainment/) remains insufficient to settle the ambiguity. This draft does not judge that sufficiency.",
+  "what_it_is_not": "Not a performance prediction, not a winner declaration, not a Hall transport validation. It produces measured, paired, common-boundary evidence on the tested hardware and a per-arm, per-point classification for the owner.",
+  "rfp_context": "RFP DTDF/06/13516 envelope (CLAUDE.md): 180-230 km, 12-25 mN, < 1.5 kW, < 40 kg, 26,000 h mission, > 15,000 h firing, Hall preferred, air + Xe."
+ },
+ "rules_compliance": [
+  "No Hall transport closure, screening candidate (sgb-screen-*) or withdrawn 0-D Hall result is used as a performance source; the break-even is evaluated only from paired measurements.",
+  "P5 calibration nuisance (p5_registration, p5_coil_shape, beam_efficiency_reading, facility_ingestion_interpretation) is never an axis, factor or design variable here.",
+  "Hall-closure uncertainty never leaks upstream: the feed state is an input fixed by the upstream ICD (IF-A5) and is identical for all arms; compressor and other upstream loads enter the bus sum as explicit ledger inputs identical across arms.",
+  "Every numeric value carries a source and an evidence class, or is 'TBD - requires ...'. Thresholds not in the RFP are PROPOSED. Missing inputs raise in the derivation script (no defaults).",
+  "Eliminations happen only through explicit rules (hard gate G-SRC on a measured source-sustainment failure; PROPOSED stop rule D3 on measured paired data). No rule stops an arm on literature or model evidence alone.",
+  "Other lanes' artefacts are referenced by repository path only and are not required by this draft or its test."
+ ],
+ "milestones": {
+  "supports": ["A", "B"],
+  "A": {
+   "delivers": "Per-arm, per-point classes (SOURCE_BETTER / EQUIVALENT / SOURCE_WORSE / ENABLES / UNRESOLVED / FACILITY_CONDITIONAL) measured on common hardware and a common bus boundary, plus the conditions under which they hold; enough for an owner statement of the form 'architecture X is baseline provided conditions A/B/C are demonstrated'. Does not require Physics Baseline 1.0.",
+   "to_reach": "S0-S4 complete for at least the hall_only arm and every non-stopped source arm; S5 for the facility qualifier."
+  },
+  "B": {
+   "delivers": "Transport-independent source boundary data (P_src,bus, I_src, I_del, eta_ts, delivered-ion energy and species) and Vyovrinda-hardware Hall data (B(z) maps, geometry, coil currents, I_d traces, species fractions, divergence) that an admitted Hall closure would need to turn tested points into design envelopes.",
+   "still_needed": "An admitted Hall transport closure (credible set currently empty: CLAUDE.md gate 3), O/O2 chemistry for air (CLAUDE.md next work 4; the air surrogate here has no atomic O), and, if the physics track wants these data as promotion evidence, its own pre-registration before the measurement."
+  },
+  "C": {
+   "delivers": "Measured bus-power ledger entries per consumer at the tested points and source waste-heat inputs.",
+   "still_needed": "Mass, thermal, life (docs/evidence/wall_life/, abep_sim/thermal_life.py), startup, cathode (docs/evidence/cathode/) and mission closure integrated; flight-representative PPU and generator; not supported by this experiment alone."
+  },
+  "fastest_route": "This is the fastest physical route to milestone A, and a direct input to milestone B once a closure is admitted."
+ },
+ "architectures": [
+  {"id": "hall_only", "hardware_configuration": "HW-0", "pre_ionizer": "none", "accelerator": "H-1", "feed_state": "FS-common", "cathode": "C-1", "bus_boundary": "bus_power_boundary_v1", "arm_specific_bus_components": []},
+  {"id": "rf_hall", "hardware_configuration": "HW-RF", "pre_ionizer": "RF", "accelerator": "H-1", "feed_state": "FS-common", "cathode": "C-1", "bus_boundary": "bus_power_boundary_v1", "arm_specific_bus_components": ["rf_source"]},
+  {"id": "ecr_hall", "hardware_configuration": "HW-ECR", "pre_ionizer": "ECR", "accelerator": "H-1", "feed_state": "FS-common", "cathode": "C-1", "bus_boundary": "bus_power_boundary_v1", "arm_specific_bus_components": ["ecr_source", "ecr_magnet"]}
+ ],
+ "common_elements": {
+  "accelerator": {"id": "H-1", "definition": "One physical Hall accelerator unit (same serial number, channel, anode, magnetic circuit) used in every arm, operated at the same coil currents for a given operating point.", "geometry_and_Bz": "TBD - requires the Vyovrinda Hall design; B(z) is measured in S1 for every hardware configuration (P5 lesson: unpublished coil currents/B(z) made P5 transport non-identifiable, CLAUDE.md next work 1)."},
+  "cathode": {"id": "C-1", "definition": "One physical cathode unit, same position, same flow and keeper setting in every arm.", "type": "TBD - requires the cathode lane decision (docs/evidence/cathode/)."},
+  "feed_state": {"id": "FS-common", "definition": "For a given operating point: identical anode mass flow, composition (same mass-flow controllers and gas bottles), cathode flow and gas supply temperature in every arm.", "fields": "schemas/interfaces/upstream_icd_v1.json IF-A5 (mdot_total_kgps, mdot_s_kgps, w_s, x_s, p_feed_Pa, T_gas_K) and IF-X2 (mdot_xe_cathode_kgps)", "values": "TBD - requires the feed envelope from the upstream ICD (IF-A5) and the design point"},
+  "discharge_voltage": "Same V_d setpoint per operating point in every arm.",
+  "facility_and_instruments": "Same chamber, thrust stand, power analyzer channels, gauges, probes and calibration standards for every arm.",
+  "only_difference": "The pre-ionizer module (none / RF / ECR), the gas path through it (inherent to the architecture), and its arm-specific bus components."
+ },
+ "hardware_configurations": [
+  {"id": "HW-0", "arm": "hall_only", "description": "H-1 + flow-equivalent feed spacer replicating the source module's mechanical envelope and gas path, with no source hardware.", "note": "True hall_only reference. Measured first and last (re-mount reproducibility)."},
+  {"id": "HW-RF", "arm": "rf_hall", "description": "H-1 + RF source module + interstage + DC-input RF generator + matching network.", "note": "Source-unpowered state = installed-off reference (within-configuration pairing, installation effect vs HW-0)."},
+  {"id": "HW-ECR", "arm": "ecr_hall", "description": "H-1 + ECR source module + interstage + DC-input microwave generator + waveguide/antenna + ECR magnet.", "note": "If the ECR field comes from permanent magnets, the installed-off state is not hall_only-equivalent; B(z) mapping in S1 quantifies the perturbation of the Hall field."},
+  {"id": "OPTION-DIVERTER", "arm": "hall_only", "description": "PROPOSED hardware option: an in-vacuum feed-path diverter that routes the gas either through the source module or directly to the anode distributor without venting.", "note": "Removes the re-mount term G5 from the hall_only comparison; needs one check against true HW-0. Owner decision (hardware cost)."}
+ ],
+ "bus_power_boundary": {
+  "version": "bus_power_boundary_v1",
+  "module": "abep_sim/arch_boundary.py (other lane; referenced by path, not imported)",
+  "api": "ledger(arch, loads, efficiencies)",
+  "components_common": ["hall_discharge", "hall_magnet", "cathode_keeper", "cathode_heater", "flow_control", "compressor", "thermal_control", "housekeeping"],
+  "components_arm_specific": {"hall_only": [], "rf_hall": ["rf_source"], "ecr_hall": ["ecr_source", "ecr_magnet"]},
+  "measured_in_experiment": {
+   "hall_discharge": "load side V_d, I_d (converted to bus side with the ledger discharge-converter efficiency eta_d, identical for all arms)",
+   "hall_magnet": "load side coil V, I",
+   "cathode_keeper": "load side V, I",
+   "cathode_heater": "load side V, I (startup only; reported, steady-state value expected 0 if the heater is off)",
+   "flow_control": "valve/MFC electrical input (lab MFCs are not flight hardware: ledger value, same for all arms)",
+   "rf_source": "DC input power of the RF generator (bus side); forward and reflected RF power as diagnostics",
+   "ecr_source": "DC input power of the microwave generator (bus side); forward and reflected power as diagnostics",
+   "ecr_magnet": "load side coil V, I if electromagnet; 0 W with a permanent magnet (recorded)",
+   "thermal_control": "heater/pump electrical input if present; else ledger value",
+   "compressor": "not present in the lab (bottled feed): explicit ledger input, identical for all arms at a given feed state",
+   "housekeeping": "not present in the lab: explicit ledger input, identical for all arms"
+  },
+  "note": "Common unmeasured loads (compressor, housekeeping) enter P_bus of every arm; they dilute R toward 1 and raise the break-even cost C*. R is reported both with lab-measured consumers only and with the full bus_power_boundary_v1 sum; the latter is decisive and states the evidence class of each ledger input."
+ },
+ "comparison_grid_axes": {
+  "mdot": {"role": "set factor", "levels": ["mdot_min", "mdot_knee", "mdot_nom"], "values": "TBD - requires the feed envelope (schemas/interfaces/upstream_icd_v1.json IF-A5 mdot_total_kgps) for mdot_min and mdot_nom; mdot_knee is located by the S2 knee scan under rule T-OP2-FALLBACK"},
+  "p": {"role": "measured covariate, not independently set", "definition": "feed / source-chamber absolute pressure (capacitance manometer) and background pressure p_b", "reason": "With fixed hardware, p follows mdot and the conductance of the source/interstage; setting it independently needs a variable conductance (hardware change, not minimal). The rig's (mdot, p) relation is compared with IF-A5 p_feed_Pa; mismatch is an applicability limit."},
+  "V_d": {"role": "set factor", "levels": ["V_nom", "V_hi"], "values": "TBD - requires the Hall design point and the bus allocation; V_hi only for hall_only iso-power references and must bracket the source-on bus power (no extrapolation)"},
+  "composition": {"role": "set factor", "levels": ["N2", "air_surrogate"], "values": "air_surrogate = N2 + O2 blend with the IF-A5 oxygen mass fraction (O + O2) supplied as O2: TBD - requires the IF-A5 composition at the design point. Atomic O is not reproducible with bottled gas (limitation). Xe as anode propellant is outside the minimum set."},
+  "P_source": {"role": "set factor (source arms only; 0 for hall_only)", "levels": ["off", "lo", "hi"], "values": "P_hi: TBD - requires the source allocation in bus_power_boundary_v1; P_lo per rule T-PLO-FRACTION"},
+  "never_axes": ["p5_registration", "p5_coil_shape", "beam_efficiency_reading", "facility_ingestion_interpretation"]
+ },
+ "operating_points": [
+  {"id": "OP1", "mdot": "mdot_min", "V_d": "V_nom", "composition": "N2", "P_source_levels": ["off", "lo", "hi"], "why": "Lower edge of the feed envelope; where Hall-only ionization is weakest and sustainment may fail (enablement test)."},
+  {"id": "OP2", "mdot": "mdot_knee", "V_d": "V_nom", "composition": "N2", "P_source_levels": ["off", "lo", "hi"], "why": "Hall-only sustainment knee; hypothesised sign change of the source benefit (hypothesis, not evidence)."},
+  {"id": "OP3", "mdot": "mdot_nom", "V_d": "V_nom", "composition": "N2", "P_source_levels": ["off", "lo", "hi"], "why": "Nominal feed; where Hall-only is expected to be strongest; the other side of the break-even surface."},
+  {"id": "OP2H", "mdot": "mdot_knee", "V_d": "V_hi", "composition": "N2", "P_source_levels": ["off"], "why": "hall_only only: iso-power reference (raise V_d instead of powering a source)."},
+  {"id": "OP3H", "mdot": "mdot_nom", "V_d": "V_hi", "composition": "N2", "P_source_levels": ["off"], "why": "hall_only only: iso-power reference at nominal flow."},
+  {"id": "OP5", "mdot": "mdot_knee", "V_d": "V_nom", "composition": "air_surrogate", "P_source_levels": ["off", "hi"], "why": "Composition transfer check at the most sensitive flow; enablement on air if hall_only fails there."}
+ ],
+ "knee_scan": {
+  "stage": "S2",
+  "configuration": "HW-0",
+  "composition": "N2",
+  "V_d": "V_nom",
+  "levels": "T-KNEE-LEVELS equally spaced mass flows from mdot_nom down to mdot_min, then back up (hysteresis check)",
+  "output": "SUSTAINED flag per level (rule T-SUSTAIN), I_d traces, thrust where sustained",
+  "score_bearing": true
+ },
+ "run_matrix": {
+  "description": "Hall-on conditions. Each condition is measured in every block (n blocks, rule T-N-MIN/T-N-MAX). 'families' lists the comparison families in which the condition is the source-on member (compared against HW-0 at the same operating point; iso_power against the HW-0 V_nom/V_hi interpolation).",
+  "conditions": [
+   {"id": "R01", "stage": "S2", "hw": "HW-0", "arm": "hall_only", "op": "OP1", "source": "off", "role": "baseline", "families": []},
+   {"id": "R02", "stage": "S2", "hw": "HW-0", "arm": "hall_only", "op": "OP2", "source": "off", "role": "baseline", "families": []},
+   {"id": "R03", "stage": "S2", "hw": "HW-0", "arm": "hall_only", "op": "OP3", "source": "off", "role": "baseline", "families": []},
+   {"id": "R04", "stage": "S2", "hw": "HW-0", "arm": "hall_only", "op": "OP5", "source": "off", "role": "baseline", "families": []},
+   {"id": "R05", "stage": "S2", "hw": "HW-0", "arm": "hall_only", "op": "OP2H", "source": "off", "role": "iso_power_reference", "families": []},
+   {"id": "R06", "stage": "S2", "hw": "HW-0", "arm": "hall_only", "op": "OP3H", "source": "off", "role": "iso_power_reference", "families": []},
+   {"id": "R07", "stage": "S5", "hw": "HW-0", "arm": "hall_only", "op": "OP2", "source": "off", "role": "facility_check_elevated_pb", "families": []},
+   {"id": "R08", "stage": "S5", "hw": "HW-0", "arm": "hall_only", "op": "OP3", "source": "off", "role": "facility_check_elevated_pb", "families": []},
+   {"id": "R09", "stage": "S6", "hw": "HW-0", "arm": "hall_only", "op": "OP2", "source": "off", "role": "remount_reproducibility", "families": []},
+   {"id": "R10", "stage": "S6", "hw": "HW-0", "arm": "hall_only", "op": "OP3", "source": "off", "role": "remount_reproducibility", "families": []},
+   {"id": "R11", "stage": "S4", "hw": "HW-RF", "arm": "rf_hall", "op": "OP1", "source": "off", "role": "installed_off", "families": [], "confirmation_subset": true},
+   {"id": "R12", "stage": "S4", "hw": "HW-RF", "arm": "rf_hall", "op": "OP1", "source": "lo", "role": "comparison", "families": ["primary"]},
+   {"id": "R13", "stage": "S4", "hw": "HW-RF", "arm": "rf_hall", "op": "OP1", "source": "hi", "role": "comparison", "families": ["primary"], "confirmation_subset": true},
+   {"id": "R14", "stage": "S4", "hw": "HW-RF", "arm": "rf_hall", "op": "OP2", "source": "off", "role": "installed_off", "families": [], "confirmation_subset": true},
+   {"id": "R15", "stage": "S4", "hw": "HW-RF", "arm": "rf_hall", "op": "OP2", "source": "lo", "role": "comparison", "families": ["primary", "iso_power"]},
+   {"id": "R16", "stage": "S4", "hw": "HW-RF", "arm": "rf_hall", "op": "OP2", "source": "hi", "role": "comparison", "families": ["primary", "iso_power"], "confirmation_subset": true},
+   {"id": "R17", "stage": "S4", "hw": "HW-RF", "arm": "rf_hall", "op": "OP3", "source": "off", "role": "installed_off", "families": [], "confirmation_subset": true},
+   {"id": "R18", "stage": "S4", "hw": "HW-RF", "arm": "rf_hall", "op": "OP3", "source": "lo", "role": "comparison", "families": ["primary", "iso_power"]},
+   {"id": "R19", "stage": "S4", "hw": "HW-RF", "arm": "rf_hall", "op": "OP3", "source": "hi", "role": "comparison", "families": ["primary", "iso_power"], "confirmation_subset": true},
+   {"id": "R20", "stage": "S4", "hw": "HW-RF", "arm": "rf_hall", "op": "OP5", "source": "off", "role": "installed_off", "families": [], "confirmation_subset": true},
+   {"id": "R21", "stage": "S4", "hw": "HW-RF", "arm": "rf_hall", "op": "OP5", "source": "hi", "role": "comparison", "families": ["primary"], "confirmation_subset": true},
+   {"id": "R22", "stage": "S5", "hw": "HW-RF", "arm": "rf_hall", "op": "OP2", "source": "off", "role": "facility_check_elevated_pb", "families": []},
+   {"id": "R23", "stage": "S5", "hw": "HW-RF", "arm": "rf_hall", "op": "OP2", "source": "hi", "role": "facility_check_elevated_pb", "families": []},
+   {"id": "R24", "stage": "S5", "hw": "HW-RF", "arm": "rf_hall", "op": "OP3", "source": "off", "role": "facility_check_elevated_pb", "families": []},
+   {"id": "R25", "stage": "S5", "hw": "HW-RF", "arm": "rf_hall", "op": "OP3", "source": "hi", "role": "facility_check_elevated_pb", "families": []},
+   {"id": "R26", "stage": "S4", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP1", "source": "off", "role": "installed_off", "families": [], "confirmation_subset": true},
+   {"id": "R27", "stage": "S4", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP1", "source": "lo", "role": "comparison", "families": ["primary"]},
+   {"id": "R28", "stage": "S4", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP1", "source": "hi", "role": "comparison", "families": ["primary"], "confirmation_subset": true},
+   {"id": "R29", "stage": "S4", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP2", "source": "off", "role": "installed_off", "families": [], "confirmation_subset": true},
+   {"id": "R30", "stage": "S4", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP2", "source": "lo", "role": "comparison", "families": ["primary", "iso_power"]},
+   {"id": "R31", "stage": "S4", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP2", "source": "hi", "role": "comparison", "families": ["primary", "iso_power"], "confirmation_subset": true},
+   {"id": "R32", "stage": "S4", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP3", "source": "off", "role": "installed_off", "families": [], "confirmation_subset": true},
+   {"id": "R33", "stage": "S4", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP3", "source": "lo", "role": "comparison", "families": ["primary", "iso_power"]},
+   {"id": "R34", "stage": "S4", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP3", "source": "hi", "role": "comparison", "families": ["primary", "iso_power"], "confirmation_subset": true},
+   {"id": "R35", "stage": "S4", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP5", "source": "off", "role": "installed_off", "families": [], "confirmation_subset": true},
+   {"id": "R36", "stage": "S4", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP5", "source": "hi", "role": "comparison", "families": ["primary"], "confirmation_subset": true},
+   {"id": "R37", "stage": "S5", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP2", "source": "off", "role": "facility_check_elevated_pb", "families": []},
+   {"id": "R38", "stage": "S5", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP2", "source": "hi", "role": "facility_check_elevated_pb", "families": []},
+   {"id": "R39", "stage": "S5", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP3", "source": "off", "role": "facility_check_elevated_pb", "families": []},
+   {"id": "R40", "stage": "S5", "hw": "HW-ECR", "arm": "ecr_hall", "op": "OP3", "source": "hi", "role": "facility_check_elevated_pb", "families": []}
+  ],
+  "bench_conditions": {
+   "stage": "S3",
+   "description": "Hall discharge OFF, Hall magnet at the operating coil currents of the matching operating point, same flows and composition. Per source arm: flows of OP1, OP2, OP3 (N2) and OP5 (air surrogate) x source levels lo, hi.",
+   "per_arm": [["OP1", "lo"], ["OP1", "hi"], ["OP2", "lo"], ["OP2", "hi"], ["OP3", "lo"], ["OP3", "hi"], ["OP5", "lo"], ["OP5", "hi"]],
+   "cathode_state": "TBD - requires the full-protocol lane (docs/architecture_comparison/experiment_protocol/) or owner; recorded either way"
+  }
+ },
+ "decisive_quantities": [
+  {"id": "Q1", "symbol": "I_del", "unit": "A", "name": "delivered ion current", "definition": "Ion current that crosses the Hall channel exit plane with the Hall discharge off and the Hall magnet on (cold transport through the full accelerator geometry), integrated over the beam.", "measured_in": "S3", "instrument": "M5"},
+  {"id": "Q2", "symbol": "P_src,bus", "unit": "W", "name": "source bus power", "definition": "DC input power of the source generator (plus ecr_magnet for ecr_hall) on the common bus.", "measured_in": "S3, S4", "instrument": "M2"},
+  {"id": "Q3", "symbol": "eta_ts", "unit": "-", "name": "interstage transport efficiency", "definition": "I_del / I_src, with I_src the ion current leaving the source exit plane.", "measured_in": "S3", "instrument": "M5"},
+  {"id": "Q4", "symbol": "dI_d", "unit": "A", "name": "change of Hall discharge current", "definition": "I_d(arm X, source on) - I_d(hall_only) at fixed V_d, mdot, composition and coil currents.", "measured_in": "S2, S4", "instrument": "M2, M4"},
+  {"id": "Q5", "symbol": "dT", "unit": "mN", "name": "change of thrust", "definition": "T(arm X, source on) - T(hall_only) at the same fixed conditions.", "measured_in": "S2, S4", "instrument": "M1"},
+  {"id": "Q6", "symbol": "dP_bus", "unit": "W", "name": "change of bus power", "definition": "Sum over bus_power_boundary_v1 components (arm X source on) minus the hall_only sum.", "measured_in": "S2, S4", "instrument": "M2 + ledger"}
+ ],
+ "derived_metrics": [
+  {"symbol": "R_arch", "definition": "(T/P_bus)_{X,on} / (T/P_bus)_{hall_only, HW-0}, same operating point", "role": "decisive (primary family)"},
+  {"symbol": "R_within", "definition": "(T/P_bus)_{X,on} / (T/P_bus)_{X,installed-off}, same block", "role": "explanatory (source effect without re-mount)"},
+  {"symbol": "R_install", "definition": "(T/P_bus)_{X,installed-off} / (T/P_bus)_{HW-0}", "role": "explanatory (passive presence of the source hardware); R_arch = R_within * R_install"},
+  {"symbol": "R_iso", "definition": "T_{X,on} / T_{hall_only}(P_bus = P_bus,X,on), hall_only thrust linearly interpolated between V_nom and V_hi at the same mdot; reported only when bracketed", "role": "decisive (iso-power family)"},
+  {"symbol": "C_del", "definition": "P_src,bus / I_del  [W/A = V; numerically eV per delivered ion]", "role": "source figure of merit"},
+  {"symbol": "y", "definition": "dT / I_del  [mN/A]", "role": "thrust yield per delivered ampere"},
+  {"symbol": "kappa", "definition": "dI_d / I_del  [-]", "role": "discharge-current response per delivered ampere"},
+  {"symbol": "C_star", "definition": "y (P_bus,0/T_0) - kappa V_d/eta_d - dP_other/I_del", "role": "break-even delivered-ion cost; R_arch > 1 <=> C_del < C_star"},
+  {"symbol": "y_max", "definition": "sqrt(2 m_i V_d / (Z e)) for the heaviest singly charged species in the feed", "role": "ion-momentum ceiling used only by the S3 screen"}
+ ],
+ "break_even": {
+  "inequality": "R_arch > 1  <=>  dT * P_bus,0 > T_0 * (dP_d,load/eta_d + P_src,bus + dP_other)  <=>  C_del < C_star = y*(P_bus,0/T_0) - kappa*V_d/eta_d - dP_other/I_del",
+  "derivation": "P_bus,X = P_bus,0 + V_d*dI_d/eta_d + P_src,bus + dP_other; divide the inequality T_X/P_bus,X > T_0/P_bus,0 by I_del. Identity, no physical assumption; verified numerically by the test with synthetic vectors.",
+  "screen_bound": "C_star_ub = y_max * (P_bus,0/T_0) assumes y <= y_max, kappa >= 0 and dP_other >= 0.",
+  "why_screen_only": "y can exceed y_max if delivered plasma seeds extra Hall ionization or if Hall-on transport exceeds cold transport; kappa can be negative: the ID-Hall abstract (Martin Ortega et al. 2020, REF-MARTINORTEGA2020) reports that the I-V overshoot of single-stage operation disappears in double-stage operation at intermediate voltages, which the authors read as decreased anomalous electron transport. A Hall-off bound can therefore only prioritise, never stop, an arm. (The ID-Hall concept and its inductive ionization source are described in REF-DUBOIS2018; context only.)",
+  "prior_to_be_tested": "CLAUDE.md lists 'RF/helicon pre-ionisers add nothing' as probably robust at mechanism level (independent of the Hall closure); it comes from the project's own models, so it is model-derived and is superseded by hardware measurement within the tested domain (docs/EVIDENCE.md). The helicon-Hall precedent (REF-SHABSHELOWITZ2014, abstract only) reports thrust marginally up and thrust-to-power down with RF power."
+ },
+ "measurements": [
+  {"id": "M1", "quantity": "thrust T", "instrument": "pendulum-type thrust stand (hanging, inverted or torsional) with in-situ calibration", "practice": "REF-POLK2017: end-to-end in-situ calibration under vacuum; at least ten calibrations before and after thruster operation; zero taken with thruster power and flow off before thermal transients drift it; uncertainty reported with an error budget", "requirement": "relative random uncertainty per reading u_T <= derived_numbers.u_reading_max_by_n (for the chosen n)", "range": "TBD - requires the Hall design thrust range"},
+  {"id": "M2", "quantity": "bus-level DC power per consumer", "instrument": "multi-channel DC power analyzer or calibrated shunt/voltage-divider pairs, simultaneous sampling, one channel per bus_power_boundary_v1 component present in the lab; DC input of each source generator measured on its supply side", "practice": "calibration traceable to a national standard (owner to specify); same channels for every arm", "requirement": "u_P per reading <= derived_numbers.u_reading_max_by_n; source-channel scale uncertainty (incl. generator efficiency if DC input is not measured) <= derived_numbers.u_source_scale_max_by_f_src at the measured f_src"},
+  {"id": "M3", "quantity": "forward / reflected RF or microwave power", "instrument": "directional coupler + power sensors at the generator output", "practice": "diagnostic: coupling and generator DC-to-RF efficiency; not a substitute for the DC input", "requirement": "reported with uncertainty; not decisive"},
+  {"id": "M4", "quantity": "discharge current waveform I_d(t)", "instrument": "current probe on the anode line, time-synchronised DAQ", "practice": "sampling rate TBD - requires the S1 I_d spectrum; traces archived for every reading (P5 lesson: per-point I_d traces were not available)", "requirement": "used for T-SUSTAIN (extinction) and oscillation reporting (non-gating)"},
+  {"id": "M5", "quantity": "I_src and I_del (Q1, Q3)", "instrument": "guarded Faraday collector or probe array at the source exit plane (I_src) and a downstream Faraday probe sweep / integrating collector for the Hall channel exit plane with the Hall discharge off (I_del)", "practice": "REF-BROWN2017 Table A1: ion-saturation bias characterised across the plume, collector SEE and gap corrections, alignment and cabling rules; the full practice asks for at least four background pressures and four distances, the minimum set uses fewer and states the deviation", "requirement": "u(I_del) enters the S3 screen only (conservative direction: a larger u never produces a stop candidate)"},
+  {"id": "M6", "quantity": "ion energy distribution", "instrument": "retarding potential analyser at the interstage/channel exit (S3) and in the far field (S4, both source states)", "practice": "diagnostic for delivered-ion energy and for dT decomposition", "requirement": "reported; not decisive"},
+  {"id": "M7", "quantity": "ion species current fractions (N2+, N+, O2+, O+)", "instrument": "E x B (Wien filter) probe; with an accelerating bias for low-energy interstage ions", "practice": "REF-ROVEY2025: at low energy the four air ion species (m/q 32, 28, 16, 14) are not all resolved without an accelerating bias; the CEX correction's dominant uncertainty is the background neutral density from ion gauges (typically 10-20 %)", "requirement": "species if possible; explanatory for milestone B, not decisive"},
+  {"id": "M8", "quantity": "far-field ion current density, beam current, divergence", "instrument": "far-field Faraday probe sweep (Hall on, both source states)", "practice": "REF-BROWN2017 (far field > 4 channel diameters); decomposition of dT into beam current, divergence and voltage terms", "requirement": "explanatory; published per point (P5 lesson: per-point divergence missing)"},
+  {"id": "M9", "quantity": "background pressure p_b and feed/source pressure p", "instrument": "hot-cathode (Bayard-Alpert type) ion gauge(s) for p_b; capacitance diaphragm manometer for p (gas-independent)", "practice": "REF-DANKANICH2017 Sec. IV.A: gauge inside the chamber with line of sight to the thruster, near the wall at the thruster exit plane (>= 0.6 chamber radii from the centerline, >= 1 m from the thruster outer diameter), >= 10 Hz sampling, 3 s averages, no reading within 2 min of a > 10 % flow change; calibrate on the gas of interest where practical (nitrogen is the industry standard calibration gas, Sec. II.A.2); report wall temperature at the gauge", "requirement": "p_b recorded for every reading; gas-correction for the air surrogate TBD - requires the gauge calibration"},
+  {"id": "M10", "quantity": "mass flow per species", "instrument": "thermal mass-flow controllers calibrated for N2, O2 and Xe (cathode)", "practice": "REF-SNYDER2017 (title/DOI verified only; details to verify)", "requirement": "identical setpoints across arms; absolute accuracy matters for mapping to IF-A5, not for the paired ratios"},
+  {"id": "M11", "quantity": "B(z) of the Hall channel", "instrument": "Hall-probe gaussmeter on a positioning stage", "practice": "mapped for HW-0, HW-RF, HW-ECR (source magnet on/off where applicable) at the operating coil currents, before and after the campaign; published with coil currents", "requirement": "TBD - requires the Hall design (field magnitude and gradient) for the probe range and positioning accuracy"},
+  {"id": "M12", "quantity": "temperatures", "instrument": "thermocouples on anode/channel body, magnet circuit, source, generator, cathode mount", "practice": "thermal settling detection (T-SETTLE) and thermal_control ledger input", "requirement": "TBD - requires S1 thermal time constants"},
+  {"id": "M13", "quantity": "species / background composition (optional)", "instrument": "optical emission spectroscopy in the source/interstage; residual gas analyser for the chamber background", "practice": "qualitative dissociation/excitation indicators; background contamination check with O2 flow", "requirement": "optional"},
+  {"id": "M14", "quantity": "electrical environment", "instrument": "cathode-to-ground and anode-to-ground potentials", "practice": "recorded for every reading; same facility grounding for every arm", "requirement": "reported"}
+ ],
+ "uncertainty": {
+  "metric": "ln R_arch (and ln R_iso)",
+  "model": "sigma_lnR() in minexp_numbers.py (first-order propagation)",
+  "variance_groups": [
+   {"id": "G1", "name": "thrust, random per reading (incl. zero and calibration drift)", "term": "2 u_T^2 / n", "averages_down": true, "cancels": "the thrust-stand scale factor cancels in the ratio when one in-situ calibration set brackets both conditions"},
+   {"id": "G2", "name": "bus power, random per reading", "term": "2 u_P^2 / n", "averages_down": true, "cancels": "meter scale of a consumer whose power is unchanged between conditions cancels to first order"},
+   {"id": "G3", "name": "source-power scale (meter scale; generator efficiency if its DC input is not measured)", "term": "(f_src * u_src)^2, f_src = P_src,bus / P_bus,X", "averages_down": false, "cancels": "does not cancel: the source channel exists in one condition only"},
+   {"id": "G4", "name": "common-consumer scale and unmeasured common ledger loads (compressor, housekeeping, eta_d)", "term": "sum_c (w_c * u_c)^2, w_c = |P_c,X/P_bus,X - P_c,0/P_bus,0|", "averages_down": false, "cancels": "partially: weighted by the change of the consumer's share"},
+   {"id": "G5", "name": "re-mount / between-session reproducibility of ln(T/P_bus), including thrust-stand re-calibration shifts between sessions", "term": "u_rm^2", "averages_down": false, "cancels": "no; estimated from the HW-0 start/end repeat (R02/R03 vs R09/R10); removed by OPTION-DIVERTER"}
+  ],
+  "requirement_logic": "Classes against the band (-delta, +delta) with simultaneous half-width h = z*sigma are mutually exclusive, and UNRESOLVED is impossible iff h < delta/2 (if a point is not EQUIVALENT then |x| + h >= delta, so |x| >= delta - h > h and the interval excludes 0). Hence sigma(ln R) < delta/(2 z). The budget is split into T-VAR-GROUPS equal variance shares. Non-averaging groups (G3-G5) set a floor delta_floor = 2 z s_nonavg that no number of repeats can beat.",
+  "screen_uncertainty": "S3 screen: u(ln C_del)^2 = u(P_src,bus)^2 + u(I_del)^2; u(ln C_star_ub)^2 = u_abs(P_bus,0)^2 + u_abs(T_0)^2 (absolute calibrations; scale terms do not cancel here). Stop candidate only if ln C_del - ln C_star_ub > z_screen * sqrt(sum) at every qualifying point.",
+  "achievability": "TBD - requires S1 measured repeatability (u_T, u_P, u_rm) and calibration certificates. No instrument accuracy is claimed in this draft. If the derived n exceeds T-N-MAX or delta_floor exceeds T-DELTA, the owner decides before any score-bearing run (D0).",
+  "p5_lesson": "The P5-N2 ingestion correction to I_d was 2.2-3.7 % (docs/EVIDENCE.md register, reconstructed from Brabston Eq. 13/14, REF-BRABSTON2025) and facility-ingestion interpretation became a calibration-nuisance dimension (hallthruster_bridge/ensemble/transport_ensemble_v0.json). That is the same order as delta, so the decisive metric uses raw paired data at measured p_b with no ingestion correction; p_b sensitivity is measured directly in S5."
+ },
+ "planning_grids": {
+  "note": "Hypothetical scenarios used only to tabulate derived requirements; they are not claims about any hardware or facility.",
+  "f_src": {"values": [0.1, 0.2, 0.3, 0.4], "unit": "-", "evidence_class": "assumed", "source": "lane 25 planning grid (hypothetical source share of bus power)"},
+  "u_reading": {"values": [0.005, 0.01, 0.02], "unit": "relative", "evidence_class": "assumed", "source": "lane 25 planning grid (hypothetical per-reading repeatability)"},
+  "s_nonaveraging": {"values": [0.005, 0.01, 0.02], "unit": "ln-ratio", "evidence_class": "assumed", "source": "lane 25 planning grid (hypothetical combined non-averaging uncertainty)"},
+  "delta_alternatives": {"values": [0.05, 0.1], "unit": "ln-ratio", "evidence_class": "assumed", "source": "lane 25 planning grid (T-DELTA and one owner alternative)"},
+  "background_pressure_torr": {"values": [1.0e-05, 1.3e-05, 5.0e-05], "unit": "Torr", "evidence_class": "assumed", "source": "REF-DANKANICH2017 Sec. V: 5e-5 and 1.3e-5 Torr = early SPT-100 guidance for performance and near-field plume measurements; 1e-5 Torr = level below which the SPT-100 transportability study found the thrust-slope change identifiable. Xenon/SPT-100 specific; the authors note that the basis of that guidance does not address applicability beyond the SPT-100 and that the data are insufficient for absolute requirements for general thruster designs. Used here only as planning scenarios."},
+  "gauge_wall_temperature_K": {"values": [300.0], "unit": "K", "evidence_class": "assumed", "source": "planning value (room-temperature chamber wall); S_eff scales linearly with it"},
+  "species": {"values": ["N2+", "O2+", "N+", "O+", "Xe+"], "source": "abep_sim/constants.py M_SPECIES (N+ = N2/2)"}
+ },
+ "thresholds": [
+  {"id": "T-DELTA", "name": "equivalence / decision margin on ln R", "value": 0.05, "unit": "ln-ratio", "status": "PROPOSED", "evidence_class": "assumed", "source": "lane 25 proposal for owner decision (not in the RFP)", "rationale": "about 5 % in thrust per bus watt; smaller margins raise the required repeats as 1/delta^2 (derived_numbers.n_required)", "used_by": ["D3", "S5", "requirement_logic"]},
+  {"id": "T-ALPHA-FW", "name": "family-wise error rate for simultaneous intervals (Bonferroni)", "value": 0.05, "unit": "-", "status": "PROPOSED", "evidence_class": "assumed", "source": "lane 25 proposal for owner decision", "rationale": "all per-point classes of one family hold simultaneously with >= 95 % confidence", "used_by": ["D3", "requirement_logic"]},
+  {"id": "T-ALPHA-SCREEN", "name": "one-sided error rate for the S3 screen", "value": 0.05, "unit": "-", "status": "PROPOSED", "evidence_class": "assumed", "source": "lane 25 proposal for owner decision", "rationale": "the screen only reduces the S4 grid; the stop itself needs D3", "used_by": ["D2"]},
+  {"id": "T-N-MIN", "name": "minimum blocks per condition", "value": 4, "unit": "blocks", "status": "PROPOSED", "evidence_class": "assumed", "source": "lane 25 proposal for owner decision", "rationale": "even number: alternating source-level order cancels linear drift over block pairs", "used_by": ["D0", "randomization"]},
+  {"id": "T-N-MAX", "name": "maximum blocks per condition", "value": 8, "unit": "blocks", "status": "PROPOSED", "evidence_class": "assumed", "source": "lane 25 proposal for owner decision", "rationale": "caps campaign length; beyond it the owner changes delta or instruments (D0)", "used_by": ["D0"]},
+  {"id": "T-VAR-GROUPS", "name": "number of equal variance shares in the uncertainty budget", "value": 5, "unit": "-", "status": "PROPOSED", "evidence_class": "assumed", "source": "lane 25 proposal for owner decision", "rationale": "transparent default allocation over G1-G5; the owner may re-allocate after S1", "used_by": ["requirement_logic"]},
+  {"id": "T-PB-ELEV-FACTOR", "name": "elevated background pressure for the S5 facility check", "value": 2, "unit": "x base p_b", "status": "PROPOSED", "evidence_class": "assumed", "source": "lane 25 proposal; method from REF-DANKANICH2017 Sec. IV.B (supplemental primary gas >= 2 m downstream, a pumping surface between injection and gauge)", "rationale": "measures the sign and size of the p_b sensitivity without an ingestion model", "used_by": ["S5"]},
+  {"id": "T-PB-MAX", "name": "maximum base background pressure for a scoreable Hall-on reading", "value": "TBD - requires S1 facility characterization and an owner decision; REF-DANKANICH2017 Sec. V guidance values are SPT-100/xenon specific and not transferable", "status": "PROPOSED", "used_by": ["D0", "facility_split"]},
+  {"id": "T-KNEE-LEVELS", "name": "mass-flow levels in the S2 knee scan", "value": 5, "unit": "levels", "status": "PROPOSED", "evidence_class": "assumed", "source": "lane 25 proposal for owner decision", "rationale": "locates the knee to one quarter of the mdot_min-mdot_nom interval", "used_by": ["S2", "D1"]},
+  {"id": "T-OP2-FALLBACK", "name": "definition of mdot_knee", "rule": "mdot_knee = the lowest scan level at which hall_only is SUSTAINED in both scan directions; if every level is sustained, mdot_knee = arithmetic midpoint of mdot_min and mdot_nom; if no level is sustained, mdot_knee = mdot_nom and every point is an enablement test", "status": "PROPOSED", "used_by": ["D1"]},
+  {"id": "T-PLO-FRACTION", "name": "low source power level", "value": 0.5, "unit": "x P_hi", "status": "PROPOSED", "evidence_class": "assumed", "source": "lane 25 proposal for owner decision", "rationale": "P_lo = max(lowest stably sustained source power at that flow from S3, 0.5 * P_hi): two levels give the marginal yield and straddle the unknown dependence of C_del on power", "used_by": ["S3", "S4"]},
+  {"id": "T-SUSTAIN", "name": "sustainment rule", "rule": "SUSTAINED = the discharge runs for the whole dwell without extinction or automatic restart; oscillation amplitude is reported, not gating", "dwell": "TBD - requires S1 thermal settling time", "status": "PROPOSED", "used_by": ["S2", "S4", "D1", "D3"]},
+  {"id": "T-SETTLE", "name": "thermal settling before a reading", "value": "TBD - requires S1 thermal time constants (M12) and thrust-stand drift data", "status": "PROPOSED", "used_by": ["randomization"]},
+  {"id": "T-SCREEN-RULE", "name": "S3 stop-candidate screen (D2)", "rule": "An arm is a STOP_CANDIDATE if hall_only is SUSTAINED at every grid operating point AND at every one of them ln C_del - ln C_star_ub > z_screen_one_sided * u_combined. A stop candidate runs only the confirmation subset in S4. The screen never stops an arm.", "status": "PROPOSED", "used_by": ["D2"]},
+  {"id": "T-STOP-RULE", "name": "arm stop (D3)", "rule": "STOP the arm if (a) at every tested operating point where hall_only is SUSTAINED the R_arch class is SOURCE_WORSE (equivalently C_del > C_star with simultaneous confidence), (b) no R_iso class is SOURCE_BETTER, (c) the arm ENABLES at no point, and (d) when stopping from the confirmation subset, the screen assumptions are not contradicted there (y - z_screen_one_sided*u(y) <= y_max and kappa + z_screen_one_sided*u(kappa) >= 0 at every subset point). EQUIVALENT never stops an arm; it is reported to the owner.", "status": "PROPOSED", "used_by": ["D3"]},
+  {"id": "T-FACILITY-ROBUST", "name": "facility robustness qualifier (S5)", "rule": "FACILITY_ROBUST if the R_arch class at base p_b equals the class at T-PB-ELEV-FACTOR x base p_b; otherwise FACILITY_CONDITIONAL. No ingestion correction is applied to rescue a class.", "status": "PROPOSED", "used_by": ["S5"]},
+  {"id": "T-READINESS", "name": "readiness gate (D0)", "rule": "Before any score-bearing run: calibrations done (M1, M2, M9, M10), B(z) mapped for every configuration (M11), derived n <= T-N-MAX at T-DELTA from S1 repeatability, delta_floor(measured non-averaging terms) < T-DELTA, base p_b <= T-PB-MAX at every grid flow. Otherwise the owner decides (raise delta, improve instruments, adopt OPTION-DIVERTER, or move facility).", "status": "PROPOSED", "used_by": ["D0"]}
+ ],
+ "randomization": {
+  "configuration_order": "HW-0 first and last; the order of HW-RF and HW-ECR between them is drawn by a seeded coin (seed fixed and published in the pre-registration).",
+  "block": "One block = one visit of every condition of the current configuration. Operating-point order within a block is a seeded random permutation, re-drawn per block.",
+  "within_point_order": "At each operating point of a source configuration: off, lo, hi, off in odd blocks and off, hi, lo, off in even blocks; the two 'off' readings bracket drift and linear drift cancels over block pairs. Thrust zero taken at the end of each point visit (REF-POLK2017).",
+  "seed": "TBD - requires the pre-registration (publicly drawn, recorded in the lock file)",
+  "blinding": "Analysis runs only through the frozen, hash-locked script after the raw dataset is frozen and hashed (score once), mirroring the P5-N2 practice (hallthruster_bridge/prereg/p5_n2_prereg_lock_v1.json)."
+ },
+ "repeatability": {
+  "blocks": "n between T-N-MIN and T-N-MAX, fixed at D0 from S1 repeatability by derived_numbers.n_required logic; never changed after the first score-bearing reading",
+  "day_effect": "blocks on different days where possible; day recorded as a covariate",
+  "remount": "HW-0 at OP2 and OP3 repeated after re-mounting at the end (R09, R10) gives u_rm (G5)",
+  "hysteresis": "S2 knee scan descending and ascending"
+ },
+ "facility_controls": {
+  "background_pressure": "M9 per REF-DANKANICH2017; every reading carries p_b; base p_b must satisfy T-PB-MAX",
+  "facility_effect_check": "S5 at OP2 and OP3 for hall_only and every non-stopped source arm at P_hi (R07, R08, R22-R25, R37-R40), elevated p_b by supplemental N2 injection per REF-DANKANICH2017 Sec. IV.B",
+  "no_correction_in_decisive_metric": "Raw paired data are decisive; any ingestion-corrected value is secondary, versioned and reported beside the raw value (P5-N2 lesson).",
+  "electrical": "same grounding and cable routing for every arm; M14 recorded",
+  "gas_safety": "facility compatibility with O2 flow (pump type, safety case): TBD - requires facility data",
+  "publish": "B(z) maps and coil currents, channel geometry, I_d traces, per-point divergence, p_b location and gauge calibration are published with the dataset (the items whose absence made P5 non-identifiable)"
+ },
+ "facility_split": {
+  "method": "Required effective pumping speed S_eff = Q / p_b,max with Q = (mdot_total/m) k_B T at the gauge-wall temperature (derived_numbers.S_eff_required_per_mgps gives S_eff per mg/s of N2 or O2). Whether a facility qualifies for a stage follows from its published S_eff and the grid's largest total flow (anode + cathode): TBD - requires the IF-A5 feed envelope and T-PB-MAX.",
+  "stages": {
+   "S1_instrument_qualification": "power-chain, flow-controller and gauge calibrations; B(z) mapping (magnetostatic, possible at atmosphere at room temperature; hot-state effects TBD): no large chamber needed",
+   "S3_source_bench": "Hall discharge off; needs vacuum at the grid flows with p_b low enough that CEX loss over the collector path is bounded (attenuation form exp(-n0 sigma z) as in REF-ROVEY2025 Eq. 37; sigma for N2+ on N2 TBD - requires a cited cross section). A smaller facility may suffice if its S_eff meets this bound: TBD",
+   "S2_S4_S5_hall_on": "thrust at grid flows with p_b <= T-PB-MAX and the ability to raise p_b by supplemental injection; S_eff from derived_numbers.S_eff_required_per_mgps; likely a larger chamber at nominal flow, TBD - requires the feed envelope"
+  },
+  "iist": "Published information (REF-IIST-WEB, accessed 2026-09-26): IIST collaborates in the LPSC-led 'High Thrust Electric Propulsion' inter-centre project on the design, development, testing and implementation of diagnostic tools for characterising the Stationary Plasma Thruster being developed by LPSC; it developed a back-diffusion plasma source and an ion beam source in-house, and states that its plasma facility can be tuned to lower-ionospheric conditions ('India's only ionospheric plasma simulator'). No chamber dimensions, base pressure or pumping speed were found in published sources. Suitability for any stage is TBD - requires the facility's specification (obtaining it and any discussion are the owner's decision; this lane made no contact).",
+  "commitments": "None. Nothing here commits any institution, facility or person."
+ },
+ "decision_tree": {
+  "stages": [
+   {"id": "S0", "name": "pre-registration", "score_bearing": false, "output": "owner-approved thresholds (replacing PROPOSED), frozen analysis script and seed, hash lock"},
+   {"id": "S1", "name": "instrument and facility qualification", "score_bearing": false, "output": "calibrations, B(z) maps (HW-0, HW-RF, HW-ECR), repeatability u_T, u_P, cold-flow p_b vs flow, thermal time constants"},
+   {"id": "S2", "name": "hall_only on HW-0", "score_bearing": true, "output": "knee scan, SUSTAINED map, T_0, P_bus,0, I_d traces at R01-R06"},
+   {"id": "S3", "name": "source bench, Hall discharge off", "score_bearing": true, "output": "P_src,bus, I_src, I_del, eta_ts, C_del, ion energy/species per arm (bench_conditions)"},
+   {"id": "S4", "name": "paired Hall-on, source arms", "score_bearing": true, "output": "R_arch, R_within, R_install, R_iso, y, kappa, C_star, ENABLES flags"},
+   {"id": "S5", "name": "facility effect check", "score_bearing": true, "output": "FACILITY_ROBUST / FACILITY_CONDITIONAL per compared point"},
+   {"id": "S6", "name": "re-mount repeat, freeze, score once, report", "score_bearing": true, "output": "u_rm, frozen raw dataset hash, per-arm per-point classes with conditions, milestone-A condition statements for the owner"}
+  ],
+  "decisions": [
+   {"id": "D0", "after": "S1", "rule": "T-READINESS", "outcomes": {"pass": "S2", "fail": "OWNER (no score-bearing run)"}},
+   {"id": "D1", "after": "S2", "rule": "T-OP2-FALLBACK and T-SUSTAIN", "outcomes": {"always": "fix mdot_knee; flag points where hall_only is not SUSTAINED as enablement tests; go to S3"}},
+   {"id": "G-SRC", "after": "S3", "rule": "hard gate (measured): a source that cannot sustain its plasma at a grid flow within P_hi, with the Hall discharge off (S3) and in one Hall-on attempt at P_hi (S4), is INFEASIBLE_AT_POINT there; an arm infeasible at every grid flow is STOPPED (hard gate, measured)", "status": "PROPOSED", "outcomes": {"some_points_feasible": "D2 on the feasible points", "none_feasible": "arm STOPPED"}},
+   {"id": "D2", "after": "S3", "rule": "T-SCREEN-RULE", "outcomes": {"stop_candidate": "S4 confirmation subset only (rows with confirmation_subset = true)", "otherwise": "S4 full"}},
+   {"id": "D3", "after": "S4", "rule": "T-STOP-RULE", "outcomes": {"stop": "arm STOPPED; remaining rows of the arm not run", "continue_from_subset": "run the rest of S4 for the arm", "continue": "S5"}},
+   {"id": "D4", "after": "S5", "rule": "T-FACILITY-ROBUST", "outcomes": {"always": "qualify each class as FACILITY_ROBUST or FACILITY_CONDITIONAL; go to S6"}},
+   {"id": "D5", "after": "S2+S4", "rule": "EXPERIMENT_MOOT if hall_only is not SUSTAINED at any grid point and no source arm ENABLES at any grid point", "status": "PROPOSED", "outcomes": {"moot": "report to owner: no arm operates at the feed envelope on this hardware", "otherwise": "continue"}}
+  ],
+  "classes": {
+   "per_point": ["SOURCE_BETTER", "EQUIVALENT", "SOURCE_WORSE", "UNRESOLVED", "ENABLES", "INFEASIBLE_AT_POINT", "NOT_SCOREABLE_FACILITY"],
+   "qualifiers": ["FACILITY_ROBUST", "FACILITY_CONDITIONAL"],
+   "per_arm": ["CONTINUE", "STOP_CANDIDATE", "STOPPED", "COMPLETE"],
+   "notes": "ENABLES: hall_only not SUSTAINED and the source arm SUSTAINED at that point (R undefined; T and P_bus reported). NOT_SCOREABLE_FACILITY: base p_b above T-PB-MAX (not evidence against any arm). No class names a winner."
+  }
+ },
+ "preregistration": {
+  "when": "After S1 hardware and facility are known and before the first score-bearing reading (S2 onward).",
+  "contents": ["owner decision on every PROPOSED threshold (value or rule), recorded with date", "feed-envelope values mdot_min, mdot_nom, composition, V_nom, V_hi, P_hi from IF-A5 and bus_power_boundary_v1", "ledger efficiencies and unmeasured common loads with evidence class", "instrument list with calibration certificates and the S1 repeatability numbers used for n", "randomisation seed and configuration-order draw", "frozen analysis script (sha256) implementing the classes of this draft", "stop rules, gates and the list of score-bearing rows", "statement of which results, if any, the physics track pre-registers as Hall-closure evidence (their decision, separate pre-registration)"],
+  "lock": "sha256 of the approved successor of this JSON, the analysis script and the seed, in a lock file; score-bearing data taken before the lock are excluded",
+  "location": "TBD - requires owner decision (outside hallthruster_bridge/prereg/, which this lane may not modify)"
+ },
+ "hardware_minimum": [
+  {"item": "Hall accelerator H-1 (one unit, Vyovrinda design if evidence level 1 is wanted)", "note": "a non-Vyovrinda unit gives level 2/3 evidence and transfers only through an admitted closure"},
+  {"item": "Cathode C-1 (one unit) with its keeper and heater supplies", "note": "type TBD - requires the cathode lane"},
+  {"item": "Feed system: MFCs for N2, O2 (air surrogate) and Xe (cathode), common manifold", "note": "identical for all arms"},
+  {"item": "Flow-equivalent feed spacer (HW-0)", "note": "or OPTION-DIVERTER"},
+  {"item": "RF source module + interstage + DC-input RF generator + matching network", "note": "flight-representative generator preferred: its DC input is the bus power"},
+  {"item": "ECR source module + interstage + DC-input microwave generator + waveguide/antenna + ECR magnet", "note": "as above"},
+  {"item": "Power supplies: discharge, magnet, keeper, heater", "note": "lab supplies; bus conversion via ledger efficiencies"},
+  {"item": "DC power analyzer channels for every present bus component, current probe for I_d(t), time-synchronised DAQ", "note": "M2, M4"},
+  {"item": "Thrust stand with in-situ calibration system", "note": "M1"},
+  {"item": "Faraday collector/probe array (source exit), downstream Faraday probe sweep, RPA, E x B probe", "note": "M5-M8; E x B optional for the minimum"},
+  {"item": "Ion gauge(s) calibrated on N2, capacitance manometer, wall thermocouple, supplemental gas injector", "note": "M9, S5"},
+  {"item": "Hall-probe gaussmeter with positioning stage", "note": "M11"},
+  {"item": "Vacuum facility meeting T-PB-MAX at the grid flows", "note": "see facility_split"}
+ ],
+ "related_lanes": [
+  {"path": "docs/architecture_comparison/experiment_protocol/", "relation": "full common-condition protocol lane; this draft is the minimum decisive subset and sequencing. Where they differ, the owner decides. Not present in this worktree when written; referenced by path only."},
+  {"path": "docs/experiments/", "relation": "IIST experiment package lane; facility-specific packaging of any stage. Referenced by path only."},
+  {"path": "abep_sim/arch_boundary.py", "relation": "bus_power_boundary_v1 contract (components and ledger(arch, loads, efficiencies)); the component names above follow it. Referenced by path; not imported."},
+  {"path": "abep_sim/arch_compare.py", "relation": "comparison harness; measured results of this experiment are candidate inputs once pre-registered. Referenced by path only."},
+  {"path": "abep_sim/thermal_life.py", "relation": "thermal/life framework (milestone C). Referenced by path only."},
+  {"path": "docs/evidence/rf_source/", "relation": "RF source evidence matrix; decides whether this experiment is needed for the RF arm."},
+  {"path": "docs/evidence/ecr_source/", "relation": "ECR source evidence matrix; same role for the ECR arm."},
+  {"path": "docs/evidence/hall_sustainment/", "relation": "Hall-only sustainment evidence; sets expectations for the knee scan."},
+  {"path": "docs/evidence/cathode/", "relation": "cathode choice for C-1."},
+  {"path": "docs/evidence/wall_life/", "relation": "life constraints (milestone C)."},
+  {"path": "schemas/interfaces/upstream_icd_v1.json", "relation": "feed-state fields IF-A5 / IF-X2 that fix mdot, composition, p_feed."},
+  {"path": "schemas/ledgers/", "relation": "ledger schemas for the bus-power sum."},
+  {"path": "docs/hallmap/", "relation": "Hall-map production spec; B(z) and geometry measured here are its inputs for Vyovrinda hardware (milestone B)."}
+ ],
+ "open_owner_decisions": [
+  "Approve, change or reject every PROPOSED threshold and rule (T-*, G-SRC, D5).",
+  "Supply mdot_min, mdot_nom, composition (IF-A5), V_nom, V_hi and P_hi (bus allocation), and the ledger efficiencies and unmeasured common loads with evidence classes.",
+  "HW-0 spacer vs OPTION-DIVERTER (removes the re-mount term).",
+  "Whether the tested Hall is the Vyovrinda design (evidence level 1) or a surrogate.",
+  "Facility choice per stage; whether to seek any facility's specification (owner's channel; no contact by this lane).",
+  "Whether to add Xe as anode propellant or a second V_d for the source arms (outside the minimum).",
+  "Where the pre-registration and lock files live."
+ ],
+ "references": [
+  {"id": "REF-POLK2017", "citation": "J. E. Polk, A. Pancotti, T. Haag, S. King, M. Walker, J. Blakely, J. Ziemer, 'Recommended Practice for Thrust Measurement in Electric Propulsion Testing', J. Propulsion and Power 33(3):539-555, 2017", "doi": "10.2514/1.B35564", "accessed": "2026-09-26", "access": "full text via https://pmc.ncbi.nlm.nih.gov/articles/PMC7839308/ (cited statements checked against the PMC full text; wording paraphrased)", "used_for": "M1 calibration, zero and uncertainty practice"},
+  {"id": "REF-DANKANICH2017", "citation": "J. W. Dankanich, M. Walker, M. W. Swiatek, J. T. Yim, 'Recommended Practice for Pressure Measurement and Calculation of Effective Pumping Speed in Electric Propulsion Testing', J. Propulsion and Power 33(3), 2017", "doi": "10.2514/1.B35478", "accessed": "2026-09-26", "access": "full text PDF from hpepl.ae.gatech.edu (author lab page), text extracted", "used_for": "M9 gauge practice (Secs. II.A.2, IV.A), S5 method (Sec. IV.B), planning pressures and their non-transferability caveat (Sec. V)"},
+  {"id": "REF-BROWN2017", "citation": "D. L. Brown, M. L. R. Walker, J. Szabo, W. Huang, J. E. Foster, 'Recommended Practice for Use of Faraday Probes in Electric Propulsion Testing', J. Propulsion and Power 33(3):582-613, 2017", "doi": "10.2514/1.B35696", "accessed": "2026-09-26", "access": "full text PDF from hpepl.ae.gatech.edu, text extracted (Table A1)", "used_for": "M5, M8"},
+  {"id": "REF-SNYDER2017", "citation": "J. S. Snyder et al., 'Recommended Practice for Flow Control and Measurement in Electric Propulsion Testing', J. Propulsion and Power 33(3), 2017", "doi": "10.2514/1.B35644", "accessed": "2026-09-26", "access": "title and DOI from search results only; content not read - verify", "used_for": "M10 (practice reference only)"},
+  {"id": "REF-ROVEY2025", "citation": "J. L. Rovey, T. Yamauchi, W. Huang, R. E. Thomas, W. J. Hurley, S. C. Farnell, S. J. Thompson, C. C. Farnell, C. C. Farnell, W. P. Brabston, 'Recommended Practice for Use of ExB Probes in Electric Propulsion Testing', IEPC-2025-483, 39th International Electric Propulsion Conference, London, 14-19 September 2025", "url": "https://januselectricpropulsion.ae.gatech.edu/sites/default/files/2025-10/IEPC-2025-483_Rovey.pdf", "accessed": "2026-09-26", "access": "full text PDF, text extracted (Sec. V.A and Fig. 8 air species example; Sec. VI.C Eq. 37; Sec. VI.D)", "used_for": "M7, facility_split S3 attenuation form"},
+  {"id": "REF-SHABSHELOWITZ2014", "citation": "A. Shabshelowitz, A. D. Gallimore, P. Y. Peterson, 'Performance of a Helicon Hall Thruster Operating with Xenon, Argon, and Nitrogen', J. Propulsion and Power 30(3):664-671, 2014", "doi": "10.2514/1.B35041", "accessed": "2026-09-26", "access": "metadata via Crossref API, abstract via OpenAlex API; full text not accessed (AIAA and Deep Blue returned HTTP 403 to the fetch tool; not bypassed). How RF power was counted (DC input or RF forward) is not known - verify", "used_for": "precedent of a paired single-/two-stage measurement including nitrogen; qualitative prior"},
+  {"id": "REF-MARTINORTEGA2020", "citation": "A. Martin Ortega, A. Guglielmi, F. Gaboriau, C. Boniface, J. P. Boeuf, 'Experimental characterization of ID-Hall, a double stage Hall thruster with an inductive ionization stage', Physics of Plasmas 27(2):023518, 2020", "doi": "10.1063/1.5140241", "accessed": "2026-09-26", "access": "metadata via Crossref API, abstract via OpenAlex API; open copy listed at https://hal.science/hal-03033131 not read", "used_for": "precedent measurement set (I-V, Faraday cup extracted current, RPA in single/double stage); why a Hall-off bound cannot stop an arm (kappa may be negative)"},
+  {"id": "REF-DUBOIS2018", "citation": "L. Dubois et al., 'ID-HALL, a new double stage Hall thruster design. I. Principle and hybrid model of ID-HALL' and 'II. Experimental characterization of the inductive ionization source', Physics of Plasmas 25(9):093503 and 093504, 2018", "doi": "10.1063/1.5043354; 10.1063/1.5043355", "accessed": "2026-09-26", "access": "metadata via Crossref API only", "used_for": "context only"},
+  {"id": "REF-IIST-WEB", "citation": "Indian Institute of Space Science and Technology, 'Space Research' web page", "url": "https://iist.ac.in/space-research", "accessed": "2026-09-26", "access": "page text via fetch tool", "used_for": "facility_split.iist"},
+  {"id": "REF-BRABSTON2025", "citation": "W. P. Brabston, Marino, Lev, M. L. R. Walker, J. Propulsion and Power 2025 (P5 Hall thruster on xenon and nitrogen)", "doi": "10.2514/1.B39623", "accessed": "not re-accessed; via this repository's audit records", "access": "docs/EVIDENCE.md register and hallthruster_bridge/identification/ audit files", "used_for": "P5-N2 facility lesson (Eq. 13/14/16 corrections, empirical zeta_en, I_d correction 2.2-3.7 %)"},
+  {"id": "REF-REPO", "citation": "CLAUDE.md (rules, gates, superseded results); docs/EVIDENCE.md; docs/HISTORY.md (v1.3 note on decisive measurements; absolute numbers withdrawn); hallthruster_bridge/ensemble/transport_ensemble_v0.json (calibration_nuisance); hallthruster_bridge/prereg/p5_n2_run_status_rule_v1.json and p5_n2_prereg_lock_v1.json (practice mirrored)", "accessed": "2026-09-26", "access": "repository at c53b75a", "used_for": "rules and lessons"}
+ ],
+ "derived_numbers": {
+  "generated_by": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py",
+  "inputs": {
+   "thresholds": [
+    "T-DELTA",
+    "T-ALPHA-FW",
+    "T-ALPHA-SCREEN",
+    "T-N-MIN",
+    "T-N-MAX",
+    "T-VAR-GROUPS"
+   ],
+   "run_matrix_families": [
+    "primary",
+    "iso_power"
+   ],
+   "planning_grids": [
+    "f_src",
+    "u_reading",
+    "s_nonaveraging",
+    "delta_alternatives",
+    "background_pressure_torr",
+    "gauge_wall_temperature_K",
+    "species"
+   ],
+   "constants": "abep_sim/constants.py (E_CHARGE, AMU, K_B, M_SPECIES)"
+  },
+  "m_family_primary": {
+   "value": 14,
+   "unit": "-",
+   "evidence_class": "model-derived",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: family_sizes(run_matrix) rows with family == 'primary'"
+  },
+  "m_family_iso": {
+   "value": 8,
+   "unit": "-",
+   "evidence_class": "model-derived",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: family_sizes(run_matrix) rows with family == 'iso_power'"
+  },
+  "z_fw_primary": {
+   "value": 2.9137263,
+   "unit": "-",
+   "evidence_class": "model-derived",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: z_two_sided_bonferroni(T-ALPHA-FW, m_family_primary)"
+  },
+  "z_fw_iso": {
+   "value": 2.7343688,
+   "unit": "-",
+   "evidence_class": "model-derived",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: z_two_sided_bonferroni(T-ALPHA-FW, m_family_iso)"
+  },
+  "z_screen_one_sided": {
+   "value": 1.6448536,
+   "unit": "-",
+   "evidence_class": "model-derived",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: z_one_sided(T-ALPHA-SCREEN)"
+  },
+  "sigma_lnR_max": {
+   "value": 0.0085800783,
+   "unit": "ln-ratio",
+   "evidence_class": "model-derived",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: sigma_lnR_max(T-DELTA, z_fw_primary) = delta/(2 z)"
+  },
+  "sigma_lnR_max_iso": {
+   "value": 0.0091428779,
+   "unit": "ln-ratio",
+   "evidence_class": "model-derived",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: sigma_lnR_max(T-DELTA, z_fw_iso)"
+  },
+  "sigma_group_max": {
+   "value": 0.0038371277,
+   "unit": "ln-ratio",
+   "evidence_class": "model-derived",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: sigma_lnR_max / sqrt(T-VAR-GROUPS) (equal variance shares)"
+  },
+  "u_remount_max": {
+   "value": 0.0038371277,
+   "unit": "ln-ratio",
+   "evidence_class": "model-derived",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: one equal share: re-mount reproducibility of ln(T/P_bus) (does not average down)"
+  },
+  "h_max_decisive_over_delta": {
+   "value": 0.5,
+   "unit": "-",
+   "evidence_class": "model-derived",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: exhaustive_when_h_below_half_delta (proof in the draft, numerical check below)"
+  },
+  "classification_check": {
+   "unresolved_count_h_below_half_delta": {
+    "value": 0,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: exhaustive_when_h_below_half_delta(T-DELTA)"
+   },
+   "unresolved_count_h_above_half_delta": {
+    "value": 668,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: exhaustive_when_h_below_half_delta(T-DELTA)"
+   }
+  },
+  "u_reading_max_by_n": {
+   "4": {
+    "value": 0.005426518,
+    "unit": "relative (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: sigma_group_max * sqrt(n/2), n = 4 blocks; applies to u_T and to u_P separately"
+   },
+   "6": {
+    "value": 0.0066461001,
+    "unit": "relative (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: sigma_group_max * sqrt(n/2), n = 6 blocks; applies to u_T and to u_P separately"
+   },
+   "8": {
+    "value": 0.0076742553,
+    "unit": "relative (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: sigma_group_max * sqrt(n/2), n = 8 blocks; applies to u_T and to u_P separately"
+   }
+  },
+  "u_source_scale_max_by_f_src": {
+   "0.1": {
+    "value": 0.038371277,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: sigma_group_max / f_src, f_src = 0.1 (planning grid, hypothetical)"
+   },
+   "0.2": {
+    "value": 0.019185638,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: sigma_group_max / f_src, f_src = 0.2 (planning grid, hypothetical)"
+   },
+   "0.3": {
+    "value": 0.012790426,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: sigma_group_max / f_src, f_src = 0.3 (planning grid, hypothetical)"
+   },
+   "0.4": {
+    "value": 0.0095928192,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: sigma_group_max / f_src, f_src = 0.4 (planning grid, hypothetical)"
+   }
+  },
+  "delta_floor_by_s_nonaveraging": {
+   "0.005": {
+    "value": 0.029137263,
+    "unit": "ln-ratio",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: delta_floor(z_fw_primary, s = 0.005) = 2 z s (planning grid, hypothetical)"
+   },
+   "0.01": {
+    "value": 0.058274526,
+    "unit": "ln-ratio",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: delta_floor(z_fw_primary, s = 0.01) = 2 z s (planning grid, hypothetical)"
+   },
+   "0.02": {
+    "value": 0.11654905,
+    "unit": "ln-ratio",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: delta_floor(z_fw_primary, s = 0.02) = 2 z s (planning grid, hypothetical)"
+   }
+  },
+  "n_required": {
+   "delta=0.05": {
+    "u=0.005": {
+     "value": 4,
+     "unit": "blocks",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: max(T-N-MIN, even_ceiling(n_required(u=0.005, sigma_lnR_max(delta=0.05), 3 shares non-averaging)))",
+     "raw_n": 3.3959204,
+     "within_T_N_MAX": true
+    },
+    "u=0.01": {
+     "value": 14,
+     "unit": "blocks",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: max(T-N-MIN, even_ceiling(n_required(u=0.01, sigma_lnR_max(delta=0.05), 3 shares non-averaging)))",
+     "raw_n": 13.583682,
+     "within_T_N_MAX": false
+    },
+    "u=0.02": {
+     "value": 56,
+     "unit": "blocks",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: max(T-N-MIN, even_ceiling(n_required(u=0.02, sigma_lnR_max(delta=0.05), 3 shares non-averaging)))",
+     "raw_n": 54.334727,
+     "within_T_N_MAX": false
+    }
+   },
+   "delta=0.1": {
+    "u=0.005": {
+     "value": 4,
+     "unit": "blocks",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: max(T-N-MIN, even_ceiling(n_required(u=0.005, sigma_lnR_max(delta=0.1), 3 shares non-averaging)))",
+     "raw_n": 0.84898011,
+     "within_T_N_MAX": true
+    },
+    "u=0.01": {
+     "value": 4,
+     "unit": "blocks",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: max(T-N-MIN, even_ceiling(n_required(u=0.01, sigma_lnR_max(delta=0.1), 3 shares non-averaging)))",
+     "raw_n": 3.3959204,
+     "within_T_N_MAX": true
+    },
+    "u=0.02": {
+     "value": 14,
+     "unit": "blocks",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: max(T-N-MIN, even_ceiling(n_required(u=0.02, sigma_lnR_max(delta=0.1), 3 shares non-averaging)))",
+     "raw_n": 13.583682,
+     "within_T_N_MAX": false
+    }
+   }
+  },
+  "y_max_per_sqrtV": {
+   "N2+": {
+    "value": 0.76183929,
+    "unit": "mN A^-1 V^-1/2",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: y_max(m_N2+, V_d = 1 V, Z = 1) * 1e3; multiply by sqrt(V_d/V) (ion mass ~ neutral mass from abep_sim/constants.py; electron mass neglected, < 1e-4 relative)"
+   },
+   "O2+": {
+    "value": 0.81444046,
+    "unit": "mN A^-1 V^-1/2",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: y_max(m_O2+, V_d = 1 V, Z = 1) * 1e3; multiply by sqrt(V_d/V) (ion mass ~ neutral mass from abep_sim/constants.py; electron mass neglected, < 1e-4 relative)"
+   },
+   "N+": {
+    "value": 0.53870173,
+    "unit": "mN A^-1 V^-1/2",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: y_max(m_N+, V_d = 1 V, Z = 1) * 1e3; multiply by sqrt(V_d/V) (ion mass ~ neutral mass from abep_sim/constants.py; electron mass neglected, < 1e-4 relative)"
+   },
+   "O+": {
+    "value": 0.57589637,
+    "unit": "mN A^-1 V^-1/2",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: y_max(m_O+, V_d = 1 V, Z = 1) * 1e3; multiply by sqrt(V_d/V) (ion mass ~ neutral mass from abep_sim/constants.py; electron mass neglected, < 1e-4 relative)"
+   },
+   "Xe+": {
+    "value": 1.6497446,
+    "unit": "mN A^-1 V^-1/2",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: y_max(m_Xe+, V_d = 1 V, Z = 1) * 1e3; multiply by sqrt(V_d/V) (ion mass ~ neutral mass from abep_sim/constants.py; electron mass neglected, < 1e-4 relative)"
+   }
+  },
+  "S_eff_required_per_mgps": {
+   "N2": {
+    "1.0e-05 Torr": {
+     "value": 66818.141,
+     "unit": "L s^-1 per (mg s^-1)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: pumping_speed_required(1 mg/s N2, T = 300.0 K, p_b = 1e-05 Torr) * 1e3; gas-specific gauge reading; cathode flow adds load"
+    },
+    "1.3e-05 Torr": {
+     "value": 51398.57,
+     "unit": "L s^-1 per (mg s^-1)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: pumping_speed_required(1 mg/s N2, T = 300.0 K, p_b = 1.3e-05 Torr) * 1e3; gas-specific gauge reading; cathode flow adds load"
+    },
+    "5.0e-05 Torr": {
+     "value": 13363.628,
+     "unit": "L s^-1 per (mg s^-1)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: pumping_speed_required(1 mg/s N2, T = 300.0 K, p_b = 5e-05 Torr) * 1e3; gas-specific gauge reading; cathode flow adds load"
+    }
+   },
+   "O2": {
+    "1.0e-05 Torr": {
+     "value": 58465.873,
+     "unit": "L s^-1 per (mg s^-1)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: pumping_speed_required(1 mg/s O2, T = 300.0 K, p_b = 1e-05 Torr) * 1e3; gas-specific gauge reading; cathode flow adds load"
+    },
+    "1.3e-05 Torr": {
+     "value": 44973.749,
+     "unit": "L s^-1 per (mg s^-1)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: pumping_speed_required(1 mg/s O2, T = 300.0 K, p_b = 1.3e-05 Torr) * 1e3; gas-specific gauge reading; cathode flow adds load"
+    },
+    "5.0e-05 Torr": {
+     "value": 11693.175,
+     "unit": "L s^-1 per (mg s^-1)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: pumping_speed_required(1 mg/s O2, T = 300.0 K, p_b = 5e-05 Torr) * 1e3; gas-specific gauge reading; cathode flow adds load"
+    }
+   }
+  },
+  "run_counts": {
+   "hall_on_conditions_total": {
+    "value": 40,
+    "unit": "conditions per block",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: run_counts(run_matrix, n = T-N-MIN, T-KNEE-LEVELS)"
+   },
+   "hall_on_conditions_by_configuration": {
+    "HW-0": {
+     "value": 10,
+     "unit": "conditions per block",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: run_counts(run_matrix, n = T-N-MIN, T-KNEE-LEVELS)"
+    },
+    "HW-ECR": {
+     "value": 15,
+     "unit": "conditions per block",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: run_counts(run_matrix, n = T-N-MIN, T-KNEE-LEVELS)"
+    },
+    "HW-RF": {
+     "value": 15,
+     "unit": "conditions per block",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: run_counts(run_matrix, n = T-N-MIN, T-KNEE-LEVELS)"
+    }
+   },
+   "confirmation_subset_by_arm": {
+    "ecr_hall": {
+     "value": 8,
+     "unit": "conditions per block",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: run_counts(run_matrix, n = T-N-MIN, T-KNEE-LEVELS)"
+    },
+    "rf_hall": {
+     "value": 8,
+     "unit": "conditions per block",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: run_counts(run_matrix, n = T-N-MIN, T-KNEE-LEVELS)"
+    }
+   },
+   "hall_on_readings_full_at_n_min": {
+    "value": 160,
+    "unit": "readings",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: run_counts(run_matrix, n = T-N-MIN, T-KNEE-LEVELS)"
+   },
+   "hall_on_readings_if_every_source_arm_stops_at_subset_at_n_min": {
+    "value": 104,
+    "unit": "readings",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: run_counts(run_matrix, n = T-N-MIN, T-KNEE-LEVELS)"
+   },
+   "bench_readings_at_n_min": {
+    "value": 64,
+    "unit": "readings",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: run_counts(run_matrix, n = T-N-MIN, T-KNEE-LEVELS)"
+   },
+   "knee_scan_readings": {
+    "value": 10,
+    "unit": "readings (descending + ascending, one pass each)",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/minexp_numbers.py: run_counts(run_matrix, n = T-N-MIN, T-KNEE-LEVELS)"
+   }
+  }
+ }
+}
