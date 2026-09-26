@@ -1,22 +1,24 @@
 {
- "recorded_utc": "2026-09-26T12:52:00Z",
+ "recorded_utc": "2026-09-26T13:00:00Z",
  "mechanism": {
   "tracker": "scripts/orchestration/lane_status.py (read-only; state derived from workflow journals, runner outputs, validation/ files, and the fired-trigger ledger; idempotent)",
   "daemon": {
-   "pid": 27068,
+   "pid": 29739,
    "launched": "setsid nohup (PPID 1, own session)",
-   "started_utc": "2026-09-26T12:50:51Z",
-   "script": "<scratchpad>/orchestration/orchestration_daemon.sh",
+   "started_utc": "2026-09-26T12:57:26Z",
+   "script": "<scratchpad>/orchestration/orchestration_daemon_v2.sh",
    "period_s": 60,
-   "event_log": "<scratchpad>/orchestration/events.log (append-only: DAEMON_START/EXIT, STATE transitions into terminal states, TRIGGER_READY once per trigger)",
-   "heartbeat": "<scratchpad>/orchestration/heartbeat"
+   "event_log": "<scratchpad>/orchestration/events.log (append-only: DAEMON_START/EXIT, STATE transitions into terminal states, TRIGGER_READY on each transition into the ready set, ALERT STALE_CLAIM / LAUNCH_UNCONFIRMED)",
+   "heartbeat": "<scratchpad>/orchestration/heartbeat",
+   "previous": "v1 daemon PID 27068 (12:50:51Z-12:57:29Z), replaced (not edited in place) to announce READY on transitions and to raise alerts"
   },
   "wake": {
-   "tool": "harness Monitor tailing events.log (filter: TRIGGER_READY, DAEMON_START/EXIT, TRACKER_ERROR, done_open_issues, structural_fail, verified_provisional, error)",
-   "task": "bb67zz1gm",
+   "tool": "harness Monitor tailing events.log (filter: TRIGGER_READY, ALERT, DAEMON_START/EXIT, TRACKER_ERROR, done_open_issues, structural_fail, verified_provisional, error)",
+   "task": "bb6x36rw2",
    "expiry": "30 min (harness cap); re-armed at each expiry, when the daemon heartbeat is also checked"
   },
-  "actions": "taken by the operator (this session) on a TRIGGER_READY event; each firing appended to docs/orchestration/fired_triggers.jsonl and committed"
+  "actions": "taken by the operator (this session) on a TRIGGER_READY event; each firing appended to docs/orchestration/fired_triggers.jsonl and committed",
+  "ledger": "docs/orchestration/trigger_ledger_v2.jsonl + claims/ (transactional lifecycle; see OPERATING_MODEL.md section 1)"
  },
  "campaign_runners": [
   {
@@ -52,6 +54,9 @@
   "monitor": "harness task; expires every 30 min and is re-armed; lost if the session ends",
   "workflows": "run inside this session; resumable only in the same session (resumeFromRunId); lost on container reclamation"
  },
- "restart_semantics": "On any wake or resume: check the daemon heartbeat (< 3 min old) and PID; if dead, relaunch the daemon (state is re-derived; TRIGGER_READY is re-emitted only for triggers absent from events.log, and the ledger prevents double firing). If runners died, the pinned manifests' structural check shows missing keys; rerun only missing shards' keys is NOT allowed mid-dataset without an owner decision \u2014 report instead.",
- "incident": "2026-09-26: two earlier session-bound watchers (harness background shells byu2qv4f0 started 12:40Z, bbdjklhst started 11:57Z) died silently (empty output, no exit notice; cause not determined). The detached daemon + Monitor design replaces them; no event was lost (state is derived, not event-sourced)."
+ "restart_semantics": "On any wake or resume: check the daemon heartbeat (< 3 min) and PID; if dead, start a new daemon (state is re-derived). Triggers with a live claim (CLAIMED/LAUNCHED/VERIFIED) are never READY, so a restart can never relaunch them; STALE_CLAIM / LAUNCH_UNCONFIRMED alerts are resolved by the operator with evidence (LAUNCHED recovered, or FAILED + new attempt). Runner death shows as missing keys in the pinned structural check; missing shards are reported to the owner, never silently rerun.",
+ "incidents": [
+  "2026-09-26: two earlier session-bound watchers (harness background shells byu2qv4f0 started 12:40Z, bbdjklhst started 11:57Z) died silently (empty output, no exit notice; cause not determined). The detached daemon + Monitor design replaces them; no event was lost (state is derived, not event-sourced).",
+  "2026-09-26T12:56:55Z: during the migration to the transactional ledger, the v1 daemon ran the tracker after it had switched to the (still empty) v2 ledger and before the reconstructed claims were written; it announced TRIGGER_READY T_O4_ESCALATE:ds_staged_n2_n_exc_johnsonlow. No action was taken; the reconstructed LAUNCHED claim removed it from the ready set and the claim CLI refuses a second claim. This is the failure mode the transactional rule guards against."
+ ]
 }

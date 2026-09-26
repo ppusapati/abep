@@ -186,7 +186,10 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    `lane_registry_v1.json` (lane_NN_*, ds_*, fo_*; break-even = lane_28_break_even); follow-on work launches ONLY from
    `trigger_registry_v1.json` (incl. T_O4_SCORE / T_O4_ESCALATE / T_O4_DISPOSITION_MATRIX / T_JOHNSONLOW_ESCALATION_ASSESSMENT /
    T_V2_QUESTION_A / T_V2_QUESTION_B / T_FACILITY_SCORE); every firing goes to the ledger `fired_triggers.jsonl`. A lane satisfies a
-   trigger only when `verified` (final round passed under its protocol AND deps verified). **Bundle 1 prerequisites include
+   trigger only when `verified` (final round passed under its protocol AND deps verified). **Trigger execution is transactional
+   and idempotent** (READY → CLAIMED → LAUNCHED → VERIFIED | FAILED; deterministic execution key; claim persisted before launch;
+   launch needs checkable evidence; `trigger_ledger_v2.jsonl`, record_origin live | retroactive_reconstruction). single-lens-v1 lanes
+   need the second lens before they become decisive evidence for Milestone B or C. **Bundle 1 prerequisites include
    lane_24_hard_gates as a hard prerequisite.** Bundle 1 outcomes: CONDITIONAL_BASELINE(X) with explicit conditions / NO_BASELINE_YET
    with blocking fields and lanes / per architecture ELIMINATED_WITHIN_TESTED_ENVELOPE only via a demonstrated hard gate. No new broad
    lanes; each lane answers (i) conditional selection now, (ii) what blocks physics-backed selection, (iii) what could overturn it;

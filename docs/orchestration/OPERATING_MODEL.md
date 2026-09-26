@@ -4,12 +4,27 @@
 * Every unit of work is a registered, machine-addressable id (`lane_registry_v1.json`): `lane_NN_<name>` (owner numbering where
   one exists; break-even = `lane_28_break_even`, E×B physics = `lane_29_exb_physics`), campaign datasets `ds_<manifest>`, follow-ons
   `fo_<name>`. No prose dependencies.
-* Follow-on work launches **only** from `trigger_registry_v1.json`. A trigger fires once; every firing is appended to the ledger
-  `fired_triggers.jsonl` (prerequisite states + commits, action, workflow run/key).
+* Follow-on work launches **only** from `trigger_registry_v1.json`.
+* **Trigger execution is transactional and idempotent** (`scripts/orchestration/trigger_ledger.py`, ledger
+  `trigger_ledger_v2.jsonl`, append-only, fsync'd): READY → CLAIMED → LAUNCHED → VERIFIED | FAILED. The execution key is
+  sha256(trigger, member, dependency-state hash, config hash); the dependency-state hash covers each prerequisite's terminal state
+  and identity (lane build commit, dataset provenance/structural-check sha256), and the config hash covers the pre-registration
+  lock and the trigger registry. CLAIMED is persisted **before** launch through an exclusive-create claim file
+  (`claims/<key>.<attempt>.claim`), and a trigger with a live claim is never READY again, so a crash after launch cannot relaunch it.
+  LAUNCHED needs checkable evidence that the launch happened (workflow journal, runner log start line, or artifact). A claim with no
+  LAUNCHED after 15 min raises ALERT STALE_CLAIM, and LAUNCHED without checkable evidence raises ALERT LAUNCH_UNCONFIRMED. Neither is
+  ever relaunched automatically: the operator records either LAUNCHED (recovered, with evidence) or FAILED(launch_not_acknowledged)
+  and claims attempt n+1. VERIFIED and FAILED are completion events with evidence. The CLI is
+  `python scripts/orchestration/trigger_ledger.py claim|launched|verified|failed|show <trigger> [member] --evidence '<json>'`.
+* Every ledger event carries `record_origin` (`live` or `retroactive_reconstruction`). Reconstructions carry the reconstruction
+  time, the original event time and the evidence used. The two firings before this ledger existed (T_O4_SCORE and T_O4_ESCALATE
+  for Johnson-low) are reconstructions. The v1 ledger `fired_triggers.jsonl` is frozen as historical evidence.
 * A lane/follow-on satisfies a trigger only in the terminal state **`verified`**: its final verification round passed under its
   protocol (two-lens: evidence AND rules/recompute; lanes built by the first script: one adversarial reviewer, recorded as
   `single-lens-v1`) AND every registered dependency is verified. `verified_provisional`, `done_open_issues` and anything in progress
   never satisfy a trigger; `done_open_issues` needs operator repair and re-verification.
+* `single-lens-v1` lanes (the first lanes workflow) are disclosed as such. If one of them becomes **decisive evidence for
+  Milestone B or C**, it must first pass the second (two-lens) verification; its weaker review status is never silently promoted.
 * Workflow-internal dependencies (`T_GRID`, `T_DOSSIER`) start the dependent lane at its prerequisites' terminal state and pass
   their verification flag; the dependent lane is `verified` only if the prerequisites are.
 * No new broad lanes. Every lane answers (i) can an architecture be conditionally selected now, (ii) what evidence prevents

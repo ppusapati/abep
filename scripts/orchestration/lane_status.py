@@ -1,7 +1,8 @@
 """Machine-readable orchestration state (owner operating rules 2026-09-26). Read-only: derives every lane, dataset and
 follow-on state from (a) the workflow journals (session-local, --journals), (b) campaign runner outputs (--followon) and the
 frozen/scored datasets in hallthruster_bridge/validation/, and (c) the append-only fired-trigger ledger
-docs/orchestration/fired_triggers.jsonl. Reports which registered triggers are READY (all prerequisites in their terminal
+docs/orchestration/trigger_ledger_v2.jsonl (transactional lifecycle, scripts/orchestration/trigger_ledger.py). Reports which
+registered triggers are READY (all prerequisites in their terminal
 state) and not yet fired. Nothing here launches work: actions are taken by the operator and recorded in the ledger.
 
 Terminal states (docs/orchestration/lane_registry_v1.json): a workflow lane / follow-on is `verified` only if its final
@@ -103,18 +104,49 @@ def dataset_state(manifest, followon_dir):
     return ("running" if os.path.isdir(os.path.join(followon_dir, manifest)) else "not_started"), {}
 
 
-def ledger():
-    p = os.path.join(ORCH, "fired_triggers.jsonl")
-    return [json.loads(l) for l in open(p) if l.strip()] if os.path.isfile(p) else []
+DEFAULT_JOURNALS = "/root/.claude/projects/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/subagents/workflows"
+DEFAULT_FOLLOWON = "/tmp/claude-0/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/scratchpad/followon"
+STALE_CLAIM_S = 900
+
+
+def _ledger_module():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("tl", os.path.join(os.path.dirname(os.path.abspath(__file__)), "trigger_ledger.py"))
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    m.ORCH = ORCH                                                   # same orchestration directory as this tracker
+    return m
+
+
+def dataset_identity(manifest, followon_dir, state):
+    """sha256 of the file that establishes the dataset's state (scores provenance when scored, else the structural check)."""
+    import hashlib
+    stem = os.path.join(VAL, "p5_n2_campaign_v1_facility" if manifest == "facility_mandatory" else f"p5_n2_campaign_v1_{manifest}")
+    p = {"scored": stem + "_scores_provenance.json", "frozen": stem + "_raw_manifest.json"}.get(
+        state, os.path.join(followon_dir, manifest, "structural_check.json"))
+    return hashlib.sha256(open(p, "rb").read()).hexdigest() if os.path.isfile(p) else None
 
 
 def status(journals_dir, followon_dir):
     reg = json.load(open(os.path.join(ORCH, "lane_registry_v1.json")))
     trig = json.load(open(os.path.join(ORCH, "trigger_registry_v1.json")))
-    jl, led = journal_lanes(journals_dir), ledger()
-    fired = {e["trigger"] + (":" + e["member"] if e.get("member") else "") for e in led}
-    launched = {e["produces"]: e["action"] for e in led if e.get("produces") and isinstance(e.get("action"), dict)
-                and e["action"].get("workflow_run")}
+    jl, tl = journal_lanes(journals_dir), _ledger_module()
+    lc = tl.lifecycle()
+    fired = {t + (":" + m if m else "") for (t, m), x in lc.items() if x["state"] != "FAILED"}   # live claim => never READY again
+    produces = {T["id"]: T.get("produces") for T in trig["triggers"]}
+    launched = {}
+    for (t, m), x in lc.items():
+        for ev in x["events"]:
+            if ev["event"] == "LAUNCHED" and isinstance(ev.get("evidence"), dict) and ev["evidence"].get("workflow_key") and produces.get(t):
+                launched[produces[t]] = ev["evidence"]
+    alerts = []
+    import datetime as _dt
+    for (t, m), x in lc.items():
+        name = t + (":" + m if m else "")
+        age = (_dt.datetime.now(_dt.timezone.utc) - _dt.datetime.fromisoformat(x["events"][-1]["utc"])).total_seconds()
+        if x["state"] == "CLAIMED" and age > STALE_CLAIM_S:
+            alerts.append(f"STALE_CLAIM {name} attempt {x['attempt']} (claimed {int(age)} s ago, no LAUNCHED)")
+        if x["state"] == "LAUNCHED" and not tl.launch_evidence_ok(x["events"][-1].get("evidence"), journals_dir):
+            alerts.append(f"LAUNCH_UNCONFIRMED {name} attempt {x['attempt']}")
     st, info = {}, {}
     for L in reg["lanes"]:
         st[L["id"]] = lane_state(jl.get((L["workflow_run"], L["workflow_key"])))
@@ -123,9 +155,12 @@ def status(journals_dir, followon_dir):
     for F in reg["follow_ons"]:
         a = launched.get(F["id"])
         st[F["id"]] = lane_state(jl.get((a["workflow_run"], a["workflow_key"]))) if a else "not_started"
-    ds_fired = {}
+        b = (jl.get((a["workflow_run"], a["workflow_key"])) or {}).get("build") or {} if a else {}
+        info[F["id"]] = {k: b.get(k) for k in ("worktree_path", "branch", "commit")}
+    ds_fired, ds_ident = {}, {}
     for D in reg["datasets"]:
         st[D["id"]], ds_fired[D["id"]] = dataset_state(D["manifest"], followon_dir)
+        ds_ident[D["id"]] = dataset_identity(D["manifest"], followon_dir, st[D["id"]])
     try:
         import sys; sys.path.insert(0, ROOT)
         from abep_sim.hall_ensemble import load_ensemble
@@ -162,14 +197,15 @@ def status(journals_dir, followon_dir):
                     ok = ok and all(state.get(e) == "scored" for e in D["escalations"])
         if ok:
             ready.append(T["id"])
-    return {"ready": ready, "state": state, "lane_build": info}
+    return {"ready": ready, "state": state, "lane_build": info, "dataset_identity": ds_ident, "alerts": alerts,
+            "lifecycle": {t + (":" + m if m else ""): x["state"] for (t, m), x in lc.items()}}
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--journals", default="/root/.claude/projects/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/subagents/workflows")
-    ap.add_argument("--followon", default="/tmp/claude-0/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/scratchpad/followon")
+    ap.add_argument("--journals", default=DEFAULT_JOURNALS)
+    ap.add_argument("--followon", default=DEFAULT_FOLLOWON)
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args()
     s = status(a.journals, a.followon)
-    print(json.dumps(s if a.json else {"ready": s["ready"], "state": s["state"]}, sort_keys=True))
+    print(json.dumps(s if a.json else {"ready": s["ready"], "state": s["state"], "alerts": s["alerts"], "lifecycle": s["lifecycle"]}, sort_keys=True))

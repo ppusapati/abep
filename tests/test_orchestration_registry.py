@@ -82,8 +82,9 @@ def test_tracker_terminal_states(tmp_path, monkeypatch):
     assert st["lane_a"] == "verified" and st["lane_b"] == "done_open_issues" and st["lane_c"] == "verified_provisional"
     assert st["lane_d"] == "verifying" and st["lane_e"] == "building" and st["ds_x"] == "structural_pass"
     assert s["ready"] == ["T_A", "T_O4_SCORE:ds_x"]                                            # T_AC blocked by the provisional lane
-    (orch / "fired_triggers.jsonl").write_text(json.dumps({"trigger": "T_A"}) + "\n" + json.dumps({"trigger": "T_O4_SCORE", "member": "ds_x"}) + "\n")
-    assert m.status(str(tmp_path / "j"), str(fo))["ready"] == []                              # fires once
+    tl = m._ledger_module()                                                                      # claims live in the v2 ledger
+    tl.claim("T_A", None, {}, {}); tl.claim("T_O4_SCORE", "ds_x", {}, {})
+    assert m.status(str(tmp_path / "j"), str(fo))["ready"] == []                              # a live claim is never READY again
 
 
 def test_operating_model_rules_recorded():
@@ -92,4 +93,70 @@ def test_operating_model_rules_recorded():
               "Question B", "hard prerequisite", "feed-state pressure"):
         assert s in txt
     rt = json.load(open(os.path.join(ORCH, "runtime_state.json")))
-    assert rt["mechanism"]["daemon"]["pid"] and rt["restart_semantics"] and rt["incident"]
+    assert rt["mechanism"]["daemon"]["pid"] and rt["restart_semantics"] and rt["incidents"] and "STALE_CLAIM" in txt
+
+
+def _ledger(tmp_path, monkeypatch):
+    spec = importlib.util.spec_from_file_location("tl", os.path.join(ROOT, "scripts", "orchestration", "trigger_ledger.py"))
+    tl = importlib.util.module_from_spec(spec); spec.loader.exec_module(tl)
+    monkeypatch.setattr(tl, "ORCH", str(tmp_path))
+    return tl
+
+
+def test_trigger_lifecycle_is_transactional_and_idempotent(tmp_path, monkeypatch):
+    """READY -> CLAIMED -> LAUNCHED -> VERIFIED | FAILED (owner rule): the claim is persisted before launch with an exclusive
+    create, a live claim can never be re-claimed (no double launch after a crash), transitions follow the allow-list, every
+    transition needs evidence, FAILED allows a new attempt, and the execution key is deterministic in its inputs."""
+    tl = _ledger(tmp_path, monkeypatch)
+    pre, cfg = {"lane_x": {"state": "verified", "identity": "c1"}}, {"prereg_lock_sha256": "a", "trigger_registry_sha256": "b"}
+    assert tl.execution_key("T", None, pre, cfg) == tl.execution_key("T", None, dict(pre), dict(cfg))
+    assert tl.execution_key("T", None, {"lane_x": {"state": "verified", "identity": "c2"}}, cfg)[0] != tl.execution_key("T", None, pre, cfg)[0]
+    k, a = tl.claim("T", None, pre, cfg)
+    assert a == 1 and os.path.isfile(tmp_path / "claims" / f"{k}.1.claim")
+    with pytest.raises(RuntimeError):                                  # crash after launch + re-derived READY: no second claim
+        tl.claim("T", None, pre, cfg)
+    with pytest.raises(OSError):                                       # the claim file itself is exclusive
+        os.close(os.open(str(tmp_path / "claims" / f"{k}.1.claim"), os.O_WRONLY | os.O_CREAT | os.O_EXCL))
+    with pytest.raises(RuntimeError):
+        tl.record("VERIFIED", "T", None, k, a, {"artifact": "x"})    # VERIFIED before LAUNCHED is illegal
+    with pytest.raises(ValueError):
+        tl.record("LAUNCHED", "T", None, k, a, None)                   # no evidence, no transition
+    tl.record("LAUNCHED", "T", None, k, a, {"workflow_run": "wf1", "workflow_key": "X"})
+    tl.record("FAILED", "T", None, k, a, {"reason": "verification failed"})
+    with pytest.raises(RuntimeError):
+        tl.record("VERIFIED", "T", None, k, a, {"artifact": "x"})    # nothing leaves a completed state
+    k2, a2 = tl.claim("T", None, pre, cfg)                              # FAILED allows a new attempt, same deterministic key
+    assert a2 == 2 and k2 == k and tl.lifecycle()[("T", None)]["state"] == "CLAIMED"
+    ev = [json.loads(l) for l in open(tmp_path / "trigger_ledger_v2.jsonl")]
+    assert [e["event"] for e in ev] == ["CLAIMED", "LAUNCHED", "FAILED", "CLAIMED"] and all(e["record_origin"] == "live" for e in ev)
+    (tmp_path / "wf1").mkdir(); (tmp_path / "wf1" / "journal.jsonl").write_text("")
+    assert tl.launch_evidence_ok({"workflow_run": "wf1"}, str(tmp_path)) and not tl.launch_evidence_ok({"workflow_run": "wf9"}, str(tmp_path))
+    log = tmp_path / "p.log"; log.write_text("12:00 start job_a\n")
+    assert tl.launch_evidence_ok({"runner_log": str(log), "start_line": "start job_a"}, str(tmp_path))
+    assert not tl.launch_evidence_ok({"runner_log": str(log), "start_line": "start job_b"}, str(tmp_path))
+
+
+def test_retroactive_ledger_entries_are_marked():
+    """The two firings that predate the transactional ledger are reconstructions, never indistinguishable from live events."""
+    ev = [json.loads(l) for l in open(os.path.join(ORCH, "trigger_ledger_v2.jsonl"))]
+    old = [e for e in ev if e["trigger"] in ("T_O4_SCORE", "T_O4_ESCALATE") and e.get("member") == "ds_staged_n2_n_exc_johnsonlow"]
+    assert old and all(e["record_origin"] == "retroactive_reconstruction" for e in old)
+    for e in old:
+        r = e["reconstruction"]
+        assert r["reconstructed_utc"] and r["original_event_utc"] and r["evidence"]
+
+
+def test_stale_claim_and_unconfirmed_launch_alerts(tmp_path, monkeypatch):
+    m = _load()
+    orch = tmp_path / "orch"; orch.mkdir()
+    (orch / "lane_registry_v1.json").write_text(json.dumps({"lanes": [], "datasets": [], "follow_ons": []}))
+    (orch / "trigger_registry_v1.json").write_text(json.dumps({"triggers": [{"id": "T1", "prerequisites": []}, {"id": "T2", "prerequisites": []}]}))
+    monkeypatch.setattr(m, "ORCH", str(orch)); monkeypatch.setattr(m, "VAL", str(tmp_path / "val")); monkeypatch.setattr(m, "STALE_CLAIM_S", -1)
+    tl = m._ledger_module()
+    k1, a1 = tl.claim("T1", None, {}, {})                                # claimed, never launched -> STALE_CLAIM
+    k2, a2 = tl.claim("T2", None, {}, {})
+    tl.record("LAUNCHED", "T2", None, k2, a2, {"workflow_run": "missing_wf", "workflow_key": "K"})   # unverifiable launch
+    (tmp_path / "j").mkdir()
+    s = m.status(str(tmp_path / "j"), str(tmp_path / "fo"))
+    assert s["ready"] == []                                             # both claimed: neither is READY again
+    assert any(a.startswith("STALE_CLAIM T1") for a in s["alerts"]) and any(a.startswith("LAUNCH_UNCONFIRMED T2") for a in s["alerts"])

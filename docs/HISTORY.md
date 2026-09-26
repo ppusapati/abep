@@ -2217,3 +2217,21 @@ in `docs/orchestration/`:
 - Other recorded changes: an admissibility rule with per-field metadata for the frozen comparison vector (P_feed/T_feed are
   feed-state pressure/temperature; electrically driven feed loads are inside P_bus); the strict Bundle-1 outcome vocabulary; and the
   separation of v2 Question A and Question B.
+
+### 2026-09-26 — Transactional, idempotent trigger lifecycle (owner rule; governance cleared to continue)
+The owner cleared the orchestration layer for continued execution and made one more control binding: trigger execution must be
+transactional and idempotent.
+- Implemented in `scripts/orchestration/trigger_ledger.py` with the append-only ledger `docs/orchestration/trigger_ledger_v2.jsonl`:
+  READY → CLAIMED → LAUNCHED → VERIFIED | FAILED.
+- The execution key is deterministic: trigger + dependency-state hash + prereg/config hash.
+- The claim is persisted before launch through an exclusive-create claim file. A live claim is never READY again, so a daemon crash
+  after launch cannot relaunch.
+- LAUNCHED needs checkable evidence. Stale claims and unconfirmed launches raise alerts and are resolved by the operator, never relaunched
+  automatically.
+- The two firings from before the ledger existed are marked `record_origin=retroactive_reconstruction`, with reconstruction time,
+  original time and evidence. The v1 ledger is frozen.
+- During the migration a transient READY was announced (incident recorded in `runtime_state.json`). No action was taken, and the claim
+  protocol would have refused a second launch.
+- The daemon was replaced by v2 (PID 29739), which announces READY on transitions and raises alerts.
+- `single-lens-v1` lanes must pass the second lens before becoming decisive evidence for Milestone B or C.
+- No broader governance redesign (owner).
