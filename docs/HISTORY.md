@@ -1893,3 +1893,18 @@ Renames (the file contents and rates are unchanged; the files were never on main
 - Full-set N1 smoke run (0.5 ms, no measured targets): loads, runs and is chemistry-trustworthy. The limiting file is dissociation (36.2 of 45 eV).
 - The combined variant `n2_n_di_lower_nel_wang.toml` gives the same verdict.
 - `PINNED.toml` stays INCOMPLETE (owner rule). Remaining: the tier-3 bounds (rotational excitation, N → N²⁺ direct, N²⁺ → N³⁺), then re-running audits 1–2 with the complete denominators.
+
+## 2026-09-26 — PR #24 merged; omitted-process audit, final pass on abep-n2n-0.9 (`audit/n2_completeness_final_v1.json`)
+
+**Merged:** PR #24 (0.9). Denominators are built from `n2_n.toml` itself: every N₂-target inelastic reaction, rate times header energy, with x_N = 0.
+
+| process | result | verdict |
+|---|---|---|
+| dissociative ionization (included 0.4) | final F_P max 17.4 %, F_ion max 19.6 % (T_e ≤ 30 eV) | promoted, final |
+| vibrational excitation (included 0.7) | final F_P up to 99.98 % at T_e ≤ 1 eV, > 1 % up to ~9 eV | promoted, final; model-form limits unchanged |
+| rotational excitation (tier 3) | gross from j = 0: ceiling bound (10 meV, σ held at its max) 3.5 %; **spectroscopic** (NIST B₀ = 1.98958 cm⁻¹: 0→2 = 1.480 meV, 0→4 = 4.933 meV; σ held at the 10 eV value) **1.13 % max at T_e 1–2 eV** | **PROMOTE (marginal)**. Same gross convention as the vibrational verdict; the net loss (kT_gas ≫ ΔE) would be far smaller. Owner may reverse |
+| N²⁺ → N³⁺ (tier 3, Bell N III row) | x_crit (n_N²⁺/n_N₂ for F_ion = 1 %) ≥ 0.25 over T_e ≤ 30 eV; reference state max ratio 1.2×10⁻³; F_ion 4.7×10⁻⁷; F_S(N²⁺ destruction) 2.1×10⁻⁴ | **EXCLUDED** (margin ~200) |
+| N → N²⁺ direct (tier 3) | no cross-section source | **UNRESOLVED-BY-SOURCE** (not inferred or scaled) |
+
+- The reference state is the full-set N1 smoke run (0.5 ms, default transport, no measured targets).
+- The driver now writes ion density profiles (`profile_ni_<sym>_Z<Z>_m3`).

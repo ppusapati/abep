@@ -920,6 +920,22 @@ def test_n2_electronic_excitation_tables_su_johnson_splice():
     assert "excitation_N2.dat" not in files and all(os.path.isfile(os.path.join(b.PROP, f)) for f in files)
 
 
+def test_n2_completeness_final_audit():
+    """Final omitted-process pass on abep-n2n-0.9 (prereg v1): DI and vibrational fractions recomputed on the complete
+    denominator; rotational gross bound uses NIST B_0 (0->2 = 1.480 meV, 0->4 = 4.933 meV); N^2+ -> N^3+ excluded on the
+    reference state; direct N -> N^2+ unresolved-by-source (never inferred)."""
+    import importlib.util, json, os
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("a", os.path.join(root, "scripts", "audit_n2_completeness_final.py"))
+    a = importlib.util.module_from_spec(spec); spec.loader.exec_module(a)
+    assert abs(a.ROT_DE_SPECTRO_EV[1] - 1.480e-3) < 2e-6 and abs(a.ROT_DE_SPECTRO_EV[2] - 4.933e-3) < 5e-6
+    v = json.load(open(os.path.join(root, "hallthruster_bridge", "audit", "n2_completeness_final_v1.json")))["verdict"]
+    assert v["dissociative_ionization"]["final_F_ion_max"] > 0.01 and v["vibrational_excitation"]["final_F_P_max"] > 0.01
+    assert 0.01 < v["rotational_excitation"]["F_P_spectroscopic_max"] < 0.02
+    assert v["N_Z2plus_to_N_Z3plus"]["verdict"].startswith("EXCLUDED") and v["N_Z2plus_to_N_Z3plus"]["x_crit_min"] > 0.2
+    assert v["N_to_N_Z2plus_direct"]["verdict"].startswith("UNRESOLVED-BY-SOURCE")
+
+
 def test_variant_configs_are_regenerated_from_n2_n():
     """Every chemistry-variant config equals what scripts/make_n2_variant_configs.py produces from the current n2_n.toml."""
     import importlib.util, os

@@ -318,6 +318,7 @@ function run_case(c, mode)
     end
     for (sym, ions) in fr.ions, ion in ions
         out["profile_ui_$(sym)_Z$(ion.Z)_ms"] = collect(ion.u)    # e.g. N2_Z1 vs N_Z2 (unambiguous)
+        out["profile_ni_$(sym)_Z$(ion.Z)_m3"] = collect(ion.n)
     end
     if haskey(c, :measured) && haskey(c.measured, :Id_A)
         out["Id_raw_A"] = c.measured.Id_A
