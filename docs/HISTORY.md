@@ -1762,3 +1762,29 @@ This audit was run under `prereg/n2_completeness_audit_v1` (merged in PR #20 bef
 - Atomic exit-ion-flux share: 0.537 upper vs 0.533 lower. This is a chemistry diagnostic only.
 
 **Still to bound (tier 3):** direct N → N²⁺, and N²⁺ → N³⁺. Molecular N₂²⁺ stays unresolved.
+
+## 2026-09-26 — Omitted-process audit 2: N₂ vibrational excitation → PROMOTE (not yet included)
+
+**Data:** the set JPCRD 2023 recommends, Laporta, Little, Celiberto & Tennyson, PSST 23, 065002 (2014), obtained via arXiv:1402.3814 (green OA). Its IOP supplementary files were downloaded directly.
+- They hold Eq. (10) rate fits, κ(T) = κ_max (T_max/T)^{3/2} e^{−T_max/T}, for v = 0 → v_f = 0…58, with level energies from Table II.
+- Eq. (10) was read from the rendered page. Note that κ_max is a fit parameter, not the peak: the fit peaks at 0.41 κ_max at T = 2T_max/3.
+- Units (10⁻⁹ cm³/s) were confirmed independently: the 0→1 fit reproduces the Maxwellian integral of JPCRD Table 7's recommended σ₀₁ to 1–6 % at T = 0.5–3 eV.
+- The Laporta rates are resonant only (integrated to 15 eV) and from v = 0 only, so the vibrational power is a lower bound.
+
+**Denominator:** abep-n2n-0.6 upper inelastic power, plus Su et al. 2021's 8 electronic channels (σ = 0 above 20 eV) with the owner's experimental energy losses. The denominator is final where the Maxwellian flux above 20 eV is ≤ 1 %, i.e. T_e ≤ 3 eV.
+
+| T_e (eV) | 0.5 | 1 | 2 | 3 | 5 | 7.5 | 10 | 20 | 30 |
+|---|---|---|---|---|---|---|---|---|---|
+| P_vib / (P_incl + P_elec) | 1.7e5 | 155 | 2.5 | 0.41 | 0.064 | 0.017 | 0.0071 | 0.0010 | 0.00035 |
+
+- **Verdict: PROMOTE.** It is forced where the denominator is complete. Vibrational excitation is the dominant electron energy sink at T_e ≤ 2 eV and exceeds 1 % up to T_e ≈ 9 eV.
+- Power by final level: v_f = 1 carries only ~22 %, v_f ≤ 4 about 77 %, and v_f ≤ 10 about 99.9 % (T_e = 1–10 eV). Implementation therefore needs overtones: one fixed-energy excitation reaction per v_f = 1…10, header ε_vf.
+
+**Residual sanity bound** (TCS − elastic ICS − known inelastic, rate space; a diagnostic only). No pass/fail tolerance is applied, since none was pre-registered.
+- The residual is **negative** at T_e ≤ 0.3 eV: the datasets are inconsistent there, as expected.
+- Σk_vib / k_res is 1.14 at 0.5 eV and 1.01 at 0.7 eV (the residual is a small difference of 10–20 %-uncertain sets), and 0.93 → 0.08 from 1 to 30 eV.
+- So the residual cannot serve as a vibrational dataset.
+
+**Data licences:**
+- Laporta: IOP copyright. The committed data are 59 transcribed fit-parameter pairs plus 59 level energies (factual data, cited); the supplementary file itself is not committed.
+- Su 2021: CC BY 4.0, fetched at run time from IOP (or `--su-dir`).
