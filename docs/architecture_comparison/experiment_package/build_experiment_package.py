@@ -75,7 +75,7 @@ INPUTS = {
                     "3ee12e66f94204955f61cbb78d7c5036044cc59a9bc50f675704592bfbfabfcd"),
     "overlay_hs": ("docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json",
                    "fo_hall_sustainment_envelope",
-                   "c7d05fd04aafe249ff0dce575902067dea9bdd048fa857283cb66066e612b19e"),
+                   "3381c88b81670c37836c04e1ee8dea78898718fa9219df12140f2dbe24f612bb"),
     "hg_matrix": ("docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
                   "lane_24_hard_gates",
                   "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f"),
@@ -102,6 +102,28 @@ INPUTS = {
                            "physics track (transport ensemble; read-only, admitted set empty)",
                            "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"),
 }
+
+# Deliberate re-pins of pinned inputs (kept in the package so a reviewer can see what moved and why).
+INPUT_REPIN_LOG = [
+    {"date": "2026-09-26",
+     "key": "overlay_hs",
+     "path": "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json",
+     "lane": "fo_hall_sustainment_envelope",
+     "from_sha256": "c7d05fd04aafe249ff0dce575902067dea9bdd048fa857283cb66066e612b19e",
+     "to_sha256": "3381c88b81670c37836c04e1ee8dea78898718fa9219df12140f2dbe24f612bb",
+     "reason": ("envelope re-pinned and re-verified after the lane_09 ECHT integration repair (commit da9b71b, merged): "
+                "its own input_repin_log records that ECHT-N2 items E03/E04 carry repository_status "
+                "HISTORICAL_UNSUPPORTED (hallthruster_bridge/identification/echt_n2/STATUS.json) and that the ECHT "
+                "channel area carries forced assumption A1 (inferred channel radii) as declared_uncertainty; "
+                "ECHT-OD-READING names A1; no case status, coverage verdict or F-9 changed"),
+     "effect_on_this_package": ("none substantive: the package reads only the envelope's milestone_A_conditions "
+                                "(HS-A1..HS-A7), which are identical before and after the repair; the package cites "
+                                "no ECHT evidence item (E03/E04), channel area or flow density, so A1 / "
+                                "HISTORICAL_UNSUPPORTED has no entry to attach to here. Any future revision that "
+                                "cites an ECHT item must carry A1 and HISTORICAL_UNSUPPORTED with it "
+                                "(enforced in validate())"),
+     "other_pinned_inputs_changed": "none (all other sha256 pins verified unchanged at f44087adc2)"},
+]
 
 ARCHS = ("hall_only", "rf_hall", "ecr_hall")
 STATUS = "DRAFT_PENDING_OWNER"
@@ -1444,6 +1466,7 @@ def build(root: Path = ROOT) -> dict:
             "every number carries a unit, evidence class and source (input pointer or computation), else TBD with "
             "its blocking lane or measurement"],
         "inputs": [{"key": k, "path": v[0], "lane": v[1], "sha256": v[2]} for k, v in INPUTS.items()],
+        "input_repin_log": INPUT_REPIN_LOG,
         "milestones": milestones(docs),
         "decisions": decisions(ctx, docs),
         "traceability": traceability(docs, hg, matrix),
@@ -1471,6 +1494,13 @@ def validate(pkg: dict) -> None:
     for pat in FORBIDDEN_PATTERNS:
         if re.search(pat, text):
             raise ValueError(f"forbidden pattern {pat!r} in the package")
+    body = json.dumps({k: v for k, v in pkg.items() if k != "input_repin_log"}, ensure_ascii=False)
+    if re.search(r"\bECHT\b", body) and not ("HISTORICAL_UNSUPPORTED" in body and re.search(r"\bA1\b", body)):
+        raise ValueError("the package cites ECHT evidence without its repository status HISTORICAL_UNSUPPORTED and "
+                         "forced assumption A1 (hall_sustainment envelope declared_uncertainty)")
+    for rp in pkg["input_repin_log"]:
+        if INPUTS[rp["key"]][2] != rp["to_sha256"]:
+            raise ValueError(f"input_repin_log entry for {rp['key']} does not match the current pin")
     for d in pkg["decisions"]:
         if d["status"] != "OPEN_OWNER_DECISION" or d["recommendation"]["status"] != REC:
             raise ValueError(f"{d['id']}: decisions stay open and recommendations PROPOSED")
@@ -1639,6 +1669,13 @@ def render_md(pkg: dict) -> str:
     L += ["## 8. Pinned inputs", "", "| path | lane | sha256 |", "|---|---|---|"]
     for i in pkg["inputs"]:
         L.append(f"| `{i['path']}` | {md_cell(i['lane'])} | `{i['sha256'][:16]}` |")
+    L.append("")
+    L += ["### Input re-pin log", "", "| date | input | from | to | reason | effect on this package |",
+          "|---|---|---|---|---|---|"]
+    for rp in pkg["input_repin_log"]:
+        L.append(f"| {rp['date']} | `{rp['path']}` ({md_cell(rp['lane'])}) | `{rp['from_sha256'][:16]}` | "
+                 f"`{rp['to_sha256'][:16]}` | {md_cell(rp['reason'])} | {md_cell(rp['effect_on_this_package'])}; "
+                 f"other pinned inputs changed: {md_cell(rp['other_pinned_inputs_changed'])} |")
     L.append("")
     return "\n".join(L)
 

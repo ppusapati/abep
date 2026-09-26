@@ -6,7 +6,7 @@
  "type": "object",
  "additionalProperties": false,
  "required": ["schema", "id", "follow_on", "trigger", "prerequisite", "status", "base_commit", "generated_by",
-              "not_locked", "compliance", "inputs", "milestones", "decisions", "traceability", "hard_gate_context",
+              "not_locked", "compliance", "inputs", "input_repin_log", "milestones", "decisions", "traceability", "hard_gate_context",
               "reconciliation", "requirements", "tbd_register"],
  "properties": {
   "schema": {"const": "abep_experiment_package_v1"},
@@ -25,6 +25,19 @@
              "properties": {"key": {"type": "string", "minLength": 1}, "path": {"type": "string", "minLength": 1},
                             "lane": {"type": "string", "minLength": 1},
                             "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}
+  },
+  "input_repin_log": {
+   "type": "array",
+   "items": {"type": "object", "additionalProperties": false,
+             "required": ["date", "key", "path", "lane", "from_sha256", "to_sha256", "reason",
+                          "effect_on_this_package", "other_pinned_inputs_changed"],
+             "properties": {"date": {"type": "string", "minLength": 1}, "key": {"type": "string", "minLength": 1},
+                            "path": {"type": "string", "minLength": 1}, "lane": {"type": "string", "minLength": 1},
+                            "from_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                            "to_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                            "reason": {"type": "string", "minLength": 1},
+                            "effect_on_this_package": {"type": "string", "minLength": 1},
+                            "other_pinned_inputs_changed": {"type": "string", "minLength": 1}}}
   },
   "milestones": {
    "type": "object", "additionalProperties": false, "required": ["supports", "A", "to_reach_B", "to_reach_C"],

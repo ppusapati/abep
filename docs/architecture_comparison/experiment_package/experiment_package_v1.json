@@ -68,7 +68,7 @@
    "key": "overlay_hs",
    "path": "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json",
    "lane": "fo_hall_sustainment_envelope",
-   "sha256": "c7d05fd04aafe249ff0dce575902067dea9bdd048fa857283cb66066e612b19e"
+   "sha256": "3381c88b81670c37836c04e1ee8dea78898718fa9219df12140f2dbe24f612bb"
   },
   {
    "key": "hg_matrix",
@@ -129,6 +129,19 @@
    "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
    "lane": "physics track (transport ensemble; read-only, admitted set empty)",
    "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"
+  }
+ ],
+ "input_repin_log": [
+  {
+   "date": "2026-09-26",
+   "key": "overlay_hs",
+   "path": "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json",
+   "lane": "fo_hall_sustainment_envelope",
+   "from_sha256": "c7d05fd04aafe249ff0dce575902067dea9bdd048fa857283cb66066e612b19e",
+   "to_sha256": "3381c88b81670c37836c04e1ee8dea78898718fa9219df12140f2dbe24f612bb",
+   "reason": "envelope re-pinned and re-verified after the lane_09 ECHT integration repair (commit da9b71b, merged): its own input_repin_log records that ECHT-N2 items E03/E04 carry repository_status HISTORICAL_UNSUPPORTED (hallthruster_bridge/identification/echt_n2/STATUS.json) and that the ECHT channel area carries forced assumption A1 (inferred channel radii) as declared_uncertainty; ECHT-OD-READING names A1; no case status, coverage verdict or F-9 changed",
+   "effect_on_this_package": "none substantive: the package reads only the envelope's milestone_A_conditions (HS-A1..HS-A7), which are identical before and after the repair; the package cites no ECHT evidence item (E03/E04), channel area or flow density, so A1 / HISTORICAL_UNSUPPORTED has no entry to attach to here. Any future revision that cites an ECHT item must carry A1 and HISTORICAL_UNSUPPORTED with it (enforced in validate())",
+   "other_pinned_inputs_changed": "none (all other sha256 pins verified unchanged at f44087adc2)"
   }
  ],
  "milestones": {

@@ -339,7 +339,7 @@ Both component mappings cover `bus_power_boundary_v1` exactly once: lane 06 True
 | `docs/architecture_comparison/failure_tree/failure_trees_v1.json` | lane_26_failure_tree | `5b81c1e99fd7ed9a` |
 | `docs/architecture_comparison/overlays/rf/overlay_rf_v1.json` | fo_rf_breakeven_overlay | `ba739be2fdf431ac` |
 | `docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json` | fo_ecr_breakeven_overlay | `3ee12e66f9420495` |
-| `docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json` | fo_hall_sustainment_envelope | `c7d05fd04aafe249` |
+| `docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json` | fo_hall_sustainment_envelope | `3381c88b81670c37` |
 | `docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json` | lane_24_hard_gates | `7d77d2831214f3f3` |
 | `docs/architecture_comparison/hard_gates/hard_gate_status_v1.json` | lane_24_hard_gates | `2c82b3277067b22c` |
 | `docs/architecture_comparison/hard_gates/evidence_register_v1.json` | lane_24_hard_gates | `45dfbfb311441aeb` |
@@ -350,3 +350,9 @@ Both component mappings cover `bus_power_boundary_v1` exactly once: lane 06 True
 | `abep_sim/constants.py` | repository (RFP record and physical constants; read by minexp_numbers.py) | `dd1c564324c13947` |
 | `abep_sim/hall_ensemble.py` | repository (admission guard; read by the lane-24 evaluator) | `218f890c8444af1f` |
 | `hallthruster_bridge/ensemble/transport_ensemble_v0.json` | physics track (transport ensemble; read-only, admitted set empty) | `2d5069a3382ab667` |
+
+### Input re-pin log
+
+| date | input | from | to | reason | effect on this package |
+|---|---|---|---|---|---|
+| 2026-09-26 | `docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json` (fo_hall_sustainment_envelope) | `c7d05fd04aafe249` | `3381c88b81670c37` | envelope re-pinned and re-verified after the lane_09 ECHT integration repair (commit da9b71b, merged): its own input_repin_log records that ECHT-N2 items E03/E04 carry repository_status HISTORICAL_UNSUPPORTED (hallthruster_bridge/identification/echt_n2/STATUS.json) and that the ECHT channel area carries forced assumption A1 (inferred channel radii) as declared_uncertainty; ECHT-OD-READING names A1; no case status, coverage verdict or F-9 changed | none substantive: the package reads only the envelope's milestone_A_conditions (HS-A1..HS-A7), which are identical before and after the repair; the package cites no ECHT evidence item (E03/E04), channel area or flow density, so A1 / HISTORICAL_UNSUPPORTED has no entry to attach to here. Any future revision that cites an ECHT item must carry A1 and HISTORICAL_UNSUPPORTED with it (enforced in validate()); other pinned inputs changed: none (all other sha256 pins verified unchanged at f44087adc2) |
