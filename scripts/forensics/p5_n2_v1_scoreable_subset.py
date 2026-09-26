@@ -594,7 +594,9 @@ def section5(rows, runs_A, cands, chems):
             "Te_max_eV": "maximum over z of the time-averaged (1-2 ms) T_e profile (raw dataset)",
             "ion_over_discharge": ("time-averaged (1-2 ms) ion current at the downstream domain boundary / window-mean "
                                    "I_d (raw dataset; bridge_lib.jl uses HallThruster.jl ion_current = ji[end] * "
-                                   "channel_area[end], pinned v0.23.1 src/simulation/postprocess.jl)")},
+                                   "channel_area[end], pinned v0.23.1 src/simulation/postprocess.jl); a value > 1 means the model's "
+                                   "time-averaged boundary ion current exceeds its window-mean I_d, so an I_i + I_e "
+                                   "split with I_e >= 0 is not clean for that run (section 6 caveat)")},
     }
 
 
@@ -622,6 +624,31 @@ def group_facts(rows, runs_A, cs):
     nc13 = {rd: [r for r in rr if r["reading"] == rd and r["point"] in T_POINTS and "SUSTAINMENT" not in r["reasons"]]
             for rd in READINGS}
     rr25 = [r for r in rr if r["point"] != "N1"]
+    sc25 = [r for r in sc if r["point"] != "N1"]
+    rd_status = {(r["key"], r["reading"]): r for r in rr}
+    cur25 = {}                              # CURRENT is reading-independent: counted per run (reading-A row)
+    for g in REGS:
+        for coil in COILS:
+            m_ = [r for r in sc25 if r["registration"] == g and r["coil"] == coil]
+            cur25[f"{g}|{coil}"] = {
+                "scoreable_runs": len(m_),
+                "current_over": sum("CURRENT" in r["reasons"] and r["dI_rel"] > 0 for r in m_),
+                "current_under": sum("CURRENT" in r["reasons"] and r["dI_rel"] < 0 for r in m_),
+                "within_current_tolerance": sum("CURRENT" not in r["reasons"] for r in m_)}
+    within = [r for r in sc25 if "CURRENT" not in r["reasons"]]
+    within_loc = collections.OrderedDict()
+    for r in sorted(within, key=lambda r: (r["candidate"], r["registration"], r["coil"], r["point"], r["chemistry"])):
+        k_ = (f"{cshort(r['candidate'])} " if len(cs) > 1 else "") + f"{r['registration']}|{r['coil']}"
+        e = within_loc.setdefault(k_, {"runs": 0, "points": [], "SUSTAINMENT": 0, "THRUST_A": 0, "THRUST_B": 0,
+                                       "PASS_A": 0, "PASS_B": 0})
+        e["runs"] += 1
+        if r["point"] not in e["points"]:
+            e["points"].append(r["point"])
+        e["SUSTAINMENT"] += "SUSTAINMENT" in r["reasons"]
+        for rd in READINGS:
+            x = rd_status[(r["key"], rd)]
+            e[f"THRUST_{rd}"] += "THRUST" in x["reasons"]
+            e[f"PASS_{rd}"] += x["status"] == "PASS"
     return {
         "candidates": cs,
         "runs_total": len(rA), "runs_scoreable": len(sc),
@@ -633,6 +660,10 @@ def group_facts(rows, runs_A, cs):
             (r["candidate"], r["member"]) for r in passes).values()),
         "run_readings_scoreable_N2_N5": len(rr25),
         "run_readings_pass_N2_N5": sum(r["status"] == "PASS" for r in rr25),
+        "run_readings_total_N2_N5": 2 * sum(r["point"] != "N1" for r in rA),
+        "current_N2_N5_runs_by_registration_coil": cur25,
+        "current_N2_N5_within_tolerance_locations": within_loc,
+        "ion_over_discharge_gt_1_scoreable_runs": sum(r["ion_over_discharge"] > 1.0 for r in sc),
         "reasons_by_registration_run_readings": {g: {q: sum(q in r["reasons"] for r in rr if r["registration"] == g)
                                                      for q in REASONS} for g in REGS},
         "pass_locations": sorted({(f"{cshort(r['candidate'])} " if len(cs) > 1 else "") +
@@ -649,6 +680,8 @@ def group_facts(rows, runs_A, cs):
         "ion_over_target_gt_1_in_current_over_runs": sum(r["ion_over_target"] > 1.0 for r in cur_over),
         "ion_over_target_gt_1p15_in_current_over_runs": sum(r["ion_over_target"] > 1.15 for r in cur_over),
         "ion_share_of_excess_in_current_over_runs": desc((r["ion_over_target"] - 1.0) / r["dI_rel"] for r in cur_over),
+        "ion_share_of_excess_gt_1_in_current_over_runs": sum((r["ion_over_target"] - 1.0) / r["dI_rel"] > 1.0
+                                                             for r in cur_over),
         "ion_over_target_in_pass_runs": desc(r["ion_over_target"] for r in
                                              {r["key"]: r for r in passes}.values()),
         "ion_over_target_gt_1_in_pass_runs": sum(r["ion_over_target"] > 1.0 for r in
@@ -680,7 +713,9 @@ def statements(f, label):
                  f"official PASS, at {', '.join(f['pass_points'])} only. {full}, and the official member verdicts are "
                  f"unchanged. At N2-N5, "
                  f"{f['run_readings_pass_N2_N5']} of {f['run_readings_scoreable_N2_N5']} scoreable run-readings are "
-                 f"PASS.")
+                 f"PASS; only {f['run_readings_scoreable_N2_N5']} of the {f['run_readings_total_N2_N5']} N2-N5 "
+                 f"run-readings are scoreable at all (coverage description, not a verdict; the official verdicts "
+                 f"are final).")
     else:
         s.append(f"PASS evidence: none. All {f['run_readings_scoreable']} scoreable run-readings are official "
                  f"FAIL_VALIDATION.")
@@ -692,18 +727,47 @@ def statements(f, label):
              ", ".join(f"{pt} {cur[pt]['over']}/{cur[pt]['under']}" for pt in POINTS) +
              ". Median scoreable dI: " + ", ".join(f"{pt} {fmt(f['median_scoreable_dI_by_point'][pt])}"
                                                    for pt in POINTS) + ".")
-    n25o = sum(cur[pt]["over"] for pt in POINTS[1:])
-    n25u = sum(cur[pt]["under"] for pt in POINTS[1:])
-    if n25o + n25u:
-        if n25u == 0:
-            s.append(f"At N2-N5 every official CURRENT failure ({n25o} runs) over-predicts I_d. The scoreable evidence "
-                     f"does not support the modelled current level of {label} there, under the layer-1 members where "
-                     f"it is scoreable.")
-        elif n25o == 0:
-            s.append(f"At N2-N5 every official CURRENT failure ({n25u} runs) under-predicts I_d.")
-        else:
-            s.append(f"At N2-N5, {n25o} of {n25o + n25u} official CURRENT failures "
-                     f"({100.0 * n25o / (n25o + n25u):.0f} %) over-predict I_d and {n25u} under-predict it.")
+    cm = f["current_N2_N5_runs_by_registration_coil"]
+    n25 = sum(v["scoreable_runs"] for v in cm.values())
+    n25o = sum(v["current_over"] for v in cm.values())
+    n25u = sum(v["current_under"] for v in cm.values())
+    n25w = sum(v["within_current_tolerance"] for v in cm.values())
+    if n25:
+        sign = ("all over-predicting I_d" if n25o and not n25u else
+                "all under-predicting I_d" if n25u and not n25o else
+                f"{n25o} over- and {n25u} under-predicting I_d" if n25o + n25u else "none")
+        txt = (f"Current at N2-N5 (runs; the CURRENT reason does not depend on the reading): {n25o + n25u} of {n25} "
+               f"scoreable runs fail CURRENT ({sign}); {n25w} are within the current tolerance (no CURRENT reason).")
+        wl = f["current_N2_N5_within_tolerance_locations"]
+        if wl:
+            txt += (" The within-tolerance runs are at (runs; points; of which SUSTAINMENT, THRUST A/B, PASS A/B): " +
+                    "; ".join(f"{k} {v['runs']} ({','.join(v['points'])}; S {v['SUSTAINMENT']}, T "
+                              f"{v['THRUST_A']}/{v['THRUST_B']}, P {v['PASS_A']}/{v['PASS_B']})" for k, v in wl.items())
+                    + ".")
+        s.append(txt)
+        present = {k: v for k, v in cm.items() if v["scoreable_runs"]}
+        s.append("By registration|coil (scoreable N2-N5 runs: CURRENT over / CURRENT under / within tolerance): " +
+                 ", ".join(f"{k} {v['scoreable_runs']}: {v['current_over']}/{v['current_under']}/"
+                           f"{v['within_current_tolerance']}" for k, v in present.items()) + ".")
+        all_over = [k for k, v in present.items() if v["current_over"] == v["scoreable_runs"]]
+        all_under = [k for k, v in present.items() if v["current_under"] == v["scoreable_runs"]]
+        no_cur = [k for k, v in present.items() if v["within_current_tolerance"] == v["scoreable_runs"]]
+        mixed = [k for k in present if k not in all_over + all_under + no_cur]
+        if all_over:
+            s.append(f"Restricted to where CURRENT fails: under {', '.join(all_over)}, every scoreable N2-N5 run of "
+                     f"{label} fails CURRENT by over-predicting I_d; there the scoreable evidence does not support the "
+                     f"modelled current level. This statement does not extend to the other registration|coil "
+                     f"combinations.")
+        if all_under:
+            s.append(f"Under {', '.join(all_under)}, every scoreable N2-N5 run of {label} fails CURRENT by "
+                     f"under-predicting I_d.")
+        if mixed:
+            s.append(f"Under {', '.join(mixed)}, CURRENT fails in some scoreable N2-N5 runs of {label} and not in "
+                     f"others (counts above); no current-level statement is made for these combinations as a whole.")
+        if no_cur:
+            s.append(f"Under {', '.join(no_cur)}, no scoreable N2-N5 run of {label} carries the CURRENT reason: the "
+                     f"modelled current level is within the pre-registered tolerance there (other official reasons, "
+                     f"listed above, still apply; coverage description, not a verdict).")
     if f["sustainment_runs"]:
         s.append(f"Sustainment: {f['sustainment_runs']} of {rs} scoreable runs carry the official SUSTAINMENT reason "
                  f"(late collapse), at {', '.join(f['sustainment_points'])}. In these runs the modelled discharge is "
@@ -722,11 +786,19 @@ def statements(f, label):
                  f"{io['median']:.2f}). It exceeds I_target in {f['ion_over_target_gt_1_in_current_over_runs']} runs "
                  f"and 1.15 x I_target in {f['ion_over_target_gt_1p15_in_current_over_runs']}. The ion current carries "
                  f"a median {sh['median']:.2f} (range {sh['min']:.2f}-{sh['max']:.2f}) of the modelled excess "
-                 f"I_d - I_target. Assume the standard current balance I_d = I_i + I_e with I_e >= 0 (assumed; verify "
-                 f"for the P5 data reduction). Then a modelled ion current above I_target exceeds every ion current "
-                 f"compatible with the reconstructed target I_d. Where that holds, the scoreable evidence does not "
-                 f"support the modelled ion production level. No measured ion/electron split at N1-N5 is in the "
-                 f"repository's audit.")
+                 f"I_d - I_target. Conditional inference, not a measured finding: if the current balance I_d = I_i + I_e "
+                 f"with I_e >= 0 holds (assumed; verify for the P5 data reduction) and the level-3 reconstructed "
+                 f"Eq. 14 target is taken as I_d, then a modelled ion current above I_target would exceed every ion "
+                 f"current compatible with that target. No measured ion/electron split at N1-N5 is in the repository's "
+                 f"audit, so neither condition is checked against data here.")
+        ng, ns = f["ion_over_discharge_gt_1_scoreable_runs"], f["ion_share_of_excess_gt_1_in_current_over_runs"]
+        if ng or ns:
+            s.append(f"Caveat on that decomposition: in {ng} of {rs} scoreable runs of {label} the model's own "
+                     f"time-averaged boundary ion current exceeds its window-mean I_d (ion_over_discharge up to "
+                     f"{f['ion_over_discharge_scoreable']['max']:.3f}), and in {ns} of the {io['n']} over-prediction "
+                     f"runs the ion share of the excess exceeds 1. In those runs the model output itself implies a "
+                     f"negative time-averaged electron current at the boundary, so the I_e >= 0 decomposition is not "
+                     f"clean there (model-derived; the cause is not diagnosed here, verify).")
     ip = f["ion_over_target_in_pass_runs"]
     if ip:
         if ip["n"] == 1:
@@ -745,7 +817,7 @@ def family_statements(f):
     iod, i2 = f["ion_over_discharge_scoreable"], f["ion_over_N2_equivalent_in_current_over_runs"]
     t2 = f["target_over_N2_equivalent"]
     s = [f"Model current composition: across the scoreable runs, the time-averaged boundary ion current is "
-         f"{iod['min']:.2f}-{iod['max']:.2f} of the window-mean I_d (median {iod['median']:.2f}). In the CURRENT "
+         f"{iod['min']:.3f}-{iod['max']:.3f} of the window-mean I_d (median {iod['median']:.3f}). In the CURRENT "
          f"over-prediction runs it is {i2['min']:.2f}-{i2['max']:.2f} x the N2-equivalent flow current "
          f"e*mdot_anode/m_N2 (median {i2['median']:.2f}). The reconstructed target I_d (Eq. 14 corrected, level 3) is "
          f"{t2['min']:.2f}-{t2['max']:.2f} x that current (mdot_anode measured, Brabston 2025 Table 2). Inferred from "
@@ -797,8 +869,11 @@ def cross_candidate_statements(s3, cands):
           f"{r_c:+.2f} with c and {r_w:+.2f} with w. With the derived trough deficit b*w (chosen post hoc, descriptive) "
           f"it is {r_bw:+.2f}, and b*w also ranks with the Xe in-sample max abs dI ({r_bw_xe:+.2f}).")
     if r_bw < 0:
-        tp += (" The sign is the one expected from the model form, where a larger low-transport trough lowers the "
-               "anomalous inverse Hall parameter over a wider region and so lowers the modelled current.")
+        tp += (" In the model form c(z) = a (1 - b exp(-((z - c L)/(w L))^2 / 2)) (HallThruster.jl ScaledGaussianBohm "
+               "as wrapped in hallthruster_bridge/bridge_lib.jl; docs/HISTORY.md), a larger b or w lowers the "
+               "anomalous coefficient c(z) over a wider region. That this lowers the modelled current is an inferred "
+               "model response (evidence class: inferred; not independently sourced, verify); the n = 9 rank "
+               "correlation is consistent with it but does not demonstrate it.")
     tp += (" This describes how the model responds. It is not evidence that any parameter value is physically correct, "
            "and because the parameters co-vary it cannot be attributed to b*w alone.")
     a_vals = s3["a_anom_scale"]["values"]
@@ -863,7 +938,7 @@ def build():
             "candidate_verdicts": inp["decision"]["candidates"],
             "credible_set": "empty (CLAUDE.md, project decision 2026-09-26)",
             "gate_3": "FAIL",
-            "statement": "the v1 outcome is final; this analysis reads official statuses and reasons and changes none",
+            "statement": "the v1 outcome is final and permanent (never rewritten); this analysis reads official statuses and reasons and changes none",
         },
         "inputs": {k: {"file": v, "sha256": inp["hashes"][k]} for k, v in REL.items()},
         "input_checks": inp["checks"],
@@ -964,7 +1039,8 @@ def render(doc):
     L = ["# P5-N₂ v1 vacuum campaign: scoreable-subset forensics (descriptive, non-gating)", "",
          "> **Status.** This is a descriptive, **non-gating** analysis of the scoreable run-readings of the frozen "
          "P5-N₂ v1 "
-         "vacuum campaign (official PASS + FAIL_VALIDATION). The official v1 outcome is final and unchanged: all 9 "
+         "vacuum campaign (official PASS + FAIL_VALIDATION). The official v1 outcome is final, permanent and "
+         "unchanged, and is never rewritten: all 9 "
          "screening candidates are **INCONCLUSIVE / NOT ELIGIBLE**, the credible set is **∅** and gate 3 is **FAIL**. "
          "Every run status and failure reason below is read from the official scores file and none is recomputed. "
          "Nothing here re-scores or re-labels a run. Nothing here proposes a change to transport, chemistry, criteria, "
@@ -1060,8 +1136,12 @@ def render(doc):
                   [[g] + [f"{v[pt]['over']}/{v[pt]['under']}" for pt in POINTS]
                    for g, v in sp["current_failures_by_registration_point"].items()])
     n25 = sp["current_failures_N2_N5"]
+    cm25 = next(iter(s6["families"].values()))["facts"]["current_N2_N5_runs_by_registration_coil"]
     L += ["", f"- **Current at N2–N5:** {n25['over']} of {n25['n']} CURRENT-failing runs over-predict I_d "
-              f"({100 * n25['over'] / n25['n']:.1f} %); {n25['under']} under-predict.",
+              f"({100 * n25['over'] / n25['n']:.1f} %); {n25['under']} under-predict. These are failing runs only: "
+              f"{sum(v['within_current_tolerance'] for v in cm25.values())} of the "
+              f"{sum(v['scoreable_runs'] for v in cm25.values())} scoreable N2–N5 runs carry no CURRENT reason "
+              f"(where, per registration|coil: section 6).",
           f"- **Current at N1:** {sp['current_failures_by_point']['N1']['over']} over and "
           f"{sp['current_failures_by_point']['N1']['under']} under. The sign splits by registration, as the table "
           "above shows."]

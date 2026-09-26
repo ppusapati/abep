@@ -171,3 +171,33 @@ def test_json_and_markdown_deterministic_and_committed(mod, doc):
     assert mod.dumps(doc2) == js1 and mod.render(doc2) == md1
     assert open(os.path.join(OUT, "scoreable_subset.json"), encoding="utf-8").read() == js1
     assert open(os.path.join(OUT, "SCOREABLE_SUBSET.md"), encoding="utf-8").read() == md1
+
+
+def test_current_level_statements_restricted_to_where_current_fails(doc):
+    """A 'does not support the modelled current level' statement may name only registration|coil combinations in
+    which every scoreable N2-N5 run carries the official CURRENT reason (none within tolerance)."""
+    s6 = doc["s6_evidence_statements"]
+    blocks = [s6["families"], s6["parameter_groups"], s6["emphasis_candidates"]]
+    fam = next(iter(s6["families"].values()))["facts"]["current_N2_N5_runs_by_registration_coil"]
+    assert sum(v["scoreable_runs"] for v in fam.values()) == 334
+    assert sum(v["current_over"] + v["current_under"] for v in fam.values()) == 247
+    assert sum(v["within_current_tolerance"] for v in fam.values()) == 87
+    n_claims = 0
+    for blk in blocks:
+        for v in blk.values():
+            cm = v["facts"]["current_N2_N5_runs_by_registration_coil"]
+            for st in v["statements"]:
+                if "does not support the modelled current level" not in st:
+                    continue
+                n_claims += 1
+                assert st.startswith("Restricted to where CURRENT fails: under ")
+                named = st.split("under ", 1)[1].split(", every")[0].split(", ")
+                for k in named:
+                    assert cm[k]["scoreable_runs"] > 0
+                    assert cm[k]["current_over"] == cm[k]["scoreable_runs"], (k, cm[k])
+    assert n_claims > 0
+    em = s6["emphasis_candidates"]
+    for c, (n, w) in {"sgb-screen-05": (64, 24), "sgb-screen-07": (42, 23)}.items():
+        cm = em[c]["facts"]["current_N2_N5_runs_by_registration_coil"]
+        assert sum(x["scoreable_runs"] for x in cm.values()) == n
+        assert sum(x["within_current_tolerance"] for x in cm.values()) == w
