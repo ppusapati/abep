@@ -1155,6 +1155,92 @@ def test_p5_n2_validation_preregistration():
     for f, sha in lock["files"].items():
         assert h(os.path.join(B, f)) == sha, f
 
+def test_p5_n2_scorer_implements_frozen_rules():
+    """Synthetic records only (no campaign data): O2 precedence, O1 extinction vs breathing vs low steady current, CURRENT and
+    N1-N3 THRUST tolerances with the divergence reading, N4/N5 thrust unscored, O3 member / candidate aggregation, O4 triggers."""
+    import importlib.util, os
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("s", os.path.join(root, "scripts", "score_p5_n2_campaign.py"))
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+
+    def rec(point="N1", mode="vacuum", I=None, T_mN=None, samples=None, fout=0.0, retcode="success", cand="c1", chem="n2_n.toml",
+            reg="L32-anode", coil="1p6kW", finite=True):
+        It, Tt = m.targets(point, mode)
+        I = It if I is None else I
+        f = m.axial_factor(point, "A") or 1.0
+        T = (Tt if T_mN is None else T_mN) / f
+        return {"key": f"{cand}|{chem}|{point}-{reg}-{coil}|{mode}", "candidate": cand, "chemistry": chem, "case": f"{point}-{reg}-{coil}",
+                "point": point, "registration": reg, "coil_shape": coil, "mode": mode, "retcode": retcode, "finite": finite,
+                "discharge_current_A": I, "thrust_N": T * 1e-3, "Id_final10_samples_A": samples if samples is not None else [I] * 50,
+                "chemistry_per_reaction": [{"extrapolated_fraction": fout}], "chemistry_unresolved_rate_files": []}
+    It, Tt = m.targets("N1", "vacuum")
+    assert m.run_status(rec(), "A")[0] == "PASS"
+    assert m.run_status(rec(retcode="failure"), "A")[0] == "NUMERICAL_FAILURE"
+    assert m.run_status(rec(finite=False), "A")[0] == "NUMERICAL_FAILURE"
+    assert m.run_status(rec(fout=1e-3, samples=[0.0] * 50), "A")[0] == "OUT_OF_DOMAIN"          # collapse outside domain
+    st, why, _ = m.run_status(rec(I=0.01 * It, samples=[0.001 * It] * 50), "A")
+    assert st == "FAIL_VALIDATION" and "SUSTAINMENT" in why                                     # persistent collapse
+    st, why, _ = m.run_status(rec(samples=[0.0] * 20 + [1.6 * It] * 30), "A")                   # deep breathing, lit
+    assert "SUSTAINMENT" not in why
+    st, why, _ = m.run_status(rec(I=0.5 * It, samples=[0.5 * It] * 50), "A")                    # low steady current
+    assert why == ["CURRENT"]
+    assert m.run_status(rec(I=1.149 * It), "A")[0] == "PASS" and m.run_status(rec(I=1.151 * It), "A")[1] == ["CURRENT"]
+    assert m.run_status(rec(T_mN=Tt + 5.1), "A")[0] == "PASS" and m.run_status(rec(T_mN=Tt + 5.3), "A")[1] == ["THRUST"]
+    It4, Tt4 = m.targets("N4", "vacuum")
+    r4 = rec(point="N4"); r4["thrust_N"] = 10 * r4["thrust_N"]
+    assert m.run_status(r4, "A")[0] == "PASS"                                                    # N4 thrust unscored
+    assert m.targets("N1", "facility")[0] > It                                                   # raw > corrected current
+    # aggregation: one member all PASS -> PROMOTABLE; a failing run under every member -> FAIL_VALIDATION
+    good = [rec(point=p, chem=c) for c in m.MANDATORY for p in m.POINTS]
+    _, mem = m.score(good)
+    assert mem["vacuum"]["c1"]["candidate"] == "PROMOTABLE" and mem["vacuum"]["c1"]["members"]["L32-anode|1p6kW|A"] == "PASS"
+    bad = [rec(point=p, chem=c, I=(1.5 * m.targets(p, "vacuum")[0] if p == "N2" else None)) for c in m.MANDATORY for p in m.POINTS]
+    assert m.score(bad)[1]["vacuum"]["c1"]["candidate"] == "FAIL_VALIDATION"
+    ood = [rec(point=p, chem=c, fout=(1e-3 if p == "N5" else 0.0)) for c in m.MANDATORY for p in m.POINTS]
+    assert m.score(ood)[1]["vacuum"]["c1"]["candidate"] == "INCONCLUSIVE / NOT ELIGIBLE"
+    assert m.score(good[:-1])[1]["vacuum"]["c1"]["candidate"] == "INCONCLUSIVE / NOT ELIGIBLE"      # a missing run never passes
+    # O4 triggers
+    base = [rec(point="N2", chem="n2_n.toml")]
+    I2, T2 = m.targets("N2", "vacuum")
+    assert m.escalation([rec(point="N2", chem="s", I=1.07 * I2)], base, "s") == []
+    assert m.escalation([rec(point="N2", chem="s", I=1.08 * I2)], base, "s")
+    onA = lambda fired: [f for f in fired if f[1].endswith("(A)")]          # fixtures set thrust through reading A's factor
+    assert onA(m.escalation([rec(point="N2", chem="s", T_mN=T2 + 2.7)], base, "s")) == []
+    assert onA(m.escalation([rec(point="N2", chem="s", T_mN=T2 + 2.9)], base, "s"))
+    # O4 compares observables even when both runs are OUT_OF_DOMAIN (review, PR #28)
+    ood_base = [rec(point="N2", chem="n2_n.toml", fout=1e-3)]
+    assert m.escalation([rec(point="N2", chem="s", fout=1e-3)], ood_base, "s") == []
+    assert m.escalation([rec(point="N2", chem="s", fout=1e-3, I=1.2 * I2)], ood_base, "s")
+    # staged records are scored for O4 against their pre-registered baseline, not discarded
+    jl = [rec(point=p, chem="n2_n_exc_johnsonlow.toml", I=(1.2 * m.targets(p, "vacuum")[0] if p == "N3" else None)) for p in m.POINTS]
+    st = m.staged_escalations(good + jl)
+    assert st["n2_n_exc_johnsonlow.toml"]["baseline"] == "n2_n.toml" and st["n2_n_exc_johnsonlow.toml"]["trigger_fired"]
+    dic = [rec(point=p, chem="n2_n_n2dication.toml") for p in m.POINTS]
+    assert m.staged_escalations(good + dic)["n2_n_n2dication.toml"]["baseline"] == "n2_n_di_lower.toml"
+    assert not m.staged_escalations(good + dic)["n2_n_n2dication.toml"]["trigger_fired"]
+    # O4 verdict clause on the FULL mandatory set (owner review, PR #28): members M1 = L32-anode, M2 = L38-hist
+    def member(chem, reg, fail):
+        return [rec(point=p, chem=chem, reg=reg, I=(1.5 * m.targets(p, "vacuum")[0] if (fail and p == "N2") else None))
+                for p in m.POINTS]
+    others = [c for c in m.MANDATORY if c != "n2_n.toml"]
+    def full(nominal_m1_fail, nominal_m2_fail, other_m1_fail, other_m2_fail):
+        out = member("n2_n.toml", "L32-anode", nominal_m1_fail) + member("n2_n.toml", "L38-hist", nominal_m2_fail)
+        for c in others:
+            out += member(c, "L32-anode", other_m1_fail) + member(c, "L38-hist", other_m2_fail)
+        return out
+    sens = lambda m1_fail, m2_fail: [dict(r, chemistry="n2_n_exc_johnsonlow.toml") for r in
+                                     member("n2_n.toml", "L32-anode", m1_fail) + member("n2_n.toml", "L38-hist", m2_fail)]
+    # (1) single-chemistry candidate verdict unchanged (PROMOTABLE via M1 -> via M2) but the full verdict changes (M2 fails elsewhere)
+    base1 = full(False, True, False, True)
+    assert m.score(base1)[1]["vacuum"]["c1"]["candidate"] == "PROMOTABLE"
+    vc = m.verdict_change(sens(True, False), base1, "n2_n.toml")
+    assert vc["c1"]["candidate"] == ("PROMOTABLE", "FAIL_VALIDATION")
+    assert m.staged_escalations(base1 + sens(True, False))["n2_n_exc_johnsonlow.toml"]["trigger_fired"]
+    # (2) converse: the single-chemistry verdict changes, but the other chemistries already falsify every member -> no change
+    base2 = full(False, True, True, True)
+    assert m.score(base2)[1]["vacuum"]["c1"]["candidate"] == "FAIL_VALIDATION"
+    assert m.verdict_change(sens(True, True), base2, "n2_n.toml") == {}
+
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""
     from abep_sim.rate_tables import maxwellian_rate, tail_sensitivity
