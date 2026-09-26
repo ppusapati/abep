@@ -489,3 +489,50 @@ def test_ht100_gap_recorded():
         md = f.read()
     gaps = md[md.index("## Gaps (TBD)"):md.index("## Access log")]
     assert "HT100" in gaps
+
+
+# ---------------------------------------------------------------- ECHT-N2 disposition (lane 31) carried on ECHT items
+def test_echt_items_carry_repository_status(m, entries):
+    st = _json(os.path.join(IDENT, "echt_n2", "STATUS.json"))
+    assert st["status"] == "HISTORICAL_UNSUPPORTED"
+    ins = m["meta"]["repository_inputs"]
+    for k, rel in (("echt_status", "echt_n2/STATUS.json"), ("echt_status_md", "echt_n2/ECHT_N2_EVIDENCE_STATUS.md"),
+                   ("evidence_policy", None)):
+        assert k in ins, k
+        if rel:
+            assert ins[k]["path"] == "hallthruster_bridge/identification/" + rel
+    for f in (ins["echt_status"]["path"], ins["echt_status_md"]["path"]):
+        assert f in m["sources"]["REPO_ECHT_AUDIT"]["repository_files"]
+    echt_ids = [e["id"] for e in m["entries"] if "REPO_ECHT_AUDIT" in e["sources"]]
+    assert echt_ids == ["E03", "E04"]
+    for i in echt_ids:
+        rs = entries[i]["repository_status"]
+        assert rs["status"] == st["status"] and rs["score_bearing"] is st["score_bearing"] is False
+        assert rs["transport_discriminator"] is st["transport_discriminator"] is False
+        assert rs["supporting_check_preregistered"] is st["disposition"]["supporting_check_preregistered"]
+        assert rs["may_be_used_for"] in st["disposition"]["may_be_used_for"]
+        sus = next(x for x in st["items"] if x["item"].startswith("sustainment on N2"))
+        assert rs["sustainment_item"] == {k: sus[k] for k in rs["sustainment_item"]}
+        assert rs["literature_transfer_use"] == "PERMITTED_AS_PUBLISHED_MEASUREMENT_OF_THAT_THRUSTER"
+        for fa in rs["forced_assumptions_relevant_to_transfer"]:
+            assert fa in st["disposition"]["forced_assumptions"]
+    # items not from the ECHT audit carry no ECHT status
+    assert all("repository_status" not in e for e in m["entries"] if e["id"] not in echt_ids)
+
+
+def test_echt_b_field_and_anchor_statements(entries):
+    """No ECHT item treats '130 G' as measured, calls B(z) exit-peaked, or uses the withdrawn 250 V / 24 mN anchor."""
+    for i in ("E03", "E04"):
+        blob = json.dumps(entries[i], ensure_ascii=False)
+        assert "24 mN" not in blob and "1230 s" not in blob and "690 W" not in blob, i
+        for qd in _all_quantities(entries[i]):
+            if qd["unit"] == "G":
+                assert qd["value"] != 130 and qd["evidence_class"] in ("digitized", None), (i, qd["name"])
+    b = entries["E03"]["magnetic_field"]
+    assert "not exit-peaked" in b["note"] and "model-derived" in b["note"] and "A3" in b["uncertainty"]
+    for qd in entries["E03"]["quantities"]:
+        if qd["name"].startswith("thrust"):
+            assert "A7" in qd["uncertainty"] and "reduced by the author" in qd["note"]
+    with open(MDFILE) as f:
+        md = f.read()
+    assert "HISTORICAL_UNSUPPORTED" in md and "FEMM" in md

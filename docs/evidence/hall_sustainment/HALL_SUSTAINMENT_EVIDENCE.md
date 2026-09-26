@@ -52,6 +52,18 @@ voltage and B ranges, channel geometry, oscillations and extinction, cathode flo
   `.../echt_n2/echt_n2_evidence_audit_v1.json`, `.../echt_n2/echt_table_checks_v1.json`). Their original sources are
   Brabston et al., JPP 2025 (doi:10.2514/1.B39623) and Marchioni's 2020 MSc thesis. The builder recomputes each value
   from those files, and their sha256 hashes are recorded in `meta.repository_inputs`.
+- **ECHT-N2 repository status.** The ECHT-N2 disposition (`hallthruster_bridge/identification/echt_n2/STATUS.json`,
+  `ECHT_N2_EVIDENCE_STATUS.md`, and the ECHT rows of `docs/EVIDENCE.md`) is **HISTORICAL_UNSUPPORTED**: not
+  score-bearing, not a transport discriminator, and no ECHT supporting check is pre-registered. The builder reads that
+  status from `STATUS.json` and carries it on E03 and E04 (`repository_status`). The disposition lists the published
+  operating envelope, quoted with its evidence class, among its permitted uses, and its exclusions concern scoring,
+  transport discrimination, tuning, simulation cases and the 250 V anchor. So the published sustainment on pure N2
+  is still quoted here as a level-3 measurement of that thruster in its own facility. Anything the thesis does not
+  publish (the channel cross-section, B at the operating coil currents, the cathode and facility contributions) carries
+  the disposition's forced assumptions A1, A3, A5 and A6. The measured B(z) is a flat plateau (85.3 G at a 2 A coil
+  current), not exit-peaked. The "130 G" in the thesis is the FEMM value at 3 A, which is model-derived, and it is not
+  used here. The 250 V / 24 mN 0-D calibration anchor and the 225-275 V case voltages have no open source and are not
+  used anywhere in this audit.
 - **Simulation results are not evidence.** The P5-N2 v1 vacuum simulation campaign is not used as evidence that a
   discharge physically sustains. v1 is INCONCLUSIVE: no candidate is admitted and the credible set is empty. The v1
   campaign is recorded as frozen, scored once and released, with no-replace evidence publication (docs/HISTORY.md,
@@ -148,10 +160,11 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 - Sources / access: REPO_ECHT_AUDIT (repository_audit_file), MARCHIONI2020 (open_full_text_restrictive_license), MARCHIONI2021 (abstract_only). Evidence level 3; outcome evidence class: measured; repository-derived values recomputed by the builder.
 - Pre-ionizer: none. Ignition (direct_on_atmospheric_gas, measured, basis primary): S2 pp.84-85 give an ignition procedure with N2 set on the anode and Ar on the cathode (cathode puff, low B at ignition, B applied after the anode stabilises); S2 p.97 states a stable discharge was maintained on 100 % nitrogen with no xenon present.
 - Outcome: **sustained**. 13 operating points (Table 6.1) and 7 thrust runs (Table 6.2) on pure N2 at 2.06 mg/s. Runs 1, 3, 7 are flagged 'strong instability during calibration'; mode changes and quenching were attributed by the author to a degraded BaO cathode.
+- Repository status: **HISTORICAL_UNSUPPORTED** (`hallthruster_bridge/identification/echt_n2/STATUS.json`; score_bearing false, transport_discriminator false). Literature-transfer use: PERMITTED_AS_PUBLISHED_MEASUREMENT_OF_THAT_THRUSTER. Decided from STATUS.json: the disposition lists 'Context for the published ECHT operating envelope ..., quoted with its evidence class' under may_be_used_for, and classes the sustainment observation as evidence level 3, 'measured (qualitative)'. Its must_not_be_used_for list concerns transport discrimination, score-bearing validation or gate-3 verdicts, tuning, replacement simulation cases and the 250 V anchor / 225-275 V points; none of these is a literature-transfer sustainment statement. The published sustainment on pure N2 therefore remains a level-3 measurement of the ECHT in its own facility and may be quoted as such. HISTORICAL_UNSUPPORTED governs scoring and transport discrimination: ECHT is not score-bearing, cannot select, eliminate or rank any Hall closure, and no ECHT supporting check is pre-registered. Any transfer that needs a quantity the thesis does not publish (channel cross-section, B at the operating coil current, cathode or facility contribution) inherits the forced assumptions listed here and their evidence class.
 - Observations: oscillations: qualitative only: mode changes during calibration (Fig. 6.12 LVDT trace), quenching, keeper runaway; discharge unstable/quenches below ~80 sccm (1.6 mg/s). No I_d time traces, spectra, or oscillation amplitudes.; extinction: quenching linked to keeper-voltage runaway (30-40 V) of a degraded emitter; cathode flow raised ad hoc to keep the cathode running (repository audit, cathode.flow_mgps note; S2 p.98); erosion: not reported; cathode: argon, 0.15-0.74 mg/s (Table 6.1).
-- **Implication for 'is pre-ionization required?'** (operation_without_preionizer_demonstrated): The only accessed Hall case that both ignited and ran on a pure N2 anode flow with no xenon anywhere (Ar cathode) and no pre-ionization stage, at about 2 mg/s in an 86 mm channel.
+- **Implication for 'is pre-ionization required?'** (operation_without_preionizer_demonstrated): The only accessed Hall case that both ignited and ran on a pure N2 anode flow with no xenon anywhere (Ar cathode) and no pre-ionization stage, at about 2 mg/s in an 86 mm channel. Repository status HISTORICAL_UNSUPPORTED (not score-bearing, not a transport discriminator) does not withdraw this published measurement; it stays a level-3 measurement of that thruster (see repository_status).
   - Uncertainty: Argon cathode flow was large (7.3-35.9 % of anode mass) and co-varied with the best points; facility background 8.1e-05-2.2e-04 Torr (inferred ingestion 2.0-6.0 % of anode flow, repository audit); 3 of 7 thrust runs strongly unstable; per-point I_d to 2 s.f.; no oscillation data.
-  - Applicability limits: 0.27-0.77 kW, 180-220 V only (300 V supply limit, no data above 220 V), one flow (2.06 mg/s), elevated facility pressure; MSc-thesis measurement with fit-only thrust uncertainty.
+  - Applicability limits: 0.27-0.77 kW, 180-220 V only (300 V supply limit, no data above 220 V), one flow (2.06 mg/s), elevated facility pressure; MSc-thesis measurement with fit-only thrust uncertainty. Any quantity the thesis does not publish (channel cross-section, B at the operating coil current, cathode or facility contribution) needs forced assumptions A1/A3/A5/A6 of the repository ECHT disposition.
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
   - Thruster geometry note: extended channel; the stated outer diameter is ambiguous (channel OD vs BN piece OD); the measured B(z) has a flat plateau inside the channel rather than an exit-plane peak (see quantities of the sustained-operation ECHT entry)
 
@@ -166,13 +179,13 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   | discharge voltage | 180-220 | V | measured | not stated | REPO_ECHT_AUDIT, S2 Table 6.1 |
   | discharge current | 1.5-3.9 | A | measured | 2 s.f. (rounding +-0.05 A) | REPO_ECHT_AUDIT, S2 Table 6.1 |
   | magnet coil current | 0.8-3 | A | measured | not stated | REPO_ECHT_AUDIT, S2 Table 6.1 |
-  | centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured) | 85.3 | G | digitized | reading +-0.2 G; probe uncertainty not stated | REPO_ECHT_AUDIT, S2 Fig. 4.7 p.66 (digitized by the repository audit) |
+  | centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured) | 85.3 | G | digitized | reading +-0.2 G; probe uncertainty, component and radial position not stated; B at the operating coil currents needs forced assumption A3 (repository STATUS.json) | REPO_ECHT_AUDIT, S2 Fig. 4.7 p.66 (digitized by the repository audit) |
   | cathode Ar mass flow | 0.15-0.74 | mg/s | measured | not stated | REPO_ECHT_AUDIT, S2 Table 6.1 |
   | cathode Ar / anode N2 mass-flow ratio | 0.0728-0.3592 | 1 | inferred | inherits the 2.06/2.083 mg/s ambiguity | REPO_ECHT_AUDIT, our arithmetic on Table 6.1 |
   | chamber pressure (ion gauge) | 8.1e-05-0.00022 | Torr | measured | gauge location and gas correction not stated | REPO_ECHT_AUDIT, S2 Table 6.1 |
   | anode power, thrust runs | 270-770 | W | inferred | from 2 s.f. I_d | REPO_ECHT_AUDIT, V_d x I_d, S2 Table 6.2 |
-  | thrust, one-side reduction (7 runs) | 20.62-23.41 | mN | measured | published +- are calibration-fit only (0.02-2.66 mN) | REPO_ECHT_AUDIT, S2 Table 6.2 p.101 |
-  | thrust, averaged reduction (4 runs) | 17.29-21.31 | mN | measured | published +- 2.68-4.56 mN; 6-18 % below one-side | REPO_ECHT_AUDIT, S2 Table 6.3 p.108 |
+  | thrust, one-side reduction (7 runs) | 20.62-23.41 | mN | measured | published +- are calibration-fit only (0.02-2.66 mN); no total uncertainty; which reduction applies is forced assumption A7 | REPO_ECHT_AUDIT, S2 Table 6.2 p.101 |
+  | thrust, averaged reduction (4 runs) | 17.29-21.31 | mN | measured | published +- 2.68-4.56 mN; 6-18 % below one-side; which reduction applies is forced assumption A7 | REPO_ECHT_AUDIT, S2 Table 6.3 p.108 |
   | axial window over which the audit averages the B plateau (2 A coil current) | 4.7-8.3 | cm | digitized | reading +-0.014 cm; B(z) axis origin not defined in the text | REPO_ECHT_AUDIT, S2 Fig. 4.7 p.66; audit key magnetic_field.measured_Bz_at_2A.plateau_mean_4.7_8.3cm_G |
   | peak of the digitized B(z) at 2 A coil current | 86.09 | G | digitized | reading +-0.2 G | REPO_ECHT_AUDIT, S2 Fig. 4.7 p.66 (audit magnetic_field.measured_Bz_at_2A.points) |
 
@@ -181,6 +194,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 - Sources / access: REPO_ECHT_AUDIT (repository_audit_file), MARCHIONI2020 (open_full_text_restrictive_license), MARCHIONI2021 (abstract_only). Evidence level 3; outcome evidence class: measured; repository-derived values recomputed by the builder.
 - Pre-ionizer: none. Ignition (direct_on_atmospheric_gas, measured, basis primary): as E03
 - Outcome: **extinguished**. Qualitative: below about 80 sccm (1.6 mg/s) N2 the discharge was unstable and easily quenched at increasing magnet current (p.104) or if the potential was not raised sufficiently (p.110). The flow range explored was also limited by the flow controller.
+- Repository status: **HISTORICAL_UNSUPPORTED** (`hallthruster_bridge/identification/echt_n2/STATUS.json`; score_bearing false, transport_discriminator false). Literature-transfer use: PERMITTED_AS_PUBLISHED_MEASUREMENT_OF_THAT_THRUSTER. Decided from STATUS.json: the disposition lists 'Context for the published ECHT operating envelope ..., quoted with its evidence class' under may_be_used_for, and classes the sustainment observation as evidence level 3, 'measured (qualitative)'. Its must_not_be_used_for list concerns transport discrimination, score-bearing validation or gate-3 verdicts, tuning, replacement simulation cases and the 250 V anchor / 225-275 V points; none of these is a literature-transfer sustainment statement. The published sustainment on pure N2 therefore remains a level-3 measurement of the ECHT in its own facility and may be quoted as such. HISTORICAL_UNSUPPORTED governs scoring and transport discrimination: ECHT is not score-bearing, cannot select, eliminate or rank any Hall closure, and no ECHT supporting check is pre-registered. Any transfer that needs a quantity the thesis does not publish (channel cross-section, B at the operating coil current, cathode or facility contribution) inherits the forced assumptions listed here and their evidence class.
 - Observations: oscillations: not quantified; extinction: easy quenching below about 1.6 mg/s, conditional on voltage and magnet current (not a fixed flow floor); erosion: not reported; cathode: Ar, degraded BaO emitter.
 - **Implication for 'is pre-ionization required?'** (operation_bounded_extinction_observed): Even with an 86 mm channel, pure-N2 operation without a pre-ionizer became unstable and easily quenched below about 1.6 mg/s unless the voltage was raised sufficiently, and at increasing magnet current. The source describes a boundary that depends on V and B, not a fixed flow floor.
   - Uncertainty: Two short qualitative statements; the V and B values at the boundary are not given numerically, only the direction of their effect; the explored flow range was limited by the flow controller; the degraded cathode may have contributed.
@@ -573,7 +587,8 @@ limits.
 2. **Xenon is present in most cases.** Most cases use xenon in the cathode (E01, E05, E06, E08, E10, E19, E20), for
    ignition (E05, E06, E09) or in the anode flow (E07, E13-E15). The accessed record shows only two xenon-free cases:
    - **E03 (ECHT).** The discharge was ignited directly on N2 with an argon cathode. Argon was 7-36 % of the anode mass
-     flow.
+     flow. (Repository status HISTORICAL_UNSUPPORTED applies to scoring and transport discrimination; the published
+     measurement is quoted with its evidence class.)
    - **E09 (HT5k DM2).** The discharge ran xenon-free in steady state (N2/O2 anode, N2 cathode), but only after a
      xenon start.
 
@@ -601,7 +616,8 @@ limits.
    efficiency (0.64 to 0.61) (E14, GURCIULLO2020 Table 4.10 p.201). These are estimates from uncorrected spectra, not
    thrust-stand data, and one pair of runs.
    Among the atmospheric-gas tests, a measured B(z) is published only for ECHT: a flat plateau of 85.3 G, measured at a
-   2 A coil current only, while the operating points used 0.8-3.0 A (E03). For P5 the N2 coil currents are unpublished.
+   2 A coil current only, while the operating points used 0.8-3.0 A (E03). It is not exit-peaked, and the thesis's
+   "130 G" is a FEMM (model-derived) value, not a measurement. For P5 the N2 coil currents are unpublished.
 5. **Channel length.** Channel lengths in the set are 23 mm (Z-70), 32 or 38 mm (P5) and 86 mm (ECHT). Only the
    longest channel ran pure N2 at about 2 mg/s with no xenon anywhere. The short Z-70 did not run pure N2 at ≤ 0.7 kW.
    The source attributes that limit to available power, not to the channel. There is no controlled comparison, so this

@@ -30,6 +30,8 @@ REPO_FILES = {
     "p5_findings": "hallthruster_bridge/identification/p5_n2_measurement_audit_findings_v1.json",
     "echt_audit": "hallthruster_bridge/identification/echt_n2/echt_n2_evidence_audit_v1.json",
     "echt_tables": "hallthruster_bridge/identification/echt_n2/echt_table_checks_v1.json",
+    "echt_status": "hallthruster_bridge/identification/echt_n2/STATUS.json",
+    "echt_status_md": "hallthruster_bridge/identification/echt_n2/ECHT_N2_EVIDENCE_STATUS.md",
     "evidence_policy": "docs/EVIDENCE.md",
     "v1_scores": "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores.json",
 }
@@ -117,9 +119,12 @@ SOURCES = {
         "access": "repository_audit_file", "access_note": "frozen repository files (sha256 recorded in meta)",
         "sha256": None, "license": "repository"},
     "REPO_ECHT_AUDIT": {
-        "citation": "Repository ECHT-N2 evidence audit v1 (values from MARCHIONI2020 Tables 6.1-6.3, Figs. 4.7/4.8)",
+        "citation": "Repository ECHT-N2 evidence audit v1 (values from MARCHIONI2020 Tables 6.1-6.3, Figs. 4.7/4.8) and "
+                    "the ECHT-N2 status disposition (STATUS.json: HISTORICAL_UNSUPPORTED, not score-bearing, not a "
+                    "transport discriminator)",
         "doi": None, "urls_accessed": [],
-        "repository_files": [REPO_FILES["echt_audit"], REPO_FILES["echt_tables"]],
+        "repository_files": [REPO_FILES["echt_audit"], REPO_FILES["echt_tables"], REPO_FILES["echt_status"],
+                             REPO_FILES["echt_status_md"], REPO_FILES["evidence_policy"]],
         "access": "repository_audit_file", "access_note": "frozen repository files (sha256 recorded in meta)",
         "sha256": None, "license": "repository"},
     "MARCHIONI2020": {
@@ -391,8 +396,56 @@ def p5_entries():
     return [e1, e2]
 
 
+# Where the ECHT-N2 disposition allows its published measurements to be used (STATUS.json 'may_be_used_for'), and the
+# forced assumptions that bear on a literature-transfer use of the sustainment observation (channel cross-section, B per
+# run, argon cathode, facility). Each is looked up in STATUS.json by its label, so a changed disposition fails the build.
+ECHT_TRANSFER_ASSUMPTIONS = ["A1", "A3", "A5", "A6"]
+
+
+def echt_status():
+    """ECHT-N2 repository disposition (lane 31), carried on every ECHT entry. Read from STATUS.json, never restated."""
+    st = _load("echt_status")
+    assert st["status"] == "HISTORICAL_UNSUPPORTED" and st["score_bearing"] is False, st["status"]
+    assert st["transport_discriminator"] is False and st["independent_scoreable_validation_dataset"] is False
+    assert st["basis"]["audit_file"] == REPO_FILES["echt_audit"] and st["basis"]["audit_sha256"] == _sha256("echt_audit")
+    context = [u for u in st["disposition"]["may_be_used_for"] if u.startswith("Context for the published ECHT")]
+    assert len(context) == 1, context
+    sus = [i for i in st["items"] if i["item"].startswith("sustainment on N2")]
+    assert len(sus) == 1 and sus[0]["evidence_level"] == 3 and sus[0]["quantity_type"].startswith("measured"), sus
+    fa = {x.split(" ", 1)[0]: x for x in st["disposition"]["forced_assumptions"]}
+    return {
+        "status": st["status"],
+        "status_file": REPO_FILES["echt_status"],
+        "companion_document": REPO_FILES["echt_status_md"],
+        "score_bearing": st["score_bearing"],
+        "transport_discriminator": st["transport_discriminator"],
+        "supporting_check_preregistered": st["disposition"]["supporting_check_preregistered"],
+        "may_be_used_for": context[0],
+        "must_not_be_used_for_ref": "%s disposition.must_not_be_used_for (%d items: transport discrimination, "
+                                    "score-bearing validation or gate-3 verdicts, tuning, replacement simulation cases, "
+                                    "the 250 V anchor and 225-275 V points)"
+                                    % (REPO_FILES["echt_status"], len(st["disposition"]["must_not_be_used_for"])),
+        "sustainment_item": {k: sus[0][k] for k in ("value", "source", "evidence_level", "quantity_type", "use")},
+        "forced_assumptions_relevant_to_transfer": [fa[k] for k in ECHT_TRANSFER_ASSUMPTIONS],
+        "literature_transfer_use": "PERMITTED_AS_PUBLISHED_MEASUREMENT_OF_THAT_THRUSTER",
+        "literature_transfer_statement": (
+            "Decided from STATUS.json: the disposition lists 'Context for the published ECHT operating envelope ..., "
+            "quoted with its evidence class' under may_be_used_for, and classes the sustainment observation as "
+            "evidence level %d, '%s'. Its must_not_be_used_for list concerns transport discrimination, score-bearing "
+            "validation or gate-3 verdicts, tuning, replacement simulation cases and the 250 V anchor / 225-275 V "
+            "points; none of these is a literature-transfer sustainment statement. The published sustainment on pure "
+            "N2 therefore remains a level-3 measurement of the ECHT in its own facility and may be quoted as such. "
+            "HISTORICAL_UNSUPPORTED governs scoring and transport discrimination: ECHT is not score-bearing, cannot "
+            "select, eliminate or rank any Hall closure, and no ECHT supporting check is pre-registered. Any transfer "
+            "that needs a quantity the thesis does not publish (channel cross-section, B at the operating coil current, "
+            "cathode or facility contribution) inherits the forced assumptions listed here and their evidence class."
+            % (sus[0]["evidence_level"], sus[0]["quantity_type"])),
+    }
+
+
 def echt_entries():
     a = _load("echt_audit")
+    rs = echt_status()
     v = a["values"]
     rows = v["operating_points_table_6_1"]["rows"]   # [Vd, Id, Imag, mdot_a, mdot_c(Ar), Pa/Ptot, p]
     vd = [r[0] for r in rows]
@@ -420,7 +473,12 @@ def echt_entries():
         q("magnet coil current", [min(im), max(im)], "A", "measured", S, "S2 Table 6.1", "not stated"),
         q("centreline B plateau measured at 2 A coil current only (operating points used %g-%g A; B at those "
           "currents not measured)" % (min(im), max(im)), plateau, "G", "digitized", S,
-          "S2 Fig. 4.7 p.66 (digitized by the repository audit)", "reading +-0.2 G; probe uncertainty not stated"),
+          "S2 Fig. 4.7 p.66 (digitized by the repository audit)",
+          "reading +-0.2 G; probe uncertainty, component and radial position not stated; B at the operating coil "
+          "currents needs forced assumption A3 (repository STATUS.json)",
+          note="digitized of a measured centreline profile: a flat plateau at about 4.7-8.6 cm, not exit-peaked. The "
+               "'130 G' quoted in S2 (p.104, p.114) is the FEMM value at 3 A (model-derived), not a measured B_max, and "
+               "is not used here (repository STATUS.json item \"'130 G' peak field\")."),
         q("cathode Ar mass flow", [min(mc), max(mc)], "mg/s", "measured", S, "S2 Table 6.1", "not stated"),
         q("cathode Ar / anode N2 mass-flow ratio", [r4(min(frac)), r4(max(frac))], "1", "inferred", S,
           "our arithmetic on Table 6.1", "inherits the 2.06/2.083 mg/s ambiguity"),
@@ -428,9 +486,12 @@ def echt_entries():
           "gauge location and gas correction not stated"),
         q("anode power, thrust runs", [min(pa), max(pa)], "W", "inferred", S, "V_d x I_d, S2 Table 6.2", "from 2 s.f. I_d"),
         q("thrust, one-side reduction (7 runs)", [min(t1), max(t1)], "mN", "measured", S, "S2 Table 6.2 p.101",
-          "published +- are calibration-fit only (0.02-2.66 mN)"),
+          "published +- are calibration-fit only (0.02-2.66 mN); no total uncertainty; which reduction applies is "
+          "forced assumption A7",
+          note="measured on a thrust stand and reduced by the author (repository STATUS.json quantity type)"),
         q("thrust, averaged reduction (4 runs)", [min(tav), max(tav)], "mN", "measured", S, "S2 Table 6.3 p.108",
-          "published +- 2.68-4.56 mN; 6-18 % below one-side"),
+          "published +- 2.68-4.56 mN; 6-18 % below one-side; which reduction applies is forced assumption A7",
+          note="measured on a thrust stand and reduced by the author (repository STATUS.json quantity type)"),
         q("axial window over which the audit averages the B plateau (2 A coil current)", [4.7, 8.3], "cm", "digitized",
           S, "S2 Fig. 4.7 p.66; audit key magnetic_field.measured_Bz_at_2A.plateau_mean_4.7_8.3cm_G",
           "reading +-0.014 cm; B(z) axis origin not defined in the text"),
@@ -459,7 +520,7 @@ def echt_entries():
               "propellant": {"anode_gas": "N2 (pure)", "cathode_gas": "Ar", "xenon_in_anode_flow": False},
               "preionizer": {"present": False, "type": None,
                              "note": "single-stage; Ar-fed BaO hollow cathode (IonTech HCN-252) is the electron source"},
-              "repository_derived": True}
+              "repository_derived": True, "repository_status": rs}
     e3 = dict(common)
     e3.update({
         "id": "E03", "title": "ECHT on pure N2 with an argon cathode, 180-220 V (SPPL LVF)",
@@ -484,7 +545,10 @@ def echt_entries():
         "implication": {
             "direction": "operation_without_preionizer_demonstrated",
             "statement": "The only accessed Hall case that both ignited and ran on a pure N2 anode flow with no xenon "
-                         "anywhere (Ar cathode) and no pre-ionization stage, at about 2 mg/s in an 86 mm channel.",
+                         "anywhere (Ar cathode) and no pre-ionization stage, at about 2 mg/s in an 86 mm channel. "
+                         "Repository status HISTORICAL_UNSUPPORTED (not score-bearing, not a transport discriminator) "
+                         "does not withdraw this published measurement; it stays a level-3 measurement of that "
+                         "thruster (see repository_status).",
             "uncertainty": ("Argon cathode flow was large (%.1f-%.1f %% of anode mass) and co-varied with the best points; "
                             "facility background %.1e-%.1e Torr (inferred ingestion %s of anode flow, repository audit); "
                             "%d of %d thrust runs strongly unstable; per-point I_d to 2 s.f.; no oscillation data."
@@ -493,7 +557,11 @@ def echt_entries():
                                len(unstable), len(perf))),
             "applicability_limits": ("%.2f-%.2f kW, %g-%g V only (300 V supply limit, no data above 220 V), one flow "
                                      "(%g mg/s), elevated facility pressure; MSc-thesis measurement with fit-only thrust "
-                                     "uncertainty." % (min(pa) / 1000.0, max(pa) / 1000.0, min(vd), max(vd), ma[0])),
+                                     "uncertainty. Any quantity the thesis does not publish (channel cross-section, "
+                                     "B at the operating coil current, cathode or facility contribution) needs forced "
+                                     "assumptions %s of the repository ECHT disposition."
+                                     % (min(pa) / 1000.0, max(pa) / 1000.0, min(vd), max(vd), ma[0],
+                                        "/".join(ECHT_TRANSFER_ASSUMPTIONS))),
             "abep_regime": ABEP_REGIME_TBD},
     })
     e4 = dict(common)
@@ -1401,6 +1469,14 @@ def render_md(m):
                   e["ignition"]["mode"], e["ignition"]["evidence_class"], e["ignition"]["basis"],
                   e["ignition"]["statement"]),
               "- Outcome: **%s**. %s" % (e["outcome"], e["outcome_statement"]),
+              ] + (["- Repository status: **%s** (`%s`; score_bearing %s, transport_discriminator %s). "
+                    "Literature-transfer use: %s. %s" % (
+                        e["repository_status"]["status"], e["repository_status"]["status_file"],
+                        str(e["repository_status"]["score_bearing"]).lower(),
+                        str(e["repository_status"]["transport_discriminator"]).lower(),
+                        e["repository_status"]["literature_transfer_use"],
+                        e["repository_status"]["literature_transfer_statement"])]
+                   if "repository_status" in e else []) + [
               "- Observations: oscillations: %s; extinction: %s; erosion: %s; cathode: %s." % (
                   e["observations"]["oscillation_modes"], e["observations"]["extinction"],
                   e["observations"]["erosion"], e["observations"]["cathode"]),
