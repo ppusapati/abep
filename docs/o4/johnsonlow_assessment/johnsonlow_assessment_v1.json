@@ -1,0 +1,3726 @@
+{
+ "answer": {
+  "basis": "pre-registered O4 trigger (scored staged_escalation.trigger_fired) on all four baselines; classes per jla_persistence_rule_v1",
+  "class_counts": {
+   "BASELINE_DEPENDENT_SIGN": 2,
+   "SIGN_PERSISTS_BELOW_THRESHOLD": 12
+  },
+  "material_on_every_primary_combination": true,
+  "mode": "TAIL_AND_BOUNDARY_ON_ALL_FOUR",
+  "observables_material_only_with_some_baselines": [],
+  "observables_sign_consistent_below_threshold": [
+   "dI@N1",
+   "dI@N2",
+   "dI@N3",
+   "dI@N4",
+   "dI@N5",
+   "dI@pooled",
+   "dT_A@N1",
+   "dT_A@N2",
+   "dT_A@pooled",
+   "dT_B@N1",
+   "dT_B@N2",
+   "dT_B@pooled"
+  ],
+  "observables_that_persist": [],
+  "observables_with_baseline_dependent_sign": [
+   "dT_A@N3",
+   "dT_B@N3"
+  ],
+  "status_changes_on_every_combination": {
+   "A": true,
+   "B": true
+  },
+  "summary": "The pre-registered O4 trigger fires on all four primary combinations, but through a minority of runs (individual large deltas and status changes; 84 of 92 status-changed runs cross the OUT_OF_DOMAIN boundary). No observable shows a median shift at or above the O4 threshold on any combination; the median I_d shift is positive on all four at every point; the median shift changes sign with the baseline at dT_A@N3, dT_B@N3.",
+  "tail_by_baseline": {
+   "n2_n.toml": {
+    "n_pairs_dI_ge_threshold": 32,
+    "n_pairs_dT_A_ge_threshold": 47,
+    "n_pairs_dT_B_ge_threshold": 49,
+    "n_pairs_with_thrust": 162,
+    "n_runs_any_trigger": 79,
+    "n_runs_status_changed": 31,
+    "n_runs_status_changed_across_OOD_boundary": 29,
+    "note": "pairs are (candidate, case); thresholds are the O4 thresholds (|r| >= 1)"
+   },
+   "n2_n_di_lower.toml": {
+    "n_pairs_dI_ge_threshold": 34,
+    "n_pairs_dT_A_ge_threshold": 44,
+    "n_pairs_dT_B_ge_threshold": 45,
+    "n_pairs_with_thrust": 162,
+    "n_runs_any_trigger": 72,
+    "n_runs_status_changed": 26,
+    "n_runs_status_changed_across_OOD_boundary": 25,
+    "note": "pairs are (candidate, case); thresholds are the O4 thresholds (|r| >= 1)"
+   },
+   "n2_n_di_lower_nel_wang.toml": {
+    "n_pairs_dI_ge_threshold": 39,
+    "n_pairs_dT_A_ge_threshold": 44,
+    "n_pairs_dT_B_ge_threshold": 45,
+    "n_pairs_with_thrust": 162,
+    "n_runs_any_trigger": 78,
+    "n_runs_status_changed": 23,
+    "n_runs_status_changed_across_OOD_boundary": 20,
+    "note": "pairs are (candidate, case); thresholds are the O4 thresholds (|r| >= 1)"
+   },
+   "n2_n_nel_wang.toml": {
+    "n_pairs_dI_ge_threshold": 38,
+    "n_pairs_dT_A_ge_threshold": 40,
+    "n_pairs_dT_B_ge_threshold": 43,
+    "n_pairs_with_thrust": 162,
+    "n_runs_any_trigger": 62,
+    "n_runs_status_changed": 12,
+    "n_runs_status_changed_across_OOD_boundary": 10,
+    "note": "pairs are (candidate, case); thresholds are the O4 thresholds (|r| >= 1)"
+   }
+  },
+  "verdict_changes_common_to_all_four": false,
+  "verdict_changes_on_every_combination": false,
+  "what_this_does_not_mean": "a numerical effect, however large or persistent, is not experimental support for Johnson 2005 over Su 2021 below 20 eV; it measures how much the P5-N2 observables depend on that choice."
+ },
+ "combinations": [
+  {
+   "baseline": "n2_n.toml",
+   "deltas": {
+    "dI_normalized_r": {
+     "N1": {
+      "max": 3.78714,
+      "median": 0.0908453,
+      "min": -4.04205,
+      "n": 54,
+      "n_abs_ge_threshold": 10,
+      "n_neg": 9,
+      "n_pos": 45,
+      "n_zero": 0,
+      "q25": 0.0538716,
+      "q75": 0.150127
+     },
+     "N2": {
+      "max": 1.84777,
+      "median": 0.05262,
+      "min": -4.49652,
+      "n": 54,
+      "n_abs_ge_threshold": 6,
+      "n_neg": 10,
+      "n_pos": 44,
+      "n_zero": 0,
+      "q25": 0.0195456,
+      "q75": 0.0813012
+     },
+     "N3": {
+      "max": 3.60621,
+      "median": 0.0222377,
+      "min": -3.61541,
+      "n": 54,
+      "n_abs_ge_threshold": 7,
+      "n_neg": 15,
+      "n_pos": 39,
+      "n_zero": 0,
+      "q25": -0.02342,
+      "q75": 0.0493827
+     },
+     "N4": {
+      "max": 0.305137,
+      "median": 0.0208666,
+      "min": -3.75589,
+      "n": 54,
+      "n_abs_ge_threshold": 4,
+      "n_neg": 20,
+      "n_pos": 34,
+      "n_zero": 0,
+      "q25": -0.0506519,
+      "q75": 0.0418194
+     },
+     "N5": {
+      "max": 5.28397,
+      "median": 0.0333876,
+      "min": -3.55085,
+      "n": 54,
+      "n_abs_ge_threshold": 5,
+      "n_neg": 15,
+      "n_pos": 39,
+      "n_zero": 0,
+      "q25": -0.0164341,
+      "q75": 0.0636732
+     },
+     "pooled": {
+      "max": 5.28397,
+      "median": 0.0392835,
+      "min": -4.49652,
+      "n": 270,
+      "n_abs_ge_threshold": 32,
+      "n_neg": 69,
+      "n_pos": 201,
+      "n_zero": 0,
+      "q25": -0.0111219,
+      "q75": 0.0813012
+     }
+    },
+    "dI_over_Itarget": {
+     "N1": {
+      "max": 0.284036,
+      "median": 0.0068134,
+      "min": -0.303154,
+      "n": 54,
+      "n_neg": 9,
+      "n_pos": 45,
+      "n_zero": 0,
+      "q25": 0.00404037,
+      "q75": 0.0112595
+     },
+     "N2": {
+      "max": 0.138583,
+      "median": 0.0039465,
+      "min": -0.337239,
+      "n": 54,
+      "n_neg": 10,
+      "n_pos": 44,
+      "n_zero": 0,
+      "q25": 0.00146592,
+      "q75": 0.00609759
+     },
+     "N3": {
+      "max": 0.270465,
+      "median": 0.00166783,
+      "min": -0.271156,
+      "n": 54,
+      "n_neg": 15,
+      "n_pos": 39,
+      "n_zero": 0,
+      "q25": -0.0017565,
+      "q75": 0.00370371
+     },
+     "N4": {
+      "max": 0.0228853,
+      "median": 0.001565,
+      "min": -0.281691,
+      "n": 54,
+      "n_neg": 20,
+      "n_pos": 34,
+      "n_zero": 0,
+      "q25": -0.00379889,
+      "q75": 0.00313645
+     },
+     "N5": {
+      "max": 0.396298,
+      "median": 0.00250407,
+      "min": -0.266314,
+      "n": 54,
+      "n_neg": 15,
+      "n_pos": 39,
+      "n_zero": 0,
+      "q25": -0.00123256,
+      "q75": 0.00477549
+     },
+     "pooled": {
+      "max": 0.396298,
+      "median": 0.00294627,
+      "min": -0.337239,
+      "n": 270,
+      "n_neg": 69,
+      "n_pos": 201,
+      "n_zero": 0,
+      "q25": -0.000834144,
+      "q75": 0.00609759
+     }
+    },
+    "dI_over_Itarget_both_runs_in_domain": {
+     "N1": {
+      "max": 0.216416,
+      "median": 0.00791779,
+      "min": -0.0665202,
+      "n": 5,
+      "n_neg": 1,
+      "n_pos": 4,
+      "n_zero": 0,
+      "q25": 0.00431509,
+      "q75": 0.0162442
+     },
+     "N2": {
+      "max": 0.0389005,
+      "median": 0.00369714,
+      "min": -0.337239,
+      "n": 14,
+      "n_neg": 2,
+      "n_pos": 12,
+      "n_zero": 0,
+      "q25": 0.00164332,
+      "q75": 0.00442047
+     },
+     "N3": {
+      "max": 0.109473,
+      "median": 0.00120423,
+      "min": -0.271156,
+      "n": 18,
+      "n_neg": 5,
+      "n_pos": 13,
+      "n_zero": 0,
+      "q25": -0.00133895,
+      "q75": 0.00288498
+     },
+     "N4": {
+      "max": 0.0228853,
+      "median": 0.00154185,
+      "min": -0.203868,
+      "n": 23,
+      "n_neg": 8,
+      "n_pos": 15,
+      "n_zero": 0,
+      "q25": -0.00359868,
+      "q75": 0.00316985
+     },
+     "N5": {
+      "max": 0.0162691,
+      "median": 0.00244183,
+      "min": -0.173758,
+      "n": 23,
+      "n_neg": 7,
+      "n_pos": 16,
+      "n_zero": 0,
+      "q25": -0.00146064,
+      "q75": 0.00395628
+     },
+     "pooled": {
+      "max": 0.216416,
+      "median": 0.00244183,
+      "min": -0.337239,
+      "n": 83,
+      "n_neg": 23,
+      "n_pos": 60,
+      "n_zero": 0,
+      "q25": -0.00184804,
+      "q75": 0.00409531
+     }
+    },
+    "dT_axial_mN": {
+     "A": {
+      "N1": {
+       "max": 19.7094,
+       "median": 0.320768,
+       "min": -28.3962,
+       "n": 54,
+       "n_neg": 13,
+       "n_pos": 41,
+       "n_zero": 0,
+       "q25": 0.0288352,
+       "q75": 0.767563
+      },
+      "N2": {
+       "max": 8.50565,
+       "median": 0.243418,
+       "min": -20.6234,
+       "n": 54,
+       "n_neg": 18,
+       "n_pos": 36,
+       "n_zero": 0,
+       "q25": -0.245115,
+       "q75": 0.475704
+      },
+      "N3": {
+       "max": 21.2375,
+       "median": 0.138656,
+       "min": -17.5939,
+       "n": 54,
+       "n_neg": 23,
+       "n_pos": 31,
+       "n_zero": 0,
+       "q25": -0.511283,
+       "q75": 0.962748
+      },
+      "pooled": {
+       "max": 21.2375,
+       "median": 0.245781,
+       "min": -28.3962,
+       "n": 162,
+       "n_neg": 54,
+       "n_pos": 108,
+       "n_zero": 0,
+       "q25": -0.360649,
+       "q75": 0.807992
+      }
+     },
+     "B": {
+      "N1": {
+       "max": 19.9246,
+       "median": 0.32427,
+       "min": -28.7062,
+       "n": 54,
+       "n_neg": 13,
+       "n_pos": 41,
+       "n_zero": 0,
+       "q25": 0.0291501,
+       "q75": 0.775944
+      },
+      "N2": {
+       "max": 9.12382,
+       "median": 0.261109,
+       "min": -22.1223,
+       "n": 54,
+       "n_neg": 18,
+       "n_pos": 36,
+       "n_zero": 0,
+       "q25": -0.26293,
+       "q75": 0.510278
+      },
+      "N3": {
+       "max": 23.6643,
+       "median": 0.154499,
+       "min": -19.6042,
+       "n": 54,
+       "n_neg": 23,
+       "n_pos": 31,
+       "n_zero": 0,
+       "q25": -0.569705,
+       "q75": 1.07276
+      },
+      "pooled": {
+       "max": 23.6643,
+       "median": 0.26648,
+       "min": -28.7062,
+       "n": 162,
+       "n_neg": 54,
+       "n_pos": 108,
+       "n_zero": 0,
+       "q25": -0.397686,
+       "q75": 0.859596
+      }
+     }
+    },
+    "dT_normalized_r": {
+     "A": {
+      "N1": {
+       "max": 7.58055,
+       "median": 0.123372,
+       "min": -10.9216,
+       "n": 54,
+       "n_abs_ge_threshold": 15,
+       "n_neg": 13,
+       "n_pos": 41,
+       "n_zero": 0,
+       "q25": 0.0110905,
+       "q75": 0.295216
+      },
+      "N2": {
+       "max": 3.03773,
+       "median": 0.086935,
+       "min": -7.36551,
+       "n": 54,
+       "n_abs_ge_threshold": 15,
+       "n_neg": 18,
+       "n_pos": 36,
+       "n_zero": 0,
+       "q25": -0.0875411,
+       "q75": 0.169894
+      },
+      "N3": {
+       "max": 7.58484,
+       "median": 0.0495199,
+       "min": -6.28352,
+       "n": 54,
+       "n_abs_ge_threshold": 17,
+       "n_neg": 23,
+       "n_pos": 31,
+       "n_zero": 0,
+       "q25": -0.182601,
+       "q75": 0.343838
+      },
+      "pooled": {
+       "max": 7.58484,
+       "median": 0.0911538,
+       "min": -10.9216,
+       "n": 162,
+       "n_abs_ge_threshold": 47,
+       "n_neg": 54,
+       "n_pos": 108,
+       "n_zero": 0,
+       "q25": -0.128803,
+       "q75": 0.302054
+      }
+     },
+     "B": {
+      "N1": {
+       "max": 7.66332,
+       "median": 0.124719,
+       "min": -11.0409,
+       "n": 54,
+       "n_abs_ge_threshold": 15,
+       "n_neg": 13,
+       "n_pos": 41,
+       "n_zero": 0,
+       "q25": 0.0112116,
+       "q75": 0.29844
+      },
+      "N2": {
+       "max": 3.25851,
+       "median": 0.0932533,
+       "min": -7.90082,
+       "n": 54,
+       "n_abs_ge_threshold": 15,
+       "n_neg": 18,
+       "n_pos": 36,
+       "n_zero": 0,
+       "q25": -0.0939035,
+       "q75": 0.182242
+      },
+      "N3": {
+       "max": 8.45152,
+       "median": 0.0551783,
+       "min": -7.00151,
+       "n": 54,
+       "n_abs_ge_threshold": 19,
+       "n_neg": 23,
+       "n_pos": 31,
+       "n_zero": 0,
+       "q25": -0.203466,
+       "q75": 0.383127
+      },
+      "pooled": {
+       "max": 8.45152,
+       "median": 0.0951713,
+       "min": -11.0409,
+       "n": 162,
+       "n_abs_ge_threshold": 49,
+       "n_neg": 54,
+       "n_pos": 108,
+       "n_zero": 0,
+       "q25": -0.143521,
+       "q75": 0.315945
+      }
+     }
+    },
+    "dTe_max_eV": {
+     "N1": {
+      "max": 0.354669,
+      "median": 0.0586901,
+      "min": -0.454817,
+      "n": 54,
+      "n_neg": 16,
+      "n_pos": 38,
+      "n_zero": 0,
+      "q25": -0.0434202,
+      "q75": 0.162443
+     },
+     "N2": {
+      "max": 0.634472,
+      "median": 0.0226002,
+      "min": -0.318931,
+      "n": 54,
+      "n_neg": 24,
+      "n_pos": 30,
+      "n_zero": 0,
+      "q25": -0.109416,
+      "q75": 0.158105
+     },
+     "N3": {
+      "max": 0.827158,
+      "median": 0.0354951,
+      "min": -1.43616,
+      "n": 54,
+      "n_neg": 22,
+      "n_pos": 32,
+      "n_zero": 0,
+      "q25": -0.0524126,
+      "q75": 0.146823
+     },
+     "N4": {
+      "max": 0.69082,
+      "median": 0.0742914,
+      "min": -1.00583,
+      "n": 54,
+      "n_neg": 21,
+      "n_pos": 33,
+      "n_zero": 0,
+      "q25": -0.0510802,
+      "q75": 0.189023
+     },
+     "N5": {
+      "max": 1.7662,
+      "median": 0.0769434,
+      "min": -0.391681,
+      "n": 54,
+      "n_neg": 17,
+      "n_pos": 37,
+      "n_zero": 0,
+      "q25": -0.0645337,
+      "q75": 0.17807
+     },
+     "pooled": {
+      "max": 1.7662,
+      "median": 0.0563303,
+      "min": -1.43616,
+      "n": 270,
+      "n_neg": 100,
+      "n_pos": 170,
+      "n_zero": 0,
+      "q25": -0.0649843,
+      "q75": 0.165595
+     }
+    }
+   },
+   "factors": {
+    "DI": "DI-upper",
+    "N_elastic": "Nel-OPM"
+   },
+   "n_pairs": 270,
+   "ood": {
+    "f_out_max_median_baseline": 3.21509e-11,
+    "f_out_max_median_sensitivity": 3.5777e-11,
+    "n_OOD_to_scoreable": 16,
+    "n_OUT_OF_DOMAIN_baseline": 174,
+    "n_OUT_OF_DOMAIN_sensitivity": 171,
+    "n_scoreable_to_OOD": 13,
+    "note": "counts are runs (reading independent); a run can have several reaction families beyond their limit",
+    "runs_with_family_beyond_limit_baseline": {
+     "dissociation": 174,
+     "electronic": 166,
+     "rotational": 168,
+     "vibrational": 133
+    },
+    "runs_with_family_beyond_limit_sensitivity": {
+     "dissociation": 171,
+     "electronic": 161,
+     "rotational": 161,
+     "vibrational": 134
+    }
+   },
+   "run_level_triggers": {
+    "by_candidate": {
+     "sgb-screen-01": {
+      "dI_d": 12,
+      "dT": 14,
+      "status": 8
+     },
+     "sgb-screen-02": {
+      "dT": 10
+     },
+     "sgb-screen-03": {
+      "dI_d": 6,
+      "dT": 11
+     },
+     "sgb-screen-04": {
+      "dI_d": 14,
+      "dT": 12,
+      "status": 6
+     },
+     "sgb-screen-05": {
+      "dI_d": 6,
+      "dT": 10,
+      "status": 9
+     },
+     "sgb-screen-06": {
+      "dI_d": 6,
+      "dT": 8,
+      "status": 6
+     },
+     "sgb-screen-07": {
+      "dI_d": 2,
+      "dT": 2,
+      "status": 6
+     },
+     "sgb-screen-08": {
+      "dI_d": 8,
+      "dT": 18,
+      "status": 14
+     },
+     "sgb-screen-09": {
+      "dI_d": 10,
+      "dT": 11,
+      "status": 12
+     }
+    },
+    "by_coil_shape": {
+     "1p6kW": {
+      "dI_d": 42,
+      "dT": 63,
+      "status": 39
+     },
+     "3p0kW": {
+      "dI_d": 22,
+      "dT": 33,
+      "status": 22
+     }
+    },
+    "by_kind": {
+     "dI_d": 64,
+     "dT": 96,
+     "status": 61
+    },
+    "by_kind_and_reading": {
+     "dI_d|A": 32,
+     "dI_d|B": 32,
+     "dT|A": 47,
+     "dT|B": 49,
+     "status|A": 30,
+     "status|B": 31
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 20,
+      "dT": 30,
+      "status": 24
+     },
+     "N2": {
+      "dI_d": 12,
+      "dT": 30,
+      "status": 8
+     },
+     "N3": {
+      "dI_d": 14,
+      "dT": 36,
+      "status": 13
+     },
+     "N4": {
+      "dI_d": 8,
+      "status": 8
+     },
+     "N5": {
+      "dI_d": 10,
+      "status": 8
+     }
+    },
+    "by_registration": {
+     "L32-anode": {
+      "dI_d": 10,
+      "dT": 16,
+      "status": 26
+     },
+     "L32-exit": {
+      "dI_d": 34,
+      "dT": 44,
+      "status": 4
+     },
+     "L38-hist": {
+      "dI_d": 20,
+      "dT": 36,
+      "status": 31
+     }
+    },
+    "n_distinct_runs_triggered": {
+     "any": 79,
+     "dI_d": 32,
+     "dT": 49,
+     "status": 31
+    },
+    "n_entries_total": 221,
+    "note": "entries are (run, reading) pairs as listed by the scorer: status and dI_d entries appear once per reading"
+   },
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "sensitivity": "n2_n_exc_johnsonlow.toml",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION->FAIL_VALIDATION": 80,
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 9,
+     "FAIL_VALIDATION->PASS": 1,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 13,
+     "OUT_OF_DOMAIN->OUT_OF_DOMAIN": 158,
+     "OUT_OF_DOMAIN->PASS": 3,
+     "PASS->OUT_OF_DOMAIN": 4,
+     "PASS->PASS": 2
+    },
+    "B": {
+     "FAIL_VALIDATION->FAIL_VALIDATION": 80,
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 9,
+     "FAIL_VALIDATION->PASS": 2,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 13,
+     "OUT_OF_DOMAIN->OUT_OF_DOMAIN": 158,
+     "OUT_OF_DOMAIN->PASS": 3,
+     "PASS->OUT_OF_DOMAIN": 4,
+     "PASS->PASS": 1
+    }
+   },
+   "status_transitions_changed_only": {
+    "A": {
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 9,
+     "FAIL_VALIDATION->PASS": 1,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 13,
+     "OUT_OF_DOMAIN->PASS": 3,
+     "PASS->OUT_OF_DOMAIN": 4
+    },
+    "B": {
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 9,
+     "FAIL_VALIDATION->PASS": 2,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 13,
+     "OUT_OF_DOMAIN->PASS": 3,
+     "PASS->OUT_OF_DOMAIN": 4
+    }
+   },
+   "tail": {
+    "n_pairs_dI_ge_threshold": 32,
+    "n_pairs_dT_A_ge_threshold": 47,
+    "n_pairs_dT_B_ge_threshold": 49,
+    "n_pairs_with_thrust": 162,
+    "n_runs_any_trigger": 79,
+    "n_runs_status_changed": 31,
+    "n_runs_status_changed_across_OOD_boundary": 29,
+    "note": "pairs are (candidate, case); thresholds are the O4 thresholds (|r| >= 1)"
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_level_changes": {
+     "sgb-screen-09": [
+      "INCONCLUSIVE / NOT ELIGIBLE",
+      "FAIL_VALIDATION"
+     ]
+    },
+    "detail": {
+     "sgb-screen-08": {
+      "candidate": [
+       "INCONCLUSIVE / NOT ELIGIBLE",
+       "INCONCLUSIVE / NOT ELIGIBLE"
+      ],
+      "members": {
+       "L38-hist|3p0kW|A": [
+        "FAIL",
+        "INCONCLUSIVE"
+       ],
+       "L38-hist|3p0kW|B": [
+        "FAIL",
+        "INCONCLUSIVE"
+       ]
+      }
+     },
+     "sgb-screen-09": {
+      "candidate": [
+       "INCONCLUSIVE / NOT ELIGIBLE",
+       "FAIL_VALIDATION"
+      ],
+      "members": {
+       "L32-exit|1p6kW|A": [
+        "INCONCLUSIVE",
+        "FAIL"
+       ],
+       "L32-exit|1p6kW|B": [
+        "INCONCLUSIVE",
+        "FAIL"
+       ]
+      }
+     }
+    },
+    "meaning": "O4 last clause, provisional counterfactual: v1 verdicts recomputed with ONLY this baseline chemistry replaced by the sensitivity. Not a v1 verdict, not a rejection.",
+    "member_transitions": {
+     "FAIL->INCONCLUSIVE": 2,
+     "INCONCLUSIVE->FAIL": 2
+    },
+    "n_candidates_with_any_change": 2,
+    "n_member_changes": 4
+   }
+  },
+  {
+   "baseline": "n2_n_di_lower.toml",
+   "deltas": {
+    "dI_normalized_r": {
+     "N1": {
+      "max": 5.68041,
+      "median": 0.103441,
+      "min": -1.50043,
+      "n": 54,
+      "n_abs_ge_threshold": 12,
+      "n_neg": 7,
+      "n_pos": 47,
+      "n_zero": 0,
+      "q25": 0.0662197,
+      "q75": 0.28651
+     },
+     "N2": {
+      "max": 3.02212,
+      "median": 0.0565082,
+      "min": -4.27442,
+      "n": 54,
+      "n_abs_ge_threshold": 7,
+      "n_neg": 10,
+      "n_pos": 44,
+      "n_zero": 0,
+      "q25": 0.0260526,
+      "q75": 0.079237
+     },
+     "N3": {
+      "max": 5.30301,
+      "median": 0.0365478,
+      "min": -3.00671,
+      "n": 54,
+      "n_abs_ge_threshold": 7,
+      "n_neg": 13,
+      "n_pos": 41,
+      "n_zero": 0,
+      "q25": 0.00315605,
+      "q75": 0.0612378
+     },
+     "N4": {
+      "max": 0.516559,
+      "median": 0.0288685,
+      "min": -3.30337,
+      "n": 54,
+      "n_abs_ge_threshold": 3,
+      "n_neg": 18,
+      "n_pos": 36,
+      "n_zero": 0,
+      "q25": -0.0409757,
+      "q75": 0.0574414
+     },
+     "N5": {
+      "max": 5.0719,
+      "median": 0.0286384,
+      "min": -4.09587,
+      "n": 54,
+      "n_abs_ge_threshold": 5,
+      "n_neg": 22,
+      "n_pos": 32,
+      "n_zero": 0,
+      "q25": -0.0381038,
+      "q75": 0.0596502
+     },
+     "pooled": {
+      "max": 5.68041,
+      "median": 0.046227,
+      "min": -4.27442,
+      "n": 270,
+      "n_abs_ge_threshold": 34,
+      "n_neg": 70,
+      "n_pos": 200,
+      "n_zero": 0,
+      "q25": -0.00202276,
+      "q75": 0.0930524
+     }
+    },
+    "dI_over_Itarget": {
+     "N1": {
+      "max": 0.426031,
+      "median": 0.00775808,
+      "min": -0.112532,
+      "n": 54,
+      "n_neg": 7,
+      "n_pos": 47,
+      "n_zero": 0,
+      "q25": 0.00496648,
+      "q75": 0.0214883
+     },
+     "N2": {
+      "max": 0.226659,
+      "median": 0.00423811,
+      "min": -0.320582,
+      "n": 54,
+      "n_neg": 10,
+      "n_pos": 44,
+      "n_zero": 0,
+      "q25": 0.00195394,
+      "q75": 0.00594277
+     },
+     "N3": {
+      "max": 0.397726,
+      "median": 0.00274108,
+      "min": -0.225504,
+      "n": 54,
+      "n_neg": 13,
+      "n_pos": 41,
+      "n_zero": 0,
+      "q25": 0.000236704,
+      "q75": 0.00459284
+     },
+     "N4": {
+      "max": 0.0387419,
+      "median": 0.00216514,
+      "min": -0.247753,
+      "n": 54,
+      "n_neg": 18,
+      "n_pos": 36,
+      "n_zero": 0,
+      "q25": -0.00307318,
+      "q75": 0.00430811
+     },
+     "N5": {
+      "max": 0.380392,
+      "median": 0.00214788,
+      "min": -0.30719,
+      "n": 54,
+      "n_neg": 22,
+      "n_pos": 32,
+      "n_zero": 0,
+      "q25": -0.00285778,
+      "q75": 0.00447376
+     },
+     "pooled": {
+      "max": 0.426031,
+      "median": 0.00346702,
+      "min": -0.320582,
+      "n": 270,
+      "n_neg": 70,
+      "n_pos": 200,
+      "n_zero": 0,
+      "q25": -0.000151707,
+      "q75": 0.00697893
+     }
+    },
+    "dI_over_Itarget_both_runs_in_domain": {
+     "N1": {
+      "max": 0.235725,
+      "median": 0.0076197,
+      "min": -0.112532,
+      "n": 5,
+      "n_neg": 1,
+      "n_pos": 4,
+      "n_zero": 0,
+      "q25": 0.00567145,
+      "q75": 0.00790557
+     },
+     "N2": {
+      "max": 0.0371884,
+      "median": 0.00354256,
+      "min": -0.000315068,
+      "n": 12,
+      "n_neg": 1,
+      "n_pos": 11,
+      "n_zero": 0,
+      "q25": 0.00302297,
+      "q75": 0.005159
+     },
+     "N3": {
+      "max": 0.397726,
+      "median": 0.00290177,
+      "min": -0.00825512,
+      "n": 19,
+      "n_neg": 4,
+      "n_pos": 15,
+      "n_zero": 0,
+      "q25": 0.000607655,
+      "q75": 0.00634106
+     },
+     "N4": {
+      "max": 0.0387419,
+      "median": 0.00192654,
+      "min": -0.205285,
+      "n": 22,
+      "n_neg": 7,
+      "n_pos": 15,
+      "n_zero": 0,
+      "q25": -0.00395748,
+      "q75": 0.0030946
+     },
+     "N5": {
+      "max": 0.0244972,
+      "median": 0.00111958,
+      "min": -0.30719,
+      "n": 24,
+      "n_neg": 11,
+      "n_pos": 13,
+      "n_zero": 0,
+      "q25": -0.00253395,
+      "q75": 0.0034089
+     },
+     "pooled": {
+      "max": 0.397726,
+      "median": 0.00235647,
+      "min": -0.30719,
+      "n": 82,
+      "n_neg": 24,
+      "n_pos": 58,
+      "n_zero": 0,
+      "q25": -0.00049496,
+      "q75": 0.00447376
+     }
+    },
+    "dT_axial_mN": {
+     "A": {
+      "N1": {
+       "max": 22.067,
+       "median": 0.362436,
+       "min": -7.0967,
+       "n": 54,
+       "n_neg": 10,
+       "n_pos": 44,
+       "n_zero": 0,
+       "q25": 0.167279,
+       "q75": 1.21757
+      },
+      "N2": {
+       "max": 14.9093,
+       "median": 0.246197,
+       "min": -18.5086,
+       "n": 54,
+       "n_neg": 20,
+       "n_pos": 34,
+       "n_zero": 0,
+       "q25": -0.403757,
+       "q75": 0.474611
+      },
+      "N3": {
+       "max": 24.1493,
+       "median": 0.125671,
+       "min": -21.425,
+       "n": 54,
+       "n_neg": 22,
+       "n_pos": 32,
+       "n_zero": 0,
+       "q25": -0.726251,
+       "q75": 1.03563
+      },
+      "pooled": {
+       "max": 24.1493,
+       "median": 0.296035,
+       "min": -21.425,
+       "n": 162,
+       "n_neg": 52,
+       "n_pos": 110,
+       "n_zero": 0,
+       "q25": -0.380701,
+       "q75": 0.866723
+      }
+     },
+     "B": {
+      "N1": {
+       "max": 22.3079,
+       "median": 0.366393,
+       "min": -7.17418,
+       "n": 54,
+       "n_neg": 10,
+       "n_pos": 44,
+       "n_zero": 0,
+       "q25": 0.169105,
+       "q75": 1.23086
+      },
+      "N2": {
+       "max": 15.9929,
+       "median": 0.26409,
+       "min": -19.8537,
+       "n": 54,
+       "n_neg": 20,
+       "n_pos": 34,
+       "n_zero": 0,
+       "q25": -0.433101,
+       "q75": 0.509105
+      },
+      "N3": {
+       "max": 26.9087,
+       "median": 0.140031,
+       "min": -23.8731,
+       "n": 54,
+       "n_neg": 22,
+       "n_pos": 32,
+       "n_zero": 0,
+       "q25": -0.809237,
+       "q75": 1.15397
+      },
+      "pooled": {
+       "max": 26.9087,
+       "median": 0.314589,
+       "min": -23.8731,
+       "n": 162,
+       "n_neg": 52,
+       "n_pos": 110,
+       "n_zero": 0,
+       "q25": -0.408369,
+       "q75": 0.943597
+      }
+     }
+    },
+    "dT_normalized_r": {
+     "A": {
+      "N1": {
+       "max": 8.48731,
+       "median": 0.139398,
+       "min": -2.7295,
+       "n": 54,
+       "n_abs_ge_threshold": 14,
+       "n_neg": 10,
+       "n_pos": 44,
+       "n_zero": 0,
+       "q25": 0.0643379,
+       "q75": 0.468296
+      },
+      "N2": {
+       "max": 5.32475,
+       "median": 0.0879276,
+       "min": -6.61021,
+       "n": 54,
+       "n_abs_ge_threshold": 11,
+       "n_neg": 20,
+       "n_pos": 34,
+       "n_zero": 0,
+       "q25": -0.144199,
+       "q75": 0.169504
+      },
+      "N3": {
+       "max": 8.62475,
+       "median": 0.0448826,
+       "min": -7.65178,
+       "n": 54,
+       "n_abs_ge_threshold": 19,
+       "n_neg": 22,
+       "n_pos": 32,
+       "n_zero": 0,
+       "q25": -0.259375,
+       "q75": 0.369868
+      },
+      "pooled": {
+       "max": 8.62475,
+       "median": 0.111667,
+       "min": -7.65178,
+       "n": 162,
+       "n_abs_ge_threshold": 44,
+       "n_neg": 52,
+       "n_pos": 110,
+       "n_zero": 0,
+       "q25": -0.135965,
+       "q75": 0.319815
+      }
+     },
+     "B": {
+      "N1": {
+       "max": 8.57998,
+       "median": 0.14092,
+       "min": -2.7593,
+       "n": 54,
+       "n_abs_ge_threshold": 14,
+       "n_neg": 10,
+       "n_pos": 44,
+       "n_zero": 0,
+       "q25": 0.0650404,
+       "q75": 0.473409
+      },
+      "N2": {
+       "max": 5.71174,
+       "median": 0.094318,
+       "min": -7.09062,
+       "n": 54,
+       "n_abs_ge_threshold": 12,
+       "n_neg": 20,
+       "n_pos": 34,
+       "n_zero": 0,
+       "q25": -0.154679,
+       "q75": 0.181823
+      },
+      "N3": {
+       "max": 9.61026,
+       "median": 0.0500112,
+       "min": -8.52612,
+       "n": 54,
+       "n_abs_ge_threshold": 19,
+       "n_neg": 22,
+       "n_pos": 32,
+       "n_zero": 0,
+       "q25": -0.289013,
+       "q75": 0.412131
+      },
+      "pooled": {
+       "max": 9.61026,
+       "median": 0.116465,
+       "min": -8.52612,
+       "n": 162,
+       "n_abs_ge_threshold": 45,
+       "n_neg": 52,
+       "n_pos": 110,
+       "n_zero": 0,
+       "q25": -0.145846,
+       "q75": 0.338932
+      }
+     }
+    },
+    "dTe_max_eV": {
+     "N1": {
+      "max": 0.474958,
+      "median": 0.0750924,
+      "min": -0.21488,
+      "n": 54,
+      "n_neg": 18,
+      "n_pos": 36,
+      "n_zero": 0,
+      "q25": -0.0168503,
+      "q75": 0.157349
+     },
+     "N2": {
+      "max": 0.381549,
+      "median": 0.0437832,
+      "min": -0.349149,
+      "n": 54,
+      "n_neg": 21,
+      "n_pos": 33,
+      "n_zero": 0,
+      "q25": -0.0604925,
+      "q75": 0.163336
+     },
+     "N3": {
+      "max": 0.981341,
+      "median": -0.0250385,
+      "min": -0.628378,
+      "n": 54,
+      "n_neg": 29,
+      "n_pos": 25,
+      "n_zero": 0,
+      "q25": -0.124806,
+      "q75": 0.127037
+     },
+     "N4": {
+      "max": 0.501602,
+      "median": 0.0552173,
+      "min": -0.479435,
+      "n": 54,
+      "n_neg": 22,
+      "n_pos": 32,
+      "n_zero": 0,
+      "q25": -0.065778,
+      "q75": 0.1545
+     },
+     "N5": {
+      "max": 1.39072,
+      "median": 0.0989042,
+      "min": -0.676823,
+      "n": 54,
+      "n_neg": 18,
+      "n_pos": 36,
+      "n_zero": 0,
+      "q25": -0.0677524,
+      "q75": 0.207463
+     },
+     "pooled": {
+      "max": 1.39072,
+      "median": 0.0557576,
+      "min": -0.676823,
+      "n": 270,
+      "n_neg": 108,
+      "n_pos": 162,
+      "n_zero": 0,
+      "q25": -0.0667774,
+      "q75": 0.164698
+     }
+    }
+   },
+   "factors": {
+    "DI": "DI-lower",
+    "N_elastic": "Nel-OPM"
+   },
+   "n_pairs": 270,
+   "ood": {
+    "f_out_max_median_baseline": 4.8062e-11,
+    "f_out_max_median_sensitivity": 3.30416e-11,
+    "n_OOD_to_scoreable": 13,
+    "n_OUT_OF_DOMAIN_baseline": 176,
+    "n_OUT_OF_DOMAIN_sensitivity": 175,
+    "n_scoreable_to_OOD": 12,
+    "note": "counts are runs (reading independent); a run can have several reaction families beyond their limit",
+    "runs_with_family_beyond_limit_baseline": {
+     "dissociation": 176,
+     "electronic": 168,
+     "rotational": 167,
+     "vibrational": 135
+    },
+    "runs_with_family_beyond_limit_sensitivity": {
+     "dissociation": 175,
+     "electronic": 163,
+     "rotational": 163,
+     "vibrational": 133
+    }
+   },
+   "run_level_triggers": {
+    "by_candidate": {
+     "sgb-screen-01": {
+      "dI_d": 10,
+      "dT": 12,
+      "status": 6
+     },
+     "sgb-screen-02": {
+      "dI_d": 2,
+      "dT": 8
+     },
+     "sgb-screen-03": {
+      "dI_d": 4,
+      "dT": 10,
+      "status": 2
+     },
+     "sgb-screen-04": {
+      "dI_d": 6,
+      "dT": 14,
+      "status": 10
+     },
+     "sgb-screen-05": {
+      "dI_d": 6,
+      "dT": 10,
+      "status": 4
+     },
+     "sgb-screen-06": {
+      "dI_d": 8,
+      "dT": 6,
+      "status": 2
+     },
+     "sgb-screen-07": {
+      "dI_d": 2,
+      "dT": 2,
+      "status": 8
+     },
+     "sgb-screen-08": {
+      "dI_d": 16,
+      "dT": 17,
+      "status": 10
+     },
+     "sgb-screen-09": {
+      "dI_d": 14,
+      "dT": 10,
+      "status": 10
+     }
+    },
+    "by_coil_shape": {
+     "1p6kW": {
+      "dI_d": 44,
+      "dT": 56,
+      "status": 24
+     },
+     "3p0kW": {
+      "dI_d": 24,
+      "dT": 33,
+      "status": 28
+     }
+    },
+    "by_kind": {
+     "dI_d": 68,
+     "dT": 89,
+     "status": 52
+    },
+    "by_kind_and_reading": {
+     "dI_d|A": 34,
+     "dI_d|B": 34,
+     "dT|A": 44,
+     "dT|B": 45,
+     "status|A": 26,
+     "status|B": 26
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 24,
+      "dT": 28,
+      "status": 14
+     },
+     "N2": {
+      "dI_d": 14,
+      "dT": 23,
+      "status": 8
+     },
+     "N3": {
+      "dI_d": 14,
+      "dT": 38,
+      "status": 10
+     },
+     "N4": {
+      "dI_d": 6,
+      "status": 12
+     },
+     "N5": {
+      "dI_d": 10,
+      "status": 8
+     }
+    },
+    "by_registration": {
+     "L32-anode": {
+      "dI_d": 12,
+      "dT": 16,
+      "status": 18
+     },
+     "L32-exit": {
+      "dI_d": 32,
+      "dT": 41,
+      "status": 12
+     },
+     "L38-hist": {
+      "dI_d": 24,
+      "dT": 32,
+      "status": 22
+     }
+    },
+    "n_distinct_runs_triggered": {
+     "any": 72,
+     "dI_d": 34,
+     "dT": 45,
+     "status": 26
+    },
+    "n_entries_total": 209,
+    "note": "entries are (run, reading) pairs as listed by the scorer: status and dI_d entries appear once per reading"
+   },
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "sensitivity": "n2_n_exc_johnsonlow_di_lower.toml",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION->FAIL_VALIDATION": 79,
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 9,
+     "FAIL_VALIDATION->PASS": 1,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 11,
+     "OUT_OF_DOMAIN->OUT_OF_DOMAIN": 163,
+     "OUT_OF_DOMAIN->PASS": 2,
+     "PASS->OUT_OF_DOMAIN": 3,
+     "PASS->PASS": 2
+    },
+    "B": {
+     "FAIL_VALIDATION->FAIL_VALIDATION": 80,
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 9,
+     "FAIL_VALIDATION->PASS": 1,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 11,
+     "OUT_OF_DOMAIN->OUT_OF_DOMAIN": 163,
+     "OUT_OF_DOMAIN->PASS": 2,
+     "PASS->OUT_OF_DOMAIN": 3,
+     "PASS->PASS": 1
+    }
+   },
+   "status_transitions_changed_only": {
+    "A": {
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 9,
+     "FAIL_VALIDATION->PASS": 1,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 11,
+     "OUT_OF_DOMAIN->PASS": 2,
+     "PASS->OUT_OF_DOMAIN": 3
+    },
+    "B": {
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 9,
+     "FAIL_VALIDATION->PASS": 1,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 11,
+     "OUT_OF_DOMAIN->PASS": 2,
+     "PASS->OUT_OF_DOMAIN": 3
+    }
+   },
+   "tail": {
+    "n_pairs_dI_ge_threshold": 34,
+    "n_pairs_dT_A_ge_threshold": 44,
+    "n_pairs_dT_B_ge_threshold": 45,
+    "n_pairs_with_thrust": 162,
+    "n_runs_any_trigger": 72,
+    "n_runs_status_changed": 26,
+    "n_runs_status_changed_across_OOD_boundary": 25,
+    "note": "pairs are (candidate, case); thresholds are the O4 thresholds (|r| >= 1)"
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_level_changes": {
+     "sgb-screen-09": [
+      "INCONCLUSIVE / NOT ELIGIBLE",
+      "FAIL_VALIDATION"
+     ]
+    },
+    "detail": {
+     "sgb-screen-04": {
+      "candidate": [
+       "INCONCLUSIVE / NOT ELIGIBLE",
+       "INCONCLUSIVE / NOT ELIGIBLE"
+      ],
+      "members": {
+       "L32-exit|1p6kW|A": [
+        "INCONCLUSIVE",
+        "FAIL"
+       ],
+       "L32-exit|1p6kW|B": [
+        "INCONCLUSIVE",
+        "FAIL"
+       ]
+      }
+     },
+     "sgb-screen-05": {
+      "candidate": [
+       "INCONCLUSIVE / NOT ELIGIBLE",
+       "INCONCLUSIVE / NOT ELIGIBLE"
+      ],
+      "members": {
+       "L32-exit|3p0kW|A": [
+        "FAIL",
+        "INCONCLUSIVE"
+       ],
+       "L32-exit|3p0kW|B": [
+        "FAIL",
+        "INCONCLUSIVE"
+       ]
+      }
+     },
+     "sgb-screen-09": {
+      "candidate": [
+       "INCONCLUSIVE / NOT ELIGIBLE",
+       "FAIL_VALIDATION"
+      ],
+      "members": {
+       "L32-exit|1p6kW|A": [
+        "INCONCLUSIVE",
+        "FAIL"
+       ],
+       "L32-exit|1p6kW|B": [
+        "INCONCLUSIVE",
+        "FAIL"
+       ]
+      }
+     }
+    },
+    "meaning": "O4 last clause, provisional counterfactual: v1 verdicts recomputed with ONLY this baseline chemistry replaced by the sensitivity. Not a v1 verdict, not a rejection.",
+    "member_transitions": {
+     "FAIL->INCONCLUSIVE": 2,
+     "INCONCLUSIVE->FAIL": 4
+    },
+    "n_candidates_with_any_change": 3,
+    "n_member_changes": 6
+   }
+  },
+  {
+   "baseline": "n2_n_nel_wang.toml",
+   "deltas": {
+    "dI_normalized_r": {
+     "N1": {
+      "max": 2.93609,
+      "median": 0.0954097,
+      "min": -2.241,
+      "n": 54,
+      "n_abs_ge_threshold": 9,
+      "n_neg": 9,
+      "n_pos": 45,
+      "n_zero": 0,
+      "q25": 0.0569508,
+      "q75": 0.191549
+     },
+     "N2": {
+      "max": 5.06498,
+      "median": 0.0515121,
+      "min": -4.94136,
+      "n": 54,
+      "n_abs_ge_threshold": 9,
+      "n_neg": 9,
+      "n_pos": 45,
+      "n_zero": 0,
+      "q25": 0.0132776,
+      "q75": 0.0785916
+     },
+     "N3": {
+      "max": 5.11328,
+      "median": 0.0316518,
+      "min": -4.49141,
+      "n": 54,
+      "n_abs_ge_threshold": 9,
+      "n_neg": 14,
+      "n_pos": 40,
+      "n_zero": 0,
+      "q25": 0.00141497,
+      "q75": 0.0689755
+     },
+     "N4": {
+      "max": 3.17683,
+      "median": 0.022105,
+      "min": -3.45479,
+      "n": 54,
+      "n_abs_ge_threshold": 7,
+      "n_neg": 21,
+      "n_pos": 33,
+      "n_zero": 0,
+      "q25": -0.0272707,
+      "q75": 0.0444019
+     },
+     "N5": {
+      "max": 2.9886,
+      "median": 0.0212391,
+      "min": -3.8264,
+      "n": 54,
+      "n_abs_ge_threshold": 4,
+      "n_neg": 21,
+      "n_pos": 33,
+      "n_zero": 0,
+      "q25": -0.033994,
+      "q75": 0.0605458
+     },
+     "pooled": {
+      "max": 5.11328,
+      "median": 0.0393756,
+      "min": -4.94136,
+      "n": 270,
+      "n_abs_ge_threshold": 38,
+      "n_neg": 74,
+      "n_pos": 196,
+      "n_zero": 0,
+      "q25": -0.00401358,
+      "q75": 0.0872574
+     }
+    },
+    "dI_over_Itarget": {
+     "N1": {
+      "max": 0.220207,
+      "median": 0.00715573,
+      "min": -0.168075,
+      "n": 54,
+      "n_neg": 9,
+      "n_pos": 45,
+      "n_zero": 0,
+      "q25": 0.00427131,
+      "q75": 0.0143662
+     },
+     "N2": {
+      "max": 0.379874,
+      "median": 0.00386341,
+      "min": -0.370602,
+      "n": 54,
+      "n_neg": 9,
+      "n_pos": 45,
+      "n_zero": 0,
+      "q25": 0.00099582,
+      "q75": 0.00589437
+     },
+     "N3": {
+      "max": 0.383496,
+      "median": 0.00237388,
+      "min": -0.336856,
+      "n": 54,
+      "n_neg": 14,
+      "n_pos": 40,
+      "n_zero": 0,
+      "q25": 0.000106123,
+      "q75": 0.00517316
+     },
+     "N4": {
+      "max": 0.238262,
+      "median": 0.00165788,
+      "min": -0.259109,
+      "n": 54,
+      "n_neg": 21,
+      "n_pos": 33,
+      "n_zero": 0,
+      "q25": -0.0020453,
+      "q75": 0.00333014
+     },
+     "N5": {
+      "max": 0.224145,
+      "median": 0.00159294,
+      "min": -0.28698,
+      "n": 54,
+      "n_neg": 21,
+      "n_pos": 33,
+      "n_zero": 0,
+      "q25": -0.00254955,
+      "q75": 0.00454094
+     },
+     "pooled": {
+      "max": 0.383496,
+      "median": 0.00295317,
+      "min": -0.370602,
+      "n": 270,
+      "n_neg": 74,
+      "n_pos": 196,
+      "n_zero": 0,
+      "q25": -0.000301018,
+      "q75": 0.00654431
+     }
+    },
+    "dI_over_Itarget_both_runs_in_domain": {
+     "N1": {
+      "max": 0.0291429,
+      "median": 0.0065494,
+      "min": -0.0232815,
+      "n": 6,
+      "n_neg": 1,
+      "n_pos": 5,
+      "n_zero": 0,
+      "q25": 0.00436613,
+      "q75": 0.0132576
+     },
+     "N2": {
+      "max": 0.379874,
+      "median": 0.00379044,
+      "min": -0.00500015,
+      "n": 12,
+      "n_neg": 1,
+      "n_pos": 11,
+      "n_zero": 0,
+      "q25": 0.00346947,
+      "q75": 0.00722876
+     },
+     "N3": {
+      "max": 0.383496,
+      "median": 0.0020714,
+      "min": -0.336856,
+      "n": 17,
+      "n_neg": 4,
+      "n_pos": 13,
+      "n_zero": 0,
+      "q25": 0.000528875,
+      "q75": 0.00305864
+     },
+     "N4": {
+      "max": 0.207619,
+      "median": 0.00205452,
+      "min": -0.237986,
+      "n": 23,
+      "n_neg": 9,
+      "n_pos": 14,
+      "n_zero": 0,
+      "q25": -0.000589256,
+      "q75": 0.00308524
+     },
+     "N5": {
+      "max": 0.0273784,
+      "median": 0.000582865,
+      "min": -0.240134,
+      "n": 24,
+      "n_neg": 11,
+      "n_pos": 13,
+      "n_zero": 0,
+      "q25": -0.00721476,
+      "q75": 0.00275583
+     },
+     "pooled": {
+      "max": 0.383496,
+      "median": 0.00222823,
+      "min": -0.336856,
+      "n": 82,
+      "n_neg": 26,
+      "n_pos": 56,
+      "n_zero": 0,
+      "q25": -0.000688988,
+      "q75": 0.0041005
+     }
+    },
+    "dT_axial_mN": {
+     "A": {
+      "N1": {
+       "max": 13.2985,
+       "median": 0.46275,
+       "min": -13.0078,
+       "n": 54,
+       "n_neg": 8,
+       "n_pos": 46,
+       "n_zero": 0,
+       "q25": 0.176167,
+       "q75": 1.16936
+      },
+      "N2": {
+       "max": 17.0502,
+       "median": 0.185181,
+       "min": -25.6481,
+       "n": 54,
+       "n_neg": 17,
+       "n_pos": 37,
+       "n_zero": 0,
+       "q25": -0.346738,
+       "q75": 0.458609
+      },
+      "N3": {
+       "max": 44.2401,
+       "median": 0.0146812,
+       "min": -24.6188,
+       "n": 54,
+       "n_neg": 27,
+       "n_pos": 27,
+       "n_zero": 0,
+       "q25": -1.1224,
+       "q75": 0.602997
+      },
+      "pooled": {
+       "max": 44.2401,
+       "median": 0.228392,
+       "min": -25.6481,
+       "n": 162,
+       "n_neg": 52,
+       "n_pos": 110,
+       "n_zero": 0,
+       "q25": -0.340104,
+       "q75": 0.659449
+      }
+     },
+     "B": {
+      "N1": {
+       "max": 13.4437,
+       "median": 0.467803,
+       "min": -13.1498,
+       "n": 54,
+       "n_neg": 8,
+       "n_pos": 46,
+       "n_zero": 0,
+       "q25": 0.17809,
+       "q75": 1.18213
+      },
+      "N2": {
+       "max": 18.2894,
+       "median": 0.19864,
+       "min": -27.5121,
+       "n": 54,
+       "n_neg": 17,
+       "n_pos": 37,
+       "n_zero": 0,
+       "q25": -0.371938,
+       "q75": 0.49194
+      },
+      "N3": {
+       "max": 49.2953,
+       "median": 0.0163587,
+       "min": -27.4319,
+       "n": 54,
+       "n_neg": 27,
+       "n_pos": 27,
+       "n_zero": 0,
+       "q25": -1.25065,
+       "q75": 0.671899
+      },
+      "pooled": {
+       "max": 49.2953,
+       "median": 0.249691,
+       "min": -27.5121,
+       "n": 162,
+       "n_neg": 52,
+       "n_pos": 110,
+       "n_zero": 0,
+       "q25": -0.349369,
+       "q75": 0.711528
+      }
+     }
+    },
+    "dT_normalized_r": {
+     "A": {
+      "N1": {
+       "max": 5.11482,
+       "median": 0.177981,
+       "min": -5.003,
+       "n": 54,
+       "n_abs_ge_threshold": 15,
+       "n_neg": 8,
+       "n_pos": 46,
+       "n_zero": 0,
+       "q25": 0.0677565,
+       "q75": 0.449754
+      },
+      "N2": {
+       "max": 6.08935,
+       "median": 0.0661362,
+       "min": -9.16002,
+       "n": 54,
+       "n_abs_ge_threshold": 11,
+       "n_neg": 17,
+       "n_pos": 37,
+       "n_zero": 0,
+       "q25": -0.123835,
+       "q75": 0.163789
+      },
+      "N3": {
+       "max": 15.8001,
+       "median": 0.00524328,
+       "min": -8.79244,
+       "n": 54,
+       "n_abs_ge_threshold": 14,
+       "n_neg": 27,
+       "n_pos": 27,
+       "n_zero": 0,
+       "q25": -0.400857,
+       "q75": 0.215356
+      },
+      "pooled": {
+       "max": 15.8001,
+       "median": 0.0831112,
+       "min": -9.16002,
+       "n": 162,
+       "n_abs_ge_threshold": 40,
+       "n_neg": 52,
+       "n_pos": 110,
+       "n_zero": 0,
+       "q25": -0.123835,
+       "q75": 0.238976
+      }
+     },
+     "B": {
+      "N1": {
+       "max": 5.17067,
+       "median": 0.179924,
+       "min": -5.05763,
+       "n": 54,
+       "n_abs_ge_threshold": 15,
+       "n_neg": 8,
+       "n_pos": 46,
+       "n_zero": 0,
+       "q25": 0.0684963,
+       "q75": 0.454664
+      },
+      "N2": {
+       "max": 6.53191,
+       "median": 0.0709428,
+       "min": -9.82576,
+       "n": 54,
+       "n_abs_ge_threshold": 12,
+       "n_neg": 17,
+       "n_pos": 37,
+       "n_zero": 0,
+       "q25": -0.132835,
+       "q75": 0.175693
+      },
+      "N3": {
+       "max": 17.6055,
+       "median": 0.00584241,
+       "min": -9.79711,
+       "n": 54,
+       "n_abs_ge_threshold": 16,
+       "n_neg": 27,
+       "n_pos": 27,
+       "n_zero": 0,
+       "q25": -0.446661,
+       "q75": 0.239964
+      },
+      "pooled": {
+       "max": 17.6055,
+       "median": 0.0891755,
+       "min": -9.82576,
+       "n": 162,
+       "n_abs_ge_threshold": 43,
+       "n_neg": 52,
+       "n_pos": 110,
+       "n_zero": 0,
+       "q25": -0.132117,
+       "q75": 0.254117
+      }
+     }
+    },
+    "dTe_max_eV": {
+     "N1": {
+      "max": 0.456581,
+      "median": 0.112244,
+      "min": -0.368145,
+      "n": 54,
+      "n_neg": 14,
+      "n_pos": 40,
+      "n_zero": 0,
+      "q25": -0.00495827,
+      "q75": 0.172599
+     },
+     "N2": {
+      "max": 0.408236,
+      "median": 0.00255351,
+      "min": -1.01882,
+      "n": 54,
+      "n_neg": 26,
+      "n_pos": 28,
+      "n_zero": 0,
+      "q25": -0.0905742,
+      "q75": 0.140176
+     },
+     "N3": {
+      "max": 0.741961,
+      "median": 0.0587923,
+      "min": -0.960643,
+      "n": 54,
+      "n_neg": 19,
+      "n_pos": 35,
+      "n_zero": 0,
+      "q25": -0.0612274,
+      "q75": 0.198004
+     },
+     "N4": {
+      "max": 0.47569,
+      "median": 0.0882316,
+      "min": -0.238803,
+      "n": 54,
+      "n_neg": 19,
+      "n_pos": 35,
+      "n_zero": 0,
+      "q25": -0.0328991,
+      "q75": 0.242435
+     },
+     "N5": {
+      "max": 1.72305,
+      "median": 0.0495939,
+      "min": -0.354968,
+      "n": 54,
+      "n_neg": 17,
+      "n_pos": 37,
+      "n_zero": 0,
+      "q25": -0.0151133,
+      "q75": 0.204313
+     },
+     "pooled": {
+      "max": 1.72305,
+      "median": 0.0602275,
+      "min": -1.01882,
+      "n": 270,
+      "n_neg": 95,
+      "n_pos": 175,
+      "n_zero": 0,
+      "q25": -0.0395863,
+      "q75": 0.186697
+     }
+    }
+   },
+   "factors": {
+    "DI": "DI-upper",
+    "N_elastic": "Nel-Wang"
+   },
+   "n_pairs": 270,
+   "ood": {
+    "f_out_max_median_baseline": 3.50883e-11,
+    "f_out_max_median_sensitivity": 5.76358e-11,
+    "n_OOD_to_scoreable": 7,
+    "n_OUT_OF_DOMAIN_baseline": 185,
+    "n_OUT_OF_DOMAIN_sensitivity": 181,
+    "n_scoreable_to_OOD": 3,
+    "note": "counts are runs (reading independent); a run can have several reaction families beyond their limit",
+    "runs_with_family_beyond_limit_baseline": {
+     "dissociation": 185,
+     "electronic": 171,
+     "rotational": 172,
+     "vibrational": 135
+    },
+    "runs_with_family_beyond_limit_sensitivity": {
+     "dissociation": 181,
+     "electronic": 170,
+     "rotational": 169,
+     "vibrational": 143
+    }
+   },
+   "run_level_triggers": {
+    "by_candidate": {
+     "sgb-screen-01": {
+      "dI_d": 8,
+      "dT": 12,
+      "status": 4
+     },
+     "sgb-screen-02": {
+      "dI_d": 2,
+      "dT": 5,
+      "status": 2
+     },
+     "sgb-screen-03": {
+      "dI_d": 8,
+      "dT": 10
+     },
+     "sgb-screen-04": {
+      "dI_d": 12,
+      "dT": 17,
+      "status": 4
+     },
+     "sgb-screen-05": {
+      "dI_d": 6,
+      "dT": 4,
+      "status": 4
+     },
+     "sgb-screen-06": {
+      "dI_d": 10,
+      "dT": 8,
+      "status": 4
+     },
+     "sgb-screen-07": {
+      "dI_d": 2,
+      "dT": 2,
+      "status": 4
+     },
+     "sgb-screen-08": {
+      "dI_d": 16,
+      "dT": 19
+     },
+     "sgb-screen-09": {
+      "dI_d": 12,
+      "dT": 6,
+      "status": 2
+     }
+    },
+    "by_coil_shape": {
+     "1p6kW": {
+      "dI_d": 50,
+      "dT": 48,
+      "status": 20
+     },
+     "3p0kW": {
+      "dI_d": 26,
+      "dT": 35,
+      "status": 4
+     }
+    },
+    "by_kind": {
+     "dI_d": 76,
+     "dT": 83,
+     "status": 24
+    },
+    "by_kind_and_reading": {
+     "dI_d|A": 38,
+     "dI_d|B": 38,
+     "dT|A": 40,
+     "dT|B": 43,
+     "status|A": 12,
+     "status|B": 12
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 18,
+      "dT": 30,
+      "status": 4
+     },
+     "N2": {
+      "dI_d": 18,
+      "dT": 23,
+      "status": 6
+     },
+     "N3": {
+      "dI_d": 18,
+      "dT": 30,
+      "status": 8
+     },
+     "N4": {
+      "dI_d": 14,
+      "status": 4
+     },
+     "N5": {
+      "dI_d": 8,
+      "status": 2
+     }
+    },
+    "by_registration": {
+     "L32-anode": {
+      "dI_d": 14,
+      "dT": 19,
+      "status": 6
+     },
+     "L32-exit": {
+      "dI_d": 34,
+      "dT": 36
+     },
+     "L38-hist": {
+      "dI_d": 28,
+      "dT": 28,
+      "status": 18
+     }
+    },
+    "n_distinct_runs_triggered": {
+     "any": 62,
+     "dI_d": 38,
+     "dT": 43,
+     "status": 12
+    },
+    "n_entries_total": 183,
+    "note": "entries are (run, reading) pairs as listed by the scorer: status and dI_d entries appear once per reading"
+   },
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "sensitivity": "n2_n_exc_johnsonlow_nel_wang.toml",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION->FAIL_VALIDATION": 77,
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 3,
+     "FAIL_VALIDATION->PASS": 2,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 6,
+     "OUT_OF_DOMAIN->OUT_OF_DOMAIN": 178,
+     "OUT_OF_DOMAIN->PASS": 1,
+     "PASS->PASS": 3
+    },
+    "B": {
+     "FAIL_VALIDATION->FAIL_VALIDATION": 78,
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 3,
+     "FAIL_VALIDATION->PASS": 2,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 6,
+     "OUT_OF_DOMAIN->OUT_OF_DOMAIN": 178,
+     "OUT_OF_DOMAIN->PASS": 1,
+     "PASS->PASS": 2
+    }
+   },
+   "status_transitions_changed_only": {
+    "A": {
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 3,
+     "FAIL_VALIDATION->PASS": 2,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 6,
+     "OUT_OF_DOMAIN->PASS": 1
+    },
+    "B": {
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 3,
+     "FAIL_VALIDATION->PASS": 2,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 6,
+     "OUT_OF_DOMAIN->PASS": 1
+    }
+   },
+   "tail": {
+    "n_pairs_dI_ge_threshold": 38,
+    "n_pairs_dT_A_ge_threshold": 40,
+    "n_pairs_dT_B_ge_threshold": 43,
+    "n_pairs_with_thrust": 162,
+    "n_runs_any_trigger": 62,
+    "n_runs_status_changed": 12,
+    "n_runs_status_changed_across_OOD_boundary": 10,
+    "note": "pairs are (candidate, case); thresholds are the O4 thresholds (|r| >= 1)"
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_level_changes": {},
+    "detail": {},
+    "meaning": "O4 last clause, provisional counterfactual: v1 verdicts recomputed with ONLY this baseline chemistry replaced by the sensitivity. Not a v1 verdict, not a rejection.",
+    "member_transitions": {},
+    "n_candidates_with_any_change": 0,
+    "n_member_changes": 0
+   }
+  },
+  {
+   "baseline": "n2_n_di_lower_nel_wang.toml",
+   "deltas": {
+    "dI_normalized_r": {
+     "N1": {
+      "max": 3.08791,
+      "median": 0.100165,
+      "min": -3.02583,
+      "n": 54,
+      "n_abs_ge_threshold": 10,
+      "n_neg": 8,
+      "n_pos": 46,
+      "n_zero": 0,
+      "q25": 0.0640539,
+      "q75": 0.201747
+     },
+     "N2": {
+      "max": 4.88786,
+      "median": 0.0511543,
+      "min": -4.87353,
+      "n": 54,
+      "n_abs_ge_threshold": 7,
+      "n_neg": 11,
+      "n_pos": 43,
+      "n_zero": 0,
+      "q25": 0.00971988,
+      "q75": 0.0736162
+     },
+     "N3": {
+      "max": 5.64294,
+      "median": 0.0399744,
+      "min": -4.03252,
+      "n": 54,
+      "n_abs_ge_threshold": 8,
+      "n_neg": 15,
+      "n_pos": 39,
+      "n_zero": 0,
+      "q25": -0.0178881,
+      "q75": 0.0853672
+     },
+     "N4": {
+      "max": 2.75506,
+      "median": 0.0233016,
+      "min": -2.67183,
+      "n": 54,
+      "n_abs_ge_threshold": 8,
+      "n_neg": 17,
+      "n_pos": 37,
+      "n_zero": 0,
+      "q25": -0.00672284,
+      "q75": 0.0467718
+     },
+     "N5": {
+      "max": 2.39875,
+      "median": 0.0312313,
+      "min": -3.84452,
+      "n": 54,
+      "n_abs_ge_threshold": 6,
+      "n_neg": 18,
+      "n_pos": 36,
+      "n_zero": 0,
+      "q25": -0.0411873,
+      "q75": 0.0596987
+     },
+     "pooled": {
+      "max": 5.64294,
+      "median": 0.0438772,
+      "min": -4.87353,
+      "n": 270,
+      "n_abs_ge_threshold": 39,
+      "n_neg": 69,
+      "n_pos": 201,
+      "n_zero": 0,
+      "q25": -0.00112291,
+      "q75": 0.0872615
+     }
+    },
+    "dI_over_Itarget": {
+     "N1": {
+      "max": 0.231593,
+      "median": 0.00751241,
+      "min": -0.226938,
+      "n": 54,
+      "n_neg": 8,
+      "n_pos": 46,
+      "n_zero": 0,
+      "q25": 0.00480404,
+      "q75": 0.015131
+     },
+     "N2": {
+      "max": 0.36659,
+      "median": 0.00383657,
+      "min": -0.365514,
+      "n": 54,
+      "n_neg": 11,
+      "n_pos": 43,
+      "n_zero": 0,
+      "q25": 0.000728991,
+      "q75": 0.00552122
+     },
+     "N3": {
+      "max": 0.42322,
+      "median": 0.00299808,
+      "min": -0.302439,
+      "n": 54,
+      "n_neg": 15,
+      "n_pos": 39,
+      "n_zero": 0,
+      "q25": -0.00134161,
+      "q75": 0.00640254
+     },
+     "N4": {
+      "max": 0.206629,
+      "median": 0.00174762,
+      "min": -0.200388,
+      "n": 54,
+      "n_neg": 17,
+      "n_pos": 37,
+      "n_zero": 0,
+      "q25": -0.000504213,
+      "q75": 0.00350789
+     },
+     "N5": {
+      "max": 0.179906,
+      "median": 0.00234235,
+      "min": -0.288339,
+      "n": 54,
+      "n_neg": 18,
+      "n_pos": 36,
+      "n_zero": 0,
+      "q25": -0.00308905,
+      "q75": 0.0044774
+     },
+     "pooled": {
+      "max": 0.42322,
+      "median": 0.00329079,
+      "min": -0.365514,
+      "n": 270,
+      "n_neg": 69,
+      "n_pos": 201,
+      "n_zero": 0,
+      "q25": -8.42179e-05,
+      "q75": 0.00654461
+     }
+    },
+    "dI_over_Itarget_both_runs_in_domain": {
+     "N1": {
+      "max": 0.0577693,
+      "median": 0.00678638,
+      "min": -0.00454739,
+      "n": 6,
+      "n_neg": 1,
+      "n_pos": 5,
+      "n_zero": 0,
+      "q25": 0.00381421,
+      "q75": 0.0135638
+     },
+     "N2": {
+      "max": 0.36659,
+      "median": 0.0033839,
+      "min": -0.365514,
+      "n": 14,
+      "n_neg": 3,
+      "n_pos": 11,
+      "n_zero": 0,
+      "q25": 0.00250075,
+      "q75": 0.0042652
+     },
+     "N3": {
+      "max": 0.42322,
+      "median": 0.00166693,
+      "min": -0.302439,
+      "n": 19,
+      "n_neg": 7,
+      "n_pos": 12,
+      "n_zero": 0,
+      "q25": -0.00251924,
+      "q75": 0.00392464
+     },
+     "N4": {
+      "max": 0.206629,
+      "median": 0.00189228,
+      "min": -0.175881,
+      "n": 22,
+      "n_neg": 6,
+      "n_pos": 16,
+      "n_zero": 0,
+      "q25": 1.48001e-05,
+      "q75": 0.00321558
+     },
+     "N5": {
+      "max": 0.0237337,
+      "median": 0.00190221,
+      "min": -0.200302,
+      "n": 23,
+      "n_neg": 9,
+      "n_pos": 14,
+      "n_zero": 0,
+      "q25": -0.00618736,
+      "q75": 0.00448981
+     },
+     "pooled": {
+      "max": 0.42322,
+      "median": 0.00234863,
+      "min": -0.365514,
+      "n": 84,
+      "n_neg": 26,
+      "n_pos": 58,
+      "n_zero": 0,
+      "q25": -0.00246911,
+      "q75": 0.00469393
+     }
+    },
+    "dT_axial_mN": {
+     "A": {
+      "N1": {
+       "max": 15.3505,
+       "median": 0.403137,
+       "min": -8.4037,
+       "n": 54,
+       "n_neg": 11,
+       "n_pos": 43,
+       "n_zero": 0,
+       "q25": 0.138422,
+       "q75": 1.66484
+      },
+      "N2": {
+       "max": 12.89,
+       "median": 0.18054,
+       "min": -24.804,
+       "n": 54,
+       "n_neg": 20,
+       "n_pos": 34,
+       "n_zero": 0,
+       "q25": -0.361195,
+       "q75": 0.52081
+      },
+      "N3": {
+       "max": 27.0593,
+       "median": -0.110987,
+       "min": -26.2787,
+       "n": 54,
+       "n_neg": 28,
+       "n_pos": 26,
+       "n_zero": 0,
+       "q25": -1.22875,
+       "q75": 1.41278
+      },
+      "pooled": {
+       "max": 27.0593,
+       "median": 0.232961,
+       "min": -26.2787,
+       "n": 162,
+       "n_neg": 59,
+       "n_pos": 103,
+       "n_zero": 0,
+       "q25": -0.473711,
+       "q75": 0.856131
+      }
+     },
+     "B": {
+      "N1": {
+       "max": 15.5182,
+       "median": 0.407539,
+       "min": -8.49546,
+       "n": 54,
+       "n_neg": 11,
+       "n_pos": 43,
+       "n_zero": 0,
+       "q25": 0.139934,
+       "q75": 1.68302
+      },
+      "N2": {
+       "max": 13.8268,
+       "median": 0.193661,
+       "min": -26.6067,
+       "n": 54,
+       "n_neg": 20,
+       "n_pos": 34,
+       "n_zero": 0,
+       "q25": -0.387446,
+       "q75": 0.558662
+      },
+      "N3": {
+       "max": 30.1513,
+       "median": -0.123669,
+       "min": -29.2815,
+       "n": 54,
+       "n_neg": 28,
+       "n_pos": 26,
+       "n_zero": 0,
+       "q25": -1.36915,
+       "q75": 1.57421
+      },
+      "pooled": {
+       "max": 30.1513,
+       "median": 0.254731,
+       "min": -29.2815,
+       "n": 162,
+       "n_neg": 59,
+       "n_pos": 103,
+       "n_zero": 0,
+       "q25": -0.499068,
+       "q75": 0.870445
+      }
+     }
+    },
+    "dT_normalized_r": {
+     "A": {
+      "N1": {
+       "max": 5.90406,
+       "median": 0.155053,
+       "min": -3.23219,
+       "n": 54,
+       "n_abs_ge_threshold": 13,
+       "n_neg": 11,
+       "n_pos": 43,
+       "n_zero": 0,
+       "q25": 0.0532393,
+       "q75": 0.640323
+      },
+      "N2": {
+       "max": 4.60357,
+       "median": 0.0644784,
+       "min": -8.85856,
+       "n": 54,
+       "n_abs_ge_threshold": 11,
+       "n_neg": 20,
+       "n_pos": 34,
+       "n_zero": 0,
+       "q25": -0.128998,
+       "q75": 0.186004
+      },
+      "N3": {
+       "max": 9.66405,
+       "median": -0.0396381,
+       "min": -9.38526,
+       "n": 54,
+       "n_abs_ge_threshold": 20,
+       "n_neg": 28,
+       "n_pos": 26,
+       "n_zero": 0,
+       "q25": -0.438839,
+       "q75": 0.504564
+      },
+      "pooled": {
+       "max": 9.66405,
+       "median": 0.0855603,
+       "min": -9.38526,
+       "n": 162,
+       "n_abs_ge_threshold": 44,
+       "n_neg": 59,
+       "n_pos": 103,
+       "n_zero": 0,
+       "q25": -0.17896,
+       "q75": 0.326484
+      }
+     },
+     "B": {
+      "N1": {
+       "max": 5.96852,
+       "median": 0.156746,
+       "min": -3.26748,
+       "n": 54,
+       "n_abs_ge_threshold": 13,
+       "n_neg": 11,
+       "n_pos": 43,
+       "n_zero": 0,
+       "q25": 0.0538206,
+       "q75": 0.647314
+      },
+      "N2": {
+       "max": 4.93814,
+       "median": 0.0691646,
+       "min": -9.50238,
+       "n": 54,
+       "n_abs_ge_threshold": 12,
+       "n_neg": 20,
+       "n_pos": 34,
+       "n_zero": 0,
+       "q25": -0.138373,
+       "q75": 0.199522
+      },
+      "N3": {
+       "max": 10.7683,
+       "median": -0.0441673,
+       "min": -10.4577,
+       "n": 54,
+       "n_abs_ge_threshold": 20,
+       "n_neg": 28,
+       "n_pos": 26,
+       "n_zero": 0,
+       "q25": -0.488984,
+       "q75": 0.562219
+      },
+      "pooled": {
+       "max": 10.7683,
+       "median": 0.0909754,
+       "min": -10.4577,
+       "n": 162,
+       "n_abs_ge_threshold": 45,
+       "n_neg": 59,
+       "n_pos": 103,
+       "n_zero": 0,
+       "q25": -0.183513,
+       "q75": 0.332876
+      }
+     }
+    },
+    "dTe_max_eV": {
+     "N1": {
+      "max": 0.616675,
+      "median": 0.101417,
+      "min": -0.329099,
+      "n": 54,
+      "n_neg": 12,
+      "n_pos": 42,
+      "n_zero": 0,
+      "q25": 0.0123053,
+      "q75": 0.189492
+     },
+     "N2": {
+      "max": 0.440988,
+      "median": 0.0879883,
+      "min": -0.706556,
+      "n": 54,
+      "n_neg": 17,
+      "n_pos": 37,
+      "n_zero": 0,
+      "q25": -0.0293277,
+      "q75": 0.202968
+     },
+     "N3": {
+      "max": 0.851617,
+      "median": 0.0110456,
+      "min": -0.80891,
+      "n": 54,
+      "n_neg": 27,
+      "n_pos": 27,
+      "n_zero": 0,
+      "q25": -0.0831643,
+      "q75": 0.123915
+     },
+     "N4": {
+      "max": 0.512074,
+      "median": 0.0724173,
+      "min": -0.329782,
+      "n": 54,
+      "n_neg": 15,
+      "n_pos": 39,
+      "n_zero": 0,
+      "q25": -0.0203465,
+      "q75": 0.216416
+     },
+     "N5": {
+      "max": 0.521188,
+      "median": 0.0798921,
+      "min": -0.454252,
+      "n": 54,
+      "n_neg": 19,
+      "n_pos": 35,
+      "n_zero": 0,
+      "q25": -0.060295,
+      "q75": 0.20636
+     },
+     "pooled": {
+      "max": 0.851617,
+      "median": 0.072291,
+      "min": -0.80891,
+      "n": 270,
+      "n_neg": 90,
+      "n_pos": 180,
+      "n_zero": 0,
+      "q25": -0.0426106,
+      "q75": 0.186379
+     }
+    }
+   },
+   "factors": {
+    "DI": "DI-lower",
+    "N_elastic": "Nel-Wang"
+   },
+   "n_pairs": 270,
+   "ood": {
+    "f_out_max_median_baseline": 4.91539e-11,
+    "f_out_max_median_sensitivity": 4.17865e-11,
+    "n_OOD_to_scoreable": 13,
+    "n_OUT_OF_DOMAIN_baseline": 179,
+    "n_OUT_OF_DOMAIN_sensitivity": 173,
+    "n_scoreable_to_OOD": 7,
+    "note": "counts are runs (reading independent); a run can have several reaction families beyond their limit",
+    "runs_with_family_beyond_limit_baseline": {
+     "dissociation": 179,
+     "electronic": 169,
+     "rotational": 170,
+     "vibrational": 140
+    },
+    "runs_with_family_beyond_limit_sensitivity": {
+     "dissociation": 173,
+     "electronic": 166,
+     "rotational": 167,
+     "vibrational": 136
+    }
+   },
+   "run_level_triggers": {
+    "by_candidate": {
+     "sgb-screen-01": {
+      "dI_d": 8,
+      "dT": 12,
+      "status": 16
+     },
+     "sgb-screen-02": {
+      "dI_d": 2,
+      "dT": 6,
+      "status": 2
+     },
+     "sgb-screen-03": {
+      "dI_d": 8,
+      "dT": 6,
+      "status": 2
+     },
+     "sgb-screen-04": {
+      "dI_d": 8,
+      "dT": 15
+     },
+     "sgb-screen-05": {
+      "dI_d": 8,
+      "dT": 10,
+      "status": 6
+     },
+     "sgb-screen-06": {
+      "dI_d": 12,
+      "dT": 10,
+      "status": 2
+     },
+     "sgb-screen-07": {
+      "dI_d": 4,
+      "dT": 4,
+      "status": 1
+     },
+     "sgb-screen-08": {
+      "dI_d": 16,
+      "dT": 18,
+      "status": 4
+     },
+     "sgb-screen-09": {
+      "dI_d": 12,
+      "dT": 8,
+      "status": 12
+     }
+    },
+    "by_coil_shape": {
+     "1p6kW": {
+      "dI_d": 52,
+      "dT": 55,
+      "status": 29
+     },
+     "3p0kW": {
+      "dI_d": 26,
+      "dT": 34,
+      "status": 16
+     }
+    },
+    "by_kind": {
+     "dI_d": 78,
+     "dT": 89,
+     "status": 45
+    },
+    "by_kind_and_reading": {
+     "dI_d|A": 39,
+     "dI_d|B": 39,
+     "dT|A": 44,
+     "dT|B": 45,
+     "status|A": 23,
+     "status|B": 22
+    },
+    "by_point": {
+     "N1": {
+      "dI_d": 20,
+      "dT": 26,
+      "status": 12
+     },
+     "N2": {
+      "dI_d": 14,
+      "dT": 23,
+      "status": 6
+     },
+     "N3": {
+      "dI_d": 16,
+      "dT": 40,
+      "status": 11
+     },
+     "N4": {
+      "dI_d": 16,
+      "status": 8
+     },
+     "N5": {
+      "dI_d": 12,
+      "status": 8
+     }
+    },
+    "by_registration": {
+     "L32-anode": {
+      "dI_d": 20,
+      "dT": 20,
+      "status": 20
+     },
+     "L32-exit": {
+      "dI_d": 34,
+      "dT": 40,
+      "status": 6
+     },
+     "L38-hist": {
+      "dI_d": 24,
+      "dT": 29,
+      "status": 19
+     }
+    },
+    "n_distinct_runs_triggered": {
+     "any": 78,
+     "dI_d": 39,
+     "dT": 45,
+     "status": 23
+    },
+    "n_entries_total": 212,
+    "note": "entries are (run, reading) pairs as listed by the scorer: status and dI_d entries appear once per reading"
+   },
+   "scored_block_reproduced_by_frozen_scorer": true,
+   "sensitivity": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml",
+   "status_transitions": {
+    "A": {
+     "FAIL_VALIDATION->FAIL_VALIDATION": 79,
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 5,
+     "FAIL_VALIDATION->PASS": 3,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 12,
+     "OUT_OF_DOMAIN->OUT_OF_DOMAIN": 166,
+     "OUT_OF_DOMAIN->PASS": 1,
+     "PASS->OUT_OF_DOMAIN": 2,
+     "PASS->PASS": 2
+    },
+    "B": {
+     "FAIL_VALIDATION->FAIL_VALIDATION": 81,
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 5,
+     "FAIL_VALIDATION->PASS": 2,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 12,
+     "OUT_OF_DOMAIN->OUT_OF_DOMAIN": 166,
+     "OUT_OF_DOMAIN->PASS": 1,
+     "PASS->OUT_OF_DOMAIN": 2,
+     "PASS->PASS": 1
+    }
+   },
+   "status_transitions_changed_only": {
+    "A": {
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 5,
+     "FAIL_VALIDATION->PASS": 3,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 12,
+     "OUT_OF_DOMAIN->PASS": 1,
+     "PASS->OUT_OF_DOMAIN": 2
+    },
+    "B": {
+     "FAIL_VALIDATION->OUT_OF_DOMAIN": 5,
+     "FAIL_VALIDATION->PASS": 2,
+     "OUT_OF_DOMAIN->FAIL_VALIDATION": 12,
+     "OUT_OF_DOMAIN->PASS": 1,
+     "PASS->OUT_OF_DOMAIN": 2
+    }
+   },
+   "tail": {
+    "n_pairs_dI_ge_threshold": 39,
+    "n_pairs_dT_A_ge_threshold": 44,
+    "n_pairs_dT_B_ge_threshold": 45,
+    "n_pairs_with_thrust": 162,
+    "n_runs_any_trigger": 78,
+    "n_runs_status_changed": 23,
+    "n_runs_status_changed_across_OOD_boundary": 20,
+    "note": "pairs are (candidate, case); thresholds are the O4 thresholds (|r| >= 1)"
+   },
+   "trigger_fired": true,
+   "verdict_changes": {
+    "candidate_level_changes": {},
+    "detail": {
+     "sgb-screen-02": {
+      "candidate": [
+       "INCONCLUSIVE / NOT ELIGIBLE",
+       "INCONCLUSIVE / NOT ELIGIBLE"
+      ],
+      "members": {
+       "L32-anode|1p6kW|A": [
+        "INCONCLUSIVE",
+        "FAIL"
+       ],
+       "L32-anode|1p6kW|B": [
+        "INCONCLUSIVE",
+        "FAIL"
+       ]
+      }
+     },
+     "sgb-screen-09": {
+      "candidate": [
+       "INCONCLUSIVE / NOT ELIGIBLE",
+       "INCONCLUSIVE / NOT ELIGIBLE"
+      ],
+      "members": {
+       "L32-exit|3p0kW|A": [
+        "FAIL",
+        "INCONCLUSIVE"
+       ],
+       "L32-exit|3p0kW|B": [
+        "FAIL",
+        "INCONCLUSIVE"
+       ]
+      }
+     }
+    },
+    "meaning": "O4 last clause, provisional counterfactual: v1 verdicts recomputed with ONLY this baseline chemistry replaced by the sensitivity. Not a v1 verdict, not a rejection.",
+    "member_transitions": {
+     "FAIL->INCONCLUSIVE": 2,
+     "INCONCLUSIVE->FAIL": 2
+    },
+    "n_candidates_with_any_change": 2,
+    "n_member_changes": 4
+   }
+  }
+ ],
+ "consistency": {
+  "observables": {
+   "dI": {
+    "N1": {
+     "class": "SIGN_PERSISTS_BELOW_THRESHOLD",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": 0.0086755,
+      "Nel_wang_minus_opm": 0.0006442,
+      "interaction": -0.0078404
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 1.13865,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.0908453,
+      "n2_n_di_lower.toml": 0.103441,
+      "n2_n_di_lower_nel_wang.toml": 0.100165,
+      "n2_n_nel_wang.toml": 0.0954097
+     },
+     "pairs_material_on_all_four": 5,
+     "pairs_present_on_all_four": 54,
+     "pairs_same_sign_on_all_four": 46
+    },
+    "N2": {
+     "class": "SIGN_PERSISTS_BELOW_THRESHOLD",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": 0.0017652,
+      "Nel_wang_minus_opm": -0.0032309,
+      "interaction": -0.004246
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 1.10466,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.05262,
+      "n2_n_di_lower.toml": 0.0565082,
+      "n2_n_di_lower_nel_wang.toml": 0.0511543,
+      "n2_n_nel_wang.toml": 0.0515121
+     },
+     "pairs_material_on_all_four": 4,
+     "pairs_present_on_all_four": 54,
+     "pairs_same_sign_on_all_four": 44
+    },
+    "N3": {
+     "class": "SIGN_PERSISTS_BELOW_THRESHOLD",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": 0.0113163,
+      "Nel_wang_minus_opm": 0.00642035,
+      "interaction": -0.0059875
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 1.7976,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.0222377,
+      "n2_n_di_lower.toml": 0.0365478,
+      "n2_n_di_lower_nel_wang.toml": 0.0399744,
+      "n2_n_nel_wang.toml": 0.0316518
+     },
+     "pairs_material_on_all_four": 4,
+     "pairs_present_on_all_four": 54,
+     "pairs_same_sign_on_all_four": 37
+    },
+    "N4": {
+     "class": "SIGN_PERSISTS_BELOW_THRESHOLD",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": 0.00459925,
+      "Nel_wang_minus_opm": -0.00216425,
+      "interaction": -0.0068053
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 1.38348,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.0208666,
+      "n2_n_di_lower.toml": 0.0288685,
+      "n2_n_di_lower_nel_wang.toml": 0.0233016,
+      "n2_n_nel_wang.toml": 0.022105
+     },
+     "pairs_material_on_all_four": 3,
+     "pairs_present_on_all_four": 54,
+     "pairs_same_sign_on_all_four": 30
+    },
+    "N5": {
+     "class": "SIGN_PERSISTS_BELOW_THRESHOLD",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": 0.0026215,
+      "Nel_wang_minus_opm": -0.0047778,
+      "interaction": 0.0147414
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 1.57199,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.0333876,
+      "n2_n_di_lower.toml": 0.0286384,
+      "n2_n_di_lower_nel_wang.toml": 0.0312313,
+      "n2_n_nel_wang.toml": 0.0212391
+     },
+     "pairs_material_on_all_four": 2,
+     "pairs_present_on_all_four": 54,
+     "pairs_same_sign_on_all_four": 26
+    },
+    "pooled": {
+     "class": "SIGN_PERSISTS_BELOW_THRESHOLD",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": 0.00572255,
+      "Nel_wang_minus_opm": -0.00112885,
+      "interaction": -0.0024419
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 1.17675,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.0392835,
+      "n2_n_di_lower.toml": 0.046227,
+      "n2_n_di_lower_nel_wang.toml": 0.0438772,
+      "n2_n_nel_wang.toml": 0.0393756
+     },
+     "pairs_material_on_all_four": 18,
+     "pairs_present_on_all_four": 270,
+     "pairs_same_sign_on_all_four": 183
+    }
+   },
+   "dT_A": {
+    "N1": {
+     "class": "SIGN_PERSISTS_BELOW_THRESHOLD",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": -0.003451,
+      "Nel_wang_minus_opm": 0.035132,
+      "interaction": -0.038954
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 1.44264,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.123372,
+      "n2_n_di_lower.toml": 0.139398,
+      "n2_n_di_lower_nel_wang.toml": 0.155053,
+      "n2_n_nel_wang.toml": 0.177981
+     },
+     "pairs_material_on_all_four": 10,
+     "pairs_present_on_all_four": 54,
+     "pairs_same_sign_on_all_four": 44
+    },
+    "N2": {
+     "class": "SIGN_PERSISTS_BELOW_THRESHOLD",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": -0.0003326,
+      "Nel_wang_minus_opm": -0.022124,
+      "interaction": -0.0026504
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 1.36368,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.086935,
+      "n2_n_di_lower.toml": 0.0879276,
+      "n2_n_di_lower_nel_wang.toml": 0.0644784,
+      "n2_n_nel_wang.toml": 0.0661362
+     },
+     "pairs_material_on_all_four": 5,
+     "pairs_present_on_all_four": 54,
+     "pairs_same_sign_on_all_four": 27
+    },
+    "N3": {
+     "class": "BASELINE_DEPENDENT_SIGN",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": -0.0247593,
+      "Nel_wang_minus_opm": -0.0643987,
+      "interaction": -0.0402441
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 9.44445,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.0495199,
+      "n2_n_di_lower.toml": 0.0448826,
+      "n2_n_di_lower_nel_wang.toml": -0.0396381,
+      "n2_n_nel_wang.toml": 0.00524328
+     },
+     "pairs_material_on_all_four": 8,
+     "pairs_present_on_all_four": 54,
+     "pairs_same_sign_on_all_four": 16
+    },
+    "pooled": {
+     "class": "SIGN_PERSISTS_BELOW_THRESHOLD",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": 0.0114812,
+      "Nel_wang_minus_opm": -0.0170746,
+      "interaction": -0.0180641
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 1.34359,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.0911538,
+      "n2_n_di_lower.toml": 0.111667,
+      "n2_n_di_lower_nel_wang.toml": 0.0855603,
+      "n2_n_nel_wang.toml": 0.0831112
+     },
+     "pairs_material_on_all_four": 23,
+     "pairs_present_on_all_four": 162,
+     "pairs_same_sign_on_all_four": 87
+    }
+   },
+   "dT_B": {
+    "N1": {
+     "class": "SIGN_PERSISTS_BELOW_THRESHOLD",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": -0.0034885,
+      "Nel_wang_minus_opm": 0.0355155,
+      "interaction": -0.039379
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 1.44264,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.124719,
+      "n2_n_di_lower.toml": 0.14092,
+      "n2_n_di_lower_nel_wang.toml": 0.156746,
+      "n2_n_nel_wang.toml": 0.179924
+     },
+     "pairs_material_on_all_four": 10,
+     "pairs_present_on_all_four": 54,
+     "pairs_same_sign_on_all_four": 44
+    },
+    "N2": {
+     "class": "SIGN_PERSISTS_BELOW_THRESHOLD",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": -0.00035675,
+      "Nel_wang_minus_opm": -0.0237319,
+      "interaction": -0.0028429
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 1.36367,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.0932533,
+      "n2_n_di_lower.toml": 0.094318,
+      "n2_n_di_lower_nel_wang.toml": 0.0691646,
+      "n2_n_nel_wang.toml": 0.0709428
+     },
+     "pairs_material_on_all_four": 6,
+     "pairs_present_on_all_four": 54,
+     "pairs_same_sign_on_all_four": 27
+    },
+    "N3": {
+     "class": "BASELINE_DEPENDENT_SIGN",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": -0.0275884,
+      "Nel_wang_minus_opm": -0.0717572,
+      "interaction": -0.0448426
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 9.44444,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.0551783,
+      "n2_n_di_lower.toml": 0.0500112,
+      "n2_n_di_lower_nel_wang.toml": -0.0441673,
+      "n2_n_nel_wang.toml": 0.00584241
+     },
+     "pairs_material_on_all_four": 8,
+     "pairs_present_on_all_four": 54,
+     "pairs_same_sign_on_all_four": 16
+    },
+    "pooled": {
+     "class": "SIGN_PERSISTS_BELOW_THRESHOLD",
+     "factor_effects_on_median_r": {
+      "DI_lower_minus_upper": 0.0115468,
+      "Nel_wang_minus_opm": -0.0157427,
+      "interaction": -0.0194938
+     },
+     "factor_pattern": null,
+     "material_on": [],
+     "max_over_min_abs_median": 1.30602,
+     "median_r_by_baseline": {
+      "n2_n.toml": 0.0951713,
+      "n2_n_di_lower.toml": 0.116465,
+      "n2_n_di_lower_nel_wang.toml": 0.0909754,
+      "n2_n_nel_wang.toml": 0.0891755
+     },
+     "pairs_material_on_all_four": 24,
+     "pairs_present_on_all_four": 162,
+     "pairs_same_sign_on_all_four": 87
+    }
+   }
+  },
+  "ood": {
+   "OOD_to_scoreable_by_combination": {
+    "n2_n.toml": 16,
+    "n2_n_di_lower.toml": 13,
+    "n2_n_di_lower_nel_wang.toml": 13,
+    "n2_n_nel_wang.toml": 7
+   },
+   "n_OOD_baseline_by_combination": {
+    "n2_n.toml": 174,
+    "n2_n_di_lower.toml": 176,
+    "n2_n_di_lower_nel_wang.toml": 179,
+    "n2_n_nel_wang.toml": 185
+   },
+   "n_OOD_sensitivity_by_combination": {
+    "n2_n.toml": 171,
+    "n2_n_di_lower.toml": 175,
+    "n2_n_di_lower_nel_wang.toml": 173,
+    "n2_n_nel_wang.toml": 181
+   },
+   "scoreable_to_OOD_by_combination": {
+    "n2_n.toml": 13,
+    "n2_n_di_lower.toml": 12,
+    "n2_n_di_lower_nel_wang.toml": 7,
+    "n2_n_nel_wang.toml": 3
+   }
+  },
+  "status": {
+   "A": {
+    "changes_on_every_combination": true,
+    "transitions_common_to_all_four": [
+     "FAIL_VALIDATION->OUT_OF_DOMAIN",
+     "FAIL_VALIDATION->PASS",
+     "OUT_OF_DOMAIN->FAIL_VALIDATION",
+     "OUT_OF_DOMAIN->PASS"
+    ],
+    "transitions_only_with_some": {
+     "PASS->OUT_OF_DOMAIN": [
+      "n2_n.toml",
+      "n2_n_di_lower.toml",
+      "n2_n_di_lower_nel_wang.toml"
+     ]
+    }
+   },
+   "B": {
+    "changes_on_every_combination": true,
+    "transitions_common_to_all_four": [
+     "FAIL_VALIDATION->OUT_OF_DOMAIN",
+     "FAIL_VALIDATION->PASS",
+     "OUT_OF_DOMAIN->FAIL_VALIDATION",
+     "OUT_OF_DOMAIN->PASS"
+    ],
+    "transitions_only_with_some": {
+     "PASS->OUT_OF_DOMAIN": [
+      "n2_n.toml",
+      "n2_n_di_lower.toml",
+      "n2_n_di_lower_nel_wang.toml"
+     ]
+    }
+   }
+  },
+  "trigger_fired_on_all_four": true,
+  "verdict": {
+   "candidate_level_changes_common_to_all_four": [],
+   "candidate_level_changes_factor_pattern": {
+    "sgb-screen-09": "Nel-OPM only"
+   },
+   "candidate_level_changes_only_with_some": {
+    "sgb-screen-09": [
+     "n2_n.toml",
+     "n2_n_di_lower.toml"
+    ]
+   },
+   "changes_on_every_combination": false,
+   "member_changes_common_to_all_four": [],
+   "member_changes_factor_pattern": {
+    "sgb-screen-02|L32-anode|1p6kW|A": "no single-factor pattern",
+    "sgb-screen-02|L32-anode|1p6kW|B": "no single-factor pattern",
+    "sgb-screen-04|L32-exit|1p6kW|A": "no single-factor pattern",
+    "sgb-screen-04|L32-exit|1p6kW|B": "no single-factor pattern",
+    "sgb-screen-05|L32-exit|3p0kW|A": "no single-factor pattern",
+    "sgb-screen-05|L32-exit|3p0kW|B": "no single-factor pattern",
+    "sgb-screen-08|L38-hist|3p0kW|A": "no single-factor pattern",
+    "sgb-screen-08|L38-hist|3p0kW|B": "no single-factor pattern",
+    "sgb-screen-09|L32-exit|1p6kW|A": "Nel-OPM only",
+    "sgb-screen-09|L32-exit|1p6kW|B": "Nel-OPM only",
+    "sgb-screen-09|L32-exit|3p0kW|A": "no single-factor pattern",
+    "sgb-screen-09|L32-exit|3p0kW|B": "no single-factor pattern"
+   },
+   "member_changes_only_with_some": {
+    "sgb-screen-02|L32-anode|1p6kW|A": [
+     "n2_n_di_lower_nel_wang.toml"
+    ],
+    "sgb-screen-02|L32-anode|1p6kW|B": [
+     "n2_n_di_lower_nel_wang.toml"
+    ],
+    "sgb-screen-04|L32-exit|1p6kW|A": [
+     "n2_n_di_lower.toml"
+    ],
+    "sgb-screen-04|L32-exit|1p6kW|B": [
+     "n2_n_di_lower.toml"
+    ],
+    "sgb-screen-05|L32-exit|3p0kW|A": [
+     "n2_n_di_lower.toml"
+    ],
+    "sgb-screen-05|L32-exit|3p0kW|B": [
+     "n2_n_di_lower.toml"
+    ],
+    "sgb-screen-08|L38-hist|3p0kW|A": [
+     "n2_n.toml"
+    ],
+    "sgb-screen-08|L38-hist|3p0kW|B": [
+     "n2_n.toml"
+    ],
+    "sgb-screen-09|L32-exit|1p6kW|A": [
+     "n2_n.toml",
+     "n2_n_di_lower.toml"
+    ],
+    "sgb-screen-09|L32-exit|1p6kW|B": [
+     "n2_n.toml",
+     "n2_n_di_lower.toml"
+    ],
+    "sgb-screen-09|L32-exit|3p0kW|A": [
+     "n2_n_di_lower_nel_wang.toml"
+    ],
+    "sgb-screen-09|L32-exit|3p0kW|B": [
+     "n2_n_di_lower_nel_wang.toml"
+    ]
+   }
+  }
+ },
+ "lane": "fo_johnsonlow_escalation_assessment",
+ "milestones": {
+  "not_used_for": [
+   "Milestone A (no absolute Hall numbers are produced or implied)"
+  ],
+  "supports": [
+   "physics-validation track: input to the O4 disposition matrix (fo_o4_disposition_matrix), which gates admission and therefore Milestone B"
+  ],
+  "to_reach_next": "Milestone B needs an admitted transport closure (credible set is empty after v1), which needs genuinely new predictive evidence plus the owner's O4 dispositions; this document only supplies evidence for the Johnson-low row of that matrix."
+ },
+ "o4_rule_text": {
+  "escalate_to_other_three_primary_combinations_if_any_vacuum": [
+   "a run status changes",
+   "|delta I_d| >= 0.075 x I_d,target",
+   "|delta T_axial| >= 0.5 x T_tolerance: N1 2.6 mN, N2 2.8 mN, N3 2.8 mN",
+   "replacing nominal chemistry by the sensitivity changes a provisional global-member or candidate verdict"
+  ],
+  "escalation_configs": "pre-generated and hash-pinned (staged_sensitivities.*.escalation; scripts/make_n2_variant_configs.py ESCALATION): on escalation each sensitivity is run on every listed primary combination and compared with that combination",
+  "facility": "facility sensitivity results may be produced as secondary evidence; facility-only differences never trigger escalation",
+  "first_run": "each staged sensitivity against ITS BASELINE (n2_n.toml for Johnson-low, rotational-off, HMS x0.5, HMS x1.3; n2_n_di_lower.toml for molecular N2^2+), in VACUUM, 9 candidates x 30 cases; deltas are sensitivity minus baseline for the same candidate, case and mode"
+ },
+ "o4_thresholds": {
+  "dI_over_Itarget": 0.075,
+  "dT_axial_mN": {
+   "N1": 2.6,
+   "N2": 2.8,
+   "N3": 2.8
+  }
+ },
+ "persistence_rule": {
+  "answer_to_question": "Johnson-low is 'material on every primary combination' iff the pre-registered O4 trigger fired on all four (scored staged_escalation blocks). The per-observable classes say WHICH effects persist.",
+  "classes": {
+   "BASELINE_DEPENDENT_SIGN": "the sign of median r differs between combinations (or is zero on one)",
+   "PERSISTS": "median r has the same non-zero sign on all four combinations AND |median r| >= 1 on all four",
+   "SIGN_PERSISTS_BELOW_THRESHOLD": "same sign on all four; |median r| < 1 on all four",
+   "SIGN_PERSISTS_MATERIAL_ON_SOME": "same sign on all four; |median r| >= 1 on 1 to 3 of them"
+  },
+  "factor_pattern": "for an effect that is material (|median r| >= 1) on some but not all combinations: 'DI-lower only', 'DI-upper only', 'Nel-Wang only', 'Nel-OPM only' when the material set equals exactly the two combinations sharing that factor level; otherwise 'no single-factor pattern'. Descriptive only.",
+  "id": "jla_persistence_rule_v1",
+  "normalization": "r = delta / O4 threshold: delta(I_d)/I_target / 0.075 (all points); delta(T_axial) / (0.5 x T_tolerance) = /2.6 mN (N1), /2.8 mN (N2, N3), per divergence reading A and B. delta = sensitivity minus its own baseline, same candidate, case and mode (vacuum), over every numerically valid pair whatever the run status (as O4 compares observables).",
+  "per_combination_summary": "median of r over the matched pairs of that combination (per point, and pooled over points)",
+  "status_and_verdict": "a status effect PERSISTS iff at least one run status changes on every combination; a verdict effect PERSISTS iff the O4 verdict-change clause is non-empty on every combination. Individual transitions / member changes are listed as common-to-all-four or present-only-with-some-baselines."
+ },
+ "provenance": {
+  "all_checks_passed": true,
+  "checks": [
+   {
+    "check": "mandatory raw canonical sha256 == its freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "mandatory provenance input == mandatory freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "mandatory scores sha256 == its provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "mandatory prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "scorer file sha256 == mandatory provenance scorer_sha256",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow.toml: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow.toml: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow.toml: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow.toml: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow.toml: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow.toml: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow.toml: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow.toml: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow.toml: pre-registered baseline n2_n.toml (o4.baseline or o4.compare_with)",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow.toml: escalation belongs to n2_n_exc_johnsonlow.toml",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow.toml: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow.toml: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow.toml: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower.toml: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower.toml: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower.toml: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower.toml: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower.toml: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower.toml: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower.toml: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower.toml: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower.toml: pre-registered baseline n2_n_di_lower.toml (o4.baseline or o4.compare_with)",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower.toml: escalation belongs to n2_n_exc_johnsonlow.toml",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower.toml: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower.toml: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower.toml: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_nel_wang.toml: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_nel_wang.toml: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_nel_wang.toml: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_nel_wang.toml: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_nel_wang.toml: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_nel_wang.toml: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_nel_wang.toml: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_nel_wang.toml: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_nel_wang.toml: pre-registered baseline n2_n_nel_wang.toml (o4.baseline or o4.compare_with)",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_nel_wang.toml: escalation belongs to n2_n_exc_johnsonlow.toml",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_nel_wang.toml: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_nel_wang.toml: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_nel_wang.toml: provenance o4_trigger_fired == scored block",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml: raw canonical sha256 == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml: provenance input == freeze manifest",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml: scores sha256 == provenance output_sha256",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml: mandatory_reproduced is true",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml: bound to the mandatory raw dataset",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml: bound to the official mandatory scores",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml: scorer sha256 == frozen scorer",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml: prereg lock == current lock",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml: pre-registered baseline n2_n_di_lower_nel_wang.toml (o4.baseline or o4.compare_with)",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml: escalation belongs to n2_n_exc_johnsonlow.toml",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml: chemistry config sha256 == pinned propellant file",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml: block baseline == pre-registered baseline",
+    "ok": true
+   },
+   {
+    "check": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml: provenance o4_trigger_fired == scored block",
+    "ok": true
+   }
+  ],
+  "datasets": [
+   {
+    "dataset": "mandatory v1 vacuum",
+    "n_records": 1080,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores_provenance.json",
+    "provenance_sha256": "6f10b02e505a1c48adc47b77a1d7b84fd8c569a7867b611d6d1099bb75c2ca8c",
+    "raw": "validation/p5_n2_campaign_v1_vacuum_raw.jsonl.gz",
+    "raw_sha256_canonical": "20e926d507598a2ca3d4789929f7e99b179e5fc56c81403286552bbd54097468",
+    "scores": "validation/p5_n2_campaign_v1_vacuum_scores.json",
+    "scores_sha256": "87895820e21e36fa8f9b07fa7475789f08d91d946d526a09acf142fe509be1bc"
+   },
+   {
+    "baseline": "n2_n.toml",
+    "dataset": "staged_n2_n_exc_johnsonlow",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_staged_n2_n_exc_johnsonlow_scores_provenance.json",
+    "provenance_sha256": "dc902155f740167299e6ccfa9447ddcc6b42042070ab47b097e6990f2af5c574",
+    "raw": "validation/p5_n2_campaign_v1_staged_n2_n_exc_johnsonlow_raw.jsonl.gz",
+    "raw_sha256_canonical": "9332ecdb6388b79491b570f063d06329274113b940e0410b35a0f610089fe1eb",
+    "scores": "validation/p5_n2_campaign_v1_staged_n2_n_exc_johnsonlow_scores.json",
+    "scores_sha256": "ee55fce1c51458692a39858dcf353587f50a0393194f48f6b72cffe3447ebc0d",
+    "sensitivity": "n2_n_exc_johnsonlow.toml"
+   },
+   {
+    "baseline": "n2_n_di_lower.toml",
+    "dataset": "escalation_n2_n_exc_johnsonlow_di_lower",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_scores_provenance.json",
+    "provenance_sha256": "8a1e81095ec4c9b203b81d87be7defa5abeccec1d47c33431f56a0c55a6c366d",
+    "raw": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_raw.jsonl.gz",
+    "raw_sha256_canonical": "9e1d797683d81a52133c8115ddc6bb9979255ed2afcf47c3bdbd84846e3b50f6",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_scores.json",
+    "scores_sha256": "d6631ceb77948c3bae3c74237d628c1af08cd7488272cac2db760a07ee893491",
+    "sensitivity": "n2_n_exc_johnsonlow_di_lower.toml"
+   },
+   {
+    "baseline": "n2_n_nel_wang.toml",
+    "dataset": "escalation_n2_n_exc_johnsonlow_nel_wang",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_nel_wang_scores_provenance.json",
+    "provenance_sha256": "a0792fe82c2942c23cb4688330c464c7538e4b23f1a3ea2d8204f68c8e5ba341",
+    "raw": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_nel_wang_raw.jsonl.gz",
+    "raw_sha256_canonical": "9667a541645c8d22b4639bb7a261f330a38524bc9b2bb3c9c064ffd6295e9699",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_nel_wang_scores.json",
+    "scores_sha256": "31276be1fa1b2deade8e46ae39168b21ecf2b7fef384ed30fde8f2cbb3c293b5",
+    "sensitivity": "n2_n_exc_johnsonlow_nel_wang.toml"
+   },
+   {
+    "baseline": "n2_n_di_lower_nel_wang.toml",
+    "dataset": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+    "mandatory_reproduced": true,
+    "n_records": 270,
+    "provenance": "hallthruster_bridge/validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang_scores_provenance.json",
+    "provenance_sha256": "07ed37f178afc4e9ae19c688fc5d3a39273786ea52cd8bfe8abd9beb79bb2aa8",
+    "raw": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang_raw.jsonl.gz",
+    "raw_sha256_canonical": "cd56310cb27bb96b0eb1f1598f423ec3edb2c19e8421a3bd5612ab480da2903d",
+    "scores": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang_scores.json",
+    "scores_sha256": "57d8614090e885471360ab8a0234779ee2849bd402cb8e138824e05a90f4ebaf",
+    "sensitivity": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml"
+   }
+  ],
+  "other_inputs_sha256": {
+   "hallthruster_bridge/cases/p5_n2.json": "03f8e838adbb9074f03d8e916b09f84bacc81c3efe9afa2947c6b4dbb73ab1df",
+   "hallthruster_bridge/prereg/p5_n2_prereg_lock_v1.json": "71ecd39fa25ea60e2e4aff9474bdd700ec8cd718e819dfdae774594709e805be",
+   "hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json": "8ca75ae2fac3a47ba008474f706cdfa8b60e3d1cf27429e1a4ad55dc47068462",
+   "scripts/score_p5_n2_campaign.py": "907ca7b5ef8e802ed97129ca9e3fd09b7493bc688088425b150ed02352a39fe3"
+  }
+ },
+ "question": "Is the Johnson-low electronic-excitation sensitivity material on every primary chemistry combination (does it persist across the DI and N-elastic choices)?",
+ "schema": "johnsonlow_assessment_v1",
+ "status_of_this_document": "evidence summary of frozen O4 scores; decides nothing; no criterion, tolerance, chemistry or transport change; Johnson-low stays a sensitivity/alternative; the v1 result is unchanged; no candidate is made PROMOTABLE or rejected by this assessment",
+ "trigger": "T_JOHNSONLOW_ESCALATION_ASSESSMENT"
+}
