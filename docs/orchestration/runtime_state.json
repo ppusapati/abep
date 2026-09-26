@@ -58,5 +58,14 @@
  "incidents": [
   "2026-09-26: two earlier session-bound watchers (harness background shells byu2qv4f0 started 12:40Z, bbdjklhst started 11:57Z) died silently (empty output, no exit notice; cause not determined). The detached daemon + Monitor design replaces them; no event was lost (state is derived, not event-sourced).",
   "2026-09-26T12:56:55Z: during the migration to the transactional ledger, the v1 daemon ran the tracker after it had switched to the (still empty) v2 ledger and before the reconstructed claims were written; it announced TRIGGER_READY T_O4_ESCALATE:ds_staged_n2_n_exc_johnsonlow. No action was taken; the reconstructed LAUNCHED claim removed it from the ready set and the claim CLI refuses a second claim. This is the failure mode the transactional rule guards against."
+ ],
+ "execution_baseline": {
+  "pinned": "branch claude/nifty-ramanujan-w68f9z at debce1603de04b79881fef4ae355e6cdbf531436",
+  "main": "daa0e759e26416847f200a4781194f266be27c5c (does NOT contain the orchestration governance)",
+  "rule": "until the branch is merged (owner approval), every developer and every automated step uses this branch as the execution baseline; later commits on it add only campaign results, ledger events and verified lane merges, each recorded; any change to the orchestration code or registries is announced as a new pinned baseline",
+  "recorded_utc": "2026-09-26T13:08:00Z"
+ },
+ "known_limitations": [
+  "Orphan claim file (owner review of debce16): if the process dies after the exclusive claim file is created but before the CLAIMED event is appended, O_EXCL still prevents a duplicate execution, but the tracker may show the trigger READY while every new claim of that attempt fails on the orphan file. This is a liveness/diagnostics issue, not an idempotency failure. Owner decision: address it only if it actually occurs (recovery: inspect claims/<key>.<attempt>.claim and record the event with evidence)."
  ]
 }

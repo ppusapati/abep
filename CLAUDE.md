@@ -182,6 +182,8 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    break-even surfaces, hard-gate eliminations). **Fan-out rule:** whenever a lane finishes, immediately ask whether its result lets
    another lane start, removes a dependency, or creates a new parallel branch; never fall back to a sequential queue.
    **O4 first stage:** Johnson-low trigger FIRED (scored 2026-09-26) → its three pre-registered escalations are running.
+   **Execution baseline (pinned until merged):** branch `claude/nifty-ramanujan-w68f9z` at `debce16` — `main` (daa0e75) does not
+   contain the orchestration governance; nobody works from `main` for execution until the merge (`runtime_state.json`).
    **Operating model (binding; owner decisions 2026-09-26): `docs/orchestration/OPERATING_MODEL.md`.** Machine ids in
    `lane_registry_v1.json` (lane_NN_*, ds_*, fo_*; break-even = lane_28_break_even); follow-on work launches ONLY from
    `trigger_registry_v1.json` (incl. T_O4_SCORE / T_O4_ESCALATE / T_O4_DISPOSITION_MATRIX / T_JOHNSONLOW_ESCALATION_ASSESSMENT /
