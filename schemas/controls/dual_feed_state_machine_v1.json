@@ -1,0 +1,5062 @@
+{
+ "schema": "dual_feed_state_machine_v1",
+ "version": "1.0-draft",
+ "status": "DRAFT",
+ "status_detail": "Conceptual control-logic specification for the RFP's air + Xe dual feed. Every guard is symbolic; every threshold value is TBD until the model or test named in its parameter entry supplies it with a source and an evidence class. Not validated. It asserts nothing about whether a mixed-feed or air-only Hall discharge can be ignited, sustained or throttled: gate 3 is FAIL and the credible transport set is empty.",
+ "created": "2026-09-26",
+ "documentation": "docs/controls/DUAL_FEED_STATES.md",
+ "tests": "tests/test_dual_feed_state_machine.py",
+ "rfp_context": {
+  "reference": "DRDO TDF RFP DTDF/06/13516/DSP/ABEP/X/L/M/01 as summarised in CLAUDE.md and abep_sim/constants.py (the RFP text is not in the repository: verify clause references)",
+  "requirement_summary": "air + Xe propellants; Hall preferred; thrust, power, mass and life limits as in abep_sim.constants:RFPConstraints",
+  "note": "The state list is a Vyovrinda control-design proposal; the RFP does not enumerate these states (verify)."
+ },
+ "architecture_context": {
+  "atmospheric_path": [
+   "intake",
+   "filter",
+   "compressor",
+   "atmospheric gas chamber",
+   "atmospheric valve (atm_anode)"
+  ],
+  "xe_path": [
+   "Xe chamber (tank)",
+   "Xe valves (xe_cathode, xe_anode)"
+  ],
+  "shared_block": "ionization/discharge -> acceleration/thrust (Hall)",
+  "scope_rule": "Hall transport-ensemble uncertainty belongs to the discharge/thrust block only and never enters upstream guard quantities (intake, compressor, gas chambers, valves). Layer-1 calibration-nuisance variables are never guard quantities or parameters (CLAUDE.md next-work item 1)."
+ },
+ "evidence_classes": [
+  "measured",
+  "digitized",
+  "inferred",
+  "reconstructed",
+  "model-derived",
+  "assumed"
+ ],
+ "tbd_prefix": "TBD — requires ",
+ "required_guard_categories": [
+  "pressure",
+  "discharge_current",
+  "flows",
+  "timing",
+  "power"
+ ],
+ "optional_guard_categories": [
+  "thermal",
+  "inventory",
+  "sequence",
+  "health"
+ ],
+ "guard_semantics": {
+  "preconditions": "always ANDed with the guard",
+  "ALL": "every condition in every category holds (entries ANDed); entries starting 'n/a:' impose no condition; t_condition counts how long the full condition set has held",
+  "ANY_PERSISTING": "fires when any condition in pressure, discharge_current, flows, power, thermal, inventory, sequence or health holds (ORed) and t_condition, the time that trigger set has held continuously, satisfies the timing entries",
+  "priority": "fault > protective > command > degradation > recovery > nominal > retry, evaluated every control cycle"
+ },
+ "expression_grammar": {
+  "identifiers": "declared quantities, parameters or external_refs only",
+  "operators": [
+   "<",
+   "<=",
+   ">",
+   ">=",
+   "==",
+   "!=",
+   "+",
+   "-",
+   "*",
+   "/",
+   "AND",
+   "OR",
+   "NOT",
+   "(",
+   ")",
+   ","
+  ],
+  "functions": {
+   "abs": "absolute value",
+   "integral": "integral(rate, t_in_state): time integral of rate over the dwell in the source state"
+  },
+  "numeric_literals": "forbidden: every threshold is a named parameter",
+  "special_values": [
+   "n/a: <reason>",
+   "none: <reason>",
+   "TBD — requires <what>"
+  ]
+ },
+ "transition_kinds": {
+  "nominal": "planned sequence step",
+  "retry": "bounded self-loop; precondition bounds the counter",
+  "command": "ground or autonomy command",
+  "degradation": "absorbable anomaly; operation continues",
+  "recovery": "return after a cleared degradation or restart eligibility",
+  "protective": "recoverable anomaly; sequenced shutdown (or OFF from RESTART)",
+  "fault": "hard fault; SAFE_MODE"
+ },
+ "initial_state": "OFF",
+ "safe_states": [
+  "OFF",
+  "SAFE_MODE"
+ ],
+ "safing_states": [
+  "CONTROLLED_SHUTDOWN"
+ ],
+ "xe_ledger_semantics": "xe_consumed.in_source_state is the Xe used from entry into the source state until the transition fires; at_transition is any commanded Xe beyond that. Summing along a path gives the Xe cost of a sequence, which is what m_Xe_reserve_* must cover.",
+ "states": [
+  {
+   "id": "OFF",
+   "category": "safe",
+   "safe": true,
+   "terminal": false,
+   "description": "Unpowered propulsion. All converters off, all propellant valves closed, compressor stopped.",
+   "outputs": {
+    "anode_hv": "off",
+    "keeper": "off",
+    "heater": "off",
+    "magnet": "off"
+   },
+   "valves": {
+    "xe_cathode": "closed",
+    "xe_anode": "closed",
+    "atm_anode": "closed"
+   },
+   "compressor": "off",
+   "xe_rate": "none: all Xe valves closed",
+   "entry_actions": [
+    "confirm all converters off",
+    "confirm all propellant valves closed"
+   ],
+   "invariants": [
+    "I_d <= I_d_off_max",
+    "P_prop <= P_prop_idle_max"
+   ],
+   "rationale": "Initial and final state. Exits only on a start/restart command or on a fault latched while off."
+  },
+  {
+   "id": "XE_PURGE",
+   "category": "startup",
+   "safe": false,
+   "terminal": false,
+   "description": "Xe flows through the cathode (and, if the feed design routes it, the anode line) at the purge setpoint with no electrical load except valves; displaces atmospheric species from the cathode region before heating.",
+   "outputs": {
+    "anode_hv": "off",
+    "keeper": "off",
+    "heater": "off",
+    "magnet": "off"
+   },
+   "valves": {
+    "xe_cathode": "open (purge setpoint)",
+    "xe_anode": "open (purge setpoint; TBD — requires feed-system design)",
+    "atm_anode": "closed"
+   },
+   "compressor": "off",
+   "xe_rate": "mdot_Xe_purge",
+   "entry_actions": [
+    "open Xe latch valve",
+    "set Xe purge flow to mdot_Xe_purge_set",
+    "reset t_since_purge on exit"
+   ],
+   "invariants": [
+    "p_Xe_line <= p_Xe_line_max",
+    "I_d <= I_d_off_max"
+   ],
+   "rationale": "The repository's cathode model treats atomic O as an emitter poison (abep_sim.plasma_devices:LaB6Cathode.coverage; abep_sim.aochem MATERIAL_CLASS 'LaB6 ... must be Xe-shielded'); purging before heating follows from that model. The need for, and duration of, a purge is TBD — requires cathode O-exposure test."
+  },
+  {
+   "id": "CATHODE_CONDITIONING",
+   "category": "startup",
+   "safe": false,
+   "terminal": false,
+   "description": "Heater on with Xe cathode flow at its setpoint; the emitter is brought to its ignition temperature.",
+   "outputs": {
+    "anode_hv": "off",
+    "keeper": "off",
+    "heater": "on",
+    "magnet": "off"
+   },
+   "valves": {
+    "xe_cathode": "open (cathode setpoint)",
+    "xe_anode": "closed",
+    "atm_anode": "closed"
+   },
+   "compressor": "off",
+   "xe_rate": "mdot_Xe_cathode",
+   "entry_actions": [
+    "set Xe cathode flow to mdot_Xe_cathode_set",
+    "close anode purge path",
+    "heater on"
+   ],
+   "invariants": [
+    "P_heater <= P_heater_max",
+    "p_Xe_line <= p_Xe_line_max"
+   ],
+   "rationale": "Emitter heating under Xe flow so the emitter is not heated in an O-bearing environment without flow."
+  },
+  {
+   "id": "CATHODE_IGNITION",
+   "category": "startup",
+   "safe": false,
+   "terminal": false,
+   "description": "Keeper voltage applied; waits for a coupled keeper discharge. Bounded retries.",
+   "outputs": {
+    "anode_hv": "off",
+    "keeper": "on",
+    "heater": "on",
+    "magnet": "off"
+   },
+   "valves": {
+    "xe_cathode": "open (cathode setpoint)",
+    "xe_anode": "closed",
+    "atm_anode": "closed"
+   },
+   "compressor": "off",
+   "xe_rate": "mdot_Xe_cathode",
+   "entry_actions": [
+    "apply keeper voltage",
+    "increment n_cathode_starts"
+   ],
+   "invariants": [
+    "I_keeper <= I_keeper_max",
+    "I_d <= I_d_off_max"
+   ],
+   "rationale": "Separates keeper coupling from anode ignition so that a keeper failure never reaches the anode supply."
+  },
+  {
+   "id": "XE_DISCHARGE_IGNITION",
+   "category": "startup",
+   "safe": false,
+   "terminal": false,
+   "description": "Magnet on, Xe anode flow at the ignition setpoint, anode voltage V_d_ign applied; waits for a lit, stable Xe discharge. Bounded retries.",
+   "outputs": {
+    "anode_hv": "on",
+    "keeper": "on",
+    "heater": "per cathode design (TBD — requires cathode qualification)",
+    "magnet": "on"
+   },
+   "valves": {
+    "xe_cathode": "open (cathode setpoint)",
+    "xe_anode": "open (ignition setpoint)",
+    "atm_anode": "closed"
+   },
+   "compressor": "off",
+   "xe_rate": "mdot_Xe_cathode + mdot_Xe_anode",
+   "entry_actions": [
+    "magnet on",
+    "set Xe anode flow to mdot_Xe_anode_ign_set",
+    "apply V_d_ign"
+   ],
+   "invariants": [
+    "I_d <= I_d_overcurrent_max",
+    "p_Xe_line <= p_Xe_line_max"
+   ],
+   "rationale": "Ignition on Xe only: the Xe path is independent of the atmospheric path, so ignition does not depend on intake/compressor state. Whether a discharge on atmospheric feed could be ignited directly is not assumed."
+  },
+  {
+   "id": "WARM_UP",
+   "category": "startup",
+   "safe": false,
+   "terminal": false,
+   "description": "Xe-only discharge at the warm-up setpoint for thermal soak. Compressor spin-up is commanded on entry and the atmospheric chamber fills behind the closed atmospheric valve.",
+   "outputs": {
+    "anode_hv": "on",
+    "keeper": "per cathode design (TBD — requires cathode qualification)",
+    "heater": "off",
+    "magnet": "on"
+   },
+   "valves": {
+    "xe_cathode": "open (cathode setpoint)",
+    "xe_anode": "open (warm-up setpoint)",
+    "atm_anode": "closed"
+   },
+   "compressor": "spin-up then running",
+   "xe_rate": "mdot_Xe_cathode + mdot_Xe_anode",
+   "entry_actions": [
+    "ramp V_d to V_d_op",
+    "set Xe anode flow to mdot_Xe_anode_warm_set",
+    "command compressor spin-up",
+    "keep atmospheric valve closed"
+   ],
+   "invariants": [
+    "I_d <= I_d_overcurrent_max",
+    "p_atm_chamber <= p_atm_chamber_max",
+    "compressor_speed <= compressor_speed_max"
+   ],
+   "rationale": "Overlaps thruster warm-up with the atmospheric chamber fill transient (abep_sim.reservoir:startup_transient) so that admission starts from a filled chamber and a thermally soaked thruster."
+  },
+  {
+   "id": "ATMOSPHERE_ADMISSION",
+   "category": "operating",
+   "safe": false,
+   "terminal": false,
+   "description": "Atmospheric valve opens along a ramp while the Xe anode flow is held; discharge current excursions are monitored.",
+   "outputs": {
+    "anode_hv": "on",
+    "keeper": "per cathode design",
+    "heater": "off",
+    "magnet": "on"
+   },
+   "valves": {
+    "xe_cathode": "open (cathode setpoint)",
+    "xe_anode": "open (warm-up setpoint, held)",
+    "atm_anode": "opening (ramp over t_admit_ramp)"
+   },
+   "compressor": "running",
+   "xe_rate": "mdot_Xe_cathode + mdot_Xe_anode",
+   "entry_actions": [
+    "open atmospheric valve along the admission ramp",
+    "hold Xe anode flow"
+   ],
+   "invariants": [
+    "I_d <= I_d_overcurrent_max",
+    "p_atm_chamber <= p_atm_chamber_max"
+   ],
+   "rationale": "Introduces atmospheric species into an established Xe discharge instead of igniting on atmospheric feed. Whether the discharge survives admission is not modelled (no admitted Hall member; no O/O2 chemistry; no Xe + atmosphere mixture) and is a test item."
+  },
+  {
+   "id": "MIXED_STABILIZATION",
+   "category": "operating",
+   "safe": false,
+   "terminal": false,
+   "description": "Atmospheric valve at its operating opening; Xe anode flow ramps down as the atmospheric fraction rises, closed-loop on I_d.",
+   "outputs": {
+    "anode_hv": "on",
+    "keeper": "per cathode design",
+    "heater": "off",
+    "magnet": "on"
+   },
+   "valves": {
+    "xe_cathode": "open (cathode setpoint)",
+    "xe_anode": "ramping down",
+    "atm_anode": "open"
+   },
+   "compressor": "running",
+   "xe_rate": "mdot_Xe_cathode + mdot_Xe_anode",
+   "entry_actions": [
+    "ramp Xe anode flow down while holding abs(I_d - I_d_ref) within dI_d_band_max"
+   ],
+   "invariants": [
+    "I_d <= I_d_overcurrent_max",
+    "p_atm_chamber <= p_atm_chamber_max"
+   ],
+   "rationale": "Transfers the discharge from Xe to atmospheric feed gradually so each step can be reversed to Xe fallback."
+  },
+  {
+   "id": "ATMOSPHERE_DOMINANT",
+   "category": "operating",
+   "safe": false,
+   "terminal": false,
+   "description": "Atmospheric feed dominates the anode flow (x_atm_anode >= x_atm_dominant_min); Xe anode flow is at most a trim. Also the Xe-topping state when air-only thrust capability falls short of the command.",
+   "outputs": {
+    "anode_hv": "on",
+    "keeper": "per cathode design",
+    "heater": "off",
+    "magnet": "on"
+   },
+   "valves": {
+    "xe_cathode": "open (cathode setpoint)",
+    "xe_anode": "trim (<= mdot_Xe_anode_trim_max)",
+    "atm_anode": "open"
+   },
+   "compressor": "running",
+   "xe_rate": "mdot_Xe_cathode + mdot_Xe_anode",
+   "entry_actions": [
+    "limit Xe anode flow to mdot_Xe_anode_trim_max"
+   ],
+   "invariants": [
+    "I_d <= I_d_overcurrent_max",
+    "mdot_Xe_anode <= mdot_Xe_anode_trim_max"
+   ],
+   "rationale": "Mirrors the Xe-topping policy structure of abep_sim.transient:run_mission (air first, Xe anode topping when air thrust is short)."
+  },
+  {
+   "id": "AIR_ONLY_ANODE_XE_CATHODE",
+   "category": "operating",
+   "safe": false,
+   "terminal": false,
+   "description": "Anode fed by the atmospheric path only; Xe flows to the cathode only. Intended long-duration mode.",
+   "outputs": {
+    "anode_hv": "on",
+    "keeper": "per cathode design",
+    "heater": "off",
+    "magnet": "on"
+   },
+   "valves": {
+    "xe_cathode": "open (cathode setpoint)",
+    "xe_anode": "closed",
+    "atm_anode": "open"
+   },
+   "compressor": "running",
+   "xe_rate": "mdot_Xe_cathode",
+   "entry_actions": [
+    "close Xe anode valve"
+   ],
+   "invariants": [
+    "I_d <= I_d_overcurrent_max",
+    "mdot_Xe_anode <= mdot_Xe_closed_max",
+    "mdot_Xe_cathode >= mdot_Xe_cathode_min"
+   ],
+   "rationale": "Keeps an Xe-fed cathode because the repository's air-cathode closure did not close the current at life (docs/HISTORY.md v1.1 item 3, model-derived; 'a test, not a design choice'). Xe consumption in this state is the cathode flow only."
+  },
+  {
+   "id": "DEGRADED_OPERATION",
+   "category": "degraded",
+   "safe": false,
+   "terminal": false,
+   "description": "Operation continues at a derated setpoint under a declared non-hard degradation (power shortfall absorbable by throttling, thermal warning, lost sensor redundancy, derated compressor).",
+   "outputs": {
+    "anode_hv": "on (derated)",
+    "keeper": "per cathode design",
+    "heater": "off",
+    "magnet": "on"
+   },
+   "valves": {
+    "xe_cathode": "open (cathode setpoint)",
+    "xe_anode": "as in the source state",
+    "atm_anode": "open"
+   },
+   "compressor": "running (possibly derated)",
+   "xe_rate": "mdot_Xe_cathode + mdot_Xe_anode",
+   "entry_actions": [
+    "throttle to a setpoint with P_prop_demand <= P_avail_prop",
+    "report degradation"
+   ],
+   "invariants": [
+    "I_d <= I_d_overcurrent_max",
+    "P_avail_prop >= P_prop_min_sustain"
+   ],
+   "rationale": "Avoids a shutdown/restart cycle (which costs Xe and cathode starts) for degradations that throttling can absorb."
+  },
+  {
+   "id": "XE_FALLBACK",
+   "category": "degraded",
+   "safe": false,
+   "terminal": false,
+   "description": "Atmospheric valve closed; anode on Xe at the fallback setpoint. Used when the atmospheric path is unavailable or the discharge on atmospheric feed is unstable. Bounded by the Xe reserve.",
+   "outputs": {
+    "anode_hv": "on",
+    "keeper": "per cathode design",
+    "heater": "off",
+    "magnet": "on"
+   },
+   "valves": {
+    "xe_cathode": "open (cathode setpoint)",
+    "xe_anode": "open (fallback setpoint)",
+    "atm_anode": "closed"
+   },
+   "compressor": "idle or stopped (TBD — requires compressor restart characterization)",
+   "xe_rate": "mdot_Xe_cathode + mdot_Xe_anode",
+   "entry_actions": [
+    "close atmospheric valve",
+    "set Xe anode flow to mdot_Xe_anode_fallback_set",
+    "increment n_fallback_cycles"
+   ],
+   "invariants": [
+    "I_d <= I_d_overcurrent_max",
+    "m_Xe_remaining > m_Xe_reserve_shutdown"
+   ],
+   "rationale": "Keeps the discharge lit on the independent Xe path so that an atmospheric-path anomaly does not force a restart."
+  },
+  {
+   "id": "CONTROLLED_SHUTDOWN",
+   "category": "safing",
+   "safe": false,
+   "terminal": false,
+   "description": "Sequenced shutdown: close atmospheric valve, ramp V_d down, anode off, close Xe anode valve, magnet off, keeper off, heater off, Xe cathode flow kept for the cool-down, then closed; compressor stopped.",
+   "outputs": {
+    "anode_hv": "ramping off",
+    "keeper": "off at end of sequence",
+    "heater": "off",
+    "magnet": "off at end of sequence"
+   },
+   "valves": {
+    "xe_cathode": "open until cool-down complete",
+    "xe_anode": "closing",
+    "atm_anode": "closed"
+   },
+   "compressor": "stopping",
+   "xe_rate": "mdot_Xe_cathode + mdot_Xe_anode",
+   "entry_actions": [
+    "close atmospheric valve",
+    "ramp V_d to off",
+    "close Xe anode valve",
+    "magnet off",
+    "keeper off",
+    "heater off",
+    "hold Xe cathode flow for t_cathode_cooldown_min",
+    "close Xe cathode valve",
+    "stop compressor",
+    "reset t_since_shutdown"
+   ],
+   "invariants": [
+    "p_Xe_line <= p_Xe_line_max"
+   ],
+   "rationale": "The only exits are to OFF (sequence complete) or SAFE_MODE (fault or time-out), so a shutdown never re-enters operation."
+  },
+  {
+   "id": "RESTART",
+   "category": "recovery",
+   "safe": false,
+   "terminal": false,
+   "description": "Restart eligibility check after a shutdown: inhibit time, restart counter, Xe reserve, power, cathode start count and exposure history; chooses the cold path (purge) or the warm path (conditioning).",
+   "outputs": {
+    "anode_hv": "off",
+    "keeper": "off",
+    "heater": "off",
+    "magnet": "off"
+   },
+   "valves": {
+    "xe_cathode": "closed",
+    "xe_anode": "closed",
+    "atm_anode": "closed"
+   },
+   "compressor": "off",
+   "xe_rate": "none: all Xe valves closed while eligibility is evaluated",
+   "entry_actions": [
+    "evaluate restart eligibility"
+   ],
+   "invariants": [
+    "I_d <= I_d_off_max",
+    "P_prop <= P_prop_idle_max"
+   ],
+   "rationale": "Makes restart a checked, counted decision instead of a re-entry into the start sequence."
+  },
+  {
+   "id": "SAFE_MODE",
+   "category": "safe",
+   "safe": true,
+   "terminal": false,
+   "description": "All converters off, all propellant valves closed (fail-closed), compressor stopped; fault latched; awaits ground.",
+   "outputs": {
+    "anode_hv": "off",
+    "keeper": "off",
+    "heater": "off",
+    "magnet": "off"
+   },
+   "valves": {
+    "xe_cathode": "closed",
+    "xe_anode": "closed",
+    "atm_anode": "closed"
+   },
+   "compressor": "off",
+   "xe_rate": "none: all Xe valves closed",
+   "entry_actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "invariants": [
+    "I_d <= I_d_off_max",
+    "P_prop <= P_prop_idle_max"
+   ],
+   "rationale": "Hard-fault sink. Leaves only by ground command to OFF; restart then goes through OFF and RESTART."
+  }
+ ],
+ "transitions": [
+  {
+   "id": "OFF__start",
+   "from": "OFF",
+   "to": "XE_PURGE",
+   "kind": "command",
+   "trigger": "cmd_start",
+   "guard_logic": "ALL",
+   "preconditions": [
+    "m_Xe_remaining >= m_Xe_reserve_startup",
+    "n_cathode_starts < n_cathode_starts_max"
+   ],
+   "guards": {
+    "pressure": [
+     "p_Xe_tank >= p_Xe_tank_min"
+    ],
+    "discharge_current": [
+     "I_d <= I_d_off_max AND I_keeper <= I_keeper_off_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode <= mdot_Xe_closed_max AND mdot_Xe_anode <= mdot_Xe_closed_max AND mdot_atm_anode <= mdot_atm_closed_max"
+    ],
+    "timing": [
+     "t_since_shutdown >= t_restart_inhibit"
+    ],
+    "power": [
+     "P_avail_prop >= P_startup_peak AND V_bus >= V_bus_min AND t_to_eclipse >= t_startup_budget"
+    ],
+    "sequence": [
+     "cmd_start"
+    ],
+    "thermal": [
+     "NOT thermal_warn"
+    ]
+   },
+   "actions": [
+    "open Xe latch valve",
+    "start purge"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "OFF__fault",
+    "on_guard_not_met": "n/a: command is rejected and the state stays OFF; rejection reported",
+    "description": "a fault latched while OFF goes to SAFE_MODE"
+   },
+   "xe_consumed": {
+    "in_source_state": "none: all Xe valves closed in OFF",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Cold start. Startup must fit before eclipse entry and within the start-up power peak."
+  },
+  {
+   "id": "XE_PURGE__done",
+   "from": "XE_PURGE",
+   "to": "CATHODE_CONDITIONING",
+   "kind": "nominal",
+   "trigger": "purge complete",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line >= p_Xe_line_min AND p_Xe_line <= p_Xe_line_max",
+     "p_O_cathode_est <= p_O_cathode_max"
+    ],
+    "discharge_current": [
+     "I_d <= I_d_off_max"
+    ],
+    "flows": [
+     "abs(mdot_Xe_purge - mdot_Xe_purge_set) <= flow_tol_rel * mdot_Xe_purge_set"
+    ],
+    "timing": [
+     "t_in_state >= t_purge_min"
+    ],
+    "power": [
+     "P_avail_prop >= P_startup_peak AND V_bus >= V_bus_min"
+    ]
+   },
+   "actions": [
+    "set Xe cathode flow to mdot_Xe_cathode_set",
+    "heater on"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "XE_PURGE__fault",
+    "on_guard_not_met": "XE_PURGE__protect",
+    "description": "purge flow or line pressure not established goes to controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_purge, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Heating starts only after the purge dwell and with an estimated emitter O partial pressure below its limit."
+  },
+  {
+   "id": "CATHODE_CONDITIONING__hot",
+   "from": "CATHODE_CONDITIONING",
+   "to": "CATHODE_IGNITION",
+   "kind": "nominal",
+   "trigger": "emitter at ignition temperature",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line >= p_Xe_line_min AND p_Xe_line <= p_Xe_line_max"
+    ],
+    "discharge_current": [
+     "I_d <= I_d_off_max"
+    ],
+    "flows": [
+     "abs(mdot_Xe_cathode - mdot_Xe_cathode_set) <= flow_tol_rel * mdot_Xe_cathode_set"
+    ],
+    "timing": [
+     "t_in_state >= t_heater_soak_min"
+    ],
+    "power": [
+     "P_heater <= P_heater_max"
+    ],
+    "thermal": [
+     "T_emitter >= T_emitter_ignite_min"
+    ]
+   },
+   "actions": [
+    "apply keeper voltage"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "CATHODE_CONDITIONING__fault",
+    "on_guard_not_met": "CATHODE_CONDITIONING__timeout",
+    "description": "heater time-out goes to controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Keeper voltage only on a soaked emitter under Xe flow."
+  },
+  {
+   "id": "CATHODE_IGNITION__coupled",
+   "from": "CATHODE_IGNITION",
+   "to": "XE_DISCHARGE_IGNITION",
+   "kind": "nominal",
+   "trigger": "keeper coupled",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line >= p_Xe_line_min AND p_Xe_line <= p_Xe_line_max"
+    ],
+    "discharge_current": [
+     "I_keeper >= I_keeper_min AND I_keeper <= I_keeper_max AND V_keeper <= V_keeper_max"
+    ],
+    "flows": [
+     "abs(mdot_Xe_cathode - mdot_Xe_cathode_set) <= flow_tol_rel * mdot_Xe_cathode_set"
+    ],
+    "timing": [
+     "t_condition >= t_stable_confirm"
+    ],
+    "power": [
+     "P_prop <= P_prop_alloc"
+    ]
+   },
+   "actions": [
+    "magnet on",
+    "set Xe anode flow to mdot_Xe_anode_ign_set",
+    "apply V_d_ign",
+    "reset n_keeper_retry"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "CATHODE_IGNITION__fault",
+    "on_guard_not_met": "CATHODE_IGNITION__retry",
+    "description": "keeper not coupled within t_keeper_ignite_max: bounded retry, then controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Anode voltage only after a confirmed keeper discharge."
+  },
+  {
+   "id": "CATHODE_IGNITION__retry",
+   "from": "CATHODE_IGNITION",
+   "to": "CATHODE_IGNITION",
+   "kind": "retry",
+   "trigger": "keeper ignition attempt timed out",
+   "guard_logic": "ALL",
+   "preconditions": [
+    "n_keeper_retry < n_keeper_retry_max"
+   ],
+   "guards": {
+    "pressure": [
+     "p_Xe_line >= p_Xe_line_min AND p_Xe_line <= p_Xe_line_max"
+    ],
+    "discharge_current": [
+     "I_keeper < I_keeper_min"
+    ],
+    "flows": [
+     "abs(mdot_Xe_cathode - mdot_Xe_cathode_set) <= flow_tol_rel * mdot_Xe_cathode_set"
+    ],
+    "timing": [
+     "t_in_state > t_keeper_ignite_max"
+    ],
+    "power": [
+     "n/a: retry keeps the present heater/keeper power"
+    ]
+   },
+   "actions": [
+    "remove keeper voltage",
+    "increment n_keeper_retry",
+    "re-apply keeper voltage",
+    "reset t_in_state"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "CATHODE_IGNITION__fault",
+    "on_guard_not_met": "CATHODE_IGNITION__exhausted",
+    "description": "retries exhausted goes to controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Bounded keeper retries."
+  },
+  {
+   "id": "CATHODE_IGNITION__exhausted",
+   "from": "CATHODE_IGNITION",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "protective",
+   "trigger": "keeper retries exhausted",
+   "guard_logic": "ALL",
+   "preconditions": [
+    "n_keeper_retry >= n_keeper_retry_max"
+   ],
+   "guards": {
+    "pressure": [
+     "n/a: independent of line pressure"
+    ],
+    "discharge_current": [
+     "I_keeper < I_keeper_min"
+    ],
+    "flows": [
+     "n/a: independent of flow"
+    ],
+    "timing": [
+     "t_in_state > t_keeper_ignite_max"
+    ],
+    "power": [
+     "n/a: independent of power"
+    ]
+   },
+   "actions": [
+    "set restart_requested"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "CATHODE_IGNITION__fault",
+    "on_guard_not_met": "n/a: this is the not-met handler",
+    "description": "protective exit"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Stops retrying after the allowed attempts; a restart request is left for RESTART to evaluate."
+  },
+  {
+   "id": "XE_DISCHARGE_IGNITION__lit",
+   "from": "XE_DISCHARGE_IGNITION",
+   "to": "WARM_UP",
+   "kind": "nominal",
+   "trigger": "Xe discharge lit and stable",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line >= p_Xe_line_min AND p_Xe_line <= p_Xe_line_max"
+    ],
+    "discharge_current": [
+     "I_d >= I_d_detect_min AND I_d <= I_d_overcurrent_max AND Id_rms_rel <= Id_rms_rel_max"
+    ],
+    "flows": [
+     "abs(mdot_Xe_anode - mdot_Xe_anode_ign_set) <= flow_tol_rel * mdot_Xe_anode_ign_set AND abs(mdot_Xe_cathode - mdot_Xe_cathode_set) <= flow_tol_rel * mdot_Xe_cathode_set"
+    ],
+    "timing": [
+     "t_condition >= t_stable_confirm"
+    ],
+    "power": [
+     "P_prop <= P_prop_alloc"
+    ]
+   },
+   "actions": [
+    "reset n_ignite_retry",
+    "ramp V_d to V_d_op",
+    "command compressor spin-up"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "XE_DISCHARGE_IGNITION__fault",
+    "on_guard_not_met": "XE_DISCHARGE_IGNITION__retry",
+    "description": "not lit within t_ignite_max: bounded retry, then controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "The Xe discharge is established and confirmed before any atmospheric species are introduced."
+  },
+  {
+   "id": "XE_DISCHARGE_IGNITION__retry",
+   "from": "XE_DISCHARGE_IGNITION",
+   "to": "XE_DISCHARGE_IGNITION",
+   "kind": "retry",
+   "trigger": "anode ignition attempt timed out",
+   "guard_logic": "ALL",
+   "preconditions": [
+    "n_ignite_retry < n_ignite_retry_max"
+   ],
+   "guards": {
+    "pressure": [
+     "p_Xe_line >= p_Xe_line_min AND p_Xe_line <= p_Xe_line_max"
+    ],
+    "discharge_current": [
+     "I_d < I_d_detect_min AND I_keeper >= I_keeper_min"
+    ],
+    "flows": [
+     "abs(mdot_Xe_anode - mdot_Xe_anode_ign_set) <= flow_tol_rel * mdot_Xe_anode_ign_set"
+    ],
+    "timing": [
+     "t_in_state > t_ignite_max"
+    ],
+    "power": [
+     "n/a: retry keeps the present converter settings"
+    ]
+   },
+   "actions": [
+    "remove anode voltage",
+    "increment n_ignite_retry",
+    "re-apply V_d_ign",
+    "reset t_in_state"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "XE_DISCHARGE_IGNITION__fault",
+    "on_guard_not_met": "XE_DISCHARGE_IGNITION__exhausted",
+    "description": "retries exhausted goes to controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Bounded anode ignition retries with the keeper still coupled."
+  },
+  {
+   "id": "XE_DISCHARGE_IGNITION__exhausted",
+   "from": "XE_DISCHARGE_IGNITION",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "protective",
+   "trigger": "anode ignition retries exhausted",
+   "guard_logic": "ALL",
+   "preconditions": [
+    "n_ignite_retry >= n_ignite_retry_max"
+   ],
+   "guards": {
+    "pressure": [
+     "n/a: independent of line pressure"
+    ],
+    "discharge_current": [
+     "I_d < I_d_detect_min"
+    ],
+    "flows": [
+     "n/a: independent of flow"
+    ],
+    "timing": [
+     "t_in_state > t_ignite_max"
+    ],
+    "power": [
+     "n/a: independent of power"
+    ]
+   },
+   "actions": [
+    "set restart_requested"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "XE_DISCHARGE_IGNITION__fault",
+    "on_guard_not_met": "n/a: this is the not-met handler",
+    "description": "protective exit"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Stops retrying after the allowed attempts."
+  },
+  {
+   "id": "WARM_UP__admit",
+   "from": "WARM_UP",
+   "to": "ATMOSPHERE_ADMISSION",
+   "kind": "nominal",
+   "trigger": "thruster warm and atmospheric chamber filled",
+   "guard_logic": "ALL",
+   "preconditions": [
+    "m_Xe_remaining >= m_Xe_reserve_fallback"
+   ],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber >= p_atm_chamber_admit_min AND p_atm_chamber <= p_atm_chamber_max",
+     "p_Xe_line >= p_Xe_line_min AND p_Xe_line <= p_Xe_line_max"
+    ],
+    "discharge_current": [
+     "abs(I_d - I_d_ref) <= dI_d_band_max AND Id_rms_rel <= Id_rms_rel_max"
+    ],
+    "flows": [
+     "compressor_speed >= compressor_speed_min AND compressor_speed <= compressor_speed_max AND NOT compressor_fault AND NOT atm_path_fault"
+    ],
+    "timing": [
+     "t_in_state >= t_warmup_min AND t_condition >= t_stable_confirm"
+    ],
+    "power": [
+     "P_prop <= P_prop_alloc AND P_avail_prop >= P_prop_demand"
+    ],
+    "thermal": [
+     "T_thruster >= T_thruster_warm_min AND NOT thermal_warn"
+    ]
+   },
+   "actions": [
+    "begin atmospheric valve ramp"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "WARM_UP__fault",
+    "on_guard_not_met": "WARM_UP__no_atm",
+    "description": "chamber not filled by t_atm_fill_max: Xe fallback if the Xe reserve allows, else controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Atmospheric operation starts only if the Xe reserve can carry at least one fallback episode (owner policy item)."
+  },
+  {
+   "id": "WARM_UP__no_atm",
+   "from": "WARM_UP",
+   "to": "XE_FALLBACK",
+   "kind": "degradation",
+   "trigger": "atmospheric path not ready",
+   "guard_logic": "ALL",
+   "preconditions": [
+    "m_Xe_remaining >= m_Xe_reserve_fallback"
+   ],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber < p_atm_chamber_admit_min OR compressor_fault OR atm_path_fault"
+    ],
+    "discharge_current": [
+     "I_d >= I_d_detect_min"
+    ],
+    "flows": [
+     "n/a: the atmospheric valve stays closed"
+    ],
+    "timing": [
+     "t_in_state >= t_atm_fill_max"
+    ],
+    "power": [
+     "P_avail_prop >= P_prop_min_sustain"
+    ]
+   },
+   "actions": [
+    "stop or idle compressor",
+    "set Xe anode flow to mdot_Xe_anode_fallback_set"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "WARM_UP__fault",
+    "on_guard_not_met": "WARM_UP__timeout",
+    "description": "if neither admission nor fallback guard holds by t_warmup_max: controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "An atmospheric-path failure at start does not force a shutdown if Xe is available."
+  },
+  {
+   "id": "WARM_UP__low_xe",
+   "from": "WARM_UP",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "protective",
+   "trigger": "Xe below the fallback reserve",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: independent of pressure"
+    ],
+    "discharge_current": [
+     "n/a: independent of discharge state"
+    ],
+    "flows": [
+     "n/a: independent of flow"
+    ],
+    "timing": [
+     "t_in_state >= t_warmup_min"
+    ],
+    "power": [
+     "n/a: independent of power"
+    ],
+    "inventory": [
+     "m_Xe_remaining < m_Xe_reserve_fallback"
+    ]
+   },
+   "actions": [
+    "report Xe reserve"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "WARM_UP__fault",
+    "on_guard_not_met": "n/a: this is the not-met handler",
+    "description": "protective exit"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Policy: no atmospheric operation without a fallback reserve (owner may relax; see docs/controls/DUAL_FEED_STATES.md)."
+  },
+  {
+   "id": "WARM_UP__timeout",
+   "from": "WARM_UP",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "protective",
+   "trigger": "warm-up time-out",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: time-out applies regardless of pressure"
+    ],
+    "discharge_current": [
+     "n/a: time-out applies regardless of current"
+    ],
+    "flows": [
+     "n/a: time-out applies regardless of flow"
+    ],
+    "timing": [
+     "t_in_state >= t_warmup_max"
+    ],
+    "power": [
+     "n/a: time-out applies regardless of power"
+    ]
+   },
+   "actions": [
+    "set restart_requested"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "WARM_UP__fault",
+    "on_guard_not_met": "n/a: this is the not-met handler",
+    "description": "protective exit"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Guarantees WARM_UP cannot dwell indefinitely."
+  },
+  {
+   "id": "ATMOSPHERE_ADMISSION__stable",
+   "from": "ATMOSPHERE_ADMISSION",
+   "to": "MIXED_STABILIZATION",
+   "kind": "nominal",
+   "trigger": "admission ramp complete, discharge within band",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber >= p_atm_chamber_min_op AND p_atm_chamber <= p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "abs(I_d - I_d_ref) <= dI_d_admit_max AND Id_rms_rel <= Id_rms_rel_max"
+    ],
+    "flows": [
+     "mdot_atm_anode >= mdot_atm_anode_min AND abs(mdot_Xe_anode - mdot_Xe_anode_warm_set) <= flow_tol_rel * mdot_Xe_anode_warm_set"
+    ],
+    "timing": [
+     "t_in_state >= t_admit_ramp AND t_condition >= t_stable_confirm"
+    ],
+    "power": [
+     "P_prop <= P_prop_alloc"
+    ]
+   },
+   "actions": [
+    "begin Xe anode ramp-down"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "ATMOSPHERE_ADMISSION__fault",
+    "on_guard_not_met": "ATMOSPHERE_ADMISSION__fallback",
+    "description": "excursion or time-out goes to Xe fallback"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Xe ramp-down starts only after the discharge has absorbed the atmospheric admission."
+  },
+  {
+   "id": "MIXED_STABILIZATION__dominant",
+   "from": "MIXED_STABILIZATION",
+   "to": "ATMOSPHERE_DOMINANT",
+   "kind": "nominal",
+   "trigger": "atmospheric fraction reached",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber >= p_atm_chamber_min_op AND p_atm_chamber <= p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "abs(I_d - I_d_ref) <= dI_d_band_max AND Id_rms_rel <= Id_rms_rel_max"
+    ],
+    "flows": [
+     "x_atm_anode >= x_atm_dominant_min AND mdot_atm_anode >= mdot_atm_anode_min"
+    ],
+    "timing": [
+     "t_in_state >= t_mixed_dwell_min AND t_condition >= t_stable_confirm"
+    ],
+    "power": [
+     "P_prop <= P_prop_alloc AND P_avail_prop >= P_prop_demand"
+    ],
+    "thermal": [
+     "NOT thermal_warn"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "MIXED_STABILIZATION__fault",
+    "on_guard_not_met": "MIXED_STABILIZATION__fallback",
+    "description": "excursion or time-out goes to Xe fallback"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "The mode boundary x_atm_dominant_min is an owner definition."
+  },
+  {
+   "id": "ATMOSPHERE_DOMINANT__air_only",
+   "from": "ATMOSPHERE_DOMINANT",
+   "to": "AIR_ONLY_ANODE_XE_CATHODE",
+   "kind": "nominal",
+   "trigger": "Xe trim no longer needed",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber >= p_atm_chamber_min_op"
+    ],
+    "discharge_current": [
+     "abs(I_d - I_d_ref) <= dI_d_band_max AND Id_rms_rel <= Id_rms_rel_max"
+    ],
+    "flows": [
+     "mdot_Xe_anode <= mdot_Xe_anode_trim_max AND mdot_atm_anode >= mdot_atm_anode_min"
+    ],
+    "timing": [
+     "t_in_state >= t_dominant_dwell_min AND t_condition >= t_stable_confirm"
+    ],
+    "power": [
+     "P_prop <= P_prop_alloc"
+    ],
+    "sequence": [
+     "T_air_avail >= T_cmd"
+    ]
+   },
+   "actions": [
+    "close Xe anode valve"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "ATMOSPHERE_DOMINANT__fault",
+    "on_guard_not_met": "n/a: remains ATMOSPHERE_DOMINANT (Xe topping) while the guard is not met",
+    "description": "atmospheric-path anomaly goes to Xe fallback; hard fault to SAFE_MODE"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Leaves topping with hysteresis: enter below T_cmd - T_margin, leave at T_cmd."
+  },
+  {
+   "id": "AIR_ONLY__topping",
+   "from": "AIR_ONLY_ANODE_XE_CATHODE",
+   "to": "ATMOSPHERE_DOMINANT",
+   "kind": "nominal",
+   "trigger": "air-only thrust short of command",
+   "guard_logic": "ALL",
+   "preconditions": [
+    "m_Xe_remaining >= m_Xe_reserve_fallback"
+   ],
+   "guards": {
+    "pressure": [
+     "p_Xe_line >= p_Xe_line_min AND p_Xe_line <= p_Xe_line_max"
+    ],
+    "discharge_current": [
+     "abs(I_d - I_d_ref) <= dI_d_band_max AND Id_rms_rel <= Id_rms_rel_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode >= mdot_Xe_cathode_min"
+    ],
+    "timing": [
+     "t_condition >= t_stable_confirm"
+    ],
+    "power": [
+     "P_avail_prop >= P_prop_demand"
+    ],
+    "sequence": [
+     "T_air_avail < T_cmd - T_margin"
+    ]
+   },
+   "actions": [
+    "open Xe anode valve to a trim flow not above mdot_Xe_anode_trim_max"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "AIR_ONLY_ANODE_XE_CATHODE__fault",
+    "on_guard_not_met": "n/a: remains air-only (altitude-control shortfall reported) while the guard is not met",
+    "description": "hard fault to SAFE_MODE"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Xe topping is discretionary and allowed only above the fallback reserve."
+  },
+  {
+   "id": "ATMOSPHERE_ADMISSION__fallback",
+   "from": "ATMOSPHERE_ADMISSION",
+   "to": "XE_FALLBACK",
+   "kind": "degradation",
+   "trigger": "atmospheric path or atmospheric-feed discharge anomaly",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber < p_atm_chamber_min_op"
+    ],
+    "discharge_current": [
+     "abs(I_d - I_d_ref) > dI_d_admit_max OR Id_rms_rel > Id_rms_rel_max"
+    ],
+    "flows": [
+     "mdot_atm_anode < mdot_atm_anode_min OR compressor_fault OR atm_path_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "n/a: power shortfall is handled by DEGRADED_OPERATION or the protective exit"
+    ],
+    "sequence": [
+     "t_in_state > t_admit_max"
+    ]
+   },
+   "actions": [
+    "close atmospheric valve",
+    "set Xe anode flow to mdot_Xe_anode_fallback_set",
+    "increment n_fallback_cycles"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "ATMOSPHERE_ADMISSION__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "if the discharge extinguishes during the switch, XE_FALLBACK's protective exit applies"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+   },
+   "rationale": "Reverts to the independent Xe path rather than shutting down."
+  },
+  {
+   "id": "MIXED_STABILIZATION__fallback",
+   "from": "MIXED_STABILIZATION",
+   "to": "XE_FALLBACK",
+   "kind": "degradation",
+   "trigger": "atmospheric path or atmospheric-feed discharge anomaly",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber < p_atm_chamber_min_op"
+    ],
+    "discharge_current": [
+     "abs(I_d - I_d_ref) > dI_d_band_max OR Id_rms_rel > Id_rms_rel_max"
+    ],
+    "flows": [
+     "mdot_atm_anode < mdot_atm_anode_min OR compressor_fault OR atm_path_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "n/a: power shortfall is handled by DEGRADED_OPERATION or the protective exit"
+    ],
+    "sequence": [
+     "t_in_state > t_mixed_max"
+    ]
+   },
+   "actions": [
+    "close atmospheric valve",
+    "set Xe anode flow to mdot_Xe_anode_fallback_set",
+    "increment n_fallback_cycles"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "MIXED_STABILIZATION__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "if the discharge extinguishes during the switch, XE_FALLBACK's protective exit applies"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+   },
+   "rationale": "Reverts to the independent Xe path rather than shutting down."
+  },
+  {
+   "id": "ATMOSPHERE_DOMINANT__fallback",
+   "from": "ATMOSPHERE_DOMINANT",
+   "to": "XE_FALLBACK",
+   "kind": "degradation",
+   "trigger": "atmospheric path or atmospheric-feed discharge anomaly",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber < p_atm_chamber_min_op"
+    ],
+    "discharge_current": [
+     "abs(I_d - I_d_ref) > dI_d_band_max OR Id_rms_rel > Id_rms_rel_max"
+    ],
+    "flows": [
+     "mdot_atm_anode < mdot_atm_anode_min OR compressor_fault OR atm_path_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "n/a: power shortfall is handled by DEGRADED_OPERATION or the protective exit"
+    ]
+   },
+   "actions": [
+    "close atmospheric valve",
+    "set Xe anode flow to mdot_Xe_anode_fallback_set",
+    "increment n_fallback_cycles"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "ATMOSPHERE_DOMINANT__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "if the discharge extinguishes during the switch, XE_FALLBACK's protective exit applies"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+   },
+   "rationale": "Reverts to the independent Xe path rather than shutting down."
+  },
+  {
+   "id": "AIR_ONLY_ANODE_XE_CATHODE__fallback",
+   "from": "AIR_ONLY_ANODE_XE_CATHODE",
+   "to": "XE_FALLBACK",
+   "kind": "degradation",
+   "trigger": "atmospheric path or atmospheric-feed discharge anomaly",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber < p_atm_chamber_min_op"
+    ],
+    "discharge_current": [
+     "abs(I_d - I_d_ref) > dI_d_band_max OR Id_rms_rel > Id_rms_rel_max"
+    ],
+    "flows": [
+     "mdot_atm_anode < mdot_atm_anode_min OR compressor_fault OR atm_path_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "n/a: power shortfall is handled by DEGRADED_OPERATION or the protective exit"
+    ]
+   },
+   "actions": [
+    "close atmospheric valve",
+    "set Xe anode flow to mdot_Xe_anode_fallback_set",
+    "increment n_fallback_cycles"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "AIR_ONLY_ANODE_XE_CATHODE__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "if the discharge extinguishes during the switch, XE_FALLBACK's protective exit applies"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+   },
+   "rationale": "Reverts to the independent Xe path rather than shutting down."
+  },
+  {
+   "id": "DEGRADED_OPERATION__fallback",
+   "from": "DEGRADED_OPERATION",
+   "to": "XE_FALLBACK",
+   "kind": "degradation",
+   "trigger": "atmospheric path or atmospheric-feed discharge anomaly",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber < p_atm_chamber_min_op"
+    ],
+    "discharge_current": [
+     "abs(I_d - I_d_ref) > dI_d_band_max OR Id_rms_rel > Id_rms_rel_max"
+    ],
+    "flows": [
+     "mdot_atm_anode < mdot_atm_anode_min OR compressor_fault OR atm_path_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "n/a: power shortfall is handled by DEGRADED_OPERATION or the protective exit"
+    ]
+   },
+   "actions": [
+    "close atmospheric valve",
+    "set Xe anode flow to mdot_Xe_anode_fallback_set",
+    "increment n_fallback_cycles"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "DEGRADED_OPERATION__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "if the discharge extinguishes during the switch, XE_FALLBACK's protective exit applies"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+   },
+   "rationale": "Reverts to the independent Xe path rather than shutting down."
+  },
+  {
+   "id": "MIXED_STABILIZATION__degrade",
+   "from": "MIXED_STABILIZATION",
+   "to": "DEGRADED_OPERATION",
+   "kind": "degradation",
+   "trigger": "absorbable degradation",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [
+    "P_avail_prop >= P_prop_min_sustain"
+   ],
+   "guards": {
+    "pressure": [
+     "n/a: pressure anomalies go to Xe fallback"
+    ],
+    "discharge_current": [
+     "n/a: discharge anomalies go to Xe fallback"
+    ],
+    "flows": [
+     "compressor_derated"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "P_avail_prop < P_prop_demand"
+    ],
+    "thermal": [
+     "thermal_warn"
+    ],
+    "health": [
+     "sensor_redundancy_lost"
+    ]
+   },
+   "actions": [
+    "throttle to a setpoint with P_prop_demand <= P_avail_prop"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "MIXED_STABILIZATION__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "if the power floor is also breached the protective exit applies"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Throttle instead of shutting down when the degradation is absorbable."
+  },
+  {
+   "id": "ATMOSPHERE_DOMINANT__degrade",
+   "from": "ATMOSPHERE_DOMINANT",
+   "to": "DEGRADED_OPERATION",
+   "kind": "degradation",
+   "trigger": "absorbable degradation",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [
+    "P_avail_prop >= P_prop_min_sustain"
+   ],
+   "guards": {
+    "pressure": [
+     "n/a: pressure anomalies go to Xe fallback"
+    ],
+    "discharge_current": [
+     "n/a: discharge anomalies go to Xe fallback"
+    ],
+    "flows": [
+     "compressor_derated"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "P_avail_prop < P_prop_demand"
+    ],
+    "thermal": [
+     "thermal_warn"
+    ],
+    "health": [
+     "sensor_redundancy_lost"
+    ]
+   },
+   "actions": [
+    "throttle to a setpoint with P_prop_demand <= P_avail_prop"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "ATMOSPHERE_DOMINANT__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "if the power floor is also breached the protective exit applies"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Throttle instead of shutting down when the degradation is absorbable."
+  },
+  {
+   "id": "AIR_ONLY_ANODE_XE_CATHODE__degrade",
+   "from": "AIR_ONLY_ANODE_XE_CATHODE",
+   "to": "DEGRADED_OPERATION",
+   "kind": "degradation",
+   "trigger": "absorbable degradation",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [
+    "P_avail_prop >= P_prop_min_sustain"
+   ],
+   "guards": {
+    "pressure": [
+     "n/a: pressure anomalies go to Xe fallback"
+    ],
+    "discharge_current": [
+     "n/a: discharge anomalies go to Xe fallback"
+    ],
+    "flows": [
+     "compressor_derated"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "P_avail_prop < P_prop_demand"
+    ],
+    "thermal": [
+     "thermal_warn"
+    ],
+    "health": [
+     "sensor_redundancy_lost"
+    ]
+   },
+   "actions": [
+    "throttle to a setpoint with P_prop_demand <= P_avail_prop"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "AIR_ONLY_ANODE_XE_CATHODE__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "if the power floor is also breached the protective exit applies"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Throttle instead of shutting down when the degradation is absorbable."
+  },
+  {
+   "id": "DEGRADED_OPERATION__recover_atmosphere_dominant",
+   "from": "DEGRADED_OPERATION",
+   "to": "ATMOSPHERE_DOMINANT",
+   "kind": "recovery",
+   "trigger": "degradation cleared",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber >= p_atm_chamber_min_op"
+    ],
+    "discharge_current": [
+     "abs(I_d - I_d_ref) <= dI_d_band_max AND Id_rms_rel <= Id_rms_rel_max"
+    ],
+    "flows": [
+     "NOT compressor_derated AND x_atm_anode >= x_atm_dominant_min"
+    ],
+    "timing": [
+     "t_condition >= t_clear_min"
+    ],
+    "power": [
+     "P_avail_prop >= P_prop_demand"
+    ],
+    "thermal": [
+     "NOT thermal_warn"
+    ],
+    "health": [
+     "NOT sensor_redundancy_lost"
+    ]
+   },
+   "actions": [
+    "restore the commanded setpoint"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "DEGRADED_OPERATION__fault",
+    "on_guard_not_met": "n/a: remains DEGRADED_OPERATION while the guard is not met",
+    "description": "hard fault to SAFE_MODE"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Returns to the operating state matching the present atmospheric fraction."
+  },
+  {
+   "id": "DEGRADED_OPERATION__recover_mixed_stabilization",
+   "from": "DEGRADED_OPERATION",
+   "to": "MIXED_STABILIZATION",
+   "kind": "recovery",
+   "trigger": "degradation cleared",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber >= p_atm_chamber_min_op"
+    ],
+    "discharge_current": [
+     "abs(I_d - I_d_ref) <= dI_d_band_max AND Id_rms_rel <= Id_rms_rel_max"
+    ],
+    "flows": [
+     "NOT compressor_derated AND x_atm_anode < x_atm_dominant_min"
+    ],
+    "timing": [
+     "t_condition >= t_clear_min"
+    ],
+    "power": [
+     "P_avail_prop >= P_prop_demand"
+    ],
+    "thermal": [
+     "NOT thermal_warn"
+    ],
+    "health": [
+     "NOT sensor_redundancy_lost"
+    ]
+   },
+   "actions": [
+    "restore the commanded setpoint"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "DEGRADED_OPERATION__fault",
+    "on_guard_not_met": "n/a: remains DEGRADED_OPERATION while the guard is not met",
+    "description": "hard fault to SAFE_MODE"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Returns to the operating state matching the present atmospheric fraction."
+  },
+  {
+   "id": "XE_FALLBACK__readmit",
+   "from": "XE_FALLBACK",
+   "to": "ATMOSPHERE_ADMISSION",
+   "kind": "recovery",
+   "trigger": "atmospheric path healthy again",
+   "guard_logic": "ALL",
+   "preconditions": [
+    "n_fallback_cycles < n_fallback_cycles_max"
+   ],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber >= p_atm_chamber_admit_min AND p_atm_chamber <= p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "abs(I_d - I_d_ref) <= dI_d_band_max AND Id_rms_rel <= Id_rms_rel_max"
+    ],
+    "flows": [
+     "compressor_speed >= compressor_speed_min AND NOT compressor_fault AND NOT atm_path_fault"
+    ],
+    "timing": [
+     "t_atm_healthy >= t_atm_healthy_min"
+    ],
+    "power": [
+     "P_prop <= P_prop_alloc AND P_avail_prop >= P_prop_demand"
+    ]
+   },
+   "actions": [
+    "set Xe anode flow to mdot_Xe_anode_warm_set",
+    "begin atmospheric valve ramp"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "XE_FALLBACK__fault",
+    "on_guard_not_met": "n/a: remains in XE_FALLBACK until the Xe reserve protective exit",
+    "description": "hard fault to SAFE_MODE"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Bounded re-admission attempts prevent fallback chattering."
+  },
+  {
+   "id": "WARM_UP__protect",
+   "from": "WARM_UP",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "protective",
+   "trigger": "extinction, Xe reserve, feed or power floor",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line < p_Xe_line_min"
+    ],
+    "discharge_current": [
+     "I_d < I_d_off_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode < mdot_Xe_cathode_min"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "P_avail_prop < P_prop_min_sustain"
+    ],
+    "inventory": [
+     "m_Xe_remaining <= m_Xe_reserve_shutdown"
+    ]
+   },
+   "actions": [
+    "set restart_requested if the cause is restart-eligible"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "WARM_UP__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "protective exit to controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Recoverable conditions are shut down in sequence (cathode kept under Xe for cool-down) rather than cut."
+  },
+  {
+   "id": "ATMOSPHERE_ADMISSION__protect",
+   "from": "ATMOSPHERE_ADMISSION",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "protective",
+   "trigger": "extinction, Xe reserve, feed or power floor",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line < p_Xe_line_min"
+    ],
+    "discharge_current": [
+     "I_d < I_d_off_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode < mdot_Xe_cathode_min"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "P_avail_prop < P_prop_min_sustain"
+    ],
+    "inventory": [
+     "m_Xe_remaining <= m_Xe_reserve_shutdown"
+    ]
+   },
+   "actions": [
+    "set restart_requested if the cause is restart-eligible"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "ATMOSPHERE_ADMISSION__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "protective exit to controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Recoverable conditions are shut down in sequence (cathode kept under Xe for cool-down) rather than cut."
+  },
+  {
+   "id": "MIXED_STABILIZATION__protect",
+   "from": "MIXED_STABILIZATION",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "protective",
+   "trigger": "extinction, Xe reserve, feed or power floor",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line < p_Xe_line_min"
+    ],
+    "discharge_current": [
+     "I_d < I_d_off_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode < mdot_Xe_cathode_min"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "P_avail_prop < P_prop_min_sustain"
+    ],
+    "inventory": [
+     "m_Xe_remaining <= m_Xe_reserve_shutdown"
+    ]
+   },
+   "actions": [
+    "set restart_requested if the cause is restart-eligible"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "MIXED_STABILIZATION__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "protective exit to controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Recoverable conditions are shut down in sequence (cathode kept under Xe for cool-down) rather than cut."
+  },
+  {
+   "id": "ATMOSPHERE_DOMINANT__protect",
+   "from": "ATMOSPHERE_DOMINANT",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "protective",
+   "trigger": "extinction, Xe reserve, feed or power floor",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line < p_Xe_line_min"
+    ],
+    "discharge_current": [
+     "I_d < I_d_off_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode < mdot_Xe_cathode_min"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "P_avail_prop < P_prop_min_sustain"
+    ],
+    "inventory": [
+     "m_Xe_remaining <= m_Xe_reserve_shutdown"
+    ]
+   },
+   "actions": [
+    "set restart_requested if the cause is restart-eligible"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "ATMOSPHERE_DOMINANT__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "protective exit to controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Recoverable conditions are shut down in sequence (cathode kept under Xe for cool-down) rather than cut."
+  },
+  {
+   "id": "AIR_ONLY_ANODE_XE_CATHODE__protect",
+   "from": "AIR_ONLY_ANODE_XE_CATHODE",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "protective",
+   "trigger": "extinction, Xe reserve, feed or power floor",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line < p_Xe_line_min"
+    ],
+    "discharge_current": [
+     "I_d < I_d_off_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode < mdot_Xe_cathode_min"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "P_avail_prop < P_prop_min_sustain"
+    ],
+    "inventory": [
+     "m_Xe_remaining <= m_Xe_reserve_shutdown"
+    ]
+   },
+   "actions": [
+    "set restart_requested if the cause is restart-eligible"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "AIR_ONLY_ANODE_XE_CATHODE__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "protective exit to controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Recoverable conditions are shut down in sequence (cathode kept under Xe for cool-down) rather than cut."
+  },
+  {
+   "id": "DEGRADED_OPERATION__protect",
+   "from": "DEGRADED_OPERATION",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "protective",
+   "trigger": "extinction, Xe reserve, feed or power floor",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line < p_Xe_line_min"
+    ],
+    "discharge_current": [
+     "I_d < I_d_off_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode < mdot_Xe_cathode_min"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "P_avail_prop < P_prop_min_sustain"
+    ],
+    "inventory": [
+     "m_Xe_remaining <= m_Xe_reserve_shutdown"
+    ]
+   },
+   "actions": [
+    "set restart_requested if the cause is restart-eligible"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "DEGRADED_OPERATION__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "protective exit to controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Recoverable conditions are shut down in sequence (cathode kept under Xe for cool-down) rather than cut."
+  },
+  {
+   "id": "XE_FALLBACK__protect",
+   "from": "XE_FALLBACK",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "protective",
+   "trigger": "extinction, Xe reserve, feed or power floor",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line < p_Xe_line_min"
+    ],
+    "discharge_current": [
+     "I_d < I_d_off_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode < mdot_Xe_cathode_min"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "P_avail_prop < P_prop_min_sustain"
+    ],
+    "inventory": [
+     "m_Xe_remaining <= m_Xe_reserve_shutdown"
+    ]
+   },
+   "actions": [
+    "set restart_requested if the cause is restart-eligible"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "XE_FALLBACK__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "protective exit to controlled shutdown"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Recoverable conditions are shut down in sequence (cathode kept under Xe for cool-down) rather than cut."
+  },
+  {
+   "id": "XE_PURGE__protect",
+   "from": "XE_PURGE",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "protective",
+   "trigger": "purge flow or line pressure not established",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line < p_Xe_line_min"
+    ],
+    "discharge_current": [
+     "n/a: no discharge in XE_PURGE"
+    ],
+    "flows": [
+     "abs(mdot_Xe_purge - mdot_Xe_purge_set) > flow_tol_rel * mdot_Xe_purge_set"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "P_avail_prop < P_startup_peak"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "XE_PURGE__fault",
+    "on_guard_not_met": "n/a: detection transition",
+    "description": "protective exit"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_purge, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "A start that cannot establish the purge is abandoned before any heating."
+  },
+  {
+   "id": "CATHODE_CONDITIONING__timeout",
+   "from": "CATHODE_CONDITIONING",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "protective",
+   "trigger": "heater time-out",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: independent of pressure"
+    ],
+    "discharge_current": [
+     "n/a: no discharge"
+    ],
+    "flows": [
+     "n/a: independent of flow"
+    ],
+    "timing": [
+     "t_in_state > t_heater_max"
+    ],
+    "power": [
+     "n/a: independent of power"
+    ],
+    "thermal": [
+     "T_emitter < T_emitter_ignite_min"
+    ]
+   },
+   "actions": [
+    "heater off"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "CATHODE_CONDITIONING__fault",
+    "on_guard_not_met": "n/a: this is the not-met handler",
+    "description": "protective exit"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Bounded heater time."
+  },
+  {
+   "id": "XE_PURGE__stop",
+   "from": "XE_PURGE",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "command",
+   "trigger": "cmd_stop",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "discharge_current": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "flows": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "timing": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "power": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "sequence": [
+     "cmd_stop"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "XE_PURGE__fault",
+    "on_guard_not_met": "n/a: unconditional",
+    "description": "hard fault to SAFE_MODE takes precedence"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_purge, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Ground stop always leads to the sequenced shutdown."
+  },
+  {
+   "id": "CATHODE_CONDITIONING__stop",
+   "from": "CATHODE_CONDITIONING",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "command",
+   "trigger": "cmd_stop",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "discharge_current": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "flows": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "timing": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "power": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "sequence": [
+     "cmd_stop"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "CATHODE_CONDITIONING__fault",
+    "on_guard_not_met": "n/a: unconditional",
+    "description": "hard fault to SAFE_MODE takes precedence"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Ground stop always leads to the sequenced shutdown."
+  },
+  {
+   "id": "CATHODE_IGNITION__stop",
+   "from": "CATHODE_IGNITION",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "command",
+   "trigger": "cmd_stop",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "discharge_current": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "flows": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "timing": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "power": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "sequence": [
+     "cmd_stop"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "CATHODE_IGNITION__fault",
+    "on_guard_not_met": "n/a: unconditional",
+    "description": "hard fault to SAFE_MODE takes precedence"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Ground stop always leads to the sequenced shutdown."
+  },
+  {
+   "id": "XE_DISCHARGE_IGNITION__stop",
+   "from": "XE_DISCHARGE_IGNITION",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "command",
+   "trigger": "cmd_stop",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "discharge_current": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "flows": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "timing": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "power": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "sequence": [
+     "cmd_stop"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "XE_DISCHARGE_IGNITION__fault",
+    "on_guard_not_met": "n/a: unconditional",
+    "description": "hard fault to SAFE_MODE takes precedence"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Ground stop always leads to the sequenced shutdown."
+  },
+  {
+   "id": "WARM_UP__stop",
+   "from": "WARM_UP",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "command",
+   "trigger": "cmd_stop",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "discharge_current": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "flows": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "timing": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "power": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "sequence": [
+     "cmd_stop"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "WARM_UP__fault",
+    "on_guard_not_met": "n/a: unconditional",
+    "description": "hard fault to SAFE_MODE takes precedence"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Ground stop always leads to the sequenced shutdown."
+  },
+  {
+   "id": "ATMOSPHERE_ADMISSION__stop",
+   "from": "ATMOSPHERE_ADMISSION",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "command",
+   "trigger": "cmd_stop",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "discharge_current": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "flows": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "timing": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "power": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "sequence": [
+     "cmd_stop"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "ATMOSPHERE_ADMISSION__fault",
+    "on_guard_not_met": "n/a: unconditional",
+    "description": "hard fault to SAFE_MODE takes precedence"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Ground stop always leads to the sequenced shutdown."
+  },
+  {
+   "id": "MIXED_STABILIZATION__stop",
+   "from": "MIXED_STABILIZATION",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "command",
+   "trigger": "cmd_stop",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "discharge_current": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "flows": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "timing": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "power": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "sequence": [
+     "cmd_stop"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "MIXED_STABILIZATION__fault",
+    "on_guard_not_met": "n/a: unconditional",
+    "description": "hard fault to SAFE_MODE takes precedence"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Ground stop always leads to the sequenced shutdown."
+  },
+  {
+   "id": "ATMOSPHERE_DOMINANT__stop",
+   "from": "ATMOSPHERE_DOMINANT",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "command",
+   "trigger": "cmd_stop",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "discharge_current": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "flows": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "timing": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "power": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "sequence": [
+     "cmd_stop"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "ATMOSPHERE_DOMINANT__fault",
+    "on_guard_not_met": "n/a: unconditional",
+    "description": "hard fault to SAFE_MODE takes precedence"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Ground stop always leads to the sequenced shutdown."
+  },
+  {
+   "id": "AIR_ONLY_ANODE_XE_CATHODE__stop",
+   "from": "AIR_ONLY_ANODE_XE_CATHODE",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "command",
+   "trigger": "cmd_stop",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "discharge_current": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "flows": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "timing": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "power": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "sequence": [
+     "cmd_stop"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "AIR_ONLY_ANODE_XE_CATHODE__fault",
+    "on_guard_not_met": "n/a: unconditional",
+    "description": "hard fault to SAFE_MODE takes precedence"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Ground stop always leads to the sequenced shutdown."
+  },
+  {
+   "id": "DEGRADED_OPERATION__stop",
+   "from": "DEGRADED_OPERATION",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "command",
+   "trigger": "cmd_stop",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "discharge_current": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "flows": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "timing": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "power": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "sequence": [
+     "cmd_stop"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "DEGRADED_OPERATION__fault",
+    "on_guard_not_met": "n/a: unconditional",
+    "description": "hard fault to SAFE_MODE takes precedence"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Ground stop always leads to the sequenced shutdown."
+  },
+  {
+   "id": "XE_FALLBACK__stop",
+   "from": "XE_FALLBACK",
+   "to": "CONTROLLED_SHUTDOWN",
+   "kind": "command",
+   "trigger": "cmd_stop",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "discharge_current": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "flows": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "timing": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "power": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "sequence": [
+     "cmd_stop"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "XE_FALLBACK__fault",
+    "on_guard_not_met": "n/a: unconditional",
+    "description": "hard fault to SAFE_MODE takes precedence"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Ground stop always leads to the sequenced shutdown."
+  },
+  {
+   "id": "CONTROLLED_SHUTDOWN__complete",
+   "from": "CONTROLLED_SHUTDOWN",
+   "to": "OFF",
+   "kind": "nominal",
+   "trigger": "shutdown sequence complete",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_atm_chamber <= p_atm_chamber_max AND p_Xe_line <= p_Xe_line_max"
+    ],
+    "discharge_current": [
+     "I_d <= I_d_off_max AND I_keeper <= I_keeper_off_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode <= mdot_Xe_closed_max AND mdot_Xe_anode <= mdot_Xe_closed_max AND mdot_atm_anode <= mdot_atm_closed_max"
+    ],
+    "timing": [
+     "t_in_state >= t_cathode_cooldown_min"
+    ],
+    "power": [
+     "P_prop <= P_prop_idle_max"
+    ],
+    "thermal": [
+     "T_emitter <= T_emitter_cool_max"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "CONTROLLED_SHUTDOWN__fault",
+    "on_guard_not_met": "CONTROLLED_SHUTDOWN__timeout",
+    "description": "sequence not complete by t_shutdown_max goes to SAFE_MODE"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Xe cathode flow stops only after the emitter has cooled."
+  },
+  {
+   "id": "CONTROLLED_SHUTDOWN__timeout",
+   "from": "CONTROLLED_SHUTDOWN",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "shutdown time-out",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: time-out applies regardless"
+    ],
+    "discharge_current": [
+     "n/a: time-out applies regardless"
+    ],
+    "flows": [
+     "n/a: time-out applies regardless"
+    ],
+    "power": [
+     "n/a: time-out applies regardless"
+    ],
+    "timing": [
+     "t_in_state > t_shutdown_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "CONTROLLED_SHUTDOWN__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed)"
+   },
+   "rationale": "A shutdown that cannot complete is escalated to safe mode."
+  },
+  {
+   "id": "OFF__restart",
+   "from": "OFF",
+   "to": "RESTART",
+   "kind": "command",
+   "trigger": "cmd_restart or an autonomous restart request",
+   "guard_logic": "ALL",
+   "preconditions": [
+    "n_restart_count < n_restart_max"
+   ],
+   "guards": {
+    "pressure": [
+     "n/a: evaluated in RESTART"
+    ],
+    "discharge_current": [
+     "I_d <= I_d_off_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode <= mdot_Xe_closed_max AND mdot_Xe_anode <= mdot_Xe_closed_max AND mdot_atm_anode <= mdot_atm_closed_max"
+    ],
+    "timing": [
+     "n/a: inhibit time is evaluated in RESTART"
+    ],
+    "power": [
+     "n/a: evaluated in RESTART"
+    ],
+    "sequence": [
+     "cmd_restart OR (autonomy_restart_enabled AND restart_requested)"
+    ]
+   },
+   "actions": [
+    "clear restart_requested"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "OFF__fault",
+    "on_guard_not_met": "n/a: request is rejected and reported; state stays OFF",
+    "description": "a fault latched while OFF goes to SAFE_MODE"
+   },
+   "xe_consumed": {
+    "in_source_state": "none: all Xe valves closed in OFF",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Restarts are counted; the count is reset only by ground."
+  },
+  {
+   "id": "RESTART__cold",
+   "from": "RESTART",
+   "to": "XE_PURGE",
+   "kind": "recovery",
+   "trigger": "eligible; purge required",
+   "guard_logic": "ALL",
+   "preconditions": [
+    "m_Xe_remaining >= m_Xe_reserve_restart",
+    "n_cathode_starts < n_cathode_starts_max"
+   ],
+   "guards": {
+    "pressure": [
+     "p_Xe_tank >= p_Xe_tank_min"
+    ],
+    "discharge_current": [
+     "I_d <= I_d_off_max AND I_keeper <= I_keeper_off_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode <= mdot_Xe_closed_max AND mdot_Xe_anode <= mdot_Xe_closed_max AND mdot_atm_anode <= mdot_atm_closed_max"
+    ],
+    "power": [
+     "P_avail_prop >= P_startup_peak AND V_bus >= V_bus_min AND t_to_eclipse >= t_startup_budget"
+    ],
+    "thermal": [
+     "NOT thermal_warn"
+    ],
+    "timing": [
+     "t_since_shutdown >= t_restart_inhibit AND (t_atm_exposure > t_exposure_max OR t_since_purge > t_purge_validity)"
+    ]
+   },
+   "actions": [
+    "increment n_restart_count",
+    "open Xe latch valve",
+    "start purge"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "RESTART__fault",
+    "on_guard_not_met": "RESTART__ineligible",
+    "description": "not eligible within t_restart_wait_max returns to OFF"
+   },
+   "xe_consumed": {
+    "in_source_state": "none: all Xe valves closed in RESTART",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Cold restart repeats the purge when the cathode has been exposed without flow."
+  },
+  {
+   "id": "RESTART__warm",
+   "from": "RESTART",
+   "to": "CATHODE_CONDITIONING",
+   "kind": "recovery",
+   "trigger": "eligible; purge still valid",
+   "guard_logic": "ALL",
+   "preconditions": [
+    "m_Xe_remaining >= m_Xe_reserve_restart",
+    "n_cathode_starts < n_cathode_starts_max"
+   ],
+   "guards": {
+    "pressure": [
+     "p_Xe_tank >= p_Xe_tank_min"
+    ],
+    "discharge_current": [
+     "I_d <= I_d_off_max AND I_keeper <= I_keeper_off_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode <= mdot_Xe_closed_max AND mdot_Xe_anode <= mdot_Xe_closed_max AND mdot_atm_anode <= mdot_atm_closed_max"
+    ],
+    "power": [
+     "P_avail_prop >= P_startup_peak AND V_bus >= V_bus_min AND t_to_eclipse >= t_startup_budget"
+    ],
+    "thermal": [
+     "NOT thermal_warn"
+    ],
+    "timing": [
+     "t_since_shutdown >= t_restart_inhibit AND t_atm_exposure <= t_exposure_max AND t_since_purge <= t_purge_validity"
+    ]
+   },
+   "actions": [
+    "increment n_restart_count",
+    "open Xe latch valve",
+    "set Xe cathode flow to mdot_Xe_cathode_set",
+    "heater on"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "RESTART__fault",
+    "on_guard_not_met": "RESTART__ineligible",
+    "description": "not eligible within t_restart_wait_max returns to OFF"
+   },
+   "xe_consumed": {
+    "in_source_state": "none: all Xe valves closed in RESTART",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Warm restart skips the purge only inside the validated exposure window."
+  },
+  {
+   "id": "RESTART__ineligible",
+   "from": "RESTART",
+   "to": "OFF",
+   "kind": "protective",
+   "trigger": "restart not eligible",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_tank < p_Xe_tank_min"
+    ],
+    "discharge_current": [
+     "n/a: no discharge in RESTART"
+    ],
+    "flows": [
+     "n/a: valves closed in RESTART"
+    ],
+    "timing": [
+     "t_condition >= t_restart_wait_max"
+    ],
+    "power": [
+     "P_avail_prop < P_startup_peak OR V_bus < V_bus_min"
+    ],
+    "inventory": [
+     "m_Xe_remaining < m_Xe_reserve_restart"
+    ],
+    "sequence": [
+     "n_cathode_starts >= n_cathode_starts_max"
+    ]
+   },
+   "actions": [
+    "report restart ineligibility"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "RESTART__fault",
+    "on_guard_not_met": "n/a: this is the not-met handler",
+    "description": "protective exit"
+   },
+   "xe_consumed": {
+    "in_source_state": "none: all Xe valves closed in RESTART",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "An ineligible restart returns to OFF and waits for ground."
+  },
+  {
+   "id": "RESTART__abort",
+   "from": "RESTART",
+   "to": "OFF",
+   "kind": "command",
+   "trigger": "cmd_stop",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "discharge_current": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "flows": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "timing": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "power": [
+     "n/a: a stop command is accepted in any condition"
+    ],
+    "sequence": [
+     "cmd_stop"
+    ]
+   },
+   "actions": [],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "RESTART__fault",
+    "on_guard_not_met": "n/a: unconditional",
+    "description": "hard fault to SAFE_MODE takes precedence"
+   },
+   "xe_consumed": {
+    "in_source_state": "none: all Xe valves closed in RESTART",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Ground abort of a restart."
+  },
+  {
+   "id": "SAFE_MODE__clear",
+   "from": "SAFE_MODE",
+   "to": "OFF",
+   "kind": "command",
+   "trigger": "cmd_ground_clear",
+   "guard_logic": "ALL",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line <= p_Xe_line_max AND p_atm_chamber <= p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d <= I_d_off_max AND I_keeper <= I_keeper_off_max"
+    ],
+    "flows": [
+     "mdot_Xe_cathode <= mdot_Xe_closed_max AND mdot_Xe_anode <= mdot_Xe_closed_max AND mdot_atm_anode <= mdot_atm_closed_max"
+    ],
+    "timing": [
+     "n/a: ground-commanded after fault review"
+    ],
+    "power": [
+     "P_prop <= P_prop_idle_max"
+    ],
+    "sequence": [
+     "cmd_ground_clear"
+    ]
+   },
+   "actions": [
+    "clear fault latches",
+    "reset n_restart_count (ground decision)"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "n/a: SAFE_MODE is the fault sink",
+    "on_guard_not_met": "n/a: command rejected; state stays SAFE_MODE",
+    "description": "a new fault re-latches SAFE_MODE"
+   },
+   "xe_consumed": {
+    "in_source_state": "none: all Xe valves closed in SAFE_MODE",
+    "at_transition": "none: no commanded Xe pulse at this transition"
+   },
+   "rationale": "Only ground leaves safe mode; restart then goes through OFF and RESTART."
+  },
+  {
+   "id": "OFF__fault",
+   "from": "OFF",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_off_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "OFF__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "none: all Xe valves closed in OFF",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  },
+  {
+   "id": "XE_PURGE__fault",
+   "from": "XE_PURGE",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_off_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "XE_PURGE__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_purge, t_in_state)",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  },
+  {
+   "id": "CATHODE_CONDITIONING__fault",
+   "from": "CATHODE_CONDITIONING",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_off_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "CATHODE_CONDITIONING__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  },
+  {
+   "id": "CATHODE_IGNITION__fault",
+   "from": "CATHODE_IGNITION",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_off_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "CATHODE_IGNITION__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  },
+  {
+   "id": "XE_DISCHARGE_IGNITION__fault",
+   "from": "XE_DISCHARGE_IGNITION",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_overcurrent_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "XE_DISCHARGE_IGNITION__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  },
+  {
+   "id": "WARM_UP__fault",
+   "from": "WARM_UP",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_overcurrent_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "WARM_UP__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  },
+  {
+   "id": "ATMOSPHERE_ADMISSION__fault",
+   "from": "ATMOSPHERE_ADMISSION",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_overcurrent_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "ATMOSPHERE_ADMISSION__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  },
+  {
+   "id": "MIXED_STABILIZATION__fault",
+   "from": "MIXED_STABILIZATION",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_overcurrent_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "MIXED_STABILIZATION__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  },
+  {
+   "id": "ATMOSPHERE_DOMINANT__fault",
+   "from": "ATMOSPHERE_DOMINANT",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_overcurrent_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "ATMOSPHERE_DOMINANT__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  },
+  {
+   "id": "AIR_ONLY_ANODE_XE_CATHODE__fault",
+   "from": "AIR_ONLY_ANODE_XE_CATHODE",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_overcurrent_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "AIR_ONLY_ANODE_XE_CATHODE__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  },
+  {
+   "id": "DEGRADED_OPERATION__fault",
+   "from": "DEGRADED_OPERATION",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_overcurrent_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "DEGRADED_OPERATION__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  },
+  {
+   "id": "XE_FALLBACK__fault",
+   "from": "XE_FALLBACK",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_overcurrent_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "XE_FALLBACK__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  },
+  {
+   "id": "CONTROLLED_SHUTDOWN__fault",
+   "from": "CONTROLLED_SHUTDOWN",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_overcurrent_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "CONTROLLED_SHUTDOWN__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  },
+  {
+   "id": "RESTART__fault",
+   "from": "RESTART",
+   "to": "SAFE_MODE",
+   "kind": "fault",
+   "trigger": "hard fault",
+   "guard_logic": "ANY_PERSISTING",
+   "preconditions": [],
+   "guards": {
+    "pressure": [
+     "p_Xe_line > p_Xe_line_max OR p_atm_chamber > p_atm_chamber_max"
+    ],
+    "discharge_current": [
+     "I_d > I_d_off_max OR I_keeper > I_keeper_max"
+    ],
+    "flows": [
+     "mdot_leak_est > mdot_leak_max OR valve_fault"
+    ],
+    "timing": [
+     "t_condition >= t_fault_confirm"
+    ],
+    "power": [
+     "V_bus < V_bus_min OR ppu_fault OR hv_fault"
+    ],
+    "thermal": [
+     "thermal_trip"
+    ],
+    "health": [
+     "watchdog_fault OR compressor_speed > compressor_speed_max"
+    ]
+   },
+   "actions": [
+    "remove all converter outputs",
+    "close all propellant valves",
+    "stop compressor",
+    "latch fault record"
+   ],
+   "fault_behaviour": {
+    "on_fault": "SAFE_MODE",
+    "fault_transition": "RESTART__fault",
+    "on_guard_not_met": "n/a: fault transition",
+    "description": "fault transition"
+   },
+   "xe_consumed": {
+    "in_source_state": "none: all Xe valves closed in RESTART",
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+   },
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test)."
+  }
+ ],
+ "quantities": {
+  "t_in_state": {
+   "unit": "s",
+   "kind": "timer",
+   "description": "time since entry into the current state (reset on self-loop retries)",
+   "telemetry": "flight-software timer",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "t_condition": {
+   "unit": "s",
+   "kind": "timer",
+   "description": "time the guard's condition set has held continuously (success confirmation for ALL guards; persistence of the triggering condition for ANY_PERSISTING guards)",
+   "telemetry": "flight-software timer",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "t_since_shutdown": {
+   "unit": "s",
+   "kind": "timer",
+   "description": "time since the last completed controlled shutdown or safe-mode entry",
+   "telemetry": "flight-software timer",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "t_since_purge": {
+   "unit": "s",
+   "kind": "timer",
+   "description": "time since the last completed Xe purge",
+   "telemetry": "flight-software timer",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "t_atm_exposure": {
+   "unit": "s",
+   "kind": "timer",
+   "description": "cumulative time since the last Xe purge during which the cathode had no Xe flow while exposed to the ambient/plume environment",
+   "telemetry": "flight-software timer",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.aochem:ao_flux",
+     "output": "ao_flux",
+     "status": "available",
+     "note": "ram atomic-O number flux for the exposure environment (not a cathode dose model)"
+    }
+   ],
+   "simulator_gap": "TBD — requires a cathode O-exposure dose model and test; the timer itself is controller-internal"
+  },
+  "t_atm_healthy": {
+   "unit": "s",
+   "kind": "timer",
+   "description": "time the atmospheric-path health criteria (pressure, compressor, no atm_path_fault) have held continuously",
+   "telemetry": "flight-software timer",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "t_to_eclipse": {
+   "unit": "s",
+   "kind": "estimated",
+   "description": "predicted time to the next eclipse entry",
+   "telemetry": "spacecraft orbit/ephemeris service",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.mission_env:eclipse_fraction",
+     "output": "orbit-averaged eclipse fraction",
+     "status": "available",
+     "note": "fraction per orbit, not an entry time"
+    },
+    {
+     "ref": "abep_sim.mission_env:beta_angle",
+     "output": "beta angle",
+     "status": "available"
+    }
+   ],
+   "simulator_gap": "TBD — requires an eclipse-entry-time predictor (abep_sim.mission_env gives orbit-averaged eclipse fraction only)"
+  },
+  "n_keeper_retry": {
+   "unit": "-",
+   "kind": "counter",
+   "description": "keeper ignition retries in the current start",
+   "telemetry": "flight-software counter",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "n_ignite_retry": {
+   "unit": "-",
+   "kind": "counter",
+   "description": "anode-discharge ignition retries in the current start",
+   "telemetry": "flight-software counter",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "n_restart_count": {
+   "unit": "-",
+   "kind": "counter",
+   "description": "autonomous restarts since the last ground reset",
+   "telemetry": "flight-software counter",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "n_fallback_cycles": {
+   "unit": "-",
+   "kind": "counter",
+   "description": "entries into XE_FALLBACK since the last start",
+   "telemetry": "flight-software counter",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "n_cathode_starts": {
+   "unit": "-",
+   "kind": "counter",
+   "description": "cumulative cathode ignitions over the mission",
+   "telemetry": "flight-software counter (non-volatile)",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.life:cathode_life",
+     "output": "cycles_ok",
+     "status": "available",
+     "note": "compares LifeInputs.cathode_starts against LifeInputs.cathode_start_limit; both are unsourced code priors (verify)"
+    }
+   ]
+  },
+  "cmd_start": {
+   "unit": "bool",
+   "kind": "command",
+   "description": "ground command: cold start",
+   "telemetry": "telecommand",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "cmd_stop": {
+   "unit": "bool",
+   "kind": "command",
+   "description": "ground command: stop (controlled shutdown)",
+   "telemetry": "telecommand",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "cmd_restart": {
+   "unit": "bool",
+   "kind": "command",
+   "description": "ground command: restart",
+   "telemetry": "telecommand",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "cmd_ground_clear": {
+   "unit": "bool",
+   "kind": "command",
+   "description": "ground command: fault reviewed, leave safe mode",
+   "telemetry": "telecommand",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "autonomy_restart_enabled": {
+   "unit": "bool",
+   "kind": "configuration",
+   "description": "on-board autonomous restart permitted",
+   "telemetry": "configuration table (owner policy)",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "restart_requested": {
+   "unit": "bool",
+   "kind": "flag",
+   "description": "set by a protective shutdown whose cause is eligible for autonomous restart",
+   "telemetry": "FDIR",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: flight-software timer/counter, not a physics quantity"
+  },
+  "p_Xe_tank": {
+   "unit": "Pa",
+   "kind": "measured",
+   "description": "Xe storage (Xe chamber) pressure",
+   "telemetry": "pressure transducer",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.mass_bom:xe_tank",
+     "output": "tank mass at a given storage pressure",
+     "status": "input_only",
+     "note": "sizing only; no blow-down or PVT gauging"
+    }
+   ],
+   "simulator_gap": "TBD — requires a Xe tank PVT/blow-down model and transducer specification"
+  },
+  "p_Xe_line": {
+   "unit": "Pa",
+   "kind": "measured",
+   "description": "regulated Xe feed-line (plenum) pressure downstream of the regulator",
+   "telemetry": "pressure transducer",
+   "simulator_suppliers": [],
+   "simulator_gap": "TBD — requires a Xe feed-system (regulator/plenum) model; none exists in abep_sim"
+  },
+  "m_Xe_remaining": {
+   "unit": "kg",
+   "kind": "estimated",
+   "description": "usable Xe inventory",
+   "telemetry": "PVT gauging and/or flow book-keeping",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.transient:run_mission",
+     "output": "xe_left_kg, xe_used_total_kg",
+     "status": "withdrawn_absolute",
+     "note": "thruster.CARDS are priors calibrated partly to the withdrawn Marchioni calibration (invented geometry); structure reusable for control-logic prototyping, absolute values not quotable"
+    }
+   ],
+   "simulator_gap": "TBD — requires a Xe gauging method and a mission Xe budget from admitted design Hall maps"
+  },
+  "mdot_Xe_cathode": {
+   "unit": "kg/s",
+   "kind": "measured",
+   "description": "Xe mass flow to the cathode",
+   "telemetry": "flow controller telemetry",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.plasma_devices:LaB6Cathode.operate",
+     "output": "xe_mgps",
+     "status": "input_only",
+     "note": "the flow is an input attribute; its default is an unsourced code prior, not a guard value"
+    },
+    {
+     "ref": "abep_sim.archengine:Neutralizer.operate",
+     "output": "xe_mgps attribute",
+     "status": "input_only",
+     "note": "the flow is an input attribute; its default is an unsourced code prior"
+    }
+   ],
+   "simulator_gap": "n/a: commanded flow, measured by the flow controller; the simulator consumes it as an input (setpoint mdot_Xe_cathode_set is TBD)"
+  },
+  "mdot_Xe_anode": {
+   "unit": "kg/s",
+   "kind": "measured",
+   "description": "Xe mass flow to the anode",
+   "telemetry": "flow controller telemetry",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.thruster:performance",
+     "output": "mdot_xe_anode argument",
+     "status": "input_only"
+    },
+    {
+     "ref": "abep_sim.thruster:xe_for_thrust",
+     "output": "anode Xe flow for a thrust target",
+     "status": "withdrawn_absolute",
+     "note": "thruster.CARDS are priors calibrated partly to the withdrawn Marchioni calibration (invented geometry); structure reusable for control-logic prototyping, absolute values not quotable"
+    }
+   ],
+   "simulator_gap": "n/a: commanded flow, measured by the flow controller; a thrust-based Xe topping flow needs admitted design Hall maps (TBD — requires an admitted transport-ensemble member)"
+  },
+  "mdot_Xe_purge": {
+   "unit": "kg/s",
+   "kind": "measured",
+   "description": "total Xe purge flow",
+   "telemetry": "flow controller telemetry",
+   "simulator_suppliers": [],
+   "simulator_gap": "TBD — requires a purge procedure (flow path and setpoint) from feed-system design"
+  },
+  "mdot_leak_est": {
+   "unit": "kg/s",
+   "kind": "estimated",
+   "description": "estimated external leak rate of the propellant feed (Xe or atmospheric)",
+   "telemetry": "pressure-decay / flow-balance monitor",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.reservoir:Reservoir.steady_state",
+     "output": "mdot_leak",
+     "status": "available",
+     "note": "atmospheric gas chamber leak path only"
+    }
+   ],
+   "simulator_gap": "TBD — requires a Xe feed-system leak specification and test"
+  },
+  "p_O_cathode_est": {
+   "unit": "Pa",
+   "kind": "estimated",
+   "description": "estimated atomic-O partial pressure at the cathode emitter",
+   "telemetry": "model estimate (not directly measurable)",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.plasma_devices:LaB6Cathode.operate",
+     "output": "p_O_at_emitter_Pa",
+     "status": "available",
+     "note": "model-derived; shield_attenuation is an unsourced code prior (verify); emitter material is a design choice"
+    },
+    {
+     "ref": "abep_sim.atmosphere:atmosphere",
+     "output": "rho, fO (frozen NRLMSIS 2.1)",
+     "status": "available",
+     "note": "ambient input"
+    },
+    {
+     "ref": "abep_sim.aochem:inlet_composition",
+     "output": "fO after wall recombination",
+     "status": "available",
+     "note": "recombination coefficients are literature-class priors"
+    }
+   ]
+  },
+  "T_emitter": {
+   "unit": "K",
+   "kind": "measured",
+   "description": "cathode emitter temperature",
+   "telemetry": "TBD (heater resistance or pyrometry)",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.plasma_devices:LaB6Cathode.operate",
+     "output": "T_emitter_K",
+     "status": "available",
+     "note": "emitter temperature needed for a demanded current with O poisoning; Richardson/poisoning coefficients are code priors (verify)"
+    }
+   ],
+   "simulator_gap": "TBD — requires the measurement method from cathode design"
+  },
+  "P_heater": {
+   "unit": "W",
+   "kind": "measured",
+   "description": "cathode heater power",
+   "telemetry": "PPU telemetry",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.ppu:load_modes",
+     "output": "startup (heater converter)",
+     "status": "available",
+     "note": "converter-loss coefficients are code priors (verify)"
+    },
+    {
+     "ref": "abep_sim.plasma_devices:LaB6Cathode.operate",
+     "output": "P_W",
+     "status": "available"
+    }
+   ]
+  },
+  "I_keeper": {
+   "unit": "A",
+   "kind": "measured",
+   "description": "keeper current",
+   "telemetry": "PPU telemetry",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.ppu:load_modes",
+     "output": "I_keeper argument",
+     "status": "input_only"
+    }
+   ],
+   "simulator_gap": "TBD — requires keeper discharge characterization test; no keeper model in abep_sim"
+  },
+  "V_keeper": {
+   "unit": "V",
+   "kind": "measured",
+   "description": "keeper voltage",
+   "telemetry": "PPU telemetry",
+   "simulator_suppliers": [],
+   "simulator_gap": "TBD — requires keeper discharge characterization test"
+  },
+  "I_d": {
+   "unit": "A",
+   "kind": "measured",
+   "description": "anode discharge current (time-averaged over the PPU telemetry window)",
+   "telemetry": "PPU telemetry",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.hall_map:HallMap.__call__",
+     "output": "discharge_current_A",
+     "status": "gated",
+     "note": "HallMap loads admitted transport-ensemble members only; the credible set is empty (CLAUDE.md gate 3), so no design Hall map exists. HallThruster.jl reaction sets cover Xe and N2/N only: no O/O2 chemistry and no Xe + atmosphere mixture"
+    },
+    {
+     "ref": "abep_sim.plasma_devices:hall_run_coupled",
+     "output": "0-D discharge current",
+     "status": "superseded_do_not_use",
+     "note": "0-D Hall closure (v1.2-v1.6) superseded; absolute Hall results withdrawn (CLAUDE.md 'Superseded / withdrawn'); v1.3 hysteresis was a numerical artefact"
+    }
+   ],
+   "simulator_gap": "TBD — requires an admitted transport-ensemble member with design-specific Hall maps and, for atmospheric or mixed feeds, O/O2 chemistry and Xe + atmosphere mixture support; ultimately a thruster test"
+  },
+  "I_d_ref": {
+   "unit": "A",
+   "kind": "setpoint",
+   "description": "reference discharge current for the current throttle setpoint",
+   "telemetry": "controller throttle table",
+   "simulator_suppliers": [],
+   "simulator_gap": "TBD — requires a throttle table from admitted design Hall maps and thruster test"
+  },
+  "Id_rms_rel": {
+   "unit": "-",
+   "kind": "measured",
+   "description": "RMS of I_d over the telemetry window divided by its mean",
+   "telemetry": "PPU high-rate telemetry",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.hall_map:HallMap.__call__",
+     "output": "Id_rms_rel",
+     "status": "gated",
+     "note": "HallMap loads admitted transport-ensemble members only; the credible set is empty (CLAUDE.md gate 3), so no design Hall map exists. HallThruster.jl reaction sets cover Xe and N2/N only: no O/O2 chemistry and no Xe + atmosphere mixture"
+    }
+   ],
+   "simulator_gap": "TBD — requires thruster test (oscillation behaviour on mixed and atmospheric feed is not modelled)"
+  },
+  "T_thruster": {
+   "unit": "K",
+   "kind": "measured",
+   "description": "thruster body temperature at the qualification reference point",
+   "telemetry": "thermistor/thermocouple",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.thermal:solve_network",
+     "output": "T['thruster'] (steady state)",
+     "status": "available",
+     "note": "steady-state lumped network; no warm-up transient"
+    }
+   ],
+   "simulator_gap": "TBD — requires a transient thermal model or thruster thermal test for warm-up timing"
+  },
+  "thermal_warn": {
+   "unit": "bool",
+   "kind": "flag",
+   "description": "any monitored node above its warning temperature T_node_warn",
+   "telemetry": "FDIR on node temperatures",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.thermal:solve_network",
+     "output": "node temperatures",
+     "status": "available"
+    },
+    {
+     "ref": "abep_sim.thermal:default_nodes",
+     "output": "node list and T_max_K",
+     "status": "available",
+     "note": "node limits are unsourced code priors (verify)"
+    }
+   ],
+   "depends_on_parameters": [
+    "T_node_warn"
+   ]
+  },
+  "thermal_trip": {
+   "unit": "bool",
+   "kind": "flag",
+   "description": "any monitored node above its trip temperature T_node_trip",
+   "telemetry": "FDIR on node temperatures",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.thermal:solve_network",
+     "output": "node temperatures",
+     "status": "available"
+    }
+   ],
+   "depends_on_parameters": [
+    "T_node_trip"
+   ]
+  },
+  "compressor_speed": {
+   "unit": "rpm",
+   "kind": "measured",
+   "description": "compressor rotor speed",
+   "telemetry": "motor controller telemetry",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.compressor:DragCompressor.rpm_limit",
+     "output": "rotor-stress speed limit",
+     "status": "available",
+     "note": "material strength from abep_sim.materials DB (verify)"
+    },
+    {
+     "ref": "abep_sim.compressor:DragCompressor.run",
+     "output": "rotor_ok, p_out_Pa at a given rpm",
+     "status": "available"
+    }
+   ]
+  },
+  "compressor_fault": {
+   "unit": "bool",
+   "kind": "flag",
+   "description": "compressor hard anomaly (bearing, motor, over-speed, over-temperature)",
+   "telemetry": "FDIR",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.compressor:DragCompressor.run",
+     "output": "rotor_ok, T_comp_K",
+     "status": "available",
+     "note": "design-point checks only"
+    }
+   ],
+   "simulator_gap": "TBD — requires compressor FDIR design (bearing/motor telemetry)"
+  },
+  "compressor_derated": {
+   "unit": "bool",
+   "kind": "flag",
+   "description": "compressor running below its commanded speed/throughput but not faulted",
+   "telemetry": "FDIR",
+   "simulator_suppliers": [],
+   "simulator_gap": "TBD — requires compressor FDIR design"
+  },
+  "atm_path_fault": {
+   "unit": "bool",
+   "kind": "flag",
+   "description": "atmospheric-path anomaly other than chamber pressure (intake, filter, atmospheric valve)",
+   "telemetry": "FDIR",
+   "simulator_suppliers": [],
+   "simulator_gap": "TBD — requires intake/filter/valve FDIR design"
+  },
+  "p_atm_chamber": {
+   "unit": "Pa",
+   "kind": "measured",
+   "description": "atmospheric gas chamber (reservoir) pressure upstream of the atmospheric valve",
+   "telemetry": "pressure transducer",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.reservoir:Reservoir.steady_state",
+     "output": "p_total_Pa",
+     "status": "available"
+    },
+    {
+     "ref": "abep_sim.reservoir:startup_transient",
+     "output": "t_ignite_s, history",
+     "status": "available",
+     "note": "fill transient during compressor spin-up"
+    },
+    {
+     "ref": "abep_sim.compressor:DragCompressor.run",
+     "output": "p_out_Pa",
+     "status": "available"
+    },
+    {
+     "ref": "abep_sim.intake:compress",
+     "output": "p_out_Pa",
+     "status": "available"
+    }
+   ]
+  },
+  "mdot_atm_anode": {
+   "unit": "kg/s",
+   "kind": "estimated",
+   "description": "atmospheric mass flow through the atmospheric valve to the anode",
+   "telemetry": "chamber pressure x valve conductance (calibrated)",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.reservoir:Reservoir.steady_state",
+     "output": "mdot_anode",
+     "status": "available"
+    },
+    {
+     "ref": "abep_sim.intake:collection",
+     "output": "mdot_collected",
+     "status": "available",
+     "note": "captured flow upstream of the compressor"
+    }
+   ]
+  },
+  "x_atm_anode": {
+   "unit": "-",
+   "kind": "derived",
+   "description": "atmospheric fraction of the anode mass flow: mdot_atm_anode / (mdot_atm_anode + mdot_Xe_anode)",
+   "telemetry": "computed on board from mdot_atm_anode and mdot_Xe_anode",
+   "simulator_suppliers": [],
+   "simulator_gap": "n/a: derived from other declared quantities"
+  },
+  "P_prop": {
+   "unit": "W",
+   "kind": "measured",
+   "description": "total propulsion-subsystem bus draw (PPU input incl. compressor motor and controller)",
+   "telemetry": "PPU/EPS telemetry",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.ppu:PPU.loads",
+     "output": "P_bus_W",
+     "status": "available",
+     "note": "converter-loss coefficients are code priors (verify)"
+    },
+    {
+     "ref": "abep_sim.compressor:DragCompressor.run",
+     "output": "P_el_W (compressor share)",
+     "status": "available"
+    },
+    {
+     "ref": "abep_sim.intake:compress",
+     "output": "comp_power_W (compressor share, simple model)",
+     "status": "available"
+    }
+   ]
+  },
+  "P_prop_demand": {
+   "unit": "W",
+   "kind": "estimated",
+   "description": "bus power required by the commanded setpoint",
+   "telemetry": "controller (setpoint x PPU model)",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.ppu:load_modes",
+     "output": "steady/startup P_bus_W",
+     "status": "available",
+     "note": "discharge current input must come from admitted Hall maps (gated)"
+    }
+   ]
+  },
+  "P_avail_prop": {
+   "unit": "W",
+   "kind": "estimated",
+   "description": "bus power the spacecraft makes available to propulsion now",
+   "telemetry": "spacecraft EPS interface",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.mission_env:propagate",
+     "output": "P_avail_W, power_margin_W",
+     "status": "available",
+     "note": "orbit-step averages; array/battery parameters are spacecraft assumptions"
+    }
+   ],
+   "simulator_gap": "TBD — requires the spacecraft EPS interface (battery state of charge, array power) from the spacecraft prime"
+  },
+  "V_bus": {
+   "unit": "V",
+   "kind": "measured",
+   "description": "spacecraft bus voltage at the PPU input",
+   "telemetry": "EPS telemetry",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.ppu:PPU",
+     "output": "V_bus attribute",
+     "status": "input_only"
+    }
+   ],
+   "simulator_gap": "TBD — requires the spacecraft EPS specification"
+  },
+  "ppu_fault": {
+   "unit": "bool",
+   "kind": "flag",
+   "description": "PPU converter fault (over-current trip, rating violation, converter failure)",
+   "telemetry": "PPU FDIR",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.ppu:PPU.loads",
+     "output": "rating_ok, violations",
+     "status": "available",
+     "note": "static rating check only"
+    }
+   ],
+   "simulator_gap": "TBD — requires PPU FDIR design"
+  },
+  "hv_fault": {
+   "unit": "bool",
+   "kind": "flag",
+   "description": "high-voltage isolation or arcing fault",
+   "telemetry": "PPU FDIR",
+   "simulator_suppliers": [],
+   "simulator_gap": "TBD — requires PPU FDIR design"
+  },
+  "valve_fault": {
+   "unit": "bool",
+   "kind": "flag",
+   "description": "valve position/command disagreement on any propellant valve",
+   "telemetry": "valve drivers",
+   "simulator_suppliers": [],
+   "simulator_gap": "TBD — requires feed-system FDIR design"
+  },
+  "sensor_redundancy_lost": {
+   "unit": "bool",
+   "kind": "flag",
+   "description": "a guard quantity has lost its redundant measurement but is still observable",
+   "telemetry": "FDIR",
+   "simulator_suppliers": [],
+   "simulator_gap": "TBD — requires sensor architecture and FDIR design"
+  },
+  "watchdog_fault": {
+   "unit": "bool",
+   "kind": "flag",
+   "description": "controller watchdog or health-check failure",
+   "telemetry": "flight software",
+   "simulator_suppliers": [],
+   "simulator_gap": "TBD — requires flight-software design"
+  },
+  "T_cmd": {
+   "unit": "mN",
+   "kind": "setpoint",
+   "description": "commanded thrust from the altitude-control law",
+   "telemetry": "GNC / altitude controller",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.transient:run_mission",
+     "output": "T_cmd_mN",
+     "status": "available",
+     "note": "controller prior (alt_gain), clamped to RFPConstraints.thrust_max_mN; not a validated control law"
+    }
+   ]
+  },
+  "T_air_avail": {
+   "unit": "mN",
+   "kind": "estimated",
+   "description": "air-only thrust capability at the present atmospheric feed",
+   "telemetry": "on-board estimator",
+   "simulator_suppliers": [
+    {
+     "ref": "abep_sim.thruster:performance",
+     "output": "T_N",
+     "status": "withdrawn_absolute",
+     "note": "thruster.CARDS are priors calibrated partly to the withdrawn Marchioni calibration (invented geometry); structure reusable for control-logic prototyping, absolute values not quotable"
+    },
+    {
+     "ref": "abep_sim.hall_map:HallMap.__call__",
+     "output": "thrust_N",
+     "status": "gated",
+     "note": "HallMap loads admitted transport-ensemble members only; the credible set is empty (CLAUDE.md gate 3), so no design Hall map exists. HallThruster.jl reaction sets cover Xe and N2/N only: no O/O2 chemistry and no Xe + atmosphere mixture"
+    }
+   ],
+   "simulator_gap": "TBD — requires an on-board thrust estimator validated by thruster test on atmospheric feed"
+  }
+ },
+ "parameters": {
+  "p_Xe_tank_min": {
+   "unit": "Pa",
+   "description": "minimum Xe storage pressure for regulated feed",
+   "value": "TBD — requires Xe feed-system design (regulator minimum inlet pressure) and a tank blow-down model",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "p_Xe_line_min": {
+   "unit": "Pa",
+   "description": "lower bound of the regulated Xe line pressure",
+   "value": "TBD — requires Xe feed-system design and qualification test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "p_Xe_line_max": {
+   "unit": "Pa",
+   "description": "Xe line over-pressure limit",
+   "value": "TBD — requires Xe feed-system design (relief/lock-up settings) and qualification test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "mdot_Xe_purge_set": {
+   "unit": "kg/s",
+   "description": "Xe purge flow setpoint",
+   "value": "TBD — requires cathode/feed purge procedure development test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "mdot_Xe_cathode_set": {
+   "unit": "kg/s",
+   "description": "Xe cathode flow setpoint",
+   "value": "TBD — requires cathode qualification test (abep_sim cathode flows are unsourced priors, not guard values)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "mdot_Xe_cathode_min": {
+   "unit": "kg/s",
+   "description": "minimum Xe cathode flow for stable emission and O shielding",
+   "value": "TBD — requires cathode qualification test with atmospheric plume exposure",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "mdot_Xe_anode_ign_set": {
+   "unit": "kg/s",
+   "description": "Xe anode flow for discharge ignition",
+   "value": "TBD — requires thruster ignition test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "mdot_Xe_anode_warm_set": {
+   "unit": "kg/s",
+   "description": "Xe anode flow held through warm-up and atmosphere admission",
+   "value": "TBD — requires thruster warm-up test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "mdot_Xe_anode_fallback_set": {
+   "unit": "kg/s",
+   "description": "Xe anode flow in Xe fallback",
+   "value": "TBD — requires thruster test and the Xe-only throttle table from admitted design Hall maps",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "mdot_Xe_anode_trim_max": {
+   "unit": "kg/s",
+   "description": "largest Xe anode trim flow that still counts as atmosphere-dominant operation",
+   "value": "TBD — requires owner definition of the mode boundary plus thruster test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "mdot_Xe_closed_max": {
+   "unit": "kg/s",
+   "description": "flow reading below which a Xe valve is treated as closed",
+   "value": "TBD — requires flow-sensor noise floor and valve internal-leak specification",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "mdot_atm_closed_max": {
+   "unit": "kg/s",
+   "description": "flow estimate below which the atmospheric valve is treated as closed",
+   "value": "TBD — requires atmospheric valve internal-leak specification and flow-estimate uncertainty",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "mdot_atm_anode_min": {
+   "unit": "kg/s",
+   "description": "minimum atmospheric anode flow for mixed or atmosphere-dominant operation",
+   "value": "TBD — requires thruster sustainment test on atmospheric feed (no admitted Hall model; no O/O2 chemistry)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "flow_tol_rel": {
+   "unit": "-",
+   "description": "relative tolerance between commanded and measured flow",
+   "value": "TBD — requires flow-controller characterization",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "mdot_leak_max": {
+   "unit": "kg/s",
+   "description": "external leak rate that declares a leak fault",
+   "value": "TBD — requires feed-system leak specification",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "m_Xe_reserve_startup": {
+   "unit": "kg",
+   "description": "Xe required before a cold start (purge, conditioning, ignition, warm-up and a controlled shutdown)",
+   "value": "TBD — requires the per-transition Xe ledger in this file evaluated with qualified flows and dwell times",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "m_Xe_reserve_restart": {
+   "unit": "kg",
+   "description": "Xe required before an autonomous restart",
+   "value": "TBD — requires the per-transition Xe ledger evaluated with qualified flows and dwell times",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "m_Xe_reserve_fallback": {
+   "unit": "kg",
+   "description": "Xe held back so that at least one Xe-fallback episode can complete; required before atmosphere admission from warm-up and for Xe topping",
+   "value": "TBD — requires owner allocation from a mission Xe budget computed with admitted design Hall maps",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "m_Xe_reserve_shutdown": {
+   "unit": "kg",
+   "description": "Xe that must remain to execute a controlled shutdown and the allocated restarts",
+   "value": "TBD — requires the per-transition Xe ledger evaluated with qualified flows and dwell times",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "p_O_cathode_max": {
+   "unit": "Pa",
+   "description": "largest estimated O partial pressure at the emitter at which heating may start",
+   "value": "TBD — requires cathode O-poisoning test (emitter material TBD); the abep_sim coverage model is unvalidated",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_purge_min": {
+   "unit": "s",
+   "description": "minimum Xe purge duration",
+   "value": "TBD — requires purge procedure development test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_purge_validity": {
+   "unit": "s",
+   "description": "time after a purge within which a warm restart may skip the purge",
+   "value": "TBD — requires cathode exposure test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_exposure_max": {
+   "unit": "s",
+   "description": "largest cumulative no-flow exposure after which a purge is mandatory",
+   "value": "TBD — requires cathode O-exposure test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "T_emitter_ignite_min": {
+   "unit": "K",
+   "description": "emitter temperature required before keeper ignition",
+   "value": "TBD — requires cathode qualification test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "T_emitter_cool_max": {
+   "unit": "K",
+   "description": "emitter temperature below which Xe cathode flow may stop at shutdown",
+   "value": "TBD — requires cathode qualification test (oxidation at temperature without flow)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_heater_soak_min": {
+   "unit": "s",
+   "description": "minimum heater soak",
+   "value": "TBD — requires cathode qualification test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_heater_max": {
+   "unit": "s",
+   "description": "heater time-out for reaching T_emitter_ignite_min",
+   "value": "TBD — requires cathode qualification test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "P_heater_max": {
+   "unit": "W",
+   "description": "heater power limit",
+   "value": "TBD — requires cathode heater rating and PPU heater converter design",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "I_keeper_min": {
+   "unit": "A",
+   "description": "keeper current that confirms keeper ignition",
+   "value": "TBD — requires keeper characterization test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "I_keeper_max": {
+   "unit": "A",
+   "description": "keeper over-current limit",
+   "value": "TBD — requires PPU keeper converter design and keeper characterization test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "I_keeper_off_max": {
+   "unit": "A",
+   "description": "keeper current reading that confirms keeper off",
+   "value": "TBD — requires PPU keeper telemetry noise floor",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "V_keeper_max": {
+   "unit": "V",
+   "description": "keeper voltage above which the keeper is not coupled",
+   "value": "TBD — requires keeper characterization test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_keeper_ignite_max": {
+   "unit": "s",
+   "description": "keeper ignition window per attempt",
+   "value": "TBD — requires cathode ignition test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "n_keeper_retry_max": {
+   "unit": "-",
+   "description": "keeper ignition attempts per start",
+   "value": "TBD — requires FDIR policy (owner) informed by cathode ignition test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "n_cathode_starts_max": {
+   "unit": "-",
+   "description": "cathode ignition cycles allowed over the mission",
+   "value": "TBD — requires cathode cycle-life test (abep_sim.life:LifeInputs.cathode_start_limit is an unsourced code prior)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": [
+    "abep_sim.life:cathode_life"
+   ]
+  },
+  "V_d_ign": {
+   "unit": "V",
+   "description": "anode voltage applied for ignition",
+   "value": "TBD — requires thruster ignition test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "V_d_op": {
+   "unit": "V",
+   "description": "anode voltage for operation",
+   "value": "TBD — requires admitted design Hall maps and thruster test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "I_d_detect_min": {
+   "unit": "A",
+   "description": "discharge current above which the anode discharge is declared lit",
+   "value": "TBD — requires PPU current telemetry characterization and ignition test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "I_d_off_max": {
+   "unit": "A",
+   "description": "discharge current below which the anode discharge is declared off (extinction while V_d is commanded)",
+   "value": "TBD — requires PPU current telemetry noise floor; operational detector, distinct from the pre-registered P5-N2 O1 extinction definition",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "I_d_overcurrent_max": {
+   "unit": "A",
+   "description": "anode over-current trip",
+   "value": "TBD — requires PPU anode converter rating (abep_sim.ppu:Converter.I_max is a sizing input) and thruster test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": [
+    "abep_sim.ppu:default_ppu"
+   ]
+  },
+  "dI_d_admit_max": {
+   "unit": "A",
+   "description": "allowed |I_d - I_d_ref| during atmosphere admission",
+   "value": "TBD — requires thruster test on mixed feed (no admitted Hall model)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "dI_d_band_max": {
+   "unit": "A",
+   "description": "allowed |I_d - I_d_ref| in steady operation",
+   "value": "TBD — requires thruster test and PPU regulation design",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "Id_rms_rel_max": {
+   "unit": "-",
+   "description": "allowed relative I_d oscillation",
+   "value": "TBD — requires thruster test and PPU output-filter design",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_ignite_max": {
+   "unit": "s",
+   "description": "anode ignition window per attempt",
+   "value": "TBD — requires thruster ignition test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "n_ignite_retry_max": {
+   "unit": "-",
+   "description": "anode ignition attempts per start",
+   "value": "TBD — requires FDIR policy (owner) informed by thruster ignition test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "T_thruster_warm_min": {
+   "unit": "K",
+   "description": "thruster temperature that ends Xe warm-up",
+   "value": "TBD — requires thruster thermal test (abep_sim.thermal is steady-state only)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": [
+    "abep_sim.thermal:solve_network"
+   ]
+  },
+  "t_warmup_min": {
+   "unit": "s",
+   "description": "minimum Xe warm-up duration",
+   "value": "TBD — requires thruster thermal/transient test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_warmup_max": {
+   "unit": "s",
+   "description": "warm-up time-out",
+   "value": "TBD — requires thruster thermal/transient test and FDIR policy",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "T_node_warn": {
+   "unit": "K",
+   "description": "per-node warning temperatures (vector over the monitored nodes)",
+   "value": "TBD — requires component thermal qualification (abep_sim.thermal:default_nodes T_max_K are unsourced priors)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": [
+    "abep_sim.thermal:default_nodes"
+   ]
+  },
+  "T_node_trip": {
+   "unit": "K",
+   "description": "per-node trip temperatures (vector over the monitored nodes)",
+   "value": "TBD — requires component thermal qualification",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "compressor_speed_min": {
+   "unit": "rpm",
+   "description": "compressor speed at which the admission pressure is delivered",
+   "value": "TBD — requires compressor test and abep_sim.compressor evaluation at the design point",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": [
+    "abep_sim.compressor:DragCompressor.run"
+   ]
+  },
+  "compressor_speed_max": {
+   "unit": "rpm",
+   "description": "compressor over-speed limit",
+   "value": "TBD — requires rotor stress qualification (model estimate abep_sim.compressor:DragCompressor.rpm_limit)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": [
+    "abep_sim.compressor:DragCompressor.rpm_limit"
+   ]
+  },
+  "p_atm_chamber_admit_min": {
+   "unit": "Pa",
+   "description": "atmospheric chamber pressure required before admission",
+   "value": "TBD — requires thruster sustainment test on atmospheric feed (no admitted Hall model; no O/O2 chemistry)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": [
+    "abep_sim.reservoir:startup_transient"
+   ]
+  },
+  "p_atm_chamber_min_op": {
+   "unit": "Pa",
+   "description": "atmospheric chamber pressure below which atmospheric operation is abandoned",
+   "value": "TBD — requires thruster sustainment test on atmospheric feed",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "p_atm_chamber_max": {
+   "unit": "Pa",
+   "description": "atmospheric chamber over-pressure limit",
+   "value": "TBD — requires gas-chamber and valve design pressure",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_atm_fill_max": {
+   "unit": "s",
+   "description": "time allowed for the atmospheric chamber to reach the admission pressure",
+   "value": "TBD — requires abep_sim.reservoir:startup_transient evaluated for the design plus compressor spin-up test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": [
+    "abep_sim.reservoir:startup_transient"
+   ]
+  },
+  "t_admit_ramp": {
+   "unit": "s",
+   "description": "atmospheric valve opening ramp duration",
+   "value": "TBD — requires thruster test on mixed feed",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_admit_max": {
+   "unit": "s",
+   "description": "admission time-out",
+   "value": "TBD — requires thruster test on mixed feed and FDIR policy",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_mixed_dwell_min": {
+   "unit": "s",
+   "description": "minimum mixed-stabilization dwell",
+   "value": "TBD — requires thruster test on mixed feed",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_mixed_max": {
+   "unit": "s",
+   "description": "mixed-stabilization time-out",
+   "value": "TBD — requires thruster test on mixed feed and FDIR policy",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_dominant_dwell_min": {
+   "unit": "s",
+   "description": "minimum atmosphere-dominant dwell before closing the Xe anode valve",
+   "value": "TBD — requires thruster test on mixed feed",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "x_atm_dominant_min": {
+   "unit": "-",
+   "description": "atmospheric anode-flow fraction that defines atmosphere-dominant operation",
+   "value": "TBD — requires owner definition of the mode boundary plus thruster test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_atm_healthy_min": {
+   "unit": "s",
+   "description": "atmospheric-path health persistence before re-admission",
+   "value": "TBD — requires FDIR policy (owner)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "n_fallback_cycles_max": {
+   "unit": "-",
+   "description": "Xe-fallback entries allowed per start before staying in fallback",
+   "value": "TBD — requires FDIR policy (owner)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "P_prop_alloc": {
+   "unit": "W",
+   "description": "propulsion power allocation (must not exceed the RFP power limit)",
+   "value": "TBD — requires spacecraft power budget allocation",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "P_startup_peak": {
+   "unit": "W",
+   "description": "peak bus draw of the start sequence",
+   "value": "TBD — requires PPU start-up load evaluation (abep_sim.ppu:load_modes 'startup') with qualified cathode/heater data",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": [
+    "abep_sim.ppu:load_modes"
+   ]
+  },
+  "P_prop_min_sustain": {
+   "unit": "W",
+   "description": "lowest propulsion power at which a discharge can be held",
+   "value": "TBD — requires thruster throttling test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "P_prop_idle_max": {
+   "unit": "W",
+   "description": "bus draw that confirms all propulsion converters off",
+   "value": "TBD — requires PPU quiescent draw specification",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "V_bus_min": {
+   "unit": "V",
+   "description": "bus under-voltage limit",
+   "value": "TBD — requires spacecraft EPS specification",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_startup_budget": {
+   "unit": "s",
+   "description": "start-command-to-warm-up duration that must fit before eclipse entry",
+   "value": "TBD — requires the sum of qualified dwell times and time-outs",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_stable_confirm": {
+   "unit": "s",
+   "description": "time a success condition must hold before a nominal transition fires",
+   "value": "TBD — requires FDIR design (telemetry rate, noise)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_fault_confirm": {
+   "unit": "s",
+   "description": "persistence filter for fault and protective detection",
+   "value": "TBD — requires FDIR design (sensor noise, PPU protection response time)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_restart_inhibit": {
+   "unit": "s",
+   "description": "minimum time between shutdown and a new start",
+   "value": "TBD — requires cathode/thruster cool-down test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_restart_wait_max": {
+   "unit": "s",
+   "description": "time RESTART waits for eligibility before returning to OFF",
+   "value": "TBD — requires FDIR policy (owner)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "n_restart_max": {
+   "unit": "-",
+   "description": "autonomous restarts allowed before ground intervention",
+   "value": "TBD — requires FDIR policy (owner)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_shutdown_max": {
+   "unit": "s",
+   "description": "controlled-shutdown time-out",
+   "value": "TBD — requires cathode qualification test and FDIR policy",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_cathode_cooldown_min": {
+   "unit": "s",
+   "description": "minimum Xe-flowing cool-down of the cathode at shutdown",
+   "value": "TBD — requires cathode qualification test",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "t_clear_min": {
+   "unit": "s",
+   "description": "persistence of cleared degradation before recovery",
+   "value": "TBD — requires FDIR policy (owner)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  },
+  "T_margin": {
+   "unit": "mN",
+   "description": "thrust deficit that triggers Xe anode topping (hysteresis half-width)",
+   "value": "TBD — requires altitude-control law design (abep_sim.transient:run_mission alt_gain is a controller prior)",
+   "source": null,
+   "evidence_class": null,
+   "determined_by": []
+  }
+ },
+ "external_refs": {
+  "RFP_power_max": {
+   "ref": "abep_sim.constants:RFPConstraints.power_max_W",
+   "unit": "W",
+   "source": "DRDO TDF RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, Part III Para 2, as transcribed in abep_sim/constants.py (RFP text not in the repository: verify)"
+  },
+  "RFP_thrust_max": {
+   "ref": "abep_sim.constants:RFPConstraints.thrust_max_mN",
+   "unit": "mN",
+   "source": "DRDO TDF RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, Part III Para 2, as transcribed in abep_sim/constants.py (verify)"
+  }
+ },
+ "parameter_constraints": [
+  "I_d_off_max < I_d_detect_min",
+  "I_d_detect_min < I_d_overcurrent_max",
+  "I_keeper_off_max < I_keeper_min",
+  "I_keeper_min < I_keeper_max",
+  "p_Xe_line_min < p_Xe_line_max",
+  "p_atm_chamber_min_op <= p_atm_chamber_admit_min",
+  "p_atm_chamber_admit_min < p_atm_chamber_max",
+  "m_Xe_reserve_shutdown <= m_Xe_reserve_restart",
+  "m_Xe_reserve_restart <= m_Xe_reserve_startup",
+  "m_Xe_reserve_shutdown < m_Xe_reserve_fallback",
+  "mdot_Xe_cathode_min <= mdot_Xe_cathode_set",
+  "mdot_Xe_closed_max < mdot_Xe_cathode_min",
+  "t_heater_soak_min <= t_heater_max",
+  "t_warmup_min <= t_atm_fill_max",
+  "t_atm_fill_max < t_warmup_max",
+  "t_admit_ramp <= t_admit_max",
+  "t_mixed_dwell_min <= t_mixed_max",
+  "compressor_speed_min < compressor_speed_max",
+  "T_node_warn < T_node_trip",
+  "P_prop_min_sustain <= P_prop_alloc",
+  "P_startup_peak <= P_prop_alloc",
+  "P_prop_alloc <= RFP_power_max",
+  "V_d_ign <= V_d_op"
+ ],
+ "global_invariants": [
+  "T_cmd <= RFP_thrust_max",
+  "P_prop <= P_prop_alloc"
+ ]
+}
