@@ -1,0 +1,191 @@
+{
+ "ambient_atomic_oxygen": {
+  "T_ref_K": 300.0,
+  "caveat": "ram-facing external surface, directed flux only; the emitter sits inside the cathode behind the Xe flow and orifice (attenuation TBD). No published LaB6 threshold for atomic O was found, so these values are NOT compared with the O2 thresholds; they only show the scale the shielding must handle.",
+  "rows": [
+   {
+    "V_m_s": 7800.367930842138,
+    "alt_km": 180.0,
+    "flux_equivalent_p_Pa": 0.001017834082113248,
+    "flux_equivalent_p_Torr": 7.63438344343517e-06,
+    "n_O_m3": 4962324470842039.0,
+    "ram_flux_m2_s": 3.870795666478943e+19,
+    "solar": "low",
+    "source": "frozen_atmosphere"
+   },
+   {
+    "V_m_s": 7800.367930842138,
+    "alt_km": 180.0,
+    "flux_equivalent_p_Pa": 0.0015603250647196246,
+    "flux_equivalent_p_Torr": 1.1703400436090942e-05,
+    "n_O_m3": 7607172315403842.0,
+    "ram_flux_m2_s": 5.933874297346626e+19,
+    "solar": "mean",
+    "source": "frozen_atmosphere"
+   },
+   {
+    "V_m_s": 7800.367930842138,
+    "alt_km": 180.0,
+    "flux_equivalent_p_Pa": 0.002199542179759779,
+    "flux_equivalent_p_Torr": 1.6497923085294174e-05,
+    "n_O_m3": 1.072359648304326e+16,
+    "ram_flux_m2_s": 8.364799810962217e+19,
+    "solar": "high",
+    "source": "frozen_atmosphere"
+   },
+   {
+    "V_m_s": 7770.769402868593,
+    "alt_km": 230.0,
+    "flux_equivalent_p_Pa": 0.0002824351798307918,
+    "flux_equivalent_p_Torr": 2.1184380623873847e-06,
+    "n_O_m3": 1382222717683939.5,
+    "ram_flux_m2_s": 1.074093400252823e+19,
+    "solar": "low",
+    "source": "frozen_atmosphere"
+   },
+   {
+    "V_m_s": 7770.769402868593,
+    "alt_km": 230.0,
+    "flux_equivalent_p_Pa": 0.000541429611781563,
+    "flux_equivalent_p_Torr": 4.061056056787445e-06,
+    "n_O_m3": 2649727664519795.0,
+    "ram_flux_m2_s": 2.059042266138488e+19,
+    "solar": "mean",
+    "source": "frozen_atmosphere"
+   },
+   {
+    "V_m_s": 7770.769402868593,
+    "alt_km": 230.0,
+    "flux_equivalent_p_Pa": 0.000859904445476767,
+    "flux_equivalent_p_Torr": 6.449813753390999e-06,
+    "n_O_m3": 4208326527479619.5,
+    "ram_flux_m2_s": 3.270193501701886e+19,
+    "solar": "high",
+    "source": "frozen_atmosphere"
+   }
+  ]
+ },
+ "data_file": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+ "emitter_relations": {
+  "consistency_check": {
+   "J_A_cm2_from_lafferty_parameters": 10.800955292071553,
+   "T_K": 1923.15,
+   "consistent_with_over_10_A_cm2": true,
+   "statement_source": "lab6_10Acm2_temperature_statement_C"
+  },
+  "rows": [
+   {
+    "J_A_cm2": 5.0,
+    "T_K_gk_A120_phi_linear": 1839.0554793914475,
+    "T_K_lafferty_A29_phi2.67": 1844.5292077396175,
+    "areal_mass_evaporated_over_min_firing_g_cm2": 0.1322675891808827,
+    "evaporation_g_cm2_s_at_T_lafferty": 2.449399799645976e-09,
+    "statement": "IF a uniform LaB6 insert emits 5.0 A/cm2 (T = 1845 K with A = 29, phi = 2.67 eV) THEN, without redeposition, 0.132 g/cm2 evaporates in 15000 h; insert areal mass (density x usable thickness) must exceed this"
+   },
+   {
+    "J_A_cm2": 10.0,
+    "T_K_gk_A120_phi_linear": 1909.3689852337889,
+    "T_K_lafferty_A29_phi2.67": 1915.0011611883542,
+    "areal_mass_evaporated_over_min_firing_g_cm2": 0.7055065722080743,
+    "evaporation_g_cm2_s_at_T_lafferty": 1.3064936522371746e-08,
+    "statement": "IF a uniform LaB6 insert emits 10.0 A/cm2 (T = 1915 K with A = 29, phi = 2.67 eV) THEN, without redeposition, 0.706 g/cm2 evaporates in 15000 h; insert areal mass (density x usable thickness) must exceed this"
+   }
+  ]
+ },
+ "generated_by": "docs/architecture_comparison/cathode_integration/derive_cathode_integration_v1.py",
+ "id": "cathode_integration_derived_v1",
+ "module_version": "cathode_integration_v1",
+ "nature": "conditional statements from sourced values; no operating point, no Hall prediction",
+ "startup_heater_energy": [
+  {
+   "energy_Wh": 7.5,
+   "heater_W": 45.0,
+   "statement": "IF a cathode needs 45.0 W for 600.0 s of preheat (Sitael HC1, emitter ~1460 K) THEN each start costs 7.50 Wh on cathode_heater; the mission total scales with the number of starts (TBD)",
+   "time_s": 600.0
+  },
+  {
+   "energy_Wh": 3.3333333333333335,
+   "heater_W": 60.0,
+   "statement": "IF a cathode needs 60.0 W for 200.0 s of preheat (Sitael HC1, emitter ~1460 K) THEN each start costs 3.33 Wh on cathode_heater; the mission total scales with the number of starts (TBD)",
+   "time_s": 200.0
+  }
+ ],
+ "xe_mass_vs_rfp": {
+  "flow_consuming_whole_mass_limit_mg_s": 0.7407407407407407,
+  "reference_flows": [
+   {
+    "flow_mg_s": 0.44,
+    "flow_sccm": 4.4760526098947215,
+    "fraction_of_rfp_mass_limit": 0.5940000000000001,
+    "parameter": "p5_cathode_xe_flow_mg_s",
+    "statement": "IF the cathode flows 0.44 mg/s for the 15000 h RFP minimum firing THEN it uses 23.76 kg Xe (59.4% of the 40 kg RFP system mass limit, tank excluded)",
+    "xe_kg_if_flowing_whole_mission": 41.184,
+    "xe_kg_over_min_firing": 23.76
+   },
+   {
+    "flow_mg_s": 0.08,
+    "flow_sccm": 0.8138277472535858,
+    "fraction_of_rfp_mass_limit": 0.10800000000000001,
+    "parameter": "hc1_design_flow_range_mg_s",
+    "statement": "IF the cathode flows 0.08 mg/s for the 15000 h RFP minimum firing THEN it uses 4.32 kg Xe (10.8% of the 40 kg RFP system mass limit, tank excluded)",
+    "xe_kg_if_flowing_whole_mission": 7.488,
+    "xe_kg_over_min_firing": 4.32
+   },
+   {
+    "flow_mg_s": 0.5,
+    "flow_sccm": 5.086423420334911,
+    "fraction_of_rfp_mass_limit": 0.675,
+    "parameter": "hc1_design_flow_range_mg_s",
+    "statement": "IF the cathode flows 0.5 mg/s for the 15000 h RFP minimum firing THEN it uses 27.00 kg Xe (67.5% of the 40 kg RFP system mass limit, tank excluded)",
+    "xe_kg_if_flowing_whole_mission": 46.8,
+    "xe_kg_over_min_firing": 27.0
+   },
+   {
+    "flow_mg_s": 0.08,
+    "flow_sccm": 0.8138277472535858,
+    "fraction_of_rfp_mass_limit": 0.10800000000000001,
+    "parameter": "hc3_design_flow_range_mg_s",
+    "statement": "IF the cathode flows 0.08 mg/s for the 15000 h RFP minimum firing THEN it uses 4.32 kg Xe (10.8% of the 40 kg RFP system mass limit, tank excluded)",
+    "xe_kg_if_flowing_whole_mission": 7.488,
+    "xe_kg_over_min_firing": 4.32
+   },
+   {
+    "flow_mg_s": 1.0,
+    "flow_sccm": 10.172846840669822,
+    "fraction_of_rfp_mass_limit": 1.35,
+    "parameter": "hc3_design_flow_range_mg_s",
+    "statement": "IF the cathode flows 1.0 mg/s for the 15000 h RFP minimum firing THEN it uses 54.00 kg Xe (135.0% of the 40 kg RFP system mass limit, tank excluded)",
+    "xe_kg_if_flowing_whole_mission": 93.6,
+    "xe_kg_over_min_firing": 54.0
+   },
+   {
+    "flow_mg_s": 0.5,
+    "flow_sccm": 5.086423420334911,
+    "fraction_of_rfp_mass_limit": 0.675,
+    "parameter": "hc3_endurance_flow_mg_s",
+    "statement": "IF the cathode flows 0.5 mg/s for the 15000 h RFP minimum firing THEN it uses 27.00 kg Xe (67.5% of the 40 kg RFP system mass limit, tank excluded)",
+    "xe_kg_if_flowing_whole_mission": 46.8,
+    "xe_kg_over_min_firing": 27.0
+   },
+   {
+    "flow_mg_s": 0.6,
+    "flow_sccm": 6.103708104401893,
+    "fraction_of_rfp_mass_limit": 0.8099999999999999,
+    "parameter": "hc3_diode_spot_mode_min_flow_mg_s",
+    "statement": "IF the cathode flows 0.6 mg/s for the 15000 h RFP minimum firing THEN it uses 32.40 kg Xe (81.0% of the 40 kg RFP system mass limit, tank excluded)",
+    "xe_kg_if_flowing_whole_mission": 56.16,
+    "xe_kg_over_min_firing": 32.4
+   },
+   {
+    "flow_mg_s": 0.8,
+    "flow_sccm": 8.138277472535858,
+    "fraction_of_rfp_mass_limit": 1.08,
+    "parameter": "hc1_diode_flow_mg_s",
+    "statement": "IF the cathode flows 0.8 mg/s for the 15000 h RFP minimum firing THEN it uses 43.20 kg Xe (108.0% of the 40 kg RFP system mass limit, tank excluded)",
+    "xe_kg_if_flowing_whole_mission": 74.88,
+    "xe_kg_over_min_firing": 43.2
+   }
+  ],
+  "relation": "cathode flow that uses a fraction f of 40 kg in 15000 h = f x 0.74074 mg/s"
+ }
+}
