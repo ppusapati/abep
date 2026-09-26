@@ -1218,6 +1218,28 @@ def test_p5_n2_scorer_implements_frozen_rules():
     dic = [rec(point=p, chem="n2_n_n2dication.toml") for p in m.POINTS]
     assert m.staged_escalations(good + dic)["n2_n_n2dication.toml"]["baseline"] == "n2_n_di_lower.toml"
     assert not m.staged_escalations(good + dic)["n2_n_n2dication.toml"]["trigger_fired"]
+    # O4 verdict clause on the FULL mandatory set (owner review, PR #28): members M1 = L32-anode, M2 = L38-hist
+    def member(chem, reg, fail):
+        return [rec(point=p, chem=chem, reg=reg, I=(1.5 * m.targets(p, "vacuum")[0] if (fail and p == "N2") else None))
+                for p in m.POINTS]
+    others = [c for c in m.MANDATORY if c != "n2_n.toml"]
+    def full(nominal_m1_fail, nominal_m2_fail, other_m1_fail, other_m2_fail):
+        out = member("n2_n.toml", "L32-anode", nominal_m1_fail) + member("n2_n.toml", "L38-hist", nominal_m2_fail)
+        for c in others:
+            out += member(c, "L32-anode", other_m1_fail) + member(c, "L38-hist", other_m2_fail)
+        return out
+    sens = lambda m1_fail, m2_fail: [dict(r, chemistry="n2_n_exc_johnsonlow.toml") for r in
+                                     member("n2_n.toml", "L32-anode", m1_fail) + member("n2_n.toml", "L38-hist", m2_fail)]
+    # (1) single-chemistry candidate verdict unchanged (PROMOTABLE via M1 -> via M2) but the full verdict changes (M2 fails elsewhere)
+    base1 = full(False, True, False, True)
+    assert m.score(base1)[1]["vacuum"]["c1"]["candidate"] == "PROMOTABLE"
+    vc = m.verdict_change(sens(True, False), base1, "n2_n.toml")
+    assert vc["c1"]["candidate"] == ("PROMOTABLE", "FAIL_VALIDATION")
+    assert m.staged_escalations(base1 + sens(True, False))["n2_n_exc_johnsonlow.toml"]["trigger_fired"]
+    # (2) converse: the single-chemistry verdict changes, but the other chemistries already falsify every member -> no change
+    base2 = full(False, True, True, True)
+    assert m.score(base2)[1]["vacuum"]["c1"]["candidate"] == "FAIL_VALIDATION"
+    assert m.verdict_change(sens(True, True), base2, "n2_n.toml") == {}
 
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""

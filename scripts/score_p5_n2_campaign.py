@@ -172,14 +172,24 @@ def escalation(sens_records, base_records, sensitivity):
     return fired
 
 
-def verdict_change(sens_records, base_records, baseline_chem, sens_chem):
-    """O4 last clause: does replacing the baseline chemistry by the sensitivity change any member / candidate verdict?
-    Evaluated on the vacuum member built from the baseline-chemistry runs only (the other chemistries are not re-run)."""
-    rb = [dict(r, chemistry="X") for r in base_records if r["mode"] == "vacuum"]
-    rs = [dict(r, chemistry="X") for r in sens_records if r["mode"] == "vacuum"]
-    _, mb = score(rb, ["X"]); _, ms = score(rs, ["X"])
-    return {c: (mb["vacuum"][c], ms["vacuum"].get(c)) for c in mb.get("vacuum", {}) if mb["vacuum"][c] != ms["vacuum"].get(c)}
-
+def verdict_change(sens_records, mandatory_records, baseline_chem):
+    """O4 last clause, as frozen: form the provisional O3 verdicts from the FULL mandatory vacuum record set, then from the same
+    set with only the sensitivity's declared baseline chemistry replaced by the staged sensitivity (relabelled as that
+    baseline); report every global member and candidate whose verdict changes. The other three mandatory chemistries stay in
+    both sets, so a change that is masked (or created) by them is handled exactly as the rule states."""
+    base = [r for r in mandatory_records if r["mode"] == "vacuum" and r["chemistry"] in MANDATORY]
+    alt = [r for r in base if r["chemistry"] != baseline_chem] + \
+          [dict(r, chemistry=baseline_chem) for r in sens_records if r["mode"] == "vacuum"]
+    _, mb = score(base); _, ma = score(alt)
+    changes = {}
+    for cand, v in mb.get("vacuum", {}).items():
+        a = ma.get("vacuum", {}).get(cand)
+        if a is None:
+            continue
+        mem = {k: (vb, a["members"].get(k)) for k, vb in v["members"].items() if a["members"].get(k) != vb}
+        if mem or a["candidate"] != v["candidate"]:
+            changes[cand] = {"candidate": (v["candidate"], a["candidate"]), "members": mem}
+    return changes
 
 def staged_escalations(allrecs):
     """O4 for every staged sensitivity (and escalation combination) present in the records, against its pre-registered
@@ -194,7 +204,7 @@ def staged_escalations(allrecs):
             if not by_chem.get(s_ch):
                 continue
             fired = escalation(by_chem[s_ch], by_chem.get(b_ch, []), s_ch)
-            vc = verdict_change(by_chem[s_ch], by_chem.get(b_ch, []), b_ch, s_ch)
+            vc = verdict_change(by_chem[s_ch], allrecs, b_ch)
             out[s_ch] = {"baseline": b_ch, "n_runs": len(by_chem[s_ch]), "trigger_fired": bool(fired or vc),
                          "run_level_triggers": fired, "verdict_changes": vc,
                          "role": "first stage (escalate on trigger)" if s_ch == sens else "escalation combination"}
