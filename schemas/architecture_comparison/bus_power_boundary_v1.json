@@ -1,0 +1,945 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:abep:schemas:architecture_comparison:bus_power_boundary_v1",
+  "title": "ABEP common bus-power boundary v1",
+  "description": "Inputs and output of abep_sim.arch_boundary.bus_power_ledger (boundary bus_power_boundary_v1): one electrical boundary, the spacecraft DC bus input to the propulsion subsystem, identical for hall_only, rf_hall and ecr_hall. Common components are identical across architectures; pre-ionized architectures add exactly their pre-ionizer components. Every component needs an explicit load and efficiency (no defaults). Component definitions and reference planes: docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md.",
+  "x-boundary_version": "bus_power_boundary_v1",
+  "x-common_components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping"
+  ],
+  "x-preionizer_components": {
+    "hall_only": [],
+    "rf_hall": [
+      "rf_source"
+    ],
+    "ecr_hall": [
+      "ecr_source",
+      "ecr_magnet"
+    ]
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "inputs",
+    "ledger"
+  ],
+  "properties": {
+    "inputs": {
+      "$ref": "#/$defs/inputs"
+    },
+    "ledger": {
+      "$ref": "#/$defs/ledger"
+    }
+  },
+  "$defs": {
+    "architecture": {
+      "description": "Architecture on the common boundary.",
+      "enum": [
+        "hall_only",
+        "rf_hall",
+        "ecr_hall"
+      ]
+    },
+    "component": {
+      "description": "Component key of bus_power_boundary_v1 (eight common + pre-ionizer components).",
+      "enum": [
+        "hall_discharge",
+        "hall_magnet",
+        "cathode_keeper",
+        "cathode_heater",
+        "flow_control",
+        "compressor",
+        "thermal_control",
+        "housekeeping",
+        "rf_source",
+        "ecr_source",
+        "ecr_magnet"
+      ]
+    },
+    "load_W": {
+      "description": "Delivered load-side power at the component's reference plane [W]; finite, >= 0.",
+      "type": "number",
+      "minimum": 0
+    },
+    "efficiency": {
+      "description": "DC-bus-to-load efficiency at the operating point, in (0, 1]. No defaults exist.",
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1
+    },
+    "power_W": {
+      "type": "number",
+      "minimum": 0
+    },
+    "ledger_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component",
+        "P_load_W",
+        "efficiency",
+        "P_bus_W",
+        "P_loss_W"
+      ],
+      "properties": {
+        "component": {
+          "$ref": "#/$defs/component"
+        },
+        "P_load_W": {
+          "$ref": "#/$defs/load_W"
+        },
+        "efficiency": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "P_bus_W": {
+          "description": "P_load_W / efficiency [W]",
+          "$ref": "#/$defs/power_W"
+        },
+        "P_loss_W": {
+          "description": "P_bus_W - P_load_W [W]: conversion loss between the bus and the load plane",
+          "$ref": "#/$defs/power_W"
+        }
+      }
+    },
+    "loads_hall_only": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hall_discharge",
+        "hall_magnet",
+        "cathode_keeper",
+        "cathode_heater",
+        "flow_control",
+        "compressor",
+        "thermal_control",
+        "housekeeping"
+      ],
+      "properties": {
+        "hall_discharge": {
+          "$ref": "#/$defs/load_W"
+        },
+        "hall_magnet": {
+          "$ref": "#/$defs/load_W"
+        },
+        "cathode_keeper": {
+          "$ref": "#/$defs/load_W"
+        },
+        "cathode_heater": {
+          "$ref": "#/$defs/load_W"
+        },
+        "flow_control": {
+          "$ref": "#/$defs/load_W"
+        },
+        "compressor": {
+          "$ref": "#/$defs/load_W"
+        },
+        "thermal_control": {
+          "$ref": "#/$defs/load_W"
+        },
+        "housekeeping": {
+          "$ref": "#/$defs/load_W"
+        }
+      }
+    },
+    "efficiencies_hall_only": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hall_discharge",
+        "hall_magnet",
+        "cathode_keeper",
+        "cathode_heater",
+        "flow_control",
+        "compressor",
+        "thermal_control",
+        "housekeeping"
+      ],
+      "properties": {
+        "hall_discharge": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "hall_magnet": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "cathode_keeper": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "cathode_heater": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "flow_control": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "compressor": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "thermal_control": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "housekeeping": {
+          "$ref": "#/$defs/efficiency"
+        }
+      }
+    },
+    "inputs_hall_only": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "architecture",
+        "loads",
+        "efficiencies"
+      ],
+      "properties": {
+        "architecture": {
+          "const": "hall_only"
+        },
+        "loads": {
+          "$ref": "#/$defs/loads_hall_only"
+        },
+        "efficiencies": {
+          "$ref": "#/$defs/efficiencies_hall_only"
+        }
+      }
+    },
+    "ledger_hall_only": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "boundary_version",
+        "architecture",
+        "P_bus_W",
+        "items",
+        "residual_W"
+      ],
+      "properties": {
+        "boundary_version": {
+          "const": "bus_power_boundary_v1"
+        },
+        "architecture": {
+          "const": "hall_only"
+        },
+        "P_bus_W": {
+          "description": "destination-side total: sum(P_load_W) + sum(P_loss_W) [W]",
+          "$ref": "#/$defs/power_W"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "items": false,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "hall_discharge"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "hall_magnet"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "cathode_keeper"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "cathode_heater"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "flow_control"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "compressor"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "thermal_control"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "housekeeping"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "residual_W": {
+          "description": "P_bus_W - sum(items[].P_bus_W) [W]; the module refuses |residual| > 1e-12 x max(sum(items[].P_bus_W), 1 W)",
+          "type": "number"
+        }
+      }
+    },
+    "loads_rf_hall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hall_discharge",
+        "hall_magnet",
+        "cathode_keeper",
+        "cathode_heater",
+        "flow_control",
+        "compressor",
+        "thermal_control",
+        "housekeeping",
+        "rf_source"
+      ],
+      "properties": {
+        "hall_discharge": {
+          "$ref": "#/$defs/load_W"
+        },
+        "hall_magnet": {
+          "$ref": "#/$defs/load_W"
+        },
+        "cathode_keeper": {
+          "$ref": "#/$defs/load_W"
+        },
+        "cathode_heater": {
+          "$ref": "#/$defs/load_W"
+        },
+        "flow_control": {
+          "$ref": "#/$defs/load_W"
+        },
+        "compressor": {
+          "$ref": "#/$defs/load_W"
+        },
+        "thermal_control": {
+          "$ref": "#/$defs/load_W"
+        },
+        "housekeeping": {
+          "$ref": "#/$defs/load_W"
+        },
+        "rf_source": {
+          "$ref": "#/$defs/load_W"
+        }
+      }
+    },
+    "efficiencies_rf_hall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hall_discharge",
+        "hall_magnet",
+        "cathode_keeper",
+        "cathode_heater",
+        "flow_control",
+        "compressor",
+        "thermal_control",
+        "housekeeping",
+        "rf_source"
+      ],
+      "properties": {
+        "hall_discharge": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "hall_magnet": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "cathode_keeper": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "cathode_heater": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "flow_control": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "compressor": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "thermal_control": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "housekeeping": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "rf_source": {
+          "$ref": "#/$defs/efficiency"
+        }
+      }
+    },
+    "inputs_rf_hall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "architecture",
+        "loads",
+        "efficiencies"
+      ],
+      "properties": {
+        "architecture": {
+          "const": "rf_hall"
+        },
+        "loads": {
+          "$ref": "#/$defs/loads_rf_hall"
+        },
+        "efficiencies": {
+          "$ref": "#/$defs/efficiencies_rf_hall"
+        }
+      }
+    },
+    "ledger_rf_hall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "boundary_version",
+        "architecture",
+        "P_bus_W",
+        "items",
+        "residual_W"
+      ],
+      "properties": {
+        "boundary_version": {
+          "const": "bus_power_boundary_v1"
+        },
+        "architecture": {
+          "const": "rf_hall"
+        },
+        "P_bus_W": {
+          "description": "destination-side total: sum(P_load_W) + sum(P_loss_W) [W]",
+          "$ref": "#/$defs/power_W"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9,
+          "items": false,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "hall_discharge"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "hall_magnet"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "cathode_keeper"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "cathode_heater"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "flow_control"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "compressor"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "thermal_control"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "housekeeping"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "rf_source"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "residual_W": {
+          "description": "P_bus_W - sum(items[].P_bus_W) [W]; the module refuses |residual| > 1e-12 x max(sum(items[].P_bus_W), 1 W)",
+          "type": "number"
+        }
+      }
+    },
+    "loads_ecr_hall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hall_discharge",
+        "hall_magnet",
+        "cathode_keeper",
+        "cathode_heater",
+        "flow_control",
+        "compressor",
+        "thermal_control",
+        "housekeeping",
+        "ecr_source",
+        "ecr_magnet"
+      ],
+      "properties": {
+        "hall_discharge": {
+          "$ref": "#/$defs/load_W"
+        },
+        "hall_magnet": {
+          "$ref": "#/$defs/load_W"
+        },
+        "cathode_keeper": {
+          "$ref": "#/$defs/load_W"
+        },
+        "cathode_heater": {
+          "$ref": "#/$defs/load_W"
+        },
+        "flow_control": {
+          "$ref": "#/$defs/load_W"
+        },
+        "compressor": {
+          "$ref": "#/$defs/load_W"
+        },
+        "thermal_control": {
+          "$ref": "#/$defs/load_W"
+        },
+        "housekeeping": {
+          "$ref": "#/$defs/load_W"
+        },
+        "ecr_source": {
+          "$ref": "#/$defs/load_W"
+        },
+        "ecr_magnet": {
+          "$ref": "#/$defs/load_W"
+        }
+      }
+    },
+    "efficiencies_ecr_hall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hall_discharge",
+        "hall_magnet",
+        "cathode_keeper",
+        "cathode_heater",
+        "flow_control",
+        "compressor",
+        "thermal_control",
+        "housekeeping",
+        "ecr_source",
+        "ecr_magnet"
+      ],
+      "properties": {
+        "hall_discharge": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "hall_magnet": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "cathode_keeper": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "cathode_heater": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "flow_control": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "compressor": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "thermal_control": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "housekeeping": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "ecr_source": {
+          "$ref": "#/$defs/efficiency"
+        },
+        "ecr_magnet": {
+          "$ref": "#/$defs/efficiency"
+        }
+      }
+    },
+    "inputs_ecr_hall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "architecture",
+        "loads",
+        "efficiencies"
+      ],
+      "properties": {
+        "architecture": {
+          "const": "ecr_hall"
+        },
+        "loads": {
+          "$ref": "#/$defs/loads_ecr_hall"
+        },
+        "efficiencies": {
+          "$ref": "#/$defs/efficiencies_ecr_hall"
+        }
+      }
+    },
+    "ledger_ecr_hall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "boundary_version",
+        "architecture",
+        "P_bus_W",
+        "items",
+        "residual_W"
+      ],
+      "properties": {
+        "boundary_version": {
+          "const": "bus_power_boundary_v1"
+        },
+        "architecture": {
+          "const": "ecr_hall"
+        },
+        "P_bus_W": {
+          "description": "destination-side total: sum(P_load_W) + sum(P_loss_W) [W]",
+          "$ref": "#/$defs/power_W"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "items": false,
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "hall_discharge"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "hall_magnet"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "cathode_keeper"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "cathode_heater"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "flow_control"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "compressor"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "thermal_control"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "housekeeping"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "ecr_source"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ledger_item"
+                },
+                {
+                  "properties": {
+                    "component": {
+                      "const": "ecr_magnet"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "residual_W": {
+          "description": "P_bus_W - sum(items[].P_bus_W) [W]; the module refuses |residual| > 1e-12 x max(sum(items[].P_bus_W), 1 W)",
+          "type": "number"
+        }
+      }
+    },
+    "inputs": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/inputs_hall_only"
+        },
+        {
+          "$ref": "#/$defs/inputs_rf_hall"
+        },
+        {
+          "$ref": "#/$defs/inputs_ecr_hall"
+        }
+      ]
+    },
+    "ledger": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ledger_hall_only"
+        },
+        {
+          "$ref": "#/$defs/ledger_rf_hall"
+        },
+        {
+          "$ref": "#/$defs/ledger_ecr_hall"
+        }
+      ]
+    }
+  }
+}
