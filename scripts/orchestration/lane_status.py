@@ -135,7 +135,7 @@ def lane_state(L):
     return f"fixing{r}" if r in L["fix_started"] else f"verified{r}_fail"
 
 
-def dataset_state(manifest, followon_dir):
+def dataset_state(manifest, followon_dir, subdir=None):
     stem = os.path.join(VAL, f"p5_n2_campaign_v1_{manifest}")
     if manifest == "facility_mandatory":
         stem = os.path.join(VAL, "p5_n2_campaign_v1_facility")
@@ -145,13 +145,13 @@ def dataset_state(manifest, followon_dir):
         return "scored", (p.get("o4_trigger_fired") or {})
     if os.path.isfile(stem + "_raw_manifest.json"):
         return "frozen", {}
-    sc = os.path.join(followon_dir, manifest, "structural_check.json")
+    sc = os.path.join(followon_dir, subdir or manifest, "structural_check.json")
     if os.path.isfile(sc):
         try:
             return ("structural_pass" if json.load(open(sc)).get("PASS") else "structural_fail"), {}
         except ValueError:
             return "structural_fail", {}
-    return ("running" if os.path.isdir(os.path.join(followon_dir, manifest)) else "not_started"), {}
+    return ("running" if os.path.isdir(os.path.join(followon_dir, subdir or manifest)) else "not_started"), {}
 
 
 DEFAULT_JOURNALS = "/root/.claude/projects/-home-user-abep/275befef-ee58-5bbd-84f0-21c33eb50eb4/subagents/workflows"
@@ -167,12 +167,12 @@ def _ledger_module():
     return m
 
 
-def dataset_identity(manifest, followon_dir, state):
+def dataset_identity(manifest, followon_dir, state, subdir=None):
     """sha256 of the file that establishes the dataset's state (scores provenance when scored, else the structural check)."""
     import hashlib
     stem = os.path.join(VAL, "p5_n2_campaign_v1_facility" if manifest == "facility_mandatory" else f"p5_n2_campaign_v1_{manifest}")
     p = {"scored": stem + "_scores_provenance.json", "frozen": stem + "_raw_manifest.json"}.get(
-        state, os.path.join(followon_dir, manifest, "structural_check.json"))
+        state, os.path.join(followon_dir, subdir or manifest, "structural_check.json"))
     return hashlib.sha256(open(p, "rb").read()).hexdigest() if os.path.isfile(p) else None
 
 
@@ -220,8 +220,8 @@ def status(journals_dir, followon_dir):
         info[F["id"]] = {k: b.get(k) for k in ("worktree_path", "branch", "commit")}
     ds_fired, ds_ident = {}, {}
     for D in reg["datasets"]:
-        st[D["id"]], ds_fired[D["id"]] = dataset_state(D["manifest"], followon_dir)
-        ds_ident[D["id"]] = dataset_identity(D["manifest"], followon_dir, st[D["id"]])
+        st[D["id"]], ds_fired[D["id"]] = dataset_state(D["manifest"], followon_dir, D.get("followon_dir"))
+        ds_ident[D["id"]] = dataset_identity(D["manifest"], followon_dir, st[D["id"]], D.get("followon_dir"))
     try:
         import sys; sys.path.insert(0, ROOT)
         from abep_sim.hall_ensemble import load_ensemble

@@ -571,7 +571,8 @@
    "id": "ds_facility_mandatory",
    "kind": "campaign_dataset",
    "manifest": "facility_mandatory",
-   "role": "facility (secondary, never gates)"
+   "role": "facility (secondary, never gates)",
+   "followon_dir": "facility_mandatory_attempt2"
   }
  ],
  "follow_ons": [

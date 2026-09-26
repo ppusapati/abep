@@ -2280,3 +2280,11 @@ Rot-off escalations:
 - di_lower_nel_wang: 353 triggers; sgb-09 → FAIL.
 These are sensitivity results; v1 is unchanged. The pinned escalations of HMS-low (3), HMS-high (3) and dication (1) are running.
 A container reboot (~19:15–19:35Z) cut off the non-gating facility campaign after 36 of 1080 records; it is not rerun without the owner.
+
+### 2026-09-26 — Facility campaign: owner decision after the reboot
+The reboot-interrupted facility attempt (36 of 1080 records, started 19:10:12Z) is preserved unchanged in
+`hallthruster_bridge/validation/interrupted/facility_mandatory_attempt1/` (STATUS.json: INCOMPLETE_INFRASTRUCTURE_INTERRUPTION, file sha256).
+It is not a numerical failure and not a physics result, and it is never scored or concatenated.
+A fresh 1080-record attempt (`facility_mandatory_attempt2`) launches only via `T_FACILITY_RELAUNCH`, after the 7 active O4 escalations
+are frozen and scored. It gets fresh execution provenance linked to attempt 1, and `T_FACILITY_SCORE` runs only after its complete
+structural audit. Facility stays non-gating; the priority after the escalations is S9/S12.
