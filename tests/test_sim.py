@@ -1275,6 +1275,29 @@ def test_p5_n2_freeze_and_score_once(tmp_path):
     assert json.load(open(os.path.join(sf.BR, p["output"])))["status_counts"]["vacuum"] == {"NUMERICAL_FAILURE": 10}
     with _pytest.raises(SystemExit):                                                   # score once
         sf.score_frozen(mp)
+    # a scorer that differs from the frozen scorer is refused BEFORE it produces anything
+    fake = tmp_path / "score_p5_n2_campaign.py"; fake.write_text(open(sf.SCORER).read() + "\n# modified\n")
+    real_scorer, sf.SCORER = sf.SCORER, str(fake)
+    try:
+        with _pytest.raises(SystemExit):
+            sf.score_frozen(mp, allow_existing=True)
+    finally:
+        sf.SCORER = real_scorer
+    # an interrupted scoring attempt leaves no official artifact
+    os.remove(os.path.join(sf.BR, p["output"])); os.remove(mp.replace("_raw_manifest.json", "_scores_provenance.json"))
+    class Boom:
+        def main(self, argv):
+            open(argv[argv.index("--out") + 1], "w").write("{partial")
+            raise RuntimeError("interrupted")
+    real_load, sf._load_scorer = sf._load_scorer, (lambda: Boom())
+    try:
+        with _pytest.raises(RuntimeError):
+            sf.score_frozen(mp)
+    finally:
+        sf._load_scorer = real_load
+    assert not os.path.exists(os.path.join(sf.BR, p["output"]))
+    assert not any(f.name.startswith("p5_n2_campaign_test_vacuum_scores") for f in out.iterdir())
+    assert sf.score_frozen(mp)["output_sha256"]                                        # a clean attempt then succeeds
     gz = out / "p5_n2_campaign_test_vacuum_raw.jsonl.gz"                               # tampering is detected
     gz.write_bytes(gzip.compress(gzip.decompress(gz.read_bytes()).replace(b"failure", b"success")))
     with _pytest.raises(SystemExit):
@@ -1316,8 +1339,10 @@ def test_admission_gate_and_launch_manifests(tmp_path):
     root = os.path.dirname(os.path.dirname(__file__))
     e = json.load(open(he.ENSEMBLE_FILE))
     bdir = tmp_path / "bridge"; (bdir / "ensemble").mkdir(parents=True); (bdir / "validation").mkdir()
-    dec = {"candidates": {"sgb-screen-01": "PROMOTABLE"}, "passing_members": {"sgb-screen-01": ["L32-anode|1p6kW|A"]}}
-    (bdir / "validation" / "d.json").write_text(json.dumps(dec)); (bdir / "validation" / "p.json").write_text("{}")
+    dec = {"candidates": {"sgb-screen-01": "PROMOTABLE"}, "passing_members": {"sgb-screen-01": ["L32-anode|1p6kW|A"]},
+           "source_scores_sha256": "a" * 64}
+    (bdir / "validation" / "d.json").write_text(json.dumps(dec))
+    (bdir / "validation" / "p.json").write_text(json.dumps({"output_sha256": "a" * 64}))
     sha = lambda f: hashlib.sha256((bdir / "validation" / f).read_bytes()).hexdigest()
     cand = copy.deepcopy(e["screening_candidates"][0])
     adm = {"promoted_from_screening_id": "sgb-screen-01", "campaign_id": "p5_n2_campaign_v1", "preregistration": "prereg/x.json",
@@ -1336,6 +1361,10 @@ def test_admission_gate_and_launch_manifests(tmp_path):
         he.load_ensemble(write(dict(copy.deepcopy(cand), admission=adm), drop_from_screening=False))
     with _pytest.raises(ValueError):                                        # tampered decision
         he.load_ensemble(write(dict(copy.deepcopy(cand), admission=dict(adm, decision_sha256="0" * 64))))
+    (bdir / "validation" / "p2.json").write_text(json.dumps({"output_sha256": "b" * 64}))   # provenance of a different scores file
+    with _pytest.raises(ValueError):
+        he.load_ensemble(write(dict(copy.deepcopy(cand), admission=dict(adm, scores_provenance_file="validation/p2.json",
+                                                                           scores_provenance_sha256=sha("p2.json")))))
     with _pytest.raises(ValueError):                                        # unsupported passing member
         he.load_ensemble(write(dict(copy.deepcopy(cand), admission=dict(adm, passing_layer1_members=["L38-hist|3p0kW|B"]))))
     with _pytest.raises(ValueError):                                        # the real ensemble: screening refused

@@ -26,9 +26,10 @@ def stats(v):
     return None if not v else {"n": len(v), "min": min(v), "median": statistics.median(v), "max": max(v)}
 
 
-def decision(scores):
+def decision(scores, source_scores_sha256=None, scores_provenance=None):
     vac = scores["candidates"].get("vacuum", {})
     return {"source": "scripts/score_p5_n2_campaign.py output (frozen pre-registration p5_n2_validation_criteria_v1)",
+            "source_scores_sha256": source_scores_sha256, "scores_provenance": scores_provenance,
             "admission_mode": "vacuum",
             "candidates": {c: v["candidate"] for c, v in sorted(vac.items())},
             "promotable": sorted(c for c, v in vac.items() if v["candidate"] == "PROMOTABLE"),
@@ -125,8 +126,17 @@ def main(argv):
     for p in (md, dec):
         if os.path.exists(p):
             raise SystemExit(f"refusing to overwrite {p}")
+    import hashlib
+    scores_sha = hashlib.sha256(open(argv[0], "rb").read()).hexdigest()
+    prov_path = argv[0].replace("_scores.json", "_scores_provenance.json")
+    prov = None
+    if os.path.exists(prov_path):
+        pj = json.load(open(prov_path))
+        if pj.get("output_sha256") != scores_sha:
+            raise SystemExit("scores file does not match its provenance manifest")
+        prov = {"file": os.path.basename(prov_path), "sha256": hashlib.sha256(open(prov_path, "rb").read()).hexdigest()}
     open(md, "w").write(report(scores))
-    json.dump(decision(scores), open(dec, "w"), indent=1)
+    json.dump(decision(scores, scores_sha, prov), open(dec, "w"), indent=1)
     print(md, dec)
 
 

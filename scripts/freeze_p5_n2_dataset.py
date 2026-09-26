@@ -28,6 +28,28 @@ def _last_commit(path):
         return None
 
 
+def blob_sha256(commit, relpath):
+    """sha256 of a file's content at a commit (None if unavailable)."""
+    import subprocess
+    r = subprocess.run(["git", "show", f"{commit}:{relpath}"], cwd=ROOT, capture_output=True)
+    return hashlib.sha256(r.stdout).hexdigest() if r.returncode == 0 else None
+
+
+CODE = {"integrity_gate": ("scripts/audit_p5_n2_campaign_records.py", "integrity_gate_commit"),
+        "scorer": ("scripts/score_p5_n2_campaign.py", "scorer_commit")}
+
+
+def code_identity():
+    """Each pipeline file must be byte-identical to its content at the pinned chain commit."""
+    out = {}
+    for name, (rel, key) in CODE.items():
+        cur = hashlib.sha256(open(os.path.join(ROOT, rel), "rb").read()).hexdigest()
+        exp = blob_sha256(PROVENANCE[key], rel)
+        out[name] = {"file": rel, "sha256": cur, "expected_commit": PROVENANCE[key], "expected_sha256": exp,
+                     "last_commit": _last_commit(os.path.join(ROOT, rel)), "identical": cur == exp}
+    return out
+
+
 def _gate():
     spec = importlib.util.spec_from_file_location("g", os.path.join(os.path.dirname(__file__), "audit_p5_n2_campaign_records.py"))
     g = importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
@@ -51,7 +73,10 @@ def canonical(paths):
     return b"".join(lines[k] for k in sorted(lines)), len(lines)
 
 
-def freeze(mode, paths, tag="v1", outdir=OUTDIR):
+def freeze(mode, paths, tag="v1", outdir=OUTDIR, check_code=True):
+    ident = code_identity()
+    if check_code and not all(v["identical"] for v in ident.values()):
+        raise SystemExit("pipeline code differs from the pinned chain: " + json.dumps(ident))
     gate = _gate().audit(mode, paths)
     if not gate["PASS"]:
         raise SystemExit("structural integrity gate FAILED: " + json.dumps({k: v for k, v in gate.items() if k != "missing"}))
@@ -72,11 +97,8 @@ def freeze(mode, paths, tag="v1", outdir=OUTDIR):
            "prereg_lock_sha256": hashlib.sha256(open(lock, "rb").read()).hexdigest(),
            "integrity_gate": {k: gate[k] for k in ("PASS", "n_records", "n_expected", "retcode_counts", "grid")},
            "frozen_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), **PROVENANCE}
-    man["code_as_run"] = {name: {"file": os.path.relpath(f, ROOT), "sha256": hashlib.sha256(open(f, "rb").read()).hexdigest(),
-                                 "last_commit": _last_commit(f)}
-                          for name, f in (("integrity_gate", os.path.join(os.path.dirname(__file__), "audit_p5_n2_campaign_records.py")),
-                                          ("scorer", os.path.join(os.path.dirname(__file__), "score_p5_n2_campaign.py")))}
-    man["chain_consistent"] = man["code_as_run"]["integrity_gate"]["last_commit"] == PROVENANCE["integrity_gate_commit"]
+    man["code_as_run"] = ident
+    man["chain_consistent"] = all(v["identical"] for v in ident.values())
     json.dump(man, open(man_path, "w"), indent=1)
     return man
 
