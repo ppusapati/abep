@@ -1734,3 +1734,31 @@ This audit was run under `prereg/n2_completeness_audit_v1` (merged in PR #20 bef
 **Smoke test (0.5 minus excitation and N elastic).** Loads and runs with an N Z = 2 fluid. All six tables have f_out = 0; chemistry_trustworthy.
 
 **Omitted routes to bound later:** direct N → N²⁺ and N²⁺ → N³⁺ (tier 3).
+
+## 2026-09-26 — Reaction set abep-n2n-0.6: direct N₂ → N²⁺ + N; sequential-route audit
+
+**Change:**
+- New `dissociative_ionization_N2_N2+.dat` from Table 10 σ(N⁺⁺), the total N⁺⁺ yield from N₂. The extra N⁺ produced by triple events is not added.
+- Same threshold rule as single dissociative ionization: a linear ramp from σ = 0 at E_th = D₀ + IE(N I) + IE(N II) = 53.885 eV to the 70 eV point. Header 53.885 eV.
+- Tail 0.95 % at 255 eV, so verified to 255 eV.
+- Threshold sensitivity (table/envelope vs ramp): −10/+16 % at T_e = 10 eV, < 2 % from 20 eV.
+
+**Sequential vs direct N²⁺ route.** The route is included, not merely bounded.
+
+| T_e (eV) | 10 | 15 | 20 | 25 | 30 |
+|---|---|---|---|---|---|
+| k_direct (N₂ → N²⁺) [m³/s] | 3.0e-18 | 4.1e-17 | 1.7e-16 | 3.9e-16 | 7.2e-16 |
+| k_seq (N⁺ → N²⁺) [m³/s] | 6.7e-16 | 2.4e-15 | 4.6e-15 | 6.9e-15 | 9.2e-15 |
+| n_N⁺/n_N₂ where seq = 5 % of direct | 2.2e-4 | 8.7e-4 | 1.8e-3 | 2.9e-3 | 3.9e-3 |
+| n_N⁺/n_N₂ where seq = direct | 0.45 % | 1.7 % | 3.6 % | 5.7 % | 7.8 % |
+
+- The sequential route passes the 5 % species criterion at ion-to-N₂ ratios of order 10⁻³.
+- Once the ion fraction exceeds a few percent, which is typical of a Hall ionization zone, it is the dominant N²⁺ source.
+- Leaving it out would have been a material omission.
+
+**Smoke tests (0.6 minus excitation and N elastic).**
+- Both variants run: upper `n2_n.toml` and lower `n2_n_di_lower.toml`.
+- f_out = 0 for every table; chemistry_trustworthy.
+- Atomic exit-ion-flux share: 0.537 upper vs 0.533 lower. This is a chemistry diagnostic only.
+
+**Still to bound (tier 3):** direct N → N²⁺, and N²⁺ → N³⁺. Molecular N₂²⁺ stays unresolved.

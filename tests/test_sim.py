@@ -807,6 +807,25 @@ def test_n_plus_ionization_bell1983_table():
     assert any(r.get("equation") == "N(+) + e -> N(2+) + 2e" for r in cfg["reactions"])
 
 
+def test_n2_to_n2plus_table():
+    """dissociative_ionization_N2_N2+.dat (Song 2023 Table 10 sigma(N++)): threshold ramp from 53.885 eV, header = that
+    appearance energy, rows equal a fresh integration, and n2_n.toml carries the charge-balanced equation."""
+    import importlib.util, os, numpy as np
+    from abep_sim.rate_tables import maxwellian_rate
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_to_n2plus_table.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    assert b.E_TH == 53.885
+    d = os.path.join(root, "hallthruster_bridge", "propellants")
+    assert open(os.path.join(d, "dissociative_ionization_N2_N2+.dat")).readline().strip() == "Ionization energy (eV): 53.885"
+    a = np.loadtxt(os.path.join(d, "dissociative_ionization_N2_N2+.dat"), skiprows=2)
+    E, s = b.cross_section()
+    assert E[0] == 53.885 and s[0] == 0.0 and E[1] == 70.0
+    for eps in (30.0, 45.0, 150.0):
+        assert abs(a[a[:, 0] == eps][0, 1] / maxwellian_rate(E, s, eps / 1.5, b.TAIL) - 1) < 1e-5
+    assert 'equation = "N2 + e -> N(2+) + N + 3e"' in open(os.path.join(d, "n2_n.toml")).read()
+
+
 def test_variant_configs_are_regenerated_from_n2_n():
     """Every chemistry-variant config equals what scripts/make_n2_variant_configs.py produces from the current n2_n.toml."""
     import importlib.util, os

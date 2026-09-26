@@ -27,6 +27,11 @@ status = "verified"
 max_mean_energy_eV = 255.0
 basis = "Bell et al. JPCRD 1983 Eq. (1) N II (+-10 %), analytic Bethe form evaluated 29.60 eV-10 keV; held-tail share 0.0000 % at 255 eV mean energy (scripts/build_n_plus_ionization_table.py)"
 
+["dissociative_ionization_N2_N2+.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "JPCRD 2023 Table 10 sigma(N++) spans 70-1000 eV (ramp from 53.885 eV); held-tail share 0.946 % at 255 eV mean energy (scripts/build_n2_to_n2plus_table.py)"
+
 ["ionization_N.dat"]
 status = "verified"
 max_mean_energy_eV = 255.0
