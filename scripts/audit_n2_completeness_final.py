@@ -1,4 +1,6 @@
-"""Omitted-process audit, final pass (prereg n2_completeness_audit_v1), on reaction set abep-n2n-0.9:
+"""Omitted-process audit, closure pass (prereg n2_completeness_audit_v1), on reaction set abep-n2n-0.9.
+Overall status CLOSURE_PENDING until every omitted channel has a verdict (owner decision 2026-09-26); the DI and
+vibrational fractions below are final:
   * rerun of audit 1 (dissociative ionization) and audit 2 (vibrational excitation) with the complete 0.9 denominators;
   * the three tier-3 bounds: rotational excitation, N^2+ -> N^3+ (N_Z2plus -> N_Z3plus), direct N -> N^2+.
 
@@ -22,6 +24,13 @@ N^2+ -> N^3+ (Bell et al. JPCRD 1983 Eq. (1), Table 5 N III row read from the pa
   ionization = 2.1e-4 of its production -> x_crit is exceeded nowhere by a factor ~200 (REFERENCE_STATE below).
 Direct N -> N^2+: no cross-section source in hand; per owner rule it is NOT inferred from sequential ionization or scaled.
   Recorded as unresolved-by-source.
+Molecular N2^2+ (N2 + e -> N2^2+ + 3e): no recommended curve (JPCRD 2023 Sec. 2.8: measurements disagree). Envelope:
+  nominal  sigma = 0.01 sigma_total(E) (JPCRD: "~1% of the total ionization cross section"), from the appearance energy;
+  upper    sigma = 0.14e-16 cm^2 flat (the MAXIMUM of Tian & Vidal's total double ionization, which also contains N+ + N+ and
+           N^2+ + N already modelled - a loose bound);
+  appearance energy 42.9 eV (Mark 1975, J. Chem. Phys. 63, 3731, as cited by the owner; not read here - verify), with a
+  40 eV sensitivity. Note: in ion-count terms the DI chemistry-variant pair already brackets N2^2+ (upper counts N2^2+ events
+  as N+ ions, lower removes them).
 Usage: python scripts/audit_n2_completeness_final.py  (writes hallthruster_bridge/audit/n2_completeness_final_v1.json)
 """
 import importlib.util, json, os, sys, tomllib
@@ -115,6 +124,21 @@ def k_n2plus_to_n3plus(Te):
     return maxwellian_rate(E, np.where(E > I, s, 0.0), Te, "hold")
 
 
+N2PP_THRESHOLD_EV = 42.9
+
+
+def n2pp_rate(Te, kind="nominal", th=N2PP_THRESHOLD_EV):
+    spec = importlib.util.spec_from_file_location("iz", os.path.join(os.path.dirname(__file__), "build_n2_ionization_song2023_table.py"))
+    iz = importlib.util.module_from_spec(spec); spec.loader.exec_module(iz)
+    if kind == "nominal":
+        Et = np.array([r[0] for r in iz.TABLE10], float); St = np.array([r[2] for r in iz.TABLE10]) * 1e-20
+        m = Et >= th
+        E, S = np.concatenate([[th], Et[m]]), np.concatenate([[0.0], 0.01 * St[m]])
+    else:
+        E, S = np.array([th, np.nextafter(th, np.inf), 1e4]), np.array([0.0, 0.14e-20, 0.14e-20])
+    return maxwellian_rate(E, S, Te, "hold")
+
+
 def main():
     pre = json.load(open(PREREG)); th = pre["thresholds"]
     Tes = [0.2, 0.3, 0.5, 0.7, 1, 1.5, 2, 3, 4, 5, 7.5, 10, 15, 20, 25, 30]
@@ -127,7 +151,10 @@ def main():
         rows.append(dict(Te_eV=Te, P_total=P, F_P_DI=p_di / P, F_ion_DI=k_di / K_ion, F_P_vib=p_vib / P,
                          F_P_rot_upper=p_rot / (P + p_rot),
                          F_P_rot_spectroscopic=rot_bound(Te, "spectroscopic") / (P + rot_bound(Te, "spectroscopic")),
-                         x_crit_N2plus_over_N2_for_1pct_ion=(0.01 / 0.99) * K_ion / k3 if k3 > 0 else None))
+                         x_crit_N2plus_over_N2_for_1pct_ion=(0.01 / 0.99) * K_ion / k3 if k3 > 0 else None,
+                         F_ion_N2pp_nominal=n2pp_rate(Te) / (K_ion + n2pp_rate(Te)),
+                         F_ion_N2pp_upper=n2pp_rate(Te, "upper") / (K_ion + n2pp_rate(Te, "upper")),
+                         F_ion_N2pp_upper_th40=n2pp_rate(Te, "upper", 40.0) / (K_ion + n2pp_rate(Te, "upper", 40.0))))
     dom = pre["domains"]["default"]["Te_eV"]; vdom = pre["domains"]["vibrational_excitation"]["Te_eV"]
     in_dom = [r for r in rows if dom[0] <= r["Te_eV"] <= dom[1]]; in_v = [r for r in rows if vdom[0] <= r["Te_eV"] <= vdom[1]]
     verdict = {
@@ -146,10 +173,18 @@ def main():
                                  "reference_state": REFERENCE_STATE,
                                  "verdict": "EXCLUDED: reference-state n(N^2+)/n(N2) <= 1.2e-3 vs x_crit >= 0.25 (margin ~200); "
                                             "F_ion 4.7e-7, F_S 2.1e-4"},
+        "N2_Z2plus_molecular": {"F_ion_nominal_max": max(r["F_ion_N2pp_nominal"] for r in in_dom),
+                                "F_ion_upper_max": max(r["F_ion_N2pp_upper"] for r in in_dom),
+                                "F_ion_upper_th40_max": max(r["F_ion_N2pp_upper_th40"] for r in in_dom),
+                                "verdict": "BRACKETED, NOT EXCLUDABLE BY BOUND: nominal (JPCRD ~1 % statement) stays below 1 % "
+                                           "(max 0.79 %); the loose upper envelope crosses (4.8 %). In ion-count terms the DI "
+                                           "upper/lower chemistry variants already bracket it. Owner decision."},
         "N_to_N_Z2plus_direct": {"verdict": "UNRESOLVED-BY-SOURCE: no cross section in hand; not inferred or scaled"},
         "rule": pre["rule"],
     }
-    out = {"audit": "N2 completeness, final pass", "prereg": pre["id"], "reaction_set": "abep-n2n-0.9", "atomic_fraction_x": 0.0,
+    out = {"audit": "N2 completeness, closure pass", "prereg": pre["id"],
+           "status": "CLOSURE_PENDING: DI and vibrational fractions final; N -> N^2+ direct, molecular N2^2+ and the "
+                     "transport-envelope check of N^2+ -> N^3+ still open", "reaction_set": "abep-n2n-0.9", "atomic_fraction_x": 0.0,
            "rot_energy_ceiling_eV": ROT_DE_CEILING_EV, "verdict": verdict, "rows": rows}
     json.dump(out, open(OUT, "w"), indent=1, default=float)
     print(json.dumps(verdict, indent=1, default=float))

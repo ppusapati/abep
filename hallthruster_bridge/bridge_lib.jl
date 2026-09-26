@@ -207,6 +207,9 @@ entrained_flow(c, m) = c.entrainment_area_m2 * c.background_pressure_Torr * TORR
 # Never cross them (ingestion ON vs corrected, or OFF vs raw).
 const MODES = ("facility", "vacuum")
 
+# The most recent solution, for check scripts that need per-frame state beyond the returned summary (never used for scoring).
+const LAST_SOL = Ref{Any}(nothing)
+
 function run_case(c, mode)
     mode in MODES || error("unknown comparison mode $mode")
     geom = het.Geometry1D(channel_length=c.L_m, inner_radius=c.r_in_m, outer_radius=c.r_out_m)
@@ -262,6 +265,7 @@ function run_case(c, mode)
     sp = het.SimParams(grid=het.EvenGrid(c.cells), dt=c.dt_s, duration=c.duration_s, verbose=false)
     t0 = time()
     sol = het.run_simulation(config, sp)
+    LAST_SOL[] = sol
     out = Dict{String,Any}("id" => "$(c.id)/$(mode)", "case_id" => c.id, "comparison_mode" => mode,
                            "retcode" => string(sol.retcode), "wall_s" => time() - t0,
                            "t_end_s" => sol.t[end], "converged" => sol.retcode == :success)

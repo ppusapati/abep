@@ -1930,3 +1930,25 @@ This inclusion follows the pre-registered rule literally (gross F_P 1.13 % > 1 %
 - Primary: 4 chemistry configs × 9 transports = 36 runs.
 - Johnson-low: × 9 transports = +9 runs.
 - Escalation to the full 72 only if the trigger fires. The trigger's definition of "materially" is fixed in the P5-N₂ pre-registration from the audited measurement uncertainties, not a generic number.
+
+## 2026-09-26 — Closure pass (owner decisions): rotational kept; rotational-off branch; status CLOSURE_PENDING; N₂²⁺ envelope; blind state envelope
+
+- **Rotational:** 0.10 stays promoted. The pre-registered F_P is gross; redefining it as net after seeing 1.13 % would be a post-hoc metric change.
+  - The generated `n2_n_rot_off.toml` (the two rotational reactions removed; nominal DI, OPM N elastic) is the lower-bound closure.
+  - Run design: rotational-off × 9 transports, factorialized only if it changes a validation conclusion.
+- **Status:** `audit/n2_completeness_final_v1.json` is marked `CLOSURE_PENDING`. The DI and vibrational fractions are final; the overall completeness verdict is not.
+- **Molecular N₂²⁺ envelope** (appearance energy 42.9 eV per the owner's citation of Märk 1975 — not read here, verify):
+
+  | T_e (eV) | 5 | 10 | 20 | 30 |
+  |---|---|---|---|---|
+  | F_ion, nominal (σ = 1 % of σ_total, JPCRD statement) | 0.04 % | 0.30 % | 0.66 % | 0.79 % |
+  | F_ion, upper (0.14×10⁻¹⁶ cm² flat = maximum total double ionization) | 0.34 % | 2.2 % | 4.2 % | 4.8 % |
+
+  - A 40 eV threshold gives an upper bound of 5.1 %.
+  - **Bracketed, not excludable by bound.** In ion-count terms the DI chemistry variants already bracket it: the upper variant counts N₂²⁺ events as N⁺, the lower removes them.
+  - The primary Märk 1975 (AIP) and Phys. Rev. A 98, 052701 data are not accessible here. JPCRD Fig. 23 is raster.
+- **Direct N → N²⁺:** Deutsch, Becker & Märk, PPCF 42, 489 (2000) is bronze OA, but IOP serves only a JavaScript-gated PDF route and an abstract-only landing page to this environment. Still unresolved-by-source.
+- **Blind state envelope** (`checks/blind_state_envelope.jl`): 5 P5-N₂ points × 9 SGB candidates × 4 chemistry configs, with measured targets removed and only chemistry-state quantities recorded per saved frame (max n_N²⁺/n_N₂, reaction-weighted F_ion and F_S for N²⁺ → N³⁺).
+  - Uses a bound-only Bell N III table in `audit/bound_tables/`.
+  - The driver exposes `LAST_SOL` for check scripts; it is never used for scoring.
+  - Running.

@@ -1,0 +1,149 @@
+# GENERATED VARIANT of n2_n.toml (rotational-OFF lower-bound closure (gross rotational cooling removed; nominal DI, OPM N elastic)) by scripts/make_n2_variant_configs.py; do not edit by hand.
+# N2/N propellant for HallThruster.jl v0.23.1 (Stage A). Reaction-set version: PINNED.toml [reaction_set]. Rate files are Maxwellian tables vs mean energy (3/2 Te).
+[[species]]
+symbol = "N"
+name = "Nitrogen"
+max_charge = 2                                      # atomic N^2+ (N_Z2plus) promoted by the pre-registered audit (abep-n2n-0.5)
+gamma = 1.666667
+mass = 14.0067
+flow_rate_kg_s = 0.0
+temperature_K = 500.0
+
+[[species]]
+symbol = "N2"
+name = "Molecular Nitrogen"
+max_charge = 1
+gamma = 1.4
+mass = 28.0134
+flow_rate_kg_s = 5e-6
+temperature_K = 500.0
+
+[[reactions]]
+type = "elastic"
+target_species = "N2"
+rate_coeff_file = "elastic_N2_song2023.dat"         # Song et al. JPCRD 2023 Table 5 MTCS (abep-n2n-0.3; replaces shipped elastic_N2.dat)
+
+[[reactions]]
+type = "electron_impact"
+equation = "N2 + e -> N2(+) + 2e"
+rate_coeff_file = "ionization_N2_song2023.dat"      # Song et al. JPCRD 2023 Table 10 sigma(N2+) (abep-n2n-0.2; replaces shipped ionization_N2_N2+.dat)
+
+[[reactions]]
+type = "electron_impact"
+equation = "N2 + e -> N(+) + N + 2e"
+rate_coeff_file = "dissociative_ionization_N2_upper.dat"  # Song 2023 Table 10 sigma(N+ + N2++), upper variant (abep-n2n-0.4); lower variant: n2_n_di_lower.toml
+
+[[reactions]]
+type = "electron_impact"
+equation = "N2 + e -> N(2+) + N + 3e"
+rate_coeff_file = "dissociative_ionization_N2_to_N_Z2plus.dat"  # Song 2023 Table 10 sigma(N++), ramp from 53.885 eV (abep-n2n-0.6)
+
+[[reactions]]
+type = "electron_impact"
+equation = "N2 + e -> N + N + e"
+rate_coeff_file = "dissociation_N2.dat"             # Song et al. JPCRD 2023 Table 9 (Cosby 1993); header 12.14 eV (PROVENANCE.md)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_A3Sigma_u.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 7.75 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_B3Pi_g.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 8.04 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_W3Delta_u.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 8.88 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_Bprime3Sigma_u.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 9.67 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_a1Pi_g.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 9.31 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_aprime1Sigma_u.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 9.92 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_w1Delta_u.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 10.27 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_C3Pi_u.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 11.19 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_1.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 1, dE = 0.288 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_2.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 2, dE = 0.573 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_3.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 3, dE = 0.855 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_4.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 4, dE = 1.133 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_5.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 5, dE = 1.408 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_6.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 6, dE = 1.679 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_7.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 7, dE = 1.947 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_8.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 8, dE = 2.211 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_9.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 9, dE = 2.471 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_10.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 10, dE = 2.728 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "elastic"
+target_species = "N"
+rate_coeff_file = "elastic_N_ragimkhanov2026.dat"    # Ragimkhanov et al. EPJD 2026 Fig. 1b OPM MTCS (abep-n2n-0.8); Wang BSR variant: n2_n_nel_wang.toml
+
+[[reactions]]
+type = "electron_impact"
+equation = "N + e -> N(+) + 2e"
+rate_coeff_file = "ionization_N.dat"                # Kim & Desclaux 2002 BEB via NIST SRD 107 (PROVENANCE.md)
+
+[[reactions]]
+type = "electron_impact"
+equation = "N(+) + e -> N(2+) + 2e"
+rate_coeff_file = "ionization_N_Z1plus_to_N_Z2plus.dat"           # Bell et al. JPCRD 1983 Eq. (1), N II (abep-n2n-0.5)

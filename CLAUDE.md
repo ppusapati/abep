@@ -112,6 +112,12 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    chemistry-trustworthy). **Final audit pass** (`audit/n2_completeness_final_v1.json`): DI and vib final on the complete denominator; rotational gross
    1.13 % → **abep-n2n-0.10** adds j 0→2, 0→4 (JPCRD Table 6, NIST B₀ headers; marginal, gross convention, owner may reverse);
    N²⁺ → N³⁺ excluded (reference-state margin ~200); direct N → N²⁺ unresolved-by-source. Completeness freeze is the owner's call.
+   **Closure pass (owner decision 2026-09-26):** 0.10 rotational stays on (the pre-registered gross F_P; switching to net after seeing
+   1.13 % would be post hoc). The generated `n2_n_rot_off.toml` is a lower-bound sensitivity branch (nominal DI + OPM N elastic × 9,
+   expand only on trigger). Audit status is CLOSURE_PENDING. Molecular N₂²⁺ envelope: JPCRD "~1 %" nominal F_ion ≤ 0.79 %; the loose
+   upper bound (all double ionization) reaches 4.8 %, so it is bracketed and not excludable by bound. The DI variant pair already brackets
+   its ion count. Direct N → N²⁺: Deutsch, Becker & Märk 2000 (PPCF 42, 489) not retrievable here (IOP JS gate). The blind 5 × 9 × 4
+   state-envelope check of N²⁺ → N³⁺ (`checks/blind_state_envelope.jl`) is running.
    **P5-N₂ run design (owner decision):** primary 4 chemistry configs × 9 transports = 36 runs, plus the Johnson-low sensitivity
    branch (`n2_n_exc_johnsonlow.toml`: nominal DI + OPM N elastic) × 9 = +9. Expand Johnson-low to the other three chemistry
    combinations (+27, full 72) only if its escalation trigger fires. The trigger ("changes a pass/fail, the surviving set, or

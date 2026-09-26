@@ -934,6 +934,13 @@ def test_n2_completeness_final_audit():
     assert 0.01 < v["rotational_excitation"]["F_P_spectroscopic_max"] < 0.02
     assert v["N_Z2plus_to_N_Z3plus"]["verdict"].startswith("EXCLUDED") and v["N_Z2plus_to_N_Z3plus"]["x_crit_min"] > 0.2
     assert v["N_to_N_Z2plus_direct"]["verdict"].startswith("UNRESOLVED-BY-SOURCE")
+    res = json.load(open(os.path.join(root, "hallthruster_bridge", "audit", "n2_completeness_final_v1.json")))
+    assert res["status"].startswith("CLOSURE_PENDING")
+    m = v["N2_Z2plus_molecular"]
+    assert m["F_ion_nominal_max"] < 0.01 < m["F_ion_upper_max"]           # envelope straddles the criterion
+    up = open(os.path.join(root, "hallthruster_bridge", "propellants", "n2_n.toml")).read()
+    off = open(os.path.join(root, "hallthruster_bridge", "propellants", "n2_n_rot_off.toml")).read()
+    assert "_rot_j0_to_j2" in up and "_rot_" not in off
 
 
 def test_n2_rotational_tables():
