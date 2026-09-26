@@ -139,6 +139,12 @@
    "type": "bool",
    "status": "computed",
    "definition": "converged AND sustained AND ion_wall_losses=true AND wall model is WallSheath AND unshielded AND both wall fields present. map_ready means schema-complete only; lifetime/erosion use requires wall_life_trustworthy"
+  },
+  "chemistry_trustworthy": {
+   "unit": "-",
+   "type": "bool",
+   "status": "computed",
+   "definition": "converged AND sustained AND 1.5 x (max time-averaged T_e over the chemistry-active region, n_e * total neutral density >= 1 % of its peak) <= the lowest max_mean_energy_eV of the reaction set's rate files (propellants/rate_validity.toml). Built-in xenon: no project limit. A point outside it uses extrapolated chemistry and is neither validation- nor performance-trustworthy"
   }
  }
 }

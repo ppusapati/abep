@@ -706,6 +706,35 @@ def test_n2_dissociation_rate_table_reproduces_jpcrd_table9():
     assert "Table 9" in src and "Cosby" in src and "held" in src
 
 
+def test_chemistry_extrapolation_makes_a_map_point_untrustworthy(tmp_path):
+    """A node whose chemistry-active region exceeded a rate table's documented validity domain (chemistry_trustworthy =
+    0) makes every query touching it untrustworthy, even if converged and sustained."""
+    import json, numpy as np
+    from abep_sim.hall_map import HallMap, REQUIRED_FIELDS, REQUIRED_META, pinned_commit
+    axes = {"Vd": [250.0, 300.0], "mdot_kgps": [1e-6, 2e-6]}
+    def make(ch):
+        f = {k: (np.ones((2, 2)) * 0.02).tolist() for k in REQUIRED_FIELDS}
+        f["converged"] = [[1, 1], [1, 1]]; f["sustained"] = [[1, 1], [1, 1]]; f["chemistry_trustworthy"] = ch
+        meta = {k: "synthetic" for k in REQUIRED_META}
+        meta.update(schema="hall_map_schema_v1", pinned=f"commit = \"{pinned_commit()}\"")
+        p = tmp_path / f"c{ch}.json"; p.write_text(json.dumps({"meta": meta, "axes": axes, "fields": f}))
+        return HallMap(str(p), ensemble=_synthetic_ensemble())(Vd=275.0, mdot_kgps=1.5e-6)
+    assert make([[1, 1], [1, 1]])["trustworthy"] is True
+    assert make([[1, 1], [1, 0]])["trustworthy"] is False
+
+
+def test_every_committed_rate_table_has_a_validity_domain():
+    """propellants/rate_validity.toml must cover every rate table present (the driver errors on a missing entry), and
+    the dissociation limit is the documented 45 eV mean energy (T_e = 30 eV)."""
+    import os, glob, tomllib
+    d = os.path.join(os.path.dirname(os.path.dirname(__file__)), "hallthruster_bridge", "propellants")
+    val = tomllib.load(open(os.path.join(d, "rate_validity.toml"), "rb"))
+    for f in glob.glob(os.path.join(d, "*.dat")):
+        e = val[os.path.basename(f)]
+        assert 0 < e["max_mean_energy_eV"] <= 255 and e["basis"]
+    assert val["dissociation_N2.dat"]["max_mean_energy_eV"] == 45.0
+
+
 def test_bridge_and_0d_chemistry_are_not_unified():
     """HallThruster.jl tables in hallthruster_bridge/propellants/ are NOT read by the 0-D plasma_chem model. If this
     fails, the databases were unified: that is a model change (goldens, HISTORY), so update this test deliberately."""
@@ -723,6 +752,7 @@ def test_wall_life_trust_is_separate_from_performance_trust(tmp_path):
     def make(ion_wall_losses, wl):
         f = {k: (np.ones((2, 2)) * 0.02).tolist() for k in REQUIRED_FIELDS}
         f["converged"] = [[1, 1], [1, 1]]; f["sustained"] = [[1, 1], [1, 1]]; f["wall_life_trustworthy"] = wl
+        f["chemistry_trustworthy"] = [[1, 1], [1, 1]]
         meta = {k: "synthetic" for k in REQUIRED_META}
         meta.update(schema="hall_map_schema_v1", pinned=f"commit = \"{pinned_commit()}\"", ion_wall_losses=ion_wall_losses)
         p = tmp_path / f"m{ion_wall_losses}{wl}.json"; p.write_text(json.dumps({"meta": meta, "axes": axes, "fields": f}))

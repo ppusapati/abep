@@ -1,0 +1,20 @@
+# Validity domain of each rate table, as the highest mean electron energy (3/2 T_e, eV) up to which the table rests on
+# its cited cross sections rather than on an extrapolation. Read by bridge_lib.jl: a run whose chemistry-active region
+# reaches beyond the lowest limit in its reaction set is not chemistry_trustworthy. Every rate file named in a propellant
+# config must have an entry here (no default). 255 eV = the whole HallThruster.jl rate grid (0-255 eV).
+
+["dissociation_N2.dat"]
+max_mean_energy_eV = 45.0
+basis = "Table 9 ends at 200 eV; held tail carries < 1 % of the rate up to 45 eV mean energy (T_e = 30 eV), 3.8 % at 60 eV (build_n2_dissociation_table.py)"
+
+["ionization_N.dat"]
+max_mean_energy_eV = 255.0
+basis = "NIST SRD 107 Kim & Desclaux tabulation extends to keV energies (verify exact upper limit at rebuild)"
+
+["ionization_N2_N2+.dat"]
+max_mean_energy_eV = 255.0
+basis = "shipped with HallThruster.jl v0.23.1 (Itikawa 2006); tail treatment of the shipped table not audited here (verify)"
+
+["elastic_N2.dat"]
+max_mean_energy_eV = 255.0
+basis = "shipped with HallThruster.jl v0.23.1 (Itikawa 2006); tail treatment of the shipped table not audited here (verify)"

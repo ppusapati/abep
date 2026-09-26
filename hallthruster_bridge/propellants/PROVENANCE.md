@@ -13,6 +13,10 @@ Integration is done by `abep_sim/rate_tables.py`, which is verified against the 
 | excitation_N2.dat | e + N2 -> N2* + e (lumped electronic; energy-weighted) | Itikawa 2006 / Song et al. 2023 | **missing: same** |
 | elastic_N.dat | e + N momentum transfer | e.g. Wang, Zatsarinny & Bartschat, Phys. Rev. A 89, 062714 (2014) | **missing: same** |
 
+Validity domains: `rate_validity.toml` gives, per file, the highest mean electron energy up to which the table rests on
+its cited cross sections. The driver refuses a reaction set with an unlisted file, and flags a run
+`chemistry_trustworthy = false` when its chemistry-active region exceeds the lowest limit (schema field).
+
 Scope: these files are read only by HallThruster.jl (via `n2_n.toml`). The Python 0-D chemistry (`abep_sim/plasma_chem.py`)
 does not read this directory. It uses its own Arrhenius fits except for one table, `abep_sim/data/rates/ionization_N2_N2+.dat`.
 The two chemistry databases are **not unified** (a test pins this). The 0-D N-ionization fit is ~2× below `ionization_N.dat`

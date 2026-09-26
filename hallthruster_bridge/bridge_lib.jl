@@ -40,6 +40,27 @@ function missing_rate_files(c)
     return [f for f in files if !isfile(joinpath(dir, f))]
 end
 
+# Chemistry validity: the lowest documented limit (mean electron energy, eV) over every rate file in the reaction set
+# (propellants/rate_validity.toml). A file without an entry is an error, never a default.
+function chemistry_validity_limit(c)
+    (haskey(c, :propellant_config) && !isempty(c.propellant_config)) ||
+        return Inf, "HallThruster.jl built-in propellant tables (no project validity manifest)"
+    cfg = TOML.parsefile(joinpath(@__DIR__, c.propellant_config))
+    val = TOML.parsefile(joinpath(@__DIR__, c.rate_dir, "rate_validity.toml"))
+    lim, why = Inf, ""
+    for r in get(cfg, "reactions", [])
+        f = get(r, "rate_coeff_file", nothing)
+        isnothing(f) && continue
+        haskey(val, f) || error("rate file $f has no validity entry in $(c.rate_dir)/rate_validity.toml")
+        e = Float64(val[f]["max_mean_energy_eV"])
+        e < lim && ((lim, why) = (e, "$f: " * val[f]["basis"]))
+    end
+    return lim, why
+end
+
+# Chemistry-active region: cells where n_e * (total neutral density) >= CHEM_REGION_FRACTION of its peak.
+const CHEM_REGION_FRACTION = 0.01
+
 const TORR_TO_PA = 133.322368
 
 # Measured B(z) from a cited CSV (z_mm, B_G; '#' comments, one header line), placed on the model axis by an explicit
@@ -267,6 +288,16 @@ function run_case(c, mode)
     # solver actually removes it from the ion fluid.
     out["wall_life_trustworthy"] = out["converged"] && out["sustained"] && config.ion_wall_losses &&
                                    haskey(out, "wall_ion_flux_m2s") && haskey(out, "wall_ion_energy_eV")
+    # No silent chemistry extrapolation: every rate table must be used inside its documented domain wherever the
+    # electron-neutral chemistry is active.
+    lim, why = chemistry_validity_limit(c)
+    nn = sum(collect(st.n) for (sym, st) in fr.neutrals)
+    w = collect(fr.ne) .* nn
+    region = w .>= CHEM_REGION_FRACTION * maximum(w)
+    out["Te_chem_region_max_eV"] = maximum(fr.Tev[region])
+    out["chem_validity_limit_mean_energy_eV"] = isfinite(lim) ? lim : nothing
+    out["chem_validity_basis"] = why
+    out["chemistry_trustworthy"] = out["converged"] && out["sustained"] && 1.5 * out["Te_chem_region_max_eV"] <= lim
     out["schema"] = String(SCHEMA.schema)
     out["schema_missing"] = schema_missing(out)
     out["map_ready"] = isempty(out["schema_missing"])

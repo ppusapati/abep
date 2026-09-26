@@ -1521,3 +1521,25 @@ It must never leak upstream, or into Vyovrinda's own thruster geometry.
 `rate_tables.maxwellian_rate` now takes an explicit `tail` (`hold` | `zero`). `hold` is bit-identical to the previous behaviour, so `ionization_N.dat` is unchanged. There is no golden or model change: the bridge tables are not read by the 0-D chemistry.
 
 **Open (owner's decision):** N₂ excitation. The recommended per-state data end at 20 eV, but Maxwellian rates up to T_e ≈ 30 eV need σ well above that. Extending needs a second source, e.g. Johnson et al. 2005 (10–100 eV, measured), Kawaguchi et al. 2021 or Itikawa 2006, or an explicit Born-type extrapolation. That choice is not made here.
+
+## 2026-09-26 — Chemistry validity guard; excitation / atomic-N source decisions
+
+**Merged:** PR #17, the N₂ dissociation table. It was rebased onto main first. The 12.14 eV energy loss is now documented as a representative fixed loss for a channel-summed cross section, with 9.75–13.33 eV carried as model uncertainty.
+
+**Guard (project decision):** no silent chemistry extrapolation.
+- `propellants/rate_validity.toml` gives every rate table a validity domain in mean electron energy.
+- `bridge_lib.jl` emits `chemistry_trustworthy`, a new `hall_map_schema_v1` field. It is converged ∧ sustained ∧ 1.5 × max T_e over the chemistry-active region (n_e·Σn_n ≥ 1 % of peak) ≤ the lowest limit in the reaction set. It also emits `Te_chem_region_max_eV` and the limiting file's basis.
+- `HallMap` performance `trustworthy` now requires it.
+- The dissociation limit is 45 eV (T_e = 30 eV) until its cross section is extended.
+- Smoke-tested on a shortened Xe1 run: the new fields are populated, and map_ready is unchanged.
+
+**Source decisions (owner):**
+- N₂ excitation: eight state-resolved reactions (A, B, W, B′, a, a′, w, C). Su et al. 2021 up to 20 eV, then Johnson et al. 2005 (JGR 110, A11311, doi 10.1029/2005JA011295) from 20 to 100 eV. No renormalization at the join: the 10–20 eV overlap difference is recorded as source uncertainty. No −1.5 eV shift.
+- Energy losses are the experimental vertical energies from Su 2021 Table 1 (Oddershede et al.): 7.75, 8.04, 8.88, 9.67, 9.31, 9.92, 10.27 and 11.19 eV. Su's per-state supplementary files carry the cc-pVTZ onsets (7.76, 8.67, … 11.88 eV).
+- Above 100 eV: quantify the hold-vs-zero sensitivity at T_e = 10–30 eV first. Tabata et al. 2006 is considered only if the sensitivity is material.
+- Atomic-N elastic: momentum-transfer cross section from Ragimkhanov et al., EPJD 80, 69 (2026), doi 10.1140/epjd/s10053-026-01166-3, CC BY 4.0. Wang, Zatsarinny & Bartschat 2014 is the low-energy cross-check. Disagreement in 5–50 eV is carried as uncertainty.
+
+**Access status from this container:**
+- Johnson 2005 is free-to-read on Wiley (bronze OA). Ragimkhanov 2026 is CC BY on Springer.
+- Both publisher sites answer scripted requests with a JavaScript/bot challenge (HTTP 403 / "Client Challenge"). Using the headless browser would have needed a trust-store change, which was not permitted.
+- No repository copy was found: NTRS has no PDF, and OpenAlex lists publisher locations only. So neither table is built yet.

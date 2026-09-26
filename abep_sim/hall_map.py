@@ -87,7 +87,9 @@ class HallMap:
         # a query is trustworthy only if every surrounding grid node converged and sustained
         idx = [np.clip(np.searchsorted(self.axes[n], v) - 1, 0, len(self.axes[n]) - 2) for n, v in zip(self.names, pt)]
         cube = self.bad[tuple(slice(i, i + 2) for i in idx)]
-        out["trustworthy"] = bool(not cube.any()) and out["sustained"] > 0.999
+        # ...and used every rate table inside its documented validity domain (no silent chemistry extrapolation)
+        ch = self.fields["chemistry_trustworthy"][tuple(slice(i, i + 2) for i in idx)]
+        out["trustworthy"] = bool(not cube.any()) and out["sustained"] > 0.999 and bool((ch > 0.5).all())
         # Performance trust is not erosion trust: wall flux/energy are erosion-grade only if every surrounding node is
         # wall_life_trustworthy (which requires ion_wall_losses=true in the solve) and the map says so in its meta.
         wl = self.fields["wall_life_trustworthy"][tuple(slice(i, i + 2) for i in idx)]

@@ -100,7 +100,11 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    fluid (`wall_ion_basis` says so). `map_ready` = schema-complete only. Erosion/lifetime use requires
    `wall_life_trustworthy` (converged ∧ sustained ∧ `ion_wall_losses=true` ∧ WallSheath, unshielded), which `HallMap`
    reports separately from performance `trustworthy`; map meta must carry `ion_wall_losses`. Never fill missing fields
-   with placeholders.
+   with placeholders. **No silent chemistry extrapolation:** every rate file has a validity domain in
+   `propellants/rate_validity.toml` (a missing entry is a driver error). A run is `chemistry_trustworthy` only if
+   1.5 × max T_e over its chemistry-active region (n_e·n_n ≥ 1 % of peak) stays within the lowest limit of its
+   reaction set (currently dissociation_N2: 45 eV mean energy, T_e = 30 eV). `HallMap` performance `trustworthy`
+   requires it; N₂ validation scoring must too.
    Then generate frozen Hall maps (all fields in `hall_map.REQUIRED_FIELDS`), one set per ensemble member, each carrying
    `meta.ensemble_member_id`. Wire the `archengine` Hall branch to `HallMap`, and rerun the architecture trade and gate-4
    UQ across members (envelopes, not one deterministic answer).
