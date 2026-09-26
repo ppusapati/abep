@@ -1962,3 +1962,15 @@ This inclusion follows the pre-registered rule literally (gross F_P 1.13 % > 1 %
 - Bounds are taken over all nuisance choices (operating point, transport, chemistry). A verdict that flips with the nuisance choice is treated as the between-bounds case.
 - Disclosure: early partial records had been seen in the session log. No full-envelope summary, maximum or range had been computed.
 - On promotion, molecular N₂²⁺ requires both N₂ → N₂²⁺ and N₂⁺ → N₂²⁺, with N₂ `max_charge` = 2 and the species-energy link checked. Direct N → N²⁺ goes into nominal chemistry, with the Hahn–Müller–Savin uncertainty as a sensitivity.
+
+### 2026-09-26 — Blind state envelope complete (5 P5-N₂ points × 9 SGB candidates × 4 chemistry configs; measured targets removed)
+180/180 runs succeed; common metrics identical to an independent earlier batch (max rel. diff 6e-16). 100/180 are
+`chemistry_trustworthy`. The 20 unsustained runs are sgb-screen-05 at N1–N4 and sgb-screen-09 at N1. The other 60 untrusted
+runs are every run of sgb-screen-02/03/04, where `dissociation_N2.dat` activity extends beyond its 45 eV mean-energy limit
+(T_e > 30 eV; share ≤ 3.1 % in the 5 reruns of untrusted cases). Omitted-process results (all runs / trusted only are the same
+by verdict):
+N²⁺→N³⁺ F_ion ≤ 1.3e-6, F_S ≤ 4.9e-4; direct N→N²⁺ (HMS 2017) F_ion 0.47–1.10 % (36/180 > 1 %, flips with candidate/point,
+not with chemistry config), F_S(N²⁺ production) 63–85 % in all 180; N₂²⁺ F_ion sequential ≤ 0.25 %, nominal 0.28–0.54 %,
+upper 1.26–2.73 % (all 180 > 1 %). Region reruns (argmax cases): N²⁺ channels weighted to T_e ≈ 19–25 eV, z/L ≈ 0.92–1.05,
+n_e ≈ 0.4–1.7e18 m⁻³; N₂²⁺ channels T_e ≈ 16–20 eV, z/L ≈ 0.75–0.97. Verdicts under addendum 1 await the owner.
+Records: `hallthruster_bridge/audit/blind_state_envelope_v1*.json[l]`.

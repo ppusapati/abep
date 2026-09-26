@@ -38,9 +38,12 @@ def main(argv):
     recs = load(paths)
     ok = [r for r in recs.values() if r.get("retcode") == "success"]
     s = {"n_records": len(recs), "n_success": len(ok), "failed": sorted(k for k, r in recs.items() if r.get("retcode") != "success"),
-         "not_sustained": sorted(r["key"] for r in ok if not r.get("sustained")), "metrics": {}}
-    for m, (proc, crit, th) in METRICS.items():
-        vals = [r for r in ok if m in r]
+         "not_sustained": sorted(r["key"] for r in ok if not r.get("sustained"))}
+    s["n_chemistry_trustworthy"] = sum(bool(r.get("chemistry_trustworthy")) for r in ok)
+    for subset, sel in (("metrics", ok), ("metrics_chemistry_trustworthy_only", [r for r in ok if r.get("chemistry_trustworthy")])):
+      s[subset] = {}
+      for m, (proc, crit, th) in METRICS.items():
+        vals = [r for r in sel if m in r]
         if not vals:
             continue
         top = max(vals, key=lambda r: r[m])
@@ -51,7 +54,7 @@ def main(argv):
                 g[r[dim]].append(r[m])
             by[dim] = {k: [min(v), max(v)] for k, v in sorted(g.items())}
         above = [r["key"] for r in vals if r[m] > th]
-        s["metrics"][m] = {"process": proc, "criterion": crit, "threshold": th, "n": len(vals), "min": min(r[m] for r in vals),
+        s[subset][m] = {"process": proc, "criterion": crit, "threshold": th, "n": len(vals), "min": min(r[m] for r in vals),
                            "max": top[m], "argmax": top["key"], "n_above_threshold": len(above),
                            "verdict_flips_with_nuisance": 0 < len(above) < len(vals), "ranges": by}
     if check:
@@ -60,7 +63,7 @@ def main(argv):
                  if recs[k].get(m)), default=None)
         s["cross_check_vs_independent_batch"] = {"file": os.path.basename(check), "n_common": len(common), "max_rel_diff_common_metrics": d}
     if region:
-        s["region_of_maxima"] = {r["key"]: {k: v for k, v in r.items() if k.startswith("region_") or k in ("max_ratio_NZ2_over_N2", "Te_at_max_ratio_eV")}
+        s["region_of_maxima"] = {r["key"]: {k: v for k, v in r.items() if k.startswith("region_") or k.startswith("chemistry_") or k in ("max_ratio_NZ2_over_N2", "Te_at_max_ratio_eV")}
                                  for r in load([region]).values() if r.get("retcode") == "success"}
     json.dump(s, open(OUT, "w"), indent=1)
     with open(RECORDS, "w") as fh:
