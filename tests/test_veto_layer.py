@@ -226,3 +226,42 @@ def test_no_closure_screening_winner_or_filled_tbd(outs, doc):
         assert "compressor bus draw" in startup
     assert doc["milestones"]["supports"] == ["A"]
     assert all(p["status"] == "PROPOSED" for p in doc["proposed_for_owner"])
+
+
+LANE09_MATRIX = "docs/evidence/hall_sustainment/hall_sustainment_matrix.json"
+LANE09_SHA = "76bba594eb1175b2186a8066b38665a2ce5e4cf77487c90f4af2e187a0b82dcc"
+
+
+def test_lane09_matrix_pinned_to_repaired_version_and_mismatch_fails():
+    """Pinned-hash mismatch must raise (a test failure, never a skip)."""
+    pin = [p for p in vl.PINS if p[0] == LANE09_MATRIX]
+    assert len(pin) == 1 and pin[0][1] == LANE09_SHA
+    assert pin[0][2] == ("lane_09_hall_sustainment", "f458811a5720a20216379dd1f701a54d21faf2b6")
+    pins = [(r, ("f" * 64 if r == LANE09_MATRIX else s), l, ro) for r, s, l, ro in vl.PINS]
+    with pytest.raises(vl.InputError, match="changed input"):
+        vl.build(vl.ROOT, tuple(pins))
+
+
+def test_echt_historical_unsupported_status_is_carried(doc, inputs):
+    hs = inputs[LANE09_MATRIX]
+    status = vl._hs_repository_status(hs)
+    assert status.get("E03", {}).get("status") == "HISTORICAL_UNSUPPORTED"
+    assert status.get("E04", {}).get("status") == "HISTORICAL_UNSUPPORTED"
+    # every source_ref citing a lane-09 entry with a repository_status carries it; none lacks it
+    for ri in doc["risk_indicators"]:
+        for ref in ri["source_refs"]:
+            if ref["file"] != LANE09_MATRIX:
+                continue
+            eid = ref["path"].split("[", 1)[1].split("]", 1)[0]
+            if eid in status:
+                assert ref.get("repository_status") == status[eid]["status"]
+            else:
+                assert "repository_status" not in ref
+    notes = [n for n in doc["not_used"] if "repository_status" in n["what"]]
+    assert len(notes) == 1 and "E03: HISTORICAL_UNSUPPORTED" in notes[0]["what"]
+    assert "E04: HISTORICAL_UNSUPPORTED" in notes[0]["what"]
+    # a synthetic citation of E03 must get the status attached
+    ris = [{"id": "SYN", "lane24_basis": "measurement_similar_hardware",
+            "source_refs": [{"file": LANE09_MATRIX, "path": "entries[E03].observations"}]}]
+    vl._carry_hs_repository_status(ris, hs, LANE09_MATRIX)
+    assert ris[0]["source_refs"][0]["repository_status"] == "HISTORICAL_UNSUPPORTED"
