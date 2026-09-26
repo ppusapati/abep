@@ -724,15 +724,22 @@ def test_chemistry_extrapolation_makes_a_map_point_untrustworthy(tmp_path):
 
 
 def test_every_committed_rate_table_has_a_validity_domain():
-    """propellants/rate_validity.toml must cover every rate table present (the driver errors on a missing entry), and
-    the dissociation limit is the documented 45 eV mean energy (T_e = 30 eV)."""
+    """propellants/rate_validity.toml must cover every rate table present (the driver errors on a missing entry). A
+    'verified' entry carries a limit within HallThruster's 0-255 eV grid and no 'verify' caveat; an 'unresolved' entry
+    carries no limit, so it can never certify chemistry_trustworthy. The shipped N2 tables stay unresolved until audited."""
     import os, glob, tomllib
     d = os.path.join(os.path.dirname(os.path.dirname(__file__)), "hallthruster_bridge", "propellants")
     val = tomllib.load(open(os.path.join(d, "rate_validity.toml"), "rb"))
     for f in glob.glob(os.path.join(d, "*.dat")):
         e = val[os.path.basename(f)]
-        assert 0 < e["max_mean_energy_eV"] <= 255 and e["basis"]
+        assert e["status"] in ("verified", "unresolved") and e["basis"]
+        if e["status"] == "verified":
+            assert 0 < e["max_mean_energy_eV"] <= 255 and "verify" not in e["basis"].lower()
+        else:
+            assert "max_mean_energy_eV" not in e
     assert val["dissociation_N2.dat"]["max_mean_energy_eV"] == 45.0
+    assert val["ionization_N.dat"]["max_mean_energy_eV"] == 255.0
+    assert {f for f, e in val.items() if e["status"] == "unresolved"} == {"ionization_N2_N2+.dat", "elastic_N2.dat"}
 
 
 def test_bridge_and_0d_chemistry_are_not_unified():

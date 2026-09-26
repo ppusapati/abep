@@ -40,26 +40,75 @@ function missing_rate_files(c)
     return [f for f in files if !isfile(joinpath(dir, f))]
 end
 
-# Chemistry validity: the lowest documented limit (mean electron energy, eV) over every rate file in the reaction set
-# (propellants/rate_validity.toml). A file without an entry is an error, never a default.
-function chemistry_validity_limit(c)
-    (haskey(c, :propellant_config) && !isempty(c.propellant_config)) ||
-        return Inf, "HallThruster.jl built-in propellant tables (no project validity manifest)"
+# Chemistry validity (no silent extrapolation). propellants/rate_validity.toml gives every rate file a status and, when
+# "verified", the highest mean electron energy (3/2 T_e) up to which it rests on its cited cross sections. A file without
+# an entry is an error, never a default. Returns one entry per reaction: (file, target neutral symbol, rate table on
+# HallThruster's 0-255 eV grid, limit or nothing if unresolved, basis).
+function chemistry_reactions(c)
     cfg = TOML.parsefile(joinpath(@__DIR__, c.propellant_config))
-    val = TOML.parsefile(joinpath(@__DIR__, c.rate_dir, "rate_validity.toml"))
-    lim, why = Inf, ""
+    dir = joinpath(@__DIR__, c.rate_dir)
+    val = TOML.parsefile(joinpath(dir, "rate_validity.toml"))
+    rx = []
     for r in get(cfg, "reactions", [])
         f = get(r, "rate_coeff_file", nothing)
         isnothing(f) && continue
         haskey(val, f) || error("rate file $f has no validity entry in $(c.rate_dir)/rate_validity.toml")
-        e = Float64(val[f]["max_mean_energy_eV"])
-        e < lim && ((lim, why) = (e, "$f: " * val[f]["basis"]))
+        v = val[f]
+        v["status"] in ("verified", "unresolved") || error("rate_validity.toml: $f status must be verified|unresolved")
+        target = haskey(r, "target_species") ? r["target_species"] :
+                 strip(first(t for t in strip.(split(split(r["equation"], "->")[1], "+")) if t != "e"))
+        _, k = het.load_rate_coeff_file(joinpath(dir, f), r["type"])
+        lim = v["status"] == "verified" ? Float64(v["max_mean_energy_eV"]) : nothing
+        push!(rx, (file=f, target=Symbol(target), k=k, limit=lim, basis=v["basis"]))
     end
-    return lim, why
+    return rx
 end
 
-# Chemistry-active region: cells where n_e * (total neutral density) >= CHEM_REGION_FRACTION of its peak.
-const CHEM_REGION_FRACTION = 0.01
+# Rate on HallThruster's own 1-eV mean-energy grid, clamped at the ends exactly as the solver does.
+function rate_at(k, eps)
+    x = clamp(eps, 0.0, length(k) - 1.0)
+    i = min(floor(Int, x), length(k) - 2)
+    return k[i + 1] + (x - i) * (k[i + 2] - k[i + 1])
+end
+
+# Reaction activity R_r = n_e n_target k_r(3/2 T_e), per saved frame of the averaging window and per cell (weighted by
+# cell width; the 1-D area is constant). f_out,r = activity where 3/2 T_e > E_r,max / total activity. Per frame, not on
+# the time-averaged state, because breathing produces transient high-T_e periods that averaging hides.
+const CHEM_FOUT_TOL = 1e-12        # numerical tolerance on f_out (validation rule: f_out = 0)
+
+function chemistry_validity(sol, c, i0)
+    (haskey(c, :propellant_config) && !isempty(c.propellant_config)) || return nothing
+    return chemistry_activity(sol.frames[i0:end], collect(sol.grid), chemistry_reactions(c))
+end
+
+# Pure function of (frames, cell centres, reactions): per reaction, the fraction of n_e n_target k_r dz summed over all
+# frames and cells that comes from cells with 3/2 T_e above the reaction's limit (nothing if unresolved), and the highest
+# mean energy at which the activity exceeds CHEM_FOUT_TOL of its maximum.
+function chemistry_activity(frames, z, rx)
+    dz = [(z[min(i + 1, end)] - z[max(i - 1, 1)]) / (i == 1 || i == length(z) ? 1 : 2) for i in eachindex(z)]
+    res = []
+    for r in rx
+        acts = Float64[]; epss = Float64[]
+        for f in frames
+            haskey(f.neutrals, r.target) || error("reaction target $(r.target) ($(r.file)) is not a neutral fluid")
+            nt = f.neutrals[r.target].n
+            for i in eachindex(z)
+                eps = 1.5 * f.Tev[i]
+                push!(acts, f.ne[i] * nt[i] * rate_at(r.k, eps) * dz[i]); push!(epss, eps)
+            end
+        end
+        Rmax = maximum(acts)
+        tot, out, epsmax = 0.0, 0.0, 0.0
+        for (R, eps) in zip(acts, epss)
+            tot += R
+            R > CHEM_FOUT_TOL * Rmax && (epsmax = max(epsmax, eps))
+            !isnothing(r.limit) && eps > r.limit && (out += R)
+        end
+        push!(res, (file=r.file, limit=r.limit, basis=r.basis, fout=isnothing(r.limit) ? nothing : (tot > 0 ? out / tot : 0.0),
+                    eps_active=epsmax))
+    end
+    return res
+end
 
 const TORR_TO_PA = 133.322368
 
@@ -288,16 +337,31 @@ function run_case(c, mode)
     # solver actually removes it from the ion fluid.
     out["wall_life_trustworthy"] = out["converged"] && out["sustained"] && config.ion_wall_losses &&
                                    haskey(out, "wall_ion_flux_m2s") && haskey(out, "wall_ion_energy_eV")
-    # No silent chemistry extrapolation: every rate table must be used inside its documented domain wherever the
-    # electron-neutral chemistry is active.
-    lim, why = chemistry_validity_limit(c)
-    nn = sum(collect(st.n) for (sym, st) in fr.neutrals)
-    w = collect(fr.ne) .* nn
-    region = w .>= CHEM_REGION_FRACTION * maximum(w)
-    out["Te_chem_region_max_eV"] = maximum(fr.Tev[region])
-    out["chem_validity_limit_mean_energy_eV"] = isfinite(lim) ? lim : nothing
-    out["chem_validity_basis"] = why
-    out["chemistry_trustworthy"] = out["converged"] && out["sustained"] && 1.5 * out["Te_chem_region_max_eV"] <= lim
+    # No silent chemistry extrapolation: no reaction's activity may come from states beyond its table's validity domain
+    # (validation rule f_out = 0), and every table in the set must have a verified domain.
+    chem = chemistry_validity(sol, c, i0)
+    if isnothing(chem)
+        out["chemistry_basis"] = "HallThruster.jl built-in propellant tables (no project validity manifest)"
+        out["chemistry_trustworthy"] = out["converged"] && out["sustained"]
+    else
+        resolved = [r for r in chem if !isnothing(r.fout)]
+        out["chemistry_unresolved_rate_files"] = [r.file for r in chem if isnothing(r.fout)]
+        out["chemistry_per_reaction"] = [Dict("file" => r.file, "max_mean_energy_eV" => r.limit, "extrapolated_fraction" => r.fout,
+                                              "max_mean_energy_active_eV" => r.eps_active, "basis" => r.basis) for r in chem]
+        if !isempty(resolved)
+            # limiting file: largest extrapolated fraction; ties (e.g. all zero) broken by the smallest margin to its limit
+            lim = argmax(r -> (r.fout, r.eps_active / r.limit), resolved)
+            out["chemistry_extrapolated_fraction_max"] = lim.fout
+            out["chemistry_limiting_rate_file"] = lim.file
+            out["chemistry_max_mean_energy_active_eV"] = lim.eps_active
+        else
+            out["chemistry_extrapolated_fraction_max"] = nothing
+            out["chemistry_limiting_rate_file"] = nothing
+            out["chemistry_max_mean_energy_active_eV"] = nothing
+        end
+        out["chemistry_trustworthy"] = out["converged"] && out["sustained"] && isempty(out["chemistry_unresolved_rate_files"]) &&
+                                       all(r.fout <= CHEM_FOUT_TOL for r in resolved)
+    end
     out["schema"] = String(SCHEMA.schema)
     out["schema_missing"] = schema_missing(out)
     out["map_ready"] = isempty(out["schema_missing"])

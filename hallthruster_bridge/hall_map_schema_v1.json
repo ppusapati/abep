@@ -144,7 +144,7 @@
    "unit": "-",
    "type": "bool",
    "status": "computed",
-   "definition": "converged AND sustained AND 1.5 x (max time-averaged T_e over the chemistry-active region, n_e * total neutral density >= 1 % of its peak) <= the lowest max_mean_energy_eV of the reaction set's rate files (propellants/rate_validity.toml). Built-in xenon: no project limit. A point outside it uses extrapolated chemistry and is neither validation- nor performance-trustworthy"
+   "definition": "converged AND sustained AND every rate file in the reaction set has status 'verified' in propellants/rate_validity.toml AND, for every reaction r, f_out,r = 0 (<= 1e-12): the fraction of its activity n_e n_target k_r(3/2 T_e) dz, summed over every saved frame of the averaging window and every cell, that comes from cells with 3/2 T_e above the file's max_mean_energy_eV. Per frame, not time-averaged. Built-in xenon: converged AND sustained (no project manifest). A point failing it uses unverified or extrapolated chemistry and is neither validation- nor performance-trustworthy"
   }
  }
 }

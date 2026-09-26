@@ -13,9 +13,15 @@ Integration is done by `abep_sim/rate_tables.py`, which is verified against the 
 | excitation_N2.dat | e + N2 -> N2* + e (lumped electronic; energy-weighted) | Itikawa 2006 / Song et al. 2023 | **missing: same** |
 | elastic_N.dat | e + N momentum transfer | e.g. Wang, Zatsarinny & Bartschat, Phys. Rev. A 89, 062714 (2014) | **missing: same** |
 
-Validity domains: `rate_validity.toml` gives, per file, the highest mean electron energy up to which the table rests on
-its cited cross sections. The driver refuses a reaction set with an unlisted file, and flags a run
-`chemistry_trustworthy = false` when its chemistry-active region exceeds the lowest limit (schema field).
+Validity domains: `rate_validity.toml` marks each file `verified` (highest mean electron energy at which < 1 % of the
+Maxwellian rate rests beyond the last cited cross-section point, capped at HallThruster's 255 eV grid) or `unresolved`.
+The driver refuses a reaction set with an unlisted file. A run is `chemistry_trustworthy` only if no file is unresolved
+and no reaction has activity (n_e n_target k_r, every saved frame and cell) beyond its limit (schema field).
+Audit 2026-09-26: `ionization_N.dat` verified to 255 eV (NIST source 15–5000 eV; tail share 0.0000 %). The shipped
+`ionization_N2_N2+.dat` (0–300 eV) and `elastic_N2.dat` (0–100 eV only; the solver holds the 100 eV value above) are
+unresolved: HallThruster.jl ships the rate tables but not the Itikawa 2006 cross-section inputs, so their tails cannot be
+audited. Rebuilding them from Song et al. JPCRD 2023 Table 10 (ionization) and Table 5 (MTCS, 0.001 eV–10 keV) would
+resolve both.
 
 Scope: these files are read only by HallThruster.jl (via `n2_n.toml`). The Python 0-D chemistry (`abep_sim/plasma_chem.py`)
 does not read this directory. It uses its own Arrhenius fits except for one table, `abep_sim/data/rates/ionization_N2_N2+.dat`.

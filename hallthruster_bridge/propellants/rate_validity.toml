@@ -1,20 +1,26 @@
-# Validity domain of each rate table, as the highest mean electron energy (3/2 T_e, eV) up to which the table rests on
-# its cited cross sections rather than on an extrapolation. Read by bridge_lib.jl: a run whose chemistry-active region
-# reaches beyond the lowest limit in its reaction set is not chemistry_trustworthy. Every rate file named in a propellant
-# config must have an entry here (no default). 255 eV = the whole HallThruster.jl rate grid (0-255 eV).
+# Validity domain of each rate table, read by bridge_lib.jl (chemistry_validity). Every rate file named in a propellant
+# config must have an entry here; a missing entry is a driver error, never a default.
+#   status = "verified":   max_mean_energy_eV is the highest mean electron energy (3/2 T_e, eV) at which the part of the
+#                          Maxwellian rate resting beyond the last cited cross-section point is < 1 %, capped at 255 eV
+#                          (HallThruster.jl interpolates tables on 0-255 eV and holds the end value beyond).
+#   status = "unresolved": the domain has not been audited. Any run using the file is NOT chemistry_trustworthy.
+# A run is chemistry_trustworthy only if, over every saved frame of the averaging window, no reaction has activity
+# n_e n_target k_r at cells where 3/2 T_e exceeds its limit (f_out = 0 within 1e-12), and no file is unresolved.
 
 ["dissociation_N2.dat"]
+status = "verified"
 max_mean_energy_eV = 45.0
-basis = "Table 9 ends at 200 eV; held tail carries < 1 % of the rate up to 45 eV mean energy (T_e = 30 eV), 3.8 % at 60 eV (build_n2_dissociation_table.py)"
+basis = "JPCRD 2023 Table 9 ends at 200 eV; held tail carries 0.95 % of the rate at 45 eV mean energy (T_e = 30 eV), 3.8 % at 60 eV (scripts/build_n2_dissociation_table.py)"
 
 ["ionization_N.dat"]
+status = "verified"
 max_mean_energy_eV = 255.0
-basis = "NIST SRD 107 Kim & Desclaux tabulation extends to keV energies (verify exact upper limit at rebuild)"
+basis = "NIST SRD 107 Kim & Desclaux N(4S) tabulation spans 15-5000 eV (audited 2026-09-26); held-tail share 0.0000 % up to 300 eV mean energy"
 
 ["ionization_N2_N2+.dat"]
-max_mean_energy_eV = 255.0
-basis = "shipped with HallThruster.jl v0.23.1 (Itikawa 2006); tail treatment of the shipped table not audited here (verify)"
+status = "unresolved"
+basis = "shipped with HallThruster.jl v0.23.1, citing Itikawa 2006 (reactions/CITATIONS.md); table spans 0-300 eV mean energy, but the cross-section input and its energy extent are not in the package, so the tail cannot be audited. Resolve by rebuilding from Song et al. JPCRD 2023 Table 10"
 
 ["elastic_N2.dat"]
-max_mean_energy_eV = 255.0
-basis = "shipped with HallThruster.jl v0.23.1 (Itikawa 2006); tail treatment of the shipped table not audited here (verify)"
+status = "unresolved"
+basis = "shipped with HallThruster.jl v0.23.1, citing Itikawa 2006; table stops at 100 eV mean energy (the solver holds the 100 eV value beyond), and the cross-section input is not in the package. Resolve by rebuilding from Song et al. JPCRD 2023 Table 5 (MTCS, 0.001 eV-10 keV)"

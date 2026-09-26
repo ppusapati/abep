@@ -1543,3 +1543,34 @@ It must never leak upstream, or into Vyovrinda's own thruster geometry.
 - Johnson 2005 is free-to-read on Wiley (bronze OA). Ragimkhanov 2026 is CC BY on Springer.
 - Both publisher sites answer scripted requests with a JavaScript/bot challenge (HTTP 403 / "Client Challenge"). Using the headless browser would have needed a trust-store change, which was not permitted.
 - No repository copy was found: NTRS has no PDF, and OpenAlex lists publisher locations only. So neither table is built yet.
+
+## 2026-09-26 — Chemistry guard tightened (reaction-weighted, per frame); validity audit
+
+This replaces the first version (commit d2009b3). That version used the time-averaged T_e over an n_e·n_n ≥ 1 %-of-peak region. It could miss two things:
+- a low-density, high-T_e cell whose rate k_r makes it matter;
+- a transient hot frame during breathing.
+
+**Now:**
+- For each reaction r, the activity R = n_e·n_target·k_r(3/2 T_e)·dz is summed over every saved frame of the averaging window and every cell.
+- f_out,r is the share of that activity at 3/2 T_e above the file's limit. Validation rule: f_out = 0 (≤ 1e-12). No contribution allowance is set; one would have to be pre-registered, e.g. for architecture maps.
+- k_r comes from the same 0–255 eV grid and end-clamping that the solver uses.
+
+**New outputs:**
+- `chemistry_extrapolated_fraction_max`;
+- `chemistry_limiting_rate_file`;
+- `chemistry_max_mean_energy_active_eV`;
+- `chemistry_unresolved_rate_files`;
+- `chemistry_per_reaction`;
+- `chemistry_trustworthy`.
+
+**Checks:**
+- `checks/chemistry_validity_check.jl` uses synthetic frames with the real dissociation table. The cold case gives 0. A single transient 40 eV frame gives f_out = 0.016. A hot cell at 0.5 % of peak n_e·n_n gives 8.7e-4. The old region cut would have missed both.
+- End-to-end N₂ smoke run (N1, 0.5 ms, uncommitted reaction subset without excitation or N elastic): not chemistry-trustworthy, because two tables are unresolved. Dissociation f_out = 0, with a max active mean energy of 35.9 eV (limit 45).
+- End-to-end Xe1 smoke run: the built-in path is unchanged.
+
+**Validity audit:**
+- A "verify" value can no longer certify trust. Entries are now `verified` or `unresolved`.
+- `ionization_N.dat` is verified to 255 eV. The NIST source spans 15–5000 eV, and the held-tail share is 0.0000 % up to 300 eV.
+- The HallThruster-shipped `ionization_N2_N2+.dat` and `elastic_N2.dat` are **unresolved**. The package has no cross-section inputs (reactions/CITATIONS.md cites Itikawa 2006 only), and `elastic_N2.dat` ends at 100 eV mean energy, above which the solver holds the last value.
+- Consequence: no N₂ run can be chemistry-trustworthy until these two tables are audited or rebuilt from Song et al. JPCRD 2023 Tables 10/5.
+
