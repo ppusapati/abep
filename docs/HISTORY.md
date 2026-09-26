@@ -1627,3 +1627,28 @@ This replaces the first version (commit d2009b3). That version used the time-ave
 **Remaining N₂/N gaps:**
 - the 8 excitation reactions and N elastic, both blocked on source access;
 - dissociative/double ionization, rotational/vibrational excitation (not in the set; owner decision).
+
+## 2026-09-26 — abep-n2n-0.2 + 0.3 merged (PR #19); N₂ reaction-set completeness criterion
+
+**Merged:** PR #19, with the two separate commits (0.2 ionization, 0.3 momentum transfer). The shipped elastic table's origin stays **unresolved**; no origin is inferred for it.
+
+**Completeness decision (owner):** "every file referenced by n2_n.toml exists" is not the same as "physically complete enough for validation". The processes are staged by physical importance:
+
+| tier | processes | rule |
+|---|---|---|
+| 1 | 8 N₂ electronic-excitation channels; atomic-N momentum transfer | required before P5-N₂ scoring |
+| 2 | N₂ vibrational excitation; dissociative ionization (N₂ → N⁺ + N) | must be assessed before the set is called complete; can materially change the electron-energy or species balance |
+| 3 | rotational excitation; double ionization | explicit "assessed / not included" list unless a bounding calculation shows a non-negligible contribution |
+
+**Criterion:**
+- Every omitted process is bounded by its maximum fractional contribution, over the intended T_e range, to electron energy loss P_e and to species production/destruction S_s.
+- Any process above a threshold (likely 1–2 %) is promoted into the model.
+- The threshold is pre-registered **before any P5-N₂ fit quality is seen**. `PINNED.toml` stays INCOMPLETE until the audit is done.
+
+**Sequence:** 8 × N₂* excitation → N momentum transfer → omitted-process importance audit → reaction-set completeness decision → P5-N₂ pre-registration.
+
+**Pre-registration (2026-09-26, before any P5-N₂ scoring):** `hallthruster_bridge/prereg/n2_completeness_audit_v1.json`.
+- **Domain:** T_e = 2–30 eV (mean energy 3–45 eV). The upper limit is the tightest verified table (dissociation). Vibrational and rotational excitation use T_e = 0.2–30 eV.
+- **Rule:** promote if F_P > 0.01 (share of total electron inelastic power) ∨ F_ion > 0.01 (share of total positive-ion production) ∨ F_S_s > 0.05 (share of any modeled species' production or destruction), anywhere in the domain.
+- **Denominators:** the best currently available included set. Verdicts made before the 8 excitation and the vibrational channels exist are provisional.
+- A test pins these values.

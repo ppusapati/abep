@@ -725,6 +725,19 @@ def test_n2_elastic_song2023_table_reproduces_jpcrd_table5():
     assert [h.split()[0].rstrip(":") for h in pinned["history"]] == ["abep-n2n-0.1", "abep-n2n-0.2", "abep-n2n-0.3"]
 
 
+def test_n2_completeness_audit_preregistration_is_frozen():
+    """The omitted-process audit criteria were pre-registered before any P5-N2 scoring. Changing them is a new
+    pre-registration (new id), never an edit of v1."""
+    import json, os
+    p = os.path.join(os.path.dirname(os.path.dirname(__file__)), "hallthruster_bridge", "prereg", "n2_completeness_audit_v1.json")
+    r = json.load(open(p))
+    assert r["id"] == "n2_completeness_audit_v1" and r["registered"] == "2026-09-26"
+    assert r["thresholds"] == {"F_P": 0.01, "F_ion": 0.01, "F_S_s": 0.05}
+    assert r["domains"]["default"]["Te_eV"] == [2.0, 30.0] and r["domains"]["default"]["mean_energy_eV"] == [3.0, 45.0]
+    assert r["domains"]["vibrational_excitation"]["Te_eV"] == [0.2, 30.0]
+    assert r["domains"]["rotational_excitation"]["Te_eV"] == [0.2, 30.0]
+
+
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""
     from abep_sim.rate_tables import maxwellian_rate, tail_sensitivity
