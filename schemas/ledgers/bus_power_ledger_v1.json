@@ -1,0 +1,189 @@
+{
+ "schema": "bus_power_ledger_v1",
+ "version": "1.0",
+ "status": "schema only: term definitions, origins and closure rules. It carries no power numbers; instances are produced from a closed architecture operating point. Not wired into abep_sim (wiring is a model change for the owner).",
+ "companions": ["schemas/ledgers/subsystem_ledger_v1.json", "schemas/ledgers/thermal_rejection_ledger_v1.json", "docs/ledgers/LEDGERS.md"],
+ "boundary": {
+  "definition": "P_bus = all electrical power crossing the spacecraft-side DC boundary into the propulsion system: discharge + pre-ionizer + cathode + magnets + PPU losses + gas path (compressor, valves/flow control) + controls + thermal control (heaters) + any other propulsion load. Wording follows the CLAUDE.md admissibility rule for bus_power_boundary_v1.",
+  "plane": "input terminals of the PPU converters on the regulated spacecraft bus (abep_sim/ppu.py:PPU.V_bus); matches loads['P_bus_W'] of abep_sim/ppu.py:PPU.loads as used by abep_sim/archengine.py:close_architecture",
+  "never_P_bus": [
+   "absorbed RF or microwave power in the source plasma (abep_sim/plasma_devices.py:ECRSource.absorbed, RFSource.absorbed); the bus-side quantity is the DC converter output P_ion_W plus its conversion loss",
+   "Hall discharge-only power (I_d x V_d) reported alone",
+   "jet or beam power"
+  ],
+  "outside": "solar-array generation, EPS/battery round-trip losses and spacecraft housekeeping loads (abep_sim/mission_env.py:array_area_for sizes arrays from P_bus; those losses are not propulsion bus terms)",
+  "alignment": "bus_power_boundary_v1 is named in CLAUDE.md but is not present in the tree at base efc4a4e; when it lands, its field names take precedence and this ledger is re-mapped to them (gap G8)"
+ },
+ "modes": {
+  "steady": "firing steady state; the only mode archengine close_architecture evaluates",
+  "startup": "cathode heater + keeper x1.5 + compressor spin-up x1.8 (abep_sim/ppu.py:load_modes 'startup'); not evaluated by archengine (gap G7)",
+  "peak": "maximum simultaneous draw (e.g. solar-max flow, Xe augmentation); no producer in archengine (gap G7)"
+ },
+ "value_record": "as defined in subsystem_ledger_v1.value_record (value, unit, status, origin, evidence; null value unless status is computed)",
+ "terms": [
+  {
+   "id": "P_discharge",
+   "definition": "DC output of the Hall anode supply at its load plane (discharge power I_d x V_d)",
+   "subsystems": ["hall_discharge"],
+   "ppu_converters": ["anode"],
+   "archengine_energy_ledger_terms": ["jet", "plume", "accelerator_body"],
+   "origin": "abep_sim/archengine.py:_propulsion P_acc_W (Hall branch, from abep_sim/plasma_devices.py:hall_run_coupled)",
+   "status": "superseded",
+   "superseded_by": "discharge_power_W of an admitted transport-ensemble member's design Hall map (hallthruster_bridge/hall_map_schema_v1.json, abep_sim/hall_map.py:HallMap); the credible set is empty, so value is null (TBD)",
+   "hall_transport_ensemble_role": "carrier",
+   "gaps": ["G13"]
+  },
+  {
+   "id": "P_accelerator_other",
+   "definition": "accelerating-stage supply of non-Hall families screened by archengine (grids anode, MPD, PIT capacitor charger, electrothermal heater)",
+   "subsystems": ["accelerator_other_family"],
+   "ppu_converters": ["anode", "mpd_hc", "cap_charger", "heater_main"],
+   "archengine_energy_ledger_terms": ["jet", "plume", "accelerator_body"],
+   "origin": "abep_sim/archengine.py:_propulsion P_acc_W (grids / mpd / pit / thermal branches)",
+   "status": "computed",
+   "note": "screening families only; CLAUDE.md rule 8 (no new propulsion families) applies",
+   "hall_transport_ensemble_role": "not_applicable"
+  },
+  {
+   "id": "P_preionizer",
+   "definition": "DC output of the pre-ionizer supply (RF amplifier or ECR/microwave HV supply) into the source, when the architecture has one",
+   "subsystems": ["preionizer"],
+   "ppu_converters": ["hv_mw", "rf_amp"],
+   "archengine_energy_ledger_terms": ["ionizer", "jet"],
+   "origin": "abep_sim/archengine.py:_propulsion P_ion_W (design variable, abep_sim/archengine.py:_variables)",
+   "status": "computed",
+   "note": "the 'jet' share appears only when jet power exceeds the accelerating supply (from_src in close_architecture); absorbed plasma power is not a bus term",
+   "hall_transport_ensemble_role": "independent"
+  },
+  {
+   "id": "P_cathode",
+   "definition": "cathode/neutralizer supplies: keeper (LaB6), heater (startup), plasma-bridge source (air cathodes)",
+   "subsystems": ["cathode"],
+   "ppu_converters": ["keeper", "heater", "cathode_src"],
+   "archengine_energy_ledger_terms": ["neutralizer"],
+   "origin": "abep_sim/archengine.py:Neutralizer.operate P_W (LaB6 via abep_sim/plasma_devices.py:LaB6Cathode.operate)",
+   "status": "partial",
+   "note": "steady total only; heater draw exists only in abep_sim/ppu.py:load_modes 'startup'",
+   "hall_transport_ensemble_role": "downstream_consumer",
+   "gaps": ["G6", "G7"]
+  },
+  {
+   "id": "P_magnets",
+   "definition": "electromagnet coil supply",
+   "subsystems": ["magnets"],
+   "ppu_converters": ["magnet"],
+   "archengine_energy_ledger_terms": ["magnets"],
+   "origin": "abep_sim/archengine.py:close_architecture P_mag (code constant for hall / nozzle / ECR architectures)",
+   "status": "partial",
+   "hall_transport_ensemble_role": "independent",
+   "gaps": ["G5"]
+  },
+  {
+   "id": "P_compressor",
+   "definition": "compressor motor drive",
+   "subsystems": ["compressor"],
+   "ppu_converters": ["motor"],
+   "archengine_energy_ledger_terms": ["compressor"],
+   "origin": "abep_sim/archengine.py:gas_path_state comp_power (from abep_sim/system.py:evaluate, gaspath_physics=True)",
+   "status": "computed",
+   "hall_transport_ensemble_role": "forbidden_upstream"
+  },
+  {
+   "id": "P_valves_control",
+   "definition": "valve actuation/holding and flow-controller power on both propellant paths (atmospheric valve, Xe valve/regulator)",
+   "subsystems": ["valves", "xe_tank"],
+   "ppu_converters": [],
+   "archengine_energy_ledger_terms": [],
+   "origin": "TBD — requires valve and flow-controller selection for both propellant paths with holding/actuation power data",
+   "status": "TBD",
+   "hall_transport_ensemble_role": "forbidden_upstream",
+   "gaps": ["G3"]
+  },
+  {
+   "id": "P_aux_unallocated",
+   "definition": "the 'aux' converter load that the code carries without naming its consumer",
+   "subsystems": ["valves", "avionics"],
+   "ppu_converters": ["aux"],
+   "archengine_energy_ledger_terms": ["aux"],
+   "origin": "abep_sim/archengine.py:close_architecture ledger['aux'] and demand['aux'] (code constant)",
+   "status": "partial",
+   "note": "counted so the ledger closes; to be re-allocated to P_valves_control and/or P_avionics once the consumer is defined",
+   "hall_transport_ensemble_role": "independent",
+   "gaps": ["G2"]
+  },
+  {
+   "id": "P_thermal",
+   "definition": "heater power (gas chamber, Xe tank/lines, electronics survival) set by the cold-case (eclipse) thermal solution",
+   "subsystems": ["thermal_control", "buffer", "xe_tank"],
+   "ppu_converters": [],
+   "archengine_energy_ledger_terms": [],
+   "origin": "TBD — requires heater set-points and a heater-power derivation from the cold case of abep_sim/thermal.py:size_radiator (computed there, not converted into heater power)",
+   "status": "TBD",
+   "hall_transport_ensemble_role": "downstream_consumer",
+   "gaps": ["G4"]
+  },
+  {
+   "id": "P_avionics",
+   "definition": "propulsion controller and sensors",
+   "subsystems": ["avionics"],
+   "ppu_converters": [],
+   "archengine_energy_ledger_terms": ["ppu_loss_control"],
+   "origin": "abep_sim/ppu.py:PPU.loads (controller_W + sensors_W, code constants, included in P_bus_W and P_loss_W)",
+   "status": "partial",
+   "hall_transport_ensemble_role": "independent",
+   "gaps": ["G17"]
+  },
+  {
+   "id": "P_PPU_losses",
+   "definition": "conversion losses of all PPU converters (P_in - P_out summed over converters)",
+   "subsystems": ["ppu"],
+   "ppu_converters": ["*"],
+   "archengine_energy_ledger_terms": ["ppu_loss_control"],
+   "origin": "abep_sim/ppu.py:PPU.loads (P_loss_W minus controller_W and sensors_W) with abep_sim/ppu.py:Converter.efficiency",
+   "status": "computed",
+   "hall_transport_ensemble_role": "downstream_consumer",
+   "gaps": ["G17"]
+  },
+  {
+   "id": "P_harness_losses",
+   "definition": "resistive loss in the bus-side and load-side harness",
+   "subsystems": ["ppu"],
+   "ppu_converters": [],
+   "archengine_energy_ledger_terms": [],
+   "origin": "TBD — requires harness lengths, gauges and currents; abep_sim/ppu.py:PPU.mass sizes harness mass only",
+   "status": "TBD",
+   "hall_transport_ensemble_role": "downstream_consumer",
+   "gaps": ["G15"]
+  }
+ ],
+ "closure": {
+  "identity": "P_bus_W = sum over terms of P_term_W (each term at the bus side, i.e. load-plane power plus its converter loss booked in P_PPU_losses)",
+  "residual": "resid = (P_bus_W - sum_terms P_term_W) / P_bus_W, with P_bus_W taken from abep_sim/ppu.py:PPU.loads",
+  "gate": "|resid| <= 0.02 (abep_sim/archengine.py:close_architecture rejects the candidate as 'energy_ledger' otherwise; CLAUDE.md rule 4)",
+  "golden_comparison": "near-zero ledger_resid values are compared with an absolute tolerance (CLAUDE.md gate 6)",
+  "completeness": {
+   "rule": "closure is reported with a completeness flag, never as complete while a term is TBD",
+   "values": {
+    "CLOSED_ALL_TERMS": "|resid| <= 0.02 and every applicable term has status computed",
+    "CLOSED_MODELED_TERMS_ONLY": "|resid| <= 0.02 over computed/partial terms; at least one applicable term is TBD (list them in open_terms)",
+    "NOT_EVALUABLE": "an applicable term is superseded (e.g. P_discharge while the Hall credible set is empty); no P_bus is reported",
+    "OPEN": "|resid| > 0.02"
+   }
+  },
+  "cap_check": "P_bus_W <= abep_sim/constants.py:RFPConstraints power_max_W is checked only on CLOSED_ALL_TERMS instances; on CLOSED_MODELED_TERMS_ONLY it is reported as a lower bound (missing TBD terms can only add power)",
+  "per_mode": "the identity and gate apply to each mode separately (steady, startup, peak); a mode without a producer is status TBD, not copied from steady"
+ },
+ "instance_required_fields": {
+  "schema": "\"bus_power_ledger_v1\"",
+  "architecture": "abep_sim/archengine.py:arch_name",
+  "operating_point_ref": "design variables x_* and gas-path state",
+  "mode": "steady | startup | peak",
+  "V_bus_V": "value_record (abep_sim/ppu.py:PPU.V_bus)",
+  "terms": "{term_id: value_record} for every term above (not_applicable with reason where the architecture lacks it)",
+  "P_bus_W": "value_record",
+  "resid": "value_record (dimensionless)",
+  "completeness": "one of closure.completeness.values",
+  "open_terms": "list of TBD term ids",
+  "ensemble_member_id": "required when P_discharge is computed from an admitted member's design Hall map; null otherwise"
+ }
+}

@@ -1,0 +1,1794 @@
+{
+ "schema": "subsystem_ledger_v1",
+ "version": "1.0",
+ "status": "schema only: defines fields, conventions and mappings to existing code. It carries no subsystem numbers and is not wired into abep_sim (wiring is a model change for the owner).",
+ "purpose": "Common engineering ledger so that every propulsion subsystem exposes the same six quantities (performance, power, mass, rejected heat, life/degradation, uncertainty) with the same value/evidence record. Companion schemas: bus_power_ledger_v1.json (electrical source side) and thermal_rejection_ledger_v1.json (heat disposition side). Field names follow abep_sim/archengine.py:close_architecture where a producer exists; mapping, gaps and closure rules are in docs/ledgers/LEDGERS.md.",
+ "scope": {
+  "rfp_architecture": "atmospheric path: intake -> filter -> compressor -> atmospheric gas chamber -> valve; Xe path: Xe chamber -> valve; both feed ionization/discharge -> acceleration/thrust (CLAUDE.md, two-layer Hall uncertainty, Scope).",
+  "boundary": "the propulsion subsystem, from the intake aperture to the thruster exit plane, electrically from the propulsion DC bus input (bus_power_ledger_v1 boundary). Spacecraft bus housekeeping, solar arrays and the EPS round trip are outside (abep_sim/mission_env.py:Spacecraft, abep_sim/mission_env.py:array_area_for).",
+  "not_in_scope": "new propulsion families (CLAUDE.md rule 8); calibration-nuisance (layer-1) variables of the P5 experiment, which are never ledger fields, map axes or design variables."
+ },
+ "quantities": {
+  "performance": {
+   "definition": "subsystem-specific functional metrics at the operating point (what the subsystem delivers to the next block). Metric ids, units and producers are declared per subsystem in subsystems.<id>.performance.metrics.",
+   "fields": {
+    "metrics": "{metric_id: value_record}"
+   }
+  },
+  "power": {
+   "definition": "electrical power delivered to the subsystem at its load plane (converter output side). Conversion losses are booked to the ppu subsystem, never to the consumer. Bus-side totals live in bus_power_ledger_v1.",
+   "fields": {
+    "P_steady_W": "value_record, mode 'steady'",
+    "P_peak_W": "value_record, mode 'peak'",
+    "P_startup_W": "value_record, mode 'startup' (optional for subsystems without a startup draw: status not_applicable with reason)",
+    "bus_terms": "list of bus_power_ledger_v1 term ids this subsystem's load contributes to"
+   }
+  },
+  "mass": {
+   "definition": "current best estimate and growth by item class (abep_sim/mass_bom.py:build_bom, abep_sim/mass_bom.py:MGA).",
+   "fields": {
+    "m_cbe_kg": "value_record: current best estimate (dry)",
+    "mga_class": "one of mass_bom.MGA classes: new | modified | existing | calculated",
+    "m_mev_kg": "value_record: m_cbe_kg * (1 + MGA[mga_class]) (computed, never entered)",
+    "m_consumable_kg": "value_record: propellant or other consumables carried by this subsystem (reported separately from dry mass; not_applicable if none)"
+   }
+  },
+  "rejected_heat": {
+   "definition": "heat that the subsystem hands to the thermal network, kept distinct from its electrical input. Full per-subsystem balance and closure rules in thermal_rejection_ledger_v1.",
+   "fields": {
+    "Q_int_W": "value_record: internal dissipation handed to the thermal network",
+    "Q_env_absorbed_W": "value_record: absorbed environmental heat (solar, Earth IR, albedo, aero) on the subsystem's external surfaces",
+    "Q_rejected_W": "value_record: Q_int_W + Q_env_absorbed_W (steady state; computed, never entered)",
+    "P_exported_W": "value_record: power leaving the subsystem to space without passing the thermal network (jet kinetic power, plume, direct plasma radiation)",
+    "P_transferred_W": "{target_subsystem_id: value_record}: power carried to another subsystem (e.g. flow enthalpy, source power recovered as jet power)",
+    "thermal_nodes": "list of abep_sim/thermal.py:default_nodes node names this subsystem's Q_int is assigned to (empty list = unassigned, which is a closure gap)"
+   }
+  },
+  "life": {
+   "definition": "time or cycles to the limiting degradation mechanism, with its basis, and the degradation state that feeds performance drift.",
+   "fields": {
+    "life": "value_record (unit h or cycles)",
+    "basis": "firing_hours | calendar_hours | cycles | TBD",
+    "limiting_mechanism": "text (e.g. wall sputtering, AO coating erosion, emitter evaporation, bearing wear)",
+    "degradation_metrics": "{metric_id: value_record} (e.g. erosion depth, accommodation drift, B loss fraction)",
+    "requirement_ref": "the requirement the life is compared against (abep_sim/constants.py:RFPConstraints ignition_hours for firing basis, mission_hours for calendar basis), or TBD",
+    "life_trustworthy": "bool or null: true only when the producer's own validity gate is met (e.g. hall_map wall_life_trustworthy); null when the producer has no gate"
+   }
+  },
+  "uncertainty": {
+   "definition": "how each reported quantity is uncertain and why. Every numeric value_record carries its own evidence.uncertainty; this block lists the subsystem-level drivers and representation.",
+   "fields": {
+    "representation": "one of uncertainty_representations",
+    "drivers": "list of {name, kind: epistemic | aleatory, ref: code reference of an existing prior or 'TBD — requires ...'}",
+    "ensemble_member_id": "transport-ensemble member id for values derived from Hall discharge outputs (hall_transport_ensemble_role carrier or downstream_consumer); null otherwise",
+    "envelope_over_members": "for carrier/downstream_consumer subsystems: min/max across admitted members (unweighted scenario set, no probabilities)"
+   }
+  }
+ },
+ "uncertainty_representations": {
+  "interval": "bounded range with its source",
+  "triangular_prior": "(low, mode, high) prior as in abep_sim/uq_modular.py:PRIORS or abep_sim/uncertainty.py:DEFAULT_PRIORS; encodes literature spread, not measurement",
+  "distribution": "any other stated distribution with its source",
+  "unweighted_scenario_set": "set of admitted alternatives reported as an envelope with no weights (the Hall layer-2 transport credible set)",
+  "reading_variants": "alternative readings of the same published evidence carried side by side (e.g. beam-efficiency readings A/B)",
+  "none_quantified": "no uncertainty stated by any source: an explicit gap, never an implicit zero"
+ },
+ "value_record": {
+  "definition": "every numeric quantity in a ledger instance is a value_record; bare numbers are not allowed",
+  "required": [
+   "value",
+   "unit",
+   "status",
+   "origin",
+   "evidence"
+  ],
+  "status_enum": {
+   "computed": "produced by the cited origin at the cited operating point and mode",
+   "superseded": "the only producer is a superseded or withdrawn model (e.g. the 0-D Hall closure, CLAUDE.md 'Superseded / withdrawn'); value must be null and the field must name what supersedes it",
+   "TBD": "no producer yet; value must be null and 'requires' must say what is needed",
+   "not_applicable": "the subsystem has no such quantity in this architecture or mode; value must be null and 'reason' is required"
+  },
+  "fields": {
+   "value": "number or null (null unless status is computed)",
+   "unit": "SI unit string",
+   "status": "one of status_enum",
+   "origin": "code reference 'path/to/file.py:qualname' of the producer, or 'TBD — requires <what>', or 'not_applicable — <reason>'",
+   "mode": "steady | peak | startup (for power and heat quantities)",
+   "operating_point_ref": "architecture name (abep_sim/archengine.py:arch_name) and design variables x_* of the operating point",
+   "requires": "required when status is TBD",
+   "reason": "required when status is not_applicable",
+   "superseded_by": "required when status is superseded",
+   "evidence": "evidence_record"
+  }
+ },
+ "evidence_record": {
+  "definition": "the attributes docs/EVIDENCE.md requires for every simulator input (its 'Future' programmatic fields)",
+  "required": [
+   "source",
+   "evidence_level",
+   "quantity_type",
+   "uncertainty",
+   "applicability_domain",
+   "validation_status",
+   "transformation_chain"
+  ],
+  "evidence_levels": {
+   "1": "in-house measurement on the actual Vyovrinda hardware and operating condition",
+   "2": "independent measurement on the same or essentially identical hardware",
+   "3": "primary experimental literature on the same or closely similar hardware",
+   "4": "validated physics or evaluated-data literature",
+   "5": "indirect published evidence (secondary literature, reviews, compilations, inherited datasets)",
+   "6": "engineering correlation, or extrapolation outside its directly validated domain",
+   "7": "assumption or hypothesis without direct validating evidence for the present application"
+  },
+  "quantity_types": [
+   "measured",
+   "digitized",
+   "inferred",
+   "reconstructed",
+   "model-derived",
+   "assumed"
+  ],
+  "rules": [
+   "evidence level and quantity type are orthogonal (docs/EVIDENCE.md)",
+   "a code constant without a cited source is quantity_type 'assumed' at evidence level 7 until a source is recorded",
+   "a value recalled from memory without a verified source is marked 'verify' in source and cannot be above level 7",
+   "digitization, unit conversion or interpolation never changes the evidence level; it is recorded in transformation_chain"
+  ]
+ },
+ "instance_required_fields": {
+  "schema": "\"subsystem_ledger_v1\"",
+  "subsystem_id": "one of subsystems",
+  "architecture": "archengine architecture name (abep_sim/archengine.py:arch_name)",
+  "operating_point_ref": "design variables and gas-path state reference",
+  "modes": "list of modes evaluated (subset of steady, peak, startup)",
+  "performance": "quantities.performance.fields",
+  "power": "quantities.power.fields",
+  "mass": "quantities.mass.fields",
+  "rejected_heat": "quantities.rejected_heat.fields",
+  "life": "quantities.life.fields",
+  "uncertainty": "quantities.uncertainty.fields",
+  "gaps": "list of gap ids from docs/ledgers/LEDGERS.md that apply to this instance"
+ },
+ "hall_transport_ensemble_roles": {
+  "carrier": "values are produced by an admitted transport-ensemble member's design Hall map (abep_sim/hall_map.py:HallMap); each value carries ensemble_member_id",
+  "downstream_consumer": "values are computed from Hall discharge outputs, so they are reported per admitted member (envelope), but the subsystem's own model takes no transport parameter",
+  "independent": "no dependence on Hall discharge outputs; must not be retuned per member (includes Vyovrinda's own geometry and B(z))",
+  "forbidden_upstream": "upstream of the ionization/discharge block (CLAUDE.md: intake, compressor, gas chambers, valves; Xe chamber); the transport uncertainty must never leak into these models or their uncertainty drivers",
+  "not_applicable": "archengine screening families outside the RFP Hall architecture"
+ },
+ "subsystems": {
+  "intake": {
+   "name": "ram intake (collimator)",
+   "rfp_block": "atmospheric_path",
+   "presence": "all architectures",
+   "hall_transport_ensemble_role": "forbidden_upstream",
+   "performance": {
+    "status": "computed",
+    "metrics": {
+     "eta_c": {
+      "unit": "-",
+      "definition": "capture efficiency referenced to the free-stream flux on the aperture",
+      "origin": "abep_sim/intake.py:collection",
+      "archengine_field": "gas_path_state()['eta_c'] -> close_architecture out['eta_c']"
+     },
+     "mdot_collected_kgps": {
+      "unit": "kg/s",
+      "definition": "collected mass flow",
+      "origin": "abep_sim/intake.py:collection",
+      "archengine_field": "not exported (system.evaluate uses it internally)"
+     },
+     "C_D": {
+      "unit": "-",
+      "definition": "free-molecular drag coefficient of the ram face",
+      "origin": "abep_sim/intake.py:collection",
+      "archengine_field": "gas_path_state()['C_D'] -> out['C_D']"
+     },
+     "CR_passive": {
+      "unit": "-",
+      "definition": "passive compression ratio of the intake (TPMC path)",
+      "origin": "abep_sim/intake_tpmc.py:intake_response",
+      "archengine_field": "not exported"
+     }
+    }
+   },
+   "power": {
+    "status": "not_applicable",
+    "bus_terms": [],
+    "origins": [
+     "not_applicable — passive component in every existing model"
+    ]
+   },
+   "mass": {
+    "status": "computed",
+    "bom_lines": {
+     "archengine": [
+      "intake"
+     ],
+     "system_engineering": [
+      "intake"
+     ]
+    },
+    "origins": [
+     "abep_sim/intake.py:collection",
+     "abep_sim/mass_bom.py:build_bom"
+    ]
+   },
+   "rejected_heat": {
+    "status": "partial",
+    "thermal_nodes": [
+     "intake"
+    ],
+    "archengine_energy_ledger_terms": [],
+    "origins": [
+     "abep_sim/thermal.py:default_nodes",
+     "abep_sim/thermal.py:solve_network"
+    ],
+    "note": "no internal dissipation; absorbed environment (solar, Earth IR, albedo, ram-face aero heating) is computed inside thermal.solve_network but not reported per subsystem",
+    "gaps": [
+     "G19"
+    ]
+   },
+   "life": {
+    "status": "partial",
+    "life_items": [
+     "intake_coating"
+    ],
+    "basis": "calendar_hours",
+    "origins": [
+     "abep_sim/life.py:intake_life"
+    ],
+    "note": "archengine encodes the intake life item as a pass/fail flag, not a life estimate",
+    "gaps": [
+     "G12"
+    ]
+   },
+   "uncertainty": {
+    "status": "partial",
+    "representation": "triangular_prior",
+    "drivers": [
+     {
+      "name": "accommodation",
+      "kind": "epistemic",
+      "ref": "abep_sim/uq_modular.py:PRIORS['accommodation']"
+     },
+     {
+      "name": "eta_c_specular",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['eta_c_specular']"
+     },
+     {
+      "name": "eta_c_diffuse",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['eta_c_diffuse']"
+     },
+     {
+      "name": "surface_state",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['surface_state']"
+     },
+     {
+      "name": "cd_specular",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['cd_specular']"
+     },
+     {
+      "name": "cd_diffuse",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['cd_diffuse']"
+     },
+     {
+      "name": "intake_mass_per_m2",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['intake_mass_per_m2']"
+     }
+    ],
+    "origins": [
+     "abep_sim/uq_modular.py:evaluate_sample"
+    ],
+    "gaps": [
+     "G14"
+    ]
+   }
+  },
+  "filter": {
+   "name": "intake filter element",
+   "rfp_block": "atmospheric_path",
+   "presence": "RFP architecture (intake -> filter -> compressor); never enabled by archengine.gas_path_state",
+   "hall_transport_ensemble_role": "forbidden_upstream",
+   "performance": {
+    "status": "partial",
+    "metrics": {
+     "transmission_factor": {
+      "unit": "-",
+      "definition": "multiplicative factor on eta_c and on the back-flow transmission from the filter open fraction and transmission",
+      "origin": "abep_sim/intake_tpmc.py:intake_response",
+      "archengine_field": "none (IntakeParams.filter stays False in gas_path_state)"
+     },
+     "function_metric": {
+      "unit": "TBD",
+      "definition": "what the filter is required to remove or admit",
+      "origin": "TBD — requires the RFP filter function definition and a filter design with test or published data"
+     }
+    },
+    "gaps": [
+     "G9"
+    ]
+   },
+   "power": {
+    "status": "not_applicable",
+    "bus_terms": [],
+    "origins": [
+     "not_applicable — passive in every existing model"
+    ]
+   },
+   "mass": {
+    "status": "partial",
+    "bom_lines": {
+     "archengine": [],
+     "system_engineering": [
+      "filter"
+     ]
+    },
+    "origins": [
+     "abep_sim/intake.py:collection",
+     "abep_sim/system.py:evaluate"
+    ],
+    "gaps": [
+     "G9"
+    ]
+   },
+   "rejected_heat": {
+    "status": "TBD",
+    "thermal_nodes": [],
+    "archengine_energy_ledger_terms": [],
+    "origins": [
+     "TBD — requires filter placement and optical/thermal properties; no thermal node exists"
+    ]
+   },
+   "life": {
+    "status": "TBD",
+    "life_items": [],
+    "basis": "TBD",
+    "origins": [
+     "TBD — requires filter material and an atomic-oxygen erosion / clogging mechanism with a cited source"
+    ],
+    "gaps": [
+     "G12"
+    ]
+   },
+   "uncertainty": {
+    "status": "TBD",
+    "representation": "none_quantified",
+    "drivers": [],
+    "origins": [
+     "TBD — requires filter test or published data"
+    ],
+    "gaps": [
+     "G14"
+    ]
+   }
+  },
+  "compressor": {
+   "name": "drag / turbomolecular compressor",
+   "rfp_block": "atmospheric_path",
+   "presence": "all air-breathing architectures",
+   "hall_transport_ensemble_role": "forbidden_upstream",
+   "performance": {
+    "status": "computed",
+    "metrics": {
+     "CR_active": {
+      "unit": "-",
+      "definition": "active compression ratio p_out/p_in",
+      "origin": "abep_sim/compressor.py:DragCompressor.run",
+      "archengine_field": "not exported (system.evaluate 'comp_CR_active')"
+     },
+     "delivered_kgps": {
+      "unit": "kg/s",
+      "definition": "mass flow delivered to the gas chamber",
+      "origin": "abep_sim/compressor.py:DragCompressor.run",
+      "archengine_field": "not exported"
+     },
+     "p_out_Pa": {
+      "unit": "Pa",
+      "definition": "outlet pressure",
+      "origin": "abep_sim/compressor.py:DragCompressor.run",
+      "archengine_field": "not exported"
+     },
+     "rpm": {
+      "unit": "1/min",
+      "definition": "rotor speed selected by the sizing search",
+      "origin": "abep_sim/compressor.py:DragCompressor.size_for",
+      "archengine_field": "not exported (system.evaluate 'comp_rpm')"
+     },
+     "rotor_ok": {
+      "unit": "bool",
+      "definition": "tip speed within the rotor stress limit",
+      "origin": "abep_sim/compressor.py:DragCompressor.run",
+      "archengine_field": "not exported"
+     }
+    }
+   },
+   "power": {
+    "status": "computed",
+    "bus_terms": [
+     "P_compressor"
+    ],
+    "origins": [
+     "abep_sim/compressor.py:DragCompressor.run",
+     "abep_sim/archengine.py:gas_path_state",
+     "abep_sim/archengine.py:close_architecture"
+    ]
+   },
+   "mass": {
+    "status": "computed",
+    "bom_lines": {
+     "archengine": [
+      "compressor"
+     ],
+     "system_engineering": [
+      "compressor"
+     ]
+    },
+    "origins": [
+     "abep_sim/compressor.py:DragCompressor.run",
+     "abep_sim/mass_bom.py:build_bom"
+    ]
+   },
+   "rejected_heat": {
+    "status": "computed",
+    "thermal_nodes": [
+     "compressor"
+    ],
+    "archengine_energy_ledger_terms": [
+     "compressor"
+    ],
+    "origins": [
+     "abep_sim/thermal.py:default_nodes"
+    ],
+    "note": "the whole electrical input is booked at the compressor node; the gas-work share (DragCompressor.run 'P_gas_W') is not tracked to where it is finally dissipated",
+    "gaps": [
+     "G16"
+    ]
+   },
+   "life": {
+    "status": "partial",
+    "life_items": [
+     "blade_coating",
+     "bearings"
+    ],
+    "basis": "calendar_hours",
+    "origins": [
+     "abep_sim/life.py:blade_life",
+     "abep_sim/life.py:compressor_life"
+    ],
+    "note": "archengine's 'bearings' item is a code constant, not a life estimate",
+    "gaps": [
+     "G12"
+    ]
+   },
+   "uncertainty": {
+    "status": "partial",
+    "representation": "triangular_prior",
+    "drivers": [
+     {
+      "name": "comp_area_ratio",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['comp_area_ratio']"
+     },
+     {
+      "name": "comp_p_per_mgps_ln",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['comp_p_per_mgps_ln']"
+     },
+     {
+      "name": "comp_p_base",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['comp_p_base']"
+     },
+     {
+      "name": "comp_mass_per_ln",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['comp_mass_per_ln']"
+     },
+     {
+      "name": "gamma_compressor_wall",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['gamma_compressor_wall']"
+     }
+    ],
+    "origins": [
+     "abep_sim/uncertainty.py:DEFAULT_PRIORS"
+    ],
+    "note": "these priors act on the parametric system.evaluate path; the physics compressor used by archengine (gaspath_physics) has no prior",
+    "gaps": [
+     "G14"
+    ]
+   }
+  },
+  "buffer": {
+   "name": "atmospheric gas chamber (reservoir)",
+   "rfp_block": "atmospheric_path",
+   "presence": "all air-breathing architectures",
+   "hall_transport_ensemble_role": "forbidden_upstream",
+   "performance": {
+    "status": "computed",
+    "metrics": {
+     "p_total_Pa": {
+      "unit": "Pa",
+      "definition": "chamber pressure feeding the ionization/discharge block",
+      "origin": "abep_sim/reservoir.py:Reservoir.steady_state",
+      "archengine_field": "gas_path_state()['p_in'] -> out['p_in_Pa']"
+     },
+     "O_survival": {
+      "unit": "-",
+      "definition": "fraction of inflowing atomic O reaching the anode feed",
+      "origin": "abep_sim/reservoir.py:Reservoir.steady_state",
+      "archengine_field": "not exported (system.evaluate 'O_survival')"
+     },
+     "residence_time_s": {
+      "unit": "s",
+      "definition": "gas residence time in the chamber",
+      "origin": "abep_sim/reservoir.py:Reservoir.steady_state",
+      "archengine_field": "not exported (system.evaluate 'res_tau_ms')"
+     },
+     "composition_anode_mass": {
+      "unit": "-",
+      "definition": "mass fractions O / N2 / O2 delivered to the anode feed",
+      "origin": "abep_sim/reservoir.py:Reservoir.steady_state",
+      "archengine_field": "gas_path_state()['fO','fN2','fO2']"
+     },
+     "t_ignite_s": {
+      "unit": "s",
+      "definition": "time to reach the ignition pressure after spin-up",
+      "origin": "abep_sim/reservoir.py:startup_transient",
+      "archengine_field": "not exported"
+     }
+    }
+   },
+   "power": {
+    "status": "TBD",
+    "bus_terms": [
+     "P_thermal"
+    ],
+    "origins": [
+     "TBD — requires the gas-chamber thermal-control need (heater set-points) from a cold-case network solution"
+    ],
+    "gaps": [
+     "G4"
+    ]
+   },
+   "mass": {
+    "status": "partial",
+    "bom_lines": {
+     "archengine": [
+      "reservoir_feed"
+     ],
+     "system_engineering": [
+      "reservoir"
+     ]
+    },
+    "origins": [
+     "abep_sim/mass_bom.py:reservoir_vessel",
+     "abep_sim/archengine.py:close_architecture"
+    ],
+    "note": "archengine books one combined constant line for chamber and feed",
+    "gaps": [
+     "G10"
+    ]
+   },
+   "rejected_heat": {
+    "status": "TBD",
+    "thermal_nodes": [],
+    "archengine_energy_ledger_terms": [],
+    "origins": [
+     "TBD — requires a gas-chamber thermal node and the wall-recombination heat release (not modeled)"
+    ],
+    "gaps": [
+     "G16"
+    ]
+   },
+   "life": {
+    "status": "TBD",
+    "life_items": [],
+    "basis": "TBD",
+    "origins": [
+     "TBD — requires wall-material degradation under atomic oxygen with a cited source"
+    ],
+    "gaps": [
+     "G12"
+    ]
+   },
+   "uncertainty": {
+    "status": "TBD",
+    "representation": "none_quantified",
+    "drivers": [],
+    "origins": [
+     "TBD — requires recombination-coefficient and conductance uncertainties with sources"
+    ],
+    "gaps": [
+     "G14"
+    ]
+   }
+  },
+  "valves": {
+   "name": "flow control (atmospheric valve after the gas chamber; Xe valve after the Xe chamber)",
+   "rfp_block": "atmospheric_path",
+   "presence": "all architectures (air valve); Xe valve where a Xe path exists",
+   "hall_transport_ensemble_role": "forbidden_upstream",
+   "performance": {
+    "status": "partial",
+    "metrics": {
+     "anode_feed_area_m2": {
+      "unit": "m^2",
+      "definition": "fixed feed restrictor area that sets the chamber pressure for the inflow",
+      "origin": "abep_sim/reservoir.py:size_orifice_for_pressure",
+      "archengine_field": "not exported"
+     },
+     "mdot_anode_kgps": {
+      "unit": "kg/s",
+      "definition": "mass flow delivered to the anode",
+      "origin": "abep_sim/reservoir.py:Reservoir.steady_state",
+      "archengine_field": "gas_path_state()['mdot_air'] -> out['mdot_air_mgps']"
+     },
+     "xe_flow_control": {
+      "unit": "kg/s",
+      "definition": "Xe flow set by the Xe valve",
+      "origin": "TBD — requires a Xe feed model (no Xe-to-anode path in archengine)"
+     }
+    },
+    "gaps": [
+     "G10",
+     "G11"
+    ]
+   },
+   "power": {
+    "status": "TBD",
+    "bus_terms": [
+     "P_valves_control",
+     "P_aux_unallocated"
+    ],
+    "origins": [
+     "TBD — requires valve and flow-controller selection for both propellant paths with holding/actuation power data"
+    ],
+    "gaps": [
+     "G3",
+     "G2"
+    ]
+   },
+   "mass": {
+    "status": "partial",
+    "bom_lines": {
+     "archengine": [
+      "reservoir_feed"
+     ],
+     "system_engineering": [
+      "feed_valves_lines"
+     ]
+    },
+    "origins": [
+     "abep_sim/archengine.py:close_architecture",
+     "abep_sim/system.py:evaluate"
+    ],
+    "note": "both are code constants",
+    "gaps": [
+     "G10"
+    ]
+   },
+   "rejected_heat": {
+    "status": "TBD",
+    "thermal_nodes": [],
+    "archengine_energy_ledger_terms": [],
+    "origins": [
+     "TBD — requires valve power and placement"
+    ],
+    "gaps": [
+     "G3"
+    ]
+   },
+   "life": {
+    "status": "TBD",
+    "life_items": [],
+    "basis": "cycles",
+    "origins": [
+     "TBD — requires cycle-life data for the selected valves"
+    ],
+    "gaps": [
+     "G12"
+    ]
+   },
+   "uncertainty": {
+    "status": "TBD",
+    "representation": "none_quantified",
+    "drivers": [],
+    "origins": [
+     "TBD — requires valve data sheets or test data"
+    ],
+    "gaps": [
+     "G14"
+    ]
+   }
+  },
+  "xe_tank": {
+   "name": "Xe chamber (tank, regulator, lines)",
+   "rfp_block": "xe_path",
+   "presence": "architectures with Xe (archengine: cathode Xe flow only)",
+   "hall_transport_ensemble_role": "forbidden_upstream",
+   "performance": {
+    "status": "partial",
+    "metrics": {
+     "xe_stored_kg": {
+      "unit": "kg",
+      "definition": "Xe loaded for the mission",
+      "origin": "abep_sim/archengine.py:close_architecture",
+      "archengine_field": "out['xe_kg'] (cathode flow over firing_hours with a code-constant factor)"
+     },
+     "tank_volume_L": {
+      "unit": "L",
+      "definition": "tank volume from the stored mass",
+      "origin": "abep_sim/mass_bom.py:xe_tank",
+      "archengine_field": "not exported"
+     }
+    },
+    "gaps": [
+     "G11"
+    ]
+   },
+   "power": {
+    "status": "TBD",
+    "bus_terms": [
+     "P_thermal",
+     "P_valves_control"
+    ],
+    "origins": [
+     "TBD — requires Xe tank/line heater and regulator power from the thermal design"
+    ],
+    "gaps": [
+     "G3",
+     "G4"
+    ]
+   },
+   "mass": {
+    "status": "computed",
+    "bom_lines": {
+     "archengine": [
+      "xe_tank",
+      "xe"
+     ],
+     "system_engineering": [
+      "xe_tank",
+      "xe_propellant"
+     ]
+    },
+    "origins": [
+     "abep_sim/mass_bom.py:xe_tank"
+    ],
+    "note": "'xe' / 'xe_propellant' are consumables (m_consumable_kg), not dry mass"
+   },
+   "rejected_heat": {
+    "status": "TBD",
+    "thermal_nodes": [],
+    "archengine_energy_ledger_terms": [],
+    "origins": [
+     "TBD — requires a Xe-tank thermal node"
+    ],
+    "gaps": [
+     "G4"
+    ]
+   },
+   "life": {
+    "status": "TBD",
+    "life_items": [],
+    "basis": "TBD",
+    "origins": [
+     "TBD — requires tank/regulator life data"
+    ],
+    "gaps": [
+     "G12"
+    ]
+   },
+   "uncertainty": {
+    "status": "TBD",
+    "representation": "none_quantified",
+    "drivers": [],
+    "origins": [
+     "TBD — requires Xe budget uncertainty (augmentation duty is not in archengine)"
+    ],
+    "gaps": [
+     "G14"
+    ]
+   }
+  },
+  "cathode": {
+   "name": "cathode / neutralizer",
+   "rfp_block": "ionization_discharge_acceleration",
+   "presence": "all accelerators that need a neutralizer",
+   "hall_transport_ensemble_role": "downstream_consumer",
+   "performance": {
+    "status": "computed",
+    "metrics": {
+     "I_neut_req_A": {
+      "unit": "A",
+      "definition": "electron current demanded by the accelerator",
+      "origin": "abep_sim/archengine.py:_propulsion",
+      "archengine_field": "out['I_neut_req_A']"
+     },
+     "I_neut_max_A": {
+      "unit": "A",
+      "definition": "current capability (validated cap applied for plasma-bridge cathodes)",
+      "origin": "abep_sim/archengine.py:Neutralizer.operate",
+      "archengine_field": "out['I_neut_max_A']"
+     },
+     "T_emitter_K": {
+      "unit": "K",
+      "definition": "LaB6 emitter temperature for the demanded current",
+      "origin": "abep_sim/plasma_devices.py:LaB6Cathode.operate",
+      "archengine_field": "not exported"
+     },
+     "xe_mgps": {
+      "unit": "mg/s",
+      "definition": "cathode Xe flow",
+      "origin": "abep_sim/archengine.py:Neutralizer.operate",
+      "archengine_field": "NEUTRALIZERS[].xe_mgps"
+     }
+    }
+   },
+   "power": {
+    "status": "partial",
+    "bus_terms": [
+     "P_cathode"
+    ],
+    "origins": [
+     "abep_sim/archengine.py:Neutralizer.operate",
+     "abep_sim/plasma_devices.py:LaB6Cathode.operate",
+     "abep_sim/ppu.py:load_modes"
+    ],
+    "note": "steady total only; keeper/heater split exists only in the startup mode of ppu.load_modes",
+    "gaps": [
+     "G6"
+    ]
+   },
+   "mass": {
+    "status": "computed",
+    "bom_lines": {
+     "archengine": [
+      "neutralizer"
+     ],
+     "system_engineering": [
+      "cathode_assy"
+     ]
+    },
+    "origins": [
+     "abep_sim/archengine.py:close_architecture"
+    ],
+    "note": "per-neutralizer code constants"
+   },
+   "rejected_heat": {
+    "status": "partial",
+    "thermal_nodes": [
+     "cathode"
+    ],
+    "archengine_energy_ledger_terms": [
+     "neutralizer"
+    ],
+    "origins": [
+     "abep_sim/thermal.py:default_nodes"
+    ],
+    "gaps": [
+     "G1"
+    ]
+   },
+   "life": {
+    "status": "computed",
+    "life_items": [
+     "neutralizer"
+    ],
+    "basis": "firing_hours",
+    "origins": [
+     "abep_sim/archengine.py:Neutralizer.operate",
+     "abep_sim/life.py:cathode_life"
+    ],
+    "note": "start-cycle limit is evaluated only in system.evaluate (life.cathode_life)"
+   },
+   "uncertainty": {
+    "status": "TBD",
+    "representation": "none_quantified",
+    "drivers": [],
+    "origins": [
+     "TBD — requires cathode evidence (emitter evaporation, O poisoning, plasma-bridge current) with sources"
+    ],
+    "gaps": [
+     "G14"
+    ]
+   }
+  },
+  "magnets": {
+   "name": "magnetic circuit (Hall channel field; ECR resonance field where present)",
+   "rfp_block": "ionization_discharge_acceleration",
+   "presence": "Hall accelerator; ECR pre-ionizer",
+   "hall_transport_ensemble_role": "independent",
+   "performance": {
+    "status": "TBD",
+    "metrics": {
+     "B_profile": {
+      "unit": "T",
+      "definition": "Vyovrinda magnetic field B(z) and peak field (design input to the Hall maps; never varied per ensemble member)",
+      "origin": "TBD — requires the Vyovrinda magnetic-circuit design (own geometry and B(z))"
+     }
+    }
+   },
+   "power": {
+    "status": "partial",
+    "bus_terms": [
+     "P_magnets"
+    ],
+    "origins": [
+     "abep_sim/archengine.py:close_architecture"
+    ],
+    "note": "a code constant charged for hall/nozzle/ECR architectures",
+    "gaps": [
+     "G5"
+    ]
+   },
+   "mass": {
+    "status": "partial",
+    "bom_lines": {
+     "archengine": [
+      "accelerator"
+     ],
+     "system_engineering": [
+      "hall_magnetics"
+     ]
+    },
+    "origins": [
+     "abep_sim/mass_bom.py:hall_magnetic_circuit"
+    ],
+    "note": "archengine folds the magnetic circuit into its 'accelerator' line",
+    "gaps": [
+     "G5"
+    ]
+   },
+   "rejected_heat": {
+    "status": "computed",
+    "thermal_nodes": [
+     "magnets"
+    ],
+    "archengine_energy_ledger_terms": [
+     "magnets"
+    ],
+    "origins": [
+     "abep_sim/archengine.py:close_architecture",
+     "abep_sim/thermal.py:default_nodes"
+    ]
+   },
+   "life": {
+    "status": "partial",
+    "life_items": [],
+    "basis": "firing_hours",
+    "origins": [
+     "abep_sim/life.py:magnet_life"
+    ],
+    "note": "evaluated only in system.evaluate; no archengine life item",
+    "gaps": [
+     "G12"
+    ]
+   },
+   "uncertainty": {
+    "status": "TBD",
+    "representation": "none_quantified",
+    "drivers": [],
+    "origins": [
+     "TBD — requires the magnetic-circuit design and its field tolerance"
+    ],
+    "gaps": [
+     "G14"
+    ]
+   }
+  },
+  "preionizer": {
+   "name": "pre-ionizer (RF or ECR source), where the architecture has one",
+   "rfp_block": "ionization_discharge_acceleration",
+   "presence": "architectures whose ionizer output is 'plasma' (archengine IONIZERS); absent for hall_internal",
+   "hall_transport_ensemble_role": "independent",
+   "performance": {
+    "status": "computed",
+    "metrics": {
+     "chi_preion": {
+      "unit": "-",
+      "definition": "source utilisation (ionized fraction of the feed)",
+      "origin": "abep_sim/archengine.py:_propulsion",
+      "archengine_field": "out['chi_preion']"
+     },
+     "P_absorbed_W": {
+      "unit": "W",
+      "definition": "power absorbed by the plasma after generator and coupling efficiency",
+      "origin": "abep_sim/plasma_devices.py:ECRSource.absorbed",
+      "archengine_field": "not exported"
+     },
+     "eV_per_ion": {
+      "unit": "eV",
+      "definition": "source energy cost per usable ion",
+      "origin": "abep_sim/archengine.py:_ion_source",
+      "archengine_field": "res['eV_per_ion_source'] (non-Hall families only)"
+     }
+    },
+    "note": "source physics uses the 0-D global model with Arrhenius rates CLAUDE.md lists as unverified (next work, item 6)"
+   },
+   "power": {
+    "status": "computed",
+    "bus_terms": [
+     "P_preionizer"
+    ],
+    "origins": [
+     "abep_sim/archengine.py:_variables",
+     "abep_sim/archengine.py:_ion_source"
+    ],
+    "note": "P_ion is a design variable of the search"
+   },
+   "mass": {
+    "status": "computed",
+    "bom_lines": {
+     "archengine": [
+      "ionizer"
+     ],
+     "system_engineering": [
+      "stage1_hardware"
+     ]
+    },
+    "origins": [
+     "abep_sim/archengine.py:close_architecture"
+    ],
+    "note": "per-ionizer code constants"
+   },
+   "rejected_heat": {
+    "status": "computed",
+    "thermal_nodes": [
+     "stage1_source"
+    ],
+    "archengine_energy_ledger_terms": [
+     "ionizer"
+    ],
+    "origins": [
+     "abep_sim/archengine.py:close_architecture"
+    ]
+   },
+   "life": {
+    "status": "TBD",
+    "life_items": [],
+    "basis": "firing_hours",
+    "origins": [
+     "TBD — requires an erosion/degradation model for the source (archengine only flags electrodes_in_plasma)"
+    ],
+    "gaps": [
+     "G12"
+    ]
+   },
+   "uncertainty": {
+    "status": "partial",
+    "representation": "triangular_prior",
+    "drivers": [
+     {
+      "name": "ecr_scale",
+      "kind": "epistemic",
+      "ref": "abep_sim/uq_modular.py:PRIORS['ecr_scale']"
+     },
+     {
+      "name": "s1_transport_eff",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['s1_transport_eff']"
+     },
+     {
+      "name": "s1_source_eff",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['s1_source_eff']"
+     },
+     {
+      "name": "s1_mass",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['s1_mass']"
+     }
+    ],
+    "origins": [
+     "abep_sim/uq_modular.py:evaluate_sample"
+    ],
+    "gaps": [
+     "G14"
+    ]
+   }
+  },
+  "hall_discharge": {
+   "name": "Hall ionization/discharge -> acceleration/thrust",
+   "rfp_block": "ionization_discharge_acceleration",
+   "presence": "Hall architectures (RFP: Hall preferred)",
+   "hall_transport_ensemble_role": "carrier",
+   "performance": {
+    "status": "superseded",
+    "superseded_by": "design Hall maps of admitted transport-ensemble members (abep_sim/hall_map.py:HallMap); credible set is empty, so every value is TBD",
+    "metrics": {
+     "thrust_N": {
+      "unit": "N",
+      "definition": "time-averaged thrust",
+      "origin": "abep_sim/archengine.py:_propulsion",
+      "future_origin": "hallthruster_bridge/hall_map_schema_v1.json#fields.thrust_N"
+     },
+     "discharge_current_A": {
+      "unit": "A",
+      "definition": "time-averaged discharge current",
+      "origin": "abep_sim/plasma_devices.py:hall_run_coupled",
+      "future_origin": "hallthruster_bridge/hall_map_schema_v1.json#fields.discharge_current_A"
+     },
+     "ion_current_A": {
+      "unit": "A",
+      "definition": "exit ion (beam) current",
+      "origin": "abep_sim/plasma_devices.py:hall_run_coupled",
+      "future_origin": "hallthruster_bridge/hall_map_schema_v1.json#fields.ion_current_A"
+     },
+     "anode_eff": {
+      "unit": "-",
+      "definition": "anode efficiency",
+      "origin": "TBD — requires an admitted member's design Hall map",
+      "future_origin": "hallthruster_bridge/hall_map_schema_v1.json#fields.anode_eff"
+     },
+     "divergence_eff": {
+      "unit": "-",
+      "definition": "divergence efficiency",
+      "origin": "TBD — requires an admitted member's design Hall map",
+      "future_origin": "hallthruster_bridge/hall_map_schema_v1.json#fields.divergence_eff"
+     },
+     "Id_rms_rel": {
+      "unit": "-",
+      "definition": "relative discharge-current oscillation",
+      "origin": "TBD — requires an admitted member's design Hall map",
+      "future_origin": "hallthruster_bridge/hall_map_schema_v1.json#fields.Id_rms_rel"
+     }
+    },
+    "validity_gates": [
+     "hallthruster_bridge/hall_map_schema_v1.json#fields.converged",
+     "hallthruster_bridge/hall_map_schema_v1.json#fields.sustained",
+     "hallthruster_bridge/hall_map_schema_v1.json#fields.chemistry_trustworthy"
+    ],
+    "gaps": [
+     "G13"
+    ]
+   },
+   "power": {
+    "status": "superseded",
+    "bus_terms": [
+     "P_discharge"
+    ],
+    "origins": [
+     "abep_sim/archengine.py:_propulsion",
+     "abep_sim/plasma_devices.py:hall_run_coupled"
+    ],
+    "future_origin": "hallthruster_bridge/hall_map_schema_v1.json#fields.discharge_power_W",
+    "gaps": [
+     "G13"
+    ]
+   },
+   "mass": {
+    "status": "partial",
+    "bom_lines": {
+     "archengine": [
+      "accelerator"
+     ],
+     "system_engineering": [
+      "hall_channel"
+     ]
+    },
+    "origins": [
+     "abep_sim/mass_bom.py:hall_channel_mass"
+    ],
+    "note": "archengine's 'accelerator' line also holds the magnetic circuit",
+    "gaps": [
+     "G5"
+    ]
+   },
+   "rejected_heat": {
+    "status": "superseded",
+    "thermal_nodes": [
+     "thruster"
+    ],
+    "archengine_energy_ledger_terms": [
+     "jet",
+     "plume",
+     "accelerator_body"
+    ],
+    "origins": [
+     "abep_sim/archengine.py:close_architecture"
+    ],
+    "note": "the jet / plume / body split of the discharge power is fixed by code constants on top of the superseded 0-D discharge",
+    "gaps": [
+     "G13",
+     "G18"
+    ]
+   },
+   "life": {
+    "status": "superseded",
+    "life_items": [
+     "hall_channel"
+    ],
+    "basis": "firing_hours",
+    "origins": [
+     "abep_sim/archengine.py:_propulsion",
+     "abep_sim/life.py:hall_channel_life"
+    ],
+    "future_origin": "hallthruster_bridge/hall_map_schema_v1.json#fields.wall_life_trustworthy",
+    "note": "erosion use requires wall_life_trustworthy (hall_map_schema_v1) and a wall sputter-yield model",
+    "gaps": [
+     "G13"
+    ]
+   },
+   "uncertainty": {
+    "status": "TBD",
+    "representation": "unweighted_scenario_set",
+    "drivers": [
+     {
+      "name": "transport_ensemble_layer2",
+      "kind": "epistemic",
+      "ref": "abep_sim/hall_ensemble.py:require_admitted"
+     }
+    ],
+    "origins": [
+     "abep_sim/hall_ensemble.py:member_ids",
+     "abep_sim/hall_ensemble.py:screening_ids"
+    ],
+    "note": "uq_modular alpha_anom / L_iz_frac / rate_scale / epsc_scale act on the superseded 0-D closure and are not transferable",
+    "gaps": [
+     "G13"
+    ]
+   }
+  },
+  "ppu": {
+   "name": "power processing unit (converters, housing, harness)",
+   "rfp_block": "power_processing",
+   "presence": "all architectures",
+   "hall_transport_ensemble_role": "downstream_consumer",
+   "performance": {
+    "status": "computed",
+    "metrics": {
+     "eta_overall": {
+      "unit": "-",
+      "definition": "delivered / bus power",
+      "origin": "abep_sim/ppu.py:PPU.loads",
+      "archengine_field": "out['ppu_eta']"
+     },
+     "rating_ok": {
+      "unit": "bool",
+      "definition": "every converter within its current rating",
+      "origin": "abep_sim/ppu.py:PPU.loads",
+      "archengine_field": "rejection reason 'converter_rating'"
+     },
+     "converter_eta": {
+      "unit": "-",
+      "definition": "per-converter efficiency at load and temperature",
+      "origin": "abep_sim/ppu.py:Converter.efficiency",
+      "archengine_field": "loads['detail']"
+     }
+    }
+   },
+   "power": {
+    "status": "computed",
+    "bus_terms": [
+     "P_PPU_losses",
+     "P_harness_losses"
+    ],
+    "origins": [
+     "abep_sim/ppu.py:PPU.loads"
+    ],
+    "note": "the PPU consumes no load power of its own; its bus terms are conversion losses (harness loss TBD)",
+    "gaps": [
+     "G15"
+    ]
+   },
+   "mass": {
+    "status": "computed",
+    "bom_lines": {
+     "archengine": [
+      "ppu"
+     ],
+     "system_engineering": [
+      "ppu_converters",
+      "ppu_housing_shield",
+      "harness"
+     ]
+    },
+    "origins": [
+     "abep_sim/ppu.py:PPU.mass"
+    ],
+    "note": "archengine's 'ppu' line also contains the control electronics (avionics)"
+   },
+   "rejected_heat": {
+    "status": "computed",
+    "thermal_nodes": [
+     "ppu"
+    ],
+    "archengine_energy_ledger_terms": [
+     "ppu_loss_control"
+    ],
+    "origins": [
+     "abep_sim/thermal.py:default_nodes",
+     "abep_sim/ppu.py:PPU.loads"
+    ]
+   },
+   "life": {
+    "status": "partial",
+    "life_items": [
+     "ppu"
+    ],
+    "basis": "calendar_hours",
+    "origins": [
+     "abep_sim/archengine.py:close_architecture",
+     "abep_sim/life.py:reliability"
+    ],
+    "note": "archengine's 'ppu' life item is a code constant, not a life estimate",
+    "gaps": [
+     "G12"
+    ]
+   },
+   "uncertainty": {
+    "status": "partial",
+    "representation": "triangular_prior",
+    "drivers": [
+     {
+      "name": "ppu_eff",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['ppu_eff']"
+     },
+     {
+      "name": "ppu_mass_base",
+      "kind": "epistemic",
+      "ref": "abep_sim/uncertainty.py:DEFAULT_PRIORS['ppu_mass_base']"
+     }
+    ],
+    "origins": [
+     "abep_sim/uncertainty.py:DEFAULT_PRIORS"
+    ],
+    "note": "these priors act on the parametric system.evaluate budgets, not on the converter model archengine uses",
+    "gaps": [
+     "G14"
+    ]
+   }
+  },
+  "thermal_control": {
+   "name": "thermal control (radiator, straps / heat pipes, heaters)",
+   "rfp_block": "thermal",
+   "presence": "all architectures",
+   "hall_transport_ensemble_role": "downstream_consumer",
+   "performance": {
+    "status": "computed",
+    "metrics": {
+     "A_rad_m2": {
+      "unit": "m^2",
+      "definition": "radiator area sized for the hot case",
+      "origin": "abep_sim/thermal.py:size_radiator",
+      "archengine_field": "out['A_rad_m2']"
+     },
+     "T_hot_limiting": {
+      "unit": "-",
+      "definition": "node closest to its temperature limit",
+      "origin": "abep_sim/thermal.py:size_radiator",
+      "archengine_field": "out['T_hot_limiting']"
+     },
+     "Q_waste_W": {
+      "unit": "W",
+      "definition": "sum of node internal dissipations handed to the radiator",
+      "origin": "abep_sim/thermal.py:size_radiator",
+      "archengine_field": "out['Q_waste_W']"
+     },
+     "node_T_hot_K": {
+      "unit": "K",
+      "definition": "hot-case node temperatures",
+      "origin": "abep_sim/thermal.py:solve_network",
+      "archengine_field": "not exported (system.evaluate eng_T_*)"
+     }
+    }
+   },
+   "power": {
+    "status": "TBD",
+    "bus_terms": [
+     "P_thermal"
+    ],
+    "origins": [
+     "TBD — requires heater set-points and the cold-case (eclipse) network solution; thermal.size_radiator computes the cold case but derives no heater power"
+    ],
+    "gaps": [
+     "G4"
+    ]
+   },
+   "mass": {
+    "status": "computed",
+    "bom_lines": {
+     "archengine": [
+      "thermal"
+     ],
+     "system_engineering": [
+      "thermal"
+     ]
+    },
+    "origins": [
+     "abep_sim/thermal.py:size_radiator",
+     "abep_sim/thermal.py:size_straps"
+    ]
+   },
+   "rejected_heat": {
+    "status": "computed",
+    "thermal_nodes": [],
+    "archengine_energy_ledger_terms": [],
+    "origins": [
+     "abep_sim/thermal.py:size_radiator"
+    ],
+    "note": "the radiator is the sink: it rejects the sum of all node Q_int plus absorbed environment; heater dissipation (when modeled) is booked at the heated node"
+   },
+   "life": {
+    "status": "TBD",
+    "life_items": [],
+    "basis": "calendar_hours",
+    "origins": [
+     "TBD — requires radiator-coating optical degradation under atomic oxygen / UV with a cited source"
+    ],
+    "gaps": [
+     "G12"
+    ]
+   },
+   "uncertainty": {
+    "status": "TBD",
+    "representation": "none_quantified",
+    "drivers": [],
+    "origins": [
+     "TBD — requires thermo-optical property and node-limit uncertainties with sources"
+    ],
+    "gaps": [
+     "G14"
+    ]
+   }
+  },
+  "avionics": {
+   "name": "propulsion control electronics (PPU controller, sensors, switch matrix, TM/TC interface)",
+   "rfp_block": "control",
+   "presence": "all architectures",
+   "hall_transport_ensemble_role": "independent",
+   "performance": {
+    "status": "TBD",
+    "metrics": {
+     "control_function": {
+      "unit": "-",
+      "definition": "control loops, telemetry and commanding provided",
+      "origin": "TBD — requires the propulsion control architecture"
+     }
+    }
+   },
+   "power": {
+    "status": "computed",
+    "bus_terms": [
+     "P_avionics",
+     "P_aux_unallocated"
+    ],
+    "origins": [
+     "abep_sim/ppu.py:PPU.loads"
+    ],
+    "note": "controller and sensor draws are code constants of ppu.PPU, included in loads P_bus_W and P_loss_W",
+    "gaps": [
+     "G17",
+     "G2"
+    ]
+   },
+   "mass": {
+    "status": "partial",
+    "bom_lines": {
+     "archengine": [
+      "ppu"
+     ],
+     "system_engineering": [
+      "ppu_control_sensors"
+     ]
+    },
+    "origins": [
+     "abep_sim/ppu.py:PPU.mass"
+    ],
+    "note": "archengine books it inside the 'ppu' line",
+    "gaps": [
+     "G17"
+    ]
+   },
+   "rejected_heat": {
+    "status": "computed",
+    "thermal_nodes": [
+     "ppu"
+    ],
+    "archengine_energy_ledger_terms": [
+     "ppu_loss_control"
+    ],
+    "origins": [
+     "abep_sim/ppu.py:PPU.loads",
+     "abep_sim/thermal.py:default_nodes"
+    ]
+   },
+   "life": {
+    "status": "partial",
+    "life_items": [],
+    "basis": "calendar_hours",
+    "origins": [
+     "abep_sim/life.py:reliability"
+    ],
+    "note": "electronics enter only the exponential reliability term of system.evaluate",
+    "gaps": [
+     "G12"
+    ]
+   },
+   "uncertainty": {
+    "status": "TBD",
+    "representation": "none_quantified",
+    "drivers": [],
+    "origins": [
+     "TBD — requires controller/sensor selection data"
+    ],
+    "gaps": [
+     "G14"
+    ]
+   }
+  },
+  "structure": {
+   "name": "propulsion-module secondary structure (frame, brackets)",
+   "rfp_block": "structure",
+   "presence": "all architectures",
+   "hall_transport_ensemble_role": "downstream_consumer",
+   "performance": {
+    "status": "computed",
+    "metrics": {
+     "first_mode_Hz": {
+      "unit": "Hz",
+      "definition": "first structural mode of the sized deck",
+      "origin": "abep_sim/mass_bom.py:structure_mass",
+      "archengine_field": "out['structure_first_mode_Hz']"
+     }
+    }
+   },
+   "power": {
+    "status": "not_applicable",
+    "bus_terms": [],
+    "origins": [
+     "not_applicable — passive structure"
+    ]
+   },
+   "mass": {
+    "status": "computed",
+    "bom_lines": {
+     "archengine": [
+      "structure"
+     ],
+     "system_engineering": [
+      "structure"
+     ]
+    },
+    "origins": [
+     "abep_sim/mass_bom.py:structure_mass"
+    ]
+   },
+   "rejected_heat": {
+    "status": "not_applicable",
+    "thermal_nodes": [],
+    "archengine_energy_ledger_terms": [],
+    "origins": [
+     "not_applicable — no dissipation; conductive paths are part of the thermal network"
+    ]
+   },
+   "life": {
+    "status": "not_applicable",
+    "life_items": [],
+    "basis": "TBD",
+    "origins": [
+     "not_applicable — no wear-out mechanism modeled"
+    ]
+   },
+   "uncertainty": {
+    "status": "TBD",
+    "representation": "none_quantified",
+    "drivers": [],
+    "origins": [
+     "TBD — requires load-case and material allowable uncertainties"
+    ],
+    "gaps": [
+     "G14"
+    ]
+   }
+  },
+  "accelerator_other_family": {
+   "name": "non-Hall accelerators of the archengine screening enumeration (grids, magnetic nozzle, MPD, PIT, electrothermal)",
+   "rfp_block": "screening_only",
+   "presence": "archengine screening families only; not part of the RFP Hall architecture; mapped so every archengine ledger term has a destination (CLAUDE.md rule 8: no new families)",
+   "hall_transport_ensemble_role": "not_applicable",
+   "performance": {
+    "status": "computed",
+    "metrics": {
+     "T_N": {
+      "unit": "N",
+      "definition": "thrust of the screening accelerator model",
+      "origin": "abep_sim/archengine.py:_propulsion",
+      "archengine_field": "out['T_mN']"
+     }
+    }
+   },
+   "power": {
+    "status": "computed",
+    "bus_terms": [
+     "P_accelerator_other"
+    ],
+    "origins": [
+     "abep_sim/archengine.py:grid_optics",
+     "abep_sim/archengine.py:accel_mpd",
+     "abep_sim/archengine.py:accel_pit",
+     "abep_sim/archengine.py:accel_thermal"
+    ]
+   },
+   "mass": {
+    "status": "computed",
+    "bom_lines": {
+     "archengine": [
+      "accelerator"
+     ],
+     "system_engineering": []
+    },
+    "origins": [
+     "abep_sim/archengine.py:_propulsion",
+     "abep_sim/archengine.py:magnetic_nozzle"
+    ]
+   },
+   "rejected_heat": {
+    "status": "computed",
+    "thermal_nodes": [
+     "thruster"
+    ],
+    "archengine_energy_ledger_terms": [
+     "jet",
+     "plume",
+     "accelerator_body"
+    ],
+    "origins": [
+     "abep_sim/archengine.py:close_architecture"
+    ],
+    "gaps": [
+     "G18"
+    ]
+   },
+   "life": {
+    "status": "computed",
+    "life_items": [
+     "grids",
+     "nozzle_source",
+     "mpd_electrodes",
+     "pit_capacitors",
+     "heater_nozzle"
+    ],
+    "basis": "firing_hours",
+    "origins": [
+     "abep_sim/archengine.py:_propulsion"
+    ]
+   },
+   "uncertainty": {
+    "status": "TBD",
+    "representation": "none_quantified",
+    "drivers": [],
+    "origins": [
+     "TBD — screening models carry no stated uncertainty"
+    ],
+    "gaps": [
+     "G14"
+    ]
+   }
+  }
+ },
+ "rules": [
+  "every subsystem exposes all six quantity blocks; a block without a producer says so (status TBD with 'requires', or not_applicable with a reason); nothing is defaulted or filled with a placeholder",
+  "power is booked at the consumer's load plane; conversion losses belong to the ppu subsystem, control-electronics draw to avionics",
+  "rejected heat is never assumed equal to electrical input: Q_int_W, P_exported_W and P_transferred_W are reported separately (thermal_rejection_ledger_v1)",
+  "mass lines combined in the code (archengine 'reservoir_feed', 'accelerator', 'ppu') are reported as combined with an explicit split source, or the split is TBD; never split silently",
+  "life values declare their basis (firing_hours, calendar_hours or cycles) and are compared only with the matching requirement",
+  "no ledger value derived from the Hall discharge may be computed until an ensemble member is admitted (abep_sim/hall_ensemble.py:require_admitted); screening candidates (abep_sim/hall_ensemble.py:screening_ids) never appear in ledgers",
+  "calibration-nuisance (layer-1) variables are never ledger fields, drivers, axes or design variables",
+  "forbidden_upstream subsystems list no transport-ensemble driver and take no transport parameter",
+  "values from the superseded 0-D Hall closure are not quoted: status superseded, value null"
+ ],
+ "archengine_energy_ledger_map": {
+  "source": "abep_sim/archengine.py:close_architecture, dict 'ledger' (residual gate |resid| <= 0.02 against loads['P_bus_W'] from abep_sim/ppu.py:PPU.loads)",
+  "terms": {
+   "jet": {
+    "subsystems": [
+     "hall_discharge",
+     "accelerator_other_family",
+     "preionizer"
+    ],
+    "bus_terms": [
+     "P_discharge",
+     "P_accelerator_other",
+     "P_preionizer"
+    ],
+    "note": "from_acc share is booked to the accelerating supply, from_src share to the source (each watt once)",
+    "thermal": "P_exported_W"
+   },
+   "plume": {
+    "subsystems": [
+     "hall_discharge",
+     "accelerator_other_family"
+    ],
+    "bus_terms": [
+     "P_discharge",
+     "P_accelerator_other"
+    ],
+    "note": "0.4 x Q_dev code constant (gap G18)",
+    "thermal": "P_exported_W"
+   },
+   "accelerator_body": {
+    "subsystems": [
+     "hall_discharge",
+     "accelerator_other_family"
+    ],
+    "bus_terms": [
+     "P_discharge",
+     "P_accelerator_other"
+    ],
+    "note": "0.6 x Q_dev code constant (gap G18)",
+    "thermal": "Q_int_W at node 'thruster'"
+   },
+   "ionizer": {
+    "subsystems": [
+     "preionizer"
+    ],
+    "bus_terms": [
+     "P_preionizer"
+    ],
+    "thermal": "Q_int_W at node 'stage1_source'"
+   },
+   "neutralizer": {
+    "subsystems": [
+     "cathode"
+    ],
+    "bus_terms": [
+     "P_cathode"
+    ],
+    "thermal": "Q_int_W at node 'cathode' is 0.5 x P_neut (abep_sim/thermal.py:default_nodes); the remainder is unassigned (gap G1)"
+   },
+   "magnets": {
+    "subsystems": [
+     "magnets"
+    ],
+    "bus_terms": [
+     "P_magnets"
+    ],
+    "thermal": "Q_int_W at node 'magnets' (close_architecture overwrites the default_nodes value with P_mag)"
+   },
+   "compressor": {
+    "subsystems": [
+     "compressor"
+    ],
+    "bus_terms": [
+     "P_compressor"
+    ],
+    "thermal": "Q_int_W at node 'compressor'"
+   },
+   "aux": {
+    "subsystems": [
+     "valves",
+     "avionics"
+    ],
+    "bus_terms": [
+     "P_aux_unallocated"
+    ],
+    "note": "5 V x 1 A 'aux' converter demand (5.0 W ledger code constant); the consumer is not named in the code, so its allocation between valves/flow control and avionics is TBD (gap G2)",
+    "thermal": "no thermal node (gap G2)"
+   },
+   "ppu_loss_control": {
+    "subsystems": [
+     "ppu",
+     "avionics"
+    ],
+    "bus_terms": [
+     "P_PPU_losses",
+     "P_avionics"
+    ],
+    "note": "loads['P_loss_W'] lumps converter losses with controller_W + sensors_W (gap G17)",
+    "thermal": "Q_int_W at node 'ppu'"
+   }
+  },
+  "rule": "every key of the archengine energy ledger must appear here and in some bus_power_ledger_v1 terms[*].archengine_energy_ledger_terms (tests/test_ledger_schemas.py)"
+ }
+}

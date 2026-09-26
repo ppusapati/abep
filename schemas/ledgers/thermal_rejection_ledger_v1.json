@@ -1,0 +1,64 @@
+{
+ "schema": "thermal_rejection_ledger_v1",
+ "version": "1.0",
+ "status": "schema only: heat-disposition fields per subsystem, node mapping and closure rules. It carries no heat numbers; not wired into abep_sim (wiring is a model change for the owner).",
+ "companions": ["schemas/ledgers/subsystem_ledger_v1.json", "schemas/ledgers/bus_power_ledger_v1.json", "docs/ledgers/LEDGERS.md"],
+ "principle": "rejected heat is not electrical input. Each subsystem's electrical input (bus_power_ledger_v1) is split into heat handed to the thermal network (Q_int_W), power exported to space without passing the network (P_exported_W: jet, plume, direct plasma radiation) and power transferred to another subsystem (P_transferred_W). Absorbed environmental heat (Q_env_absorbed_W) is a separate input that the radiator must also reject.",
+ "per_subsystem_fields": {
+  "P_elec_in_W": "value_record: load-plane electrical input (subsystem_ledger_v1 power.P_steady_W); converter losses are the ppu subsystem's input",
+  "Q_int_W": "value_record: internal dissipation handed to the thermal network",
+  "P_exported_W": "value_record: power leaving to space directly",
+  "P_transferred_W": "{target_subsystem_id: value_record}",
+  "P_received_W": "{source_subsystem_id: value_record}: power received from another subsystem (mirror of the source's P_transferred_W)",
+  "Q_env_absorbed_W": "value_record: solar + Earth IR + albedo + ram aero heating on the subsystem's external surfaces, per case (hot = sunlit, cold = eclipse)",
+  "Q_radiated_direct_W": "value_record: heat the node radiates from its own external area",
+  "Q_to_radiator_W": "value_record: heat conducted to the radiator node (G_to_rad x (T_node - T_rad))",
+  "thermal_nodes": "list of abep_sim/thermal.py:default_nodes node names",
+  "T_node_K": "value_record per case; T_max_K limit from the node definition",
+  "case": "hot | cold (abep_sim/thermal.py:size_radiator evaluates both)"
+ },
+ "node_map": {
+  "source": "abep_sim/thermal.py:default_nodes, with the overrides in abep_sim/archengine.py:close_architecture (nodes[2] thruster = ledger['accelerator_body'], nodes[3] magnets = P_mag, nodes[4] stage1_source = ledger['ionizer'])",
+  "intake": {"subsystems": ["intake"], "Q_int_origin": "none (0 W internal); environment + ram aero heating only", "gaps": ["G19"]},
+  "compressor": {"subsystems": ["compressor"], "Q_int_origin": "abep_sim/archengine.py:gas_path_state comp_power (whole electrical input booked as heat at this node)", "gaps": ["G16"]},
+  "thruster": {"subsystems": ["hall_discharge", "accelerator_other_family"], "Q_int_origin": "abep_sim/archengine.py:close_architecture ledger['accelerator_body'] (0.6 x non-jet accelerator power)", "status_for_hall": "superseded (0-D Hall closure); TBD until an admitted member's design Hall map provides the wall heat flux", "gaps": ["G13", "G18"]},
+  "magnets": {"subsystems": ["magnets"], "Q_int_origin": "abep_sim/archengine.py:close_architecture P_mag (coil Joule heat); thruster radiative/conductive load onto the magnetic circuit is not modeled", "gaps": ["G5"]},
+  "stage1_source": {"subsystems": ["preionizer"], "Q_int_origin": "abep_sim/archengine.py:close_architecture ledger['ionizer'] (source power not leaving as jet)"},
+  "cathode": {"subsystems": ["cathode"], "Q_int_origin": "abep_sim/thermal.py:default_nodes 0.5 x P_cath_W (code constant); the other half is not assigned to any node or export term", "gaps": ["G1"]},
+  "ppu": {"subsystems": ["ppu", "avionics"], "Q_int_origin": "abep_sim/ppu.py:PPU.loads P_loss_W (converter losses + controller + sensors)", "gaps": ["G17"]},
+  "unassigned": {"subsystems": ["filter", "buffer", "valves", "xe_tank", "thermal_control", "structure"], "note": "no thermal node exists; their Q_int and Q_env_absorbed are TBD (filter, buffer, valves, xe_tank) or not_applicable (structure internal dissipation)", "gaps": ["G3", "G4", "G16"]},
+  "aux_load": {"subsystems": ["valves", "avionics"], "note": "the 5 W 'aux' ledger term has no node", "gaps": ["G2"]}
+ },
+ "exports": {
+  "jet": "abep_sim/archengine.py:close_architecture ledger['jet'] (beam/jet kinetic power)",
+  "plume": "abep_sim/archengine.py:close_architecture ledger['plume'] (0.4 x non-jet accelerator power, code constant, gap G18)"
+ },
+ "closure": {
+  "electrical_to_thermal": {
+   "identity": "for every subsystem: P_elec_in_W + sum P_received_W = Q_int_W + P_exported_W + sum P_transferred_W (+ P_stored_W in transients only)",
+   "system_identity": "P_bus_W = sum_nodes Q_int_W + sum P_exported_W + P_unassigned_W, where P_unassigned_W is listed term by term (currently: 0.5 x P_neut at the cathode, gap G1; ledger['aux'], gap G2)",
+   "residual": "resid_th = (P_bus_W - sum_nodes Q_int_W - sum P_exported_W - P_unassigned_W) / P_bus_W",
+   "gate": "|resid_th| <= 0.02, the same tolerance as the archengine energy-ledger gate (CLAUDE.md rule 4); an instance with P_unassigned_W > 0 is reported as CLOSED_WITH_UNASSIGNED, never as fully closed"
+  },
+  "radiator_balance": {
+   "identity": "steady state per case: sum_nodes (Q_int_W + Q_env_absorbed_W - Q_radiated_direct_W) + Q_env_absorbed_radiator_W = Q_rejected_radiator_W",
+   "producer": "abep_sim/thermal.py:solve_network residuals (Newton on node temperatures); abep_sim/thermal.py:size_radiator returns P_waste_W = sum_nodes Q_int_W, which excludes absorbed environment",
+   "note": "per-node Q_env_absorbed_W, Q_radiated_direct_W and Q_to_radiator_W are computed inside solve_network but not returned (gap G19); until they are, the radiator balance is TBD at instance level"
+  },
+  "no_double_count": "each watt appears once: the jet share drawn from the source (from_src) is not also in stage1_source Q_int; a transferred power appears only as P_transferred_W at the source and P_received_W at the target"
+ },
+ "instance_required_fields": {
+  "schema": "\"thermal_rejection_ledger_v1\"",
+  "architecture": "abep_sim/archengine.py:arch_name",
+  "operating_point_ref": "design variables x_*",
+  "case": "hot | cold",
+  "subsystems": "{subsystem_id: per_subsystem_fields}",
+  "P_bus_W": "value_record (from the matching bus_power_ledger_v1 instance)",
+  "P_unassigned_W": "{term: value_record}",
+  "resid_th": "value_record",
+  "closure_status": "CLOSED | CLOSED_WITH_UNASSIGNED | NOT_EVALUABLE (a superseded Hall term) | OPEN",
+  "A_rad_m2": "value_record (abep_sim/thermal.py:size_radiator)",
+  "limiting_node": "node name (abep_sim/thermal.py:size_radiator limiting_node)",
+  "ensemble_member_id": "required when thruster-node heat comes from an admitted member's design Hall map; null otherwise"
+ }
+}
