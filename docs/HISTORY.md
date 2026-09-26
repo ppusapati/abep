@@ -2062,3 +2062,10 @@ observable.
 is kept as the immutable blind-envelope snapshot `audit/configs/p5_n2_cases_blind_envelope_v1.json` and the envelope now reads
 it. Construction check (2 µs runs, targets stripped, field quantities only): all six registration × coil builds succeed; B at the
 exit = 130 G, in-channel peak 131–149 G (same exit-scaling convention as Xe).
+**Operational rules frozen (owner, same day):** O2, O3, O5 confirmed (O5 adds the standardized residual ΔV_a/11.6 V and the
+species' outlet ion flux beside each value); O1 amended to a persistent terminal collapse (final-10 % mean I_d < 0.05 I_d,target
+AND ≥ 90 % of final-10 % samples < 0.10 I_d,target, mode-matched target; a low steady current fails CURRENT; the bridge `sustained`
+flag is diagnostic only); O4 amended to exact half-tolerances (7.5 % I_d; 2.6 / 2.8 / 2.8 mN) evaluated on vacuum results only
+(facility-only differences never escalate). Execution order: the 1080 vacuum runs first (promotion decided from them), then the
+1080 facility runs. Final pre-registration hash-locked in `prereg/p5_n2_prereg_lock_v1.json`; no score-bearing run before the
+pre-registration PR merges.

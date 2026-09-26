@@ -20,5 +20,5 @@
   ],
   "blind_envelope_runs": "the blind state-envelope flags for sgb-screen-05 and -09 are not verdicts; only the pre-registered campaign runs are scored"
  },
- "operational_definition_of_extinction": "see p5_n2_validation_criteria_v1.json -> pending_owner_confirmation.O1"
+ "operational_definition_of_extinction": "p5_n2_validation_criteria_v1.json -> operational_rules.O1_extinction_SUSTAINMENT (persistent terminal collapse; the bridge 'sustained' flag is diagnostic only)"
 }

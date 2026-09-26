@@ -1136,6 +1136,14 @@ def test_p5_n2_validation_preregistration():
     snap = os.path.join(B, "audit", "configs", "p5_n2_cases_blind_envelope_v1.json")
     assert h(snap) == man["p5_n2_cases_blind_envelope_v1.json"]["sha256"]
     assert "p5_n2_cases_blind_envelope_v1.json" in open(os.path.join(B, "checks", "blind_state_envelope.jl")).read()
+    assert "pending_owner_confirmation" not in c and set(c["operational_rules"]) == {
+        "O1_extinction_SUSTAINMENT", "O2_precedence", "O3_verdicts", "O4_staged_escalation", "O5_ExB_diagnostic"}
+    assert c["operational_rules"]["O2_precedence"]["order"] == ["NUMERICAL_FAILURE", "OUT_OF_DOMAIN", "FAIL_VALIDATION", "PASS"]
+    assert "0.05 x I_d,target" in c["operational_rules"]["O1_extinction_SUSTAINMENT"]["rule"]
+    assert "N2 2.8 mN" in " ".join(c["operational_rules"]["O4_staged_escalation"]["escalate_to_other_three_primary_combinations_if_any_vacuum"])
+    lock = json.load(open(os.path.join(B, "prereg", "p5_n2_prereg_lock_v1.json")))
+    for f, sha in lock["files"].items():
+        assert h(os.path.join(B, f)) == sha, f
 
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""

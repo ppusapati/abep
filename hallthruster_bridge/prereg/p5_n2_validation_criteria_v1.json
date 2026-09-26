@@ -2,7 +2,7 @@
  "id": "p5_n2_validation_criteria_v1",
  "registered": "2026-09-26",
  "registered_before": "any P5-N2 simulation is scored or any P5-N2 discharge current / thrust prediction is inspected. Known: the measurement audit (PR #26) and the blind state envelope (chemistry-state quantities only, measured targets removed).",
- "decided_by": "project owner (decisions D1-D6, 2026-09-26); operational details O1-O5 proposed by Claude and NOT frozen until the owner confirms them",
+ "decided_by": "project owner: decisions D1-D6 and operational rules O1-O5 (O2, O3, O5 confirmed as proposed with the owner's additions; O1 and O4 amended by the owner), 2026-09-26",
  "purpose": "no-retuning discrimination of the 9 ScaledGaussianBohm screening candidates on P5-N2 (promotion rule, CLAUDE.md next work 1)",
  "inputs_pinned": {
   "measurement_audit": {
@@ -112,14 +112,54 @@
   "n2_n_n2dication.toml"
  ],
  "run_count": {
-  "mandatory": "9 candidates x 4 chemistry x 30 cases (5 points x 3 registrations x 2 coils) x 2 modes = 2160 runs; readings A/B are post-processing",
+  "mandatory": "9 candidates x 4 chemistry x 30 cases x 2 modes = 2160 runs (1080 vacuum first, then 1080 facility); readings A/B are post-processing",
   "staged": "9 x 30 x 2 = 540 runs per sensitivity branch when run"
  },
- "pending_owner_confirmation": {
-  "O1_extinction": "Operational SUSTAINMENT failure: the averaging-window mean I_d is below 10 % of the measured I_d, or the last 10 % of the window has mean I_d below 1 % of the window mean (the discharge has died). A run that stays lit but whose instantaneous minimum dips below 1 % of the mean (the existing bookkeeping flag 'sustained' in hall_map_schema_v1) is NOT a SUSTAINMENT failure; its I_d RMS, peak-to-peak and frequency are reported and it is scored on CURRENT/THRUST. Rationale: the schema defines that flag as bookkeeping, and deep breathing is not extinction.",
-  "O2_precedence": "per run: NUMERICAL_FAILURE, then OUT_OF_DOMAIN, then FAIL_VALIDATION (all failing reasons listed), then PASS. The chemistry-domain test for OUT_OF_DOMAIN is f_out <= 1e-12 for every reaction and no unresolved table, evaluated independently of the sustained flag (the bridge's chemistry_trustworthy also requires sustained, so it cannot be used alone once extinction is a validation outcome).",
-  "O3_candidate_verdict": "per layer-1 member (vacuum, 4 chemistry x 5 points): PASS if every run PASS; FAIL if any run FAIL_VALIDATION; otherwise INCONCLUSIVE (some run OUT_OF_DOMAIN or NUMERICAL_FAILURE, none failing). Candidate: PROMOTABLE if any member PASS; else INCONCLUSIVE / NOT ELIGIBLE if any member INCONCLUSIVE; else FAIL_VALIDATION (falsified under every layer-1 member). Facility verdicts are reported the same way and do not gate.",
-  "O4_staged_escalation_trigger": "A staged sensitivity branch (run for the nominal chemistry only, x 9 candidates, both modes) escalates to the other three mandatory chemistry combinations if, for any candidate and any layer-1 member, it (a) changes any run status or the member or candidate verdict, or (b) shifts a scored observable by at least half its tolerance: |delta I_d| >= 7.5 % of I_d,exp, or |delta T_axial| >= 2.6 mN (1 sigma). Branches: Johnson-low, rotational-off, HMS x0.5, HMS x1.3, molecular N2^2+.",
-  "O5_ExB_model_observable": "V_a,n,model = m_n u_n^2 / (2 Z e) from the ion velocity at the domain outlet, per species; reported against the E x B values as a signed residual and as the ordering V_a(N+) > V_a(N2+)."
- }
+ "operational_rules": {
+  "O1_extinction_SUSTAINMENT": {
+   "rule": "FAIL_VALIDATION / SUSTAINMENT iff BOTH: (a) the mean I_d over the final 10 % of the simulated time is < 0.05 x I_d,target, AND (b) >= 90 % of the I_d samples in that final 10 % are < 0.10 x I_d,target",
+   "target": "mode-matched: vacuum -> Eq. (14)-corrected I_d; facility -> raw P_d/V_d",
+   "not_extinction": "a low but steady discharge fails CURRENT, not SUSTAINMENT; a single deep breathing trough does not trigger SUSTAINMENT",
+   "bridge_sustained_flag": "the bridge's 'sustained' (window minimum > 1 % of mean, hall_map_schema_v1 bookkeeping) is a diagnostic only and never controls a validation status"
+  },
+  "O2_precedence": {
+   "order": [
+    "NUMERICAL_FAILURE",
+    "OUT_OF_DOMAIN",
+    "FAIL_VALIDATION",
+    "PASS"
+   ],
+   "NUMERICAL_FAILURE": "solver failure, non-finite state, invalid time history, or inability to produce the required observables; NOT the bridge 'sustained' flag",
+   "OUT_OF_DOMAIN": "chemistry domain evaluated directly from the reaction-validity audit: f_out <= 1e-12 for every reaction and no unresolved table, independent of sustainment (the bridge's combined chemistry_trustworthy Boolean is not used alone because it includes 'sustained')",
+   "collapse_outside_domain": "a run that collapses AND crosses the chemistry validity boundary is OUT_OF_DOMAIN, not a SUSTAINMENT falsification",
+   "FAIL_VALIDATION": "all failing reasons are listed (CURRENT, THRUST, SUSTAINMENT)"
+  },
+  "O3_verdicts": {
+   "layer1_member": "global member = (registration, coil shape, divergence reading), vacuum, 4 mandatory chemistries x 5 points = 20 runs: PASS iff all 20 PASS; FAIL if any run is FAIL_VALIDATION; otherwise INCONCLUSIVE (some OUT_OF_DOMAIN or NUMERICAL_FAILURE, no validation failure)",
+   "candidate": "PROMOTABLE iff some global member PASS; else INCONCLUSIVE / NOT ELIGIBLE if any member INCONCLUSIVE; else FAIL_VALIDATION (a genuine validation failure under every global member)",
+   "facility": "reported with the same aggregation; never gates"
+  },
+  "O4_staged_escalation": {
+   "first_run": "each staged sensitivity (Johnson-low, rotational-off, HMS x0.5, HMS x1.3, molecular N2^2+) against nominal chemistry, in VACUUM, 9 candidates x 30 cases",
+   "escalate_to_other_three_primary_combinations_if_any_vacuum": [
+    "a run status changes",
+    "|delta I_d| >= 0.075 x I_d,target",
+    "|delta T_axial| >= 0.5 x T_tolerance: N1 2.6 mN, N2 2.8 mN, N3 2.8 mN",
+    "replacing nominal chemistry by the sensitivity changes a provisional global-member or candidate verdict"
+   ],
+   "facility": "facility sensitivity results may be produced as secondary evidence; facility-only differences never trigger escalation"
+  },
+  "O5_ExB_diagnostic": {
+   "model_observable": "V_a,s,model = m_s u_z,s^2 / (2 Z_s e) at the model-domain outlet, for N2+ and N+",
+   "reported": [
+    "Delta V_a,s = V_a,s,model - V_a,s,obs",
+    "Delta V_a,s / 11.6 V (standardized diagnostic residual)",
+    "the species' outlet ion flux and flux fraction beside each value (no minimum-flux threshold)",
+    "ordering V_a(N+) > V_a(N2+)"
+   ],
+   "role": "non-gating"
+  }
+ },
+ "execution_order": "both modes are pre-registered and both are run. The 1080 mandatory VACUUM runs execute first and the promotion result is evaluated from them; the 1080 facility runs follow as secondary consistency evidence. No criterion changes between the two.",
+ "no_score_bearing_run_before": "this pre-registration PR is merged"
 }

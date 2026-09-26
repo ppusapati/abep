@@ -1,0 +1,13 @@
+{
+ "id": "p5_n2_prereg_lock_v1",
+ "locked": "2026-09-26",
+ "note": "sha256 of the final P5-N2 pre-registration; any change after this lock is a new, dated addendum, never an edit",
+ "files": {
+  "prereg/p5_n2_validation_criteria_v1.json": "1d33234c24185e8c2724f2328cf95878969e13145666f7575096962e59cafed6",
+  "prereg/p5_n2_run_status_rule_v1.json": "e72eb4c65417ebda87fbb1f2df75b3d97156f4a4a25207a336197872d88151e0",
+  "prereg/p5_n2_run_status_rule_v1_addendum1_extinction.json": "56e767747b92e1fad8c0820c564700e0052a5496e63192f4c38f9539ce3c04bf",
+  "cases/p5_n2.json": "03f8e838adbb9074f03d8e916b09f84bacc81c3efe9afa2947c6b4dbb73ab1df",
+  "identification/brabston_p5_n2_measurement_audit_v1.json": "f93ce2c25eb0a794ff192a5a0ab0dae1448cab824642bca8eff57e27079f4397",
+  "ensemble/transport_ensemble_v0.json": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"
+ }
+}
