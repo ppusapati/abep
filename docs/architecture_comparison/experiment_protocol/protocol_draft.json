@@ -1,0 +1,911 @@
+{
+  "id": "xprot_ionization_architecture_common_condition_protocol",
+  "protocol_version": "v0-draft",
+  "status": "DRAFT_PENDING_OWNER",
+  "decided_by": null,
+  "schema": "protocol.schema.json",
+  "created": "2026-09-26",
+  "base_commit": "daa0e759e26416847f200a4781194f266be27c5c",
+  "prepared_by": "XPROT workflow lane (draft for the project owner; not an owner decision)",
+  "companion_document": "EXPERIMENT_PROTOCOL_DRAFT.md",
+  "tools": "protocol_tools.py (schema-subset validator, derived-value check, numeric-register rendering, schedule generator)",
+  "purpose": "Common-condition experimental comparison of three ionization architectures feeding the same Hall acceleration stage (Hall-only, RF pre-ionizer + Hall, ECR pre-ionizer + Hall), in which the pre-ionizer is the only change and every consumer is accounted at the same DC input bus boundary.",
+  "scope": {
+    "rfp_block": "ionization/discharge -> acceleration/thrust block of the RFP architecture (atmospheric path: intake -> filter -> compressor -> atmospheric gas chamber -> valve; Xe path: Xe chamber -> valve). The experiment starts at the valve outlets; intake, filter, compressor and gas chambers are replaced by laboratory gas supplies and are outside this experiment.",
+    "in_scope": [
+      "discharge/ionization and acceleration performance of the three arms at identical propellant composition, total mass flow, Hall channel, magnetic configuration, discharge voltage, cathode, facility and diagnostics",
+      "bus-power accounting at the DC input bus boundary for every consumer, identical for all arms",
+      "ignition, sustainment/extinction and stability behaviour",
+      "facility (background-pressure) sensitivity of every arm"
+    ],
+    "out_of_scope": [
+      "intake, filter, compressor, gas-chamber and spacecraft-level performance (the upstream ICD supplies the delivered flow and composition)",
+      "atomic oxygen: bottled O2/N2 mixtures cannot reproduce intake-delivered atomic O; this is a declared limitation, not a surrogate claim",
+      "life and erosion (a separate test)",
+      "any change to Vyovrinda's own Hall geometry between arms",
+      "any new propulsion family (CLAUDE.md rule 8)"
+    ]
+  },
+  "non_claims": [
+    "This protocol makes no claim about which architecture performs better; it defines how the comparison is measured and classified.",
+    "No simulator prediction of arm differences is used or registered here. The Hall transport credible set is empty and gate 3 is FAIL (CLAUDE.md gate table); all absolute Hall results of the withdrawn 0-D closure are not quoted.",
+    "No demonstrated ABEP closure, architecture selection or transport admission is claimed or implied.",
+    "The P5-N2 v1 validation outcome is unaffected; nothing here re-scores, re-labels or re-interprets any v1 run."
+  ],
+  "relation_to_repository": {
+    "evidence_level_of_results": "in-house measurement on Vyovrinda hardware = evidence level 1 (docs/EVIDENCE.md hierarchy); quantity type 'measured' for direct readings, 'inferred' or 'reconstructed' for derived quantities, each with its transformation chain",
+    "prior_plan_item": "docs/HISTORY.md 'What to feed it next' lists measurements of utilization for Hall-only vs ECR/RF-assisted operation on N2 and O; this protocol is a common-condition design for that item (no numbers from that section are used)",
+    "bus_boundary_definition": "bus_power_boundary_v1 (defined by a separate lane in abep_sim/arch_boundary.py, BOUNDARY_VERSION 'bus_power_boundary_v1'); referenced by name only, not imported",
+    "experiment_material_alignment": "docs/experiments/ is not present at the base commit; alignment with any later experiment material is an owner review item"
+  },
+  "arms": [
+    {
+      "id": "HALL_ONLY",
+      "label": "Hall-only",
+      "role": "reference arm",
+      "pre_ionizer": {
+        "type": "none",
+        "energized": false,
+        "hardware_note": "CFG-A: both pre-ionizer applicators installed and unenergized; CFG-B: reference Hall build without pre-ionizer hardware (see hardware_configurations)"
+      },
+      "only_change_vs_reference": "none (reference)",
+      "bus_boundary": {
+        "boundary_version_ref": "bus_power_boundary_v1",
+        "component_ids": ["hall_ppu_input", "magnet_supplies", "rf_generator_input", "microwave_source_input", "cathode_heater", "cathode_keeper", "valves_flow_control", "compressor", "thermal_control", "housekeeping"],
+        "expected_presence": {
+          "hall_ppu_input": "ENERGIZED",
+          "magnet_supplies": "ENERGIZED_OR_ABSENT",
+          "rf_generator_input": "ABSENT_OR_UNENERGIZED",
+          "microwave_source_input": "ABSENT_OR_UNENERGIZED",
+          "cathode_heater": "ENERGIZED_OR_UNENERGIZED",
+          "cathode_keeper": "ENERGIZED",
+          "valves_flow_control": "ENERGIZED",
+          "compressor": "ABSENT_IN_LAB",
+          "thermal_control": "ENERGIZED_OR_ABSENT",
+          "housekeeping": "ENERGIZED"
+        }
+      }
+    },
+    {
+      "id": "RF_HALL",
+      "label": "RF pre-ionizer + Hall",
+      "role": "test arm",
+      "pre_ionizer": {
+        "type": "radio-frequency (inductive/helicon class; coupling topology is an owner/hardware decision)",
+        "energized": true,
+        "frequency": {"id": "rf_frequency", "value": "TBD", "unit": "MHz", "tbd_requires": "RF pre-ionizer design (owner/hardware)"},
+        "dc_input_power_levels": {"id": "rf_dc_input_power_levels", "value": "TBD", "unit": "W", "tbd_requires": "RF pre-ionizer design; the level set must include zero (sham) and at least the number of non-zero levels in design.pre_ionizer_power_levels_min"},
+        "feed_topology": {"id": "rf_feed_topology", "value": "TBD", "unit": "-", "tbd_requires": "hardware decision: series (all propellant through the pre-ionizer) or parallel (split m_dot_p / m_dot_prop); fixed and pre-registered"}
+      },
+      "only_change_vs_reference": "RF pre-ionizer energized (and, in CFG-B, its applicator installed); every common_conditions invariant held",
+      "bus_boundary": {
+        "boundary_version_ref": "bus_power_boundary_v1",
+        "component_ids": ["hall_ppu_input", "magnet_supplies", "rf_generator_input", "microwave_source_input", "cathode_heater", "cathode_keeper", "valves_flow_control", "compressor", "thermal_control", "housekeeping"],
+        "expected_presence": {
+          "hall_ppu_input": "ENERGIZED",
+          "magnet_supplies": "ENERGIZED_OR_ABSENT",
+          "rf_generator_input": "ENERGIZED",
+          "microwave_source_input": "ABSENT_OR_UNENERGIZED",
+          "cathode_heater": "ENERGIZED_OR_UNENERGIZED",
+          "cathode_keeper": "ENERGIZED",
+          "valves_flow_control": "ENERGIZED",
+          "compressor": "ABSENT_IN_LAB",
+          "thermal_control": "ENERGIZED_OR_ABSENT",
+          "housekeeping": "ENERGIZED"
+        }
+      }
+    },
+    {
+      "id": "ECR_HALL",
+      "label": "ECR pre-ionizer + Hall",
+      "role": "test arm",
+      "pre_ionizer": {
+        "type": "electron-cyclotron-resonance microwave",
+        "energized": true,
+        "frequency": {"id": "mw_frequency", "value": "TBD", "unit": "GHz", "tbd_requires": "ECR pre-ionizer design (owner/hardware)"},
+        "resonance_condition": "B_res = 2 pi f m_e / e (fixed by the chosen frequency; the resonance-field magnets must not perturb the Hall channel field beyond the INV-MAG tolerance)",
+        "dc_input_power_levels": {"id": "mw_dc_input_power_levels", "value": "TBD", "unit": "W", "tbd_requires": "ECR pre-ionizer design; the level set must include zero (sham) and at least the number of non-zero levels in design.pre_ionizer_power_levels_min"},
+        "feed_topology": {"id": "mw_feed_topology", "value": "TBD", "unit": "-", "tbd_requires": "hardware decision: series or parallel propellant feed; fixed and pre-registered"}
+      },
+      "only_change_vs_reference": "ECR pre-ionizer energized (and, in CFG-B, its applicator and resonance magnets installed); every common_conditions invariant held",
+      "bus_boundary": {
+        "boundary_version_ref": "bus_power_boundary_v1",
+        "component_ids": ["hall_ppu_input", "magnet_supplies", "rf_generator_input", "microwave_source_input", "cathode_heater", "cathode_keeper", "valves_flow_control", "compressor", "thermal_control", "housekeeping"],
+        "expected_presence": {
+          "hall_ppu_input": "ENERGIZED",
+          "magnet_supplies": "ENERGIZED_OR_ABSENT",
+          "rf_generator_input": "ABSENT_OR_UNENERGIZED",
+          "microwave_source_input": "ENERGIZED",
+          "cathode_heater": "ENERGIZED_OR_UNENERGIZED",
+          "cathode_keeper": "ENERGIZED",
+          "valves_flow_control": "ENERGIZED",
+          "compressor": "ABSENT_IN_LAB",
+          "thermal_control": "ENERGIZED_OR_ABSENT",
+          "housekeeping": "ENERGIZED"
+        }
+      }
+    }
+  ],
+  "controls": [
+    {
+      "id": "SHAM_RF",
+      "purpose": "separates the effect of installing the RF applicator (gas path, volume, surfaces) from the effect of energizing it",
+      "definition": "RF applicator installed, generator not energized, all other settings as RF_HALL",
+      "status": "PROPOSED",
+      "required_in": "CFG-B (in CFG-A the HALL_ONLY arm is this control for both applicators)"
+    },
+    {
+      "id": "SHAM_ECR",
+      "purpose": "separates the effect of installing the ECR applicator and its resonance magnets from the effect of energizing it",
+      "definition": "ECR applicator and resonance magnets installed, microwave source not energized, all other settings as ECR_HALL",
+      "status": "PROPOSED",
+      "required_in": "CFG-B (in CFG-A the HALL_ONLY arm is this control for both applicators)"
+    },
+    {
+      "id": "DUMMY_LOAD_PICKUP",
+      "purpose": "quantifies electromagnetic pickup of the RF generator and microwave source on every common diagnostic",
+      "definition": "each generator drives a matched dummy load (no plasma, no flow) at every pre-registered power level while all common diagnostics record; repeated in every pump-down",
+      "status": "PROPOSED",
+      "required_in": "all configurations"
+    },
+    {
+      "id": "XE_HEALTH_CHECK",
+      "purpose": "detects drift of the Hall channel, cathode, thrust stand and diagnostics over the campaign",
+      "definition": "HALL_ONLY arm at the Xe reference point at the start and end of every test day",
+      "status": "PROPOSED",
+      "required_in": "all configurations"
+    }
+  ],
+  "hardware_configurations": [
+    {
+      "id": "CFG-A",
+      "name": "integrated article",
+      "definition": "one test article carries both pre-ionizer applicators; arms are selected electrically without venting; HALL_ONLY = both applicators installed and unenergized",
+      "advantage": "arms can be randomized within a pump-down; the gas path and magnetic circuit are physically identical across arms",
+      "risk": "the two applicators may interfere (field perturbation, gas-path volume); feasibility TBD by hardware design",
+      "status": "PROPOSED as the preferred configuration, subject to feasibility"
+    },
+    {
+      "id": "CFG-B",
+      "name": "separate builds",
+      "definition": "three builds (bare Hall, RF + Hall, ECR + Hall) plus the two sham builds; a vent separates builds",
+      "advantage": "no mutual interference between applicators",
+      "risk": "reassembly variance and vent/re-conditioning effects; controlled by replicate builds and the XE_HEALTH_CHECK",
+      "status": "PROPOSED fallback"
+    }
+  ],
+  "common_conditions": {
+    "principle": "the pre-ionizer (its applicator and its energization) is the only change between arms; every invariant below is verified and logged at every operating point",
+    "invariants": [
+      {
+        "id": "INV-PROP",
+        "quantity": "propellant composition delivered to the discharge (anode + pre-ionizer lines)",
+        "rule": "same certified gas source (same cylinder lot for premixed O2/N2) or the same calibrated per-species controllers, for all arms at a given point",
+        "verification": "cylinder certificate or per-species MFC readings logged; composition uncertainty stated",
+        "threshold": {
+          "threshold_id": "THR-INV-PROP",
+          "status": "PROPOSED",
+          "decided_by": null,
+          "rule": "per-species mole-fraction difference between arms at the same point <= {inv_prop_tol}",
+          "parameters": [
+            {"id": "inv_prop_tol", "value": "TBD", "unit": "mole fraction", "tbd_requires": "gas-supply specification and the composition uncertainty of the chosen supply"}
+          ]
+        }
+      },
+      {
+        "id": "INV-FLOW",
+        "quantity": "propellant mass flow m_dot_prop = m_dot_a + m_dot_p and cathode flow m_dot_c",
+        "rule": "m_dot_prop and m_dot_c identical across arms at each point, set by the same calibrated controllers; m_dot_p = 0 in HALL_ONLY; the split m_dot_p / m_dot_prop is fixed per arm and pre-registered",
+        "verification": "controller readings logged at >= the pressure sampling rate; periodic in-situ flow verification (calibrator) per Snyder et al. 2017 Sec. IV",
+        "threshold": {
+          "threshold_id": "THR-INV-FLOW",
+          "status": "PROPOSED",
+          "decided_by": null,
+          "rule": "|m_dot_prop,arm / m_dot_prop,HALL_ONLY - 1| <= {inv_flow_tol} and the same for m_dot_c",
+          "parameters": [
+            {"id": "inv_flow_tol", "value": "TBD", "unit": "fraction", "tbd_requires": "MFC calibration uncertainty on the working gas (from the pre-campaign calibration)"}
+          ]
+        }
+      },
+      {
+        "id": "INV-CHANNEL",
+        "quantity": "Hall channel, anode and gas distributor",
+        "rule": "same serial-numbered channel, anode and distributor in every arm; channel dimensions measured before and after the campaign",
+        "verification": "serial numbers logged per pump-down; dimensional inspection report",
+        "threshold": {
+          "threshold_id": "THR-INV-CHANNEL",
+          "status": "PROPOSED",
+          "decided_by": null,
+          "rule": "channel width and depth change over the campaign <= {inv_channel_tol}",
+          "parameters": [
+            {"id": "inv_channel_tol", "value": "TBD", "unit": "mm", "tbd_requires": "Hall channel design and metrology capability"}
+          ]
+        }
+      },
+      {
+        "id": "INV-MAG",
+        "quantity": "Hall magnetic configuration",
+        "rule": "same magnet hardware and coil currents in every arm; B(z) (and B(r) at the channel exit) mapped in every hardware configuration with every pre-ionizer magnet installed",
+        "verification": "Gauss-probe map per configuration; coil currents logged at every point",
+        "threshold": {
+          "threshold_id": "THR-INV-MAG",
+          "status": "PROPOSED",
+          "decided_by": null,
+          "rule": "peak |B| on the channel centreline differs by <= {inv_mag_peak_tol} and its axial location by <= {inv_mag_loc_tol} between configurations; otherwise the comparison is flagged CONFOUNDED_MAGNETIC and reported, not scored",
+          "parameters": [
+            {"id": "inv_mag_peak_tol", "value": "TBD", "unit": "fraction", "tbd_requires": "Hall magnetic design and Gauss-probe uncertainty"},
+            {"id": "inv_mag_loc_tol", "value": "TBD", "unit": "mm", "tbd_requires": "Hall magnetic design and probe positioning uncertainty"}
+          ]
+        }
+      },
+      {
+        "id": "INV-VD",
+        "quantity": "discharge-voltage set",
+        "rule": "identical V_d set points for all arms, regulated at the thruster terminals (voltage sense), constant-voltage mode; flow is not adjusted by discharge-current feedback",
+        "verification": "V_d logged at every point",
+        "threshold": {
+          "threshold_id": "THR-INV-VD",
+          "status": "PROPOSED",
+          "decided_by": null,
+          "rule": "|V_d,arm - V_d,set| <= {inv_vd_tol}",
+          "parameters": [
+            {"id": "inv_vd_tol", "value": "TBD", "unit": "V", "tbd_requires": "discharge supply regulation specification"}
+          ]
+        }
+      },
+      {
+        "id": "INV-CATH",
+        "quantity": "cathode",
+        "rule": "same Xe-fed LaB6 hollow cathode (serial number), position, Xe flow, heater and keeper settings and electrical configuration in every arm (cathode type per the task definition and the repository default neutralizer lab6_xe in abep_sim/archengine.py; owner to confirm)",
+        "verification": "cathode-to-ground and keeper voltages logged at every point as cathode-health indicators",
+        "threshold": {
+          "threshold_id": "THR-INV-CATH",
+          "status": "PROPOSED",
+          "decided_by": null,
+          "rule": "XE_HEALTH_CHECK cathode-to-ground voltage drift over the campaign <= {inv_cath_drift}",
+          "parameters": [
+            {"id": "inv_cath_drift", "value": "TBD", "unit": "V", "tbd_requires": "cathode specification and Hall-only pilot repeatability"}
+          ]
+        }
+      },
+      {
+        "id": "INV-FAC",
+        "quantity": "facility and background-pressure measurement",
+        "rule": "same chamber, pump configuration, thruster position and reference-pressure gauges for all arms; reference pressure reported near the chamber wall at the thruster exit plane (Dankanich et al. 2017 Sec. IV.A); arms are compared only at matched reference pressure",
+        "verification": "reference pressure logged at every point; gauge calibration records",
+        "threshold": {
+          "threshold_id": "THR-INV-FAC",
+          "status": "PROPOSED",
+          "decided_by": null,
+          "rule": "|p_ref,arm / p_ref,HALL_ONLY - 1| <= {inv_fac_tol} for a paired comparison",
+          "parameters": [
+            {"id": "inv_fac_tol", "value": "TBD", "unit": "fraction", "tbd_requires": "facility characterization (pressure sensitivity of the Hall-only arm from the pilot)"}
+          ]
+        }
+      },
+      {
+        "id": "INV-DIAG",
+        "quantity": "common diagnostic set",
+        "rule": "same instruments, positions, calibrations and data-reduction code for all arms; arm-specific monitoring (forward/reflected power) is additive and shown non-perturbing by DUMMY_LOAD_PICKUP",
+        "verification": "instrument serial numbers, positions and calibration dates logged per pump-down",
+        "threshold": {
+          "threshold_id": "THR-INV-DIAG",
+          "status": "PROPOSED",
+          "decided_by": null,
+          "rule": "pickup measured in DUMMY_LOAD_PICKUP on each common diagnostic <= {inv_diag_pickup} of that diagnostic's expanded uncertainty",
+          "parameters": [
+            {"id": "inv_diag_pickup", "value": "TBD", "unit": "fraction", "tbd_requires": "owner decision after the diagnostic uncertainty budget is known"}
+          ]
+        }
+      },
+      {
+        "id": "INV-ELEC",
+        "quantity": "electrical configuration",
+        "rule": "same grounding/floating scheme of thruster body and cathode, same cabling, filters and supplies for all arms",
+        "verification": "configuration photograph and checklist per pump-down"
+      },
+      {
+        "id": "INV-THERM",
+        "quantity": "thermal state at measurement",
+        "rule": "a point is measured only after the same pre-registered thermal-settling criterion is met in every arm (thrust-stand and thruster temperatures)",
+        "verification": "thermocouple records",
+        "threshold": {
+          "threshold_id": "THR-INV-THERM",
+          "status": "PROPOSED",
+          "decided_by": null,
+          "rule": "rate of change of each monitored temperature <= {inv_therm_rate} before a point is recorded",
+          "parameters": [
+            {"id": "inv_therm_rate", "value": "TBD", "unit": "K/min", "tbd_requires": "thrust-stand thermal-drift characterization"}
+          ]
+        }
+      },
+      {
+        "id": "INV-BUS",
+        "quantity": "bus-power boundary",
+        "rule": "the same declared laboratory subset of bus_power_boundary_v1 in every arm: the same component list (bus_power_boundary.components, mapped to v1 ids), measurement points and instrument classes; the compressor row is ABSENT_IN_LAB in every arm and reconstructed from the upstream ICD (bus_power_boundary.laboratory_subset)",
+        "verification": "per-point bus-power record with one row per component, no missing rows"
+      }
+    ]
+  },
+  "flow_accounting": {
+    "definitions": {
+      "m_dot_a": "propellant flow to the Hall anode/gas distributor",
+      "m_dot_p": "propellant flow injected into the pre-ionizer (0 in HALL_ONLY; equals m_dot_prop for a series feed)",
+      "m_dot_prop": "m_dot_a + m_dot_p, the matched discharge-propellant flow",
+      "m_dot_c": "Xe flow to the LaB6 cathode",
+      "m_dot_tot": "m_dot_prop + m_dot_c, used in every efficiency and utilization denominator",
+      "m_dot_transient": "any ignition or conditioning puff on any line, logged and reported with the ignition metric"
+    },
+    "rules": [
+      "every line (anode, pre-ionizer, cathode) has its own calibrated controller and logged reading",
+      "m_dot_prop and m_dot_c are the matched quantities between arms; the split m_dot_p / m_dot_prop is fixed per arm and pre-registered",
+      "controllers are calibrated on each working gas and mixture in the final configuration, traceable to a national metrology standard, within the calibration interval below (Snyder et al. 2017 Sec. IV and VI)",
+      "facility-ingested background gas is not a controlled flow: it is characterized through the reference pressure and the background-pressure sweep, never added to m_dot_tot"
+    ],
+    "mfc_calibration_interval": {"id": "mfc_calibration_interval", "value": 12, "unit": "months (maximum)", "source": "REF-SNYDER2017 Sec. VI (paraphrase: calibrations traceable to NIST, performed at least every twelve months over the entire flow scale)", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"}
+  },
+  "bus_power_boundary": {
+    "boundary_version_ref": "bus_power_boundary_v1",
+    "boundary_point": "DC input bus: every consumer is measured (or, where labelled, reconstructed) at its input terminals from the common DC bus",
+    "bus_voltage": {"id": "bus_voltage", "value": "TBD", "unit": "V", "tbd_requires": "spacecraft EPS ICD"},
+    "laboratory_bus_emulation": "preferred: all consumers fed from one laboratory DC bus supply at the ICD bus voltage through breadboard or flight-like converters, with a main-bus meter and one branch meter per component; where a laboratory supply replaces a bus-fed converter, bus-side power is reconstructed as P_out / eta_conv with eta_conv measured for that converter at that load and labelled 'reconstructed'",
+    "consistency_note": "Each laboratory component row maps name by name onto the component identifiers of bus_power_boundary_v1 (abep_sim/arch_boundary.py, BOUNDARY_VERSION 'bus_power_boundary_v1'; COMMON_COMPONENTS and PREIONIZER_COMPONENTS, referenced by name only, never imported) through its v1_component_ids field; every v1 identifier is covered exactly once (checked by protocol_tools.py and, against the sibling module source, by the test). The laboratory measurement is a DECLARED SUBSET of bus_power_boundary_v1: the compressor row is carried in every arm with presence ABSENT_IN_LAB because the laboratory gas supply replaces the intake/compressor path; its bus draw is explicitly unavailable from this experiment and is reconstructed from the upstream ICD (see laboratory_subset).",
+    "laboratory_subset": {
+      "measured_total": "P_bus,lab = sum of every component row measured (or reconstructed per converter) in the laboratory = bus_power_boundary_v1 minus the compressor; a PARTIAL-boundary quantity, labelled as such wherever it appears",
+      "absent_in_lab": ["compressor"],
+      "absent_in_lab_disposition": "compressor: EXPLICITLY UNAVAILABLE from the experiment (no compressor in the laboratory feed); its bus draw P_compressor(m_dot_tot, composition) is RECONSTRUCTED from the upstream ICD / compressor model at each point's total flow and composition, labelled evidence class 'reconstructed' with the ICD revision and its uncertainty; never filled with a placeholder and never taken as zero",
+      "v1_total": "P_bus,v1 = P_bus,lab + P_compressor,ICD (reconstructed); defined only when the ICD supplies P_compressor for that point, otherwise UNAVAILABLE",
+      "bias_note": "the compressor draw depends on flow and composition, which are held identical across arms, so it is the same additive term in every arm at a matched point; omitting a common additive term from the denominators still moves the paired ratios of M1/M2 (it does not cancel), so partial-boundary ratios are never reported as bus_power_boundary_v1 ratios",
+      "compressor_bus_power": {"id": "compressor_bus_power", "value": "TBD", "unit": "W", "tbd_requires": "upstream ICD: compressor bus draw as a function of delivered total flow and composition at each operating point (abep_sim/compressor.py is the model reference; not evaluated here)"}
+    },
+    "components": [
+      {
+        "id": "hall_ppu_input",
+        "v1_component_ids": ["hall_discharge"],
+        "name": "Hall PPU (discharge converter) DC input",
+        "includes": "discharge-converter conversion loss, output filter and cabling to the thruster; i.e. everything between the bus and the anode/cathode terminals",
+        "measurement": "branch DC power meter at the converter input (4-wire voltage sense, calibrated shunt or zero-flux current transducer, simultaneous V and I sampling); discharge-side V_d and I_d also recorded to report eta_conv",
+        "quantity_type": "measured (bus-fed converter) or reconstructed (laboratory supply, P_d / eta_conv)"
+      },
+      {
+        "id": "magnet_supplies",
+        "v1_component_ids": ["hall_magnet", "ecr_magnet"],
+        "name": "magnet supplies DC input",
+        "includes": "two separately metered sub-items, one per bus_power_boundary_v1 component: hall_magnet (Hall magnetic-circuit coil supplies) and ecr_magnet (ECR resonance-field coil supplies; recorded in every arm, ABSENT or measured standby outside ECR_HALL); a 0 W row for a permanent-magnet circuit is still reported per sub-item",
+        "measurement": "branch DC power meter per supply input",
+        "quantity_type": "measured or reconstructed as above"
+      },
+      {
+        "id": "rf_generator_input",
+        "v1_component_ids": ["rf_source"],
+        "name": "RF generator DC input",
+        "includes": "generator conversion loss, matching network and RF cable losses (everything between the bus and the antenna); forward and reflected power at the generator output and at the applicator are recorded as diagnostics only. A DC field-coil supply of the RF applicator, if the chosen design has one, has no separate bus_power_boundary_v1 component; this draft books it as a metered sub-item of this row (v1: rf_source) so that every common component stays identical across arms (mapping proposal for the owner)",
+        "measurement": "branch DC power meter at the generator DC input; directional coupler and RF power meter as diagnostics",
+        "quantity_type": "measured"
+      },
+      {
+        "id": "microwave_source_input",
+        "v1_component_ids": ["ecr_source"],
+        "name": "microwave source DC input",
+        "includes": "source conversion loss, isolator/circulator, tuner, waveguide/coax and window losses (everything between the bus and the applicator); forward and reflected power recorded as diagnostics only",
+        "measurement": "branch DC power meter at the source DC input; directional coupler and power meter as diagnostics",
+        "quantity_type": "measured"
+      },
+      {
+        "id": "cathode_heater",
+        "v1_component_ids": ["cathode_heater"],
+        "name": "cathode heater supply DC input",
+        "includes": "heater converter loss; reported separately for steady state and for the start-up (ignition) phase as energy",
+        "measurement": "branch DC power meter",
+        "quantity_type": "measured or reconstructed as above"
+      },
+      {
+        "id": "cathode_keeper",
+        "v1_component_ids": ["cathode_keeper"],
+        "name": "cathode keeper supply DC input",
+        "includes": "keeper converter loss",
+        "measurement": "branch DC power meter",
+        "quantity_type": "measured or reconstructed as above"
+      },
+      {
+        "id": "valves_flow_control",
+        "v1_component_ids": ["flow_control"],
+        "name": "valves and flow control DC input",
+        "includes": "valve drivers and flow controllers on every propellant line (anode, pre-ionizer, cathode); laboratory-only controller power is reported as a flagged sub-item",
+        "measurement": "branch DC power meter",
+        "quantity_type": "measured"
+      },
+      {
+        "id": "compressor",
+        "v1_component_ids": ["compressor"],
+        "name": "gas-path compressor motor-drive DC input",
+        "includes": "compressor motor drive and harness on the atmospheric path (intake -> filter -> compressor -> gas chamber -> valve); not present in the laboratory experiment, which starts at the valve outlets",
+        "measurement": "none in this experiment (presence ABSENT_IN_LAB in every arm); bus draw reconstructed from the upstream ICD at each point's total flow and composition (bus_power_boundary.laboratory_subset)",
+        "quantity_type": "unavailable from the experiment; reconstructed (upstream ICD) when supplied",
+        "lab_presence": "ABSENT_IN_LAB"
+      },
+      {
+        "id": "thermal_control",
+        "v1_component_ids": ["thermal_control"],
+        "name": "thermal control DC input",
+        "includes": "heaters and active cooling that the flight system would power for the thruster, pre-ionizer and PPU; facility-provided cooling is disclosed separately (facility_services_disclosure)",
+        "measurement": "branch DC power meter",
+        "quantity_type": "measured"
+      },
+      {
+        "id": "housekeeping",
+        "v1_component_ids": ["housekeeping"],
+        "name": "housekeeping DC input",
+        "includes": "control, telemetry and sensor electronics of the propulsion string",
+        "measurement": "branch DC power meter",
+        "quantity_type": "measured"
+      }
+    ],
+    "presence_rule": "every component row is recorded for every arm at every point (the compressor row as ABSENT_IN_LAB with its reconstructed-from-ICD disposition). A physically absent component is recorded as 0 W with presence ABSENT; an installed but unenergized component is measured (standby draw), never assumed zero. A missing row makes P_bus,lab (and P_bus,v1) undefined for that point (status EXCLUDED_MISSING_BOUNDARY_COMPONENT); no placeholder is ever filled in.",
+    "totals": "P_bus,lab = sum over all components measured in the laboratory (partial boundary: bus_power_boundary_v1 minus the compressor); P_bus,v1 = P_bus,lab + P_compressor,ICD when the ICD supplies it; the per-component breakdown (per v1 component id) is reported for every point and arm",
+    "facility_services_disclosure": [
+      "facility cooling water or gas for any generator, applicator, magnet or PPU: heat load reported per arm (calorimetric or flow x temperature rise), outside the bus boundary but disclosed because flight would reject it through the thermal subsystem",
+      "facility pumping and laboratory instrumentation are not propulsion consumers and are excluded, identically for all arms"
+    ],
+    "ledger_check": {
+      "definition": "residual = |P_main - sum of branch meters| / P_main at every point, where P_main is the main-bus meter",
+      "threshold": {
+        "threshold_id": "THR-LEDGER",
+        "status": "PROPOSED",
+        "decided_by": null,
+        "rule": "residual <= {ledger_residual_max}; otherwise the point is EXCLUDED_INSTRUMENT",
+        "parameters": [
+          {"id": "ledger_residual_max", "value": 0.02, "unit": "fraction", "source": "CLAUDE.md rule 4 (architecture energy-ledger residual < 2 % for the simulator); adoption for the experimental ledger is a proposal", "evidence_class": "assumed", "status": "PROPOSED"}
+        ]
+      }
+    },
+    "uncertainty_targets": {
+      "instrument_class": "DC power analyzer channels with calibration traceable to a national metrology standard, 4-wire voltage sensing at the consumer input, simultaneous voltage and current sampling, stated bandwidth covering converter ripple",
+      "threshold": {
+        "threshold_id": "THR-UNC-BUS",
+        "status": "PROPOSED",
+        "decided_by": null,
+        "rule": "expanded relative uncertainty of P_bus,lab at every point (and of P_bus,v1, including the ICD compressor uncertainty, when it is formed) <= {bus_unc_ratio} x delta_m1 (the pre-registered minimum effect of interest of M1); per-component budgets are allocated so that their root-sum-square meets this target",
+        "parameters": [
+          {"id": "bus_unc_ratio", "value": 0.25, "unit": "fraction of delta_m1", "source": "XPROT draft proposal, analogous to the common 4:1 test-uncertainty-ratio convention (from memory - verify); not derived from data", "evidence_class": "assumed", "status": "PROPOSED"}
+        ]
+      }
+    }
+  },
+  "diagnostics": {
+    "common": [
+      {
+        "id": "DIAG-THRUST",
+        "quantity": "thrust T",
+        "instrument": "pendulum-type thrust stand with in-situ end-to-end calibration of the whole installation (Polk et al. 2017 Sec. IV); this protocol applies that principle to the pre-ionizer feed lines (RF cables, waveguide or coax) crossing the stand interface (XPROT application, not a statement of the source)",
+        "procedure": "calibrations before and after each operating sequence and zero measurement with thruster off (Polk et al. 2017 Sec. V.A); thermocouples on the stand for drift tracking (Sec. VI.B); uncertainty budget reported (Sec. VI.C, VII)",
+        "calibrations_before": {"id": "thrust_cal_before_min", "value": 10, "unit": "calibrations (minimum)", "source": "REF-POLK2017 Sec. V.A ('Perform a minimum of ten calibrations to generate a calibration curve')", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"},
+        "calibrations_after": {"id": "thrust_cal_after_min", "value": 10, "unit": "calibrations (minimum)", "source": "REF-POLK2017 Sec. V.A ('Perform a minimum of ten calibrations after thruster operation')", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"},
+        "uncertainty_target": {
+          "threshold_id": "THR-UNC-THRUST",
+          "status": "PROPOSED",
+          "decided_by": null,
+          "rule": "expanded relative thrust uncertainty <= {thrust_unc_ratio} x delta_m1, and the pre/post calibration sensitivity shift contributes <= {thrust_cal_shift_max} of the total thrust uncertainty, otherwise EXCLUDED_INSTRUMENT",
+          "parameters": [
+            {"id": "thrust_unc_ratio", "value": 0.25, "unit": "fraction of delta_m1", "source": "XPROT draft proposal (same ratio as THR-UNC-BUS); not derived from data", "evidence_class": "assumed", "status": "PROPOSED"},
+            {"id": "thrust_cal_shift_max", "value": "TBD", "unit": "fraction", "tbd_requires": "thrust-stand characterization (owner)"}
+          ]
+        }
+      },
+      {
+        "id": "DIAG-DISCHARGE",
+        "quantity": "V_d, I_d (DC and time-resolved), cathode-to-ground and keeper voltages, coil currents",
+        "instrument": "calibrated DC meters plus a high-bandwidth current probe on the discharge line",
+        "sampling_rate": {"id": "discharge_sampling_rate", "value": "TBD", "unit": "Hz", "tbd_requires": "oscillation band observed in the Hall-only pilot, with anti-alias filtering; the same rate for all arms"}
+      },
+      {
+        "id": "DIAG-FARADAY",
+        "quantity": "ion current density map, beam current I_b, divergence",
+        "instrument": "Faraday probe sweep at fixed radius, same probe and positions in all arms",
+        "procedure": "per the recommended practice REF-BROWN2017 (full text not accessed by this lane - verify the applicable corrections before pre-registration)"
+      },
+      {
+        "id": "DIAG-EXB",
+        "quantity": "species and charge-state current fractions (N2+, N+, O2+, O+, NO+ if present, multiply charged ions, Xe+ from the cathode flow)",
+        "instrument": "E x B probe (or equivalent species-resolving diagnostic); required mass resolution TBD",
+        "procedure": "spectrum analysis per REF-SHASTRY2009 (metadata only accessed - verify); same analysis code for all arms",
+        "mass_resolution": {"id": "exb_resolution", "value": "TBD", "unit": "-", "tbd_requires": "species set of the O2/N2 mixtures from the upstream ICD and E x B probe design"}
+      },
+      {
+        "id": "DIAG-IEDF",
+        "quantity": "ion energy distribution (acceleration voltage)",
+        "instrument": "retarding potential analyzer",
+        "procedure": "recommended-practice reference TBD (none located by this lane); same analyzer and position for all arms"
+      },
+      {
+        "id": "DIAG-PRESSURE",
+        "quantity": "reference background pressure p_ref",
+        "instrument": "hot-cathode ionization gauges calibrated on each working gas and mixture with their controller, cabling and feedthrough (Dankanich et al. 2017 Sec. III)",
+        "placement": "near the chamber wall at the thruster exit plane (Dankanich et al. 2017 Sec. IV.A)",
+        "gauge_radial_offset_min": {"id": "gauge_offset_chamber_radii_min", "value": 0.6, "unit": "chamber radii from the centreline (minimum)", "source": "REF-DANKANICH2017 Sec. IV.A ('at least 0.6 chamber radii away from the centerline')", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"},
+        "gauge_distance_from_thruster_min": {"id": "gauge_distance_thruster_min", "value": 1, "unit": "m from the thruster outer diameter (minimum)", "source": "REF-DANKANICH2017 Sec. IV.A ('at least 1 m from the outer diameter of the thruster')", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"},
+        "settling_after_flow_change": {"id": "pressure_settle_min", "value": 2, "unit": "min (minimum) after a commanded flow change greater than the fraction below", "source": "REF-DANKANICH2017 Sec. IV.A ('no less than 2 min after a commanded flow-rate change greater than 10%')", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"},
+        "settling_flow_change_fraction": {"id": "pressure_settle_flow_change", "value": 0.1, "unit": "fraction of commanded flow", "source": "REF-DANKANICH2017 Sec. IV.A", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"},
+        "sampling_rate_min": {"id": "pressure_sampling_min", "value": 10, "unit": "Hz (minimum)", "source": "REF-DANKANICH2017 Sec. IV.A ('The sampling rate should be no less than 10 Hz')", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"},
+        "averaging_window": {"id": "pressure_average_window", "value": 3, "unit": "s", "source": "REF-DANKANICH2017 Sec. IV.A ('pressure should be measured as the 3 s average value')", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"},
+        "gauge_calibration_interval": {"id": "gauge_calibration_interval", "value": 12, "unit": "months (maximum; or the operating-hour limit below, whichever is less)", "source": "REF-DANKANICH2017 Sec. III ('the lesser of 12 months or 2000 h of noncontinuous operation')", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"},
+        "gauge_calibration_hours": {"id": "gauge_calibration_hours", "value": 2000, "unit": "h of noncontinuous operation (maximum)", "source": "REF-DANKANICH2017 Sec. III", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"},
+        "radial_asymmetry": {
+          "threshold_id": "THR-PRESSURE-ASYM",
+          "status": "PROPOSED",
+          "decided_by": null,
+          "rule": "asymmetric pressure variation at the thruster exit plane one thruster radius from the outer channel wall < {pressure_asym_max}",
+          "parameters": [
+            {"id": "pressure_asym_max", "value": 0.2, "unit": "fraction", "source": "REF-DANKANICH2017 Sec. IV.A ('Asymmetric pressure variation should be less than 20%')", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"}
+          ]
+        },
+        "mixture_gas_correction": {"id": "gauge_correction_o2n2", "value": "TBD", "unit": "-", "tbd_requires": "calibration of the gauges on each O2/N2 mixture (N2 is the industry reference gas; REF-DANKANICH2017 Sec. II.A.2 and III: calibration on the gas of interest, if practical, gives higher precision than a gas correction factor)"}
+      },
+      {
+        "id": "DIAG-FLOW",
+        "quantity": "m_dot_a, m_dot_p, m_dot_c",
+        "instrument": "calibrated mass-flow controllers (see flow_accounting)",
+        "procedure": "per REF-SNYDER2017 Sec. IV and VI"
+      },
+      {
+        "id": "DIAG-BUS",
+        "quantity": "per-component DC input power and P_main",
+        "instrument": "see bus_power_boundary.uncertainty_targets",
+        "procedure": "one record per component per point; averaging window equal to the thrust averaging window"
+      },
+      {
+        "id": "DIAG-TEMP",
+        "quantity": "thrust-stand, thruster, applicator and PPU temperatures",
+        "instrument": "thermocouples at pre-registered locations",
+        "procedure": "used for INV-THERM and drift correction"
+      }
+    ],
+    "arm_specific_additive": [
+      {"id": "DIAG-RF-FWDREF", "arm": "RF_HALL", "quantity": "RF forward/reflected power at generator output and applicator", "use": "diagnostic and stability metric S5 only; never substitutes for the DC input power"},
+      {"id": "DIAG-MW-FWDREF", "arm": "ECR_HALL", "quantity": "microwave forward/reflected power", "use": "diagnostic and stability metric S5 only; never substitutes for the DC input power"},
+      {"id": "DIAG-PREION-PRESSURE", "arm": "RF_HALL, ECR_HALL", "quantity": "pre-ionizer chamber pressure (if a port exists)", "use": "diagnostic only"}
+    ]
+  },
+  "test_matrix": {
+    "principle": "operating-point values are parameters; values the upstream ICD must supply are TBD and are never invented here",
+    "factors": [
+      {
+        "id": "F-PROP",
+        "name": "propellant",
+        "levels": [
+          {"id": "prop_xe_reference", "label": "Xe reference", "value": "TBD", "unit": "-", "tbd_requires": "owner choice of the Xe reference point (flow and voltage) for drift checks and cross-facility comparison"},
+          {"id": "prop_n2", "label": "N2", "value": "TBD", "unit": "-", "tbd_requires": "gas purity specification (owner)"},
+          {"id": "prop_o2n2_mixtures", "label": "O2/N2 mixtures", "value": "TBD", "unit": "mole fractions", "tbd_requires": "upstream ICD: composition delivered at the valve outlet across the RFP altitude envelope (abep_sim/constants.py RFPConstraints.alt_min_km to alt_max_km) and solar conditions (intake -> filter -> compressor -> gas chamber); not invented here"}
+        ]
+      },
+      {
+        "id": "F-MDOT",
+        "name": "propellant mass flow m_dot_prop",
+        "levels": [
+          {"id": "mdot_prop_levels", "value": "TBD", "unit": "mg/s", "tbd_requires": "upstream ICD: delivered mass-flow range at the valve outlet; the set must include the lowest ICD-delivered flow"}
+        ]
+      },
+      {
+        "id": "F-MDOTC",
+        "name": "cathode Xe flow m_dot_c",
+        "levels": [
+          {"id": "mdot_cathode", "value": "TBD", "unit": "mg/s", "tbd_requires": "LaB6 cathode specification (owner/supplier); identical in all arms"}
+        ]
+      },
+      {
+        "id": "F-VD",
+        "name": "discharge voltage",
+        "levels": [
+          {"id": "vd_levels", "value": "TBD", "unit": "V", "tbd_requires": "Hall design envelope (owner)"}
+        ]
+      },
+      {
+        "id": "F-MAG",
+        "name": "Hall magnet setting",
+        "levels": [
+          {"id": "mag_setting", "value": "TBD", "unit": "A (coil currents) or design ID", "tbd_requires": "Hall magnetic design (owner); fixed across arms"}
+        ]
+      },
+      {
+        "id": "F-PREP",
+        "name": "pre-ionizer DC input power",
+        "levels": [
+          {"id": "preionizer_power_levels", "value": "TBD", "unit": "W", "tbd_requires": "arms[].pre_ionizer.dc_input_power_levels (RF and ECR designs); includes zero"}
+        ]
+      },
+      {
+        "id": "F-PBG",
+        "name": "reference background pressure",
+        "levels": [
+          {"id": "pbg_levels", "value": "TBD", "unit": "Torr (gas-corrected)", "tbd_requires": "facility characterization: base level at maximum facility capability plus elevated levels spanning the expected operating range"}
+        ]
+      }
+    ],
+    "full_factorial_required": false,
+    "matrix_rule": "the primary matrix is F-PROP x F-MDOT x F-VD at base background pressure for every arm (and sham controls in CFG-B), with the pre-ionizer at each of its non-zero power levels; the background-pressure sweep and the minimum-flow search are run on a pre-registered subset of points (subset TBD by the owner)"
+  },
+  "design": {
+    "randomisation": {
+      "within_day": "propellant blocks in the fixed order Xe reference -> N2 -> O2/N2 (oxygen exposure may change cathode and wall surfaces irreversibly, so oxygen-containing points are not interleaved with the others); inside each block the operating points are shuffled and, in CFG-A, the arm order is shuffled inside each point",
+      "between_builds": "CFG-B: build order balanced over replicate builds (each build installed at least twice, HALL_ONLY build revisited between test-arm builds)",
+      "algorithm": "protocol_tools.randomized_schedule (deterministic given the seed); the seed is drawn and recorded at pre-registration",
+      "seed": {"id": "schedule_seed", "value": "TBD", "unit": "-", "tbd_requires": "drawn at pre-registration and recorded in the lock"}
+    },
+    "replication": {
+      "definition": "a replicate is an independent visit to the point separated by a thruster shutdown and restart (and, in CFG-B, preferably a re-installation)",
+      "replicates_min": {"id": "replicates_min", "value": 3, "unit": "replicates per (arm, point)", "source": "XPROT draft proposal; the final count follows a power analysis on Hall-only pilot variance (TBD)", "evidence_class": "assumed", "status": "PROPOSED"}
+    },
+    "pre_ionizer_power_levels_min": {"id": "preionizer_nonzero_levels_min", "value": 2, "unit": "non-zero power levels per pre-ionizer arm", "source": "XPROT draft proposal (needed to see a dose-response rather than a single point)", "evidence_class": "assumed", "status": "PROPOSED"},
+    "drift_controls": [
+      "XE_HEALTH_CHECK at the start and end of every day",
+      "thrust-stand calibrations before and after each sequence (DIAG-THRUST)",
+      "arm order randomized so that drift cannot align with arm"
+    ],
+    "blinding": "the analysis pipeline is frozen and run with coded arm labels; labels are decoded only after the per-metric classification is produced (PROPOSED)",
+    "conditioning": "the same pre-registered conditioning sequence (bake-out, cathode activation, Hall conditioning on Xe) after every vent, identical for all arms"
+  },
+  "facility_effect_controls": {
+    "method": "background pressure is raised by supplemental injection of the same working gas downstream of the thruster, at least one pumping surface between injection and gauge, and preferably near the facility centreline; the baseline is at maximum facility pumping capability (Dankanich et al. 2017 Sec. IV.B)",
+    "elevated_levels_min": {"id": "pbg_elevated_levels_min", "value": 2, "unit": "elevated background-pressure levels in addition to the base level", "source": "XPROT draft proposal (two elevated levels allow a slope and a curvature check)", "evidence_class": "assumed", "status": "PROPOSED"},
+    "injection_distance_min": {"id": "pbg_injection_distance_min", "value": 2, "unit": "m downstream of the thruster exit plane (minimum)", "source": "REF-DANKANICH2017 Sec. IV.B ('at least 2 m downstream of the thruster exit plane or preferably near the centerline of the facility')", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"},
+    "analysis": "for every arm and swept point, each metric is regressed on p_ref; arm-by-pressure interaction is reported. An arm difference that is present at base pressure but whose sign or classification changes within the swept range is reported as FACILITY_SENSITIVE and is not carried as a vacuum-representative result. Extrapolation to zero pressure is a secondary, model-based analysis and is labelled 'reconstructed'.",
+    "never_crossed": "a paired comparison is made only at matched reference pressure (THR-INV-FAC); results at different pressures are never compared directly",
+    "precedent": "the P5-N2 reference data required a facility ingestion correction (Brabston et al. 2025, as audited in hallthruster_bridge/identification/brabston_p5_n2_measurement_audit_v1.json), which is why the sweep is mandatory for every arm"
+  },
+  "sustainment_and_extinction": {
+    "ignition": {
+      "definition": "an ignition attempt follows the pre-registered start sequence (cathode heater, keeper, flows, pre-ionizer where applicable, discharge supply). Success: I_d reaches the steady window within the timeout and remains sustained for the hold time.",
+      "timeout": {"id": "ignition_timeout", "value": "TBD", "unit": "s", "tbd_requires": "start-sequence design and Hall-only pilot"},
+      "hold_time": {"id": "ignition_hold", "value": "TBD", "unit": "s", "tbd_requires": "owner decision"}
+    },
+    "extinction": {
+      "definition_source": "same functional form as the simulation rule O1 (hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json operational_rules.O1_extinction_SUSTAINMENT) so that experiment and simulation use one definition; applied over an experimental hold window",
+      "threshold": {
+        "threshold_id": "THR-EXTINCTION",
+        "status": "PROPOSED",
+        "decided_by": null,
+        "rule": "uncommanded extinction iff BOTH the mean I_d over the hold window < {ext_mean_frac} x I_d,ref AND >= {ext_sample_share} of I_d samples in that window < {ext_sample_frac} x I_d,ref, with I_d,ref the median I_d of the preceding steady window of duration {ext_window}",
+        "parameters": [
+          {"id": "ext_mean_frac", "value": 0.05, "unit": "fraction of I_d,ref", "source": "p5_n2_validation_criteria_v1.json operational_rules.O1_extinction_SUSTAINMENT (project decision for simulation scoring); adoption for experiments is a proposal", "evidence_class": "assumed", "status": "PROPOSED"},
+          {"id": "ext_sample_share", "value": 0.9, "unit": "fraction of samples", "source": "p5_n2_validation_criteria_v1.json operational_rules.O1_extinction_SUSTAINMENT; adoption for experiments is a proposal", "evidence_class": "assumed", "status": "PROPOSED"},
+          {"id": "ext_sample_frac", "value": 0.1, "unit": "fraction of I_d,ref", "source": "p5_n2_validation_criteria_v1.json operational_rules.O1_extinction_SUSTAINMENT; adoption for experiments is a proposal", "evidence_class": "assumed", "status": "PROPOSED"},
+          {"id": "ext_window", "value": "TBD", "unit": "s", "tbd_requires": "discharge oscillation band from the Hall-only pilot"}
+        ]
+      },
+      "not_extinction": "a low but steady discharge is sustained; a single deep breathing trough is not an extinction"
+    },
+    "minimum_sustained_flow_search": "at fixed V_d and magnet setting, m_dot_prop is stepped down (pre-registered step and dwell) until extinction or the facility/controller limit; the lowest sustained step is m_dot_min for that arm. Extinctions are data (metric M6 and S6), never exclusions.",
+    "flow_step": {"id": "min_flow_step", "value": "TBD", "unit": "mg/s", "tbd_requires": "MFC resolution and owner decision; it sets the resolution of M6"}
+  },
+  "stability_metrics": [
+    {"id": "S1", "name": "relative discharge-current oscillation", "definition": "sigma(I_d) / mean(I_d) over the steady window, in the pre-registered band"},
+    {"id": "S2", "name": "peak-to-peak discharge-current oscillation", "definition": "(max - min)(I_d) / mean(I_d) over the steady window"},
+    {"id": "S3", "name": "dominant oscillation frequency", "definition": "frequency of the largest peak of the I_d power spectral density in the pre-registered band"},
+    {"id": "S4", "name": "thrust noise", "definition": "standard deviation of the thrust-stand signal over the steady window after drift correction"},
+    {"id": "S5", "name": "pre-ionizer coupling stability", "definition": "mean and standard deviation of reflected/forward power ratio (pre-ionizer arms only; diagnostic)"},
+    {"id": "S6", "name": "uncommanded extinctions and mode transitions", "definition": "count per hour of operation per arm and propellant"}
+  ],
+  "run_statuses": {
+    "statuses": {
+      "VALID": "all invariants within tolerance, all instruments valid, every bus component recorded",
+      "EXCLUDED_FACILITY": "reference pressure outside the matched band, gauge fault or asymmetry beyond THR-PRESSURE-ASYM",
+      "EXCLUDED_INSTRUMENT": "thrust-stand calibration shift beyond THR-UNC-THRUST, ledger residual beyond THR-LEDGER, or another instrument fault",
+      "EXCLUDED_MISSING_BOUNDARY_COMPONENT": "any bus_power_boundary_v1 component row not recorded (the compressor row counts as recorded only with its ABSENT_IN_LAB disposition); P_bus,lab undefined",
+      "CONFOUNDED_MAGNETIC": "INV-MAG tolerance missed for the configuration",
+      "NOT_IGNITED": "ignition attempt failed; counted in M5",
+      "NOT_SUSTAINED": "uncommanded extinction per THR-EXTINCTION; counted in M6 and S6"
+    },
+    "precedence": ["EXCLUDED_MISSING_BOUNDARY_COMPONENT", "CONFOUNDED_MAGNETIC", "EXCLUDED_INSTRUMENT", "EXCLUDED_FACILITY", "NOT_IGNITED", "NOT_SUSTAINED", "VALID"],
+    "rules": [
+      "excluded points are reported with their reason, never deleted",
+      "NOT_IGNITED and NOT_SUSTAINED are outcomes, not exclusions",
+      "re-runs of excluded points are scheduled at the end of the same block with the same randomization rule; the re-run cap is pre-registered (TBD)"
+    ]
+  },
+  "decision_metrics": [
+    {
+      "id": "M1",
+      "name": "thrust per bus power",
+      "definition": "T / P_bus at matched point and reference pressure, computed on two labelled bases: PARTIAL (P_bus,lab, bus_power_boundary_v1 minus the compressor) and V1 (P_bus,v1 = P_bus,lab + P_compressor,ICD, only when the ICD supplies the compressor draw). Only the V1-basis classification is a bus_power_boundary_v1 result; a PARTIAL-basis classification is always reported with the label PARTIAL_BOUNDARY",
+      "unit": "mN/kW",
+      "role": "primary (PROPOSED)",
+      "comparison": "paired ratio R = M1(arm) / M1(HALL_ONLY) at the same point, day and pressure",
+      "threshold": {
+        "threshold_id": "THR-M1",
+        "status": "PROPOSED",
+        "decided_by": null,
+        "rule": "classify HIGHER if the lower bound of the two-sided {confidence_level} confidence interval of R exceeds unity by more than {delta_m1}; LOWER if the upper bound is below unity by more than {delta_m1}; otherwise NOT_DISTINGUISHED",
+        "parameters": [
+          {"id": "delta_m1", "value": "TBD", "unit": "fraction", "tbd_requires": "owner: minimum effect of interest (the change in thrust per bus power that would alter an architecture decision); not derivable from the simulator while the Hall credible set is empty"},
+          {"id": "confidence_level", "value": 0.95, "unit": "-", "source": "XPROT draft proposal (conventional level); multiplicity handled by the statistics section", "evidence_class": "assumed", "status": "PROPOSED"}
+        ]
+      }
+    },
+    {
+      "id": "M2",
+      "name": "beam ion current per bus power",
+      "definition": "I_b / P_bus on the same two labelled bases as M1 (PARTIAL: P_bus,lab; V1: P_bus,lab + P_compressor,ICD), I_b from the Faraday-probe integration (DIAG-FARADAY)",
+      "unit": "A/kW",
+      "role": "secondary (PROPOSED)",
+      "comparison": "paired ratio as M1",
+      "threshold": {
+        "threshold_id": "THR-M2",
+        "status": "PROPOSED",
+        "decided_by": null,
+        "rule": "as THR-M1 with {delta_m2} at the {confidence_level_m2} level",
+        "parameters": [
+          {"id": "delta_m2", "value": "TBD", "unit": "fraction", "tbd_requires": "owner: minimum effect of interest for M2"},
+          {"id": "confidence_level_m2", "value": 0.95, "unit": "-", "source": "XPROT draft proposal (same as THR-M1)", "evidence_class": "assumed", "status": "PROPOSED"}
+        ]
+      }
+    },
+    {
+      "id": "M3",
+      "name": "mass utilization",
+      "definition": "eta_m,tot = sum_j (m_j / (q_j e)) I_b,j / m_dot_tot with I_b,j = I_b x Omega_j (E x B current fraction of species j, charge state q_j, mass m_j from standard atomic weights); eta_m,prop (propellant species only over m_dot_prop) reported alongside",
+      "unit": "-",
+      "role": "secondary (PROPOSED)",
+      "comparison": "paired ratio as M1",
+      "threshold": {
+        "threshold_id": "THR-M3",
+        "status": "PROPOSED",
+        "decided_by": null,
+        "rule": "as THR-M1 with {delta_m3} at the {confidence_level_m3} level",
+        "parameters": [
+          {"id": "delta_m3", "value": "TBD", "unit": "fraction", "tbd_requires": "owner: minimum effect of interest for M3"},
+          {"id": "confidence_level_m3", "value": 0.95, "unit": "-", "source": "XPROT draft proposal (same as THR-M1)", "evidence_class": "assumed", "status": "PROPOSED"}
+        ]
+      }
+    },
+    {
+      "id": "M4",
+      "name": "stability",
+      "definition": "S1 (relative discharge-current oscillation); S2-S6 reported",
+      "unit": "-",
+      "role": "secondary, non-inferiority (PROPOSED)",
+      "comparison": "paired ratio S1(arm) / S1(HALL_ONLY)",
+      "threshold": {
+        "threshold_id": "THR-M4",
+        "status": "PROPOSED",
+        "decided_by": null,
+        "rule": "classify NOT_WORSE if the upper bound of the two-sided {confidence_level_m4} confidence interval of the S1 ratio is <= unity plus {delta_m4}; WORSE if its lower bound exceeds unity plus {delta_m4}; otherwise NOT_DISTINGUISHED",
+        "parameters": [
+          {"id": "delta_m4", "value": "TBD", "unit": "fraction", "tbd_requires": "owner: tolerable increase in oscillation (depends on PPU and cathode design)"},
+          {"id": "confidence_level_m4", "value": 0.95, "unit": "-", "source": "XPROT draft proposal (same as THR-M1)", "evidence_class": "assumed", "status": "PROPOSED"}
+        ]
+      }
+    },
+    {
+      "id": "M5",
+      "name": "ignition reliability",
+      "definition": "successes / attempts per arm and propellant under the pre-registered start sequence; one-sided Clopper-Pearson lower bound on the success probability",
+      "unit": "-",
+      "role": "secondary (PROPOSED)",
+      "comparison": "each arm against the owner's minimum reliability; arms compared descriptively",
+      "threshold": {
+        "threshold_id": "THR-M5",
+        "status": "PROPOSED",
+        "decided_by": null,
+        "rule": "MEETS if the one-sided {ignition_confidence} Clopper-Pearson lower bound of the ignition success probability over {ignition_attempts} attempts is >= {ignition_p_min}; otherwise NOT_DEMONSTRATED",
+        "parameters": [
+          {"id": "ignition_confidence", "value": 0.95, "unit": "-", "source": "XPROT draft proposal (conventional level)", "evidence_class": "assumed", "status": "PROPOSED"},
+          {"id": "ignition_attempts", "value": "TBD", "unit": "attempts per arm and propellant", "tbd_requires": "owner, using the ignition decision aid (statistics.ignition_decision_aid)"},
+          {"id": "ignition_p_min", "value": "TBD", "unit": "probability", "tbd_requires": "owner/system requirement (cathode start-cycle budget over the RFP mission duration, abep_sim/constants.py RFPConstraints.mission_hours)"}
+        ]
+      }
+    },
+    {
+      "id": "M6",
+      "name": "minimum sustained propellant flow",
+      "definition": "m_dot_min from the minimum_sustained_flow_search at fixed V_d and magnet setting",
+      "unit": "mg/s",
+      "role": "secondary (PROPOSED)",
+      "comparison": "difference m_dot_min(arm) - m_dot_min(HALL_ONLY) over replicates",
+      "threshold": {
+        "threshold_id": "THR-M6",
+        "status": "PROPOSED",
+        "decided_by": null,
+        "rule": "classify LOWER_MIN_FLOW if m_dot_min(arm) is below m_dot_min(HALL_ONLY) by at least {m6_steps} flow steps in every replicate; HIGHER_MIN_FLOW symmetrically; otherwise NOT_DISTINGUISHED",
+        "parameters": [
+          {"id": "m6_steps", "value": "TBD", "unit": "flow steps", "tbd_requires": "owner, after the flow step (sustainment_and_extinction.flow_step) is fixed"}
+        ]
+      }
+    }
+  ],
+  "rfp_screens": {
+    "note": "informational screens only; they use the partial laboratory boundary (no intake/compressor), so passing a screen is a necessary, not a sufficient, condition for RFP relevance, and failing it is reported without ranking arms",
+    "rfp_values": [
+      {"id": "rfp_thrust_min", "value": 12, "unit": "mN", "source": "RFP DTDF/06/13516/DSP/ABEP/X/L/M/01 Part III Para 2, as transcribed in abep_sim/constants.py (RFPConstraints.thrust_min_mN) and CLAUDE.md; not re-read from the RFP by this lane - verify", "evidence_class": "assumed", "status": "REQUIREMENT_TRANSCRIBED"},
+      {"id": "rfp_thrust_max", "value": 25, "unit": "mN", "source": "RFP Part III Para 2 as transcribed in abep_sim/constants.py (RFPConstraints.thrust_max_mN); verify", "evidence_class": "assumed", "status": "REQUIREMENT_TRANSCRIBED"},
+      {"id": "rfp_power_max", "value": 1500, "unit": "W", "source": "RFP Part III Para 2 as transcribed in abep_sim/constants.py (RFPConstraints.power_max_W; CLAUDE.md '< 1.5 kW'); verify", "evidence_class": "assumed", "status": "REQUIREMENT_TRANSCRIBED"}
+    ],
+    "derived": [
+      {"id": "rfp_thrust_per_power_floor", "value": 8.0, "unit": "mN/kW", "source": "derived by protocol_tools.py: rfp_thrust_min / rfp_power_max. A point with T >= rfp_thrust_min at total system power < rfp_power_max has T / P_system > this value, and P_bus,lab <= P_system, so T / P_bus,lab > this value is necessary", "evidence_class": "model-derived", "status": "DERIVED", "derived_key": "rfp_thrust_per_power_floor"}
+    ],
+    "screens": [
+      {
+        "id": "SCR-THRUST-WINDOW",
+        "threshold": {
+          "threshold_id": "THR-SCR-THRUST",
+          "status": "PROPOSED",
+          "decided_by": null,
+          "rule": "report whether {rfp_thrust_min_ref} <= T <= {rfp_thrust_max_ref} at the point",
+          "parameters": [
+            {"id": "rfp_thrust_min_ref", "value": 12, "unit": "mN", "source": "rfp_screens.rfp_values.rfp_thrust_min", "evidence_class": "assumed", "status": "REQUIREMENT_TRANSCRIBED"},
+            {"id": "rfp_thrust_max_ref", "value": 25, "unit": "mN", "source": "rfp_screens.rfp_values.rfp_thrust_max", "evidence_class": "assumed", "status": "REQUIREMENT_TRANSCRIBED"}
+          ]
+        }
+      },
+      {
+        "id": "SCR-TP-FLOOR",
+        "threshold": {
+          "threshold_id": "THR-SCR-TP",
+          "status": "PROPOSED",
+          "decided_by": null,
+          "rule": "report whether T / P_bus,lab > {rfp_tp_floor_ref} (PARTIAL_BOUNDARY; necessary condition only), and T / P_bus,v1 when the ICD compressor draw is available",
+          "parameters": [
+            {"id": "rfp_tp_floor_ref", "value": 8.0, "unit": "mN/kW", "source": "rfp_screens.derived.rfp_thrust_per_power_floor (protocol_tools.py)", "evidence_class": "model-derived", "status": "DERIVED", "derived_key": "rfp_thrust_per_power_floor"}
+          ]
+        }
+      }
+    ]
+  },
+  "statistics": {
+    "unit_of_analysis": "paired (arm, HALL_ONLY) visits to the same point in the same day and matched reference pressure",
+    "interval_method": "ratio confidence intervals from replicate-level paired log-ratios (t-interval on log R); bootstrap over replicates as a cross-check (PROPOSED)",
+    "multiplicity": "Holm step-down correction across the pre-registered primary family (M1 at every primary point and arm); secondary metrics reported with unadjusted and adjusted intervals (PROPOSED)",
+    "aggregation": "no composite score and no single overall ranking; the output is the per-metric, per-point, per-arm classification table. Any aggregation rule must be pre-registered by the owner before measurement.",
+    "ignition_decision_aid": {
+      "note": "zero-failure demonstration: the one-sided lower confidence bound on the success probability after n successes in n attempts is (1 - c)^(1/n); the smallest n that demonstrates a target p is ceil(ln(1 - c) / ln p). Illustrative targets only; the owner sets ignition_p_min.",
+      "confidence": {"id": "aid_confidence", "value": 0.95, "unit": "-", "source": "XPROT draft proposal (same as ignition_confidence)", "evidence_class": "assumed", "status": "PROPOSED"},
+      "rows": [
+        {
+          "target": {"id": "aid_target_p90", "value": 0.9, "unit": "probability", "source": "illustrative grid point chosen by this draft; not a requirement", "evidence_class": "assumed", "status": "PROPOSED"},
+          "n_min_zero_failures": {"id": "aid_nmin_p90", "value": 29, "unit": "attempts", "source": "derived by protocol_tools.py (zero-failure Clopper-Pearson bound)", "evidence_class": "model-derived", "status": "DERIVED", "derived_key": "n_zero_fail:aid_target_p90"}
+        },
+        {
+          "target": {"id": "aid_target_p95", "value": 0.95, "unit": "probability", "source": "illustrative grid point chosen by this draft; not a requirement", "evidence_class": "assumed", "status": "PROPOSED"},
+          "n_min_zero_failures": {"id": "aid_nmin_p95", "value": 59, "unit": "attempts", "source": "derived by protocol_tools.py (zero-failure Clopper-Pearson bound)", "evidence_class": "model-derived", "status": "DERIVED", "derived_key": "n_zero_fail:aid_target_p95"}
+        },
+        {
+          "target": {"id": "aid_target_p99", "value": 0.99, "unit": "probability", "source": "illustrative grid point chosen by this draft; not a requirement", "evidence_class": "assumed", "status": "PROPOSED"},
+          "n_min_zero_failures": {"id": "aid_nmin_p99", "value": 299, "unit": "attempts", "source": "derived by protocol_tools.py (zero-failure Clopper-Pearson bound)", "evidence_class": "model-derived", "status": "DERIVED", "derived_key": "n_zero_fail:aid_target_p99"}
+        }
+      ]
+    }
+  },
+  "preregistration": {
+    "rule": "no score-bearing measurement before the pre-registration is locked and merged (mirrors hallthruster_bridge/prereg practice)",
+    "steps": [
+      {"id": "PR-1", "step": "owner resolves every TBD and every PROPOSED item (accept, change or reject) and records the decision; status moves from DRAFT_PENDING_OWNER to REGISTERED only by an owner decision"},
+      {"id": "PR-2", "step": "pilot phase, disclosed: Hall-only repeatability and facility characterization; pre-ionizer arms limited to functional checkout (ignition, matching, dummy-load pickup) with no thrust, current or utilization metric computed for them. Pilot data never enter the decision analysis."},
+      {"id": "PR-3", "step": "freeze: protocol JSON (status REGISTERED), analysis code, schedule seed, upstream-ICD revision, instrument calibration certificates list; write a sha256 lock file of these artefacts"},
+      {"id": "PR-4", "step": "merge the lock; only then run the campaign"},
+      {"id": "PR-5", "step": "any later change is a dated addendum that discloses what data had been seen; the lock is never edited"},
+      {"id": "PR-6", "step": "raw data frozen with sha256 before analysis; the per-metric classification table is produced by the frozen code with coded arm labels"}
+    ],
+    "lock_location": "docs/architecture_comparison/experiment_protocol/prereg/ (future; created only at PR-3)"
+  },
+  "references": [
+    {"id": "REF-POLK2017", "citation": "J. E. Polk, A. Pancotti, T. Haag, S. King, M. Walker, J. Blakely, J. Ziemer, 'Recommended Practice for Thrust Measurement in Electric Propulsion Testing', Journal of Propulsion and Power 33(3), 539-555, 2017", "doi": "10.2514/1.B35564", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7839308/", "access": "full_text", "access_note": "author manuscript on PubMed Central; Sec. IV, V.A, VI.B, VI.C, VII read; bibliographic data checked against Crossref", "used_for": "thrust-stand calibration, drift control, uncertainty reporting"},
+    {"id": "REF-DANKANICH2017", "citation": "J. W. Dankanich, M. Walker, M. W. Swiatek, J. T. Yim, 'Recommended Practice for Pressure Measurement and Calculation of Effective Pumping Speed in Electric Propulsion Testing', Journal of Propulsion and Power 33(3), 668-680, 2017", "doi": "10.2514/1.B35478", "url": "https://hpepl.ae.gatech.edu/sites/default/files/Journal_Articles/JPP%20V33%20No3%20MayJune2017_PressureMeasurement.pdf", "access": "full_text", "access_note": "PDF posted openly by the Georgia Tech HPEPL laboratory; Sec. II.A.2, III, IV.A, IV.B read; bibliographic data checked against Crossref", "used_for": "gauge placement, calibration, sampling, facility-effect (background-pressure) characterization"},
+    {"id": "REF-SNYDER2017", "citation": "J. S. Snyder, J. Baldwin, J. D. Frieman, M. L. R. Walker, N. S. Hicks, K. A. Polzin, J. T. Singleton, 'Recommended Practice for Flow Control and Measurement in Electric Propulsion Testing', Journal of Propulsion and Power 33(3), 556-565, 2017", "doi": "10.2514/1.B35644", "url": "https://hpepl.ae.gatech.edu/sites/default/files/Journal_Articles/JPP%20V33%20No3%20MayJune2017_MassFlowMeasurement.pdf", "access": "full_text", "access_note": "PDF posted openly by the Georgia Tech HPEPL laboratory; Sec. IV and VI read; bibliographic data checked against Crossref", "used_for": "flow-controller calibration on the working gas, calibration interval, reporting"},
+    {"id": "REF-BROWN2017", "citation": "D. L. Brown, M. L. R. Walker, J. Szabo, W. Huang, J. E. Foster, 'Recommended Practice for Use of Faraday Probes in Electric Propulsion Testing', Journal of Propulsion and Power 33(3), 582-613, 2017", "doi": "10.2514/1.B35696", "url": "https://doi.org/10.2514/1.B35696", "access": "metadata_only", "access_note": "Crossref metadata only; the open repository copy returned HTTP 403 and was not bypassed - verify content before pre-registration", "used_for": "Faraday-probe practice (beam current, divergence)"},
+    {"id": "REF-SHASTRY2009", "citation": "R. Shastry, R. R. Hofer, B. M. Reid, A. D. Gallimore, 'Method for analyzing E x B probe spectra from Hall thruster plumes', Review of Scientific Instruments 80, 2009", "doi": "10.1063/1.3152218", "url": "https://doi.org/10.1063/1.3152218", "access": "metadata_only", "access_note": "Crossref metadata only - verify content before pre-registration", "used_for": "species-fraction analysis of E x B spectra"},
+    {"id": "REF-SHABSHELOWITZ2014", "citation": "A. Shabshelowitz, A. D. Gallimore, P. Y. Peterson, 'Performance of a Helicon Hall Thruster Operating with Xenon, Argon, and Nitrogen', Journal of Propulsion and Power 30, 664-671, 2014", "doi": "10.2514/1.B35041", "url": "https://doi.org/10.2514/1.B35041", "access": "metadata_only", "access_note": "Crossref/Semantic Scholar metadata only; the open repository copy returned HTTP 403 and was not bypassed; no result from it is used - verify", "used_for": "precedent that an RF (helicon) pre-ionization stage has been operated ahead of a Hall stage on N2; context only"},
+    {"id": "REF-BRABSTON2025", "citation": "Brabston et al., Journal of Propulsion and Power 2025 (P5 Hall thruster on N2 and Xe)", "doi": "10.2514/1.B39623", "url": "https://doi.org/10.2514/1.B39623", "access": "repository_record", "access_note": "as audited in hallthruster_bridge/identification/brabston_p5_n2_measurement_audit_v1.json (not re-read by this lane)", "used_for": "precedent for facility ingestion corrections on N2 Hall operation (motivates the mandatory background-pressure sweep)"}
+  ],
+  "open_items_for_owner": [
+    "choose CFG-A (integrated) or CFG-B (separate builds) after a hardware feasibility review",
+    "confirm the cathode (Xe-fed LaB6) and its Xe flow, and the thruster/cathode electrical configuration",
+    "set every minimum effect of interest delta_m1..delta_m4 and m6_steps, and the confidence levels",
+    "accept, change or reject every PROPOSED threshold and adopted practice value",
+    "obtain the upstream ICD revision that fixes delivered flows and O2/N2 compositions (flows are never invented here)",
+    "decide the primary endpoint(s) and the primary point set for the multiplicity family",
+    "decide the subset of points for the background-pressure sweep and the minimum-flow search",
+    "confirm the name-by-name mapping to bus_power_boundary_v1 (bus_power_boundary.components[].v1_component_ids), in particular booking any RF applicator DC field coil under rf_source, and re-run the test against abep_sim/arch_boundary.py once that module is merged",
+    "confirm the declared laboratory subset (compressor ABSENT_IN_LAB, reconstructed from the upstream ICD) and obtain the ICD compressor bus draw per operating point",
+    "verify the metadata-only references (REF-BROWN2017, REF-SHASTRY2009, REF-SHABSHELOWITZ2014) and locate a recommended practice for the retarding potential analyzer",
+    "align with docs/experiments/ material if and when it exists"
+  ]
+}
