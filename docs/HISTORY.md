@@ -1952,3 +1952,13 @@ This inclusion follows the pre-registered rule literally (gross F_P 1.13 % > 1 %
   - Uses a bound-only Bell N III table in `audit/bound_tables/`.
   - The driver exposes `LAST_SOL` for check scripts; it is never used for scoring.
   - Running.
+
+## 2026-09-26 — Pre-registration addendum 1: ambiguity rule (frozen before the full envelope summary)
+
+`prereg/n2_completeness_audit_v1_addendum1_ambiguity.json` (owner decision):
+- upper bound < threshold ⇒ **EXCLUDE**;
+- lower bound > threshold ⇒ **PROMOTE** (nominal chemistry);
+- lower < threshold < upper ⇒ **PROMOTE AS AN UNCERTAINTY VARIANT**. This means omission has not been shown harmless; it does not assert the upper-envelope physics.
+- Bounds are taken over all nuisance choices (operating point, transport, chemistry). A verdict that flips with the nuisance choice is treated as the between-bounds case.
+- Disclosure: early partial records had been seen in the session log. No full-envelope summary, maximum or range had been computed.
+- On promotion, molecular N₂²⁺ requires both N₂ → N₂²⁺ and N₂⁺ → N₂²⁺, with N₂ `max_charge` = 2 and the species-energy link checked. Direct N → N²⁺ goes into nominal chemistry, with the Hahn–Müller–Savin uncertainty as a sensitivity.

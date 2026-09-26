@@ -1,0 +1,18 @@
+{
+ "id": "n2_completeness_audit_v1_addendum1_ambiguity",
+ "amends": "n2_completeness_audit_v1",
+ "registered": "2026-09-26",
+ "registered_before": "the complete 180-case blind state-envelope summary is inspected. Disclosure: early partial records (a few runs of the direct N -> N^2+ and molecular N2^2+ metrics) had been seen in the session log; no summary, maximum or range over the full envelope had been computed.",
+ "decided_by": "project owner",
+ "rule": {
+  "upper_bound_below_threshold": "EXCLUDE",
+  "lower_bound_above_threshold": "PROMOTE (nominal chemistry)",
+  "threshold_between_lower_and_upper": "PROMOTE AS AN UNCERTAINTY VARIANT: omission has not been shown harmless, so the uncertainty survives into validation as a chemistry variant. This does not assert the upper-envelope physics."
+ },
+ "applies_to": "every omitted-process verdict under n2_completeness_audit_v1, using its thresholds (F_P 1 %, F_ion 1 %, F_S_s 5 %) and domains; bounds are taken over all evaluated nuisance choices (operating point, transport candidate, chemistry configuration).",
+ "robustness": "If a verdict changes with transport or chemistry nuisance choice, the uncertainty belongs in the validation set (treated as the between-bounds case).",
+ "model_requirements_on_promotion": {
+  "molecular_N2_Z2plus": "model both N2 + e -> N2^2+ + 3e and N2+ + e -> N2^2+ + 2e; N2 max_charge = 2; verify HallThruster species-energy derivation (a one-to-one N2+ -> N2^2+ link is required)",
+  "direct_N_to_N_Z2plus": "if promoted, nominal chemistry, with the Hahn-Muller-Savin semi-empirical uncertainty carried as a sensitivity"
+ }
+}

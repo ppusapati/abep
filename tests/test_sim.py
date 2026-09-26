@@ -990,6 +990,19 @@ def test_variant_configs_are_regenerated_from_n2_n():
         assert open(os.path.join(m.PROP, name)).read().split("\n", 1)[1] == exp, name
 
 
+def test_completeness_ambiguity_addendum_is_frozen():
+    """Addendum 1 to n2_completeness_audit_v1 (registered before the full blind-envelope summary): exclude if upper <
+    threshold, promote if lower > threshold, promote as an uncertainty variant if the threshold lies between."""
+    import json, os
+    p = os.path.join(os.path.dirname(os.path.dirname(__file__)), "hallthruster_bridge", "prereg",
+                     "n2_completeness_audit_v1_addendum1_ambiguity.json")
+    r = json.load(open(p))
+    assert r["amends"] == "n2_completeness_audit_v1" and r["registered"] == "2026-09-26"
+    assert r["rule"]["upper_bound_below_threshold"] == "EXCLUDE"
+    assert r["rule"]["lower_bound_above_threshold"].startswith("PROMOTE")
+    assert r["rule"]["threshold_between_lower_and_upper"].startswith("PROMOTE AS AN UNCERTAINTY VARIANT")
+
+
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""
     from abep_sim.rate_tables import maxwellian_rate, tail_sensitivity
