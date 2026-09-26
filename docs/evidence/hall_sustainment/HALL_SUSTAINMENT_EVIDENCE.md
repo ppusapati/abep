@@ -33,7 +33,10 @@ voltage and B ranges, channel geometry, oscillations and extinction, cathode flo
 - **Evidence level:** the `docs/EVIDENCE.md` hierarchy. Primary experimental literature on similar hardware is level 3.
   Anything known only second-hand through a review is level 5.
 - **Evidence class** of every number: measured / digitized / inferred / reconstructed / model-derived / assumed. A value
-  that is not available is written as "not reported" or "TBD - requires ...". It is never filled in.
+  that is not available is written as "not reported" or "TBD - requires ...". It is never filled in, and because a
+  missing value has no quantity type its evidence class is null ("none (no value)" in the tables). Thruster power and
+  geometry are structured quantities too (`thruster.power`, `thruster.geometry`); the free-text `geometry_note`
+  carries no numbers.
 
 ## Rules followed
 
@@ -50,9 +53,10 @@ voltage and B ranges, channel geometry, oscillations and extinction, cathode flo
   Brabston et al., JPP 2025 (doi:10.2514/1.B39623) and Marchioni's 2020 MSc thesis. The builder recomputes each value
   from those files, and their sha256 hashes are recorded in `meta.repository_inputs`.
 - **Simulation results are not evidence.** The P5-N2 v1 vacuum simulation campaign is not used as evidence that a
-  discharge physically sustains. v1 is INCONCLUSIVE: no candidate is admitted and the credible set is empty. That v1
-  outcome is final and permanent; it is never re-scored or re-labelled, and this audit reads the official statuses
-  unchanged from the frozen scores file. The status counts appear only under `context_not_evidence`: 1080 records,
+  discharge physically sustains. v1 is INCONCLUSIVE: no candidate is admitted and the credible set is empty. The v1
+  campaign is recorded as frozen, scored once and released, with no-replace evidence publication (docs/HISTORY.md,
+  2026-09-26 entry). This audit's own practice follows from that: it never re-scores or re-labels v1 and reads the
+  official statuses unchanged from the frozen scores file. The status counts appear only under `context_not_evidence`: 1080 records,
   and among the 2160 run × reading evaluations, 1428 OUT_OF_DOMAIN, 700 FAIL_VALIDATION and 32 PASS.
 - **Scope.** The audit covers Hall discharges only. Excluded items and the reasons are in `excluded`: cusped-field MCFT,
   RIT-10, ABIE, IPT and other non-Hall devices.
@@ -68,8 +72,8 @@ voltage and B ranges, channel geometry, oscillations and extinction, cathode flo
 | E01 | P5 (5 kW-class laboratory Hall thruster) (single-stage Hall (SPT-type)) | N2 (pure) / Xe | not_reported | 5-5.4 mg/s (anode N2 mass flow (N1-N5)) | 231.9-278.6 V | 130 G (peak radial B at channel centre, exit plane) | **sustained** | 3 | operation_without_preionizer_demonstrated |
 | E02 | P5 (5 kW-class laboratory Hall thruster) (single-stage Hall (SPT-type)) | N2 (pure) / Xe | not_reported | n/r | 225-275 V | 130 G (peak radial B at channel centre, exit plane) | **extinguished** | 3 | operation_bounded_extinction_observed |
 | E03 | ECHT (Stanford extended-channel Hall thruster) (single-stage Hall (SPT-type, extended channel)) | N2 (pure) / Ar | direct_on_atmospheric_gas | 2.06 mg/s (anode N2 mass flow) | 180-220 V | 85.3 G (centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)) | **sustained** | 3 | operation_without_preionizer_demonstrated |
-| E04 | ECHT (Stanford extended-channel Hall thruster) (single-stage Hall (SPT-type, extended channel)) | N2 (pure) / Ar | direct_on_atmospheric_gas | 1.6 mg/s (anode N2 flow below which the discharge was unstable / quenched) | n/r | n/r | **extinguished** | 3 | operation_bounded_extinction_observed |
-| E05 | Snecma PPS1350-TSD (reconverted to PPS1350 configuration) (single-stage Hall (SPT-type)) | N2 (pure) / Xe | xenon_start_then_transition | 2.3-2.85 mg/s (anode N2 flow, characterization) | n/r | n/r | **sustained** | 3 | operation_without_preionizer_demonstrated_xenon_start |
+| E04 | ECHT (Stanford extended-channel Hall thruster) (single-stage Hall (SPT-type, extended channel)) | N2 (pure) / Ar | direct_on_atmospheric_gas | 1.6 mg/s (anode N2 flow below which the discharge was reported unstable and easily quenched unless the potential was raised sufficiently (and at increasing magnet current)) | n/r | n/r | **extinguished** | 3 | operation_bounded_extinction_observed |
+| E05 | Snecma PPS1350-TSD (reconverted to PPS1350 configuration) (single-stage Hall (SPT-type)) | N2 (pure) / Xe | xenon_start_then_transition | 2.3-2.85 mg/s (anode N2 flow, characterization) | 305 V | n/r | **sustained** | 3 | operation_without_preionizer_demonstrated_xenon_start |
 | E06 | Snecma PPS1350-TSD (reconverted to PPS1350 configuration) (single-stage Hall (SPT-type)) | N2/O2, 1.27N2 + O2 (molecular composition) / Xe | xenon_start_then_transition | 2.1 mg/s (minimum stable mixture flow) | 220-350 V | n/r | **sustained** | 3 | operation_without_preionizer_demonstrated_xenon_start |
 | E07 | Snecma PPS1350-TSD (reconverted to PPS1350 configuration) (single-stage Hall (SPT-type)) | N2/O2 mixture with a 10 % xenon mass-flow addition / not reported | not_reported | 2.75 mg/s (mixture flow) | 305 V | n/r | **extinguished** | 5 | not_informative |
 | E08 | SITAEL HT5k (first development model) (single-stage Hall (SPT-type)) | 0.56N2/0.44O2 (= 1.27N2 + O2) / Xe | not_reported | 4.3-4.7 mg/s (anode mixture flow) | 225 V | n/r | **sustained** | 5 | operation_without_preionizer_demonstrated |
@@ -79,7 +83,7 @@ voltage and B ranges, channel geometry, oscillations and extinction, cathode flo
 | E12 | MaSHEKT-100 (Southampton) (magnetically shielded Hall (low power)) | N2 (pure) / not accessed | direct_on_atmospheric_gas (second-hand; verify) | n/r | n/r | n/r | **sustained** | 5 | operation_without_preionizer_demonstrated |
 | E13 | Z-70 (Stanford, refurbished) (single-stage Hall (SPT-type)) | Xe/N2 mixtures (Xe mass fraction down to about 10 %); pure N2 not sustained / Xe | xenon_admixture_required | 1.33-1.39 mg/s (anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)) | 290 V | 135 G (radial B at channel centreline, exit plane) | **extinguished** | 3 | xenon_admixture_required_in_tested_regime |
 | E14 | Z-70 (Stanford, refurbished) (single-stage Hall (SPT-type)) | Xe/air mixtures (Xe mass fraction 48-96 % per ANDREUSSI2022 p.26) / Xe | xenon_admixture_required | 0.83 mg/s (anode air flow, runs XeAir-3/4 (+ 0.78 mg/s Xe in the anode flow)) | 290 V | 135-160 G (radial B at channel-exit centreline (XeAir-3 135 G, XeAir-4 160 G)) | **sustained** | 3 | xenon_admixture_required_in_tested_regime |
-| E15 | TsNIIMASH anode-layer thrusters, 27 mm and 55 mm (D-55) anode diameter (anode-layer Hall (TAL)) | Xe + air mixtures (fractions not legible in the accessed scan) / not reported | xenon_admixture_required | n/r | n/r | n/r | **sustained** | 3 | xenon_admixture_required_in_tested_regime |
+| E15 | TsNIIMASH anode-layer thrusters (two anode diameters; D-55 type) (anode-layer Hall (TAL)) | Xe + air mixtures (fractions not legible in the accessed scan) / not reported | not_reported | n/r | n/r | n/r | **sustained** | 3 | xenon_admixture_improves_operating_mode |
 | E16 | Busek BHT (2 kW nominal) (single-stage Hall (SPT-type)) | air simulant 68.3 % N2, 6.7 % O2, 25 % Ar (Ar as surrogate for atomic O) / not reported | not_reported | 2.94 mg/s (best-efficiency point flow) | 200-350 V | n/r | **sustained** | 5 | operation_without_preionizer_demonstrated |
 | E17 | Busek ABHET LX2 prototype (single-stage Hall (open-ended, extended channel per patent; details unpublished)) | air simulant in an inlet duct, or collected flow from an RF Hall source / not reported (the RF Hall source used a Xe cathode) | not_reported | n/r | n/r | n/r | **sustained** | 5 | not_informative |
 | E18 | SITAEL RAM-EP prototype (two-stage Hall (ionization stage + Hall-like acceleration stage)) | intake-collected flow from the HT5k PFG (4.7 mg/s 1.27N2 + O2 at the PFG); PFG also run on Xe / Xe (hollow cathode neutralizer) | not_reported | 4.7 mg/s (PFG anode flow (upstream source, not the thruster inlet flow)) | n/r | n/r | **sustained** | 3 | preionization_stage_present_effect_not_isolated |
@@ -95,17 +99,21 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 
 - Sources / access: REPO_P5_N2_AUDIT (repository_audit_file), BRABSTON2025 (licensed_full_text_sha_pinned), BRABSTON_IEPC2024 (open_full_text). Evidence level 3; outcome evidence class: measured; repository-derived values recomputed by the builder.
 - Pre-ionizer: none. Ignition (not_reported, measured, basis primary): The start-up / ignition procedure (gas at ignition) is not described in the accessed text (verify in the full paper if needed).
-- Outcome: **sustained**. All five N2 setpoints were operated and measured (thrust, plume probes at N1-N3). Coils were tuned at N3 to minimise I_d and its peak-to-peak oscillation, then held fixed. The Xe cathode flow (4.5 sccm) was chosen as the lowest that kept stable operation on all propellants.
+- Outcome: **sustained**. All five N2 setpoints were operated and measured (thrust, plume probes at N1-N3). Coils were tuned at N3 to minimise I_d and its peak-to-peak oscillation, then held fixed. The Xe cathode flow (4.5 sccm) was selected in preliminary testing as the lowest flow that maintained stable operation across all propellants and setpoints, to minimise xenon ingestion (BRABSTON2025 p.6, article-in-advance pagination; the open IEPC-2024-297 p.8 states only that the cathode is maintained at 4.5 sccm).
 - Observations: oscillations: qualitative only: B tuned to minimise I_d peak-to-peak oscillation; no amplitudes or spectra published (repository findings F6; BRABSTON2025 p.6); extinction: see E02 (voltage window); erosion: not reported; cathode: Xe hollow cathode at 0.44 mg/s; paper assumes the Xe contribution negligible (no resolvable Xe in E x B spectra; findings F5).
 - **Implication for 'is pre-ionization required?'** (operation_without_preionizer_demonstrated): A single-stage Hall discharge without a dedicated pre-ionization stage sustained on a pure N2 anode flow of 5.0-5.4 mg/s at 232-279 V and 130 G in this thruster and facility.
   - Uncertainty: Electron supply and possibly ionization are assisted by a Xe cathode flow of 8.1-8.8 % of the anode mass flow, and by ingested background N2 (2.0-3.4 % of the anode flow, Eq. (13) correlation). The start-up gas is not reported, so this entry says nothing about Xe-free ignition.
   - Applicability limits: 5 kW-class channel (32 or 38 mm long), 3.1-4.8 kW, 1.1-2.1e-5 Torr facility background, Xe cathode; not a flight or intake-fed condition.
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: channel length/depth conflicts between sources (see geometry); coil currents and B(z) for the tested thruster unpublished
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
-  | anode N2 mass flow (N1-N5) | 5-5.4 | mg/s | measured | MFC 1 % of setpoint (max 0.05 mg/s) | REPO_P5_N2_AUDIT, Table 2 via audit points.*.table2 |
-  | cathode Xe mass flow | 0.44 | mg/s | measured | MFC 1 % of setpoint | REPO_P5_N2_AUDIT, Table 2 (4.5 sccm) |
+  | [thruster power] discharge power | 3.08-4.81 | kW | measured | rounding 0.005 kW (3 s.f.) | REPO_P5_N2_AUDIT, Table 2 |
+  | [geometry] discharge channel length/depth as reported by Brabston 2025 | 32 | mm | measured | conflicts with the historical 38 mm; which value applies to the tested thruster is a layer-1 registration hypothesis (L38-hist / L32-anode / L32-exit), not resolved | REPO_P5_N2_AUDIT, docs/EVIDENCE.md register row 'P5 channel depth' (measured, conflicting) |
+  | [geometry] discharge channel length/depth as reported historically (Peterson 2001, Hofer 2004) | 38 | mm | measured | conflicts with Brabston 2025 (32 mm); layer-1 registration hypothesis, not resolved | REPO_P5_N2_AUDIT, docs/EVIDENCE.md register row 'P5 channel depth' (measured, conflicting) |
+  | anode N2 mass flow (N1-N5) | 5-5.4 | mg/s | measured | MFC 1 % of setpoint (BRABSTON2025 p.6): 0.05-0.054 mg/s per point (audit points.*.table2.mdot_anode_sigma_mg_s); the paper states a maximum test uncertainty of 0.05 mg/s | REPO_P5_N2_AUDIT, Table 2 via audit points.*.table2 |
+  | cathode Xe mass flow | 0.44 | mg/s | measured | MFC 1 % of setpoint (BRABSTON2025 p.6, anode and cathode MFCs) | REPO_P5_N2_AUDIT, Table 2 (4.5 sccm) |
   | cathode Xe / anode N2 mass-flow ratio | 0.0815-0.088 | 1 | inferred | propagated from MFC 1 % (each) | REPO_P5_N2_AUDIT, our arithmetic on Table 2 |
   | discharge voltage | 231.9-278.6 | V | measured | not stated | REPO_P5_N2_AUDIT, Table 2 |
   | discharge power | 3.08-4.81 | kW | measured | rounding 0.005 kW (3 s.f.) | REPO_P5_N2_AUDIT, Table 2 |
@@ -115,7 +123,6 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   | ingested background N2 flow, Eq. (13) | 0.0992-0.1861 | mg/s | inferred | engineering correlation (evidence level 6) | REPO_P5_N2_AUDIT, audit points.*.mdot_ingested_eq13_mg_s |
   | ingested / anode flow | 0.0198-0.0345 | 1 | inferred | inherits Eq. (13) uncertainty | REPO_P5_N2_AUDIT, our arithmetic |
   | thrust, ingestion-corrected (N1..N5) | 61.4-90 | mN | reconstructed | max uncertainty 2.6 mN (BRABSTON2025 Table 5, audit points.*.T_sigma_mN); Fig. 5 digitization about 0.4 mN at N2-N4 (repository findings) | REPO_P5_N2_AUDIT, abstract end-points (N1, N5); Fig. 5 digitized (N2-N4) |
-  | discharge channel length | 32-38 | mm | measured | conflicting sources; carried as hypotheses | REPO_P5_N2_AUDIT, docs/EVIDENCE.md register: 32 mm (Brabston 2025) vs 38 mm (Peterson 2001, Hofer 2004) |
 
 #### E02 - P5 on pure N2 outside about 225-275 V (operating-window statement)
 
@@ -123,13 +130,17 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 - Pre-ionizer: none. Ignition (not_reported, measured, basis primary): not described in the accessed text
 - Outcome: **extinguished**. The paper states that above 275 V and below 225 V the thruster becomes unstable and cannot sustain a discharge on nitrogen (text statement, no boundary data). qualitative: all five setpoints ran; the text says the discharge cannot be sustained above 275 V or below 225 V (N3-N5 are at 275.7-278.6 V)
 - Observations: oscillations: not quantified; extinction: loss of discharge outside the window; erosion: not reported; cathode: Xe hollow cathode 0.44 mg/s.
-- **Implication for 'is pre-ionization required?'** (operation_bounded_extinction_observed): Without a pre-ionizer, sustained N2 operation of this thruster was confined to a narrow voltage window at about 5 mg/s and fixed B.
+- **Implication for 'is pre-ionization required?'** (operation_bounded_extinction_observed): Without a pre-ionizer, sustained N2 operation of this thruster was confined to a stated window of about 225-275 V at 5.0-5.4 mg/s and fixed B; the window is approximate, since setpoints at 5-5.4 mg/s ran at 275.7-278.6 V, above the stated 275 V upper bound.
   - Uncertainty: Boundary is a text statement (no data, no B or flow scan at the boundary); whether a pre-ionizer, a different B, or more flow widens the window is not tested.
   - Applicability limits: same as E01
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: channel length/depth conflicts between sources (see geometry); coil currents and B(z) for the tested thruster unpublished
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | [thruster power] discharge power | 3.08-4.81 | kW | measured | rounding 0.005 kW (3 s.f.) | REPO_P5_N2_AUDIT, Table 2 |
+  | [geometry] discharge channel length/depth as reported by Brabston 2025 | 32 | mm | measured | conflicts with the historical 38 mm; which value applies to the tested thruster is a layer-1 registration hypothesis (L38-hist / L32-anode / L32-exit), not resolved | REPO_P5_N2_AUDIT, docs/EVIDENCE.md register row 'P5 channel depth' (measured, conflicting) |
+  | [geometry] discharge channel length/depth as reported historically (Peterson 2001, Hofer 2004) | 38 | mm | measured | conflicts with Brabston 2025 (32 mm); layer-1 registration hypothesis, not resolved | REPO_P5_N2_AUDIT, docs/EVIDENCE.md register row 'P5 channel depth' (measured, conflicting) |
   | discharge voltage | 231.9-278.6 | V | measured | not stated | REPO_P5_N2_AUDIT, Table 2 |
 
 #### E03 - ECHT on pure N2 with an argon cathode, 180-220 V (SPPL LVF)
@@ -142,9 +153,15 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Argon cathode flow was large (7.3-35.9 % of anode mass) and co-varied with the best points; facility background 8.1e-05-2.2e-04 Torr (inferred ingestion 2.0-6.0 % of anode flow, repository audit); 3 of 7 thrust runs strongly unstable; per-point I_d to 2 s.f.; no oscillation data.
   - Applicability limits: 0.27-0.77 kW, 180-220 V only (300 V supply limit, no data above 220 V), one flow (2.06 mg/s), elevated facility pressure; MSc-thesis measurement with fit-only thrust uncertainty.
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: extended channel; the stated outer diameter is ambiguous (channel OD vs BN piece OD); the measured B(z) has a flat plateau inside the channel rather than an exit-plane peak (see quantities of the sustained-operation ECHT entry)
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | [thruster power] anode power, thrust runs | 270-770 | W | inferred | from 2 s.f. I_d | REPO_ECHT_AUDIT, V_d x I_d, S2 Table 6.2 |
+  | [geometry] channel length | 86 | mm | measured | not stated (design dimension) | REPO_ECHT_AUDIT, S2 Sec. 4.1.1 p.63 |
+  | [geometry] channel height | 10 | mm | measured | not stated (design dimension) | REPO_ECHT_AUDIT, S2 Sec. 4.1.1 p.63 |
+  | [geometry] stated outer diameter of the BN chamber | 100 | mm | measured | not stated; ambiguous: channel outer-wall diameter or BN piece OD (repository audit geometry.outer_diameter.ambiguity) | REPO_ECHT_AUDIT, S2 Sec. 4.1.1 p.63 |
+  | [geometry] exit-plane marker position on the B(z) axis | 8.73 | cm | digitized | reading +-0.014 cm; axis origin not defined | REPO_ECHT_AUDIT, S2 Figs. 4.7/4.8 (audit geometry.exit_plane_on_Bz_axis) |
   | anode N2 mass flow | 2.06 | mg/s | measured | 1 % ambiguity (99 vs 100 sccm = 2.06 vs 2.083 mg/s); possible feed-line leakage | REPO_ECHT_AUDIT, S2 Table 6.1 p.98 |
   | discharge voltage | 180-220 | V | measured | not stated | REPO_ECHT_AUDIT, S2 Table 6.1 |
   | discharge current | 1.5-3.9 | A | measured | 2 s.f. (rounding +-0.05 A) | REPO_ECHT_AUDIT, S2 Table 6.1 |
@@ -156,19 +173,28 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   | anode power, thrust runs | 270-770 | W | inferred | from 2 s.f. I_d | REPO_ECHT_AUDIT, V_d x I_d, S2 Table 6.2 |
   | thrust, one-side reduction (7 runs) | 20.62-23.41 | mN | measured | published +- are calibration-fit only (0.02-2.66 mN) | REPO_ECHT_AUDIT, S2 Table 6.2 p.101 |
   | thrust, averaged reduction (4 runs) | 17.29-21.31 | mN | measured | published +- 2.68-4.56 mN; 6-18 % below one-side | REPO_ECHT_AUDIT, S2 Table 6.3 p.108 |
-  | channel length | 86 | mm | measured | not stated (design dimension) | REPO_ECHT_AUDIT, S2 Sec. 4.1.1 p.63 |
-  | channel height | 10 | mm | measured | not stated (design dimension) | REPO_ECHT_AUDIT, S2 Sec. 4.1.1 p.63 |
+  | axial window over which the audit averages the B plateau (2 A coil current) | 4.7-8.3 | cm | digitized | reading +-0.014 cm; B(z) axis origin not defined in the text | REPO_ECHT_AUDIT, S2 Fig. 4.7 p.66; audit key magnetic_field.measured_Bz_at_2A.plateau_mean_4.7_8.3cm_G |
+  | peak of the digitized B(z) at 2 A coil current | 86.09 | G | digitized | reading +-0.2 G | REPO_ECHT_AUDIT, S2 Fig. 4.7 p.66 (audit magnetic_field.measured_Bz_at_2A.points) |
 
-#### E04 - ECHT on pure N2 below about 80 sccm (1.6 mg/s)
+#### E04 - ECHT on pure N2 below about 80 sccm (1.6 mg/s): V- and B-dependent instability / quenching
 
 - Sources / access: REPO_ECHT_AUDIT (repository_audit_file), MARCHIONI2020 (open_full_text_restrictive_license), MARCHIONI2021 (abstract_only). Evidence level 3; outcome evidence class: measured; repository-derived values recomputed by the builder.
 - Pre-ionizer: none. Ignition (direct_on_atmospheric_gas, measured, basis primary): as E03
-- Outcome: **extinguished**. Qualitative: the discharge was unstable / quenched below about 80 sccm (1.6 mg/s) N2.
-- Observations: oscillations: not quantified; extinction: flow floor about 1.6 mg/s; erosion: not reported; cathode: Ar, degraded BaO emitter.
-- **Implication for 'is pre-ionization required?'** (operation_bounded_extinction_observed): Even with an 86 mm channel, pure-N2 operation without a pre-ionizer had a flow floor near 1.6 mg/s in this set-up.
-  - Uncertainty: Single approximate statement; voltage, B and cathode state at the boundary not given; the degraded cathode may have set the floor.
+- Outcome: **extinguished**. Qualitative: below about 80 sccm (1.6 mg/s) N2 the discharge was unstable and easily quenched at increasing magnet current (p.104) or if the potential was not raised sufficiently (p.110). The flow range explored was also limited by the flow controller.
+- Observations: oscillations: not quantified; extinction: easy quenching below about 1.6 mg/s, conditional on voltage and magnet current (not a fixed flow floor); erosion: not reported; cathode: Ar, degraded BaO emitter.
+- **Implication for 'is pre-ionization required?'** (operation_bounded_extinction_observed): Even with an 86 mm channel, pure-N2 operation without a pre-ionizer became unstable and easily quenched below about 1.6 mg/s unless the voltage was raised sufficiently, and at increasing magnet current. The source describes a boundary that depends on V and B, not a fixed flow floor.
+  - Uncertainty: Two short qualitative statements; the V and B values at the boundary are not given numerically, only the direction of their effect; the explored flow range was limited by the flow controller; the degraded cathode may have contributed.
   - Applicability limits: as E03
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: extended channel; the stated outer diameter is ambiguous (channel OD vs BN piece OD); the measured B(z) has a flat plateau inside the channel rather than an exit-plane peak (see quantities of the sustained-operation ECHT entry)
+
+  | quantity | value | unit | class | uncertainty | source, locator |
+  |---|---|---|---|---|---|
+  | [thruster power] anode power, thrust runs | 270-770 | W | inferred | from 2 s.f. I_d | REPO_ECHT_AUDIT, V_d x I_d, S2 Table 6.2 |
+  | [geometry] channel length | 86 | mm | measured | not stated (design dimension) | REPO_ECHT_AUDIT, S2 Sec. 4.1.1 p.63 |
+  | [geometry] channel height | 10 | mm | measured | not stated (design dimension) | REPO_ECHT_AUDIT, S2 Sec. 4.1.1 p.63 |
+  | [geometry] stated outer diameter of the BN chamber | 100 | mm | measured | not stated; ambiguous: channel outer-wall diameter or BN piece OD (repository audit geometry.outer_diameter.ambiguity) | REPO_ECHT_AUDIT, S2 Sec. 4.1.1 p.63 |
+  | [geometry] exit-plane marker position on the B(z) axis | 8.73 | cm | digitized | reading +-0.014 cm; axis origin not defined | REPO_ECHT_AUDIT, S2 Figs. 4.7/4.8 (audit geometry.exit_plane_on_Bz_axis) |
 
 #### E05 - PPS1350-TSD on pure N2 (Alta IV10, ESA contract)
 
@@ -180,9 +206,11 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Ignition on N2 itself was not attempted/reported; B, oscillations and plume not measured; performance only from the stand.
   - Applicability limits: about 1 kW, 2.3-2.85 mg/s, facility < 6e-6 mbar, Xe cathode.
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: flight-type SPT reconverted from the thrust-steering (TSD) configuration after earlier campaigns (prior operating time is listed among the quantities); channel dimensions not given in the accessed text
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | [thruster power] discharge power limit applied during the tests | 1.4 | kW | measured | n/a (a stated limit) | CIFALI2011, p.2 |
   | reference point: voltage | 305 | V | measured | not stated | CIFALI2011, p.3 |
   | reference point: discharge current | 3.48 | A | measured | not stated | CIFALI2011, p.3 |
   | reference point: power-to-thrust | 41.6 | W/mN | inferred | not stated | CIFALI2011, p.3 |
@@ -191,6 +219,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   | long firing: thrust band | 19-21 | mN | measured | stand accuracy 1 % of full scale (range 5-300 mN), resolution 1 mN (p.2) | CIFALI2011, p.4 |
   | long firing: anode N2 flow | 2.65 | mg/s | measured | not stated | CIFALI2011, p.5 |
   | chamber pressure during N2 long firing | < 6.0e-6 | mbar | measured | upper bound as stated | CIFALI2011, p.2 |
+  | prior cumulative operation of the test article (TSD campaigns, Alta IV4 facility) | 554 | h | measured | 'nearly' (as stated) | CIFALI2011, p.2 |
 
 #### E06 - PPS1350-TSD on N2/O2 mixture 1.27N2 + O2 (200 km-representative)
 
@@ -202,9 +231,11 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Xe start and Xe cathode; no B data; oxidation of the anode is a separate life issue (E07).
   - Applicability limits: about 1 kW, 2.1-4 mg/s, 220-350 V, facility-fed gas, no atomic oxygen.
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: flight-type SPT reconverted from the thrust-steering (TSD) configuration after earlier campaigns (prior operating time is listed among the quantities); channel dimensions not given in the accessed text
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | [thruster power] discharge power limit applied during the tests | 1.4 | kW | measured | n/a (a stated limit) | CIFALI2011, p.2 |
   | long firing: flow | 2.75 | mg/s | measured | not stated | CIFALI2011, p.5 / Fig. 7 caption |
   | long firing: voltage | 305 | V | measured | not stated | CIFALI2011, Fig. 7 caption p.4 |
   | long firing: thrust | 24 | mN | measured | stand accuracy 1 % of full scale | CIFALI2011, p.5 |
@@ -221,6 +252,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Second-hand (primary SP2012 paper not accessed).
   - Applicability limits: PPS1350, 305 V, 2.75 mg/s, facility-fed N2/O2 + Xe.
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: flight-type SPT reconverted from the thrust-steering (TSD) configuration after earlier campaigns (prior operating time is listed among the quantities); channel dimensions not given in the accessed text
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
@@ -241,9 +273,11 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Second-hand for the performance values (IEPC-2017-377 not accessed); ignition gas not reported; Xe cathode.
   - Applicability limits: 5 kW-class, 225 V, facility-fed gas.
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: not reported in the accessed text
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | [thruster power] discharge power | 2.4 | kW | measured | not stated | ANDREUSSI2022, Page 24 of 57 |
   | thrust | 64 | mN | measured | not stated | ANDREUSSI2022, Page 24 of 57 |
   | discharge power | 2.4 | kW | measured | not stated | ANDREUSSI2022, Page 24 of 57 |
   | plume half-angle divergence | 52 | deg | measured | not stated | ANDREUSSI2022, Page 43 of 57 |
@@ -258,9 +292,11 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Ignition itself used xenon; B and geometry not published; only 10 h; efficiency range differs between the two SITAEL sources.
   - Applicability limits: 5 kW class, 1.2-5.2 kW, 225-300 V, facility < 2.5e-5 mbar, lab-fed gas (no atomic O).
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: not reported in the accessed text
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | [thruster power] discharge power range | 1.2-5.2 | kW | measured | not stated | ANDREUSSI2022_IEPC435, p.5 |
   | thrust range | 30-120 | mN | measured | stand accuracy +-3 mN (p.3) | ANDREUSSI2022_IEPC435, p.5 |
   | discharge power range | 1.2-5.2 | kW | measured | not stated | ANDREUSSI2022_IEPC435, p.5 |
   | anodic efficiency range | 10-20 | % | inferred | FERRATO2022_PSST abstract gives 8-18 % (discrepancy not resolved) | ANDREUSSI2022_IEPC435, p.5 |
@@ -280,10 +316,13 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Ignition gas inferred, not stated; Xe cathode; facility pressure effect addressed only in an appendix; envelope minima are in a figure only (TBD digitization).
   - Applicability limits: 0.2-0.45 kW, 180-250 V, coaxial-anode geometry (not a conventional SPT).
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: coaxial metallic cylinders at anode potential form the channel (thruster description section)
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
-  | power range | 212-452 | W | measured | not stated | MOSKOVITZ2026, Table 5 p.8 |
+  | [thruster power] power range operated on N2 | 212-452 | W | measured | not stated | MOSKOVITZ2026, Table 5 p.8 |
+  | [geometry] channel mean diameter | 49 | mm | measured | not stated | MOSKOVITZ2026, Table 3 p.6 |
+  | [geometry] channel width | 12 | mm | measured | not stated | MOSKOVITZ2026, Table 3 p.6 |
   | peak anode efficiency point: voltage | 250 | V | measured | not stated | MOSKOVITZ2026, Table 6 p.11 |
   | peak anode efficiency point: flow | 1.144 | mg/s | measured | not stated | MOSKOVITZ2026, Table 6 p.11 |
   | peak anode efficiency point: power | 400 | W | measured | not stated | MOSKOVITZ2026, Table 6 p.11 |
@@ -292,8 +331,6 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   | fixed-power points: N2 flow at 350/400/450 W | 1.34, 1.475, 1.543 | mg/s | measured | not stated | MOSKOVITZ2026, Table 7 p.16 |
   | fixed-power points: thrust at 350/400/450 W | 7.25, 8.6, 9.7 | mN | measured | not stated | MOSKOVITZ2026, Table 7 p.16 |
   | fixed-power points: mass utilization | 24, 25, 27 | % | inferred | Faraday probe 10 % | MOSKOVITZ2026, Table 7 p.16 |
-  | channel mean diameter | 49 | mm | measured | not stated | MOSKOVITZ2026, Table 3 p.6 |
-  | channel width | 12 | mm | measured | not stated | MOSKOVITZ2026, Table 3 p.6 |
   | N2 flow conversion check 55.0 sccm | 1.1457 | mg/s | inferred | reference conditions of the paper not stated | MOSKOVITZ2026, our arithmetic |
 
 #### E11 - Simplified CAMILA on pure N2 below its minimum voltage/flow envelope
@@ -306,9 +343,13 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Boundary values need digitization; 5-min stability criterion only.
   - Applicability limits: as E10
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: coaxial metallic cylinders at anode potential form the channel (thruster description section)
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | [thruster power] power range operated on N2 | 212-452 | W | measured | not stated | MOSKOVITZ2026, Table 5 p.8 |
+  | [geometry] channel mean diameter | 49 | mm | measured | not stated | MOSKOVITZ2026, Table 3 p.6 |
+  | [geometry] channel width | 12 | mm | measured | not stated | MOSKOVITZ2026, Table 3 p.6 |
   | boundary probe step in voltage | 0.5-5 | V | measured | not stated | MOSKOVITZ2026, p.9 |
 
 #### E12 - MaSHEKT-100 low-power magnetically shielded Hall thruster on N2 (abstract only)
@@ -321,9 +362,11 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Abstract plus second-hand statements only; flow, voltage, cathode gas and stability not accessed.
   - Applicability limits: about 0.1 kW class; unknown flow regime.
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: not accessed
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | [thruster power] discharge power range across all propellants (not N2 only) | 30-810 | W | measured | not stated | MUNRO2023, abstract (OpenAlex) |
   | peak thrust on N2 | 5.7 | mN | measured | not stated | MUNRO2023, abstract |
   | peak anode efficiency on N2 | 5.4 | % | inferred | not stated | MUNRO2023, abstract |
   | peak specific impulse on N2 | 1000 | s | inferred | not stated | MUNRO2023, abstract |
@@ -338,15 +381,21 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: The author attributes the limit to available power (supply voltage), and states pure N2/air would be possible at higher power (citing CIFALI2011); not tested here.
   - Applicability limits: 0.4-0.75 kW, 270-290 V, 23 mm channel, facility 6.5e-5 Torr on Xe (p.147).
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: boron-nitride channel; refurbished xenon thruster (see geometry)
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | [thruster power] tabulated anode power over the Xe/N2 and Xe/air runs | 330.6-745.3 | W | measured | not stated | GURCIULLO2020, Table A.1 printed p.214 (min, run XeN2-14) and Table A.2 printed p.218 (max, run XeAir-3) |
+  | [geometry] BN channel outer diameter | 72 | mm | measured | not stated (design dimension) | GURCIULLO2020, p.148 |
+  | [geometry] BN channel inner diameter | 42 | mm | measured | not stated (design dimension) | GURCIULLO2020, p.148 |
+  | [geometry] channel depth | 23 | mm | measured | not stated (design dimension) | GURCIULLO2020, p.148 |
   | lowest anode Xe flow that sustained (with N2 1.33-1.39 mg/s) | 0.16 | mg/s | measured | not stated | GURCIULLO2020, p.177 |
   | anode power at the lowest-Xe points | 603.2-681.5 | W | measured | not stated | GURCIULLO2020, Tables 4.6/4.7 captions |
   | anode current at the lowest-Xe points | 2.08-2.35 | A | measured | not stated | GURCIULLO2020, Tables 4.6/4.7 captions |
   | Xe mass fraction of anode flow at the lowest-Xe points | 0.1032-0.1074 | 1 | inferred | not stated | GURCIULLO2020, our arithmetic on p.177 values |
   | cathode Xe flow | 0.46 | mg/s | measured | not stated | GURCIULLO2020, p.148 |
   | anode supply voltage limit | 300 | V | measured | not stated | GURCIULLO2020, p.147 |
+  | electromagnet current at which the 135 G exit-plane value is given | 1.5 | A | measured | not stated | GURCIULLO2020, p.148 |
 
 #### E14 - Z-70 on Xe/air mixtures (sustained with xenon admixture)
 
@@ -358,9 +407,14 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Lowest Xe share run with air in the thesis is 0.78 mg/s Xe with 0.83 mg/s air (48 % Xe by mass, our arithmetic); a minimum Xe share for air was not reported. Performance ratios are Wien-filter-based estimates, not thrust-stand data.
   - Applicability limits: as E13
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: boron-nitride channel; refurbished xenon thruster (see geometry)
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | [thruster power] tabulated anode power over the Xe/N2 and Xe/air runs | 330.6-745.3 | W | measured | not stated | GURCIULLO2020, Table A.1 printed p.214 (min, run XeN2-14) and Table A.2 printed p.218 (max, run XeAir-3) |
+  | [geometry] BN channel outer diameter | 72 | mm | measured | not stated (design dimension) | GURCIULLO2020, p.148 |
+  | [geometry] BN channel inner diameter | 42 | mm | measured | not stated (design dimension) | GURCIULLO2020, p.148 |
+  | [geometry] channel depth | 23 | mm | measured | not stated (design dimension) | GURCIULLO2020, p.148 |
   | anode Xe flow, runs XeAir-3/4 | 0.78 | mg/s | measured | not stated | GURCIULLO2020, Table 4.10 p.201 |
   | anode air flow, runs XeAir-3/4 | 0.83 | mg/s | measured | not stated | GURCIULLO2020, Table 4.10 p.201 |
   | total anode flow (Xe + air), runs XeAir-3/4 | 1.61 | mg/s | inferred | not stated | GURCIULLO2020, our arithmetic on Table 4.10 p.201 |
@@ -375,13 +429,19 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E15 - TsNIIMASH anode-layer thrusters on Xe + air mixtures (1995)
 
 - Sources / access: SEMENKIN1995 (open_full_text), ANDREUSSI2022 (open_full_text). Evidence level 3; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (xenon_admixture_required, measured, basis primary): Xe addition to light propellants changed the operating mode and enabled the 'acceleration mode' (pp.3-4); pure-air operation is not characterized in the text.
-- Outcome: **sustained**. Volt-ampere characteristics for Xe + air were measured; Xe additions allowed an effective 'acceleration mode' (p.4).
+- Pre-ionizer: none. Ignition (not_reported, measured, basis primary): Ignition is not described. The source tested only Xe + air mixtures (no pure-air run is reported, neither success nor failure); it states that Xe additions allowed an effective 'acceleration mode' with Xe + air (printed p.524) and that Xe added to light propellants changes the operating mode and increases their ionization (abstract, printed p.521).
+- Outcome: **sustained**. Volt-ampere characteristics for Xe + air were measured; Xe additions allowed an effective 'acceleration mode' (printed p.524). For pure argon, the other light gas tested, the 'acceleration mode' could be reached only at high power near the thruster's upper limit (printed p.524).
 - Observations: oscillations: not reported; extinction: not reported; erosion: not reported; cathode: not reported.
-- **Implication for 'is pre-ionization required?'** (xenon_admixture_required_in_tested_regime): Early evidence that a heavy-gas (Xe) discharge acts as the ionizer for light gases in a TAL; it does not test pure air or a separate pre-ionizer.
-  - Uncertainty: Qualitative; figures illegible; mixture ratios for air unknown.
+- **Implication for 'is pre-ionization required?'** (xenon_admixture_improves_operating_mode): Xe added to air improved the operating mode of a TAL (effective 'acceleration mode'); the source does not report pure-air operation, so it does not show that xenon is required. Its pure-argon result (acceleration mode reached only at high power) indicates that a light gas can operate alone in this thruster at high power. No separate pre-ionizer was tested.
+  - Uncertainty: Qualitative; figures illegible; mixture ratios for air unknown; whether pure air would ignite or sustain in these thrusters is not reported.
   - Applicability limits: TAL geometry, 1995 laboratory conditions.
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: designed for xenon and not changed to operate with other gases (same page as the anode diameters)
+
+  | quantity | value | unit | class | uncertainty | source, locator |
+  |---|---|---|---|---|---|
+  | [geometry] anode diameter, smaller thruster | 27 | mm | measured | not stated | SEMENKIN1995, printed p.523 |
+  | [geometry] anode diameter, larger thruster | 55 | mm | measured | not stated | SEMENKIN1995, printed p.523 |
 
 #### E16 - Busek 2 kW-class BHT on 'air simulant' 68.3 % N2 / 6.7 % O2 / 25 % Ar (2005; secondary)
 
@@ -393,9 +453,11 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Second-hand; 25 % argon (not atomic O) in the feed eases ionization; ignition and cathode gas unknown.
   - Applicability limits: 2 kW class, 1-5.5 kW, lab-fed gas.
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: not reported in the review
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | [thruster power] discharge power range | 1-5.5 | kW | measured | not stated | ANDREUSSI2022, Page 25 of 57 |
   | discharge power range | 1-5.5 | kW | measured | not stated | ANDREUSSI2022, Page 25 of 57 |
   | best anodic efficiency | 27 | % | inferred | 'about' | ANDREUSSI2022, Page 25 of 57 |
 
@@ -409,6 +471,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Second-hand, qualitative, high facility pressure.
   - Applicability limits: unknown
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: not reported
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
@@ -424,6 +487,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Inlet density/flow not measured; upstream source partly ionized; Xe cathode; no single-stage control case.
   - Applicability limits: ground end-to-end test at 500 mm from a Hall-thruster flow source.
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: not reported
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
@@ -441,9 +505,11 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Second-hand (primary not accessible); very large Xe cathode fraction (about 38 %) may have assisted sustainment.
   - Applicability limits: one flow (2.6 mg/s), 200 V, laboratory facility.
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: not accessed
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | [thruster power] power | 1.75 | kW | digitized | '~'; the review's Table 3 footnote says values for this device are partially extracted from graphs and indicate operating ranges only | ANDREUSSI2022, Table 3, Page 22 of 57 |
   | RF power range | 0-302 | W | measured | not stated | ANDREUSSI2022, Page 27 of 57 |
   | cathode Xe flow | 1 | mg/s | measured | not stated | ANDREUSSI2022, Page 27 of 57 |
   | cathode/anode flow ratio | 0.3846 | 1 | inferred | not stated | ANDREUSSI2022, our arithmetic |
@@ -460,9 +526,12 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Abstract + review only; thrust inferred with an assumed voltage utilization; ignition not reported.
   - Applicability limits: small TAL-type device, 0.8-1.0 mg/s.
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: xenon-design laboratory model (see geometry)
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | [thruster power] power range | 0.3-1.4 | kW | digitized | not stated; the review's Table 3 footnote says values for this device are partially extracted from graphs and indicate operating ranges only | ANDREUSSI2022, Table 3, Page 22 of 57 |
+  | [geometry] average channel diameter | 38 | mm | measured | not stated (second-hand) | ANDREUSSI2022, Page 26 of 57 |
   | cathode Xe flow | 0.19 | mg/s | measured | not stated | ANDREUSSI2022, Page 26 of 57 |
   | I_d ratio air/Xe (200-350 V) | 2.1-2.4 | 1 | measured | not stated | ANDREUSSI2022, Page 27 of 57 |
   | thrust estimate basis: assumed voltage utilization | 0.75 | 1 | assumed | not stated | ANDREUSSI2022, Page 26 of 57 |
@@ -477,6 +546,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   - Uncertainty: Second-hand; no atmospheric-gas data exist in the accessed record.
   - Applicability limits: none for N2/O2/air (xenon tests only).
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
+  - Thruster geometry note: not reported
 
 <!-- END GENERATED -->
 
@@ -512,8 +582,12 @@ limits.
    statement is second-hand through MOSKOVITZ2026 (basis `second_hand`, evidence level 5) and its cathode gas was not
    accessed.
 3. **Extinction boundaries are reported, but mostly qualitatively.** Four entries give a boundary:
-   - **E02:** P5 had a narrow voltage window of about 225-275 V at 5 mg/s and fixed B.
-   - **E04:** ECHT had a flow floor near 1.6 mg/s.
+   - **E02:** P5 had a stated window of about 225-275 V at 5.0-5.4 mg/s and fixed B. The window is approximate:
+     setpoints N3-N5 ran at 275.7-278.6 V, above the stated 275 V upper bound.
+   - **E04:** below about 80 sccm (1.6 mg/s) N2, the ECHT discharge was unstable and easily quenched at increasing
+     magnet current (MARCHIONI2020 printed p.104) or if the potential was not raised sufficiently (p.110). The source
+     makes this boundary conditional on V and B; it is not a fixed flow floor. Both passages also say the explored flow
+     range was limited by the flow controller (maximum 100 sccm = 2.06 mg/s).
    - **E11:** CAMILA's minimum flow depends on voltage, and the values are available only in Fig. 6 (TBD digitization).
    - **E13:** the Z-70 did not sustain at 290 V and ≤ 0.7 kW once xenon fell below about 10 % of the anode mass.
 
@@ -584,6 +658,13 @@ limits.
 - The measurement basis of "0.56N2 + 0.44O2" in the SITAEL papers is not stated. It reads as mole fractions (see
   `derived_checks`; verify).
 - P5 ignition procedure on N2: not in the accessed text.
+- SITAEL HT100 on N2/O2: no accessible record was found in this audit. A web search (2026-09-26) returned SITAEL
+  pages on HT100 operation with krypton and an HT100 endurance run, not atmospheric gases (search-result titles only;
+  the pages were not read). The SITAEL/Alta atmospheric-propellant Hall work accessed here is the PPS1350 campaign
+  (E05-E07) and the HT5k (E08, E09). HT100 is therefore neither an entry nor an exclusion; if an HT100 N2/O2 test
+  exists, it needs locating in a primary source.
+- Semenkin & Chislov 1995 (E15): pure-air operation of those thrusters is not reported, so the source cannot say
+  whether xenon was required for air (TBD - requires a source that reports pure-air runs).
 
 ## Access log (URLs actually accessed, 2026-09-26)
 

@@ -56,9 +56,22 @@ def _sha256(key):
         return hashlib.sha256(f.read()).hexdigest()
 
 
+# A value that is not available is a placeholder string starting with one of these prefixes. A placeholder has no
+# quantity type, so its evidence_class is null; every other value (number, range, bound such as '< 6e-6') has a class.
+PLACEHOLDER_PREFIXES = ("not ", "TBD - requires ", "figure data ")
+
+
+def is_placeholder(value):
+    return isinstance(value, str) and value.startswith(PLACEHOLDER_PREFIXES)
+
+
 def q(name, value, unit, cls, source, locator, uncertainty="not stated", note=None):
-    """One quantity. value: number, [lo, hi], or a string ('not reported ...' / 'TBD - requires ...')."""
-    assert cls in EVIDENCE_CLASSES, cls
+    """One quantity. value: number, [lo, hi], a bound string ('< ...'), or a placeholder ('not reported ...' /
+    'TBD - requires ...'), which must carry cls=None."""
+    if is_placeholder(value):
+        assert cls is None, (name, cls)
+    else:
+        assert cls in EVIDENCE_CLASSES, (name, cls)
     d = {"name": name, "value": value, "unit": unit, "uncertainty": uncertainty, "evidence_class": cls,
          "source": source, "locator": locator}
     if note:
@@ -66,9 +79,11 @@ def q(name, value, unit, cls, source, locator, uncertainty="not stated", note=No
     return d
 
 
-def nr(name, unit, source, what="not reported in the accessed text"):
-    return {"name": name, "value": what, "unit": unit, "uncertainty": "n/a", "evidence_class": "measured",
-            "source": source, "locator": "n/a"}
+def nr(name, unit, source, what="not reported in the accessed text", locator="n/a"):
+    """Placeholder quantity: no value, therefore no evidence class (null)."""
+    assert is_placeholder(what), what
+    return {"name": name, "value": what, "unit": unit, "uncertainty": "n/a", "evidence_class": None,
+            "source": source, "locator": locator}
 
 
 def r4(x):
@@ -259,12 +274,16 @@ def p5_entries():
     ing = [pts[k]["mdot_ingested_eq13_mg_s"] for k in names]
     frac_c = [t2[k]["mdot_cathode_Xe_mg_s"] / t2[k]["mdot_anode_mg_s"] for k in names]
     frac_i = [pts[k]["mdot_ingested_eq13_mg_s"] / t2[k]["mdot_anode_mg_s"] for k in names]
+    msig = [t2[k]["mdot_anode_sigma_mg_s"] for k in names]
+    vhi = [t2[k]["V_d"] for k in names if t2[k]["V_d"] > 275]
+    mhi = [t2[k]["mdot_anode_mg_s"] for k in names if t2[k]["V_d"] > 275]
     S, B = "REPO_P5_N2_AUDIT", "BRABSTON2025"
     quantities = [
         q("anode N2 mass flow (N1-N5)", [min(mdot), max(mdot)], "mg/s", "measured", S, "Table 2 via audit points.*.table2",
-          "MFC 1 % of setpoint (max 0.05 mg/s)"),
+          "MFC 1 %% of setpoint (BRABSTON2025 p.6): %g-%g mg/s per point (audit points.*.table2.mdot_anode_sigma_mg_s); "
+          "the paper states a maximum test uncertainty of 0.05 mg/s" % (min(msig), max(msig))),
         q("cathode Xe mass flow", mc[0] if len(mc) == 1 else [mc[0], mc[-1]], "mg/s", "measured", S,
-          "Table 2 (4.5 sccm)", "MFC 1 % of setpoint"),
+          "Table 2 (4.5 sccm)", "MFC 1 % of setpoint (BRABSTON2025 p.6, anode and cathode MFCs)"),
         q("cathode Xe / anode N2 mass-flow ratio", [r4(min(frac_c)), r4(max(frac_c))], "1", "inferred", S,
           "our arithmetic on Table 2", "propagated from MFC 1 % (each)"),
         q("discharge voltage", [min(vd), max(vd)], "V", "measured", S, "Table 2", "not stated"),
@@ -282,16 +301,23 @@ def p5_entries():
           "abstract end-points (N1, N5); Fig. 5 digitized (N2-N4)",
           "max uncertainty %g mN (BRABSTON2025 Table 5, audit points.*.T_sigma_mN); Fig. 5 digitization about 0.4 mN "
           "at N2-N4 (repository findings)" % tsig[0]),
-        q("discharge channel length", [32, 38], "mm", "measured", S,
-          "docs/EVIDENCE.md register: 32 mm (Brabston 2025) vs 38 mm (Peterson 2001, Hofer 2004)",
-          "conflicting sources; carried as hypotheses"),
+    ]
+    geometry = [
+        q("discharge channel length/depth as reported by Brabston 2025", 32, "mm", "measured", S,
+          "docs/EVIDENCE.md register row 'P5 channel depth' (measured, conflicting)",
+          "conflicts with the historical 38 mm; which value applies to the tested thruster is a layer-1 registration "
+          "hypothesis (L38-hist / L32-anode / L32-exit), not resolved"),
+        q("discharge channel length/depth as reported historically (Peterson 2001, Hofer 2004)", 38, "mm", "measured", S,
+          "docs/EVIDENCE.md register row 'P5 channel depth' (measured, conflicting)",
+          "conflicts with Brabston 2025 (32 mm); layer-1 registration hypothesis, not resolved"),
     ]
     common = {
         "sources": [S, B, "BRABSTON_IEPC2024"],
         "evidence_level": 3,
         "thruster": {"name": "P5 (5 kW-class laboratory Hall thruster)",
-                     "family": "single-stage Hall (SPT-type)", "power_class_kW": [3.08, 4.81],
-                     "geometry_note": "channel length 32 mm (Brabston) vs 38 mm (historical); coil currents unpublished"},
+                     "family": "single-stage Hall (SPT-type)", "power": quantities[4], "geometry": geometry,
+                     "geometry_note": "channel length/depth conflicts between sources (see geometry); coil currents "
+                                      "and B(z) for the tested thruster unpublished"},
         "propellant": {"anode_gas": "N2 (pure)", "cathode_gas": "Xe", "xenon_in_anode_flow": False},
         "preionizer": {"present": False, "type": None, "note": "single-stage Hall; hollow cathode (Xe) is the electron source"},
         "repository_derived": True,
@@ -307,7 +333,10 @@ def p5_entries():
         "outcome": "sustained",
         "outcome_statement": "All five N2 setpoints were operated and measured (thrust, plume probes at N1-N3). Coils were "
                              "tuned at N3 to minimise I_d and its peak-to-peak oscillation, then held fixed. The Xe "
-                             "cathode flow (4.5 sccm) was chosen as the lowest that kept stable operation on all propellants.",
+                             "cathode flow (4.5 sccm) was selected in preliminary testing as the lowest flow that "
+                             "maintained stable operation across all propellants and setpoints, to minimise xenon "
+                             "ingestion (BRABSTON2025 p.6, article-in-advance pagination; the open IEPC-2024-297 p.8 "
+                             "states only that the cathode is maintained at 4.5 sccm).",
         "observations": {
             "oscillation_modes": "qualitative only: B tuned to minimise I_d peak-to-peak oscillation; no amplitudes or "
                                  "spectra published (repository findings F6; BRABSTON2025 p.6)",
@@ -350,8 +379,10 @@ def p5_entries():
         "quantities": [quantities[3]],
         "implication": {
             "direction": "operation_bounded_extinction_observed",
-            "statement": "Without a pre-ionizer, sustained N2 operation of this thruster was confined to a narrow voltage "
-                         "window at about 5 mg/s and fixed B.",
+            "statement": ("Without a pre-ionizer, sustained N2 operation of this thruster was confined to a stated "
+                          "window of about 225-275 V at 5.0-5.4 mg/s and fixed B; the window is approximate, since "
+                          "setpoints at %g-%g mg/s ran at %g-%g V, above the stated 275 V upper bound."
+                          % (min(mhi), max(mhi), min(vhi), max(vhi))),
             "uncertainty": "Boundary is a text statement (no data, no B or flow scan at the boundary); whether a "
                            "pre-ionizer, a different B, or more flow widens the window is not tested.",
             "applicability_limits": "same as E01",
@@ -376,7 +407,9 @@ def echt_entries():
     tav = [p["T_avg_mN"] for p in perf if p["T_avg_mN"] is not None]
     pa = [p["P_anode_W"] for p in perf]
     unstable = v["performance_table_6_2"]["unstable_runs"]
-    plateau = v["magnetic_field"]["measured_Bz_at_2A"]["plateau_mean_4.7_8.3cm_G"]
+    bz = v["magnetic_field"]["measured_Bz_at_2A"]
+    plateau = bz["plateau_mean_4.7_8.3cm_G"]
+    pk = max(bz["points"], key=lambda p: p["B_G"])
     geo = v["geometry"]
     S, T = "REPO_ECHT_AUDIT", "MARCHIONI2020"
     quantities = [
@@ -398,15 +431,30 @@ def echt_entries():
           "published +- are calibration-fit only (0.02-2.66 mN)"),
         q("thrust, averaged reduction (4 runs)", [min(tav), max(tav)], "mN", "measured", S, "S2 Table 6.3 p.108",
           "published +- 2.68-4.56 mN; 6-18 % below one-side"),
+        q("axial window over which the audit averages the B plateau (2 A coil current)", [4.7, 8.3], "cm", "digitized",
+          S, "S2 Fig. 4.7 p.66; audit key magnetic_field.measured_Bz_at_2A.plateau_mean_4.7_8.3cm_G",
+          "reading +-0.014 cm; B(z) axis origin not defined in the text"),
+        q("peak of the digitized B(z) at 2 A coil current", pk["B_G"], "G", "digitized", S,
+          "S2 Fig. 4.7 p.66 (audit magnetic_field.measured_Bz_at_2A.points)", "reading +-0.2 G",
+          note="at z = %g cm on the figure axis, upstream of the digitized exit-plane marker (%g cm)"
+               % (pk["z_cm"], geo["exit_plane_on_Bz_axis"]["value_cm"])),
+    ]
+    geometry = [
         q("channel length", geo["channel_length"]["value_mm"], "mm", "measured", S, "S2 Sec. 4.1.1 p.63",
           "not stated (design dimension)"),
         q("channel height", geo["channel_height"]["value_mm"], "mm", "measured", S, "S2 Sec. 4.1.1 p.63",
           "not stated (design dimension)"),
+        q("stated outer diameter of the BN chamber", geo["outer_diameter"]["value_mm"], "mm", "measured", S,
+          "S2 Sec. 4.1.1 p.63", "not stated; ambiguous: channel outer-wall diameter or BN piece OD (repository audit "
+          "geometry.outer_diameter.ambiguity)"),
+        q("exit-plane marker position on the B(z) axis", geo["exit_plane_on_Bz_axis"]["value_cm"], "cm", "digitized", S,
+          "S2 Figs. 4.7/4.8 (audit geometry.exit_plane_on_Bz_axis)", "reading +-0.014 cm; axis origin not defined"),
     ]
     thr = {"name": "ECHT (Stanford extended-channel Hall thruster)", "family": "single-stage Hall (SPT-type, extended channel)",
-           "power_class_kW": [min(pa) / 1000.0, max(pa) / 1000.0],
-           "geometry_note": "86 mm channel length, 10 mm channel height, '100 mm outer diameter' ambiguous "
-                            "(channel OD vs BN piece OD); flat B plateau over about 4.7-8.6 cm, not exit-peaked"}
+           "power": quantities[8], "geometry": geometry,
+           "geometry_note": "extended channel; the stated outer diameter is ambiguous (channel OD vs BN piece OD); the "
+                            "measured B(z) has a flat plateau inside the channel rather than an exit-plane peak (see "
+                            "quantities of the sustained-operation ECHT entry)"}
     common = {"sources": [S, T, "MARCHIONI2021"], "evidence_level": 3, "thruster": thr,
               "propellant": {"anode_gas": "N2 (pure)", "cathode_gas": "Ar", "xenon_in_anode_flow": False},
               "preionizer": {"present": False, "type": None,
@@ -449,26 +497,43 @@ def echt_entries():
             "abep_regime": ABEP_REGIME_TBD},
     })
     e4 = dict(common)
+    cond = ("S2 p.104: under 80 sccm (1.6 mg/s) the discharge 'resulted unstable and easily quenched at increasing magnet "
+            "current'; S2 p.110: 'easily quenched if the potential was not raised sufficiently'. Both passages also say "
+            "flow variation was limited by the N2 mass flow controller (maximum 100 sccm = 2.06 mg/s).")
     e4.update({
-        "id": "E04", "title": "ECHT on pure N2 below about 80 sccm (1.6 mg/s)",
+        "id": "E04", "title": "ECHT on pure N2 below about 80 sccm (1.6 mg/s): V- and B-dependent instability / quenching",
         "evidence_class": "measured",
         "ignition": {"mode": "direct_on_atmospheric_gas", "evidence_class": "measured", "statement": "as E03"},
-        "flow": q("anode N2 flow below which the discharge was unstable / quenched", 1.6, "mg/s", "measured", S,
-                  "repository audit values.stability_oscillations (S2 p.98, p.104, p.107-110)",
-                  "approximate text value ('~80 sccm'); no scan data"),
-        "voltage": nr("discharge voltage at the flow boundary", "V", S),
-        "magnetic_field": nr("B at the flow boundary", "G", S),
+        "flow": q("anode N2 flow below which the discharge was reported unstable and easily quenched unless the "
+                  "potential was raised sufficiently (and at increasing magnet current)", 1.6, "mg/s", "measured", S,
+                  "S2 p.104 and p.110 (printed pages; MARCHIONI2020 sha256 d3b3ea99...); repository audit "
+                  "values.stability_oscillations",
+                  "approximate text value ('under 80sccm'); no scan data; conditional on V and B (see note)",
+                  note=cond),
+        "voltage": nr("discharge voltage at the flow boundary", "V", T,
+                      "not reported numerically; the source makes the boundary conditional on voltage ('if the "
+                      "potential was not raised sufficiently')", "S2 p.110"),
+        "magnetic_field": nr("B at the flow boundary", "G", T,
+                             "not reported numerically; the source makes the boundary conditional on magnet current "
+                             "('easily quenched at increasing magnet current')", "S2 p.104"),
         "outcome": "extinguished",
-        "outcome_statement": "Qualitative: the discharge was unstable / quenched below about 80 sccm (1.6 mg/s) N2.",
-        "observations": {"oscillation_modes": "not quantified", "extinction": "flow floor about 1.6 mg/s",
+        "outcome_statement": "Qualitative: below about 80 sccm (1.6 mg/s) N2 the discharge was unstable and easily "
+                             "quenched at increasing magnet current (p.104) or if the potential was not raised "
+                             "sufficiently (p.110). The flow range explored was also limited by the flow controller.",
+        "observations": {"oscillation_modes": "not quantified",
+                         "extinction": "easy quenching below about 1.6 mg/s, conditional on voltage and magnet current "
+                                       "(not a fixed flow floor)",
                          "erosion": "not reported", "cathode": "Ar, degraded BaO emitter"},
         "quantities": [],
         "implication": {
             "direction": "operation_bounded_extinction_observed",
-            "statement": "Even with an 86 mm channel, pure-N2 operation without a pre-ionizer had a flow floor near "
-                         "1.6 mg/s in this set-up.",
-            "uncertainty": "Single approximate statement; voltage, B and cathode state at the boundary not given; the "
-                           "degraded cathode may have set the floor.",
+            "statement": "Even with an 86 mm channel, pure-N2 operation without a pre-ionizer became unstable and easily "
+                         "quenched below about 1.6 mg/s unless the voltage was raised sufficiently, and at increasing "
+                         "magnet current. The source describes a boundary that depends on V and B, not a "
+                         "fixed flow floor.",
+            "uncertainty": "Two short qualitative statements; the V and B values at the boundary are not given "
+                           "numerically, only the direction of their effect; the explored flow range was limited by "
+                           "the flow controller; the degraded cathode may have contributed.",
             "applicability_limits": "as E03", "abep_regime": ABEP_REGIME_TBD},
     })
     return [e3, e4]
@@ -522,16 +587,22 @@ def literature_entries(dc):
         "id": "E05", "title": "PPS1350-TSD on pure N2 (Alta IV10, ESA contract)",
         "sources": [C, "ANDREUSSI2022"], "evidence_level": 3, "evidence_class": "measured",
         "thruster": {"name": "Snecma PPS1350-TSD (reconverted to PPS1350 configuration)", "family": "single-stage Hall (SPT-type)",
-                     "power_class_kW": "about 1 (limits 350 V, 1.4 kW)", "geometry_note": "flight-type 1.5 kW-class "
-                     "SPT; eroded channel from earlier TSD campaigns (about 554 h)"},
+                     "power": q("discharge power limit applied during the tests", 1.4, "kW", "measured", C, "p.2",
+                                "n/a (a stated limit)", note="a test limit, not an operating point; the voltage limit "
+                                "was 350 V (p.2)"),
+                     "geometry": [],
+                     "geometry_note": "flight-type SPT reconverted from the thrust-steering (TSD) configuration after "
+                                      "earlier campaigns (prior operating time is listed among the quantities); channel dimensions not "
+                                      "given in the accessed text"},
         "propellant": {"anode_gas": "N2 (pure)", "cathode_gas": "Xe", "xenon_in_anode_flow": False},
         "preionizer": {"present": False, "type": None, "note": "single-stage"},
         "ignition": {"mode": "xenon_start_then_transition", "evidence_class": "measured",
                      "statement": "Always ignited with xenon, then a smooth anode transition from 100 % Xe to 100 % N2; "
                                   "the cathode stayed on xenon (CIFALI2011 p.2)."},
         "flow": q("anode N2 flow, characterization", [2.3, 2.85], "mg/s", "measured", C, "Fig. 5/6 legends p.4"),
-        "voltage": q("discharge voltage, characterization", "not tabulated (Fig. 5 axis 200-360 V; 305 and 350 V named "
-                     "in text)", "V", "measured", C, "p.3-4, Fig. 5"),
+        "voltage": q("discharge voltage at the reference point and the 10 h firing", 305, "V", "measured", C, "p.3-4",
+                     note="the Fig. 5 characterization curves span other voltages (not tabulated); 350 V is also "
+                          "discussed on p.3"),
         "magnetic_field": nr("B", "G", C),
         "outcome": "sustained",
         "outcome_statement": "Operated over 2.3-2.85 mg/s N2; 10 h long firing at 305 V, 3 A 'very stable', thrust always "
@@ -549,6 +620,8 @@ def literature_entries(dc):
               "(range 5-300 mN), resolution 1 mN (p.2)"),
             q("long firing: anode N2 flow", 2.65, "mg/s", "measured", C, "p.5"),
             q("chamber pressure during N2 long firing", "< 6.0e-6", "mbar", "measured", C, "p.2", "upper bound as stated"),
+            q("prior cumulative operation of the test article (TSD campaigns, Alta IV4 facility)", 554, "h", "measured",
+              C, "p.2", "'nearly' (as stated)"),
         ],
         "implication": {
             "direction": "operation_without_preionizer_demonstrated_xenon_start",
@@ -600,7 +673,7 @@ def literature_entries(dc):
     E.append({
         "id": "E07", "title": "PPS1350 endurance on N2/O2 + 10 % Xe (secondary report)",
         "sources": [A, "CIFALI2012"], "evidence_level": 5, "evidence_class": "measured",
-        "thruster": E[-1]["thruster"],
+        "thruster": dict(E[-1]["thruster"], power=nr("discharge power", "kW", A, "not reported in the review")),
         "propellant": {"anode_gas": "N2/O2 mixture with a 10 % xenon mass-flow addition", "cathode_gas": "not reported",
                        "xenon_in_anode_flow": True},
         "preionizer": {"present": False, "type": None, "note": "single-stage"},
@@ -638,7 +711,8 @@ def literature_entries(dc):
         "id": "E08", "title": "SITAEL HT5k (first development model) as particle-flow generator on N2/O2 (2017)",
         "sources": [A, F, "ANDREUSSI2017_IEPC377"], "evidence_level": 5, "evidence_class": "measured",
         "thruster": {"name": "SITAEL HT5k (first development model)", "family": "single-stage Hall (SPT-type)",
-                     "power_class_kW": 2.4, "geometry_note": "not reported"},
+                     "power": q("discharge power", 2.4, "kW", "measured", A, "Page 24 of 57"),
+                     "geometry": [], "geometry_note": "not reported in the accessed text"},
         "propellant": {"anode_gas": "0.56N2/0.44O2 (= 1.27N2 + O2)", "cathode_gas": "Xe", "xenon_in_anode_flow": False},
         "preionizer": {"present": False, "type": None, "note": "single-stage"},
         "ignition": {"mode": "not_reported", "evidence_class": "measured", "statement": "not reported"},
@@ -668,7 +742,8 @@ def literature_entries(dc):
                               "N2 cathode (Nov 2021)",
         "sources": [I, "FERRATO2022_PSST", A], "evidence_level": 3, "evidence_class": "measured",
         "thruster": {"name": "SITAEL HT5k DM2 with HC20h hollow cathode", "family": "magnetically shielded Hall",
-                     "power_class_kW": [1.2, 5.2], "geometry_note": "not reported; centrally mounted cathode"},
+                     "power": q("discharge power range", [1.2, 5.2], "kW", "measured", I, "p.5"),
+                     "geometry": [], "geometry_note": "not reported in the accessed text"},
         "propellant": {"anode_gas": "0.56N2 + 0.44O2", "cathode_gas": "N2 (after transition from Xe)",
                        "xenon_in_anode_flow": False},
         "preionizer": {"present": False, "type": None, "note": "single-stage"},
@@ -717,7 +792,11 @@ def literature_entries(dc):
     M = "MOSKOVITZ2026"
     cam = {"name": "Simplified CAMILA (ASRI Technion)", "family": "single-stage Hall with coaxial anodes extending into the "
                                                               "channel (low power)",
-           "power_class_kW": [0.212, 0.452], "geometry_note": "channel mean diameter 49 mm, width 12 mm (Table 3)"}
+           "power": q("power range operated on N2", [212, 452], "W", "measured", M, "Table 5 p.8"),
+           "geometry": [q("channel mean diameter", 49, "mm", "measured", M, "Table 3 p.6",
+                          note="Table 3 lists CAMILA dimensions together with its xenon performance"),
+                        q("channel width", 12, "mm", "measured", M, "Table 3 p.6")],
+           "geometry_note": "coaxial metallic cylinders at anode potential form the channel (thruster description section)"}
     E.append({
         "id": "E10", "title": "Simplified CAMILA low-power Hall thruster on pure N2 (inside its operating envelope)",
         "sources": [M], "evidence_level": 3, "evidence_class": "measured", "thruster": cam,
@@ -741,7 +820,6 @@ def literature_entries(dc):
             "erosion": "not measured (endurance recommended as future work, p.21)",
             "cathode": "Xe only, 0.15 or 0.20 mg/s; 2.00 sccm for Ar/CO2/N2 vs 1.50 sccm for Xe/Kr (p.6, p.14)"},
         "quantities": [
-            q("power range", [212, 452], "W", "measured", M, "Table 5 p.8"),
             q("peak anode efficiency point: voltage", 250, "V", "measured", M, "Table 6 p.11"),
             q("peak anode efficiency point: flow", 1.144, "mg/s", "measured", M, "Table 6 p.11"),
             q("peak anode efficiency point: power", 400, "W", "measured", M, "Table 6 p.11"),
@@ -752,8 +830,6 @@ def literature_entries(dc):
               "Table 7 p.16", note="Table 7 title says 200 V, Fig. 8 caption says 250 V (inconsistent; verify)"),
             q("fixed-power points: thrust at 350/400/450 W", [7.25, 8.60, 9.70], "mN", "measured", M, "Table 7 p.16"),
             q("fixed-power points: mass utilization", [24, 25, 27], "%", "inferred", M, "Table 7 p.16", "Faraday probe 10 %"),
-            q("channel mean diameter", 49, "mm", "measured", M, "Table 3 p.6"),
-            q("channel width", 12, "mm", "measured", M, "Table 3 p.6"),
             q("N2 flow conversion check 55.0 sccm", dc["moskovitz_n2_55sccm_mg_s"], "mg/s", "inferred", M, "our arithmetic",
               "reference conditions of the paper not stated"),
         ],
@@ -775,9 +851,11 @@ def literature_entries(dc):
         "ignition": {"mode": "direct_on_atmospheric_gas", "evidence_class": "inferred", "basis": "our_inference",
                      "statement": "as E10 (gas at ignition not stated in the source; inferred, verify)"},
         "flow": q("minimum N2 flow for > 5 min operation vs voltage", "TBD - requires digitization of Fig. 6 (p.11); "
-                  "values not tabulated", "mg/s", "digitized", M, "Fig. 6 p.11"),
+                  "values not tabulated", "mg/s", None, M, "Fig. 6 p.11", "n/a",
+                  note="evidence class will be 'digitized' once the figure is digitized"),
         "voltage": q("minimum discharge voltage for > 5 min operation", "TBD - requires digitization of Fig. 6 (p.11)",
-                     "V", "digitized", M, "Fig. 6 p.11"),
+                     "V", None, M, "Fig. 6 p.11", "n/a",
+                     note="evidence class will be 'digitized' once the figure is digitized"),
         "magnetic_field": nr("B at the boundary", "G", M, "not legible / not reported per point"),
         "outcome": "extinguished",
         "outcome_statement": "Below the minimum voltage/flow combination the discharge shut down spontaneously; lower "
@@ -797,7 +875,9 @@ def literature_entries(dc):
         "id": "E12", "title": "MaSHEKT-100 low-power magnetically shielded Hall thruster on N2 (abstract only)",
         "sources": [U, M], "evidence_level": 5, "evidence_class": "measured",
         "thruster": {"name": "MaSHEKT-100 (Southampton)", "family": "magnetically shielded Hall (low power)",
-                     "power_class_kW": "0.03-0.81 across all propellants", "geometry_note": "not accessed"},
+                     "power": q("discharge power range across all propellants (not N2 only)", [30, 810], "W",
+                                "measured", U, "abstract (OpenAlex)", note="nominally 100 W (abstract)"),
+                     "geometry": [], "geometry_note": "not accessed"},
         "propellant": {"anode_gas": "N2 (pure)", "cathode_gas": "not accessed", "xenon_in_anode_flow": False},
         "preionizer": {"present": False, "type": None, "note": "single-stage (from the abstract)"},
         "ignition": {"mode": "direct_on_atmospheric_gas", "evidence_class": "measured", "basis": "second_hand",
@@ -825,9 +905,13 @@ def literature_entries(dc):
         "repository_derived": False})
     G = "GURCIULLO2020"
     z70 = {"name": "Z-70 (Stanford, refurbished)", "family": "single-stage Hall (SPT-type)",
-           "power_class_kW": [0.394, 0.745],
-           "geometry_note": "BN channel OD 72 mm, ID 42 mm, depth 23 mm (p.148); 135 G at channel centreline, exit plane, "
-                            "at 1.5 A (p.148)"}
+           "power": q("tabulated anode power over the Xe/N2 and Xe/air runs", [330.6, 745.3], "W", "measured", G,
+                      "Table A.1 printed p.214 (min, run XeN2-14) and Table A.2 printed p.218 (max, run XeAir-3)",
+                      "not stated", note="tabulated anode power equals anode voltage x anode current"),
+           "geometry": [q("BN channel outer diameter", 72, "mm", "measured", G, "p.148", "not stated (design dimension)"),
+                        q("BN channel inner diameter", 42, "mm", "measured", G, "p.148", "not stated (design dimension)"),
+                        q("channel depth", 23, "mm", "measured", G, "p.148", "not stated (design dimension)")],
+           "geometry_note": "boron-nitride channel; refurbished xenon thruster (see geometry)"}
     E.append({
         "id": "E13", "title": "Z-70 on Xe/N2 mixtures: xenon needed to sustain the discharge at <= about 0.7 kW",
         "sources": [G, "GURCIULLO2019", A], "evidence_level": 3, "evidence_class": "measured", "thruster": z70,
@@ -855,6 +939,7 @@ def literature_entries(dc):
               "inferred", G, "our arithmetic on p.177 values"),
             q("cathode Xe flow", 0.46, "mg/s", "measured", G, "p.148"),
             q("anode supply voltage limit", 300, "V", "measured", G, "p.147"),
+            q("electromagnet current at which the 135 G exit-plane value is given", 1.5, "A", "measured", G, "p.148"),
         ],
         "implication": {
             "direction": "xenon_admixture_required_in_tested_regime",
@@ -915,29 +1000,40 @@ def literature_entries(dc):
     E.append({
         "id": "E15", "title": "TsNIIMASH anode-layer thrusters on Xe + air mixtures (1995)",
         "sources": [SM, A], "evidence_level": 3, "evidence_class": "measured",
-        "thruster": {"name": "TsNIIMASH anode-layer thrusters, 27 mm and 55 mm (D-55) anode diameter",
-                     "family": "anode-layer Hall (TAL)", "power_class_kW": "not legible",
-                     "geometry_note": "xenon designs, unmodified"},
+        "thruster": {"name": "TsNIIMASH anode-layer thrusters (two anode diameters; D-55 type)",
+                     "family": "anode-layer Hall (TAL)",
+                     "power": nr("power", "kW", SM, "not legible in the accessed scan"),
+                     "geometry": [q("anode diameter, smaller thruster", 27, "mm", "measured", SM, "printed p.523"),
+                                  q("anode diameter, larger thruster", 55, "mm", "measured", SM, "printed p.523")],
+                     "geometry_note": "designed for xenon and not changed to operate with other gases (same page as the anode diameters)"},
         "propellant": {"anode_gas": "Xe + air mixtures (fractions not legible in the accessed scan)", "cathode_gas": "not reported",
                        "xenon_in_anode_flow": True},
         "preionizer": {"present": False, "type": None, "note": "single-stage TAL"},
-        "ignition": {"mode": "xenon_admixture_required", "evidence_class": "measured",
-                     "statement": "Xe addition to light propellants changed the operating mode and enabled the 'acceleration "
-                                  "mode' (pp.3-4); pure-air operation is not characterized in the text."},
+        "ignition": {"mode": "not_reported", "evidence_class": "measured",
+                     "statement": "Ignition is not described. The source tested only Xe + air mixtures (no pure-air run is "
+                                  "reported, neither success nor failure); it states that Xe additions allowed an "
+                                  "effective 'acceleration mode' with Xe + air (printed p.524) and that Xe added to light "
+                                  "propellants changes the operating mode and increases their ionization (abstract, "
+                                  "printed p.521)."},
         "flow": nr("flows", "sccm", SM, "figure data not legible in the accessed scan"),
         "voltage": nr("voltages", "V", SM, "figure data not legible in the accessed scan"),
         "magnetic_field": nr("B", "G", SM),
         "outcome": "sustained",
         "outcome_statement": "Volt-ampere characteristics for Xe + air were measured; Xe additions allowed an effective "
-                             "'acceleration mode' (p.4).",
+                             "'acceleration mode' (printed p.524). For pure argon, the other light gas tested, the "
+                             "'acceleration mode' could be reached only at high power near the thruster's upper limit "
+                             "(printed p.524).",
         "observations": {"oscillation_modes": "not reported", "extinction": "not reported", "erosion": "not reported",
                          "cathode": "not reported"},
         "quantities": [],
         "implication": {
-            "direction": "xenon_admixture_required_in_tested_regime",
-            "statement": "Early evidence that a heavy-gas (Xe) discharge acts as the ionizer for light gases in a TAL; it "
-                         "does not test pure air or a separate pre-ionizer.",
-            "uncertainty": "Qualitative; figures illegible; mixture ratios for air unknown.",
+            "direction": "xenon_admixture_improves_operating_mode",
+            "statement": "Xe added to air improved the operating mode of a TAL (effective 'acceleration mode'); the source "
+                         "does not report pure-air operation, so it does not show that xenon is required. Its pure-argon "
+                         "result (acceleration mode reached only at high power) indicates that a light gas can operate "
+                         "alone in this thruster at high power. No separate pre-ionizer was tested.",
+            "uncertainty": "Qualitative; figures illegible; mixture ratios for air unknown; whether pure air would "
+                           "ignite or sustain in these thrusters is not reported.",
             "applicability_limits": "TAL geometry, 1995 laboratory conditions.",
             "abep_regime": ABEP_REGIME_TBD},
         "repository_derived": False})
@@ -945,8 +1041,9 @@ def literature_entries(dc):
     E.append({
         "id": "E16", "title": "Busek 2 kW-class BHT on 'air simulant' 68.3 % N2 / 6.7 % O2 / 25 % Ar (2005; secondary)",
         "sources": [A, H], "evidence_level": 5, "evidence_class": "measured",
-        "thruster": {"name": "Busek BHT (2 kW nominal)", "family": "single-stage Hall (SPT-type)", "power_class_kW": [1, 5.5],
-                     "geometry_note": "not reported"},
+        "thruster": {"name": "Busek BHT (2 kW nominal)", "family": "single-stage Hall (SPT-type)",
+                     "power": q("discharge power range", [1, 5.5], "kW", "measured", A, "Page 25 of 57"),
+                     "geometry": [], "geometry_note": "not reported in the review"},
         "propellant": {"anode_gas": "air simulant 68.3 % N2, 6.7 % O2, 25 % Ar (Ar as surrogate for atomic O)",
                        "cathode_gas": "not reported", "xenon_in_anode_flow": False},
         "preionizer": {"present": False, "type": None, "note": "conventional single-stage"},
@@ -971,7 +1068,8 @@ def literature_entries(dc):
         "id": "E17", "title": "Busek ABHET prototype fed by duct / RF-Hall-generated flow (secondary)",
         "sources": [A, H], "evidence_level": 5, "evidence_class": "measured",
         "thruster": {"name": "Busek ABHET LX2 prototype", "family": "single-stage Hall (open-ended, extended channel per "
-                     "patent; details unpublished)", "power_class_kW": "not reported", "geometry_note": "not reported"},
+                     "patent; details unpublished)", "power": nr("power", "kW", A), "geometry": [],
+                     "geometry_note": "not reported"},
         "propellant": {"anode_gas": "air simulant in an inlet duct, or collected flow from an RF Hall source",
                        "cathode_gas": "not reported (the RF Hall source used a Xe cathode)", "xenon_in_anode_flow": False},
         "preionizer": {"present": False, "type": None,
@@ -996,7 +1094,7 @@ def literature_entries(dc):
         "id": "E18", "title": "SITAEL RAM-EP double-stage thruster, end-to-end with intake and PFG (2017)",
         "sources": [F, A, "ANDREUSSI2017_IEPC377"], "evidence_level": 3, "evidence_class": "measured",
         "thruster": {"name": "SITAEL RAM-EP prototype", "family": "two-stage Hall (ionization stage + Hall-like acceleration stage)",
-                     "power_class_kW": "not reported", "geometry_note": "not reported"},
+                     "power": nr("power", "kW", F), "geometry": [], "geometry_note": "not reported"},
         "propellant": {"anode_gas": "intake-collected flow from the HT5k PFG (4.7 mg/s 1.27N2 + O2 at the PFG); PFG also "
                                     "run on Xe", "cathode_gas": "Xe (hollow cathode neutralizer)", "xenon_in_anode_flow": False},
         "preionizer": {"present": True, "type": "dedicated first (ionization) stage of a double-stage device",
@@ -1031,7 +1129,10 @@ def literature_entries(dc):
         "id": "E19", "title": "Michigan helicon Hall thruster on N2: single-stage vs RF-assisted (secondary)",
         "sources": [A, SH], "evidence_level": 5, "evidence_class": "measured",
         "thruster": {"name": "Helicon Hall thruster (HHT)", "family": "two-stage Hall (helicon RF first stage + Hall stage)",
-                     "power_class_kW": "about 1.75 (review Table 3)", "geometry_note": "not accessed"},
+                     "power": q("power", 1.75, "kW", "digitized", A, "Table 3, Page 22 of 57",
+                                "'~'; the review's Table 3 footnote says values for this device are partially extracted "
+                                "from graphs and indicate operating ranges only"),
+                     "geometry": [], "geometry_note": "not accessed"},
         "propellant": {"anode_gas": "N2 (pure)", "cathode_gas": "Xe", "xenon_in_anode_flow": False},
         "preionizer": {"present": True, "type": "helicon RF stage (0-302 W)", "note": "operated both off and on"},
         "ignition": {"mode": "not_reported", "evidence_class": "measured", "statement": "not reported in the review"},
@@ -1063,8 +1164,13 @@ def literature_entries(dc):
         "id": "E20", "title": "Laboratory closed-drift thruster (38 mm mean channel diameter) on air and 2:1 N2/O2",
         "sources": [D, A], "evidence_level": 5, "evidence_class": "measured",
         "thruster": {"name": "laboratory model, Moscow State Technical University per review Table 3 (xenon design)", "family": "anode-layer / closed-drift Hall "
-                     "(title: 'thruster with anode layer')", "power_class_kW": "not reported",
-                     "geometry_note": "38 mm average channel diameter (review p.26)"},
+                     "(title: 'thruster with anode layer')",
+                     "power": q("power range", [0.3, 1.4], "kW", "digitized", A, "Table 3, Page 22 of 57",
+                                "not stated; the review's Table 3 footnote says values for this device are partially "
+                                "extracted from graphs and indicate operating ranges only"),
+                     "geometry": [q("average channel diameter", 38, "mm", "measured", A, "Page 26 of 57",
+                                    "not stated (second-hand)")],
+                     "geometry_note": "xenon-design laboratory model (see geometry)"},
         "propellant": {"anode_gas": "air; N2/O2 2:1", "cathode_gas": "Xe", "xenon_in_anode_flow": False},
         "preionizer": {"present": False, "type": None, "note": "single-stage"},
         "ignition": {"mode": "not_reported", "evidence_class": "measured", "statement": "not reported"},
@@ -1093,7 +1199,7 @@ def literature_entries(dc):
         "id": "E21", "title": "Aerospace Corp. 2-stage air-breathing cylindrical Hall thruster (ECR + CHT) - xenon only",
         "sources": [A, "DIAMANT2010"], "evidence_level": 5, "evidence_class": "measured",
         "thruster": {"name": "ABCHT prototype", "family": "two-stage Hall (ECR ionization + cylindrical Hall acceleration)",
-                     "power_class_kW": "not reported", "geometry_note": "not reported"},
+                     "power": nr("power", "kW", A), "geometry": [], "geometry_note": "not reported"},
         "propellant": {"anode_gas": "xenon only (no atmospheric gas test reported)", "cathode_gas": "not reported "
                        "(1 % thoriated W filament selected for the concept, review p.38)", "xenon_in_anode_flow": True},
         "preionizer": {"present": True, "type": "ECR stage", "note": "designed for low-pressure air ionization"},
@@ -1132,18 +1238,30 @@ def v1_context():
     return {
         "status": "CONTEXT ONLY - NOT EVIDENCE. These are counts of simulated run x reading evaluations of the P5-N2 v1 "
                   "vacuum campaign. They are model results and say nothing about whether a physical discharge ignites "
-                  "or sustains. v1 is INCONCLUSIVE; no candidate is admitted; the credible set is empty. The v1 outcome "
-                  "is final and permanent: it is never re-scored or re-labelled, and these counts are read unchanged "
-                  "from the official frozen scores file.",
+                  "or sustains. v1 is INCONCLUSIVE; no candidate is admitted; the credible set is empty. Basis for "
+                  "treating v1 as final: docs/HISTORY.md entry '2026-09-26 - P5-N2 v1 vacuum campaign: frozen, scored "
+                  "once, released' and the no-replace evidence publication recorded there. This audit's own practice: "
+                  "it never re-scores or re-labels v1 and reads these counts unchanged from the official frozen scores "
+                  "file.",
         "file": REPO_FILES["v1_scores"],
         "n_records": s["n_records"],
         "vacuum_status_counts": s["status_counts"]["vacuum"],
     }
 
 
-# Single-stage entries without a pre-ionizer that sustained on pure N2 or N2/O2 (no Ar, no Xe in the anode flow);
-# the list quoted in cross-cutting observation 1 of HALL_SUSTAINMENT_EVIDENCE.md.
+# Single-stage entries without a pre-ionizer that sustained on pure N2 or N2/O2/air (no Ar, no Xe in the anode flow);
+# the list quoted in cross-cutting observation 1 of HALL_SUSTAINMENT_EVIDENCE.md. Checked against the selection rule
+# below (no_preionizer_n2_o2_ids) so the hand list cannot drift from the entries.
 NO_PREIONIZER_N2_O2_IDS = ["E01", "E03", "E05", "E06", "E08", "E09", "E10", "E12", "E20"]
+
+
+def no_preionizer_n2_o2_ids(entries):
+    """Entries with an 'operation without pre-ionizer' implication, sustained, no pre-ionizer, no Xe in the anode flow
+    and no argon in the anode gas (the Busek simulant E16 carries 25 % Ar and is excluded)."""
+    return [e["id"] for e in entries
+            if e["implication"]["direction"].startswith("operation_without_preionizer")
+            and e["outcome"] == "sustained" and not e["preionizer"]["present"]
+            and not e["propellant"]["xenon_in_anode_flow"] and "Ar" not in e["propellant"]["anode_gas"]]
 
 
 def _ignition_basis(e):
@@ -1178,6 +1296,7 @@ def build():
     entries = p5_entries() + echt_entries() + literature_entries(dc)
     entries.sort(key=lambda e: int(e["id"][1:]))
     entries = [_ignition_basis(e) for e in entries]
+    assert no_preionizer_n2_o2_ids(entries) == NO_PREIONIZER_N2_O2_IDS, no_preionizer_n2_o2_ids(entries)
     dc["no_preionizer_n2_o2_sustained_flow_range"] = _flow_range(entries, NO_PREIONIZER_N2_O2_IDS)
     dc["no_preionizer_n2_o2_sustained_flow_range_excluding_E20"] = _flow_range(
         entries, [i for i in NO_PREIONIZER_N2_O2_IDS if i != "E20"])
@@ -1195,7 +1314,8 @@ def build():
             "ignition_modes": {
                 "direct_on_atmospheric_gas": "discharge started with the atmospheric gas on the anode (cathode gas recorded separately)",
                 "xenon_start_then_transition": "discharge started on xenon, then the anode (and possibly cathode) moved to atmospheric gas",
-                "xenon_admixture_required": "xenon kept in the anode flow because the atmospheric gas alone did not sustain",
+                "xenon_admixture_required": "xenon kept in the anode flow because, as the source states, the atmospheric "
+                                            "gas alone did not sustain at the tested condition",
                 "not_reported": "the accessed text does not say"},
             "ignition_basis": {
                 "primary": "classification read from the accessed primary text",
@@ -1289,12 +1409,15 @@ def render_md(m):
               "  - Uncertainty: %s" % e["implication"]["uncertainty"],
               "  - Applicability limits: %s" % e["implication"]["applicability_limits"],
               "  - ABEP flow/density regime: %s" % e["implication"]["abep_regime"], ""]
-        if e["quantities"]:
+        L[-1:-1] = ["  - Thruster geometry note: %s" % e["thruster"]["geometry_note"]]
+        rows = ([("[thruster power] ", e["thruster"]["power"])] if not isinstance(e["thruster"]["power"]["value"], str)
+                else []) + [("[geometry] ", qd) for qd in e["thruster"]["geometry"]] + [("", qd) for qd in e["quantities"]]
+        if rows:
             L += ["  | quantity | value | unit | class | uncertainty | source, locator |", "  |---|---|---|---|---|---|"]
-            for qd in e["quantities"]:
-                L.append("  | %s | %s | %s | %s | %s | %s, %s |" % (
-                    qd["name"], _fmt(qd["value"]), qd["unit"], qd["evidence_class"], _ufmt(qd),
-                    qd["source"], qd["locator"]))
+            for tag, qd in rows:
+                L.append("  | %s%s | %s | %s | %s | %s | %s, %s |" % (
+                    tag, qd["name"], _fmt(qd["value"]), qd["unit"], qd["evidence_class"] or "none (no value)",
+                    _ufmt(qd), qd["source"], qd["locator"]))
             L.append("")
     L.append(END)
     return "\n".join(L)

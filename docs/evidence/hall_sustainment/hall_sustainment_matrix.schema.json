@@ -75,7 +75,7 @@
     "value": {"$ref": "#/$defs/value"},
     "unit": {"type": "string", "minLength": 1},
     "uncertainty": {"type": ["string", "number"]},
-    "evidence_class": {"$ref": "#/$defs/evidence_class"},
+    "evidence_class": {"type": ["string", "null"], "enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed", null], "description": "null only for a placeholder value ('not ...', 'TBD - requires ...', 'figure data ...'): a missing value has no quantity type"},
     "source": {"type": "string"},
     "locator": {"type": "string", "minLength": 1},
     "note": {"type": "string"}
@@ -93,13 +93,14 @@
     "evidence_class": {"$ref": "#/$defs/evidence_class"},
     "thruster": {
      "type": "object",
-     "required": ["name", "family", "power_class_kW", "geometry_note"],
+     "required": ["name", "family", "power", "geometry", "geometry_note"],
      "additionalProperties": false,
      "properties": {
       "name": {"type": "string"},
       "family": {"type": "string"},
-      "power_class_kW": {"$ref": "#/$defs/value"},
-      "geometry_note": {"type": "string"}
+      "power": {"$ref": "#/$defs/quantity"},
+      "geometry": {"type": "array", "items": {"$ref": "#/$defs/quantity"}, "description": "structured geometry quantities (each with unit, source, locator, evidence class, uncertainty); empty if none reported"},
+      "geometry_note": {"type": "string", "pattern": "^[^0-9]*$", "description": "free text without numbers; every number belongs in geometry or quantities"}
      }
     },
     "propellant": {
@@ -151,7 +152,7 @@
      "required": ["direction", "statement", "uncertainty", "applicability_limits", "abep_regime"],
      "additionalProperties": false,
      "properties": {
-      "direction": {"type": "string", "enum": ["operation_without_preionizer_demonstrated", "operation_without_preionizer_demonstrated_xenon_start", "operation_bounded_extinction_observed", "xenon_admixture_required_in_tested_regime", "preionization_stage_present_effect_not_isolated", "preionization_stage_tested_no_net_benefit_reported", "not_informative"]},
+      "direction": {"type": "string", "enum": ["operation_without_preionizer_demonstrated", "operation_without_preionizer_demonstrated_xenon_start", "operation_bounded_extinction_observed", "xenon_admixture_required_in_tested_regime", "xenon_admixture_improves_operating_mode", "preionization_stage_present_effect_not_isolated", "preionization_stage_tested_no_net_benefit_reported", "not_informative"]},
       "statement": {"type": "string"},
       "uncertainty": {"type": "string"},
       "applicability_limits": {"type": "string"},

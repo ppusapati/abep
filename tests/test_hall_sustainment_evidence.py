@@ -135,7 +135,11 @@ def test_validator_rejects_bad_entries(m):
 
 # ---------------------------------------------------------------- sourcing and evidence classes
 def _all_quantities(e):
-    return [e["flow"], e["voltage"], e["magnetic_field"]] + list(e["quantities"])
+    return ([e["flow"], e["voltage"], e["magnetic_field"], e["thruster"]["power"]] + list(e["thruster"]["geometry"])
+            + list(e["quantities"]))
+
+
+PLACEHOLDER = re.compile(r"^(not |TBD - requires |figure data )")
 
 
 def test_entries_sourced_and_classed(m):
@@ -146,15 +150,20 @@ def test_entries_sourced_and_classed(m):
         for sid in e["sources"]:
             assert sid in m["sources"], (e["id"], sid)
         for qd in _all_quantities(e):
-            assert qd["evidence_class"] in CLASSES, (e["id"], qd["name"])
+            v = qd["value"]
+            if isinstance(v, str) and PLACEHOLDER.match(v):
+                # a missing value has no quantity type
+                assert qd["evidence_class"] is None, (e["id"], qd["name"])
+            else:
+                assert qd["evidence_class"] in CLASSES, (e["id"], qd["name"])
             assert qd["unit"].strip(), (e["id"], qd["name"])
             assert qd["source"] in e["sources"], (e["id"], qd["name"], qd["source"])
             assert str(qd["uncertainty"]).strip(), (e["id"], qd["name"])
-            v = qd["value"]
             if isinstance(v, list) and len(v) == 2:
                 assert v[0] <= v[1], (e["id"], qd["name"], v)
             if isinstance(v, str):
-                assert re.match(r"^(not |TBD - requires |< |> |from |figure data )", v), (e["id"], qd["name"], v)
+                assert PLACEHOLDER.match(v) or re.match(r"^(< |> |from )", v), (e["id"], qd["name"], v)
+        assert not re.search(r"[0-9]", e["thruster"]["geometry_note"]), (e["id"], "numbers belong in geometry")
         assert e["implication"]["abep_regime"].startswith("TBD - requires the upstream ICD")
         for k in ("statement", "uncertainty", "applicability_limits"):
             assert len(e["implication"][k]) > 3, (e["id"], k)
@@ -246,7 +255,7 @@ def test_echt_values_match_repository(entries):
     e = entries["E03"]
 
     def qn(name):
-        return next(qd for qd in e["quantities"] if qd["name"] == name)["value"]
+        return next(qd for qd in e["quantities"] + e["thruster"]["geometry"] if qd["name"] == name)["value"]
 
     assert e["repository_derived"] is True
     assert e["flow"]["value"] == 2.06 and {r[3] for r in rows} == {2.06}
@@ -266,6 +275,12 @@ def test_echt_values_match_repository(entries):
         assert r.replace("Run ", "") in e["outcome_statement"]
     assert e["propellant"]["cathode_gas"] == "Ar" and "argon" in v["cathode"]["gas"]["value"]
     assert entries["E04"]["flow"]["value"] == 1.6 and "1.6 mg/s" in v["stability_oscillations"]["value"]
+    assert qn("stated outer diameter of the BN chamber") == v["geometry"]["outer_diameter"]["value_mm"] == 100
+    assert qn("exit-plane marker position on the B(z) axis") == v["geometry"]["exit_plane_on_Bz_axis"]["value_cm"]
+    pk = max(v["magnetic_field"]["measured_Bz_at_2A"]["points"], key=lambda p: p["B_G"])
+    assert qn("peak of the digitized B(z) at 2 A coil current") == pk["B_G"]
+    assert pk["z_cm"] < v["geometry"]["exit_plane_on_Bz_axis"]["value_cm"]
+    assert e["thruster"]["power"]["value"] == qn("anode power, thrust runs")
     t = _json(os.path.join(IDENT, "echt_n2", "echt_table_checks_v1.json"))
     assert {r["run"] for r in t["runs"]} == {p["run"] for p in perf}
 
@@ -393,7 +408,84 @@ def test_uncertainties_carry_units(m, entries):
     assert len(sig) == 1 and ("%g mN" % sig.pop()) in t["uncertainty"] and "Table 5" in t["uncertainty"]
 
 
-def test_v1_outcome_stated_final(m):
-    assert "final and permanent" in m["context_not_evidence"]["p5_n2_v1_vacuum"]["status"]
+def test_v1_finality_cites_its_basis(m):
+    """v1 finality is stated with its repository basis (docs/HISTORY.md), and never-re-scoring is this audit's practice."""
+    st = m["context_not_evidence"]["p5_n2_v1_vacuum"]["status"]
+    assert "docs/HISTORY.md" in st and "scored once" in st and "This audit's own practice" in st
+    with open(os.path.join(ROOT, "docs", "HISTORY.md")) as f:
+        hist = f.read()
+    assert "P5-N₂ v1 vacuum campaign: frozen, scored once, released" in hist
+    assert "no-replace" in hist
     with open(MDFILE) as f:
-        assert "final and permanent" in f.read()
+        md = f.read()
+    assert "final and permanent" not in md and "final and permanent" not in st
+    assert "scored once and released" in md
+
+
+# ---------------------------------------------------------------- second review repairs
+def _entry_text(e):
+    return json.dumps(e, ensure_ascii=False)
+
+
+def test_e15_does_not_claim_xenon_required(entries):
+    e = entries["E15"]
+    assert e["ignition"]["mode"] == "not_reported"
+    assert e["implication"]["direction"] == "xenon_admixture_improves_operating_mode"
+    assert "does not show that xenon is required" in e["implication"]["statement"]
+    assert "argon" in e["outcome_statement"] and "high power" in e["outcome_statement"]
+
+
+def test_e04_boundary_is_conditional_on_v_and_b(entries):
+    e = entries["E04"]
+    assert "p.104" in e["flow"]["locator"] and "p.110" in e["flow"]["locator"]
+    assert "if the potential was not raised sufficiently" in e["flow"]["note"]
+    assert "at increasing magnet current" in e["flow"]["note"]
+    assert "not a fixed flow floor" in e["implication"]["statement"]
+    assert "not given" not in e["implication"]["uncertainty"] or "numerically" in e["implication"]["uncertainty"]
+    with open(MDFILE) as f:
+        md = f.read()
+    assert "flow floor near" not in md
+
+
+def test_p5_repairs(entries):
+    a = _json(os.path.join(IDENT, "brabston_p5_n2_measurement_audit_v1.json"))
+    t2 = [p["table2"] for p in a["points"].values()]
+    sig = [t["mdot_anode_sigma_mg_s"] for t in t2]
+    unc = entries["E01"]["flow"]["uncertainty"]
+    assert ("%g-%g mg/s" % (min(sig), max(sig))) in unc and "max 0.05 mg/s" not in unc
+    assert "BRABSTON2025 p.6" in entries["E01"]["outcome_statement"]
+    geo = {qd["name"]: qd for qd in entries["E01"]["thruster"]["geometry"]}
+    assert sorted(qd["value"] for qd in geo.values()) == [32, 38]
+    assert all("hypothesis" in qd["uncertainty"] for qd in geo.values())
+    assert not any(isinstance(qd["value"], list) and qd["unit"] == "mm" for qd in entries["E01"]["quantities"])
+    hi = [t["V_d"] for t in t2 if t["V_d"] > 275]
+    st = entries["E02"]["implication"]["statement"]
+    assert ("%g-%g V" % (min(hi), max(hi))) in st and "above the stated 275 V" in st
+
+
+def test_power_and_geometry_structured(entries):
+    assert entries["E20"]["thruster"]["power"]["value"] == [0.3, 1.4]
+    assert "Page 22 of 57" in entries["E20"]["thruster"]["power"]["locator"]
+    z = entries["E13"]["thruster"]
+    assert z["power"]["value"] == [330.6, 745.3]
+    assert sorted(qd["value"] for qd in z["geometry"]) == [23, 42, 72]
+    assert any(qd["value"] == 554 and qd["unit"] == "h" for qd in entries["E05"]["quantities"])
+
+
+def test_flow_range_membership_follows_rule(m):
+    b = _builder()
+    rng = m["derived_checks"]["no_preionizer_n2_o2_sustained_flow_range"]
+    assert rng["entries"] == b.no_preionizer_n2_o2_ids(m["entries"]) == b.NO_PREIONIZER_N2_O2_IDS
+    assert "E08" in rng["entries_with_numeric_flow"]
+    with open(MDFILE) as f:
+        md = f.read()
+    obs = md[md.index("1. **Operation without a pre-ionizer"):md.index("2. **Xenon is present")]
+    for i in rng["entries"]:
+        assert i in obs, i
+
+
+def test_ht100_gap_recorded():
+    with open(MDFILE) as f:
+        md = f.read()
+    gaps = md[md.index("## Gaps (TBD)"):md.index("## Access log")]
+    assert "HT100" in gaps
