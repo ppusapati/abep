@@ -1305,18 +1305,32 @@ def test_p5_n2_freeze_and_score_once(tmp_path):
     assert not any(f.name.startswith("p5_n2_campaign_test_vacuum_scores") for f in out.iterdir())
     orphan = mp.replace("_raw_manifest.json", "_scores.json")                         # hard-interruption orphan (no provenance)
     open(orphan, "w").write("{}")
-    real_replace = sf.os.replace
-    def failing_replace(src, dst):
+    real_link = sf.os.link
+    def failing_link(src, dst):
         if dst.endswith("_scores_provenance.json"):
             raise OSError("simulated failure publishing provenance")
-        return real_replace(src, dst)
-    sf.os.replace = failing_replace
+        return real_link(src, dst)
+    sf.os.link = failing_link
     try:
         with _pytest.raises(OSError):
             sf.score_frozen(mp)
     finally:
-        sf.os.replace = real_replace
+        sf.os.link = real_link
     assert not os.path.exists(orphan)                                                  # rolled back, nothing official
+    # a concurrent attempt that publishes first is never overwritten (PR #30 review): no-replace publication
+    prov_path = mp.replace("_raw_manifest.json", "_scores_provenance.json")
+    class Racer:
+        def main(self, argv):
+            real_load().main(argv)
+            open(orphan, "w").write('{"other": 1}'); open(prov_path, "w").write('{"other": 1}')
+    sf._load_scorer = lambda: Racer()
+    try:
+        with _pytest.raises(SystemExit):
+            sf.score_frozen(mp)
+    finally:
+        sf._load_scorer = real_load
+    assert open(orphan).read() == open(prov_path).read() == '{"other": 1}'
+    os.remove(orphan); os.remove(prov_path)
     open(orphan, "w").write("{}")
     assert sf.score_frozen(mp)["output_sha256"]                                        # orphan removed; clean attempt succeeds
     # release manifest binds the whole chain and refuses a broken link
@@ -1328,6 +1342,23 @@ def test_p5_n2_freeze_and_score_once(tmp_path):
     rl = importlib.util.module_from_spec(spec); spec.loader.exec_module(rl)
     r = rl.release(mp, bridge_dir=sf.BR)
     assert all(r["link_checks"].values()) and r["dataset"]["n_records"] == 5 and r["decision"]["promotable"] == []
+    rel_out = str(tmp_path / "VALIDATION_RELEASE_test.json")
+    real_dump = rl.json.dump
+    def dying_dump(obj, fh, **kw):
+        fh.write("{trunc"); raise KeyboardInterrupt
+    rl.json.dump = dying_dump
+    try:
+        with _pytest.raises(KeyboardInterrupt):
+            rl.publish(r, rel_out)
+    finally:
+        rl.json.dump = real_dump
+    assert not os.path.exists(rel_out) and not any("VALIDATION_RELEASE_test" in f.name for f in tmp_path.iterdir())
+    rl.publish(r, rel_out)
+    assert json.load(open(rel_out))["link_checks"] == r["link_checks"]
+    before = open(rel_out).read()
+    with _pytest.raises(SystemExit):                                                   # concurrent/second publication refused
+        rl.publish(dict(r, campaign="other"), rel_out)
+    assert open(rel_out).read() == before and not any(".partial-" in f.name for f in tmp_path.iterdir())
     dec_path = scores_path.replace(".json", "_decision.json")
     d = json.load(open(dec_path)); d["source_scores_sha256"] = "0" * 64; json.dump(d, open(dec_path, "w"))
     with _pytest.raises(SystemExit):
@@ -1365,6 +1396,10 @@ def test_p5_n2_report_and_decision_are_mechanical(tmp_path):
     md = rp.report(scores)
     heads = [md.index(h) for h in ("## 1. Candidate verdicts", "## 2. Global layer-1", "## 3. Run status", "## 4. Signed residuals", "## 5. E×B")]
     assert heads == sorted(heads) and "-0.200" in md                                       # signed, not absolute
+    import re as _re                                         # member keys contain "|": escaped, so every row has equal columns
+    sec2 = md[md.index("## 2. Global layer-1"):md.index("## 3. Run status")]
+    ncols = {len(_re.split(r"(?<!\\)\|", l)) for l in sec2.splitlines() if l.startswith("|")}
+    assert len(ncols) == 1, ncols
 
 def test_admission_gate_and_launch_manifests(tmp_path):
     """Admitted members need an offline-verifiable admission record (decision + provenance files, sha256, PROMOTABLE, passing
@@ -1380,12 +1415,31 @@ def test_admission_gate_and_launch_manifests(tmp_path):
     dec = {"candidates": {"sgb-screen-01": "PROMOTABLE"}, "passing_members": {"sgb-screen-01": ["L32-anode|1p6kW|A"]},
            "source_scores_sha256": s_sha}
     (bdir / "validation" / "d.json").write_text(json.dumps(dec))
-    (bdir / "validation" / "p.json").write_text(json.dumps({"output": "validation/s.json", "output_sha256": s_sha}))
+    (bdir / "validation" / "p.json").write_text(json.dumps({"output": "validation/s.json", "output_sha256": s_sha,
+                                                            "input_sha256_canonical_jsonl": "m" * 64}))
     sha = lambda f: hashlib.sha256((bdir / "validation" / f).read_bytes()).hexdigest()
+    (bdir / "prereg").mkdir()                          # O4: one staged sensitivity with one escalation combination
+    (bdir / "prereg" / "x.json").write_text(json.dumps({"staged_sensitivities": {"sens.toml": {
+        "baseline": "n2_n.toml", "escalation": {"n2_n_di_lower.toml": "sens_di_lower.toml"}}}}))
+    def o4_scored(name, chem, fired, mand="m" * 64):
+        (bdir / "validation" / f"{name}_s.json").write_text(json.dumps({"staged_escalation": {chem: {"trigger_fired": fired}}}))
+        (bdir / "validation" / f"{name}_p.json").write_text(json.dumps({
+            "mode": "vacuum", "input_mandatory_sha256": mand, "mandatory_scores_sha256": s_sha,
+            "output": f"validation/{name}_s.json", "output_sha256": sha(f"{name}_s.json")}))
+        return {"scores_provenance_file": f"validation/{name}_p.json", "scores_provenance_sha256": sha(f"{name}_p.json")}
+    def o4_file(name, fired=False, escalations=None, cleared=("sgb-screen-01",), recorded=None, first=None, disp="owner text"):
+        d = {"schema": "o4_dispositions_v1", "campaign_id": "p5_n2_campaign_v1", "mandatory_decision_sha256": sha("d.json"),
+             "sensitivities": {"sens.toml": {"baseline": "n2_n.toml", "first_stage": first or o4_scored(name + "_st", "sens.toml", fired),
+                                             "trigger_fired": fired if recorded is None else recorded,
+                                             "escalations": escalations or {}, "disposition": disp}},
+             "cleared_for_admission": list(cleared), "decided_by": "owner", "decided_utc": "t"}
+        (bdir / "validation" / f"{name}.json").write_text(json.dumps(d))
+        return {"o4_dispositions_file": f"validation/{name}.json", "o4_dispositions_sha256": sha(f"{name}.json")}
     cand = copy.deepcopy(e["screening_candidates"][0])
     adm = {"promoted_from_screening_id": "sgb-screen-01", "campaign_id": "p5_n2_campaign_v1", "preregistration": "prereg/x.json",
            "decision_file": "validation/d.json", "decision_sha256": sha("d.json"), "scores_provenance_file": "validation/p.json",
-           "scores_provenance_sha256": sha("p.json"), "passing_layer1_members": ["L32-anode|1p6kW|A"], "admitted_utc": "t", "decided_by": "owner"}
+           "scores_provenance_sha256": sha("p.json"), "passing_layer1_members": ["L32-anode|1p6kW|A"], "admitted_utc": "t", "decided_by": "owner",
+           **o4_file("o4ok")}
     def write(member, drop_from_screening=True):
         ee = copy.deepcopy(e); ee["members"] = [member]
         if drop_from_screening:
@@ -1409,6 +1463,21 @@ def test_admission_gate_and_launch_manifests(tmp_path):
                                                                            scores_provenance_sha256=sha("p2.json")))))
     with _pytest.raises(ValueError):                                        # unsupported passing member
         he.load_ensemble(write(dict(copy.deepcopy(cand), admission=dict(adm, passing_layer1_members=["L38-hist|3p0kW|B"]))))
+    # owner follow-up on PR #29: PROMOTABLE alone never admits; the O4 stage must be scored and dispositioned
+    no_o4 = {k: v for k, v in adm.items() if not k.startswith("o4_")}
+    refused = {"no O4 record": no_o4,
+               "not cleared": dict(adm, **o4_file("o4a", cleared=())),
+               "recorded trigger contradicts the scored one": dict(adm, **o4_file("o4b", fired=True, recorded=False)),
+               "trigger fired, escalation not scored": dict(adm, **o4_file("o4c", fired=True)),
+               "no disposition text": dict(adm, **o4_file("o4d", disp=" ")),
+               "scored against another mandatory dataset": dict(adm, **o4_file("o4e", first=o4_scored("o4e_st", "sens.toml", False, "x" * 64))),
+               "tampered O4 record": dict(adm, o4_dispositions_sha256="0" * 64)}
+    for why, a in refused.items():
+        with _pytest.raises(ValueError):
+            he.load_ensemble(write(dict(copy.deepcopy(cand), admission=a)))
+    esc = {"sens_di_lower.toml": o4_scored("o4f_esc", "sens_di_lower.toml", False)}
+    ok2 = he.load_ensemble(write(dict(copy.deepcopy(cand), admission=dict(adm, **o4_file("o4f", fired=True, escalations=esc)))))
+    he.require_admitted("sgb-screen-01", ok2)                              # fired + every escalation scored + dispositioned
     with _pytest.raises(ValueError):                                        # the real ensemble: screening refused
         he.require_admitted("sgb-screen-01")
     spec = importlib.util.spec_from_file_location("mm", os.path.join(root, "scripts", "make_p5_n2_launch_manifests.py"))
@@ -1425,6 +1494,39 @@ def test_admission_gate_and_launch_manifests(tmp_path):
                                      "hallthruster_commit": commit, "retcode": "success"}) + "\n" for k in m["expected_keys"]))
     assert mm.check(m, [str(f)])["PASS"]
     assert not mm.check(built["staged_n2_n_ndd_hmslow"], [str(f)])["PASS"]
+
+def test_staged_o4_freeze_and_score_once(tmp_path):
+    """O4 datasets (scripts/score_p5_n2_staged.py): frozen against the pinned launch manifest, scored once with the frozen
+    scorer on mandatory + staged records; the mandatory scores must be reproduced exactly. A copy of the baseline relabelled as
+    the sensitivity fires no trigger; a +10 % current perturbation fires it; re-scoring and re-freezing are refused."""
+    import gzip, importlib.util, json, os
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("st", os.path.join(root, "scripts", "score_p5_n2_staged.py"))
+    st = importlib.util.module_from_spec(spec); spec.loader.exec_module(st)
+    raw = gzip.decompress(open(os.path.join(root, "hallthruster_bridge", "validation", "p5_n2_campaign_v1_vacuum_raw.jsonl.gz"), "rb").read())
+    def staged(sens, scale):
+        f = tmp_path / f"{sens}.jsonl"
+        with open(f, "w") as fh:
+            for line in raw.decode().splitlines():
+                r = json.loads(line)
+                if r["chemistry"] == "n2_n.toml":
+                    r["chemistry"], r["key"] = sens + ".toml", r["key"].replace("|n2_n.toml|", f"|{sens}.toml|")
+                    if isinstance(r.get("discharge_current_A"), (int, float)):
+                        r["discharge_current_A"] *= scale
+                    fh.write(json.dumps(r) + "\n")
+        man = os.path.join(root, "hallthruster_bridge", "campaign", "manifests", f"staged_{sens}.json")
+        st.freeze_staged(man, [str(f)], tag="t", outdir=str(tmp_path))
+        return man, str(f), str(tmp_path / f"p5_n2_campaign_t_staged_{sens}_raw_manifest.json")
+    man, f, fm = staged("n2_n_rot_off", 1.0)
+    p = st.score_staged(fm)
+    assert p["mandatory_reproduced"] and p["o4_trigger_fired"] == {"n2_n_rot_off.toml": False}
+    with _pytest.raises(SystemExit):
+        st.score_staged(fm)                                                # score once
+    with _pytest.raises(SystemExit):
+        st.freeze_staged(man, [f], tag="t", outdir=str(tmp_path))          # no overwrite
+    with _pytest.raises(SystemExit):                                       # wrong launch manifest for these records
+        st.freeze_staged(man.replace("rot_off", "ndd_hmslow"), [f], tag="u", outdir=str(tmp_path))
+    assert st.score_staged(staged("n2_n_ndd_hmslow", 1.10)[2])["o4_trigger_fired"] == {"n2_n_ndd_hmslow.toml": True}
 
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""

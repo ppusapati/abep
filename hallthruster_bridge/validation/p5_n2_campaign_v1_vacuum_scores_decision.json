@@ -1,0 +1,45 @@
+{
+ "source": "scripts/score_p5_n2_campaign.py output (frozen pre-registration p5_n2_validation_criteria_v1)",
+ "source_scores_sha256": "87895820e21e36fa8f9b07fa7475789f08d91d946d526a09acf142fe509be1bc",
+ "scores_provenance": {
+  "file": "p5_n2_campaign_v1_vacuum_scores_provenance.json",
+  "sha256": "6f10b02e505a1c48adc47b77a1d7b84fd8c569a7867b611d6d1099bb75c2ca8c"
+ },
+ "admission_mode": "vacuum",
+ "candidates": {
+  "sgb-screen-01": "INCONCLUSIVE / NOT ELIGIBLE",
+  "sgb-screen-02": "INCONCLUSIVE / NOT ELIGIBLE",
+  "sgb-screen-03": "INCONCLUSIVE / NOT ELIGIBLE",
+  "sgb-screen-04": "INCONCLUSIVE / NOT ELIGIBLE",
+  "sgb-screen-05": "INCONCLUSIVE / NOT ELIGIBLE",
+  "sgb-screen-06": "INCONCLUSIVE / NOT ELIGIBLE",
+  "sgb-screen-07": "INCONCLUSIVE / NOT ELIGIBLE",
+  "sgb-screen-08": "INCONCLUSIVE / NOT ELIGIBLE",
+  "sgb-screen-09": "INCONCLUSIVE / NOT ELIGIBLE"
+ },
+ "promotable": [],
+ "inconclusive": [
+  "sgb-screen-01",
+  "sgb-screen-02",
+  "sgb-screen-03",
+  "sgb-screen-04",
+  "sgb-screen-05",
+  "sgb-screen-06",
+  "sgb-screen-07",
+  "sgb-screen-08",
+  "sgb-screen-09"
+ ],
+ "failed_validation": [],
+ "passing_members": {
+  "sgb-screen-01": [],
+  "sgb-screen-02": [],
+  "sgb-screen-03": [],
+  "sgb-screen-04": [],
+  "sgb-screen-05": [],
+  "sgb-screen-06": [],
+  "sgb-screen-07": [],
+  "sgb-screen-08": [],
+  "sgb-screen-09": []
+ },
+ "facility_verdicts_non_gating": {}
+}

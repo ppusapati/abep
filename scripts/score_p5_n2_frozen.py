@@ -5,7 +5,7 @@
   -> write a provenance manifest: input dataset SHA, scorer file SHA + commit, prereg lock SHA, scoring time, output SHA.
 Refuses to run if a score for this dataset already exists ("score once"); a rescore would need a new, dated decision.
 Refuses to run unless the scorer is byte-identical to the frozen scorer at the manifest's scorer_commit. The scores file is
-written to a temporary path and verified; the provenance manifest is renamed LAST and is the commit marker. If publishing the
+written to a temporary path and verified; the provenance manifest is linked LAST (no-replace) and is the commit marker. If publishing the
 provenance fails, the scores file is rolled back; an orphan scores file left by a hard interruption (no provenance) is
 removed on the next attempt, so a failed attempt never blocks or masquerades as the official result.
 Usage: python scripts/score_p5_n2_frozen.py hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_raw_manifest.json
@@ -71,12 +71,17 @@ def score_frozen(manifest_path, allow_existing=False):
              "chain": {k: man[k] for k in ("driver_commit", "integrity_gate_commit", "scorer_commit", "preregistration")}}
         with open(tmp_prov, "w") as fh:
             json.dump(p, fh, indent=1)
-        os.replace(tmp_out, out)             # both artifacts are complete on disk before either becomes official
+        try:                                 # no-replace publication: a concurrent attempt never overwrites (PR #30 review)
+            os.link(tmp_out, out)            # both artifacts are complete on disk before either becomes official
+        except FileExistsError:
+            raise SystemExit(f"scores published concurrently, refusing to overwrite: {out}")
         try:
-            os.replace(tmp_prov, prov)       # the provenance rename commits the result
+            os.link(tmp_prov, prov)          # the provenance link commits the result
         except BaseException:
-            if os.path.exists(out):
-                os.unlink(out)               # roll back: no official scores without provenance
+            if os.path.exists(out) and os.path.samefile(out, tmp_out):
+                os.unlink(out)               # roll back only our own scores file: no official scores without provenance
+            if isinstance(sys.exc_info()[1], FileExistsError):
+                raise SystemExit(f"already scored concurrently (score once): {prov}")
             raise
     finally:
         os.unlink(tmp)
