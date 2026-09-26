@@ -1,12 +1,28 @@
 {
  "schema": "subsystem_ledger_v1",
  "version": "1.0",
- "status": "schema only: defines fields, conventions and mappings to existing code. It carries no subsystem numbers and is not wired into abep_sim (wiring is a model change for the owner).",
+ "status": "DRAFT — PROPOSED for owner decision. Schema only: defines fields, conventions and mappings to existing code. It carries no subsystem numbers and is not wired into abep_sim (wiring is a model change for the owner).",
+ "milestones": {
+  "supports": [
+   "A",
+   "C"
+  ],
+  "A": "common six-quantity vocabulary per subsystem and per architecture (hall_only / rf_hall / ecr_hall) so conditions can be stated; no numbers",
+  "B": "needs instances with evidenced values, the admitted Hall transport closure for hall_discharge-derived fields, and the second lens on this single-lens-v1 lane",
+  "C": "listed as a Milestone C integration deliverable (docs/architecture_comparison/dossier/dossier.json); needs instances from integrated designs for mass, power, thermal, life and startup"
+ },
  "purpose": "Common engineering ledger so that every propulsion subsystem exposes the same six quantities (performance, power, mass, rejected heat, life/degradation, uncertainty) with the same value/evidence record. Companion schemas: bus_power_ledger_v1.json (electrical source side) and thermal_rejection_ledger_v1.json (heat disposition side). Field names follow abep_sim/archengine.py:close_architecture where a producer exists; mapping, gaps and closure rules are in docs/ledgers/LEDGERS.md.",
  "scope": {
   "rfp_architecture": "atmospheric path: intake -> filter -> compressor -> atmospheric gas chamber -> valve; Xe path: Xe chamber -> valve; both feed ionization/discharge -> acceleration/thrust (CLAUDE.md, two-layer Hall uncertainty, Scope).",
   "boundary": "the propulsion subsystem, from the intake aperture to the thruster exit plane, electrically from the propulsion DC bus input (bus_power_ledger_v1 boundary). Spacecraft bus housekeeping, solar arrays and the EPS round trip are outside (abep_sim/mission_env.py:Spacecraft, abep_sim/mission_env.py:array_area_for).",
   "not_in_scope": "new propulsion families (CLAUDE.md rule 8); calibration-nuisance (layer-1) variables of the P5 experiment, which are never ledger fields, map axes or design variables."
+ },
+ "execution_branch_alignment": {
+  "base": "names checked against the execution branch e15f66f (lanes merged after this lane was first built)",
+  "bus_power_boundary_v1": "abep_sim/arch_boundary.py COMMON_COMPONENTS / PREIONIZER_COMPONENTS: every component is carried by at least one subsystem (subsystems.*.execution_branch_mapping.boundary_components; tested)",
+  "thermal_life": "abep_sim/thermal_life.py THERMAL_COMPONENTS (hall_discharge, hall_magnet, cathode, rf_source, ecr_source, ecr_magnet) with limits/inputs in schemas/thermal_life/; each maps to exactly one subsystem (tested)",
+  "mass_bom_v1": "abep_sim/mass_bom.py catalog (_CATALOG, architecture_items, check_power_boundary_coverage, ESA maturity categories / MGA) and docs/architecture_comparison/mass_bom/mass_bom_v1.json; every catalog item maps to a subsystem (tested). mass_bom_v1 is the architecture-comparison mass authority; the archengine BOM lines below remain the legacy-trade mapping",
+  "resolution": "read-only, lazily; tests skip these checks when the modules are absent and never import them at collection time"
  },
  "quantities": {
   "performance": {
@@ -139,7 +155,7 @@
  "instance_required_fields": {
   "schema": "\"subsystem_ledger_v1\"",
   "subsystem_id": "one of subsystems",
-  "architecture": "archengine architecture name (abep_sim/archengine.py:arch_name)",
+  "architecture": "one of hall_only | rf_hall | ecr_hall (plus the archengine arch_name abep_sim/archengine.py:arch_name when the instance is derived from archengine)",
   "operating_point_ref": "design variables and gas-path state reference",
   "modes": "list of modes evaluated (subset of steady, peak, startup)",
   "performance": "quantities.performance.fields",
@@ -289,6 +305,22 @@
     "gaps": [
      "G14"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "hall_only": [],
+     "rf_hall": [],
+     "ecr_hall": []
+    },
+    "thermal_life_components": [],
+    "mass_bom_v1_items": [
+     "intake"
+    ]
    }
   },
   "filter": {
@@ -367,6 +399,23 @@
     "gaps": [
      "G14"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "hall_only": [],
+     "rf_hall": [],
+     "ecr_hall": []
+    },
+    "thermal_life_components": [],
+    "mass_bom_v1_items": [
+     "filter"
+    ],
+    "note": "no electrical consumer is defined; a powered filter is not covered by bus_power_boundary_v1 (needs a new boundary version)"
    }
   },
   "compressor": {
@@ -504,6 +553,28 @@
     "gaps": [
      "G14"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "hall_only": [
+      "compressor"
+     ],
+     "rf_hall": [
+      "compressor"
+     ],
+     "ecr_hall": [
+      "compressor"
+     ]
+    },
+    "thermal_life_components": [],
+    "mass_bom_v1_items": [
+     "compressor"
+    ]
    }
   },
   "buffer": {
@@ -609,6 +680,29 @@
     "gaps": [
      "G14"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "hall_only": [
+      "thermal_control"
+     ],
+     "rf_hall": [
+      "thermal_control"
+     ],
+     "ecr_hall": [
+      "thermal_control"
+     ]
+    },
+    "thermal_life_components": [],
+    "mass_bom_v1_items": [
+     "atmospheric_gas_chamber"
+    ],
+    "note": "gas-chamber heaters draw on thermal_control; the chamber itself is passive"
    }
   },
   "valves": {
@@ -707,6 +801,29 @@
     "gaps": [
      "G14"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "hall_only": [
+      "flow_control"
+     ],
+     "rf_hall": [
+      "flow_control"
+     ],
+     "ecr_hall": [
+      "flow_control"
+     ]
+    },
+    "thermal_life_components": [],
+    "mass_bom_v1_items": [
+     "atmospheric_valve",
+     "xe_valve_and_flow_control"
+    ]
    }
   },
   "xe_tank": {
@@ -797,6 +914,31 @@
     "gaps": [
      "G14"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "hall_only": [
+      "thermal_control"
+     ],
+     "rf_hall": [
+      "thermal_control"
+     ],
+     "ecr_hall": [
+      "thermal_control"
+     ]
+    },
+    "thermal_life_components": [],
+    "mass_bom_v1_items": [
+     "xe_tank",
+     "xe_load",
+     "xe_residual"
+    ],
+    "note": "Xe tank/line heaters draw on thermal_control; the Xe valve / regulator is under valves (flow_control)"
    }
   },
   "cathode": {
@@ -843,7 +985,7 @@
      "abep_sim/plasma_devices.py:LaB6Cathode.operate",
      "abep_sim/ppu.py:load_modes"
     ],
-    "note": "steady total only; keeper/heater split exists only in the startup mode of ppu.load_modes",
+    "note": "steady total only in archengine (heater share routed through the keeper converter); the keeper/heater split and the start-up transient are produced by abep_sim.cathode_integration on the execution branch (not wired into archengine)",
     "gaps": [
      "G6"
     ]
@@ -900,6 +1042,34 @@
     "gaps": [
      "G14"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "hall_only": [
+      "cathode_keeper",
+      "cathode_heater"
+     ],
+     "rf_hall": [
+      "cathode_keeper",
+      "cathode_heater"
+     ],
+     "ecr_hall": [
+      "cathode_keeper",
+      "cathode_heater"
+     ]
+    },
+    "thermal_life_components": [
+     "cathode"
+    ],
+    "mass_bom_v1_items": [
+     "cathode"
+    ],
+    "note": "cathode_keeper + cathode_heater on the boundary; one thermal_life node 'cathode' fed by both (abep_sim.thermal_life docstring). Split producer: abep_sim.cathode_integration (lane 19)"
    }
   },
   "magnets": {
@@ -925,7 +1095,7 @@
     "origins": [
      "abep_sim/archengine.py:close_architecture"
     ],
-    "note": "a code constant charged for hall/nozzle/ECR architectures",
+    "note": "a code constant charged for hall/nozzle/ECR architectures (one 25 W value; the ECR resonance field is not charged separately). Execution-branch producer of the load-side coil power: abep_sim.magnet_power",
     "gaps": [
      "G5"
     ]
@@ -943,7 +1113,7 @@
     "origins": [
      "abep_sim/mass_bom.py:hall_magnetic_circuit"
     ],
-    "note": "archengine folds the magnetic circuit into its 'accelerator' line",
+    "note": "archengine folds the magnetic circuit into its 'accelerator' line; mass_bom_v1 (execution branch) carries separate items hall_magnets and ecr_magnets",
     "gaps": [
      "G5"
     ]
@@ -983,12 +1153,40 @@
     "gaps": [
      "G14"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "hall_only": [
+      "hall_magnet"
+     ],
+     "rf_hall": [
+      "hall_magnet"
+     ],
+     "ecr_hall": [
+      "hall_magnet",
+      "ecr_magnet"
+     ]
+    },
+    "thermal_life_components": [
+     "hall_magnet",
+     "ecr_magnet"
+    ],
+    "mass_bom_v1_items": [
+     "hall_magnets",
+     "ecr_magnets"
+    ],
+    "note": "hall_magnet in every architecture; ecr_magnet only in ecr_hall (explicit 0 W / efficiency 1 for a permanent-magnet circuit). Load-side producer: abep_sim.magnet_power (lane PPUMAG)"
    }
   },
   "preionizer": {
    "name": "pre-ionizer (RF or ECR source), where the architecture has one",
    "rfp_block": "ionization_discharge_acceleration",
-   "presence": "architectures whose ionizer output is 'plasma' (archengine IONIZERS); absent for hall_internal",
+   "presence": "rf_hall (RF source, boundary rf_source) and ecr_hall (ECR source, boundary ecr_source); absent in hall_only. In archengine: ionizers whose output is 'plasma' (IONIZERS); absent for hall_internal",
    "hall_transport_ensemble_role": "independent",
    "performance": {
     "status": "computed",
@@ -1094,6 +1292,33 @@
     "gaps": [
      "G14"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "rf_hall": [
+      "rf_source"
+     ],
+     "ecr_hall": [
+      "ecr_source"
+     ]
+    },
+    "thermal_life_components": [
+     "rf_source",
+     "ecr_source"
+    ],
+    "mass_bom_v1_items": [
+     "rf_source",
+     "rf_generator",
+     "rf_matching_network",
+     "ecr_source",
+     "microwave_source",
+     "waveguide"
+    ],
+    "note": "present only in rf_hall (rf_source) and ecr_hall (ecr_source); the ECR resonance-field supply (ecr_magnet) is booked under magnets. hall_only has no pre-ionizer (bus_power_boundary_v1 PREIONIZER_COMPONENTS['hall_only'] = ())"
    }
   },
   "hall_discharge": {
@@ -1236,6 +1461,30 @@
     "gaps": [
      "G13"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "hall_only": [
+      "hall_discharge"
+     ],
+     "rf_hall": [
+      "hall_discharge"
+     ],
+     "ecr_hall": [
+      "hall_discharge"
+     ]
+    },
+    "thermal_life_components": [
+     "hall_discharge"
+    ],
+    "mass_bom_v1_items": [
+     "hall_thruster_head"
+    ]
    }
   },
   "ppu": {
@@ -1347,6 +1596,24 @@
     "gaps": [
      "G14"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "hall_only": [],
+     "rf_hall": [],
+     "ecr_hall": []
+    },
+    "thermal_life_components": [],
+    "mass_bom_v1_items": [
+     "ppu",
+     "harness"
+    ],
+    "note": "no boundary component of its own: bus_power_boundary_v1 books each converter's loss (and harness loss) inside the efficiency of the component it feeds (bus_power_ledger_v1 boundary_crosswalk A1/A2). mass_bom_v1 'ppu' item lists all common components except thermal_control"
    }
   },
   "thermal_control": {
@@ -1440,10 +1707,32 @@
     "gaps": [
      "G14"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "hall_only": [
+      "thermal_control"
+     ],
+     "rf_hall": [
+      "thermal_control"
+     ],
+     "ecr_hall": [
+      "thermal_control"
+     ]
+    },
+    "thermal_life_components": [],
+    "mass_bom_v1_items": [
+     "thermal_hardware"
+    ]
    }
   },
   "avionics": {
-   "name": "propulsion control electronics (PPU controller, sensors, switch matrix, TM/TC interface)",
+   "name": "propulsion housekeeping electronics (PPU controller, sensors, switch matrix, TM/TC interface; boundary component 'housekeeping'; not spacecraft avionics)",
    "rfp_block": "control",
    "presence": "all architectures",
    "hall_transport_ensemble_role": "independent",
@@ -1460,7 +1749,7 @@
    "power": {
     "status": "computed",
     "bus_terms": [
-     "P_avionics",
+     "P_housekeeping",
      "P_aux_unallocated"
     ],
     "origins": [
@@ -1525,6 +1814,29 @@
     "gaps": [
      "G14"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "hall_only": [
+      "housekeeping"
+     ],
+     "rf_hall": [
+      "housekeeping"
+     ],
+     "ecr_hall": [
+      "housekeeping"
+     ]
+    },
+    "thermal_life_components": [],
+    "mass_bom_v1_items": [
+     "ppu"
+    ],
+    "note": "propulsion-side housekeeping (controller, PPU control, sensors, TM/TC interface) = boundary component 'housekeeping'; spacecraft avionics are outside the boundary. Its mass sits inside the mass_bom_v1 'ppu' item"
    }
   },
   "structure": {
@@ -1589,6 +1901,22 @@
     ],
     "gaps": [
      "G14"
+    ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [
+     "hall_only",
+     "rf_hall",
+     "ecr_hall"
+    ],
+    "boundary_components": {
+     "hall_only": [],
+     "rf_hall": [],
+     "ecr_hall": []
+    },
+    "thermal_life_components": [],
+    "mass_bom_v1_items": [
+     "structure"
     ]
    }
   },
@@ -1674,12 +2002,19 @@
     "gaps": [
      "G14"
     ]
+   },
+   "execution_branch_mapping": {
+    "architectures": [],
+    "boundary_components": {},
+    "thermal_life_components": [],
+    "mass_bom_v1_items": [],
+    "note": "not covered by bus_power_boundary_v1 (non-Hall screening families); never part of an admissible architecture comparison"
    }
   }
  },
  "rules": [
   "every subsystem exposes all six quantity blocks; a block without a producer says so (status TBD with 'requires', or not_applicable with a reason); nothing is defaulted or filled with a placeholder",
-  "power is booked at the consumer's load plane; conversion losses belong to the ppu subsystem, control-electronics draw to avionics",
+  "power is booked at the consumer's load plane; conversion losses belong to the ppu subsystem, control-electronics draw to avionics (= boundary 'housekeeping'); on bus_power_boundary_v1 each converter/harness loss is booked inside the efficiency of the component it feeds instead",
   "rejected heat is never assumed equal to electrical input: Q_int_W, P_exported_W and P_transferred_W are reported separately (thermal_rejection_ledger_v1)",
   "mass lines combined in the code (archengine 'reservoir_feed', 'accelerator', 'ppu') are reported as combined with an explicit split source, or the split is TBD; never split silently",
   "life values declare their basis (firing_hours, calendar_hours or cycles) and are compared only with the matching requirement",
@@ -1783,7 +2118,7 @@
     ],
     "bus_terms": [
      "P_PPU_losses",
-     "P_avionics"
+     "P_housekeeping"
     ],
     "note": "loads['P_loss_W'] lumps converter losses with controller_W + sensors_W (gap G17)",
     "thermal": "Q_int_W at node 'ppu'"
