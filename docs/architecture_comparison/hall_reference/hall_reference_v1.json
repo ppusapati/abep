@@ -24,14 +24,14 @@
    "supported": "YES",
    "contribution": "Fixes what is common to the three arms, so a conditional selection ('architecture X is baseline provided conditions A/B/C are demonstrated') can be phrased entirely in terms of the inlet state at HALL_INLET_Z0 and the arm-specific bus components. It needs no Hall performance number and not Physics Baseline 1.0.",
    "to_reach_next": [
-    "Owner approval (or change) of every PROPOSED item: discharge-voltage range and evaluation set, inlet-state representation, invariance rules INV-*.",
+    "Owner approval (or change) of every PROPOSED item: discharge-voltage range and evaluation set with span rule VR-1 (stated at repair, not pre-declared; unfiltered span '<100'-350 V), inlet-state representation, invariance rules INV-*.",
     "At least one ADMITTED transport member (hallthruster_bridge/ensemble/transport_ensemble_v0.json members; empty at authoring).",
     "Vyovrinda geometry and B(z) design release (document id, revision, sha256, magnetic-circuit computation or measured field).",
     "A pinned-solver capability for ion, electron and excited-state inflow at the anode plane (owner-approved model change plus validation; solver_capability status is GAP).",
     "A chemistry set whose declared domain covers the injected species and the arms' electron temperatures (N2/N set abep-n2n-0.11 is scoped to P5-N2 validation; O/O2 chemistry absent).",
     "Cathode values from the cathode lane (docs/evidence/cathode/).",
     "Wall-life settings (ion_wall_losses decision) and a cited sputter-yield model (docs/evidence/wall_life/, abep_sim/thermal_life.py).",
-    "Reconciliation of inlet-state field names with the committed interstage_v1 contract (provisional mapping recorded; status PENDING)."
+    "Reconciliation of inlet-state field names with the interstage_v1 contract once merged (provisional mapping re-checked against commit 18d2bfb; status PENDING)."
    ]
   },
   "B": {
@@ -229,8 +229,8 @@
    "kind": "other_lane_contract",
    "citation": "Pre-ionizer -> Hall interstage transfer model interstage_v1 (interstage lane, lane 18): SourceExitState and solve_interstage result fields.",
    "path": "abep_sim/interstage.py",
-   "access": "uncommitted work in progress in the interstage lane's worktree, read-only on 2026-09-26; not in this branch",
-   "notes": "Announces schemas/architecture_comparison/interstage_v1.schema.json and docs/architecture_comparison/interstage/INTERSTAGE_MODEL.md (neither present at authoring). hall_only has no interstage and is refused by that model, consistent with the hall_only rule here."
+   "access": "committed as 18d2bfb on branch worktree-wf_15f0f2f8-8d4-2 (interstage lane; not merged into this branch; read-only via git show on 2026-09-26). The first draft of this reference had read uncommitted work in progress; the field names in the provisional mapping were re-checked against 18d2bfb.",
+   "notes": "18d2bfb also contains schemas/architecture_comparison/interstage_v1.schema.json and docs/architecture_comparison/interstage/INTERSTAGE_MODEL.md. hall_only has no interstage and is refused by that model, consistent with the hall_only rule here. Until 18d2bfb (or a successor) is merged, the mapping is reproducible only from that branch commit."
   }
  ],
  "geometry_interface": {
@@ -935,9 +935,9 @@
     "SRC-P5N2-CASES",
     "SRC-GK2008"
    ],
-   "locator": "span of literature_operating_points with propellant_family 'light': lowest 180 V (ECHT), highest 350 V (PPS1350-TSD on N2; BHT on air simulant)",
-   "rationale": "It spans the discharge voltages at which published Hall-channel devices were operated on air species in the open sources consulted (180-350 V), and it lies inside the 200-500 V tested range of the xenon SPT family except its 180 V end. The envelope relations ER-1 to ER-6 show that the best V_d is not fixed a priori: at fixed efficiencies the jet-power cost of a given thrust rises as sqrt(V_d) (the <1.5 kW ceiling favours low V_d), the harvested flow sets a floor on V_d, and published light-propellant data show efficiency improving with voltage. Choosing a point would need an admitted closure or hardware; the range is therefore the evidence span, not an optimum. The superseded 0-D grid (225-325 V) is not reused.",
-   "uncertainty": "The range edges are set by what was published, not by physics limits; owner decision needed. It must also fit the Vyovrinda PPU design range (TBD).",
+   "locator": "span rule VR-1 (span_rule): span of span_voltages_V over literature_operating_points with span_role 'span_defining': lowest 180 V (ECHT, measured thrust), highest 350 V (BHT on air simulant, anodic efficiency 27 %)",
+   "rationale": "Under span rule VR-1 it is the span of discharge voltages at which Hall-channel devices fed with air species (no xenon admixture) had a measured thrust reported in the open sources consulted (180-350 V). The unfiltered span of all reported Hall-channel air-species voltages is '<100' to 350 V (Dukhopelnikov et al. sweep with estimated thrust, recorded and excluded under VR-1(c)); the cusped-field MCFT-2139 (30-2000 V) is recorded and excluded under VR-1(a). VR-1 was stated at repair, not pre-declared (span_rule.provenance_of_rule). The range lies inside the 200-500 V tested range of the xenon SPT family except its 180 V end. Tie to the RFP envelope (ideal_beam_reference_table, model-derived identities only): at the 25 mN upper thrust end an ideal singly charged beam over this range needs a jet power of 0.412 kW (O2+, 180 V) to 0.868 kW (N+, 350 V), i.e. 27.5-57.9 % of the 1.5 kW ceiling before any efficiency loss or cathode, magnet and pre-ionizer power; published light-propellant anodic efficiencies are far below 1 (HT5k 8-18 %, BHT about 27 % (EV-V2), ECHT 13-23 %; SRC-AFG2022 pp. 25-26), so the ceiling is tight across the whole range. The envelope relations ER-1 to ER-6 show that the best V_d is not fixed a priori: at fixed efficiencies the jet-power cost of a given thrust rises as sqrt(V_d) (the <1.5 kW ceiling favours low V_d), the harvested flow sets a floor on V_d, and published light-propellant data show efficiency improving with voltage. Choosing a point would need an admitted closure or hardware; the range is therefore the filtered evidence span, not an optimum. The superseded 0-D grid (225-325 V) is not reused.",
+   "uncertainty": "The range edges are set by what was published and by the span rule VR-1 (stated at repair, owner decision), not by physics limits; the owner may adopt the unfiltered span or a different rule. It must also fit the Vyovrinda PPU design range (TBD).",
    "evidence": [
     "ER-1",
     "ER-2",
@@ -965,6 +965,33 @@
    ],
    "locator": "range end points from proposed_range_V; interior nodes at 50 V spacing",
    "rationale": "Includes both ends of proposed_range_V, so no comparison point needs extrapolation (HallMap refuses queries outside its axes), and 50 V spacing in between (a design-of-experiment choice, assumed). The set is what INV-V1 freezes across arms; the owner may change the nodes, but never per arm."
+  },
+  "span_rule": {
+   "id": "VR-1",
+   "statement": "proposed_range_V is the span of span_voltages_V over the literature_operating_points with span_role 'span_defining'. An operating point is span-defining only if (a) the device is an annular Hall-channel thruster (radial magnetic field across an annular discharge channel; single- or two-stage), (b) the anode propellant is an air species or air simulant without xenon admixture, and (c) the consulted source reports a measured thrust at that voltage, directly or as an anodic efficiency (which needs a measured thrust, ER-1). Points that fail a criterion are recorded with span_role 'recorded_excluded' or 'context_only' and an exclusion_reason; they never silently disappear.",
+   "criteria": [
+    "(a) device_family == 'hall_channel'",
+    "(b) propellant_family == 'light' and no xenon admixture at the anode",
+    "(c) thrust_basis == 'measured' at the span_voltages_V"
+   ],
+   "provenance_of_rule": "Stated on 2026-09-26 in the repair of this reference, AFTER an adversarial review found that the first draft's rationale ('voltages at which published Hall-channel devices were operated on air species') had silently omitted the Dukhopelnikov et al. sweep (<100-350 V) that the draft itself cited as EV-V1, and had not recorded the MCFT-2139. The rule was therefore NOT pre-declared; the range end points (180 V ECHT, 350 V BHT) did not change under it. The owner decides between this filtered span and the unfiltered span below (open question Q1).",
+   "unfiltered_hall_channel_span_V": {
+    "definition": "span of all discharge voltages reported in the consulted sources for Hall-channel devices on air species or air simulant (criteria (a) and (b) only, any thrust basis): lowest from the Dukhopelnikov et al. sweep ('less than 100 V', no number given), highest 350 V (Dukhopelnikov et al.; PPS1350-TSD; BHT)",
+    "value": [
+     "<100",
+     350
+    ],
+    "unit": "V",
+    "status": "SOURCED",
+    "evidence_class": "measured",
+    "source": [
+     "SRC-AFG2022"
+    ],
+    "locator": "pp. 23, 25, 26 (see literature_operating_points)",
+    "uncertainty": "the lower end is reported only as 'less than 100 V'"
+   },
+   "supporting_evidence": "EV-V1: with light propellants the I_d(V_d) plateau of a xenon-designed Hall thruster sits 50-100 V above xenon's, so the sub-200 V part of a sweep includes pre-plateau operation. This supports, but does not define, the lower end.",
+   "excluded_families_considered": "MCFT-2139 (cusped field, 30-2000 V on N2) is recorded and excluded under criterion (a); see its exclusion_reason."
   },
   "requirements": {
    "thrust_mN": {
@@ -1001,6 +1028,7 @@
    {
     "device": "ECHT (Stanford extended-channel Hall thruster)",
     "device_class": "single-stage Hall, extended channel",
+    "device_family": "hall_channel",
     "gas": "N2 anode (argon cathode)",
     "propellant_family": "light",
     "discharge_voltage_V": {
@@ -1020,11 +1048,29 @@
      "uncertainty": "not stated"
     },
     "evidence_level": "3",
+    "span_role": "span_defining",
+    "thrust_basis": "measured",
+    "span_voltages_V": {
+     "definition": "discharge voltages at which the review reports direct performance (thrust) measurements",
+     "value": [
+      180,
+      220
+     ],
+     "unit": "V",
+     "status": "SOURCED",
+     "evidence_class": "measured",
+     "source": [
+      "SRC-AFG2022",
+      "SRC-ECHT-AUDIT"
+     ],
+     "locator": "SRC-AFG2022 p. 26 ('direct performance measurements were performed at a discharge voltage ranging from 180 V to 220 V', thrust 20-23 mN); ECHT audit README (Table 6.1: 180/200/220 V)"
+    },
     "notes": "The repository audit concludes ECHT-N2 cannot serve as an independent scoreable validation dataset without forced assumptions; used here for the voltage span only."
    },
    {
     "device": "P5 (tested on N2)",
     "device_class": "single-stage Hall",
+    "device_family": "hall_channel",
     "gas": "N2 anode (xenon cathode)",
     "propellant_family": "light",
     "discharge_voltage_V": {
@@ -1042,11 +1088,28 @@
      "locator": "hallthruster_bridge/cases/p5_n2.json 'Vd' of N1-N5 (Brabston et al. 2025 Table 2)"
     },
     "evidence_level": "3",
+    "span_role": "span_defining",
+    "thrust_basis": "measured",
+    "span_voltages_V": {
+     "definition": "discharge voltages of N1-N5, each with a thrust value (T_corr_mN) in the case file",
+     "value": [
+      231.9,
+      278.6
+     ],
+     "unit": "V",
+     "status": "SOURCED",
+     "evidence_class": "measured",
+     "source": [
+      "SRC-P5N2-CASES"
+     ],
+     "locator": "hallthruster_bridge/cases/p5_n2.json 'Vd' and 'measured.T_corr_mN' of N1-N5 (Brabston et al. 2025 Table 2 / Fig. 5; T at N2-N4 digitized, N1 and N5 abstract range end-points)"
+    },
     "notes": "Voltage span only. P5 geometry and B(z) are never Vyovrinda design values."
    },
    {
     "device": "PPS1350-TSD",
     "device_class": "single-stage Hall (xenon flight-class thruster)",
+    "device_family": "hall_channel",
     "gas": "pure N2 anode (xenon cathode)",
     "propellant_family": "light",
     "discharge_voltage_V": {
@@ -1065,11 +1128,27 @@
      "uncertainty": "as reported by the review"
     },
     "evidence_level": "5",
-    "notes": "A 305 V, 3 A N2 point (about 1 kW) was fired for 10 h at 19-21 mN; N2/O2 mixture gave 24 mN (review p. 23)."
+    "span_role": "span_defining",
+    "thrust_basis": "measured",
+    "span_voltages_V": {
+     "definition": "discharge voltage of the pure-N2 point with a measured thrust reported by the review",
+     "value": [
+      305
+     ],
+     "unit": "V",
+     "status": "SOURCED",
+     "evidence_class": "measured",
+     "source": [
+      "SRC-AFG2022"
+     ],
+     "locator": "p. 23 ('A 305 V and 3 A pure nitrogen operating point ... measured thrust between 19 and 21 mN')"
+    },
+    "notes": "The 240-350 V pure-N2 exploration (p. 23) is reported through ionization efficiency and discharge-current trends; the review states a measured thrust only for the 305 V, 3 A N2 point (19-21 mN, 10 h, 'neighboring 1kW of discharge power') and 24 mN for the N2/O2 mixture 10 h test (voltage of that test not stated in the text; the Fig. 8 caption shows the mixture at 305 V). So only 305 V is span-defining under VR-1."
    },
    {
     "device": "SITAEL HT5k (magnetically shielded version)",
     "device_class": "single-stage Hall, magnetically shielded",
+    "device_family": "hall_channel",
     "gas": "0.56 N2 / 0.44 O2 anode",
     "propellant_family": "light",
     "discharge_voltage_V": {
@@ -1087,11 +1166,28 @@
      "locator": "pp. 24-25"
     },
     "evidence_level": "5",
+    "span_role": "span_defining",
+    "thrust_basis": "measured",
+    "span_voltages_V": {
+     "definition": "discharge-voltage range over which the review reports measured thrust with the N2/O2 mixture",
+     "value": [
+      225,
+      300
+     ],
+     "unit": "V",
+     "status": "SOURCED",
+     "evidence_class": "measured",
+     "source": [
+      "SRC-AFG2022"
+     ],
+     "locator": "p. 25 ('discharge voltages between 225 V and 300 V ... the produced thrust was measured to be between 30 and 120 mN')"
+    },
     "notes": "5 kW class; 30-120 mN at 1.2-5.2 kW discharge power, anodic efficiency 8-18 % (review p. 25). Centrally mounted HC20 cathode transitioned from xenon to pure N2."
    },
    {
     "device": "Busek BHT (2 kW nominal)",
     "device_class": "single-stage Hall",
+    "device_family": "hall_channel",
     "gas": "air simulant (68.3 % N2, 6.7 % O2, 25 % Ar)",
     "propellant_family": "light",
     "discharge_voltage_V": {
@@ -1109,11 +1205,28 @@
      "locator": "p. 25"
     },
     "evidence_level": "5",
+    "span_role": "span_defining",
+    "thrust_basis": "measured",
+    "span_voltages_V": {
+     "definition": "discharge voltage of the air-simulant point with a reported anodic efficiency (which requires a thrust measurement, ER-1)",
+     "value": [
+      350
+     ],
+     "unit": "V",
+     "status": "SOURCED",
+     "evidence_class": "measured",
+     "source": [
+      "SRC-AFG2022"
+     ],
+     "locator": "p. 25 ('The highest thruster efficiency with the air simulant was achieved in a 350 V, 2.94 mg/s operating condition, with the anodic efficiency reaching about 27%')",
+     "notes": "the review reports the tested range 200-350 V but a thrust-based quantity explicitly only at 350 V"
+    },
     "notes": "Highest efficiency with the air simulant at 350 V, 2.94 mg/s, anodic efficiency about 27 % (review p. 25)."
    },
    {
     "device": "Z-70",
     "device_class": "single-stage Hall",
+    "device_family": "hall_channel",
     "gas": "N2/Xe and air/Xe mixtures",
     "propellant_family": "light",
     "discharge_voltage_V": {
@@ -1131,11 +1244,42 @@
      "locator": "p. 26"
     },
     "evidence_level": "5",
+    "span_role": "context_only",
+    "thrust_basis": "not_reported",
+    "exclusion_reason": "Feeds are xenon admixtures (10-96 % Xe by mass), not air species alone, and the review reports plume-composition (Wien filter) results, no thrust or anodic efficiency (p. 26). Fails VR-1 criteria (b) and (c); its 270-290 V lie inside the span anyway.",
     "notes": "Mixtures with xenon (10-96 % Xe by mass); 394-745 W."
+   },
+   {
+    "device": "38 mm mean-diameter Hall thruster designed for xenon (Dukhopelnikov et al., as summarized by the review)",
+    "device_class": "single-stage Hall (xenon-designed laboratory thruster)",
+    "device_family": "hall_channel",
+    "gas": "air and 2:1 N2/O2 anode (xenon cathode, 0.19 mg/s)",
+    "propellant_family": "light",
+    "discharge_voltage_V": {
+     "definition": "discharge-voltage sweep reported by the review; the lower end is given only as 'less than 100 V' (no number), so it is carried as the string '<100'",
+     "value": [
+      "<100",
+      350
+     ],
+     "unit": "V",
+     "status": "SOURCED",
+     "evidence_class": "measured",
+     "source": [
+      "SRC-AFG2022"
+     ],
+     "locator": "p. 26 ('with discharge voltages starting from less than 100 V up to 350 V')",
+     "uncertainty": "as reported by the review; the exact lowest voltage is not stated"
+    },
+    "evidence_level": "5",
+    "span_role": "recorded_excluded",
+    "thrust_basis": "estimated",
+    "exclusion_reason": "Fails VR-1 criterion (c): the review states that 'the thrust value was estimated assuming a fixed voltage utilization efficiency of 0.75' (p. 26), i.e. thrust is model-derived with an assumed efficiency, not measured; only Faraday-probe plume quantities were measured. Its quantitative light/xenon comparisons are reported 'in the 200 V to 350 V voltage range' (p. 27), inside the proposed range. Its sub-200 V sweep lies in the region where the I_d(V_d) plateau with light propellants sits 50-100 V above xenon's (EV-V1), i.e. includes pre-plateau operation.",
+    "notes": "Same passage as EV-V1. Recorded so that the unfiltered published span (<100 to 350 V) is visible to the owner (span_rule.unfiltered_hall_channel_span_V)."
    },
    {
     "device": "Helicon Hall thruster (HHT)",
     "device_class": "two-stage (RF helicon first stage + Hall second stage)",
+    "device_family": "hall_channel",
     "gas": "N2 anode (xenon cathode)",
     "propellant_family": "light",
     "discharge_voltage_V": {
@@ -1150,11 +1294,53 @@
      "locator": "p. 27"
     },
     "evidence_level": "5",
+    "span_role": "span_defining",
+    "thrust_basis": "measured",
+    "span_voltages_V": {
+     "definition": "discharge voltage of the N2 tests with thrust-stand measurements",
+     "value": [
+      200
+     ],
+     "unit": "V",
+     "status": "SOURCED",
+     "evidence_class": "measured",
+     "source": [
+      "SRC-AFG2022"
+     ],
+     "locator": "p. 27 ('200 V of discharge voltage ... measuring the thruster performance via a thrust stand')"
+    },
     "notes": "Listed for the voltage span only. Its RF-stage results are pre-ionization evidence owned by docs/evidence/rf_source/, not by this reference."
+   },
+   {
+    "device": "MCFT-2139 (multi-cusped field thruster)",
+    "device_class": "multi-cusped field plasma thruster (not a Hall-channel device)",
+    "device_family": "cusped_field",
+    "gas": "N2 anode (xenon cathode, 3 sccm)",
+    "propellant_family": "light",
+    "discharge_voltage_V": {
+     "definition": "discharge-voltage range explored with N2 (anode flow 0.29-1.96 mg/s)",
+     "value": [
+      30,
+      2000
+     ],
+     "unit": "V",
+     "status": "SOURCED",
+     "evidence_class": "measured",
+     "source": [
+      "SRC-AFG2022"
+     ],
+     "locator": "p. 27 ('discharge voltages between 30 V and 2000 V'; 'at 1.06 mg/s anode N2 mass flow rate and 1000 V of discharge voltage a thrust of 13.3 mN was measured, for a discharge power of 997 W')"
+    },
+    "evidence_level": "5",
+    "span_role": "recorded_excluded",
+    "thrust_basis": "measured",
+    "exclusion_reason": "Fails VR-1 criterion (a): a cusped-field thruster is a different device family from the annular Hall channel this reference defines (the lane brief and CLAUDE.md rule 8 fix the Hall accelerator; no new propulsion families). Considered because its reported 13.3 mN at 997 W discharge power (1000 V, N2) lies inside the RFP 12-25 mN band and under the 1.5 kW ceiling (discharge power only); it is not the only such light-propellant point in the source (e.g. PPS1350-TSD N2 at 305 V: 19-21 mN, about 1 kW, p. 23).",
+    "notes": "Its 1000 V point shows light-propellant operation far above the proposed range; whether Vyovrinda's Hall channel should be evaluated above 350 V is an owner question (Q1), not settled by a different device family."
    },
    {
     "device": "SPT family (Fakel)",
     "device_class": "single-stage Hall (xenon flight thrusters)",
+    "device_family": "hall_channel",
     "gas": "xenon",
     "propellant_family": "xenon",
     "discharge_voltage_V": {
@@ -1172,6 +1358,9 @@
      "locator": "p. 440"
     },
     "evidence_level": "5",
+    "span_role": "context_only",
+    "thrust_basis": "not_applicable",
+    "exclusion_reason": "Xenon propellant (xenon context for the Xe path); fails VR-1 criterion (b).",
     "notes": "Xenon context for the Xe path; SPT-100 nominal 300 V (p. 440), PPS-1350 350 V (Table 9-9, p. 442)."
    }
   ],
@@ -1295,7 +1484,7 @@
    },
    {
     "id": "ER-6",
-    "relation": "Published light-propellant data show efficiency improving with voltage in some devices (EV-V1, EV-V2), which opposes ER-4; the optimum V_d is closure- and hardware-dependent (TBD), so the proposed range covers the published span instead of a single point.",
+    "relation": "Published light-propellant data show efficiency improving with voltage in some devices (EV-V1, EV-V2), which opposes ER-4; the optimum V_d is closure- and hardware-dependent (TBD), so the proposed range covers the filtered evidence span (VR-1) instead of a single point.",
     "source": [
      "SRC-AFG2022"
     ],
@@ -1312,9 +1501,12 @@
    "assumptions": [
     "singly charged ions, monoenergetic and collimated, accelerated through the full V_d",
     "ion mass = parent neutral mass (repository M_SPECIES, rounded convention; N+ = half of N2)",
-    "P_jet = T v_b / 2 for such a beam; T / P_jet = 2 / v_b"
+    "P_jet = T v_b / 2 for such a beam; T / P_jet = 2 / v_b",
+    "jet power at the RFP thrust band ends: P_jet = T v_b / 2 with T from requirements.thrust_mN; share of the ceiling = P_jet(T_max) / requirements.power_max_W (jet power only; no efficiency, cathode, magnet, pre-ionizer or bus load)"
    ],
    "voltages_from": "/discharge_voltage_interface/proposed_evaluation_set_V",
+   "thrust_from": "/discharge_voltage_interface/requirements/thrust_mN",
+   "power_ceiling_from": "/discharge_voltage_interface/requirements/power_max_W",
    "ions": [
     "N2+",
     "N+",
@@ -1372,6 +1564,63 @@
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
       "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio (that needs the discharge efficiency, TBD)"
+     },
+     "jet_power_at_thrust_min_kW": {
+      "definition": "ideal-beam jet power T v_b / 2 of N2+ at the lower end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.211,
+       0.223,
+       0.249,
+       0.273,
+       0.295
+      ],
+      "unit": "kW",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+     },
+     "jet_power_at_thrust_max_kW": {
+      "definition": "ideal-beam jet power T v_b / 2 of N2+ at the upper end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.44,
+       0.464,
+       0.519,
+       0.568,
+       0.614
+      ],
+      "unit": "kW",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+     },
+     "jet_power_at_thrust_max_fraction_of_power_max": {
+      "definition": "jet_power_at_thrust_max_kW of N2+ divided by /discharge_voltage_interface/requirements/power_max_W (share of the RFP power ceiling taken by the ideal-beam jet power alone, before any loss), at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.294,
+       0.309,
+       0.346,
+       0.379,
+       0.409
+      ],
+      "unit": "-",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001; a lower bound on the share only for an ideal beam of that single ion, not a feasibility verdict"
      }
     },
     "N+": {
@@ -1423,6 +1672,63 @@
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
       "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio (that needs the discharge efficiency, TBD)"
+     },
+     "jet_power_at_thrust_min_kW": {
+      "definition": "ideal-beam jet power T v_b / 2 of N+ at the lower end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.299,
+       0.315,
+       0.352,
+       0.386,
+       0.417
+      ],
+      "unit": "kW",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+     },
+     "jet_power_at_thrust_max_kW": {
+      "definition": "ideal-beam jet power T v_b / 2 of N+ at the upper end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.623,
+       0.656,
+       0.734,
+       0.804,
+       0.868
+      ],
+      "unit": "kW",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+     },
+     "jet_power_at_thrust_max_fraction_of_power_max": {
+      "definition": "jet_power_at_thrust_max_kW of N+ divided by /discharge_voltage_interface/requirements/power_max_W (share of the RFP power ceiling taken by the ideal-beam jet power alone, before any loss), at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.415,
+       0.438,
+       0.489,
+       0.536,
+       0.579
+      ],
+      "unit": "-",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001; a lower bound on the share only for an ideal beam of that single ion, not a feasibility verdict"
      }
     },
     "O2+": {
@@ -1474,6 +1780,63 @@
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
       "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio (that needs the discharge efficiency, TBD)"
+     },
+     "jet_power_at_thrust_min_kW": {
+      "definition": "ideal-beam jet power T v_b / 2 of O2+ at the lower end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.198,
+       0.208,
+       0.233,
+       0.255,
+       0.276
+      ],
+      "unit": "kW",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+     },
+     "jet_power_at_thrust_max_kW": {
+      "definition": "ideal-beam jet power T v_b / 2 of O2+ at the upper end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.412,
+       0.434,
+       0.485,
+       0.532,
+       0.574
+      ],
+      "unit": "kW",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+     },
+     "jet_power_at_thrust_max_fraction_of_power_max": {
+      "definition": "jet_power_at_thrust_max_kW of O2+ divided by /discharge_voltage_interface/requirements/power_max_W (share of the RFP power ceiling taken by the ideal-beam jet power alone, before any loss), at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.275,
+       0.289,
+       0.324,
+       0.354,
+       0.383
+      ],
+      "unit": "-",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001; a lower bound on the share only for an ideal beam of that single ion, not a feasibility verdict"
      }
     },
     "O+": {
@@ -1525,6 +1888,63 @@
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
       "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio (that needs the discharge efficiency, TBD)"
+     },
+     "jet_power_at_thrust_min_kW": {
+      "definition": "ideal-beam jet power T v_b / 2 of O+ at the lower end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.28,
+       0.295,
+       0.329,
+       0.361,
+       0.39
+      ],
+      "unit": "kW",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+     },
+     "jet_power_at_thrust_max_kW": {
+      "definition": "ideal-beam jet power T v_b / 2 of O+ at the upper end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.582,
+       0.614,
+       0.686,
+       0.752,
+       0.812
+      ],
+      "unit": "kW",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+     },
+     "jet_power_at_thrust_max_fraction_of_power_max": {
+      "definition": "jet_power_at_thrust_max_kW of O+ divided by /discharge_voltage_interface/requirements/power_max_W (share of the RFP power ceiling taken by the ideal-beam jet power alone, before any loss), at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.388,
+       0.409,
+       0.458,
+       0.501,
+       0.541
+      ],
+      "unit": "-",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001; a lower bound on the share only for an ideal beam of that single ion, not a feasibility verdict"
      }
     },
     "Xe+": {
@@ -1576,6 +1996,63 @@
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
       "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio (that needs the discharge efficiency, TBD)"
+     },
+     "jet_power_at_thrust_min_kW": {
+      "definition": "ideal-beam jet power T v_b / 2 of Xe+ at the lower end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.098,
+       0.103,
+       0.115,
+       0.126,
+       0.136
+      ],
+      "unit": "kW",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+     },
+     "jet_power_at_thrust_max_kW": {
+      "definition": "ideal-beam jet power T v_b / 2 of Xe+ at the upper end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.203,
+       0.214,
+       0.24,
+       0.262,
+       0.284
+      ],
+      "unit": "kW",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+     },
+     "jet_power_at_thrust_max_fraction_of_power_max": {
+      "definition": "jet_power_at_thrust_max_kW of Xe+ divided by /discharge_voltage_interface/requirements/power_max_W (share of the RFP power ceiling taken by the ideal-beam jet power alone, before any loss), at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
+      "value": [
+       0.136,
+       0.143,
+       0.16,
+       0.175,
+       0.189
+      ],
+      "unit": "-",
+      "status": "SOURCED",
+      "evidence_class": "model-derived",
+      "source": [
+       "SRC-VENV-SCRIPT",
+       "SRC-CONSTANTS"
+      ],
+      "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001; a lower bound on the share only for an ideal beam of that single ion, not a feasibility verdict"
      }
     }
    }
@@ -1626,7 +2103,7 @@
      "SRC-UPSTREAM-ICD",
      "SRC-AFG2022"
     ],
-    "rationale": "RFP context 'air + Xe' (CLAUDE.md); the upstream ICD carries a Xe cathode flow at IF-X2; published light-propellant Hall tests almost always fed the cathode with xenon (SRC-AFG2022 p. 23).",
+    "rationale": "RFP context 'air + Xe' (CLAUDE.md); the upstream ICD carries a Xe cathode flow at IF-X2. Published light-propellant Hall tests mostly fed the cathode with xenon (PPS1350-TSD campaign p. 23, Z-70 p. 26, Dukhopelnikov et al. p. 26, MCFT-2139 and HHT p. 27 of SRC-AFG2022), but not always: the shielded HT5k transitioned its HC20 cathode from xenon to pure N2 (p. 25) and the ECHT used an argon-fed cathode (p. 26; EV-C6). Xe is proposed from the RFP context, not because the literature is uniform.",
     "maps_to": "IF-X2 mdot_xe_cathode_kgps",
     "evidence": [
      "EV-C6"
@@ -1743,7 +2220,7 @@
    "cathode_keeper",
    "cathode_heater"
   ],
-  "value_owner": "Cathode lanes (docs/evidence/cathode/; cathode-integration data docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json, work in progress, whose baseline is a Xe-fed LaB6 hollow cathode); the owner decides emitter, gas, position and keeper mode.",
+  "value_owner": "Cathode lanes (docs/evidence/cathode/; cathode-integration data docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json, uncommitted work in progress at repair time (cross-check not reproducible from a commit), whose baseline is a Xe-fed LaB6 hollow cathode); the owner decides emitter, gas, position and keeper mode.",
   "evidence": [
    {
     "id": "EV-C1",
@@ -1834,12 +2311,12 @@
    },
    {
     "id": "EV-C6",
-    "relation": "In the published light-propellant Hall tests the cathode was supplied with xenon (PPS1350-TSD campaign); one magnetically shielded HT5k test transitioned a centrally mounted HC20 hollow cathode from xenon to pure N2; the ECHT used an argon-fed cathode.",
+    "relation": "In most published light-propellant Hall tests the cathode was supplied with xenon (PPS1350-TSD campaign p. 23; Z-70 and Dukhopelnikov et al. p. 26; MCFT-2139 and HHT p. 27), but not in all: one magnetically shielded HT5k test transitioned a centrally mounted HC20 hollow cathode from xenon to pure N2 (p. 25), and the ECHT used an argon-fed cathode (p. 26).",
     "source": [
      "SRC-AFG2022",
      "SRC-ECHT-AUDIT"
     ],
-    "locator": "SRC-AFG2022 pp. 23 and 25; ECHT audit README (facility bullet)",
+    "locator": "SRC-AFG2022 pp. 23, 25, 26, 27; ECHT audit README (facility bullet)",
     "evidence_level": "5",
     "quantity_type": "reported test configuration",
     "applicability": "laboratory tests",
@@ -2061,7 +2538,7 @@
     "hall_only_rule": "gas-distributor thermal state (TBD, thermal lane)",
     "solver_support": "SUPPORTED_NOT_WIRED",
     "solver_locator": "Propellant temperature_K (src/physics/gas.jl lines 372-377, 399-434); not passed by bridge_lib.jl run_case",
-    "interstage_field": "interstage_v1 SourceExitState.neutral_temperature (one value; interstage assumes isothermal walls at it)"
+    "interstage_field": "interstage_v1 (18d2bfb) SourceExitState.neutral_temperature (one value; interstage assumes isothermal walls at it, so it is also a source-exit value carried to the inlet by assumption)"
    },
    "u_neutral_axial_m_s": {
     "unit": "m s^-1",
@@ -2133,7 +2610,7 @@
     "hall_only_rule": "not applicable (no injected plasma)",
     "solver_support": "NOT_SUPPORTED",
     "solver_locator": "anode_boundary_condition / anode_Tev (configuration.jl lines 78-90) are closure settings of the anode boundary, identical in all arms (INV-C2), not an injected state",
-    "interstage_field": "interstage_v1 SourceExitState.electron_temperature (held along the duct by source heat in the interstage energy ledger)"
+    "interstage_field": "SOURCE-EXIT value, not an inlet-plane value: interstage_v1 (18d2bfb) takes SourceExitState.electron_temperature and holds it constant along the duct by its isothermal electron closure ('isothermal_source_conduction', an interstage assumption; ASSUMPTIONS in abep_sim/interstage.py). It does not compute the electron temperature at HALL_INLET_Z0; a T_e drop across the duct or the junction is not represented. Provisional mapping only (PENDING)."
    },
    "plasma_potential_rel_anode_V": {
     "unit": "V",
@@ -2257,10 +2734,10 @@
     "source": [
      "SRC-INTERSTAGE"
     ],
-    "locator": "abep_sim/interstage.py module docstring ('Interchange format: schemas/architecture_comparison/interstage_v1.schema.json'), MODEL_VERSION 'interstage_v1'",
-    "notes": "Announced path; the schema file did not exist at authoring. The module was read as uncommitted work in progress of the interstage lane (lane 18) on 2026-09-26; names may still change."
+    "locator": "abep_sim/interstage.py at commit 18d2bfb (branch worktree-wf_15f0f2f8-8d4-2): module docstring ('Interchange format: schemas/architecture_comparison/interstage_v1.schema.json'), MODEL_VERSION 'interstage_v1'",
+    "notes": "The schema file exists at 18d2bfb but is not merged into this branch. The first draft read the module as uncommitted work in progress; the mapped names (SourceExitState.electron_temperature / neutral_temperature; result.ions[*].delivered_to_hall_flow_s / axial_speed_m_s; result.neutrals[*].to_hall_flow_s; result.charge_state_fractions.delivered; result.conservation.elements_rel) were re-checked against 18d2bfb on 2026-09-26. Names may still change before merge."
    },
-   "rule": "The interstage contract provides every inlet_state_fields entry, under the same name or through an explicit mapping table, or declares it TBD. Hall-side names are not renamed silently; a mismatch is resolved in the mapping table and recorded in both contracts. The provisional mapping to interstage_v1 (work in progress) is in each field's interstage_field; status stays PENDING until the interstage contract is committed and frozen."
+   "rule": "The interstage contract provides every inlet_state_fields entry, under the same name or through an explicit mapping table, or declares it TBD. Hall-side names are not renamed silently; a mismatch is resolved in the mapping table and recorded in both contracts. The provisional mapping to interstage_v1 (commit 18d2bfb, not merged) is in each field's interstage_field; status stays PENDING until the interstage contract is merged and frozen."
   }
  },
  "transport_numerics_binding": {
@@ -2340,7 +2817,7 @@
      "SRC-HTJL"
     ],
     "locator": "configuration.jl line 213",
-    "notes": "whether to set it from the measured coupling voltage (cathode_interface.fields.coupling_voltage_V) is an owner decision, identical in all arms"
+    "notes": "0.0 V is the solver's default setting, recorded as the present bridge configuration; it is a PLACEHOLDER solver setting, NOT a design or hardware value (published xenon practice is about 20 V, or 5-10 % of V_d, EV-C3). It will be replaced by the TBD hardware value cathode_interface.fields.coupling_voltage_V (cathode lane) or by an owner-decided setting; whichever value is used is identical in all arms (INV-C2)."
    },
    "cathode_Tev_eV": {
     "definition": "electron temperature at the right (cathode) boundary (solver default; the bridge does not set it)",
@@ -2541,7 +3018,7 @@
   {
    "id": "INV-C2",
    "category": "cathode",
-   "rule": "The 1-D solver's cathode- and anode-side boundary settings (cathode coupling voltage, cathode T_e, anode boundary condition) are identical in all arms.",
+   "rule": "The 1-D solver's cathode- and anode-side boundary settings (cathode coupling voltage, cathode T_e, anode boundary condition) are identical in all arms. The cathode coupling voltage is at present the solver default 0.0 V, a placeholder solver setting and not a design value: it will be replaced by the TBD cathode value (cathode_interface.fields.coupling_voltage_V; about 20 V in xenon practice, EV-C3) or an owner-decided setting, identically in every arm.",
    "covers": [
     "/transport_numerics_binding/solver_settings/cathode_coupling_voltage_V",
     "/transport_numerics_binding/solver_settings/cathode_Tev_eV",
@@ -2711,7 +3188,7 @@
   "upstream_icd": {
    "path": "schemas/interfaces/upstream_icd_v1.json",
    "owner": "upstream ICD lane",
-   "status_at_authoring": "exists on commit ced4aa0, not merged into this branch",
+   "status_at_authoring": "exists on commit ced4aa0 (branches of the upstream-ICD lane), not merged into this branch",
    "used_for": "IF-A5 / IF-X2 feed fields"
   },
   "ledgers": {
@@ -2723,24 +3200,24 @@
   "hallmap_spec": {
    "path": "docs/hallmap/HALLMAP_PRODUCTION_SPEC.md",
    "owner": "Hall-map spec lane",
-   "status_at_authoring": "exists on commit 113fab5, not merged into this branch",
+   "status_at_authoring": "exists on commit 113fab5 (branches of the Hall-map spec lane), not merged into this branch",
    "used_for": "map-set labels, numerics baseline, trust semantics, refusal of pre-ionized architectures"
   },
   "interstage": {
    "path": "abep_sim/interstage.py",
    "owner": "interstage lane (lane 18)",
-   "status_at_authoring": "uncommitted work in progress; not in this branch; announced schema schemas/architecture_comparison/interstage_v1.schema.json not present",
+   "status_at_authoring": "committed as 18d2bfb on branch worktree-wf_15f0f2f8-8d4-2 (with schemas/architecture_comparison/interstage_v1.schema.json); not merged into this branch",
    "used_for": "producer of the inlet state at HALL_INLET_Z0 for rf_hall and ecr_hall (provisional field mapping in injection_interface)"
   },
   "cathode_integration": {
    "path": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
    "owner": "cathode-integration lane (module abep_sim/cathode_integration.py)",
-   "status_at_authoring": "uncommitted work in progress; not in this branch; read-only on 2026-09-26",
+   "status_at_authoring": "uncommitted work in progress in the cathode-integration lane's worktree, read-only on 2026-09-26; not in any commit at repair time, so the cross-check is NOT reproducible from a commit; no value is taken from it",
    "used_for": "values of cathode_interface fields; its baseline 'Xe-fed LaB6 hollow cathode' and its bus components cathode_keeper / cathode_heater agree with the PROPOSED cathode fields here"
   }
  },
  "open_questions_for_owner": [
-  "Q1 Approve or change the PROPOSED discharge-voltage range (180-350 V) and evaluation set (180, 200, 250, 300, 350 V), and align it with the Vyovrinda PPU design range.",
+  "Q1 Approve or change the PROPOSED discharge-voltage range (180-350 V, span rule VR-1: Hall-channel, air species without xenon, measured thrust) and evaluation set (180, 200, 250, 300, 350 V); VR-1 was stated at repair after review, not pre-declared. Alternatives on record: the unfiltered Hall-channel span ('<100'-350 V, incl. an estimated-thrust sweep) and light-propellant operation far above 350 V in another device family (MCFT-2139, 1000 V). Align the choice with the Vyovrinda PPU design range.",
   "Q2 hall_only hardware: the same anode/gas distributor with no pre-ionizer, or with the pre-ionizer installed but unpowered? (It changes neutral conductance and temperature at HALL_INLET_Z0.)",
   "Q3 Magnet schedule: identical schedule in all arms as the primary comparison (INV-B2); is a per-arm re-optimization wanted as a separately pre-registered sensitivity branch?",
   "Q4 Solver gap: approve a model change for ion, electron and excited-state inflow at the anode (Config.source_heavy_species or a boundary change), with its validation plan and the INV-S1 regression tolerance; the pin is never moved automatically.",

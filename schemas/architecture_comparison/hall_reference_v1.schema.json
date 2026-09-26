@@ -151,6 +151,21 @@
     "supply_definition": {"type": "string", "minLength": 1},
     "proposed_range_V": {"$ref": "#/$defs/quantity"},
     "proposed_evaluation_set_V": {"$ref": "#/$defs/quantity"},
+    "span_rule": {
+     "type": "object",
+     "description": "The explicit rule that derives proposed_range_V from literature_operating_points, with its provenance (when it was stated) and the unfiltered span, so no reported point is silently omitted.",
+     "properties": {
+      "id": {"type": "string", "pattern": "^VR-[0-9]+$"},
+      "statement": {"type": "string", "minLength": 1},
+      "criteria": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+      "provenance_of_rule": {"type": "string", "minLength": 1},
+      "unfiltered_hall_channel_span_V": {"$ref": "#/$defs/quantity"},
+      "supporting_evidence": {"type": "string"},
+      "excluded_families_considered": {"type": "string"}
+     },
+     "required": ["id", "statement", "criteria", "provenance_of_rule", "unfiltered_hall_channel_span_V"],
+     "additionalProperties": false
+    },
     "requirements": {
      "type": "object",
      "properties": {
@@ -170,6 +185,8 @@
       "role": {"type": "string", "minLength": 1},
       "assumptions": {"type": "array", "items": {"type": "string"}, "minItems": 1},
       "voltages_from": {"type": "string", "pattern": "^/"},
+      "thrust_from": {"type": "string", "pattern": "^/"},
+      "power_ceiling_from": {"type": "string", "pattern": "^/"},
       "ions": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
       "rows": {
        "type": "object",
@@ -178,19 +195,24 @@
         "properties": {
          "ion_mass_u": {"$ref": "#/$defs/quantity"},
          "v_b_m_s": {"$ref": "#/$defs/quantity"},
-         "thrust_per_jet_power_mN_per_kW": {"$ref": "#/$defs/quantity"}
+         "thrust_per_jet_power_mN_per_kW": {"$ref": "#/$defs/quantity"},
+         "jet_power_at_thrust_min_kW": {"$ref": "#/$defs/quantity"},
+         "jet_power_at_thrust_max_kW": {"$ref": "#/$defs/quantity"},
+         "jet_power_at_thrust_max_fraction_of_power_max": {"$ref": "#/$defs/quantity"}
         },
-        "required": ["ion_mass_u", "v_b_m_s", "thrust_per_jet_power_mN_per_kW"],
+        "required": ["ion_mass_u", "v_b_m_s", "thrust_per_jet_power_mN_per_kW", "jet_power_at_thrust_min_kW",
+                     "jet_power_at_thrust_max_kW", "jet_power_at_thrust_max_fraction_of_power_max"],
         "additionalProperties": false
        }
       }
      },
-     "required": ["generated_by", "role", "assumptions", "voltages_from", "ions", "rows"],
+     "required": ["generated_by", "role", "assumptions", "voltages_from", "thrust_from", "power_ceiling_from", "ions",
+                  "rows"],
      "additionalProperties": false
     },
     "superseded_grid_note": {"type": "string"}
    },
-   "required": ["description", "supply_definition", "proposed_range_V", "proposed_evaluation_set_V", "requirements",
+   "required": ["description", "supply_definition", "proposed_range_V", "proposed_evaluation_set_V", "span_rule", "requirements",
                 "literature_operating_points", "voltage_evidence_notes", "envelope_relations",
                 "ideal_beam_reference_table", "superseded_grid_note"],
    "additionalProperties": false
@@ -472,14 +494,24 @@
    "properties": {
     "device": {"type": "string", "minLength": 1},
     "device_class": {"type": "string", "minLength": 1},
+    "device_family": {"enum": ["hall_channel", "cusped_field"]},
     "gas": {"type": "string", "minLength": 1},
     "propellant_family": {"enum": ["light", "xenon"]},
     "discharge_voltage_V": {"$ref": "#/$defs/quantity"},
     "evidence_level": {"$ref": "#/$defs/evidence_level"},
+    "span_role": {"enum": ["span_defining", "recorded_excluded", "context_only"]},
+    "thrust_basis": {"enum": ["measured", "estimated", "not_reported", "not_applicable"]},
+    "span_voltages_V": {"$ref": "#/$defs/quantity"},
+    "exclusion_reason": {"type": "string", "minLength": 1},
     "notes": {"type": "string"}
    },
-   "required": ["device", "device_class", "gas", "propellant_family", "discharge_voltage_V", "evidence_level", "notes"],
-   "additionalProperties": false
+   "required": ["device", "device_class", "device_family", "gas", "propellant_family", "discharge_voltage_V",
+                "evidence_level", "span_role", "thrust_basis", "notes"],
+   "additionalProperties": false,
+   "anyOf": [
+    {"properties": {"span_role": {"const": "span_defining"}}, "required": ["span_voltages_V"]},
+    {"properties": {"span_role": {"enum": ["recorded_excluded", "context_only"]}}, "required": ["exclusion_reason"]}
+   ]
   },
   "shape_family": {
    "type": "object",

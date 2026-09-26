@@ -7,7 +7,10 @@ requirements-lock.txt), and checks that:
   - every JSON number is inside a SOURCED / PROPOSED / OWNER_DECIDED quantity, and every TBD quantity is null;
   - the invariance rules cover geometry, B(z), the voltage set and the cathode, field by field;
   - no P5/ECHT file is a design-value source, and no screening candidate is a transport source;
-  - the ideal-beam table equals the output of its committed generator script.
+  - the discharge-voltage range is the span of the span-defining points under rule VR-1, and every other literature
+    point (incl. the Dukhopelnikov sweep and the MCFT-2139) stays on record with an exclusion reason;
+  - the ideal-beam table (incl. jet power at the RFP thrust ends) equals the output of its committed generator script;
+  - provisional other-lane mappings and the 0.0 V solver coupling placeholder are labelled as such.
 Other lanes' contracts (bus boundary, harness, ICD, Hall-map spec, evidence matrices) are referenced by path only and
 are NOT required to exist.
 """
@@ -164,6 +167,9 @@ def test_reference_validates_against_schema(ref, schema):
     ("bad_status", "enum"),
     ("extra_top_level_key", "unexpected property"),
     ("wrong_architecture", "enum"),
+    ("span_point_without_span_voltages", "anyOf"),
+    ("excluded_point_without_reason", "anyOf"),
+    ("missing_span_rule", "missing required 'span_rule'"),
 ])
 def test_validator_rejects_bad_instances(ref, schema, mutation, expect):
     bad = copy.deepcopy(ref)
@@ -179,6 +185,16 @@ def test_validator_rejects_bad_instances(ref, schema, mutation, expect):
         bad["winner"] = "rf_hall"
     elif mutation == "wrong_architecture":
         bad["architectures"] = ["hall_only", "rf_hall", "helicon_hall"]
+    elif mutation == "span_point_without_span_voltages":
+        op = next(o for o in bad["discharge_voltage_interface"]["literature_operating_points"]
+                  if o["span_role"] == "span_defining")
+        del op["span_voltages_V"]
+    elif mutation == "excluded_point_without_reason":
+        op = next(o for o in bad["discharge_voltage_interface"]["literature_operating_points"]
+                  if o["span_role"] == "recorded_excluded")
+        del op["exclusion_reason"]
+    elif mutation == "missing_span_rule":
+        del bad["discharge_voltage_interface"]["span_rule"]
     errs = validate(bad, schema, schema)
     assert any(expect in e for e in errs), errs[:5]
 
@@ -440,19 +456,68 @@ def test_injection_interface_hall_only_is_neutral_only(ref):
 
 
 # ----------------------------------------------------------------------------------------------- voltage interface
-def test_voltage_set_within_range_and_range_within_published_span(ref):
+def _as_list(v):
+    return v if isinstance(v, list) else [v]
+
+
+def _numeric_bounds(values):
+    """(min, max) of a reported voltage list; a string entry like '<100' is an open lower bound (-inf)."""
+    lo = min((x for x in values if not isinstance(x, str)), default=None)
+    if any(isinstance(x, str) and x.startswith("<") for x in values):
+        lo = -math.inf
+    return lo, max(x for x in values if not isinstance(x, str))
+
+
+def test_voltage_set_within_range_and_range_is_the_vr1_span(ref):
     dv = ref["discharge_voltage_interface"]
     lo, hi = dv["proposed_range_V"]["value"]
     vset = dv["proposed_evaluation_set_V"]["value"]
     assert dv["proposed_range_V"]["status"] == "PROPOSED" and dv["proposed_evaluation_set_V"]["status"] == "PROPOSED"
     assert vset == sorted(set(vset)), "evaluation set must be strictly increasing"
     assert vset[0] == lo and vset[-1] == hi, "evaluation set must include both range ends (no extrapolation)"
-    light = []
+    rule = dv["span_rule"]
+    assert rule["id"] == "VR-1" and "not pre-declared" in rule["provenance_of_rule"].lower()
+    span = []
     for op in dv["literature_operating_points"]:
-        v = op["discharge_voltage_V"]["value"]
-        if op["propellant_family"] == "light":
-            light += v if isinstance(v, list) else [v]
-    assert light and lo == min(light) and hi == max(light), "range must be the published light-propellant span"
+        if op["span_role"] != "span_defining":
+            continue
+        # VR-1 criteria (a) Hall channel, (b) air species without xenon, (c) measured thrust
+        assert op["device_family"] == "hall_channel", op["device"]
+        assert op["propellant_family"] == "light" and "xe" not in op["gas"].split("(")[0].lower(), op["device"]
+        assert op["thrust_basis"] == "measured", op["device"]
+        sv = _as_list(op["span_voltages_V"]["value"])
+        rlo, rhi = _numeric_bounds(_as_list(op["discharge_voltage_V"]["value"]))
+        assert all(rlo <= v <= rhi for v in sv), f"{op['device']}: span voltages outside its reported range"
+        span += sv
+    assert span and lo == min(span) and hi == max(span), "range must be the VR-1 span of span-defining points"
+
+
+def test_every_non_span_point_is_recorded_with_a_reason(ref):
+    dv = ref["discharge_voltage_interface"]
+    ops = dv["literature_operating_points"]
+    for op in ops:
+        if op["span_role"] != "span_defining":
+            assert op.get("exclusion_reason"), op["device"]
+            assert "span_voltages_V" not in op, op["device"]
+    names = " ".join(op["device"] for op in ops)
+    # the two points an adversarial review found missing from the first draft stay on record
+    duk = [op for op in ops if "Dukhopelnikov" in op["device"]]
+    mcft = [op for op in ops if "MCFT-2139" in op["device"]]
+    assert len(duk) == 1 and len(mcft) == 1, names
+    assert duk[0]["span_role"] == "recorded_excluded" and duk[0]["thrust_basis"] == "estimated"
+    assert duk[0]["discharge_voltage_V"]["value"] == ["<100", 350]
+    assert mcft[0]["span_role"] == "recorded_excluded" and mcft[0]["device_family"] == "cusped_field"
+    assert mcft[0]["discharge_voltage_V"]["value"] == [30, 2000]
+    # the unfiltered span (criteria a and b only) is recomputed from the recorded points and stated in the rule
+    lows, highs = [], []
+    for op in ops:
+        if op["device_family"] == "hall_channel" and op["propellant_family"] == "light" \
+                and "xe" not in op["gas"].split("(")[0].lower():
+            lows.append(_numeric_bounds(_as_list(op["discharge_voltage_V"]["value"]))[0])
+            highs.append(_numeric_bounds(_as_list(op["discharge_voltage_V"]["value"]))[1])
+    unf = dv["span_rule"]["unfiltered_hall_channel_span_V"]["value"]
+    assert min(lows) == -math.inf and unf[0] == "<100"
+    assert max(highs) == unf[1] == 350
 
 
 def _load_script():
@@ -466,6 +531,8 @@ def test_ideal_beam_table_matches_generator(ref):
     mod = _load_script()
     table = ref["discharge_voltage_interface"]["ideal_beam_reference_table"]
     assert table["generated_by"] == "docs/architecture_comparison/hall_reference/voltage_envelope.py"
+    assert table["thrust_from"] == "/discharge_voltage_interface/requirements/thrust_mN"
+    assert table["power_ceiling_from"] == "/discharge_voltage_interface/requirements/power_max_W"
     assert table["rows"] == mod.expected_table_rows(ref)
     assert set(table["rows"]) == set(table["ions"])
     # physics sanity of the identity: v_b scales as sqrt(V_d / m)
@@ -474,18 +541,40 @@ def test_ideal_beam_table_matches_generator(ref):
     assert n2[-1] / n2[0] == pytest.approx(math.sqrt(vset[-1] / vset[0]), rel=1e-5)
     xe = table["rows"]["Xe+"]["v_b_m_s"]["value"]
     assert n2[0] / xe[0] == pytest.approx(math.sqrt(131.3 / 28.0), rel=1e-5)
+    # P_jet = T v_b / 2 at the RFP band ends, and its share of the ceiling
+    t_min, t_max = ref["discharge_voltage_interface"]["requirements"]["thrust_mN"]["value"]
+    p_max = ref["discharge_voltage_interface"]["requirements"]["power_max_W"]["value"]
+    for ion, row in table["rows"].items():
+        vb = row["v_b_m_s"]["value"]
+        for k, v in enumerate(vb):
+            assert row["jet_power_at_thrust_max_kW"]["value"][k] == pytest.approx(t_max * v / 2e6, abs=6e-4)
+            assert row["jet_power_at_thrust_min_kW"]["value"][k] == pytest.approx(t_min * v / 2e6, abs=6e-4)
+            assert row["jet_power_at_thrust_max_fraction_of_power_max"]["value"][k] == pytest.approx(
+                t_max * v / 2e6 / (p_max / 1e3), abs=6e-4)
 
 
-def test_generator_refuses_missing_inputs():
+def test_generator_refuses_missing_inputs(ref):
     mod = _load_script()
+    band, pmax = [12, 25], 1500
     with pytest.raises(ValueError):
-        mod.compute_rows([], ["N2+"])
+        mod.compute_rows([], ["N2+"], band, pmax)
     with pytest.raises(ValueError):
-        mod.compute_rows([200], [])
+        mod.compute_rows([200], [], band, pmax)
     with pytest.raises(ValueError):
-        mod.compute_rows([200], ["He+"])
+        mod.compute_rows([200], ["He+"], band, pmax)
     with pytest.raises(ValueError):
-        mod.compute_rows([-5], ["N2+"])
+        mod.compute_rows([-5], ["N2+"], band, pmax)
+    for bad_band in (None, [25], [25, 12], [0, 25], [12, None]):
+        with pytest.raises(ValueError):
+            mod.compute_rows([200], ["N2+"], bad_band, pmax)
+    for bad_p in (None, 0, -1500):
+        with pytest.raises(ValueError):
+            mod.compute_rows([200], ["N2+"], band, bad_p)
+    # a TBD requirement (null value) is refused, never defaulted
+    bad = copy.deepcopy(ref)
+    bad["discharge_voltage_interface"]["requirements"]["power_max_W"]["value"] = None
+    with pytest.raises(ValueError):
+        mod.expected_table_rows(bad)
 
 
 # ----------------------------------------------------------------------------------------------- document
@@ -508,3 +597,34 @@ def test_document_matches_reference(ref):
     for ion, r in rows.items():
         line = f"| {ion} | " + " | ".join(str(x) for x in r["thrust_per_jet_power_mN_per_kW"]["value"]) + " |"
         assert line in doc, f"document T/P_jet row for {ion} differs from the JSON"
+        pj = r["jet_power_at_thrust_max_kW"]["value"]
+        fr = r["jet_power_at_thrust_max_fraction_of_power_max"]["value"]
+        line = f"| {ion} | " + " | ".join(f"{a} ({round(b * 100, 1)} %)" for a, b in zip(pj, fr)) + " |"
+        assert line in doc, f"document P_jet row for {ion} differs from the JSON"
+    # the envelope-tie sentence quotes the extreme air-species cells of the JSON table
+    cells = [(rows[i]["jet_power_at_thrust_max_kW"]["value"][k],
+              rows[i]["jet_power_at_thrust_max_fraction_of_power_max"]["value"][k])
+             for i in ("N2+", "N+", "O2+", "O+") for k in range(len(vset))]
+    (p_lo, f_lo), (p_hi, f_hi) = min(cells), max(cells)
+    assert f"needs {p_lo} kW" in doc and f"to {p_hi} kW" in doc
+    assert f"{round(f_lo * 100, 1)}–{round(f_hi * 100, 1)} % of the 1.5 kW ceiling" in doc
+    rat = ref["discharge_voltage_interface"]["proposed_range_V"]["rationale"]
+    assert f"{p_lo} kW" in rat and f"{p_hi} kW" in rat and f"{round(f_lo * 100, 1)}-{round(f_hi * 100, 1)} %" in rat
+    # every literature point (including the excluded ones) is in the document table
+    for op in ref["discharge_voltage_interface"]["literature_operating_points"]:
+        key = "Dukhopelnikov" if "Dukhopelnikov" in op["device"] else op["device"].split(" (")[0].split(" ")[0]
+        assert key.lower() in doc.lower(), key
+    assert "VR-1" in doc and "not pre-declared" in doc
+
+
+def test_provisional_contract_mappings_are_labelled(ref):
+    fields = ref["injection_interface"]["inlet_state_fields"]
+    te = fields["T_e_inlet_eV"]["interstage_field"]
+    assert te.startswith("SOURCE-EXIT value, not an inlet-plane value"), te
+    for c in ("interstage", "upstream_icd", "hallmap_spec", "cathode_integration"):
+        assert "not merged" in ref["related_contracts"][c]["status_at_authoring"] \
+            or "not reproducible" in ref["related_contracts"][c]["status_at_authoring"].lower(), c
+    note = ref["transport_numerics_binding"]["solver_settings"]["cathode_coupling_voltage_V"]["notes"]
+    assert "PLACEHOLDER" in note and "NOT a design" in note
+    inv = {r["id"]: r for r in ref["invariance_rules"]}["INV-C2"]["rule"]
+    assert "placeholder" in inv and "not a design value" in inv

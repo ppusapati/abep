@@ -33,7 +33,7 @@ this document is the same at both commits.
 
 **Needed to go from A to B:**
 
-- Owner approval (or change) of every PROPOSED item.
+- Owner approval (or change) of every PROPOSED item, including span rule VR-1 for the voltage range (section 5).
 - At least one admitted transport member. `transport_ensemble_v0.json` members is empty.
 - A Vyovrinda geometry and B(z) design release.
 - A solver capability for ion, electron and excited-state inflow at the anode plane (section 8; today it is a **GAP**).
@@ -41,8 +41,8 @@ this document is the same at both commits.
   does not exist.
 - Cathode values from the cathode lane.
 - The wall-life settings and a cited sputter-yield model.
-- Reconciliation of the inlet-state field names with the committed `interstage_v1` contract. A provisional mapping is
-  recorded (section 8).
+- Reconciliation of the inlet-state field names with the `interstage_v1` contract once it is merged. A provisional mapping,
+  re-checked against commit `18d2bfb`, is recorded (section 8).
 
 **Needed to go from B to C:**
 
@@ -170,19 +170,49 @@ V_d minus the coupling voltage (Goebel & Katz Eqs. 7.2-21 and 7.2-22, pp. 337–
 (INV-V1). The set includes both range ends, so no comparison point needs extrapolation. The interior spacing is 50 V, a
 design-of-experiment choice (assumed).
 
-**Rationale.** The range is the span of discharge voltages at which published Hall-channel devices have run on air species
-in the open sources consulted:
+**Rationale and span rule VR-1.** The range is the span of the discharge voltages at which, in the open sources
+consulted, an air-species Hall-channel device had a **measured thrust** reported. The explicit rule (`span_rule` in the
+JSON) counts an operating point only if all three criteria hold:
 
-| device | gas | V_d (V) | source (evidence level) |
-|---|---|---|---|
-| ECHT (extended channel) | N₂ (Ar cathode) | 180–220 | repository ECHT audit (Marchioni thesis Table 6.1); Andreussi et al. 2022 p. 26 (3) |
-| P5 | N₂ (Xe cathode) | 231.9–278.6 | `cases/p5_n2.json` (Brabston 2025 Table 2) (3) |
-| PPS1350-TSD | pure N₂ | 240–350 | Andreussi et al. 2022 p. 23 (5) |
-| HT5k (shielded) | 0.56 N₂ / 0.44 O₂ | 225–300 | Andreussi et al. 2022 pp. 24–25 (5) |
-| BHT (2 kW nominal) | air simulant | 200–350 | Andreussi et al. 2022 p. 25 (5) |
-| Z-70 | N₂/Xe, air/Xe mixtures | 270 and 290 | Andreussi et al. 2022 p. 26 (5) |
-| helicon Hall thruster | N₂ | 200 | Andreussi et al. 2022 p. 27 (5); listed for the voltage only, its RF-stage evidence belongs to `docs/evidence/rf_source/` |
-| SPT family (xenon context) | Xe | 200–500 | Goebel & Katz p. 440 (5) |
+- **(a)** the device is an annular Hall-channel thruster (single- or two-stage);
+- **(b)** the anode propellant is an air species or air simulant with no xenon admixture;
+- **(c)** the source reports a measured thrust at that voltage, directly or as an anodic efficiency (which needs a measured
+  thrust, ER-1).
+
+Points that fail a criterion stay in the table with the reason; none are dropped.
+
+**Provenance of VR-1 (stated at repair, not pre-declared).** The first draft described the range as "the span of voltages at
+which published Hall-channel devices were operated on air species". An adversarial review found that this left out the
+Dukhopelnikov et al. sweep (air and 2:1 N₂/O₂ from "less than 100 V up to 350 V", Andreussi et al. 2022 p. 26), even
+though the draft cited the same passage as EV-V1. It also found that the cusped-field MCFT-2139 was not recorded. VR-1 was
+written down during this repair. Under VR-1 the end points (180 V ECHT, 350 V BHT) do not change. The **unfiltered**
+Hall-channel air-species span is **"<100"–350 V** (criteria (a) and (b) only). The owner chooses between the two, or
+another rule (Q1).
+
+| device | family | gas | reported V_d (V) | VR-1 span voltages (V) | thrust basis | role | source (evidence level) |
+|---|---|---|---|---|---|---|---|
+| ECHT (extended channel) | Hall channel | N₂ (Ar cathode) | 180–220 | 180–220 | measured (20–23 mN) | **span-defining** | Andreussi et al. 2022 p. 26; repository ECHT audit (Marchioni thesis Table 6.1) (3) |
+| P5 | Hall channel | N₂ (Xe cathode) | 231.9–278.6 | 231.9–278.6 | measured (`T_corr_mN`, N1–N5) | **span-defining** | `cases/p5_n2.json` (Brabston 2025 Table 2, Fig. 5) (3) |
+| PPS1350-TSD | Hall channel | pure N₂ | 240–350 | 305 | measured at 305 V only (19–21 mN) | **span-defining** | Andreussi et al. 2022 p. 23 (5) |
+| SITAEL HT5k (shielded) | Hall channel | 0.56 N₂ / 0.44 O₂ | 225–300 | 225–300 | measured (30–120 mN) | **span-defining** | Andreussi et al. 2022 p. 25 (5) |
+| Busek BHT (2 kW nominal) | Hall channel | air simulant | 200–350 | 350 | anodic efficiency ≈ 27 % at 350 V | **span-defining** | Andreussi et al. 2022 p. 25 (5) |
+| helicon Hall thruster | Hall channel (two-stage) | N₂ | 200 | 200 | thrust stand | **span-defining** | Andreussi et al. 2022 p. 27 (5); its RF-stage evidence belongs to `docs/evidence/rf_source/` |
+| Z-70 | Hall channel | N₂/Xe, air/Xe mixtures | 270 and 290 | — | not reported (plume composition) | context only: xenon admixture, no thrust (fails b, c) | Andreussi et al. 2022 p. 26 (5) |
+| 38 mm Hall thruster (Dukhopelnikov et al.) | Hall channel | air; 2:1 N₂/O₂ | "<100"–350 | — | **estimated** (assumed η_v = 0.75) | recorded, excluded (fails c) | Andreussi et al. 2022 pp. 26–27 (5) |
+| MCFT-2139 | **cusped field** | N₂ | 30–2000 | — | measured (13.3 mN at 997 W, 1000 V) | recorded, excluded (fails a) | Andreussi et al. 2022 p. 27 (5) |
+| SPT family (xenon context) | Hall channel | Xe | 200–500 | — | — | context only: xenon (fails b) | Goebel & Katz p. 440 (5) |
+
+Notes on the exclusions:
+
+- **Dukhopelnikov et al.** The review states that "the thrust value was estimated assuming a fixed voltage utilization
+  efficiency of 0.75". Its quantitative light/xenon ratios are reported "in the 200 V to 350 V voltage range" (p. 27),
+  which is inside the proposed range. With light propellants its I_d(V_d) plateau sits 50–100 V above xenon's (EV-V1), so
+  the sub-200 V part of the sweep includes pre-plateau operation. That supports the lower end but does not define it.
+- **MCFT-2139.** A cusped-field thruster is a different device family from the annular Hall channel defined here (lane
+  brief; CLAUDE.md rule 8). It was considered because 13.3 mN at 997 W discharge power (1000 V, N₂) is inside the RFP
+  12–25 mN band and under the 1.5 kW ceiling (discharge power only). It is not the only such light-propellant point in the
+  review: PPS1350-TSD on N₂ at 305 V gave 19–21 mN at about 1 kW (p. 23). Whether Vyovrinda's channel should also be
+  evaluated above 350 V is part of Q1.
 
 The envelope relations show why no single voltage can be chosen today:
 
@@ -199,17 +229,19 @@ The envelope relations show why no single voltage can be chosen today:
   - The I_d(V_d) plateau sits 50–100 V higher than with xenon (EV-V1, p. 26).
   - The best air-simulant anodic efficiency, about 27 %, came at the highest tested 350 V (EV-V2, p. 25).
 
-  The optimum therefore depends on the closure and the hardware (TBD), and the proposal is the evidence span, not an optimum.
+  The optimum therefore depends on the closure and the hardware (TBD), and the proposal is the filtered evidence span
+  (VR-1), not an optimum.
 
 The superseded 0-D grid in `abep_sim/archengine.py` `_variables` (225–325 V) is **not** reused.
 
-**Ideal-beam reference table.** These values are computed by `voltage_envelope.py` from `abep_sim/constants.py`. The JSON
-is authoritative, and the test recomputes the table.
+**Ideal-beam reference table.** These values are computed by `voltage_envelope.py` from `abep_sim/constants.py` and the
+RFP requirements recorded in the JSON (12–25 mN, 1500 W). The JSON is authoritative, and the test recomputes the table.
 
 - The table uses physics identities for a singly charged, monoenergetic, collimated beam accelerated through the full V_d:
   v_b = √(2 e V_d / m) and T/P_jet = 2/v_b.
 - It is **not** a thruster prediction, **not** a bound on P_d, and not an input to any trade.
-- It only shows how the jet-power cost of thrust scales with V_d and ion mass.
+- It only shows how the jet-power cost of thrust scales with V_d and ion mass, and how much of the RFP power ceiling an
+  ideal beam alone would take.
 
 T/P_jet of the ideal beam, in mN/kW:
 
@@ -223,6 +255,26 @@ T/P_jet of the ideal beam, in mN/kW:
 
 The v_b values are in the JSON. For example, N₂⁺ reaches 45470.2 m/s at 300 V.
 
+Ideal-beam jet power P_jet = T v_b / 2 at the upper RFP thrust end, 25 mN, in kW. The share of the 1.5 kW ceiling is in
+parentheses:
+
+| ion | 180 V | 200 V | 250 V | 300 V | 350 V |
+|---|---|---|---|---|---|
+| N2+ | 0.44 (29.4 %) | 0.464 (30.9 %) | 0.519 (34.6 %) | 0.568 (37.9 %) | 0.614 (40.9 %) |
+| N+ | 0.623 (41.5 %) | 0.656 (43.8 %) | 0.734 (48.9 %) | 0.804 (53.6 %) | 0.868 (57.9 %) |
+| O2+ | 0.412 (27.5 %) | 0.434 (28.9 %) | 0.485 (32.4 %) | 0.532 (35.4 %) | 0.574 (38.3 %) |
+| O+ | 0.582 (38.8 %) | 0.614 (40.9 %) | 0.686 (45.8 %) | 0.752 (50.1 %) | 0.812 (54.1 %) |
+| Xe+ | 0.203 (13.6 %) | 0.214 (14.3 %) | 0.24 (16.0 %) | 0.262 (17.5 %) | 0.284 (18.9 %) |
+
+**Envelope tie (no performance prediction).** Across the air-species ions (N₂⁺, N⁺, O₂⁺, O⁺) and the proposed range, an
+ideal beam alone at 25 mN needs 0.412 kW (O₂⁺, 180 V) to 0.868 kW (N⁺, 350 V). That is
+27.5–57.9 % of the 1.5 kW ceiling before any efficiency loss, and before cathode, magnet, pre-ionizer and other
+bus loads. The published light-propellant anodic efficiencies are far below 1: 8–18 % for the HT5k, about 27 % for the BHT
+(EV-V2), and 13–23 % for the ECHT (Andreussi et al. 2022 pp. 25–26). The ceiling is therefore tight across the whole range,
+and tightest at the high-V_d, light-ion corner. This is the quantitative form of ER-4, and it is why the power ceiling
+favours the low end while ER-5 and ER-6 push the other way. The lower RFP thrust end (12 mN) is in the JSON
+(`jet_power_at_thrust_min_kW`).
+
 ## 6. Cathode interface
 
 **PROPOSED (owner confirms):**
@@ -232,8 +284,10 @@ The v_b values are in the JSON. For example, N₂⁺ reaches 45470.2 m/s at 300 
   - The lane brief calls for Xe-fed LaB6 per the RFP context "air + Xe" (verify against the RFP text).
   - The repository's 0-D model is `LaB6Cathode`.
   - LaB6 tolerates feed impurities and air exposure better than BaO dispenser cathodes (Goebel & Katz p. 255).
-- A **Xe** feed (IF-X2 `mdot_xe_cathode_kgps`). Published light-propellant Hall tests almost always fed the cathode with
-  xenon (Andreussi et al. 2022 p. 23).
+- A **Xe** feed (IF-X2 `mdot_xe_cathode_kgps`), proposed from the RFP context "air + Xe". Most published light-propellant
+  Hall tests fed the cathode with xenon: PPS1350-TSD (p. 23), Z-70 and Dukhopelnikov et al. (p. 26), MCFT-2139 and HHT
+  (p. 27) of Andreussi et al. 2022. But not all did: the shielded HT5k moved its HC20 cathode from xenon to pure N₂ (p. 25),
+  and the ECHT used an argon-fed cathode (p. 26) (EV-C6).
 
 **TBD, requiring the cathode lane (`docs/evidence/cathode/`):**
 
@@ -243,15 +297,18 @@ The v_b values are in the JSON. For example, N₂⁺ reaches 45470.2 m/s at 300 
 - `max_emission_current_A`.
 - `keeper_current_A`, `keeper_voltage_V` and `keeper_operating_mode`. Textbook practice is start-up only (EV-C2, p. 337).
 - `heater_power_W` and `heater_preheat_time_s`.
-- `coupling_voltage_V`. Xenon practice is about 20 V, or 5–10 % of V_d (EV-C3, p. 339).
+- `coupling_voltage_V`. Xenon practice is about 20 V, or 5–10 % of V_d (EV-C3, p. 339). The solver currently runs with
+  its default 0.0 V. That is a **placeholder solver setting, not a design value**; the TBD hardware value (or an
+  owner-decided setting) replaces it, identically in all arms (INV-C2).
 - `cathode_position`. It maps to the 1-D domain end.
 
 The firing requirement is > 15,000 h (`abep_sim/constants.py` `ignition_hours`, requirement). The bus components are
 `cathode_keeper` and `cathode_heater`.
 
 The cathode-integration lane's data file (`docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json`)
-was read on 2026-09-26 as uncommitted work in progress. Its baseline ("Xe-fed LaB6 hollow cathode") and its bus components
-agree with the PROPOSED fields here. Its values are not copied into this reference.
+was read on 2026-09-26 as uncommitted work in progress. At repair time it is still in no commit, so this cross-check **cannot
+be reproduced from any commit**. Its baseline ("Xe-fed LaB6 hollow cathode") and its bus components agree with the
+PROPOSED fields here. No value is taken from it.
 
 ## 7. Wall/life interface
 
@@ -350,18 +407,20 @@ change with its own validation plan:
 - With zero injection it must reproduce `hall_only` (INV-S1).
 - The pin is never moved automatically.
 
-**Reconciliation with the interstage lane: PENDING.** The interstage lane's model `abep_sim/interstage.py`
-(`interstage_v1`) was read on 2026-09-26 as uncommitted work in progress. It announces
-`schemas/architecture_comparison/interstage_v1.schema.json`, which did not exist yet. The provisional mapping is recorded
-field by field in `interstage_field`:
+**Reconciliation with the interstage lane: PENDING.** The first draft read the interstage lane's model
+`abep_sim/interstage.py` (`interstage_v1`) as uncommitted work in progress. The lane has since committed it as `18d2bfb`
+on branch `worktree-wf_15f0f2f8-8d4-2`, together with `schemas/architecture_comparison/interstage_v1.schema.json`. That
+commit is not merged into this branch. The mapped names below were re-checked against `18d2bfb`, so the mapping can be
+reproduced from that commit only until it is merged. The provisional mapping is recorded field by field in
+`interstage_field`:
 
-| Hall field | interstage_v1 (work in progress) |
+| Hall field | interstage_v1 (commit `18d2bfb`, not merged) |
 |---|---|
 | `mdot_neutral_kgps` | `result.neutrals[s].to_hall_flow_s` × species mass |
 | `ion_current_A` | `result.ions[i].delivered_to_hall_flow_s` × charge × e; fractions in `result.charge_state_fractions.delivered` |
 | `u_ion_axial_m_s` | `result.ions[i].axial_speed_m_s` (constant along the duct, their assumption) |
-| `T_neutral_K` | `SourceExitState.neutral_temperature` |
-| `T_e_inlet_eV` | `SourceExitState.electron_temperature` |
+| `T_neutral_K` | `SourceExitState.neutral_temperature` (a source-exit value, carried to the inlet by the isothermal-wall assumption) |
+| `T_e_inlet_eV` | `SourceExitState.electron_temperature`: a **source-exit** value, not an inlet-plane value. The interstage model holds it constant along the duct (isothermal-electron closure, an interstage assumption); it does not compute T_e at `HALL_INLET_Z0` |
 | `element_mass_flow_kgps` | derivable from the delivered flows; their element residuals are gated |
 
 Not yet provided (TBD, to be covered by the interstage lane):
@@ -394,7 +453,7 @@ All rules are PROPOSED.
 | INV-V1 | discharge_voltage | The voltage range and evaluation set are identical, and compared points share V_d. |
 | INV-V2 | discharge_voltage | The supply topology (anode to cathode common, floating) and its `hall_discharge` accounting are identical. |
 | INV-C1 | cathode | Type, emitter, gas, flow, position, keeper mode and current, heater protocol and coupling treatment are identical. |
-| INV-C2 | cathode | The solver boundary settings are identical: cathode coupling voltage 0.0 V default, cathode T_e 2.0 eV default, anode condition `:sheath` (`configuration.jl` lines 213–215). |
+| INV-C2 | cathode | The solver boundary settings are identical: cathode coupling voltage 0.0 V default, cathode T_e 2.0 eV default, anode condition `:sheath` (`configuration.jl` lines 213–215). The 0.0 V coupling voltage is a placeholder solver setting, not a design value; the TBD cathode value (about 20 V in xenon practice, EV-C3) or an owner-decided setting replaces it, identically in every arm. |
 | INV-T1 | transport | The same admitted member is used, with no retuning. Screening candidates are never used. |
 | INV-T2 | chemistry | The same reaction-set label and variant are used, and f_out = 0 is never relaxed. A pre-ionizer species outside the set blocks the arm. |
 | INV-N1 | numerics | The numerics are identical (admission numerics, Hall-map spec section 11). |
@@ -428,7 +487,7 @@ The test checks that every geometry, B(z), voltage and cathode field is covered 
   - `WallSheath(BNSiO2, 1.0)`
   - `ion_wall_losses = false`
   - anode `:sheath`
-  - cathode coupling 0.0 V and cathode T_e 2.0 eV
+  - cathode coupling 0.0 V (placeholder solver setting, not a design value; see INV-C2) and cathode T_e 2.0 eV
   - `magnetic_field_scale` 1.0
 
 ## 11. Related contracts (by path; not required to exist)
@@ -438,15 +497,21 @@ The test checks that every geometry, B(z), voltage and cathode field is covered 
 - `abep_sim/thermal_life.py`
 - `docs/evidence/{rf_source,ecr_source,hall_sustainment,cathode,wall_life}/`
 - `docs/architecture_comparison/experiment_protocol/`
-- `schemas/interfaces/upstream_icd_v1.json` (commit `ced4aa0`)
-- `abep_sim/interstage.py` (`interstage_v1`, work in progress)
-- `docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json` (work in progress)
+- `schemas/interfaces/upstream_icd_v1.json` (commit `ced4aa0` on the upstream-ICD lane's branches; not merged here)
+- `abep_sim/interstage.py` (`interstage_v1`, commit `18d2bfb` on branch `worktree-wf_15f0f2f8-8d4-2`; not merged here)
+- `docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json` (uncommitted work in progress; the
+  cross-check is not reproducible from any commit)
 - `schemas/ledgers/`
-- `docs/hallmap/HALLMAP_PRODUCTION_SPEC.md` (commit `113fab5`)
+- `docs/hallmap/HALLMAP_PRODUCTION_SPEC.md` (commit `113fab5` on the Hall-map spec lane's branches; not merged here)
+
+None of these commits is merged into this branch. Every mapping or cross-check against them is provisional (PENDING) until
+they are merged.
 
 ## 12. Open decisions for the owner
 
-1. The PROPOSED V_d range and set, aligned with the PPU range.
+1. The PROPOSED V_d range and set, aligned with the PPU range. This includes span rule VR-1, which was stated at repair and
+   not pre-declared. The alternatives on record are the unfiltered Hall-channel span "<100"–350 V, and light-propellant
+   operation far above 350 V in another device family (MCFT-2139, 1000 V).
 2. `hall_only` hardware: no pre-ionizer, or pre-ionizer installed but unpowered?
 3. Per-arm magnet re-optimization as a sensitivity branch?
 4. The solver-gap model change and the INV-S1 tolerance.
@@ -469,7 +534,7 @@ Open literature (no contact with authors or labs, no paywall bypass):
 | SRC-DM2011 | Dannenmayer & Mazouffre, "Elementary Scaling Relations for Hall Effect Thrusters", JPP 27(1), 236–245 (2011), doi:10.2514/1.48382 | https://www.aleph-zero.fr/blog/Documents/Articles/JPP_2011_Scaling%20Laws.pdf | 3c97e7cdcce0dc842e4b2b5e562b888a7ba48442dc83ced70cf0cfeb38589ccf |
 | SRC-AFG2022 | Andreussi, Ferrato & Giannetti, "A review of air-breathing electric propulsion", J. Electr. Propuls. 1:31 (2022), doi:10.1007/s44205-022-00024-9, CC BY 4.0 | https://link.springer.com/content/pdf/10.1007/s44205-022-00024-9.pdf | 490ca6f6b763fe4ee1089d9815d4075a94223ec74d577f61d67986708c3ce3b7 |
 
-The primary test reports summarized by the review (PPS1350-TSD, HT5k, BHT, Z-70, HHT, Dukhopelnikov et al.) were **not**
+The primary test reports summarized by the review (PPS1350-TSD, HT5k, BHT, Z-70, HHT, Dukhopelnikov et al., MCFT-2139) were **not**
 accessed. Their values are evidence level 5, as reported.
 
 **Software source.** The HallThruster.jl v0.23.1 source is installed locally for the bridge. It was read but not executed.
