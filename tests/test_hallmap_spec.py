@@ -170,7 +170,8 @@ def synthetic_instance():
                                           "preregistration": "SYNTHETIC", "decision_file": "SYNTHETIC", "decision_sha256": FAKE,
                                           "scores_provenance_file": "SYNTHETIC", "scores_provenance_sha256": FAKE,
                                           "passing_layer1_members": ["SYNTHETIC"], "admitted_utc": "SYNTHETIC",
-                                          "decided_by": "SYNTHETIC"}},
+                                          "decided_by": "SYNTHETIC",
+                                          "o4_dispositions_file": "SYNTHETIC", "o4_dispositions_sha256": FAKE}},
         "source_validation": {"campaign_id": "SYNTHETIC", "validation_release_file": "SYNTHETIC",
                               "validation_release_sha256": FAKE, "prereg_lock_file": "SYNTHETIC",
                               "prereg_lock_sha256": FAKE, "decision_sha256": FAKE},
@@ -267,6 +268,25 @@ def test_admission_record_and_pin_and_chemistry_domain(schema):
     assert errors(inst, schema, schema)
 
 
+# O4 gate (owner decision 2026-09-26; hall_ensemble._check_o4 on the execution baseline): admission and design Hall maps stay
+# gated until the O4 dispositions are complete. Named explicitly so the requirement holds whichever hall_ensemble is installed.
+O4_ADMISSION_FIELDS = ("o4_dispositions_file", "o4_dispositions_sha256")
+
+
+def test_admission_record_binds_o4_dispositions(schema):
+    adm = schema["$defs"]["admission_record"]
+    assert set(O4_ADMISSION_FIELDS) <= set(adm["required"])
+    assert adm["properties"]["o4_dispositions_sha256"]["$ref"] == "#/$defs/sha256"
+    for f in O4_ADMISSION_FIELDS:
+        inst = synthetic_instance()
+        del inst["ensemble_member"]["admission"][f]
+        assert errors(inst, schema, schema), f
+    inst = synthetic_instance()
+    inst["ensemble_member"]["admission"]["o4_dispositions_sha256"] = "not-a-sha"
+    assert errors(inst, schema, schema)
+    assert any("o4_dispositions" in r and "_check_o4" in r for r in schema["x-consistency_rules"])
+
+
 def test_calibration_nuisance_can_never_be_an_axis(schema):
     forbidden = set(schema["$defs"]["forbidden_axis_names"]["enum"])
     assert set(load_ensemble()["calibration_nuisance"]) <= forbidden
@@ -339,5 +359,6 @@ def test_spec_covers_fields_nuisance_and_member_gate():
     for k in load_ensemble()["calibration_nuisance"]:
         assert f"`{k}`" in text, k
     for token in ("require_admitted", "wall_life_trustworthy", "chemistry_trustworthy", "f_out", "DRAFT_PENDING_OWNER",
-                  "schemas/hallmap/hallmap_provenance_v1.json"):
+                  "schemas/hallmap/hallmap_provenance_v1.json",
+                  "_check_o4", "o4_dispositions_schema_v1.json", "o4_dispositions_file", "o4_dispositions_sha256"):
         assert token in text, token

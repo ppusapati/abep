@@ -32,7 +32,8 @@
   "list(axes.keys()) == [a.name for a in provenance.axes] (same order: fields are flattened row-major in this axis order)",
   "set(fields.keys()) == set(provenance.fields_present) == set(abep_sim.hall_map.REQUIRED_FIELDS)",
   "provenance.ensemble_member.admission equals the 'admission' block of that member in the ensemble file whose sha256 is provenance.ensemble_member.ensemble_file_sha256",
-  "provenance.source_validation.decision_sha256 == provenance.ensemble_member.admission.decision_sha256"
+  "provenance.source_validation.decision_sha256 == provenance.ensemble_member.admission.decision_sha256",
+  "sha256(hallthruster_bridge/<provenance.ensemble_member.admission.o4_dispositions_file>) == provenance.ensemble_member.admission.o4_dispositions_sha256, that record has schema o4_dispositions_v1, its mandatory_decision_sha256 == provenance.ensemble_member.admission.decision_sha256, and it lists provenance.ensemble_member.ensemble_member_id in cleared_for_admission (hall_ensemble._check_o4 at generation AND at load)"
  ],
  "type": "object",
  "additionalProperties": false,
@@ -422,8 +423,8 @@
   "admission_record": {
    "type": "object",
    "additionalProperties": true,
-   "description": "copy of the member's admission block (hallthruster_bridge/ensemble/admission_record_schema_v1.json); required keys = abep_sim.hall_ensemble.ADMISSION_FIELDS",
-   "required": ["promoted_from_screening_id", "campaign_id", "preregistration", "decision_file", "decision_sha256", "scores_provenance_file", "scores_provenance_sha256", "passing_layer1_members", "admitted_utc", "decided_by"],
+   "description": "copy of the member's admission block (hallthruster_bridge/ensemble/admission_record_schema_v1.json); required keys = abep_sim.hall_ensemble.ADMISSION_FIELDS on the execution baseline (claude/nifty-ramanujan-w68f9z, commit bd0b6ce 'Admission gated on O4 dispositions'), including the O4 dispositions file and its sha256 that hall_ensemble._check_o4 verifies (ensemble/o4_dispositions_schema_v1.json; owner decision 2026-09-26: admission and design Hall maps stay gated until the O4 dispositions are complete, even after a PROMOTABLE result)",
+   "required": ["promoted_from_screening_id", "campaign_id", "preregistration", "decision_file", "decision_sha256", "scores_provenance_file", "scores_provenance_sha256", "passing_layer1_members", "admitted_utc", "decided_by", "o4_dispositions_file", "o4_dispositions_sha256"],
    "properties": {
     "promoted_from_screening_id": {"type": "string", "minLength": 1},
     "campaign_id": {"type": "string", "minLength": 1},
@@ -434,7 +435,9 @@
     "scores_provenance_sha256": {"$ref": "#/$defs/sha256"},
     "passing_layer1_members": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "x-note": "calibration nuisance recorded as PROVENANCE of the admission only; never an axis, never a map-set label"},
     "admitted_utc": {"type": "string", "minLength": 1},
-    "decided_by": {"type": "string", "minLength": 1}
+    "decided_by": {"type": "string", "minLength": 1},
+    "o4_dispositions_file": {"type": "string", "minLength": 1, "description": "path (relative to hallthruster_bridge/) of the owner's O4 dispositions record, schema o4_dispositions_v1 (ensemble/o4_dispositions_schema_v1.json)"},
+    "o4_dispositions_sha256": {"$ref": "#/$defs/sha256", "description": "sha256 of o4_dispositions_file, verified by hall_ensemble._check_o4; the trigger values themselves are read from the scored O4 files, never from the disposition record"}
    }
   }
  }

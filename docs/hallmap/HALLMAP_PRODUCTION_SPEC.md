@@ -10,6 +10,12 @@ Producing design Hall maps is **blocked** until all of the following are true:
    computation or a measured B(z)).*
 3. The numerical-convergence pre-registration is frozen by the owner. The draft is
    `docs/hallmap/drafts/hallmap_convergence_prereg_DRAFT.json`, with status `DRAFT_PENDING_OWNER`.
+4. The **O4 dispositions** for the admitting decision are complete (owner decision 2026-09-26, CLAUDE.md "Next work"
+   item 3). Admission and design Hall maps stay gated until then, **even if a later campaign yields PROMOTABLE**: every
+   pre-registered O4 staged sensitivity and every escalation its trigger requires must be scored, and each must carry a
+   recorded owner disposition that clears the member. This is enforced by `abep_sim.hall_ensemble._check_o4` on the
+   execution baseline (branch `claude/nifty-ramanujan-w68f9z`, commit `bd0b6ce` "Admission gated on O4 dispositions"),
+   with the record format `hallthruster_bridge/ensemble/o4_dispositions_schema_v1.json`.
 
 This document changes no physics, threshold, frozen dataset, chemistry, transport or campaign file. It does not claim an
 ABEP closure, an architecture winner or any transport admission. Where it proposes something, it says **PROPOSED** and
@@ -51,6 +57,11 @@ reporting envelopes across members.
 | P6 | Vyovrinda geometry and B(z) are versioned, hashed and sourced, and are **not** P5/ECHT evidence files | provenance `geometry`, `magnetic_field` (schema refuses file names that look like P5/ECHT/Brabston/Peterson) |
 | P7 | the convergence pre-registration is frozen (not the DRAFT) | provenance `numerics.convergence.prereg_file` (schema refuses a path containing `DRAFT`) |
 | P8 | `facility_ingestion = false` (flight maps) | `hall_map_schema_v1` meta; provenance `facility_ingestion: const false` |
+| P9 | **O4 dispositions complete** for the admitting decision: the admission record names `o4_dispositions_file` and `o4_dispositions_sha256`; the file exists and matches its sha256; its schema is `o4_dispositions_v1` (`hallthruster_bridge/ensemble/o4_dispositions_schema_v1.json`) and its `mandatory_decision_sha256` equals the admission `decision_sha256`; every pre-registered staged sensitivity (and every escalation whose trigger fired) is scored against the same mandatory dataset and scores; the trigger values are **read from the scored O4 files**, never from the disposition record; each sensitivity has an owner disposition; the member is listed in `cleared_for_admission`. This holds even when the mandatory-vacuum decision lists the member as PROMOTABLE | `hall_ensemble._check_o4`, called from `_check_admission` inside `load_ensemble()` and hence before `require_admitted` can succeed; provenance `ensemble_member.admission.o4_dispositions_file` / `o4_dispositions_sha256` (schema-required) and an `x-consistency_rules` entry |
+
+P2 and P9 refer to the execution baseline, whose `hall_ensemble.ADMISSION_FIELDS` includes the two O4 fields. The provenance
+schema requires them regardless of which `hall_ensemble` is installed, so a map set cannot be recorded without binding the
+O4 dispositions record.
 
 ## 3. What one map set is
 
@@ -253,6 +264,10 @@ Observations for the owner (no change made):
   for screening candidates ("screening candidates never produce design Hall maps") and for unknown ids.
   `HallMap.__init__` repeats the check at load time against `member_ids(load_ensemble())`, so a map of a member later
   eliminated by new evidence stops loading automatically. Its provenance status then becomes `WITHDRAWN`.
+- **O4 gate.** A PROMOTABLE mandatory-vacuum result alone never admits a member and never enables design maps. The
+  admission must also bind a complete O4 dispositions record (P9; `_check_o4`, `o4_dispositions_schema_v1.json`). Its file
+  path and sha256 are copied into provenance with the rest of the admission record. If the O4 record is later missing or
+  modified, `load_ensemble()` fails and the maps stop loading.
 - **Screening candidates (`sgb-screen-01..09`) are refused.** An admitted member keeps its id
   (`promoted_from_screening_id == ensemble_member_id`), so the id pattern alone cannot tell them apart. The admission
   record, verified offline by `load_ensemble()` and copied into provenance, is what distinguishes them.
@@ -269,7 +284,7 @@ The provenance object is embedded as `meta.provenance`. It is required in full a
 |---|---|
 | `hall_map_schema` | name `hall_map_schema_v1`, file, sha256 |
 | `map_set` | id, status (`CANDIDATE`/`FROZEN`/`WITHDRAWN`), UTC, generator script + git commit + sha256, per-node case file + sha256 |
-| `ensemble_member` | member id, family, parameters, solver transport string, ensemble file sha256, **admission record** (all `hall_ensemble.ADMISSION_FIELDS`, including decision sha256) |
+| `ensemble_member` | member id, family, parameters, solver transport string, ensemble file sha256, **admission record** (all `hall_ensemble.ADMISSION_FIELDS`, including decision sha256 and the O4 gate: `o4_dispositions_file` + `o4_dispositions_sha256`) |
 | `source_validation` | admitting campaign id, **validation release manifest** file + sha256 (`scripts/make_validation_release.py` output), prereg lock file + sha256, decision sha256 |
 | `hallthruster` | package, version, pinned commit, installed commit, sha256 of the full `PINNED.toml` text |
 | `chemistry` | project config: reaction-set version and status, chemistry variant, config sha256, rate-validity sha256, every rate file sha256 (all `verified`), f_out tolerance 1e-12, declared domain. Or built-in: version string and limitation |
