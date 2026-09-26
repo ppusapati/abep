@@ -173,6 +173,15 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    `hall_ensemble._check_o4` (admission records need `o4_dispositions_file`, `ensemble/o4_dispositions_schema_v1.json`; triggers are
    read from the scored O4 files). O4 datasets: `scripts/score_p5_n2_staged.py freeze|score` (pinned launch manifest gate, score once
    on mandatory + staged, mandatory scores reproduced exactly). Facility: the standard freeze/score pipeline in mode `facility`.
+   **Decision milestones (owner decision 2026-09-26):** A = *conditional selection* ("architecture X is baseline provided conditions
+   … are demonstrated"; does not need Physics Baseline 1.0); B = *physics-backed selection* (credible envelopes from validated Hall
+   transport, chemistry and common-boundary performance); C = *proposal/PDR freeze* (mass, power, thermal, life, startup, cathode,
+   mission closure integrated). Two tracks run in parallel and meet only when an admitted closure is needed for absolute performance:
+   physics validation (v1 → OOD attribution → higher-energy evidence → v2 if justified → admission) and architecture comparison (common
+   feed envelope → common Hall accelerator → RF/ECR interstage → common bus boundary → mass/thermal/life → same-condition comparison,
+   break-even surfaces, hard-gate eliminations). **Fan-out rule:** whenever a lane finishes, immediately ask whether its result lets
+   another lane start, removes a dependency, or creates a new parallel branch; never fall back to a sequential queue.
+   **O4 first stage:** Johnson-low trigger FIRED (scored 2026-09-26) → its three pre-registered escalations are running.
    **P5-N₂ measurement audit: done** (`identification/p5_n2_measurement_audit_findings_v1.json`; values in
    `brabston_p5_n2_measurement_audit_v1.json` from `scripts/audit_p5_n2_measurements.py`). Targets: I_d and thrust at N1–N5,
    E×B species V_a at N1–N3, sustainment; Φ_m,n/η_SP,n/ξ_N are model-derived, not targets. Pre-registration decisions D1–D6 are

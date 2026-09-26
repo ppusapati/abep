@@ -2182,3 +2182,19 @@ rules/recompute lens) with up to two repair rounds:
   empty); thermal/life framework.
 These run alongside the earlier lanes (CI, ECHT disposition, Hall-map spec, ICD, O/O₂ audit, cathode, wall life, dual-feed, ledgers,
 traceability, experiment package), the O4 first stage and the facility campaign.
+
+### 2026-09-26 — O4 first stage 1/5: Johnson-low — trigger FIRED; escalations launched (pre-registered)
+`staged_n2_n_exc_johnsonlow` (270 vacuum runs, `n2_n_exc_johnsonlow.toml` against baseline `n2_n.toml`):
+- structural gate PASS (270/270, all `success`);
+- frozen via `scripts/score_p5_n2_staged.py` (canonical sha256 9332ecdb…fe1eb);
+- scored once with the frozen scorer on mandatory + staged records (mandatory scores reproduced exactly); scores sha256 ee55fce1…bc0d.
+O4 evaluation (mechanical; `staged_escalation`): **trigger fired**.
+- 221 run-level triggers: 96 |ΔT_axial| ≥ half tolerance, 64 |ΔI_d| ≥ 7.5 % of target, 61 status changes.
+- Verdict changes when the baseline chemistry is replaced: sgb-screen-09 goes INCONCLUSIVE → FAIL_VALIDATION (members L32-exit|1p6kW|A/B
+  go INCONCLUSIVE → FAIL); sgb-screen-08 L38-hist|3p0kW|A/B go FAIL → INCONCLUSIVE.
+This is a sensitivity result, not a v1 verdict change: v1 stays as scored, and dispositions are the owner's (ensemble/o4_dispositions_schema_v1.json).
+Per the pre-registration, Johnson-low is now run on the other three primary combinations. The escalation manifests are
+`escalation_n2_n_exc_johnsonlow_{di_lower,nel_wang,di_lower_nel_wang}`, 3 × 270 runs, executed exactly as pinned. They run concurrently
+with the remaining first-stage branches; the driver has no wall-clock limit, so oversubscribing the CPUs changes speed, not results.
+Also recorded (owner): decision milestones A/B/C, the two-track structure, and the fan-out rule (CLAUDE.md next-work 3). The
+Architecture Decision Acceleration lanes 16–27 and break-even surfaces were launched as dependency-aware workflows.
