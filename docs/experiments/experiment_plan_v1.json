@@ -2,7 +2,7 @@
   "id": "experiment_plan_v1",
   "title": "Discriminating experiment: Hall-only vs RF+Hall vs ECR+Hall on one common accelerator",
   "date": "2026-09-26",
-  "status": "DRAFT FOR DISCUSSION (IIST / professor). Not pre-registered, not approved, no hardware committed. Owner decision required before any use.",
+  "status": "DRAFT FOR DISCUSSION (IIST / professor), revision r2 (second-lens repair against execution branch e15f66f). Not pre-registered, not approved, no hardware committed. Every threshold, convention and decision rule in this file is PROPOSED for the owner (see proposed_register); nothing here is binding until the owner reconciles it with lane_06_experiment_protocol and lane_25_min_decisive_experiment.",
   "companion": "docs/experiments/DISCRIMINATING_EXPERIMENTS.md",
   "premise": {
     "architecture_winner": "NONE. The plan does not assume one and is designed so that each outcome discriminates between the hypotheses.",
@@ -12,7 +12,15 @@
   },
   "evidence_rules": {
     "policy": "docs/EVIDENCE.md; CLAUDE.md rules 6 and 10",
-    "every_value_carries": ["source", "evidence_level", "quantity_type", "transformation_chain", "uncertainty", "applicability_domain", "validation_status"],
+    "every_value_carries": [
+      "source",
+      "evidence_level",
+      "quantity_type",
+      "transformation_chain",
+      "uncertainty",
+      "applicability_domain",
+      "validation_status"
+    ],
     "numeric_values_in_this_file": "Only values copied from repository files, each with its path. Every other threshold is 'TBD - requires <what>'. Nothing from memory is used as a requirement.",
     "evidence_level_of_results": "Measurements on the actual Vyovrinda hardware at its operating condition = level 1. Measurements on an IIST laboratory thruster that is not the Vyovrinda design = level 2 or 3 depending on similarity (owner to classify). Within the validated operating domain of the tested hardware, these supersede literature-derived assumptions (EVIDENCE.md rule).",
     "no_tuning": "Data from this experiment are never used to retune a transport closure. If they are used to test closures, the acceptance criteria are pre-registered and the measurements audited before any simulation is compared to them (CLAUDE.md promotion rule)."
@@ -20,40 +28,130 @@
   "architecture_scope": {
     "source": "abep_sim/archengine.py IONIZERS / ACCELERATORS / NEUTRALIZERS; CLAUDE.md scope of Hall uncertainty (ionization/discharge -> acceleration/thrust block only)",
     "families_compared": {
-      "HALL_ONLY": "ionizer 'hall_internal' + accelerator 'hall' (ionisation inside the Hall channel)",
-      "RF_HALL": "ionizer 'rf_icp' (13.56 MHz inductive, model prior) -> Interstage -> accelerator 'hall'",
-      "ECR_HALL": "ionizer 'ecr' (2.45 GHz ECR, model prior; resonance field 0.0875 T in abep_sim/plasma_devices.py ECRSource.B_res_T) -> Interstage -> accelerator 'hall'"
+      "hall_only": "ionizer 'hall_internal' + accelerator 'hall' (ionisation inside the Hall channel)",
+      "rf_hall": "ionizer 'rf_icp' (13.56 MHz inductive, model prior) -> Interstage -> accelerator 'hall'",
+      "ecr_hall": "ionizer 'ecr' (2.45 GHz ECR, model prior; resonance field 0.0875 T in abep_sim/plasma_devices.py ECRSource.B_res_T) -> Interstage -> accelerator 'hall'"
     },
     "not_compared": "Grids, magnetic nozzle, MPD, PIT, thermal families (CLAUDE.md rule 8: no new propulsion families; grids and magnetic nozzles already 'probably robust' excluded on mechanism grounds).",
     "model_priors_the_experiment_replaces": [
-      {"name": "RF source minimum pressure p_min_Pa", "model_value": 0.05, "unit": "Pa", "where": "abep_sim/archengine.py IONIZERS rf_icp; abep_sim/plasma_devices.py RFSource.p_min_Pa", "evidence_class": "assumed (literature prior per docs/HISTORY.md calibration anchors, Shabshelowitz 2013 - verify)"},
-      {"name": "ECR source minimum pressure p_min_Pa", "model_value": 0.002, "unit": "Pa", "where": "abep_sim/archengine.py IONIZERS ecr; abep_sim/plasma_devices.py ECRSource.p_min_Pa", "evidence_class": "assumed ('ONERA-class' prior per docs/HISTORY.md - verify)"},
-      {"name": "RF DC-to-RF efficiency", "model_value": 0.80, "where": "abep_sim/plasma_devices.py RFSource.eta_dc_rf", "evidence_class": "assumed"},
-      {"name": "ECR DC-to-microwave efficiency and feed efficiency", "model_value": [0.65, 0.90], "where": "abep_sim/plasma_devices.py ECRSource.eta_dc_mw, eta_feed", "evidence_class": "assumed"},
-      {"name": "Interstage ion transport (wall loss, 2 V potential barrier, sigma_in 1e-18 m^2)", "where": "abep_sim/plasma_devices.py Interstage", "evidence_class": "assumed model form"},
-      {"name": "Hall-only mass utilization vs inlet pressure", "where": "abep_sim/plasma_devices.py (0-D Hall, superseded) and HallThruster.jl maps (no admitted closure)", "evidence_class": "model-derived, not validated"}
+      {
+        "name": "RF source minimum pressure p_min_Pa",
+        "model_value": 0.05,
+        "unit": "Pa",
+        "where": "abep_sim/archengine.py IONIZERS rf_icp; abep_sim/plasma_devices.py RFSource.p_min_Pa",
+        "evidence_class": "assumed (literature prior per docs/HISTORY.md calibration anchors, Shabshelowitz 2013 - verify)"
+      },
+      {
+        "name": "ECR source minimum pressure p_min_Pa",
+        "model_value": 0.002,
+        "unit": "Pa",
+        "where": "abep_sim/archengine.py IONIZERS ecr; abep_sim/plasma_devices.py ECRSource.p_min_Pa",
+        "evidence_class": "assumed ('ONERA-class' prior per docs/HISTORY.md - verify)"
+      },
+      {
+        "name": "RF DC-to-RF efficiency",
+        "model_value": 0.8,
+        "where": "abep_sim/plasma_devices.py RFSource.eta_dc_rf",
+        "evidence_class": "assumed"
+      },
+      {
+        "name": "ECR DC-to-microwave efficiency and feed efficiency",
+        "model_value": [
+          0.65,
+          0.9
+        ],
+        "where": "abep_sim/plasma_devices.py ECRSource.eta_dc_mw, eta_feed",
+        "evidence_class": "assumed"
+      },
+      {
+        "name": "Interstage ion transport (wall loss, 2 V potential barrier, sigma_in 1e-18 m^2)",
+        "where": "abep_sim/plasma_devices.py Interstage",
+        "evidence_class": "assumed model form"
+      },
+      {
+        "name": "Hall-only mass utilization vs inlet pressure",
+        "where": "abep_sim/plasma_devices.py (0-D Hall, superseded) and HallThruster.jl maps (no admitted closure)",
+        "evidence_class": "model-derived, not validated"
+      }
     ],
     "historical_sensitivity_note": "A superseded 0-D closure ranked pre-ioniser gain, Hall eta_u,max and interstage transport among the dominant T/D sensitivities (docs/HISTORY.md v0.3). The ranking is indicative only of which priors the architecture model is sensitive to; the absolute results are withdrawn."
   },
   "hypotheses": [
-    {"id": "H0", "statement": "At matched feed state, V_d and coil currents, powering an RF or ECR pre-ionizer does not improve thrust per bus power T/P_bus over Hall-only (the CLAUDE.md 'probably robust' finding that RF/helicon pre-ionisers add nothing, extended to ECR as a test).", "status": "mechanism-level model finding; untested on hardware"},
-    {"id": "H1", "statement": "Pre-ionization raises propellant utilization eta_u on N2 (and later air-like mixtures) enough that T/P_bus increases despite the pre-ionizer bus power.", "status": "hypothesis"},
-    {"id": "H2", "statement": "Pre-ionization lowers the minimum feed pressure / mass flow at which the Hall discharge ignites and sustains (startup and low-density operability), independent of any T/P_bus change.", "status": "hypothesis"},
-    {"id": "H3", "statement": "Ions produced upstream are largely lost in the interstage (wall recombination, potential barrier), so source ionization does not reach the Hall channel.", "status": "model assumption to be measured (Interstage class)"},
-    {"id": "H4", "statement": "Pre-ionization changes the discharge stability (breathing-mode amplitude/frequency, sustainment window in V_d and coil current).", "status": "hypothesis"},
-    {"id": "H5", "statement": "Pre-ionization shifts the ion species mix (N+ vs N2+) and/or the species acceleration voltage (ionization/birth location), relevant to the non-gating E x B physics-forensics lane.", "status": "hypothesis; P5-N2 E x B diagnostic (V_a(N+) far below measured in the model) is non-gating forensics only"},
-    {"id": "H6", "statement": "The ECR stage's own magnetic field (0.0875 T resonance at 2.45 GHz) perturbs the Hall B(z) in the channel, so ECR+Hall is not the same accelerator as Hall-only unless compensated.", "status": "hypothesis (integration)"},
-    {"id": "H7", "statement": "Any benefit of RF+Hall or ECR+Hall exists only within a feed-pressure window (below the pre-ionizer p_min the source does not couple; above some pressure Hall-only already ionizes well).", "status": "hypothesis; model encodes it via p_min gates"}
+    {
+      "id": "H0",
+      "statement": "At matched feed state, V_d and coil currents, powering an RF or ECR pre-ionizer does not improve thrust per bus power T/P_bus over Hall-only (the CLAUDE.md 'probably robust' finding that RF/helicon pre-ionisers add nothing, extended to ECR as a test).",
+      "status": "mechanism-level model finding; untested on hardware"
+    },
+    {
+      "id": "H1",
+      "statement": "Pre-ionization raises propellant utilization eta_u on N2 (and later air-like mixtures) enough that T/P_bus increases despite the pre-ionizer bus power.",
+      "status": "hypothesis"
+    },
+    {
+      "id": "H2",
+      "statement": "Pre-ionization lowers the minimum feed pressure / mass flow at which the Hall discharge ignites and sustains (startup and low-density operability), independent of any T/P_bus change.",
+      "status": "hypothesis"
+    },
+    {
+      "id": "H3",
+      "statement": "Ions produced upstream are largely lost in the interstage (wall recombination, potential barrier), so source ionization does not reach the Hall channel.",
+      "status": "model assumption to be measured (Interstage class)"
+    },
+    {
+      "id": "H4",
+      "statement": "Pre-ionization changes the discharge stability (breathing-mode amplitude/frequency, sustainment window in V_d and coil current).",
+      "status": "hypothesis"
+    },
+    {
+      "id": "H5",
+      "statement": "Pre-ionization shifts the ion species mix (N+ vs N2+) and/or the species acceleration voltage (ionization/birth location), relevant to the non-gating E x B physics-forensics lane.",
+      "status": "hypothesis; P5-N2 E x B diagnostic (V_a(N+) far below measured in the model) is non-gating forensics only"
+    },
+    {
+      "id": "H6",
+      "statement": "The ECR stage's own magnetic field (0.0875 T resonance at 2.45 GHz) perturbs the Hall B(z) in the channel, so ECR+Hall is not the same accelerator as Hall-only unless compensated.",
+      "status": "hypothesis (integration)"
+    },
+    {
+      "id": "H7",
+      "statement": "Any benefit of RF+Hall or ECR+Hall exists only within a feed-pressure window (below the pre-ionizer p_min the source does not couple; above some pressure Hall-only already ionizes well).",
+      "status": "hypothesis; model encodes it via p_min gates"
+    }
   ],
   "key_experiment": {
     "id": "E1_same_accelerator_mode_switch",
     "principle": "One Hall accelerator (same channel, anode/gas distributor, magnetic circuit, cathode, thrust stand, facility, feed line). Only the upstream ionization stage is switched. Every comparison is a within-session PAIRED difference so that stand calibration, facility pressure effects and hardware ageing largely cancel.",
     "modes": [
-      {"id": "M0", "name": "HALL_ONLY_REMOVED", "description": "Pre-ionizer hardware absent; feed enters the Hall anode through the reference feed line."},
-      {"id": "M0b", "name": "HALL_ONLY_INSTALLED_UNPOWERED", "description": "RF or ECR stage installed and unpowered (its magnets de-energized). Control that separates geometry/conductance/neutral-pressure effects of the hardware from plasma effects. M0 vs M0b difference must be measured before attributing any M1/M2 effect to pre-ionization."},
-      {"id": "M0c", "name": "HALL_ONLY_INSTALLED_ECR_MAGNETS_ON", "description": "ECR stage installed, microwave off, ECR magnets on. Isolates the magnetic-field perturbation (H6) from the ionization effect."},
-      {"id": "M1", "name": "RF_HALL", "description": "RF pre-ionizer powered; power level swept."},
-      {"id": "M2", "name": "ECR_HALL", "description": "ECR pre-ionizer powered; power level swept."}
+      {
+        "id": "M0",
+        "name": "MODE_PREIONIZER_REMOVED",
+        "description": "Pre-ionizer hardware absent; feed enters the Hall anode through the reference feed line.",
+        "architecture_id": "hall_only (M0b: installed reference)"
+      },
+      {
+        "id": "M0b",
+        "name": "MODE_INSTALLED_UNPOWERED",
+        "description": "RF or ECR stage installed and unpowered. For an electromagnet ECR circuit: magnets de-energized. For a PERMANENT-MAGNET ECR circuit the field cannot be switched off, so M0b = M0c for that hardware and H6 (field perturbation) cannot be separated by switching the magnets; it is then isolated only by M0 vs M0b (which confounds field and conductance) plus measured B(z) in both states, and optionally a re-trimmed Hall coil condition (D7). Control that separates geometry/conductance/neutral-pressure effects of the hardware from plasma effects. M0 vs M0b difference must be measured before attributing any M1/M2 effect to pre-ionization.",
+        "architecture_id": "hall_only (M0b: installed reference)"
+      },
+      {
+        "id": "M0c",
+        "name": "MODE_INSTALLED_ECR_MAGNETS_ON",
+        "description": "ECR stage installed, microwave off, ECR magnets on (electromagnet circuit only; identical to M0b for a permanent-magnet circuit). Isolates the magnetic-field perturbation (H6) from the ionization effect.",
+        "architecture_id": "none (control state)"
+      },
+      {
+        "id": "M1",
+        "name": "MODE_RF_POWERED",
+        "description": "RF pre-ionizer powered; power level swept.",
+        "architecture_id": "rf_hall"
+      },
+      {
+        "id": "M2",
+        "name": "MODE_ECR_POWERED",
+        "description": "ECR pre-ionizer powered; power level swept.",
+        "architecture_id": "ecr_hall"
+      }
     ],
     "held_constant_within_a_comparison": [
       "anode mass flow per species (and cathode flow, gas, and flow split)",
@@ -65,82 +163,410 @@
       "thrust-stand configuration and calibration"
     ],
     "factors": [
-      {"name": "mode", "levels": ["M0", "M0b", "M0c", "M1", "M2"]},
-      {"name": "gas", "levels": ["Xe (reference, anchors to P5-Xe / literature)", "N2 (P5-N2 comparability)", "N2/O2 mixtures - LATER STAGE ONLY, owner decision; cathode and material compatibility TBD; atomic O not reproducible without a dedicated source (TBD)"]},
-      {"name": "anode mass flow", "levels": "TBD - requires the Vyovrinda feed envelope from lane_11 (bus_power_boundary_v1) and the intake/compressor delivered-flow range; must include the low-flow end where H2/H7 bite"},
-      {"name": "V_d", "levels": "TBD - requires the Vyovrinda design point; at least three levels spanning the sustainment window"},
-      {"name": "pre-ionizer bus power", "levels": "TBD - at least 0 plus three levels, including the level the architecture model would select"},
-      {"name": "comparison basis", "levels": ["matched V_d and mass flow (adds pre-ionizer power)", "matched total P_bus (Hall discharge power reduced to compensate)"]}
+      {
+        "name": "mode",
+        "levels": [
+          "M0",
+          "M0b",
+          "M0c",
+          "M1",
+          "M2"
+        ]
+      },
+      {
+        "name": "gas",
+        "levels": [
+          "Xe (reference, anchors to P5-Xe / literature)",
+          "N2 (P5-N2 comparability)",
+          "N2/O2 mixtures - LATER STAGE ONLY, owner decision; cathode and material compatibility TBD; atomic O not reproducible without a dedicated source (TBD)"
+        ]
+      },
+      {
+        "name": "anode mass flow",
+        "levels": "TBD - requires the delivered feed envelope of lane_16_feed_envelope (docs/architecture_comparison/feed_envelope/feed_envelope_v1.json) and the upstream ICD (schemas/interfaces/upstream_icd_v1.json, IF-A5); use the common point set of lane_23_comparison_grid (docs/architecture_comparison/comparison_grid/comparison_grid_v1.json) where it applies; must include the low-flow end where H2/H7 bite"
+      },
+      {
+        "name": "V_d",
+        "levels": "TBD - requires the Vyovrinda design point; at least three levels spanning the sustainment window"
+      },
+      {
+        "name": "pre-ionizer load-plane power",
+        "levels": "TBD - at least 0 plus three levels of net RF/microwave power at the source load plane (bus_power_boundary_v1 rf_source / ecr_source definition), including the level the architecture model would select; the source allocation comes from bus_power_boundary_v1 (lane_11_bus_boundary)"
+      },
+      {
+        "name": "comparison basis",
+        "levels": [
+          "matched V_d and mass flow (adds pre-ionizer power)",
+          "matched total P_bus (Hall discharge power reduced to compensate)"
+        ]
+      }
     ],
     "run_order": "Randomized/interleaved mode order within a session with a return to M0b between blocks to measure drift; each set point approached from both directions (up/down in V_d, flow and pre-ionizer power) to detect hysteresis. Repeated sessions on different days to separate day-to-day variability from mode effects.",
-    "ignition_and_sustainment_protocol": "For each mode and gas: decreasing-flow (and decreasing feed-pressure) sweep at fixed V_d until extinction, then increasing until re-ignition; record both thresholds and the ignition transient (I_d trace). Cold-start ignition attempts counted (successes/attempts). Sustainment window in V_d at fixed flow (cf. P5-N2 text: unsustainable above ~275 V / below 225 V, hallthruster_bridge/identification/p5_n2_measurement_audit_findings_v1.json F4)."
+    "ignition_and_sustainment_protocol": "For each mode and gas: decreasing-flow (and decreasing feed-pressure) sweep at fixed V_d until extinction, then increasing until re-ignition; record both thresholds and the ignition transient (I_d trace). Cold-start ignition attempts counted (successes/attempts). Sustainment window in V_d at fixed flow (cf. P5-N2 text: unsustainable above ~275 V / below 225 V, hallthruster_bridge/identification/p5_n2_measurement_audit_findings_v1.json F4).",
+    "mode_name_crosswalk": {
+      "note": "PROPOSED crosswalk to the merged lane_25_min_decisive_experiment hardware ids; owner reconciles.",
+      "M0": "lane_25_min_decisive_experiment HW-0 (bare feed, hall_only arm)",
+      "M0b": "lane_25_min_decisive_experiment HW-RF or HW-ECR with source unpowered (lane_25_min_decisive_experiment 'installed-off' within-block drift reference; R_install term)",
+      "M0c": "no lane_25_min_decisive_experiment equivalent (lane_25_min_decisive_experiment maps B(z) with source magnet on/off, M11)",
+      "M1": "lane_25_min_decisive_experiment HW-RF powered",
+      "M2": "lane_25_min_decisive_experiment HW-ECR powered",
+      "lane_06_experiment_protocol_crosswalk": "lane_06_experiment_protocol arms hall_only / rf_hall / ecr_hall, hardware configurations CFG-A (no-vent switching) / CFG-B (separate builds with sham controls)"
+    }
   },
   "measurements": [
-    {"id": "m_Id", "quantity": "discharge current I_d: DC mean and time trace", "instrument": "shunt/Hall-effect current probe, bandwidth sufficient to resolve the breathing mode (TBD - requires expected frequency band for this geometry)", "mandatory_field": "V_d, stability", "purpose": "primary Hall observable; P5-N2 admissible target type; oscillation metric", "gap_it_closes": "P5 and ECHT publish no I_d traces or oscillation amplitudes"},
-    {"id": "m_T", "quantity": "thrust", "instrument": "thrust stand with in-situ calibration, zero-drift record, cold-flow tare for each gas and mode", "mandatory_field": "T", "purpose": "primary performance", "gap_it_closes": "ECHT publishes no total thrust uncertainty or N2 cold-flow tare (echt_n2_evidence_audit_v1.json gap register)"},
-    {"id": "m_Pbus", "quantity": "actual bus power: DC input power of EVERY supply (anode, RF generator DC input, ECR amplifier/magnetron DC input, Hall magnets, ECR magnets, cathode heater/keeper, flow control, active cooling/controls)", "instrument": "DC voltage and current at each supply input, logged simultaneously", "mandatory_field": "P_bus", "purpose": "T/P_bus on the common boundary", "rule": "Never substitute forward, absorbed or reflected RF/microwave power, or Hall discharge power, for P_bus (CLAUDE.md bus_power_boundary_v1 definition). Forward/reflected/absorbed power is recorded separately as a diagnostic. Laboratory supplies are not a flight PPU: PPU losses are added by model and flagged 'assumed' until a PPU is measured."},
-    {"id": "m_Prf", "quantity": "RF / microwave forward, reflected and (estimated) absorbed power; matching network settings", "instrument": "directional coupler + power meters", "mandatory_field": "none (diagnostic)", "purpose": "separates source coupling efficiency from plasma effects; replaces assumed eta_dc_rf / eta_dc_mw / eta_feed priors"},
-    {"id": "m_species", "quantity": "ion species current fractions (N2+, N+, N2++, N++, Xe+, Xe++, cathode-gas ions)", "instrument": "E x B (Wien) probe; published numerically, not only as plots", "mandatory_field": "x_s (beam), eta_u", "purpose": "species-resolved utilization and H5", "gap_it_closes": "P5-N2 species current fractions Omega_i,n not published numerically (p5_n2_measurement_audit_findings_v1.json not_admissible_as_targets)"},
-    {"id": "m_Va", "quantity": "species acceleration voltage / ion energy distribution", "instrument": "RPA (retarding potential analyzer) plus E x B peak positions; plasma-potential correction measured at the probe location", "mandatory_field": "V_d (acceleration efficiency)", "purpose": "voltage utilization; birth location of N+ vs N2+ (H5)", "gap_it_closes": "P5-N2 V_a exists only at N1-N3 and 1 m far field (facility CEX); near-field or multiple-distance data reduce that caveat"},
-    {"id": "m_div", "quantity": "beam current and divergence at every operating point", "instrument": "Faraday probe polar sweep (with guard ring), at more than one radius to separate facility CEX", "mandatory_field": "eta_u (beam current), T (axial factor)", "purpose": "beam current for eta_u; axial thrust factor", "gap_it_closes": "P5-N2 has no divergence data at N4/N5 and two inconsistent divergence readings A/B (F2, F3); ECHT has no plume data at all"},
-    {"id": "m_TeNe", "quantity": "T_e, n_e, plasma potential (if available)", "instrument": "Langmuir probe in the pre-ionizer source and interstage; near-plume probes; internal channel probes only if non-perturbing (optional)", "mandatory_field": "none (diagnostic)", "purpose": "tests interstage transport (H3) and the chemistry domain question (T_e above 30 eV?)", "note": "the pre-registered chemistry domain is T_e <= 30 eV (45 eV mean energy); any in-channel T_e data would be evidence for the OOD/domain question but would not by itself reopen Question A (disposition A-NO requires published evidence)"},
-    {"id": "m_Iion_interstage", "quantity": "ion current delivered from the pre-ionizer into the Hall anode region", "instrument": "biased collector / Faraday cup at the interstage exit with the Hall discharge off, then indirect (I_d change) with it on", "mandatory_field": "eta_u", "purpose": "directly measures the interstage transport efficiency that the architecture model assumes (H3)"},
-    {"id": "m_ignition", "quantity": "ignition and extinction thresholds (flow, feed pressure, V_d) and cold-start success rate", "instrument": "protocol above; I_d trace", "mandatory_field": "startup", "purpose": "H2, H7"},
-    {"id": "m_stability", "quantity": "oscillation amplitude and dominant frequency of I_d (and cathode-to-ground voltage)", "instrument": "I_d and V_cg time traces, spectra", "mandatory_field": "stability", "purpose": "H4; stability envelope"},
-    {"id": "m_cathode", "quantity": "cathode conditions: gas and flow, keeper/heater power, cathode-to-ground coupling voltage, emitter temperature if measurable", "instrument": "supply logs, voltage to facility ground", "mandatory_field": "P_bus, startup, life", "purpose": "cathode is shared across modes; coupling voltage enters the acceleration potential", "gap_it_closes": "ECHT: cathode position and coupling voltage missing; P5-N2 cathode runs on Xe 0.44 mg/s, not in the 1-D model (F5)"},
-    {"id": "m_B", "quantity": "B(z) (and radial profile) measured at the operating coil currents in every mode, including M0c", "instrument": "Hall probe map, with coil currents and magnet temperatures recorded", "mandatory_field": "none (model input)", "purpose": "H6; removes the largest P5 layer-1 nuisance for our own hardware"},
-    {"id": "m_feed", "quantity": "feed state at the accelerator inlet: P_feed, T_feed, composition; mass flow per species", "instrument": "calibrated flow controllers (gas-specific calibration), inlet pressure and temperature sensors", "mandatory_field": "mdot_s, P_feed, T_feed, x_s", "purpose": "common feed boundary"},
-    {"id": "m_facility", "quantity": "background pressure (gauge location, gas correction, composition by RGA if available)", "instrument": "ion gauge(s), RGA", "mandatory_field": "none (facility state)", "purpose": "facility-ingestion interpretation; lets vacuum/facility comparisons be stated without crossing modes", "gap_it_closes": "ECHT gauge location and background composition missing"},
-    {"id": "m_thermal", "quantity": "component temperatures (anode, channel walls, magnets, pre-ionizer, cathode) at thermal equilibrium; heat rejection estimate", "instrument": "thermocouples / IR", "mandatory_field": "Q_reject", "purpose": "thermal field for lane_15; equilibrium check before a point is logged"}
+    {
+      "id": "m_Id",
+      "quantity": "discharge current I_d: DC mean and time trace",
+      "instrument": "shunt/Hall-effect current probe, bandwidth sufficient to resolve the breathing mode (TBD - requires expected frequency band for this geometry)",
+      "mandatory_field": "V_d, stability",
+      "purpose": "primary Hall observable; P5-N2 admissible target type; oscillation metric",
+      "gap_it_closes": "P5 and ECHT publish no I_d traces or oscillation amplitudes"
+    },
+    {
+      "id": "m_T",
+      "quantity": "thrust",
+      "instrument": "thrust stand with in-situ calibration, zero-drift record, cold-flow tare for each gas and mode",
+      "mandatory_field": "T",
+      "purpose": "primary performance",
+      "gap_it_closes": "ECHT publishes no total thrust uncertainty or N2 cold-flow tare (echt_n2_evidence_audit_v1.json gap register)"
+    },
+    {
+      "id": "m_Pbus",
+      "quantity": "component power on the bus_power_boundary_v1 basis: for each v1 component (hall_discharge, hall_magnet, cathode_keeper, cathode_heater, flow_control, compressor, thermal_control, housekeeping; plus rf_source for rf_hall, ecr_source and ecr_magnet for ecr_hall) the time-averaged power at its LOAD-SIDE REFERENCE PLANE, as defined in docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md section 3. For rf_source / ecr_source that plane is the net RF / microwave power (forward - reflected) at the coil/antenna feed terminals or coupling-structure input (m_Prf).",
+      "instrument": "multi-channel DC power analyzer / calibrated shunt-divider pairs at each DC load plane, simultaneous sampling; directional coupler at the source load plane (m_Prf)",
+      "mandatory_field": "P_bus (PARTIAL until the compressor term is supplied; see below)",
+      "basis_single": "ONE basis for every component including the pre-ionizers: P_bus = sum_c P_load,c / eta_c via bus_power_ledger(arch, loads, efficiencies) (abep_sim/arch_boundary.py), with eta_c the pre-registered ledger efficiency, identical in all arms for the common components. No laboratory converter or generator efficiency enters T/P_bus, and no model PPU loss is added on top of a lab DC input (that would double-count conversion). This follows the boundary contract of lane_11_bus_boundary and the bus basis of lane_25_min_decisive_experiment section 5.",
+      "lab_dc_input": "The DC input of each laboratory supply and generator is ALSO recorded, but only as efficiency evidence: eta_lab = P_load / P_DC,in at the operating point (evidence for the ledger efficiency, evidence class 'measured' for lab hardware, not flight). A secondary lab-basis ratio may be reported, labelled LAB_CHAIN, never as a bus_power_boundary_v1 result. Rationale: charging the rf_hall / ecr_hall arms at non-flight laboratory generator efficiency would bias the comparison toward H0, the hypothesis under test.",
+      "compressor": "ABSENT_IN_LAB in every mode: the laboratory feed starts at the valve outlets, so no compressor exists. The compressor row is carried explicitly as unavailable from E1 and is RECONSTRUCTED from the upstream ICD (compressor bus draw at the delivered total flow and composition of the point; evidence class 'reconstructed', with ICD revision and uncertainty), as in lane_06_experiment_protocol section 5. It is never a placeholder and never zero.",
+      "totals": "P_bus,lab = sum over the components measured in E1 (compressor excluded) is a PARTIAL_BOUNDARY total and is labelled PARTIAL_BOUNDARY wherever it appears. P_bus,v1 = P_bus,lab + P_compressor,ICD only when the ICD supplies it; otherwise P_bus,v1 is UNAVAILABLE. A common additive term does not cancel in paired ratios, so partial-boundary ratios are never reported as bus_power_boundary_v1 ratios. Common loads the lab hardware does not represent (flow_control, housekeeping, thermal_control of flight hardware) are ledger inputs with their evidence class, identical across arms (lane_25_min_decisive_experiment section 5).",
+      "rule": "Never substitute forward or absorbed RF/microwave power at a non-load plane, or Hall discharge power alone, for P_bus (CLAUDE.md bus_power_boundary_v1 definition). Reflected power is used only to form net load-plane power.",
+      "open_reconciliation": "lane_06_experiment_protocol books rf_source / ecr_source at the generator DC input (rf_generator_input / microwave_source_input); lane_25_min_decisive_experiment and the lane_11_bus_boundary contract book them at the load plane plus ledger efficiency. This package follows the contract (load plane); the owner reconciles lane_06_experiment_protocol (see lane_25_min_decisive_experiment section 13)."
+    },
+    {
+      "id": "m_Prf",
+      "quantity": "RF / microwave forward and reflected power at the source load plane (coil/antenna feed terminals or coupling-structure input), net = forward - reflected; matching-network settings; if measured upstream, the loss to the load plane is characterized separately (evidence class 'reconstructed')",
+      "instrument": "directional coupler + power meters",
+      "mandatory_field": "P_bus (rf_source / ecr_source load-plane power)",
+      "purpose": "load-plane power for the bus_power_boundary_v1 ledger; with the generator DC input it gives the measured lab source-chain efficiency as evidence against the assumed eta_dc_rf / eta_dc_mw / eta_feed priors"
+    },
+    {
+      "id": "m_species",
+      "quantity": "ion species current fractions (N2+, N+, N2++, N++, Xe+, Xe++, cathode-gas ions)",
+      "instrument": "E x B (Wien) probe; published numerically, not only as plots",
+      "mandatory_field": "x_s (beam), eta_u",
+      "purpose": "species-resolved utilization and H5",
+      "gap_it_closes": "P5-N2 species current fractions Omega_i,n not published numerically (p5_n2_measurement_audit_findings_v1.json not_admissible_as_targets)"
+    },
+    {
+      "id": "m_Va",
+      "quantity": "species acceleration voltage / ion energy distribution",
+      "instrument": "RPA (retarding potential analyzer) plus E x B peak positions; plasma-potential correction measured at the probe location",
+      "mandatory_field": "V_d (acceleration efficiency)",
+      "purpose": "voltage utilization; birth location of N+ vs N2+ (H5)",
+      "gap_it_closes": "P5-N2 V_a exists only at N1-N3 and 1 m far field (facility CEX); near-field or multiple-distance data reduce that caveat"
+    },
+    {
+      "id": "m_div",
+      "quantity": "beam current and divergence at every operating point",
+      "instrument": "Faraday probe polar sweep (with guard ring), at more than one radius to separate facility CEX",
+      "mandatory_field": "eta_u (beam current), T (axial factor)",
+      "purpose": "beam current for eta_u; axial thrust factor",
+      "gap_it_closes": "P5-N2 has no divergence data at N4/N5 and two inconsistent divergence readings A/B (F2, F3); ECHT has no plume data at all"
+    },
+    {
+      "id": "m_TeNe",
+      "quantity": "T_e, n_e, plasma potential (if available)",
+      "instrument": "Langmuir probe in the pre-ionizer source and interstage; near-plume probes; internal channel probes only if non-perturbing (optional)",
+      "mandatory_field": "none (diagnostic)",
+      "purpose": "tests interstage transport (H3) and the chemistry domain question (T_e above 30 eV?)",
+      "note": "the pre-registered chemistry domain is T_e <= 30 eV (45 eV mean energy); any in-channel T_e data would be evidence for the OOD/domain question but would not by itself reopen Question A (disposition A-NO requires published evidence)"
+    },
+    {
+      "id": "m_Iion_interstage",
+      "quantity": "ion current delivered from the pre-ionizer into the Hall anode region",
+      "instrument": "biased collector / Faraday cup at the interstage exit with the Hall discharge off, then indirect (I_d change) with it on",
+      "mandatory_field": "eta_u",
+      "purpose": "directly measures the interstage transport efficiency that the architecture model assumes (H3)"
+    },
+    {
+      "id": "m_ignition",
+      "quantity": "ignition and extinction thresholds (flow, feed pressure, V_d) and cold-start success rate",
+      "instrument": "protocol above; I_d trace",
+      "mandatory_field": "startup",
+      "purpose": "H2, H7"
+    },
+    {
+      "id": "m_stability",
+      "quantity": "oscillation amplitude and dominant frequency of I_d (and cathode-to-ground voltage)",
+      "instrument": "I_d and V_cg time traces, spectra",
+      "mandatory_field": "stability",
+      "purpose": "H4; stability envelope"
+    },
+    {
+      "id": "m_cathode",
+      "quantity": "cathode conditions: gas and flow, keeper/heater power, cathode-to-ground coupling voltage, emitter temperature if measurable",
+      "instrument": "supply logs, voltage to facility ground",
+      "mandatory_field": "P_bus, startup, life",
+      "purpose": "cathode is shared across modes; coupling voltage enters the acceleration potential",
+      "gap_it_closes": "ECHT: cathode position and coupling voltage missing; P5-N2 cathode runs on Xe 0.44 mg/s, not in the 1-D model (F5)"
+    },
+    {
+      "id": "m_B",
+      "quantity": "B(z) (and radial profile) measured at the operating coil currents in every mode, including M0c",
+      "instrument": "Hall probe map, with coil currents and magnet temperatures recorded",
+      "mandatory_field": "none (model input)",
+      "purpose": "H6; removes the largest P5 layer-1 nuisance for our own hardware"
+    },
+    {
+      "id": "m_feed",
+      "quantity": "feed state at the accelerator inlet: P_feed, T_feed, composition; mass flow per species",
+      "instrument": "calibrated flow controllers (gas-specific calibration), inlet pressure and temperature sensors",
+      "mandatory_field": "mdot_s, P_feed, T_feed, x_s",
+      "purpose": "common feed boundary (lane_16_feed_envelope; upstream ICD IF-A5)"
+    },
+    {
+      "id": "m_facility",
+      "quantity": "background pressure (gauge location, gas correction, composition by RGA if available)",
+      "instrument": "ion gauge(s), RGA",
+      "mandatory_field": "none (facility state)",
+      "purpose": "facility-ingestion interpretation; lets vacuum/facility comparisons be stated without crossing modes",
+      "gap_it_closes": "ECHT gauge location and background composition missing"
+    },
+    {
+      "id": "m_thermal",
+      "quantity": "component temperatures (anode, channel walls, magnets, pre-ionizer, cathode) at thermal equilibrium; heat rejection estimate",
+      "instrument": "thermocouples / IR",
+      "mandatory_field": "Q_reject",
+      "purpose": "thermal field for lane_15_thermal_life (abep_sim/thermal_life.py); equilibrium check before a point is logged"
+    }
   ],
   "derived_metrics": [
-    {"id": "T_over_Pbus", "definition": "T / P_bus with P_bus the full DC boundary power (m_Pbus)", "primary": true},
-    {"id": "delta_T_over_Pbus", "definition": "paired difference (M1 or M2) - M0b at matched conditions, per comparison basis; M0b - M0 reported separately", "primary": true},
-    {"id": "eta_u", "definition": "species-resolved: sum over ions of (I_beam * Omega_i / q_i) * m_i / (e * mdot_anode), with I_beam from the Faraday sweep and Omega_i from E x B; for N2 reported on a nitrogen-atom (mass) basis so that dissociation is not double counted. Cathode-gas ions excluded or reported separately.", "primary": true},
-    {"id": "eta_V", "definition": "mean species acceleration voltage (RPA / E x B, V_p corrected) / V_d"},
-    {"id": "axial_factor", "definition": "from the Faraday divergence sweep; consistency check against T, I_beam, species and V_a (closure of the thrust decomposition)"},
-    {"id": "ignition_threshold_shift", "definition": "difference in minimum sustaining flow / feed pressure between modes"},
-    {"id": "stability_envelope", "definition": "region in (mdot, V_d, coil current, pre-ionizer power) where I_d oscillation amplitude/mean is below a threshold", "threshold": "TBD - requires a PPU / stability requirement from the power subsystem (owner)"},
-    {"id": "interstage_transport_efficiency", "definition": "ion current delivered to the Hall anode region / ion current leaving the source"},
-    {"id": "energy_ledger_residual", "definition": "P_bus - (P_jet + wall/thermal loss + supply losses + radiated); reported, not forced to close", "note": "mirrors the architecture ledger gate (< 2 % residual in the model); experimental closure uncertainty to be stated"}
+    {
+      "id": "T_over_Pbus",
+      "definition": "T / P_bus on the bus_power_boundary_v1 ledger basis (m_Pbus). Reported on two labelled bases: PARTIAL_BOUNDARY (P_bus,lab) and V1 (P_bus,lab + P_compressor,ICD, only when the ICD supplies it). Only the V1 basis is a common-boundary result.",
+      "primary": true
+    },
+    {
+      "id": "delta_T_over_Pbus",
+      "definition": "paired difference (M1 or M2) - M0b at matched conditions, per comparison basis and per power basis (PARTIAL_BOUNDARY / V1); M0b - M0 reported separately. Equivalent log-ratio form ln R_arch as in lane_25_min_decisive_experiment section 3 (owner chooses the governing form).",
+      "primary": true
+    },
+    {
+      "id": "eta_u",
+      "definition": "species-resolved: sum over ions of (I_beam * Omega_i / q_i) * m_i / (e * mdot_anode), with I_beam from the Faraday sweep and Omega_i from E x B; for N2 reported on a nitrogen-atom (mass) basis so that dissociation is not double counted. Cathode-gas ions excluded or reported separately.",
+      "primary": true
+    },
+    {
+      "id": "eta_V",
+      "definition": "mean species acceleration voltage (RPA / E x B, V_p corrected) / V_d"
+    },
+    {
+      "id": "axial_factor",
+      "definition": "from the Faraday divergence sweep; consistency check against T, I_beam, species and V_a (closure of the thrust decomposition)"
+    },
+    {
+      "id": "ignition_threshold_shift",
+      "definition": "difference in minimum sustaining flow / feed pressure between modes"
+    },
+    {
+      "id": "stability_envelope",
+      "definition": "region in (mdot, V_d, coil current, pre-ionizer power) where I_d oscillation amplitude/mean is below a threshold",
+      "threshold": "TBD - requires a PPU / stability requirement from the power subsystem (owner)"
+    },
+    {
+      "id": "interstage_transport_efficiency",
+      "definition": "ion current delivered to the Hall anode region / ion current leaving the source"
+    },
+    {
+      "id": "energy_ledger_residual",
+      "definition": "P_bus - (P_jet + wall/thermal loss + supply losses + radiated); reported, not forced to close",
+      "note": "mirrors the architecture ledger gate (< 2 % residual in the model); experimental closure uncertainty to be stated"
+    }
   ],
   "accuracy_requirements": {
     "principle": "Accuracy is specified by what must be distinguishable, not by a target number chosen in advance. The decisive quantities are paired differences between modes, so the requirement applies to the uncertainty of the DIFFERENCE, including run-to-run repeatability and drift, not only to single-instrument accuracy.",
     "rules": [
-      {"id": "R1", "metric": "delta_T_over_Pbus", "requirement": "The uncertainty of the paired difference must be small enough that the decision threshold delta_req (the break-even gain at which the pre-ionizer's added bus power, mass, thermal load and complexity are repaid) is resolvable; proposed: expanded uncertainty (k=2) < delta_req/2 so a mid-band outcome is not ambiguous.", "delta_req": "TBD - requires lane_28_break_even surfaces on bus_power_boundary_v1 (lane_11) with lane_15 thermal/life and the ADA-4 mass BOM (lane_21). The factor 1/2 is a proposed convention, owner decision."},
-      {"id": "R2", "metric": "eta_u", "requirement": "Resolve the eta_u change that would make T/P_bus cross delta_req, given the measured P_bus increase; i.e. sigma(delta eta_u) derived from R1 through T ~ mdot * eta_u * v_i (model-derived propagation, stated with the propagation used).", "value": "TBD - derived from R1 once delta_req exists"},
-      {"id": "R3", "metric": "ignition_threshold_shift", "requirement": "Flow and feed-pressure resolution finer than the gap between the Hall-only threshold and the lowest feed state the Vyovrinda intake/compressor can deliver in the RFP altitude range (180-230 km, CLAUDE.md RFP envelope).", "value": "TBD - requires lane_11 feed envelope"},
-      {"id": "R4", "metric": "I_d, T (for transport-closure testing on our hardware)", "requirement": "Measurement uncertainty smaller than the spread of predictions across the transport closures being discriminated, and no worse than the literature uncertainties that already limited P5 (P5-N2: thrust sigma 2.6 mN, I_d from P_d at 3 significant figures with no stated I_d uncertainty; blind I_d criterion 15 % was missed at Xe2 by -15.56 %). Sources: hallthruster_bridge/identification/p5_n2_measurement_audit_findings_v1.json; CLAUDE.md next-work item 1.", "value": "spread across closures on our geometry: TBD - requires an admitted credible set (currently empty) or an owner-approved non-design sensitivity study; screening candidates never produce design Hall maps"},
-      {"id": "R5", "metric": "species fractions and V_a", "requirement": "Uncertainty small enough to decide whether the N+ vs N2+ acceleration-voltage ordering is reproduced and whether pre-ionization moves it (H5). Reference only: P5-N2 E x B V_a sigma 11.6 V (literature, far field).", "value": "TBD - requires probe design review"},
-      {"id": "R6", "metric": "P_bus", "requirement": "Each supply's DC input measured simultaneously; the uncertainty of total P_bus must not dominate R1."},
-      {"id": "R7", "metric": "repeatability", "requirement": "Session-to-session repeatability of M0b (return points) must be quantified and included in every paired-difference uncertainty; a mode effect smaller than M0b drift is reported as unresolved, not as zero."}
-    ]
+      {
+        "id": "R1",
+        "metric": "delta_T_over_Pbus",
+        "requirement": "The uncertainty of the paired difference must be small enough that the decision threshold delta_req (the break-even gain at which the pre-ionizer's added bus power, mass, thermal load and complexity are repaid) is resolvable; proposed: expanded uncertainty (k=2) < delta_req/2 so a mid-band outcome is not ambiguous.",
+        "delta_req": "TBD - requires lane_28_break_even surfaces on bus_power_boundary_v1 (lane_11_bus_boundary) with lane_15_thermal_life and the mass BOM of lane_21_mass_bom. The factor 1/2 and k=2 are proposed conventions (owner decision), superseded by the multiplicity-corrected convention if the owner adopts lane_25_min_decisive_experiment's.",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "R2",
+        "metric": "eta_u",
+        "requirement": "Resolve the eta_u change that would make T/P_bus cross delta_req, given the measured P_bus increase; i.e. sigma(delta eta_u) derived from R1 through T ~ mdot * eta_u * v_i (model-derived propagation, stated with the propagation used).",
+        "value": "TBD - derived from R1 once delta_req exists",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "R3",
+        "metric": "ignition_threshold_shift",
+        "requirement": "Flow and feed-pressure resolution finer than the gap between the Hall-only threshold and the lowest feed state the Vyovrinda intake/compressor can deliver in the RFP altitude range (180-230 km, CLAUDE.md RFP envelope).",
+        "value": "TBD - requires the lane_16_feed_envelope delivered feed envelope and upstream ICD IF-A5",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "R4",
+        "metric": "I_d, T (for transport-closure testing on our hardware)",
+        "requirement": "Measurement uncertainty smaller than the spread of predictions across the transport closures being discriminated, and no worse than the literature uncertainties that already limited P5 (P5-N2: thrust sigma 2.6 mN, I_d from P_d at 3 significant figures with no stated I_d uncertainty; blind I_d criterion 15 % was missed at Xe2 by -15.56 %). Sources: hallthruster_bridge/identification/p5_n2_measurement_audit_findings_v1.json; CLAUDE.md next-work item 1.",
+        "value": "spread across closures on our geometry: TBD - requires an admitted credible set (currently empty) or an owner-approved non-design sensitivity study; screening candidates never produce design Hall maps",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "R5",
+        "metric": "species fractions and V_a",
+        "requirement": "Uncertainty small enough to decide whether the N+ vs N2+ acceleration-voltage ordering is reproduced and whether pre-ionization moves it (H5). Reference only: P5-N2 E x B V_a sigma 11.6 V (literature, far field).",
+        "value": "TBD - requires probe design review",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "R6",
+        "metric": "P_bus",
+        "requirement": "Every load-plane power channel (m_Pbus, m_Prf) sampled simultaneously; the uncertainty of P_bus on the ledger basis (including the ledger-efficiency bounds and, on the V1 basis, the ICD compressor uncertainty) must not dominate R1.",
+        "status": "PROPOSED"
+      },
+      {
+        "id": "R7",
+        "metric": "repeatability",
+        "requirement": "Session-to-session repeatability of M0b (return points) must be quantified and included in every paired-difference uncertainty; a mode effect smaller than M0b drift is reported as unresolved, not as zero.",
+        "status": "PROPOSED"
+      }
+    ],
+    "convention_status": "PROPOSED. Two conventions exist in merged drafts: this package's R1 (single comparison, expanded uncertainty k=2 < delta_req/2 on the paired difference) and lane_25_min_decisive_experiment section 6 (ln R_arch classified against a PROPOSED +/-5 % band with simultaneous Student-t intervals at Welch-Satterthwaite dof, m = 14 comparisons, k = 3.1727; lane_06_experiment_protocol uses HIGHER/LOWER/NOT_DISTINGUISHED with Holm step-down). This package does NOT claim to govern: for a pre-registered run the lane_25_min_decisive_experiment simultaneous-interval convention (or whatever the owner adopts on reconciliation) governs, and R1 is then read as the discussion-level statement 'the interval must be narrow enough to resolve delta_req', with the multiplicity-corrected coverage factor replacing k=2."
   },
   "decision_logic": [
-    {"id": "D1", "outcome": "delta_T_over_Pbus(M1 or M2) resolvably > +delta_req at matched mdot and V_d, within the delivered feed envelope", "supports": "H1 for that pre-ionizer; CONDITIONAL_BASELINE candidacy for RF_HALL or ECR_HALL within the tested envelope", "refutes": "H0 within the tested envelope", "does_not_establish": "absolute flight performance, life, or ABEP closure"},
-    {"id": "D2", "outcome": "|delta_T_over_Pbus| < delta_req (resolved) and no ignition-threshold shift", "supports": "H0; HALL_ONLY as the simpler conditional baseline", "refutes": "H1 and H2 for that pre-ionizer within the tested envelope"},
-    {"id": "D3", "outcome": "delta_T_over_Pbus resolvably < 0 (pre-ionizer costs more than it returns) but ignition/sustainment threshold resolvably lower", "supports": "H2 without H1: the pre-ionizer is a startup/low-density enabler, not a performance improver", "decision": "no winner; the choice depends on whether the delivered feed state falls below the Hall-only threshold (lane_11 feed envelope, lane_28 break-even); consider duty-cycled pre-ionization as a separate engineering question"},
-    {"id": "D4", "outcome": "eta_u rises but T/P_bus falls or is unchanged", "supports": "ionization cost in the source exceeds the acceleration gain; points to source coupling or interstage loss", "next": "use m_Prf and m_Iion_interstage to attribute to coupling vs transport"},
-    {"id": "D5", "outcome": "interstage-delivered ion current is a small fraction of the source ion current", "supports": "H3", "refutes": "architecture-model assumption of efficient interstage transport (Interstage class) for that geometry", "decision": "no architecture conclusion until an interstage redesign is tested; do not attribute to the Hall accelerator"},
-    {"id": "D6", "outcome": "M0b differs resolvably from M0", "supports": "hardware (conductance/neutral pressure) effect", "decision": "all M1/M2 effects are referenced to M0b, not M0; report the installation penalty separately (it is a real cost of the architecture)"},
-    {"id": "D7", "outcome": "M0c differs resolvably from M0b (ECR magnets alone change I_d, T or B(z))", "supports": "H6", "decision": "ECR_HALL is a different accelerator field; compare at re-matched B(z) (coil re-trim) as an additional pre-declared condition, and report both"},
-    {"id": "D8", "outcome": "stability envelope changes (wider/narrower sustainment window; oscillation amplitude change)", "supports": "H4 (direction as measured)", "decision": "feeds lane_24 hard gates only if a mode cannot be operated stably anywhere in the delivered feed envelope"},
-    {"id": "D9", "outcome": "a mode cannot ignite or sustain anywhere in the delivered feed envelope, repeatably", "supports": "hard-gate evidence", "decision": "ELIMINATED_WITHIN_TESTED_ENVELOPE for that architecture only through lane_24 (demonstrated hard gate), never extrapolated beyond the tested envelope"},
-    {"id": "D10", "outcome": "species mix or species V_a shifts with pre-ionization", "supports": "H5", "decision": "non-gating: feeds the E x B physics-forensics lane; never used for tuning"},
-    {"id": "D11", "outcome": "all differences below resolution (R7 drift dominates)", "supports": "nothing", "decision": "UNRESOLVED; report as such; improve repeatability before repeating; do not read as H0"}
+    {
+      "id": "D1",
+      "outcome": "delta_T_over_Pbus(M1 or M2) resolvably > +delta_req at matched mdot and V_d, within the delivered feed envelope, on the V1 power basis (a PARTIAL_BOUNDARY-only result is reported but is not decisive)",
+      "supports": "H1 for that pre-ionizer; CONDITIONAL_BASELINE candidacy for rf_hall or ecr_hall within the tested envelope",
+      "refutes": "H0 within the tested envelope",
+      "does_not_establish": "absolute flight performance, life, or ABEP closure",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "D2",
+      "outcome": "|delta_T_over_Pbus| < delta_req (resolved, V1 basis) and no ignition-threshold shift",
+      "supports": "H0; hall_only as the simpler conditional baseline",
+      "refutes": "H1 and H2 for that pre-ionizer within the tested envelope",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "D3",
+      "outcome": "delta_T_over_Pbus resolvably < 0 (pre-ionizer costs more than it returns) but ignition/sustainment threshold resolvably lower",
+      "supports": "H2 without H1: the pre-ionizer is a startup/low-density enabler, not a performance improver",
+      "decision": "no winner; the choice depends on whether the delivered feed state falls below the Hall-only threshold (lane_16_feed_envelope, lane_28_break_even); consider duty-cycled pre-ionization as a separate engineering question",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "D4",
+      "outcome": "eta_u rises but T/P_bus falls or is unchanged",
+      "supports": "ionization cost in the source exceeds the acceleration gain; points to source coupling or interstage loss",
+      "next": "use m_Prf and m_Iion_interstage to attribute to coupling vs transport",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "D5",
+      "outcome": "interstage-delivered ion current is a small fraction of the source ion current",
+      "supports": "H3",
+      "refutes": "architecture-model assumption of efficient interstage transport (Interstage class) for that geometry",
+      "decision": "no architecture conclusion until an interstage redesign is tested; do not attribute to the Hall accelerator",
+      "status": "PROPOSED",
+      "model_under_test": "lane_18_interstage (abep_sim/interstage.py, docs/architecture_comparison/interstage/INTERSTAGE_MODEL.md)"
+    },
+    {
+      "id": "D6",
+      "outcome": "M0b differs resolvably from M0",
+      "supports": "hardware (conductance/neutral pressure) effect",
+      "decision": "all M1/M2 effects are referenced to M0b, not M0; report the installation penalty separately (it is a real cost of the architecture)",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "D7",
+      "outcome": "M0c differs resolvably from M0b (ECR magnets alone change I_d, T or B(z))",
+      "supports": "H6",
+      "decision": "ecr_hall is a different accelerator field; compare at re-matched B(z) (coil re-trim) as an additional pre-declared condition, and report both",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "D8",
+      "outcome": "stability envelope changes (wider/narrower sustainment window; oscillation amplitude change)",
+      "supports": "H4 (direction as measured)",
+      "decision": "feeds lane_24_hard_gates only if a mode cannot be operated stably anywhere in the delivered feed envelope",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "D9",
+      "outcome": "a mode cannot ignite or sustain anywhere in the delivered feed envelope, repeatably",
+      "supports": "hard-gate evidence",
+      "decision": "ELIMINATED_WITHIN_TESTED_ENVELOPE for that architecture only through lane_24_hard_gates (demonstrated hard gate), never extrapolated beyond the tested envelope",
+      "status": "PROPOSED"
+    },
+    {
+      "id": "D10",
+      "outcome": "species mix or species V_a shifts with pre-ionization",
+      "supports": "H5",
+      "decision": "non-gating: feeds the E x B physics-forensics lane; never used for tuning",
+      "status": "PROPOSED",
+      "consumer": "lane_29_exb_physics (docs/forensics/p5_n2_v1/exb_physics/), non-gating"
+    },
+    {
+      "id": "D11",
+      "outcome": "all differences below resolution (R7 drift dominates)",
+      "supports": "nothing",
+      "decision": "UNRESOLVED; report as such; improve repeatability before repeating; do not read as H0",
+      "status": "PROPOSED"
+    }
   ],
   "transport_identifiability_measurements": {
     "context": "P5-Xe transport is not uniquely identifiable; P5-N2 v1 left all candidates INCONCLUSIVE (66 % of run-readings out of chemistry domain). The gaps below are the ones recorded in the repository. On our own hardware they can be closed by measurement (level 1), which removes layer-1 nuisance that literature cannot.",
     "items": [
-      {"id": "T1", "measurement": "B(z) measured (not FEMM) at the operating coil currents, with coil currents recorded per point and axis origin tied to the anode and exit plane", "gap": "P5: coil currents and N2 field shape unpublished; registration L38-hist / L32-anode / L32-exit and coil shape 1.6/3.0 kW carried as layer-1 hypotheses (p5_n2_measurement_audit_findings_v1.json F6; CLAUDE.md item 1). ECHT: measured B only at 2 A; '130 G' is FEMM at 3 A (echt_n2/README.md)"},
-      {"id": "T2", "measurement": "channel depth, radii and anode / gas-distributor position (as-built drawing, measured)", "gap": "P5: 32 vs 38 mm conflict (docs/EVIDENCE.md register); ECHT: radii and anode position missing"},
-      {"id": "T3", "measurement": "per-point plume divergence and beam current (Faraday), at every operating point", "gap": "P5-N2: none at N4/N5; readings A/B differ up to 11 % in axial factor at N3 (F2, F3); ECHT: no plume data"},
-      {"id": "T4", "measurement": "I_d time traces and spectra at every point (mean, amplitude, frequency)", "gap": "not published for P5 or ECHT; the P5-Xe identification used a quiet/oscillatory regime classification that measured traces would test directly"},
-      {"id": "T5", "measurement": "species current fractions (numerical) and species acceleration voltages, preferably at more than one distance", "gap": "P5-N2 Omega_i,n unpublished numerically; V_a only N1-N3 at 1 m"},
-      {"id": "T6", "measurement": "cathode coupling voltage and cathode gas/flow", "gap": "ECHT missing; P5-N2 cathode on Xe (F5)"},
-      {"id": "T7", "measurement": "facility background pressure with gauge location, gas correction and composition; if possible two background pressures per point", "gap": "facility-ingestion interpretation is a layer-1 nuisance (Brabston Eq. 13, level 6 correlation)"},
-      {"id": "T8", "measurement": "thrust with total uncertainty budget and per-gas cold-flow tare", "gap": "ECHT: fit-only uncertainties, no N2 tare, reduction ambiguity"},
-      {"id": "T9", "measurement": "near-channel T_e (if a non-perturbing diagnostic is available)", "gap": "relevant to whether T_e > 30 eV occurs in reality (v1 OOD driver); evidence for the physics lane only, not a basis for extending rate-table limits (CLAUDE.md: extension needs independent published evidence and a new v2 pre-registration)"}
+      {
+        "id": "T1",
+        "measurement": "B(z) measured (not FEMM) at the operating coil currents, with coil currents recorded per point and axis origin tied to the anode and exit plane",
+        "gap": "P5: coil currents and N2 field shape unpublished; registration L38-hist / L32-anode / L32-exit and coil shape 1.6/3.0 kW carried as layer-1 hypotheses (p5_n2_measurement_audit_findings_v1.json F6; CLAUDE.md item 1). ECHT: measured B only at 2 A; '130 G' is FEMM at 3 A (echt_n2/README.md)"
+      },
+      {
+        "id": "T2",
+        "measurement": "channel depth, radii and anode / gas-distributor position (as-built drawing, measured)",
+        "gap": "P5: 32 vs 38 mm conflict (docs/EVIDENCE.md register); ECHT: radii and anode position missing"
+      },
+      {
+        "id": "T3",
+        "measurement": "per-point plume divergence and beam current (Faraday), at every operating point",
+        "gap": "P5-N2: none at N4/N5; readings A/B differ up to 11 % in axial factor at N3 (F2, F3); ECHT: no plume data"
+      },
+      {
+        "id": "T4",
+        "measurement": "I_d time traces and spectra at every point (mean, amplitude, frequency)",
+        "gap": "not published for P5 or ECHT; the P5-Xe identification used a quiet/oscillatory regime classification that measured traces would test directly"
+      },
+      {
+        "id": "T5",
+        "measurement": "species current fractions (numerical) and species acceleration voltages, preferably at more than one distance",
+        "gap": "P5-N2 Omega_i,n unpublished numerically; V_a only N1-N3 at 1 m"
+      },
+      {
+        "id": "T6",
+        "measurement": "cathode coupling voltage and cathode gas/flow",
+        "gap": "ECHT missing; P5-N2 cathode on Xe (F5)"
+      },
+      {
+        "id": "T7",
+        "measurement": "facility background pressure with gauge location, gas correction and composition; if possible two background pressures per point",
+        "gap": "facility-ingestion interpretation is a layer-1 nuisance (Brabston Eq. 13, level 6 correlation)"
+      },
+      {
+        "id": "T8",
+        "measurement": "thrust with total uncertainty budget and per-gas cold-flow tare",
+        "gap": "ECHT: fit-only uncertainties, no N2 tare, reduction ambiguity"
+      },
+      {
+        "id": "T9",
+        "measurement": "near-channel T_e (if a non-perturbing diagnostic is available)",
+        "gap": "relevant to whether T_e > 30 eV occurs in reality (v1 OOD driver); evidence for the physics lane only, not a basis for extending rate-table limits (CLAUDE.md: extension needs independent published evidence and a new v2 pre-registration)"
+      }
     ],
     "use_rule": "If these data are used to test transport closures, (1) audit measurements and uncertainties, (2) pre-register acceptance criteria, (3) then simulate; never retune; validation modes (vacuum / facility) are never crossed."
   },
@@ -162,23 +588,40 @@
     "RF/helicon pre-ionisers add nothing (mechanism-level model finding, CLAUDE.md) - this is hypothesis H0, which E1 tests on hardware."
   ],
   "links_to_lanes": {
-    "note": "Lane ids as named in CLAUDE.md / the owner's instructions; lane_registry_v1.json lives on the execution branch, not on this base - verify ids.",
-    "lane_06": "experiment protocol (this plan is an input)",
-    "lane_11": "bus_power_boundary_v1 (P_bus definition, feed envelope) - required for R1, R3",
-    "lane_12": "comparison harness (mandatory fields mapping)",
-    "lane_15": "thermal/life (Q_reject, component temperatures)",
-    "lane_19": "cathode integration (m_cathode)",
-    "lane_21": "mass BOM (break-even inputs)",
-    "lane_24": "hard gates (D8, D9)",
-    "lane_25": "minimum decisive experiment (E1 is a candidate superset; lane_25 decides the minimum)",
-    "lane_28_break_even": "delta_req for R1"
+    "note": "Machine ids from docs/orchestration/lane_registry_v1.json at execution-branch commit e15f66f. Paths are referenced read-only; nothing here imports or depends on them.",
+    "lane_06_experiment_protocol": "full common-condition protocol (docs/architecture_comparison/experiment_protocol/); its section 17 defers 'alignment with docs/experiments/' to owner review. Reciprocal note: this package defers to lane_06_experiment_protocol for the protocol and to the owner for reconciling its generator-DC-input booking with the load-plane contract.",
+    "lane_07_rf_evidence": "RF source evidence (docs/evidence/rf_source/): priors for p_min and source-chain efficiency that E1 tests",
+    "lane_08_ecr_evidence": "ECR source evidence (docs/evidence/ecr_source/): as lane_07_rf_evidence for ECR",
+    "lane_09_hall_sustainment": "Hall sustainment evidence (docs/evidence/hall_sustainment/): H2/H7 priors",
+    "lane_11_bus_boundary": "bus_power_boundary_v1 (abep_sim/arch_boundary.py; docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md): P_bus definition and load-plane basis for m_Pbus",
+    "lane_12_arch_harness": "comparison harness (abep_sim/arch_compare.py): mandatory-field mapping",
+    "lane_15_thermal_life": "thermal/life (abep_sim/thermal_life.py): Q_reject, component temperatures",
+    "lane_16_feed_envelope": "delivered feed envelope (docs/architecture_comparison/feed_envelope/feed_envelope_v1.json): flow levels, R3, D3",
+    "lane_18_interstage": "interstage model (abep_sim/interstage.py): H3, D5 test it",
+    "lane_19_cathode_integration": "cathode integration (m_cathode)",
+    "lane_21_mass_bom": "mass BOM (abep_sim/mass_bom.py): break-even inputs",
+    "lane_23_comparison_grid": "common operating points (docs/architecture_comparison/comparison_grid/comparison_grid_v1.json) that E1 should use",
+    "lane_24_hard_gates": "hard gates (abep_sim/hard_gates.py): D8, D9",
+    "lane_25_min_decisive_experiment": "minimum decisive experiment (docs/architecture_comparison/minimum_decisive_experiment/): same paired experiment; E1 is a discussion-level superset (adds M0c, Xe reference, transport-identifiability items); lane_25_min_decisive_experiment owns the minimum, the decisive-metric convention and the uncertainty derivation unless the owner decides otherwise",
+    "lane_28_break_even": "delta_req for R1",
+    "lane_29_exb_physics": "E x B / species-acceleration forensics (docs/forensics/p5_n2_v1/exb_physics/): consumer of H5 / D10 data, non-gating"
   },
   "mandatory_field_mapping": {
     "source": "CLAUDE.md admissibility rule (bus_power_boundary_v1 mandatory fields)",
-    "mdot_s": "m_feed", "P_feed": "m_feed", "T_feed": "m_feed", "x_s": "m_feed (inlet), m_species (beam)",
-    "V_d": "supply log", "T": "m_T", "P_bus": "m_Pbus", "m": "TBD - hardware mass by weighing (lab hardware is not flight mass; flag)",
-    "Q_reject": "m_thermal (estimate)", "life": "not measurable in E1; erosion witness samples / profilometry optional, hours-class only - flag as unavailable for flight life",
-    "startup": "m_ignition", "eta_u": "derived eta_u", "stability": "m_stability"
+    "mdot_s": "m_feed",
+    "P_feed": "m_feed",
+    "T_feed": "m_feed",
+    "x_s": "m_feed (inlet), m_species (beam)",
+    "V_d": "supply log",
+    "T": "m_T",
+    "P_bus": "m_Pbus + m_Prf on the ledger (load-plane) basis: PARTIAL_BOUNDARY from E1 (compressor ABSENT_IN_LAB, explicitly unavailable from the experiment); complete only as P_bus,v1 = P_bus,lab + P_compressor,ICD (reconstructed from the upstream ICD) when the ICD supplies it, otherwise UNAVAILABLE",
+    "m": "TBD - hardware mass by weighing (lab hardware is not flight mass; flag)",
+    "Q_reject": "m_thermal (estimate)",
+    "life": "not measurable in E1; erosion witness samples / profilometry optional, hours-class only - flag as unavailable for flight life",
+    "startup": "m_ignition",
+    "eta_u": "derived eta_u",
+    "stability": "m_stability",
+    "admissibility_note": "Per CLAUDE.md, a comparison is admissible only if every mandatory field is populated or explicitly unavailable. E1 alone leaves P_bus partial (compressor), m lab-only and life unavailable; these are stated explicitly, not filled."
   },
   "questions_for_iist_discussion": [
     "Facility: pumping speed and background pressure at N2 flows of interest; gauge locations; RGA availability.",
@@ -199,7 +642,47 @@
     "hallthruster_bridge/identification/p5_n2_measurement_audit_findings_v1.json",
     "hallthruster_bridge/identification/echt_n2/README.md",
     "hallthruster_bridge/identification/echt_n2/echt_n2_evidence_audit_v1.json",
-    "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores_report.md"
+    "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores_report.md",
+    "docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md (e15f66f)",
+    "docs/architecture_comparison/experiment_protocol/EXPERIMENT_PROTOCOL_DRAFT.md (e15f66f)",
+    "docs/architecture_comparison/minimum_decisive_experiment/MINIMUM_DECISIVE_EXPERIMENT_DRAFT.md (e15f66f)",
+    "docs/orchestration/lane_registry_v1.json (e15f66f)"
   ],
-  "external_sources": "None accessed for this document. Literature cited here (Brabston et al. JPP 2025 doi:10.2514/1.B39623; Marchioni MSc thesis 2020; Shabshelowitz 2013 - verify) is cited only through the repository audit files that record their access."
+  "external_sources": "Accessed for revision r2 (2026-09-26): Crossref and OpenAlex metadata/abstract for doi:10.2514/1.B35041 (see prior_evidence). Otherwise literature (Brabston et al. JPP 2025 doi:10.2514/1.B39623; Marchioni MSc thesis 2020) is cited only through the repository audit files that record their access. The historical RF p_min prior 'Shabshelowitz 2013' in docs/HISTORY.md remains 'verify' (not the same item as the 2014 JPP paper).",
+  "architecture_ids": {
+    "contract": "Shared ids used exactly: 'hall_only', 'rf_hall', 'ecr_hall' (abep_sim/arch_boundary.py ARCHITECTURES; docs/architecture_comparison/comparison_grid/comparison_grid_v1.json; docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json).",
+    "modes_vs_architectures": "Modes (M0, M0b, M0c, M1, M2) are hardware/power STATES of the experiment, not architecture ids. Architecture-level results are reported under hall_only (M0, with M0b as installed reference), rf_hall (M1) and ecr_hall (M2)."
+  },
+  "milestones": {
+    "status": "PROPOSED statement for the owner",
+    "A_conditional_selection": {
+      "supports": "Measured, paired, common-boundary (V1 basis) differences and threshold shifts per architecture and condition, enough for 'architecture X is baseline provided conditions ... are demonstrated' (D1-D3, with the break-even source-chain efficiency as a condition since flight generators are not tested). Does not need Physics Baseline 1.0.",
+      "needs": "delta_req from lane_28_break_even; feed envelope (lane_16_feed_envelope, ICD IF-A5); ledger efficiencies and the ICD compressor draw (V1 basis); owner reconciliation of conventions with lane_25_min_decisive_experiment / lane_06_experiment_protocol; hardware and facility (section 10 questions)."
+    },
+    "B_physics_backed_selection": {
+      "supports": "Transport-independent source data (load-plane source power, interstage delivered current, species) and Hall identifiability data on the tested hardware (measured B(z) with coil currents, as-built geometry, I_d traces, per-point divergence, species fractions).",
+      "blocked_by": "No admitted Hall transport closure (credible set empty, gate 3 FAIL); O/O2 chemistry not done (CLAUDE.md next work 4); any use of E1 data as promotion evidence needs its own audit and pre-registration before measurement; the second lens required for single-lens-v1 lanes."
+    },
+    "C_proposal_PDR_freeze": {
+      "supports": "Measured load-plane power per consumer, lab source-chain efficiency as ledger evidence, component temperatures (Q_reject estimate), ignition statistics.",
+      "needs": "Integrated mass (lane_21_mass_bom), thermal and life (lane_15_thermal_life, docs/evidence/wall_life/), cathode (lane_19_cathode_integration), flight-representative PPU and generator efficiencies, mission closure. E1 alone does not support C; flight life is unavailable from it."
+    }
+  },
+  "prior_evidence": [
+    {
+      "id": "REF-SHABSHELOWITZ2014",
+      "citation": "A. Shabshelowitz, A. D. Gallimore, P. Y. Peterson, 'Performance of a Helicon Hall Thruster Operating with Xenon, Argon, and Nitrogen', J. Propulsion and Power 30(3):664-671 (2014), doi:10.2514/1.B35041",
+      "access": "metadata via Crossref API (api.crossref.org/works/10.2514/1.B35041) and abstract via OpenAlex API, accessed 2026-09-26; full text not accessed (abstract only)",
+      "abstract_statement": "Single- and two-stage operation measured on xenon, argon and nitrogen (nitrogen at 200 V); during two-stage operation thrust marginally increased with RF power while propulsive efficiency and thrust-to-power both decreased; probe diagnostics suggest a slight increase in propellant efficiency insufficient to overcome the added power.",
+      "relevance": "Published hardware precedent for H0 vs H1 on an RF (helicon) pre-ionizer including N2, and a reason delta_req must be resolvable. Evidence class: measured (literature, different hardware; level per docs/EVIDENCE.md is owner-classified). Numeric flow rates and the basis on which RF power was counted (DC input vs forward) are not recovered from the abstract: verify before any quantitative use."
+    }
+  ],
+  "proposed_register": [
+    "R1-R7 accuracy rules (incl. k=2 and delta_req/2 convention)",
+    "D1-D11 decision rules",
+    "mode set M0/M0b/M0c/M1/M2 and crosswalk to lane_25_min_decisive_experiment HW ids",
+    "comparison bases (matched mdot/V_d; matched P_bus)",
+    "PARTIAL_BOUNDARY / V1 reporting rule (follows lane_06_experiment_protocol; owner confirms)",
+    "M0b = M0c for permanent-magnet ECR"
+  ]
 }

@@ -1,8 +1,27 @@
 # Discriminating experiments: Hall-only vs RF+Hall vs ECR+Hall
 
-Status: **draft for the IIST / professor discussion (2026-09-26).** It is not pre-registered, not approved, and commits no
-hardware. The machine-readable version is `docs/experiments/experiment_plan_v1.json`, and it is the authoritative list of
-measurements, rules and decision rows.
+Status: **draft for the IIST / professor discussion (2026-09-26), revision r2** (second-lens repair against the
+execution branch at `e15f66f`). It is not pre-registered, not approved, and commits no hardware. **Every threshold,
+convention and decision rule here is PROPOSED for the owner.** The machine-readable version is
+`docs/experiments/experiment_plan_v1.json`, and it is the authoritative list of measurements, rules and decision rows.
+
+Architecture ids are the shared contract ids `hall_only`, `rf_hall`, `ecr_hall` (`abep_sim/arch_boundary.py`,
+`comparison_grid_v1.json`). The modes M0–M2 below are experimental hardware/power states, not architecture ids.
+
+**Relation to merged lanes.** `lane_25_min_decisive_experiment`
+(`docs/architecture_comparison/minimum_decisive_experiment/`) designs the *minimum* version of the same paired experiment,
+and `lane_06_experiment_protocol` (`docs/architecture_comparison/experiment_protocol/`) the full protocol. This package is
+the discussion-level superset for IIST (it adds M0c, an Xe reference and the transport-identifiability items). It does
+**not** govern: where the conventions differ (§5, §9), lane_25_min_decisive_experiment/lane_06_experiment_protocol or the owner's reconciliation govern a
+pre-registered run. lane_06_experiment_protocol §17 defers alignment with `docs/experiments/` to owner review; this is the reciprocal note.
+
+## 0. Milestones
+
+| milestone | what E1 supports | what is still needed / what blocks it |
+|---|---|---|
+| **A** conditional selection | Paired, common-boundary (V1 basis, §9) differences Δ(T/P_bus), ignition-threshold shifts and stability changes per architecture and condition: enough for "architecture X is baseline provided …" (D1–D3), with the flight source-chain efficiency stated as a condition. Does not need Physics Baseline 1.0. | δ_req from `lane_28_break_even`; the delivered feed envelope (`lane_16_feed_envelope`, ICD IF-A5); ledger efficiencies and the ICD compressor draw; owner reconciliation with lane_25_min_decisive_experiment/lane_06_experiment_protocol; hardware and facility (§10). |
+| **B** physics-backed selection | Transport-independent source data (load-plane source power, interstage delivered current, species) and identifiability data on the tested hardware (§7). | No admitted Hall transport closure (credible set ∅, gate 3 FAIL); no O/O₂ chemistry; any use of E1 data as promotion evidence needs its own audit and pre-registration *before* measurement; second lens for single-lens lanes. |
+| **C** proposal/PDR freeze | Measured load-plane power per consumer, lab source-chain efficiency as ledger evidence, temperatures, ignition statistics. | Integrated mass (`lane_21_mass_bom`), thermal/life (`lane_15_thermal_life`, `docs/evidence/wall_life/`), cathode (`lane_19_cathode_integration`), flight PPU/generator efficiencies, mission closure. E1 alone does not support C; flight life is unavailable from it. |
 
 ## 1. Why this experiment, and why now
 
@@ -22,6 +41,14 @@ measurements, rules and decision rows.
   None of these priors has been measured on hardware. A superseded 0-D closure ranked pre-ionizer gain, Hall η_u and
   interstage transport among the dominant sensitivities (docs/HISTORY.md v0.3). That ranking indicates which priors
   matter. Its absolute results are withdrawn.
+- **Published precedent.** Shabshelowitz, Gallimore & Peterson, "Performance of a Helicon Hall Thruster Operating with
+  Xenon, Argon, and Nitrogen", *J. Propulsion and Power* 30(3):664–671 (2014), doi:10.2514/1.B35041 (metadata via
+  Crossref, abstract via OpenAlex, accessed 2026-09-26; **abstract only**). They measured single- and two-stage operation,
+  including nitrogen at 200 V. In two-stage operation thrust increased only marginally with RF power, while propulsive
+  efficiency and thrust-to-power both decreased; probe diagnostics suggested a slight rise in propellant efficiency that
+  did not overcome the added power. That is real-hardware evidence for H0 over H1 on a different device, and a reason
+  δ_req must be resolvable. The flow rates and the basis on which RF power was counted are not recoverable from the
+  abstract (verify before quantitative use).
 - Under docs/EVIDENCE.md, hardware measurement supersedes literature-derived assumptions within the hardware's
   validated domain. Measured on Vyovrinda hardware, the result is level-1 evidence. Measured on an IIST lab thruster, it
   is level 2 or 3, depending on how similar that thruster is (the owner classifies it).
@@ -53,18 +80,24 @@ largely cancel.
 
 | mode | configuration | purpose |
 |---|---|---|
-| M0 | Hall-only, pre-ionizer removed | reference |
-| M0b | Hall-only, pre-ionizer installed but **unpowered** | control. It separates conductance and neutral-pressure effects of the hardware from plasma effects. All M1/M2 effects are referenced to M0b. |
-| M0c | ECR installed, microwaves off, **ECR magnets on** | isolates the field perturbation (H6) |
-| M1 | RF+Hall, source power swept | |
-| M2 | ECR+Hall, source power swept | |
+| M0 | `hall_only`, pre-ionizer removed (lane_25_min_decisive_experiment HW-0) | reference |
+| M0b | pre-ionizer installed but **unpowered** (lane_25_min_decisive_experiment installed-off state) | control. It separates conductance and neutral-pressure effects of the hardware from plasma effects. All M1/M2 effects are referenced to M0b. |
+| M0c | ECR installed, microwaves off, **ECR magnets on** (no lane_25_min_decisive_experiment equivalent) | isolates the field perturbation (H6) |
+| M1 | `rf_hall`, source power swept (lane_25_min_decisive_experiment HW-RF) | |
+| M2 | `ecr_hall`, source power swept (lane_25_min_decisive_experiment HW-ECR) | |
+
+**Permanent-magnet ECR.** A permanent-magnet ECR circuit cannot be de-energized, so for that hardware M0b = M0c and H6
+cannot be separated by switching the magnets off. It is then bounded only by M0 vs M0b (which confounds the field with
+conductance), by measured B(z) in both states, and by the re-trimmed-coil condition of D7.
 
 **Factors.**
 - Gas: Xe first as the reference, then N₂. N₂/O₂ mixtures come later and only on owner decision; atomic O needs a
   dedicated source (TBD).
-- Anode flow: TBD. It requires the delivered feed envelope from lane_11 and must include the low-flow end.
+- Anode flow: TBD. It requires the delivered feed envelope of `lane_16_feed_envelope`
+  (`docs/architecture_comparison/feed_envelope/feed_envelope_v1.json`, upstream ICD IF-A5), using the common point set
+  of `lane_23_comparison_grid` where it applies, and must include the low-flow end.
 - V_d: TBD. At least three levels across the sustainment window.
-- Pre-ionizer power: 0 plus at least three levels.
+- Pre-ionizer power (net RF/microwave power at the source load plane): 0 plus at least three levels.
 - Two comparison bases:
   - (a) matched ṁ and V_d, with the pre-ionizer power added;
   - (b) matched total P_bus, with the Hall discharge power reduced to compensate.
@@ -82,8 +115,8 @@ largely cancel.
 |---|---|---|
 | I_d mean **and time trace** | high-bandwidth current probe | No I_d traces are published for P5 or ECHT. Gives the stability metric. |
 | Thrust | stand with in-situ calibration, drift record, **per-gas and per-mode cold-flow tare** | ECHT has no total uncertainty and no N₂ tare. |
-| **Actual bus power** | DC input of *every* supply, logged simultaneously: anode, RF/ECR amplifier input, Hall and ECR magnets, cathode heater/keeper, flow control, controls/cooling | Needed for the common `bus_power_boundary_v1`. Forward, absorbed or reflected RF power and Hall-only discharge power are **never** substituted for P_bus. PPU losses stay "assumed" until a PPU is measured. |
-| RF/µW forward, reflected, absorbed power; matching settings | directional coupler | Replaces the assumed η_dc and feed efficiencies. |
+| **Bus power, ledger basis** | load-plane power of every `bus_power_boundary_v1` component, sampled simultaneously (§9) | Common boundary. Hall discharge power alone is **never** substituted for P_bus. |
+| RF/µW forward and reflected power **at the source load plane**; matching settings | directional coupler at the coil/antenna feed or coupling-structure input | Net load-plane power for `rf_source`/`ecr_source`. With the generator DC input it gives the lab source-chain efficiency as evidence against the assumed η_dc/feed priors. |
 | Ion species fractions (numerical) | E×B probe | P5-N₂ Ω_i,n were never published numerically. |
 | Acceleration voltage / IEDF | RPA plus E×B peaks, V_p-corrected | P5-N₂ V_a exists only at N1–N3 and 1 m far field. |
 | Beam current and divergence **at every point** | Faraday polar sweep at ≥ 2 radii | P5-N₂ has none at N4/N5, and its A/B readings differ by up to 11 %. ECHT has no plume data. |
@@ -95,7 +128,7 @@ largely cancel.
 | **Measured B(z)** at the operating coil currents, in every mode | Hall-probe map | P5 coil currents and field shape are unpublished. ECHT B was measured only at 2 A. |
 | Feed state: ṁ_s, P_feed, T_feed, x_s | gas-calibrated MFCs, inlet P/T sensors | common feed boundary |
 | Background pressure: gauge location, gas correction, RGA | ion gauges, RGA | facility-ingestion interpretation |
-| Component temperatures at equilibrium | TC/IR | Q_reject, for lane_15 |
+| Component temperatures at equilibrium | TC/IR | Q_reject, for `lane_15_thermal_life` |
 
 **Derived metrics.**
 
@@ -111,32 +144,40 @@ largely cancel.
 ## 5. Required accuracy, stated as discrimination requirements
 
 The decisive quantities are **paired differences**. Their uncertainty must include repeatability and drift, not only
-instrument accuracy. No target numbers are invented here.
+instrument accuracy. No target numbers are invented here. All rows are **PROPOSED**.
+
+**Convention.** Two conventions exist in merged drafts. R1 below is a single-comparison, discussion-level statement
+(k = 2). `lane_25_min_decisive_experiment` §6 classifies ln R_arch against a proposed ±5 % band with simultaneous
+Student-t intervals at Welch–Satterthwaite dof (m = 14, ν_eff 28.8, k = 3.1727), and lane_06_experiment_protocol uses HIGHER / LOWER /
+NOT_DISTINGUISHED with Holm step-down. This package does not govern: for a pre-registered run, lane_25_min_decisive_experiment's convention (or
+the owner's reconciliation) applies, and R1 then reads "the multiplicity-corrected interval must resolve δ_req".
 
 | id | requirement | still needed |
 |---|---|---|
-| R1 | The expanded uncertainty (k = 2) of Δ(T/P_bus) must be below δ_req/2. δ_req is the break-even gain at which the pre-ionizer's added power, mass, heat and complexity are repaid. The ½ is a proposed convention (owner decision). | δ_req is TBD. It needs the lane_28 break-even on lane_11's boundary, lane_15 thermal/life and the lane_21 mass BOM. |
+| R1 | The expanded uncertainty (k = 2) of Δ(T/P_bus) must be below δ_req/2. δ_req is the break-even gain at which the pre-ionizer's added power, mass, heat and complexity are repaid. The ½ is a proposed convention (owner decision). | δ_req is TBD. It needs `lane_28_break_even` on the `lane_11_bus_boundary` boundary, `lane_15_thermal_life` and `lane_21_mass_bom`. |
 | R2 | Resolve the Δη_u that would move T/P_bus across δ_req, with the propagation model stated. | follows from R1 |
-| R3 | Flow and feed-pressure resolution must be finer than the gap between the Hall-only threshold and the lowest feed state the intake/compressor delivers at 180–230 km. | the lane_11 feed envelope |
+| R3 | Flow and feed-pressure resolution must be finer than the gap between the Hall-only threshold and the lowest feed state the intake/compressor delivers at 180–230 km. | the `lane_16_feed_envelope` delivered envelope (ICD IF-A5) |
 | R4 | For testing transport closures on our hardware, the I_d and thrust uncertainty must be below the spread across the closures being discriminated. It must also be no worse than the literature uncertainties that already limited P5: thrust σ 2.6 mN; I_d only from 3-significant-figure P_d, with no stated uncertainty; the Xe2 blind I_d of −15.56 % against a 15 % criterion. | The spread on our geometry needs an admitted credible set (currently ∅) or an owner-approved non-design sensitivity study. Screening candidates never produce design maps. |
 | R5 | Species V_a and fractions must be good enough to decide whether the N⁺/N₂⁺ ordering is reproduced and whether it moves with pre-ionization. The literature reference is σ 11.6 V (P5-N₂, far field). | probe design review |
-| R6 | The uncertainty in total P_bus must not dominate R1. | |
+| R6 | The uncertainty in P_bus on the ledger basis (including ledger-efficiency bounds and, on the V1 basis, the ICD compressor uncertainty) must not dominate R1. | |
 | R7 | An effect smaller than the measured M0b drift is **UNRESOLVED**. It is not read as zero. | |
 
 ## 6. Decision logic
 
+All rows are **PROPOSED**.
+
 | # | outcome | supports | refutes / decision |
 |---|---|---|---|
-| D1 | Δ(T/P_bus) resolvably > +δ_req in the delivered feed envelope | H1. That pre-ionizer becomes a CONDITIONAL_BASELINE candidate within the tested envelope. | Refutes H0 there. Establishes nothing about flight performance, life or closure. |
-| D2 | \|Δ(T/P_bus)\| < δ_req (resolved), with no threshold shift | H0: Hall-only as the simpler conditional baseline | Refutes H1 and H2 for that source within the envelope. |
-| D3 | Δ(T/P_bus) < 0, but the ignition threshold is resolvably lower | H2 without H1: the source enables startup and low-density operation but does not improve performance | No winner. The choice depends on whether the delivered feed falls below the Hall-only threshold (lane_11, lane_28). Duty-cycled pre-ionization is a separate question. |
+| D1 | Δ(T/P_bus) resolvably > +δ_req in the delivered feed envelope, on the V1 basis (a PARTIAL_BOUNDARY-only result is not decisive) | H1. That pre-ionizer becomes a CONDITIONAL_BASELINE candidate within the tested envelope. | Refutes H0 there. Establishes nothing about flight performance, life or closure. |
+| D2 | \|Δ(T/P_bus)\| < δ_req (resolved, V1 basis), with no threshold shift | H0: Hall-only as the simpler conditional baseline | Refutes H1 and H2 for that source within the envelope. |
+| D3 | Δ(T/P_bus) < 0, but the ignition threshold is resolvably lower | H2 without H1: the source enables startup and low-density operation but does not improve performance | No winner. The choice depends on whether the delivered feed falls below the Hall-only threshold (`lane_16_feed_envelope`, `lane_28_break_even`). Duty-cycled pre-ionization is a separate question. |
 | D4 | η_u rises but T/P_bus falls or stays flat | The source's ion cost exceeds the gain | Attribute the cause with the RF/µW power and interstage-current data. |
-| D5 | The interstage delivers a small fraction of the source ions | H3 | Refutes the model's efficient-transport assumption for that geometry. The shortfall is not attributed to the Hall accelerator, and there is no architecture conclusion until the interstage is redesigned and retested. |
+| D5 | The interstage delivers a small fraction of the source ions | H3 | Refutes the interstage model (`lane_18_interstage`, `abep_sim/interstage.py`) for that geometry. The shortfall is not attributed to the Hall accelerator, and there is no architecture conclusion until the interstage is redesigned and retested. |
 | D6 | M0b ≠ M0 | A hardware installation effect | Reference everything to M0b and report the installation penalty. |
 | D7 | M0c ≠ M0b | H6 | Also compare at re-matched B(z) (coil re-trim) as a pre-declared condition, and report both comparisons. |
-| D8 | The stability envelope changes | H4 (direction as measured) | Goes to lane_24 only if no stable operation exists anywhere in the envelope. |
-| D9 | A mode cannot ignite or sustain anywhere in the delivered envelope, repeatably | Hard-gate evidence | ELIMINATED_WITHIN_TESTED_ENVELOPE only via lane_24. Never extrapolated. |
-| D10 | The species mix or V_a shifts | H5 | Non-gating forensics only. Never used for tuning. |
+| D8 | The stability envelope changes | H4 (direction as measured) | Goes to `lane_24_hard_gates` only if no stable operation exists anywhere in the envelope. |
+| D9 | A mode cannot ignite or sustain anywhere in the delivered envelope, repeatably | Hard-gate evidence | ELIMINATED_WITHIN_TESTED_ENVELOPE only via `lane_24_hard_gates`. Never extrapolated. |
+| D10 | The species mix or V_a shifts | H5 | Non-gating forensics only (`lane_29_exb_physics`). Never used for tuning. |
 | D11 | All differences fall below resolution | nothing | UNRESOLVED. Fix repeatability first. This outcome is not evidence for H0. |
 
 ## 7. Measurements that most reduce Hall-transport non-identifiability
@@ -184,28 +225,50 @@ retuning, and vacuum and facility modes are never crossed.
 
 ## 9. Mapping to the common comparison boundary
 
-E1 populates these `bus_power_boundary_v1` mandatory fields:
+**One power basis** (`bus_power_boundary_v1`, `lane_11_bus_boundary`,
+`docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md` §3). Every component, including the pre-ionizers,
+is booked at its load-side reference plane and divided by a pre-registered ledger efficiency:
+P_bus = Σ P_load,c / η_c (`bus_power_ledger(arch, loads, efficiencies)`). For `rf_source`/`ecr_source` the load plane is
+the net RF/microwave power (forward − reflected) at the coil/antenna feed or coupling-structure input. This is the basis
+of lane_25_min_decisive_experiment §5.
+- The DC input of each **lab** supply and generator is recorded only as efficiency evidence (η_lab = P_load/P_DC,in). It
+  may feed a secondary ratio labelled LAB_CHAIN, never a common-boundary result. No model PPU loss is added on top of a
+  lab DC input, which would double-count conversion. Charging `rf_hall`/`ecr_hall` at non-flight lab generator
+  efficiency would bias the outcome toward H0, the hypothesis under test.
+- **Compressor: ABSENT_IN_LAB** in every mode (the lab feed starts at the valve outlets). It is explicitly unavailable
+  from E1 and is **reconstructed** from the upstream ICD (bus draw at the delivered total flow and composition), as in
+  lane_06_experiment_protocol §5. It is never a placeholder and never zero.
+- **Totals.** P_bus,lab (all measured components, compressor excluded) is labelled **PARTIAL_BOUNDARY**.
+  P_bus,v1 = P_bus,lab + P_compressor,ICD exists only when the ICD supplies the compressor draw; otherwise it is
+  UNAVAILABLE. A common additive term does not cancel in paired ratios, so PARTIAL_BOUNDARY ratios are never reported as
+  `bus_power_boundary_v1` ratios. Common loads the lab hardware does not represent (flight `flow_control`,
+  `housekeeping`, `thermal_control`) are ledger inputs with their evidence class, identical across arms.
+- **Open reconciliation.** lane_06_experiment_protocol books `rf_source`/`ecr_source` at the generator DC input (`rf_generator_input`,
+  `microwave_source_input`). lane_25_min_decisive_experiment and the lane_11_bus_boundary contract use the load plane. This package follows the contract;
+  the owner reconciles lane_06_experiment_protocol (see lane_25_min_decisive_experiment §13).
+
+E1 populates these mandatory fields:
 - ṁ_s, P_feed, T_feed and x_s (feed instrumentation, plus E×B for the beam);
 - V_d;
 - T;
-- P_bus (all DC supplies);
+- P_bus: **PARTIAL_BOUNDARY** from E1; complete only as P_bus,v1 with the ICD-reconstructed compressor;
 - Q_reject (estimated from temperatures);
 - startup;
 - η_u;
 - stability.
 
-Two fields stay open:
-- **m** is lab-hardware mass by weighing, flagged as not flight mass.
-- **Flight life** is explicitly *unavailable* from E1: at most hours-class erosion witnesses.
+Explicitly not populated by E1 (CLAUDE.md admissibility: populated or explicitly unavailable):
+- **compressor share of P_bus**: ABSENT_IN_LAB, reconstructed from the ICD or UNAVAILABLE;
+- **m**: lab-hardware mass by weighing, flagged as not flight mass;
+- **flight life**: unavailable from E1; at most hours-class erosion witnesses.
 
-Lanes that consume the results:
-- lane_06 (protocol), lane_11 (boundary), lane_12 (harness), lane_15 (thermal/life);
-- lane_19 (cathode), lane_21 (BOM), lane_24 (hard gates), lane_25 (minimum decisive experiment, for which E1 is a
-  candidate superset);
-- lane_28 (δ_req).
-
-The lane ids follow CLAUDE.md and the owner's instructions. The registry lives on the execution branch; verify the ids
-there.
+Lanes that consume or constrain the results (machine ids from `docs/orchestration/lane_registry_v1.json` at `e15f66f`):
+- `lane_06_experiment_protocol` (protocol), `lane_25_min_decisive_experiment` (minimum; owns the decisive convention),
+  `lane_23_comparison_grid` (common points);
+- `lane_11_bus_boundary` (P_bus basis), `lane_16_feed_envelope` (flows, R3, D3), `lane_12_arch_harness` (harness);
+- `lane_07_rf_evidence`, `lane_08_ecr_evidence`, `lane_09_hall_sustainment` (priors E1 tests), `lane_18_interstage` (H3, D5);
+- `lane_15_thermal_life`, `lane_19_cathode_integration`, `lane_21_mass_bom`, `lane_28_break_even` (δ_req);
+- `lane_24_hard_gates` (D8, D9), `lane_29_exb_physics` (H5, D10; non-gating).
 
 ## 10. Questions for the IIST discussion
 
@@ -228,6 +291,12 @@ there.
   `hallthruster_bridge/identification/p5_n2_measurement_audit_findings_v1.json`;
   `hallthruster_bridge/identification/echt_n2/` (README and audit JSON);
   `hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores_report.md`.
-- No external source was accessed for this document. The literature named here comes through those audit files
-  (Brabston et al., JPP 2025, doi:10.2514/1.B39623; Marchioni, MSc thesis 2020). The historical RF prior
-  "Shabshelowitz 2013" is marked **verify**.
+- Merged lanes at `e15f66f`, read-only: `docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md`,
+  `docs/architecture_comparison/experiment_protocol/EXPERIMENT_PROTOCOL_DRAFT.md`,
+  `docs/architecture_comparison/minimum_decisive_experiment/MINIMUM_DECISIVE_EXPERIMENT_DRAFT.md`,
+  `docs/orchestration/lane_registry_v1.json`.
+- External, accessed 2026-09-26 (r2): Crossref metadata and OpenAlex abstract for doi:10.2514/1.B35041
+  (Shabshelowitz, Gallimore & Peterson 2014); abstract only.
+- Other literature named here comes through the repository audit files (Brabston et al., JPP 2025,
+  doi:10.2514/1.B39623; Marchioni, MSc thesis 2020). The historical RF p_min prior "Shabshelowitz 2013" in
+  docs/HISTORY.md is a different item and stays **verify**.
