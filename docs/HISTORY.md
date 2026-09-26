@@ -2086,3 +2086,21 @@ I_d, T_1D, the final-10 % I_d samples for O1, per-reaction f_out, outlet ion vel
 verdicts with missing runs never passing, O4 triggers, O5 diagnostic), with targets taken from the frozen audit; it was written and
 tested on synthetic records before any campaign run existed. Smoke check (2 µs, targets stripped, flagged `smoke`, refused by the
 scorer): records complete, 100 samples in the final 10 %.
+
+### 2026-09-26 — Parallel tooling while the P5-N₂ vacuum campaign runs (no campaign value inspected)
+- `scripts/audit_p5_n2_campaign_records.py` (fcd6720): structural integrity gate (identity/bookkeeping fields only).
+- `scripts/freeze_p5_n2_dataset.py`: gate must PASS → canonical merge of the untouched raw lines sorted by key (duplicates,
+  identical or conflicting, refused) → SHA256 → deterministic gzip → manifest binding driver 79d4e12, gate fcd6720, scorer
+  10842ce, the pre-registration lock hash, and the code actually used (file sha256 + last commit). Never overwrites.
+- `scripts/score_p5_n2_frozen.py`: verifies the dataset hash and lock, runs the frozen scorer unchanged, writes a provenance
+  manifest (input SHA, scorer SHA/commit, lock, time, output SHA); refuses to score a dataset twice.
+- `scripts/report_p5_n2_campaign.py`: mechanical report (candidate verdicts → 12 layer-1 member verdicts → status/reason counts →
+  SIGNED current/thrust residuals → non-gating E×B) and a decision file transcribing the vacuum O3 verdicts.
+- `scripts/make_p5_n2_launch_manifests.py` → `hallthruster_bridge/campaign/manifests/`: 19 pre-built manifests (facility 1080;
+  5 staged sensitivities and 13 escalation combinations at 270 vacuum runs each) with expected keys, pinned chemistry hashes and
+  exact commands; nothing launches automatically. Includes the structural check for those datasets.
+- Admission gate: `ensemble/admission_record_schema_v1.json`; `hall_ensemble.load_ensemble()` now requires every admitted member
+  to carry an offline-verifiable admission record (decision + score-provenance files with sha256, PROMOTABLE, supported passing
+  layer-1 members) and refuses an id listed as both member and screening candidate; `require_admitted()` is the gate for any
+  future Hall-map generator (screening candidates never produce design maps).
+All tested on synthetic data only.

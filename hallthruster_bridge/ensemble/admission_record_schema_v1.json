@@ -1,0 +1,17 @@
+{
+ "schema": "admission_record_v1",
+ "purpose": "Every ADMITTED transport-ensemble member (transport_ensemble_v0.json 'members') must carry an 'admission' block with these fields. abep_sim/hall_ensemble.load_ensemble() verifies it offline: the referenced decision and scores-provenance files must exist, match their recorded sha256, and the decision must list the member as PROMOTABLE with the recorded passing layer-1 members. Screening candidates can never produce design Hall maps; nothing can be admitted by editing the list by hand.",
+ "required_fields": {
+  "promoted_from_screening_id": "the screening_candidates id this member was promoted from (must equal ensemble_member_id)",
+  "campaign_id": "e.g. p5_n2_campaign_v1",
+  "preregistration": "path (relative to hallthruster_bridge/) of the frozen acceptance criteria",
+  "decision_file": "path (relative to hallthruster_bridge/) of the mechanical decision file (scripts/report_p5_n2_campaign.py)",
+  "decision_sha256": "sha256 of decision_file",
+  "scores_provenance_file": "path of the score-once provenance manifest (scripts/score_p5_n2_frozen.py)",
+  "scores_provenance_sha256": "sha256 of scores_provenance_file",
+  "passing_layer1_members": "non-empty list of global layer-1 members (registration|coil|reading) that passed; calibration nuisance stays provenance, never a parameter",
+  "admitted_utc": "ISO time",
+  "decided_by": "who approved the admission"
+ },
+ "evidence_matrix_note": "The Xe screening evidence that selected a candidate and the new evidence that promoted it are recorded separately (screening_rule / admission.campaign_id); the same evidence is never counted twice."
+}
