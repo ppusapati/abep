@@ -1721,7 +1721,7 @@ This audit was run under `prereg/n2_completeness_audit_v1` (merged in PR #20 bef
 
 **Change:**
 - N `max_charge` 1 → 2, because audit 1 promoted N²⁺ production: the N⁺⁺ column crosses F_ion = 1 % inside T_e ≤ 30 eV.
-- New `ionization_N+_N2+.dat`, from Bell, Gilbody, Hughes, Kingston & Smith, JPCRD 12, 891 (1983). Eq. (1) is used with the Table 5 N II parameters, ±10 %.
+- New `ionization_N_Z1plus_to_N_Z2plus.dat`, from Bell, Gilbody, Hughes, Kingston & Smith, JPCRD 12, 891 (1983). Eq. (1) is used with the Table 5 N II parameters, ±10 %.
   - The parameters were read from the page image of the NIST-hosted reprint; the OCR had dropped a sign in the N I row.
   - Formula check: Bell's N I row reproduces NIST Kim & Desclaux (30 % ²D mix, i.e. the Brook beam Bell follow) to 1–5 % from 30 eV to 1 keV.
   - The N II curve peaks at 0.51×10⁻¹⁶ cm² near 118 eV. Header 29.60125 eV (IE(N II), NIST ASD).
@@ -1738,7 +1738,7 @@ This audit was run under `prereg/n2_completeness_audit_v1` (merged in PR #20 bef
 ## 2026-09-26 — Reaction set abep-n2n-0.6: direct N₂ → N²⁺ + N; sequential-route audit
 
 **Change:**
-- New `dissociative_ionization_N2_N2+.dat` from Table 10 σ(N⁺⁺), the total N⁺⁺ yield from N₂. The extra N⁺ produced by triple events is not added.
+- New `dissociative_ionization_N2_to_N_Z2plus.dat` from Table 10 σ(N⁺⁺), the total N⁺⁺ yield from N₂. The extra N⁺ produced by triple events is not added.
 - Same threshold rule as single dissociative ionization: a linear ramp from σ = 0 at E_th = D₀ + IE(N I) + IE(N II) = 53.885 eV to the 70 eV point. Header 53.885 eV.
 - Tail 0.95 % at 255 eV, so verified to 255 eV.
 - Threshold sensitivity (table/envelope vs ramp): −10/+16 % at T_e = 10 eV, < 2 % from 20 eV.
@@ -1788,3 +1788,13 @@ This audit was run under `prereg/n2_completeness_audit_v1` (merged in PR #20 bef
 **Data licences:**
 - Laporta: IOP copyright. The committed data are 59 transcribed fit-parameter pairs plus 59 level energies (factual data, cited); the supplementary file itself is not committed.
 - Su 2021: CC BY 4.0, fetched at run time from IOP (or `--su-dir`).
+
+## 2026-09-26 — Nomenclature: atomic N²⁺ is `N_Z2plus` (owner decision)
+
+Molecular N₂⁺ and atomic N²⁺ now coexist, so "N2+" in names was ambiguous. "N2+" always means molecular N₂⁺. Atomic N²⁺ is written `N_Z2plus`, and atomic N⁺ `N_Z1plus`, in filenames, scripts, comments and metadata. The HallThruster equations such as `N(2+)` were already unambiguous. The molecular dication N₂²⁺ is not modelled.
+
+Renames (the file contents and rates are unchanged; the files were never on main under the old names, and the log entries above were updated to match):
+- `ionization_N+_N2+.dat` → `ionization_N_Z1plus_to_N_Z2plus.dat`
+- `dissociative_ionization_N2_N2+.dat` → `dissociative_ionization_N2_to_N_Z2plus.dat`
+- `scripts/build_n_plus_ionization_table.py` → `scripts/build_n_z1plus_to_z2plus_table.py`
+- `scripts/build_n2_to_n2plus_table.py` → `scripts/build_n2_to_n_z2plus_table.py`

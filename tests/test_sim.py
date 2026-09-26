@@ -784,21 +784,21 @@ def test_n2_dissociative_ionization_tables_and_chemistry_variants():
     assert "dissociative_ionization_N2_upper.dat" in diff[0][0] and "dissociative_ionization_N2_lower.dat" in diff[0][1]
 
 
-def test_n_plus_ionization_bell1983_table():
-    """ionization_N+_N2+.dat (Bell et al. JPCRD 1983 Eq. (1), N II): the transcribed formula gives the values checked on
+def test_n_z1plus_to_z2plus_bell1983_table():
+    """ionization_N_Z1plus_to_N_Z2plus.dat (Bell et al. JPCRD 1983 Eq. (1), N II): the transcribed formula gives the values checked on
     2026-09-26 (peak ~0.50e-16 cm^2 near 100-150 eV), Bell's N I row agrees with NIST Kim & Desclaux 30 % mix at 100 eV
     (1.577e-16 cm^2) within 3 %, header = IE(N II), rows equal a fresh integration, and n2_n.toml has N max_charge = 2."""
     import importlib.util, os, tomllib, numpy as np
     from abep_sim.rate_tables import maxwellian_rate
     root = os.path.dirname(os.path.dirname(__file__))
-    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n_plus_ionization_table.py"))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n_z1plus_to_z2plus_table.py"))
     b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
     assert abs(b.bell_sigma_m2(100.0) * 1e20 - 0.4995) < 0.001 and abs(b.bell_sigma_m2(150.0) * 1e20 - 0.4944) < 0.001
     assert b.bell_sigma_m2(29.0) == 0.0
     assert abs(b.bell_sigma_m2(100.0, "N I") * 1e20 / 1.577 - 1) < 0.03
     d = os.path.join(root, "hallthruster_bridge", "propellants")
-    assert open(os.path.join(d, "ionization_N+_N2+.dat")).readline().strip() == "Ionization energy (eV): 29.60125"
-    a = np.loadtxt(os.path.join(d, "ionization_N+_N2+.dat"), skiprows=2)
+    assert open(os.path.join(d, "ionization_N_Z1plus_to_N_Z2plus.dat")).readline().strip() == "Ionization energy (eV): 29.60125"
+    a = np.loadtxt(os.path.join(d, "ionization_N_Z1plus_to_N_Z2plus.dat"), skiprows=2)
     E = b.grid(); s = b.bell_sigma_m2(E)
     for eps in (30.0, 45.0, 150.0):
         assert abs(a[a[:, 0] == eps][0, 1] / maxwellian_rate(E, s, eps / 1.5, b.TAIL) - 1) < 1e-5
@@ -807,18 +807,18 @@ def test_n_plus_ionization_bell1983_table():
     assert any(r.get("equation") == "N(+) + e -> N(2+) + 2e" for r in cfg["reactions"])
 
 
-def test_n2_to_n2plus_table():
-    """dissociative_ionization_N2_N2+.dat (Song 2023 Table 10 sigma(N++)): threshold ramp from 53.885 eV, header = that
+def test_n2_to_n_z2plus_table():
+    """dissociative_ionization_N2_to_N_Z2plus.dat (Song 2023 Table 10 sigma(N++)): threshold ramp from 53.885 eV, header = that
     appearance energy, rows equal a fresh integration, and n2_n.toml carries the charge-balanced equation."""
     import importlib.util, os, numpy as np
     from abep_sim.rate_tables import maxwellian_rate
     root = os.path.dirname(os.path.dirname(__file__))
-    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_to_n2plus_table.py"))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_to_n_z2plus_table.py"))
     b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
     assert b.E_TH == 53.885
     d = os.path.join(root, "hallthruster_bridge", "propellants")
-    assert open(os.path.join(d, "dissociative_ionization_N2_N2+.dat")).readline().strip() == "Ionization energy (eV): 53.885"
-    a = np.loadtxt(os.path.join(d, "dissociative_ionization_N2_N2+.dat"), skiprows=2)
+    assert open(os.path.join(d, "dissociative_ionization_N2_to_N_Z2plus.dat")).readline().strip() == "Ionization energy (eV): 53.885"
+    a = np.loadtxt(os.path.join(d, "dissociative_ionization_N2_to_N_Z2plus.dat"), skiprows=2)
     E, s = b.cross_section()
     assert E[0] == 53.885 and s[0] == 0.0 and E[1] == 70.0
     for eps in (30.0, 45.0, 150.0):

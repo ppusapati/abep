@@ -3,7 +3,7 @@
 [[species]]
 symbol = "N"
 name = "Nitrogen"
-max_charge = 2                                      # N2+ promoted by the pre-registered audit (abep-n2n-0.5)
+max_charge = 2                                      # atomic N^2+ (N_Z2plus) promoted by the pre-registered audit (abep-n2n-0.5)
 gamma = 1.666667
 mass = 14.0067
 flow_rate_kg_s = 0.0
@@ -36,7 +36,7 @@ rate_coeff_file = "dissociative_ionization_N2_lower.dat"  # Song 2023 Table 10 s
 [[reactions]]
 type = "electron_impact"
 equation = "N2 + e -> N(2+) + N + 3e"
-rate_coeff_file = "dissociative_ionization_N2_N2+.dat"  # Song 2023 Table 10 sigma(N++), ramp from 53.885 eV (abep-n2n-0.6)
+rate_coeff_file = "dissociative_ionization_N2_to_N_Z2plus.dat"  # Song 2023 Table 10 sigma(N++), ramp from 53.885 eV (abep-n2n-0.6)
 
 [[reactions]]
 type = "electron_impact"
@@ -62,4 +62,4 @@ rate_coeff_file = "ionization_N.dat"                # Kim & Desclaux 2002 BEB vi
 [[reactions]]
 type = "electron_impact"
 equation = "N(+) + e -> N(2+) + 2e"
-rate_coeff_file = "ionization_N+_N2+.dat"           # Bell et al. JPCRD 1983 Eq. (1), N II (abep-n2n-0.5)
+rate_coeff_file = "ionization_N_Z1plus_to_N_Z2plus.dat"           # Bell et al. JPCRD 1983 Eq. (1), N II (abep-n2n-0.5)

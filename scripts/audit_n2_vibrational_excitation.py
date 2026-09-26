@@ -15,7 +15,7 @@ Caveats, all pushing the vibrational power DOWN (so its promotion verdict is con
 (superelastic returns from excited v would lower the NET loss, but the gross loss is what the criterion bounds).
 
 Denominator (included inelastic electron power per unit N2 density, x_N = 0), abep-n2n-0.6 upper:
-  N2 ionization (15.58 eV), dissociation (12.14), dissociative ionization upper (24.284), N2 -> N2+ + N (53.885),
+  N2 ionization (15.58 eV), dissociation (12.14), dissociative ionization upper (24.284), N2 -> N_Z2plus + N (53.885),
   plus - where it can be trusted - the 8 electronic-excitation channels of Su et al. 2021 (CC BY 4.0 supplementary data,
   fetched at run time from IOP; data end at 20 eV, so used with sigma = 0 above 20 eV) with the owner's experimental
   energy losses (Oddershede via Su Table 1). The Maxwellian flux share above 20 eV, (1 + 20/T) exp(-20/T), is printed:
@@ -78,7 +78,7 @@ ICS_EL = [(0.1, 5.84), (0.35, 8.09), (0.55, 8.96), (0.7, 9.48), (0.9, 9.91), (1.
           (120, 4.9), (150, 4.2), (200, 3.5), (250, 3.0), (300, 2.65), (400, 2.15), (500, 1.85), (600, 1.6), (800, 1.25),
           (1000, 1.0)]
 INCLUDED = {"ionization_N2_song2023.dat": 15.58, "dissociation_N2.dat": 12.14,
-            "dissociative_ionization_N2_upper.dat": 24.284, "dissociative_ionization_N2_N2+.dat": 53.885}
+            "dissociative_ionization_N2_upper.dat": 24.284, "dissociative_ionization_N2_to_N_Z2plus.dat": 53.885}
 
 
 def k_vib(Te, vf=None):
