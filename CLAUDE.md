@@ -81,9 +81,11 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
      → valve; both feed ionization/discharge → acceleration/thrust). It must never leak upstream into the intake,
      compressor, gas chambers or valves, or into Vyovrinda's own thruster geometry.
 2. N₂/N reaction set **v0.1: partial**. Add one provenance-backed table per commit. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited cross sections. Done: N ionisation
-   (`ionization_N.dat`, Kim & Desclaux 2002 via NIST, `scripts/build_n_ionization_table.py`). Blocked on source access:
-   N₂ dissociation (Cosby 1993 / Itikawa 2006), N₂ excitation, N elastic. LXCat's redistribution policy restricts
-   commercial use, so the source choice is the project's decision (`hallthruster_bridge/propellants/PROVENANCE.md`).
+   (`ionization_N.dat`, Kim & Desclaux 2002 via NIST, `scripts/build_n_ionization_table.py`); N₂ dissociation
+   (`dissociation_N2.dat`, Song et al. JPCRD 2023 Table 9 = Cosby 1993, `scripts/build_n2_dissociation_table.py`). Sources are open literature, not LXCat.
+   Open: N₂ excitation (the recommended Su et al. 2021 per-state set ends at 20 eV, and the source for extending it above that is
+   the owner's decision); N elastic (Ragimkhanov 2026 not yet located). See docs/HISTORY.md 2026-09-26 and
+   `hallthruster_bridge/propellants/PROVENANCE.md`.
 3. P5 on N₂ (`cases/p5_n2.json`, Table 2) and ECHT on N₂ (`cases/echt_n2.json`), run across the **credible Xe-informed
    transport screening set** (currently the 9 SGB screening candidates) with no retuning per case. N₂ is a
    discrimination experiment that can eliminate candidates or promote them to members. First audit the available N₂
