@@ -95,19 +95,31 @@
     },
     "bus_power_boundary": {
       "type": "object",
-      "required": ["boundary_version_ref", "boundary_point", "bus_voltage", "components", "presence_rule", "totals", "facility_services_disclosure", "ledger_check", "uncertainty_targets"],
+      "required": ["boundary_version_ref", "boundary_point", "bus_voltage", "consistency_note", "laboratory_subset", "components", "presence_rule", "totals", "facility_services_disclosure", "ledger_check", "uncertainty_targets"],
       "properties": {
         "boundary_version_ref": {"const": "bus_power_boundary_v1"},
         "boundary_point": {"type": "string"},
         "bus_voltage": {"$ref": "#/$defs/quantity"},
+        "consistency_note": {"type": "string", "minLength": 1},
+        "laboratory_subset": {
+          "type": "object",
+          "required": ["measured_total", "absent_in_lab", "absent_in_lab_disposition", "v1_total", "bias_note", "compressor_bus_power"],
+          "properties": {
+            "absent_in_lab": {"type": "array", "items": {"enum": ["hall_discharge", "hall_magnet", "cathode_keeper", "cathode_heater", "flow_control", "compressor", "thermal_control", "housekeeping", "rf_source", "ecr_source", "ecr_magnet"]}},
+            "absent_in_lab_disposition": {"type": "string", "minLength": 1},
+            "compressor_bus_power": {"$ref": "#/$defs/quantity"}
+          }
+        },
         "components": {
           "type": "array",
           "minItems": 1,
           "items": {
             "type": "object",
-            "required": ["id", "name", "includes", "measurement", "quantity_type"],
+            "required": ["id", "v1_component_ids", "name", "includes", "measurement", "quantity_type"],
             "properties": {
               "id": {"type": "string", "pattern": "^[a-z][a-z_]*$"},
+              "v1_component_ids": {"type": "array", "minItems": 1, "items": {"enum": ["hall_discharge", "hall_magnet", "cathode_keeper", "cathode_heater", "flow_control", "compressor", "thermal_control", "housekeeping", "rf_source", "ecr_source", "ecr_magnet"]}},
+              "lab_presence": {"enum": ["ABSENT_IN_LAB"]},
               "name": {"type": "string"},
               "includes": {"type": "string"},
               "measurement": {"type": "string"},
@@ -376,7 +388,7 @@
             "component_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
             "expected_presence": {
               "type": "object",
-              "additionalProperties": {"enum": ["ENERGIZED", "ENERGIZED_OR_ABSENT", "ENERGIZED_OR_UNENERGIZED", "ABSENT_OR_UNENERGIZED"]}
+              "additionalProperties": {"enum": ["ENERGIZED", "ENERGIZED_OR_ABSENT", "ENERGIZED_OR_UNENERGIZED", "ABSENT_OR_UNENERGIZED", "ABSENT_IN_LAB"]}
             }
           },
           "additionalProperties": false

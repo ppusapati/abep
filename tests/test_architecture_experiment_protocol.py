@@ -3,10 +3,12 @@
 docs/architecture_comparison/experiment_protocol/: protocol_draft.json, protocol.schema.json,
 EXPERIMENT_PROTOCOL_DRAFT.md, protocol_tools.py. Fast (no Julia, no network).
 """
+import ast
 import copy
 import importlib.util
 import json
 import re
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -40,11 +42,33 @@ def test_protocol_validates_against_schema(protocol, schema):
     assert tools.validate(protocol, schema) == []
 
 
-def test_protocol_validates_with_jsonschema_when_installed(protocol, schema):
-    jsonschema = pytest.importorskip("jsonschema")
-    jsonschema.Draft202012Validator.check_schema(schema)
-    errors = sorted(str(e.message) for e in jsonschema.Draft202012Validator(schema).iter_errors(protocol))
-    assert errors == []
+def test_protocol_validates_with_reference_validator_or_subset(protocol, schema):
+    """jsonschema (reference implementation) when installed; otherwise the schema must stay inside the keyword subset
+    that the in-house validator implements, so that the in-house result is complete (no silently ignored keyword)."""
+    try:
+        import jsonschema
+    except ImportError:
+        jsonschema = None
+    if jsonschema is not None:
+        jsonschema.Draft202012Validator.check_schema(schema)
+        errors = sorted(str(e.message) for e in jsonschema.Draft202012Validator(schema).iter_errors(protocol))
+        assert errors == []
+    used = set()
+
+    def keywords(node):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                used.add(k)
+                if k in ("properties", "$defs"):
+                    for sub in v.values():
+                        keywords(sub)
+                else:
+                    keywords(v)
+        elif isinstance(node, list):
+            for v in node:
+                keywords(v)
+    keywords(schema)
+    assert used <= tools._SUPPORTED, sorted(used - tools._SUPPORTED)
 
 
 def test_schema_validator_is_not_vacuous(protocol, schema):
@@ -84,7 +108,7 @@ def test_boundary_covers_every_listed_consumer(protocol):
     assert "matching network" in comps["rf_generator_input"]["includes"]
     assert "cable" in comps["rf_generator_input"]["includes"]
     for cid in ("magnet_supplies", "microwave_source_input", "cathode_heater", "cathode_keeper",
-                "valves_flow_control", "thermal_control", "housekeeping"):
+                "valves_flow_control", "compressor", "thermal_control", "housekeeping"):
         assert cid in comps
     assert "never assumed zero" in protocol["bus_power_boundary"]["presence_rule"]
 
@@ -104,11 +128,80 @@ def test_pre_ionizer_is_the_only_change(protocol):
     assert "m_dot_c" in fa["m_dot_tot"] and "m_dot_prop" in fa["m_dot_tot"]
 
 
-def test_arch_boundary_module_declares_the_referenced_version_if_present():
+SIBLING_ARCH_BOUNDARY_COMMIT = "a2a1396"  # separate lane that defines abep_sim/arch_boundary.py (bus_power_boundary_v1)
+
+
+def _arch_boundary_source():
     path = REPO / "abep_sim" / "arch_boundary.py"
-    if not path.exists():
-        pytest.skip("abep_sim/arch_boundary.py not merged yet (separate lane)")
-    assert "bus_power_boundary_v1" in path.read_text(encoding="utf-8")  # textual only; not imported
+    if path.exists():
+        return path.read_text(encoding="utf-8")
+    try:
+        out = subprocess.run(["git", "-C", str(REPO), "show", f"{SIBLING_ARCH_BOUNDARY_COMMIT}:abep_sim/arch_boundary.py"],
+                             capture_output=True, text=True, timeout=20)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return out.stdout if out.returncode == 0 and out.stdout else None
+
+
+def _literal_assignments(source):
+    """Module-level NAME = <literal> assignments, parsed with ast (the module is never imported or executed)."""
+    found = {}
+    for node in ast.parse(source).body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
+            try:
+                found[node.targets[0].id] = ast.literal_eval(node.value)
+            except ValueError:
+                pass
+    return found
+
+
+def test_mapping_matches_arch_boundary_component_ids():
+    source = _arch_boundary_source()
+    if source is None:
+        pytest.skip("abep_sim/arch_boundary.py not merged and sibling commit not reachable")
+    lit = _literal_assignments(source)
+    assert lit["BOUNDARY_VERSION"] == "bus_power_boundary_v1"
+    assert tuple(lit["COMMON_COMPONENTS"]) == tools.V1_COMMON_COMPONENTS
+    assert {k: tuple(v) for k, v in lit["PREIONIZER_COMPONENTS"].items()} == tools.V1_PREIONIZER_COMPONENTS
+
+
+def test_every_v1_component_is_mapped_exactly_once_and_compressor_is_declared_absent(protocol):
+    assert tools.v1_mapping_errors(protocol) == []
+    covered = [v for c in protocol["bus_power_boundary"]["components"] for v in c["v1_component_ids"]]
+    assert sorted(covered) == sorted(tools.V1_ALL_COMPONENTS) and len(covered) == len(set(covered))
+    for arm in protocol["arms"]:
+        assert arm["bus_boundary"]["expected_presence"]["compressor"] == "ABSENT_IN_LAB"
+    sub = protocol["bus_power_boundary"]["laboratory_subset"]
+    assert sub["absent_in_lab"] == ["compressor"]
+    assert sub["compressor_bus_power"]["value"] == "TBD" and "ICD" in sub["compressor_bus_power"]["tbd_requires"]
+    assert "reconstructed" in sub["absent_in_lab_disposition"] and "never taken as zero" in sub["absent_in_lab_disposition"]
+
+
+def test_v1_mapping_detects_divergence(protocol):
+    bad = copy.deepcopy(protocol)
+    comps = bad["bus_power_boundary"]["components"]
+    comps[:] = [c for c in comps if c["id"] != "compressor"]
+    for arm in bad["arms"]:
+        arm["bus_boundary"]["component_ids"].remove("compressor")
+        del arm["bus_boundary"]["expected_presence"]["compressor"]
+    assert tools.boundary_errors(bad)
+    bad = copy.deepcopy(protocol)
+    for c in bad["bus_power_boundary"]["components"]:
+        if c["id"] == "magnet_supplies":
+            c["v1_component_ids"] = ["hall_magnet"]
+    assert any("v1 coverage" in e for e in tools.v1_mapping_errors(bad))
+    bad = copy.deepcopy(protocol)
+    bad["arms"][0]["bus_boundary"]["expected_presence"]["compressor"] = "ENERGIZED"
+    assert tools.boundary_errors(bad)
+
+
+def test_bus_power_metrics_are_labelled_by_boundary_basis(protocol):
+    metrics = {m["id"]: m for m in protocol["decision_metrics"]}
+    for mid in ("M1", "M2"):
+        d = metrics[mid]["definition"]
+        assert "PARTIAL" in d and "P_bus,lab" in d and "P_compressor,ICD" in d
+    assert "PARTIAL_BOUNDARY" in metrics["M1"]["definition"]
+    assert "P_bus,total" not in json.dumps(protocol)
 
 
 # --- thresholds and numbers ----------------------------------------------------------------------------------

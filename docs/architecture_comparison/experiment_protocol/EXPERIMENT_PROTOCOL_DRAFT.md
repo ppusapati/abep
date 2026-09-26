@@ -90,7 +90,7 @@ TBD until the owner fixes it.
 | INV-DIAG | same instruments, positions, calibrations and reduction code; arm-specific monitors are additive and shown non-perturbing | serials/positions per pump-down; DUMMY_LOAD_PICKUP | `inv_diag_pickup` (TBD) |
 | INV-ELEC | same grounding/floating scheme, cabling, filters and supplies | checklist and photographs | none |
 | INV-THERM | same thermal-settling criterion before any point is recorded | thermocouples | `inv_therm_rate` (TBD) |
-| INV-BUS | `bus_power_boundary_v1`: same component list, measurement points and instrument classes | one row per component per point | none (a missing row excludes the point) |
+| INV-BUS | the same **declared laboratory subset** of `bus_power_boundary_v1` in every arm: same component list (mapped to v1 ids), measurement points and instrument classes; the compressor row is ABSENT_IN_LAB in every arm and reconstructed from the upstream ICD (§5) | one row per component per point | none (a missing row excludes the point) |
 
 The cathode is a Xe-fed LaB6 hollow cathode. That follows the task definition and the repository's default neutralizer
 `lab6_xe` (`abep_sim/archengine.py`); the owner confirms it.
@@ -124,45 +124,62 @@ Where a laboratory supply replaces a bus-fed converter, bus-side power is **reco
 eta_conv is measured for that converter at that load, and the value is labelled *reconstructed*.
 
 The **same component list applies to all three arms**. The test enforces this: each arm's `component_ids` must equal
-the list below.
+the list below. Each row maps name by name onto the component identifiers of `bus_power_boundary_v1`
+(`abep_sim/arch_boundary.py`, `COMMON_COMPONENTS` and `PREIONIZER_COMPONENTS`; referenced by name, never imported), and
+every v1 identifier is covered exactly once.
 
-| component id | consumer | inside the boundary |
-|---|---|---|
-| `hall_ppu_input` | Hall PPU (discharge converter) DC input | conversion loss, output filter, cabling to the thruster; V_d and I_d are also recorded to report eta_conv |
-| `magnet_supplies` | magnet supplies DC input | Hall coils and any pre-ionizer (ECR resonance / helicon) coils as sub-items; 0 W rows for permanent magnets are still reported |
-| `rf_generator_input` | RF generator DC input | generator loss, matching network and RF cable losses. Forward/reflected power is a diagnostic only |
-| `microwave_source_input` | microwave source DC input | source loss, isolator/circulator, tuner, waveguide/coax and window losses. Forward/reflected power is a diagnostic only |
-| `cathode_heater` | cathode heater supply DC input | converter loss. Steady state is reported separately from start-up energy |
-| `cathode_keeper` | cathode keeper supply DC input | converter loss |
-| `valves_flow_control` | valves and flow control DC input | valve drivers and controllers on the anode, pre-ionizer and cathode lines. Laboratory-only controller power is a flagged sub-item |
-| `thermal_control` | thermal control DC input | heaters and active cooling the flight system would power (thruster, pre-ionizer, PPU) |
-| `housekeeping` | housekeeping DC input | control, telemetry and sensor electronics of the propulsion string |
+| component id | v1 component id(s) | consumer | inside the boundary |
+|---|---|---|---|
+| `hall_ppu_input` | `hall_discharge` | Hall PPU (discharge converter) DC input | conversion loss, output filter, cabling to the thruster; V_d and I_d are also recorded to report eta_conv |
+| `magnet_supplies` | `hall_magnet`, `ecr_magnet` | magnet supplies DC input | two separately metered sub-items, one per v1 id: Hall coil supplies (`hall_magnet`) and ECR resonance-field coil supplies (`ecr_magnet`, recorded in every arm, ABSENT or measured standby outside ECR_HALL); 0 W rows for permanent magnets are still reported |
+| `rf_generator_input` | `rf_source` | RF generator DC input | generator loss, matching network and RF cable losses. Forward/reflected power is a diagnostic only. An RF-applicator DC field coil, if the design has one, has no separate v1 id; this draft books it as a metered sub-item here (mapping proposal for the owner) |
+| `microwave_source_input` | `ecr_source` | microwave source DC input | source loss, isolator/circulator, tuner, waveguide/coax and window losses. Forward/reflected power is a diagnostic only |
+| `cathode_heater` | `cathode_heater` | cathode heater supply DC input | converter loss. Steady state is reported separately from start-up energy |
+| `cathode_keeper` | `cathode_keeper` | cathode keeper supply DC input | converter loss |
+| `valves_flow_control` | `flow_control` | valves and flow control DC input | valve drivers and controllers on the anode, pre-ionizer and cathode lines. Laboratory-only controller power is a flagged sub-item |
+| `compressor` | `compressor` | gas-path compressor motor-drive DC input | **ABSENT_IN_LAB in every arm** (the laboratory feed starts at the valve outlets). Explicitly unavailable from the experiment; reconstructed from the upstream ICD (`compressor_bus_power`, TBD) |
+| `thermal_control` | `thermal_control` | thermal control DC input | heaters and active cooling the flight system would power (thruster, pre-ionizer, PPU) |
+| `housekeeping` | `housekeeping` | housekeeping DC input | control, telemetry and sensor electronics of the propulsion string |
+
+**Declared laboratory subset.** The laboratory measures `bus_power_boundary_v1` **minus the compressor**:
+P_bus,lab is a *partial-boundary* total and is labelled PARTIAL_BOUNDARY wherever it appears. The compressor row is
+carried in every arm with presence ABSENT_IN_LAB. Its bus draw depends on the total flow and composition at the point,
+which are identical across arms, and it is **reconstructed** from the upstream ICD (evidence class *reconstructed*, with
+the ICD revision and its uncertainty). It is never a placeholder and never taken as zero. When the ICD supplies it,
+P_bus,v1 = P_bus,lab + P_compressor,ICD; otherwise P_bus,v1 is UNAVAILABLE. The omission is the same in all arms, but
+a common additive term in the denominators does not cancel in the paired ratios of M1 and M2: it moves them. So
+partial-boundary ratios are never reported as `bus_power_boundary_v1` ratios (§13).
 
 - **Presence rule.** Every row is recorded for every arm at every point. An absent component is recorded as 0 W,
   presence ABSENT. An installed but unenergized component is **measured** for its standby draw, never assumed zero.
-  A missing row makes P_bus,total undefined, and the point becomes `EXCLUDED_MISSING_BOUNDARY_COMPONENT`. No
+  A missing row makes P_bus,lab (and P_bus,v1) undefined, and the point becomes `EXCLUDED_MISSING_BOUNDARY_COMPONENT`. No
   placeholder is ever filled in.
-- **Totals.** P_bus,total is the sum over all components. The per-component breakdown is reported for every point
-  and arm.
+- **Totals.** P_bus,lab is the sum over all components measured in the laboratory (partial boundary). P_bus,v1 adds
+  the reconstructed compressor draw when the ICD supplies it. The per-component breakdown, per v1 id, is reported for
+  every point and arm.
 - **Facility services disclosure.** Some generators, applicators, magnets or PPUs may be cooled by facility water or
   gas. That heat load is reported per arm, outside the boundary, because in flight the thermal subsystem would have to
   reject it. Facility pumping and laboratory instrumentation are excluded identically for all arms.
 - **Ledger check (THR-LEDGER, PROPOSED).** The residual is |P_main − Σ branch| / P_main, and it must not exceed
   `ledger_residual_max`. That value is the simulator's energy-ledger gate from CLAUDE.md rule 4, proposed here for the
   experimental ledger.
-- **Uncertainty target (THR-UNC-BUS, PROPOSED).** The expanded relative uncertainty of P_bus,total must not exceed
+- **Uncertainty target (THR-UNC-BUS, PROPOSED).** The expanded relative uncertainty of P_bus,lab (and of P_bus,v1, including the ICD
+  compressor uncertainty, when it is formed) must not exceed
   `bus_unc_ratio` × delta_m1. Instruments are DC power-analyzer channels with traceable calibration, 4-wire voltage
   sensing at the consumer input, simultaneous V and I sampling, and a bandwidth that covers converter ripple.
 
-**Consistency with `abep_sim/arch_boundary.py`.** The list follows the consumer list given for `bus_power_boundary_v1`
-in the lane definition. That module did not exist at the base commit. A name-by-name mapping check is an open item for
-when it merges. The test only checks textually, without importing the module, that it declares `bus_power_boundary_v1`.
+**Consistency with `abep_sim/arch_boundary.py`.** That module did not exist at the base commit; it is defined by a
+separate lane (sibling commit `a2a1396`). `protocol_tools.py` carries a transcribed copy of the v1 component ids and
+checks the mapping above: every v1 id covered exactly once, and every v1 component required for an arm's architecture
+recorded in that arm. The test parses the module source with `ast` (never imports or executes it), from
+`abep_sim/arch_boundary.py` when merged or otherwise from the sibling commit when that git object is reachable, and
+compares `BOUNDARY_VERSION`, `COMMON_COMPONENTS` and `PREIONIZER_COMPONENTS` with the transcribed copy.
 
 ## 6. Diagnostics (identical for all arms)
 
 | id | quantity | instrument and practice |
 |---|---|---|
-| DIAG-THRUST | T | Pendulum-type stand with **end-to-end in-situ calibration of the whole installation**, including the RF cables, waveguide or coax that cross the stand interface (REF-POLK2017 Sec. IV). At least `thrust_cal_before_min` calibrations before and `thrust_cal_after_min` after (REF-POLK2017 Sec. V.A). Zero is taken with the thruster off, thermocouples track drift (Sec. VI.B) and the uncertainty budget is reported (Sec. VI.C, VII). Target THR-UNC-THRUST (PROPOSED) |
+| DIAG-THRUST | T | Pendulum-type stand with **end-to-end in-situ calibration of the whole installation** (REF-POLK2017 Sec. IV). This protocol applies that principle to the RF cables, waveguide or coax that cross the stand interface; that application is XPROT's, not a statement of the source. At least `thrust_cal_before_min` calibrations before and `thrust_cal_after_min` after (REF-POLK2017 Sec. V.A). Zero is taken with the thruster off, thermocouples track drift (Sec. VI.B) and the uncertainty budget is reported (Sec. VI.C, VII). Target THR-UNC-THRUST (PROPOSED) |
 | DIAG-DISCHARGE | V_d, I_d (DC and time-resolved), cathode-to-ground, keeper, coil currents | Calibrated meters plus a high-bandwidth current probe. The sampling rate `discharge_sampling_rate` is TBD from the Hall-only pilot and is the same for all arms |
 | DIAG-FARADAY | beam current I_b, divergence | Faraday-probe sweep per REF-BROWN2017 (metadata only accessed: verify corrections before pre-registration) |
 | DIAG-EXB | species/charge fractions (N2+, N+, O2+, O+, NO+ if present, multiply charged, cathode Xe+) | E×B probe or equivalent. Analysis per REF-SHASTRY2009 (metadata only: verify). Resolution `exb_resolution` TBD |
@@ -234,7 +251,7 @@ base level (PROPOSED).
   applicable, then the discharge supply. An attempt succeeds if I_d reaches the steady window within `ignition_timeout`
   and stays sustained for `ignition_hold` (both TBD). Transient puffs are logged.
 - **Extinction (THR-EXTINCTION, PROPOSED).** The rule has the same functional form as the simulation rule O1
-  (`hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json`), so experiment and simulation share one definition.
+  (`hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json`, key `operational_rules.O1_extinction_SUSTAINMENT`), so experiment and simulation share one definition.
   An extinction is uncommanded if **both** conditions hold. First, the mean I_d over the hold window is below
   `ext_mean_frac` × I_d,ref. Second, at least `ext_sample_share` of the samples are below `ext_sample_frac` × I_d,ref.
   I_d,ref is the median I_d of the preceding steady window, of length `ext_window` (TBD). A low but steady discharge is
@@ -277,8 +294,8 @@ arm vs HALL_ONLY, at the same point, on the same day, at matched p_ref.
 
 | id | metric | role (PROPOSED) | PROPOSED classification rule |
 |---|---|---|---|
-| M1 | thrust per bus power, T / P_bus,total [mN/kW] | primary | HIGHER if the lower bound of the two-sided `confidence_level` CI of R exceeds unity by more than `delta_m1`. LOWER if the upper bound is below unity by more than `delta_m1`. Else NOT_DISTINGUISHED |
-| M2 | beam ion current per bus power, I_b / P_bus,total [A/kW] | secondary | as M1 with `delta_m2`, `confidence_level_m2` |
+| M1 | thrust per bus power, T / P_bus [mN/kW], on two labelled bases: PARTIAL (P_bus,lab) and V1 (P_bus,lab + P_compressor,ICD, only when the ICD supplies it). Only a V1-basis classification is a `bus_power_boundary_v1` result; a PARTIAL-basis one is always labelled PARTIAL_BOUNDARY | primary | HIGHER if the lower bound of the two-sided `confidence_level` CI of R exceeds unity by more than `delta_m1`. LOWER if the upper bound is below unity by more than `delta_m1`. Else NOT_DISTINGUISHED |
+| M2 | beam ion current per bus power, I_b / P_bus [A/kW], on the same two labelled bases as M1 | secondary | as M1 with `delta_m2`, `confidence_level_m2` |
 | M3 | mass utilization, η_m,tot = Σ_j (m_j / (q_j e)) I_b,j / m_dot_tot, with I_b,j = I_b Ω_j from E×B; η_m,prop reported alongside | secondary | as M1 with `delta_m3`, `confidence_level_m3` |
 | M4 | stability (S1; S2–S6 reported) | secondary, non-inferiority | NOT_WORSE if the upper CI bound of the S1 ratio is ≤ unity plus `delta_m4`. WORSE if the lower bound exceeds it. Else NOT_DISTINGUISHED |
 | M5 | ignition reliability | secondary | MEETS if the one-sided `ignition_confidence` Clopper–Pearson lower bound over `ignition_attempts` attempts is ≥ `ignition_p_min`. Else NOT_DEMONSTRATED |
@@ -287,7 +304,7 @@ arm vs HALL_ONLY, at the same point, on the same day, at matched p_ref.
 All minimum effects of interest (`delta_m1`–`delta_m4`, `m6_steps`) are **TBD by the owner**. They are the changes that
 would alter an architecture decision. They cannot be derived from the simulator while the Hall credible set is empty.
 
-Reported but not classified: anode and bus-level total efficiency (T² / (2 m_dot_tot P_bus,total)), specific impulse
+Reported but not classified: anode and bus-level total efficiency (T² / (2 m_dot_tot P_bus), on the same labelled bases), specific impulse
 on m_dot_tot, divergence, ion acceleration voltage, species fractions, cathode coupling voltage, and the bus-power
 breakdown.
 
@@ -297,7 +314,8 @@ These screens use the **partial laboratory boundary**, which has no intake or co
 sufficient, and failing one ranks nothing.
 
 - SCR-THRUST-WINDOW: report whether `rfp_thrust_min` ≤ T ≤ `rfp_thrust_max` at the point.
-- SCR-TP-FLOOR: report whether T / P_bus,total > `rfp_thrust_per_power_floor`. The floor is
+- SCR-TP-FLOOR: report whether T / P_bus,lab > `rfp_thrust_per_power_floor` (PARTIAL_BOUNDARY), and T / P_bus,v1 when
+  the ICD compressor draw is available. The floor is
   rfp_thrust_min / rfp_power_max, computed by `protocol_tools.py` from `abep_sim/constants.py`. An RFP-relevant point
   needs T ≥ rfp_thrust_min at total system power below rfp_power_max. The laboratory bus power cannot exceed the system
   power, so T / P_bus,lab must exceed the floor.
@@ -344,7 +362,10 @@ re-read them from the RFP (verify).
 - Obtain the upstream ICD revision for delivered flows and O2/N2 compositions.
 - Decide the primary endpoint(s), the primary point family, and the subset of points for the pressure sweep and the
   minimum-flow search.
-- When `abep_sim/arch_boundary.py` (`bus_power_boundary_v1`) merges, cross-check the component list against it.
+- Confirm the name-by-name mapping to `bus_power_boundary_v1` (in particular booking any RF-applicator DC field coil
+  under `rf_source`), and re-run the test against `abep_sim/arch_boundary.py` once it merges.
+- Confirm the declared laboratory subset (compressor ABSENT_IN_LAB, reconstructed from the upstream ICD) and obtain
+  the ICD compressor bus draw per operating point.
 - Verify the metadata-only references and locate an RPA recommended practice.
 - Align with `docs/experiments/` if and when it exists (not present at the base commit).
 
@@ -372,7 +393,7 @@ Numeric values (41), each with source and evidence class:
 
 | id | value | unit | status | evidence class | source |
 |---|---|---|---|---|---|
-| `mfc_calibration_interval` | 12 | months (maximum) | PROPOSED | assumed | REF-SNYDER2017 Sec. VI ('Calibrations should be traceable to NIST and performed at least every 12 months over the entire flow scale') |
+| `mfc_calibration_interval` | 12 | months (maximum) | PROPOSED | assumed | REF-SNYDER2017 Sec. VI (paraphrase: calibrations traceable to NIST, performed at least every twelve months over the entire flow scale) |
 | `ledger_residual_max` | 0.02 | fraction | PROPOSED | assumed | CLAUDE.md rule 4 (architecture energy-ledger residual < 2 % for the simulator); adoption for the experimental ledger is a proposal |
 | `bus_unc_ratio` | 0.25 | fraction of delta_m1 | PROPOSED | assumed | XPROT draft proposal, analogous to the common 4:1 test-uncertainty-ratio convention (from memory - verify); not derived from data |
 | `thrust_cal_before_min` | 10 | calibrations (minimum) | PROPOSED | assumed | REF-POLK2017 Sec. V.A ('Perform a minimum of ten calibrations to generate a calibration curve') |
@@ -391,9 +412,9 @@ Numeric values (41), each with source and evidence class:
 | `preionizer_nonzero_levels_min` | 2 | non-zero power levels per pre-ionizer arm | PROPOSED | assumed | XPROT draft proposal (needed to see a dose-response rather than a single point) |
 | `pbg_elevated_levels_min` | 2 | elevated background-pressure levels in addition to the base level | PROPOSED | assumed | XPROT draft proposal (two elevated levels allow a slope and a curvature check) |
 | `pbg_injection_distance_min` | 2 | m downstream of the thruster exit plane (minimum) | PROPOSED | assumed | REF-DANKANICH2017 Sec. IV.B ('at least 2 m downstream of the thruster exit plane or preferably near the centerline of the facility') |
-| `ext_mean_frac` | 0.05 | fraction of I_d,ref | PROPOSED | assumed | p5_n2_validation_criteria_v1.json operational_rules.O1 (project decision for simulation scoring); adoption for experiments is a proposal |
-| `ext_sample_share` | 0.9 | fraction of samples | PROPOSED | assumed | p5_n2_validation_criteria_v1.json operational_rules.O1; adoption for experiments is a proposal |
-| `ext_sample_frac` | 0.1 | fraction of I_d,ref | PROPOSED | assumed | p5_n2_validation_criteria_v1.json operational_rules.O1; adoption for experiments is a proposal |
+| `ext_mean_frac` | 0.05 | fraction of I_d,ref | PROPOSED | assumed | p5_n2_validation_criteria_v1.json operational_rules.O1_extinction_SUSTAINMENT (project decision for simulation scoring); adoption for experiments is a proposal |
+| `ext_sample_share` | 0.9 | fraction of samples | PROPOSED | assumed | p5_n2_validation_criteria_v1.json operational_rules.O1_extinction_SUSTAINMENT; adoption for experiments is a proposal |
+| `ext_sample_frac` | 0.1 | fraction of I_d,ref | PROPOSED | assumed | p5_n2_validation_criteria_v1.json operational_rules.O1_extinction_SUSTAINMENT; adoption for experiments is a proposal |
 | `confidence_level` | 0.95 | - | PROPOSED | assumed | XPROT draft proposal (conventional level); multiplicity handled by the statistics section |
 | `confidence_level_m2` | 0.95 | - | PROPOSED | assumed | XPROT draft proposal (same as THR-M1) |
 | `confidence_level_m3` | 0.95 | - | PROPOSED | assumed | XPROT draft proposal (same as THR-M1) |
@@ -414,7 +435,7 @@ Numeric values (41), each with source and evidence class:
 | `aid_target_p99` | 0.99 | probability | PROPOSED | assumed | illustrative grid point chosen by this draft; not a requirement |
 | `aid_nmin_p99` | 299 | attempts | DERIVED | model-derived | derived by protocol_tools.py (zero-failure Clopper-Pearson bound) |
 
-TBD values (42), each with what it requires:
+TBD values (43), each with what it requires:
 
 | id | unit | requires |
 |---|---|---|
@@ -435,6 +456,7 @@ TBD values (42), each with what it requires:
 | `inv_diag_pickup` | fraction | owner decision after the diagnostic uncertainty budget is known |
 | `inv_therm_rate` | K/min | thrust-stand thermal-drift characterization |
 | `bus_voltage` | V | spacecraft EPS ICD |
+| `compressor_bus_power` | W | upstream ICD: compressor bus draw as a function of delivered total flow and composition at each operating point (abep_sim/compressor.py is the model reference; not evaluated here) |
 | `thrust_cal_shift_max` | fraction | thrust-stand characterization (owner) |
 | `discharge_sampling_rate` | Hz | oscillation band observed in the Hall-only pilot, with anti-alias filtering; the same rate for all arms |
 | `exb_resolution` | - | species set of the O2/N2 mixtures from the upstream ICD and E x B probe design |

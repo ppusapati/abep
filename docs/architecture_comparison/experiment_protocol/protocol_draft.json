@@ -51,7 +51,7 @@
       "only_change_vs_reference": "none (reference)",
       "bus_boundary": {
         "boundary_version_ref": "bus_power_boundary_v1",
-        "component_ids": ["hall_ppu_input", "magnet_supplies", "rf_generator_input", "microwave_source_input", "cathode_heater", "cathode_keeper", "valves_flow_control", "thermal_control", "housekeeping"],
+        "component_ids": ["hall_ppu_input", "magnet_supplies", "rf_generator_input", "microwave_source_input", "cathode_heater", "cathode_keeper", "valves_flow_control", "compressor", "thermal_control", "housekeeping"],
         "expected_presence": {
           "hall_ppu_input": "ENERGIZED",
           "magnet_supplies": "ENERGIZED_OR_ABSENT",
@@ -60,6 +60,7 @@
           "cathode_heater": "ENERGIZED_OR_UNENERGIZED",
           "cathode_keeper": "ENERGIZED",
           "valves_flow_control": "ENERGIZED",
+          "compressor": "ABSENT_IN_LAB",
           "thermal_control": "ENERGIZED_OR_ABSENT",
           "housekeeping": "ENERGIZED"
         }
@@ -79,7 +80,7 @@
       "only_change_vs_reference": "RF pre-ionizer energized (and, in CFG-B, its applicator installed); every common_conditions invariant held",
       "bus_boundary": {
         "boundary_version_ref": "bus_power_boundary_v1",
-        "component_ids": ["hall_ppu_input", "magnet_supplies", "rf_generator_input", "microwave_source_input", "cathode_heater", "cathode_keeper", "valves_flow_control", "thermal_control", "housekeeping"],
+        "component_ids": ["hall_ppu_input", "magnet_supplies", "rf_generator_input", "microwave_source_input", "cathode_heater", "cathode_keeper", "valves_flow_control", "compressor", "thermal_control", "housekeeping"],
         "expected_presence": {
           "hall_ppu_input": "ENERGIZED",
           "magnet_supplies": "ENERGIZED_OR_ABSENT",
@@ -88,6 +89,7 @@
           "cathode_heater": "ENERGIZED_OR_UNENERGIZED",
           "cathode_keeper": "ENERGIZED",
           "valves_flow_control": "ENERGIZED",
+          "compressor": "ABSENT_IN_LAB",
           "thermal_control": "ENERGIZED_OR_ABSENT",
           "housekeeping": "ENERGIZED"
         }
@@ -108,7 +110,7 @@
       "only_change_vs_reference": "ECR pre-ionizer energized (and, in CFG-B, its applicator and resonance magnets installed); every common_conditions invariant held",
       "bus_boundary": {
         "boundary_version_ref": "bus_power_boundary_v1",
-        "component_ids": ["hall_ppu_input", "magnet_supplies", "rf_generator_input", "microwave_source_input", "cathode_heater", "cathode_keeper", "valves_flow_control", "thermal_control", "housekeeping"],
+        "component_ids": ["hall_ppu_input", "magnet_supplies", "rf_generator_input", "microwave_source_input", "cathode_heater", "cathode_keeper", "valves_flow_control", "compressor", "thermal_control", "housekeeping"],
         "expected_presence": {
           "hall_ppu_input": "ENERGIZED",
           "magnet_supplies": "ENERGIZED_OR_ABSENT",
@@ -117,6 +119,7 @@
           "cathode_heater": "ENERGIZED_OR_UNENERGIZED",
           "cathode_keeper": "ENERGIZED",
           "valves_flow_control": "ENERGIZED",
+          "compressor": "ABSENT_IN_LAB",
           "thermal_control": "ENERGIZED_OR_ABSENT",
           "housekeeping": "ENERGIZED"
         }
@@ -319,7 +322,7 @@
       {
         "id": "INV-BUS",
         "quantity": "bus-power boundary",
-        "rule": "bus_power_boundary_v1 with the same component list, measurement points and instrument classes in every arm (bus_power_boundary.components)",
+        "rule": "the same declared laboratory subset of bus_power_boundary_v1 in every arm: the same component list (bus_power_boundary.components, mapped to v1 ids), measurement points and instrument classes; the compressor row is ABSENT_IN_LAB in every arm and reconstructed from the upstream ICD (bus_power_boundary.laboratory_subset)",
         "verification": "per-point bus-power record with one row per component, no missing rows"
       }
     ]
@@ -339,17 +342,26 @@
       "controllers are calibrated on each working gas and mixture in the final configuration, traceable to a national metrology standard, within the calibration interval below (Snyder et al. 2017 Sec. IV and VI)",
       "facility-ingested background gas is not a controlled flow: it is characterized through the reference pressure and the background-pressure sweep, never added to m_dot_tot"
     ],
-    "mfc_calibration_interval": {"id": "mfc_calibration_interval", "value": 12, "unit": "months (maximum)", "source": "REF-SNYDER2017 Sec. VI ('Calibrations should be traceable to NIST and performed at least every 12 months over the entire flow scale')", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"}
+    "mfc_calibration_interval": {"id": "mfc_calibration_interval", "value": 12, "unit": "months (maximum)", "source": "REF-SNYDER2017 Sec. VI (paraphrase: calibrations traceable to NIST, performed at least every twelve months over the entire flow scale)", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"}
   },
   "bus_power_boundary": {
     "boundary_version_ref": "bus_power_boundary_v1",
     "boundary_point": "DC input bus: every consumer is measured (or, where labelled, reconstructed) at its input terminals from the common DC bus",
     "bus_voltage": {"id": "bus_voltage", "value": "TBD", "unit": "V", "tbd_requires": "spacecraft EPS ICD"},
     "laboratory_bus_emulation": "preferred: all consumers fed from one laboratory DC bus supply at the ICD bus voltage through breadboard or flight-like converters, with a main-bus meter and one branch meter per component; where a laboratory supply replaces a bus-fed converter, bus-side power is reconstructed as P_out / eta_conv with eta_conv measured for that converter at that load and labelled 'reconstructed'",
-    "consistency_note": "The component list follows the consumer list given for bus_power_boundary_v1 in the lane definition. Name-by-name mapping to the component identifiers in abep_sim/arch_boundary.py is an open item to check when that module is merged (this protocol does not import it).",
+    "consistency_note": "Each laboratory component row maps name by name onto the component identifiers of bus_power_boundary_v1 (abep_sim/arch_boundary.py, BOUNDARY_VERSION 'bus_power_boundary_v1'; COMMON_COMPONENTS and PREIONIZER_COMPONENTS, referenced by name only, never imported) through its v1_component_ids field; every v1 identifier is covered exactly once (checked by protocol_tools.py and, against the sibling module source, by the test). The laboratory measurement is a DECLARED SUBSET of bus_power_boundary_v1: the compressor row is carried in every arm with presence ABSENT_IN_LAB because the laboratory gas supply replaces the intake/compressor path; its bus draw is explicitly unavailable from this experiment and is reconstructed from the upstream ICD (see laboratory_subset).",
+    "laboratory_subset": {
+      "measured_total": "P_bus,lab = sum of every component row measured (or reconstructed per converter) in the laboratory = bus_power_boundary_v1 minus the compressor; a PARTIAL-boundary quantity, labelled as such wherever it appears",
+      "absent_in_lab": ["compressor"],
+      "absent_in_lab_disposition": "compressor: EXPLICITLY UNAVAILABLE from the experiment (no compressor in the laboratory feed); its bus draw P_compressor(m_dot_tot, composition) is RECONSTRUCTED from the upstream ICD / compressor model at each point's total flow and composition, labelled evidence class 'reconstructed' with the ICD revision and its uncertainty; never filled with a placeholder and never taken as zero",
+      "v1_total": "P_bus,v1 = P_bus,lab + P_compressor,ICD (reconstructed); defined only when the ICD supplies P_compressor for that point, otherwise UNAVAILABLE",
+      "bias_note": "the compressor draw depends on flow and composition, which are held identical across arms, so it is the same additive term in every arm at a matched point; omitting a common additive term from the denominators still moves the paired ratios of M1/M2 (it does not cancel), so partial-boundary ratios are never reported as bus_power_boundary_v1 ratios",
+      "compressor_bus_power": {"id": "compressor_bus_power", "value": "TBD", "unit": "W", "tbd_requires": "upstream ICD: compressor bus draw as a function of delivered total flow and composition at each operating point (abep_sim/compressor.py is the model reference; not evaluated here)"}
+    },
     "components": [
       {
         "id": "hall_ppu_input",
+        "v1_component_ids": ["hall_discharge"],
         "name": "Hall PPU (discharge converter) DC input",
         "includes": "discharge-converter conversion loss, output filter and cabling to the thruster; i.e. everything between the bus and the anode/cathode terminals",
         "measurement": "branch DC power meter at the converter input (4-wire voltage sense, calibrated shunt or zero-flux current transducer, simultaneous V and I sampling); discharge-side V_d and I_d also recorded to report eta_conv",
@@ -357,20 +369,23 @@
       },
       {
         "id": "magnet_supplies",
+        "v1_component_ids": ["hall_magnet", "ecr_magnet"],
         "name": "magnet supplies DC input",
-        "includes": "Hall coil supplies and any pre-ionizer (e.g. ECR resonance or helicon) coil supplies, reported as sub-items; 0 W rows for permanent magnets are still reported",
+        "includes": "two separately metered sub-items, one per bus_power_boundary_v1 component: hall_magnet (Hall magnetic-circuit coil supplies) and ecr_magnet (ECR resonance-field coil supplies; recorded in every arm, ABSENT or measured standby outside ECR_HALL); a 0 W row for a permanent-magnet circuit is still reported per sub-item",
         "measurement": "branch DC power meter per supply input",
         "quantity_type": "measured or reconstructed as above"
       },
       {
         "id": "rf_generator_input",
+        "v1_component_ids": ["rf_source"],
         "name": "RF generator DC input",
-        "includes": "generator conversion loss, matching network and RF cable losses (everything between the bus and the antenna); forward and reflected power at the generator output and at the applicator are recorded as diagnostics only",
+        "includes": "generator conversion loss, matching network and RF cable losses (everything between the bus and the antenna); forward and reflected power at the generator output and at the applicator are recorded as diagnostics only. A DC field-coil supply of the RF applicator, if the chosen design has one, has no separate bus_power_boundary_v1 component; this draft books it as a metered sub-item of this row (v1: rf_source) so that every common component stays identical across arms (mapping proposal for the owner)",
         "measurement": "branch DC power meter at the generator DC input; directional coupler and RF power meter as diagnostics",
         "quantity_type": "measured"
       },
       {
         "id": "microwave_source_input",
+        "v1_component_ids": ["ecr_source"],
         "name": "microwave source DC input",
         "includes": "source conversion loss, isolator/circulator, tuner, waveguide/coax and window losses (everything between the bus and the applicator); forward and reflected power recorded as diagnostics only",
         "measurement": "branch DC power meter at the source DC input; directional coupler and power meter as diagnostics",
@@ -378,6 +393,7 @@
       },
       {
         "id": "cathode_heater",
+        "v1_component_ids": ["cathode_heater"],
         "name": "cathode heater supply DC input",
         "includes": "heater converter loss; reported separately for steady state and for the start-up (ignition) phase as energy",
         "measurement": "branch DC power meter",
@@ -385,6 +401,7 @@
       },
       {
         "id": "cathode_keeper",
+        "v1_component_ids": ["cathode_keeper"],
         "name": "cathode keeper supply DC input",
         "includes": "keeper converter loss",
         "measurement": "branch DC power meter",
@@ -392,13 +409,24 @@
       },
       {
         "id": "valves_flow_control",
+        "v1_component_ids": ["flow_control"],
         "name": "valves and flow control DC input",
         "includes": "valve drivers and flow controllers on every propellant line (anode, pre-ionizer, cathode); laboratory-only controller power is reported as a flagged sub-item",
         "measurement": "branch DC power meter",
         "quantity_type": "measured"
       },
       {
+        "id": "compressor",
+        "v1_component_ids": ["compressor"],
+        "name": "gas-path compressor motor-drive DC input",
+        "includes": "compressor motor drive and harness on the atmospheric path (intake -> filter -> compressor -> gas chamber -> valve); not present in the laboratory experiment, which starts at the valve outlets",
+        "measurement": "none in this experiment (presence ABSENT_IN_LAB in every arm); bus draw reconstructed from the upstream ICD at each point's total flow and composition (bus_power_boundary.laboratory_subset)",
+        "quantity_type": "unavailable from the experiment; reconstructed (upstream ICD) when supplied",
+        "lab_presence": "ABSENT_IN_LAB"
+      },
+      {
         "id": "thermal_control",
+        "v1_component_ids": ["thermal_control"],
         "name": "thermal control DC input",
         "includes": "heaters and active cooling that the flight system would power for the thruster, pre-ionizer and PPU; facility-provided cooling is disclosed separately (facility_services_disclosure)",
         "measurement": "branch DC power meter",
@@ -406,14 +434,15 @@
       },
       {
         "id": "housekeeping",
+        "v1_component_ids": ["housekeeping"],
         "name": "housekeeping DC input",
         "includes": "control, telemetry and sensor electronics of the propulsion string",
         "measurement": "branch DC power meter",
         "quantity_type": "measured"
       }
     ],
-    "presence_rule": "every component row is recorded for every arm at every point. A physically absent component is recorded as 0 W with presence ABSENT; an installed but unenergized component is measured (standby draw), never assumed zero. A missing row makes P_bus,total undefined for that point (status EXCLUDED_MISSING_BOUNDARY_COMPONENT); no placeholder is ever filled in.",
-    "totals": "P_bus,total = sum over all components; the per-component breakdown is reported for every point and arm",
+    "presence_rule": "every component row is recorded for every arm at every point (the compressor row as ABSENT_IN_LAB with its reconstructed-from-ICD disposition). A physically absent component is recorded as 0 W with presence ABSENT; an installed but unenergized component is measured (standby draw), never assumed zero. A missing row makes P_bus,lab (and P_bus,v1) undefined for that point (status EXCLUDED_MISSING_BOUNDARY_COMPONENT); no placeholder is ever filled in.",
+    "totals": "P_bus,lab = sum over all components measured in the laboratory (partial boundary: bus_power_boundary_v1 minus the compressor); P_bus,v1 = P_bus,lab + P_compressor,ICD when the ICD supplies it; the per-component breakdown (per v1 component id) is reported for every point and arm",
     "facility_services_disclosure": [
       "facility cooling water or gas for any generator, applicator, magnet or PPU: heat load reported per arm (calorimetric or flow x temperature rise), outside the bus boundary but disclosed because flight would reject it through the thermal subsystem",
       "facility pumping and laboratory instrumentation are not propulsion consumers and are excluded, identically for all arms"
@@ -436,7 +465,7 @@
         "threshold_id": "THR-UNC-BUS",
         "status": "PROPOSED",
         "decided_by": null,
-        "rule": "expanded relative uncertainty of P_bus,total at every point <= {bus_unc_ratio} x delta_m1 (the pre-registered minimum effect of interest of M1); per-component budgets are allocated so that their root-sum-square meets this target",
+        "rule": "expanded relative uncertainty of P_bus,lab at every point (and of P_bus,v1, including the ICD compressor uncertainty, when it is formed) <= {bus_unc_ratio} x delta_m1 (the pre-registered minimum effect of interest of M1); per-component budgets are allocated so that their root-sum-square meets this target",
         "parameters": [
           {"id": "bus_unc_ratio", "value": 0.25, "unit": "fraction of delta_m1", "source": "XPROT draft proposal, analogous to the common 4:1 test-uncertainty-ratio convention (from memory - verify); not derived from data", "evidence_class": "assumed", "status": "PROPOSED"}
         ]
@@ -448,7 +477,7 @@
       {
         "id": "DIAG-THRUST",
         "quantity": "thrust T",
-        "instrument": "pendulum-type thrust stand with in-situ end-to-end calibration of the whole installation including pre-ionizer feed lines (RF cables, waveguide or coax) crossing the stand interface (Polk et al. 2017 Sec. IV)",
+        "instrument": "pendulum-type thrust stand with in-situ end-to-end calibration of the whole installation (Polk et al. 2017 Sec. IV); this protocol applies that principle to the pre-ionizer feed lines (RF cables, waveguide or coax) crossing the stand interface (XPROT application, not a statement of the source)",
         "procedure": "calibrations before and after each operating sequence and zero measurement with thruster off (Polk et al. 2017 Sec. V.A); thermocouples on the stand for drift tracking (Sec. VI.B); uncertainty budget reported (Sec. VI.C, VII)",
         "calibrations_before": {"id": "thrust_cal_before_min", "value": 10, "unit": "calibrations (minimum)", "source": "REF-POLK2017 Sec. V.A ('Perform a minimum of ten calibrations to generate a calibration curve')", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"},
         "calibrations_after": {"id": "thrust_cal_after_min", "value": 10, "unit": "calibrations (minimum)", "source": "REF-POLK2017 Sec. V.A ('Perform a minimum of ten calibrations after thruster operation')", "evidence_class": "assumed", "status": "PROPOSED", "note": "adopted recommended-practice value"},
@@ -637,9 +666,9 @@
         "decided_by": null,
         "rule": "uncommanded extinction iff BOTH the mean I_d over the hold window < {ext_mean_frac} x I_d,ref AND >= {ext_sample_share} of I_d samples in that window < {ext_sample_frac} x I_d,ref, with I_d,ref the median I_d of the preceding steady window of duration {ext_window}",
         "parameters": [
-          {"id": "ext_mean_frac", "value": 0.05, "unit": "fraction of I_d,ref", "source": "p5_n2_validation_criteria_v1.json operational_rules.O1 (project decision for simulation scoring); adoption for experiments is a proposal", "evidence_class": "assumed", "status": "PROPOSED"},
-          {"id": "ext_sample_share", "value": 0.9, "unit": "fraction of samples", "source": "p5_n2_validation_criteria_v1.json operational_rules.O1; adoption for experiments is a proposal", "evidence_class": "assumed", "status": "PROPOSED"},
-          {"id": "ext_sample_frac", "value": 0.1, "unit": "fraction of I_d,ref", "source": "p5_n2_validation_criteria_v1.json operational_rules.O1; adoption for experiments is a proposal", "evidence_class": "assumed", "status": "PROPOSED"},
+          {"id": "ext_mean_frac", "value": 0.05, "unit": "fraction of I_d,ref", "source": "p5_n2_validation_criteria_v1.json operational_rules.O1_extinction_SUSTAINMENT (project decision for simulation scoring); adoption for experiments is a proposal", "evidence_class": "assumed", "status": "PROPOSED"},
+          {"id": "ext_sample_share", "value": 0.9, "unit": "fraction of samples", "source": "p5_n2_validation_criteria_v1.json operational_rules.O1_extinction_SUSTAINMENT; adoption for experiments is a proposal", "evidence_class": "assumed", "status": "PROPOSED"},
+          {"id": "ext_sample_frac", "value": 0.1, "unit": "fraction of I_d,ref", "source": "p5_n2_validation_criteria_v1.json operational_rules.O1_extinction_SUSTAINMENT; adoption for experiments is a proposal", "evidence_class": "assumed", "status": "PROPOSED"},
           {"id": "ext_window", "value": "TBD", "unit": "s", "tbd_requires": "discharge oscillation band from the Hall-only pilot"}
         ]
       },
@@ -661,7 +690,7 @@
       "VALID": "all invariants within tolerance, all instruments valid, every bus component recorded",
       "EXCLUDED_FACILITY": "reference pressure outside the matched band, gauge fault or asymmetry beyond THR-PRESSURE-ASYM",
       "EXCLUDED_INSTRUMENT": "thrust-stand calibration shift beyond THR-UNC-THRUST, ledger residual beyond THR-LEDGER, or another instrument fault",
-      "EXCLUDED_MISSING_BOUNDARY_COMPONENT": "any bus_power_boundary_v1 component not recorded; P_bus,total undefined",
+      "EXCLUDED_MISSING_BOUNDARY_COMPONENT": "any bus_power_boundary_v1 component row not recorded (the compressor row counts as recorded only with its ABSENT_IN_LAB disposition); P_bus,lab undefined",
       "CONFOUNDED_MAGNETIC": "INV-MAG tolerance missed for the configuration",
       "NOT_IGNITED": "ignition attempt failed; counted in M5",
       "NOT_SUSTAINED": "uncommanded extinction per THR-EXTINCTION; counted in M6 and S6"
@@ -677,7 +706,7 @@
     {
       "id": "M1",
       "name": "thrust per bus power",
-      "definition": "T / P_bus,total at matched point and reference pressure",
+      "definition": "T / P_bus at matched point and reference pressure, computed on two labelled bases: PARTIAL (P_bus,lab, bus_power_boundary_v1 minus the compressor) and V1 (P_bus,v1 = P_bus,lab + P_compressor,ICD, only when the ICD supplies the compressor draw). Only the V1-basis classification is a bus_power_boundary_v1 result; a PARTIAL-basis classification is always reported with the label PARTIAL_BOUNDARY",
       "unit": "mN/kW",
       "role": "primary (PROPOSED)",
       "comparison": "paired ratio R = M1(arm) / M1(HALL_ONLY) at the same point, day and pressure",
@@ -695,7 +724,7 @@
     {
       "id": "M2",
       "name": "beam ion current per bus power",
-      "definition": "I_b / P_bus,total, I_b from the Faraday-probe integration (DIAG-FARADAY)",
+      "definition": "I_b / P_bus on the same two labelled bases as M1 (PARTIAL: P_bus,lab; V1: P_bus,lab + P_compressor,ICD), I_b from the Faraday-probe integration (DIAG-FARADAY)",
       "unit": "A/kW",
       "role": "secondary (PROPOSED)",
       "comparison": "paired ratio as M1",
@@ -813,7 +842,7 @@
           "threshold_id": "THR-SCR-TP",
           "status": "PROPOSED",
           "decided_by": null,
-          "rule": "report whether T / P_bus,total > {rfp_tp_floor_ref} (necessary condition only)",
+          "rule": "report whether T / P_bus,lab > {rfp_tp_floor_ref} (PARTIAL_BOUNDARY; necessary condition only), and T / P_bus,v1 when the ICD compressor draw is available",
           "parameters": [
             {"id": "rfp_tp_floor_ref", "value": 8.0, "unit": "mN/kW", "source": "rfp_screens.derived.rfp_thrust_per_power_floor (protocol_tools.py)", "evidence_class": "model-derived", "status": "DERIVED", "derived_key": "rfp_thrust_per_power_floor"}
           ]
@@ -874,7 +903,8 @@
     "obtain the upstream ICD revision that fixes delivered flows and O2/N2 compositions (flows are never invented here)",
     "decide the primary endpoint(s) and the primary point set for the multiplicity family",
     "decide the subset of points for the background-pressure sweep and the minimum-flow search",
-    "cross-check the component list against abep_sim/arch_boundary.py (bus_power_boundary_v1) when that module is merged",
+    "confirm the name-by-name mapping to bus_power_boundary_v1 (bus_power_boundary.components[].v1_component_ids), in particular booking any RF applicator DC field coil under rf_source, and re-run the test against abep_sim/arch_boundary.py once that module is merged",
+    "confirm the declared laboratory subset (compressor ABSENT_IN_LAB, reconstructed from the upstream ICD) and obtain the ICD compressor bus draw per operating point",
     "verify the metadata-only references (REF-BROWN2017, REF-SHASTRY2009, REF-SHABSHELOWITZ2014) and locate a recommended practice for the retarding potential analyzer",
     "align with docs/experiments/ material if and when it exists"
   ]

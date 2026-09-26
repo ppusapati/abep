@@ -41,9 +41,9 @@ MARKDOWN = HERE / "EXPERIMENT_PROTOCOL_DRAFT.md"
 EVIDENCE_CLASSES = ("measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed")
 BOUNDARY_VERSION_REF = "bus_power_boundary_v1"
 ARM_IDS = ("HALL_ONLY", "RF_HALL", "ECR_HALL")
-# Consumer list given for bus_power_boundary_v1 in the lane definition (Hall PPU input incl. conversion
-# efficiency, magnet supplies, RF generator DC input incl. matching network and cable losses, microwave source DC
-# input, cathode heater and keeper, valves/flow control, thermal control, housekeeping).
+# Laboratory consumer rows (Hall PPU input incl. conversion efficiency, magnet supplies, RF generator DC input incl.
+# matching network and cable losses, microwave source DC input, cathode heater and keeper, valves/flow control,
+# compressor [ABSENT_IN_LAB], thermal control, housekeeping).
 BOUNDARY_COMPONENTS = (
     "hall_ppu_input",
     "magnet_supplies",
@@ -52,9 +52,32 @@ BOUNDARY_COMPONENTS = (
     "cathode_heater",
     "cathode_keeper",
     "valves_flow_control",
+    "compressor",
     "thermal_control",
     "housekeeping",
 )
+# Component identifiers of bus_power_boundary_v1 as declared in abep_sim/arch_boundary.py (COMMON_COMPONENTS and
+# PREIONIZER_COMPONENTS). Transcribed, not imported; the test compares this copy against the module source (parsed
+# with ast, never executed) whenever that source is reachable.
+V1_COMMON_COMPONENTS = ("hall_discharge", "hall_magnet", "cathode_keeper", "cathode_heater", "flow_control",
+                        "compressor", "thermal_control", "housekeeping")
+V1_PREIONIZER_COMPONENTS = {"hall_only": (), "rf_hall": ("rf_source",), "ecr_hall": ("ecr_source", "ecr_magnet")}
+V1_ALL_COMPONENTS = V1_COMMON_COMPONENTS + ("rf_source", "ecr_source", "ecr_magnet")
+ARM_TO_V1_ARCH = {"HALL_ONLY": "hall_only", "RF_HALL": "rf_hall", "ECR_HALL": "ecr_hall"}
+# name-by-name mapping laboratory row -> bus_power_boundary_v1 component ids (each v1 id covered exactly once)
+V1_MAPPING = {
+    "hall_ppu_input": ("hall_discharge",),
+    "magnet_supplies": ("hall_magnet", "ecr_magnet"),
+    "rf_generator_input": ("rf_source",),
+    "microwave_source_input": ("ecr_source",),
+    "cathode_heater": ("cathode_heater",),
+    "cathode_keeper": ("cathode_keeper",),
+    "valves_flow_control": ("flow_control",),
+    "compressor": ("compressor",),
+    "thermal_control": ("thermal_control",),
+    "housekeeping": ("housekeeping",),
+}
+ABSENT_IN_LAB = ("compressor",)
 REGISTER_BEGIN = "<!-- BEGIN GENERATED: numeric_register (protocol_tools.py --write-md) -->"
 REGISTER_END = "<!-- END GENERATED: numeric_register -->"
 _PLACEHOLDER = re.compile(r"\{([a-z][a-z0-9_]*)\}")
@@ -245,8 +268,46 @@ def boundary_errors(protocol: dict) -> list[str]:
             errs.append(f"{arm['id']}: boundary_version_ref differs")
         if bb.get("component_ids") != comp_ids:
             errs.append(f"{arm['id']}: component_ids differ from bus_power_boundary.components")
-        if list(bb.get("expected_presence", {})) != comp_ids:
+        pres = bb.get("expected_presence", {})
+        if list(pres) != comp_ids:
             errs.append(f"{arm['id']}: expected_presence keys differ from the component list")
+        for cid in ABSENT_IN_LAB:
+            if pres.get(cid) != "ABSENT_IN_LAB":
+                errs.append(f"{arm['id']}: {cid} must be ABSENT_IN_LAB (declared laboratory subset)")
+        for cid, state in pres.items():
+            if state == "ABSENT_IN_LAB" and cid not in ABSENT_IN_LAB:
+                errs.append(f"{arm['id']}: {cid} is ABSENT_IN_LAB but not in the declared laboratory subset")
+    errs += v1_mapping_errors(protocol)
+    return errs
+
+
+def v1_mapping_errors(protocol: dict) -> list[str]:
+    """Every laboratory row maps onto bus_power_boundary_v1 ids; every v1 id is covered exactly once."""
+    errs = []
+    bpb = protocol["bus_power_boundary"]
+    covered = []
+    for comp in bpb["components"]:
+        ids = tuple(comp.get("v1_component_ids", ()))
+        if V1_MAPPING.get(comp["id"]) != ids:
+            errs.append(f"{comp['id']}: v1_component_ids {list(ids)} != {list(V1_MAPPING.get(comp['id'], ()))}")
+        covered += list(ids)
+        if (comp.get("lab_presence") == "ABSENT_IN_LAB") != (comp["id"] in ABSENT_IN_LAB):
+            errs.append(f"{comp['id']}: lab_presence inconsistent with the declared laboratory subset")
+    if sorted(covered) != sorted(V1_ALL_COMPONENTS):
+        errs.append(f"v1 coverage {sorted(covered)} != {sorted(V1_ALL_COMPONENTS)} (each v1 id exactly once)")
+    sub = bpb.get("laboratory_subset", {})
+    if tuple(sub.get("absent_in_lab", ())) != ABSENT_IN_LAB:
+        errs.append("laboratory_subset.absent_in_lab differs from the declared subset")
+    # every v1 component required for an arm's architecture is reachable through a row that the arm records
+    for arm in protocol["arms"]:
+        arch = ARM_TO_V1_ARCH.get(arm["id"])
+        if arch is None:
+            continue
+        required = set(V1_COMMON_COMPONENTS) | set(V1_PREIONIZER_COMPONENTS[arch])
+        recorded = {v for c in bpb["components"] if c["id"] in arm["bus_boundary"]["component_ids"]
+                    for v in V1_MAPPING.get(c["id"], ())}
+        if not required <= recorded:
+            errs.append(f"{arm['id']}: v1 components {sorted(required - recorded)} not recorded")
     return errs
 
 
