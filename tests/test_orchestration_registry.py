@@ -197,3 +197,31 @@ def test_verified_pin_is_confirmed_from_the_journal(tmp_path):
     assert m.pinned_verified(str(tmp_path / "j"), {"workflow_run": "wfx", "workflow_key": "K", "commit": "bbbbbbb2"})
     assert not m.pinned_verified(str(tmp_path / "j"), {"workflow_run": "wfx", "workflow_key": "K", "commit": "ccccccc3"})
     assert not m.pinned_verified(str(tmp_path / "j"), {"workflow_run": "wfx", "workflow_key": "K", "commit": "aaaaaaa1"})
+
+
+def test_pinned_lane_identity_is_the_pin_and_worktree_must_match(tmp_path, monkeypatch):
+    """For a lane with verified_pin: the prerequisite identity (execution-key input) is the pinned commit, and the lane is
+    verified only while its worktree HEAD is exactly that commit; a moved HEAD is an orchestration error, never trusted."""
+    import subprocess
+    m = _load()
+    wt = tmp_path / "wt"; wt.mkdir()
+    g = lambda *a: subprocess.run(["git", *a], cwd=wt, capture_output=True, text=True, check=True).stdout.strip()
+    g("init", "-q"); g("config", "user.email", "t@t"); g("config", "user.name", "t")
+    (wt / "f").write_text("1"); g("add", "f"); g("commit", "-qm", "c1"); c1 = g("rev-parse", "HEAD")
+    (wt / "f").write_text("2"); g("commit", "-qam", "c2"); c2 = g("rev-parse", "HEAD")
+    B = lambda c: {"worktree_path": str(wt), "branch": "b", "commit": c}
+    P = {"pass": True, "issues": []}
+    _journal(tmp_path / "j", "wfp", [("build:K", B(c1)), ("verify1:K:evidence", P), ("verify1:K:rules", P),
+                                     ("fix1:K", B(c2)), ("verify2:K:evidence", {"pass": False, "issues": []})])
+    orch = tmp_path / "orch"; orch.mkdir()
+    reg = {"lanes": [{"id": "lane_p", "workflow_run": "wfp", "workflow_key": "K", "deps": [],
+                      "verified_pin": {"workflow_run": "wfp", "workflow_key": "K", "commit": c1}}], "datasets": [], "follow_ons": []}
+    (orch / "lane_registry_v1.json").write_text(json.dumps(reg))
+    (orch / "trigger_registry_v1.json").write_text(json.dumps({"triggers": []}))
+    monkeypatch.setattr(m, "ORCH", str(orch)); monkeypatch.setattr(m, "VAL", str(tmp_path / "val"))
+    s = m.status(str(tmp_path / "j"), str(tmp_path / "fo"))
+    assert s["state"]["lane_p"].startswith("error: pinned worktree HEAD")          # worktree at c2, pin is c1
+    assert s["lane_build"]["lane_p"]["commit"] == c1                                # identity is the pin, not the later build
+    g("reset", "-q", "--hard", c1)
+    s = m.status(str(tmp_path / "j"), str(tmp_path / "fo"))
+    assert s["state"]["lane_p"] == "verified" and s["lane_build"]["lane_p"]["commit"] == c1

@@ -69,7 +69,8 @@ def journal_lanes(journals_dir):
 def pinned_verified(journals_dir, pin):
     """A registered verified pin (owner rule: only verified content satisfies triggers): true iff the journal of
     pin['workflow_run'] shows a build/fix result with commit pin['commit'] for pin['workflow_key'] followed by a verification
-    round in which BOTH lenses passed, before any later build/fix result for that lane."""
+    round in which BOTH lenses passed on that commit. Later unintended re-executions (e.g. a resume replaying a completed
+    fix) do NOT supersede an explicitly registered pin; only a deliberate replacement of the pin in the registry does."""
     path = os.path.join(journals_dir, pin["workflow_run"], "journal.jsonl")
     if not os.path.isfile(path):
         return False
@@ -93,6 +94,20 @@ def pinned_verified(journals_dir, pin):
             if got.get("evidence") and got.get("rules"):
                 return True
     return False
+
+
+def pin_integrity(commit, worktree):
+    """None if the pinned content is intact: the lane worktree HEAD is exactly the pinned commit, or (worktree gone) the pinned
+    commit is merged into the repository HEAD. Otherwise an orchestration error string (never silently trust the journal)."""
+    import subprocess
+    def git(*a, cwd=ROOT):
+        return subprocess.run(["git", *a], cwd=cwd, capture_output=True, text=True)
+    if worktree and os.path.isdir(worktree):
+        head = git("rev-parse", "HEAD", cwd=worktree).stdout.strip()
+        return None if head == commit else f"pinned worktree HEAD {head[:10]} != verified_pin {commit[:10]}"
+    if git("merge-base", "--is-ancestor", commit, "HEAD").returncode == 0:
+        return None
+    return f"verified_pin {commit[:10]}: worktree missing and commit not merged into HEAD"
 
 
 def lane_state(L):
@@ -188,9 +203,13 @@ def status(journals_dir, followon_dir):
         if L.get("repairs"):                                        # operator repair of done_open_issues: latest repair run rules
             src = (L["repairs"][-1]["workflow_run"], L["repairs"][-1]["workflow_key"])
         st[L["id"]] = lane_state(jl.get(src))
-        if L.get("verified_pin"):                                   # a verified terminal state preserved against re-execution
-            st[L["id"]] = "verified_self" if pinned_verified(journals_dir, L["verified_pin"]) else "error: verified_pin not confirmed by journal"
         b = (jl.get(src) or {}).get("build") or {}
+        if L.get("verified_pin"):                                   # a verified terminal state preserved against re-execution
+            pin = L["verified_pin"]
+            ok = pinned_verified(journals_dir, pin)
+            why = pin_integrity(pin["commit"], b.get("worktree_path")) if ok else "verified_pin not confirmed by journal"
+            st[L["id"]] = "verified_self" if why is None else f"error: {why}"
+            b = dict(b, commit=pin["commit"])                       # the PIN is the authoritative identity (execution keys)
         info[L["id"]] = {k: b.get(k) for k in ("worktree_path", "branch", "commit")}
     for F in reg["follow_ons"]:
         a = launched.get(F["id"])
