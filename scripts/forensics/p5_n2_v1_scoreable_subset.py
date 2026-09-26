@@ -591,8 +591,10 @@ def section5(rows, runs_A, cands, chems):
                                                                   "time (official scores file)",
             "Id_rms_rel, Id_pp_rel, Id_max_over_target, Id_f_dominant_kHz": "bridge statistics of I_d(t) over the 1-2 ms "
                                                                             "averaging window (raw dataset)",
-            "Te_max_eV": "maximum of the time-averaged T_e profile (raw dataset)",
-            "ion_over_discharge": "time-averaged exit ion current / window-mean I_d (raw dataset)"},
+            "Te_max_eV": "maximum over z of the time-averaged (1-2 ms) T_e profile (raw dataset)",
+            "ion_over_discharge": ("time-averaged (1-2 ms) ion current at the downstream domain boundary / window-mean "
+                                   "I_d (raw dataset; bridge_lib.jl uses HallThruster.jl ion_current = ji[end] * "
+                                   "channel_area[end], pinned v0.23.1 src/simulation/postprocess.jl)")},
     }
 
 
@@ -627,6 +629,8 @@ def group_facts(rows, runs_A, cs):
         "runs_total_by_registration": {g: sum(r["registration"] == g for r in rA) for g in REGS},
         "runs_scoreable_by_point": {pt: sum(r["point"] == pt for r in sc) for pt in POINTS},
         "run_readings_scoreable": len(rr), "run_readings_pass": len(passes),
+        "members_with_20_pass": sum(n == 20 for n in collections.Counter(
+            (r["candidate"], r["member"]) for r in passes).values()),
         "run_readings_scoreable_N2_N5": len(rr25),
         "run_readings_pass_N2_N5": sum(r["status"] == "PASS" for r in rr25),
         "reasons_by_registration_run_readings": {g: {q: sum(q in r["reasons"] for r in rr if r["registration"] == g)
@@ -670,9 +674,11 @@ def statements(f, label):
     if zero_pts:
         s.append(f"Not tested by the scoreable subset: {', '.join(zero_pts)} (no scoreable run there).")
     if f["run_readings_pass"]:
+        full = ("They do not make up any complete member (20 of 20)" if f["members_with_20_pass"] == 0 else
+                f"{f['members_with_20_pass']} (candidate, member) pairs have 20 of 20 PASS")
         s.append(f"PASS evidence: {f['run_readings_pass']} of {f['run_readings_scoreable']} scoreable run-readings are "
-                 f"official PASS, at {', '.join(f['pass_points'])} only. They do not make up any complete member "
-                 f"(20 of 20), and the official member verdicts are unchanged. At N2-N5, "
+                 f"official PASS, at {', '.join(f['pass_points'])} only. {full}, and the official member verdicts are "
+                 f"unchanged. At N2-N5, "
                  f"{f['run_readings_pass_N2_N5']} of {f['run_readings_scoreable_N2_N5']} scoreable run-readings are "
                  f"PASS.")
     else:
@@ -712,21 +718,21 @@ def statements(f, label):
     io, sh = f["ion_over_target_in_current_over_runs"], f["ion_share_of_excess_in_current_over_runs"]
     if io:
         s.append(f"Model-internal decomposition: take the {io['n']} CURRENT over-prediction runs. The model's "
-                 f"time-averaged exit ion current alone is {io['min']:.2f}-{io['max']:.2f} x I_target (median "
+                 f"time-averaged ion current at the downstream domain boundary alone is {io['min']:.2f}-{io['max']:.2f} x I_target (median "
                  f"{io['median']:.2f}). It exceeds I_target in {f['ion_over_target_gt_1_in_current_over_runs']} runs "
                  f"and 1.15 x I_target in {f['ion_over_target_gt_1p15_in_current_over_runs']}. The ion current carries "
                  f"a median {sh['median']:.2f} (range {sh['min']:.2f}-{sh['max']:.2f}) of the modelled excess "
                  f"I_d - I_target. Assume the standard current balance I_d = I_i + I_e with I_e >= 0 (assumed; verify "
                  f"for the P5 data reduction). Then a modelled ion current above I_target exceeds every ion current "
-                 f"compatible with the measured corrected I_d. Where that holds, the scoreable evidence does not "
+                 f"compatible with the reconstructed target I_d. Where that holds, the scoreable evidence does not "
                  f"support the modelled ion production level. No measured ion/electron split at N1-N5 is in the "
                  f"repository's audit.")
     ip = f["ion_over_target_in_pass_runs"]
     if ip:
         if ip["n"] == 1:
-            head = f"in the single PASS run the modelled exit ion current is {ip['median']:.2f} x I_target"
+            head = f"in the single PASS run the modelled boundary ion current is {ip['median']:.2f} x I_target"
         else:
-            head = (f"in the {ip['n']} distinct PASS runs the modelled exit ion current is {ip['min']:.2f}-"
+            head = (f"in the {ip['n']} distinct PASS runs the modelled boundary ion current is {ip['min']:.2f}-"
                     f"{ip['max']:.2f} x I_target (median {ip['median']:.2f}), above I_target in "
                     f"{f['ion_over_target_gt_1_in_pass_runs']}")
         s.append(f"PASS runs, same decomposition: {head}. Agreement of I_d within tolerance does not by itself show "
@@ -738,12 +744,14 @@ def family_statements(f):
     """Additional family-level statements on current composition and thrust per ampere (model-internal)."""
     iod, i2 = f["ion_over_discharge_scoreable"], f["ion_over_N2_equivalent_in_current_over_runs"]
     t2 = f["target_over_N2_equivalent"]
-    s = [f"Model current composition: across the scoreable runs, the time-averaged exit ion current is "
+    s = [f"Model current composition: across the scoreable runs, the time-averaged boundary ion current is "
          f"{iod['min']:.2f}-{iod['max']:.2f} of the window-mean I_d (median {iod['median']:.2f}). In the CURRENT "
          f"over-prediction runs it is {i2['min']:.2f}-{i2['max']:.2f} x the N2-equivalent flow current "
-         f"e*mdot_anode/m_N2 (median {i2['median']:.2f}). The measured corrected I_d is {t2['min']:.2f}-{t2['max']:.2f} "
-         f"x that current (mdot_anode measured, Brabston 2025 Table 2). An ion current above 1 x e*mdot_anode/m_N2 "
-         f"requires dissociation or multiple ionisation in the model."]
+         f"e*mdot_anode/m_N2 (median {i2['median']:.2f}). The reconstructed target I_d (Eq. 14 corrected, level 3) is "
+         f"{t2['min']:.2f}-{t2['max']:.2f} x that current (mdot_anode measured, Brabston 2025 Table 2). Inferred from "
+         f"mass conservation (time average, steady anode throughput; one N2 molecule yields at most one singly charged "
+         f"N2+): a modelled ion current above 1 x e*mdot_anode/m_N2 requires dissociation or multiple ionisation in "
+         f"the model."]
     tpc = f["thrust_per_current_ratio_non_collapsed_N1_N3"]
     dev, adI = f["abs_one_minus_thrust_per_current_ratio_non_collapsed_N1_N3"], f["abs_dI_non_collapsed_N1_N3"]
     s.append(f"Thrust per ampere: take the ratio (T_axial/I_d)_model / (T_corr/I_d,corr)_target in the non-collapsed "
@@ -770,22 +778,34 @@ def cross_candidate_statements(s3, cands):
     r_b = rho["b_barrier_scale"]["median_dI_all_points"]["rho"]
     r_w = rho["w_width_L"]["median_dI_all_points"]["rho"]
     r_c = rho["c_center_L"]["median_dI_all_points"]["rho"]
-    return [
-        f"Xe-to-N2 ordering ({N9_CAVEAT.split(':')[0]}): across the {len(cands)} candidates, the rank order of the N2 "
-        f"scoreable median dI follows the rank order of the recorded Xe in-sample dI (Spearman rho {r_xe2:+.2f} with "
-        f"Xe2, {r_xe3:+.2f} with Xe3). The recorded Xe2 dI is negative for {n_xe2_neg} of {len(cands)} candidates. The "
-        f"N2 scoreable median dI at N2-N5 is positive for {n_n25_pos} of {len(cands)}. So the between-candidate ordering "
-        f"carries over from Xe to N2 while the level moves from under- to over-prediction. The N2 ordering is "
-        f"therefore not independent of the Xe screening ordering.",
-        f"Transport parameters (same caveat): the N2 scoreable median dI has rank correlation {r_b:+.2f} with b, "
-        f"{r_c:+.2f} with c and {r_w:+.2f} with w. With the derived trough deficit b*w (chosen post hoc, descriptive) it "
-        f"is {r_bw:+.2f}, and b*w also ranks with the Xe in-sample max abs dI ({r_bw_xe:+.2f}). The direction matches "
-        f"the model form, where a larger low-transport trough lowers the anomalous inverse Hall parameter over a wider "
-        f"region. This describes how the model responds. It is not evidence that any parameter value is physically "
-        f"correct, and because the parameters co-vary it cannot be attributed to b*w alone.",
-        "a = 1/16 for every candidate, so the scoreable subset carries no information on the anomalous-transport "
-        "scale a itself.",
-    ]
+    head = f"Xe-to-N2 ordering ({N9_CAVEAT.split(':')[0]}): across the {len(cands)} candidates"
+    if min(r_xe2, r_xe3) >= 0.8:           # descriptive threshold for the wording only; nothing is tested
+        xe = (f"{head}, the rank order of the N2 scoreable median dI follows the rank order of the recorded Xe "
+              f"in-sample dI (Spearman rho {r_xe2:+.2f} with Xe2, {r_xe3:+.2f} with Xe3).")
+        tail = " The N2 ordering is therefore not independent of the Xe screening ordering."
+    else:
+        xe = (f"{head}, the Spearman rho of the N2 scoreable median dI with the recorded Xe in-sample dI is "
+              f"{r_xe2:+.2f} (Xe2) and {r_xe3:+.2f} (Xe3).")
+        tail = ""
+    xe += (f" The recorded Xe2 dI is negative for {n_xe2_neg} of {len(cands)} candidates. The N2 scoreable median dI "
+           f"at N2-N5 is positive for {n_n25_pos} of {len(cands)}.")
+    if n_xe2_neg == len(cands) and n_n25_pos >= len(cands) - 1 and min(r_xe2, r_xe3) >= 0.8:
+        xe += (" So the between-candidate ordering carries over from Xe to N2 while the level moves from under- to "
+               "over-prediction.")
+    xe += tail
+    tp = (f"Transport parameters (same caveat): the N2 scoreable median dI has rank correlation {r_b:+.2f} with b, "
+          f"{r_c:+.2f} with c and {r_w:+.2f} with w. With the derived trough deficit b*w (chosen post hoc, descriptive) "
+          f"it is {r_bw:+.2f}, and b*w also ranks with the Xe in-sample max abs dI ({r_bw_xe:+.2f}).")
+    if r_bw < 0:
+        tp += (" The sign is the one expected from the model form, where a larger low-transport trough lowers the "
+               "anomalous inverse Hall parameter over a wider region and so lowers the modelled current.")
+    tp += (" This describes how the model responds. It is not evidence that any parameter value is physically correct, "
+           "and because the parameters co-vary it cannot be attributed to b*w alone.")
+    a_vals = s3["a_anom_scale"]["values"]
+    a_st = (f"a = {a_vals[0]:g} (1/16) for every candidate, so the scoreable subset carries no information on the "
+            f"anomalous-transport scale a itself." if a_vals == [0.0625] else
+            f"a takes the values {a_vals} across the candidates (see section 3).")
+    return [xe, tp, a_st]
 
 
 def section6(rows, runs_A, cands, ctab, s3):
@@ -854,7 +874,10 @@ def build():
                       "reconstructed target (Brabston 2025 Table 2 P_d/V_d with the Eq. 14 correction, frozen audit)",
             "dT_mN": "model-derived (T_1D x axial factor, the factor being paper-reconstructed + digitized, readings A/B) "
                      "minus a level-3 reconstructed (N1) or digitized + reconstructed (N2, N3) corrected thrust",
-            "I_d time statistics, T_e max, ion current": "model-derived (bridge outputs in the frozen raw dataset)",
+            "I_d time statistics, T_e max, ion current": "model-derived (bridge outputs in the frozen raw dataset; the "
+                                                         "ion current is taken at the downstream domain boundary)",
+            "ion-current bound e*mdot_anode/m_N2 and the I_d = I_i + I_e reading": "inferred (mass / current "
+                                                                                   "conservation; I_e >= 0 assumed)",
             "anode mass flow for the N2-equivalent current": "measured (Brabston 2025 Table 2 via cases/p5_n2.json)",
             "transport parameters a, b, c, w": "assumed model form (EVIDENCE.md level 7) with screening parameters "
                                               "(transport_ensemble_v0.json screening_candidates)",
