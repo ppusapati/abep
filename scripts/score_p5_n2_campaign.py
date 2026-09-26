@@ -55,28 +55,37 @@ def run_status(r, reading):
     if r.get("retcode") != "success" or not r.get("finite", False) or any(r.get(k) is None for k in need) \
             or len(r["Id_final10_samples_A"]) == 0:
         return "NUMERICAL_FAILURE", [], {}
+    det = observables(r, reading)
     unresolved = r.get("chemistry_unresolved_rate_files") or []
     fouts = [q.get("extrapolated_fraction") for q in r["chemistry_per_reaction"]]
     if unresolved or any(f is None or f > FOUT_TOL for f in fouts):
-        return "OUT_OF_DOMAIN", [], {"f_out_max": max((f for f in fouts if f is not None), default=None), "unresolved": unresolved}
+        # the deltas are still computed (O4 compares observables whatever the status), but nothing is scored
+        det.update({"f_out_max": max((f for f in fouts if f is not None), default=None), "unresolved": unresolved})
+        return "OUT_OF_DOMAIN", [], det
+    reasons = []
+    if det["final10_mean_over_target"] < 0.05 and det["final10_frac_below_0p10"] >= 0.90:
+        reasons.append("SUSTAINMENT")
+    if abs(det["dI_rel"]) > ID_TOL:
+        reasons.append("CURRENT")
+    if "dT_mN" in det and abs(det["dT_mN"]) > T_TOL_MN[r["point"]]:
+        reasons.append("THRUST")
+    return ("FAIL_VALIDATION" if reasons else "PASS"), reasons, det
+
+
+def observables(r, reading):
+    """Residual quantities against the mode-matched targets, computed for every numerically valid run (any status)."""
     I_t, T_t = targets(r["point"], r["mode"])
     s = r["Id_final10_samples_A"]
     mean_final = sum(s) / len(s)
     frac_low = sum(x < 0.10 * I_t for x in s) / len(s)
-    reasons, det = [], {"I_target_A": I_t, "dI_rel": (r["discharge_current_A"] - I_t) / I_t,
-                        "final10_mean_over_target": mean_final / I_t, "final10_frac_below_0p10": frac_low}
-    if mean_final < 0.05 * I_t and frac_low >= 0.90:
-        reasons.append("SUSTAINMENT")
-    if abs(det["dI_rel"]) > ID_TOL:
-        reasons.append("CURRENT")
+    det = {"I_target_A": I_t, "dI_rel": (r["discharge_current_A"] - I_t) / I_t,
+           "final10_mean_over_target": mean_final / I_t, "final10_frac_below_0p10": frac_low}
     if r["point"] in T_TOL_MN:
         f = axial_factor(r["point"], reading)
         det["T_axial_mN"] = 1e3 * r["thrust_N"] * f
         det["T_target_mN"] = T_t
         det["dT_mN"] = det["T_axial_mN"] - T_t
-        if abs(det["dT_mN"]) > T_TOL_MN[r["point"]]:
-            reasons.append("THRUST")
-    return ("FAIL_VALIDATION" if reasons else "PASS"), reasons, det
+    return det
 
 
 def exb(r):
@@ -172,17 +181,39 @@ def verdict_change(sens_records, base_records, baseline_chem, sens_chem):
     return {c: (mb["vacuum"][c], ms["vacuum"].get(c)) for c in mb.get("vacuum", {}) if mb["vacuum"][c] != ms["vacuum"].get(c)}
 
 
+def staged_escalations(allrecs):
+    """O4 for every staged sensitivity (and escalation combination) present in the records, against its pre-registered
+    baseline (criteria staged_sensitivities), on vacuum results. Reports whether the escalation trigger fired and why."""
+    by_chem = collections.defaultdict(list)
+    for r in allrecs:
+        by_chem[r["chemistry"]].append(r)
+    out = {}
+    for sens, spec in CRIT["staged_sensitivities"].items():
+        pairs = [(sens, spec["baseline"])] + [(esc, prim) for prim, esc in spec["escalation"].items()]
+        for s_ch, b_ch in pairs:
+            if not by_chem.get(s_ch):
+                continue
+            fired = escalation(by_chem[s_ch], by_chem.get(b_ch, []), s_ch)
+            vc = verdict_change(by_chem[s_ch], by_chem.get(b_ch, []), b_ch, s_ch)
+            out[s_ch] = {"baseline": b_ch, "n_runs": len(by_chem[s_ch]), "trigger_fired": bool(fired or vc),
+                         "run_level_triggers": fired, "verdict_changes": vc,
+                         "role": "first stage (escalate on trigger)" if s_ch == sens else "escalation combination"}
+    return out
+
+
 def main(argv):
     out = argv[argv.index("--out") + 1] if "--out" in argv else os.path.join(BR, "validation", "p5_n2_campaign_v1_scores.json")
     paths = [a for i, a in enumerate(argv) if not a.startswith("--") and (i == 0 or argv[i - 1] != "--out")]
     recs = [json.loads(l) for p in paths for l in open(p)]
     assert not any(r.get("smoke") for r in recs), "smoke-test records are never scored"
-    recs = [r for r in recs if r["chemistry"] in MANDATORY]
+    allrecs = recs
+    recs = [r for r in allrecs if r["chemistry"] in MANDATORY]
     runs, members = score(recs)
+    staged = staged_escalations(allrecs)
     res = {"preregistration": "prereg/p5_n2_validation_criteria_v1.json", "n_records": len(recs),
            "status_counts": {m: dict(collections.Counter((x["status"]) for x in runs if x["key"].endswith("|" + m)))
                              for m in ("vacuum", "facility")},
-           "candidates": members, "exb_diagnostic": {r["key"]: exb(r) for r in recs if exb(r) is not None}, "runs": runs}
+           "candidates": members, "staged_escalation": staged, "exb_diagnostic": {r["key"]: exb(r) for r in recs if exb(r) is not None}, "runs": runs}
     os.makedirs(os.path.dirname(out), exist_ok=True)
     json.dump(res, open(out, "w"), indent=1)
     for mode, cs in members.items():

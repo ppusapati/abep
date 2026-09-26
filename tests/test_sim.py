@@ -1207,6 +1207,17 @@ def test_p5_n2_scorer_implements_frozen_rules():
     onA = lambda fired: [f for f in fired if f[1].endswith("(A)")]          # fixtures set thrust through reading A's factor
     assert onA(m.escalation([rec(point="N2", chem="s", T_mN=T2 + 2.7)], base, "s")) == []
     assert onA(m.escalation([rec(point="N2", chem="s", T_mN=T2 + 2.9)], base, "s"))
+    # O4 compares observables even when both runs are OUT_OF_DOMAIN (review, PR #28)
+    ood_base = [rec(point="N2", chem="n2_n.toml", fout=1e-3)]
+    assert m.escalation([rec(point="N2", chem="s", fout=1e-3)], ood_base, "s") == []
+    assert m.escalation([rec(point="N2", chem="s", fout=1e-3, I=1.2 * I2)], ood_base, "s")
+    # staged records are scored for O4 against their pre-registered baseline, not discarded
+    jl = [rec(point=p, chem="n2_n_exc_johnsonlow.toml", I=(1.2 * m.targets(p, "vacuum")[0] if p == "N3" else None)) for p in m.POINTS]
+    st = m.staged_escalations(good + jl)
+    assert st["n2_n_exc_johnsonlow.toml"]["baseline"] == "n2_n.toml" and st["n2_n_exc_johnsonlow.toml"]["trigger_fired"]
+    dic = [rec(point=p, chem="n2_n_n2dication.toml") for p in m.POINTS]
+    assert m.staged_escalations(good + dic)["n2_n_n2dication.toml"]["baseline"] == "n2_n_di_lower.toml"
+    assert not m.staged_escalations(good + dic)["n2_n_n2dication.toml"]["trigger_fired"]
 
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""
