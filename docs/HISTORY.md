@@ -1521,3 +1521,57 @@ It must never leak upstream, or into Vyovrinda's own thruster geometry.
 `rate_tables.maxwellian_rate` now takes an explicit `tail` (`hold` | `zero`). `hold` is bit-identical to the previous behaviour, so `ionization_N.dat` is unchanged. There is no golden or model change: the bridge tables are not read by the 0-D chemistry.
 
 **Open (owner's decision):** N₂ excitation. The recommended per-state data end at 20 eV, but Maxwellian rates up to T_e ≈ 30 eV need σ well above that. Extending needs a second source, e.g. Johnson et al. 2005 (10–100 eV, measured), Kawaguchi et al. 2021 or Itikawa 2006, or an explicit Born-type extrapolation. That choice is not made here.
+
+## 2026-09-26 — Chemistry validity guard; excitation / atomic-N source decisions
+
+**Merged:** PR #17, the N₂ dissociation table. It was rebased onto main first. The 12.14 eV energy loss is now documented as a representative fixed loss for a channel-summed cross section, with 9.75–13.33 eV carried as model uncertainty.
+
+**Guard (project decision):** no silent chemistry extrapolation.
+- `propellants/rate_validity.toml` gives every rate table a validity domain in mean electron energy.
+- `bridge_lib.jl` emits `chemistry_trustworthy`, a new `hall_map_schema_v1` field. It is converged ∧ sustained ∧ 1.5 × max T_e over the chemistry-active region (n_e·Σn_n ≥ 1 % of peak) ≤ the lowest limit in the reaction set. It also emits `Te_chem_region_max_eV` and the limiting file's basis.
+- `HallMap` performance `trustworthy` now requires it.
+- The dissociation limit is 45 eV (T_e = 30 eV) until its cross section is extended.
+- Smoke-tested on a shortened Xe1 run: the new fields are populated, and map_ready is unchanged.
+
+**Source decisions (owner):**
+- N₂ excitation: eight state-resolved reactions (A, B, W, B′, a, a′, w, C). Su et al. 2021 up to 20 eV, then Johnson et al. 2005 (JGR 110, A11311, doi 10.1029/2005JA011295) from 20 to 100 eV. No renormalization at the join: the 10–20 eV overlap difference is recorded as source uncertainty. No −1.5 eV shift.
+- Energy losses are the experimental vertical energies from Su 2021 Table 1 (Oddershede et al.): 7.75, 8.04, 8.88, 9.67, 9.31, 9.92, 10.27 and 11.19 eV. Su's per-state supplementary files carry the cc-pVTZ onsets (7.76, 8.67, … 11.88 eV).
+- Above 100 eV: quantify the hold-vs-zero sensitivity at T_e = 10–30 eV first. Tabata et al. 2006 is considered only if the sensitivity is material.
+- Atomic-N elastic: momentum-transfer cross section from Ragimkhanov et al., EPJD 80, 69 (2026), doi 10.1140/epjd/s10053-026-01166-3, CC BY 4.0. Wang, Zatsarinny & Bartschat 2014 is the low-energy cross-check. Disagreement in 5–50 eV is carried as uncertainty.
+
+**Access status from this container:**
+- Johnson 2005 is free-to-read on Wiley (bronze OA). Ragimkhanov 2026 is CC BY on Springer.
+- Both publisher sites answer scripted requests with a JavaScript/bot challenge (HTTP 403 / "Client Challenge"). Using the headless browser would have needed a trust-store change, which was not permitted.
+- No repository copy was found: NTRS has no PDF, and OpenAlex lists publisher locations only. So neither table is built yet.
+
+## 2026-09-26 — Chemistry guard tightened (reaction-weighted, per frame); validity audit
+
+This replaces the first version (commit d2009b3). That version used the time-averaged T_e over an n_e·n_n ≥ 1 %-of-peak region. It could miss two things:
+- a low-density, high-T_e cell whose rate k_r makes it matter;
+- a transient hot frame during breathing.
+
+**Now:**
+- For each reaction r, the activity R = n_e·n_target·k_r(3/2 T_e)·dz is summed over every saved frame of the averaging window and every cell.
+- f_out,r is the share of that activity at 3/2 T_e above the file's limit. Validation rule: f_out = 0 (≤ 1e-12). No contribution allowance is set; one would have to be pre-registered, e.g. for architecture maps.
+- k_r comes from the same 0–255 eV grid and end-clamping that the solver uses.
+
+**New outputs:**
+- `chemistry_extrapolated_fraction_max`;
+- `chemistry_limiting_rate_file`;
+- `chemistry_max_mean_energy_active_eV`;
+- `chemistry_unresolved_rate_files`;
+- `chemistry_per_reaction`;
+- `chemistry_trustworthy`.
+
+**Checks:**
+- `checks/chemistry_validity_check.jl` uses synthetic frames with the real dissociation table. The cold case gives 0. A single transient 40 eV frame gives f_out = 0.016. A hot cell at 0.5 % of peak n_e·n_n gives 8.7e-4. The old region cut would have missed both.
+- End-to-end N₂ smoke run (N1, 0.5 ms, uncommitted reaction subset without excitation or N elastic): not chemistry-trustworthy, because two tables are unresolved. Dissociation f_out = 0, with a max active mean energy of 35.9 eV (limit 45).
+- End-to-end Xe1 smoke run: the built-in path is unchanged.
+
+**Validity audit:**
+- A "verify" value can no longer certify trust. Entries are now `verified` or `unresolved`.
+- `ionization_N.dat` is verified to 255 eV. The NIST source spans 15–5000 eV, and the held-tail share is 0.0000 % up to 300 eV.
+- The HallThruster-shipped `ionization_N2_N2+.dat` and `elastic_N2.dat` are **unresolved**. The package has no cross-section inputs (reactions/CITATIONS.md cites Itikawa 2006 only), and `elastic_N2.dat` ends at 100 eV mean energy, above which the solver holds the last value.
+- Consequence: no N₂ run can be chemistry-trustworthy until these two tables are audited or rebuilt from Song et al. JPCRD 2023 Tables 10/5.
+
+**Driver fix found by the N₂ smoke run:** Gaussian-B cases wrote `B_peak_minus_exit_m = NaN`, which is invalid JSON and aborted the output. It now reads 0: the Gaussian profile peaks at the exit plane by construction.
