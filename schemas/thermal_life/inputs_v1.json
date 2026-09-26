@@ -1,0 +1,128 @@
+{
+ "schema": "thermal_life_inputs_v1",
+ "description": "Input contract of abep_sim/thermal_life.py (THL lane). Every input is required; there are no defaults. thermal_life.check_feasibility refuses (ValueError) when an input is missing, carries a different unit string than listed here (no unit conversion is done), lacks a source, or (for numbers) lacks evidence_level 1-7 and a docs/EVIDENCE.md quantity_type. 'from' names the lane/module expected to produce the input; 'now' is its state on 2026-09-26. Component names coordinate with the bus-power boundary component names; this file does not import or depend on that module.",
+ "input_record": {
+  "number": {"value": "float", "unit": "exactly the contract unit", "source": "non-empty provenance string", "evidence_level": "int 1-7 (docs/EVIDENCE.md)", "quantity_type": "measured | digitized | inferred | reconstructed | model-derived | assumed"},
+  "id": {"value": "one of 'allowed'", "unit": "id", "source": "who decided and where it is recorded"},
+  "paths": "non-empty list of rejection paths; each path is {'kind': 'conductance' | 'radiation', plus that kind's number inputs listed under rejection_path}",
+  "flag": {"value": "true | false", "unit": "bool", "source": "provenance string"}
+ },
+ "bus_power_components": ["hall_discharge", "hall_magnet", "cathode_keeper", "cathode_heater", "rf_source", "ecr_source", "ecr_magnet"],
+ "rejection_path": {
+  "conductance": {
+   "G_W_per_K": {"kind": "number", "unit": "W/K", "from": "thermal geometry model (TBD)"},
+   "T_sink_K": {"kind": "number", "unit": "K", "from": "thermal geometry model / radiator design (TBD)"}
+  },
+  "radiation": {
+   "emissivity": {"kind": "number", "unit": "-", "from": "surface finish data (TBD)"},
+   "area_m2": {"kind": "number", "unit": "m^2", "from": "thermal geometry (TBD)"},
+   "view_factor": {"kind": "number", "unit": "-", "from": "thermal geometry (TBD)"},
+   "T_sink_K": {"kind": "number", "unit": "K", "from": "orbit thermal environment (TBD)"}
+  }
+ },
+ "mission": {
+  "required_firing_h": {"kind": "number", "unit": "h", "from": "RFP DTDF/06/13516 (> 15,000 h firing; abep_sim.constants.RFP.ignition_hours)", "now": "available (RFP)"}
+ },
+ "components": {
+  "hall_magnet": {
+   "bus_power_components": ["hall_magnet"],
+   "node": "electromagnet coil winding (lumped)",
+   "inputs": {
+    "coil_current_A": {"kind": "number", "unit": "A", "from": "Vyovrinda magnetic-circuit design", "now": "TBD (P5 coil currents are unpublished; no Vyovrinda design yet)"},
+    "coil_resistance_ref_ohm": {"kind": "number", "unit": "ohm", "from": "coil design (thermal_life.coil_resistance_from_geometry) or coil measurement", "now": "TBD"},
+    "coil_resistance_ref_T_C": {"kind": "number", "unit": "degC", "from": "same as coil_resistance_ref_ohm", "now": "TBD"},
+    "copper_model": {"kind": "id", "allowed": ["copper_iacs_linear", "copper_roeser_ratio"], "from": "owner choice", "now": "TBD"},
+    "external_heat_W": {"kind": "number", "unit": "W", "from": "thruster thermal model: discharge heat reaching the coil", "now": "TBD"},
+    "bus_power_allocation_W": {"kind": "number", "unit": "W", "from": "bus-power boundary component 'hall_magnet'", "now": "TBD (other lane)"},
+    "insulation_class_C": {"kind": "number", "unit": "degC", "from": "magnet-wire / insulation-system selection (IEC 60085 class)", "now": "TBD"},
+    "derating_policy": {"kind": "id", "allowed": ["none", "eee_inst_002_custom_0p75", "eee_inst_002_class_c_minus_20"], "from": "owner decision", "now": "TBD"},
+    "hot_spot_allowance_K": {"kind": "number", "unit": "K", "from": "coil thermal model (EEE-INST-002 note 1/a uses 10 C for MIL-style parts)", "now": "TBD"},
+    "rejection_paths": {"kind": "paths", "from": "thermal geometry model", "now": "TBD"}
+   }
+  },
+  "hall_discharge": {
+   "bus_power_components": ["hall_discharge"],
+   "node": "channel walls (lumped); anode heat is accounted but has no thermal check in v1",
+   "inputs": {
+    "discharge_power_W": {"kind": "number", "unit": "W", "from": "HallMap field discharge_power_W or bus-power 'hall_discharge'", "now": "TBD (credible set empty: no admitted HallMap)"},
+    "discharge_current_A": {"kind": "number", "unit": "A", "from": "HallMap field discharge_current_A", "now": "TBD (no admitted HallMap)"},
+    "wall_ion_flux_m2s": {"kind": "number", "unit": "m^-2 s^-1", "from": "HallMap field wall_ion_flux_m2s (thermal_life.hallmap_wall_inputs)", "now": "TBD (no admitted HallMap)"},
+    "wall_ion_energy_eV": {"kind": "number", "unit": "eV", "from": "HallMap field wall_ion_energy_eV (thermal_life.hallmap_wall_inputs)", "now": "TBD (no admitted HallMap)"},
+    "wall_area_m2": {"kind": "number", "unit": "m^2", "from": "Vyovrinda channel geometry: inner + outer wall area over z <= L", "now": "TBD"},
+    "wall_electron_temperature_eV": {"kind": "number", "unit": "eV", "from": "solver output (not a hall_map_schema_v1 field)", "now": "TBD (needs a schema extension: owner decision)"},
+    "wall_see_yield": {"kind": "number", "unit": "-", "from": "solver output (WallSheath SEE yield, not a hall_map_schema_v1 field)", "now": "TBD (needs a schema extension: owner decision)"},
+    "anode_electron_temperature_eV": {"kind": "number", "unit": "eV", "from": "solver output near the anode (not a hall_map_schema_v1 field)", "now": "TBD"},
+    "additional_wall_heat_W": {"kind": "number", "unit": "W", "from": "any wall heat not covered by the ion and electron terms (e.g. recombination, absorbed plasma radiation); zero only with a documented justification", "now": "TBD"},
+    "wall_material_record": {"kind": "id", "allowed_prefix": "bn_", "from": "wall material selection (record id in limits_v1.json)", "now": "TBD"},
+    "wall_environment": {"kind": "id", "allowed": ["oxidizing", "inert_or_vacuum"], "from": "owner decision (ABEP air path: atomic-oxygen plasma has no sourced limit)", "now": "TBD"},
+    "hot_spot_allowance_K": {"kind": "number", "unit": "K", "from": "wall thermal model (peak vs lumped)", "now": "TBD"},
+    "rejection_paths": {"kind": "paths", "from": "thermal geometry model", "now": "TBD"},
+    "allowable_erosion_depth_m": {"kind": "number", "unit": "m", "from": "Vyovrinda wall geometry (erodible thickness before the magnetic circuit is exposed)", "now": "TBD"},
+    "peak_to_average_flux_ratio": {"kind": "number", "unit": "-", "from": "axial wall-flux profile (hall_map_schema_v1 gives only the z <= L average)", "now": "TBD"},
+    "volumetric_sputter_yield_m3_per_ion": {"kind": "number", "unit": "m^3", "from": "sourced sputter yield of the wall material for the ion mix at wall_ion_energy_eV", "now": "TBD"}
+   }
+  },
+  "ecr_magnet": {
+   "bus_power_components": ["ecr_magnet"],
+   "node": "ECR permanent-magnet assembly (lumped)",
+   "inputs": {
+    "magnet_grade_record": {"kind": "id", "allowed_prefix": "pm_", "from": "magnet selection (record id in limits_v1.json)", "now": "TBD"},
+    "ecr_rf_power_W": {"kind": "number", "unit": "W", "from": "bus-power boundary component 'ecr_source'", "now": "TBD (other lane)"},
+    "heat_fraction_to_magnets": {"kind": "number", "unit": "-", "from": "ECR source design / test", "now": "TBD"},
+    "bus_power_allocation_W": {"kind": "number", "unit": "W", "from": "bus-power boundary component 'ecr_magnet' (must be 0 W: permanent magnets only)", "now": "TBD (other lane)"},
+    "min_Br_fraction_required": {"kind": "number", "unit": "-", "from": "ECR magnetic design: smallest Br(T)/Br(20 C) that keeps the resonance zone", "now": "TBD"},
+    "demag_field_max_A_per_m": {"kind": "number", "unit": "A/m", "from": "magnetostatic design: largest opposing field at any magnet point", "now": "TBD"},
+    "knee_field_A_per_m": {"kind": "number", "unit": "A/m", "from": "manufacturer demagnetization curve of the grade (H_K,90 or H_D5)", "now": "TBD"},
+    "knee_field_at_T_C": {"kind": "number", "unit": "degC", "from": "temperature of the curve used for knee_field_A_per_m", "now": "TBD"},
+    "hot_spot_allowance_K": {"kind": "number", "unit": "K", "from": "magnet thermal model", "now": "TBD"},
+    "rejection_paths": {"kind": "paths", "from": "thermal geometry model", "now": "TBD"}
+   }
+  },
+  "rf_source": {
+   "bus_power_components": ["rf_source"],
+   "node": "RF source structure (lumped)",
+   "inputs": {
+    "rf_power_W": {"kind": "number", "unit": "W", "from": "bus-power boundary component 'rf_source' (RF power delivered to the antenna)", "now": "TBD (other lane)"},
+    "heat_fraction_antenna_copper": {"kind": "number", "unit": "-", "from": "RF source design / test", "now": "TBD"},
+    "heat_fraction_coupler_dielectric": {"kind": "number", "unit": "-", "from": "RF source design / test", "now": "TBD"},
+    "heat_fraction_plasma_to_structure": {"kind": "number", "unit": "-", "from": "RF source design / test", "now": "TBD"},
+    "structure_limit_record": {"kind": "id", "allowed": ["rf_source_structure_limit"], "from": "limits_v1.json", "now": "TBD record"},
+    "hot_spot_allowance_K": {"kind": "number", "unit": "K", "from": "source thermal model", "now": "TBD"},
+    "rejection_paths": {"kind": "paths", "from": "thermal geometry model", "now": "TBD"}
+   }
+  },
+  "ecr_source": {
+   "bus_power_components": ["ecr_source"],
+   "node": "ECR source structure (lumped); heat reaching the magnets is accounted in ecr_magnet",
+   "inputs": {
+    "rf_power_W": {"kind": "number", "unit": "W", "from": "bus-power boundary component 'ecr_source' (microwave power delivered to the coupler)", "now": "TBD (other lane)"},
+    "heat_fraction_antenna_copper": {"kind": "number", "unit": "-", "from": "ECR source design / test (coupler conductor loss)", "now": "TBD"},
+    "heat_fraction_coupler_dielectric": {"kind": "number", "unit": "-", "from": "ECR source design / test (window loss)", "now": "TBD"},
+    "heat_fraction_plasma_to_structure": {"kind": "number", "unit": "-", "from": "ECR source design / test", "now": "TBD"},
+    "structure_limit_record": {"kind": "id", "allowed": ["ecr_source_structure_limit"], "from": "limits_v1.json", "now": "TBD record"},
+    "hot_spot_allowance_K": {"kind": "number", "unit": "K", "from": "source thermal model", "now": "TBD"},
+    "rejection_paths": {"kind": "paths", "from": "thermal geometry model", "now": "TBD"}
+   }
+  },
+  "cathode": {
+   "bus_power_components": ["cathode_keeper", "cathode_heater"],
+   "node": "cathode assembly (lumped); emitter temperature from Richardson-Dushman",
+   "inputs": {
+    "keeper_power_W": {"kind": "number", "unit": "W", "from": "bus-power boundary component 'cathode_keeper'", "now": "TBD (other lane)"},
+    "keeper_heat_fraction_to_cathode": {"kind": "number", "unit": "-", "from": "cathode dossier", "now": "TBD"},
+    "heater_power_W": {"kind": "number", "unit": "W", "from": "bus-power boundary component 'cathode_heater'", "now": "TBD (other lane)"},
+    "heater_steady_state_duty": {"kind": "number", "unit": "-", "from": "cathode dossier / operations (0 for a self-heated cathode)", "now": "TBD"},
+    "emitter_plasma_heating_W": {"kind": "number", "unit": "W", "from": "cathode dossier (insert-plasma heating in steady state)", "now": "TBD"},
+    "emission_current_A": {"kind": "number", "unit": "A", "from": "HallMap discharge_current_A plus keeper current (thermally limited regime)", "now": "TBD"},
+    "emitting_area_m2": {"kind": "number", "unit": "m^2", "from": "cathode dossier (insert geometry)", "now": "TBD"},
+    "insert_mass_kg": {"kind": "number", "unit": "kg", "from": "cathode dossier", "now": "TBD"},
+    "emitter_pO2_Torr": {"kind": "number", "unit": "Torr", "from": "cathode dossier (O2 partial pressure at the emitter; feed purity / air path)", "now": "TBD"},
+    "heater_qualified_cycles": {"kind": "number", "unit": "-", "from": "cathode dossier (heater qualification cycles)", "now": "TBD"},
+    "required_heater_cycles": {"kind": "number", "unit": "-", "from": "operations concept (number of starts)", "now": "TBD"},
+    "assembly_limit_record": {"kind": "id", "allowed": ["cathode_assembly_temperature_limit"], "from": "limits_v1.json", "now": "TBD record"},
+    "hot_spot_allowance_K": {"kind": "number", "unit": "K", "from": "cathode thermal model", "now": "TBD"},
+    "rejection_paths": {"kind": "paths", "from": "thermal geometry model", "now": "TBD"}
+   }
+  }
+ }
+}

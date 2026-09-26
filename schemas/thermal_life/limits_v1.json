@@ -1,0 +1,502 @@
+{
+ "schema": "thermal_life_limits_v1",
+ "description": "Sourced material/component limits and relations for abep_sim/thermal_life.py (THL lane). Every record is either 'sourced' (value transcribed from a document that was actually opened on the accessed_on date, with locator and evidence attributes per docs/EVIDENCE.md) or 'TBD' (no value; 'requires' says what is needed). thermal_life.py refuses (ValueError) to use a TBD record or a TBD value. Values are transcribed, never computed from repository data; the only transformations are the unit conversions stated in each record's transformation_chain. Nothing here is a Vyovrinda hardware measurement (evidence level 1-2 absent throughout).",
+ "frozen_on": "2026-09-26",
+ "vocabulary": {
+  "evidence_level": "1-7 exactly as defined in docs/EVIDENCE.md (strength and proximity of the SOURCE for this application; never what was done to the number)",
+  "quantity_type": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"],
+  "status": {
+   "sourced": "value(s) transcribed from the cited, accessed document",
+   "TBD": "no usable value; 'requires' names what is needed; the module refuses to use it"
+  },
+  "value_null": "a value of null inside a sourced record carries a 'TBD' string: that single quantity is not given by the source and must not be filled"
+ },
+ "sources": {
+  "nbs_hb100_1966": {
+   "citation": "U.S. National Bureau of Standards, Copper Wire Tables, NBS Handbook 100, issued 21 February 1966 (supersedes Circular 31)",
+   "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/hb/nbshandbook100.pdf",
+   "access": "full text, openly accessible (NIST legacy publication); pages cited are the printed page numbers",
+   "accessed_on": "2026-09-26"
+  },
+  "iec60085_2007_preview": {
+   "citation": "IEC 60085:2007, Edition 4.0 (2007-11), Electrical insulation - Thermal evaluation and designation",
+   "url": "https://cdn.standards.iteh.ai/samples/15118/43856e92340a47dbb8ee823ac6b0a73c/IEC-60085-2007.pdf",
+   "access": "publisher-sanctioned sample (iTeh Standards) that shows clauses 1-5 and Table 1; the standard was not purchased; whether a later edition supersedes Ed. 4.0 was not checked (verify)",
+   "accessed_on": "2026-09-26"
+  },
+  "nasa_eee_inst_002": {
+   "citation": "K. Sahu (prepared by), EEE-INST-002: Instructions for EEE Parts Selection, Screening, Qualification, and Derating, NASA/TP-2003-212242, NASA Goddard Space Flight Center, May 2003; April 2008 edition incorporating Addendum 1",
+   "url": "https://nepp.nasa.gov/docuploads/FFB52B88-36AE-4378-A05B2C084B5EE2CC/EEE-INST-002_add1.pdf",
+   "access": "full text, openly accessible (NASA NEPP)",
+   "accessed_on": "2026-09-26"
+  },
+  "mmpa_0100_00": {
+   "citation": "Magnetic Materials Producers Association, MMPA Standard No. 0100-00, Standard Specifications for Permanent Magnet Materials, Chicago",
+   "url": "https://allianceorg.com/pdfs/MMPA_0100-00.pdf",
+   "access": "full text, openly accessible on a third-party host (Alliance LLC); the publication year is not printed in the extracted text (the '-00' suffix read as 2000: verify); the '*' and '**' footnotes of Table IV-4 are not present in the PDF text layer (not legible to us)",
+   "accessed_on": "2026-09-26"
+  },
+  "arnold_recoma35e": {
+   "citation": "Arnold Magnetic Technologies, Recoma 35E sintered Sm2Co17 magnet datasheet, Rev. 160204a",
+   "url": "https://www.arnoldmagnetics.com/wp-content/uploads/2017/10/Recoma-35E-160205-final.pdf",
+   "access": "manufacturer datasheet, openly accessible; the sheet states the data are typical, for general reference only and not guaranteed",
+   "accessed_on": "2026-09-26"
+  },
+  "arnold_n42sh": {
+   "citation": "Arnold Magnetic Technologies, N42SH sintered NdFeB magnet datasheet, Rev. 020821",
+   "url": "https://www.arnoldmagnetics.com/wp-content/uploads/2017/11/N42SH-151021.pdf",
+   "access": "manufacturer datasheet, openly accessible",
+   "accessed_on": "2026-09-26"
+  },
+  "arnold_rtc_constantinides": {
+   "citation": "S. Constantinides (Arnold Magnetic Technologies), Understanding and Using Reversible Temperature Coefficients, presentation slides (PDF title: 'Magnetics 2010'; slides marked (c) 2009 Arnold Magnetic Technologies)",
+   "url": "https://www.arnoldmagnetics.com/wp-content/uploads/2017/10/Understanding-and-Using-Reversible-Temperature-Coefficients-Constantinides-Magnetics-2010-psn-hi-res.pdf",
+   "access": "manufacturer technical presentation, openly accessible; cited by slide number",
+   "accessed_on": "2026-09-26"
+  },
+  "vac_vacodym_vacomax_2026": {
+   "citation": "VACUUMSCHMELZE GmbH & Co. KG, Rare Earth Permanent Magnets VACODYM - VACOMAX (product information brochure), Hanau, published March 2026",
+   "url": "https://vacuumschmelze.com/03_Documents/Brochures/Product%20Information%20VACODYM-VACOMAX%20en.pdf",
+   "access": "manufacturer brochure, openly accessible; per-grade temperature coefficients and maximum temperatures are NOT in this brochure",
+   "accessed_on": "2026-09-26"
+  },
+  "henze_hebosint_2021": {
+   "citation": "Henze Boron Nitride Products AG, HeBoSint Boron Nitride Solids - PURE LINE / CLASSIC LINE / STRONG LINE qualities datasheet, 08.2021",
+   "url": "https://nitrid.eu/files/henze/en/HS_Qualities_en.pdf",
+   "access": "manufacturer datasheet, openly accessible; the sheet states the data are typical, a guide only, and should not be used for detailed specifications",
+   "accessed_on": "2026-09-26"
+  },
+  "goebel_katz_2008_ch6": {
+   "citation": "D. M. Goebel and I. Katz, Fundamentals of Electric Propulsion: Ion and Hall Thrusters, JPL Space Science and Technology Series, 2008, Chapter 6 'Hollow Cathodes' (pp. 243 ff.) (publisher details from memory: verify)",
+   "url": "https://descanso.jpl.nasa.gov/SciTechBook/series1/Goebel_06_Chap6_cathodes.pdf",
+   "access": "full chapter, openly accessible (JPL DESCANSO); printed page numbers cited",
+   "accessed_on": "2026-09-26"
+  },
+  "goebel_katz_2008_ch7": {
+   "citation": "D. M. Goebel and I. Katz, Fundamentals of Electric Propulsion: Ion and Hall Thrusters, JPL Space Science and Technology Series, 2008, Chapter 7 'Hall Thrusters' (publisher details from memory: verify)",
+   "url": "https://descanso.jpl.nasa.gov/SciTechBook/series1/Goebel_07_Chap7_Hall.pdf",
+   "access": "full chapter, openly accessible (JPL DESCANSO); printed page numbers cited",
+   "accessed_on": "2026-09-26"
+  },
+  "nist_codata_sigma": {
+   "citation": "NIST, CODATA Internationally recommended 2022 values: Stefan-Boltzmann constant, 5.670 374 419... x 10^-8 W m^-2 K^-4 (exact)",
+   "url": "https://physics.nist.gov/cgi-bin/cuu/Value?sigma",
+   "access": "openly accessible",
+   "accessed_on": "2026-09-26"
+  },
+  "repo_hall_map_schema_v1": {
+   "citation": "this repository: hallthruster_bridge/hall_map_schema_v1.json (field definitions) and hallthruster_bridge/bridge_lib.jl wall_ion_metrics (producer)",
+   "url": "hallthruster_bridge/hall_map_schema_v1.json",
+   "access": "repository file (read, not modified)",
+   "accessed_on": "2026-09-26"
+  }
+ },
+ "records": {
+  "copper_iacs_linear": {
+   "status": "sourced",
+   "kind": "copper_resistance_linear",
+   "source_id": "nbs_hb100_1966",
+   "locator": "p. 3 (sec. 1.a International Annealed Copper Standard values; sec. 1.b a20 = 0.003 93 for 100 % conductivity annealed wire); p. 4 (IEC 0.00393 at 20 C for the resistance between points fixed on a freely expanding wire, based on Dellinger's NBS measurements 10-100 C; tables assume 'linear up to 200 C, and probably in the interval -100 to +300 C')",
+   "evidence_level": 4,
+   "quantity_type": "measured",
+   "nature": "international standard values (IACS, adopted by the IEC in 1913) resting on NBS measurements",
+   "values": {
+    "rho_20C": {"value": 1.7241e-08, "unit": "ohm m", "as_published": "1.7241 microhm-cm at 20 C (also 0.017 241 ohm-mm2/meter at 20 C)"},
+    "alpha_20C": {"value": 0.00393, "unit": "1/K", "as_published": "a20 = 0.003 93 (per degree C)"},
+    "T_min_C": {"value": 0.0, "unit": "degC", "as_published": "not a published bound: our domain choice (see transformation_chain)", "quantity_type": "assumed"},
+    "T_max_C": {"value": 200.0, "unit": "degC", "as_published": "the resistance-temperature curve for copper is linear up to 200 C"}
+   },
+   "transformation_chain": "measurement (Dellinger, 10-100 C) -> IACS/IEC standard values -> NBS HB100 text -> transcribed; microhm-cm -> ohm m (x 1e-8). Model R(T) = R20 [1 + a20 (T - 20 C)] as stated on p. 3. Domain: upper bound 200 C is the source's confident statement; the 'probably -100 to +300 C' extension is NOT used; lower bound 0 C is our choice (Roeser data straight from 0 C, p. 4).",
+   "uncertainty": "for copper above 94 % conductivity the measured a20 agreed with the conductivity-derived value within 0.000 01 (about 0.3 %) (p. 3); a20 scales with percent conductivity (a20 = 0.003 93 x conductivity fraction, p. 3), so wire below 100 % IACS has a smaller a20",
+   "applicability_domain": "annealed copper conductor (magnet wire), 0-200 C, resistance of a freely expanding wire",
+   "validation_status": "standard reference value; not measured on Vyovrinda coil hardware"
+  },
+  "copper_roeser_ratio": {
+   "status": "sourced",
+   "kind": "copper_resistance_ratio_table",
+   "source_id": "nbs_hb100_1966",
+   "locator": "p. 4 (W. F. Roeser, unpublished NBS data for high-purity copper heated in vacuum; Rt/R0 table)",
+   "evidence_level": 5,
+   "quantity_type": "measured",
+   "nature": "unpublished measurement reported by NBS (original not inspectable)",
+   "values": {
+    "T_C": {"value": [-100.0, 0.0, 100.0, 200.0, 300.0, 400.0, 500.0], "unit": "degC", "as_published": "Temperature C: -100, 0, 100, 200, 300, 400, 500"},
+    "R_over_R0": {"value": [0.557, 1.000, 1.431, 1.862, 2.299, 2.747, 3.210], "unit": "-", "as_published": "Rt/R0: 0.557, 1.000, 1.431, 1.862, 2.299, 2.747, 3.210"}
+   },
+   "transformation_chain": "measurement -> NBS HB100 table -> transcribed -> our piecewise-linear interpolation in T, used only as a ratio R(T)/R(Tref). The source states the curve is a straight line from 0 to 300 C with slight upward curvature above; for a convex curve the chord between tabulated points lies above the curve, so the interpolation overestimates R (conservative for I^2 R heating).",
+   "uncertainty": "no uncertainty stated; high-purity copper has a larger relative resistance rise than lower-conductivity copper (a20 proportional to conductivity, p. 3), so using these ratios for ~100 % IACS wire overestimates the rise (conservative for heating; inferred from the p. 3 rule)",
+   "applicability_domain": "-100 to 500 C, ratio form only",
+   "validation_status": "not validated on Vyovrinda coil hardware"
+  },
+  "iec60085_thermal_classes": {
+   "status": "sourced",
+   "kind": "insulation_thermal_classes",
+   "source_id": "iec60085_2007_preview",
+   "locator": "3.11 'thermal class' definition (p. 5); 4.1 maximum use temperature (p. 6); clause 5 Table 1 'Thermal class assignment' (p. 7)",
+   "evidence_level": 6,
+   "quantity_type": "assumed",
+   "nature": "normative designation: the thermal class equals the recommended maximum continuous use temperature in C of an electrical insulation system (EIS)",
+   "values": {
+    "classes_C": {"value": [90, 105, 120, 130, 155, 180, 200, 220, 250], "unit": "degC", "as_published": "Table 1: ATE or RTE >=90 <105 -> 90 (Y); >=105 <120 -> 105 (A); >=120 <130 -> 120 (E); >=130 <155 -> 130 (B); >=155 <180 -> 155 (F); >=180 <200 -> 180 (H); >=200 <220 -> 200 (N); >=220 <250 -> 220 (R); >=250 <275 -> 250; classes over 250 increase in increments of 25"},
+    "life_basis_h": {"value": null, "unit": "h", "as_published": "not stated in IEC 60085", "TBD": "requires the thermal-endurance evaluation of the actual EIS (IEC 60216-1/-5, not accessed) or a coil life test; IEC 60085 3.11 NOTE 1 only says operation above the class 'can result in shorter expected life'"}
+   },
+   "transformation_chain": "standard text -> transcribed; no conversion",
+   "uncertainty": "a thermal class is a recommendation for normal operating conditions defined by the product committee (4.1); an EIM class does not imply the EIS class (clauses 4, 5)",
+   "applicability_domain": "electrical insulation systems under normal operating conditions; vacuum, radiation and thermal-cycling effects are 'other factors' (4.2) not covered by the class",
+   "validation_status": "normative; says nothing about a Hall-thruster coil in vacuum"
+  },
+  "eee_inst_002_magnetics": {
+   "status": "sourced",
+   "kind": "magnetics_derating",
+   "source_id": "nasa_eee_inst_002",
+   "locator": "Section M1 Magnetics, Table 4 'Magnetics derating requirements' and notes 1/a-c, page 10 of 11 (M1, dated 5/03)",
+   "evidence_level": 6,
+   "quantity_type": "assumed",
+   "nature": "parts-derating instruction for EEE inductive devices (engineering rule)",
+   "values": {
+    "table4_rows": {"value": [
+      {"mil_prf_27": "Q", "mil_prf_39010": null, "mil_prf_15305_mil_t_55631": "O", "max_operating_C": 85, "derated_C": 65},
+      {"mil_prf_27": "R", "mil_prf_39010": "A", "mil_prf_15305_mil_t_55631": "A", "max_operating_C": 105, "derated_C": 85},
+      {"mil_prf_27": "S", "mil_prf_39010": null, "mil_prf_15305_mil_t_55631": null, "max_operating_C": 130, "derated_C": 110},
+      {"mil_prf_27": null, "mil_prf_39010": "B", "mil_prf_15305_mil_t_55631": "B", "max_operating_C": 125, "derated_C": 105},
+      {"mil_prf_27": null, "mil_prf_39010": "F", "mil_prf_15305_mil_t_55631": null, "max_operating_C": 150, "derated_C": 130}
+     ], "unit": "degC", "as_published": "Q/-/O +85 -> +65; R/A/A +105 -> +85; S/-/- +130 -> 110; -/B/B +125 -> +105; -/F/- +150 -> +130 (class C, '> +125 C', derated 'Max. Temp. -20 C', is carried by class_c_derating_K)"},
+    "class_c_derating_K": {"value": 20.0, "unit": "K", "as_published": "-/C/C > +125 C -> Max. Temp. -20 C"},
+    "hot_spot_allowance_K": {"value": 10.0, "unit": "K", "as_published": "note 1/a: maximum operating temperature equals ambient temperature plus temperature rise plus 10 C allowance for hot spots"},
+    "life_basis_at_rating_h": {"value": 10000.0, "unit": "h", "as_published": "note 1/b: insulation classes of MIL-style inductive parts generally have maximum operating temperature ratings based on a life expectancy of 10,000 hours"},
+    "life_basis_at_derated_h": {"value": 50000.0, "unit": "h", "as_published": "note 1/b: the derated operating temperatures are selected to extend the life expectancy to 50,000 hours at rated voltage"},
+    "custom_derating_factor": {"value": 0.75, "unit": "-", "as_published": "note 1/c: custom made inductive devices shall be evaluated on a materials basis to determine the maximum operating temperature; devices with temperature ratings different from the military insulation classes shall be derated to 0.75 times maximum operating temperature"}
+   },
+   "transformation_chain": "document text -> transcribed. Our interpretation (verify): the 0.75 factor is applied to the maximum operating temperature in C (Table 4 is in C); the 50,000 h life basis of note 1/b is stated for the Table 4 derated temperatures and is only inferred to carry over to the note 1/c factor",
+   "uncertainty": "engineering rule, no uncertainty stated; life bases are 'generally' / 'selected to' statements, not test results",
+   "applicability_domain": "EEE inductive parts (MIL-PRF-27, MIL-PRF-39010, MIL-PRF-15305, MIL-T-55631, custom magnetics) on GSFC projects; applying it to a Hall-thruster electromagnet is an analogy and an owner decision",
+   "validation_status": "flight-parts practice; not validated for thruster coils"
+  },
+  "pm_sm2co17_recoma35e": {
+   "status": "sourced",
+   "kind": "permanent_magnet_grade",
+   "source_id": "arnold_recoma35e",
+   "locator": "single-page datasheet: magnetic-properties table, 'Thermal Properties' table and note (1) 'Coefficients measured between 20 and 200 C'",
+   "evidence_level": 5,
+   "quantity_type": "measured",
+   "nature": "manufacturer typical data for one grade (measurement procedure not published)",
+   "values": {
+    "alpha_Br_pct_per_C": {"value": -0.035, "unit": "%/degC", "as_published": "alpha(Br) -0.035 %/C"},
+    "beta_Hcj_pct_per_C": {"value": -0.25, "unit": "%/degC", "as_published": "alpha(Hcj) -0.25 %/C"},
+    "coeff_T_min_C": {"value": 20.0, "unit": "degC", "as_published": "note (1): between 20 and 200 C"},
+    "coeff_T_max_C": {"value": 200.0, "unit": "degC", "as_published": "note (1): between 20 and 200 C"},
+    "T_max_use_C": {"value": 300.0, "unit": "degC", "as_published": "Max. Recommended Use Temperature 300 C", "quantity_type": "assumed"},
+    "T_curie_C": {"value": 820.0, "unit": "degC", "as_published": "Curie Temperature 820 C"},
+    "Hcj_min_20C_A_per_m": {"value": 1710000.0, "unit": "A/m", "as_published": "HcJ min. 1,710 kA/m (21,000 Oe)"},
+    "Br_nominal_20C_T": {"value": 1.19, "unit": "T", "as_published": "Br nominal 1.190 T"}
+   },
+   "transformation_chain": "manufacturer measurement -> datasheet -> transcribed; kA/m -> A/m (x 1e3)",
+   "uncertainty": "typical values; the datasheet says properties may vary with shape and size and are not guaranteed",
+   "applicability_domain": "sintered Sm2Co17 Recoma 35E; coefficients 20-200 C; maximum-use recommendation without a stated load line (permeance coefficient)",
+   "validation_status": "not validated on Vyovrinda magnet hardware"
+  },
+  "pm_ndfeb_n42sh_arnold": {
+   "status": "sourced",
+   "kind": "permanent_magnet_grade",
+   "source_id": "arnold_n42sh",
+   "locator": "single-page datasheet: magnetic-properties table, reversible-temperature-coefficient rows and note (1) 'Coefficients measured between 20 and 150 C'",
+   "evidence_level": 5,
+   "quantity_type": "measured",
+   "nature": "manufacturer typical data for one grade",
+   "values": {
+    "alpha_Br_pct_per_C": {"value": -0.12, "unit": "%/degC", "as_published": "alpha(Br) -0.12 %/C"},
+    "beta_Hcj_pct_per_C": {"value": -0.55, "unit": "%/degC", "as_published": "alpha(Hcj) -0.55 %/C"},
+    "coeff_T_min_C": {"value": 20.0, "unit": "degC", "as_published": "note (1): between 20 and 150 C"},
+    "coeff_T_max_C": {"value": 150.0, "unit": "degC", "as_published": "note (1): between 20 and 150 C"},
+    "T_max_use_C": {"value": null, "unit": "degC", "as_published": "no maximum use temperature row on this datasheet", "TBD": "requires a manufacturer maximum-use statement for N42SH (the 'SH' suffix convention is not used as a source)"},
+    "T_curie_C": {"value": 310.0, "unit": "degC", "as_published": "Curie Temperature 310 C"},
+    "Hcj_min_20C_A_per_m": {"value": 1592000.0, "unit": "A/m", "as_published": "HcJ min. 1,592 kA/m (20,000 Oe)"},
+    "Br_nominal_20C_T": {"value": 1.31, "unit": "T", "as_published": "Br nominal 1310 mT"}
+   },
+   "transformation_chain": "manufacturer measurement -> datasheet -> transcribed; kA/m -> A/m (x 1e3), mT -> T",
+   "uncertainty": "typical values",
+   "applicability_domain": "sintered NdFeB N42SH; coefficients 20-150 C",
+   "validation_status": "not validated on Vyovrinda magnet hardware"
+  },
+  "pm_smco_1_5_mmpa": {
+   "status": "sourced",
+   "kind": "permanent_magnet_grade",
+   "source_id": "mmpa_0100_00",
+   "locator": "Table IV-4 'Typical thermal properties, sintered rare earth magnets' (p. 20); Tmax definition, Appendix B glossary (p. 27)",
+   "evidence_level": 5,
+   "quantity_type": "measured",
+   "nature": "industry compilation of typical values for an alloy family (not a grade)",
+   "values": {
+    "alpha_Br_pct_per_C": {"value": -0.040, "unit": "%/degC", "as_published": "-0.040 % change per C (-100 C to +100 C)"},
+    "coeff_T_min_C": {"value": -100.0, "unit": "degC", "as_published": "(-100 C to +100 C)"},
+    "coeff_T_max_C": {"value": 100.0, "unit": "degC", "as_published": "(-100 C to +100 C)"},
+    "T_max_use_C": {"value": 300.0, "unit": "degC", "as_published": "Max. Service Temperature* 300 C (570 F); Tmax = maximum temperature to which the magnet may be exposed with no significant long range instability or structural changes", "quantity_type": "assumed"},
+    "T_curie_C": {"value": 750.0, "unit": "degC", "as_published": "Curie Temperature 750 C"}
+   },
+   "transformation_chain": "industry data -> MMPA table -> transcribed",
+   "uncertainty": "family-level typical values; the '*' footnote of the maximum service temperature column is not legible in the accessed PDF text layer",
+   "applicability_domain": "RE-Co5 (1-5) sintered alloys as a family",
+   "validation_status": "compilation; not grade-specific"
+  },
+  "pm_smco_2_17_mmpa": {
+   "status": "sourced",
+   "kind": "permanent_magnet_grade",
+   "source_id": "mmpa_0100_00",
+   "locator": "Table IV-4 (p. 20); Tmax definition (p. 27)",
+   "evidence_level": 5,
+   "quantity_type": "measured",
+   "nature": "industry compilation of typical values for an alloy family (not a grade)",
+   "values": {
+    "alpha_Br_pct_per_C": {"value": -0.035, "unit": "%/degC", "as_published": "-0.035 % change per C (-100 C to +100 C)"},
+    "coeff_T_min_C": {"value": -100.0, "unit": "degC", "as_published": "(-100 C to +100 C)"},
+    "coeff_T_max_C": {"value": 100.0, "unit": "degC", "as_published": "(-100 C to +100 C)"},
+    "T_max_use_C": {"value": 350.0, "unit": "degC", "as_published": "Max. Service Temperature* 350 C (660 F)", "quantity_type": "assumed"},
+    "T_curie_C": {"value": 825.0, "unit": "degC", "as_published": "Curie Temperature 825 C"}
+   },
+   "transformation_chain": "industry data -> MMPA table -> transcribed",
+   "uncertainty": "family-level typical values; '*' footnote not legible in the accessed PDF text layer",
+   "applicability_domain": "RE2TM17 (2-17) sintered alloys as a family",
+   "validation_status": "compilation; not grade-specific"
+  },
+  "pm_ndfeb_mmpa": {
+   "status": "sourced",
+   "kind": "permanent_magnet_grade",
+   "source_id": "mmpa_0100_00",
+   "locator": "Table IV-4 (p. 20); Tmax definition (p. 27)",
+   "evidence_level": 5,
+   "quantity_type": "measured",
+   "nature": "industry compilation of typical values for an alloy family (not a grade)",
+   "values": {
+    "alpha_Br_pct_per_C": {"value": -0.090, "unit": "%/degC", "as_published": "-0.090 % change per C (-100 C to +100 C)"},
+    "coeff_T_min_C": {"value": -100.0, "unit": "degC", "as_published": "(-100 C to +100 C)"},
+    "coeff_T_max_C": {"value": 100.0, "unit": "degC", "as_published": "(-100 C to +100 C)"},
+    "T_max_use_C": {"value": 150.0, "unit": "degC", "as_published": "Max. Service Temperature 150** C (300 F)", "quantity_type": "assumed"},
+    "T_curie_C": {"value": 310.0, "unit": "degC", "as_published": "Curie Temperature 310 C"}
+   },
+   "transformation_chain": "industry data -> MMPA table -> transcribed",
+   "uncertainty": "family-level typical values; the '**' footnote attached to the 150 C NdFeB value is not legible in the accessed PDF text layer (verify its content before relying on it); grade-specific NdFeB data (e.g. the Arnold records) differ",
+   "applicability_domain": "RE2TM14B sintered alloys as a family",
+   "validation_status": "compilation; not grade-specific"
+  },
+  "pm_sm2co17_27mgoe_arnold_rtc": {
+   "status": "sourced",
+   "kind": "permanent_magnet_grade",
+   "source_id": "arnold_rtc_constantinides",
+   "locator": "slide 14 'Reversible Temperature Coefficients: Comparisons' (typical values; coefficient range 20 C to 'Max C')",
+   "evidence_level": 5,
+   "quantity_type": "measured",
+   "nature": "manufacturer technical presentation, typical values",
+   "values": {
+    "alpha_Br_pct_per_C": {"value": -0.035, "unit": "%/degC", "as_published": "Alpha -0.035 %/C"},
+    "beta_Hcj_pct_per_C": {"value": -0.20, "unit": "%/degC", "as_published": "Beta -0.20 %/C"},
+    "coeff_T_min_C": {"value": 20.0, "unit": "degC", "as_published": "Temp. Range Min 20 C"},
+    "coeff_T_max_C": {"value": 120.0, "unit": "degC", "as_published": "Temp. Range Max 120 C"},
+    "T_max_use_C": {"value": 350.0, "unit": "degC", "as_published": "Max Use 350 C", "quantity_type": "assumed"},
+    "T_curie_C": {"value": 810.0, "unit": "degC", "as_published": "Tc 810 C"}
+   },
+   "transformation_chain": "manufacturer data -> slide table -> transcribed",
+   "uncertainty": "typical values; slide 12-13: RTC-based extrapolation is approximate except at the temperature for which the RTC was calculated",
+   "applicability_domain": "Sm2Co17 27 MGOe class; coefficients 20-120 C",
+   "validation_status": "not validated on Vyovrinda magnet hardware"
+  },
+  "pm_smco5_20mgoe_arnold_rtc": {
+   "status": "sourced",
+   "kind": "permanent_magnet_grade",
+   "source_id": "arnold_rtc_constantinides",
+   "locator": "slide 14",
+   "evidence_level": 5,
+   "quantity_type": "measured",
+   "nature": "manufacturer technical presentation, typical values",
+   "values": {
+    "alpha_Br_pct_per_C": {"value": -0.04, "unit": "%/degC", "as_published": "Alpha -0.04 %/C"},
+    "beta_Hcj_pct_per_C": {"value": -0.40, "unit": "%/degC", "as_published": "Beta -0.40 %/C"},
+    "coeff_T_min_C": {"value": 20.0, "unit": "degC", "as_published": "Min 20 C"},
+    "coeff_T_max_C": {"value": 120.0, "unit": "degC", "as_published": "Max 120 C"},
+    "T_max_use_C": {"value": 250.0, "unit": "degC", "as_published": "Max Use 250 C", "quantity_type": "assumed"},
+    "T_curie_C": {"value": 700.0, "unit": "degC", "as_published": "Tc 700 C"}
+   },
+   "transformation_chain": "manufacturer data -> slide table -> transcribed",
+   "uncertainty": "typical values; disagrees with the MMPA 1-5 family maximum service temperature (300 C) - both carried, not reconciled",
+   "applicability_domain": "SmCo5 20 MGOe class; coefficients 20-120 C",
+   "validation_status": "not validated on Vyovrinda magnet hardware"
+  },
+  "pm_ndfeb_n38uj_arnold_rtc": {
+   "status": "sourced",
+   "kind": "permanent_magnet_grade",
+   "source_id": "arnold_rtc_constantinides",
+   "locator": "slide 14",
+   "evidence_level": 5,
+   "quantity_type": "measured",
+   "nature": "manufacturer technical presentation, typical values",
+   "values": {
+    "alpha_Br_pct_per_C": {"value": -0.12, "unit": "%/degC", "as_published": "Alpha -0.12 %/C"},
+    "beta_Hcj_pct_per_C": {"value": -0.55, "unit": "%/degC", "as_published": "Beta -0.55 %/C"},
+    "coeff_T_min_C": {"value": 20.0, "unit": "degC", "as_published": "Min 20 C"},
+    "coeff_T_max_C": {"value": 180.0, "unit": "degC", "as_published": "Max 180 C"},
+    "T_max_use_C": {"value": 180.0, "unit": "degC", "as_published": "Max Use 180 C", "quantity_type": "assumed"},
+    "T_curie_C": {"value": 310.0, "unit": "degC", "as_published": "Tc 310 C"}
+   },
+   "transformation_chain": "manufacturer data -> slide table -> transcribed",
+   "uncertainty": "typical values",
+   "applicability_domain": "sintered NdFeB N38UJ; coefficients 20-180 C",
+   "validation_status": "not validated on Vyovrinda magnet hardware"
+  },
+  "pm_ndfeb_l38uht_arnold_rtc": {
+   "status": "sourced",
+   "kind": "permanent_magnet_grade",
+   "source_id": "arnold_rtc_constantinides",
+   "locator": "slide 14",
+   "evidence_level": 5,
+   "quantity_type": "measured",
+   "nature": "manufacturer technical presentation, typical values",
+   "values": {
+    "alpha_Br_pct_per_C": {"value": -0.10, "unit": "%/degC", "as_published": "Alpha -0.10 %/C"},
+    "beta_Hcj_pct_per_C": {"value": -0.50, "unit": "%/degC", "as_published": "Beta -0.50 %/C"},
+    "coeff_T_min_C": {"value": 20.0, "unit": "degC", "as_published": "Min 20 C"},
+    "coeff_T_max_C": {"value": 180.0, "unit": "degC", "as_published": "Max 180 C"},
+    "T_max_use_C": {"value": 180.0, "unit": "degC", "as_published": "Max Use 180 C", "quantity_type": "assumed"},
+    "T_curie_C": {"value": 350.0, "unit": "degC", "as_published": "Tc 350 C"}
+   },
+   "transformation_chain": "manufacturer data -> slide table -> transcribed",
+   "uncertainty": "typical values",
+   "applicability_domain": "sintered NdFeB L-38UHT; coefficients 20-180 C",
+   "validation_status": "not validated on Vyovrinda magnet hardware"
+  },
+  "pm_ndfeb_n48m_arnold_rtc": {
+   "status": "sourced",
+   "kind": "permanent_magnet_grade",
+   "source_id": "arnold_rtc_constantinides",
+   "locator": "slide 14",
+   "evidence_level": 5,
+   "quantity_type": "measured",
+   "nature": "manufacturer technical presentation, typical values",
+   "values": {
+    "alpha_Br_pct_per_C": {"value": -0.12, "unit": "%/degC", "as_published": "Alpha -0.12 %/C"},
+    "beta_Hcj_pct_per_C": {"value": -0.65, "unit": "%/degC", "as_published": "Beta -0.65 %/C"},
+    "coeff_T_min_C": {"value": 20.0, "unit": "degC", "as_published": "Min 20 C"},
+    "coeff_T_max_C": {"value": 100.0, "unit": "degC", "as_published": "Max 100 C"},
+    "T_max_use_C": {"value": 100.0, "unit": "degC", "as_published": "Max Use 100 C", "quantity_type": "assumed"},
+    "T_curie_C": {"value": 310.0, "unit": "degC", "as_published": "Tc 310 C"}
+   },
+   "transformation_chain": "manufacturer data -> slide table -> transcribed",
+   "uncertainty": "typical values",
+   "applicability_domain": "sintered NdFeB N48M; coefficients 20-100 C",
+   "validation_status": "not validated on Vyovrinda magnet hardware"
+  },
+  "bn_hebosint_pl100": {"status": "sourced", "kind": "wall_ceramic_grade", "source_id": "henze_hebosint_2021", "locator": "datasheet row 'Use Temperature max. at C', column PL 100 (composition hBN, binder none)", "evidence_level": 5, "quantity_type": "assumed", "nature": "manufacturer recommended use limit (approximate, '~'), typical data",
+   "values": {"T_use_max_oxidizing_C": {"value": 900.0, "unit": "degC", "as_published": "~ 900 (Oxidizing Atmosphere)"}, "T_use_max_inert_vacuum_C": {"value": 2000.0, "unit": "degC", "as_published": "~ 2000 (Inert Atmosphere / Vacuum Atmosphere)"}},
+   "transformation_chain": "manufacturer statement -> datasheet -> transcribed ('~' dropped; approximation carried in uncertainty)", "uncertainty": "approximate ('~'), typical, guide only", "applicability_domain": "HeBoSint PL 100 in a gas atmosphere or vacuum; plasma bombardment (ions, atomic oxygen) not covered", "validation_status": "not validated for Hall-thruster walls"},
+  "bn_hebosint_pl200": {"status": "sourced", "kind": "wall_ceramic_grade", "source_id": "henze_hebosint_2021", "locator": "datasheet row 'Use Temperature max. at C', column PL 200 (hBN, binder none)", "evidence_level": 5, "quantity_type": "assumed", "nature": "manufacturer recommended use limit (approximate, '~'), typical data",
+   "values": {"T_use_max_oxidizing_C": {"value": 900.0, "unit": "degC", "as_published": "~ 900"}, "T_use_max_inert_vacuum_C": {"value": 2000.0, "unit": "degC", "as_published": "~ 2000"}},
+   "transformation_chain": "manufacturer statement -> datasheet -> transcribed", "uncertainty": "approximate ('~'), typical, guide only", "applicability_domain": "HeBoSint PL 200; plasma bombardment not covered", "validation_status": "not validated for Hall-thruster walls"},
+  "bn_hebosint_pl600": {"status": "sourced", "kind": "wall_ceramic_grade", "source_id": "henze_hebosint_2021", "locator": "datasheet row 'Use Temperature max. at C', column PL 600 (hBN, binder none)", "evidence_level": 5, "quantity_type": "assumed", "nature": "manufacturer recommended use limit (approximate, '~'), typical data",
+   "values": {"T_use_max_oxidizing_C": {"value": 900.0, "unit": "degC", "as_published": "~ 900"}, "T_use_max_inert_vacuum_C": {"value": 2000.0, "unit": "degC", "as_published": "~ 2000"}},
+   "transformation_chain": "manufacturer statement -> datasheet -> transcribed", "uncertainty": "approximate ('~'), typical, guide only", "applicability_domain": "HeBoSint PL 600; plasma bombardment not covered", "validation_status": "not validated for Hall-thruster walls"},
+  "bn_hebosint_cl100": {"status": "sourced", "kind": "wall_ceramic_grade", "source_id": "henze_hebosint_2021", "locator": "datasheet row 'Use Temperature max. at C', column CL 100 (hBN, calcium borate binder)", "evidence_level": 5, "quantity_type": "assumed", "nature": "manufacturer recommended use limit (approximate, '~'), typical data",
+   "values": {"T_use_max_oxidizing_C": {"value": 900.0, "unit": "degC", "as_published": "~ 900"}, "T_use_max_inert_vacuum_C": {"value": 1500.0, "unit": "degC", "as_published": "~ 1500"}},
+   "transformation_chain": "manufacturer statement -> datasheet -> transcribed", "uncertainty": "approximate ('~'), typical, guide only", "applicability_domain": "HeBoSint CL 100; plasma bombardment not covered", "validation_status": "not validated for Hall-thruster walls"},
+  "bn_hebosint_clz200": {"status": "sourced", "kind": "wall_ceramic_grade", "source_id": "henze_hebosint_2021", "locator": "datasheet row 'Use Temperature max. at C', column CL-Z 200 (hBN+SiC+ZrO2, binder none)", "evidence_level": 5, "quantity_type": "assumed", "nature": "manufacturer recommended use limit (approximate, '~'), typical data",
+   "values": {"T_use_max_oxidizing_C": {"value": 900.0, "unit": "degC", "as_published": "~ 900"}, "T_use_max_inert_vacuum_C": {"value": 1800.0, "unit": "degC", "as_published": "~ 1800"}},
+   "transformation_chain": "manufacturer statement -> datasheet -> transcribed", "uncertainty": "approximate ('~'), typical, guide only", "applicability_domain": "HeBoSint CL-Z 200; plasma bombardment not covered", "validation_status": "not validated for Hall-thruster walls"},
+  "bn_hebosint_cls200": {"status": "sourced", "kind": "wall_ceramic_grade", "source_id": "henze_hebosint_2021", "locator": "datasheet row 'Use Temperature max. at C', column CL-S 200 (hBN+SiO2, binder none)", "evidence_level": 5, "quantity_type": "assumed", "nature": "manufacturer recommended use limit (approximate, '~'), typical data",
+   "values": {"T_use_max_oxidizing_C": {"value": 900.0, "unit": "degC", "as_published": "~ 900"}, "T_use_max_inert_vacuum_C": {"value": 1500.0, "unit": "degC", "as_published": "~ 1500"}},
+   "transformation_chain": "manufacturer statement -> datasheet -> transcribed", "uncertainty": "approximate ('~'), typical, guide only; BN-SiO2 composite but NOT the Combat M26 grade of the P5 wall", "applicability_domain": "HeBoSint CL-S 200; plasma bombardment not covered", "validation_status": "not validated for Hall-thruster walls"},
+  "bn_hebosint_slz100": {"status": "sourced", "kind": "wall_ceramic_grade", "source_id": "henze_hebosint_2021", "locator": "datasheet row 'Use Temperature max. at C', column SL-Z 100 (hBN+SiC+ZrO2, boric oxide binder)", "evidence_level": 5, "quantity_type": "assumed", "nature": "manufacturer recommended use limit (approximate, '~'), typical data",
+   "values": {"T_use_max_oxidizing_C": {"value": 900.0, "unit": "degC", "as_published": "~ 900"}, "T_use_max_inert_vacuum_C": {"value": 1800.0, "unit": "degC", "as_published": "~ 1800"}},
+   "transformation_chain": "manufacturer statement -> datasheet -> transcribed", "uncertainty": "approximate ('~'), typical, guide only", "applicability_domain": "HeBoSint SL-Z 100; plasma bombardment not covered", "validation_status": "not validated for Hall-thruster walls"},
+  "bn_hebosint_sla400": {"status": "sourced", "kind": "wall_ceramic_grade", "source_id": "henze_hebosint_2021", "locator": "datasheet row 'Use Temperature max. at C', column SL-A 400 (hBN+AlN, boric oxide / calcium borate binder)", "evidence_level": 5, "quantity_type": "assumed", "nature": "manufacturer recommended use limit (approximate, '~'), typical data",
+   "values": {"T_use_max_oxidizing_C": {"value": 900.0, "unit": "degC", "as_published": "~ 900"}, "T_use_max_inert_vacuum_C": {"value": 1600.0, "unit": "degC", "as_published": "~ 1600"}},
+   "transformation_chain": "manufacturer statement -> datasheet -> transcribed", "uncertainty": "approximate ('~'), typical, guide only", "applicability_domain": "HeBoSint SL-A 400; plasma bombardment not covered", "validation_status": "not validated for Hall-thruster walls"},
+  "bn_combat_m26": {
+   "status": "TBD",
+   "kind": "wall_ceramic_grade",
+   "requires": "Saint-Gobain Combat M26 (60 % hBN / 40 % SiO2) maximum-use temperatures for oxidizing and inert/vacuum atmospheres from the manufacturer datasheet. The datasheet URL (bn.saint-gobain.com/.../combat-bn-solids-ds.pdf) and a distributor copy returned bot challenges on 2026-09-26 and were not bypassed. Context: the historical P5 channel wall is Combat M26 (Schinder, Georgia Tech PhD dissertation, 2016, p. 30)."
+  },
+  "lab6_richardson_goebel_table6_1": {
+   "status": "sourced",
+   "kind": "thermionic_parameter_sets",
+   "source_id": "goebel_katz_2008_ch6",
+   "locator": "Table 6-1 (p. 252); Eqs. (6.3-1)-(6.3-3) (p. 251): J = A T^2 exp(-e phi/kT), phi = phi0 + alpha T, J = D T^2 exp(-e phi0/kT)",
+   "evidence_level": 5,
+   "quantity_type": "inferred",
+   "nature": "Richardson-Dushman fit parameters to measured emission, compiled in a textbook from Lafferty 1951 [13], Jacobson & Storms 1978 [14], Storms & Mueller 1979 [15] and Kohl [8] (originals not inspected)",
+   "values": {
+    "sets": {"value": [
+      {"id": "lafferty_1951", "prefactor_A_per_m2K2": 290000.0, "prefactor_kind": "D", "phi0_eV": 2.66, "alpha_eV_per_K": 0.0, "as_published": "LaB6 [13]: D = 29 (A/cm2 K2), phi = 2.66"},
+      {"id": "jacobson_storms_1978", "prefactor_A_per_m2K2": 1100000.0, "prefactor_kind": "D", "phi0_eV": 2.87, "alpha_eV_per_K": 0.0, "as_published": "LaB6 [14]: D = 110, phi = 2.87"},
+      {"id": "storms_mueller_1979", "prefactor_A_per_m2K2": 1200000.0, "prefactor_kind": "A", "phi0_eV": 2.91, "alpha_eV_per_K": 0.0, "as_published": "LaB6 [15]: A = 120, phi = 2.91"},
+      {"id": "kohl", "prefactor_A_per_m2K2": 1200000.0, "prefactor_kind": "A", "phi0_eV": 2.66, "alpha_eV_per_K": 0.000123, "as_published": "LaB6 [8]: A = 120, phi = 2.66 + 1.23 x 10^-4 T"}
+     ], "unit": "mixed (see keys)", "as_published": "Table 6-1, LaB6 rows"}
+   },
+   "transformation_chain": "measured emission -> original fits -> Goebel & Katz Table 6-1 -> transcribed; A/cm2K2 -> A/m2K2 (x 1e4)",
+   "uncertainty": "the four sets are not reconciled by the source; thermal_life.py carries all four as an envelope (no set is selected or tuned). Cross-check: for the Kohl set D = A exp(-e alpha/k) = 28.8 A/cm2K2, consistent with Lafferty's D = 29",
+   "applicability_domain": "thermionic emission of LaB6 without surface field (the Schottky term, Eq. 6.3-4, is neglected: a required current density is then reached at a higher, i.e. conservative-for-evaporation, temperature)",
+   "validation_status": "literature; not validated on the Vyovrinda cathode"
+  },
+  "lab6_poisoning_goebel": {
+   "status": "sourced",
+   "kind": "emitter_poisoning_envelope",
+   "source_id": "goebel_katz_2008_ch6",
+   "locator": "sec. 6.8.5 'Cathode Poisoning', p. 306 (diode tests, Fig. 6-49 from Goebel, Watkins & Jameson, JPP 23(3) 2007 [18])",
+   "evidence_level": 5,
+   "quantity_type": "measured",
+   "nature": "textbook statement of diode-test results",
+   "values": {
+    "T_no_degradation_min_C": {"value": 1570.0, "unit": "degC", "as_published": "LaB6 at 1570 C ... can withstand oxygen partial pressures up to 10^-4 torr without degradation in the electron emission"},
+    "pO2_no_degradation_max_Torr": {"value": 0.0001, "unit": "Torr", "as_published": "up to 10^-4 torr"}
+   },
+   "transformation_chain": "diode-test measurement -> Fig. 6-49 -> textbook sentence -> transcribed (only the stated no-degradation point is used; the figure itself is not digitized)",
+   "uncertainty": "single stated point; also stated: oxygen partial pressures 'in the 10^-5 torr range' are required to degrade LaB6 emission below 1440 C, and in 10^-3 torr O2 background the authors raised the temperature to just over 1600 C to avoid poisoning (p. 306) - context, not used as limits",
+   "applicability_domain": "molecular O2 partial pressure at the emitter; water and air poison at higher pressures; atomic-oxygen or O+ exposure (ABEP air path) is NOT covered",
+   "validation_status": "literature; not validated on the Vyovrinda cathode"
+  },
+  "lab6_usable_fraction_goebel": {
+   "status": "sourced",
+   "kind": "emitter_life_assumption",
+   "source_id": "goebel_katz_2008_ch6",
+   "locator": "sec. 6.8.4 'Bulk-Material Insert Life', p. 303",
+   "evidence_level": 5,
+   "quantity_type": "assumed",
+   "nature": "assumption used in the source's evaporation-limited life estimate",
+   "values": {
+    "usable_fraction": {"value": 0.9, "unit": "-", "as_published": "Assuming that 90% of the insert can be evaporated"}
+   },
+   "transformation_chain": "textbook assumption -> transcribed",
+   "uncertainty": "the source notes the estimate ignores temperature variations along the insert, surface removal and impurity build-up (life-reducing) and redeposition (life-extending); estimates are 'mostly valid relative to each other' (p. 303)",
+   "applicability_domain": "evaporation-limited LaB6 insert life",
+   "validation_status": "assumption"
+  },
+  "lab6_evaporation_rate": {
+   "status": "TBD",
+   "kind": "emitter_evaporation_rate",
+   "requires": "a sourced LaB6 evaporation (mass-loss) rate versus emitter temperature, as a table (T_K, kg m^-2 s^-1) with provenance. Candidates: Goebel & Katz 2008 Fig. 6-8 (rate vs emission current density, from Leung, Pincosy & Ehlers, Rev. Sci. Instrum. 55, 1984 [24]) - graphical, needs digitization plus the A/phi set used to map J to T; Storms & Mueller, J. Chem. Phys. (LaB system vaporization) [23] - not accessed. No value is invented here. When sourced, the record must carry values T_K (list, K, increasing) and rate_kg_m2s (list, kg m^-2 s^-1, > 0), which thermal_life.lab6_evaporation_rate interpolates log-linearly inside the table only."
+  },
+  "cathode_assembly_temperature_limit": {
+   "status": "TBD",
+   "kind": "component_temperature_limit",
+   "requires": "the limiting temperature of the cathode assembly node (heater insulation, orifice plate, keeper, LaB6 support/boron-diffusion barrier) from the cathode dossier, with source. When sourced, the record must carry the value T_max_C (degC)"
+  },
+  "rf_source_structure_limit": {
+   "status": "TBD",
+   "kind": "component_temperature_limit",
+   "requires": "the limiting temperature of the RF source structure node (antenna conductor and its insulation, dielectric tube/window, matching network) from the RF-source design, with a sourced material limit. When sourced, the record must carry the value T_max_C (degC)"
+  },
+  "ecr_source_structure_limit": {
+   "status": "TBD",
+   "kind": "component_temperature_limit",
+   "requires": "the limiting temperature of the ECR source structure node (waveguide/coupler, dielectric window, chamber) from the ECR-source design, with a sourced material limit. When sourced, the record must carry the value T_max_C (degC)"
+  }
+ },
+ "relations": {
+  "radiative_rejection": {"source_id": "nist_codata_sigma", "locator": "Stefan-Boltzmann constant (exact)", "form": "Q = eps sigma A F (T^4 - T_sink^4)"},
+  "copper_linear_resistance": {"source_id": "nbs_hb100_1966", "locator": "pp. 3-4", "form": "R(T) = R20 [1 + a20 (T - 20 C)]"},
+  "winding_temperature_rise_mil_prf_27": {"source_id": "nasa_eee_inst_002", "locator": "Section M1 Table 4 note 1/a (MIL-PRF-27 para 4.7.13)", "form": "dT = (R - r)/r (t + 234.5) - (T - t)"},
+  "wall_ion_heat": {"source_id": "repo_hall_map_schema_v1", "locator": "fields wall_ion_flux_m2s, wall_ion_energy_eV; bridge_lib.jl wall_ion_metrics returns (time-average of the cell-averaged Bohm flux, flux-weighted energy)", "form": "Q_i = e Gamma_i eps_i A_wall (exact integral of the ion energy flux over z <= L when the grid is uniform)"},
+  "wall_electron_heat": {"source_id": "goebel_katz_2008_ch7", "locator": "Eq. (7.3-28) p. 348 (I_iw = I_ew (1 - gamma)); Eqs. (7.3-43), (7.3-45) p. 354 (electrons deposit 2 T_e each; secondary-electron cooling neglected); p. 358 (I_ew = electron wall power / 2 T_e)", "form": "Q_e = e Gamma_i 2 T_e,w / (1 - gamma) A_wall"},
+  "anode_heat": {"source_id": "goebel_katz_2008_ch7", "locator": "Eq. (7.3-53), p. 358", "form": "P_a = 2 I_d T_eV(anode)"},
+  "richardson_dushman": {"source_id": "goebel_katz_2008_ch6", "locator": "Eqs. (6.3-1)-(6.3-3), p. 251", "form": "J = P T^2 exp(-e (phi0 + alpha T) / k T)"},
+  "evaporation_limited_life": {"source_id": "goebel_katz_2008_ch6", "locator": "sec. 6.8.4, pp. 302-303", "form": "life = f_usable m_insert / (G_evap(T) A_emit), T = temperature required to emit the discharge current in the thermally limited regime"},
+  "reversible_temperature_coefficient": {"source_id": "arnold_rtc_constantinides", "locator": "slides 11-13 (definition; Br(T) = Br20 [1 + RTC (T - 20)/100]; Hci(T) likewise; approximate away from the RTC calibration temperature; Br almost linear up to about 150 C); VAC brochure p. 34 (TK definitions)", "form": "X(T)/X(20 C) = 1 + c (T - 20 C)/100"},
+  "irreversible_loss_criterion": {"source_id": "vac_vacodym_vacomax_2026", "locator": "p. 34 'Influence of temperature' (the working point must remain within the linear section of the demagnetization curve over the entire temperature range to avoid irreversible changes); p. 16 (knee field H_K,90 and H_D5 per IEC 60404-8-1); MMPA 0100-00 p. 27 (irreversible losses definition)", "form": "|H_demag,max| < H_knee(T_magnet), with H_knee(T) from the grade's demagnetization curve at >= T_magnet"}
+ }
+}
