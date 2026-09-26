@@ -1,0 +1,387 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "protocol.schema.json",
+  "title": "Common-condition ionization-architecture comparison protocol (draft)",
+  "description": "Schema for protocol_draft.json. Every numeric value is a 'numeric' object (value + unit + source + evidence_class + status) or a 'tbd' object (value 'TBD' + tbd_requires). Every threshold carries status PROPOSED until the owner decides. Uses only the keyword subset implemented by protocol_tools.validate (type, required, properties, additionalProperties, enum, const, items, minItems, minLength, pattern, $ref, oneOf, anyOf).",
+  "type": "object",
+  "required": ["id", "protocol_version", "status", "decided_by", "schema", "created", "base_commit", "purpose", "scope", "non_claims", "arms", "controls", "hardware_configurations", "common_conditions", "flow_accounting", "bus_power_boundary", "diagnostics", "test_matrix", "design", "facility_effect_controls", "sustainment_and_extinction", "stability_metrics", "run_statuses", "decision_metrics", "rfp_screens", "statistics", "preregistration", "references", "open_items_for_owner"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "protocol_version": {"type": "string", "minLength": 1},
+    "status": {"enum": ["DRAFT_PENDING_OWNER", "REGISTERED"]},
+    "decided_by": {"type": ["null", "string"]},
+    "schema": {"const": "protocol.schema.json"},
+    "created": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "prepared_by": {"type": "string"},
+    "companion_document": {"type": "string"},
+    "tools": {"type": "string"},
+    "purpose": {"type": "string", "minLength": 1},
+    "scope": {
+      "type": "object",
+      "required": ["rfp_block", "in_scope", "out_of_scope"],
+      "properties": {
+        "rfp_block": {"type": "string"},
+        "in_scope": {"$ref": "#/$defs/string_list"},
+        "out_of_scope": {"$ref": "#/$defs/string_list"}
+      }
+    },
+    "non_claims": {"$ref": "#/$defs/string_list"},
+    "relation_to_repository": {"type": "object"},
+    "arms": {
+      "type": "array",
+      "minItems": 3,
+      "items": {"$ref": "#/$defs/arm"}
+    },
+    "controls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "purpose", "definition", "status"],
+        "properties": {
+          "id": {"type": "string"},
+          "purpose": {"type": "string"},
+          "definition": {"type": "string"},
+          "status": {"const": "PROPOSED"},
+          "required_in": {"type": "string"}
+        }
+      }
+    },
+    "hardware_configurations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "definition", "status"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^CFG-[A-Z]$"},
+          "status": {"type": "string", "pattern": "^PROPOSED"}
+        }
+      }
+    },
+    "common_conditions": {
+      "type": "object",
+      "required": ["principle", "invariants"],
+      "properties": {
+        "principle": {"type": "string"},
+        "invariants": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "quantity", "rule", "verification"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^INV-[A-Z]+$"},
+              "quantity": {"type": "string"},
+              "rule": {"type": "string"},
+              "verification": {"type": "string"},
+              "threshold": {"$ref": "#/$defs/threshold"}
+            }
+          }
+        }
+      }
+    },
+    "flow_accounting": {
+      "type": "object",
+      "required": ["definitions", "rules", "mfc_calibration_interval"],
+      "properties": {
+        "definitions": {
+          "type": "object",
+          "required": ["m_dot_a", "m_dot_p", "m_dot_prop", "m_dot_c", "m_dot_tot"]
+        },
+        "rules": {"$ref": "#/$defs/string_list"},
+        "mfc_calibration_interval": {"$ref": "#/$defs/quantity"}
+      }
+    },
+    "bus_power_boundary": {
+      "type": "object",
+      "required": ["boundary_version_ref", "boundary_point", "bus_voltage", "components", "presence_rule", "totals", "facility_services_disclosure", "ledger_check", "uncertainty_targets"],
+      "properties": {
+        "boundary_version_ref": {"const": "bus_power_boundary_v1"},
+        "boundary_point": {"type": "string"},
+        "bus_voltage": {"$ref": "#/$defs/quantity"},
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "includes", "measurement", "quantity_type"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^[a-z][a-z_]*$"},
+              "name": {"type": "string"},
+              "includes": {"type": "string"},
+              "measurement": {"type": "string"},
+              "quantity_type": {"type": "string"}
+            }
+          }
+        },
+        "presence_rule": {"type": "string"},
+        "totals": {"type": "string"},
+        "facility_services_disclosure": {"$ref": "#/$defs/string_list"},
+        "ledger_check": {
+          "type": "object",
+          "required": ["definition", "threshold"],
+          "properties": {"threshold": {"$ref": "#/$defs/threshold"}}
+        },
+        "uncertainty_targets": {
+          "type": "object",
+          "required": ["instrument_class", "threshold"],
+          "properties": {"threshold": {"$ref": "#/$defs/threshold"}}
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "required": ["common", "arm_specific_additive"],
+      "properties": {
+        "common": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "quantity", "instrument"],
+            "properties": {"id": {"type": "string", "pattern": "^DIAG-[A-Z]+$"}}
+          }
+        },
+        "arm_specific_additive": {"type": "array"}
+      }
+    },
+    "test_matrix": {
+      "type": "object",
+      "required": ["principle", "factors", "full_factorial_required", "matrix_rule"],
+      "properties": {
+        "factors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "levels"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^F-[A-Z]+$"},
+              "levels": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/quantity"}}
+            }
+          }
+        },
+        "full_factorial_required": {"type": "boolean"}
+      }
+    },
+    "design": {
+      "type": "object",
+      "required": ["randomisation", "replication", "pre_ionizer_power_levels_min", "drift_controls", "blinding", "conditioning"],
+      "properties": {
+        "randomisation": {
+          "type": "object",
+          "required": ["within_day", "between_builds", "algorithm", "seed"],
+          "properties": {"seed": {"$ref": "#/$defs/quantity"}}
+        },
+        "replication": {
+          "type": "object",
+          "required": ["definition", "replicates_min"],
+          "properties": {"replicates_min": {"$ref": "#/$defs/quantity"}}
+        },
+        "pre_ionizer_power_levels_min": {"$ref": "#/$defs/quantity"},
+        "drift_controls": {"$ref": "#/$defs/string_list"}
+      }
+    },
+    "facility_effect_controls": {
+      "type": "object",
+      "required": ["method", "elevated_levels_min", "injection_distance_min", "analysis", "never_crossed"],
+      "properties": {
+        "elevated_levels_min": {"$ref": "#/$defs/quantity"},
+        "injection_distance_min": {"$ref": "#/$defs/quantity"}
+      }
+    },
+    "sustainment_and_extinction": {
+      "type": "object",
+      "required": ["ignition", "extinction", "minimum_sustained_flow_search", "flow_step"],
+      "properties": {
+        "extinction": {
+          "type": "object",
+          "required": ["definition_source", "threshold", "not_extinction"],
+          "properties": {"threshold": {"$ref": "#/$defs/threshold"}}
+        },
+        "flow_step": {"$ref": "#/$defs/quantity"}
+      }
+    },
+    "stability_metrics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "definition"],
+        "properties": {"id": {"type": "string", "pattern": "^S[0-9]+$"}}
+      }
+    },
+    "run_statuses": {
+      "type": "object",
+      "required": ["statuses", "precedence", "rules"],
+      "properties": {
+        "statuses": {"type": "object", "required": ["VALID", "EXCLUDED_MISSING_BOUNDARY_COMPONENT", "NOT_IGNITED", "NOT_SUSTAINED"]},
+        "precedence": {"$ref": "#/$defs/string_list"},
+        "rules": {"$ref": "#/$defs/string_list"}
+      }
+    },
+    "decision_metrics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "definition", "unit", "role", "comparison", "threshold"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^M[0-9]+$"},
+          "threshold": {"$ref": "#/$defs/threshold"}
+        }
+      }
+    },
+    "rfp_screens": {
+      "type": "object",
+      "required": ["note", "rfp_values", "derived", "screens"],
+      "properties": {
+        "rfp_values": {"type": "array", "items": {"$ref": "#/$defs/numeric"}},
+        "derived": {"type": "array", "items": {"$ref": "#/$defs/numeric"}},
+        "screens": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "threshold"],
+            "properties": {"threshold": {"$ref": "#/$defs/threshold"}}
+          }
+        }
+      }
+    },
+    "statistics": {
+      "type": "object",
+      "required": ["unit_of_analysis", "interval_method", "multiplicity", "aggregation", "ignition_decision_aid"],
+      "properties": {
+        "ignition_decision_aid": {
+          "type": "object",
+          "required": ["note", "confidence", "rows"],
+          "properties": {
+            "confidence": {"$ref": "#/$defs/numeric"},
+            "rows": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["target", "n_min_zero_failures"],
+                "properties": {
+                  "target": {"$ref": "#/$defs/numeric"},
+                  "n_min_zero_failures": {"$ref": "#/$defs/numeric"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "preregistration": {
+      "type": "object",
+      "required": ["rule", "steps", "lock_location"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "step"],
+            "properties": {"id": {"type": "string", "pattern": "^PR-[0-9]+$"}}
+          }
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "citation", "doi", "url", "access", "access_note", "used_for"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^REF-[A-Z]+[0-9]{4}$"},
+          "doi": {"type": "string", "pattern": "^10\\.[0-9]{4,}/"},
+          "url": {"type": "string", "pattern": "^https://"},
+          "access": {"enum": ["full_text", "abstract_only", "metadata_only", "repository_record"]}
+        }
+      }
+    },
+    "open_items_for_owner": {"$ref": "#/$defs/string_list"}
+  },
+  "$defs": {
+    "string_list": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "evidence_class": {"enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]},
+    "numeric": {
+      "type": "object",
+      "required": ["id", "value", "unit", "source", "evidence_class", "status"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "value": {"type": "number"},
+        "unit": {"type": "string", "minLength": 1},
+        "source": {"type": "string", "minLength": 1},
+        "evidence_class": {"$ref": "#/$defs/evidence_class"},
+        "status": {"enum": ["PROPOSED", "REQUIREMENT_TRANSCRIBED", "DERIVED"]},
+        "note": {"type": "string"},
+        "derived_key": {"type": "string", "minLength": 1},
+        "label": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "tbd": {
+      "type": "object",
+      "required": ["id", "value", "unit", "tbd_requires"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "value": {"const": "TBD"},
+        "unit": {"type": "string", "minLength": 1},
+        "tbd_requires": {"type": "string", "minLength": 1},
+        "label": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "quantity": {"oneOf": [{"$ref": "#/$defs/numeric"}, {"$ref": "#/$defs/tbd"}]},
+    "threshold": {
+      "type": "object",
+      "required": ["threshold_id", "status", "decided_by", "rule", "parameters"],
+      "properties": {
+        "threshold_id": {"type": "string", "pattern": "^THR-[A-Z0-9-]+$"},
+        "status": {"const": "PROPOSED"},
+        "decided_by": {"type": "null"},
+        "rule": {"type": "string", "minLength": 1},
+        "parameters": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/quantity"}}
+      },
+      "additionalProperties": false
+    },
+    "arm": {
+      "type": "object",
+      "required": ["id", "label", "role", "pre_ionizer", "only_change_vs_reference", "bus_boundary"],
+      "properties": {
+        "id": {"enum": ["HALL_ONLY", "RF_HALL", "ECR_HALL"]},
+        "label": {"type": "string"},
+        "role": {"enum": ["reference arm", "test arm"]},
+        "pre_ionizer": {
+          "type": "object",
+          "required": ["type", "energized"],
+          "properties": {
+            "type": {"type": "string"},
+            "energized": {"type": "boolean"},
+            "frequency": {"$ref": "#/$defs/quantity"},
+            "dc_input_power_levels": {"$ref": "#/$defs/quantity"},
+            "feed_topology": {"$ref": "#/$defs/quantity"}
+          }
+        },
+        "only_change_vs_reference": {"type": "string"},
+        "bus_boundary": {
+          "type": "object",
+          "required": ["boundary_version_ref", "component_ids", "expected_presence"],
+          "properties": {
+            "boundary_version_ref": {"const": "bus_power_boundary_v1"},
+            "component_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "expected_presence": {
+              "type": "object",
+              "additionalProperties": {"enum": ["ENERGIZED", "ENERGIZED_OR_ABSENT", "ENERGIZED_OR_UNENERGIZED", "ABSENT_OR_UNENERGIZED"]}
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  }
+}
