@@ -53,7 +53,7 @@ SCHEMA_FILE = os.path.join(HERE, "veto_layer_v1.schema.json")
 REL_SELF = "docs/architecture_comparison/veto_layer/build_veto_layer.py"
 
 SCHEMA_ID = "veto_layer_v1"
-BASE_COMMIT = "d939ef66324b7d1036b2c9bcd5e7674df218342b"
+BASE_COMMIT = "49604b6eee234314951b9cfee1181842bf604491"
 CREATED = "2026-09-26"
 ARCHITECTURES = ("hall_only", "rf_hall", "ecr_hall")
 STATUSES = ("VETO_CANDIDATE", "NO_VETO_WITHIN_EVIDENCE", "UNDETERMINED")
@@ -78,7 +78,7 @@ _L24 = ("lane_24_hard_gates", "08b9f9bf32a0b34142338b2003f2b2cf02ecaacc")
 _L19 = ("lane_19_cathode_integration", "eff15f85c53244556b1a9a9274fb7ffe80e9fa90")
 _L20 = ("lane_20_ppu_magnet", "f7c226848d85fedb70c03bae9971be3b2bbde1fe")
 _L22 = ("lane_22_scaling", "c43d2d6ebddc244dc02d96ffbe7d52526de905c7")
-_L09 = ("lane_09_hall_sustainment", "ac7970917fd0e88c065d75406ea90c1d7ebaca7b")
+_L09 = ("lane_09_hall_sustainment", "f458811a5720a20216379dd1f701a54d21faf2b6")
 _L07 = ("lane_07_rf_evidence", "336d548042359f8559d0bf50a409a976c0158fc2")
 _L08 = ("lane_08_ecr_evidence", "a85fd592618cb15a02f14123659a0698db90df19")
 _REPO = ("repository (not a lane; CLAUDE.md next-work 1)", BASE_COMMIT)
@@ -128,7 +128,7 @@ PINS: tuple = (
      "a604d93f576c4106a819b5679f0562060f0f7d9dc8f7078924d29bfd025644fe", _L22,
      "surface-to-volume / wall-life transfer risk (TR-10)"),
     ("docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
-     "248aef28cfe6ffff90d9ee6d43c388488140547e1ce5659975ce30ca77f415b4", _L09,
+     "76bba594eb1175b2186a8066b38665a2ce5e4cf77487c90f4af2e187a0b82dcc", _L09,
      "air-fed Hall endurance / erosion observations (E07, E09)"),
     ("docs/evidence/rf_source/rf_evidence_matrix.json",
      "5f6d4e0ede8b2e21e45b740c28ac9320e7ddd6cfd70ef05012f85712ae0ac8e8", _L07,
@@ -678,7 +678,31 @@ def risk_indicators(inputs: dict, cinfo: dict) -> list:
         "architecture_modulation": "rf_hall / ecr_hall add their source power to the peak only if the pre-ionizer "
                                    "overlaps the heater phase (V2, PROPOSED): TBD",
     })
+    _carry_hs_repository_status(out, hs, HS)
     return out
+
+
+def _hs_repository_status(hs: dict) -> dict:
+    """{entry id: repository_status block} for lane-09 entries that carry one (e.g. ECHT-N2 HISTORICAL_UNSUPPORTED)."""
+    return {e["id"]: e["repository_status"] for e in hs["entries"] if e.get("repository_status")}
+
+
+def _carry_hs_repository_status(ris: list, hs: dict, hs_path: str) -> None:
+    """Carry a lane-09 entry's repository_status onto every source_ref that cites it (no silent drop)."""
+    import re
+    st = _hs_repository_status(hs)
+    for ri in ris:
+        for ref in ri["source_refs"]:
+            if ref["file"] != hs_path:
+                continue
+            m = re.match(r"entries\[([A-Z0-9-]+)\]", ref["path"])
+            _need(m is not None, f"{hs_path}: cannot parse cited entry in {ref['path']!r}")
+            _entry(hs["entries"], m.group(1), hs_path)
+            if m.group(1) in st:
+                ref["repository_status"] = st[m.group(1)]["status"]
+                ref["repository_status_ref"] = st[m.group(1)]["status_file"]
+                _need(ri["lane24_basis"] != "hard_physical_bound",
+                      f"{ri['id']}: an entry with repository_status {st[m.group(1)]['status']} cannot be verdict-bearing")
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -932,6 +956,8 @@ def build(root: str = ROOT, pins: tuple = PINS) -> dict:
     _need(tuple(bom["architecture_ids"]) == ARCHITECTURES, "mass BOM architecture ids changed")
     cinfo = criteria_info(matrix)
     ris = risk_indicators(inputs, cinfo)
+    hs_status = _hs_repository_status(inputs["docs/evidence/hall_sustainment/hall_sustainment_matrix.json"])
+    _need(len(hs_status) > 0, "lane-09 matrix: expected repository_status entries (ECHT-N2) not found")
     ri_by_dim: dict = {}
     for ri in ris:
         for a in ri["architectures"]:
@@ -1048,6 +1074,15 @@ def build(root: str = ROOT, pins: tuple = PINS) -> dict:
                      "(withdrawn; not quoted)", "why": "uncited / superseded 0-D Hall closure (MASS_BOM.md, OD-M3)"},
             {"what": "any Hall-closure output (screening candidates sgb-screen-*, withdrawn 0-D closure)",
              "why": "credible set empty (gate 3 FAIL); never a performance, heat or life source"},
+            {"what": "lane-09 entries with a repository_status ("
+                     + ", ".join(f"{k}: {v['status']}" for k, v in sorted(hs_status.items()))
+                     + "; ECHT on pure N2)",
+             "why": "not cited by this layer: they are sustainment / operating-window observations, not mass, heat "
+                    "rejection, life or start-up evidence. Their status (" + ", ".join(sorted({v["status"] for v in
+                    hs_status.values()})) + ", " + ", ".join(sorted({v["status_file"] for v in hs_status.values()}))
+                    + ") keeps them non-score-bearing and never a transport discriminator; quoting the published "
+                    "sustainment as a level-3 literature measurement stays allowed. Any citing source_ref would carry "
+                    "the status (build check)."},
             {"what": "compressor bus draw and valve-outlet feed state",
              "why": "upstream ICD (lane_33, not verified) and lane_16 values are TBD; never filled here"},
         ],
@@ -1175,7 +1210,9 @@ def render_md(doc: dict) -> str:
         w(f"- **{ri['id']}** ({ri['element']}). {ri['statement']} *Not verdict-bearing:* "
           f"{ri['why_not_verdict_bearing']}. *To become verdict-bearing:* {ri['to_become_verdict_bearing']}. "
           f"*Architecture modulation:* {ri['architecture_modulation']}. Sources: "
-          + "; ".join(f"`{s['file']}` {s['path']}" for s in ri["source_refs"]) + ".")
+          + "; ".join(f"`{s['file']}` {s['path']}"
+                      + (f" (repository_status {s['repository_status']})" if s.get("repository_status") else "")
+                      for s in ri["source_refs"]) + ".")
     w("")
     w("## Common-mode vs architecture-specific")
     w("")

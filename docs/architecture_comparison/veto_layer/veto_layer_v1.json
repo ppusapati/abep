@@ -5,7 +5,7 @@
   "rf_hall",
   "ecr_hall"
  ],
- "base_commit": "d939ef66324b7d1036b2c9bcd5e7674df218342b",
+ "base_commit": "49604b6eee234314951b9cfee1181842bf604491",
  "cells": {
   "ecr_hall": {
    "life_firing": {
@@ -2250,7 +2250,7 @@
   },
   {
    "lane": "repository (not a lane; CLAUDE.md next-work 1)",
-   "lane_commit": "d939ef66324b7d1036b2c9bcd5e7674df218342b",
+   "lane_commit": "49604b6eee234314951b9cfee1181842bf604491",
    "path": "abep_sim/thermal.py",
    "role": "legacy Phase-4 lumped thermal network with uncited dataclass defaults; NOT used as evidence",
    "sha256": "3ad94b716dd78e863ad441a78ffdc7fd3ef38b2764a7aabaace6876a2f1444fb"
@@ -2348,10 +2348,10 @@
   },
   {
    "lane": "lane_09_hall_sustainment",
-   "lane_commit": "ac7970917fd0e88c065d75406ea90c1d7ebaca7b",
+   "lane_commit": "f458811a5720a20216379dd1f701a54d21faf2b6",
    "path": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
    "role": "air-fed Hall endurance / erosion observations (E07, E09)",
-   "sha256": "248aef28cfe6ffff90d9ee6d43c388488140547e1ce5659975ce30ca77f415b4"
+   "sha256": "76bba594eb1175b2186a8066b38665a2ce5e4cf77487c90f4af2e187a0b82dcc"
   },
   {
    "lane": "lane_07_rf_evidence",
@@ -2369,14 +2369,14 @@
   },
   {
    "lane": "repository (not a lane; CLAUDE.md next-work 1)",
-   "lane_commit": "d939ef66324b7d1036b2c9bcd5e7674df218342b",
+   "lane_commit": "49604b6eee234314951b9cfee1181842bf604491",
    "path": "abep_sim/hall_ensemble.py",
    "role": "admitted-member lookup used by the lane-24 evaluator",
    "sha256": "218f890c8444af1f593396da5051e38d2d093bbb3cb0bc976cc44b01b67df704"
   },
   {
    "lane": "repository (not a lane; CLAUDE.md next-work 1)",
-   "lane_commit": "d939ef66324b7d1036b2c9bcd5e7674df218342b",
+   "lane_commit": "49604b6eee234314951b9cfee1181842bf604491",
    "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
    "role": "transport ensemble (admitted members: none; read-only)",
    "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"
@@ -2600,6 +2600,10 @@
   {
    "what": "any Hall-closure output (screening candidates sgb-screen-*, withdrawn 0-D closure)",
    "why": "credible set empty (gate 3 FAIL); never a performance, heat or life source"
+  },
+  {
+   "what": "lane-09 entries with a repository_status (E03: HISTORICAL_UNSUPPORTED, E04: HISTORICAL_UNSUPPORTED; ECHT on pure N2)",
+   "why": "not cited by this layer: they are sustainment / operating-window observations, not mass, heat rejection, life or start-up evidence. Their status (HISTORICAL_UNSUPPORTED, hallthruster_bridge/identification/echt_n2/STATUS.json) keeps them non-score-bearing and never a transport discriminator; quoting the published sustainment as a level-3 literature measurement stays allowed. Any citing source_ref would carry the status (build check)."
   },
   {
    "what": "compressor bus draw and valve-outlet feed state",
