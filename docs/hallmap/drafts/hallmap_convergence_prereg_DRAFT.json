@@ -125,7 +125,7 @@
    "status": "PROPOSED",
    "rationale": [
     "Same order as I_d: both are time-averaged integral quantities of the same solution.",
-    "At the top of the RFP thrust band (25 mN, requirement as summarised in CLAUDE.md; verify against the RFP text) 2 % is 0.5 mN, below the 5.2-5.6 mN absolute thrust tolerances pre-registered for P5-N2 N1-N3 (D3).",
+    "At the top of the RFP thrust band (25 mN, requirement as summarised in CLAUDE.md; verify against the RFP text) 2 % is 0.5 mN, below the 5.2-5.6 mN absolute thrust tolerances pre-registered for P5-N2 N1-N3 (D3). That comparison is context only: the P5-N2 tolerances belong to a different thruster and thrust scale and do not justify this value, which remains PROPOSED.",
     "No in-repo convergence evidence for thrust alone exists yet (the 2026-09-25 entry reports I_d only), so the owner may prefer to tie it to I_d or loosen it."
    ]
   },
