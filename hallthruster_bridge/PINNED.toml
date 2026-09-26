@@ -17,8 +17,8 @@ install = "https://julialang.org/downloads  (tested with 1.11.7 from julialang-s
 [reaction_set]
 # Any change to which rate files n2_n.toml uses, or to their contents, is a reaction-set model change: bump the version
 # and add a history line. A version label never refers to two different chemistry definitions.
-version = "abep-n2n-0.8"
-status = "INCOMPLETE — stays INCOMPLETE until the omitted-process importance audit (prereg/n2_completeness_audit_v1.json) is done, even when every file named in n2_n.toml exists. Tier 1 (required before P5-N2 scoring): N2 electronic excitation (8 states) [open: Johnson 2005 >20 eV not retrievable here], N momentum transfer [included 0.8, OPM + Wang-BSR variant]. Tier 2 (must be assessed before completeness): N2 vibrational excitation (audited: PROMOTION ROBUST; included 0.7 as v=0 -> 1..10, closure-limited); dissociative ionization (audited: PROMOTED, included from 0.4). Tier 3 (assessed/not included unless a bound shows otherwise): rotational excitation; double ionization (atomic N2+ from N2: PROMOTED, included 0.5/0.6 with sequential N+ -> N2+; molecular N2++: unresolved, no recommended data; N -> N2+ direct and N2+ -> N3+: to be bounded)"
+version = "abep-n2n-0.9"
+status = "INCOMPLETE — stays INCOMPLETE until the omitted-process importance audit (prereg/n2_completeness_audit_v1.json) is done, even when every file named in n2_n.toml exists. Tier 1 (required before P5-N2 scoring): N2 electronic excitation (8 states) [included 0.9], N momentum transfer [included 0.8, OPM + Wang-BSR variant]. Tier 2 (must be assessed before completeness): N2 vibrational excitation (audited: PROMOTION ROBUST; included 0.7 as v=0 -> 1..10, closure-limited); dissociative ionization (audited: PROMOTED, included from 0.4). Tier 3 (assessed/not included unless a bound shows otherwise): rotational excitation; double ionization (atomic N2+ from N2: PROMOTED, included 0.5/0.6 with sequential N+ -> N2+; molecular N2++: unresolved, no recommended data; N -> N2+ direct and N2+ -> N3+: to be bounded)"
 history = [
   "abep-n2n-0.1: N2 ionization + N2 elastic shipped with HallThruster.jl (Itikawa 2006); N ionization (Kim & Desclaux via NIST, 2026-09-25); N2 dissociation (Song 2023 Table 9, 2026-09-26)",
   "abep-n2n-0.2 (2026-09-26): N2 ionization -> ionization_N2_song2023.dat (Song et al. JPCRD 2023 Table 10 sigma(N2+)); rest as 0.1",
@@ -28,4 +28,5 @@ history = [
   "abep-n2n-0.6 (2026-09-26): + direct N2 -> N_Z2plus + N (Song 2023 Table 10 sigma(N++), ramp from 53.885 eV, header 53.885 eV); rest as 0.5",
   "abep-n2n-0.7 (2026-09-26): + vibrational excitation N2(v=0) -> N2(v_f), v_f = 1..10 (Laporta et al. 2014 Eq. (10) rate fits; headers eps_vf; omitted v_f > 10 <= 0.145 % of vib power); v = 0 only, no superelastic return; rest as 0.6",
   "abep-n2n-0.8 (2026-09-26): + atomic-N elastic momentum transfer elastic_N_ragimkhanov2026.dat (Ragimkhanov et al. EPJD 2026 Fig. 1b OPM, vector-extracted); variant n2_n_nel_wang.toml uses Wang et al. 2014 BSR via the same figure (OPM above 128 eV); rest as 0.7",
+  "abep-n2n-0.9 (2026-09-26): lumped excitation_N2.dat placeholder replaced by 8 state-resolved electronic excitations (Su et al. 2021 < 20 eV, Johnson et al. 2005 >= 20 eV, power-law continuation; headers = experimental vertical energies); rest as 0.8",
 ]

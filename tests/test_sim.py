@@ -889,6 +889,37 @@ def test_n_elastic_tables_from_ragimkhanov_fig1b():
     assert '"elastic_N_wang2014_bsr.dat"' in open(os.path.join(b.PROP, "n2_n_nel_wang.toml")).read()
 
 
+def test_n2_electronic_excitation_tables_su_johnson_splice():
+    """abep-n2n-0.9: eight state-resolved electronic excitations. Su 2021 below 20 eV, Johnson 2005 points exactly (no
+    renormalization) from 20 eV, power-law continuation anchored at Johnson's LAST point (value and slope continuous), headers
+    = experimental vertical energies, rows = fresh integration, and n2_n.toml now names only files that exist."""
+    import importlib.util, os, tomllib, numpy as np
+    from abep_sim.rate_tables import maxwellian_rate
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_electronic_excitation_tables.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    exp = {"A": 7.75, "B": 8.04, "W": 8.88, "Bp": 9.67, "a": 9.31, "ap": 9.92, "w": 10.27, "C": 11.19}
+    for key in b.STATES:
+        assert b.STATES[key][2] == exp[key]
+        E, S = b.cross_section(key)
+        Es, Ss = b.su(key); Ej, Sj, _ = b.johnson(key)
+        m = E < 20
+        assert np.allclose(S[m], np.interp(E[m], Es, Ss))
+        for e, s in zip(Ej[Ej >= 20], Sj[Ej >= 20]):
+            assert S[E == e][0] == s                                   # Johnson values used exactly
+        i = int(np.where(E == Ej[-1])[0][0])
+        assert S[i + 1] < S[i] and S[i + 1] / S[i] > 0.9               # continuation starts AT the last point
+        lines = open(os.path.join(b.PROP, b.fname(key))).read().splitlines()
+        assert lines[0] == f"Excitation energy (eV): {exp[key]}"
+        a = np.loadtxt(os.path.join(b.PROP, b.fname(key)), skiprows=2)
+        for eps in (15.0, 45.0):
+            assert abs(a[a[:, 0] == eps][0, 1] / maxwellian_rate(E, S, eps / 1.5, "zero") - 1) < 1e-5
+        assert b.continuation_sensitivity(key, 30)[0] < 0.1
+    cfg = tomllib.load(open(os.path.join(b.PROP, "n2_n.toml"), "rb"))
+    files = [r["rate_coeff_file"] for r in cfg["reactions"]]
+    assert "excitation_N2.dat" not in files and all(os.path.isfile(os.path.join(b.PROP, f)) for f in files)
+
+
 def test_variant_configs_are_regenerated_from_n2_n():
     """Every chemistry-variant config equals what scripts/make_n2_variant_configs.py produces from the current n2_n.toml."""
     import importlib.util, os
