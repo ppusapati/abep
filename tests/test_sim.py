@@ -1305,18 +1305,32 @@ def test_p5_n2_freeze_and_score_once(tmp_path):
     assert not any(f.name.startswith("p5_n2_campaign_test_vacuum_scores") for f in out.iterdir())
     orphan = mp.replace("_raw_manifest.json", "_scores.json")                         # hard-interruption orphan (no provenance)
     open(orphan, "w").write("{}")
-    real_replace = sf.os.replace
-    def failing_replace(src, dst):
+    real_link = sf.os.link
+    def failing_link(src, dst):
         if dst.endswith("_scores_provenance.json"):
             raise OSError("simulated failure publishing provenance")
-        return real_replace(src, dst)
-    sf.os.replace = failing_replace
+        return real_link(src, dst)
+    sf.os.link = failing_link
     try:
         with _pytest.raises(OSError):
             sf.score_frozen(mp)
     finally:
-        sf.os.replace = real_replace
+        sf.os.link = real_link
     assert not os.path.exists(orphan)                                                  # rolled back, nothing official
+    # a concurrent attempt that publishes first is never overwritten (PR #30 review): no-replace publication
+    prov_path = mp.replace("_raw_manifest.json", "_scores_provenance.json")
+    class Racer:
+        def main(self, argv):
+            real_load().main(argv)
+            open(orphan, "w").write('{"other": 1}'); open(prov_path, "w").write('{"other": 1}')
+    sf._load_scorer = lambda: Racer()
+    try:
+        with _pytest.raises(SystemExit):
+            sf.score_frozen(mp)
+    finally:
+        sf._load_scorer = real_load
+    assert open(orphan).read() == open(prov_path).read() == '{"other": 1}'
+    os.remove(orphan); os.remove(prov_path)
     open(orphan, "w").write("{}")
     assert sf.score_frozen(mp)["output_sha256"]                                        # orphan removed; clean attempt succeeds
     # release manifest binds the whole chain and refuses a broken link
@@ -1341,6 +1355,10 @@ def test_p5_n2_freeze_and_score_once(tmp_path):
     assert not os.path.exists(rel_out) and not any("VALIDATION_RELEASE_test" in f.name for f in tmp_path.iterdir())
     rl.publish(r, rel_out)
     assert json.load(open(rel_out))["link_checks"] == r["link_checks"]
+    before = open(rel_out).read()
+    with _pytest.raises(SystemExit):                                                   # concurrent/second publication refused
+        rl.publish(dict(r, campaign="other"), rel_out)
+    assert open(rel_out).read() == before and not any(".partial-" in f.name for f in tmp_path.iterdir())
     dec_path = scores_path.replace(".json", "_decision.json")
     d = json.load(open(dec_path)); d["source_scores_sha256"] = "0" * 64; json.dump(d, open(dec_path, "w"))
     with _pytest.raises(SystemExit):
@@ -1378,6 +1396,10 @@ def test_p5_n2_report_and_decision_are_mechanical(tmp_path):
     md = rp.report(scores)
     heads = [md.index(h) for h in ("## 1. Candidate verdicts", "## 2. Global layer-1", "## 3. Run status", "## 4. Signed residuals", "## 5. E×B")]
     assert heads == sorted(heads) and "-0.200" in md                                       # signed, not absolute
+    import re as _re                                         # member keys contain "|": escaped, so every row has equal columns
+    sec2 = md[md.index("## 2. Global layer-1"):md.index("## 3. Run status")]
+    ncols = {len(_re.split(r"(?<!\\)\|", l)) for l in sec2.splitlines() if l.startswith("|")}
+    assert len(ncols) == 1, ncols
 
 def test_admission_gate_and_launch_manifests(tmp_path):
     """Admitted members need an offline-verifiable admission record (decision + provenance files, sha256, PROMOTABLE, passing

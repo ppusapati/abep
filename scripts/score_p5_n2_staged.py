@@ -8,7 +8,7 @@
   score:   both datasets are re-verified against their freeze manifests; the mandatory dataset must already carry its
            score-once provenance; the scorer must be byte-identical to the frozen scorer (10842ce). The scorer runs on
            mandatory + staged records: its `candidates`/`runs` must reproduce the official mandatory scores exactly, and its
-           `staged_escalation` block is the O4 trigger evaluation. The provenance manifest (renamed last) binds both inputs.
+           `staged_escalation` block is the O4 trigger evaluation. The provenance manifest (linked last, no-replace) binds both inputs.
 The facility campaign (mandatory chemistry, facility mode) uses the standard pipeline (freeze_p5_n2_dataset.py facility ...,
 score_p5_n2_frozen.py); this script is for the vacuum O4 datasets only. Nothing is decided here: dispositions are recorded
 separately by the owner (ensemble/o4_dispositions_schema_v1.json) and are required before any admission.
@@ -60,7 +60,7 @@ def freeze_staged(manifest_path, paths, tag="v1", outdir=VAL, check_code=True):
     buf = io.BytesIO()
     with gzip.GzipFile(filename="", mode="wb", fileobj=buf, mtime=0) as gz:
         gz.write(data)
-    open(gz_path, "wb").write(buf.getvalue())
+    open(gz_path, "xb").write(buf.getvalue())          # exclusive creation: never overwrites
     lock = os.path.join(BR, "prereg", "p5_n2_prereg_lock_v1.json")
     fm = {"dataset": os.path.relpath(gz_path, BR), "mode": man["mode"], "n_records": n,
           "sha256_canonical_jsonl": h(data), "sha256_gz": h(buf.getvalue()),
@@ -75,7 +75,7 @@ def freeze_staged(manifest_path, paths, tag="v1", outdir=VAL, check_code=True):
     fm["code_as_run"] = dict(ident, staged={"file": "scripts/score_p5_n2_staged.py",
                                             "sha256": h(open(os.path.abspath(__file__), "rb").read())})
     fm["chain_consistent"] = all(v["identical"] for v in ident.values())
-    json.dump(fm, open(man_path, "w"), indent=1)
+    json.dump(fm, open(man_path, "x"), indent=1)
     return fm
 
 
@@ -138,12 +138,17 @@ def score_staged(staged_manifest_path, mandatory_manifest_path=MANDATORY):
              "chain": {k: mman[k] for k in ("driver_commit", "integrity_gate_commit", "scorer_commit", "preregistration")}}
         with open(tmp_prov, "w") as fh:
             json.dump(p, fh, indent=1)
-        os.replace(tmp_out, out)
+        try:                                 # no-replace publication: a concurrent attempt never overwrites (PR #30 review)
+            os.link(tmp_out, out)            # both artifacts are complete on disk before either becomes official
+        except FileExistsError:
+            raise SystemExit(f"scores published concurrently, refusing to overwrite: {out}")
         try:
-            os.replace(tmp_prov, prov)           # the provenance rename commits the result
+            os.link(tmp_prov, prov)          # the provenance link commits the result
         except BaseException:
-            if os.path.exists(out):
-                os.unlink(out)
+            if os.path.exists(out) and os.path.samefile(out, tmp_out):
+                os.unlink(out)               # roll back only our own scores file: no official scores without provenance
+            if isinstance(sys.exc_info()[1], FileExistsError):
+                raise SystemExit(f"already scored concurrently (score once): {prov}")
             raise
     finally:
         for f in tmps + [tmp_out, tmp_prov]:

@@ -117,7 +117,7 @@ def freeze(mode, paths, tag="v1", outdir=OUTDIR, check_code=True):
     buf = io.BytesIO()
     with gzip.GzipFile(filename="", mode="wb", fileobj=buf, mtime=0) as gz:
         gz.write(data)
-    open(gz_path, "wb").write(buf.getvalue())
+    open(gz_path, "xb").write(buf.getvalue())          # exclusive creation: never overwrites
     lock = os.path.join(BR, "prereg", "p5_n2_prereg_lock_v1.json")
     man = {"dataset": os.path.relpath(gz_path, BR), "mode": mode, "n_records": n,
            "sha256_canonical_jsonl": hashlib.sha256(data).hexdigest(), "sha256_gz": hashlib.sha256(buf.getvalue()).hexdigest(),
@@ -130,7 +130,7 @@ def freeze(mode, paths, tag="v1", outdir=OUTDIR, check_code=True):
                                               "sha256": hashlib.sha256(open(os.path.abspath(__file__), "rb").read()).hexdigest(),
                                               "last_commit": _last_commit(os.path.abspath(__file__))})
     man["chain_consistent"] = all(v["identical"] for v in ident.values())
-    json.dump(man, open(man_path, "w"), indent=1)
+    json.dump(man, open(man_path, "x"), indent=1)
     return man
 
 

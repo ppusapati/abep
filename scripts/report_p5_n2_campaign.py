@@ -49,7 +49,7 @@ def report(scores):
     L += ["", "## 2. Global layer-1 member verdicts (vacuum)", ""]
     vac = scores["candidates"].get("vacuum", {})
     members = sorted({k for v in vac.values() for k in v["members"]})
-    L += ["| candidate | " + " | ".join(members) + " |", "|---|" + "---|" * len(members)]
+    L += ["| candidate | " + " | ".join(m.replace("|", "\\|") for m in members) + " |", "|---|" + "---|" * len(members)]
     for c, v in sorted(vac.items()):
         L.append(f"| {c} | " + " | ".join(v["members"].get(k, "—") for k in members) + " |")
     rows = [dict(r, **parse_key(r["key"])) for r in scores["runs"]]
@@ -135,8 +135,8 @@ def main(argv):
         if pj.get("output_sha256") != scores_sha:
             raise SystemExit("scores file does not match its provenance manifest")
         prov = {"file": os.path.basename(prov_path), "sha256": hashlib.sha256(open(prov_path, "rb").read()).hexdigest()}
-    open(md, "w").write(report(scores))
-    json.dump(decision(scores, scores_sha, prov), open(dec, "w"), indent=1)
+    open(md, "x").write(report(scores))                                  # exclusive creation: never overwrites
+    json.dump(decision(scores, scores_sha, prov), open(dec, "x"), indent=1)
     print(md, dec)
 
 

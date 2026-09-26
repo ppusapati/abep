@@ -2155,3 +2155,13 @@ pinned launch manifest (manifest == fresh build; `make_p5_n2_launch_manifests.ch
 gzip) and scored once by the frozen scorer on mandatory + staged records (scorer byte-identical to 10842ce; mandatory candidates and
 runs must be reproduced exactly; provenance renamed last). Dry-run controls (scratch, not results): the baseline relabelled as a
 sensitivity fires no trigger; +10 % I_d fires it. No scorer, criterion, threshold, chemistry or record changed.
+
+### 2026-09-26 — PR #30 review fixes (presentation and publication only; scores and decision unchanged)
+(1) The v1 report's section-2 header carried unescaped `|` inside the member keys, so the rendered Markdown table was
+misaligned. `report_p5_n2_campaign.report()` now escapes them. `p5_n2_campaign_v1_vacuum_scores_report.md` was regenerated from the
+unchanged scores (sha256 87895820…be1bc); the only change is that header line. The decision file regenerates byte-identical and is not
+touched. `VALIDATION_RELEASE_v1.json` was regenerated before merge; the only change is the report sha256 (638a393d… → a83cb68a…),
+and all 10 link checks pass. Nothing was rescored.
+(2) Evidence publication is now no-replace: release, score-once scores/provenance (frozen and staged), freeze datasets/manifests and
+report/decision use a hard link or exclusive creation instead of replacing writes. A concurrent invocation can therefore never
+overwrite a published artifact, and a rollback only removes the attempt's own file (inode-checked).

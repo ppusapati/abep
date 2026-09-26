@@ -4,7 +4,8 @@
 
 and verifies every link before writing anything. It is a manifest, not an interpretation: the only result content it carries is
 a copy of the mechanical decision's candidate lists. Refuses to overwrite an existing release; published atomically
-(temporary file -> parse/verify -> os.replace), so an interruption cannot leave a truncated release that blocks a retry.
+(temporary file -> parse/verify -> no-replace hard link), so an interruption cannot leave a truncated release that blocks a
+retry, and a concurrent invocation can never overwrite a published release (PR #30 review).
 Usage: python scripts/make_validation_release.py <freeze_manifest.json> [--out VALIDATION_RELEASE_v1.json]
 (the scores / provenance / decision / report files are located next to the freeze manifest by the standard names)
 """
@@ -76,14 +77,18 @@ def release(freeze_manifest, bridge_dir=BR, ensemble_members=None, check_git=Tru
 
 
 def publish(r, out):
-    """Atomic publication: temporary file -> parse/verify -> os.replace. An interruption never leaves a truncated release."""
+    """Atomic, no-replace publication: temporary file -> parse/verify -> os.link (fails if `out` exists). An interruption never
+    leaves a truncated release, and a release published concurrently is never overwritten."""
     tmp = out + f".partial-{os.getpid()}"
     try:
         with open(tmp, "w") as fh:
             json.dump(r, fh, indent=1)
         if json.load(open(tmp)) != json.loads(json.dumps(r)):
             raise SystemExit("release verification failed")
-        os.replace(tmp, out)
+        try:
+            os.link(tmp, out)
+        except FileExistsError:
+            raise SystemExit(f"refusing to overwrite {out} (published concurrently)")
     finally:
         if os.path.exists(tmp):
             os.unlink(tmp)

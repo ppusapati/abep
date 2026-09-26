@@ -18,7 +18,7 @@ Pre-registration: `prereg/p5_n2_validation_criteria_v1.json`. Records scored: 10
 
 ## 2. Global layer-1 member verdicts (vacuum)
 
-| candidate | L32-anode|1p6kW|A | L32-anode|1p6kW|B | L32-anode|3p0kW|A | L32-anode|3p0kW|B | L32-exit|1p6kW|A | L32-exit|1p6kW|B | L32-exit|3p0kW|A | L32-exit|3p0kW|B | L38-hist|1p6kW|A | L38-hist|1p6kW|B | L38-hist|3p0kW|A | L38-hist|3p0kW|B |
+| candidate | L32-anode\|1p6kW\|A | L32-anode\|1p6kW\|B | L32-anode\|3p0kW\|A | L32-anode\|3p0kW\|B | L32-exit\|1p6kW\|A | L32-exit\|1p6kW\|B | L32-exit\|3p0kW\|A | L32-exit\|3p0kW\|B | L38-hist\|1p6kW\|A | L38-hist\|1p6kW\|B | L38-hist\|3p0kW\|A | L38-hist\|3p0kW\|B |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | sgb-screen-01 | FAIL | FAIL | FAIL | FAIL | INCONCLUSIVE | INCONCLUSIVE | INCONCLUSIVE | INCONCLUSIVE | FAIL | FAIL | FAIL | FAIL |
 | sgb-screen-02 | INCONCLUSIVE | INCONCLUSIVE | INCONCLUSIVE | INCONCLUSIVE | INCONCLUSIVE | INCONCLUSIVE | INCONCLUSIVE | INCONCLUSIVE | FAIL | FAIL | FAIL | FAIL |
