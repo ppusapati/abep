@@ -1,22 +1,391 @@
 {
  "schema": "transport_ensemble_v0",
- "description": "Two-layer Hall uncertainty structure (project decision 2026-09-26). Layer 1 (calibration nuisance) is uncertainty in what the P5 experiment WAS; it is marginalized when admitting transport closures and is NEVER a Vyovrinda design variable or an architecture-trade dimension. Layer 2 (transferable) is the credible set of Hall transport closures that survives after marginalizing layer 1; each member is evaluated on Vyovrinda's own geometry and B(z) to produce design-specific Hall maps. Members are an UNWEIGHTED scenario set (no probabilities) until evidence (e.g. N2 validation) justifies elimination or weighting.",
+ "description": "Two-layer Hall uncertainty structure (project decision 2026-09-26). Layer 1 (calibration nuisance) is uncertainty in what the P5 experiment WAS; it is marginalized when admitting transport closures and is NEVER a Vyovrinda design variable or an architecture-trade dimension. Layer 2 (transferable) is the credible set of Hall transport closures that survives after marginalizing layer 1; each member is evaluated on Vyovrinda's own geometry and B(z) to produce design-specific Hall maps. Admitted members are an UNWEIGHTED scenario set (no probabilities) until evidence (e.g. N2 validation) justifies elimination or weighting. Screening candidates are a SEPARATE list: hypotheses that new evidence can test. They are never loaded by HallMap and never enter the architecture trade or whole-system UQ.",
  "calibration_nuisance": {
-  "p5_registration": {"values": ["L38-hist", "L32-anode", "L32-exit"], "evidence": "docs/EVIDENCE.md register: P5 channel depth (level 3, conflicting) and Peterson B(z) (level 3, vector-extracted)"},
-  "p5_coil_shape": {"values": ["1p6kW", "3p0kW"], "evidence": "Peterson 2001 historical coil settings; Brabston 2025 coil currents unpublished"},
-  "beam_efficiency_reading": {"values": ["A", "B"], "evidence": "Brabston Figs. 8/9 inconsistency; hallthruster_bridge/identification/brabston_fig8_fig9_xenon.json"},
-  "facility_ingestion_interpretation": {"values": ["vacuum (Eq. 14/16-corrected targets, primary)", "facility (Eq. 13 flow at anode, raw targets, consistency check)"], "evidence": "Brabston Eqs. 13-16; injection location is our modelling choice"}
+  "p5_registration": {
+   "values": [
+    "L38-hist",
+    "L32-anode",
+    "L32-exit"
+   ],
+   "evidence": "docs/EVIDENCE.md register: P5 channel depth (level 3, conflicting) and Peterson B(z) (level 3, vector-extracted)"
+  },
+  "p5_coil_shape": {
+   "values": [
+    "1p6kW",
+    "3p0kW"
+   ],
+   "evidence": "Peterson 2001 historical coil settings; Brabston 2025 coil currents unpublished"
+  },
+  "beam_efficiency_reading": {
+   "values": [
+    "A",
+    "B"
+   ],
+   "evidence": "Brabston Figs. 8/9 inconsistency; hallthruster_bridge/identification/brabston_fig8_fig9_xenon.json"
+  },
+  "facility_ingestion_interpretation": {
+   "values": [
+    "vacuum (Eq. 14/16-corrected targets, primary)",
+    "facility (Eq. 13 flow at anode, raw targets, consistency check)"
+   ],
+   "evidence": "Brabston Eqs. 13-16; injection location is our modelling choice"
+  }
  },
- "member_fields": ["ensemble_member_id", "transport_family", "transport_parameters", "calibration_hypotheses",
-                   "evidence_basis", "applicability_domain", "validation_status"],
+ "member_fields": [
+  "ensemble_member_id",
+  "transport_family",
+  "transport_parameters",
+  "calibration_hypotheses",
+  "evidence_basis",
+  "applicability_domain",
+  "validation_status"
+ ],
  "weighting": "unweighted",
- "admission_rule": null,
- "admission_rule_status": "PENDING project decision: required choices are the I_d tolerance for in-sample admission and whether super-Bohm (a > 1/16) sets are admitted. Census of candidate rules (vacuum mode, in-sample, all three points quiet (RMS < 50 %), |dT| <= 2 sigma, admitted if supported by at least one layer-1 combination): see candidate_rule_census.",
+ "admission_rule": "Evidence-based promotion only (project decision 2026-09-26): a screening candidate may be promoted to an admitted member only after it successfully predicts new experimental evidence that was NOT used to select it, without transport retuning, while staying within the physical-prior constraints (anom_scale <= 1/16). The acceptance criteria for that evidence are pre-registered after auditing its measurements and uncertainties, and before any simulation of it. No in-sample I_d tolerance is used for admission: the pre-registered 15 % blind criterion on P5-Xe was not met, and relaxing it post hoc would turn a failed validation into calibration.",
+ "admission_rule_status": "Credible set is EMPTY (P5-Xe blind validation failed; no candidate has passed new-evidence prediction yet). Next discriminating evidence: P5-N2 (after the N2/N reaction set is complete).",
  "candidate_rule_census": {
-  "source_runs": ["hallthruster_bridge/identification/p5_xe_identification_sgb_v1_vacuum_runs.csv", "hallthruster_bridge/identification/p5_xe_identification_mlb_v1_vacuum_runs.csv"],
-  "Id_tol_15pct": {"sgb_defensible": 0, "sgb_super_bohm": 0, "mlb": 0},
-  "Id_tol_20pct": {"sgb_defensible": 1, "sgb_super_bohm": 5, "mlb": 0, "defensible_sets": ["a=1/16_b=0.8_c=0.9L_w=0.25L (supported only by L32-anode/1.6 kW)"]},
-  "Id_tol_25pct": {"sgb_defensible": 5, "sgb_super_bohm": 8, "mlb": 0, "defensible_sets": ["a=1/16_b=0.8_c=0.9L_w=0.25L", "a=1/16_b=0.97_c=0.9L_w=0.1L", "a=1/16_b=0.97_c=1.1L_w=0.1L", "a=1/16_b=0.97_c=1L_w=0.1L", "a=1/16_b=0.9_c=1.1L_w=0.25L"], "note": "all defensible sets are supported only by L32-anode registrations"}
+  "source_runs": [
+   "hallthruster_bridge/identification/p5_xe_identification_sgb_v1_vacuum_runs.csv",
+   "hallthruster_bridge/identification/p5_xe_identification_mlb_v1_vacuum_runs.csv"
+  ],
+  "Id_tol_15pct": {
+   "sgb_defensible": 0,
+   "sgb_super_bohm": 0,
+   "mlb": 0
+  },
+  "Id_tol_20pct": {
+   "sgb_defensible": 1,
+   "sgb_super_bohm": 5,
+   "mlb": 0,
+   "defensible_sets": [
+    "a=1/16_b=0.8_c=0.9L_w=0.25L (supported only by L32-anode/1.6 kW)"
+   ]
+  },
+  "Id_tol_25pct": {
+   "sgb_defensible": 5,
+   "sgb_super_bohm": 8,
+   "mlb": 0,
+   "defensible_sets": [
+    "a=1/16_b=0.8_c=0.9L_w=0.25L",
+    "a=1/16_b=0.97_c=0.9L_w=0.1L",
+    "a=1/16_b=0.97_c=1.1L_w=0.1L",
+    "a=1/16_b=0.97_c=1L_w=0.1L",
+    "a=1/16_b=0.9_c=1.1L_w=0.25L"
+   ],
+   "note": "all defensible sets are supported only by L32-anode registrations"
+  },
+  "status": "REJECTED approach, kept as a record only: in-sample I_d tolerances are not used for admission."
  },
- "members": []
+ "members": [],
+ "super_bohm_policy": "anom_scale > 1/16 sets are not admissible under current evidence; usable only as diagnostic/sensitivity cases, never as screening candidates or members.",
+ "screening_rule": "Vacuum-mode P5-Xe runs (hallthruster_bridge/identification/p5_xe_identification_sgb_v1_vacuum_runs.csv), no I_d cutoff: all three simulations successful; anom_scale <= 1/16; quiet at all three points (I_d RMS < 50 %, internal diagnostic); divergence-corrected thrust within 2 sigma at all three points under at least one layer-1 combination (registration x coil shape x beam reading).",
+ "screening_candidates": [
+  {
+   "ensemble_member_id": "sgb-screen-01",
+   "transport_family": "ScaledGaussianBohm",
+   "transport_parameters": {
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.8,
+    "center_L": 0.9,
+    "width_L": 0.25
+   },
+   "calibration_hypotheses": [
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "A",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    }
+   ],
+   "evidence_basis": "P5-Xe vacuum identification grid (Brabston 2025 Xe1-Xe3); best in-sample max |dI_d| 15.56 % under H2a/A (dI_d [-2.78, -15.56, 0.92] %, RMS [0.286, 0.303, 0.277]); diagnostic only, not an admission criterion",
+   "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units",
+   "validation_status": "screening candidate: NOT admitted; failed/untested blind validation; awaiting new-evidence prediction (P5-N2)",
+   "grid_combo": "a=1/16_b=0.8_c=0.9L_w=0.25L"
+  },
+  {
+   "ensemble_member_id": "sgb-screen-02",
+   "transport_family": "ScaledGaussianBohm",
+   "transport_parameters": {
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.97,
+    "center_L": 1.0,
+    "width_L": 0.1
+   },
+   "calibration_hypotheses": [
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "A",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "3p0kW",
+     "beam_efficiency_reading": "A",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "3p0kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    }
+   ],
+   "evidence_basis": "P5-Xe vacuum identification grid (Brabston 2025 Xe1-Xe3); best in-sample max |dI_d| 20.19 % under H2a/A (dI_d [-10.62, -20.19, -4.02] %, RMS [0.015, 0.036, 0.089]); diagnostic only, not an admission criterion",
+   "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units",
+   "validation_status": "screening candidate: NOT admitted; failed/untested blind validation; awaiting new-evidence prediction (P5-N2)",
+   "grid_combo": "a=1/16_b=0.97_c=1L_w=0.1L"
+  },
+  {
+   "ensemble_member_id": "sgb-screen-03",
+   "transport_family": "ScaledGaussianBohm",
+   "transport_parameters": {
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.97,
+    "center_L": 0.9,
+    "width_L": 0.1
+   },
+   "calibration_hypotheses": [
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "3p0kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    }
+   ],
+   "evidence_basis": "P5-Xe vacuum identification grid (Brabston 2025 Xe1-Xe3); best in-sample max |dI_d| 20.22 % under H2a/B (dI_d [-11.2, -20.22, -3.32] %, RMS [0.02, 0.044, 0.099]); diagnostic only, not an admission criterion",
+   "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units",
+   "validation_status": "screening candidate: NOT admitted; failed/untested blind validation; awaiting new-evidence prediction (P5-N2)",
+   "grid_combo": "a=1/16_b=0.97_c=0.9L_w=0.1L"
+  },
+  {
+   "ensemble_member_id": "sgb-screen-04",
+   "transport_family": "ScaledGaussianBohm",
+   "transport_parameters": {
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.97,
+    "center_L": 1.1,
+    "width_L": 0.1
+   },
+   "calibration_hypotheses": [
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    }
+   ],
+   "evidence_basis": "P5-Xe vacuum identification grid (Brabston 2025 Xe1-Xe3); best in-sample max |dI_d| 23.68 % under H2a/B (dI_d [-13.41, -23.68, -9.84] %, RMS [0.195, 0.34, 0.346]); diagnostic only, not an admission criterion",
+   "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units",
+   "validation_status": "screening candidate: NOT admitted; failed/untested blind validation; awaiting new-evidence prediction (P5-N2)",
+   "grid_combo": "a=1/16_b=0.97_c=1.1L_w=0.1L"
+  },
+  {
+   "ensemble_member_id": "sgb-screen-05",
+   "transport_family": "ScaledGaussianBohm",
+   "transport_parameters": {
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.9,
+    "center_L": 1.1,
+    "width_L": 0.25
+   },
+   "calibration_hypotheses": [
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "A",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "3p0kW",
+     "beam_efficiency_reading": "A",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "3p0kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    }
+   ],
+   "evidence_basis": "P5-Xe vacuum identification grid (Brabston 2025 Xe1-Xe3); best in-sample max |dI_d| 24.61 % under H2a/A (dI_d [-15.18, -24.61, -10.97] %, RMS [0.051, 0.008, 0.197]); diagnostic only, not an admission criterion",
+   "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units",
+   "validation_status": "screening candidate: NOT admitted; failed/untested blind validation; awaiting new-evidence prediction (P5-N2)",
+   "grid_combo": "a=1/16_b=0.9_c=1.1L_w=0.25L"
+  },
+  {
+   "ensemble_member_id": "sgb-screen-06",
+   "transport_family": "ScaledGaussianBohm",
+   "transport_parameters": {
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.9,
+    "center_L": 1.0,
+    "width_L": 0.25
+   },
+   "calibration_hypotheses": [
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "A",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "3p0kW",
+     "beam_efficiency_reading": "A",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "3p0kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    }
+   ],
+   "evidence_basis": "P5-Xe vacuum identification grid (Brabston 2025 Xe1-Xe3); best in-sample max |dI_d| 25.54 % under H2a/A (dI_d [-16.44, -25.54, -11.05] %, RMS [0.159, 0.052, 0.003]); diagnostic only, not an admission criterion",
+   "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units",
+   "validation_status": "screening candidate: NOT admitted; failed/untested blind validation; awaiting new-evidence prediction (P5-N2)",
+   "grid_combo": "a=1/16_b=0.9_c=1L_w=0.25L"
+  },
+  {
+   "ensemble_member_id": "sgb-screen-07",
+   "transport_family": "ScaledGaussianBohm",
+   "transport_parameters": {
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.9,
+    "center_L": 0.9,
+    "width_L": 0.25
+   },
+   "calibration_hypotheses": [
+    {
+     "p5_registration": "L38-hist",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L38-hist",
+     "p5_coil_shape": "3p0kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "A",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "3p0kW",
+     "beam_efficiency_reading": "A",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "3p0kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    }
+   ],
+   "evidence_basis": "P5-Xe vacuum identification grid (Brabston 2025 Xe1-Xe3); best in-sample max |dI_d| 25.92 % under H2a/A (dI_d [-16.44, -25.92, -11.8] %, RMS [0.003, 0.002, 0.001]); diagnostic only, not an admission criterion",
+   "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units",
+   "validation_status": "screening candidate: NOT admitted; failed/untested blind validation; awaiting new-evidence prediction (P5-N2)",
+   "grid_combo": "a=1/16_b=0.9_c=0.9L_w=0.25L"
+  },
+  {
+   "ensemble_member_id": "sgb-screen-08",
+   "transport_family": "ScaledGaussianBohm",
+   "transport_parameters": {
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.97,
+    "center_L": 0.9,
+    "width_L": 0.25
+   },
+   "calibration_hypotheses": [
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "3p0kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    }
+   ],
+   "evidence_basis": "P5-Xe vacuum identification grid (Brabston 2025 Xe1-Xe3); best in-sample max |dI_d| 40.93 % under H2b/B (dI_d [-34.56, -40.93, -28.98] %, RMS [0.204, 0.131, 0.262]); diagnostic only, not an admission criterion",
+   "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units",
+   "validation_status": "screening candidate: NOT admitted; failed/untested blind validation; awaiting new-evidence prediction (P5-N2)",
+   "grid_combo": "a=1/16_b=0.97_c=0.9L_w=0.25L"
+  },
+  {
+   "ensemble_member_id": "sgb-screen-09",
+   "transport_family": "ScaledGaussianBohm",
+   "transport_parameters": {
+    "anom_scale": 0.0625,
+    "barrier_scale": 0.97,
+    "center_L": 1.0,
+    "width_L": 0.25
+   },
+   "calibration_hypotheses": [
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "1p6kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    },
+    {
+     "p5_registration": "L32-anode",
+     "p5_coil_shape": "3p0kW",
+     "beam_efficiency_reading": "B",
+     "facility_ingestion_interpretation": "vacuum (Eq. 14/16-corrected targets, primary)"
+    }
+   ],
+   "evidence_basis": "P5-Xe vacuum identification grid (Brabston 2025 Xe1-Xe3); best in-sample max |dI_d| 42.01 % under H2a/B (dI_d [-35.48, -42.01, -30.32] %, RMS [0.149, 0.153, 0.173]); diagnostic only, not an admission criterion",
+   "applicability_domain": "xenon, P5-like channel (OD 173 mm, width 25 mm), 230-274 V, 5 mg/s; profile in channel-length units",
+   "validation_status": "screening candidate: NOT admitted; failed/untested blind validation; awaiting new-evidence prediction (P5-N2)",
+   "grid_combo": "a=1/16_b=0.97_c=1L_w=0.25L"
+  }
+ ]
 }

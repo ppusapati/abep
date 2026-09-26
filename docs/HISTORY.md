@@ -1458,3 +1458,49 @@ loaded.
 **Roadmap fix:** N₂ validation (P5-N₂, ECHT-N₂) runs across the credible Xe-informed ensemble with no retuning per case,
 replacing "ONE transport parameter set", which contradicted the closed Xe campaign. N₂ becomes a discrimination
 experiment that can shrink the ensemble.
+
+## Credible set empty; SGB screening candidates (2026-09-26, project decision)
+**Decisions:**
+- No in-sample I_d tolerance for admission. The pre-registered 15 % blind criterion wasn't met; choosing 20 % or 25 %
+  because those admit members would turn a failed validation into post-hoc calibration. The tolerance census stays in
+  the ensemble file as a record of a *rejected* approach.
+- Super-Bohm sets (a > 1/16) are not admissible under current evidence (diagnostic/sensitivity only).
+- **The credible transport ensemble is empty.** That's the correct state today.
+
+**Screening candidates**, kept separate from members, so new evidence can test hypotheses. No I_d cutoff is applied. The
+criteria, on the vacuum-mode SGB grid:
+- all three simulations successful;
+- a ≤ 1/16;
+- quiet at all three points (RMS < 50 %, internal diagnostic);
+- divergence-corrected thrust within 2σ at all three points under at least one layer-1 combination.
+
+Nine sets pass. This reproduces the project lead's independent count.
+
+| id | a, b, c, w | best in-sample max \|ΔI_d\| | supporting layer-1 combinations |
+|---|---|---|---|
+| sgb-screen-01 | 1/16, 0.8, 0.9 L, 0.25 L | 15.56 % | L32-anode/1.6 kW (A, B) |
+| sgb-screen-02 | 1/16, 0.97, 1.0 L, 0.1 L | 20.19 % | L32-anode/1.6 and 3.0 kW (A, B) |
+| sgb-screen-03 | 1/16, 0.97, 0.9 L, 0.1 L | 20.22 % | L32-anode/1.6 and 3.0 kW (B) |
+| sgb-screen-04 | 1/16, 0.97, 1.1 L, 0.1 L | 23.68 % | L32-anode/1.6 kW (B) |
+| sgb-screen-05 | 1/16, 0.9, 1.1 L, 0.25 L | 24.61 % | L32-anode/1.6 and 3.0 kW (A, B) |
+| sgb-screen-06 | 1/16, 0.9, 1.0 L, 0.25 L | 25.54 % | L32-anode/1.6 and 3.0 kW (A, B) |
+| sgb-screen-07 | 1/16, 0.9, 0.9 L, 0.25 L | 25.92 % | L32-anode/1.6 and 3.0 kW (A, B); **also L38-hist/1.6 and 3.0 kW (B)** |
+| sgb-screen-08 | 1/16, 0.97, 0.9 L, 0.25 L | 40.93 % | L32-anode/1.6 and 3.0 kW (B) |
+| sgb-screen-09 | 1/16, 0.97, 1.0 L, 0.25 L | 42.01 % | L32-anode/1.6 and 3.0 kW (B) |
+
+Support is L32-anode-dominated; only sgb-screen-07 is also supported by L38-hist. That's why none can be promoted to a
+transferable closure on Xe evidence. The I_d column is diagnostic, not an admission criterion. Screening candidates never
+produce design Hall maps: `HallMap` loads admitted members only, and a test enforces this.
+
+**Promotion rule:** a candidate is promoted only after predicting new evidence not used to select it, without transport
+retuning, within the physical prior. The acceptance criteria are pre-registered after auditing that evidence's
+measurements and uncertainties, and before simulating it. Next: complete the N₂/N reaction set, then P5-N₂ as the
+no-retuning discrimination experiment.
+
+**Scope rule:** Hall screening/credible-set uncertainty belongs only to the ionization/discharge → acceleration/thrust
+block of the RFP architecture:
+- atmospheric path: intake → filter → compressor → atmospheric gas chamber → valve;
+- Xe path: Xe chamber → valve;
+- both paths feed that block.
+
+It must never leak upstream, or into Vyovrinda's own thruster geometry.

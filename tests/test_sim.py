@@ -593,7 +593,8 @@ def _synthetic_ensemble():
     e = copy.deepcopy(load_ensemble())
     e["admission_rule"] = "synthetic (tests only)"
     e["members"] = [{"ensemble_member_id": "synthetic", "transport_family": "ScaledGaussianBohm",
-                     "transport_parameters": {"anom_scale": 0.0625}, "calibration_hypotheses": ["p5_registration"],
+                     "transport_parameters": {"anom_scale": 0.0625},
+                     "calibration_hypotheses": [{"p5_registration": "L32-anode", "beam_efficiency_reading": "A"}],
                      "evidence_basis": "test", "applicability_domain": "test", "validation_status": "test"}]
     return e
 
@@ -747,7 +748,10 @@ def test_transport_ensemble_two_layer_structure(tmp_path):
     real = load_ensemble()
     assert real["weighting"] == "unweighted" and set(real["calibration_nuisance"]) >= {
         "p5_registration", "p5_coil_shape", "beam_efficiency_reading"}
-    assert real["members"] == [] and real["admission_rule"] is None          # credible set pending a project decision
+    assert real["members"] == []                                             # credible set is empty (2026-09-26)
+    from abep_sim.hall_ensemble import screening_ids
+    assert len(screening_ids(real)) == 9 and all(
+        c["transport_parameters"]["anom_scale"] <= 1 / 16 for c in real["screening_candidates"])
     axes = {"Vd": [250.0, 300.0], "mdot_kgps": [1e-6, 2e-6]}
     f = {k: (np.ones((2, 2)) * 0.02).tolist() for k in REQUIRED_FIELDS}
     f["converged"] = [[1, 1], [1, 1]]; f["sustained"] = [[1, 1], [1, 1]]
@@ -770,3 +774,19 @@ def test_transport_ensemble_two_layer_structure(tmp_path):
     pw = tmp_path / "w.json"; pw.write_text(json.dumps(weighted))
     with pytest.raises(ValueError, match="unweighted"):
         load_ensemble(str(pw))
+
+
+def test_screening_candidates_never_produce_hall_maps(tmp_path):
+    """A screening candidate's id is not an admitted member: HallMap must reject a map that names it."""
+    import json, numpy as np, pytest
+    from abep_sim.hall_ensemble import load_ensemble
+    from abep_sim.hall_map import HallMap, REQUIRED_FIELDS, REQUIRED_META, pinned_commit
+    real = load_ensemble()
+    sid = real["screening_candidates"][0]["ensemble_member_id"]
+    f = {k: (np.ones((2, 2)) * 0.02).tolist() for k in REQUIRED_FIELDS}
+    meta = {k: "synthetic" for k in REQUIRED_META}
+    meta.update(schema="hall_map_schema_v1", pinned=f"commit = \"{pinned_commit()}\"", ensemble_member_id=sid)
+    p = tmp_path / "m.json"
+    p.write_text(json.dumps({"meta": meta, "axes": {"Vd": [250.0, 300.0], "mdot_kgps": [1e-6, 2e-6]}, "fields": f}))
+    with pytest.raises(ValueError, match="not an admitted"):
+        HallMap(str(p))
