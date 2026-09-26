@@ -85,7 +85,10 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    (`dissociation_N2.dat`, Song et al. JPCRD 2023 Table 9 = Cosby 1993, `scripts/build_n2_dissociation_table.py`); N₂
    ionization (`ionization_N2_song2023.dat`, Table 10 partial σ(N₂⁺)) and N₂ elastic momentum transfer
    (`elastic_N2_song2023.dat`, Table 5 MTCS) rebuilt; reaction set **abep-n2n-0.3**, versioned in `PINNED.toml` (the shipped
-   tables are kept but unused). **Completeness (project decision 2026-09-26):**
+   tables are kept but unused). **abep-n2n-0.4:** dissociative ionization added (promoted by audit 1). It uses a threshold ramp from
+   24.284 eV and a header of 24.284 eV. It has chemistry variants upper (`n2_n.toml`) / lower (`n2_n_di_lower.toml`) for the
+   N⁺/N₂²⁺ ambiguity. Smoke-test case copies omit `measured`: no P5-N₂ comparison before pre-registration.
+   **Completeness (project decision 2026-09-26):**
    "every file in n2_n.toml exists" ≠ "chemistry complete". `PINNED.toml` stays INCOMPLETE until an omitted-process audit is done:
    - Tier 1 (before P5-N₂ scoring): 8 N₂ excitation states, N momentum transfer.
    - Tier 2 (assess before calling the set complete): N₂ vibrational excitation, dissociative ionization.
