@@ -174,5 +174,12 @@
     "ionization_N_Z1plus_to_N_Z2plus.dat": "12e9c03ac8f5e37b39bcba8e81e1c8d65e57dcb8672dcab04d35e028c8c32523"
    }
   }
+ },
+ "case_files": {
+  "p5_n2_cases_blind_envelope_v1.json": {
+   "git_source": "60a0c90:hallthruster_bridge/cases/p5_n2.json",
+   "sha256": "c9bc563387e9dc7c275a8f7295952253f1101befcd15a8f669319572e3744e55",
+   "use": "operating points (Gaussian-B smoke geometry) of the blind state envelope; the scoring case set is regenerated separately"
+  }
  }
 }
