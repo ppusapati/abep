@@ -146,8 +146,10 @@ def test_trigger_lifecycle_is_transactional_and_idempotent(tmp_path, monkeypatch
 def test_retroactive_ledger_entries_are_marked():
     """The two firings that predate the transactional ledger are reconstructions, never indistinguishable from live events."""
     ev = [json.loads(l) for l in open(os.path.join(ORCH, "trigger_ledger_v2.jsonl"))]
-    old = [e for e in ev if e["trigger"] in ("T_O4_SCORE", "T_O4_ESCALATE") and e.get("member") == "ds_staged_n2_n_exc_johnsonlow"]
-    assert old and all(e["record_origin"] == "retroactive_reconstruction" for e in old)
+    mine = [e for e in ev if e["trigger"] in ("T_O4_SCORE", "T_O4_ESCALATE") and e.get("member") == "ds_staged_n2_n_exc_johnsonlow"]
+    old = [e for e in mine if e["event"] in ("CLAIMED", "LAUNCHED") or e["trigger"] == "T_O4_SCORE"]   # predate the ledger
+    assert len(old) == 5 and all(e["record_origin"] == "retroactive_reconstruction" for e in old)
+    assert all(e["record_origin"] == "live" for e in mine if e not in old)                  # later completion events are live
     for e in old:
         r = e["reconstruction"]
         assert r["reconstructed_utc"] and r["original_event_utc"] and r["evidence"]

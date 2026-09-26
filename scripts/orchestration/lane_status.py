@@ -213,6 +213,8 @@ def status(journals_dir, followon_dir):
         info[L["id"]] = {k: b.get(k) for k in ("worktree_path", "branch", "commit")}
     for F in reg["follow_ons"]:
         a = launched.get(F["id"])
+        if F.get("repairs"):                                        # targeted re-verification / repair runs, latest rules
+            a = {"workflow_run": F["repairs"][-1]["workflow_run"], "workflow_key": F["repairs"][-1]["workflow_key"]}
         st[F["id"]] = lane_state(jl.get((a["workflow_run"], a["workflow_key"]))) if a else "not_started"
         b = (jl.get((a["workflow_run"], a["workflow_key"])) or {}).get("build") or {} if a else {}
         info[F["id"]] = {k: b.get(k) for k in ("worktree_path", "branch", "commit")}
