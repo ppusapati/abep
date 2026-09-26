@@ -1,0 +1,2741 @@
+{
+ "admitted_members": [],
+ "architectures": {
+  "ecr_hall": {
+   "admitted_members": [],
+   "architecture": "ecr_hall",
+   "binding_gates": [
+    "G1_thrust",
+    "G2_bus_power",
+    "G3_mass",
+    "G4_firing_life",
+    "G5_mission",
+    "G6_ignition_sustainment",
+    "G7_air_xenon"
+   ],
+   "conflicts": [],
+   "eliminated": false,
+   "elimination_basis": [],
+   "evidence_considered": [],
+   "evidence_not_verdict_bearing": [],
+   "gates": {
+    "G1_thrust": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G1.peak_capability_25mN": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": false,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "thrust_peak_capability_mN",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP_INTERPRETATION_OPEN",
+       "threshold": 25,
+       "unit": "mN",
+       "verdict": "UNDETERMINED"
+      },
+      "G1.thrust_ceiling": {
+       "comparator": "<=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "thrust_min_stable_mN",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 25,
+       "unit": "mN",
+       "verdict": "UNDETERMINED"
+      },
+      "G1.thrust_floor": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "thrust_sustained_atmospheric_max_mN",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 12,
+       "unit": "mN",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G1.thrust_ceiling', 'G1.thrust_floor']"
+     ],
+     "status": "RFP",
+     "title": "Thrust 12–25 mN over the 180–230 km envelope",
+     "verdict": "UNDETERMINED"
+    },
+    "G2_bus_power": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G2.bus_power_max": {
+       "comparator": "<",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "bus_power_max_W",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 1500,
+       "unit": "W",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G2.bus_power_max']"
+     ],
+     "status": "RFP",
+     "title": "Bus power < 1.5 kW at the common DC boundary (bus_power_boundary_v1)",
+     "verdict": "UNDETERMINED"
+    },
+    "G3_mass": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G3.mass_mev": {
+       "comparator": "<",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "mass_mev_kg",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 40,
+       "unit": "kg",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G3.mass_mev']"
+     ],
+     "status": "RFP",
+     "title": "Propulsion-system mass MEV < 40 kg",
+     "verdict": "UNDETERMINED"
+    },
+    "G4_firing_life": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G4.firing_life": {
+       "comparator": ">",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "firing_life_h",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 15000,
+       "unit": "h",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G4.firing_life']"
+     ],
+     "status": "RFP",
+     "title": "Firing life > 15,000 h",
+     "verdict": "UNDETERMINED"
+    },
+    "G5_mission": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G5.mission_capability": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "mission_capability_h",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 26000,
+       "unit": "h",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G5.mission_capability']"
+     ],
+     "status": "RFP",
+     "title": "Mission duration 26,000 h",
+     "verdict": "UNDETERMINED"
+    },
+    "G6_ignition_sustainment": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G6.ignition": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "ignition_from_off_atmospheric",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      },
+      "G6.restart_count": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": false,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "ignition_cycles_capability",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [
+        "threshold TBD: TBD — requires the RFP restart/ignition clause (none recorded in the repository; verify against RFP document) or an owner-defined operations concept. abep_sim/system.py uses cathode_starts = mission_hours/24 × 0.5, a modelling assumption, not a requirement."
+       ],
+       "status": "TBD",
+       "threshold": null,
+       "unit": "count",
+       "verdict": "UNDETERMINED"
+      },
+      "G6.sustainment": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "sustained_discharge_atmospheric",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G6.ignition', 'G6.sustainment']"
+     ],
+     "status": "RFP",
+     "title": "Ignition and sustainment on atmospheric propellant",
+     "verdict": "UNDETERMINED"
+    },
+    "G7_air_xenon": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G7.feed_switching": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": false,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "feed_switchover_without_extinction",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP_INTERPRETATION_OPEN",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      },
+      "G7.mixed_feed": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": false,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "sustained_operation_mixed_feed",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP_INTERPRETATION_OPEN",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      },
+      "G7.xenon_operation": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "sustained_operation_xenon",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G7.xenon_operation']"
+     ],
+     "status": "RFP",
+     "title": "Air + Xe operation",
+     "verdict": "UNDETERMINED"
+    },
+    "P1_thermal": {
+     "binding": false,
+     "conflict": false,
+     "criteria": {
+      "P1.thermal_margin": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "thermal_margin_min_K",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "PROPOSED",
+       "threshold": 0,
+       "unit": "K",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['P1.thermal_margin']"
+     ],
+     "status": "PROPOSED",
+     "title": "Thermal feasibility (PROPOSED)",
+     "verdict": "UNDETERMINED"
+    },
+    "P2_cathode": {
+     "binding": false,
+     "conflict": false,
+     "criteria": {
+      "P2.cathode_life": {
+       "comparator": ">",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "cathode_life_h",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "PROPOSED",
+       "threshold": 15000,
+       "unit": "h",
+       "verdict": "UNDETERMINED"
+      },
+      "P2.start_cycles": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "cathode_start_cycles_capability",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [
+        "threshold TBD: TBD — requires the restart count (G6.restart_count, OD5)."
+       ],
+       "status": "TBD",
+       "threshold": null,
+       "unit": "count",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['P2.cathode_life', 'P2.start_cycles']"
+     ],
+     "status": "PROPOSED",
+     "title": "Cathode life and start cycles (PROPOSED)",
+     "verdict": "UNDETERMINED"
+    }
+   },
+   "matrix_schema": "hard_gate_matrix_v1",
+   "matrix_status": "DRAFT_PENDING_OWNER",
+   "matrix_version": "1.0.0",
+   "milestones": {
+    "A": {
+     "conditional_selection_available": true,
+     "conditions": [
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G1.thrust_floor",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G1_thrust",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "operating_modes": [
+         "steady"
+        ],
+        "propellants": [
+         "atmospheric"
+        ]
+       },
+       "requirement": "thrust_sustained_atmospheric_max_mN >= 12 mN"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G1.thrust_ceiling",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G1_thrust",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "operating_modes": [
+         "steady"
+        ],
+        "propellants": [
+         "atmospheric"
+        ]
+       },
+       "requirement": "thrust_min_stable_mN <= 25 mN"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G2.bus_power_max",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_closure_independent",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G2_bus_power",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "elements": [
+         "hall_discharge",
+         "hall_magnet",
+         "cathode_keeper",
+         "cathode_heater",
+         "flow_control",
+         "compressor",
+         "thermal_control",
+         "housekeeping",
+         "ecr_source",
+         "ecr_magnet"
+        ],
+        "operating_modes": [
+         "startup",
+         "steady",
+         "peak"
+        ]
+       },
+       "requirement": "bus_power_max_W < 1500 W"
+      },
+      {
+       "blockers": [],
+       "criterion": "G3.mass_mev",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_closure_independent"
+        ]
+       },
+       "gate": "G3_mass",
+       "over": {
+        "elements": [
+         "intake",
+         "filter",
+         "compressor",
+         "atmospheric_gas_chamber",
+         "xenon_chamber_and_xenon_load",
+         "valves_and_flow_control",
+         "hall_thruster",
+         "cathode",
+         "power_processing",
+         "thermal_control",
+         "harness_and_structure",
+         "ecr_source",
+         "ecr_magnet"
+        ]
+       },
+       "requirement": "mass_mev_kg < 40 kg"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G4.firing_life",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_closure_independent",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G4_firing_life",
+       "over": {
+        "elements": [
+         "hall_discharge_channel",
+         "hall_magnet",
+         "cathode",
+         "compressor",
+         "valves_and_flow_control",
+         "ecr_source",
+         "ecr_magnet"
+        ]
+       },
+       "requirement": "firing_life_h > 15000 h"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G5.mission_capability",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_closure_independent",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G5_mission",
+       "over": {
+        "elements": [
+         "intake",
+         "filter",
+         "compressor",
+         "atmospheric_gas_chamber",
+         "xenon_chamber_and_xenon_load",
+         "valves_and_flow_control",
+         "hall_thruster",
+         "cathode",
+         "power_processing",
+         "ecr_source",
+         "ecr_magnet"
+        ]
+       },
+       "requirement": "mission_capability_h >= 26000 h"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G6.sustainment",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G6_ignition_sustainment",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "operating_modes": [
+         "steady"
+        ],
+        "propellants": [
+         "atmospheric"
+        ]
+       },
+       "requirement": "sustained_discharge_atmospheric is true"
+      },
+      {
+       "blockers": [],
+       "criterion": "G6.ignition",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ]
+       },
+       "gate": "G6_ignition_sustainment",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "propellants": [
+         "atmospheric"
+        ],
+        "start_sequences": [
+         "air_only"
+        ]
+       },
+       "requirement": "ignition_from_off_atmospheric is true"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G7.xenon_operation",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G7_air_xenon",
+       "over": {
+        "operating_modes": [
+         "steady"
+        ],
+        "propellants": [
+         "xenon"
+        ]
+       },
+       "requirement": "sustained_operation_xenon is true"
+      }
+     ],
+     "open_owner_items": [
+      {
+       "criterion": "G1.peak_capability_25mN",
+       "current_verdict": "UNDETERMINED",
+       "gate": "G1_thrust",
+       "interpretation": "Reading (ii). Reading (i) treats 25 mN as the upper edge of the operating window (docs/HISTORY.md mission sections: 'the RFP's 25 mN cap'). Reported, never counted toward G1, until the owner decides OD1.",
+       "requirement": "thrust_peak_capability_mN >= 25 mN",
+       "status": "RFP_INTERPRETATION_OPEN"
+      },
+      {
+       "criterion": "G6.restart_count",
+       "current_verdict": "UNDETERMINED",
+       "gate": "G6_ignition_sustainment",
+       "interpretation": "Not counted toward G6 until a threshold exists (OD5).",
+       "requirement": "ignition_cycles_capability >= TBD count",
+       "status": "TBD"
+      },
+      {
+       "criterion": "G7.feed_switching",
+       "current_verdict": "UNDETERMINED",
+       "gate": "G7_air_xenon",
+       "interpretation": "One reading of 'air + Xe' (OD6). Reported, never counted, until the owner decides.",
+       "requirement": "feed_switchover_without_extinction is true",
+       "status": "RFP_INTERPRETATION_OPEN"
+      },
+      {
+       "criterion": "G7.mixed_feed",
+       "current_verdict": "UNDETERMINED",
+       "gate": "G7_air_xenon",
+       "interpretation": "One reading of 'air + Xe' (OD6), linked to reading (ii) of '12–25 mN' (OD1). Reported, never counted, until the owner decides.",
+       "requirement": "sustained_operation_mixed_feed is true",
+       "status": "RFP_INTERPRETATION_OPEN"
+      }
+     ],
+     "proposed_gates_pending": [
+      "P1_thermal",
+      "P2_cathode"
+     ],
+     "statement": "ecr_hall is not eliminated by any binding hard gate on the registered evidence. A conditional (milestone A) selection of ecr_hall would hold only provided each of the 9 condition(s) listed is demonstrated with the stated evidence. This is not a selection, and no architecture is ranked (matrix status: DRAFT_PENDING_OWNER)."
+    },
+    "B": {
+     "all_binding_gates_pass": false,
+     "missing": [
+      "G1_thrust: UNDETERMINED",
+      "G2_bus_power: UNDETERMINED",
+      "G3_mass: UNDETERMINED",
+      "G4_firing_life: UNDETERMINED",
+      "G5_mission: UNDETERMINED",
+      "G6_ignition_sustainment: UNDETERMINED",
+      "G7_air_xenon: UNDETERMINED",
+      "matrix 1.0.0 is DRAFT_PENDING_OWNER: thresholds, interpretations and the evidence policy need owner approval"
+     ],
+     "ready": false
+    },
+    "C": {
+     "integrated_designs": [],
+     "missing": [
+      "G1_thrust: UNDETERMINED",
+      "G2_bus_power: UNDETERMINED",
+      "G3_mass: UNDETERMINED",
+      "G4_firing_life: UNDETERMINED",
+      "G5_mission: UNDETERMINED",
+      "G6_ignition_sustainment: UNDETERMINED",
+      "G7_air_xenon: UNDETERMINED",
+      "matrix 1.0.0 is DRAFT_PENDING_OWNER: thresholds, interpretations and the evidence policy need owner approval",
+      "owner decision pending on PROPOSED gate P1_thermal (adopt as binding, or waive)",
+      "owner decision pending on PROPOSED gate P2_cathode (adopt as binding, or waive)",
+      "open owner item G1.peak_capability_25mN (RFP_INTERPRETATION_OPEN)",
+      "open owner item G6.restart_count (TBD)",
+      "open owner item G7.feed_switching (RFP_INTERPRETATION_OPEN)",
+      "open owner item G7.mixed_feed (RFP_INTERPRETATION_OPEN)"
+     ],
+     "ready": false
+    }
+   },
+   "note": "Hard gates only: PASS / FAIL / UNDETERMINED per gate. No ranking, no scoring, no winner.",
+   "proposed_gate_failures": [],
+   "proposed_gates": [
+    "P1_thermal",
+    "P2_cathode"
+   ],
+   "schema": "hard_gate_evaluation_v1"
+  },
+  "hall_only": {
+   "admitted_members": [],
+   "architecture": "hall_only",
+   "binding_gates": [
+    "G1_thrust",
+    "G2_bus_power",
+    "G3_mass",
+    "G4_firing_life",
+    "G5_mission",
+    "G6_ignition_sustainment",
+    "G7_air_xenon"
+   ],
+   "conflicts": [],
+   "eliminated": false,
+   "elimination_basis": [],
+   "evidence_considered": [],
+   "evidence_not_verdict_bearing": [],
+   "gates": {
+    "G1_thrust": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G1.peak_capability_25mN": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": false,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "thrust_peak_capability_mN",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP_INTERPRETATION_OPEN",
+       "threshold": 25,
+       "unit": "mN",
+       "verdict": "UNDETERMINED"
+      },
+      "G1.thrust_ceiling": {
+       "comparator": "<=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "thrust_min_stable_mN",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 25,
+       "unit": "mN",
+       "verdict": "UNDETERMINED"
+      },
+      "G1.thrust_floor": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "thrust_sustained_atmospheric_max_mN",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 12,
+       "unit": "mN",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G1.thrust_ceiling', 'G1.thrust_floor']"
+     ],
+     "status": "RFP",
+     "title": "Thrust 12–25 mN over the 180–230 km envelope",
+     "verdict": "UNDETERMINED"
+    },
+    "G2_bus_power": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G2.bus_power_max": {
+       "comparator": "<",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "bus_power_max_W",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 1500,
+       "unit": "W",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G2.bus_power_max']"
+     ],
+     "status": "RFP",
+     "title": "Bus power < 1.5 kW at the common DC boundary (bus_power_boundary_v1)",
+     "verdict": "UNDETERMINED"
+    },
+    "G3_mass": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G3.mass_mev": {
+       "comparator": "<",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "mass_mev_kg",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 40,
+       "unit": "kg",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G3.mass_mev']"
+     ],
+     "status": "RFP",
+     "title": "Propulsion-system mass MEV < 40 kg",
+     "verdict": "UNDETERMINED"
+    },
+    "G4_firing_life": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G4.firing_life": {
+       "comparator": ">",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "firing_life_h",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 15000,
+       "unit": "h",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G4.firing_life']"
+     ],
+     "status": "RFP",
+     "title": "Firing life > 15,000 h",
+     "verdict": "UNDETERMINED"
+    },
+    "G5_mission": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G5.mission_capability": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "mission_capability_h",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 26000,
+       "unit": "h",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G5.mission_capability']"
+     ],
+     "status": "RFP",
+     "title": "Mission duration 26,000 h",
+     "verdict": "UNDETERMINED"
+    },
+    "G6_ignition_sustainment": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G6.ignition": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "ignition_from_off_atmospheric",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      },
+      "G6.restart_count": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": false,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "ignition_cycles_capability",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [
+        "threshold TBD: TBD — requires the RFP restart/ignition clause (none recorded in the repository; verify against RFP document) or an owner-defined operations concept. abep_sim/system.py uses cathode_starts = mission_hours/24 × 0.5, a modelling assumption, not a requirement."
+       ],
+       "status": "TBD",
+       "threshold": null,
+       "unit": "count",
+       "verdict": "UNDETERMINED"
+      },
+      "G6.sustainment": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "sustained_discharge_atmospheric",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G6.ignition', 'G6.sustainment']"
+     ],
+     "status": "RFP",
+     "title": "Ignition and sustainment on atmospheric propellant",
+     "verdict": "UNDETERMINED"
+    },
+    "G7_air_xenon": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G7.feed_switching": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": false,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "feed_switchover_without_extinction",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP_INTERPRETATION_OPEN",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      },
+      "G7.mixed_feed": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": false,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "sustained_operation_mixed_feed",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP_INTERPRETATION_OPEN",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      },
+      "G7.xenon_operation": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "sustained_operation_xenon",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G7.xenon_operation']"
+     ],
+     "status": "RFP",
+     "title": "Air + Xe operation",
+     "verdict": "UNDETERMINED"
+    },
+    "P1_thermal": {
+     "binding": false,
+     "conflict": false,
+     "criteria": {
+      "P1.thermal_margin": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "thermal_margin_min_K",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "PROPOSED",
+       "threshold": 0,
+       "unit": "K",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['P1.thermal_margin']"
+     ],
+     "status": "PROPOSED",
+     "title": "Thermal feasibility (PROPOSED)",
+     "verdict": "UNDETERMINED"
+    },
+    "P2_cathode": {
+     "binding": false,
+     "conflict": false,
+     "criteria": {
+      "P2.cathode_life": {
+       "comparator": ">",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "cathode_life_h",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "PROPOSED",
+       "threshold": 15000,
+       "unit": "h",
+       "verdict": "UNDETERMINED"
+      },
+      "P2.start_cycles": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "cathode_start_cycles_capability",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [
+        "threshold TBD: TBD — requires the restart count (G6.restart_count, OD5)."
+       ],
+       "status": "TBD",
+       "threshold": null,
+       "unit": "count",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['P2.cathode_life', 'P2.start_cycles']"
+     ],
+     "status": "PROPOSED",
+     "title": "Cathode life and start cycles (PROPOSED)",
+     "verdict": "UNDETERMINED"
+    }
+   },
+   "matrix_schema": "hard_gate_matrix_v1",
+   "matrix_status": "DRAFT_PENDING_OWNER",
+   "matrix_version": "1.0.0",
+   "milestones": {
+    "A": {
+     "conditional_selection_available": true,
+     "conditions": [
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G1.thrust_floor",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G1_thrust",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "operating_modes": [
+         "steady"
+        ],
+        "propellants": [
+         "atmospheric"
+        ]
+       },
+       "requirement": "thrust_sustained_atmospheric_max_mN >= 12 mN"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G1.thrust_ceiling",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G1_thrust",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "operating_modes": [
+         "steady"
+        ],
+        "propellants": [
+         "atmospheric"
+        ]
+       },
+       "requirement": "thrust_min_stable_mN <= 25 mN"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G2.bus_power_max",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_closure_independent",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G2_bus_power",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "elements": [
+         "hall_discharge",
+         "hall_magnet",
+         "cathode_keeper",
+         "cathode_heater",
+         "flow_control",
+         "compressor",
+         "thermal_control",
+         "housekeeping"
+        ],
+        "operating_modes": [
+         "startup",
+         "steady",
+         "peak"
+        ]
+       },
+       "requirement": "bus_power_max_W < 1500 W"
+      },
+      {
+       "blockers": [],
+       "criterion": "G3.mass_mev",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_closure_independent"
+        ]
+       },
+       "gate": "G3_mass",
+       "over": {
+        "elements": [
+         "intake",
+         "filter",
+         "compressor",
+         "atmospheric_gas_chamber",
+         "xenon_chamber_and_xenon_load",
+         "valves_and_flow_control",
+         "hall_thruster",
+         "cathode",
+         "power_processing",
+         "thermal_control",
+         "harness_and_structure"
+        ]
+       },
+       "requirement": "mass_mev_kg < 40 kg"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G4.firing_life",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_closure_independent",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G4_firing_life",
+       "over": {
+        "elements": [
+         "hall_discharge_channel",
+         "hall_magnet",
+         "cathode",
+         "compressor",
+         "valves_and_flow_control"
+        ]
+       },
+       "requirement": "firing_life_h > 15000 h"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G5.mission_capability",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_closure_independent",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G5_mission",
+       "over": {
+        "elements": [
+         "intake",
+         "filter",
+         "compressor",
+         "atmospheric_gas_chamber",
+         "xenon_chamber_and_xenon_load",
+         "valves_and_flow_control",
+         "hall_thruster",
+         "cathode",
+         "power_processing"
+        ]
+       },
+       "requirement": "mission_capability_h >= 26000 h"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G6.sustainment",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G6_ignition_sustainment",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "operating_modes": [
+         "steady"
+        ],
+        "propellants": [
+         "atmospheric"
+        ]
+       },
+       "requirement": "sustained_discharge_atmospheric is true"
+      },
+      {
+       "blockers": [],
+       "criterion": "G6.ignition",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ]
+       },
+       "gate": "G6_ignition_sustainment",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "propellants": [
+         "atmospheric"
+        ],
+        "start_sequences": [
+         "air_only"
+        ]
+       },
+       "requirement": "ignition_from_off_atmospheric is true"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G7.xenon_operation",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G7_air_xenon",
+       "over": {
+        "operating_modes": [
+         "steady"
+        ],
+        "propellants": [
+         "xenon"
+        ]
+       },
+       "requirement": "sustained_operation_xenon is true"
+      }
+     ],
+     "open_owner_items": [
+      {
+       "criterion": "G1.peak_capability_25mN",
+       "current_verdict": "UNDETERMINED",
+       "gate": "G1_thrust",
+       "interpretation": "Reading (ii). Reading (i) treats 25 mN as the upper edge of the operating window (docs/HISTORY.md mission sections: 'the RFP's 25 mN cap'). Reported, never counted toward G1, until the owner decides OD1.",
+       "requirement": "thrust_peak_capability_mN >= 25 mN",
+       "status": "RFP_INTERPRETATION_OPEN"
+      },
+      {
+       "criterion": "G6.restart_count",
+       "current_verdict": "UNDETERMINED",
+       "gate": "G6_ignition_sustainment",
+       "interpretation": "Not counted toward G6 until a threshold exists (OD5).",
+       "requirement": "ignition_cycles_capability >= TBD count",
+       "status": "TBD"
+      },
+      {
+       "criterion": "G7.feed_switching",
+       "current_verdict": "UNDETERMINED",
+       "gate": "G7_air_xenon",
+       "interpretation": "One reading of 'air + Xe' (OD6). Reported, never counted, until the owner decides.",
+       "requirement": "feed_switchover_without_extinction is true",
+       "status": "RFP_INTERPRETATION_OPEN"
+      },
+      {
+       "criterion": "G7.mixed_feed",
+       "current_verdict": "UNDETERMINED",
+       "gate": "G7_air_xenon",
+       "interpretation": "One reading of 'air + Xe' (OD6), linked to reading (ii) of '12–25 mN' (OD1). Reported, never counted, until the owner decides.",
+       "requirement": "sustained_operation_mixed_feed is true",
+       "status": "RFP_INTERPRETATION_OPEN"
+      }
+     ],
+     "proposed_gates_pending": [
+      "P1_thermal",
+      "P2_cathode"
+     ],
+     "statement": "hall_only is not eliminated by any binding hard gate on the registered evidence. A conditional (milestone A) selection of hall_only would hold only provided each of the 9 condition(s) listed is demonstrated with the stated evidence. This is not a selection, and no architecture is ranked (matrix status: DRAFT_PENDING_OWNER)."
+    },
+    "B": {
+     "all_binding_gates_pass": false,
+     "missing": [
+      "G1_thrust: UNDETERMINED",
+      "G2_bus_power: UNDETERMINED",
+      "G3_mass: UNDETERMINED",
+      "G4_firing_life: UNDETERMINED",
+      "G5_mission: UNDETERMINED",
+      "G6_ignition_sustainment: UNDETERMINED",
+      "G7_air_xenon: UNDETERMINED",
+      "matrix 1.0.0 is DRAFT_PENDING_OWNER: thresholds, interpretations and the evidence policy need owner approval"
+     ],
+     "ready": false
+    },
+    "C": {
+     "integrated_designs": [],
+     "missing": [
+      "G1_thrust: UNDETERMINED",
+      "G2_bus_power: UNDETERMINED",
+      "G3_mass: UNDETERMINED",
+      "G4_firing_life: UNDETERMINED",
+      "G5_mission: UNDETERMINED",
+      "G6_ignition_sustainment: UNDETERMINED",
+      "G7_air_xenon: UNDETERMINED",
+      "matrix 1.0.0 is DRAFT_PENDING_OWNER: thresholds, interpretations and the evidence policy need owner approval",
+      "owner decision pending on PROPOSED gate P1_thermal (adopt as binding, or waive)",
+      "owner decision pending on PROPOSED gate P2_cathode (adopt as binding, or waive)",
+      "open owner item G1.peak_capability_25mN (RFP_INTERPRETATION_OPEN)",
+      "open owner item G6.restart_count (TBD)",
+      "open owner item G7.feed_switching (RFP_INTERPRETATION_OPEN)",
+      "open owner item G7.mixed_feed (RFP_INTERPRETATION_OPEN)"
+     ],
+     "ready": false
+    }
+   },
+   "note": "Hard gates only: PASS / FAIL / UNDETERMINED per gate. No ranking, no scoring, no winner.",
+   "proposed_gate_failures": [],
+   "proposed_gates": [
+    "P1_thermal",
+    "P2_cathode"
+   ],
+   "schema": "hard_gate_evaluation_v1"
+  },
+  "rf_hall": {
+   "admitted_members": [],
+   "architecture": "rf_hall",
+   "binding_gates": [
+    "G1_thrust",
+    "G2_bus_power",
+    "G3_mass",
+    "G4_firing_life",
+    "G5_mission",
+    "G6_ignition_sustainment",
+    "G7_air_xenon"
+   ],
+   "conflicts": [],
+   "eliminated": false,
+   "elimination_basis": [],
+   "evidence_considered": [],
+   "evidence_not_verdict_bearing": [],
+   "gates": {
+    "G1_thrust": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G1.peak_capability_25mN": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": false,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "thrust_peak_capability_mN",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP_INTERPRETATION_OPEN",
+       "threshold": 25,
+       "unit": "mN",
+       "verdict": "UNDETERMINED"
+      },
+      "G1.thrust_ceiling": {
+       "comparator": "<=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "thrust_min_stable_mN",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 25,
+       "unit": "mN",
+       "verdict": "UNDETERMINED"
+      },
+      "G1.thrust_floor": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "thrust_sustained_atmospheric_max_mN",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 12,
+       "unit": "mN",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G1.thrust_ceiling', 'G1.thrust_floor']"
+     ],
+     "status": "RFP",
+     "title": "Thrust 12–25 mN over the 180–230 km envelope",
+     "verdict": "UNDETERMINED"
+    },
+    "G2_bus_power": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G2.bus_power_max": {
+       "comparator": "<",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "bus_power_max_W",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 1500,
+       "unit": "W",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G2.bus_power_max']"
+     ],
+     "status": "RFP",
+     "title": "Bus power < 1.5 kW at the common DC boundary (bus_power_boundary_v1)",
+     "verdict": "UNDETERMINED"
+    },
+    "G3_mass": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G3.mass_mev": {
+       "comparator": "<",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "mass_mev_kg",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 40,
+       "unit": "kg",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G3.mass_mev']"
+     ],
+     "status": "RFP",
+     "title": "Propulsion-system mass MEV < 40 kg",
+     "verdict": "UNDETERMINED"
+    },
+    "G4_firing_life": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G4.firing_life": {
+       "comparator": ">",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "firing_life_h",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 15000,
+       "unit": "h",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G4.firing_life']"
+     ],
+     "status": "RFP",
+     "title": "Firing life > 15,000 h",
+     "verdict": "UNDETERMINED"
+    },
+    "G5_mission": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G5.mission_capability": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "mission_capability_h",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": 26000,
+       "unit": "h",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G5.mission_capability']"
+     ],
+     "status": "RFP",
+     "title": "Mission duration 26,000 h",
+     "verdict": "UNDETERMINED"
+    },
+    "G6_ignition_sustainment": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G6.ignition": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "ignition_from_off_atmospheric",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      },
+      "G6.restart_count": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": false,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "ignition_cycles_capability",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [
+        "threshold TBD: TBD — requires the RFP restart/ignition clause (none recorded in the repository; verify against RFP document) or an owner-defined operations concept. abep_sim/system.py uses cathode_starts = mission_hours/24 × 0.5, a modelling assumption, not a requirement."
+       ],
+       "status": "TBD",
+       "threshold": null,
+       "unit": "count",
+       "verdict": "UNDETERMINED"
+      },
+      "G6.sustainment": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "sustained_discharge_atmospheric",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G6.ignition', 'G6.sustainment']"
+     ],
+     "status": "RFP",
+     "title": "Ignition and sustainment on atmospheric propellant",
+     "verdict": "UNDETERMINED"
+    },
+    "G7_air_xenon": {
+     "binding": true,
+     "conflict": false,
+     "criteria": {
+      "G7.feed_switching": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": false,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "feed_switchover_without_extinction",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP_INTERPRETATION_OPEN",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      },
+      "G7.mixed_feed": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": false,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "sustained_operation_mixed_feed",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP_INTERPRETATION_OPEN",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      },
+      "G7.xenon_operation": {
+       "comparator": "is_true",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "sustained_operation_xenon",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "RFP",
+       "threshold": null,
+       "unit": "boolean",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['G7.xenon_operation']"
+     ],
+     "status": "RFP",
+     "title": "Air + Xe operation",
+     "verdict": "UNDETERMINED"
+    },
+    "P1_thermal": {
+     "binding": false,
+     "conflict": false,
+     "criteria": {
+      "P1.thermal_margin": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "thermal_margin_min_K",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "PROPOSED",
+       "threshold": 0,
+       "unit": "K",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['P1.thermal_margin']"
+     ],
+     "status": "PROPOSED",
+     "title": "Thermal feasibility (PROPOSED)",
+     "verdict": "UNDETERMINED"
+    },
+    "P2_cathode": {
+     "binding": false,
+     "conflict": false,
+     "criteria": {
+      "P2.cathode_life": {
+       "comparator": ">",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "cathode_life_h",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [],
+       "status": "PROPOSED",
+       "threshold": 15000,
+       "unit": "h",
+       "verdict": "UNDETERMINED"
+      },
+      "P2.start_cycles": {
+       "comparator": ">=",
+       "conflict": false,
+       "counts_toward_gate": true,
+       "design_failures": {},
+       "evidence_used": [],
+       "metric": "cathode_start_cycles_capability",
+       "milestone": null,
+       "missing_for_fail": [
+        "no verdict-bearing evidence"
+       ],
+       "missing_for_pass": [
+        "no verdict-bearing PASS evidence"
+       ],
+       "pass_designs": {},
+       "reasons": [
+        "threshold TBD: TBD — requires the restart count (G6.restart_count, OD5)."
+       ],
+       "status": "TBD",
+       "threshold": null,
+       "unit": "count",
+       "verdict": "UNDETERMINED"
+      }
+     },
+     "evidence_used": [],
+     "milestone": null,
+     "pass_designs": {},
+     "reasons": [
+      "not established: ['P2.cathode_life', 'P2.start_cycles']"
+     ],
+     "status": "PROPOSED",
+     "title": "Cathode life and start cycles (PROPOSED)",
+     "verdict": "UNDETERMINED"
+    }
+   },
+   "matrix_schema": "hard_gate_matrix_v1",
+   "matrix_status": "DRAFT_PENDING_OWNER",
+   "matrix_version": "1.0.0",
+   "milestones": {
+    "A": {
+     "conditional_selection_available": true,
+     "conditions": [
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G1.thrust_floor",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G1_thrust",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "operating_modes": [
+         "steady"
+        ],
+        "propellants": [
+         "atmospheric"
+        ]
+       },
+       "requirement": "thrust_sustained_atmospheric_max_mN >= 12 mN"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G1.thrust_ceiling",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G1_thrust",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "operating_modes": [
+         "steady"
+        ],
+        "propellants": [
+         "atmospheric"
+        ]
+       },
+       "requirement": "thrust_min_stable_mN <= 25 mN"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G2.bus_power_max",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_closure_independent",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G2_bus_power",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "elements": [
+         "hall_discharge",
+         "hall_magnet",
+         "cathode_keeper",
+         "cathode_heater",
+         "flow_control",
+         "compressor",
+         "thermal_control",
+         "housekeeping",
+         "rf_source"
+        ],
+        "operating_modes": [
+         "startup",
+         "steady",
+         "peak"
+        ]
+       },
+       "requirement": "bus_power_max_W < 1500 W"
+      },
+      {
+       "blockers": [],
+       "criterion": "G3.mass_mev",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_closure_independent"
+        ]
+       },
+       "gate": "G3_mass",
+       "over": {
+        "elements": [
+         "intake",
+         "filter",
+         "compressor",
+         "atmospheric_gas_chamber",
+         "xenon_chamber_and_xenon_load",
+         "valves_and_flow_control",
+         "hall_thruster",
+         "cathode",
+         "power_processing",
+         "thermal_control",
+         "harness_and_structure",
+         "rf_source"
+        ]
+       },
+       "requirement": "mass_mev_kg < 40 kg"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G4.firing_life",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_closure_independent",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G4_firing_life",
+       "over": {
+        "elements": [
+         "hall_discharge_channel",
+         "hall_magnet",
+         "cathode",
+         "compressor",
+         "valves_and_flow_control",
+         "rf_source"
+        ]
+       },
+       "requirement": "firing_life_h > 15000 h"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G5.mission_capability",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_closure_independent",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G5_mission",
+       "over": {
+        "elements": [
+         "intake",
+         "filter",
+         "compressor",
+         "atmospheric_gas_chamber",
+         "xenon_chamber_and_xenon_load",
+         "valves_and_flow_control",
+         "hall_thruster",
+         "cathode",
+         "power_processing",
+         "rf_source"
+        ]
+       },
+       "requirement": "mission_capability_h >= 26000 h"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G6.sustainment",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G6_ignition_sustainment",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "operating_modes": [
+         "steady"
+        ],
+        "propellants": [
+         "atmospheric"
+        ]
+       },
+       "requirement": "sustained_discharge_atmospheric is true"
+      },
+      {
+       "blockers": [],
+       "criterion": "G6.ignition",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ]
+       },
+       "gate": "G6_ignition_sustainment",
+       "over": {
+        "altitude_km": [
+         180,
+         230
+        ],
+        "atmosphere_states": [
+         "low",
+         "mean",
+         "high"
+        ],
+        "propellants": [
+         "atmospheric"
+        ],
+        "start_sequences": [
+         "air_only"
+        ]
+       },
+       "requirement": "ignition_from_off_atmospheric is true"
+      },
+      {
+       "blockers": [
+        "the admitted-closure route is blocked: the credible Hall-transport set is empty (gate 3 FAIL); until a closure is admitted only measurement_vyovrinda, measurement_same_hardware can discharge this condition"
+       ],
+       "criterion": "G7.xenon_operation",
+       "current_verdict": "UNDETERMINED",
+       "discharged_by": {
+        "A": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware"
+        ],
+        "B": [
+         "measurement_vyovrinda",
+         "measurement_same_hardware",
+         "model_admitted_closure"
+        ]
+       },
+       "gate": "G7_air_xenon",
+       "over": {
+        "operating_modes": [
+         "steady"
+        ],
+        "propellants": [
+         "xenon"
+        ]
+       },
+       "requirement": "sustained_operation_xenon is true"
+      }
+     ],
+     "open_owner_items": [
+      {
+       "criterion": "G1.peak_capability_25mN",
+       "current_verdict": "UNDETERMINED",
+       "gate": "G1_thrust",
+       "interpretation": "Reading (ii). Reading (i) treats 25 mN as the upper edge of the operating window (docs/HISTORY.md mission sections: 'the RFP's 25 mN cap'). Reported, never counted toward G1, until the owner decides OD1.",
+       "requirement": "thrust_peak_capability_mN >= 25 mN",
+       "status": "RFP_INTERPRETATION_OPEN"
+      },
+      {
+       "criterion": "G6.restart_count",
+       "current_verdict": "UNDETERMINED",
+       "gate": "G6_ignition_sustainment",
+       "interpretation": "Not counted toward G6 until a threshold exists (OD5).",
+       "requirement": "ignition_cycles_capability >= TBD count",
+       "status": "TBD"
+      },
+      {
+       "criterion": "G7.feed_switching",
+       "current_verdict": "UNDETERMINED",
+       "gate": "G7_air_xenon",
+       "interpretation": "One reading of 'air + Xe' (OD6). Reported, never counted, until the owner decides.",
+       "requirement": "feed_switchover_without_extinction is true",
+       "status": "RFP_INTERPRETATION_OPEN"
+      },
+      {
+       "criterion": "G7.mixed_feed",
+       "current_verdict": "UNDETERMINED",
+       "gate": "G7_air_xenon",
+       "interpretation": "One reading of 'air + Xe' (OD6), linked to reading (ii) of '12–25 mN' (OD1). Reported, never counted, until the owner decides.",
+       "requirement": "sustained_operation_mixed_feed is true",
+       "status": "RFP_INTERPRETATION_OPEN"
+      }
+     ],
+     "proposed_gates_pending": [
+      "P1_thermal",
+      "P2_cathode"
+     ],
+     "statement": "rf_hall is not eliminated by any binding hard gate on the registered evidence. A conditional (milestone A) selection of rf_hall would hold only provided each of the 9 condition(s) listed is demonstrated with the stated evidence. This is not a selection, and no architecture is ranked (matrix status: DRAFT_PENDING_OWNER)."
+    },
+    "B": {
+     "all_binding_gates_pass": false,
+     "missing": [
+      "G1_thrust: UNDETERMINED",
+      "G2_bus_power: UNDETERMINED",
+      "G3_mass: UNDETERMINED",
+      "G4_firing_life: UNDETERMINED",
+      "G5_mission: UNDETERMINED",
+      "G6_ignition_sustainment: UNDETERMINED",
+      "G7_air_xenon: UNDETERMINED",
+      "matrix 1.0.0 is DRAFT_PENDING_OWNER: thresholds, interpretations and the evidence policy need owner approval"
+     ],
+     "ready": false
+    },
+    "C": {
+     "integrated_designs": [],
+     "missing": [
+      "G1_thrust: UNDETERMINED",
+      "G2_bus_power: UNDETERMINED",
+      "G3_mass: UNDETERMINED",
+      "G4_firing_life: UNDETERMINED",
+      "G5_mission: UNDETERMINED",
+      "G6_ignition_sustainment: UNDETERMINED",
+      "G7_air_xenon: UNDETERMINED",
+      "matrix 1.0.0 is DRAFT_PENDING_OWNER: thresholds, interpretations and the evidence policy need owner approval",
+      "owner decision pending on PROPOSED gate P1_thermal (adopt as binding, or waive)",
+      "owner decision pending on PROPOSED gate P2_cathode (adopt as binding, or waive)",
+      "open owner item G1.peak_capability_25mN (RFP_INTERPRETATION_OPEN)",
+      "open owner item G6.restart_count (TBD)",
+      "open owner item G7.feed_switching (RFP_INTERPRETATION_OPEN)",
+      "open owner item G7.mixed_feed (RFP_INTERPRETATION_OPEN)"
+     ],
+     "ready": false
+    }
+   },
+   "note": "Hard gates only: PASS / FAIL / UNDETERMINED per gate. No ranking, no scoring, no winner.",
+   "proposed_gate_failures": [],
+   "proposed_gates": [
+    "P1_thermal",
+    "P2_cathode"
+   ],
+   "schema": "hard_gate_evaluation_v1"
+  }
+ },
+ "eliminated": [],
+ "matrix_status": "DRAFT_PENDING_OWNER",
+ "matrix_version": "1.0.0",
+ "not_eliminated": [
+  "hall_only",
+  "rf_hall",
+  "ecr_hall"
+ ],
+ "note": "Eliminations follow only from binding hard gates on sufficient evidence. Architectures are listed in fixed id order; no ranking, no scoring, no winner.",
+ "provenance": {
+  "admitted_members_source": "abep_sim.hall_ensemble.member_ids() (hallthruster_bridge/ensemble/transport_ensemble_v0.json)",
+  "generated_by": "python -m abep_sim.hard_gates status --out docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+  "matrix_file": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+  "matrix_sha256": "0ed8aab634b3f1e2b6434fe3129952075b560b9a600916ce97303becb615ab91",
+  "register_file": "docs/architecture_comparison/hard_gates/evidence_register_v1.json",
+  "register_sha256": "45dfbfb311441aeb7c9c58f5dbb9ffb39c28fa448b85de552c37e8268ff94a3d"
+ },
+ "schema": "hard_gate_evaluation_set_v1"
+}

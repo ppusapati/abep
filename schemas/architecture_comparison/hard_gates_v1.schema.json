@@ -1,0 +1,536 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "schemas/architecture_comparison/hard_gates_v1.schema.json",
+ "title": "Architecture hard-gate matrix v1 (hall_only / rf_hall / ecr_hall)",
+ "description": "Validates docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json. $defs.evidence_item / evidence_bundle define the evidence abep_sim/hard_gates.evaluate accepts; $defs.evaluation_result / evaluation_set define what it returns (the contract for consumers such as abep_sim/arch_compare.py). Uses only the JSON Schema keywords implemented by abep_sim.hard_gates.schema_errors (jsonschema is not a project dependency).",
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["schema", "matrix_version", "status", "status_note", "created", "purpose", "supports_milestones", "milestones", "rfp", "architectures", "common_boundary_note", "verdicts", "elimination_rule", "evidence_policy", "coverage_dimensions", "calibration_nuisance_forbidden", "hall_pin", "power_boundary", "shared_contracts", "gates", "rfp_requirements_recorded_not_gated", "not_gates", "open_owner_decisions"],
+ "properties": {
+  "schema": {"const": "hard_gate_matrix_v1"},
+  "matrix_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+  "status": {"enum": ["DRAFT_PENDING_OWNER", "OWNER_APPROVED", "SUPERSEDED"]},
+  "status_note": {"$ref": "#/$defs/text"},
+  "created": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+  "purpose": {"$ref": "#/$defs/text"},
+  "supports_milestones": {"type": "array", "items": {"$ref": "#/$defs/milestone"}, "minItems": 1, "uniqueItems": true},
+  "milestones": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["A", "B", "C"],
+   "properties": {"A": {"$ref": "#/$defs/milestone_definition"}, "B": {"$ref": "#/$defs/milestone_definition"}, "C": {"$ref": "#/$defs/milestone_definition"}}
+  },
+  "rfp": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["id", "document_in_repository", "verify", "note", "recorded_in"],
+   "properties": {
+    "id": {"$ref": "#/$defs/text"},
+    "document_in_repository": {"type": "boolean"},
+    "verify": {"type": "string", "pattern": "^verify against RFP document"},
+    "note": {"$ref": "#/$defs/text"},
+    "recorded_in": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "ref", "text_as_recorded"],
+      "properties": {"id": {"type": "string", "pattern": "^R[0-9]+$"}, "ref": {"$ref": "#/$defs/text"}, "text_as_recorded": {"$ref": "#/$defs/text"}}
+     }
+    }
+   }
+  },
+  "architectures": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["hall_only", "rf_hall", "ecr_hall"],
+   "properties": {"hall_only": {"$ref": "#/$defs/text"}, "rf_hall": {"$ref": "#/$defs/text"}, "ecr_hall": {"$ref": "#/$defs/text"}}
+  },
+  "common_boundary_note": {"$ref": "#/$defs/text"},
+  "verdicts": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["PASS", "FAIL", "UNDETERMINED"],
+   "properties": {"PASS": {"$ref": "#/$defs/text"}, "FAIL": {"$ref": "#/$defs/text"}, "UNDETERMINED": {"$ref": "#/$defs/text"}}
+  },
+  "elimination_rule": {"$ref": "#/$defs/text"},
+  "evidence_policy": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["status", "quantity_types", "evidence_levels_ref", "weakest_input_rule", "bases", "value_kinds", "scopes", "comparators", "flags"],
+   "properties": {
+    "status": {"$ref": "#/$defs/text"},
+    "quantity_types": {"type": "array", "items": {"$ref": "#/$defs/quantity_type"}, "minItems": 6, "maxItems": 6, "uniqueItems": true},
+    "evidence_levels_ref": {"$ref": "#/$defs/text"},
+    "weakest_input_rule": {"$ref": "#/$defs/text"},
+    "bases": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["hard_physical_bound", "measurement_vyovrinda", "measurement_same_hardware", "model_closure_independent", "model_admitted_closure", "measurement_similar_hardware", "model_unadmitted_closure", "engineering_estimate", "assumption"],
+     "properties": {
+      "hard_physical_bound": {"$ref": "#/$defs/basis_policy"},
+      "measurement_vyovrinda": {"$ref": "#/$defs/basis_policy"},
+      "measurement_same_hardware": {"$ref": "#/$defs/basis_policy"},
+      "model_closure_independent": {"$ref": "#/$defs/basis_policy"},
+      "model_admitted_closure": {"$ref": "#/$defs/basis_policy"},
+      "measurement_similar_hardware": {"$ref": "#/$defs/basis_policy"},
+      "model_unadmitted_closure": {"$ref": "#/$defs/basis_policy"},
+      "engineering_estimate": {"$ref": "#/$defs/basis_policy"},
+      "assumption": {"$ref": "#/$defs/basis_policy"}
+     }
+    },
+    "value_kinds": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["lower_bound", "upper_bound", "interval", "point_estimate", "boolean"],
+     "properties": {"lower_bound": {"$ref": "#/$defs/text"}, "upper_bound": {"$ref": "#/$defs/text"}, "interval": {"$ref": "#/$defs/text"}, "point_estimate": {"$ref": "#/$defs/text"}, "boolean": {"$ref": "#/$defs/text"}}
+    },
+    "scopes": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["architecture", "point_design"],
+     "properties": {"architecture": {"$ref": "#/$defs/text"}, "point_design": {"$ref": "#/$defs/text"}}
+    },
+    "comparators": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [">=", ">", "<", "<=", "is_true"],
+     "properties": {">=": {"$ref": "#/$defs/text"}, ">": {"$ref": "#/$defs/text"}, "<": {"$ref": "#/$defs/text"}, "<=": {"$ref": "#/$defs/text"}, "is_true": {"$ref": "#/$defs/text"}}
+    },
+    "flags": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["hall_map_trustworthy", "wall_life_trustworthy", "numerically_valid", "chemistry_trustworthy"],
+     "properties": {"hall_map_trustworthy": {"$ref": "#/$defs/text"}, "wall_life_trustworthy": {"$ref": "#/$defs/text"}, "numerically_valid": {"$ref": "#/$defs/text"}, "chemistry_trustworthy": {"$ref": "#/$defs/text"}}
+    }
+   }
+  },
+  "coverage_dimensions": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["altitude_km", "atmosphere_states", "operating_modes", "propellants", "start_sequences", "elements"],
+   "properties": {"altitude_km": {"$ref": "#/$defs/text"}, "atmosphere_states": {"$ref": "#/$defs/text"}, "operating_modes": {"$ref": "#/$defs/text"}, "propellants": {"$ref": "#/$defs/text"}, "start_sequences": {"$ref": "#/$defs/text"}, "elements": {"$ref": "#/$defs/text"}}
+  },
+  "calibration_nuisance_forbidden": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["keys", "source", "rule"],
+   "properties": {"keys": {"$ref": "#/$defs/string_list"}, "source": {"$ref": "#/$defs/text"}, "rule": {"$ref": "#/$defs/text"}}
+  },
+  "hall_pin": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["package", "version", "hallthruster_commit", "source"],
+   "properties": {"package": {"const": "HallThruster.jl"}, "version": {"$ref": "#/$defs/text"}, "hallthruster_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "source": {"$ref": "#/$defs/text"}}
+  },
+  "power_boundary": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["version", "module", "api", "components", "source"],
+   "properties": {"version": {"const": "bus_power_boundary_v1"}, "module": {"const": "abep_sim/arch_boundary.py"}, "api": {"$ref": "#/$defs/text"}, "components": {"$ref": "#/$defs/element_lists"}, "source": {"$ref": "#/$defs/text"}}
+  },
+  "shared_contracts": {
+   "type": "object",
+   "propertyNames": {"type": "string", "pattern": "^[a-z][A-Za-z0-9_]*$"},
+   "additionalProperties": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["path", "role", "status_at_matrix_creation"],
+    "properties": {"path": {"type": "string", "pattern": "^[a-z][A-Za-z0-9_./-]*$"}, "role": {"$ref": "#/$defs/text"}, "status_at_matrix_creation": {"$ref": "#/$defs/text"}}
+   }
+  },
+  "gates": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/gate"}},
+  "rfp_requirements_recorded_not_gated": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["requirement", "recorded_in", "reason"],
+    "properties": {"requirement": {"$ref": "#/$defs/text"}, "recorded_in": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^R[0-9]+$"}}, "reason": {"$ref": "#/$defs/text"}}
+   }
+  },
+  "not_gates": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["item", "source", "reason"],
+    "properties": {"item": {"$ref": "#/$defs/text"}, "source": {"$ref": "#/$defs/text"}, "reason": {"$ref": "#/$defs/text"}}
+   }
+  },
+  "open_owner_decisions": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id", "topic", "options", "current_handling"],
+    "properties": {"id": {"type": "string", "pattern": "^OD[0-9]+$"}, "topic": {"$ref": "#/$defs/text"}, "options": {"$ref": "#/$defs/string_list"}, "current_handling": {"$ref": "#/$defs/text"}}
+   }
+  }
+ },
+ "$defs": {
+  "text": {"type": "string", "minLength": 1},
+  "string_list": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+  "milestone": {"enum": ["A", "B", "C"]},
+  "architecture_id": {"enum": ["hall_only", "rf_hall", "ecr_hall"]},
+  "quantity_type": {"enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]},
+  "basis_name": {"enum": ["hard_physical_bound", "measurement_vyovrinda", "measurement_same_hardware", "model_closure_independent", "model_admitted_closure", "measurement_similar_hardware", "model_unadmitted_closure", "engineering_estimate", "assumption"]},
+  "flag_name": {"enum": ["hall_map_trustworthy", "wall_life_trustworthy", "numerically_valid", "chemistry_trustworthy"]},
+  "value_kind": {"enum": ["lower_bound", "upper_bound", "interval", "point_estimate", "boolean"]},
+  "operating_mode": {"enum": ["startup", "steady", "peak"]},
+  "propellant": {"enum": ["atmospheric", "xenon", "atmospheric_xenon_mixed", "n2_surrogate"]},
+  "start_sequence": {"enum": ["air_only", "xenon_assisted"]},
+  "altitude_interval": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+  "element_lists": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["common"],
+   "properties": {"common": {"$ref": "#/$defs/string_list"}, "hall_only": {"$ref": "#/$defs/string_list"}, "rf_hall": {"$ref": "#/$defs/string_list"}, "ecr_hall": {"$ref": "#/$defs/string_list"}}
+  },
+  "envelope": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "altitude_km": {"$ref": "#/$defs/altitude_interval"},
+    "atmosphere_states": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+    "operating_modes": {"type": "array", "items": {"$ref": "#/$defs/operating_mode"}, "minItems": 1, "uniqueItems": true},
+    "propellants": {"type": "array", "items": {"$ref": "#/$defs/propellant"}, "minItems": 1, "uniqueItems": true},
+    "start_sequences": {"type": "array", "items": {"$ref": "#/$defs/start_sequence"}, "minItems": 1, "uniqueItems": true},
+    "elements": {"$ref": "#/$defs/element_lists"}
+   }
+  },
+  "milestone_definition": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["name", "definition", "this_matrix_provides", "to_reach_next"],
+   "properties": {"name": {"$ref": "#/$defs/text"}, "definition": {"$ref": "#/$defs/text"}, "this_matrix_provides": {"$ref": "#/$defs/text"}, "to_reach_next": {"$ref": "#/$defs/text"}}
+  },
+  "basis_policy": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["short", "verdict_bearing", "milestone", "hall_closure"],
+   "properties": {
+    "short": {"$ref": "#/$defs/text"},
+    "verdict_bearing": {"type": "boolean"},
+    "milestone": {"enum": ["A", "B", null]},
+    "quantity_types": {"type": "array", "items": {"$ref": "#/$defs/quantity_type"}, "minItems": 1, "uniqueItems": true},
+    "evidence_levels": {"type": "array", "items": {"type": "integer", "minimum": 1, "maximum": 7}, "minItems": 1, "uniqueItems": true},
+    "hall_closure": {"enum": ["none", "admitted", "unadmitted"]},
+    "value_kinds": {"type": "array", "items": {"$ref": "#/$defs/value_kind"}, "minItems": 1, "uniqueItems": true},
+    "requires_derivation_script": {"type": "boolean"},
+    "requires_validated_for_this_use": {"type": "boolean"},
+    "description": {"$ref": "#/$defs/text"},
+    "reason": {"$ref": "#/$defs/text"}
+   },
+   "allOf": [
+    {
+     "if": {"properties": {"verdict_bearing": {"const": true}}},
+     "then": {
+      "required": ["quantity_types", "evidence_levels", "value_kinds", "requires_derivation_script", "requires_validated_for_this_use", "description"],
+      "properties": {"milestone": {"enum": ["A", "B"]}, "value_kinds": {"type": "array", "items": {"enum": ["lower_bound", "upper_bound", "interval", "boolean"]}}}
+     }
+    },
+    {
+     "if": {"properties": {"verdict_bearing": {"const": false}}},
+     "then": {"required": ["reason"], "properties": {"milestone": {"const": null}}}
+    }
+   ]
+  },
+  "rfp_source": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["text_as_recorded", "refs", "section_as_recorded", "verify"],
+   "properties": {
+    "text_as_recorded": {"$ref": "#/$defs/text"},
+    "refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^R[0-9]+$"}},
+    "section_as_recorded": {"$ref": "#/$defs/text"},
+    "verify": {"type": "string", "pattern": "^verify against RFP document"}
+   }
+  },
+  "proposal": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["proposed_by", "rationale", "owner_decision"],
+   "properties": {"proposed_by": {"$ref": "#/$defs/text"}, "rationale": {"$ref": "#/$defs/text"}, "owner_decision": {"$ref": "#/$defs/text"}}
+  },
+  "gate": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["id", "title", "status", "binding", "hall_closure_dependence", "shared_contracts", "criteria", "notes"],
+   "properties": {
+    "id": {"type": "string", "pattern": "^(G[1-9]|P[1-9])_[a-z0-9_]+$"},
+    "title": {"$ref": "#/$defs/text"},
+    "status": {"enum": ["RFP", "PROPOSED", "OWNER_ADOPTED"]},
+    "binding": {"type": "boolean"},
+    "rfp_source": {"$ref": "#/$defs/rfp_source"},
+    "proposal": {"$ref": "#/$defs/proposal"},
+    "hall_closure_dependence": {"enum": ["dependent", "independent"]},
+    "shared_contracts": {"$ref": "#/$defs/string_list"},
+    "criteria": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/criterion"}},
+    "notes": {"$ref": "#/$defs/text"}
+   },
+   "allOf": [
+    {"if": {"properties": {"status": {"const": "RFP"}}}, "then": {"required": ["rfp_source"], "properties": {"binding": {"const": true}}}},
+    {"if": {"properties": {"status": {"const": "PROPOSED"}}}, "then": {"required": ["proposal"], "properties": {"binding": {"const": false}}}},
+    {"if": {"properties": {"status": {"const": "OWNER_ADOPTED"}}}, "then": {"required": ["proposal"], "properties": {"binding": {"const": true}}}}
+   ]
+  },
+  "criterion": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["id", "title", "counts_toward_gate", "status", "metric", "unit", "definition", "comparator", "threshold", "threshold_status", "threshold_source", "interpretation", "envelope", "envelope_source", "fail_must_cover", "requires_power_boundary", "fail_sufficient_bases", "pass_sufficient_bases", "fail_evidence", "pass_evidence", "issuable_at"],
+   "properties": {
+    "id": {"type": "string", "pattern": "^(G[1-9]|P[1-9])\\.[a-z][A-Za-z0-9_]*$"},
+    "title": {"$ref": "#/$defs/text"},
+    "counts_toward_gate": {"type": "boolean"},
+    "status": {"enum": ["RFP", "RFP_INTERPRETATION_OPEN", "PROPOSED", "TBD", "OWNER_ADOPTED"]},
+    "metric": {"type": "string", "pattern": "^[a-z][A-Za-z0-9_]*$"},
+    "unit": {"$ref": "#/$defs/text"},
+    "definition": {"$ref": "#/$defs/text"},
+    "comparator": {"enum": [">=", ">", "<", "<=", "is_true"]},
+    "threshold": {"type": ["number", "null"]},
+    "threshold_status": {"enum": ["RFP_AS_RECORDED", "PROPOSED", "TBD", "NOT_APPLICABLE", "OWNER_DEFINED"]},
+    "threshold_source": {"$ref": "#/$defs/text"},
+    "interpretation": {"$ref": "#/$defs/text"},
+    "envelope": {"$ref": "#/$defs/envelope"},
+    "envelope_source": {"$ref": "#/$defs/text"},
+    "elements_semantics": {"enum": ["sum", "per_element"]},
+    "fail_must_cover": {"$ref": "#/$defs/envelope"},
+    "requires_power_boundary": {"enum": ["bus_power_boundary_v1", null]},
+    "fail_sufficient_bases": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/basis_name"}},
+    "pass_sufficient_bases": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/basis_name"}},
+    "required_flags": {
+     "type": "object",
+     "propertyNames": {"$ref": "#/$defs/basis_name"},
+     "additionalProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {"pass": {"type": "array", "items": {"$ref": "#/$defs/flag_name"}, "uniqueItems": true}, "fail": {"type": "array", "items": {"$ref": "#/$defs/flag_name"}, "uniqueItems": true}}
+     }
+    },
+    "fail_evidence": {"$ref": "#/$defs/text"},
+    "pass_evidence": {"$ref": "#/$defs/text"},
+    "issuable_at": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["FAIL", "PASS"],
+     "properties": {"FAIL": {"enum": ["A", "B", null]}, "PASS": {"enum": ["A", "B", null]}}
+    }
+   },
+   "allOf": [
+    {"if": {"properties": {"comparator": {"const": "is_true"}}}, "then": {"properties": {"threshold": {"const": null}, "threshold_status": {"const": "NOT_APPLICABLE"}, "unit": {"const": "boolean"}}}},
+    {"if": {"properties": {"threshold_status": {"const": "TBD"}}}, "then": {"properties": {"threshold": {"const": null}, "threshold_source": {"type": "string", "pattern": "^TBD"}}}},
+    {"if": {"properties": {"status": {"const": "RFP_INTERPRETATION_OPEN"}}}, "then": {"properties": {"counts_toward_gate": {"const": false}}}}
+   ]
+  },
+  "conditions": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "altitude_km": {"$ref": "#/$defs/altitude_interval"},
+    "atmosphere_states": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+    "operating_modes": {"type": "array", "items": {"$ref": "#/$defs/operating_mode"}, "minItems": 1, "uniqueItems": true},
+    "propellants": {"type": "array", "items": {"$ref": "#/$defs/propellant"}, "minItems": 1, "uniqueItems": true},
+    "start_sequences": {"type": "array", "items": {"$ref": "#/$defs/start_sequence"}, "minItems": 1, "uniqueItems": true},
+    "elements": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+    "power_boundary": {"$ref": "#/$defs/text"},
+    "feed_equivalence": {"$ref": "#/$defs/text"},
+    "operating_profile": {"$ref": "#/$defs/text"},
+    "notes": {"type": "string"}
+   }
+  },
+  "value_spec": {
+   "oneOf": [
+    {"type": "object", "additionalProperties": false, "required": ["kind", "value"], "properties": {"kind": {"enum": ["lower_bound", "upper_bound", "point_estimate"]}, "value": {"type": "number"}}},
+    {"type": "object", "additionalProperties": false, "required": ["kind", "lo", "hi"], "properties": {"kind": {"const": "interval"}, "lo": {"type": "number"}, "hi": {"type": "number"}}},
+    {"type": "object", "additionalProperties": false, "required": ["kind", "value"], "properties": {"kind": {"const": "boolean"}, "value": {"type": "boolean"}}}
+   ]
+  },
+  "hall_closure": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["status"],
+   "properties": {
+    "status": {"enum": ["none", "admitted", "unadmitted"]},
+    "member_id": {"$ref": "#/$defs/text"},
+    "hall_map_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "hallthruster_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+   },
+   "allOf": [
+    {"if": {"properties": {"status": {"const": "none"}}}, "then": {"not": {"anyOf": [{"required": ["member_id"]}, {"required": ["hall_map_sha256"]}]}}},
+    {"if": {"properties": {"status": {"const": "unadmitted"}}}, "then": {"required": ["member_id"]}},
+    {"if": {"properties": {"status": {"const": "admitted"}}}, "then": {"required": ["member_id", "hall_map_sha256", "hallthruster_commit"]}}
+   ]
+  },
+  "evidence_item": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["id", "architectures", "gate", "criterion", "metric", "unit", "value", "basis", "quantity_type", "evidence_level", "scope", "conditions", "hall_closure", "source", "uncertainty", "applicability_domain", "validation_status", "transformation_chain"],
+   "properties": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"},
+    "architectures": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/architecture_id"}},
+    "gate": {"type": "string", "pattern": "^(G[1-9]|P[1-9])_[a-z0-9_]+$"},
+    "criterion": {"type": "string", "pattern": "^(G[1-9]|P[1-9])\\.[a-z][A-Za-z0-9_]*$"},
+    "metric": {"type": "string", "pattern": "^[a-z][A-Za-z0-9_]*$"},
+    "unit": {"$ref": "#/$defs/text"},
+    "value": {"$ref": "#/$defs/value_spec"},
+    "basis": {"$ref": "#/$defs/basis_name"},
+    "quantity_type": {"$ref": "#/$defs/quantity_type"},
+    "evidence_level": {"type": "integer", "minimum": 1, "maximum": 7},
+    "scope": {"enum": ["architecture", "point_design"]},
+    "design_id": {"$ref": "#/$defs/text"},
+    "scope_justification": {"$ref": "#/$defs/text"},
+    "conditions": {"$ref": "#/$defs/conditions"},
+    "hall_closure": {"$ref": "#/$defs/hall_closure"},
+    "flags": {"type": "object", "propertyNames": {"$ref": "#/$defs/flag_name"}, "additionalProperties": {"type": "boolean"}},
+    "validated_for_this_use": {"type": "boolean"},
+    "derivation_script": {"$ref": "#/$defs/text"},
+    "inputs": {"$ref": "#/$defs/string_list"},
+    "source": {"$ref": "#/$defs/text"},
+    "uncertainty": {"$ref": "#/$defs/text"},
+    "applicability_domain": {"$ref": "#/$defs/text"},
+    "validation_status": {"$ref": "#/$defs/text"},
+    "transformation_chain": {"$ref": "#/$defs/text"},
+    "notes": {"type": "string"}
+   },
+   "allOf": [
+    {"if": {"properties": {"scope": {"const": "point_design"}}}, "then": {"required": ["design_id"]}},
+    {"if": {"properties": {"scope": {"const": "architecture"}}}, "then": {"required": ["scope_justification"], "not": {"required": ["design_id"]}}}
+   ]
+  },
+  "evidence_bundle": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["schema", "matrix_version", "items", "note"],
+   "properties": {
+    "schema": {"const": "hard_gate_evidence_v1"},
+    "matrix_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "items": {"type": "array", "items": {"$ref": "#/$defs/evidence_item"}},
+    "note": {"$ref": "#/$defs/text"}
+   }
+  },
+  "verdict": {"enum": ["PASS", "FAIL", "UNDETERMINED"]},
+  "milestone_tag": {"enum": ["A", "B", null]},
+  "design_map": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["milestone", "evidence"],
+    "properties": {"milestone": {"enum": ["A", "B"]}, "evidence": {"$ref": "#/$defs/string_list"}}
+   }
+  },
+  "criterion_result": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["counts_toward_gate", "status", "metric", "comparator", "threshold", "unit", "verdict", "milestone", "evidence_used", "pass_designs", "design_failures", "conflict", "reasons", "missing_for_fail", "missing_for_pass"],
+   "properties": {
+    "counts_toward_gate": {"type": "boolean"},
+    "status": {"type": "string"},
+    "metric": {"type": "string"},
+    "comparator": {"type": "string"},
+    "threshold": {"type": ["number", "null"]},
+    "unit": {"type": "string"},
+    "verdict": {"$ref": "#/$defs/verdict"},
+    "milestone": {"$ref": "#/$defs/milestone_tag"},
+    "evidence_used": {"$ref": "#/$defs/string_list"},
+    "pass_designs": {"$ref": "#/$defs/design_map"},
+    "design_failures": {"$ref": "#/$defs/design_map"},
+    "conflict": {"type": "boolean"},
+    "reasons": {"type": "array", "items": {"type": "string"}},
+    "missing_for_fail": {"type": "array", "items": {"type": "string"}},
+    "missing_for_pass": {"type": "array", "items": {"type": "string"}}
+   }
+  },
+  "gate_result": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["title", "status", "binding", "verdict", "milestone", "evidence_used", "pass_designs", "conflict", "reasons", "criteria"],
+   "properties": {
+    "title": {"type": "string"},
+    "status": {"enum": ["RFP", "PROPOSED", "OWNER_ADOPTED"]},
+    "binding": {"type": "boolean"},
+    "verdict": {"$ref": "#/$defs/verdict"},
+    "milestone": {"$ref": "#/$defs/milestone_tag"},
+    "evidence_used": {"$ref": "#/$defs/string_list"},
+    "pass_designs": {"$ref": "#/$defs/design_map"},
+    "conflict": {"type": "boolean"},
+    "reasons": {"type": "array", "items": {"type": "string"}},
+    "criteria": {"type": "object", "additionalProperties": {"$ref": "#/$defs/criterion_result"}}
+   }
+  },
+  "failure_record": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["gate", "criteria", "evidence", "milestone"],
+   "properties": {"gate": {"type": "string"}, "criteria": {"$ref": "#/$defs/string_list"}, "evidence": {"$ref": "#/$defs/string_list"}, "milestone": {"$ref": "#/$defs/milestone_tag"}, "note": {"type": "string"}}
+  },
+  "condition": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["gate", "criterion", "requirement", "over", "current_verdict", "discharged_by", "blockers"],
+   "properties": {
+    "gate": {"type": "string"},
+    "criterion": {"type": "string"},
+    "requirement": {"type": "string"},
+    "over": {"type": "object"},
+    "current_verdict": {"$ref": "#/$defs/verdict"},
+    "discharged_by": {"type": "object", "additionalProperties": false, "required": ["A", "B"], "properties": {"A": {"type": "array", "items": {"$ref": "#/$defs/basis_name"}}, "B": {"type": "array", "items": {"$ref": "#/$defs/basis_name"}}}},
+    "blockers": {"type": "array", "items": {"type": "string"}}
+   }
+  },
+  "no_winner": {"not": {"anyOf": [{"required": ["winner"]}, {"required": ["ranking"]}, {"required": ["rank"]}, {"required": ["score"]}, {"required": ["selected"]}]}},
+  "evaluation_result": {
+   "type": "object",
+   "additionalProperties": false,
+   "allOf": [{"$ref": "#/$defs/no_winner"}],
+   "required": ["schema", "matrix_schema", "matrix_version", "matrix_status", "architecture", "admitted_members", "gates", "binding_gates", "proposed_gates", "eliminated", "elimination_basis", "proposed_gate_failures", "conflicts", "evidence_considered", "evidence_not_verdict_bearing", "milestones", "note"],
+   "properties": {
+    "schema": {"const": "hard_gate_evaluation_v1"},
+    "matrix_schema": {"const": "hard_gate_matrix_v1"},
+    "matrix_version": {"type": "string"},
+    "matrix_status": {"type": "string"},
+    "architecture": {"$ref": "#/$defs/architecture_id"},
+    "admitted_members": {"$ref": "#/$defs/string_list"},
+    "gates": {"type": "object", "additionalProperties": {"$ref": "#/$defs/gate_result"}},
+    "binding_gates": {"$ref": "#/$defs/string_list"},
+    "proposed_gates": {"$ref": "#/$defs/string_list"},
+    "eliminated": {"type": "boolean"},
+    "elimination_basis": {"type": "array", "items": {"$ref": "#/$defs/failure_record"}},
+    "proposed_gate_failures": {"type": "array", "items": {"$ref": "#/$defs/failure_record"}},
+    "conflicts": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["gate", "criterion", "detail"], "properties": {"gate": {"type": "string"}, "criterion": {"type": "string"}, "detail": {"type": "array", "items": {"type": "string"}}}}},
+    "evidence_considered": {"$ref": "#/$defs/string_list"},
+    "evidence_not_verdict_bearing": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "criterion", "side", "reasons"], "properties": {"id": {"type": "string"}, "criterion": {"type": "string"}, "side": {"enum": ["pass", "fail", null]}, "reasons": {"type": "array", "minItems": 1, "items": {"type": "string"}}}}},
+    "milestones": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["A", "B", "C"],
+     "properties": {
+      "A": {"type": "object", "additionalProperties": false, "required": ["conditional_selection_available", "statement", "conditions", "open_owner_items", "proposed_gates_pending"], "properties": {"conditional_selection_available": {"type": "boolean"}, "statement": {"type": "string"}, "conditions": {"type": "array", "items": {"$ref": "#/$defs/condition"}}, "open_owner_items": {"type": "array", "items": {"type": "object"}}, "proposed_gates_pending": {"$ref": "#/$defs/string_list"}}},
+      "B": {"type": "object", "additionalProperties": false, "required": ["all_binding_gates_pass", "ready", "missing"], "properties": {"all_binding_gates_pass": {"type": "boolean"}, "ready": {"type": "boolean"}, "missing": {"type": "array", "items": {"type": "string"}}}},
+      "C": {"type": "object", "additionalProperties": false, "required": ["integrated_designs", "ready", "missing"], "properties": {"integrated_designs": {"$ref": "#/$defs/string_list"}, "ready": {"type": "boolean"}, "missing": {"type": "array", "items": {"type": "string"}}}}
+     }
+    },
+    "note": {"type": "string"}
+   }
+  },
+  "evaluation_set": {
+   "type": "object",
+   "additionalProperties": false,
+   "allOf": [{"$ref": "#/$defs/no_winner"}],
+   "required": ["schema", "matrix_version", "matrix_status", "admitted_members", "architectures", "eliminated", "not_eliminated", "note"],
+   "properties": {
+    "schema": {"const": "hard_gate_evaluation_set_v1"},
+    "matrix_version": {"type": "string"},
+    "matrix_status": {"type": "string"},
+    "admitted_members": {"$ref": "#/$defs/string_list"},
+    "architectures": {"type": "object", "additionalProperties": false, "required": ["hall_only", "rf_hall", "ecr_hall"], "properties": {"hall_only": {"$ref": "#/$defs/evaluation_result"}, "rf_hall": {"$ref": "#/$defs/evaluation_result"}, "ecr_hall": {"$ref": "#/$defs/evaluation_result"}}},
+    "eliminated": {"type": "array", "items": {"$ref": "#/$defs/architecture_id"}, "uniqueItems": true},
+    "not_eliminated": {"type": "array", "items": {"$ref": "#/$defs/architecture_id"}, "uniqueItems": true},
+    "note": {"type": "string"},
+    "provenance": {"type": "object"}
+   }
+  }
+ }
+}
