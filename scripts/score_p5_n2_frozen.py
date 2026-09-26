@@ -5,7 +5,9 @@
   -> write a provenance manifest: input dataset SHA, scorer file SHA + commit, prereg lock SHA, scoring time, output SHA.
 Refuses to run if a score for this dataset already exists ("score once"); a rescore would need a new, dated decision.
 Refuses to run unless the scorer is byte-identical to the frozen scorer at the manifest's scorer_commit. The scores file is
-written to a temporary path, verified and renamed atomically; a failed attempt leaves no official artifact.
+written to a temporary path and verified; the provenance manifest is renamed LAST and is the commit marker. If publishing the
+provenance fails, the scores file is rolled back; an orphan scores file left by a hard interruption (no provenance) is
+removed on the next attempt, so a failed attempt never blocks or masquerades as the official result.
 Usage: python scripts/score_p5_n2_frozen.py hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_raw_manifest.json
 """
 import datetime, gzip, hashlib, importlib.util, json, os, subprocess, sys, tempfile
@@ -42,8 +44,11 @@ def score_frozen(manifest_path, allow_existing=False):
         raise SystemExit(f"scorer differs from the frozen scorer at {man['scorer_commit']}: refusing to score")
     stem = manifest_path.replace("_raw_manifest.json", "")
     out, prov = stem + "_scores.json", stem + "_scores_provenance.json"
-    if not allow_existing and (os.path.exists(out) or os.path.exists(prov)):
-        raise SystemExit(f"already scored (score once): {out}")
+    # the provenance manifest is the commit marker: a scores file without it is the orphan of an interrupted attempt
+    if not allow_existing and os.path.exists(prov):
+        raise SystemExit(f"already scored (score once): {prov}")
+    if os.path.exists(out) and not os.path.exists(prov):
+        os.unlink(out)
     with tempfile.NamedTemporaryFile("wb", suffix=".jsonl", delete=False) as t:
         t.write(raw); tmp = t.name
     s = _load_scorer()
@@ -67,7 +72,12 @@ def score_frozen(manifest_path, allow_existing=False):
         with open(tmp_prov, "w") as fh:
             json.dump(p, fh, indent=1)
         os.replace(tmp_out, out)             # both artifacts are complete on disk before either becomes official
-        os.replace(tmp_prov, prov)
+        try:
+            os.replace(tmp_prov, prov)       # the provenance rename commits the result
+        except BaseException:
+            if os.path.exists(out):
+                os.unlink(out)               # roll back: no official scores without provenance
+            raise
     finally:
         os.unlink(tmp)
         for f in (tmp_out, tmp_prov):

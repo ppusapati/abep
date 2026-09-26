@@ -74,6 +74,10 @@ def _check_admission(member: dict, bridge_dir: str) -> None:
     prov = json.load(open(os.path.join(bridge_dir, adm["scores_provenance_file"])))
     if not dec.get("source_scores_sha256") or dec["source_scores_sha256"] != prov.get("output_sha256"):
         raise ValueError(f"admitted member {mid}: decision is not bound to the scores output named by the provenance manifest")
+    scores = os.path.join(bridge_dir, prov.get("output") or "")
+    if not prov.get("output") or not os.path.isfile(scores) or \
+            hashlib.sha256(open(scores, "rb").read()).hexdigest() != prov["output_sha256"]:
+        raise ValueError(f"admitted member {mid}: the scores file named by the provenance manifest is missing or modified")
     if dec.get("candidates", {}).get(mid) != "PROMOTABLE":
         raise ValueError(f"admitted member {mid}: the referenced decision does not list it as PROMOTABLE")
     passing = set(dec.get("passing_members", {}).get(mid, []))

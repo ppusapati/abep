@@ -1,6 +1,7 @@
 """Freeze a completed P5-N2 campaign record set BEFORE it is scored (owner decision 2026-09-26).
 
   raw shard JSONLs -> structural integrity gate (scripts/audit_p5_n2_campaign_records.py) must PASS
+  -> record identity check: every record's identity fields equal its key and the pinned case metadata
   -> canonical merge: the untouched raw lines, sorted by key; any duplicate key (identical or conflicting) is refused
   -> SHA256 of the canonical JSONL -> deterministic gzip (mtime 0) -> manifest binding the provenance chain.
 Nothing in a record is read beyond its key; no record is modified.
@@ -56,6 +57,30 @@ def _gate():
     return g
 
 
+def record_identity(paths):
+    """Every record's identity fields must equal those encoded in its key AND the pinned case metadata (cases/p5_n2.json):
+    a permutation of candidate / chemistry / case / point / registration / coil_shape / mode fields is refused (PR #29 review).
+    Reads identity fields only."""
+    cases = {c["id"]: c for c in json.load(open(os.path.join(BR, "cases", "p5_n2.json")))["cases"]}
+    bad = []
+    for p in paths:
+        for line in open(p):
+            if not line.strip():
+                continue
+            r = json.loads(line)
+            cand, chem, case, mode = r["key"].split("|")
+            c = cases.get(case)
+            exp = {"candidate": cand, "chemistry": chem, "case": case, "mode": mode}
+            if c is not None:
+                exp.update({"point": c["point"], "registration": c["registration"], "coil_shape": c["coil_shape"]})
+            else:
+                bad.append((r["key"], "case not in cases/p5_n2.json"))
+            wrong = {k: r.get(k) for k, v in exp.items() if r.get(k) != v}
+            if wrong:
+                bad.append((r["key"], wrong))
+    return bad
+
+
 def canonical(paths):
     """(canonical bytes, n) from the untouched raw lines sorted by key; raises on any duplicate key."""
     lines = {}
@@ -80,6 +105,9 @@ def freeze(mode, paths, tag="v1", outdir=OUTDIR, check_code=True):
     gate = _gate().audit(mode, paths)
     if not gate["PASS"]:
         raise SystemExit("structural integrity gate FAILED: " + json.dumps({k: v for k, v in gate.items() if k != "missing"}))
+    mism = record_identity(paths)
+    if mism:
+        raise SystemExit(f"record identity check FAILED ({len(mism)} records): " + json.dumps(mism[:5]))
     data, n = canonical(paths)
     stem = os.path.join(outdir, f"p5_n2_campaign_{tag}_{mode}_raw")
     gz_path, man_path = stem + ".jsonl.gz", stem + "_manifest.json"
@@ -96,8 +124,11 @@ def freeze(mode, paths, tag="v1", outdir=OUTDIR, check_code=True):
            "canonical_form": "untouched raw record lines, one per line, sorted by key (byte order of the key string)",
            "prereg_lock_sha256": hashlib.sha256(open(lock, "rb").read()).hexdigest(),
            "integrity_gate": {k: gate[k] for k in ("PASS", "n_records", "n_expected", "retcode_counts", "grid")},
+           "record_identity_check": {"PASS": True, "rule": "identity fields == key fields == pinned case metadata"},
            "frozen_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), **PROVENANCE}
-    man["code_as_run"] = ident
+    man["code_as_run"] = dict(ident, freeze={"file": "scripts/freeze_p5_n2_dataset.py",
+                                              "sha256": hashlib.sha256(open(os.path.abspath(__file__), "rb").read()).hexdigest(),
+                                              "last_commit": _last_commit(os.path.abspath(__file__))})
     man["chain_consistent"] = all(v["identical"] for v in ident.values())
     json.dump(man, open(man_path, "w"), indent=1)
     return man

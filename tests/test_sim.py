@@ -1263,6 +1263,12 @@ def test_p5_n2_freeze_and_score_once(tmp_path):
     fz._gate = lambda: type("G", (), {"audit": staticmethod(lambda mode, paths: {"PASS": True, "n_records": 5, "n_expected": 5,
                                                                                  "retcode_counts": {}, "grid": {}})})
     out = tmp_path / "val"
+    perm = tmp_path / "perm.jsonl"                                                     # identity fields permuted vs keys
+    rp_ = [dict(r) for r in recs]; rp_[0]["point"], rp_[1]["point"] = rp_[1]["point"], rp_[0]["point"]
+    perm.write_text("".join(json.dumps(r) + "\n" for r in rp_))
+    assert fz.record_identity([str(perm)]) and not fz.record_identity([str(a), str(b)])
+    with _pytest.raises(SystemExit):
+        fz.freeze("vacuum", [str(perm)], tag="perm", outdir=str(out))
     man = fz.freeze("vacuum", [str(a), str(b)], tag="test", outdir=str(out))
     assert man["n_records"] == 5 and len(man["sha256_canonical_jsonl"]) == 64
     with _pytest.raises(SystemExit):                                                   # never overwrite a frozen dataset
@@ -1297,7 +1303,22 @@ def test_p5_n2_freeze_and_score_once(tmp_path):
         sf._load_scorer = real_load
     assert not os.path.exists(os.path.join(sf.BR, p["output"]))
     assert not any(f.name.startswith("p5_n2_campaign_test_vacuum_scores") for f in out.iterdir())
-    assert sf.score_frozen(mp)["output_sha256"]                                        # a clean attempt then succeeds
+    orphan = mp.replace("_raw_manifest.json", "_scores.json")                         # hard-interruption orphan (no provenance)
+    open(orphan, "w").write("{}")
+    real_replace = sf.os.replace
+    def failing_replace(src, dst):
+        if dst.endswith("_scores_provenance.json"):
+            raise OSError("simulated failure publishing provenance")
+        return real_replace(src, dst)
+    sf.os.replace = failing_replace
+    try:
+        with _pytest.raises(OSError):
+            sf.score_frozen(mp)
+    finally:
+        sf.os.replace = real_replace
+    assert not os.path.exists(orphan)                                                  # rolled back, nothing official
+    open(orphan, "w").write("{}")
+    assert sf.score_frozen(mp)["output_sha256"]                                        # orphan removed; clean attempt succeeds
     # release manifest binds the whole chain and refuses a broken link
     spec = importlib.util.spec_from_file_location("rp", os.path.join(root, "scripts", "report_p5_n2_campaign.py"))
     rp = importlib.util.module_from_spec(spec); spec.loader.exec_module(rp)
@@ -1354,10 +1375,12 @@ def test_admission_gate_and_launch_manifests(tmp_path):
     root = os.path.dirname(os.path.dirname(__file__))
     e = json.load(open(he.ENSEMBLE_FILE))
     bdir = tmp_path / "bridge"; (bdir / "ensemble").mkdir(parents=True); (bdir / "validation").mkdir()
+    (bdir / "validation" / "s.json").write_text('{"scores": 1}')
+    s_sha = hashlib.sha256((bdir / "validation" / "s.json").read_bytes()).hexdigest()
     dec = {"candidates": {"sgb-screen-01": "PROMOTABLE"}, "passing_members": {"sgb-screen-01": ["L32-anode|1p6kW|A"]},
-           "source_scores_sha256": "a" * 64}
+           "source_scores_sha256": s_sha}
     (bdir / "validation" / "d.json").write_text(json.dumps(dec))
-    (bdir / "validation" / "p.json").write_text(json.dumps({"output_sha256": "a" * 64}))
+    (bdir / "validation" / "p.json").write_text(json.dumps({"output": "validation/s.json", "output_sha256": s_sha}))
     sha = lambda f: hashlib.sha256((bdir / "validation" / f).read_bytes()).hexdigest()
     cand = copy.deepcopy(e["screening_candidates"][0])
     adm = {"promoted_from_screening_id": "sgb-screen-01", "campaign_id": "p5_n2_campaign_v1", "preregistration": "prereg/x.json",
@@ -1376,6 +1399,10 @@ def test_admission_gate_and_launch_manifests(tmp_path):
         he.load_ensemble(write(dict(copy.deepcopy(cand), admission=adm), drop_from_screening=False))
     with _pytest.raises(ValueError):                                        # tampered decision
         he.load_ensemble(write(dict(copy.deepcopy(cand), admission=dict(adm, decision_sha256="0" * 64))))
+    (bdir / "validation" / "p3.json").write_text(json.dumps({"output": "validation/missing.json", "output_sha256": s_sha}))
+    with _pytest.raises(ValueError):                                        # scores file named by provenance is missing
+        he.load_ensemble(write(dict(copy.deepcopy(cand), admission=dict(adm, scores_provenance_file="validation/p3.json",
+                                                                           scores_provenance_sha256=sha("p3.json")))))
     (bdir / "validation" / "p2.json").write_text(json.dumps({"output_sha256": "b" * 64}))   # provenance of a different scores file
     with _pytest.raises(ValueError):
         he.load_ensemble(write(dict(copy.deepcopy(cand), admission=dict(adm, scores_provenance_file="validation/p2.json",
