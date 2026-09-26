@@ -34,7 +34,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 |---|---|
 | 1 clean-install reproducibility | pass (frozen atmosphere; pinned deps; runs with pymsis absent) |
 | 2 grid-life consistency | pass (optimiser degeneracy flagged; perveance-window tests) |
-| 3 multi-point Hall validation | **FAIL** — P5-Xe campaign closed 2026-09-25: transport not uniquely identifiable (best SGB misses blind I_d at Xe2, −15.56 % vs 15 %); carry an uncertainty ensemble |
+| 3 multi-point Hall validation | **FAIL** — P5-Xe closed: transport not identifiable; credible set ∅, 9 SGB screening candidates await no-retuning N₂ prediction |
 | 4 cross-family mission UQ | done but **conditional on gate 3** (all absolute Hall numbers withdrawn) |
 | 5 numerical convergence | pass |
 | 6 golden benchmarks | pass (near-zero `ledger_resid` compared with an absolute tolerance, 2026-09-25) |
@@ -65,16 +65,29 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
      **unweighted** scenario set (no probabilities) until evidence justifies elimination or weighting.
    - Flow: P5 evidence ensemble → credible closure set → Vyovrinda design-specific Hall maps (own geometry and B(z), one
      map set per member) → whole-system UQ reporting envelopes/robustness across members.
-   - **Admission rule PENDING a project decision** (I_d tolerance; whether super-Bohm sets count). Census in the ensemble
-     file: 15 % admits nothing; 20 % admits 1 defensible SGB set (plus 5 super-Bohm); 25 % admits 5 (plus 8). All
-     defensible sets are supported only by L32-anode. MultiLogBohm admits none. Until decided, `members` is empty and
-     `HallMap` rejects every map.
+   - **Credible set = ∅** (project decision 2026-09-26). No in-sample I_d tolerance is used for admission: the
+     pre-registered 15 % blind criterion was not met, and relaxing it post hoc would turn a failed validation into
+     calibration. Super-Bohm (a > 1/16) sets are diagnostic/sensitivity cases only.
+   - **Screening candidates ≠ admitted members.** Nine ScaledGaussianBohm sets (`screening_candidates`, ids
+     `sgb-screen-01..09`) pass the no-cutoff screen: all runs succeed, a ≤ 1/16, quiet at all three Xe points,
+     divergence-corrected thrust within 2σ under ≥ 1 layer-1 combination. The best is sgb-screen-01 (a = 1/16, b = 0.8,
+     c = 0.9 L, w = 0.25 L; max |ΔI_d| 15.56 %). Support is L32-anode-dominated. Screening candidates never produce design
+     Hall maps and never enter the architecture trade or UQ; `HallMap` loads admitted members only.
+   - **Promotion rule:** a screening candidate becomes a member only after it predicts new evidence not used to select
+     it, without retuning, within the physical prior (a ≤ 1/16). Before simulating that evidence, audit its measurements
+     and uncertainties and pre-register the acceptance criteria. Next discriminator: P5-N₂.
+   - **Scope:** this uncertainty belongs only to the ionization/discharge → acceleration/thrust block of the RFP
+     architecture (atmospheric path: intake → filter → compressor → atmospheric gas chamber → valve; Xe path: Xe chamber
+     → valve; both feed ionization/discharge → acceleration/thrust). It must never leak upstream into the intake,
+     compressor, gas chambers or valves, or into Vyovrinda's own thruster geometry.
 2. N₂/N reaction set **v0.1: partial**. Add one provenance-backed table per commit. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited cross sections. Done: N ionisation
    (`ionization_N.dat`, Kim & Desclaux 2002 via NIST, `scripts/build_n_ionization_table.py`). Blocked on source access:
    N₂ dissociation (Cosby 1993 / Itikawa 2006), N₂ excitation, N elastic. LXCat's redistribution policy restricts
    commercial use, so the source choice is the project's decision (`hallthruster_bridge/propellants/PROVENANCE.md`).
 3. P5 on N₂ (`cases/p5_n2.json`, Table 2) and ECHT on N₂ (`cases/echt_n2.json`), run across the **credible Xe-informed
-   transport ensemble** with no retuning per case. N₂ is a discrimination experiment that can eliminate members.
+   transport screening set** (currently the 9 SGB screening candidates) with no retuning per case. N₂ is a
+   discrimination experiment that can eliminate candidates or promote them to members. First audit the available N₂
+   measurements and uncertainties, then pre-register the acceptance criteria, then simulate.
    Blocked by the driver until every rate file in `propellants/n2_n.toml` exists. P5 B(z) shape is now available
    (`hallthruster_bridge/bfield/`, Peterson 2001; N₂ setpoints use 130 G). Still missing: ECHT B(z), B_max, per-point data.
 4. Only if 1–3 succeed: O₂/O chemistry, then intake-delivered mixtures.
