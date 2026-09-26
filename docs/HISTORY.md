@@ -2076,3 +2076,13 @@ configs (Johnson-low, rotational-off, HMS ×0.5, HMS ×1.3 × {DI-lower, Wang, D
 `scripts/make_n2_variant_configs.py` and sha256-pinned in the criteria (22 chemistry configs in all), so an escalation never needs
 chemistry defined after results. A test checks each combination carries exactly its sensitivity's rate-file change. The hash
 lock was regenerated for these fixes before merge.
+
+### 2026-09-26 — P5-N₂ campaign driver and scorer (after the pre-registration merged, #27 → 17a99cd)
+`hallthruster_bridge/campaign/p5_n2_campaign.jl` runs candidate × chemistry × case in one mode, refuses to start unless every
+file in the pre-registration lock and every pinned chemistry config matches its sha256, records raw observables only (window-mean
+I_d, T_1D, the final-10 % I_d samples for O1, per-reaction f_out, outlet ion velocity/flux per species for O5, the bridge's
+`sustained` flag as diagnostic) and logs keys and return codes only. `scripts/score_p5_n2_campaign.py` implements the frozen rules
+(O2 precedence, O1 terminal collapse, CURRENT 15 %, THRUST N1–N3 T_1D·f_reading within 5.2/5.6/5.6 mN, O3 member/candidate
+verdicts with missing runs never passing, O4 triggers, O5 diagnostic), with targets taken from the frozen audit; it was written and
+tested on synthetic records before any campaign run existed. Smoke check (2 µs, targets stripped, flagged `smoke`, refused by the
+scorer): records complete, 100 samples in the final 10 %.
