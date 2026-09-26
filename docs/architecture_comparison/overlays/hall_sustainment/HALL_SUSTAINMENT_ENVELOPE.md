@@ -9,7 +9,7 @@
 | registered follow-on | `fo_hall_sustainment_envelope` (trigger `T_HALL_SUSTAIN_ENVELOPE`) |
 | architecture | `hall_only` (direct Hall operation on atmospheric propellant, no pre-ionizer) |
 | milestone | supports **A** (conditional selection); what B and C need is in section 10 |
-| inputs | `docs/evidence/hall_sustainment/hall_sustainment_matrix.json` (lane_09_hall_sustainment, commit ac7970917f, sha256 248aef28cfe6...); `docs/architecture_comparison/feed_envelope/feed_envelope_v1.json` (lane_16_feed_envelope, commit ab27dcc449, sha256 ada3ee720b1b...); `hallthruster_bridge/cases/p5_xenon.json` (base checkout (read only), commit fe1d79390f, sha256 1071684dca85...); `abep_sim/constants.py` (base checkout (read only), commit fe1d79390f, sha256 dd1c564324c1...) |
+| inputs | `docs/evidence/hall_sustainment/hall_sustainment_matrix.json` (lane_09_hall_sustainment, commit f458811a57, sha256 76bba594eb11...); `docs/architecture_comparison/feed_envelope/feed_envelope_v1.json` (lane_16_feed_envelope, commit ab27dcc449, sha256 ada3ee720b1b...); `hallthruster_bridge/cases/p5_xenon.json` (base checkout (read only), commit fe1d79390f, sha256 1071684dca85...); `abep_sim/constants.py` (base checkout (read only), commit fe1d79390f, sha256 dd1c564324c1...) |
 | test | `tests/test_overlay_hall_sustainment.py` |
 
 **What it is.** A mapping of the published Hall-only sustainment / ignition evidence (lane 09 matrix) onto the common feed envelope (lane 16): per case and evidence item, whether the item's demonstrated operating region covers, partially covers or does not reach the case, and a per-case status with blockers. Conditional statements for milestone A.
@@ -92,7 +92,7 @@ Status-bearing rule: evidence level <= 3 (docs/EVIDENCE.md: level 5 = second-han
 | E19 | HHT | support_air_only | 5 | sustained | 2.6 | n/c: geometry not accessed | w_N2 1 | 200 | n/c: matrix 'B': not reported in the accessed text | Xe | 1.75 kW, ABOVE_RFP_CEILING | not_reported (second_hand) |
 | E20 | MSTU-lab | support_air_only | 5 | sustained | 0.8-1 | n/c: channel width not reported (average channel diameter only) | n/c: air composition and the basis of the stated N2/O2 ratio not stated | n/c: matrix 'discharge voltage': from below 100 up to 350 | n/c: matrix 'B': not reported in the accessed text | Xe | 0.3-1.4 kW, WITHIN_RFP_CEILING | not_reported (second_hand) |
 
-n/c = not comparable (the missing quantity is named). Flow densities use the channel cross-section: P5 0.01162 m^2 (annulus pi (r_out^2 - r_in^2); radii measured (design dimensions, evidence level 3) -> our arithmetic); ECHT 0.002827 m^2 (annulus pi h (D_out - h) with D_out = the stated OD (reading A); our arithmetic; upper bound); CAMILA 0.001847 m^2 (annulus pi D_mean w; our arithmetic); Z-70 0.002686 m^2 (annulus pi/4 (D_out^2 - D_in^2); our arithmetic).
+n/c = not comparable (the missing quantity is named). Flow densities use the channel cross-section: P5 0.01162 m^2 (annulus pi (r_out^2 - r_in^2); radii measured (design dimensions, evidence level 3) -> our arithmetic); ECHT 0.002827 m^2 (annulus pi h (D_out - h) with D_out = the stated OD (reading A); our arithmetic; upper bound; declared uncertainty: forced assumption A1 channel radii: 100 mm = channel OD (r 40/50 mm) vs BN piece OD (unknown wall thickness) (repository status HISTORICAL_UNSUPPORTED)); CAMILA 0.001847 m^2 (annulus pi D_mean w; our arithmetic); Z-70 0.002686 m^2 (annulus pi/4 (D_out^2 - D_in^2); our arithmetic).
 
 E13 (Z-70): anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'. The sustained reference point is not an extinction value and enters no axis, threshold or status.
 
@@ -267,4 +267,8 @@ python docs/architecture_comparison/overlays/hall_sustainment/build_hall_sustain
 python -m pytest -q tests/test_overlay_hall_sustainment.py
 ```
 
-Inputs are pinned by sha256 (`inputs` in the JSON). A changed input fails the pin and asks for a deliberate re-pin and regeneration.
+Inputs are pinned by sha256 (`inputs` in the JSON). An input present with a different sha256 is an error (never skipped); it needs a deliberate re-pin and regeneration.
+
+Input re-pins (`input_repin_log` in the JSON):
+
+- 2026-09-26 `hall_sustainment_matrix` ac7970917f (sha256 248aef28cfe6...) -> f458811a57 (sha256 76bba594eb11...): lane 09 repair (merged in 49604b6eee): ECHT-N2 items E03/E04 carry repository_status HISTORICAL_UNSUPPORTED (lane 31) with forced assumptions A1/A3/A5/A6; no item id, outcome, level/class, flow/V/B value, implication or derived check changed. Effect: no case status, coverage, finding or count changed (F-9 and the 9 air-case statuses unchanged); the ECHT channel area (E03/E04 flow per channel cross-section) now carries forced assumption A1 as declared_uncertainty, and ECHT-OD-READING names it.
