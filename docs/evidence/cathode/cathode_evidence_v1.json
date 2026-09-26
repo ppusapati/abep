@@ -1,0 +1,1502 @@
+{
+ "id": "cathode_evidence_v1",
+ "schema_version": 1,
+ "title": "Cathode / neutralizer evidence dossier for an air-breathing Hall system (published / open evidence only)",
+ "created_on": "2026-09-26",
+ "base_commit": "efc4a4e",
+ "status": "EVIDENCE DOSSIER ONLY. No simulator parameter, threshold, frozen dataset, chemistry table or campaign file is changed by this file. It is not a design input until the owner decides so.",
+ "companion": "docs/evidence/cathode/CATHODE_DOSSIER.md (human-readable summary; this JSON is authoritative)",
+ "policy": {
+  "evidence_rules": "docs/EVIDENCE.md and CLAUDE.md rules 6 and 10. Evidence level (1-7) describes the source; quantity_type describes what happened to the number. They are orthogonal.",
+  "quantity_types": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"],
+  "level_assignment_in_this_dossier": "No Vyovrinda cathode exists, so no entry is level 1 or 2. Level 3 = primary experimental report on hardware of the same cathode concept (transfer to Vyovrinda hardware is an applicability limitation, not a level change). Level 5 = textbook, review, or a value quoted by a paper from another primary that this lane did not retrieve, or a value known only from a document title. Level 7 = repository constant with no located source.",
+  "verification_vocabulary": {
+   "read_in_retrieved_text": "value read by this lane in the retrieved document (sha256 recorded in sources)",
+   "secondary_citation": "read in a retrieved document that attributes it to another primary that this lane did not retrieve",
+   "title_only_verify": "number appears in the title of a document whose bibliographic record was accessed; body not retrieved (paywall or human-verification page). Must be verified before use",
+   "repo_audit_record": "taken from an existing repository audit JSON that cites an open primary; not re-read by this lane",
+   "derived_by_this_lane": "arithmetic by this lane on other entries (inputs listed in derived_from)",
+   "code_constant": "value read from repository source code"
+  },
+  "numbers_not_entered": "Numbers seen only in search-engine result summaries (not in a retrieved document or title) are NOT entered as values; the studies are listed under leads_not_entered with what must be read.",
+  "access_rules_followed": "Published / openly accessible sources only. Pages that returned a paywall, a login redirect, a bot challenge or a human-verification page were not bypassed and are recorded as not retrieved. No person or lab was contacted. LXCat not used.",
+  "retrieved_files_not_committed": "Source PDFs were read from a scratch directory and are not redistributed; their sha256 is recorded so the exact file read can be re-identified."
+ },
+ "baseline_decision": {
+  "system_baseline_cathode": "Xe-fed hollow cathode",
+  "atmospheric_gas_fed_cathode_operation": "UNRESOLVED",
+  "statement": "The system baseline stays a Xe-fed hollow cathode (thermionic; LaB6 or BaO-W emitter). Atmospheric-gas-fed cathode operation (air, N2, O2, or a subset of the intake flow) is UNRESOLVED for the RFP use case: no retrieved source demonstrates a thermionic hollow cathode operating on air/N2/O2, and the air-fed plasma cathodes that have been demonstrated (microwave AMPCAT, RF NewOrbit) are at <= 0.9 A, with continuous operation reported only up to 2 h (AMPCAT) and no life test, versus a Hall cathode that must carry the full discharge current I_d (TBD) for > 15,000 h of firing.",
+  "does_not_claim": "This dossier does not claim ABEP closure, an architecture winner, a cathode selection, or any Hall transport admission. It does not propose retuning any model."
+ },
+ "rfp_envelope_as_quoted": {
+  "source_id": "rfp_via_claude_md",
+  "altitude": "180-230 km",
+  "thrust": "12-25 mN",
+  "power": "< 1.5 kW",
+  "mass": "< 40 kg",
+  "mission": "26,000 h mission, > 15,000 h firing",
+  "propulsion": "Hall preferred; air + Xe",
+  "note": "Quoted from the CLAUDE.md transcription of RFP DTDF/06/13516/DSP/ABEP/X/L/M/01. The RFP document itself is not in the repository; verify against the RFP before quoting externally. These are requirements, not evidence, and are kept as text."
+ },
+ "electron_current_requirement": {
+  "principle": [
+   {
+    "id": "req.claim.hall_cathode_supplies_both",
+    "claim": "The hollow cathode in a Hall thruster provides electrons for both ionization of the propellant gas and neutralization of the beam; Hall thrusters need higher cathode currents than ion thrusters at the same power because they run at lower Isp.",
+    "source_id": "goebel_katz_2008_ch6",
+    "locator": "Sec. 6.2, book p. 248 (pdf p. 6)",
+    "quantity_type": "measured",
+    "evidence_level": 5,
+    "verification": "read_in_retrieved_text",
+    "note": "Qualitative textbook statement; quantity_type 'measured' refers to the underlying thruster practice it summarizes."
+   },
+   {
+    "id": "req.claim.neutralizer_equals_beam",
+    "claim": "Neutralizer cathodes in ion thrusters emit electrons at a current equal to the beam current (for context: a gridded architecture would size the neutralizer on I_b, a Hall architecture sizes the cathode on I_d).",
+    "source_id": "goebel_katz_2008_ch6",
+    "locator": "Sec. 6.2, book p. 248 (pdf p. 6)",
+    "quantity_type": "measured",
+    "evidence_level": 5,
+    "verification": "read_in_retrieved_text"
+   },
+   {
+    "id": "req.claim.emission_includes_keeper",
+    "claim": "When a keeper is run in steady state, the cathode's total emission current is the keeper current plus the thruster current it supplies (NEXT neutralizer: total emission = keeper current + beam current).",
+    "source_id": "herman_2009_next_neutralizer",
+    "locator": "pdf p. 10",
+    "quantity_type": "measured",
+    "evidence_level": 3,
+    "verification": "read_in_retrieved_text"
+   }
+  ],
+  "symbolic_relations": [
+   "E1  I_emit = I_d + I_k   (I_k = steady keeper current; I_k = 0 if the keeper is switched off after ignition). For a Hall thruster the cathode supplies I_d = I_b + I_e,channel.",
+   "E2  I_d = P_d / V_d",
+   "E3  P_d = eta_PPU,anode * (P_EP,max - sum_j P_aux,j / eta_PPU,j),  with P_EP,max bounded by the RFP '< 1.5 kW' (definition of what the 1.5 kW covers: TBD against the RFP text) and P_aux,j = magnets, cathode heater and keeper, compressor, other loads.",
+   "E4  I_b = eta_b * I_d  (current utilization)  =>  I_d = I_b / eta_b",
+   "E5  I_emit,max = max over the operating envelope of (P_d / V_d) + I_k;  I_emit,min = min over the envelope (sets the low-current flow-margin / plume-mode limit).",
+   "E6  m_Xe,cathode = mdot_c * t_fire,  t_fire > 15,000 h (RFP), plus start-up and conditioning flow; mdot_c chosen for spot-mode margin at I_emit,min (flow margin shrinks with orifice erosion, see herman_2009_next_neutralizer).",
+   "E7  Air-fed plasma cathode (if ever pursued): mdot_c,air = M_eff * I_emit / (e * U_i) and P_c = I_emit / C_e, with U_i and C_e defined as in tisaev_2024_ampcat Eq. (1).",
+   "E8  Thermionic emitter: J = I_emit / A_emit;  J = A_R * T^2 * exp(-e*phi / (k*T)) with phi = phi(T, coverage); coverage depends on p_O,emitter = f_shield * p_O,local (f_shield: no located source; TBD).",
+   "E9  Cathode life requirement: t_life,cathode >= t_fire (> 15,000 h) * qualification margin (margin TBD); ignition cycles N_ign >= mission firing schedule (TBD)."
+  ],
+  "numeric_evaluation": {
+   "id": "req.tbd.numeric_current",
+   "value": null,
+   "tbd": "TBD - requires (a) Vyovrinda V_d and P_d at the RFP operating points, which need either an admitted Hall transport closure (gate 3 is FAIL; the credible closure set is empty; all absolute Hall numbers are withdrawn) or Vyovrinda hardware measurements; (b) the PPU efficiency and auxiliary power allocation inside the 1.5 kW cap; (c) the steady keeper policy (I_k). No numeric I_d is derived here from thrust, because that would require a Hall closure that does not exist."
+  },
+  "context_points_not_requirements": [
+   "lab6.i.joussot_nominal (laboratory LaB6 cathode normally used with a 1.5 kW-class SPT-100-derived Hall thruster)",
+   "lab6.life.astraeus_title (heaterless LaB6 cathode for a sub-kW magnetically shielded Hall thruster; current not entered, verify)",
+   "rf.i.watanabe_3p3A (RF plasma cathode, claimed sufficient for a 1-kW class Hall thruster)",
+   "sys.p5.cathode_xe_flow (Xe cathode flow used with a 5-kW-class Hall thruster running on N2)"
+  ]
+ },
+ "candidates": [
+  {
+   "id": "xe_lab6_hollow_cathode",
+   "name": "Xe-fed LaB6 hollow cathode (thermionic, bulk emitter)",
+   "status": "BASELINE candidate (Xe-fed)",
+   "summary": "Bulk emitter; tolerates about two orders of magnitude more O2/H2O impurity than BaO-W at equal emission current density (textbook statement from diode tests); runs hotter (about 1600 degC class). Hall-thruster flight heritage with LaB6 cathodes is reported (Russian SPT family). Life basis is a model plus one title-level 13,011 h demonstration for a heaterless sub-kW Hall cathode (body not retrieved).",
+   "parameters": {
+    "demonstrated_emission_current": [
+     {
+      "id": "lab6.i.joussot_range",
+      "quantity": "discharge current range demonstrated (diode configuration, flat-disk LaB6 laboratory cathode)",
+      "value": [2, 19], "unit": "A",
+      "conditions": "Xe 0.2-0.6 mg/s; flat metal anode; no keeper (igniter only)",
+      "source_id": "joussot_2017", "locator": "Abstract, pdf p. 2",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "uncertainty": "per-point uncertainties in the paper body, not transcribed here",
+      "applicability": "laboratory cathode, diode test, xenon only, facility conditions; required life of this cathode < 200 h (see lab6.life.joussot_required)"
+     },
+     {
+      "id": "lab6.i.joussot_nominal",
+      "quantity": "nominal operating point of the same laboratory cathode",
+      "value": 5, "unit": "A",
+      "conditions": "at 0.4 mg/s Xe; cathode normally used with the SPT-100-ML (1.5 kW Hall thruster derived from SPT-100)",
+      "source_id": "joussot_2017", "locator": "Abstract pdf p. 2; Sec. 2.2 pdf p. 4",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "note": "Reported nominal condition, not a requirement for Vyovrinda."
+     },
+     {
+      "id": "lab6.i.zsch_anode",
+      "quantity": "anode (extracted) current demonstrated with a LaB6 insert (triode)",
+      "value": 2.5, "unit": "A", "qualifier": "up to",
+      "conditions": "keeper current 3-7 A; Xe 3-7 sccm; spot mode; Giessen adaptable neutralizer platform",
+      "source_id": "zschaetzsch_2022", "locator": "Sec. V.A, pdf p. 6",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.i.typical_hcn_secondary",
+      "quantity": "tabulated 'typical HCN LaB6' cathode current",
+      "value": 4.0, "unit": "A",
+      "conditions": "Xe 0.2 mg/s; total power 130 W; tabulated power cost 33 W/A (see lab6.p.typical_hcn_cost)",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 6, p. 735 (pdf p. 14), citing Lev et al. 2019 [32]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "note": "Primary (Lev et al., Rev. Mod. Plasma Phys. 2019) not retrieved (paywall)."
+     }
+    ],
+    "keeper_startup_power": [
+     {
+      "id": "lab6.start.joussot_heater_ignition",
+      "quantity": "heater power at the ignition setting (heater current 15 A)",
+      "value": 184.5, "unit": "W",
+      "conditions": "emitter about 1420 degC at this setting; ignition allowed above about 1300 degC; tungsten heater coil behind the pellet",
+      "source_id": "joussot_2017", "locator": "Sec. 3, pdf p. 7",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "applicability": "laboratory flat-disk design with heater in contact with the pellet"
+     },
+     {
+      "id": "lab6.start.joussot_ignition_temperature",
+      "quantity": "emitter temperature above which ignition is allowed",
+      "value": 1300, "unit": "degC", "qualifier": "about",
+      "source_id": "joussot_2017", "locator": "Sec. 3, pdf p. 7",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.start.zsch_heater_max",
+      "quantity": "heater power during the 8-15 min heating phase",
+      "value": 400, "unit": "W", "qualifier": "up to",
+      "conditions": "ignition then with keeper voltage below 60 V at 5 sccm Xe; authors attribute the high power to a not fully optimized thermal design and massive heater",
+      "source_id": "zschaetzsch_2022", "locator": "Sec. V.A, pdf p. 6",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.start.zsch_keeper_min",
+      "quantity": "minimum keeper current to sustain self-heating",
+      "value": 3, "unit": "A",
+      "conditions": "most stable settings: keeper 5 A at 3-5 sccm Xe",
+      "source_id": "zschaetzsch_2022", "locator": "Sec. V.A, pdf p. 6",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.start.zsch_model_power",
+      "quantity": "keeper/plasma power needed to hold the minimum LaB6 insert temperature (thermal model of that device)",
+      "value": 100, "unit": "W", "qualifier": "about",
+      "source_id": "zschaetzsch_2022", "locator": "Sec. IV, pdf p. 4",
+      "quantity_type": "model-derived", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "note": "COMSOL thermal model of that specific device, validated against its own thermocouples (< 6-13 % deviation stated)."
+     },
+     {
+      "id": "lab6.start.heaterless_ignitions_title",
+      "quantity": "heaterless ignitions demonstrated on a proto-flight compact heaterless LaB6 hollow cathode",
+      "value": 25000, "unit": "ignitions",
+      "source_id": "becatti_2021_title", "locator": "article title (OSTI record 1660475)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "title_only_verify", "verify": true,
+      "note": "Body not retrieved (ScienceDirect 403; ADS human-verification page). Operating current and ignition conditions: TBD - read the paper."
+     }
+    ],
+    "steady_heater_power": [
+     {
+      "id": "lab6.claim.self_heating",
+      "claim": "Hollow cathodes operate in a self-heating mode in which the external heater is turned off during operation and the insert is heated by the plasma (orifice, ion or electron heating).",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.1, book p. 247 (pdf p. 5)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.heater.joussot_maintained",
+      "quantity": "heater power maintained during diode experiments to avoid switch-off at low discharge current",
+      "value": 185, "unit": "W", "qualifier": "about",
+      "conditions": "self-heating without external heater reached at I_d = 5 A; insufficient at lower currents (flat-disk design)",
+      "source_id": "joussot_2017", "locator": "pdf p. 8",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.heater.joussot_selfheat_current",
+      "quantity": "discharge current at which that cathode runs self-heated (no external heating)",
+      "value": 5, "unit": "A",
+      "source_id": "joussot_2017", "locator": "pdf p. 8",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "gas_flow": [
+     {
+      "id": "lab6.flow.joussot_nominal",
+      "quantity": "nominal Xe flow (5 A nominal)",
+      "value": 0.4, "unit": "mg/s",
+      "source_id": "joussot_2017", "locator": "Abstract pdf p. 2; Sec. 2.2 pdf p. 5",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.flow.joussot_range",
+      "quantity": "Xe flow range tested",
+      "value": [0.2, 0.6], "unit": "mg/s",
+      "source_id": "joussot_2017", "locator": "Abstract, pdf p. 2",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.flow.zsch_range",
+      "quantity": "Xe flow range with LaB6 insert",
+      "value": [3, 7], "unit": "sccm",
+      "source_id": "zschaetzsch_2022", "locator": "Sec. V.A, pdf p. 6",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.flow.typical_hcn_secondary",
+      "quantity": "tabulated 'typical HCN LaB6' Xe flow",
+      "value": 0.2, "unit": "mg/s",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 6, p. 735 (pdf p. 14), citing [32]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     },
+     {
+      "id": "lab6.purity.crudest_grade",
+      "quantity": "Xe purity that LaB6 cathodes tolerate 'without affecting emission or life' (textbook statement)",
+      "value": 99.99, "unit": "% purity",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.5, book p. 306 (pdf p. 64)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.purity.joussot_used",
+      "quantity": "Xe purity used in the Joussot tests (N48 grade)",
+      "value": 99.998, "unit": "% purity",
+      "source_id": "joussot_2017", "locator": "Sec. 2.2, pdf p. 5",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.p.typical_hcn_cost",
+      "quantity": "tabulated power cost of a 'typical HCN LaB6' cathode (1/C_e)",
+      "value": 33, "unit": "W/A",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 6, p. 735 (pdf p. 14), citing [32]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     }
+    ],
+    "emitter_temperature": [
+     {
+      "id": "lab6.t.goebel_10Acm2",
+      "quantity": "temperature for > 10 A/cm2 emission, polycrystalline LaB6 (work function about 2.67 eV)",
+      "value": 1650, "unit": "degC",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.3, book p. 254 (pdf p. 12), Fig. 6-7",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.t.joussot_19A",
+      "quantity": "LaB6 insert temperature at 19 A (thermocouple)",
+      "value": 1600, "unit": "degC", "qualifier": "about",
+      "conditions": "except at the lowest mass flow rate",
+      "source_id": "joussot_2017", "locator": "Abstract, pdf p. 2",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.t.joussot_preheat",
+      "quantity": "emitter temperature at heater current 15 A (184.5 W)",
+      "value": 1420, "unit": "degC", "qualifier": "about",
+      "source_id": "joussot_2017", "locator": "Sec. 3, pdf p. 7",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.wf.lafferty",
+      "quantity": "work function, LaB6 (Table 6-1 row citing Lafferty 1951), paired with D = 29",
+      "value": 2.66, "unit": "eV",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Table 6-1, book p. 252 (pdf p. 10)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     },
+     {
+      "id": "lab6.D.lafferty",
+      "quantity": "material-specific Richardson coefficient D for LaB6 (Table 6-1 row citing Lafferty 1951)",
+      "value": 29, "unit": "A/(cm2 K2)",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Table 6-1, book p. 252 (pdf p. 10)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "note": "Unit inferred from the universal Richardson value 120 A/(cm2 K2) used in the same table; the unit header was not rendered in the text extraction (verify)."
+     },
+     {
+      "id": "lab6.wf.other_rows",
+      "quantity": "other scalar LaB6 work functions in Table 6-1 (2.87 eV with D = 110 [Jacobson & Storms 1978]; 2.91 eV with A = 120 [Storms & Mueller])",
+      "value": [2.87, 2.91], "unit": "eV",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Table 6-1, book p. 252 (pdf p. 10)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "note": "A fourth row gives phi = 2.66 + 1.23e-4 T with A = 120. The spread (2.66-2.91 eV) is a real source disagreement (surface stoichiometry dependent), carried in the uncertainty register (U08)."
+     }
+    ],
+    "environmental_exposure": [
+     {
+      "id": "lab6.env.o2_degrade_1e-5",
+      "quantity": "O2 partial pressure required to degrade LaB6 emission at emitter temperatures below 1440 degC (diode tests)",
+      "value": 1e-5, "unit": "Torr", "qualifier": "order of magnitude ('10^-5-torr range')",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.5, book p. 306 (pdf p. 64), Fig. 6-49 (from ref. [18] Goebel et al. JPP 2007)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "applicability": "O2 (not atomic O) in a diode test, not in a hollow-cathode plasma"
+     },
+     {
+      "id": "lab6.env.o2_withstand_1570C",
+      "quantity": "O2 partial pressure withstood without emission degradation at 1570 degC",
+      "value": 1e-4, "unit": "Torr", "qualifier": "up to",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.5, book p. 306 (pdf p. 64)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     },
+     {
+      "id": "lab6.env.o2_withstand_temperature",
+      "quantity": "emitter temperature for the 1e-4 Torr O2 tolerance statement",
+      "value": 1570, "unit": "degC",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.5, book p. 306 (pdf p. 64)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     },
+     {
+      "id": "lab6.env.impurity_ratio",
+      "quantity": "feed-gas impurity tolerance of LaB6 relative to BaO-W dispenser cathodes at the same emission current density",
+      "value": 100, "unit": "ratio (two orders of magnitude)",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.3 book p. 254 (pdf p. 12); Sec. 6.8.5 book p. 306 (pdf p. 64)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.env.o2_plasma_background",
+      "quantity": "O2 background pressure in which the textbook authors ran LaB6 cathodes to produce pure oxygen plasmas",
+      "value": 1e-3, "unit": "Torr",
+      "conditions": "emission 5-10 A/cm2; temperature raised to just over 1600 degC to avoid lanthanum-oxide poisoning",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.5, book p. 306 (pdf p. 64)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text",
+      "applicability": "plasma-source cathode in an O2 background; NOT a hollow cathode fed with O2 and NOT an electric-propulsion life demonstration"
+     },
+     {
+      "id": "lab6.env.o2_plasma_current_density",
+      "quantity": "LaB6 emission current density during the pure-O2 plasma operation",
+      "value": [5, 10], "unit": "A/cm2",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.5, book p. 306 (pdf p. 64)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.env.o2_plasma_temperature",
+      "quantity": "LaB6 temperature needed to avoid lanthanum-oxide poisoning in that O2 plasma",
+      "value": 1600, "unit": "degC", "qualifier": "just over",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.5, book p. 306 (pdf p. 64)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.claim.hot_air_water_exposure",
+      "claim": "Hot, operating LaB6 cathodes were exposed to atmospheric pressures of air and of water vapour; after pump-out and reheating they started normally. Water and air poisoning curves of LaB6 lie at much higher partial pressures than O2 (off the graph of Fig. 6-49).",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.5, book p. 306 (pdf p. 64)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text",
+      "note": "Anecdotal (no exposure times, no emission data)."
+     },
+     {
+      "id": "lab6.env.air_fraction_in_xe",
+      "quantity": "air-mixture fraction (0.48 O2 + 0.52 N2) in xenon fed to a LaB6 hollow cathode, reported to cause sparking in the cathode plume and significant erosion of internal components within the short test duration",
+      "value": 12, "unit": "% (air mixture fraction, xenon balance)", "qualifier": "up to",
+      "source_id": "tisaev_2024_ampcat", "locator": "Sec. 1, p. 723 (pdf p. 2), citing the AETHER project paper [11]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "note": "Primary (Andreussi et al., CEAS Space J. 2022) not retrieved: Springer login redirect; project-site copies behind a bot challenge. Basis (mass or molar fraction), current, duration and emitter temperature: TBD - read the primary."
+     },
+     {
+      "id": "lab6.claim.poisoning_air_pressure",
+      "claim": "BaO-W and LaB6 emitters undergo surface poisoning with oxygen exposure, with a significant drop in current density at air pressures of order 1e-3 mbar; hollow cathodes are therefore judged not applicable as neutralizers operating on a subset of an air intake flow.",
+      "source_id": "tisaev_2024_ampcat", "locator": "Sec. 1, p. 723 (pdf p. 2), citing Gallagher 1969 [16] and Cronin 1979 [17]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "note": "Literature judgement by the AMPCAT authors; compare lab6.env.o2_plasma_background (LaB6 operated in 1e-3 Torr O2 at > 1600 degC). The two statements concern different conditions; see U06."
+     },
+     {
+      "id": "lab6.env.atomic_oxygen",
+      "quantity": "LaB6 poisoning threshold for atomic oxygen (VLEO ambient / air plume)",
+      "value": null,
+      "tbd": "TBD - no retrieved source gives atomic-O (as opposed to O2 or H2O) poisoning data for LaB6. Requires a hardware test with an atomic-O source (gap G02)."
+     },
+     {
+      "id": "lab6.env.nitrogen",
+      "quantity": "effect of N2 / N exposure (backflow from an N2-rich Hall plume) on LaB6 emission",
+      "value": null,
+      "tbd": "TBD - no retrieved source. Requires a hardware test (gap G03)."
+     }
+    ],
+    "recovery_cleaning": [
+     {
+      "id": "lab6.claim.no_conditioning",
+      "claim": "LaB6 cathodes do not require any significant conditioning or activation procedure (unlike dispenser cathodes); after atmospheric air or water-vapour exposure they restarted normally after pump-out and reheating.",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.5, book p. 306 (pdf p. 64)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.claim.temperature_margin",
+      "claim": "Raising emitter temperature is the stated mitigation against oxide poisoning in O2-bearing plasma (lanthanum-oxide formation avoided at just over 1600 degC in 1e-3 Torr O2). The cost is higher evaporation (life) and heater/keeper power; the trade is not quantified in the retrieved sources.",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.5, book p. 306 (pdf p. 64)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "lifetime_basis": [
+     {
+      "id": "lab6.life.astraeus_title",
+      "quantity": "operating time demonstrated by a proto-flight compact heaterless LaB6 hollow cathode (JPL ASTRAEUS / MaSMi low-power magnetically shielded Hall thruster cathode)",
+      "value": 13011, "unit": "h",
+      "source_id": "conversano_2022_title", "locator": "article title",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "title_only_verify", "verify": true,
+      "note": "Body not retrieved (ScienceDirect 403; ADS human-verification page). Discharge current, ignition count, gas, facility, keeper behaviour: TBD - read the paper. This is the closest located demonstration to the RFP class, but it is xenon-only in a vacuum facility."
+     },
+     {
+      "id": "lab6.life.model_tens_kh",
+      "claim": "LaB6 insert life from an evaporation model (90 % of insert evaporable, thermally limited regime) is 'tens of thousands of hours', larger for larger cathode diameters; estimates are mostly valid relative to each other.",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.4, book p. 303 (pdf p. 61), Fig. 6-47",
+      "quantity_type": "model-derived", "evidence_level": 5, "verification": "read_in_retrieved_text",
+      "note": "Model, not a demonstration. Fig. 6-47 values not digitized in this lane."
+     },
+     {
+      "id": "lab6.life.model_vs_nstar",
+      "claim": "Projected LaB6 life exceeds the NSTAR dispenser-cathode life by nearly an order of magnitude at discharge currents below 15 A (model comparison).",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.4, book p. 304 (pdf p. 62), Fig. 6-48",
+      "quantity_type": "model-derived", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "lab6.life.heritage_count",
+      "quantity": "Hall thrusters (mostly Russian) operated or operating in space with LaB6 cathodes over the last 45 years",
+      "value": 300, "unit": "thrusters", "qualifier": "more than",
+      "source_id": "joussot_2017", "locator": "Sec. 1, pdf p. 2, citing their ref. [3]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "note": "Heritage count, not a life value; per-unit hours and environment not given."
+     },
+     {
+      "id": "lab6.life.joussot_required",
+      "quantity": "lifetime required of the Joussot laboratory cathode (no boron-diffusion barrier fitted)",
+      "value": 200, "unit": "h", "qualifier": "below",
+      "source_id": "joussot_2017", "locator": "Sec. 2.2, pdf p. 4",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "note": "Shows that laboratory LaB6 data in this dossier are not life demonstrations."
+     }
+    ]
+   }
+  },
+  {
+   "id": "xe_bao_w_hollow_cathode",
+   "name": "Xe-fed BaO-W impregnated (dispenser) hollow cathode",
+   "status": "candidate (Xe-fed); purity-sensitive",
+   "summary": "Lowest work function of the flight-heritage emitters (about 2.06 eV, about 1000 degC for 10 A/cm2). Longest demonstrated xenon hollow-cathode lives (27,800 h at 12 A; NEXT LDT 51,184 h; NSTAR ELT about 30,000 h). Highly sensitive to O2 and H2O (propulsion-grade 99.9995 % Xe; 10 ppb purifier in the ISS life test); end-of-life by barium tungstate formation.",
+   "parameters": {
+    "demonstrated_emission_current": [
+     {
+      "id": "baow.i.iss_life",
+      "quantity": "emission current held for the 27,800 h ISS plasma-contactor hollow-cathode life test",
+      "value": 12, "unit": "A",
+      "conditions": "diode configuration, planar anode about 6 cm downstream; xenon",
+      "source_id": "sarver_verhey_1997", "locator": "Abstract and Introduction, pdf p. 3; Test Condition, pdf p. 4",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.i.next_beam_range",
+      "quantity": "NEXT LDT beam current range across throttle segments (neutralizer emits this plus its keeper current); Table 1 column is headed 'Operating condition' and is read as beam current, beam voltage (verify)",
+      "value": [1.0, 3.52], "unit": "A",
+      "source_id": "mackey_2017_next_inserts", "locator": "Table 1, pdf p. 8",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.i.next_keeper",
+      "quantity": "NEXT neutralizer fixed keeper current (all operating conditions)",
+      "value": 3, "unit": "A",
+      "source_id": "herman_2009_next_neutralizer", "locator": "pdf p. 10",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.i.next_total_emission",
+      "quantity": "NEXT neutralizer total emission current range (keeper + beam)",
+      "value": [4.0, 6.52], "unit": "A",
+      "source_id": "herman_2009_next_neutralizer", "locator": "derived: baow.i.next_keeper + baow.i.next_beam_range",
+      "quantity_type": "inferred", "evidence_level": 3, "verification": "derived_by_this_lane",
+      "derived_from": ["baow.i.next_keeper", "baow.i.next_beam_range"]
+     },
+     {
+      "id": "baow.i.nstar_discharge_th15",
+      "quantity": "NSTAR discharge cathode current at the TH15 full-power point",
+      "value": 13.1, "unit": "A",
+      "conditions": "3.7 sccm Xe",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.4, book p. 258 (pdf p. 16)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.i.nstar_neutralizer_th15",
+      "quantity": "NSTAR neutralizer cathode current at TH15 as given in two places of the same chapter",
+      "value": [3.2, 3.76], "unit": "A",
+      "conditions": "3.2 A = 1.76 A beam + 1.5 A keeper (book p. 275); 3.76 A at 3.5 sccm Xe (book p. 277, citing [37])",
+      "source_id": "goebel_katz_2008_ch6", "locator": "book pp. 275, 277 (pdf pp. 33, 35)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text",
+      "note": "Two values for nominally the same point; both carried (U13)."
+     }
+    ],
+    "keeper_startup_power": [
+     {
+      "id": "baow.keeper.next_voltage",
+      "quantity": "NEXT neutralizer keeper voltage during the first 10 kh at full power (decreasing)",
+      "value": [10.7, 11.2], "unit": "V",
+      "source_id": "herman_2009_next_neutralizer", "locator": "Neutralizer Performance, pdf p. 12",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.keeper.next_power_inferred",
+      "quantity": "NEXT neutralizer steady keeper power (3 A x 10.7-11.2 V)",
+      "value": [32.1, 33.6], "unit": "W",
+      "source_id": "herman_2009_next_neutralizer", "locator": "derived from pdf pp. 10, 12",
+      "quantity_type": "inferred", "evidence_level": 3, "verification": "derived_by_this_lane",
+      "derived_from": ["baow.i.next_keeper", "baow.keeper.next_voltage"]
+     },
+     {
+      "id": "baow.keeper.nstar_neutralizer",
+      "quantity": "NSTAR neutralizer keeper current at TH15",
+      "value": 1.5, "unit": "A",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.5, book p. 275 (pdf p. 33)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.start.iss_ignition_ocv",
+      "quantity": "open-circuit ignition voltage used for all ignitions before hour 23,776 of the ISS life test",
+      "value": 55, "unit": "V", "qualifier": "<= (sign rendered ambiguously in the scanned PDF; read as '<=' because the report adds that later ignitions required higher voltages - verify)",
+      "source_id": "sarver_verhey_1997", "locator": "Test Configuration, pdf p. 4",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text", "verify": true
+     },
+     {
+      "id": "baow.start.echt_hcn252_heater_current",
+      "quantity": "IonTech HCN-252 (BaO) heater current in the ECHT N2 tests (heater not switched off: 'not self-heating')",
+      "value": 8, "unit": "A",
+      "source_id": "marchioni_2020_via_repo_audit", "locator": "echt_n2_evidence_audit_v1.json cathode.heater_keeper (thesis pp. 65-66, 96, 98)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "repo_audit_record"
+     },
+     {
+      "id": "baow.start.echt_hcn252_heater_voltage",
+      "quantity": "IonTech HCN-252 heater voltage in the ECHT N2 tests",
+      "value": [8.5, 9.0], "unit": "V",
+      "source_id": "marchioni_2020_via_repo_audit", "locator": "echt_n2_evidence_audit_v1.json cathode.heater_keeper",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "repo_audit_record"
+     },
+     {
+      "id": "baow.start.echt_hcn252_heater_power_inferred",
+      "quantity": "IonTech HCN-252 heater power (8 A x 8.5-9 V)",
+      "value": [68, 72], "unit": "W",
+      "source_id": "marchioni_2020_via_repo_audit", "locator": "derived",
+      "quantity_type": "inferred", "evidence_level": 3, "verification": "derived_by_this_lane",
+      "derived_from": ["baow.start.echt_hcn252_heater_current", "baow.start.echt_hcn252_heater_voltage"]
+     },
+     {
+      "id": "baow.start.echt_keeper_voltage",
+      "quantity": "HCN-252 keeper voltage in normal operation (runaway to 30-40 V before quench observed; keeper limited to 0.3 A at ignition)",
+      "value": [15, 20], "unit": "V",
+      "source_id": "marchioni_2020_via_repo_audit", "locator": "echt_n2_evidence_audit_v1.json cathode.heater_keeper",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "repo_audit_record",
+      "note": "Emitter believed degraded by the thesis author (repo audit cathode.condition)."
+     }
+    ],
+    "steady_heater_power": [
+     {
+      "id": "baow.claim.self_heating",
+      "claim": "Hollow cathodes operate in a self-heating mode with the external heater turned off; orifice heating is used primarily in neutralizer cathodes, where discharge currents are very low.",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.1, book p. 247 (pdf p. 5)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.heater.echt_continuous",
+      "quantity": "steady heater power of the HCN-252 laboratory cathode during ECHT N2 tests (heater kept on)",
+      "value": [68, 72], "unit": "W",
+      "source_id": "marchioni_2020_via_repo_audit", "locator": "same as baow.start.echt_hcn252_heater_power_inferred",
+      "quantity_type": "inferred", "evidence_level": 3, "verification": "derived_by_this_lane",
+      "derived_from": ["baow.start.echt_hcn252_heater_current", "baow.start.echt_hcn252_heater_voltage"]
+     }
+    ],
+    "gas_flow": [
+     {
+      "id": "baow.flow.iss_start",
+      "quantity": "Xe flow at the start of the ISS life test",
+      "value": 4.2, "unit": "sccm", "qualifier": "approximately",
+      "source_id": "sarver_verhey_1997", "locator": "Test Condition, pdf p. 4",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.flow.iss_end",
+      "quantity": "Xe flow required by the end of the ISS life test (flow raised from about hour 16,700 to hold anode voltage and noise)",
+      "value": 4.7, "unit": "sccm",
+      "source_id": "sarver_verhey_1997", "locator": "Test Chronology, pdf p. 5",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.flow.nstar_discharge",
+      "quantity": "NSTAR discharge cathode Xe flow at TH15",
+      "value": 3.7, "unit": "sccm",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.4, book p. 258 (pdf p. 16)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.flow.echt_argon",
+      "quantity": "argon flow to the HCN-252 cathode during ECHT N2 tests (7-36 % of anode mass flow; raised ad hoc to stop keeper-voltage runaway)",
+      "value": [0.15, 0.74], "unit": "mg/s (Ar)",
+      "source_id": "marchioni_2020_via_repo_audit", "locator": "echt_n2_evidence_audit_v1.json cathode.flow_mgps (thesis Table 6.1 p. 98)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "repo_audit_record"
+     },
+     {
+      "id": "baow.purity.propulsion_grade",
+      "quantity": "'propulsion-grade' xenon purity specified by some users of BaO dispenser cathodes",
+      "value": 99.9995, "unit": "% purity",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.3, book p. 254 (pdf p. 12)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.purity.iss_purifier",
+      "quantity": "purifier output level of oxygen-containing contaminants in the ISS life-test feed (maximum inlet contamination 15 ppm; purifier removed at hour 23,779)",
+      "value": 10, "unit": "ppb",
+      "source_id": "sarver_verhey_1998", "locator": "Feed System, pdf p. 6",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "emitter_temperature": [
+     {
+      "id": "baow.t.goebel_10Acm2",
+      "quantity": "surface temperature for 10 A/cm2 from a BaO-W porous tungsten dispenser",
+      "value": 1000, "unit": "degC", "qualifier": "about",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.3, book p. 253 (pdf p. 11), Fig. 6-7",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.wf.type_s",
+      "quantity": "work function of the 4:1:1 Type S BaO-W dispenser above about 800 degC",
+      "value": 2.06, "unit": "eV", "qualifier": "about",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.3, book p. 253 (pdf p. 11)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.t.iss_shutdown_criterion",
+      "quantity": "cathode tip temperature shut-down criterion in the ISS life test (disappearing-filament pyrometer)",
+      "value": 1350, "unit": "degC",
+      "source_id": "sarver_verhey_1997", "locator": "Hollow Cathode Characterization, pdf p. 6",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "note": "Pyrometer read about 100 degC above the tip thermocouple (pdf p. 4)."
+     },
+     {
+      "id": "baow.t.ssc_12A_fit",
+      "quantity": "insert temperature at 12 A from the fit T = 1010.6 I_d^0.146 K to Polk's measurements on the plasma-contactor cathode",
+      "value": 1453, "unit": "K",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Eq. (6.8-6), book p. 301 (pdf p. 59)",
+      "quantity_type": "inferred", "evidence_level": 5, "verification": "secondary_citation"
+     }
+    ],
+    "environmental_exposure": [
+     {
+      "id": "baow.env.o2_complete_poison",
+      "quantity": "O2 partial pressure that can completely poison a Type S 4:1:1 dispenser at 1100 degC (diode test)",
+      "value": 1e-7, "unit": "Torr", "qualifier": "order of magnitude ('10^-7-torr range')",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.5, book p. 305 (pdf p. 63), Fig. 6-49",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     },
+     {
+      "id": "baow.env.h2o_poison",
+      "quantity": "H2O partial pressure that poisons dispenser cathodes at temperatures below 1110 degC (diode test)",
+      "value": 1e-6, "unit": "Torr", "qualifier": "order of magnitude ('10^-6-torr range')",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.5, book p. 305 (pdf p. 63)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     },
+     {
+      "id": "baow.env.polk_ppm",
+      "quantity": "O2 level in the feed above which poisoning was observed in hollow cathodes, and then only at low plasma density (low current); the insert plasma tended to mitigate O2 poisoning",
+      "value": 10, "unit": "ppm (O2 in Xe feed)", "qualifier": "greater than",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.5, book p. 305 (pdf p. 63), citing Polk AIAA-2006-5153 [56]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "note": "Primary (Polk 2006) not retrieved; its abstract as indexed by a search engine reads differently (see leads_not_entered and U07)."
+     },
+     {
+      "id": "baow.claim.tungstate_migration",
+      "claim": "Feed-gas impurities reacting with the tungsten insert cause migration and deposition of tungsten or tungstates, changing surface structure and reducing BaO coverage; the plasma may aid formation of volatile tungsten oxides; life degradation by propellant impurities 'has yet to be fully identified and quantified'.",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.3 book p. 254 (pdf p. 12); Sec. 6.8.5 book p. 305 (pdf p. 63)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.claim.iss_oxygen_primary_cause",
+      "claim": "In the NASA Lewis hollow-cathode programme preceding the ISS life test, oxygen contamination of the emitter surfaces was believed to be the primary cause of performance and physical degradation; contamination-control protocols and feed-system fidelity fixed it.",
+      "source_id": "sarver_verhey_1997", "locator": "Introduction, pdf p. 3",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "baow.env.atomic_oxygen",
+      "quantity": "BaO-W poisoning threshold for atomic oxygen",
+      "value": null,
+      "tbd": "TBD - no retrieved source; given the 1e-7 Torr O2 diode sensitivity, a hardware test is required before BaO-W is considered anywhere an O-bearing plume or ambient can reach the emitter (gaps G02, G10)."
+     }
+    ],
+    "recovery_cleaning": [
+     {
+      "id": "baow.claim.conditioning",
+      "claim": "A cathode conditioning procedure was applied whenever atmospheric exposure was suspected; dispenser cathodes need conditioning/activation procedures that LaB6 does not.",
+      "source_id": "sarver_verhey_1997", "locator": "Test Procedures, pdf p. 4",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "note": "Second half of the claim: goebel_katz_2008_ch6 book p. 306."
+     },
+     {
+      "id": "baow.claim.barium_recycling",
+      "claim": "Barium recycling in the insert plasma reduced the effective evaporation rate and extended NSTAR cathode life beyond the depletion model; about 30 % of the original barium remained after the ELT.",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.3, book p. 301 (pdf p. 59), citing [53]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     },
+     {
+      "id": "baow.claim.eol_tungstates",
+      "claim": "The 27,800 h cathode failed during a restart attempt; destructive analysis found two forms of barium tungstate (a Ba-Ca tungstate whose formula is garbled in the scanned text, and BaWO4) over a majority of the emitter surface and tungsten deposition near the orifice; the insert state was consistent with expected impregnate chemistry (end of usable life).",
+      "source_id": "sarver_verhey_1998", "locator": "Abstract pdf p. 3; Results pdf pp. 6-8",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "lifetime_basis": [
+     {
+      "id": "baow.life.iss_27800",
+      "quantity": "ISS plasma-contactor hollow-cathode life test duration at 12 A (terminated when it failed to ignite)",
+      "value": 27800, "unit": "h",
+      "source_id": "sarver_verhey_1997", "locator": "Abstract pdf p. 3",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "applicability": "xenon, diode, laboratory facility, contamination-controlled feed; not a Hall thruster plume"
+     },
+     {
+      "id": "baow.life.next_ldt",
+      "quantity": "NEXT LDT high-voltage operation (neutralizer and discharge cathode); both inserts re-ignited twice at low voltage after the test",
+      "value": 51184, "unit": "h",
+      "source_id": "mackey_2017_next_inserts", "locator": "Abstract pdf p. 5; Sec. 3 pdf p. 8",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "applicability": "ion-thruster neutralizer (1.0-3.52 A beam + 3 A keeper), xenon, vacuum facility"
+     },
+     {
+      "id": "baow.life.nstar_elt",
+      "quantity": "NSTAR (DS1 flight spare) extended life test duration as given in the chapter text and ref. [38] title (the Fig. 6-24 caption says 30,152 h)",
+      "value": 30352, "unit": "h",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.9 book p. 306 (pdf p. 64); Fig. 6-24 caption book p. 280 (pdf p. 38)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "note": "Keeper was completely eroded by end of test (book p. 306). Internal 30,152 vs 30,352 h inconsistency carried (U13)."
+     },
+     {
+      "id": "baow.life.nstar_full_power",
+      "quantity": "NSTAR ELT hours at full power (followed by 16,352 h at much lower discharge currents)",
+      "value": 14000, "unit": "h", "qualifier": "about",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.3, book p. 301 (pdf p. 59)",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     },
+     {
+      "id": "baow.life.depletion_model_100kh",
+      "claim": "Barium-depletion model: Type S insert life of over 100,000 h is readily achievable if the insert is thick enough (worst-case model; life scales with insert thickness squared).",
+      "source_id": "goebel_katz_2008_ch6", "locator": "Sec. 6.8.3, book p. 300 (pdf p. 58), Eq. (6.8-5), Fig. 6-45",
+      "quantity_type": "model-derived", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     }
+    ]
+   }
+  },
+  {
+   "id": "c12a7_electride_cathode",
+   "name": "C12A7:e- electride cathode (hollow insert or planar emitter), heaterless variants",
+   "status": "immature; not a baseline candidate",
+   "summary": "Heaterless room-temperature start demonstrated on xenon; the electride melts at about 1230 degC, close to its emission temperature, and has low thermal conductivity; reported work functions disagree by more than a factor of four; oxygen incorporation converts it to an insulating ceramic at temperature. Longest reported operation about 1000 h (planar, krypton, secondary citation). No air/N2/O2-fed operation located.",
+   "parameters": {
+    "demonstrated_emission_current": [
+     {
+      "id": "c12a7.i.zsch_discharge",
+      "quantity": "discharge current of the longest-running C12A7 hollow insert in the Giessen platform (2nd generation insert)",
+      "value": 1.4, "unit": "A", "qualifier": "about",
+      "conditions": "up to 0.2 A anode current; 5-7 sccm Xe; heater support about 110 W needed; insert melts at about 2 A; total extraction limited to about 1.6 A",
+      "source_id": "zschaetzsch_2022", "locator": "Abstract pdf p. 1; Sec. V.B pdf pp. 6-7",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "c12a7.i.zsch_melt",
+      "quantity": "current at which the 2nd generation electride insert melts",
+      "value": 2, "unit": "A", "qualifier": "about",
+      "source_id": "zschaetzsch_2022", "locator": "Sec. V.B, pdf p. 6",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "c12a7.i.rand_orifice_comparison",
+      "quantity": "discharge current at which orifice-size temperature differences were compared (Rand electride hollow cathode, xenon)",
+      "value": 2.8, "unit": "A",
+      "source_id": "rand_2014", "locator": "Ch. 6 conclusions, pdf p. 112",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "keeper_startup_power": [
+     {
+      "id": "c12a7.start.zsch_gen1_keeper_voltage",
+      "quantity": "keeper voltage needed for ignition of the 1st generation insert (with 7-10 sccm Xe and a pressure surge; heater below 150 W)",
+      "value": 900, "unit": "V", "qualifier": "about",
+      "source_id": "zschaetzsch_2022", "locator": "Sec. V.B, pdf p. 6",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "c12a7.start.zsch_gen2_preheat",
+      "quantity": "preheat power reached at the end of a 1.5-2 h stepwise heating phase (insert slightly above 1000 degC); ignition then with keeper below 300 V at 5 sccm Xe",
+      "value": 175, "unit": "W", "qualifier": "approaching",
+      "source_id": "zschaetzsch_2022", "locator": "Sec. V.B, pdf p. 6",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "c12a7.claim.rand_heaterless",
+      "claim": "An electride hollow cathode was started from room temperature without a heater (xenon; later also on iodine); an identical cathode without the electride insert could not be started with the same procedure.",
+      "source_id": "rand_2014", "locator": "Abstract pdf p. 3; Sec. 4.1, pdf p. 67",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "steady_heater_power": [
+     {
+      "id": "c12a7.heater.zsch_support",
+      "quantity": "heater power needed to support the discharge (plasma heating insufficient for self-sustained heating; raising current would melt the insert)",
+      "value": 110, "unit": "W", "qualifier": "about",
+      "source_id": "zschaetzsch_2022", "locator": "Sec. V.B, pdf p. 7",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "gas_flow": [
+     {
+      "id": "c12a7.flow.zsch",
+      "quantity": "Xe flow of the 17 h C12A7 operation",
+      "value": [5, 7], "unit": "sccm",
+      "source_id": "zschaetzsch_2022", "locator": "Abstract, pdf p. 1",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "emitter_temperature": [
+     {
+      "id": "c12a7.t.melting_electride",
+      "quantity": "melting point of C12A7 in electride form",
+      "value": 1230, "unit": "degC",
+      "source_id": "zschaetzsch_2022", "locator": "Sec. II, pdf p. 2, citing their ref. [9]; same value in becke_2026 p. 2",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     },
+     {
+      "id": "c12a7.t.melting_nonelectride",
+      "quantity": "melting point of C12A7 in non-electride form",
+      "value": 1410, "unit": "degC", "qualifier": "up to",
+      "source_id": "becke_2026", "locator": "Introduction, p. 2 (pdf p. 2), citing [14-19]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     },
+     {
+      "id": "c12a7.t.richardson_1A",
+      "quantity": "Richardson-Dushman temperature for 1 A from a 0.5 cm2 emitter at phi = 2.4 eV (authors' estimate)",
+      "value": 1215, "unit": "degC",
+      "source_id": "becke_2026", "locator": "Introduction, p. 2 (pdf p. 2)",
+      "quantity_type": "model-derived", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "c12a7.t.zsch_model_melt_power",
+      "quantity": "keeper input power at which the 1st generation insert reaches its melting point (thermal model); tests then limited to 60 W (about 1100 degC)",
+      "value": 80, "unit": "W",
+      "source_id": "zschaetzsch_2022", "locator": "Sec. IV, pdf p. 4",
+      "quantity_type": "model-derived", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "c12a7.k.thermal_conductivity",
+      "quantity": "thermal conductivity of C12A7:e-",
+      "value": 4.5, "unit": "W/(m K)", "qualifier": "about",
+      "source_id": "zschaetzsch_2022", "locator": "Sec. II, pdf p. 2, citing their ref. [8]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     },
+     {
+      "id": "c12a7.wf.reitemeyer",
+      "quantity": "work function measured on an ATD C12A7:e- disk (low electron-density sample)",
+      "value": 0.52, "unit": "eV",
+      "uncertainty": "+/- 0.03 eV (statistical, as stated)",
+      "source_id": "reitemeyer_2019", "locator": "Abstract pdf p. 1; Sec. V pdf p. 7",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "c12a7.wf.rand",
+      "quantity": "work function measured on amorphous C12A7 electride (one-step process)",
+      "value": 0.76, "unit": "eV",
+      "source_id": "rand_2014", "locator": "Abstract, pdf p. 3",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "c12a7.wf.thermionic_range",
+      "quantity": "work function range for thermionic emission quoted for C12A7:e- by the iodine-compatibility study",
+      "value": [2.4, 2.96], "unit": "eV",
+      "source_id": "becke_2026", "locator": "Introduction, p. 2 (pdf p. 2), citing [14-19]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "note": "zschaetzsch_2022 (pdf p. 2) quotes 'about 2.4 eV'; reitemeyer_2019 quotes literature values 'mostly about 0.6 eV'. Spread carried as U09."
+     }
+    ],
+    "environmental_exposure": [
+     {
+      "id": "c12a7.claim.room_temperature_air",
+      "claim": "C12A7 electride is stable in air at room temperature (Matsuishi et al. 2003 as cited); one electride insert ran more than 60 h on xenon over two months including 20 restarts and 11 chamber vent / pump-down cycles with no sign of degradation.",
+      "source_id": "rand_2014", "locator": "Abstract pdf p. 3; Sec. 4.2 pdf p. 67",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "note": "Vent cycles are cold air exposures, not operation in an O-bearing gas. Room-temperature air stability also stated in reitemeyer_2019 pdf p. 3."
+     },
+     {
+      "id": "c12a7.claim.oxidation_at_temperature",
+      "claim": "A C12A7:e- sample held at 1000 degC in an Ar-H2 atmosphere for 24 h lost its electride character (Raman spectrum of C12A7:O2- ceramic), attributed to residual oxygen in the gas; the authors state that C12A7:e- reacts very sensitively to oxygen contamination and ran their emission tests at an O2 partial pressure of about 5e-11 mbar.",
+      "source_id": "reitemeyer_2019", "locator": "Sec. III pdf p. 4; Sec. IV pdf p. 5",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "c12a7.claim.oxidation_in_hollow_cathode",
+      "claim": "In hollow-cathode tests with iodine, oxygen incorporation converted the electride to insulating C12A7 ceramic in all three repeats despite feed-system bake-out, attributed to trace oxygen-bearing species (e.g. water) in the propellant; the authors conclude C12A7 is not compatible with iodine under the tested conditions.",
+      "source_id": "becke_2026", "locator": "Abstract p. 1; 'Degradation caused by oxidation' p. 19-20 (pdf pp. 19-20)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "note": "Cause (water contamination) is the authors' inference."
+     },
+     {
+      "id": "c12a7.claim.oxygen_resistance_asserted",
+      "claim": "C12A7:2e- 'exhibits a much higher resistance against oxygen than its competitor BaO-W, even at high temperatures' (literature assertion).",
+      "source_id": "zschaetzsch_2022", "locator": "Sec. II, pdf p. 2, citing their ref. [6]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "note": "Conflicts with c12a7.claim.oxidation_at_temperature and c12a7.claim.oxidation_in_hollow_cathode; no quantitative O2 partial-pressure threshold located. Carried as U10."
+     },
+     {
+      "id": "c12a7.env.air_fed_operation",
+      "quantity": "operation of a C12A7 cathode on air, N2 or O2",
+      "value": null,
+      "tbd": "TBD - none located. tisaev_2024_ampcat (p. 723) states that operation with air 'remains some way from being investigated'."
+     }
+    ],
+    "recovery_cleaning": [
+     {
+      "id": "c12a7.claim.plasma_conditioning",
+      "claim": "Electride cathodes ran at lower anode voltages and temperatures after several hours and multiple restarts; the author suggests a cleaning or conditioning effect of the internal cathode plasma.",
+      "source_id": "rand_2014", "locator": "Sec. 2.4, pdf p. 39",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "note": "A reported recovery of oxidized electride by xenon ion bombardment (Plasma Sci. Technol. 2022, doi 10.1088/2058-6272/ac5c26) was seen only in a search summary; not entered (see leads_not_entered)."
+     }
+    ],
+    "lifetime_basis": [
+     {
+      "id": "c12a7.life.planar_krypton",
+      "quantity": "stable krypton discharge duration of a planar heaterless C12A7:e- cathode (Drobny et al.)",
+      "value": 1000, "unit": "h", "qualifier": "nearly",
+      "source_id": "becke_2026", "locator": "Introduction, p. 2 (pdf p. 2), citing Drobny et al. 2024 [21]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "note": "Primary (Acta Astronautica 2024) not retrieved (ScienceDirect 403; institutional record behind a bot check). Current: TBD - read the primary."
+     },
+     {
+      "id": "c12a7.life.zsch_17h",
+      "quantity": "longest operation of an electride hollow insert in the Giessen platform",
+      "value": 17, "unit": "h", "qualifier": "about",
+      "source_id": "zschaetzsch_2022", "locator": "Abstract pdf p. 1; Sec. V.B pdf p. 7",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "c12a7.life.rand_60h",
+      "quantity": "operation of one electride insert on xenon (over two months, 20 restarts, 11 vent cycles)",
+      "value": 60, "unit": "h", "qualifier": "over",
+      "source_id": "rand_2014", "locator": "Abstract pdf p. 3; Sec. 4.2 pdf p. 67",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ]
+   }
+  },
+  {
+   "id": "rf_plasma_cathode",
+   "name": "RF (inductively coupled) plasma cathode, xenon or atmospheric gas",
+   "status": "not baseline; air-fed operation demonstrated at sub-ampere current in a gridded-ion system (non-peer-reviewed preprint), no life data",
+   "summary": "No thermionic emitter, so no emitter poisoning; power cost several times that of a hollow cathode. Xenon: 3.3 A demonstrated at 140 W RF. Air (50:50 N2/O2): up to 0.45 A at 90 W RF, used to neutralize an air-fed RF gridded ion engine.",
+   "parameters": {
+    "demonstrated_emission_current": [
+     {
+      "id": "rf.i.watanabe_3p3A",
+      "quantity": "anode (extracted electron) current of the outer-coil RF plasma cathode on xenon",
+      "value": 3.3, "unit": "A",
+      "conditions": "RF power 140 W; Xe 0.3 mg/s; anode voltage 58 V; authors: 'sufficiently high to operate a 1-kW class Hall thruster'",
+      "source_id": "watanabe_2015", "locator": "Abstract, pdf p. 1",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "rf.i.icp_table6_secondary",
+      "quantity": "tabulated RF ICP cathode point (Watanabe et al. as cited in the AMPCAT comparison table; different operating point)",
+      "value": 1.7, "unit": "A",
+      "conditions": "Xe 0.3 mg/s; total 114 W (anode power included)",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 6, p. 735 (pdf p. 14), citing [21]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     },
+     {
+      "id": "rf.i.neworbit_max",
+      "quantity": "maximum current of the NewOrbit engineering-model RF cathode (xenon at 25 W RF with 0.15 sccm, or 50:50 N2/O2 at 90 W RF with 0.8 sccm)",
+      "value": 0.45, "unit": "A", "qualifier": "up to",
+      "source_id": "schwertheim_2025", "locator": "subsection B (RF Cathode), pdf p. 5",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "note": "Non-peer-reviewed preprint (CC BY 4.0) of IEPC-2025-378."
+     }
+    ],
+    "keeper_startup_power": [
+     {
+      "id": "rf.p.neworbit_air",
+      "quantity": "cathode RF input power on 0.8 sccm 50:50 N2/O2",
+      "value": 90, "unit": "W",
+      "source_id": "schwertheim_2025", "locator": "subsection B (RF Cathode) pdf p. 5; test setup pdf pp. 8, 10, 15",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "rf.p.neworbit_xe",
+      "quantity": "cathode RF input power on 0.15 sccm xenon",
+      "value": 25, "unit": "W",
+      "source_id": "schwertheim_2025", "locator": "subsection B (RF Cathode), pdf p. 5",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "rf.cost.neworbit_air_inferred",
+      "quantity": "power cost of the NewOrbit RF cathode on air at its stated maximum current (90 W / 0.45 A); higher at lower current",
+      "value": 200, "unit": "W/A", "qualifier": "at least",
+      "source_id": "schwertheim_2025", "locator": "derived",
+      "quantity_type": "inferred", "evidence_level": 3, "verification": "derived_by_this_lane",
+      "derived_from": ["rf.p.neworbit_air", "rf.i.neworbit_max"]
+     },
+     {
+      "id": "rf.claim.watanabe_cost",
+      "claim": "The electron production cost of the outer-coil RF plasma cathode is four times that of the hollow cathode it was compared with; gas utilization is comparable.",
+      "source_id": "watanabe_2015", "locator": "Abstract, pdf p. 1",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "steady_heater_power": [
+     {
+      "id": "rf.heater.none",
+      "quantity": "heater power",
+      "value": null,
+      "tbd": "Not applicable - no thermionic emitter; the RF power entries (rf.p.*) are the steady power."
+     }
+    ],
+    "gas_flow": [
+     {
+      "id": "rf.flow.watanabe",
+      "quantity": "Xe flow at the 3.3 A point",
+      "value": 0.3, "unit": "mg/s",
+      "source_id": "watanabe_2015", "locator": "Abstract, pdf p. 1",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "rf.flow.neworbit_air",
+      "quantity": "cathode air flow (0.4 sccm O2 + 0.4 sccm N2), as converted by the authors",
+      "value": 0.018, "unit": "mg/s",
+      "source_id": "schwertheim_2025", "locator": "test description pdf p. 8 (0.018 mg/s) and pdf p. 15 (0.0178 mg/s)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "emitter_temperature": [
+     {
+      "id": "rf.t.none",
+      "quantity": "emitter temperature",
+      "value": null,
+      "tbd": "Not applicable (no thermionic emitter). Thermal limits of the RF coil, dielectric and orifice in an O-bearing plasma: TBD - not reported in retrieved text."
+     }
+    ],
+    "environmental_exposure": [
+     {
+      "id": "rf.claim.neworbit_rationale",
+      "claim": "An RF cathode was selected over thermionic neutralizers to reduce sensitivity to oxidation on atmospheric propellants (particularly O2) and under the atomic-oxygen fluxes of ultra-low orbits; it was optimized to ignite and operate on O2, N2, their mixtures and xenon.",
+      "source_id": "schwertheim_2025", "locator": "subsection B (RF Cathode), pdf p. 5",
+      "quantity_type": "assumed", "evidence_level": 3, "verification": "read_in_retrieved_text",
+      "note": "Design rationale, not an exposure measurement; typed 'assumed'."
+     }
+    ],
+    "recovery_cleaning": [
+     {
+      "id": "rf.recovery.none",
+      "quantity": "recovery / cleaning mechanism",
+      "value": null,
+      "tbd": "TBD - no erosion, deposition or recovery data in retrieved text."
+     }
+    ],
+    "lifetime_basis": [
+     {
+      "id": "rf.life.none_demonstrated",
+      "quantity": "demonstrated operating life of an air-fed RF cathode",
+      "value": null,
+      "tbd": "TBD - none reported. schwertheim_2025 (pdf p. 22) plans 300 h continuous tests and 100 on/off ignition cycles (future work)."
+     }
+    ]
+   }
+  },
+  {
+   "id": "microwave_plasma_cathode",
+   "name": "Microwave (ECR / antenna) plasma cathode: JAXA mu10/mu20 neutralizers (xenon), AMPCAT (air)",
+   "status": "not baseline; air-fed operation demonstrated at <= 0.9 A for 2 h runs (AMPCAT), no life test on air",
+   "summary": "Xenon microwave neutralizers have ion-engine flight heritage (mu10, 0.18 A nominal, second-hand); the mu20 laboratory neutralizer handled a 0.54 A beam. AMPCAT is the only retrieved peer-reviewed air-fed cathode: 0.8 A for 2 h on 0.1 mg/s of 0.48 O2 + 0.52 N2 at 70 W microwave input, with antenna erosion mitigated by alumina isolation and a water-cooled connector.",
+   "parameters": {
+    "demonstrated_emission_current": [
+     {
+      "id": "mw.i.ampcat_duration_high",
+      "quantity": "AMPCAT extracted current in the 120 min duration test at 70 W input microwave power",
+      "value": [0.79, 0.8], "unit": "A",
+      "conditions": "0.1 mg/s of 0.48 O2 + 0.52 N2; internal bias -60 V, anode +20 V; background 3.4e-4 mbar; t = 0.1 mm alumina-coated antenna; water-cooled connector",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 5, p. 733 (pdf p. 12)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "mw.i.ampcat_duration_low",
+      "quantity": "AMPCAT extracted current in the 120 min duration test at 48 W input microwave power",
+      "value": [0.52, 0.56], "unit": "A",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 5, p. 733 (pdf p. 12)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "mw.i.ampcat_air_max",
+      "quantity": "maximum AMPCAT extracted current on air in the comparison table (0.1 and 0.05 mg/s, 70 W input, V_b = 120 V)",
+      "value": 0.9, "unit": "A",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 6, p. 735 (pdf p. 14)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "mw.i.ampcat_xe_max",
+      "quantity": "AMPCAT extracted current on xenon (0.1 mg/s, 70 W input, V_b = 60 V)",
+      "value": 0.97, "unit": "A",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 6, p. 735 (pdf p. 14)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "mw.i.mu10_secondary",
+      "quantity": "JAXA mu10 microwave neutralizer nominal current (flown on Hayabusa 1 and 2)",
+      "value": 0.18, "unit": "A",
+      "conditions": "total bias 32 V and microwave power 8 W (as cited); Table 6: Xe 0.07 mg/s, 13.8 W total",
+      "source_id": "tisaev_2024_ampcat", "locator": "Sec. 1, p. 724 (pdf p. 3) citing [31]; Table 6 citing [60]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     },
+     {
+      "id": "mw.i.mu20_540mA",
+      "quantity": "ion beam current neutralized by the mu20 microwave neutralizer at its best position, with coupling voltage below 30 V at 1 sccm Xe",
+      "value": 0.54, "unit": "A",
+      "conditions": "microwave powers examined 11, 18 and 22 W",
+      "source_id": "nishiyama_2009", "locator": "subsection E (microwave power at the best location), pdf p. 7; Fig. 9 caption pdf p. 5",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "keeper_startup_power": [
+     {
+      "id": "mw.p.ampcat_input",
+      "quantity": "AMPCAT input microwave power in the duration tests (source microwave power 60 and 90 W)",
+      "value": [48, 70], "unit": "W",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 5, p. 733 (pdf p. 12)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "mw.ce.ampcat_duration",
+      "quantity": "AMPCAT average power efficacy C_e in the 48 W and 70 W duration tests (anode bias power excluded)",
+      "value": [6.9, 7.0], "unit": "mA/W",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 5, p. 733 (pdf p. 12)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "mw.cost.ampcat_duration",
+      "quantity": "AMPCAT average power cost 1/C_e in the 48 W and 70 W duration tests (anode bias power excluded)",
+      "value": [142.1, 144.8], "unit": "W/A",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 5, p. 733 (pdf p. 12)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "mw.p.ampcat_total_at_0p8A_inferred",
+      "quantity": "AMPCAT total cathode power at 0.79-0.80 A, P_tot = I / C_e with C_e = 6.9 mA/W (microwave + internal bias; anode bias excluded)",
+      "value": [114, 116], "unit": "W",
+      "source_id": "tisaev_2024_ampcat", "locator": "derived from Table 5",
+      "quantity_type": "inferred", "evidence_level": 3, "verification": "derived_by_this_lane",
+      "derived_from": ["mw.i.ampcat_duration_high", "mw.ce.ampcat_duration"]
+     },
+     {
+      "id": "mw.cost.ampcat_air_table6",
+      "quantity": "AMPCAT air power cost across Table 6 air points",
+      "value": [155, 178], "unit": "W/A",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 6, p. 735 (pdf p. 14)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "steady_heater_power": [
+     {
+      "id": "mw.heater.none",
+      "quantity": "heater power",
+      "value": null,
+      "tbd": "Not applicable (no thermionic emitter). Note: AMPCAT needed active water cooling of its microwave connector in test (PTFE dielectric deformed above about 150 degC); a flight thermal solution is TBD."
+     }
+    ],
+    "gas_flow": [
+     {
+      "id": "mw.flow.ampcat_air",
+      "quantity": "AMPCAT air (0.48 O2 + 0.52 N2) flow in the duration tests",
+      "value": 0.1, "unit": "mg/s",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 5, p. 733 (pdf p. 12)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "mw.flow.ampcat_range",
+      "quantity": "AMPCAT air flow range characterized",
+      "value": [0.05, 0.15], "unit": "mg/s",
+      "source_id": "tisaev_2024_ampcat", "locator": "Sec. 6.2, p. 733 (pdf p. 12); Conclusion p. 735",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "mw.flow.aether_target",
+      "quantity": "AETHER target for post-intake air flow available to the cathode (targets with significant margin, not measurements)",
+      "value": [0.04, 0.1], "unit": "mg/s",
+      "source_id": "tisaev_2024_ampcat", "locator": "Sec. 1, p. 723 (pdf p. 2)",
+      "quantity_type": "assumed", "evidence_level": 5, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "mw.ui.ampcat_duration",
+      "quantity": "AMPCAT average propellant utilization factor U_i in the duration tests",
+      "value": [1.7, 2.4], "unit": "dimensionless",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 5, p. 733 (pdf p. 12)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "emitter_temperature": [
+     {
+      "id": "mw.t.none",
+      "quantity": "emitter temperature",
+      "value": null,
+      "tbd": "Not applicable. Connector plateau temperatures of 53 and 68 degC with water cooling (Table 5) are test-rig values, not flight values."
+     }
+    ],
+    "environmental_exposure": [
+     {
+      "id": "mw.claim.ampcat_antenna_erosion",
+      "claim": "Direct insertion of the molybdenum antenna into the air plasma eroded the antenna and deposited a molybdenum-oxide coating on internal surfaces within about 1 h; electrically isolating the antenna with alumina (0.1-0.7 mm) mitigated it; refined prototype showed no visible damage after the 2 h tests.",
+      "source_id": "tisaev_2024_ampcat", "locator": "Sec. 4 pp. 729-732 (pdf pp. 8-11); Sec. 6.1 p. 733",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "mw.claim.ampcat_negative_ions",
+      "claim": "Part of the extracted negative current on air may be O- ions; the fraction was not quantified and is left to future work.",
+      "source_id": "tisaev_2024_ampcat", "locator": "Sec. 2.1, p. 724 (pdf p. 3)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     }
+    ],
+    "recovery_cleaning": [
+     {
+      "id": "mw.claim.mu10_degradation_mitigation",
+      "claim": "A performance degradation of the spacecraft ECR neutralizer and its mitigation are reported in Ohmichi & Kuninaka, JPP 30(5) 2014 (title as cited).",
+      "source_id": "tisaev_2024_ampcat", "locator": "reference [30], p. 736",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "note": "Content not retrieved; mechanism TBD."
+     }
+    ],
+    "lifetime_basis": [
+     {
+      "id": "mw.life.ampcat_2h",
+      "quantity": "AMPCAT continuous duration test length on air (two tests, deliberately terminated)",
+      "value": 120, "unit": "min",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 5 and Sec. 6.1, p. 733 (pdf p. 12)",
+      "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+     },
+     {
+      "id": "mw.life.mu10_ground",
+      "quantity": "mu10 neutralizer endurance demonstrated on ground (as quoted; whether single-unit or cumulative is not stated)",
+      "value": 48000, "unit": "h",
+      "source_id": "tisaev_2024_ampcat", "locator": "Sec. 1, p. 724 (pdf p. 3), citing Lev et al. 2019 [32]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation", "verify": true
+     },
+     {
+      "id": "mw.life.mu10_space",
+      "quantity": "mu10 neutralizer operation in space (as quoted)",
+      "value": 6500, "unit": "h", "qualifier": "more than",
+      "source_id": "tisaev_2024_ampcat", "locator": "Sec. 1, p. 724 (pdf p. 3), citing [32]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation", "verify": true
+     },
+     {
+      "id": "mw.life.mu10_claim_10kh",
+      "quantity": "life of the microwave discharge neutralizer 'over 10000 hours' at contact voltage below 50 V (claim from an earlier paper, as restated)",
+      "value": 10000, "unit": "h", "qualifier": "over",
+      "source_id": "nishiyama_2009", "locator": "Introduction, pdf p. 1, citing IEPC-93-040",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation", "verify": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "dc_plasma_electron_source",
+   "name": "DC (E x B) plasma electron source on atmospheric and molecular propellants (Gurciullo, Lucca Fabris, Knoll 2017)",
+   "status": "not baseline; secondary data only",
+   "summary": "Tested on xenon, krypton, argon, helium, water and air; peak current 0.24 A.",
+   "parameters": {
+    "demonstrated_emission_current": [
+     {
+      "id": "dc.i.air_secondary",
+      "quantity": "extracted current on air (as tabulated in the AMPCAT comparison)",
+      "value": 0.24, "unit": "A",
+      "conditions": "air 0.08 mg/s; total 89 W (anode power not included)",
+      "source_id": "tisaev_2024_ampcat", "locator": "Sec. 1 p. 723; Table 6 p. 735, citing [20]",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     }
+    ],
+    "keeper_startup_power": [
+     {
+      "id": "dc.cost.secondary",
+      "quantity": "power cost quoted for the DC source: minimum 290 W/A in the text, 370 W/A for the air entry of Table 6",
+      "value": [290, 370], "unit": "W/A",
+      "source_id": "tisaev_2024_ampcat", "locator": "Sec. 1 p. 723 (text); Table 6 p. 735",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation",
+      "note": "Text minimum may refer to another gas; primary (IEEE TPS 45 (2017) 2472-2480) not retrieved."
+     }
+    ],
+    "steady_heater_power": [{"id": "dc.heater.na", "quantity": "heater power", "value": null, "tbd": "Not applicable / not reported."}],
+    "gas_flow": [
+     {
+      "id": "dc.flow.air_secondary",
+      "quantity": "air flow at the tabulated point",
+      "value": 0.08, "unit": "mg/s",
+      "source_id": "tisaev_2024_ampcat", "locator": "Table 6, p. 735",
+      "quantity_type": "measured", "evidence_level": 5, "verification": "secondary_citation"
+     }
+    ],
+    "emitter_temperature": [{"id": "dc.t.na", "quantity": "emitter temperature", "value": null, "tbd": "Not applicable / not reported."}],
+    "environmental_exposure": [{"id": "dc.env.tbd", "quantity": "erosion / exposure data", "value": null, "tbd": "TBD - primary not retrieved."}],
+    "recovery_cleaning": [{"id": "dc.rec.tbd", "quantity": "recovery mechanism", "value": null, "tbd": "TBD - primary not retrieved."}],
+    "lifetime_basis": [{"id": "dc.life.tbd", "quantity": "life", "value": null, "tbd": "TBD - no duration data retrieved."}]
+   }
+  },
+  {
+   "id": "air_fed_thermionic_hollow_cathode",
+   "name": "Thermionic hollow cathode fed with air, N2 or O2 (or a subset of the intake flow)",
+   "status": "UNRESOLVED",
+   "summary": "No retrieved source demonstrates a thermionic hollow cathode operating on air, N2 or O2. The only direct datum is adverse: a LaB6 hollow cathode fed xenon with up to 12 % of a 0.48 O2 + 0.52 N2 mixture showed plume sparking and significant internal erosion within a short test (secondary citation). A LaB6 cathode run inside a 1e-3 Torr O2 background at > 1600 degC (textbook) is not a gas-fed demonstration. A study of oxygen impurities in LaB6 hollow-cathode propellant exists (Vacuum 2025) but was not retrievable.",
+   "parameters": {
+    "demonstrated_emission_current": [{"id": "airhc.i.none", "quantity": "emission current on air / N2 / O2 feed", "value": null, "tbd": "UNRESOLVED - no demonstration located."}],
+    "keeper_startup_power": [{"id": "airhc.start.none", "quantity": "keeper / start-up power on air feed", "value": null, "tbd": "UNRESOLVED - no demonstration located."}],
+    "steady_heater_power": [{"id": "airhc.heater.none", "quantity": "steady heater power on air feed", "value": null, "tbd": "UNRESOLVED - no demonstration located."}],
+    "gas_flow": [{"id": "airhc.flow.none", "quantity": "air / N2 / O2 cathode flow", "value": null, "tbd": "UNRESOLVED - no demonstration located."}],
+    "emitter_temperature": [{"id": "airhc.t.none", "quantity": "emitter temperature needed on air feed", "value": null, "tbd": "UNRESOLVED. Only indirect: lab6.env.o2_plasma_temperature (O2 background, not O2 feed)."}],
+    "environmental_exposure": [
+     {"id": "airhc.env.ref_lab6_air_fraction", "quantity": "see lab6.env.air_fraction_in_xe (adverse, secondary)", "value": null, "tbd": "Cross-reference only; the value is carried once, in lab6.env.air_fraction_in_xe."}
+    ],
+    "recovery_cleaning": [{"id": "airhc.rec.none", "quantity": "recovery mechanism on air feed", "value": null, "tbd": "UNRESOLVED."}],
+    "lifetime_basis": [{"id": "airhc.life.none", "quantity": "life on air feed", "value": null, "tbd": "UNRESOLVED - no duration data of any length located."}]
+   }
+  }
+ ],
+ "system_level_precedents": {
+  "note": "Laboratory Hall thrusters run on N2 or air at the anode with a separate noble-gas-fed cathode. These are the evidence behind keeping the Xe-fed cathode baseline; all are short-duration facility tests.",
+  "entries": [
+   {
+    "id": "sys.pps1350.claim",
+    "claim": "PPS1350 (reconverted PPS1350-TSD) was ignited on xenon and transitioned to 100 % N2 or to a 1.27 N2 + O2 mixture at the anode while the cathode continued on xenon; 10 h tests on each atmospheric propellant ran stably; performance on xenon afterwards was substantially unaffected.",
+    "source_id": "cifali_2011", "locator": "pdf p. 2; pdf pp. 4-5",
+    "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+   },
+   {
+    "id": "sys.pps1350.duration",
+    "quantity": "duration of each fixed-point firing on N2 and on the N2/O2 mixture (cathode on xenon)",
+    "value": 10, "unit": "h",
+    "source_id": "cifali_2011", "locator": "pdf pp. 4-5",
+    "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+   },
+   {
+    "id": "sys.pps1350.voltage_limit",
+    "quantity": "discharge voltage limit of that test campaign",
+    "value": 350, "unit": "V",
+    "source_id": "cifali_2011", "locator": "pdf p. 2",
+    "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+   },
+   {
+    "id": "sys.pps1350.power_limit",
+    "quantity": "power limit of that test campaign",
+    "value": 1.4, "unit": "kW",
+    "source_id": "cifali_2011", "locator": "pdf p. 2",
+    "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+   },
+   {
+    "id": "sys.p5.cathode_xe_flow",
+    "quantity": "xenon flow to the external EPL HCPEE 500 cathode for all P5 setpoints on N2, Ar and Xe (4.5 sccm)",
+    "value": 0.44, "unit": "mg/s",
+    "source_id": "brabston_2024", "locator": "text and Table 3, pdf p. 8; subsection B (Vacuum Test Facility and Thruster), pdf p. 10",
+    "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+    "note": "Emitter material of the HCPEE 500 is not stated in the retrieved text (verify). Same value in hallthruster_bridge/identification/brabston_p5_n2_measurement_audit_v1.json (JPP 2025 Table 2)."
+   },
+   {
+    "id": "sys.p5.anode_n2_flow",
+    "quantity": "P5 N2 anode flow at setpoints N1-N5",
+    "value": [5.0, 5.4], "unit": "mg/s",
+    "source_id": "brabston_2024", "locator": "Table 3, pdf p. 8",
+    "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text"
+   },
+   {
+    "id": "sys.p5.cathode_fraction_inferred",
+    "quantity": "cathode Xe mass flow as a fraction of anode N2 mass flow (0.44 / 5.0-5.4)",
+    "value": [8.1, 8.8], "unit": "%",
+    "source_id": "brabston_2024", "locator": "derived",
+    "quantity_type": "inferred", "evidence_level": 3, "verification": "derived_by_this_lane",
+    "derived_from": ["sys.p5.cathode_xe_flow", "sys.p5.anode_n2_flow"]
+   },
+   {
+    "id": "sys.echt.claim",
+    "claim": "ECHT (extended-channel Hall) ran on N2 at the anode with an IonTech HCN-252 BaO hollow cathode on argon (7-36 % of anode mass flow); the emitter was believed degraded (instability, mode changes, quenching) and cathode flow was raised ad hoc to stop keeper-voltage runaway.",
+    "source_id": "marchioni_2020_via_repo_audit", "locator": "echt_n2_evidence_audit_v1.json cathode block; E7",
+    "quantity_type": "measured", "evidence_level": 3, "verification": "repo_audit_record"
+   },
+   {
+    "id": "sys.echt.id_range",
+    "quantity": "ECHT discharge current range supplied by the HCN-252 cathode (13 setpoints, 180-220 V, 2 s.f.)",
+    "value": [1.5, 3.9], "unit": "A",
+    "source_id": "marchioni_2020_via_repo_audit", "locator": "hallthruster_bridge/identification/echt_n2/README.md (thesis Table 6.1)",
+    "quantity_type": "measured", "evidence_level": 3, "verification": "repo_audit_record"
+   },
+   {
+    "id": "sys.neworbit.claim",
+    "claim": "An air-fed RF gridded ion engine was neutralized by the air-fed RF cathode (0.4 sccm N2 + 0.4 sccm O2, 90 W) during direct and indirect thrust measurements.",
+    "source_id": "schwertheim_2025", "locator": "test campaign, pdf pp. 8-15",
+    "quantity_type": "measured", "evidence_level": 3, "verification": "read_in_retrieved_text",
+    "note": "Gridded ion engine: neutralizer current equals beam current (sub-ampere), not a Hall discharge current."
+   }
+  ]
+ },
+ "leads_not_entered": [
+  {"id": "lead.polk_2006", "citation": "J. E. Polk, 'The Effect of Reactive Gases on Hollow Cathode Operation', AIAA-2006-5153, doi 10.2514/6.2006-5153", "why_not_entered": "AIAA page not retrievable (403). Its search-indexed abstract reports no change in discharge voltage or cathode temperature over a wide O2 range, which reads differently from the textbook summary (baow.env.polk_ppm). Read the primary before using either."},
+  {"id": "lead.yang_2025", "citation": "C. Yang et al., 'Influence of propellant oxygen concentration on LaB6 hollow cathode for electric propulsion', Vacuum (2025), doi 10.1016/j.vacuum.2025.114181; SSRN abstract 5036722", "why_not_entered": "ScienceDirect and SSRN returned 403. The search-indexed abstract describes short- and long-term O2/H2O exposure effects on a LaB6 hollow cathode and on a coupled Hall thruster. Directly relevant to U05/U06; numbers not entered until read."},
+  {"id": "lead.conversano_2022", "citation": "R. W. Conversano, G. Becatti, D. M. Goebel, V. H. Chaplin, Acta Astronautica 197 (2022) 53-59 (13,011 h heaterless LaB6)", "why_not_entered": "Only the title number is entered (lab6.life.astraeus_title). Current, ignitions and anomalies must be read from the paper (ScienceDirect 403; ADS human verification)."},
+  {"id": "lead.drobny_2024", "citation": "C. Drobny, K. Waetzig, A. Rost, M. Tajmar, 'Endurance operation of a heaterless C12A7 electride plasma cathode and post operation material analysis', Acta Astronautica (2024)", "why_not_entered": "Primary not retrievable (ScienceDirect 403; institutional repository bot check). Only the secondary 'nearly 1000 h, krypton' from becke_2026 is entered."},
+  {"id": "lead.andreussi_2022_aether", "citation": "T. Andreussi et al., 'The AETHER project: development of air-breathing electric propulsion for VLEO missions', CEAS Space J. 14 (2022) 717-740, doi 10.1007/s12567-022-00442-3", "why_not_entered": "Primary of the LaB6 + air-fraction test; Springer login redirect and project-site bot challenge. Only the secondary lab6.env.air_fraction_in_xe is entered."},
+  {"id": "lead.tisaev_2023_jap", "citation": "M. Tisaev et al., 'Performance and plasma diagnostics of the AMPCAT coupled to a cylindrical Hall thruster', J. Appl. Phys. 134, 193302 (2023)", "why_not_entered": "AIP returned 403. This is the only located coupling of an air-fed cathode to a Hall-type thruster; read before any air-cathode trade."},
+  {"id": "lead.pst_2022_c12a7", "citation": "'An experimental study on the degradation of the C12A7 hollow cathode', Plasma Sci. Technol. (2022), doi 10.1088/2058-6272/ac5c26", "why_not_entered": "Mirror returned 503; a search summary mentions recovery of emission by xenon ion bombardment for less degraded emitters. Not entered."},
+  {"id": "lead.lev_2019_review", "citation": "D. Lev, D. Pedrini, D. Goebel et al., 'Recent progress in research and development of hollow cathodes for electric propulsion', Rev. Mod. Plasma Phys. 3 (2019), doi 10.1007/s41614-019-0026-0", "why_not_entered": "Paywalled. Several values in this dossier (typical HCN LaB6, mu10 hours) are quoted from it by tisaev_2024_ampcat."}
+ ],
+ "uncertainty_register": [
+  {"id": "U01", "item": "Required cathode emission current", "description": "I_emit = I_d + I_k is unknown because I_d needs V_d and P_d at the RFP points, which need an admitted Hall closure (gate 3 FAIL, credible set empty) or hardware data.", "refs": ["req.tbd.numeric_current"], "effect": "cathode size, Xe flow, keeper/heater power, life model inputs all TBD", "resolution": "gate 3 or Vyovrinda thruster test (G01)"},
+  {"id": "U02", "item": "Transfer of xenon life data to a VLEO air-breathing Hall cathode", "description": "All long-life demonstrations (27,800 h, 51,184 h, about 30,000 h, 13,011 h title-only) are xenon-only in vacuum facilities; none includes an N2/O-rich thruster plume or VLEO ambient exposure.", "refs": ["baow.life.iss_27800", "baow.life.next_ldt", "baow.life.nstar_elt", "lab6.life.astraeus_title"], "effect": "life margin for > 15,000 h firing is not established for the ABEP environment", "resolution": "G02, G04"},
+  {"id": "U03", "item": "O / O2 partial pressure at the emitter in flight", "description": "Depends on cathode placement, Xe flow shielding, ambient VLEO composition and the air-fed discharge plume. The repository uses an unsourced attenuation factor (repo.lab6.shield_attenuation) and an unsourced 0.1 plume factor (repo.system.cathode_pO_factor).", "refs": ["repo.lab6.shield_attenuation", "repo.system.cathode_pO_factor"], "effect": "sets poisoning coverage and required emitter temperature (E8)", "resolution": "G02 (measure emission vs controlled O/O2 at the orifice region), plume modelling validated against it"},
+  {"id": "U04", "item": "Atomic O vs O2 poisoning", "description": "All located poisoning thresholds are for O2 or H2O in diode tests; atomic oxygen (dominant at 180-230 km) is not covered.", "refs": ["lab6.env.atomic_oxygen", "baow.env.atomic_oxygen"], "effect": "thresholds in lab6.env.* and baow.env.* may not bound AO exposure", "resolution": "G02"},
+  {"id": "U05", "item": "N2 / N exposure of thermionic emitters", "description": "No source located on N2 or atomic-N effects on LaB6 or BaO-W emitters.", "refs": ["lab6.env.nitrogen"], "effect": "unknown", "resolution": "G03"},
+  {"id": "U06", "item": "LaB6 O2 tolerance statements under different conditions", "description": "Textbook: LaB6 ran in 1e-3 Torr O2 background at > 1600 degC and tolerates 1e-4 Torr O2 at 1570 degC; AMPCAT paper: current density drops at about 1e-3 mbar air; AETHER (secondary): up to 12 % air in the Xe feed caused sparking and erosion. Different geometries (diode, plasma source, hollow cathode with internal pressure > 1 Torr) and gases (O2 vs air); not contradictory but not reconcilable without primaries.", "refs": ["lab6.env.o2_plasma_background", "lab6.env.o2_withstand_1570C", "lab6.claim.poisoning_air_pressure", "lab6.env.air_fraction_in_xe"], "effect": "no usable O2 threshold for a Xe-fed hollow cathode in an air plume", "resolution": "read lead.yang_2025 and lead.andreussi_2022_aether; G02"},
+  {"id": "U07", "item": "BaO-W hollow-cathode O2 tolerance (Polk 2006)", "description": "Textbook summary: poisoning only at low current and > 10 ppm O2; search-indexed abstract of the primary reads as no change over a wide ppm range. Primary not read.", "refs": ["baow.env.polk_ppm", "lead.polk_2006"], "effect": "BaO-W feed purity margin", "resolution": "read the primary legitimately"},
+  {"id": "U08", "item": "LaB6 work function / Richardson coefficient spread", "description": "Table 6-1 gives 2.66-2.91 eV with D = 29, 110 or A = 120 depending on source and stoichiometry. The repository uses 2.66 eV with 29 A/(cm2 K2).", "refs": ["lab6.wf.lafferty", "lab6.D.lafferty", "lab6.wf.other_rows", "repo.lab6.phi0", "repo.lab6.A_richardson"], "effect": "required emitter temperature for a given J differs by tens to about a hundred K between rows (not computed here)", "resolution": "emission characterization of the actual insert (G01)"},
+  {"id": "U09", "item": "C12A7 work function", "description": "Measured 0.52 +/- 0.03 eV and 0.76 eV (low-temperature emission measurements) vs 2.4-2.96 eV quoted for thermionic emission; the model-derived 1215 degC for 1 A assumes 2.4 eV.", "refs": ["c12a7.wf.reitemeyer", "c12a7.wf.rand", "c12a7.wf.thermionic_range", "c12a7.t.richardson_1A"], "effect": "emission predictions for C12A7 are not usable", "resolution": "G08"},
+  {"id": "U10", "item": "C12A7 oxygen resistance", "description": "Asserted 'much higher resistance against oxygen than BaO-W even at high temperatures' vs measured oxidation to insulating ceramic at 1000 degC with residual O2 and in hollow-cathode tests with trace water; room-temperature air stable.", "refs": ["c12a7.claim.oxygen_resistance_asserted", "c12a7.claim.oxidation_at_temperature", "c12a7.claim.oxidation_in_hollow_cathode", "c12a7.claim.room_temperature_air"], "effect": "no basis for using C12A7 near O-bearing gas", "resolution": "G08"},
+  {"id": "U11", "item": "AMPCAT electron fraction and duration", "description": "Extracted current may include O- ions (unquantified); only 2 x 120 min continuous tests; antenna erosion and MoOx deposition mitigated but not life-tested; connector required water cooling in test.", "refs": ["mw.claim.ampcat_negative_ions", "mw.life.ampcat_2h", "mw.claim.ampcat_antenna_erosion"], "effect": "air-fed cathode current and life unestablished", "resolution": "G07"},
+  {"id": "U12", "item": "mu10 neutralizer hours", "description": "48,000 h ground / > 6,500 h space are quoted second-hand; single-unit vs cumulative not stated.", "refs": ["mw.life.mu10_ground", "mw.life.mu10_space"], "effect": "xenon microwave-neutralizer heritage only; does not bear on air operation", "resolution": "read the primary"},
+  {"id": "U13", "item": "Source-internal inconsistencies", "description": "NSTAR ELT given as 30,352 h (text, ref. title) and 30,152 h (Fig. 6-24 caption); ISS life test 27,800 h (report) vs 'about 28,000 hours' (textbook); NSTAR neutralizer TH15 current 3.2 A vs 3.76 A in the same chapter.", "refs": ["baow.life.nstar_elt", "baow.life.iss_27800", "baow.i.nstar_neutralizer_th15"], "effect": "minor; values carried as reported", "resolution": "none needed for this dossier"},
+  {"id": "U14", "item": "Heater and keeper power", "description": "Heater powers in the retrieved sources span tens to hundreds of W and are design-specific (flat-disk lab cathode about 185 W; non-optimized lab LaB6 up to 400 W; BaO lab cathode about 68-72 W inferred; hollow cathodes normally run heater-off per the textbook). Steady keeper power: NEXT neutralizer about 32-34 W inferred. Repository constants (30 W heater, 15 W keeper, 40-45 W total) are unsourced.", "refs": ["lab6.start.joussot_heater_ignition", "lab6.start.zsch_heater_max", "baow.start.echt_hcn252_heater_power_inferred", "baow.keeper.next_power_inferred", "repo.lab6.heater_W", "repo.lab6.keeper_W", "repo.thruster.xe_cathode_power", "repo.arch.lab6_power"], "effect": "cathode share of the 1.5 kW cap and start-up energy TBD", "resolution": "G01, G05"},
+  {"id": "U15", "item": "Ignition cycles", "description": "Firing schedule over 26,000 h is not defined; heaterless LaB6 demonstrated 25,000 ignitions (title only); the repository start limit of 10,000 is unsourced.", "refs": ["lab6.start.heaterless_ignitions_title", "repo.life.start_limit"], "effect": "cycle-life margin TBD", "resolution": "mission firing profile + G04/G05"},
+  {"id": "U16", "item": "Cathode xenon flow and mission Xe mass", "description": "Literature cathode flows used with Hall thrusters: 0.44 mg/s (5-kW class P5 on N2), 0.4 mg/s nominal (5 A lab cathode). Repository uses 0.05 mg/s (unsourced). m_Xe = mdot_c * t_fire (E6) scales directly.", "refs": ["sys.p5.cathode_xe_flow", "lab6.flow.joussot_nominal", "repo.cathode.xe_flow"], "effect": "Xe tank mass over > 15,000 h firing", "resolution": "G06"},
+  {"id": "U17", "item": "Cathode coupling in an N2/air Hall plume", "description": "Only short facility tests (PPS1350 10 h per gas; P5 setpoint campaign; ECHT with a degraded BaO cathode on Ar showing keeper runaway). No coupling-voltage or cathode-wear data vs O content.", "refs": ["sys.pps1350.claim", "sys.p5.cathode_xe_flow", "sys.echt.claim"], "effect": "coupling voltage and cathode wear in the ABEP plume unknown", "resolution": "G01, G09"},
+  {"id": "U18", "item": "Power cost of air-fed plasma cathodes", "description": "AMPCAT 142-178 W/A (anode bias excluded); NewOrbit RF at least 200 W/A at 0.45 A (inferred); tabulated typical LaB6 hollow cathode 33 W/A (secondary). Multiplied by I_emit (TBD) this competes with discharge power inside 1.5 kW.", "refs": ["mw.cost.ampcat_duration", "mw.cost.ampcat_air_table6", "rf.cost.neworbit_air_inferred", "lab6.p.typical_hcn_cost"], "effect": "large if an air-fed plasma cathode had to carry I_d", "resolution": "only relevant if the UNRESOLVED air-fed path is reopened"}
+ ],
+ "hardware_test_gaps": [
+  {"id": "G01", "gap": "Cathode operation at the Vyovrinda discharge current on the Vyovrinda Hall thruster with N2/O2/air anode flow", "hardware_test": "Xe-fed LaB6 (and/or BaO-W) cathode coupled to the thruster across the RFP envelope: coupling voltage, keeper voltage/current, spot-plume margin vs cathode flow, emitter temperature, heater-off self-heating limit.", "blocks": ["U01", "U08", "U14", "U17"]},
+  {"id": "G02", "gap": "Emitter poisoning by atomic O, O2 and H2O at VLEO-representative partial pressures", "hardware_test": "Controlled exposure at the orifice/keeper region (including an atomic-oxygen source) during operation; emission current, temperature and work-function drift; recovery after exposure; compare LaB6 and BaO-W.", "blocks": ["U02", "U03", "U04", "U06"]},
+  {"id": "G03", "gap": "N2 / N exposure of thermionic emitters", "hardware_test": "Operation with N2 backflow representative of an N2-rich plume; post-test surface analysis.", "blocks": ["U05"]},
+  {"id": "G04", "gap": "Wear / life in a representative mixed-gas background", "hardware_test": "Long-duration wear test (duration and acceptance TBD, pre-registered) with keeper, orifice and insert wear measurement and a life-model validation plan against > 15,000 h firing; ignition cycling per the mission profile.", "blocks": ["U02", "U15"]},
+  {"id": "G05", "gap": "Heater (or heaterless) start-up qualification in an O-bearing environment", "hardware_test": "Heater cycling life and start energy; or heaterless ignition-count qualification; with exposure between starts.", "blocks": ["U14", "U15"]},
+  {"id": "G06", "gap": "Minimum Xe cathode flow for margin", "hardware_test": "Flow-margin map vs emission current and orifice erosion state (spot-plume transition) to size mission Xe.", "blocks": ["U16"]},
+  {"id": "G07", "gap": "Air-fed plasma cathode viability (only if the UNRESOLVED path is reopened)", "hardware_test": "Multi-ampere current at acceptable W/A; electron vs O- fraction; antenna/wall erosion over a long-duration test; coupling to an air-fed Hall thruster; flight-representative thermal design without active liquid cooling.", "blocks": ["U11", "U18"]},
+  {"id": "G08", "gap": "C12A7 material qualification (only if pursued)", "hardware_test": "Work function and emission of the actual material lot; oxidation behaviour at operating temperature with controlled O2/H2O; thermal design below the melting point at the required current.", "blocks": ["U09", "U10"]},
+  {"id": "G09", "gap": "Facility-to-flight transfer", "hardware_test": "Characterize background pressure and composition near the cathode in ground tests (ingestion into the cathode region) and bound its effect on coupling and poisoning.", "blocks": ["U17"]},
+  {"id": "G10", "gap": "Ground handling and launch exposure", "hardware_test": "Define and verify storage/purge and conditioning procedures (BaO-W needs conditioning after atmospheric exposure; LaB6 reported robust).", "blocks": ["U02"]}
+ ],
+ "repo_model_crosscheck": {
+  "note": "Documentation only. The repository cathode constants below were compared with the retrieved sources; NOTHING is changed here. Changing any of them is a model change for the owner (goldens may move; log in docs/HISTORY.md).",
+  "entries": [
+   {"id": "repo.lab6.phi0", "location": "abep_sim/plasma_devices.py:256 (LaB6Cathode.phi0_eV)", "value": 2.66, "unit": "eV", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 5, "verification": "code_constant", "matches_entry": "lab6.wf.lafferty", "finding": "Consistent with Table 6-1 (Lafferty 1951 row) as quoted by the textbook."},
+   {"id": "repo.lab6.A_richardson", "location": "abep_sim/plasma_devices.py:257 (LaB6Cathode.A_richardson)", "value": 290000.0, "unit": "A/(m2 K2)", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 5, "verification": "code_constant", "matches_entry": "lab6.D.lafferty", "finding": "29 A/(cm2 K2) in SI; consistent with the same Table 6-1 row."},
+   {"id": "repo.lab6.poison_params", "location": "abep_sim/plasma_devices.py:258-265,275 (delta_phi_poison_eV, E_des_eV, nu_des_Hz, s0_stick, k_clean_nu_Hz, E_clean_eV, N_s)", "value": null, "tbd": "No source located in retrieved literature for any of these coverage-model constants (values 0.9 eV, 3.2 eV, 1e13 Hz, 0.3, 1e13 Hz, 5.0 eV, 1e19 m-2 as coded). Status: unsourced model assumptions (level 7) - verify or replace by G02 data.", "finding": "Unsourced."},
+   {"id": "repo.lab6.shield_attenuation", "location": "abep_sim/plasma_devices.py:263 (shield_attenuation)", "value": 0.001, "unit": "dimensionless (p_O at emitter / ambient)", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "Unsourced; drives coverage and emitter temperature (U03)."},
+   {"id": "repo.lab6.heater_W", "location": "abep_sim/plasma_devices.py:266 (heater_W)", "value": 30.0, "unit": "W", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "Unsourced; retrieved heater powers are design-specific and larger for laboratory cathodes, while hollow cathodes normally run heater-off in steady state per the textbook (U14)."},
+   {"id": "repo.lab6.keeper_W", "location": "abep_sim/plasma_devices.py:267 (keeper_W)", "value": 15.0, "unit": "W", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "Unsourced; a NEXT neutralizer keeper ran about 32-34 W (inferred) (U14)."},
+   {"id": "repo.lab6.evap_prefactor", "location": "abep_sim/plasma_devices.py:268 and abep_sim/life.py:96 (evap_A)", "value": 34000000.0, "unit": "kg/(m2 s)", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "Comment says 'literature-class'; no source located. Textbook Fig. 6-8 (LaB6 evaporation rate) could be the reference but was not digitized here - verify."},
+   {"id": "repo.lab6.evap_activation", "location": "abep_sim/plasma_devices.py:269 and abep_sim/life.py:96 (evap_E_eV)", "value": 5.9, "unit": "eV", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "As for repo.lab6.evap_prefactor: unsourced; verify."},
+   {"id": "repo.cathode.xe_flow", "location": "abep_sim/plasma_devices.py:262; abep_sim/thruster.py:95; abep_sim/archengine.py:135 (Xe cathode flow)", "value": 0.05, "unit": "mg/s", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "Unsourced; literature Hall cathodes in retrieved tests used 0.4-0.44 mg/s (lab6.flow.joussot_nominal, sys.p5.cathode_xe_flow), different sizes (U16)."},
+   {"id": "repo.arch.lab6_Imax_scaling", "location": "abep_sim/archengine.py:79 (I_max = 12 A x mdot/0.05 mg/s)", "value": 12.0, "unit": "A", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "Unsourced current capability and linear flow scaling."},
+   {"id": "repo.thruster.xe_cathode_power", "location": "abep_sim/thruster.py:95 (XE_CATHODE power_W)", "value": 40.0, "unit": "W", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "Unsourced (U14)."},
+   {"id": "repo.arch.lab6_power", "location": "abep_sim/archengine.py:135 (Neutralizer lab6_xe power_W)", "value": 45.0, "unit": "W", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "Unsourced (U14)."},
+   {"id": "repo.arch.mw_air_power", "location": "abep_sim/archengine.py:136 (Neutralizer mw_air power_W); abep_sim/thruster.py:96 (MW_AIR_CATHODE power_W); comment at archengine.py:91 and docs/HISTORY.md ('0.8 A at 145 W, 0.1 mg/s')", "value": 145.0, "unit": "W", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "AMPCAT Table 5 reports 0.79-0.80 A at 0.1 mg/s with 70 W input microwave power and an average 1/C_e of 144.8 W/A. The '145' matches the W/A figure, not a total power; P_tot at 0.8 A is about 114-116 W (inferred, anode bias excluded; mw.p.ampcat_total_at_0p8A_inferred). Flag for the owner; not changed."},
+   {"id": "repo.arch.mw_air_validated_current", "location": "abep_sim/archengine.py:97 (I_validated mw_air)", "value": 1.0, "unit": "A", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "Highest tabulated AMPCAT air current is 0.90 A (mw.i.ampcat_air_max); text says 'approaching 1 A'. The 1.0 A ceiling is slightly above the tabulated demonstration."},
+   {"id": "repo.thruster.mw_air_life", "location": "abep_sim/thruster.py:96 (MW_AIR_CATHODE o_life_h); docs/HISTORY.md ('hours-class life -> o_life_h = 3000')", "value": 3000.0, "unit": "h", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "Not supported by the retrieved AMPCAT paper: continuous tests were 2 x 120 min (mw.life.ampcat_2h); no life test reported."},
+   {"id": "repo.arch.rf_air_validated_current", "location": "abep_sim/archengine.py:97 (I_validated rf_cathode; comment 'no data')", "value": 0.5, "unit": "A", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "A data point now exists: up to 0.45 A on 0.8 sccm N2/O2 at 90 W (rf.i.neworbit_max; non-peer-reviewed preprint). Code flow for this cathode is 0.05 mg/s vs 0.018 mg/s in that source."},
+   {"id": "repo.life.start_limit", "location": "abep_sim/life.py:38 (cathode_start_limit)", "value": 10000, "unit": "ignitions", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "Unsourced (U15)."},
+   {"id": "repo.system.cathode_pO_factor", "location": "abep_sim/system.py:155 and abep_sim/archengine.py:528,535 (cathode O partial pressure = p_in x fO x 0.1)", "value": 0.1, "unit": "dimensionless", "source_id": "repo_code", "quantity_type": "assumed", "evidence_level": 7, "verification": "code_constant", "finding": "Unsourced plume factor (U03)."}
+  ]
+ },
+ "sources": [
+  {"id": "goebel_katz_2008_ch6", "citation": "D. M. Goebel and I. Katz, Fundamentals of Electric Propulsion: Ion and Hall Thrusters, JPL Space Science and Technology Series, Wiley, 2008. Chapter 6, 'Hollow Cathodes', book pp. 243-323.", "url": "https://descanso.jpl.nasa.gov/SciTechBook/series1/Goebel_06_Chap6_cathodes.pdf", "access": "open (JPL DESCANSO chapter PDF)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "61ea4e1069e9beaab71ead29ea9dcf91deb8812859dd4c2c0f82d129f92a00f6", "page_convention": "book page = pdf page + 242", "source_class": "textbook (secondary for most statements; some statements are the authors' own unpublished-detail experiments)", "cites_not_retrieved": ["Goebel, Watkins, Jameson, JPP 23(3) 2007, doi 10.2514/1.25475 [18]", "Gallagher, J. Appl. Phys. 40 (1969) 44-51 [55]", "Polk, AIAA-2006-5153 [56]", "Sengupta et al., AIAA-2003-4558 [38] and AIAA-2004-3608 [53]", "Cronin, Microwave J. 1979 [17]", "Lafferty, J. Appl. Phys. 22 (1951) 299 [13]"]},
+  {"id": "tisaev_2024_ampcat", "citation": "M. Tisaev, B. Karadag, E. Ferrato, T. Andreussi, A. Lucca Fabris, 'Development and standalone testing of the Air-breathing Microwave Plasma CAThode (AMPCAT)', Acta Astronautica 214 (2024) 722-736.", "doi": "10.1016/j.actaastro.2023.11.028", "url": "https://www.iris.sssup.it/retrieve/27faf9a1-ebba-4a74-a6a2-7f85f443dc26/Tisaev-et-al-AA214-2024.pdf", "license": "CC BY 4.0", "access": "open (institutional repository)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "4294f3522a7114ac5d0f153695dd3d5646613cc96f5752604f0845205058640c", "page_convention": "journal page = pdf page + 721"},
+  {"id": "sarver_verhey_1997", "citation": "T. R. Sarver-Verhey, '28,000 Hour Xenon Hollow Cathode Life Test Results', NASA/CR-97-206231, IEPC-97-168, 1997.", "url": "https://ntrs.nasa.gov/api/citations/19970041515/downloads/19970041515.pdf", "access": "open (NASA NTRS)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "e4a83981c4d19e3ba67346f8d8f2f143698ec5d780e59e53ec93a1e210bed860", "page_convention": "report page = pdf page - 2"},
+  {"id": "sarver_verhey_1998", "citation": "T. R. Sarver-Verhey, 'Destructive Evaluation of a Xenon Hollow Cathode After a 28,000 Hour Life Test', NASA/CR-1998-208678, AIAA-98-3482, 1998.", "url": "https://ntrs.nasa.gov/api/citations/19990008886/downloads/19990008886.pdf", "access": "open (NASA NTRS)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "1766487c91296050138bbb36d2842a56ff639682284c1411df5bf43f1b13f836"},
+  {"id": "herman_2009_next_neutralizer", "citation": "D. A. Herman, G. C. Soulas, M. J. Patterson, 'NEXT Long-Duration Test Neutralizer Performance and Erosion Characteristics', NASA/TM-2009-215838, IEPC-2009-154.", "url": "https://ntrs.nasa.gov/api/citations/20100002896/downloads/20100002896.pdf", "access": "open (NASA NTRS)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "aa82569549bed1b855571e85e08564331f24d54298f8f313479a408a57cd09d4"},
+  {"id": "mackey_2017_next_inserts", "citation": "J. A. Mackey, R. Shastry, G. C. Soulas, 'Characterization of the NEXT Hollow Cathode Inserts After Long-Duration Testing', NASA/TM-2017-219713, IEPC-2017-304.", "url": "https://ntrs.nasa.gov/api/citations/20180000837/downloads/20180000837.pdf", "access": "open (NASA NTRS)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "78fb696b2b6a1d674f99c31872a70e12f9ccfcdd59985adf84107bc262285a8e"},
+  {"id": "joussot_2017", "citation": "R. Joussot, L. Grimaud, S. Mazouffre, 'Examination of a 5 A-class cathode with a LaB6 flat disk emitter in the 2 A-20 A current range', Vacuum 146 (2017) 52-62.", "doi": "10.1016/j.vacuum.2017.09.021", "url": "https://hal.science/hal-03546669/document", "access": "open (HAL, author manuscript)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "5c246cc857c8c1f5a8c2976855eda388be0f0b8c80589faf1eba9234a0eba40c"},
+  {"id": "zschaetzsch_2022", "citation": "D. Zschaetzsch, M. Reitemeyer, P. J. Klar, A. Post, J. F. Plaza Fernandez, 'Design and Operation of a Hollow Cathode with a C12A7:2e- Insert in Comparison with a LaB6 Insert', IEPC-2022-102.", "url": "https://www.jotform.com/uploads/electricrocket/220994246997171/5309367837227259563/IEPC-2022-102_HollowCathode_Daniel_Zschaetzsch.pdf", "access": "open (ERPS conference upload)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "e718a0d7b8e1c62c40badf771ba0677da8e779a9c768e50a339f5051cf17e258"},
+  {"id": "reitemeyer_2019", "citation": "M. Reitemeyer, D. Zschaetzsch, K. Holste, L. Chen, P. J. Klar, 'Applicability of electride materials for hollow cathodes', IEPC-2019-A-604.", "url": "https://www.electricrocket.org/2019/604.pdf", "access": "open (ERPS)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "fbcb703b6d06772da536544e4d1223732bc2209ca14b5d4149d19f031545381a"},
+  {"id": "rand_2014", "citation": "L. P. Rand, 'A Calcium Aluminate Electride Hollow Cathode', PhD dissertation, Colorado State University, 2014.", "url": "https://projects-web.engr.colostate.edu/ionstand/graduates/papers/Rand%20Dissertation.pdf", "access": "open (university web)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "ae88717babf72fa980c4cb0a46909ad614b70a199f76152c55d1f0c33d67cac0"},
+  {"id": "becke_2026", "citation": "P. S. Becke, N. G. Kottke, M. Vaupel, N. Kutufa, M. Tajmar, K. Waetzig, F. G. Hey, 'On the compatibility of C12A7 electride and iodine in planar and hollow cathodes', Journal of Electric Propulsion 5:17 (2026).", "doi": "10.1007/s44205-026-00192-y", "url": "https://zenodo.org/records/21787452", "license": "CC BY 4.0", "access": "open (Zenodo)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "5390588d7a9d5809c9929ffc5b9eae7ee658a7c234abd0deadd4edfcd21a4ab1"},
+  {"id": "watanabe_2015", "citation": "H. Watanabe et al., 'Performance Evaluation of Radio Frequency Plasma Cathode for Hall Effect Thruster', IEPC-2015-194 / ISTS-2015-b-194.", "url": "http://electricrocket.org/IEPC/IEPC-2015-194_ISTS-2015-b-194.pdf", "access": "open (ERPS)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "00d3165e3dd2b03c81bbfccee3ebd8060a7ef3e03e7b46e60dee97a08f8ae538"},
+  {"id": "nishiyama_2009", "citation": "K. Nishiyama, S. Hosoda, H. Kuninaka, Y. Toyoda, 'Operational Characteristics of a Microwave Discharge Neutralizer for the ECR Ion Thruster mu20', IEPC-2009-021.", "url": "https://electricrocket.org/IEPC/IEPC-2009-021.pdf", "access": "open (ERPS)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "f1c069ad45ada22e45f9040aba0c5de0d777b6ad25f7f2bbf8d37cc89dea96d8"},
+  {"id": "schwertheim_2025", "citation": "A. Schwertheim, N. Gondol, R. Rakhimov, J. Arteaga, P. Singh, D. Noal, T. Eagland, P. Sheppard, A. Papulov, 'Air-Breathing Electric Propulsion Developments at NewOrbit Space', IEPC-2025-378; posted as Research Square preprint rs-9039885 v1 (not peer reviewed).", "doi": "10.21203/rs.3.rs-9039885/v1", "url": "https://www.researchsquare.com/article/rs-9039885/v1", "license": "CC BY 4.0", "access": "open (preprint)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "d121e9dfa7891706a21f0034a06ebdaecf21ec03b12945e6484dd355bd543c6f"},
+  {"id": "cifali_2011", "citation": "G. Cifali, T. Misuri, P. Rossetti, M. Andrenucci, D. Valentian, D. Feili, B. Lotz, 'Experimental characterization of HET and RIT with atmospheric propellants', IEPC-2011-224.", "url": "https://electricrocket.org/IEPC/IEPC-2011-224.pdf", "access": "open (ERPS)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "44b0fc265f35bbf707b1d99f8cbbdcf938aef48831ad28f97350550803254d11"},
+  {"id": "brabston_2024", "citation": "W. P. Brabston, L. A. Marino, D. Lev, M. L. R. Walker, 'Analysis of the Ionization and Acceleration Efficiencies of Molecular Nitrogen in a Hall Effect Thruster', IEPC-2024-297.", "url": "https://hpepl.ae.gatech.edu/sites/default/files/gbb-uploads/IEPC-24-297.pdf", "access": "open (laboratory web)", "retrieved": true, "retrieved_on": "2026-09-26", "sha256": "ea9e763be1cd0ae2fe357c9de6717eca8e2a194c08a95d4c284f3f6a18b2f226", "note": "Cathode description only; no P5-N2 campaign result is used or implied."},
+  {"id": "marchioni_2020_via_repo_audit", "citation": "F. Marchioni, 'Design and Performance Measurements of a Long Channel Hall Thruster for Air-Breathing Electric Propulsion', MSc thesis, Politecnico di Torino, 2019-20 (source S2 of the repository ECHT audit).", "url": "https://webthesis.biblio.polito.it/14618/", "repo_path": "hallthruster_bridge/identification/echt_n2/echt_n2_evidence_audit_v1.json", "access": "open (thesis repository); values taken from the repository audit record, not re-read in this lane", "retrieved": false},
+  {"id": "conversano_2022_title", "citation": "R. W. Conversano, G. Becatti, D. M. Goebel, V. H. Chaplin, 'Demonstration of 13,011-h of Operation of a Proto-Flight Compact Heaterless Lanthanum Hexaboride Hollow Cathode', Acta Astronautica 197 (2022) 53-59 (bibliographic data as shown in search results - verify).", "url": "https://www.sciencedirect.com/science/article/abs/pii/S0094576522002119", "access": "not retrieved (ScienceDirect 403; ADS human-verification page); title only", "retrieved": false},
+  {"id": "becatti_2021_title", "citation": "G. Becatti, R. W. Conversano, D. M. Goebel, 'Demonstration of 25,000 ignitions on a proto-flight compact heaterless lanthanum hexaboride hollow cathode', Acta Astronautica 178 (2021).", "doi": "10.1016/j.actaastro.2020.09.013", "url": "https://www.osti.gov/pages/biblio/1660475", "access": "OSTI bibliographic record accessed (abstract 'Not Available'); body not retrieved", "retrieved": false},
+  {"id": "rfp_via_claude_md", "citation": "RFP DTDF/06/13516/DSP/ABEP/X/L/M/01 envelope as transcribed in the repository CLAUDE.md", "repo_path": "CLAUDE.md", "access": "repository", "retrieved": false},
+  {"id": "repo_code", "citation": "ABEP-VLEO simulator source code at base commit efc4a4e", "repo_path": "abep_sim/", "access": "repository", "retrieved": false}
+ ]
+}
