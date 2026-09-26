@@ -699,6 +699,11 @@
      "workflow_run": "wf_e16cec30-7b2",
      "workflow_key": "BUNDLE1",
      "reason": "Bundle 1 v2 (new files; v1 kept byte-identical as the T_BUNDLE1 attempt-2 record): re-pinned inputs incl. repaired lane_09 and re-pinned envelope; governance inputs pinned so bookkeeping cannot break reproduction"
+    },
+    {
+     "workflow_run": "wf_16b7de5d-7b9",
+     "workflow_key": "BUNDLE1",
+     "reason": "Bundle 1 v3: veto-layer context pin updated to the re-verified 7a7eb68 (orchestration race in wf_e16cec30-7b2); v1/v2 kept as records"
     }
    ]
   },
@@ -722,7 +727,14 @@
   {
    "id": "fo_experiment_package",
    "kind": "follow_on",
-   "title": "Experimental decision package from the minimum decisive experiment"
+   "title": "Experimental decision package from the minimum decisive experiment",
+   "repairs": [
+    {
+     "workflow_run": "wf_16b7de5d-7b9",
+     "workflow_key": "EXPPKG",
+     "reason": "re-pin the re-verified Hall-sustainment envelope (da9b71b); input verification moved out of import so a changed pin FAILS tests instead of a collection error"
+    }
+   ]
   },
   {
    "id": "fo_v2_domain_question_a",
