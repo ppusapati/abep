@@ -70,7 +70,9 @@ def derived_values() -> dict:
                      "inputs": {"f_Hz": f, "frequency_source": fsrc, "constants": "scipy.constants epsilon_0, m_e, e"},
                      "cross_check": ({"source_stated": stated["n"][0], "where": stated["n"][1], "rel_diff": rel(n, stated["n"][0])}
                                      if "n" in stated else None),
-                     "note": "Low-field-side O/X-mode cutoff; right-hand waves launched from the high-field side can propagate above it."})
+                     "note": ("O-mode cutoff (omega_pe = omega). A low-field-side X-mode wave meets the R-cutoff first, at "
+                              "omega_pe^2 = omega (omega - omega_ce), i.e. at a lower density; right-hand waves launched from "
+                              "the high-field side can propagate above n_c.")})
 
     b245 = b_ecr(2.45e9)
     for gid, bg, where in [("P5N2", 130.0, "hallthruster_bridge/cases/p5_n2.json source field: 'peak radial B 130 G' (Brabston 2025 Table 2)"),
@@ -106,7 +108,9 @@ def derived_values() -> dict:
                  "inputs": {"firing_hours": RFP.ignition_hours, "mission_hours": RFP.mission_hours,
                             "source": "abep_sim/constants.py RFP.ignition_hours, RFP.mission_hours"},
                  "cross_check": None,
-                 "note": "Below 1, so the thruster is off for part of the mission and must restart; the restart count is TBD (owner)."})
+                 "note": ("Uses the RFP lower bound (> 15,000 h) as the firing time, the same modelling choice as "
+                          "abep_sim/system.py duty_cycle; below 1, so under that choice the thruster is off for part of the "
+                          "mission and must restart. The RFP itself does not state a restart count (TBD, owner).")})
     return {"generated_by": GENERATOR,
             "constants": {"source": "scipy.constants (CODATA) for m_e, e, epsilon_0, R, zero_Celsius, atm; abep_sim/constants.py for RFP, AMU, M_SPECIES",
                           "rounding": "6 significant figures (ratios and fractions 4)"},

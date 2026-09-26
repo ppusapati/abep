@@ -7,7 +7,7 @@
  "additionalProperties": false,
  "required": ["schema", "id", "version", "status", "date", "base_commit", "lane", "scope", "no_winner_statement", "milestones",
   "architectures", "hard_gates", "hard_gate_matrix_link", "lanes", "failure_classes", "evidence_status_rule", "elimination_rule", "eliminations",
-  "sources", "actions", "nodes", "ranking_rule", "derived_values", "ranked_next_evidence", "open_questions_for_owner"],
+  "sources", "actions", "action_effects", "nodes", "ranking_rule", "derived_values", "ranked_next_evidence", "open_questions_for_owner"],
  "properties": {
   "schema": {"const": "failure_tree_v1"},
   "id": {"const": "failure_trees_v1"},
@@ -29,6 +29,7 @@
   "eliminations": {"type": "array", "items": {"$ref": "#/$defs/elimination"}},
   "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}},
   "actions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/action"}},
+  "action_effects": {"$ref": "#/$defs/action_effects"},
   "nodes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/node"}},
   "ranking_rule": {"$ref": "#/$defs/ranking_rule"},
   "derived_values": {"$ref": "#/$defs/derived_values"},
@@ -169,6 +170,14 @@
     "targets": {"type": "array", "items": {"type": "string"}}
    }
   },
+  "action_effects": {
+   "type": "object", "additionalProperties": false,
+   "required": ["decides", "contributes", "informs", "rule"],
+   "properties": {
+    "decides": {"type": "string", "minLength": 1}, "contributes": {"type": "string", "minLength": 1},
+    "informs": {"type": "string", "minLength": 1}, "rule": {"type": "string", "minLength": 1}
+   }
+  },
   "evidence_item": {
    "type": "object", "additionalProperties": false,
    "required": ["source", "direction", "evidence_class", "evidence_level", "statement", "locator", "applicability"],
@@ -192,12 +201,14 @@
   },
   "decision_quantity": {
    "type": "object", "additionalProperties": false,
-   "required": ["quantity", "threshold", "threshold_status", "gates"],
+   "required": ["quantity", "threshold", "threshold_status", "requires_actions", "requires_owner_inputs", "gates"],
    "properties": {
     "quantity": {"type": "string", "minLength": 1},
     "threshold": {"type": "string", "minLength": 1},
     "threshold_status": {"enum": ["RFP", "PROPOSED", "TBD", "physics_bound"]},
     "requires": {"type": "string"},
+    "requires_actions": {"description": "Every action whose output the threshold comparison needs. Each is 'contributes' on the node (or is its single deciding action); no other action may decide the node.", "type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[LAM]-[A-Z0-9]+$"}},
+    "requires_owner_inputs": {"description": "Owner-fixed inputs (thresholds, margins, allocations, allowed Xe roles, operations assumptions) the comparison needs; these do not stop an action from deciding.", "type": "array", "items": {"type": "string", "minLength": 1}},
     "derived_values": {"type": "array", "items": {"type": "string", "pattern": "^D-[A-Z0-9.-]+$"}},
     "gates": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/gate_id"}}
    }

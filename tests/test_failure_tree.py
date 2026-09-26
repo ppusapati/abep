@@ -195,6 +195,55 @@ def test_cheapest_resolution_rule(doc):
             assert max(COST[acts[a]["kind"]] for a in cr) <= min(dec_costs), n["id"]
 
 
+def test_requires_actions_forbid_a_lone_decides(doc):
+    """'decides' means sufficient alone given only owner-fixed and design-fixed inputs. An action named in
+    decision_quantity.requires_actions (another action's output the threshold comparison needs) therefore forbids any
+    other action from deciding the node; each required action contributes and is in cheapest_resolution."""
+    assert set(doc["action_effects"]) == {"decides", "contributes", "informs", "rule"}
+    acts = {a["id"] for a in doc["actions"]}
+    for n in doc["nodes"]:
+        dq = n["decision_quantity"]
+        req = set(dq["requires_actions"])
+        assert req <= acts, n["id"]
+        eff = {na["action"]: na["effect"] for na in n["actions"]}
+        # every action id named in the free-text 'requires' is listed in requires_actions
+        assert set(re.findall(r"\b[LAM]-[A-Z0-9]+\b", dq.get("requires", ""))) <= req, n["id"]
+        for a in req:
+            assert eff.get(a) in ("decides", "contributes"), (n["id"], a)
+            assert a in n["cheapest_resolution"], (n["id"], a)
+        for a, e in eff.items():
+            if e == "decides":
+                assert req <= {a}, f"{n['id']}: {a} cannot decide while {sorted(req - {a})} is required"
+
+
+def test_contributes_forms_a_jointly_sufficient_set(doc):
+    """A 'contributes' action is never sufficient alone, so a node's contributing actions are either absent or at
+    least two (a lone contributor beside a decider would really only inform)."""
+    for n in doc["nodes"]:
+        c = [na["action"] for na in n["actions"] if na["effect"] == "contributes"]
+        assert len(c) != 1, (n["id"], c)
+
+
+def test_regression_requires_relabelled_nodes(doc):
+    """Nodes whose threshold needs another action's output (review round 1) have no lone decider."""
+    nodes = {n["id"]: n for n in doc["nodes"]}
+    for nid in ("N-PWR-01", "N-PWR-02", "N-PWR-03", "N-UTL-01", "N-UTL-02", "N-UTL-03", "N-ISL-RF", "N-ISL-ECR",
+                "N-ECR-01", "N-SUS-02", "N-CAT-02", "N-CTL-02"):
+        assert not [na for na in nodes[nid]["actions"] if na["effect"] == "decides"], nid
+
+
+def test_unstated_gas_is_not_decisive_for_air_nodes(doc):
+    """An item whose applicability admits the gas/composition is not stated cannot support or contradict a node that
+    is specific to air or N2/O2 (it is 'context' until the gas is known)."""
+    pat = re.compile(r"(gas|composition)[^.;]{0,60}(not stated|does not state)|does not state the (gas|composition)", re.I)
+    for n in doc["nodes"]:
+        if not re.search(r"\bon (air|N2/O2)\b", n["title"]):
+            continue
+        for e in n["evidence"]:
+            if pat.search(e["applicability"]):
+                assert e["direction"] == "context", (n["id"], e["source"])
+
+
 # ------------------------------------------------------------------ gates
 def test_hard_gates_are_the_rfp_set_with_rfp_numbers(doc):
     from abep_sim.constants import RFP
@@ -274,6 +323,9 @@ def test_architecture_specific_classes_and_modes(doc):
     assert "e-h" in text["rf_hall"]                                    # RF E-H mode transition
     assert "cutoff" in text["ecr_hall"] and "overdense" in text["ecr_hall"]
     assert "hall magnetic circuit" in text["ecr_hall"]                 # ECR magnets vs Hall circuit
+    for arch in ARCHS:                                                 # thermal limit covers the channel walls
+        assert any(classes[n["failure_class"]]["name"] == "thermal_limit" and "wall" in n["title"].lower()
+                   and arch in n["architectures"] for n in doc["nodes"]), arch
     for arch in ("rf_hall", "ecr_hall"):
         assert any(classes[n["failure_class"]]["name"] == "interstage_loss" and n["architectures"] == [arch]
                    for n in doc["nodes"]), arch

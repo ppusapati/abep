@@ -1,7 +1,7 @@
 {
  "schema": "failure_tree_v1",
  "id": "failure_trees_v1",
- "version": "1.0.0",
+ "version": "1.1.0",
  "status": "DRAFT for owner review (2026-09-26). Evidence map and decision structure only: nothing here is a performance prediction, a validation claim or a selection.",
  "date": "2026-09-26",
  "base_commit": "c53b75a",
@@ -165,7 +165,7 @@
    "id": "restart_sustainment",
    "title": "Sustained operation and restart capability",
    "threshold": {
-    "text": "sustained discharge over the delivered feed envelope and every restart the operations concept needs; firing (15,000 h) < mission (26,000 h) implies interruptions",
+    "text": "sustained discharge over the delivered feed envelope and every restart the operations concept needs; the RFP firing figure is a lower bound (> 15,000 h), so off periods follow from the repository's modelling choice (abep_sim/system.py duty_cycle = ignition_hours / mission_hours), not strictly from the RFP",
     "values": []
    },
    "threshold_status": "RFP_with_TBD_count",
@@ -620,7 +620,8 @@
    ],
    "accessed": "2026-09-26",
    "sha256": "8758ce87658e3e1a93e39402d3a999624d41160d4a368ca1e05aab5aee2f56f3",
-   "license": "CC BY 4.0"
+   "license": "CC BY 4.0",
+   "notes": "sha256 is that of the copy read on 2026-09-26. The publisher's PDF is not byte-stable: each download carries its own download timestamp (CreationDate) and a fresh second trailer /ID, so a later download hashes differently (two further downloads on 2026-09-26 gave 576b84d9... and 4ff002a0..., 22 pages, first trailer /ID a71bb6b2b93a86c77acf6ae25578eccf and ModDate D:20230821173100Z unchanged). The quoted text (87.5 mT and 7.4e16 m^-3 on pdf p. 4; the air sentence on pdf p. 9; the poisoning sentence on pdf p. 3) was re-found by text search in a fresh download."
   },
   {
    "id": "S-TISAEV2023B",
@@ -639,7 +640,8 @@
    "doi": "10.1063/5.0188080",
    "access": "abstract_only",
    "retrieved_via": [
-    "https://api.crossref.org/works?query.bibliographic=Plume+mode+instability+emitter+surface+poisoning"
+    "https://api.crossref.org/works?query.bibliographic=Plume+mode+instability+emitter+surface+poisoning",
+    "https://api.crossref.org/works/10.1063/5.0188080"
    ],
    "accessed": "2026-09-26",
    "license": "CC BY 4.0"
@@ -697,11 +699,12 @@
    "doi": "10.1007/s12567-026-00700-8",
    "access": "abstract_only",
    "retrieved_via": [
-    "https://api.crossref.org/works?query.bibliographic=Current+progress+development+ECR+plasma+atmosphere-breathing+electric+propulsion+CEAS"
+    "https://api.crossref.org/works?query.bibliographic=Current+progress+development+ECR+plasma+atmosphere-breathing+electric+propulsion+CEAS",
+    "https://api.crossref.org/works/10.1007/s12567-026-00700-8"
    ],
    "accessed": "2026-09-26",
    "license": "CC BY 4.0",
-   "notes": "Full text is CC BY but the publisher link uses a cookie redirect that was not followed; abstract only."
+   "notes": "Full text is CC BY but the publisher link uses a cookie redirect that was not followed; abstract only. The abstract (Crossref record, re-read 2026-09-26) does not state the gas used."
   },
   {
    "id": "S-SIMMONDS2022",
@@ -999,7 +1002,7 @@
    "id": "M-PREION",
    "kind": "measurement",
    "title": "Common-condition pre-ionizer A/B/C test",
-   "description": "Same Hall stage, same feed state and same bus power with no pre-ionizer (hall_only arm), RF pre-ionizer and ECR pre-ionizer: thrust, I_d, ion current, acceleration-stage current, interstage ion flux, RF interference. This is the minimum decisive experiment for the two-stage nodes.",
+   "description": "Same Hall stage, same feed state and same bus power with no pre-ionizer (hall_only arm), RF pre-ionizer and ECR pre-ionizer: thrust, I_d, ion current, acceleration-stage current, interstage ion flux, RF interference. It is the common measurement for the two-stage nodes; most of them also need another lane's analysis (A-ELEC, A-BREAKEVEN) to be settled, so it contributes to them rather than deciding them alone.",
    "lane": "minimum_decisive_experiment",
    "deliverable": "docs/architecture_comparison/minimum_decisive_experiment/ (design) with docs/architecture_comparison/experiment_protocol/ (common-condition protocol)",
    "blocked_by": []
@@ -1059,6 +1062,12 @@
    "blocked_by": []
   }
  ],
+ "action_effects": {
+  "decides": "The action's output alone settles the node, given only owner-fixed inputs (thresholds, margins, allocations, allowed Xe roles, operations-concept assumptions) and design-fixed inputs (component ratings and datasheet limits). If decision_quantity.requires_actions names another action, this action cannot decide the node.",
+  "contributes": "The action's output is a necessary member of the jointly sufficient set named in cheapest_resolution (or of another jointly sufficient set of the node's contributing actions); it is not sufficient alone.",
+  "informs": "The action narrows, prioritises or cross-checks the node but is not needed to settle it (for example a literature search, an unvalidated model, or a blocked Hall-map analysis).",
+  "rule": "decision_quantity.requires_actions lists every action whose output the threshold comparison needs. Each listed action is 'contributes' on the node (or is the single deciding action), no other action may 'decide' it, and every listed action is in cheapest_resolution."
+ },
  "nodes": [
   {
    "id": "N-IGN-01",
@@ -1118,7 +1127,15 @@
     "quantity": "Start success per attempt on atmospheric-only anode flow at the delivered feed state (IF-A5); Xe used per start when a Xe start is used",
     "threshold": "Every start the operations concept needs succeeds without Xe, or with a Xe per start that fits the air_xe rules and the Xe allocation (see N-CTL-02) (TBD - requires the owner's restart count and Xe allocation)",
     "threshold_status": "TBD",
-    "requires": "restart count (A-OPS, owner) and allowed Xe roles (air_xe gate TBD)",
+    "requires": "restart count (A-OPS, from owner assumptions) and allowed Xe roles (air_xe gate TBD)",
+    "requires_actions": [
+     "A-OPS"
+    ],
+    "requires_owner_inputs": [
+     "operations-concept assumptions for the restart count",
+     "allowed Xe roles (air_xe)",
+     "Xe allocation"
+    ],
     "gates": [
      "restart_sustainment",
      "air_xe"
@@ -1127,7 +1144,11 @@
    "actions": [
     {
      "action": "M-IGN",
-     "effect": "decides"
+     "effect": "contributes"
+    },
+    {
+     "action": "A-OPS",
+     "effect": "contributes"
     },
     {
      "action": "L-SITAEL",
@@ -1135,6 +1156,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-OPS",
     "M-IGN"
    ],
    "resolve_by_milestone": "C",
@@ -1181,6 +1203,12 @@
     "threshold": "Breakdown without a noble-gas start, or noble-gas start within the air_xe rules (TBD - requires the owner's air_xe rules on Xe roles)",
     "threshold_status": "TBD",
     "requires": "delivered pressure (A-FLOWENV) and allowed Xe roles",
+    "requires_actions": [
+     "A-FLOWENV"
+    ],
+    "requires_owner_inputs": [
+     "allowed Xe roles (air_xe)"
+    ],
     "gates": [
      "restart_sustainment",
      "air_xe"
@@ -1189,11 +1217,15 @@
    "actions": [
     {
      "action": "M-RFSRC",
-     "effect": "decides"
+     "effect": "contributes"
     },
     {
      "action": "M-IGN",
-     "effect": "decides"
+     "effect": "contributes"
+    },
+    {
+     "action": "A-FLOWENV",
+     "effect": "contributes"
     },
     {
      "action": "L-RFMODE",
@@ -1201,6 +1233,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-FLOWENV",
     "M-IGN"
    ],
    "resolve_by_milestone": "C",
@@ -1224,12 +1257,12 @@
    "evidence": [
     {
      "source": "S-STASTNY2026",
-     "direction": "contradicts",
+     "direction": "context",
      "evidence_class": "measured",
      "evidence_level": 3,
      "statement": "Abstract: 'experimental demonstration of plasma ignition in an electron-cyclotron-resonance atmosphere-breathing electric propulsion source at pressures representative of very low Earth orbit' and 'sustained plasma discharge at pressures consistent with conditions expected after intake compression at altitudes near 200 km'.",
      "locator": "Abstract",
-     "applicability": "Laboratory ECR ABEP source with a MHz-range birdcage resonator; gas composition as used by the source (abstract does not state it)."
+     "applicability": "Laboratory ECR ABEP source with a MHz-range birdcage resonator. The abstract (re-read via Crossref 2026-09-26) does not state the gas, so air or N2/O2 breakdown is not established; not decisive until the full text (L-ECRHALL) gives the composition."
     },
     {
      "source": "S-DIAMANT2009",
@@ -1241,12 +1274,18 @@
      "applicability": "Noble gases only; nitrogen-oxygen not attempted (Sec. V)."
     }
    ],
-   "evidence_status": "contradicted",
+   "evidence_status": "unknown",
    "decision_quantity": {
     "quantity": "ECR-source breakdown on the atmospheric feed at the delivered pressure",
     "threshold": "Breakdown without a noble-gas start, or noble-gas start within the air_xe rules (TBD - requires the owner's air_xe rules on Xe roles)",
     "threshold_status": "TBD",
     "requires": "delivered pressure (A-FLOWENV) and allowed Xe roles",
+    "requires_actions": [
+     "A-FLOWENV"
+    ],
+    "requires_owner_inputs": [
+     "allowed Xe roles (air_xe)"
+    ],
     "gates": [
      "restart_sustainment",
      "air_xe"
@@ -1255,11 +1294,15 @@
    "actions": [
     {
      "action": "M-ECRSRC",
-     "effect": "decides"
+     "effect": "contributes"
     },
     {
      "action": "M-IGN",
-     "effect": "decides"
+     "effect": "contributes"
+    },
+    {
+     "action": "A-FLOWENV",
+     "effect": "contributes"
     },
     {
      "action": "L-ECRHALL",
@@ -1267,12 +1310,14 @@
     }
    ],
    "cheapest_resolution": [
+    "A-FLOWENV",
     "M-ECRSRC"
    ],
    "resolve_by_milestone": "C",
    "milestone_A_condition": "Demonstrate ECR-source breakdown on the atmospheric feed at delivered pressure.",
    "analysis_requires_admitted_hall_closure": false,
-   "decision_state": "open"
+   "decision_state": "open",
+   "evidence_gap": "No open item read so far establishes ECR breakdown on air or N2/O2: S-STASTNY2026 reports ignition at VLEO-representative pressures but its abstract does not state the gas, and its CC BY full text is targeted by L-ECRHALL; S-DIAMANT2009 covers noble gases only."
   },
   {
    "id": "N-IGN-04",
@@ -1306,6 +1351,12 @@
     "threshold": "Start at the lowest delivered feed state of the envelope with the pre-ionizer on (PROPOSED form; margin TBD)",
     "threshold_status": "PROPOSED",
     "requires": "delivered-feed envelope (A-FLOWENV)",
+    "requires_actions": [
+     "A-FLOWENV"
+    ],
+    "requires_owner_inputs": [
+     "start margin (PROPOSED)"
+    ],
     "gates": [
      "restart_sustainment",
      "air_xe"
@@ -1314,11 +1365,15 @@
    "actions": [
     {
      "action": "M-IGN",
-     "effect": "decides"
+     "effect": "contributes"
     },
     {
      "action": "M-PREION",
-     "effect": "decides"
+     "effect": "contributes"
+    },
+    {
+     "action": "A-FLOWENV",
+     "effect": "contributes"
     },
     {
      "action": "A-INTERSTAGE",
@@ -1326,6 +1381,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-FLOWENV",
     "M-IGN"
    ],
    "resolve_by_milestone": "C",
@@ -1392,6 +1448,12 @@
     "threshold": "Sustained at every design operating point on the delivered composition without continuous Xe, with an oscillation bound (PROPOSED; amplitude TBD)",
     "threshold_status": "PROPOSED",
     "requires": "delivered composition (A-FLOWENV); owner margin",
+    "requires_actions": [
+     "A-FLOWENV"
+    ],
+    "requires_owner_inputs": [
+     "oscillation bound and sustainment margin"
+    ],
     "gates": [
      "restart_sustainment",
      "thrust",
@@ -1401,7 +1463,11 @@
    "actions": [
     {
      "action": "M-SUSWIN",
-     "effect": "decides"
+     "effect": "contributes"
+    },
+    {
+     "action": "A-FLOWENV",
+     "effect": "contributes"
     },
     {
      "action": "L-SITAEL",
@@ -1413,6 +1479,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-FLOWENV",
     "M-SUSWIN"
    ],
    "resolve_by_milestone": "B",
@@ -1452,6 +1519,11 @@
     "threshold": "Sustained flow range contains the delivered-flow envelope, or the flow control keeps the feed inside it (PROPOSED)",
     "threshold_status": "PROPOSED",
     "requires": "A-FLOWENV (upstream, Hall-independent) and M-SUSWIN",
+    "requires_actions": [
+     "A-FLOWENV",
+     "M-SUSWIN"
+    ],
+    "requires_owner_inputs": [],
     "gates": [
      "restart_sustainment",
      "thrust"
@@ -1507,6 +1579,9 @@
     "quantity": "Acceleration-stage current and usable acceleration voltage with the pre-ionizer on, and stability of the coupled discharges",
     "threshold": "Acceleration voltage and current at the design point reachable with bounded oscillation (PROPOSED)",
     "threshold_status": "PROPOSED",
+    "requires": "owner-fixed thresholds and design-fixed inputs only",
+    "requires_actions": [],
+    "requires_owner_inputs": [],
     "gates": [
      "thrust",
      "bus_power",
@@ -1593,6 +1668,10 @@
     "threshold": ">= 12 mN sustained on air within the 1.5 kW bus (RFP)",
     "threshold_status": "RFP",
     "requires": "A-ELEC for the discharge power available",
+    "requires_actions": [
+     "A-ELEC"
+    ],
+    "requires_owner_inputs": [],
     "gates": [
      "thrust",
      "bus_power"
@@ -1601,7 +1680,7 @@
    "actions": [
     {
      "action": "M-PREION",
-     "effect": "decides"
+     "effect": "contributes"
     },
     {
      "action": "A-ELEC",
@@ -1617,6 +1696,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-ELEC",
     "M-PREION"
    ],
    "resolve_by_milestone": "B",
@@ -1662,7 +1742,14 @@
     "quantity": "Thrust at fixed bus power with the RF stage on vs the hall_only arm at the same feed state",
     "threshold": "rf_hall thrust at 1.5 kW bus >= 12 mN; break-even against the hall_only arm is PROPOSED as the architecture-benefit criterion",
     "threshold_status": "PROPOSED",
-    "requires": "A-BREAKEVEN surfaces; common bus boundary",
+    "requires": "A-BREAKEVEN surfaces; common bus boundary (A-ELEC)",
+    "requires_actions": [
+     "A-BREAKEVEN",
+     "A-ELEC"
+    ],
+    "requires_owner_inputs": [
+     "break-even criterion (PROPOSED)"
+    ],
     "gates": [
      "thrust",
      "bus_power"
@@ -1671,10 +1758,14 @@
    "actions": [
     {
      "action": "M-PREION",
-     "effect": "decides"
+     "effect": "contributes"
     },
     {
      "action": "A-BREAKEVEN",
+     "effect": "contributes"
+    },
+    {
+     "action": "A-ELEC",
      "effect": "contributes"
     },
     {
@@ -1683,6 +1774,8 @@
     }
    ],
    "cheapest_resolution": [
+    "A-BREAKEVEN",
+    "A-ELEC",
     "M-PREION"
    ],
    "resolve_by_milestone": "B",
@@ -1715,20 +1808,27 @@
     },
     {
      "source": "S-DIAMANT2010",
-     "direction": "contradicts",
+     "direction": "context",
      "evidence_class": "measured",
      "evidence_level": 3,
      "statement": "Abstract: an ECR-stage 2-stage cylindrical Hall thruster design with 'preliminary data showing favorable comparison to existing cylindrical Hall thrusters'.",
      "locator": "Abstract (closed access)",
-     "applicability": "Abstract only; gas and operating points not stated in the abstract."
+     "applicability": "Abstract only; gas, utilization and power trade not stated in the abstract, so it does not bear on the air-specific gain per watt."
     }
    ],
-   "evidence_status": "unknown",
+   "evidence_status": "supported",
    "decision_quantity": {
     "quantity": "Thrust at fixed bus power with the ECR stage on vs the hall_only arm at the same feed state",
     "threshold": "ecr_hall thrust at 1.5 kW bus >= 12 mN; break-even against the hall_only arm is PROPOSED as the architecture-benefit criterion",
     "threshold_status": "PROPOSED",
-    "requires": "A-BREAKEVEN surfaces; common bus boundary",
+    "requires": "A-BREAKEVEN surfaces; common bus boundary (A-ELEC)",
+    "requires_actions": [
+     "A-BREAKEVEN",
+     "A-ELEC"
+    ],
+    "requires_owner_inputs": [
+     "break-even criterion (PROPOSED)"
+    ],
     "gates": [
      "thrust",
      "bus_power"
@@ -1737,10 +1837,14 @@
    "actions": [
     {
      "action": "M-PREION",
-     "effect": "decides"
+     "effect": "contributes"
     },
     {
      "action": "A-BREAKEVEN",
+     "effect": "contributes"
+    },
+    {
+     "action": "A-ELEC",
      "effect": "contributes"
     },
     {
@@ -1749,6 +1853,8 @@
     }
    ],
    "cheapest_resolution": [
+    "A-BREAKEVEN",
+    "A-ELEC",
     "M-PREION"
    ],
    "resolve_by_milestone": "B",
@@ -1785,7 +1891,11 @@
     "quantity": "Interstage ion transmission fraction (ion current entering the acceleration zone / ion current produced in the RF stage)",
     "threshold": ">= the transmission the break-even surfaces require at the design point (TBD - requires the break-even surfaces evaluated at a Vyovrinda design point)",
     "threshold_status": "TBD",
-    "requires": "A-BREAKEVEN",
+    "requires": "A-BREAKEVEN for the required transmission; the transmission itself is the measured quantity (interstage ion flux in the common-condition test). The interstage model output is unvalidated and only informs.",
+    "requires_actions": [
+     "A-BREAKEVEN"
+    ],
+    "requires_owner_inputs": [],
     "gates": [
      "thrust",
      "bus_power"
@@ -1794,10 +1904,6 @@
    "actions": [
     {
      "action": "M-PREION",
-     "effect": "decides"
-    },
-    {
-     "action": "A-INTERSTAGE",
      "effect": "contributes"
     },
     {
@@ -1805,11 +1911,16 @@
      "effect": "contributes"
     },
     {
+     "action": "A-INTERSTAGE",
+     "effect": "informs"
+    },
+    {
      "action": "L-HHT",
      "effect": "informs"
     }
    ],
    "cheapest_resolution": [
+    "A-BREAKEVEN",
     "M-PREION"
    ],
    "resolve_by_milestone": "B",
@@ -1854,7 +1965,11 @@
     "quantity": "Interstage ion transmission fraction from the ECR zone to the acceleration zone",
     "threshold": ">= the transmission the break-even surfaces require at the design point (TBD - requires the break-even surfaces evaluated at a Vyovrinda design point)",
     "threshold_status": "TBD",
-    "requires": "A-BREAKEVEN",
+    "requires": "A-BREAKEVEN for the required transmission; the transmission itself is the measured quantity (interstage ion flux in the common-condition test). The interstage model output is unvalidated and only informs.",
+    "requires_actions": [
+     "A-BREAKEVEN"
+    ],
+    "requires_owner_inputs": [],
     "derived_values": [
      "D-ECR-B-2.45GHZ"
     ],
@@ -1866,15 +1981,15 @@
    "actions": [
     {
      "action": "M-PREION",
-     "effect": "decides"
-    },
-    {
-     "action": "A-INTERSTAGE",
      "effect": "contributes"
     },
     {
      "action": "A-BREAKEVEN",
      "effect": "contributes"
+    },
+    {
+     "action": "A-INTERSTAGE",
+     "effect": "informs"
     },
     {
      "action": "A-BFIELD",
@@ -1886,6 +2001,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-BREAKEVEN",
     "M-PREION"
    ],
    "resolve_by_milestone": "B",
@@ -1940,6 +2056,12 @@
     "threshold": "Operating point above the down-transition everywhere in the envelope with a margin (PROPOSED; margin TBD)",
     "threshold_status": "PROPOSED",
     "requires": "composition envelope (A-FLOWENV)",
+    "requires_actions": [
+     "A-FLOWENV"
+    ],
+    "requires_owner_inputs": [
+     "mode-transition margin (PROPOSED)"
+    ],
     "gates": [
      "restart_sustainment",
      "bus_power",
@@ -1949,7 +2071,7 @@
    "actions": [
     {
      "action": "M-RFSRC",
-     "effect": "decides"
+     "effect": "contributes"
     },
     {
      "action": "A-FLOWENV",
@@ -1961,6 +2083,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-FLOWENV",
     "M-RFSRC"
    ],
    "resolve_by_milestone": "B",
@@ -2006,6 +2129,13 @@
     "quantity": "Reflected power fraction over ignition, Xe <-> air transition and the flow envelope with the chosen matching approach",
     "threshold": "Reflected power within the RF generator rating and inside the bus ledger (PROPOSED; value TBD)",
     "threshold_status": "PROPOSED",
+    "requires": "bus-ledger margin for reflected power (A-ELEC); RF generator rating (design input)",
+    "requires_actions": [
+     "A-ELEC"
+    ],
+    "requires_owner_inputs": [
+     "reflected-power limit (PROPOSED)"
+    ],
     "gates": [
      "bus_power",
      "restart_sustainment"
@@ -2014,18 +2144,19 @@
    "actions": [
     {
      "action": "M-RFSRC",
-     "effect": "decides"
-    },
-    {
-     "action": "M-TRANS",
      "effect": "contributes"
     },
     {
      "action": "A-ELEC",
+     "effect": "contributes"
+    },
+    {
+     "action": "M-TRANS",
      "effect": "informs"
     }
    ],
    "cheapest_resolution": [
+    "A-ELEC",
     "M-RFSRC"
    ],
    "resolve_by_milestone": "C",
@@ -2073,6 +2204,9 @@
     "quantity": "Deviation of the Hall-channel B(z) and of the helicon-region field under superposition, over the magnet-current schedule",
     "threshold": "Hall B(z) within the Vyovrinda design tolerance (TBD, docs/hallmap/)",
     "threshold_status": "TBD",
+    "requires": "owner-fixed thresholds and design-fixed inputs only",
+    "requires_actions": [],
+    "requires_owner_inputs": [],
     "gates": [
      "thrust",
      "restart_sustainment"
@@ -2120,6 +2254,9 @@
     "quantity": "Disturbance on discharge current/voltage regulation and keeper/cathode supply with RF on",
     "threshold": "No loss of regulation or protection trips (PROPOSED)",
     "threshold_status": "PROPOSED",
+    "requires": "owner-fixed thresholds and design-fixed inputs only",
+    "requires_actions": [],
+    "requires_owner_inputs": [],
     "gates": [
      "restart_sustainment"
     ]
@@ -2152,7 +2289,7 @@
    "rfp_blocks": [
     "ionization_discharge"
    ],
-   "mechanism": "Microwaves launched from the low-field side are reflected where the plasma frequency exceeds the wave frequency, capping density at the cutoff n_c(f) unless another wave mode or launch is used.",
+   "mechanism": "Microwaves launched from the low-field side are reflected where the plasma frequency exceeds the wave frequency (O-mode cutoff n_c(f); the X-mode R-cutoff lies at lower density), capping density unless another wave mode or launch is used.",
    "physical_cause": "n_c(f) = epsilon_0 m_e (2 pi f)^2 / e^2 (derived values D-ECR-NC-*).",
    "evidence": [
     {
@@ -2186,9 +2323,13 @@
    "evidence_status": "unknown",
    "decision_quantity": {
     "quantity": "Required ECR-stage density (or ion flux) against n_c(f) for the chosen frequency and launch",
-    "threshold": "n_e <= n_c(f) for low-field-side O/X launch; above it only with a demonstrated overdense heating route (physics bound)",
+    "threshold": "n_e <= n_c(f), the O-mode cutoff, for low-field-side launch (a low-field-side X-mode wave meets the R-cutoff, omega_pe^2 = omega (omega - omega_ce), at a lower density still); above n_c only with a demonstrated overdense heating route (physics bound)",
     "threshold_status": "physics_bound",
     "requires": "required ion flux from A-INTERSTAGE",
+    "requires_actions": [
+     "A-INTERSTAGE"
+    ],
+    "requires_owner_inputs": [],
     "derived_values": [
      "D-ECR-NC-2.45GHZ",
      "D-ECR-NC-5.8GHZ",
@@ -2202,7 +2343,7 @@
    "actions": [
     {
      "action": "M-ECRSRC",
-     "effect": "decides"
+     "effect": "contributes"
     },
     {
      "action": "A-INTERSTAGE",
@@ -2214,6 +2355,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-INTERSTAGE",
     "M-ECRSRC"
    ],
    "resolve_by_milestone": "B",
@@ -2278,6 +2420,9 @@
     "quantity": "Resonance-surface location and Hall B(z) deviation under superposed fields over the magnet-current schedule",
     "threshold": "Resonance surface inside the ECR region and Hall B(z) within design tolerance at every scheduled setpoint (TBD, docs/hallmap/)",
     "threshold_status": "TBD",
+    "requires": "owner-fixed thresholds and design-fixed inputs only",
+    "requires_actions": [],
+    "requires_owner_inputs": [],
     "derived_values": [
      "D-ECR-B-2.45GHZ",
      "D-RATIO-BECR-P5N2",
@@ -2295,7 +2440,7 @@
     },
     {
      "action": "M-ECRSRC",
-     "effect": "contributes"
+     "effect": "informs"
     },
     {
      "action": "L-ECRHALL",
@@ -2329,6 +2474,12 @@
     "quantity": "Microwave chain efficiency (explicit input to the bus ledger) and generator life",
     "threshold": "Bus ledger closes with the stated efficiency; life > 15,000 h firing within 26,000 h mission (RFP)",
     "threshold_status": "RFP",
+    "requires": "bus ledger with the stated microwave-chain efficiency (A-ELEC) and chain life (A-THERMAL)",
+    "requires_actions": [
+     "A-ELEC",
+     "A-THERMAL"
+    ],
+    "requires_owner_inputs": [],
     "gates": [
      "bus_power",
      "firing_life",
@@ -2384,12 +2535,12 @@
     },
     {
      "source": "S-SUZUKI2024",
-     "direction": "supports",
+     "direction": "context",
      "evidence_class": "measured",
      "evidence_level": 3,
-     "statement": "Abstract: an LaB6 emitter surface showed oxygen and carbon; a work-function increase region appears to increase plasma instability; the unstable plume-mode region expanded, and plume mode 'severely degrades the overall cathode lifetime'.",
+     "statement": "Abstract: on an unused segmented LaB6 emitter the plume-mode region expanded during a discharge experiment; the surface showed 'oxygen and carbon detection', but 'the dominant substance in the region where carbon is detected was lanthanum carbide', where 'an increase in the work function is indicated', which 'appears to increase the plasma instability'; plume mode 'severely degrades the overall cathode lifetime'.",
      "locator": "Abstract",
-     "applicability": "Laboratory LaB6 hollow cathode; contamination source not an air feed."
+     "applicability": "Laboratory LaB6 hollow cathode; the work-function rise is attributed mainly to carbon (lanthanum carbide), oxygen is only detected, and the contamination source is not an air feed. Weak for oxygen poisoning, so context only."
     },
     {
      "source": "S-MARCHIONI2020",
@@ -2424,6 +2575,13 @@
     "quantity": "Emission and discharge stability vs oxygen-bearing partial pressure at the emitter (from cathode feed, plume backflow and ram exposure during off periods)",
     "threshold": "Tolerated partial pressure (TBD - requires cathode data) above the predicted exposure over firing and mission life",
     "threshold_status": "TBD",
+    "requires": "predicted oxygen-bearing exposure at the emitter: feed composition from A-FLOWENV; plume-backflow and ram-exposure partial pressures have no assigned action yet (TBD)",
+    "requires_actions": [
+     "A-FLOWENV"
+    ],
+    "requires_owner_inputs": [
+     "exposure margin"
+    ],
     "gates": [
      "firing_life",
      "mission_life",
@@ -2433,7 +2591,11 @@
    "actions": [
     {
      "action": "M-CATHODE",
-     "effect": "decides"
+     "effect": "contributes"
+    },
+    {
+     "action": "A-FLOWENV",
+     "effect": "contributes"
     },
     {
      "action": "L-CATHODE",
@@ -2441,6 +2603,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-FLOWENV",
     "M-CATHODE"
    ],
    "resolve_by_milestone": "C",
@@ -2510,6 +2673,13 @@
     "threshold": "Within the Xe allocation inside the 40 kg mass gate (allocation TBD from the mass ledger)",
     "threshold_status": "TBD",
     "requires": "A-MASS allocation; minimum cathode flow (M-CATHODE)",
+    "requires_actions": [
+     "A-MASS",
+     "M-CATHODE"
+    ],
+    "requires_owner_inputs": [
+     "Xe allocation (owner)"
+    ],
     "derived_values": [
      "D-XE-PER-0.1MGPS-15000H",
      "D-XE-DIAMANT-CHECK"
@@ -2584,6 +2754,11 @@
     "quantity": "Plume-mode onset flow at the required discharge current vs the chosen cathode flow",
     "threshold": "Spot-mode operation with a flow margin (PROPOSED; margin TBD)",
     "threshold_status": "PROPOSED",
+    "requires": "required cathode current = maximum discharge current (design input: PPU rating)",
+    "requires_actions": [],
+    "requires_owner_inputs": [
+     "flow margin (PROPOSED)"
+    ],
     "gates": [
      "firing_life",
      "mass"
@@ -2650,6 +2825,11 @@
     "quantity": "Extracted electron current and coupling voltage of the air-fed cathode at the required discharge current and flow",
     "threshold": "Extracted current >= maximum discharge current with margin (PROPOSED; margin TBD)",
     "threshold_status": "PROPOSED",
+    "requires": "maximum discharge current (design input: PPU rating)",
+    "requires_actions": [],
+    "requires_owner_inputs": [
+     "current margin (PROPOSED)"
+    ],
     "gates": [
      "thrust",
      "restart_sustainment",
@@ -2726,6 +2906,9 @@
     "quantity": "Peak magnet/coil temperature at the worst-case operating point (air and Xe setpoints)",
     "threshold": "Below the component limit (TBD - datasheet) with margin (PROPOSED)",
     "threshold_status": "TBD",
+    "requires": "owner-fixed thresholds and design-fixed inputs only",
+    "requires_actions": [],
+    "requires_owner_inputs": [],
     "gates": [
      "firing_life",
      "bus_power",
@@ -2739,7 +2922,7 @@
     },
     {
      "action": "A-THERMAL",
-     "effect": "contributes"
+     "effect": "informs"
     },
     {
      "action": "L-THERMAL",
@@ -2787,6 +2970,9 @@
     "quantity": "Coil, coupler and tube temperatures and the RF loss fraction",
     "threshold": "Below material limits (TBD) with margin",
     "threshold_status": "TBD",
+    "requires": "owner-fixed thresholds and design-fixed inputs only",
+    "requires_actions": [],
+    "requires_owner_inputs": [],
     "gates": [
      "bus_power",
      "firing_life"
@@ -2799,7 +2985,7 @@
     },
     {
      "action": "A-THERMAL",
-     "effect": "contributes"
+     "effect": "informs"
     },
     {
      "action": "L-THERMAL",
@@ -2855,6 +3041,9 @@
     "quantity": "Magnet and resonator/coupler temperatures at the design microwave power",
     "threshold": "Below limits (TBD) with the resonance surface held in place",
     "threshold_status": "TBD",
+    "requires": "owner-fixed thresholds and design-fixed inputs only",
+    "requires_actions": [],
+    "requires_owner_inputs": [],
     "gates": [
      "firing_life",
      "bus_power"
@@ -2867,7 +3056,7 @@
     },
     {
      "action": "A-THERMAL",
-     "effect": "contributes"
+     "effect": "informs"
     },
     {
      "action": "L-THERMAL",
@@ -2884,6 +3073,77 @@
    "resolve_by_milestone": "C",
    "milestone_A_condition": "Show ECR magnet and resonator temperatures below limits at the design microwave power.",
    "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open",
+   "proposed_gate_links": [
+    "P1_thermal"
+   ]
+  },
+  {
+   "id": "N-THM-04",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-THM",
+   "title": "Hall channel wall or anode exceeds its temperature limit",
+   "rfp_blocks": [
+    "thermal",
+    "acceleration_thrust"
+   ],
+   "mechanism": "Discharge power deposited on the channel walls and the anode raises their temperature; above the material or joint limit the wall or anode can crack, deform or degrade.",
+   "physical_cause": "Wall and anode heat flux from the discharge; the fraction of discharge power lost to the walls on N2/O2 at the Vyovrinda operating point is not established here (A-THERMAL, M-THERMAL).",
+   "evidence": [
+    {
+     "source": "S-MYERS2016",
+     "direction": "context",
+     "evidence_class": "model-derived",
+     "evidence_level": 3,
+     "statement": "Abstract: Hall thruster life is 'primarily limited by plasma erosion and thermal related failures'; 'thruster operational parameters can push some components/materials beyond their temperature limits'; the design reduced temperatures of critical components.",
+     "locator": "Abstract",
+     "applicability": "NASA-JPL xenon Hall thruster thermal model correlated with test; a general statement about temperature limits that does not single out channel walls or air operation."
+    }
+   ],
+   "evidence_gap": "No open-literature item giving Hall channel-wall or anode temperatures on air or N2/O2 was located in this lane; L-THERMAL and L-WALL are to search for one.",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Peak channel-wall and anode temperatures at the worst-case operating point (air and Xe setpoints)",
+    "threshold": "Below the material limit (TBD - material datasheet) with margin (PROPOSED)",
+    "threshold_status": "TBD",
+    "requires": "material limits from datasheets (design input); thermal margin (owner)",
+    "requires_actions": [],
+    "requires_owner_inputs": [
+     "thermal margin"
+    ],
+    "gates": [
+     "firing_life",
+     "bus_power"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-THERMAL",
+     "effect": "decides"
+    },
+    {
+     "action": "A-THERMAL",
+     "effect": "informs"
+    },
+    {
+     "action": "L-THERMAL",
+     "effect": "informs"
+    },
+    {
+     "action": "L-WALL",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "M-THERMAL"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Show channel-wall and anode temperatures below their material limits at the worst-case air and Xe setpoints.",
+   "analysis_requires_admitted_hall_closure": true,
    "decision_state": "open",
    "proposed_gate_links": [
     "P1_thermal"
@@ -2928,6 +3188,13 @@
     "quantity": "Wall erosion rate on the delivered composition x firing hours against the wall allowance",
     "threshold": "Wall allowance not consumed before 15,000 h firing (RFP) with margin",
     "threshold_status": "RFP",
+    "requires": "life extrapolation of a short-test rate to 15,000 h (A-THERMAL)",
+    "requires_actions": [
+     "A-THERMAL"
+    ],
+    "requires_owner_inputs": [
+     "wall allowance margin"
+    ],
     "gates": [
      "firing_life"
     ]
@@ -2989,6 +3256,13 @@
     "quantity": "Anode surface state and resistance vs firing hours on the delivered composition",
     "threshold": "Discharge unaffected over 15,000 h firing (threshold TBD)",
     "threshold_status": "TBD",
+    "requires": "life extrapolation of a short-test rate to 15,000 h (A-THERMAL)",
+    "requires_actions": [
+     "A-THERMAL"
+    ],
+    "requires_owner_inputs": [
+     "resistance threshold (TBD)"
+    ],
     "gates": [
      "firing_life"
     ]
@@ -2996,7 +3270,11 @@
    "actions": [
     {
      "action": "M-EROSION",
-     "effect": "decides"
+     "effect": "contributes"
+    },
+    {
+     "action": "A-THERMAL",
+     "effect": "contributes"
     },
     {
      "action": "L-WALL",
@@ -3004,6 +3282,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-THERMAL",
     "M-EROSION"
    ],
    "resolve_by_milestone": "C",
@@ -3026,19 +3305,26 @@
    "evidence": [
     {
      "source": "S-RABUNAL2024",
-     "direction": "contradicts",
+     "direction": "context",
      "evidence_class": "measured",
      "evidence_level": 3,
      "statement": "'there are no signs of oxidation of surfaces exposed to or nearby to the plasma' and no degradation with time was noticed during the air campaign.",
      "locator": "Sec. V (pdf p. 12)",
-     "applicability": "Short laboratory campaign on a quartz helicon source; does not bound 15,000 h."
+     "applicability": "Short laboratory campaign on a quartz helicon source. It reports no oxidation, which does not address the node's main mechanism (sputtered or deposited conductive films on the window) and does not bound 15,000 h."
     }
    ],
-   "evidence_status": "contradicted",
+   "evidence_status": "unknown",
    "decision_quantity": {
     "quantity": "Coupling efficiency drift and window condition vs firing hours",
     "threshold": "No coupling loss beyond the bus-ledger margin over 15,000 h (TBD)",
     "threshold_status": "TBD",
+    "requires": "life extrapolation of a short-test rate to 15,000 h (A-THERMAL); bus-ledger margin",
+    "requires_actions": [
+     "A-THERMAL"
+    ],
+    "requires_owner_inputs": [
+     "coupling-loss margin (TBD)"
+    ],
     "gates": [
      "firing_life"
     ]
@@ -3046,7 +3332,11 @@
    "actions": [
     {
      "action": "M-EROSION",
-     "effect": "decides"
+     "effect": "contributes"
+    },
+    {
+     "action": "A-THERMAL",
+     "effect": "contributes"
     },
     {
      "action": "L-WALL",
@@ -3054,12 +3344,14 @@
     }
    ],
    "cheapest_resolution": [
+    "A-THERMAL",
     "M-EROSION"
    ],
    "resolve_by_milestone": "C",
    "milestone_A_condition": "Show RF window condition and coupling stable over a representative firing on the delivered composition.",
    "analysis_requires_admitted_hall_closure": false,
-   "decision_state": "open"
+   "decision_state": "open",
+   "evidence_gap": "No open item on conductive coating or erosion of an RF window under air over life-relevant durations was located; S-RABUNAL2024 reports only the absence of oxidation after a short campaign."
   },
   {
    "id": "N-ERO-04",
@@ -3080,6 +3372,13 @@
     "quantity": "Antenna/window condition and coupling vs firing hours",
     "threshold": "No coupling loss beyond margin over 15,000 h (TBD)",
     "threshold_status": "TBD",
+    "requires": "life extrapolation of a short-test rate to 15,000 h (A-THERMAL)",
+    "requires_actions": [
+     "A-THERMAL"
+    ],
+    "requires_owner_inputs": [
+     "coupling-loss margin (TBD)"
+    ],
     "gates": [
      "firing_life"
     ]
@@ -3087,7 +3386,11 @@
    "actions": [
     {
      "action": "M-EROSION",
-     "effect": "decides"
+     "effect": "contributes"
+    },
+    {
+     "action": "A-THERMAL",
+     "effect": "contributes"
     },
     {
      "action": "L-ECRHALL",
@@ -3095,6 +3398,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-THERMAL",
     "M-EROSION"
    ],
    "resolve_by_milestone": "C",
@@ -3142,7 +3446,11 @@
     "quantity": "Discharge power per thrust on the delivered composition, against the discharge power the bus ledger leaves",
     "threshold": "P_discharge(12 mN) <= 1500 W minus all other loads (RFP)",
     "threshold_status": "RFP",
-    "requires": "A-ELEC",
+    "requires": "A-ELEC (power left for the discharge after all other loads)",
+    "requires_actions": [
+     "A-ELEC"
+    ],
+    "requires_owner_inputs": [],
     "gates": [
      "bus_power",
      "thrust"
@@ -3151,7 +3459,7 @@
    "actions": [
     {
      "action": "M-PREION",
-     "effect": "decides"
+     "effect": "contributes"
     },
     {
      "action": "A-ELEC",
@@ -3163,6 +3471,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-ELEC",
     "M-PREION"
    ],
    "resolve_by_milestone": "B",
@@ -3191,16 +3500,16 @@
      "evidence_level": 3,
      "statement": "Abstract: in two-stage operation 'thrust-to-power ... decreased with increasing radio frequency power'.",
      "locator": "Abstract",
-     "applicability": "Helicon Hall thruster."
+     "applicability": "Helicon Hall thruster. The abstract shows thrust-to-power falling with RF power (the mechanism); it does not show a bus exceedance at 12 mN, which needs A-ELEC and M-PREION."
     },
     {
      "source": "S-ZHOU2024",
-     "direction": "supports",
+     "direction": "context",
      "evidence_class": "model-derived",
      "evidence_level": 4,
      "statement": "Abstract: for 1 mg/s, N2 and O performance trends are 'similar to Xe, but displaced to powers between 1250 and 2000W' (Xe reference 300 W).",
      "locator": "Abstract",
-     "applicability": "Hybrid 2D simulation of an electrodeless thruster, not a pre-ionizer."
+     "applicability": "Hybrid 2D simulation of a standalone electrodeless thruster, not a pre-ionizer; shows the power level at which N2/O performance appears, not an rf_hall bus exceedance."
     }
    ],
    "evidence_status": "supported",
@@ -3209,6 +3518,10 @@
     "threshold": "< 1500 W (RFP)",
     "threshold_status": "RFP",
     "requires": "A-ELEC with an explicit generator efficiency",
+    "requires_actions": [
+     "A-ELEC"
+    ],
+    "requires_owner_inputs": [],
     "gates": [
      "bus_power",
      "thrust"
@@ -3217,7 +3530,7 @@
    "actions": [
     {
      "action": "M-PREION",
-     "effect": "decides"
+     "effect": "contributes"
     },
     {
      "action": "A-ELEC",
@@ -3225,7 +3538,7 @@
     },
     {
      "action": "A-BREAKEVEN",
-     "effect": "contributes"
+     "effect": "informs"
     },
     {
      "action": "L-HHT",
@@ -3233,6 +3546,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-ELEC",
     "M-PREION"
    ],
    "resolve_by_milestone": "B",
@@ -3271,6 +3585,10 @@
     "threshold": "< 1500 W (RFP)",
     "threshold_status": "RFP",
     "requires": "A-ELEC with an explicit microwave chain efficiency",
+    "requires_actions": [
+     "A-ELEC"
+    ],
+    "requires_owner_inputs": [],
     "gates": [
      "bus_power",
      "thrust"
@@ -3279,7 +3597,7 @@
    "actions": [
     {
      "action": "M-PREION",
-     "effect": "decides"
+     "effect": "contributes"
     },
     {
      "action": "A-ELEC",
@@ -3287,7 +3605,7 @@
     },
     {
      "action": "A-BREAKEVEN",
-     "effect": "contributes"
+     "effect": "informs"
     },
     {
      "action": "L-ECRHALL",
@@ -3295,6 +3613,7 @@
     }
    ],
    "cheapest_resolution": [
+    "A-ELEC",
     "M-PREION"
    ],
    "resolve_by_milestone": "B",
@@ -3323,6 +3642,11 @@
     "quantity": "Sum of non-thruster loads on bus_power_boundary_v1",
     "threshold": "Leaves the discharge power needed for 12 mN below 1500 W (RFP)",
     "threshold_status": "RFP",
+    "requires": "discharge power needed for 12 mN on the delivered feed (M-PREION)",
+    "requires_actions": [
+     "M-PREION"
+    ],
+    "requires_owner_inputs": [],
     "gates": [
      "bus_power"
     ]
@@ -3330,11 +3654,16 @@
    "actions": [
     {
      "action": "A-ELEC",
-     "effect": "decides"
+     "effect": "contributes"
+    },
+    {
+     "action": "M-PREION",
+     "effect": "contributes"
     }
    ],
    "cheapest_resolution": [
-    "A-ELEC"
+    "A-ELEC",
+    "M-PREION"
    ],
    "resolve_by_milestone": "B",
    "milestone_A_condition": "Close the non-thruster load ledger on the common boundary with explicit inputs.",
@@ -3362,6 +3691,11 @@
     "quantity": "Propulsion-system mass including Xe inventory",
     "threshold": "< 40 kg (RFP)",
     "threshold_status": "RFP",
+    "requires": "Xe and component allocations (owner; actual consumption is checked in N-CAT-02 and N-CTL-02)",
+    "requires_actions": [],
+    "requires_owner_inputs": [
+     "Xe allocation"
+    ],
     "gates": [
      "mass"
     ]
@@ -3399,6 +3733,9 @@
     "quantity": "RF chain mass in the ledger",
     "threshold": "Total < 40 kg (RFP)",
     "threshold_status": "RFP",
+    "requires": "component masses of the RF chain (design input)",
+    "requires_actions": [],
+    "requires_owner_inputs": [],
     "gates": [
      "mass"
     ]
@@ -3446,6 +3783,9 @@
     "quantity": "Microwave chain and ECR magnet mass in the ledger",
     "threshold": "Total < 40 kg (RFP)",
     "threshold_status": "RFP",
+    "requires": "component masses of the microwave chain and ECR magnets (design input)",
+    "requires_actions": [],
+    "requires_owner_inputs": [],
     "gates": [
      "mass"
     ]
@@ -3522,6 +3862,9 @@
     "quantity": "Discharge continuity and current transients through the transition schedule (flow ramp, V_d, magnet current)",
     "threshold": "No extinction; transients within supply limits (PROPOSED; limits TBD)",
     "threshold_status": "PROPOSED",
+    "requires": "owner-fixed thresholds and design-fixed inputs only",
+    "requires_actions": [],
+    "requires_owner_inputs": [],
     "gates": [
      "restart_sustainment",
      "air_xe"
@@ -3558,7 +3901,7 @@
     "operations",
     "cathode"
    ],
-   "mechanism": "Firing 15,000 h within a 26,000 h mission implies interruptions (eclipse, safe mode, duty cycling); each restart costs a cathode heater cycle, an ignition and possibly Xe.",
+   "mechanism": "With the repository's modelling choice of firing 15,000 h within a 26,000 h mission (abep_sim/system.py duty_cycle; the RFP figure '> 15,000 h' is a lower bound), the thruster is off for part of the mission (eclipse, safe mode, duty cycling); each restart costs a cathode heater cycle, an ignition and possibly Xe.",
    "physical_cause": "Cycle-limited parts and per-start consumables.",
    "evidence": [],
    "evidence_gap": "The restart count is an operations-concept quantity (TBD - owner); cycle-life data for the chosen cathode not yet collected.",
@@ -3567,7 +3910,14 @@
     "quantity": "Required starts N_start (operations) against demonstrated start cycles and Xe per start",
     "threshold": "Demonstrated cycles >= N_start with margin; Xe for N_start within the allocation (TBD)",
     "threshold_status": "TBD",
-    "requires": "A-OPS (owner assumptions)",
+    "requires": "A-OPS (from owner assumptions)",
+    "requires_actions": [
+     "A-OPS"
+    ],
+    "requires_owner_inputs": [
+     "operations-concept assumptions",
+     "Xe allocation (owner)"
+    ],
     "derived_values": [
      "D-RFP-FIRING-FRACTION"
     ],
@@ -3637,6 +3987,11 @@
     "quantity": "Gas-chamber pressure trajectory and fill time constant at IF-A5 after start/eclipse",
     "threshold": "Operating pressure reached within the time the operations concept allows (TBD)",
     "threshold_status": "TBD",
+    "requires": "start time the operations concept allows (owner)",
+    "requires_actions": [],
+    "requires_owner_inputs": [
+     "allowed start time after start or eclipse"
+    ],
     "gates": [
      "restart_sustainment"
     ]
@@ -3717,7 +4072,7 @@
      "where": "S-TISAEV2023A pdf p. 4: 7.4e16 m^-3",
      "rel_diff": 0.006183
     },
-    "note": "Low-field-side O/X-mode cutoff; right-hand waves launched from the high-field side can propagate above it."
+    "note": "O-mode cutoff (omega_pe = omega). A low-field-side X-mode wave meets the R-cutoff first, at omega_pe^2 = omega (omega - omega_ce), i.e. at a lower density; right-hand waves launched from the high-field side can propagate above n_c."
    },
    {
     "id": "D-ECR-NC-5.8GHZ",
@@ -3735,7 +4090,7 @@
      "where": "S-DIAMANT2009 Sec. V pdf p. 4: 4x10^17 m^-3",
      "rel_diff": 0.04321
     },
-    "note": "Low-field-side O/X-mode cutoff; right-hand waves launched from the high-field side can propagate above it."
+    "note": "O-mode cutoff (omega_pe = omega). A low-field-side X-mode wave meets the R-cutoff first, at omega_pe^2 = omega (omega - omega_ce), i.e. at a lower density; right-hand waves launched from the high-field side can propagate above n_c."
    },
    {
     "id": "D-ECR-B-5.85GHZ",
@@ -3763,7 +4118,7 @@
      "constants": "scipy.constants epsilon_0, m_e, e"
     },
     "cross_check": null,
-    "note": "Low-field-side O/X-mode cutoff; right-hand waves launched from the high-field side can propagate above it."
+    "note": "O-mode cutoff (omega_pe = omega). A low-field-side X-mode wave meets the R-cutoff first, at omega_pe^2 = omega (omega - omega_ce), i.e. at a lower density; right-hand waves launched from the high-field side can propagate above n_c."
    },
    {
     "id": "D-RATIO-BECR-P5N2",
@@ -3840,7 +4195,7 @@
      "source": "abep_sim/constants.py RFP.ignition_hours, RFP.mission_hours"
     },
     "cross_check": null,
-    "note": "Below 1, so the thruster is off for part of the mission and must restart; the restart count is TBD (owner)."
+    "note": "Uses the RFP lower bound (> 15,000 h) as the firing time, the same modelling choice as abep_sim/system.py duty_cycle; below 1, so under that choice the thruster is off for part of the mission and must restart. The RFP itself does not state a restart count (TBD, owner)."
    }
   ]
  },
@@ -3849,30 +4204,29 @@
   "rule_id": "decisiveness_lexicographic_v1",
   "per_architecture": {
    "hall_only": {
-    "n_nodes": 17,
+    "n_nodes": 18,
     "ranked": [
      {
       "rank": 1,
       "action": "M-CATHODE",
       "kind": "measurement",
-      "n_decides": 3,
-      "n_gates_decided": 6,
-      "n_contributes": 2,
+      "n_decides": 2,
+      "n_gates_decided": 5,
+      "n_contributes": 3,
       "n_informs": 0,
       "gates_decided": [
        "thrust",
        "mass",
        "firing_life",
-       "mission_life",
        "restart_sustainment",
        "air_xe"
       ],
       "nodes_decided": [
-       "N-CAT-01",
        "N-CAT-03",
        "N-CAT-04"
       ],
       "nodes_contributed": [
+       "N-CAT-01",
        "N-CAT-02",
        "N-CTL-02"
       ],
@@ -3880,49 +4234,9 @@
      },
      {
       "rank": 2,
-      "action": "M-PREION",
-      "kind": "measurement",
-      "n_decides": 2,
-      "n_gates_decided": 2,
-      "n_contributes": 0,
-      "n_informs": 0,
-      "gates_decided": [
-       "thrust",
-       "bus_power"
-      ],
-      "nodes_decided": [
-       "N-UTL-01",
-       "N-PWR-01"
-      ],
-      "nodes_contributed": [],
-      "nodes_informed": []
-     },
-     {
-      "rank": 3,
-      "action": "M-SUSWIN",
-      "kind": "measurement",
-      "n_decides": 1,
-      "n_gates_decided": 3,
-      "n_contributes": 1,
-      "n_informs": 0,
-      "gates_decided": [
-       "thrust",
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-SUS-01"
-      ],
-      "nodes_contributed": [
-       "N-SUS-02"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 4,
       "action": "M-THERMAL",
       "kind": "measurement",
-      "n_decides": 1,
+      "n_decides": 2,
       "n_gates_decided": 3,
       "n_contributes": 0,
       "n_informs": 0,
@@ -3932,33 +4246,14 @@
        "firing_life"
       ],
       "nodes_decided": [
-       "N-THM-01"
+       "N-THM-01",
+       "N-THM-04"
       ],
       "nodes_contributed": [],
       "nodes_informed": []
      },
      {
-      "rank": 5,
-      "action": "M-IGN",
-      "kind": "measurement",
-      "n_decides": 1,
-      "n_gates_decided": 2,
-      "n_contributes": 1,
-      "n_informs": 0,
-      "gates_decided": [
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-IGN-01"
-      ],
-      "nodes_contributed": [
-       "N-CTL-02"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 6,
+      "rank": 3,
       "action": "M-TRANS",
       "kind": "measurement",
       "n_decides": 1,
@@ -3976,32 +4271,12 @@
       "nodes_informed": []
      },
      {
-      "rank": 7,
-      "action": "A-ELEC",
-      "kind": "analysis",
-      "n_decides": 1,
-      "n_gates_decided": 1,
-      "n_contributes": 2,
-      "n_informs": 0,
-      "gates_decided": [
-       "bus_power"
-      ],
-      "nodes_decided": [
-       "N-PWR-04"
-      ],
-      "nodes_contributed": [
-       "N-UTL-01",
-       "N-PWR-01"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 8,
+      "rank": 4,
       "action": "A-FLOWENV",
       "kind": "analysis",
       "n_decides": 1,
       "n_gates_decided": 1,
-      "n_contributes": 1,
+      "n_contributes": 3,
       "n_informs": 0,
       "gates_decided": [
        "restart_sustainment"
@@ -4010,12 +4285,14 @@
        "N-CTL-03"
       ],
       "nodes_contributed": [
-       "N-SUS-02"
+       "N-SUS-01",
+       "N-SUS-02",
+       "N-CAT-01"
       ],
       "nodes_informed": []
      },
      {
-      "rank": 9,
+      "rank": 5,
       "action": "A-MASS",
       "kind": "analysis",
       "n_decides": 1,
@@ -4034,27 +4311,61 @@
       "nodes_informed": []
      },
      {
-      "rank": 10,
-      "action": "M-EROSION",
-      "kind": "measurement",
-      "n_decides": 1,
-      "n_gates_decided": 1,
-      "n_contributes": 1,
+      "rank": 6,
+      "action": "A-ELEC",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 3,
       "n_informs": 0,
-      "gates_decided": [
-       "firing_life"
-      ],
-      "nodes_decided": [
-       "N-ERO-02"
-      ],
+      "gates_decided": [],
+      "nodes_decided": [],
       "nodes_contributed": [
-       "N-ERO-01"
+       "N-UTL-01",
+       "N-PWR-01",
+       "N-PWR-04"
       ],
       "nodes_informed": []
      },
      {
-      "rank": 11,
+      "rank": 7,
+      "action": "M-PREION",
+      "kind": "measurement",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 3,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-UTL-01",
+       "N-PWR-01",
+       "N-PWR-04"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 8,
       "action": "A-THERMAL",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 2,
+      "n_informs": 2,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-ERO-01",
+       "N-ERO-02"
+      ],
+      "nodes_informed": [
+       "N-THM-01",
+       "N-THM-04"
+      ]
+     },
+     {
+      "rank": 9,
+      "action": "A-OPS",
       "kind": "analysis",
       "n_decides": 0,
       "n_gates_decided": 0,
@@ -4063,23 +4374,56 @@
       "gates_decided": [],
       "nodes_decided": [],
       "nodes_contributed": [
-       "N-THM-01",
-       "N-ERO-01"
+       "N-IGN-01",
+       "N-CTL-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 10,
+      "action": "M-EROSION",
+      "kind": "measurement",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 2,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-ERO-01",
+       "N-ERO-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 11,
+      "action": "M-IGN",
+      "kind": "measurement",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 2,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-IGN-01",
+       "N-CTL-02"
       ],
       "nodes_informed": []
      },
      {
       "rank": 12,
-      "action": "A-OPS",
-      "kind": "analysis",
+      "action": "M-SUSWIN",
+      "kind": "measurement",
       "n_decides": 0,
       "n_gates_decided": 0,
-      "n_contributes": 1,
+      "n_contributes": 2,
       "n_informs": 0,
       "gates_decided": [],
       "nodes_decided": [],
       "nodes_contributed": [
-       "N-CTL-02"
+       "N-SUS-01",
+       "N-SUS-02"
       ],
       "nodes_informed": []
      },
@@ -4126,11 +4470,12 @@
       "n_decides": 0,
       "n_gates_decided": 0,
       "n_contributes": 0,
-      "n_informs": 2,
+      "n_informs": 3,
       "gates_decided": [],
       "nodes_decided": [],
       "nodes_contributed": [],
       "nodes_informed": [
+       "N-THM-04",
        "N-ERO-01",
        "N-ERO-02"
       ]
@@ -4142,12 +4487,13 @@
       "n_decides": 0,
       "n_gates_decided": 0,
       "n_contributes": 0,
-      "n_informs": 1,
+      "n_informs": 2,
       "gates_decided": [],
       "nodes_decided": [],
       "nodes_contributed": [],
       "nodes_informed": [
-       "N-THM-01"
+       "N-THM-01",
+       "N-THM-04"
       ]
      }
     ],
@@ -4168,113 +4514,13 @@
     ]
    },
    "rf_hall": {
-    "n_nodes": 30,
+    "n_nodes": 31,
     "ranked": [
      {
       "rank": 1,
-      "action": "M-PREION",
-      "kind": "measurement",
-      "n_decides": 8,
-      "n_gates_decided": 4,
-      "n_contributes": 0,
-      "n_informs": 1,
-      "gates_decided": [
-       "thrust",
-       "bus_power",
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-IGN-04",
-       "N-SUS-03",
-       "N-UTL-01",
-       "N-UTL-02",
-       "N-ISL-RF",
-       "N-RF-04",
-       "N-PWR-01",
-       "N-PWR-02"
-      ],
-      "nodes_contributed": [],
-      "nodes_informed": [
-       "N-RF-03"
-      ]
-     },
-     {
-      "rank": 2,
-      "action": "M-CATHODE",
-      "kind": "measurement",
-      "n_decides": 3,
-      "n_gates_decided": 6,
-      "n_contributes": 2,
-      "n_informs": 0,
-      "gates_decided": [
-       "thrust",
-       "mass",
-       "firing_life",
-       "mission_life",
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-CAT-01",
-       "N-CAT-03",
-       "N-CAT-04"
-      ],
-      "nodes_contributed": [
-       "N-CAT-02",
-       "N-CTL-02"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 3,
-      "action": "M-RFSRC",
-      "kind": "measurement",
-      "n_decides": 3,
-      "n_gates_decided": 4,
-      "n_contributes": 0,
-      "n_informs": 0,
-      "gates_decided": [
-       "thrust",
-       "bus_power",
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-IGN-02",
-       "N-RF-01",
-       "N-RF-02"
-      ],
-      "nodes_contributed": [],
-      "nodes_informed": []
-     },
-     {
-      "rank": 4,
-      "action": "M-IGN",
-      "kind": "measurement",
-      "n_decides": 3,
-      "n_gates_decided": 2,
-      "n_contributes": 1,
-      "n_informs": 0,
-      "gates_decided": [
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-IGN-01",
-       "N-IGN-02",
-       "N-IGN-04"
-      ],
-      "nodes_contributed": [
-       "N-CTL-02"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 5,
       "action": "M-THERMAL",
       "kind": "measurement",
-      "n_decides": 2,
+      "n_decides": 3,
       "n_gates_decided": 3,
       "n_contributes": 0,
       "n_informs": 0,
@@ -4285,13 +4531,70 @@
       ],
       "nodes_decided": [
        "N-THM-01",
-       "N-THM-02"
+       "N-THM-02",
+       "N-THM-04"
       ],
       "nodes_contributed": [],
       "nodes_informed": []
      },
      {
-      "rank": 6,
+      "rank": 2,
+      "action": "M-CATHODE",
+      "kind": "measurement",
+      "n_decides": 2,
+      "n_gates_decided": 5,
+      "n_contributes": 3,
+      "n_informs": 0,
+      "gates_decided": [
+       "thrust",
+       "mass",
+       "firing_life",
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-CAT-03",
+       "N-CAT-04"
+      ],
+      "nodes_contributed": [
+       "N-CAT-01",
+       "N-CAT-02",
+       "N-CTL-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 3,
+      "action": "M-PREION",
+      "kind": "measurement",
+      "n_decides": 2,
+      "n_gates_decided": 3,
+      "n_contributes": 7,
+      "n_informs": 1,
+      "gates_decided": [
+       "thrust",
+       "bus_power",
+       "restart_sustainment"
+      ],
+      "nodes_decided": [
+       "N-SUS-03",
+       "N-RF-04"
+      ],
+      "nodes_contributed": [
+       "N-IGN-04",
+       "N-UTL-01",
+       "N-UTL-02",
+       "N-ISL-RF",
+       "N-PWR-01",
+       "N-PWR-02",
+       "N-PWR-04"
+      ],
+      "nodes_informed": [
+       "N-RF-03"
+      ]
+     },
+     {
+      "rank": 4,
       "action": "A-MASS",
       "kind": "analysis",
       "n_decides": 2,
@@ -4311,54 +4614,13 @@
       "nodes_informed": []
      },
      {
-      "rank": 7,
-      "action": "M-EROSION",
-      "kind": "measurement",
-      "n_decides": 2,
-      "n_gates_decided": 1,
-      "n_contributes": 1,
-      "n_informs": 0,
-      "gates_decided": [
-       "firing_life"
-      ],
-      "nodes_decided": [
-       "N-ERO-02",
-       "N-ERO-03"
-      ],
-      "nodes_contributed": [
-       "N-ERO-01"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 8,
-      "action": "M-SUSWIN",
-      "kind": "measurement",
-      "n_decides": 1,
-      "n_gates_decided": 3,
-      "n_contributes": 1,
-      "n_informs": 0,
-      "gates_decided": [
-       "thrust",
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-SUS-01"
-      ],
-      "nodes_contributed": [
-       "N-SUS-02"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 9,
+      "rank": 5,
       "action": "M-TRANS",
       "kind": "measurement",
       "n_decides": 1,
       "n_gates_decided": 2,
-      "n_contributes": 1,
-      "n_informs": 0,
+      "n_contributes": 0,
+      "n_informs": 1,
       "gates_decided": [
        "restart_sustainment",
        "air_xe"
@@ -4366,13 +4628,13 @@
       "nodes_decided": [
        "N-CTL-01"
       ],
-      "nodes_contributed": [
+      "nodes_contributed": [],
+      "nodes_informed": [
        "N-RF-02"
-      ],
-      "nodes_informed": []
+      ]
      },
      {
-      "rank": 10,
+      "rank": 6,
       "action": "A-BFIELD",
       "kind": "analysis",
       "n_decides": 1,
@@ -4390,36 +4652,12 @@
       "nodes_informed": []
      },
      {
-      "rank": 11,
-      "action": "A-ELEC",
-      "kind": "analysis",
-      "n_decides": 1,
-      "n_gates_decided": 1,
-      "n_contributes": 3,
-      "n_informs": 2,
-      "gates_decided": [
-       "bus_power"
-      ],
-      "nodes_decided": [
-       "N-PWR-04"
-      ],
-      "nodes_contributed": [
-       "N-UTL-01",
-       "N-PWR-01",
-       "N-PWR-02"
-      ],
-      "nodes_informed": [
-       "N-RF-02",
-       "N-RF-04"
-      ]
-     },
-     {
-      "rank": 12,
+      "rank": 7,
       "action": "A-FLOWENV",
       "kind": "analysis",
       "n_decides": 1,
       "n_gates_decided": 1,
-      "n_contributes": 2,
+      "n_contributes": 6,
       "n_informs": 0,
       "gates_decided": [
        "restart_sustainment"
@@ -4428,8 +4666,107 @@
        "N-CTL-03"
       ],
       "nodes_contributed": [
+       "N-IGN-02",
+       "N-IGN-04",
+       "N-SUS-01",
        "N-SUS-02",
-       "N-RF-01"
+       "N-RF-01",
+       "N-CAT-01"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 8,
+      "action": "A-ELEC",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 6,
+      "n_informs": 1,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-UTL-01",
+       "N-UTL-02",
+       "N-RF-02",
+       "N-PWR-01",
+       "N-PWR-02",
+       "N-PWR-04"
+      ],
+      "nodes_informed": [
+       "N-RF-04"
+      ]
+     },
+     {
+      "rank": 9,
+      "action": "M-IGN",
+      "kind": "measurement",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 4,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-IGN-01",
+       "N-IGN-02",
+       "N-IGN-04",
+       "N-CTL-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 10,
+      "action": "A-THERMAL",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 3,
+      "n_informs": 3,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-ERO-01",
+       "N-ERO-02",
+       "N-ERO-03"
+      ],
+      "nodes_informed": [
+       "N-THM-01",
+       "N-THM-02",
+       "N-THM-04"
+      ]
+     },
+     {
+      "rank": 11,
+      "action": "M-EROSION",
+      "kind": "measurement",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 3,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-ERO-01",
+       "N-ERO-02",
+       "N-ERO-03"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 12,
+      "action": "M-RFSRC",
+      "kind": "measurement",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 3,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-IGN-02",
+       "N-RF-01",
+       "N-RF-02"
       ],
       "nodes_informed": []
      },
@@ -4439,69 +4776,52 @@
       "kind": "analysis",
       "n_decides": 0,
       "n_gates_decided": 0,
-      "n_contributes": 3,
-      "n_informs": 0,
+      "n_contributes": 2,
+      "n_informs": 1,
       "gates_decided": [],
       "nodes_decided": [],
       "nodes_contributed": [
        "N-UTL-02",
-       "N-ISL-RF",
-       "N-PWR-02"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 14,
-      "action": "A-THERMAL",
-      "kind": "analysis",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 3,
-      "n_informs": 0,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [
-       "N-THM-01",
-       "N-THM-02",
-       "N-ERO-01"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 15,
-      "action": "A-INTERSTAGE",
-      "kind": "analysis",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 1,
-      "n_informs": 2,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [
        "N-ISL-RF"
       ],
       "nodes_informed": [
-       "N-IGN-04",
-       "N-SUS-03"
+       "N-PWR-02"
       ]
      },
      {
-      "rank": 16,
+      "rank": 14,
       "action": "A-OPS",
       "kind": "analysis",
       "n_decides": 0,
       "n_gates_decided": 0,
-      "n_contributes": 1,
+      "n_contributes": 2,
       "n_informs": 0,
       "gates_decided": [],
       "nodes_decided": [],
       "nodes_contributed": [
+       "N-IGN-01",
        "N-CTL-02"
       ],
       "nodes_informed": []
      },
      {
-      "rank": 17,
+      "rank": 15,
+      "action": "M-SUSWIN",
+      "kind": "measurement",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 2,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-SUS-01",
+       "N-SUS-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 16,
       "action": "L-HHT",
       "kind": "literature",
       "n_decides": 0,
@@ -4520,7 +4840,7 @@
       ]
      },
      {
-      "rank": 18,
+      "rank": 17,
       "action": "L-SITAEL",
       "kind": "literature",
       "n_decides": 0,
@@ -4539,7 +4859,7 @@
       ]
      },
      {
-      "rank": 19,
+      "rank": 18,
       "action": "L-CATHODE",
       "kind": "literature",
       "n_decides": 0,
@@ -4557,8 +4877,26 @@
       ]
      },
      {
-      "rank": 20,
+      "rank": 19,
       "action": "L-WALL",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 4,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-THM-04",
+       "N-ERO-01",
+       "N-ERO-02",
+       "N-ERO-03"
+      ]
+     },
+     {
+      "rank": 20,
+      "action": "L-THERMAL",
       "kind": "literature",
       "n_decides": 0,
       "n_gates_decided": 0,
@@ -4568,13 +4906,30 @@
       "nodes_decided": [],
       "nodes_contributed": [],
       "nodes_informed": [
-       "N-ERO-01",
-       "N-ERO-02",
-       "N-ERO-03"
+       "N-THM-01",
+       "N-THM-02",
+       "N-THM-04"
       ]
      },
      {
       "rank": 21,
+      "action": "A-INTERSTAGE",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 3,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-IGN-04",
+       "N-SUS-03",
+       "N-ISL-RF"
+      ]
+     },
+     {
+      "rank": 22,
       "action": "L-RFMODE",
       "kind": "literature",
       "n_decides": 0,
@@ -4587,22 +4942,6 @@
       "nodes_informed": [
        "N-IGN-02",
        "N-RF-01"
-      ]
-     },
-     {
-      "rank": 22,
-      "action": "L-THERMAL",
-      "kind": "literature",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 0,
-      "n_informs": 2,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [],
-      "nodes_informed": [
-       "N-THM-01",
-       "N-THM-02"
       ]
      },
      {
@@ -4638,111 +4977,13 @@
     ]
    },
    "ecr_hall": {
-    "n_nodes": 29,
+    "n_nodes": 30,
     "ranked": [
      {
       "rank": 1,
-      "action": "M-PREION",
-      "kind": "measurement",
-      "n_decides": 7,
-      "n_gates_decided": 4,
-      "n_contributes": 0,
-      "n_informs": 0,
-      "gates_decided": [
-       "thrust",
-       "bus_power",
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-IGN-04",
-       "N-SUS-03",
-       "N-UTL-01",
-       "N-UTL-03",
-       "N-ISL-ECR",
-       "N-PWR-01",
-       "N-PWR-03"
-      ],
-      "nodes_contributed": [],
-      "nodes_informed": []
-     },
-     {
-      "rank": 2,
-      "action": "M-CATHODE",
-      "kind": "measurement",
-      "n_decides": 3,
-      "n_gates_decided": 6,
-      "n_contributes": 2,
-      "n_informs": 0,
-      "gates_decided": [
-       "thrust",
-       "mass",
-       "firing_life",
-       "mission_life",
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-CAT-01",
-       "N-CAT-03",
-       "N-CAT-04"
-      ],
-      "nodes_contributed": [
-       "N-CAT-02",
-       "N-CTL-02"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 3,
-      "action": "M-IGN",
-      "kind": "measurement",
-      "n_decides": 3,
-      "n_gates_decided": 2,
-      "n_contributes": 1,
-      "n_informs": 0,
-      "gates_decided": [
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-IGN-01",
-       "N-IGN-03",
-       "N-IGN-04"
-      ],
-      "nodes_contributed": [
-       "N-CTL-02"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 4,
-      "action": "M-ECRSRC",
-      "kind": "measurement",
-      "n_decides": 2,
-      "n_gates_decided": 4,
-      "n_contributes": 1,
-      "n_informs": 0,
-      "gates_decided": [
-       "thrust",
-       "bus_power",
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-IGN-03",
-       "N-ECR-01"
-      ],
-      "nodes_contributed": [
-       "N-ECR-02"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 5,
       "action": "M-THERMAL",
       "kind": "measurement",
-      "n_decides": 2,
+      "n_decides": 3,
       "n_gates_decided": 3,
       "n_contributes": 0,
       "n_informs": 0,
@@ -4753,13 +4994,40 @@
       ],
       "nodes_decided": [
        "N-THM-01",
-       "N-THM-03"
+       "N-THM-03",
+       "N-THM-04"
       ],
       "nodes_contributed": [],
       "nodes_informed": []
      },
      {
-      "rank": 6,
+      "rank": 2,
+      "action": "M-CATHODE",
+      "kind": "measurement",
+      "n_decides": 2,
+      "n_gates_decided": 5,
+      "n_contributes": 3,
+      "n_informs": 0,
+      "gates_decided": [
+       "thrust",
+       "mass",
+       "firing_life",
+       "restart_sustainment",
+       "air_xe"
+      ],
+      "nodes_decided": [
+       "N-CAT-03",
+       "N-CAT-04"
+      ],
+      "nodes_contributed": [
+       "N-CAT-01",
+       "N-CAT-02",
+       "N-CTL-02"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 3,
       "action": "A-MASS",
       "kind": "analysis",
       "n_decides": 2,
@@ -4779,48 +5047,34 @@
       "nodes_informed": []
      },
      {
-      "rank": 7,
-      "action": "M-EROSION",
-      "kind": "measurement",
-      "n_decides": 2,
-      "n_gates_decided": 1,
-      "n_contributes": 1,
-      "n_informs": 0,
-      "gates_decided": [
-       "firing_life"
-      ],
-      "nodes_decided": [
-       "N-ERO-02",
-       "N-ERO-04"
-      ],
-      "nodes_contributed": [
-       "N-ERO-01"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 8,
-      "action": "M-SUSWIN",
+      "rank": 4,
+      "action": "M-PREION",
       "kind": "measurement",
       "n_decides": 1,
       "n_gates_decided": 3,
-      "n_contributes": 1,
+      "n_contributes": 7,
       "n_informs": 0,
       "gates_decided": [
        "thrust",
-       "restart_sustainment",
-       "air_xe"
+       "bus_power",
+       "restart_sustainment"
       ],
       "nodes_decided": [
-       "N-SUS-01"
+       "N-SUS-03"
       ],
       "nodes_contributed": [
-       "N-SUS-02"
+       "N-IGN-04",
+       "N-UTL-01",
+       "N-UTL-03",
+       "N-ISL-ECR",
+       "N-PWR-01",
+       "N-PWR-03",
+       "N-PWR-04"
       ],
       "nodes_informed": []
      },
      {
-      "rank": 9,
+      "rank": 5,
       "action": "A-BFIELD",
       "kind": "analysis",
       "n_decides": 1,
@@ -4840,7 +5094,7 @@
       ]
      },
      {
-      "rank": 10,
+      "rank": 6,
       "action": "M-TRANS",
       "kind": "measurement",
       "n_decides": 1,
@@ -4858,34 +5112,12 @@
       "nodes_informed": []
      },
      {
-      "rank": 11,
-      "action": "A-ELEC",
-      "kind": "analysis",
-      "n_decides": 1,
-      "n_gates_decided": 1,
-      "n_contributes": 4,
-      "n_informs": 0,
-      "gates_decided": [
-       "bus_power"
-      ],
-      "nodes_decided": [
-       "N-PWR-04"
-      ],
-      "nodes_contributed": [
-       "N-UTL-01",
-       "N-ECR-03",
-       "N-PWR-01",
-       "N-PWR-03"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 12,
+      "rank": 7,
       "action": "A-FLOWENV",
       "kind": "analysis",
       "n_decides": 1,
       "n_gates_decided": 1,
-      "n_contributes": 1,
+      "n_contributes": 5,
       "n_informs": 0,
       "gates_decided": [
        "restart_sustainment"
@@ -4894,14 +5126,60 @@
        "N-CTL-03"
       ],
       "nodes_contributed": [
-       "N-SUS-02"
+       "N-IGN-03",
+       "N-IGN-04",
+       "N-SUS-01",
+       "N-SUS-02",
+       "N-CAT-01"
       ],
       "nodes_informed": []
      },
      {
-      "rank": 13,
+      "rank": 8,
+      "action": "A-ELEC",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 6,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-UTL-01",
+       "N-UTL-03",
+       "N-ECR-03",
+       "N-PWR-01",
+       "N-PWR-03",
+       "N-PWR-04"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 9,
       "action": "A-THERMAL",
       "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 4,
+      "n_informs": 3,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-ECR-03",
+       "N-ERO-01",
+       "N-ERO-02",
+       "N-ERO-04"
+      ],
+      "nodes_informed": [
+       "N-THM-01",
+       "N-THM-03",
+       "N-THM-04"
+      ]
+     },
+     {
+      "rank": 10,
+      "action": "M-IGN",
+      "kind": "measurement",
       "n_decides": 0,
       "n_gates_decided": 0,
       "n_contributes": 4,
@@ -4909,17 +5187,17 @@
       "gates_decided": [],
       "nodes_decided": [],
       "nodes_contributed": [
-       "N-ECR-03",
-       "N-THM-01",
-       "N-THM-03",
-       "N-ERO-01"
+       "N-IGN-01",
+       "N-IGN-03",
+       "N-IGN-04",
+       "N-CTL-02"
       ],
       "nodes_informed": []
      },
      {
-      "rank": 14,
-      "action": "A-BREAKEVEN",
-      "kind": "analysis",
+      "rank": 11,
+      "action": "M-EROSION",
+      "kind": "measurement",
       "n_decides": 0,
       "n_gates_decided": 0,
       "n_contributes": 3,
@@ -4927,45 +5205,98 @@
       "gates_decided": [],
       "nodes_decided": [],
       "nodes_contributed": [
+       "N-ERO-01",
+       "N-ERO-02",
+       "N-ERO-04"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 12,
+      "action": "A-BREAKEVEN",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 2,
+      "n_informs": 1,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
        "N-UTL-03",
-       "N-ISL-ECR",
+       "N-ISL-ECR"
+      ],
+      "nodes_informed": [
        "N-PWR-03"
+      ]
+     },
+     {
+      "rank": 13,
+      "action": "M-ECRSRC",
+      "kind": "measurement",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 2,
+      "n_informs": 1,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-IGN-03",
+       "N-ECR-01"
+      ],
+      "nodes_informed": [
+       "N-ECR-02"
+      ]
+     },
+     {
+      "rank": 14,
+      "action": "A-OPS",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 2,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-IGN-01",
+       "N-CTL-02"
       ],
       "nodes_informed": []
      },
      {
       "rank": 15,
-      "action": "A-INTERSTAGE",
-      "kind": "analysis",
+      "action": "M-SUSWIN",
+      "kind": "measurement",
       "n_decides": 0,
       "n_gates_decided": 0,
       "n_contributes": 2,
-      "n_informs": 2,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [
-       "N-ISL-ECR",
-       "N-ECR-01"
-      ],
-      "nodes_informed": [
-       "N-IGN-04",
-       "N-SUS-03"
-      ]
-     },
-     {
-      "rank": 16,
-      "action": "A-OPS",
-      "kind": "analysis",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 1,
       "n_informs": 0,
       "gates_decided": [],
       "nodes_decided": [],
       "nodes_contributed": [
-       "N-CTL-02"
+       "N-SUS-01",
+       "N-SUS-02"
       ],
       "nodes_informed": []
+     },
+     {
+      "rank": 16,
+      "action": "A-INTERSTAGE",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 1,
+      "n_informs": 3,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-ECR-01"
+      ],
+      "nodes_informed": [
+       "N-IGN-04",
+       "N-SUS-03",
+       "N-ISL-ECR"
+      ]
      },
      {
       "rank": 17,
@@ -5035,13 +5366,14 @@
       "n_decides": 0,
       "n_gates_decided": 0,
       "n_contributes": 0,
-      "n_informs": 2,
+      "n_informs": 3,
       "gates_decided": [],
       "nodes_decided": [],
       "nodes_contributed": [],
       "nodes_informed": [
        "N-THM-01",
-       "N-THM-03"
+       "N-THM-03",
+       "N-THM-04"
       ]
      },
      {
@@ -5051,11 +5383,12 @@
       "n_decides": 0,
       "n_gates_decided": 0,
       "n_contributes": 0,
-      "n_informs": 2,
+      "n_informs": 3,
       "gates_decided": [],
       "nodes_decided": [],
       "nodes_contributed": [],
       "nodes_informed": [
+       "N-THM-04",
        "N-ERO-01",
        "N-ERO-02"
       ]
