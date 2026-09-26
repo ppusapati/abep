@@ -1,0 +1,169 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "ecr_evidence_matrix.schema.json",
+ "title": "ECR ionization / pre-ionization source evidence matrix v1",
+ "description": "Evidence audit record: every entry carries a source (citation, DOI or URL, access mode), an evidence class (docs/EVIDENCE.md quantity type), a quantity, a value with units and uncertainty, the source's operating conditions and its applicability to ABEP. Derived entries (ECR-D###) carry the formula and inputs used by build_ecr_evidence_matrix.py.",
+ "type": "object",
+ "required": ["schema", "title", "audit_date", "scope", "evidence_classes", "regime_match_rubric", "constants", "sources", "leads_not_admitted", "entries"],
+ "additionalProperties": false,
+ "properties": {
+  "schema": {"const": "ecr_evidence_matrix_v1"},
+  "title": {"type": "string", "minLength": 5},
+  "audit_date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+  "scope": {"type": "string", "minLength": 20},
+  "evidence_classes": {
+   "type": "object",
+   "required": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"],
+   "additionalProperties": false,
+   "properties": {
+    "measured": {"type": "string"}, "digitized": {"type": "string"}, "inferred": {"type": "string"},
+    "reconstructed": {"type": "string"}, "model-derived": {"type": "string"}, "assumed": {"type": "string"}
+   }
+  },
+  "regime_match_rubric": {
+   "type": "object",
+   "required": ["yes", "partial", "no", "TBD"],
+   "additionalProperties": false,
+   "properties": {"yes": {"type": "string"}, "partial": {"type": "string"}, "no": {"type": "string"}, "TBD": {"type": "string"}}
+  },
+  "constants": {
+   "type": "object",
+   "required": ["e_C", "m_e_kg", "eps0_F_per_m", "k_B_J_per_K", "sccm_reference_T_K", "sccm_reference_p_Pa", "source"],
+   "additionalProperties": false,
+   "properties": {
+    "e_C": {"type": "number"}, "m_e_kg": {"type": "number"}, "eps0_F_per_m": {"type": "number"},
+    "k_B_J_per_K": {"type": "number"}, "sccm_reference_T_K": {"type": "number"}, "sccm_reference_p_Pa": {"type": "number"},
+    "source": {"$ref": "#/$defs/source_min"}
+   }
+  },
+  "sources": {
+   "type": "object",
+   "additionalProperties": {"$ref": "#/$defs/source_min"}
+  },
+  "leads_not_admitted": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["citation", "doi_or_url", "reason"],
+    "additionalProperties": false,
+    "properties": {
+     "citation": {"type": "string", "minLength": 10},
+     "doi_or_url": {"$ref": "#/$defs/doi_or_url"},
+     "reason": {"type": "string", "minLength": 10}
+    }
+   }
+  },
+  "entries": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/entry"}}
+ },
+ "$defs": {
+  "doi_or_url": {"type": "string", "pattern": "^(https?://[^ ]+|10\\.[0-9]{4,9}/[^ ]+)$"},
+  "access": {"enum": ["open", "abstract_only"]},
+  "source_kind": {"enum": ["primary", "secondary_citation", "review", "datasheet", "abstract", "preprint", "formula_and_constants"]},
+  "source_min": {
+   "type": "object",
+   "required": ["citation", "doi_or_url", "access"],
+   "additionalProperties": false,
+   "properties": {
+    "citation": {"type": "string", "minLength": 10},
+    "doi_or_url": {"$ref": "#/$defs/doi_or_url"},
+    "access": {"$ref": "#/$defs/access"},
+    "source_kind": {"$ref": "#/$defs/source_kind"}
+   }
+  },
+  "source": {
+   "type": "object",
+   "required": ["citation", "doi_or_url", "access", "source_kind", "source_id", "locator"],
+   "additionalProperties": false,
+   "properties": {
+    "citation": {"type": "string", "minLength": 10},
+    "doi_or_url": {"$ref": "#/$defs/doi_or_url"},
+    "access": {"$ref": "#/$defs/access"},
+    "source_kind": {"$ref": "#/$defs/source_kind"},
+    "source_id": {"type": "string", "pattern": "^S[0-9]{2}$"},
+    "locator": {"type": "string", "minLength": 3}
+   }
+  },
+  "cond_value": {
+   "anyOf": [
+    {"type": "null"},
+    {"type": "number"},
+    {"type": "string", "minLength": 1},
+    {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 4}
+   ]
+  },
+  "conditions": {
+   "type": "object",
+   "required": ["gas", "pressure_Pa", "density_m3", "power_W", "frequency_Hz", "B_T"],
+   "additionalProperties": false,
+   "properties": {
+    "gas": {"anyOf": [{"type": "null"}, {"type": "string", "minLength": 1}]},
+    "pressure_Pa": {"$ref": "#/$defs/cond_value"},
+    "density_m3": {"$ref": "#/$defs/cond_value"},
+    "power_W": {"$ref": "#/$defs/cond_value"},
+    "frequency_Hz": {"$ref": "#/$defs/cond_value"},
+    "B_T": {"$ref": "#/$defs/cond_value"},
+    "other": {"type": "string", "minLength": 1}
+   }
+  },
+  "entry": {
+   "type": "object",
+   "required": ["id", "source", "evidence_class", "quantity", "value", "units", "uncertainty", "conditions", "applicability_to_abep"],
+   "additionalProperties": false,
+   "properties": {
+    "id": {"type": "string", "pattern": "^ECR-[ED][0-9]{3}$"},
+    "source": {"$ref": "#/$defs/source"},
+    "evidence_class": {"enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]},
+    "quantity": {"type": "string", "minLength": 5},
+    "value": {
+     "anyOf": [
+      {"type": "number"},
+      {"type": "string", "minLength": 3},
+      {"type": "array", "items": {"type": "number"}, "minItems": 1, "maxItems": 6}
+     ]
+    },
+    "value_qualifier": {"enum": ["approx", "lower_bound", "upper_bound", "range", "list", "qualitative"]},
+    "units": {"type": "string", "minLength": 1},
+    "uncertainty": {"type": "string", "minLength": 3},
+    "conditions": {"$ref": "#/$defs/conditions"},
+    "applicability_to_abep": {
+     "type": "object",
+     "required": ["regime_match", "notes"],
+     "additionalProperties": false,
+     "properties": {
+      "regime_match": {"enum": ["yes", "partial", "no", "TBD"]},
+      "notes": {"type": "string", "minLength": 3}
+     }
+    },
+    "transformation": {"type": "string", "minLength": 3},
+    "derivation": {
+     "type": "object",
+     "required": ["function", "formula", "inputs"],
+     "additionalProperties": false,
+     "properties": {
+      "function": {"type": "string", "minLength": 3},
+      "formula": {"type": "string", "minLength": 3},
+      "inputs": {"type": "object"}
+     }
+    }
+   },
+   "allOf": [
+    {
+     "if": {"properties": {"id": {"pattern": "^ECR-D"}}, "required": ["id"]},
+     "then": {"required": ["derivation"], "properties": {"evidence_class": {"enum": ["model-derived", "inferred"]}}}
+    },
+    {
+     "if": {"properties": {"id": {"pattern": "^ECR-E"}}, "required": ["id"]},
+     "then": {"not": {"required": ["derivation"]}}
+    },
+    {
+     "if": {"properties": {"value": {"type": "string"}}, "required": ["value"]},
+     "then": {"required": ["value_qualifier"], "properties": {"value_qualifier": {"const": "qualitative"}}}
+    },
+    {
+     "if": {"properties": {"value": {"type": "array"}}, "required": ["value"]},
+     "then": {"required": ["value_qualifier"], "properties": {"value_qualifier": {"enum": ["range", "list"]}}}
+    }
+   ]
+  }
+ }
+}
