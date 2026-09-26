@@ -826,10 +826,11 @@ def test_n2_to_n_z2plus_table():
     assert 'equation = "N2 + e -> N(2+) + N + 3e"' in open(os.path.join(d, "n2_n.toml")).read()
 
 
-def test_n2_vibrational_audit_promotes_with_a_complete_low_te_denominator():
+def test_n2_vibrational_audit_promotion_is_robust_at_low_te():
     """Audit 2 (prereg n2_completeness_audit_v1, vibrational domain 0.2-30 eV): Laporta et al. 2014 Eq. (10) with
     kappa_max in 1e-9 cm^3/s (0->1 peaks at ~8.0e-9 cm^3/s near 1.6 eV, matching JPCRD Table 7), and vibrational power
-    exceeds 1 % of the inelastic power even with the 8 electronic channels in the denominator at T_e <= 3 eV."""
+    exceeds 1 % of the inelastic power even with the 8 electronic channels in the denominator at T_e <= 3 eV (robust, not a
+    completeness claim: other omitted channels are still being bounded)."""
     import importlib.util, json, os
     root = os.path.dirname(os.path.dirname(__file__))
     spec = importlib.util.spec_from_file_location("a", os.path.join(root, "scripts", "audit_n2_vibrational_excitation.py"))
@@ -837,8 +838,8 @@ def test_n2_vibrational_audit_promotes_with_a_complete_low_te_denominator():
     assert abs(a.k_vib(1.585, 1)[0][1] / 8.015e-15 - 1) < 1e-3
     assert len(a.LAPORTA_V0) == 59 and len(a.EPS_V) == 59 and a.EPS_V[1] == 0.288
     res = json.load(open(os.path.join(root, "hallthruster_bridge", "audit", "n2_vibrational_excitation_v1.json")))
-    assert res["prereg"] == "n2_completeness_audit_v1" and res["verdict"]["vibrational_excitation"].startswith("PROMOTE")
-    fin = [r for r in res["rows"] if r["electronic_denominator_final"]]
+    assert res["prereg"] == "n2_completeness_audit_v1" and res["verdict"]["vibrational_excitation"].startswith("PROMOTION ROBUST")
+    fin = [r for r in res["rows"] if r["electronic_in_denominator_trusted"]]
     assert fin[-1]["Te_eV"] == 3.0 and max(r["F_P_vs_included_plus_electronic"] for r in fin) > 0.01
 
 

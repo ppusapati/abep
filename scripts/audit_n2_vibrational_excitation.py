@@ -19,7 +19,8 @@ Denominator (included inelastic electron power per unit N2 density, x_N = 0), ab
   plus - where it can be trusted - the 8 electronic-excitation channels of Su et al. 2021 (CC BY 4.0 supplementary data,
   fetched at run time from IOP; data end at 20 eV, so used with sigma = 0 above 20 eV) with the owner's experimental
   energy losses (Oddershede via Su Table 1). The Maxwellian flux share above 20 eV, (1 + 20/T) exp(-20/T), is printed:
-  <= 1 % for T_e <= 3 eV, where the excitation-inclusive F_P is therefore final.
+  <= 1 % for T_e <= 3 eV, where the electronic channels are trusted in the denominator. The denominator is the presently
+  completed set; rotational excitation and other omitted channels are not yet bounded, so no completeness is claimed.
 Residual sanity bound (one-sided, NOT a vibrational dataset): in rate space,
   k_res = k(JPCRD Table 1 TCS) - k(Table 4 elastic ICS) - k(included inelastic) - sum k(Su electronic)
   must not be exceeded by sum_vf k_vib (it also contains rotational excitation etc.).
@@ -139,18 +140,21 @@ def main():
         rows.append(dict(Te_eV=Te, P_vib=P_vib, K_vib=K_vib, P_included=P_inc, P_electronic_su=P_el,
                          F_P_vs_included=P_vib / P_inc if P_inc > 0 else float("inf"),
                          F_P_vs_included_plus_electronic=P_vib / (P_inc + P_el) if P_inc + P_el > 0 else float("inf"),
-                         maxwellian_flux_share_above_20eV=above20, electronic_denominator_final=above20 <= 0.01,
+                         maxwellian_flux_share_above_20eV=above20, electronic_in_denominator_trusted=above20 <= 0.01,
                          k_residual=k_res, residual_ratio=K_vib / k_res if k_res > 0 else None))
-    final = [r for r in rows if r["electronic_denominator_final"]]
+    trusted = [r for r in rows if r["electronic_in_denominator_trusted"]]
     th = pre["thresholds"]["F_P"]
-    promote = any(r["F_P_vs_included_plus_electronic"] > th for r in final)
+    promote = any(r["F_P_vs_included_plus_electronic"] > th for r in trusted)
     verdict = {"rule": pre["rule"],
-               "max_F_P_where_denominator_final": max(r["F_P_vs_included_plus_electronic"] for r in final),
-               "Te_range_denominator_final": [final[0]["Te_eV"], final[-1]["Te_eV"]],
-               "vibrational_excitation": ("PROMOTE. Forced by F_P at T_e <= 3 eV, where the denominator already includes the "
-                                          "8 electronic-excitation channels (Maxwellian flux above 20 eV <= 1 %) and the "
-                                          "vibrational power is itself a lower bound (resonant only, v = 0 only)."
-                                          if promote else "not forced where the denominator is final"),
+               "max_F_P_where_electronic_denominator_trusted": max(r["F_P_vs_included_plus_electronic"] for r in trusted),
+               "Te_range_electronic_denominator_trusted": [trusted[0]["Te_eV"], trusted[-1]["Te_eV"]],
+               "vibrational_excitation": (
+                   "PROMOTION ROBUST: exceeds the preregistered criterion by a large margin over the low-T_e domain using "
+                   "the presently completed denominator; final completeness of the reaction set remains pending the "
+                   "remaining omitted-process bounds." if promote else "not forced over the trusted low-T_e range"),
+               "vibrational_power_basis": "lower bound: resonant (2Pi_g) excitation only, cross sections integrated to 15 eV, "
+                                          "from v = 0 only",
+
                # One-sided consistency diagnostic, reported as numbers; no pass/fail tolerance is applied (none was
                # pre-registered). k_residual is a small difference of datasets with 10-20 % uncertainties.
                "residual_check": {
@@ -160,7 +164,7 @@ def main():
                    "reading": "at T_e <= 0.3 eV TCS - elastic ICS - known inelastic is negative (dataset inconsistency, as "
                               "expected for a residual); elsewhere Laporta's resonant vibrational rate stays within the "
                               "residual to within its uncertainty. The residual is a diagnostic, never a vibrational dataset."}}
-    out = {"audit": "N2 vibrational excitation", "prereg": pre["id"], "status": "PROMOTION FINAL (low-T_e F_P, complete denominator)",
+    out = {"audit": "N2 vibrational excitation", "prereg": pre["id"], "status": "PROMOTION ROBUST (low-T_e F_P); reaction-set completeness pending",
            "source": "Laporta et al. PSST 23, 065002 (2014) Eq. (10) + supplementary v_i = 0 fits; Table II level energies",
            "units_check_k01_m3s": check_units(), "verdict": verdict, "rows": rows}
     os.makedirs(os.path.dirname(OUT), exist_ok=True)

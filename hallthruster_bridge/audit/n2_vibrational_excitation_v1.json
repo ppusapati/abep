@@ -1,7 +1,7 @@
 {
  "audit": "N2 vibrational excitation",
  "prereg": "n2_completeness_audit_v1",
- "status": "PROMOTION FINAL (low-T_e F_P, complete denominator)",
+ "status": "PROMOTION ROBUST (low-T_e F_P); reaction-set completeness pending",
  "source": "Laporta et al. PSST 23, 065002 (2014) Eq. (10) + supplementary v_i = 0 fits; Table II level energies",
  "units_check_k01_m3s": {
   "0.5": 1.745633222687031e-15,
@@ -12,12 +12,13 @@
  },
  "verdict": {
   "rule": "Promote the omitted process if F_P > 0.01 OR F_ion > 0.01 OR F_S_s > 0.05 anywhere in its applicable Te domain.",
-  "max_F_P_where_denominator_final": 889183.0362072951,
-  "Te_range_denominator_final": [
+  "max_F_P_where_electronic_denominator_trusted": 889183.0362072951,
+  "Te_range_electronic_denominator_trusted": [
    0.2,
    3.0
   ],
-  "vibrational_excitation": "PROMOTE. Forced by F_P at T_e <= 3 eV, where the denominator already includes the 8 electronic-excitation channels (Maxwellian flux above 20 eV <= 1 %) and the vibrational power is itself a lower bound (resonant only, v = 0 only).",
+  "vibrational_excitation": "PROMOTION ROBUST: exceeds the preregistered criterion by a large margin over the low-T_e domain using the presently completed denominator; final completeness of the reaction set remains pending the remaining omitted-process bounds.",
+  "vibrational_power_basis": "lower bound: resonant (2Pi_g) excitation only, cross sections integrated to 15 eV, from v = 0 only",
   "residual_check": {
    "Te_where_residual_negative_eV": [
     0.2,
@@ -41,7 +42,7 @@
    "F_P_vs_included": 44816.82634263746,
    "F_P_vs_included_plus_electronic": 44816.826228213606,
    "maxwellian_flux_share_above_20eV": 3.757276735781044e-42,
-   "electronic_denominator_final": 1.0,
+   "electronic_in_denominator_trusted": 1.0,
    "k_residual": -1.002978341733342e-15,
    "residual_ratio": null
   },
@@ -54,7 +55,7 @@
    "F_P_vs_included": 890136.4558140289,
    "F_P_vs_included_plus_electronic": 889183.0362072951,
    "maxwellian_flux_share_above_20eV": 7.540659368052943e-28,
-   "electronic_denominator_final": 1.0,
+   "electronic_in_denominator_trusted": 1.0,
    "k_residual": -5.080937952911704e-16,
    "residual_ratio": null
   },
@@ -67,7 +68,7 @@
    "F_P_vs_included": 6185873.934086604,
    "F_P_vs_included_plus_electronic": 172180.36773373806,
    "maxwellian_flux_share_above_20eV": 1.7418252446695514e-16,
-   "electronic_denominator_final": 1.0,
+   "electronic_in_denominator_trusted": 1.0,
    "k_residual": 3.1396070739358557e-15,
    "residual_ratio": 1.1439176247453067
   },
@@ -80,7 +81,7 @@
    "F_P_vs_included": 13404.159905235705,
    "F_P_vs_included_plus_electronic": 2902.309476918846,
    "maxwellian_flux_share_above_20eV": 1.1546717399181623e-11,
-   "electronic_denominator_final": 1.0,
+   "electronic_in_denominator_trusted": 1.0,
    "k_residual": 8.405842724173814e-15,
    "residual_ratio": 1.0122105196843303
   },
@@ -93,7 +94,7 @@
    "F_P_vs_included": 2224.316159708173,
    "F_P_vs_included_plus_electronic": 155.1844554979104,
    "maxwellian_flux_share_above_20eV": 4.3284226071209714e-08,
-   "electronic_denominator_final": 1.0,
+   "electronic_in_denominator_trusted": 1.0,
    "k_residual": 1.4882635872917178e-14,
    "residual_ratio": 0.934468945894956
   },
@@ -106,7 +107,7 @@
    "F_P_vs_included": 135.6955020224811,
    "F_P_vs_included_plus_electronic": 10.8107790410356,
    "maxwellian_flux_share_above_20eV": 2.3214220689814074e-05,
-   "electronic_denominator_final": 1.0,
+   "electronic_in_denominator_trusted": 1.0,
    "k_residual": 2.0109356100655958e-14,
    "residual_ratio": 0.836932250860588
   },
@@ -119,7 +120,7 @@
    "F_P_vs_included": 35.7480966548839,
    "F_P_vs_included_plus_electronic": 2.4952036971695692,
    "maxwellian_flux_share_above_20eV": 0.0004993992273873334,
-   "electronic_denominator_final": 1.0,
+   "electronic_in_denominator_trusted": 1.0,
    "k_residual": 2.1387807947861025e-14,
    "residual_ratio": 0.7622746437432169
   },
@@ -132,7 +133,7 @@
    "F_P_vs_included": 5.9797756488457035,
    "F_P_vs_included_plus_electronic": 0.8755394289618258,
    "maxwellian_flux_share_above_20eV": 0.003019163651122607,
-   "electronic_denominator_final": 1.0,
+   "electronic_in_denominator_trusted": 1.0,
    "k_residual": 2.1067916143761085e-14,
    "residual_ratio": 0.7038606536740434
   },
@@ -145,7 +146,7 @@
    "F_P_vs_included": 1.9132195520496258,
    "F_P_vs_included_plus_electronic": 0.4085388656211428,
    "maxwellian_flux_share_above_20eV": 0.009756859143605193,
-   "electronic_denominator_final": 1.0,
+   "electronic_in_denominator_trusted": 1.0,
    "k_residual": 2.023729432133054e-14,
    "residual_ratio": 0.654129639693027
   },
@@ -158,7 +159,7 @@
    "F_P_vs_included": 0.42139498676273784,
    "F_P_vs_included_plus_electronic": 0.14056185289285,
    "maxwellian_flux_share_above_20eV": 0.0404276819945128,
-   "electronic_denominator_final": 0.0,
+   "electronic_in_denominator_trusted": 0.0,
    "k_residual": 1.8697807776442842e-14,
    "residual_ratio": 0.5616763979138386
   },
@@ -171,7 +172,7 @@
    "F_P_vs_included": 0.13820719425299893,
    "F_P_vs_included_plus_electronic": 0.06402206031505207,
    "maxwellian_flux_share_above_20eV": 0.0915781944436709,
-   "electronic_denominator_final": 0.0,
+   "electronic_in_denominator_trusted": 0.0,
    "k_residual": 1.7828304244211663e-14,
    "residual_ratio": 0.47526230103525685
   },
@@ -184,7 +185,7 @@
    "F_P_vs_included": 0.025142567799551586,
    "F_P_vs_included_plus_electronic": 0.0171386827409332,
    "maxwellian_flux_share_above_20eV": 0.25477265448360564,
-   "electronic_denominator_final": 0.0,
+   "electronic_in_denominator_trusted": 0.0,
    "k_residual": 1.808730478492122e-14,
    "residual_ratio": 0.29926354286930396
   },
@@ -197,7 +198,7 @@
    "F_P_vs_included": 0.008820729281222007,
    "F_P_vs_included_plus_electronic": 0.007070195550626058,
    "maxwellian_flux_share_above_20eV": 0.4060058497098381,
-   "electronic_denominator_final": 0.0,
+   "electronic_in_denominator_trusted": 0.0,
    "k_residual": 1.899519615224738e-14,
    "residual_ratio": 0.20051265877914176
   },
@@ -210,7 +211,7 @@
    "F_P_vs_included": 0.002396768058564982,
    "F_P_vs_included_plus_electronic": 0.0021735801163118022,
    "maxwellian_flux_share_above_20eV": 0.6150599889366957,
-   "electronic_denominator_final": 0.0,
+   "electronic_in_denominator_trusted": 0.0,
    "k_residual": 1.890374133867475e-14,
    "residual_ratio": 0.11881482466544967
   },
@@ -223,7 +224,7 @@
    "F_P_vs_included": 0.0010473429328979396,
    "F_P_vs_included_plus_electronic": 0.0009921436697557914,
    "maxwellian_flux_share_above_20eV": 0.7357588823428847,
-   "electronic_denominator_final": 0.0,
+   "electronic_in_denominator_trusted": 0.0,
    "k_residual": 1.6823162410841085e-14,
    "residual_ratio": 0.09025866620780834
   },
@@ -236,7 +237,7 @@
    "F_P_vs_included": 0.0005759998386389733,
    "F_P_vs_included_plus_electronic": 0.0005566010966470481,
    "maxwellian_flux_share_above_20eV": 0.8087921354109988,
-   "electronic_denominator_final": 0.0,
+   "electronic_in_denominator_trusted": 0.0,
    "k_residual": 1.3995587907602112e-14,
    "residual_ratio": 0.07951930757324802
   },
@@ -249,7 +250,7 @@
    "F_P_vs_included": 0.0003622423450011559,
    "F_P_vs_included_plus_electronic": 0.00035378104754938083,
    "maxwellian_flux_share_above_20eV": 0.8556951983876533,
-   "electronic_denominator_final": 0.0,
+   "electronic_in_denominator_trusted": 0.0,
    "k_residual": 1.1019852753854843e-14,
    "residual_ratio": 0.07806764336657553
   }

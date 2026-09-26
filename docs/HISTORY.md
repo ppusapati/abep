@@ -1771,13 +1771,13 @@ This audit was run under `prereg/n2_completeness_audit_v1` (merged in PR #20 bef
 - Units (10⁻⁹ cm³/s) were confirmed independently: the 0→1 fit reproduces the Maxwellian integral of JPCRD Table 7's recommended σ₀₁ to 1–6 % at T = 0.5–3 eV.
 - The Laporta rates are resonant only (integrated to 15 eV) and from v = 0 only, so the vibrational power is a lower bound.
 
-**Denominator:** abep-n2n-0.6 upper inelastic power, plus Su et al. 2021's 8 electronic channels (σ = 0 above 20 eV) with the owner's experimental energy losses. The denominator is final where the Maxwellian flux above 20 eV is ≤ 1 %, i.e. T_e ≤ 3 eV.
+**Denominator:** abep-n2n-0.6 upper inelastic power, plus Su et al. 2021's 8 electronic channels (σ = 0 above 20 eV) with the owner's experimental energy losses. The electronic channels are trusted in the denominator where the Maxwellian flux above 20 eV is ≤ 1 %, i.e. T_e ≤ 3 eV. This is the presently completed denominator, not a complete one: rotational excitation and the remaining omitted channels are not yet bounded.
 
 | T_e (eV) | 0.5 | 1 | 2 | 3 | 5 | 7.5 | 10 | 20 | 30 |
 |---|---|---|---|---|---|---|---|---|---|
 | P_vib / (P_incl + P_elec) | 1.7e5 | 155 | 2.5 | 0.41 | 0.064 | 0.017 | 0.0071 | 0.0010 | 0.00035 |
 
-- **Verdict: PROMOTE.** It is forced where the denominator is complete. Vibrational excitation is the dominant electron energy sink at T_e ≤ 2 eV and exceeds 1 % up to T_e ≈ 9 eV.
+- **Verdict: PROMOTION ROBUST.** It exceeds the pre-registered criterion by a large margin over the low-T_e domain, using the presently completed denominator. Final completeness of the reaction set remains pending the remaining omitted-process bounds. Vibrational excitation is the dominant electron energy sink at T_e ≤ 2 eV and exceeds 1 % up to T_e ≈ 9 eV.
 - Power by final level: v_f = 1 carries only ~22 %, v_f ≤ 4 about 77 %, and v_f ≤ 10 about 99.9 % (T_e = 1–10 eV). Implementation therefore needs overtones: one fixed-energy excitation reaction per v_f = 1…10, header ε_vf.
 
 **Residual sanity bound** (TCS − elastic ICS − known inelastic, rate space; a diagnostic only). No pass/fail tolerance is applied, since none was pre-registered.
