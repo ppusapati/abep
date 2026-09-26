@@ -1,0 +1,2391 @@
+{
+ "architectures": [
+  "hall_only",
+  "rf_hall",
+  "ecr_hall"
+ ],
+ "base_commit": "d939ef66324b7d1036b2c9bcd5e7674df218342b",
+ "boundary_version": "bus_power_boundary_v1",
+ "components": {
+  "cathode_heater": {
+   "in_architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "modes": {
+    "startup": {
+     "bus_draw": {
+      "P_bus_W_at_least": [
+       45.0,
+       305.0
+      ],
+      "derivation": "P_bus >= P_load because efficiency <= 1 (definition); design-dependent bracket",
+      "status": "LOWER_BOUND"
+     },
+     "efficiency": {
+      "blocking": "measured heater-supply efficiency (supply-efficiency campaign)",
+      "entry_ids": [
+       "CH-SUPPLY-EFF"
+      ],
+      "requires": "a measured heater-supply efficiency at the heater current/voltage of the selected cathode",
+      "status": "TBD"
+     },
+     "energy_per_start_load_Wh": [
+      {
+       "energy_Wh": 7.5,
+       "evidence_class": "inferred",
+       "heater_W": 45.0,
+       "source": "cathode_integration_derived_v1.startup_heater_energy (SITAEL HC1)",
+       "time_s": 600.0
+      },
+      {
+       "energy_Wh": 3.33333,
+       "evidence_class": "inferred",
+       "heater_W": 60.0,
+       "source": "cathode_integration_derived_v1.startup_heater_energy (SITAEL HC1)",
+       "time_s": 200.0
+      }
+     ],
+     "load": {
+      "entry_ids": [
+       "CH-PEDRINI17-HC1",
+       "CH-PEDRINI17-HC3",
+       "jpl_h6_lab6_heater_W",
+       "CH-MONTERO24"
+      ],
+      "evidence_class": "measured",
+      "evidence_level": [
+       3,
+       6
+      ],
+      "note": "ignition heater power across four LaB6 designs (SITAEL HC1 about 45 W, HC3 about 60 W, JPL H6 cathode 120 W routine, UC3M 267-305 W): the design spread, not a Vyovrinda value; preheat phase and cathode-ignition phase only (heater off at discharge ignition)",
+      "range_W": [
+       45.0,
+       305.0
+      ],
+      "status": "BRACKET"
+     },
+     "loss": {
+      "reason": "supply efficiency TBD",
+      "status": "TBD"
+     }
+    },
+    "steady": {
+     "bus_draw": {
+      "P_bus_W": 0.0,
+      "status": "ZERO_CONDITIONAL"
+     },
+     "efficiency": {
+      "evidence_class": "definition",
+      "note": "boundary convention: heater off in the mode = 0 W with efficiency 1, explicit",
+      "status": "DEFINITION",
+      "value": 1.0
+     },
+     "load": {
+      "P_load_W": 0.0,
+      "condition": "cathode self-heating once the discharge is on (heater off; Goebel & Katz p. 337); lane 19 steady policy",
+      "entry_ids": [
+       "CH-G&K-STEADY-OFF"
+      ],
+      "evidence_class": "qualitative",
+      "status": "ZERO_CONDITIONAL"
+     },
+     "loss": {
+      "P_loss_W": 0.0,
+      "status": "ZERO_CONDITIONAL"
+     }
+    }
+   }
+  },
+  "cathode_keeper": {
+   "in_architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "modes": {
+    "startup": {
+     "bus_draw": {
+      "P_bus_W_at_least": [
+       10.0,
+       30.0
+      ],
+      "derivation": "P_bus >= P_load because efficiency <= 1 (definition); bracket, design-dependent",
+      "status": "LOWER_BOUND"
+     },
+     "efficiency": {
+      "blocking": "measured keeper-supply efficiency (supply-efficiency campaign)",
+      "entry_ids": [
+       "CK-SUPPLY-EFF"
+      ],
+      "requires": "a measured keeper-supply efficiency at the keeper current/voltage used by the cathode policy",
+      "status": "TBD"
+     },
+     "load": {
+      "derivation": "keeper current regulated to 2.0 A x keeper voltage 5.0-15.0 V after ignition (product of two reported quantities of the JPL 1.5-cm LaB6 procedure)",
+      "entry_ids": [
+       "jpl_ignition_keeper_current_A",
+       "jpl_keeper_voltage_after_ignition_V"
+      ],
+      "evidence": [
+       {
+        "applicability": "1.5-cm LaB6 cathode",
+        "evidence_class": "measured",
+        "evidence_level": 3,
+        "id": "jpl_ignition_keeper_current_A",
+        "input": "cathode_data",
+        "locator": "Sec. 5, p. 4 ('The keeper current is typically regulated to 2 A'); keeper off once the anode current exceeded 10 A",
+        "quantity_type": "measured (procedure)",
+        "source_ids": [
+         "goebel_polk_2015_iepc43"
+        ],
+        "uncertainty": "typical",
+        "units": "A",
+        "value": 2.0
+       },
+       {
+        "applicability": "1.5-cm LaB6 cathode",
+        "evidence_class": "measured",
+        "evidence_level": 3,
+        "id": "jpl_keeper_voltage_after_ignition_V",
+        "input": "cathode_data",
+        "locator": "Sec. 5, p. 4 (keeper voltage falls to 5-15 V depending on gas flow and discharge current); floating keeper 5-20 V in IEPC-2017-276 p. 4",
+        "quantity_type": "measured (range)",
+        "source_ids": [
+         "goebel_polk_2015_iepc43"
+        ],
+        "uncertainty": "range",
+        "units": "V",
+        "value": [
+         5.0,
+         15.0
+        ]
+       }
+      ],
+      "evidence_class": "inferred",
+      "note": "the 150 V ignition voltage is applied before the current flows; a different cathode class, not a Vyovrinda value",
+      "range_W": [
+       10.0,
+       30.0
+      ],
+      "status": "BRACKET"
+     },
+     "loss": {
+      "reason": "supply efficiency TBD",
+      "status": "TBD"
+     }
+    },
+    "steady": {
+     "bus_draw": {
+      "options": [
+       {
+        "P_bus_W": 0.0,
+        "option": "keeper_off",
+        "status": "ZERO_CONDITIONAL"
+       },
+       {
+        "bound": "P_bus >= P_load (efficiency <= 1)",
+        "option": "keeper_on",
+        "reason": "supply efficiency TBD",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     },
+     "efficiency": {
+      "options": [
+       {
+        "evidence_class": "definition",
+        "note": "0 W passed explicitly; any efficiency gives 0 W bus draw, 1.0 follows the boundary's zero-power convention",
+        "option": "keeper_off",
+        "value": 1.0
+       },
+       {
+        "blocking": "measured keeper-supply efficiency (supply-efficiency campaign)",
+        "entry_ids": [
+         "CK-SUPPLY-EFF"
+        ],
+        "option": "keeper_on",
+        "requires": "a measured keeper-supply efficiency at the keeper current/voltage used by the cathode policy",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     },
+     "load": {
+      "options": [
+       {
+        "P_load_W": 0.0,
+        "condition": "the cathode self-heats at the architecture's discharge current (keeper off after ignition, Goebel & Katz p. 337); lane 19 Sec. 4: if I_d falls below the selected cathode's self-heating current the keeper stays on",
+        "entry_ids": [
+         "CK-G&K-OFF"
+        ],
+        "evidence_class": "qualitative",
+        "option": "keeper_off"
+       },
+       {
+        "entry_ids": [
+         "CK-PEDRINI17-HC1",
+         "CK-PEDRINI17-HC3"
+        ],
+        "evidence_class": "measured",
+        "evidence_level": [
+         3,
+         6
+        ],
+        "note": "keeper-only discharges (keeper as the only anode) of SITAEL HC1/HC3: a bracket from other hardware, not a Vyovrinda keeper load; lane 20 reads HC3 as the upper bracket",
+        "option": "keeper_on",
+        "range_W": [
+         9.0,
+         60.0
+        ],
+        "status": "BRACKET"
+       }
+      ],
+      "status": "OPTIONS"
+     },
+     "loss": {
+      "options": [
+       {
+        "P_loss_W": 0.0,
+        "option": "keeper_off",
+        "status": "ZERO_CONDITIONAL"
+       },
+       {
+        "option": "keeper_on",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     }
+    }
+   }
+  },
+  "compressor": {
+   "in_architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "modes": {
+    "startup": {
+     "bus_draw": {
+      "reason": "load and efficiency TBD (never filled in this lane)",
+      "status": "TBD"
+     },
+     "efficiency": {
+      "blocking": "motor-drive converter data",
+      "entry_ids": [
+       "CP-CONV-EFF"
+      ],
+      "requires": "converter data at the motor-drive input power",
+      "status": "TBD"
+     },
+     "load": {
+      "blocking": "upstream ICD lane_33_upstream_icd not verified (single-lens-v1); abep_sim.compressor inputs eta_motor / P_ctrl / k_bear unsourced",
+      "entry_ids": [
+       "CP-LOAD",
+       "CP-REPO-MODEL"
+      ],
+      "requires": "a sized compressor design (flow from the upstream ICD), a sourced motor + drive efficiency and bearing loss, then abep_sim.compressor evaluated at those inputs; the valve-outlet feed state (lane_16) is never filled here",
+      "status": "TBD"
+     },
+     "loss": {
+      "reason": "load and efficiency TBD",
+      "status": "TBD"
+     },
+     "phase_note": "lane 19 start-up order powers the compressor only in the keeper-off phase"
+    },
+    "steady": {
+     "bus_draw": {
+      "reason": "load and efficiency TBD (never filled in this lane)",
+      "status": "TBD"
+     },
+     "efficiency": {
+      "blocking": "motor-drive converter data",
+      "entry_ids": [
+       "CP-CONV-EFF"
+      ],
+      "requires": "converter data at the motor-drive input power",
+      "status": "TBD"
+     },
+     "load": {
+      "blocking": "upstream ICD lane_33_upstream_icd not verified (single-lens-v1); abep_sim.compressor inputs eta_motor / P_ctrl / k_bear unsourced",
+      "entry_ids": [
+       "CP-LOAD",
+       "CP-REPO-MODEL"
+      ],
+      "requires": "a sized compressor design (flow from the upstream ICD), a sourced motor + drive efficiency and bearing loss, then abep_sim.compressor evaluated at those inputs; the valve-outlet feed state (lane_16) is never filled here",
+      "status": "TBD"
+     },
+     "loss": {
+      "reason": "load and efficiency TBD",
+      "status": "TBD"
+     }
+    }
+   }
+  },
+  "ecr_magnet": {
+   "in_architectures": [
+    "ecr_hall"
+   ],
+   "modes": {
+    "startup": {
+     "bus_draw": {
+      "options": [
+       {
+        "P_bus_W": 0.0,
+        "option": "permanent_magnet",
+        "status": "ZERO_CONDITIONAL"
+       },
+       {
+        "bound": "P_bus >= P_load (efficiency <= 1)",
+        "option": "electromagnet",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     },
+     "efficiency": {
+      "options": [
+       {
+        "evidence_class": "definition",
+        "option": "permanent_magnet",
+        "value": 1.0
+       },
+       {
+        "blocking": "measured magnet-supply efficiency",
+        "entry_ids": [
+         "EM-SUPPLY-EFF"
+        ],
+        "option": "electromagnet",
+        "requires": "as HM-SUPPLY-EFF, at the ECR coil operating point",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     },
+     "load": {
+      "options": [
+       {
+        "P_load_W": 0.0,
+        "condition": "owner selects a permanent-magnet ECR circuit",
+        "entry_ids": [
+         "EM-PM-OPTION"
+        ],
+        "evidence_class": "definition",
+        "option": "permanent_magnet"
+       },
+       {
+        "blocking": "Vyovrinda ECR stage design",
+        "entry_ids": [
+         "EM-MODEL"
+        ],
+        "field_evidence_class": "model-derived",
+        "field_required_T": {
+         "2.45GHz_T": 0.0875235,
+         "4.2GHz_T": 0.15004
+        },
+        "open_evidence": "no accessed open source gives the main-field electromagnet power of an ECR stage (ECR_SOURCE_EVIDENCE.md Sec. 4.5): ECR-E067 gives a coil current without power, ECR-E066 is a 14 G steering coil pair, not a resonance field",
+        "option": "electromagnet",
+        "relation": "at identical circuit geometry the coil power scales as (B_ECR / B_Hall)^2 (magnet_power E5)",
+        "requires": "the ECR coil geometry at the resonance field fed into abep_sim.magnet_power.electromagnet",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     },
+     "loss": {
+      "options": [
+       {
+        "P_loss_W": 0.0,
+        "option": "permanent_magnet",
+        "status": "ZERO_CONDITIONAL"
+       },
+       {
+        "option": "electromagnet",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     }
+    },
+    "steady": {
+     "bus_draw": {
+      "options": [
+       {
+        "P_bus_W": 0.0,
+        "option": "permanent_magnet",
+        "status": "ZERO_CONDITIONAL"
+       },
+       {
+        "bound": "P_bus >= P_load (efficiency <= 1)",
+        "option": "electromagnet",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     },
+     "efficiency": {
+      "options": [
+       {
+        "evidence_class": "definition",
+        "option": "permanent_magnet",
+        "value": 1.0
+       },
+       {
+        "blocking": "measured magnet-supply efficiency",
+        "entry_ids": [
+         "EM-SUPPLY-EFF"
+        ],
+        "option": "electromagnet",
+        "requires": "as HM-SUPPLY-EFF, at the ECR coil operating point",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     },
+     "load": {
+      "options": [
+       {
+        "P_load_W": 0.0,
+        "condition": "owner selects a permanent-magnet ECR circuit",
+        "entry_ids": [
+         "EM-PM-OPTION"
+        ],
+        "evidence_class": "definition",
+        "option": "permanent_magnet"
+       },
+       {
+        "blocking": "Vyovrinda ECR stage design",
+        "entry_ids": [
+         "EM-MODEL"
+        ],
+        "field_evidence_class": "model-derived",
+        "field_required_T": {
+         "2.45GHz_T": 0.0875235,
+         "4.2GHz_T": 0.15004
+        },
+        "open_evidence": "no accessed open source gives the main-field electromagnet power of an ECR stage (ECR_SOURCE_EVIDENCE.md Sec. 4.5): ECR-E067 gives a coil current without power, ECR-E066 is a 14 G steering coil pair, not a resonance field",
+        "option": "electromagnet",
+        "relation": "at identical circuit geometry the coil power scales as (B_ECR / B_Hall)^2 (magnet_power E5)",
+        "requires": "the ECR coil geometry at the resonance field fed into abep_sim.magnet_power.electromagnet",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     },
+     "loss": {
+      "options": [
+       {
+        "P_loss_W": 0.0,
+        "option": "permanent_magnet",
+        "status": "ZERO_CONDITIONAL"
+       },
+       {
+        "option": "electromagnet",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     }
+    }
+   }
+  },
+  "ecr_source": {
+   "in_architectures": [
+    "ecr_hall"
+   ],
+   "modes": {
+    "startup": {
+     "bus_draw": {
+      "bus_W_per_W_load_at_least_for_stage_technology": {
+       "EC-KAZAKEVICH24-MAG": 1.85185,
+       "EC-NAKATANI15-GAN:PAE": 1.5625,
+       "EC-NAKATANI15-GAN:drain_efficiency": 1.37174,
+       "ECR-E045": 1.27389
+      },
+      "bus_W_per_W_load_reference_chain": 2.75028,
+      "lower_bound": "P_bus[ecr_source] >= eps_floor x I_src (floor above)",
+      "reason": "load TBD",
+      "status": "TBD"
+     },
+     "efficiency": {
+      "missing": [
+       {
+        "blocking": "isolator/feed measurement",
+        "entry_ids": [
+         "EC-ISOLATOR-FEED"
+        ],
+        "requires": "measured insertion loss of the selected isolator/circulator and feed at the ECR frequency",
+        "status": "TBD"
+       }
+      ],
+      "note": "stage-only values bound the chain that contains that stage from above; only the Hayabusa value is system-level; the ABEP chain may be higher or lower than it",
+      "reference_chain": 0.3636,
+      "reference_chain_evidence": {
+       "applicability": "4.2 GHz TWT system, 40 W RF / 110 W DC, flight",
+       "evidence_class": "inferred",
+       "evidence_level": 3,
+       "id": "EC-HAYABUSA-TWTA"
+      },
+      "stage_only_upper_bounds": [
+       {
+        "id": "EC-NAKATANI15-GAN:drain_efficiency",
+        "value": 0.729
+       },
+       {
+        "id": "EC-NAKATANI15-GAN:PAE",
+        "value": 0.64
+       },
+       {
+        "id": "EC-KAZAKEVICH24-MAG",
+        "value": 0.54
+       },
+       {
+        "id": "ECR-E045",
+        "value": 0.785
+       }
+      ],
+      "status": "REFERENCE_AND_STAGE_BOUNDS"
+     },
+     "load": {
+      "blocking": "pre-ionizer physics / ECR source measurement on air/N2 at the ICD inlet state (lane 06 experiment protocol)",
+      "entry_ids": [
+       "EC-LOAD"
+      ],
+      "lower_bound": {
+       "air_mixture_feed": "TBD - requires the O2 ionization energy (interstage_v1 CATALOGUE['ionization_energy:O2'] is TBD)",
+       "evidence_class": "model-derived",
+       "floors": {
+        "N2_feed": {
+         "W_per_A": 14.5341,
+         "evidence_class": "model-derived",
+         "feed": "pure N2 feed (ions N2+, N+ and multiply charged ions)",
+         "source": "overlay_ecr_v1.ionization_floor (interstage_v1 catalogue, NIST ionization energies)"
+        },
+        "O_feed": {
+         "W_per_A": 13.6181,
+         "evidence_class": "model-derived",
+         "feed": "atomic-O feed only (no placed evidence)",
+         "source": "overlay_ecr_v1.ionization_floor (interstage_v1 catalogue, NIST ionization energies)"
+        },
+        "Xe_feed": {
+         "W_per_A": 12.1298,
+         "evidence_class": "model-derived",
+         "feed": "pure Xe feed",
+         "source": "overlay_ecr_v1.ionization_floor (interstage_v1 catalogue, NIST ionization energies)"
+        }
+       },
+       "relation": "P_load[source] >= eps_floor x I_src and P_bus[source] >= P_load[source] (I_src = ion current leaving the source exit, A; eps_floor in W/A = eV per charge); the floor holds at every power plane (energy conservation)"
+      },
+      "requires": "pre-ionizer physics at the admitted operating point",
+      "status": "TBD"
+     },
+     "loss": {
+      "reason": "load TBD",
+      "status": "TBD"
+     },
+     "phase_note": "PROPOSED variants (lane 19): V1 ecr_magnet then ecr_source after keeper-off; V2 both before discharge ignition"
+    },
+    "steady": {
+     "bus_draw": {
+      "bus_W_per_W_load_at_least_for_stage_technology": {
+       "EC-KAZAKEVICH24-MAG": 1.85185,
+       "EC-NAKATANI15-GAN:PAE": 1.5625,
+       "EC-NAKATANI15-GAN:drain_efficiency": 1.37174,
+       "ECR-E045": 1.27389
+      },
+      "bus_W_per_W_load_reference_chain": 2.75028,
+      "lower_bound": "P_bus[ecr_source] >= eps_floor x I_src (floor above)",
+      "reason": "load TBD",
+      "status": "TBD"
+     },
+     "efficiency": {
+      "missing": [
+       {
+        "blocking": "isolator/feed measurement",
+        "entry_ids": [
+         "EC-ISOLATOR-FEED"
+        ],
+        "requires": "measured insertion loss of the selected isolator/circulator and feed at the ECR frequency",
+        "status": "TBD"
+       }
+      ],
+      "note": "stage-only values bound the chain that contains that stage from above; only the Hayabusa value is system-level; the ABEP chain may be higher or lower than it",
+      "reference_chain": 0.3636,
+      "reference_chain_evidence": {
+       "applicability": "4.2 GHz TWT system, 40 W RF / 110 W DC, flight",
+       "evidence_class": "inferred",
+       "evidence_level": 3,
+       "id": "EC-HAYABUSA-TWTA"
+      },
+      "stage_only_upper_bounds": [
+       {
+        "id": "EC-NAKATANI15-GAN:drain_efficiency",
+        "value": 0.729
+       },
+       {
+        "id": "EC-NAKATANI15-GAN:PAE",
+        "value": 0.64
+       },
+       {
+        "id": "EC-KAZAKEVICH24-MAG",
+        "value": 0.54
+       },
+       {
+        "id": "ECR-E045",
+        "value": 0.785
+       }
+      ],
+      "status": "REFERENCE_AND_STAGE_BOUNDS"
+     },
+     "load": {
+      "blocking": "pre-ionizer physics / ECR source measurement on air/N2 at the ICD inlet state (lane 06 experiment protocol)",
+      "entry_ids": [
+       "EC-LOAD"
+      ],
+      "lower_bound": {
+       "air_mixture_feed": "TBD - requires the O2 ionization energy (interstage_v1 CATALOGUE['ionization_energy:O2'] is TBD)",
+       "evidence_class": "model-derived",
+       "floors": {
+        "N2_feed": {
+         "W_per_A": 14.5341,
+         "evidence_class": "model-derived",
+         "feed": "pure N2 feed (ions N2+, N+ and multiply charged ions)",
+         "source": "overlay_ecr_v1.ionization_floor (interstage_v1 catalogue, NIST ionization energies)"
+        },
+        "O_feed": {
+         "W_per_A": 13.6181,
+         "evidence_class": "model-derived",
+         "feed": "atomic-O feed only (no placed evidence)",
+         "source": "overlay_ecr_v1.ionization_floor (interstage_v1 catalogue, NIST ionization energies)"
+        },
+        "Xe_feed": {
+         "W_per_A": 12.1298,
+         "evidence_class": "model-derived",
+         "feed": "pure Xe feed",
+         "source": "overlay_ecr_v1.ionization_floor (interstage_v1 catalogue, NIST ionization energies)"
+        }
+       },
+       "relation": "P_load[source] >= eps_floor x I_src and P_bus[source] >= P_load[source] (I_src = ion current leaving the source exit, A; eps_floor in W/A = eV per charge); the floor holds at every power plane (energy conservation)"
+      },
+      "requires": "pre-ionizer physics at the admitted operating point",
+      "status": "TBD"
+     },
+     "loss": {
+      "reason": "load TBD",
+      "status": "TBD"
+     }
+    }
+   }
+  },
+  "flow_control": {
+   "in_architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "modes": {
+    "startup": {
+     "bus_draw": {
+      "P_bus_W_at_least_per_energized_xe_pfcv": [
+       0.4191,
+       1.46
+      ],
+      "derivation": "P_bus >= P_load (efficiency <= 1); total needs the valve count and the air valve",
+      "status": "LOWER_BOUND_PER_VALVE"
+     },
+     "efficiency": {
+      "blocking": "valve-driver design data",
+      "entry_ids": [
+       "FC-DRIVER-EFF"
+      ],
+      "requires": "valve-driver circuit data (linear vs switched current source) at the coil current",
+      "status": "TBD"
+     },
+     "load": {
+      "entry_ids": [
+       "FC-MOOG-I2R"
+      ],
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "missing": [
+       {
+        "blocking": "upstream ICD lane_33_upstream_icd (single-lens-v1, not verified)",
+        "entry_ids": [],
+        "requires": "number of simultaneously energized valves per mode (design / upstream ICD)",
+        "status": "TBD"
+       },
+       {
+        "blocking": "upstream ICD lane_33_upstream_icd",
+        "entry_ids": [
+         "FC-AIR-VALVE"
+        ],
+        "requires": "the air-path valve selection and its drive current/resistance (upstream ICD, schemas/interfaces/)",
+        "status": "TBD"
+       }
+      ],
+      "note": "coil I^2R at 21 C of one Moog 51E339 Xe PFCV; the air-path valve and the valve count are TBD",
+      "per_energized_xe_pfcv_W": [
+       0.4191,
+       1.46
+      ],
+      "status": "PARTIAL"
+     },
+     "loss": {
+      "reason": "driver efficiency TBD",
+      "status": "TBD"
+     }
+    },
+    "steady": {
+     "bus_draw": {
+      "P_bus_W_at_least_per_energized_xe_pfcv": [
+       0.4191,
+       1.46
+      ],
+      "derivation": "P_bus >= P_load (efficiency <= 1); total needs the valve count and the air valve",
+      "status": "LOWER_BOUND_PER_VALVE"
+     },
+     "efficiency": {
+      "blocking": "valve-driver design data",
+      "entry_ids": [
+       "FC-DRIVER-EFF"
+      ],
+      "requires": "valve-driver circuit data (linear vs switched current source) at the coil current",
+      "status": "TBD"
+     },
+     "load": {
+      "entry_ids": [
+       "FC-MOOG-I2R"
+      ],
+      "evidence_class": "inferred",
+      "evidence_level": 3,
+      "missing": [
+       {
+        "blocking": "upstream ICD lane_33_upstream_icd (single-lens-v1, not verified)",
+        "entry_ids": [],
+        "requires": "number of simultaneously energized valves per mode (design / upstream ICD)",
+        "status": "TBD"
+       },
+       {
+        "blocking": "upstream ICD lane_33_upstream_icd",
+        "entry_ids": [
+         "FC-AIR-VALVE"
+        ],
+        "requires": "the air-path valve selection and its drive current/resistance (upstream ICD, schemas/interfaces/)",
+        "status": "TBD"
+       }
+      ],
+      "note": "coil I^2R at 21 C of one Moog 51E339 Xe PFCV; the air-path valve and the valve count are TBD",
+      "per_energized_xe_pfcv_W": [
+       0.4191,
+       1.46
+      ],
+      "status": "PARTIAL"
+     },
+     "loss": {
+      "reason": "driver efficiency TBD",
+      "status": "TBD"
+     }
+    }
+   }
+  },
+  "hall_discharge": {
+   "in_architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "measured_supply_points_28V": [
+    {
+     "P_bus_W": 289.761,
+     "P_load_W": 249.6,
+     "P_loss_W": 40.1609,
+     "V_out_V": 250,
+     "aux_allowance_below_1500W_W": 1210.24,
+     "efficiency": 0.8614,
+     "series": "HD-RH24-250V-28Vin"
+    },
+    {
+     "P_bus_W": 344.863,
+     "P_load_W": 300.1,
+     "P_loss_W": 44.7632,
+     "V_out_V": 250,
+     "aux_allowance_below_1500W_W": 1155.14,
+     "efficiency": 0.8702,
+     "series": "HD-RH24-250V-28Vin"
+    },
+    {
+     "P_bus_W": 453.063,
+     "P_load_W": 400.1,
+     "P_loss_W": 52.9631,
+     "V_out_V": 250,
+     "aux_allowance_below_1500W_W": 1046.94,
+     "efficiency": 0.8831,
+     "series": "HD-RH24-250V-28Vin"
+    },
+    {
+     "P_bus_W": 562.352,
+     "P_load_W": 500.1,
+     "P_loss_W": 62.2524,
+     "V_out_V": 250,
+     "aux_allowance_below_1500W_W": 937.648,
+     "efficiency": 0.8893,
+     "series": "HD-RH24-250V-28Vin"
+    },
+    {
+     "P_bus_W": 668.635,
+     "P_load_W": 600.1,
+     "P_loss_W": 68.5351,
+     "V_out_V": 250,
+     "aux_allowance_below_1500W_W": 831.365,
+     "efficiency": 0.8975,
+     "series": "HD-RH24-250V-28Vin"
+    },
+    {
+     "P_bus_W": 777.112,
+     "P_load_W": 700.1,
+     "P_loss_W": 77.0118,
+     "V_out_V": 250,
+     "aux_allowance_below_1500W_W": 722.888,
+     "efficiency": 0.9009,
+     "series": "HD-RH24-250V-28Vin"
+    },
+    {
+     "P_bus_W": 887.619,
+     "P_load_W": 800.1,
+     "P_loss_W": 87.5193,
+     "V_out_V": 250,
+     "aux_allowance_below_1500W_W": 612.381,
+     "efficiency": 0.9014,
+     "series": "HD-RH24-250V-28Vin"
+    },
+    {
+     "P_bus_W": 1000.11,
+     "P_load_W": 900.1,
+     "P_loss_W": 100.011,
+     "V_out_V": 250,
+     "aux_allowance_below_1500W_W": 499.889,
+     "efficiency": 0.9,
+     "series": "HD-RH24-250V-28Vin"
+    },
+    {
+     "P_bus_W": 1112.09,
+     "P_load_W": 1000.1,
+     "P_loss_W": 111.987,
+     "V_out_V": 250,
+     "aux_allowance_below_1500W_W": 387.913,
+     "efficiency": 0.8993,
+     "series": "HD-RH24-250V-28Vin"
+    },
+    {
+     "P_bus_W": 259.331,
+     "P_load_W": 200.1,
+     "P_loss_W": 59.2313,
+     "V_out_V": 400,
+     "aux_allowance_below_1500W_W": 1240.67,
+     "efficiency": 0.7716,
+     "series": "HD-RH24-400V-28Vin"
+    },
+    {
+     "P_bus_W": 367.165,
+     "P_load_W": 299.9,
+     "P_loss_W": 67.2645,
+     "V_out_V": 400,
+     "aux_allowance_below_1500W_W": 1132.84,
+     "efficiency": 0.8168,
+     "series": "HD-RH24-400V-28Vin"
+    },
+    {
+     "P_bus_W": 473.36,
+     "P_load_W": 399.8,
+     "P_loss_W": 73.5602,
+     "V_out_V": 400,
+     "aux_allowance_below_1500W_W": 1026.64,
+     "efficiency": 0.8446,
+     "series": "HD-RH24-400V-28Vin"
+    },
+    {
+     "P_bus_W": 580.904,
+     "P_load_W": 500.1,
+     "P_loss_W": 80.8037,
+     "V_out_V": 400,
+     "aux_allowance_below_1500W_W": 919.096,
+     "efficiency": 0.8609,
+     "series": "HD-RH24-400V-28Vin"
+    },
+    {
+     "P_bus_W": 686.384,
+     "P_load_W": 599.9,
+     "P_loss_W": 86.4844,
+     "V_out_V": 400,
+     "aux_allowance_below_1500W_W": 813.616,
+     "efficiency": 0.874,
+     "series": "HD-RH24-400V-28Vin"
+    },
+    {
+     "P_bus_W": 794.662,
+     "P_load_W": 699.7,
+     "P_loss_W": 94.9621,
+     "V_out_V": 400,
+     "aux_allowance_below_1500W_W": 705.338,
+     "efficiency": 0.8805,
+     "series": "HD-RH24-400V-28Vin"
+    },
+    {
+     "P_bus_W": 904.068,
+     "P_load_W": 800.1,
+     "P_loss_W": 103.968,
+     "V_out_V": 400,
+     "aux_allowance_below_1500W_W": 595.932,
+     "efficiency": 0.885,
+     "series": "HD-RH24-400V-28Vin"
+    },
+    {
+     "P_bus_W": 1000.33,
+     "P_load_W": 899.9,
+     "P_loss_W": 100.433,
+     "V_out_V": 400,
+     "aux_allowance_below_1500W_W": 499.667,
+     "efficiency": 0.8996,
+     "series": "HD-RH24-400V-28Vin"
+    },
+    {
+     "P_bus_W": 1102.51,
+     "P_load_W": 1000.2,
+     "P_loss_W": 102.313,
+     "V_out_V": 400,
+     "aux_allowance_below_1500W_W": 397.487,
+     "efficiency": 0.9072,
+     "series": "HD-RH24-400V-28Vin"
+    }
+   ],
+   "modes": {
+    "startup": {
+     "bus_draw": {
+      "bus_W_per_W_load": [
+       1.10229,
+       1.29601
+      ],
+      "derivation": "P_bus = P_load / eta, P_loss = P_bus - P_load (bus_power_boundary_v1 per-item relation)",
+      "loss_W_per_W_load": [
+       0.102293,
+       0.296008
+      ],
+      "reason": "load TBD",
+      "status": "TBD"
+     },
+     "efficiency": {
+      "applicability": "NASA SSEP LCC breadboard discharge supply, 24-34 V in, 200-500 V out, 200.1-1000.2 W measured at 28 V in; harness/filters excluded; strong part-load dependence; no accessed 28 V-class point above about 1 kW",
+      "entry_ids": [
+       "HD-RH24-250V-25Vin",
+       "HD-RH24-250V-28Vin",
+       "HD-RH24-250V-34Vin",
+       "HD-RH24-400V-25Vin",
+       "HD-RH24-400V-28Vin",
+       "HD-RH24-400V-34Vin"
+      ],
+      "evidence_class": "digitized",
+      "evidence_level": 3,
+      "note": "range = min/max over the measured 28 V-input points of both output-voltage series; the all-input-voltage range spans 25/28/34 V in (bus voltage is an owner decision)",
+      "range": [
+       0.7716,
+       0.9072
+      ],
+      "range_all_input_voltages": [
+       0.7705,
+       0.915
+      ],
+      "status": "EVIDENCE_RANGE"
+     },
+     "load": {
+      "blocking": "physics track (gate 3)",
+      "entry_ids": [],
+      "requires": "discharge-ignition load of an admitted closure or hardware measurement",
+      "status": "TBD"
+     },
+     "loss": {
+      "reason": "load TBD",
+      "status": "TBD"
+     }
+    },
+    "steady": {
+     "bus_draw": {
+      "bus_W_per_W_load": [
+       1.10229,
+       1.29601
+      ],
+      "derivation": "P_bus = P_load / eta, P_loss = P_bus - P_load (bus_power_boundary_v1 per-item relation)",
+      "loss_W_per_W_load": [
+       0.102293,
+       0.296008
+      ],
+      "reason": "load TBD",
+      "status": "TBD"
+     },
+     "efficiency": {
+      "applicability": "NASA SSEP LCC breadboard discharge supply, 24-34 V in, 200-500 V out, 200.1-1000.2 W measured at 28 V in; harness/filters excluded; strong part-load dependence; no accessed 28 V-class point above about 1 kW",
+      "entry_ids": [
+       "HD-RH24-250V-25Vin",
+       "HD-RH24-250V-28Vin",
+       "HD-RH24-250V-34Vin",
+       "HD-RH24-400V-25Vin",
+       "HD-RH24-400V-28Vin",
+       "HD-RH24-400V-34Vin"
+      ],
+      "evidence_class": "digitized",
+      "evidence_level": 3,
+      "note": "range = min/max over the measured 28 V-input points of both output-voltage series; the all-input-voltage range spans 25/28/34 V in (bus voltage is an owner decision)",
+      "range": [
+       0.7716,
+       0.9072
+      ],
+      "range_all_input_voltages": [
+       0.7705,
+       0.915
+      ],
+      "status": "EVIDENCE_RANGE"
+     },
+     "load": {
+      "blocking": "physics track: admission of a closure (fo_absolute_comparison); every absolute Hall number is withdrawn",
+      "entry_ids": [],
+      "requires": "an admitted Hall transport closure (credible set empty, gate 3 FAIL) or a Vyovrinda hardware measurement of V_d x I_d",
+      "status": "TBD"
+     },
+     "loss": {
+      "reason": "load TBD",
+      "status": "TBD"
+     }
+    }
+   }
+  },
+  "hall_magnet": {
+   "coil_resistance_factor_vs_20C": {
+    "100C": 1.3144,
+    "200C": 1.7074,
+    "evidence_class": "model-derived",
+    "source": "abep_sim.magnet_power.resistance_factor (NBS Handbook 100, alpha_20 = 0.00393 /K)"
+   },
+   "in_architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "modes": {
+    "startup": {
+     "bus_draw": {
+      "options": [
+       {
+        "P_bus_W": 0.0,
+        "condition": "permanent-magnet Hall circuit (0 W, efficiency 1, passed explicitly)",
+        "option": "permanent_magnet",
+        "status": "ZERO_CONDITIONAL"
+       },
+       {
+        "bound": "P_bus >= P_load (efficiency <= 1 by definition)",
+        "option": "electromagnet",
+        "reason": "load and supply efficiency TBD",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     },
+     "efficiency": {
+      "options": [
+       {
+        "entry_ids": [
+         "HM-PM-OPTION"
+        ],
+        "evidence_class": "definition",
+        "option": "permanent_magnet",
+        "value": 1.0
+       },
+       {
+        "blocking": "measured magnet-supply efficiency (supply-efficiency campaign)",
+        "entry_ids": [
+         "HM-SUPPLY-EFF"
+        ],
+        "option": "electromagnet",
+        "requires": "a measured magnet-supply efficiency at the coil's current/voltage (sub-100 W, 28 V-class bus)",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     },
+     "load": {
+      "evidence_class": "model-derived",
+      "options": [
+       {
+        "P_load_W": 0.0,
+        "condition": "owner selects a permanent-magnet Hall circuit (lane 20 open question 3)",
+        "entry_ids": [
+         "HM-PM-OPTION"
+        ],
+        "evidence_class": "definition",
+        "option": "permanent_magnet"
+       },
+       {
+        "blocking": "Vyovrinda thruster design (not a Hall-closure quantity)",
+        "entry_ids": [
+         "HM-MODEL"
+        ],
+        "option": "electromagnet",
+        "requires": "the Vyovrinda magnetic-circuit geometry, field and coil temperature fed into abep_sim.magnet_power.electromagnet",
+        "status": "TBD"
+       }
+      ],
+      "relation": "P_load = (N I)^2 rho(T) l_mt / (k A_w), so P_load is proportional to B_gap^2 at fixed geometry and to [1 + 0.00393 (T - 20 C)] (magnet_power E3/E5)",
+      "status": "OPTIONS"
+     },
+     "loss": {
+      "options": [
+       {
+        "P_loss_W": 0.0,
+        "option": "permanent_magnet",
+        "status": "ZERO_CONDITIONAL"
+       },
+       {
+        "option": "electromagnet",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     }
+    },
+    "steady": {
+     "bus_draw": {
+      "options": [
+       {
+        "P_bus_W": 0.0,
+        "condition": "permanent-magnet Hall circuit (0 W, efficiency 1, passed explicitly)",
+        "option": "permanent_magnet",
+        "status": "ZERO_CONDITIONAL"
+       },
+       {
+        "bound": "P_bus >= P_load (efficiency <= 1 by definition)",
+        "option": "electromagnet",
+        "reason": "load and supply efficiency TBD",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     },
+     "efficiency": {
+      "options": [
+       {
+        "entry_ids": [
+         "HM-PM-OPTION"
+        ],
+        "evidence_class": "definition",
+        "option": "permanent_magnet",
+        "value": 1.0
+       },
+       {
+        "blocking": "measured magnet-supply efficiency (supply-efficiency campaign)",
+        "entry_ids": [
+         "HM-SUPPLY-EFF"
+        ],
+        "option": "electromagnet",
+        "requires": "a measured magnet-supply efficiency at the coil's current/voltage (sub-100 W, 28 V-class bus)",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     },
+     "load": {
+      "evidence_class": "model-derived",
+      "options": [
+       {
+        "P_load_W": 0.0,
+        "condition": "owner selects a permanent-magnet Hall circuit (lane 20 open question 3)",
+        "entry_ids": [
+         "HM-PM-OPTION"
+        ],
+        "evidence_class": "definition",
+        "option": "permanent_magnet"
+       },
+       {
+        "blocking": "Vyovrinda thruster design (not a Hall-closure quantity)",
+        "entry_ids": [
+         "HM-MODEL"
+        ],
+        "option": "electromagnet",
+        "requires": "the Vyovrinda magnetic-circuit geometry, field and coil temperature fed into abep_sim.magnet_power.electromagnet",
+        "status": "TBD"
+       }
+      ],
+      "relation": "P_load = (N I)^2 rho(T) l_mt / (k A_w), so P_load is proportional to B_gap^2 at fixed geometry and to [1 + 0.00393 (T - 20 C)] (magnet_power E3/E5)",
+      "status": "OPTIONS"
+     },
+     "loss": {
+      "options": [
+       {
+        "P_loss_W": 0.0,
+        "option": "permanent_magnet",
+        "status": "ZERO_CONDITIONAL"
+       },
+       {
+        "option": "electromagnet",
+        "status": "TBD"
+       }
+      ],
+      "status": "OPTIONS"
+     }
+    }
+   }
+  },
+  "housekeeping": {
+   "in_architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "modes": {
+    "startup": {
+     "bus_draw": {
+      "reason": "load and efficiency TBD",
+      "status": "TBD"
+     },
+     "efficiency": {
+      "blocking": "converter data",
+      "entry_ids": [
+       "HK-EFF"
+      ],
+      "requires": "converter data at the housekeeping load",
+      "status": "TBD"
+     },
+     "load": {
+      "blocking": "controller / telemetry electronics selection",
+      "entry_ids": [
+       "HK-LOAD"
+      ],
+      "requires": "controller and telemetry electronics selection and their measured power; never 0 W (BUS_POWER_BOUNDARY Sec. 3); for rf_hall/ecr_hall it also carries the pre-ionizer controller and any pre-ionizer standby draw (v1 limitation, BUS_POWER_BOUNDARY Sec. 2)",
+      "status": "TBD"
+     },
+     "loss": {
+      "reason": "load and efficiency TBD",
+      "status": "TBD"
+     }
+    },
+    "steady": {
+     "bus_draw": {
+      "reason": "load and efficiency TBD",
+      "status": "TBD"
+     },
+     "efficiency": {
+      "blocking": "converter data",
+      "entry_ids": [
+       "HK-EFF"
+      ],
+      "requires": "converter data at the housekeeping load",
+      "status": "TBD"
+     },
+     "load": {
+      "blocking": "controller / telemetry electronics selection",
+      "entry_ids": [
+       "HK-LOAD"
+      ],
+      "requires": "controller and telemetry electronics selection and their measured power; never 0 W (BUS_POWER_BOUNDARY Sec. 3); for rf_hall/ecr_hall it also carries the pre-ionizer controller and any pre-ionizer standby draw (v1 limitation, BUS_POWER_BOUNDARY Sec. 2)",
+      "status": "TBD"
+     },
+     "loss": {
+      "reason": "load and efficiency TBD",
+      "status": "TBD"
+     }
+    }
+   }
+  },
+  "rf_source": {
+   "in_architectures": [
+    "rf_hall"
+   ],
+   "modes": {
+    "startup": {
+     "bus_draw": {
+      "bus_W_per_W_load": [
+       1.08696,
+       1.66667
+      ],
+      "derivation": "P_bus = P_load / eta, P_loss = P_bus - P_load (bus_power_boundary_v1 per-item relation)",
+      "loss_W_per_W_load": [
+       0.0869565,
+       0.666667
+      ],
+      "lower_bound": "P_bus[rf_source] >= eps_floor x I_src (floor above)",
+      "reason": "load TBD",
+      "status": "TBD"
+     },
+     "efficiency": {
+      "entry_ids": [
+       "RF-NEWORBIT25",
+       "RF-VOLKMAR18"
+      ],
+      "evidence": [
+       {
+        "chain_stage": "bus -> RF generator output",
+        "evidence_class": "measured",
+        "evidence_level": 3,
+        "id": "RF-NEWORBIT25",
+        "input": "electrical_closure_data",
+        "locator": "Sec. II.C ('The RFGs operate at a nominal power efficiency of 92% (from the unregulated bus to RF) in both the cathode and the thruster.')",
+        "source_ids": [
+         "S-NEWORBIT25"
+        ],
+        "uncertainty": "method, load range and dependence on plasma impedance not stated; 'nominal'",
+        "units": "fraction",
+        "value": 0.92
+       },
+       {
+        "chain_stage": "RFG DC input -> coil feed terminals",
+        "evidence_class": "inferred",
+        "evidence_level": 6,
+        "id": "RF-VOLKMAR18",
+        "input": "electrical_closure_data",
+        "locator": "Sec. V (Conclusion): 'a difference of about 30 - 40 % between DC input and forwarded RF power'; Fig. 11b",
+        "source_ids": [
+         "S-VOLKMAR18"
+        ],
+        "uncertainty": "interpretation of 'difference of 30-40 %' as a fraction of DC input; Fig. 11b coupling efficiency axis spans 60-75 % (not digitized)",
+        "units": "fraction",
+        "value": {
+         "max": 0.7,
+         "min": 0.6
+        }
+       }
+      ],
+      "evidence_class": "measured/inferred",
+      "missing": [
+       {
+        "blocking": "RF chain measurement",
+        "entry_ids": [
+         "RF-MATCH-LOSS"
+        ],
+        "requires": "forward/reflected power and matchbox/cable loss measured at the pre-ionizer coil across the ABEP flow range",
+        "status": "TBD"
+       }
+      ],
+      "note": "0.92 is an RF-generator-stage nominal (bus -> RFG output) and is therefore an UPPER bound on the bus -> coil-feed chain (electrical_closure rule: stage-only efficiencies bound the chain); 0.60-0.70 is RFG DC input -> coil feed at low xenon flow. Matching/cable loss is TBD (RF-MATCH-LOSS).",
+      "range": [
+       0.6,
+       0.92
+      ],
+      "status": "EVIDENCE_RANGE"
+     },
+     "load": {
+      "blocking": "pre-ionizer physics / RF source measurement on air/N2 at the ICD inlet state (lane 06 experiment protocol)",
+      "entry_ids": [
+       "RF-LOAD"
+      ],
+      "lower_bound": {
+       "air_mixture_feed": "TBD - requires the O2 ionization energy (interstage_v1 CATALOGUE['ionization_energy:O2'] is TBD)",
+       "evidence_class": "model-derived",
+       "floors": {
+        "N2_feed": {
+         "W_per_A": 14.5341,
+         "evidence_class": "model-derived",
+         "feed": "pure N2 feed (ions N2+, N+ and multiply charged ions)",
+         "source": "overlay_ecr_v1.ionization_floor (interstage_v1 catalogue, NIST ionization energies)"
+        },
+        "O_feed": {
+         "W_per_A": 13.6181,
+         "evidence_class": "model-derived",
+         "feed": "atomic-O feed only (no placed evidence)",
+         "source": "overlay_ecr_v1.ionization_floor (interstage_v1 catalogue, NIST ionization energies)"
+        },
+        "Xe_feed": {
+         "W_per_A": 12.1298,
+         "evidence_class": "model-derived",
+         "feed": "pure Xe feed",
+         "source": "overlay_ecr_v1.ionization_floor (interstage_v1 catalogue, NIST ionization energies)"
+        }
+       },
+       "relation": "P_load[source] >= eps_floor x I_src and P_bus[source] >= P_load[source] (I_src = ion current leaving the source exit, A; eps_floor in W/A = eV per charge); the floor holds at every power plane (energy conservation)"
+      },
+      "requires": "pre-ionizer physics at the admitted operating point (ionization block; conditional on gate 3 for the coupled Hall stage)",
+      "status": "TBD"
+     },
+     "loss": {
+      "reason": "load TBD",
+      "status": "TBD"
+     },
+     "phase_note": "PROPOSED variants (lane 19): V1 pre-ionizer on after keeper-off (never overlaps the heater); V2 on during cathode/discharge ignition"
+    },
+    "steady": {
+     "bus_draw": {
+      "bus_W_per_W_load": [
+       1.08696,
+       1.66667
+      ],
+      "derivation": "P_bus = P_load / eta, P_loss = P_bus - P_load (bus_power_boundary_v1 per-item relation)",
+      "loss_W_per_W_load": [
+       0.0869565,
+       0.666667
+      ],
+      "lower_bound": "P_bus[rf_source] >= eps_floor x I_src (floor above)",
+      "reason": "load TBD",
+      "status": "TBD"
+     },
+     "efficiency": {
+      "entry_ids": [
+       "RF-NEWORBIT25",
+       "RF-VOLKMAR18"
+      ],
+      "evidence": [
+       {
+        "chain_stage": "bus -> RF generator output",
+        "evidence_class": "measured",
+        "evidence_level": 3,
+        "id": "RF-NEWORBIT25",
+        "input": "electrical_closure_data",
+        "locator": "Sec. II.C ('The RFGs operate at a nominal power efficiency of 92% (from the unregulated bus to RF) in both the cathode and the thruster.')",
+        "source_ids": [
+         "S-NEWORBIT25"
+        ],
+        "uncertainty": "method, load range and dependence on plasma impedance not stated; 'nominal'",
+        "units": "fraction",
+        "value": 0.92
+       },
+       {
+        "chain_stage": "RFG DC input -> coil feed terminals",
+        "evidence_class": "inferred",
+        "evidence_level": 6,
+        "id": "RF-VOLKMAR18",
+        "input": "electrical_closure_data",
+        "locator": "Sec. V (Conclusion): 'a difference of about 30 - 40 % between DC input and forwarded RF power'; Fig. 11b",
+        "source_ids": [
+         "S-VOLKMAR18"
+        ],
+        "uncertainty": "interpretation of 'difference of 30-40 %' as a fraction of DC input; Fig. 11b coupling efficiency axis spans 60-75 % (not digitized)",
+        "units": "fraction",
+        "value": {
+         "max": 0.7,
+         "min": 0.6
+        }
+       }
+      ],
+      "evidence_class": "measured/inferred",
+      "missing": [
+       {
+        "blocking": "RF chain measurement",
+        "entry_ids": [
+         "RF-MATCH-LOSS"
+        ],
+        "requires": "forward/reflected power and matchbox/cable loss measured at the pre-ionizer coil across the ABEP flow range",
+        "status": "TBD"
+       }
+      ],
+      "note": "0.92 is an RF-generator-stage nominal (bus -> RFG output) and is therefore an UPPER bound on the bus -> coil-feed chain (electrical_closure rule: stage-only efficiencies bound the chain); 0.60-0.70 is RFG DC input -> coil feed at low xenon flow. Matching/cable loss is TBD (RF-MATCH-LOSS).",
+      "range": [
+       0.6,
+       0.92
+      ],
+      "status": "EVIDENCE_RANGE"
+     },
+     "load": {
+      "blocking": "pre-ionizer physics / RF source measurement on air/N2 at the ICD inlet state (lane 06 experiment protocol)",
+      "entry_ids": [
+       "RF-LOAD"
+      ],
+      "lower_bound": {
+       "air_mixture_feed": "TBD - requires the O2 ionization energy (interstage_v1 CATALOGUE['ionization_energy:O2'] is TBD)",
+       "evidence_class": "model-derived",
+       "floors": {
+        "N2_feed": {
+         "W_per_A": 14.5341,
+         "evidence_class": "model-derived",
+         "feed": "pure N2 feed (ions N2+, N+ and multiply charged ions)",
+         "source": "overlay_ecr_v1.ionization_floor (interstage_v1 catalogue, NIST ionization energies)"
+        },
+        "O_feed": {
+         "W_per_A": 13.6181,
+         "evidence_class": "model-derived",
+         "feed": "atomic-O feed only (no placed evidence)",
+         "source": "overlay_ecr_v1.ionization_floor (interstage_v1 catalogue, NIST ionization energies)"
+        },
+        "Xe_feed": {
+         "W_per_A": 12.1298,
+         "evidence_class": "model-derived",
+         "feed": "pure Xe feed",
+         "source": "overlay_ecr_v1.ionization_floor (interstage_v1 catalogue, NIST ionization energies)"
+        }
+       },
+       "relation": "P_load[source] >= eps_floor x I_src and P_bus[source] >= P_load[source] (I_src = ion current leaving the source exit, A; eps_floor in W/A = eV per charge); the floor holds at every power plane (energy conservation)"
+      },
+      "requires": "pre-ionizer physics at the admitted operating point (ionization block; conditional on gate 3 for the coupled Hall stage)",
+      "status": "TBD"
+     },
+     "loss": {
+      "reason": "load TBD",
+      "status": "TBD"
+     }
+    }
+   }
+  },
+  "thermal_control": {
+   "in_architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "modes": {
+    "startup": {
+     "bus_draw": {
+      "reason": "load and efficiency TBD",
+      "status": "TBD"
+     },
+     "efficiency": {
+      "blocking": "heater-switch topology data",
+      "entry_ids": [
+       "TC-EFF"
+      ],
+      "requires": "heater-switch topology data",
+      "status": "TBD"
+     },
+     "load": {
+      "blocking": "lane_15_thermal_life evaluated with sourced inputs",
+      "entry_ids": [
+       "TC-LOAD"
+      ],
+      "requires": "the thermal model and heater duty cycle (abep_sim/thermal_life.py lane; Xe tank/line/valve and gas-chamber heaters)",
+      "status": "TBD"
+     },
+     "loss": {
+      "reason": "load and efficiency TBD",
+      "status": "TBD"
+     }
+    },
+    "steady": {
+     "bus_draw": {
+      "reason": "load and efficiency TBD",
+      "status": "TBD"
+     },
+     "efficiency": {
+      "blocking": "heater-switch topology data",
+      "entry_ids": [
+       "TC-EFF"
+      ],
+      "requires": "heater-switch topology data",
+      "status": "TBD"
+     },
+     "load": {
+      "blocking": "lane_15_thermal_life evaluated with sourced inputs",
+      "entry_ids": [
+       "TC-LOAD"
+      ],
+      "requires": "the thermal model and heater duty cycle (abep_sim/thermal_life.py lane; Xe tank/line/valve and gas-chamber heaters)",
+      "status": "TBD"
+     },
+     "loss": {
+      "reason": "load and efficiency TBD",
+      "status": "TBD"
+     }
+    }
+   }
+  }
+ },
+ "components_by_architecture": {
+  "ecr_hall": [
+   "hall_discharge",
+   "hall_magnet",
+   "cathode_keeper",
+   "cathode_heater",
+   "flow_control",
+   "compressor",
+   "thermal_control",
+   "housekeeping",
+   "ecr_source",
+   "ecr_magnet"
+  ],
+  "hall_only": [
+   "hall_discharge",
+   "hall_magnet",
+   "cathode_keeper",
+   "cathode_heater",
+   "flow_control",
+   "compressor",
+   "thermal_control",
+   "housekeeping"
+  ],
+  "rf_hall": [
+   "hall_discharge",
+   "hall_magnet",
+   "cathode_keeper",
+   "cathode_heater",
+   "flow_control",
+   "compressor",
+   "thermal_control",
+   "housekeeping",
+   "rf_source"
+  ]
+ },
+ "differential": {
+  "arms": {
+   "ecr_hall-hall_only": {
+    "cancels": [
+     "cathode_heater",
+     "compressor"
+    ],
+    "cancels_conditionally": [
+     "cathode_keeper",
+     "flow_control",
+     "hall_magnet",
+     "thermal_control"
+    ],
+    "does_not_cancel": [
+     "ecr_magnet",
+     "ecr_source",
+     "hall_discharge",
+     "housekeeping"
+    ],
+    "numeric_value": "TBD: no pre-ionizer load, no housekeeping delta and no Hall discharge delta is sourced",
+    "overhead_for_breakeven": "O = P_bus[ecr_source] + P_bus[ecr_magnet] + sum over common components except hall_discharge of (P_bus,arm - P_bus,hall_only); omega = O / P_d,bus0 (BREAKEVEN_DERIVATION Sec. 4, v1-conformant: P_interstage = P_extraPPU = 0)",
+    "sourced_lower_bound": "DeltaP_bus - DeltaP_bus,d >= P_bus[ecr_source] + P_bus[ecr_magnet] >= eps_floor x I_src when every conditional common term is 0 and housekeeping does not decrease (eps_floor: N2 feed 14.5341 W/A, Xe feed 12.1298 W/A; air mixture TBD)",
+    "terms": {
+     "cathode_heater": {
+      "class": "COMMON_MODE",
+      "formula": "0 (steady: off in all; start-up: identical cathode and heater)",
+      "reason": "lane 19 Sec. 7: the cathode loads themselves are identical across architectures; only the start-up PEAK differs, through pre-ionizer overlap (variant V2), which is booked on the source components",
+      "value": "0 W"
+     },
+     "cathode_keeper": {
+      "class": "COMMON_MODE_CONDITIONAL",
+      "formula": "DeltaP_bus,k = I_k V_k / eta_k when the policies differ",
+      "reason": "same cathode and policy: cancels; breaks when an architecture's discharge current falls below the selected cathode's self-heating current so its keeper must stay on (lane 19 Sec. 4); at a fixed bus limit the pre-ionized arms reach this first",
+      "value": "0 W if the same policy holds"
+     },
+     "compressor": {
+      "class": "COMMON_MODE",
+      "formula": "0",
+      "reason": "the flow is fixed by the common feed state; pre-ionizer and Hall-closure uncertainty never leak upstream into the intake/compressor/gas chambers/valves (CLAUDE.md scope)",
+      "value": "0 W"
+     },
+     "ecr_magnet": {
+      "class": "ARCH_SPECIFIC",
+      "formula": "P_bus[ecr_magnet] = P_load/eta (0 W for a permanent magnet)",
+      "reason": "no hall_only counterpart; the ECR resonance field is separate from the Hall field in bus_power_boundary_v1",
+      "value": "0 W (PM) or TBD (electromagnet)"
+     },
+     "ecr_source": {
+      "class": "ARCH_SPECIFIC",
+      "formula": "P_bus[ecr_source] = P_load[ecr_source] / eta_chain >= eps_floor I_src",
+      "reason": "no hall_only counterpart",
+      "value": "TBD (load); per-unit bus multiplier in the component table"
+     },
+     "flow_control": {
+      "class": "COMMON_MODE_CONDITIONAL",
+      "formula": "0 if the pre-ionizer adds no feed actuator",
+      "reason": "common feed state (breakeven_v1 A7): same valves, same flows; a pre-ionizer that needs its own feed actuator would add its coil power here (design question)",
+      "value": "0 W unless a source valve is added"
+     },
+     "hall_discharge": {
+      "class": "NOT_COMMON",
+      "formula": "DeltaP_bus,d = P_d,arm / eta_d(P_d,arm) - P_d,ho / eta_d(P_d,ho)",
+      "reason": "the pre-ionizer changes the discharge load at the common feed state (Hall block, gate 3); the discharge-supply efficiency is part-load dependent (lane 20 HD-RH24 series), so even the conversion loss differs when P_d differs. This is the only term through which a pre-ionizer can save bus power (breakeven_v1 Sec. 4)",
+      "value": "TBD (gate 3)"
+     },
+     "hall_magnet": {
+      "class": "COMMON_MODE_CONDITIONAL",
+      "formula": "DeltaP_bus,mag = P_mag,ho (r(T_arm)/r(T_ho) - 1) / eta_mag at equal field",
+      "reason": "same downstream Hall accelerator and field: cancels exactly at equal coil temperature (or 0 W for a permanent magnet in both); a different coil temperature changes the I^2R by the copper resistance factor r(T) = 1 + 0.00393 (T - 20 C) (magnet_power E3)",
+      "value": "0 W if common temperature or PM"
+     },
+     "housekeeping": {
+      "class": "NOT_COMMON",
+      "formula": "DeltaP_bus,hk = pre-ionizer control electronics + standby / eta_hk",
+      "reason": "bus_power_boundary_v1 books pre-ionizer controller and standby (idle) draw under housekeeping (BUS_POWER_BOUNDARY Sec. 2 v1 limitation), so it does not cancel",
+      "value": "TBD (> 0 for an active pre-ionizer controller)"
+     },
+     "thermal_control": {
+      "class": "COMMON_MODE_CONDITIONAL",
+      "formula": "DeltaP_bus,tc from any heater the pre-ionizer hardware needs",
+      "reason": "common gas-path and Xe heaters cancel; a pre-ionizer may add heaters or change the thermal balance of the PPU/gas chamber (lane_15 thermal/life)",
+      "value": "TBD (lane 15)"
+     }
+    },
+    "total": "DeltaP_bus(ecr_hall - hall_only) = DeltaP_bus,d + P_bus[ecr_source] + P_bus[ecr_magnet] + DeltaP_bus,hk + sum over the conditional common terms"
+   },
+   "rf_hall-hall_only": {
+    "cancels": [
+     "cathode_heater",
+     "compressor"
+    ],
+    "cancels_conditionally": [
+     "cathode_keeper",
+     "flow_control",
+     "hall_magnet",
+     "thermal_control"
+    ],
+    "does_not_cancel": [
+     "hall_discharge",
+     "housekeeping",
+     "rf_source"
+    ],
+    "numeric_value": "TBD: no pre-ionizer load, no housekeeping delta and no Hall discharge delta is sourced",
+    "overhead_for_breakeven": "O = P_bus[rf_source] + sum over common components except hall_discharge of (P_bus,arm - P_bus,hall_only); omega = O / P_d,bus0 (BREAKEVEN_DERIVATION Sec. 4, v1-conformant: P_interstage = P_extraPPU = 0)",
+    "sourced_lower_bound": "DeltaP_bus - DeltaP_bus,d >= P_bus[rf_source] >= eps_floor x I_src when every conditional common term is 0 and housekeeping does not decrease (eps_floor: N2 feed 14.5341 W/A, Xe feed 12.1298 W/A; air mixture TBD)",
+    "terms": {
+     "cathode_heater": {
+      "class": "COMMON_MODE",
+      "formula": "0 (steady: off in all; start-up: identical cathode and heater)",
+      "reason": "lane 19 Sec. 7: the cathode loads themselves are identical across architectures; only the start-up PEAK differs, through pre-ionizer overlap (variant V2), which is booked on the source components",
+      "value": "0 W"
+     },
+     "cathode_keeper": {
+      "class": "COMMON_MODE_CONDITIONAL",
+      "formula": "DeltaP_bus,k = I_k V_k / eta_k when the policies differ",
+      "reason": "same cathode and policy: cancels; breaks when an architecture's discharge current falls below the selected cathode's self-heating current so its keeper must stay on (lane 19 Sec. 4); at a fixed bus limit the pre-ionized arms reach this first",
+      "value": "0 W if the same policy holds"
+     },
+     "compressor": {
+      "class": "COMMON_MODE",
+      "formula": "0",
+      "reason": "the flow is fixed by the common feed state; pre-ionizer and Hall-closure uncertainty never leak upstream into the intake/compressor/gas chambers/valves (CLAUDE.md scope)",
+      "value": "0 W"
+     },
+     "flow_control": {
+      "class": "COMMON_MODE_CONDITIONAL",
+      "formula": "0 if the pre-ionizer adds no feed actuator",
+      "reason": "common feed state (breakeven_v1 A7): same valves, same flows; a pre-ionizer that needs its own feed actuator would add its coil power here (design question)",
+      "value": "0 W unless a source valve is added"
+     },
+     "hall_discharge": {
+      "class": "NOT_COMMON",
+      "formula": "DeltaP_bus,d = P_d,arm / eta_d(P_d,arm) - P_d,ho / eta_d(P_d,ho)",
+      "reason": "the pre-ionizer changes the discharge load at the common feed state (Hall block, gate 3); the discharge-supply efficiency is part-load dependent (lane 20 HD-RH24 series), so even the conversion loss differs when P_d differs. This is the only term through which a pre-ionizer can save bus power (breakeven_v1 Sec. 4)",
+      "value": "TBD (gate 3)"
+     },
+     "hall_magnet": {
+      "class": "COMMON_MODE_CONDITIONAL",
+      "formula": "DeltaP_bus,mag = P_mag,ho (r(T_arm)/r(T_ho) - 1) / eta_mag at equal field",
+      "reason": "same downstream Hall accelerator and field: cancels exactly at equal coil temperature (or 0 W for a permanent magnet in both); a different coil temperature changes the I^2R by the copper resistance factor r(T) = 1 + 0.00393 (T - 20 C) (magnet_power E3)",
+      "value": "0 W if common temperature or PM"
+     },
+     "housekeeping": {
+      "class": "NOT_COMMON",
+      "formula": "DeltaP_bus,hk = pre-ionizer control electronics + standby / eta_hk",
+      "reason": "bus_power_boundary_v1 books pre-ionizer controller and standby (idle) draw under housekeeping (BUS_POWER_BOUNDARY Sec. 2 v1 limitation), so it does not cancel",
+      "value": "TBD (> 0 for an active pre-ionizer controller)"
+     },
+     "rf_source": {
+      "class": "ARCH_SPECIFIC",
+      "formula": "P_bus[rf_source] = P_load[rf_source] / eta_chain >= eps_floor I_src",
+      "reason": "no hall_only counterpart",
+      "value": "TBD (load); per-unit bus multiplier in the component table"
+     },
+     "thermal_control": {
+      "class": "COMMON_MODE_CONDITIONAL",
+      "formula": "DeltaP_bus,tc from any heater the pre-ionizer hardware needs",
+      "reason": "common gas-path and Xe heaters cancel; a pre-ionizer may add heaters or change the thermal balance of the PPU/gas chamber (lane_15 thermal/life)",
+      "value": "TBD (lane 15)"
+     }
+    },
+    "total": "DeltaP_bus(rf_hall - hall_only) = DeltaP_bus,d + P_bus[rf_source] + DeltaP_bus,hk + sum over the conditional common terms"
+   }
+  },
+  "classes": [
+   "NOT_COMMON",
+   "COMMON_MODE",
+   "COMMON_MODE_CONDITIONAL",
+   "ARCH_SPECIFIC"
+  ]
+ },
+ "evidence_classes": [
+  "measured",
+  "digitized",
+  "inferred",
+  "reconstructed",
+  "model-derived",
+  "assumed",
+  "definition",
+  "qualitative",
+  "TBD"
+ ],
+ "follow_on": "fo_aux_bus_comparison",
+ "generated_by": "docs/architecture_comparison/aux_bus/build_aux_bus.py",
+ "hard_gates": {
+  "G2_bus_power_verdicts": {
+   "ecr_hall": "UNDETERMINED",
+   "hall_only": "UNDETERMINED",
+   "rf_hall": "UNDETERMINED"
+  },
+  "admitted_members": [],
+  "eliminated": [],
+  "evaluator": "abep_sim.hard_gates.evaluate_all(evidence=[]) (lane_24_hard_gates)",
+  "evidence_submitted": [],
+  "matrix_status": "DRAFT_PENDING_OWNER",
+  "matrix_version": "1.0.0",
+  "not_eliminated": [
+   "hall_only",
+   "rf_hall",
+   "ecr_hall"
+  ],
+  "why_no_evidence": "G2.bus_power_max FAILs only on a lower bound >= 1500 W of architecture scope in steady mode on both feeds. Every auxiliary lower bound this lane can derive is design-dependent (cathode brackets, per-valve coil power) or proportional to an unknown source current (eps_floor I_src), and the hall_discharge load is withdrawn; none is a verdict-bearing bound, and a PASS needs the complete ledger, which is not evaluable."
+ },
+ "headroom": {
+  "definitions": {
+   "A_arch": "sum over every bus_power_boundary_v1 component of arch except hall_discharge of P_load / eta (auxiliary + pre-ionizer bus draw, same mode)",
+   "P_d": "Hall discharge load-plane power V_d I_d (unknown: no admitted closure)",
+   "eta_d(P_d)": "discharge-supply efficiency at P_d (part-load dependent)"
+  },
+  "discharge_allowance_coefficient": "eta_d in [0.7716, 0.9072] at the measured 28 V-input points only",
+  "eta_d_measured_range_28V": [
+   0.7716,
+   0.9072
+  ],
+  "inequalities": {
+   "auxiliary_allowance": "A_arch < 1500 W - P_d / eta_d(P_d)",
+   "discharge_allowance": "P_d < eta_d(P_d) x (1500 W - A_arch)",
+   "ecr_hall": "A_ecr = A_ho(ecr loads) + P_bus[ecr_source] + P_bus[ecr_magnet],  P_bus[ecr_source] >= eps_floor I_src",
+   "general": "P_d / eta_d(P_d) + A_arch < 1500 W",
+   "hall_only": "A_ho = P_bus[hall_magnet] + P_bus[cathode_keeper] + P_bus[cathode_heater] + P_bus[flow_control] + P_bus[compressor] + P_bus[thermal_control] + P_bus[housekeeping]",
+   "necessary_any_supply": "P_d < 1500 W - A_arch  (eta_d <= 1 by definition)",
+   "payable_source_current": "I_src < (1500 W - P_d,arm / eta_d(P_d,arm) - A_common,arm) / eps_floor (necessary; eps_floor N2 14.5341 W/A, Xe 12.1298 W/A)",
+   "rf_hall": "A_rf = A_ho(rf loads) + P_bus[rf_source],  P_bus[rf_source] >= eps_floor I_src"
+  },
+  "limit_W": 1500,
+  "limit_source": "'< 1.5 kW' (R1); power_max_W 1500 (R2); '< 1500 W total' (R3). Verify against RFP document.",
+  "limit_status": "RFP_AS_RECORDED",
+  "measured_point_table_note": "aux_allowance_below_1500W_W in components.hall_discharge.measured_supply_points_28V = 1500 W - P_d/eta_d at the breadboard supply's own test points: IF the discharge load equals that test point and the supply performs as measured, THEN A_arch must stay below it. Test points are not Vyovrinda discharge powers.",
+  "numeric_headroom": "TBD: P_d is withdrawn (gate 3) and A_arch has no sourced value in any mode",
+  "scope_open": [
+   "whether the RFP '< 1.5 kW' refers to bus_power_boundary_v1 (BUS_POWER_BOUNDARY Sec. 5 rule 6; owner)",
+   "every mode vs steady only (hard-gate reading OD8)",
+   "floor with or without Xe augmentation (hard-gate reading OD4)"
+  ]
+ },
+ "id": "aux_bus_comparison_v1",
+ "inputs": [
+  {
+   "key": "boundary_doc",
+   "lane": "lane_11_bus_boundary",
+   "lane_commit": "a2a139686dd25ea0f5f4fa908f9d57c25d3746dd",
+   "path": "docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md",
+   "role": "component load planes, zero-power conventions, v1 standby limitation (Sec. 2), caller rules (Sec. 5)",
+   "sha256": "2432edb7e9095fd630585768a62a811140b5230ba035afa3f0fc168636d11ca9"
+  },
+  {
+   "key": "boundary_module",
+   "lane": "lane_11_bus_boundary",
+   "lane_commit": "a2a139686dd25ea0f5f4fa908f9d57c25d3746dd",
+   "path": "abep_sim/arch_boundary.py",
+   "role": "bus_power_boundary_v1: component sets and bus_power_ledger (every ledger here)",
+   "sha256": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae"
+  },
+  {
+   "key": "breakeven_derivation",
+   "lane": "lane_28_break_even",
+   "lane_commit": "2ad4c463d7a7bd7b983e2de30f8fb34d8cac92fa",
+   "path": "docs/architecture_comparison/breakeven/BREAKEVEN_DERIVATION.md",
+   "role": "overhead O and omega definitions (Sec. 4) that the differential terms feed",
+   "sha256": "e65c28c040c1fbd9b079d4d4872316441e4f4114f37ff70e79138aab8c134d86"
+  },
+  {
+   "key": "cathode_data",
+   "lane": "lane_19_cathode_integration",
+   "lane_commit": "eff15f85c53244556b1a9a9274fb7ffe80e9fa90",
+   "path": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+   "role": "keeper/heater parameters, start-up phase order and variants, PROPOSED start-up peak limit",
+   "sha256": "df020bfe3ef87b0fc6f49c56db7e38dc585c4640b5c89dd167d1f18e928dbd6f"
+  },
+  {
+   "key": "cathode_derived",
+   "lane": "lane_19_cathode_integration",
+   "lane_commit": "eff15f85c53244556b1a9a9274fb7ffe80e9fa90",
+   "path": "docs/architecture_comparison/cathode_integration/cathode_integration_derived_v1.json",
+   "role": "heater energy per start",
+   "sha256": "a0c8c247d2f87654568da3c01fece2ad562c1ca8e2ba78140813394aed81c125"
+  },
+  {
+   "key": "cathode_module",
+   "lane": "lane_19_cathode_integration",
+   "lane_commit": "eff15f85c53244556b1a9a9274fb7ffe80e9fa90",
+   "path": "abep_sim/cathode_integration.py",
+   "role": "steady cathode loads and start-up transient functions (start-up phase contract)",
+   "sha256": "9c8e776b851c112da89b0621a2e1da0dd128ab647229214b81aed19c3e0561b0"
+  },
+  {
+   "key": "ecr_overlay",
+   "lane": "fo_ecr_breakeven_overlay",
+   "lane_commit": "d22bc6053a64230dd01b8df0e764d884bab722a9",
+   "path": "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json",
+   "role": "ecr_source chain evidence, ecr_magnet options, ionization-energy floor on source power per ampere",
+   "sha256": "3ee12e66f94204955f61cbb78d7c5036044cc59a9bc50f675704592bfbfabfcd"
+  },
+  {
+   "key": "electrical_closure_data",
+   "lane": "lane_20_ppu_magnet",
+   "lane_commit": "f7c226848d85fedb70c03bae9971be3b2bbde1fe",
+   "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+   "role": "supply/chain efficiencies and auxiliary load entries by component (entry ids)",
+   "sha256": "d56f700198a64a919d736c8659b6e0aaaa01cd56521885772d2f5a40de374501"
+  },
+  {
+   "key": "electrical_closure_worked_example",
+   "lane": "lane_20_ppu_magnet",
+   "lane_commit": "f7c226848d85fedb70c03bae9971be3b2bbde1fe",
+   "path": "docs/architecture_comparison/electrical_closure/worked_example_v1.json",
+   "role": "cross-check of the recomputed discharge points and source-chain spreads",
+   "sha256": "ae0158e269ada00bfd03bd17c896c509241817b0b89c2edbb5512fe7819d72b3"
+  },
+  {
+   "key": "hall_ensemble_module",
+   "lane": "project (read-only)",
+   "lane_commit": null,
+   "path": "abep_sim/hall_ensemble.py",
+   "role": "admission guard used by the hard-gate evaluator",
+   "sha256": "218f890c8444af1f593396da5051e38d2d093bbb3cb0bc976cc44b01b67df704"
+  },
+  {
+   "key": "hard_gate_matrix",
+   "lane": "lane_24_hard_gates",
+   "lane_commit": "08b9f9bf32a0b34142338b2003f2b2cf02ecaacc",
+   "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+   "role": "G2_bus_power criterion (RFP 1500 W as recorded, readings OD4/OD8)",
+   "sha256": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f"
+  },
+  {
+   "key": "hard_gate_schema",
+   "lane": "lane_24_hard_gates",
+   "lane_commit": "08b9f9bf32a0b34142338b2003f2b2cf02ecaacc",
+   "path": "schemas/architecture_comparison/hard_gates_v1.schema.json",
+   "role": "read by hard_gates.evaluate",
+   "sha256": "e5c70c588f3e785720c0d9d01013e5725807b9fd288fa8a1bddf6ba6d86f54ba"
+  },
+  {
+   "key": "hard_gates_module",
+   "lane": "lane_24_hard_gates",
+   "lane_commit": "08b9f9bf32a0b34142338b2003f2b2cf02ecaacc",
+   "path": "abep_sim/hard_gates.py",
+   "role": "the only elimination path: evaluate_all(evidence); also the JSON-schema checker",
+   "sha256": "a36fe3c9065291f0fe5be3f17e179d5b691f00c013f7f8ef299fa89db896dda8"
+  },
+  {
+   "key": "interstage_doc",
+   "lane": "lane_18_interstage",
+   "lane_commit": "870514285c087382b21812c65bd9db196a5a985f",
+   "path": "docs/architecture_comparison/interstage/INTERSTAGE_MODEL.md",
+   "role": "eta_t definition (charge-current basis)",
+   "sha256": "2a08e8045d1cb61a121e84dc9f7bba268a1ec7b66476057d9093b4e044f6d616"
+  },
+  {
+   "key": "magnet_module",
+   "lane": "lane_20_ppu_magnet",
+   "lane_commit": "f7c226848d85fedb70c03bae9971be3b2bbde1fe",
+   "path": "abep_sim/magnet_power.py",
+   "role": "copper resistance-temperature factor [E3] and the B^2 coil-power relation [E5]",
+   "sha256": "adf2905d90b7dd17b59071759d0a62b245fa065b0c3375c74df4e3476b7bb523"
+  },
+  {
+   "key": "rf_overlay",
+   "lane": "fo_rf_breakeven_overlay",
+   "lane_commit": "9ef356b536f84e203b87b583b7246e72dcc07d71",
+   "path": "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json",
+   "role": "rf_source chain evidence and eta_t basis (ion-current basis, <= 1 for a source-free duct)",
+   "sha256": "ba739be2fdf431ac33900207cd8365d265456ad7b9d7e6a71e0875524c662359"
+  },
+  {
+   "key": "transport_ensemble",
+   "lane": "project (read-only)",
+   "lane_commit": null,
+   "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+   "role": "admitted members for the hard-gate evaluator (credible set empty)",
+   "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"
+  }
+ ],
+ "ledger_summary": {
+  "attempted": 6,
+  "evaluated": 0,
+  "not_evaluable": 6
+ },
+ "ledgers": [
+  {
+   "architecture": "hall_only",
+   "blocking_components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping"
+   ],
+   "boundary_refusal": "loads for 'hall_only' must have exactly the components ['hall_discharge', 'hall_magnet', 'cathode_keeper', 'cathode_heater', 'flow_control', 'compressor', 'thermal_control', 'housekeeping'] (boundary bus_power_boundary_v1); missing ['hall_discharge', 'hall_magnet', 'cathode_keeper', 'flow_control', 'compressor', 'thermal_control', 'housekeeping'], extra []",
+   "conditional_components": [
+    "cathode_heater"
+   ],
+   "mode": "steady",
+   "sourced_components_passed": [
+    "cathode_heater"
+   ],
+   "status": "NOT_EVALUABLE"
+  },
+  {
+   "architecture": "hall_only",
+   "blocking_components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping"
+   ],
+   "boundary_refusal": "loads for 'hall_only' must have exactly the components ['hall_discharge', 'hall_magnet', 'cathode_keeper', 'cathode_heater', 'flow_control', 'compressor', 'thermal_control', 'housekeeping'] (boundary bus_power_boundary_v1); missing ['hall_discharge', 'hall_magnet', 'cathode_keeper', 'cathode_heater', 'flow_control', 'compressor', 'thermal_control', 'housekeeping'], extra []",
+   "conditional_components": [],
+   "mode": "startup",
+   "sourced_components_passed": [],
+   "status": "NOT_EVALUABLE"
+  },
+  {
+   "architecture": "rf_hall",
+   "blocking_components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping",
+    "rf_source"
+   ],
+   "boundary_refusal": "loads for 'rf_hall' must have exactly the components ['hall_discharge', 'hall_magnet', 'cathode_keeper', 'cathode_heater', 'flow_control', 'compressor', 'thermal_control', 'housekeeping', 'rf_source'] (boundary bus_power_boundary_v1); missing ['hall_discharge', 'hall_magnet', 'cathode_keeper', 'flow_control', 'compressor', 'thermal_control', 'housekeeping', 'rf_source'], extra []",
+   "conditional_components": [
+    "cathode_heater"
+   ],
+   "mode": "steady",
+   "sourced_components_passed": [
+    "cathode_heater"
+   ],
+   "status": "NOT_EVALUABLE"
+  },
+  {
+   "architecture": "rf_hall",
+   "blocking_components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping",
+    "rf_source"
+   ],
+   "boundary_refusal": "loads for 'rf_hall' must have exactly the components ['hall_discharge', 'hall_magnet', 'cathode_keeper', 'cathode_heater', 'flow_control', 'compressor', 'thermal_control', 'housekeeping', 'rf_source'] (boundary bus_power_boundary_v1); missing ['hall_discharge', 'hall_magnet', 'cathode_keeper', 'cathode_heater', 'flow_control', 'compressor', 'thermal_control', 'housekeeping', 'rf_source'], extra []",
+   "conditional_components": [],
+   "mode": "startup",
+   "sourced_components_passed": [],
+   "status": "NOT_EVALUABLE"
+  },
+  {
+   "architecture": "ecr_hall",
+   "blocking_components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping",
+    "ecr_source",
+    "ecr_magnet"
+   ],
+   "boundary_refusal": "loads for 'ecr_hall' must have exactly the components ['hall_discharge', 'hall_magnet', 'cathode_keeper', 'cathode_heater', 'flow_control', 'compressor', 'thermal_control', 'housekeeping', 'ecr_source', 'ecr_magnet'] (boundary bus_power_boundary_v1); missing ['hall_discharge', 'hall_magnet', 'cathode_keeper', 'flow_control', 'compressor', 'thermal_control', 'housekeeping', 'ecr_source', 'ecr_magnet'], extra []",
+   "conditional_components": [
+    "cathode_heater"
+   ],
+   "mode": "steady",
+   "sourced_components_passed": [
+    "cathode_heater"
+   ],
+   "status": "NOT_EVALUABLE"
+  },
+  {
+   "architecture": "ecr_hall",
+   "blocking_components": [
+    "hall_discharge",
+    "hall_magnet",
+    "cathode_keeper",
+    "cathode_heater",
+    "flow_control",
+    "compressor",
+    "thermal_control",
+    "housekeeping",
+    "ecr_source",
+    "ecr_magnet"
+   ],
+   "boundary_refusal": "loads for 'ecr_hall' must have exactly the components ['hall_discharge', 'hall_magnet', 'cathode_keeper', 'cathode_heater', 'flow_control', 'compressor', 'thermal_control', 'housekeeping', 'ecr_source', 'ecr_magnet'] (boundary bus_power_boundary_v1); missing ['hall_discharge', 'hall_magnet', 'cathode_keeper', 'cathode_heater', 'flow_control', 'compressor', 'thermal_control', 'housekeeping', 'ecr_source', 'ecr_magnet'], extra []",
+   "conditional_components": [],
+   "mode": "startup",
+   "sourced_components_passed": [],
+   "status": "NOT_EVALUABLE"
+  }
+ ],
+ "milestones": {
+  "A": "conditional statements: 'X is baseline provided its auxiliary + pre-ionizer bus draw A_X satisfies P_d/eta_d(P_d) + A_X < 1500 W at the admitted operating point and the conditional common-mode terms (keeper policy, coil temperature, source feed actuator, pre-ionizer heaters) are demonstrated equal'; the pre-ionizer bus term is bounded below by eps_floor x I_src on every chain",
+  "supports": [
+   "A"
+  ],
+  "to_reach_B": [
+   "an admitted Hall closure (P_d per architecture)",
+   "measured supply efficiencies (magnet, keeper, heater, valve driver, RF/microwave chain incl. matching/isolator)",
+   "sized compressor from a verified upstream ICD",
+   "thermal-control and housekeeping loads",
+   "measured source ion cost and eta_t on air/N2",
+   "owner reading of the 1.5 kW scope"
+  ],
+  "to_reach_C": [
+   "a flight PPU design with every ledger evaluated in every mode",
+   "measured start-up profile and peak with the chosen pre-ionizer ordering",
+   "thermal/life integration",
+   "mission closure"
+  ]
+ },
+ "modes": {
+  "startup": "preheat, cathode ignition and discharge ignition (lane 19 phase order)",
+  "steady": "keeper-off steady firing (lane 19 phase keeper_off)"
+ },
+ "not_used": [
+  "archengine / ppu / system / plasma_devices fixed values (P_mag 25 W, controller 8 W + sensors 4 W, aux 5 W, generator 0.65/0.90/0.80): unsourced, context only (BUS_POWER_BOUNDARY Sec. 8 R-rows)",
+  "abep_sim.arch_compare: refuses with zero admitted members (credible set empty); not needed for an accounting without Hall maps",
+  "screening candidates sgb-screen-*: never a performance source"
+ ],
+ "owner_questions": [
+  "Does the RFP '< 1.5 kW' apply at bus_power_boundary_v1, and to start-up transients (lane 19 PROPOSED startup_peak_limit)?",
+  "Permanent magnet or electromagnet for the Hall field and for the ECR resonance field?",
+  "Steady cathode-keeper policy (off, or on below the self-heating current)?",
+  "Pre-ionizer start-up ordering V1 or V2?",
+  "Should v1.1 add explicit standby terms instead of booking pre-ionizer standby under housekeeping?"
+ ],
+ "prerequisites": {
+  "lane_11_bus_boundary": "a2a139686d",
+  "lane_19_cathode_integration": "eff15f85c5",
+  "lane_20_ppu_magnet": "f7c226848d"
+ },
+ "regenerate": "python docs/architecture_comparison/aux_bus/build_aux_bus.py  (check: --check)",
+ "self_checks": {
+  "discharge_points_vs_lane20_worked_example": {
+   "max_abs_dev_W": 0.0,
+   "n": 18,
+   "pass": true
+  },
+  "ecr_reference_chain_vs_lane20_worked_example": {
+   "lane20_bus_W_per_100W": 275.03,
+   "pass": true,
+   "this": 275.028
+  }
+ },
+ "startup": {
+  "differential": {
+   "V1_preionizer_after_discharge": "start-up phases identical across the three architectures up to keeper-off; the pre-ionizer adds P_bus[source] (+ P_bus[ecr_magnet]) only in the steady (keeper-off) mode, so the start-up differential before steady is 0 W",
+   "V2_preionizer_seed_before_discharge": "during cathode/discharge ignition the pre-ionized arms add P_bus[source] (+ P_bus[ecr_magnet]) on top of the phase load; with the heater still on the start-up peak of rf_hall/ecr_hall exceeds the hall_only level by that source bus draw (lane 19 Sec. 7)"
+  },
+  "peak_limit": {
+   "note": "interpretation that the RFP '< 1.5 kW' also bounds start-up transients; the owner confirms or replaces it",
+   "status": "PROPOSED",
+   "value_W": 1500.0
+  },
+  "phase_bus_lower_bounds_all_architectures": {
+   "cathode_ignition": {
+    "P_bus_W_at_least": [
+     55.0,
+     335.0
+    ],
+    "from": "cathode_heater + cathode_keeper brackets (+ flow_control, housekeeping >= 0); the brackets come from different cathodes, so the sum is a bracket, not a design"
+   },
+   "discharge_ignition": {
+    "P_bus_W_at_least": "TBD",
+    "from": "hall_discharge ignition load TBD (gate 3)"
+   },
+   "keeper_off": {
+    "P_bus_W_at_least": "TBD",
+    "from": "steady-mode ledger (hall_discharge TBD)"
+   },
+   "preheat": {
+    "P_bus_W_at_least": [
+     45.0,
+     305.0
+    ],
+    "from": "cathode_heater (bracket) + housekeeping (TBD, >= 0)"
+   }
+  },
+  "phase_order": [
+   {
+    "note": "heater raises the emitter to emission temperature",
+    "on": [
+     "cathode_heater",
+     "housekeeping"
+    ],
+    "phase": "preheat"
+   },
+   {
+    "note": "cathode Xe flow on, keeper voltage applied, keeper current regulated",
+    "on": [
+     "cathode_heater",
+     "cathode_keeper",
+     "flow_control",
+     "housekeeping"
+    ],
+    "phase": "cathode_ignition"
+   },
+   {
+    "note": "heater off once the discharge starts; anode supply on",
+    "on": [
+     "hall_discharge",
+     "hall_magnet",
+     "cathode_keeper",
+     "flow_control",
+     "housekeeping"
+    ],
+    "phase": "discharge_ignition"
+   },
+   {
+    "note": "keeper off/floating once the anode current is nominal, unless the discharge current is below the cathode's self-heating current",
+    "on": [
+     "hall_discharge",
+     "hall_magnet",
+     "flow_control",
+     "compressor",
+     "thermal_control",
+     "housekeeping"
+    ],
+    "phase": "keeper_off"
+   }
+  ],
+  "phase_order_status": "phase order sourced (Goebel & Katz Sec. 7.2.3 p. 337; IEPC-2017-276 pp. 3-4; IEPC-2015-43 p. 4); powers and durations are inputs",
+  "startup_ledger": "NOT_EVALUABLE (see ledgers): hall_discharge ignition load, supply efficiencies, housekeeping TBD; abep_sim.cathode_integration.startup_transient is the function to use once they exist",
+  "variants": {
+   "ecr_hall": {
+    "V1_preionizer_after_discharge": "hall_only sequence, then ecr_magnet, then ecr_source",
+    "V2_preionizer_seed_before_discharge": "ecr_magnet and ecr_source on before discharge_ignition (seed hypothesis)",
+    "status": "PROPOSED (see docs/evidence/ecr_source/ lane)"
+   },
+   "rf_hall": {
+    "V1_preionizer_after_discharge": "hall_only sequence, then rf_source on after keeper_off: the heater never overlaps the pre-ionizer",
+    "V2_preionizer_seed_before_discharge": "rf_source on during cathode_ignition/discharge_ignition (seed hypothesis): check the peak against the bus limit when the heater is still on",
+    "status": "PROPOSED (no accessed source fixes where the pre-ionizer starts; see docs/evidence/rf_source/ lane)"
+   }
+  }
+ },
+ "status": "DRAFT for owner review. Accounting of the auxiliary DC-bus power on bus_power_boundary_v1: no absolute Hall performance, no screening candidate, no ranking, no preferred architecture; eliminations only through abep_sim.hard_gates (none).",
+ "tbd_register": [
+  {
+   "blocking": "physics track (gate 3; credible set empty)",
+   "component": "hall_discharge",
+   "item": "load",
+   "requires": "admitted Hall transport closure or hardware V_d I_d"
+  },
+  {
+   "blocking": "owner bus-voltage decision; supply test",
+   "component": "hall_discharge",
+   "item": "efficiency above ~1 kW / at the chosen bus voltage",
+   "requires": "measured discharge-supply efficiency at the Vyovrinda bus voltage and load; Rhodes 2024 full paper for definition and uncertainty"
+  },
+  {
+   "blocking": "thruster design; owner",
+   "component": "hall_magnet",
+   "item": "load",
+   "requires": "Vyovrinda magnetic circuit into magnet_power.electromagnet, or PM decision"
+  },
+  {
+   "blocking": "supply-efficiency campaign",
+   "component": "hall_magnet",
+   "item": "efficiency",
+   "requires": "measured magnet-supply efficiency (HM-SUPPLY-EFF)"
+  },
+  {
+   "blocking": "lane 19 / cathode selection; I_d needs gate 3",
+   "component": "cathode_keeper",
+   "item": "steady policy and load",
+   "requires": "self-heating current of the selected cathode (dossier G01) vs each architecture's I_d"
+  },
+  {
+   "blocking": "supply-efficiency campaign",
+   "component": "cathode_keeper",
+   "item": "efficiency",
+   "requires": "measured keeper-supply efficiency (CK-SUPPLY-EFF)"
+  },
+  {
+   "blocking": "cathode selection (milestone C)",
+   "component": "cathode_heater",
+   "item": "start-up load",
+   "requires": "measured heater profile of the selected cathode"
+  },
+  {
+   "blocking": "supply-efficiency campaign",
+   "component": "cathode_heater",
+   "item": "efficiency",
+   "requires": "measured heater-supply efficiency (CH-SUPPLY-EFF)"
+  },
+  {
+   "blocking": "lane_33_upstream_icd (not verified)",
+   "component": "flow_control",
+   "item": "load",
+   "requires": "energized valve count per mode and the air-path valve (FC-AIR-VALVE)"
+  },
+  {
+   "blocking": "driver design",
+   "component": "flow_control",
+   "item": "efficiency",
+   "requires": "valve-driver data (FC-DRIVER-EFF)"
+  },
+  {
+   "blocking": "lane_33_upstream_icd (not verified)",
+   "component": "compressor",
+   "item": "load and efficiency",
+   "requires": "sized compressor from the upstream ICD flow with sourced motor/drive efficiency (CP-LOAD, CP-CONV-EFF); never filled here"
+  },
+  {
+   "blocking": "lane_15_thermal_life",
+   "component": "thermal_control",
+   "item": "load and efficiency",
+   "requires": "thermal model heater duty (TC-LOAD, TC-EFF)"
+  },
+  {
+   "blocking": "electronics design; owner question on v1.1 standby terms",
+   "component": "housekeeping",
+   "item": "load and efficiency",
+   "requires": "controller/telemetry selection incl. pre-ionizer control and standby (HK-LOAD, HK-EFF)"
+  },
+  {
+   "blocking": "RF source measurement on air/N2 (lane 06 protocol); pre-ionizer physics",
+   "component": "rf_source",
+   "item": "load",
+   "requires": "net RF power at the coil feed at the operating point = source ion cost x I_src (RF-LOAD)"
+  },
+  {
+   "blocking": "RF chain measurement",
+   "component": "rf_source",
+   "item": "efficiency",
+   "requires": "matchbox/cable loss at the pre-ionizer coil (RF-MATCH-LOSS)"
+  },
+  {
+   "blocking": "ECR source measurement on air/N2 (lane 06 protocol)",
+   "component": "ecr_source",
+   "item": "load",
+   "requires": "net microwave power at the coupling input at the operating point (EC-LOAD)"
+  },
+  {
+   "blocking": "ECR chain measurement",
+   "component": "ecr_source",
+   "item": "efficiency",
+   "requires": "system chain incl. isolator/feed at the ECR frequency (EC-ISOLATOR-FEED)"
+  },
+  {
+   "blocking": "ECR stage design; owner",
+   "component": "ecr_magnet",
+   "item": "load and efficiency",
+   "requires": "PM vs electromagnet decision; ECR coil geometry; supply efficiency (EM-SUPPLY-EFF)"
+  },
+  {
+   "blocking": "lane_18_interstage inputs / measurement",
+   "component": "all",
+   "item": "eta_t",
+   "requires": "interstage transport (junction capture, recombination rates, cross sections: interstage_v1 TBD list)"
+  }
+ ],
+ "trigger": "T_AUX_BUS"
+}
