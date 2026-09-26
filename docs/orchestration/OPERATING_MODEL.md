@@ -70,3 +70,10 @@ silently omitted, replaced by subsystem values, or inferred from incompatible po
 Running score-bearing jobs are never altered. Future campaigns record JULIA_NUM_THREADS / BLAS / OMP threads, Julia version and
 HallThruster commit per run, so resource-induced failures stay distinguishable from physical or numerical ones. The orchestration
 runtime (daemon, monitors, runners) is recorded in `runtime_state.json` with its restart semantics.
+
+**Parallel execution (owner 2026-09-26).** No single-file queue: task groups (Bundle 1, O4/S9/S12, D-X5, architecture
+support, ADA-4, dossier, deferred lanes, facility) advance independently. Whenever a dependency-free slot becomes available,
+fill it immediately with another registered architecture-critical, evidence, verification or engineering task (READY
+triggers first, then resumable non-terminal lanes). Programme-level checkpoints (Bundle 1, S9, S12, D-X5) are reported
+when they land; other lanes never pause for them. Facility attempt 2 stays sequenced behind the 7 escalations + S9 + S12 and
+never delays other work.
