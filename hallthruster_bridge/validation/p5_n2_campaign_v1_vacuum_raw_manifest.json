@@ -1,0 +1,55 @@
+{
+ "dataset": "validation/p5_n2_campaign_v1_vacuum_raw.jsonl.gz",
+ "mode": "vacuum",
+ "n_records": 1080,
+ "sha256_canonical_jsonl": "20e926d507598a2ca3d4789929f7e99b179e5fc56c81403286552bbd54097468",
+ "sha256_gz": "5b11705cf1afa31df7202bfb12f4e4d99e8f03966373e23652b9066846627b6f",
+ "canonical_form": "untouched raw record lines, one per line, sorted by key (byte order of the key string)",
+ "prereg_lock_sha256": "71ecd39fa25ea60e2e4aff9474bdd700ec8cd718e819dfdae774594709e805be",
+ "integrity_gate": {
+  "PASS": true,
+  "n_records": 1080,
+  "n_expected": 1080,
+  "retcode_counts": {
+   "success": 1080
+  },
+  "grid": {
+   "candidates": 9,
+   "chemistries": 4,
+   "cases": 30
+  }
+ },
+ "record_identity_check": {
+  "PASS": true,
+  "rule": "identity fields == key fields == pinned case metadata"
+ },
+ "frozen_utc": "2026-09-26T11:54:33+00:00",
+ "driver_commit": "79d4e128bfb9ad672dc8e6e81a6e88445bc5b62a",
+ "integrity_gate_commit": "fcd6720ce8de6f33c0348e9f46144c8e27330a8b",
+ "scorer_commit": "10842ce1fca42c260f902ebd038b8379db9fe0ac",
+ "preregistration": "PR #27 (17a99cd), prereg/p5_n2_validation_criteria_v1.json",
+ "code_as_run": {
+  "integrity_gate": {
+   "file": "scripts/audit_p5_n2_campaign_records.py",
+   "sha256": "c7eaf3ca726417d97f114b6395387d9c56e86c51253e477adc2775738d4b0493",
+   "expected_commit": "fcd6720ce8de6f33c0348e9f46144c8e27330a8b",
+   "expected_sha256": "c7eaf3ca726417d97f114b6395387d9c56e86c51253e477adc2775738d4b0493",
+   "last_commit": "fcd6720ce8de6f33c0348e9f46144c8e27330a8b",
+   "identical": true
+  },
+  "scorer": {
+   "file": "scripts/score_p5_n2_campaign.py",
+   "sha256": "907ca7b5ef8e802ed97129ca9e3fd09b7493bc688088425b150ed02352a39fe3",
+   "expected_commit": "10842ce1fca42c260f902ebd038b8379db9fe0ac",
+   "expected_sha256": "907ca7b5ef8e802ed97129ca9e3fd09b7493bc688088425b150ed02352a39fe3",
+   "last_commit": "a36e2037da56ab618a2b97c996195430f85ca2d5",
+   "identical": true
+  },
+  "freeze": {
+   "file": "scripts/freeze_p5_n2_dataset.py",
+   "sha256": "bc4c5a9405ba411fd133f86d57c63e2a05c1c996a1aad80886e9ca27c7849a19",
+   "last_commit": "54943d82a5d1232047d01aafe11acca458aaf07f"
+  }
+ },
+ "chain_consistent": true
+}
