@@ -2165,3 +2165,20 @@ and all 10 link checks pass. Nothing was rescored.
 (2) Evidence publication is now no-replace: release, score-once scores/provenance (frozen and staged), freeze datasets/manifests and
 report/decision use a hard link or exclusive creation instead of replacing writes. A concurrent invocation can therefore never
 overwrite a published artifact, and a rollback only removes the attempt's own file (inode-checked).
+
+### 2026-09-26 — PR #30 merged; critical path re-ordered after the v1 result (owner decision)
+PR #30 merged (daa0e75): the v1 vacuum result, the O4-disposition admission gate and the O4 freeze/score path. The owner's reading of
+the result is that v1 could not discriminate, mainly because 1428 of 2160 run-reading evaluations are OUT_OF_DOMAIN and there are no
+numerical failures. The fastest legitimate route to the thrust-architecture decision is to attack that cause, not to polish v1.
+New critical path: OOD reactions → independent published evidence for a wider validity domain → a v2 N₂ validation pre-registration only
+if justified → rerun only what v2 requires → admission. In parallel, a common-boundary Hall-only / RF+Hall / ECR+Hall comparison is
+prepared. Rules: never extend a validity limit because the solver reached a higher T_e; v1 stays INCONCLUSIVE permanently; the E×B
+diagnostic stays non-gating (physics forensics, no tuning); fixed-time polling is replaced by milestone watchers.
+Parallel lanes launched as workflows in isolated worktrees, each checked by two independent adversarial reviewers (evidence lens and
+rules/recompute lens) with up to two repair rounds:
+- OOD attribution; N₂ domain-extension evidence audit with a DRAFT v2 outline; scoreable-subset forensics; E×B physics forensics.
+- RF and ECR source evidence; Hall-only sustainment evidence.
+- Common-condition experiment protocol (DRAFT); common bus-power boundary module; comparison harness (refuses while the credible set is
+  empty); thermal/life framework.
+These run alongside the earlier lanes (CI, ECHT disposition, Hall-map spec, ICD, O/O₂ audit, cathode, wall life, dual-feed, ledgers,
+traceability, experiment package), the O4 first stage and the facility campaign.

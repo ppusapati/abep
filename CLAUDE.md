@@ -161,6 +161,14 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    scores, provenance, report, decision, `VALIDATION_RELEASE_v1.json`, all links verified). Result: no candidate PROMOTABLE; all nine
    INCONCLUSIVE / NOT ELIGIBLE; credible set ∅; no admission, no design Hall maps. Next (owner plan): O4 staged-sensitivity first stage
    (5 × 270 vacuum) and the 1080 facility runs as pre-registered; non-gating failure/OOD forensics; no retuning, no criteria change.
+   **Critical path after v1 (owner decision 2026-09-26):** identify the OOD reactions → independent published evidence for a wider
+   validity domain → pre-register an N₂ validation **v2** only if that evidence justifies it → rerun only what v2 requires → admit
+   closure(s). In parallel: prepare the Hall-only vs RF+Hall vs ECR+Hall comparison on one common bus-power boundary. **Never extend a
+   rate-table validity limit merely because the solver reached a higher T_e**; an extension needs independent published evidence
+   and a new v2 pre-registration. **The v1 outcome stays INCONCLUSIVE permanently and is never rewritten.** The E×B diagnostic
+   (V_a(N⁺) far below measured; ordering inverted in 0/648 runs) stays non-gating: it gets a physics-forensics lane (possible missing
+   species-dependent acceleration / birth-location physics), never tuning. v1 OOD is driven by the 45 eV-capped family (dissociation,
+   8 electronic, 2 rotational, 10 vibrational) firing together; 45 eV is the project's pre-registered completeness domain.
    Admission/Hall maps stay gated until the O4 dispositions are complete even if a later campaign yields PROMOTABLE: enforced by
    `hall_ensemble._check_o4` (admission records need `o4_dispositions_file`, `ensemble/o4_dispositions_schema_v1.json`; triggers are
    read from the scored O4 files). O4 datasets: `scripts/score_p5_n2_staged.py freeze|score` (pinned launch manifest gate, score once
