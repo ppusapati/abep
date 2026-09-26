@@ -167,6 +167,7 @@
     "lane": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
     "deliverable": {"type": "string", "minLength": 1},
     "blocked_by": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "specified_by": {"description": "Lanes that specify the protocol or requirement of a measurement action; the executing lane is 'lane'.", "type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}},
     "targets": {"type": "array", "items": {"type": "string"}}
    }
   },
@@ -188,7 +189,9 @@
     "evidence_level": {"type": "integer", "minimum": 1, "maximum": 7},
     "statement": {"type": "string", "minLength": 1},
     "locator": {"type": "string", "minLength": 1},
-    "applicability": {"type": "string", "minLength": 1}
+    "applicability": {"type": "string", "minLength": 1},
+    "gas_not_stated": {"description": "true when the source does not state the gas or composition for the cited result; on an air_specific node such an item can only be 'context'.", "type": "boolean"},
+    "gas_stated": {"description": "The gas the source states for the cited result. Required on a decisive item (supports/contradicts) of an air_specific node when another item of the same source is gas_not_stated.", "type": "string", "minLength": 1}
    }
   },
   "node_action": {
@@ -215,16 +218,18 @@
   },
   "node": {
    "type": "object", "additionalProperties": false,
-   "required": ["id", "architectures", "failure_class", "title", "rfp_blocks", "mechanism", "physical_cause", "evidence",
+   "required": ["id", "architectures", "failure_class", "title", "rfp_blocks", "air_specific", "mechanism", "physical_cause", "evidence",
     "evidence_status", "decision_quantity", "actions", "cheapest_resolution", "resolve_by_milestone", "milestone_A_condition",
     "analysis_requires_admitted_hall_closure", "decision_state"],
    "properties": {
     "id": {"type": "string", "pattern": "^N-[A-Z]{2,3}-[A-Z0-9]+$"},
     "architectures": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/arch_id"}},
     "failure_class": {"type": "string", "pattern": "^FC-[A-Z]{3}$"},
+    "sub_cause_of": {"description": "Parent node whose threshold comparison this node repeats (an architecture-specific contributor). Sub-causes are listed but not counted in the ranking.", "type": "string", "pattern": "^N-[A-Z]{2,3}-[A-Z0-9]+$"},
     "title": {"type": "string", "minLength": 1},
     "condition": {"type": "string", "minLength": 1},
     "rfp_blocks": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/rfp_block"}},
+    "air_specific": {"description": "true when the node's decision quantity is evaluated on the atmospheric (air / N2 / O2) feed or its mechanism depends on N/O species; evidence whose gas is not stated cannot decide it.", "type": "boolean"},
     "mechanism": {"type": "string", "minLength": 1},
     "physical_cause": {"type": "string", "minLength": 1},
     "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence_item"}},
@@ -276,9 +281,10 @@
   },
   "arch_ranking": {
    "type": "object", "additionalProperties": false,
-   "required": ["n_nodes", "ranked", "blocked"],
+   "required": ["n_nodes", "n_sub_causes_not_counted", "ranked", "blocked"],
    "properties": {
-    "n_nodes": {"type": "integer", "minimum": 1},
+    "n_nodes": {"description": "Open nodes of the architecture that are counted (sub-causes excluded).", "type": "integer", "minimum": 1},
+    "n_sub_causes_not_counted": {"type": "integer", "minimum": 0},
     "ranked": {"type": "array", "items": {"type": "object", "additionalProperties": false,
      "required": ["rank", "action", "kind", "n_decides", "n_gates_decided", "n_contributes", "n_informs", "gates_decided", "nodes_decided", "nodes_contributed", "nodes_informed"],
      "properties": {

@@ -74,6 +74,13 @@ def derived_values() -> dict:
                               "omega_pe^2 = omega (omega - omega_ce), i.e. at a lower density; right-hand waves launched from "
                               "the high-field side can propagate above n_c.")})
 
+    vals.append({"id": "D-ECR-B-PER-100MHZ", "quantity": "ECR resonance field per 100 MHz of source frequency |B| = 2 pi f m_e / e",
+                 "value": _sig(b_ecr(1e8)), "unit": "T", "evidence_class": "model-derived",
+                 "inputs": {"f_Hz": 1e8, "frequency_source": "per-unit reference (the field is linear in f); S-STASTNY2026 states only 'MHz-range'",
+                            "constants": "scipy.constants m_e, e"},
+                 "cross_check": None,
+                 "note": "Scale for a MHz-range resonator; 100 MHz is a unit of scale, not a source or Vyovrinda frequency."})
+
     b245 = b_ecr(2.45e9)
     for gid, bg, where in [("P5N2", 130.0, "hallthruster_bridge/cases/p5_n2.json source field: 'peak radial B 130 G' (Brabston 2025 Table 2)"),
                            ("P5XE", 162.5, "hallthruster_bridge/cases/p5_xenon.json source field: 'peak radial B 162.5 G' (Brabston 2025 Table 4)")]:
@@ -122,7 +129,10 @@ def rank(doc: dict) -> dict:
     actions = doc["actions"]
     out = {}
     for arch in ARCHS:
-        nodes = [n for n in doc["nodes"] if arch in n["architectures"] and n["decision_state"] == "open"]
+        arch_open = [n for n in doc["nodes"] if arch in n["architectures"] and n["decision_state"] == "open"]
+        # a sub-cause repeats its parent's threshold comparison: listed in the tree, not counted
+        nodes = [n for n in arch_open if not n.get("sub_cause_of")]
+        n_sub = len(arch_open) - len(nodes)
         ranked, blocked = [], []
         for a in actions:
             by = {"decides": [], "contributes": [], "informs": []}
@@ -149,7 +159,7 @@ def rank(doc: dict) -> dict:
             r_ordered = {"rank": i}
             r_ordered.update(r)
             ranked[i - 1] = r_ordered
-        out[arch] = {"n_nodes": len(nodes), "ranked": ranked, "blocked": blocked}
+        out[arch] = {"n_nodes": len(nodes), "n_sub_causes_not_counted": n_sub, "ranked": ranked, "blocked": blocked}
     return {"generated_by": GENERATOR, "rule_id": doc["ranking_rule"]["id"], "per_architecture": out}
 
 
@@ -169,8 +179,9 @@ def md_sections(doc: dict) -> dict:
     for arch in ARCHS:
         c = status_counts(doc, arch)
         nodes = [n for n in doc["nodes"] if arch in n["architectures"]]
-        lines.append(f"### `{arch}` ({len(nodes)} nodes: {c['supported']} supported, {c['contradicted']} contradicted, "
-                     f"{c['unknown']} unknown; all decision_state = open)")
+        n_sub = sum(1 for n in nodes if n.get("sub_cause_of"))
+        lines.append(f"### `{arch}` ({len(nodes)} nodes, {n_sub} of them sub-causes: {c['supported']} supported, "
+                     f"{c['contradicted']} contradicted, {c['unknown']} unknown; all decision_state = open)")
         lines.append("")
         lines.append("| class | node | failure path | evidence status | gates | cheapest resolution | resolve by | analysis needs admitted Hall closure |")
         lines.append("|---|---|---|---|---|---|---|---|")
@@ -181,6 +192,8 @@ def md_sections(doc: dict) -> dict:
                 if n["failure_class"] != fc["id"]:
                     continue
                 cond = " (conditional)" if n.get("condition") else ""
+                if n.get("sub_cause_of"):
+                    cond += f" (sub-cause of {n['sub_cause_of']}; not counted)"
                 lines.append(f"| {classes[fc['id']]['name']} | {n['id']} | {n['title']}{cond} | {n['evidence_status']} | "
                              f"{', '.join(n['decision_quantity']['gates'])} | {' + '.join(n['cheapest_resolution'])} | "
                              f"{n['resolve_by_milestone']} | {'yes' if n['analysis_requires_admitted_hall_closure'] else 'no'} |")
@@ -190,7 +203,7 @@ def md_sections(doc: dict) -> dict:
     lines = []
     for arch in ARCHS:
         r = doc["ranked_next_evidence"]["per_architecture"][arch]
-        lines.append(f"### `{arch}` ({r['n_nodes']} open nodes)")
+        lines.append(f"### `{arch}` ({r['n_nodes']} open nodes counted; {r['n_sub_causes_not_counted']} sub-causes not counted)")
         lines.append("")
         lines.append("| rank | action | kind | decides | gates decided | contributes | informs |")
         lines.append("|---|---|---|---|---|---|---|")

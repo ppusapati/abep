@@ -94,11 +94,14 @@ def _validate(x, s, root, path, errs):
             if k not in x:
                 errs.append(f"{path}: missing required {k!r}")
         props = s.get("properties", {})
+        extra = s.get("additionalProperties", True)
         for k, v in x.items():
             if k in props:
                 _validate(v, props[k], root, f"{path}.{k}", errs)
-            elif s.get("additionalProperties") is False:
+            elif extra is False:
                 errs.append(f"{path}: unexpected property {k!r}")
+            elif isinstance(extra, dict):
+                _validate(v, extra, root, f"{path}.{k}", errs)
 
 
 def _keywords(s, out):
@@ -125,6 +128,15 @@ def test_validator_rejects_bad_documents(doc, schema):
     errs = []
     _validate(bad, schema, schema, "$", errs)
     assert len(errs) >= 3, errs
+
+
+def test_validator_applies_schema_valued_additional_properties():
+    s = {"type": "object", "properties": {"a": {"type": "string"}}, "additionalProperties": {"type": "integer"}}
+    errs = []
+    _validate({"a": "x", "b": 1}, s, s, "$", errs)
+    assert not errs
+    _validate({"a": "x", "b": "not an integer"}, s, s, "$", errs)
+    assert errs and "$.b" in errs[0]
 
 
 def test_document_validates_against_schema(doc, schema):
@@ -232,16 +244,54 @@ def test_regression_requires_relabelled_nodes(doc):
         assert not [na for na in nodes[nid]["actions"] if na["effect"] == "decides"], nid
 
 
+_UNSTATED_GAS = re.compile(r"(gas|composition)[^.;]{0,60}(not stated|does not state)|does not state the (gas|composition)", re.I)
+
+
 def test_unstated_gas_is_not_decisive_for_air_nodes(doc):
-    """An item whose applicability admits the gas/composition is not stated cannot support or contradict a node that
-    is specific to air or N2/O2 (it is 'context' until the gas is known)."""
-    pat = re.compile(r"(gas|composition)[^.;]{0,60}(not stated|does not state)|does not state the (gas|composition)", re.I)
+    """An item whose source does not state the gas/composition for the cited result (gas_not_stated) cannot support or
+    contradict an air_specific node: it is 'context' until the gas is known. The rule is keyed on the explicit
+    air_specific and gas_not_stated flags, not on titles, and the flags cannot be dropped silently:
+    - an applicability text that says the gas is not stated must carry gas_not_stated;
+    - once a source has an unstated-gas item anywhere, each of its decisive items on an air_specific node must name the
+      gas the source states for that result (gas_stated)."""
+    unstated_sources = {e["source"] for n in doc["nodes"] for e in n["evidence"] if e.get("gas_not_stated")}
     for n in doc["nodes"]:
-        if not re.search(r"\bon (air|N2/O2)\b", n["title"]):
-            continue
+        assert isinstance(n["air_specific"], bool), n["id"]
         for e in n["evidence"]:
-            if pat.search(e["applicability"]):
+            if _UNSTATED_GAS.search(e["applicability"]):
+                assert e.get("gas_not_stated") is True, (n["id"], e["source"])
+            assert not (e.get("gas_not_stated") and e.get("gas_stated")), (n["id"], e["source"])
+            if not n["air_specific"]:
+                continue
+            if e.get("gas_not_stated"):
                 assert e["direction"] == "context", (n["id"], e["source"])
+            elif e["source"] in unstated_sources and e["direction"] != "context":
+                assert e.get("gas_stated"), (n["id"], e["source"])
+
+
+def test_air_specific_flag_covers_the_air_nodes(doc):
+    """Every node whose title, quantity or threshold names air, N2/O2, the atmospheric/delivered feed or N/O species is
+    flagged air_specific (the flag can be set, but not forgotten, on such a node)."""
+    pat = re.compile(r"\bair\b|N2/O2|N2-O2|atmospheric|delivered (feed|composition|air)|\bN/O\b|oxygen|oxidation", re.I)
+    for n in doc["nodes"]:
+        text = " ".join((n["title"], n["decision_quantity"]["quantity"], n["decision_quantity"]["threshold"]))
+        if pat.search(text) and not n.get("sub_cause_of"):
+            assert n["air_specific"], n["id"]
+
+
+def test_review_round2_evidence_relabels(doc):
+    nodes = {n["id"]: n for n in doc["nodes"]}
+
+    def item(nid, src):
+        return [e for e in nodes[nid]["evidence"] if e["source"] == src]
+
+    for nid in ("N-UTL-02", "N-PWR-02"):
+        assert all(e["direction"] == "context" for e in item(nid, "S-SHABSHELOWITZ2014")), nid
+        assert nodes[nid]["evidence_status"] == "unknown", nid
+    assert all(e["direction"] == "context" for e in item("N-UTL-03", "S-TISAEV2023A"))
+    assert all(e["direction"] == "context" for e in item("N-SUS-02", "S-ANDREUSSI2017"))
+    for nid in ("N-UTL-03", "N-SUS-02"):
+        assert nodes[nid]["evidence_status"] == "unknown", nid
 
 
 # ------------------------------------------------------------------ gates
@@ -284,14 +334,27 @@ def test_every_gate_is_reached_by_every_architecture(doc):
         assert reached == set(GATES), (arch, set(GATES) - reached)
 
 
+_RFP_NUMBER = re.compile(r"12 mN|25 mN|1\.5 kW|1500 W|40 kg|15,000 h|26,000 h|180-230 km")
+_ANY_NUMBER_WITH_UNIT = re.compile(r"\b\d[\d,.]*\s*(mN|kW|W|kg|h|km|%|G|T|V|A|sccm|mg/s)\b")
+
+
 def test_threshold_status_discipline(doc):
-    """RFP numbers only on RFP-status thresholds; everything else is PROPOSED, TBD or a physics bound."""
+    """Every threshold says what it is: a TBD threshold contains 'TBD', a PROPOSED one 'PROPOSED', an RFP one '(RFP)'
+    and an RFP number. RFP numbers appear in any threshold only with an 'RFP' label next to them in the same text, and
+    no other number with a unit appears in a threshold (non-RFP values are TBD for the owner, never invented)."""
     for n in doc["nodes"]:
         dq = n["decision_quantity"]
+        t = dq["threshold"]
         if dq["threshold_status"] == "TBD":
-            assert "TBD" in dq["threshold"], n["id"]
+            assert "TBD" in t, n["id"]
         if dq["threshold_status"] == "PROPOSED":
-            assert "PROPOSED" in dq["threshold"], n["id"]
+            assert "PROPOSED" in t, n["id"]
+        if dq["threshold_status"] == "RFP":
+            assert "(RFP)" in t and _RFP_NUMBER.search(t), n["id"]
+        if _RFP_NUMBER.search(t):
+            assert "RFP" in t, n["id"]
+        for m in _ANY_NUMBER_WITH_UNIT.finditer(t):
+            assert _RFP_NUMBER.search(m.group(0)) or m.group(0) in ("1.5 kW", "1500 W"), (n["id"], m.group(0))
 
 
 # ------------------------------------------------------------------ coverage
@@ -406,7 +469,8 @@ def test_derived_values_reproduce_source_statements(doc):
 # ------------------------------------------------------------------ ranking and generator
 def _rank_independent(doc, arch):
     gates_of = {n["id"]: set(n["decision_quantity"]["gates"]) for n in doc["nodes"]}
-    nodes = [n for n in doc["nodes"] if arch in n["architectures"] and n["decision_state"] == "open"]
+    nodes = [n for n in doc["nodes"] if arch in n["architectures"] and n["decision_state"] == "open"
+             and not n.get("sub_cause_of")]
     rows = []
     for a in doc["actions"]:
         if a["blocked_by"]:
@@ -433,7 +497,9 @@ def test_ranking_follows_the_stated_rule(doc):
         assert [x["action"] for x in r["ranked"]] == _rank_independent(doc, arch), arch
         assert [x["rank"] for x in r["ranked"]] == list(range(1, len(r["ranked"]) + 1))
         assert {b["action"] for b in r["blocked"]} <= {"A-HALLMAP"}
-        assert r["n_nodes"] == sum(1 for n in doc["nodes"] if arch in n["architectures"])
+        mine = [n for n in doc["nodes"] if arch in n["architectures"]]
+        assert r["n_nodes"] == sum(1 for n in mine if not n.get("sub_cause_of"))
+        assert r["n_sub_causes_not_counted"] == sum(1 for n in mine if n.get("sub_cause_of"))
         assert r["ranked"], arch
 
 
@@ -457,3 +523,78 @@ def test_generator_imports_no_other_lane_module():
     for mod in ("arch_boundary", "arch_compare", "thermal_life", "breakeven", "interstage", "cathode_integration",
                 "hall_map", "hall_ensemble", "archengine"):
         assert not re.search(rf"^\s*(from|import)\s+\S*{mod}", src, re.M), mod
+
+
+# ------------------------------------------------------------------ review round 2: structure that keeps the counts honest
+def test_sub_causes_repeat_their_parent_and_are_not_counted(doc):
+    """A sub-cause names an architecture-specific contributor to its parent's threshold comparison. It carries the
+    parent's gates and deciding action, says in its threshold that the parent decides it, and is not counted in the
+    ranking (so one comparison is never counted twice)."""
+    nodes = {n["id"]: n for n in doc["nodes"]}
+    subs = [n for n in doc["nodes"] if n.get("sub_cause_of")]
+    assert {n["id"] for n in subs} == {"N-MAS-02", "N-MAS-03"}
+    for n in subs:
+        p = nodes[n["sub_cause_of"]]
+        assert not p.get("sub_cause_of"), n["id"]
+        assert p["failure_class"] == n["failure_class"], n["id"]
+        assert set(n["architectures"]) <= set(p["architectures"]), n["id"]
+        assert n["decision_quantity"]["gates"] == p["decision_quantity"]["gates"], n["id"]
+        assert p["id"] in n["decision_quantity"]["threshold"], n["id"]
+        assert {na["action"] for na in n["actions"]} <= {na["action"] for na in p["actions"]}, n["id"]
+    for arch in ARCHS:
+        r = doc["ranked_next_evidence"]["per_architecture"][arch]
+        for x in r["ranked"]:
+            assert not set(x["nodes_decided"] + x["nodes_contributed"] + x["nodes_informed"]) & {n["id"] for n in subs}
+        a_mass = [x for x in r["ranked"] if x["action"] == "A-MASS"]
+        assert a_mass and a_mass[0]["n_decides"] == 1, arch
+
+
+def test_unassigned_work_is_named_not_hidden(doc):
+    """Work that no lane produces sits in a lane whose deliverable starts with 'TBD - no lane assigned' and is raised
+    with the owner; every measurement action is executed by the (unassigned) hardware_test lane and names the lanes
+    that only specify it."""
+    lanes = {l["id"]: l for l in doc["lanes"]}
+    unassigned = {i for i, l in lanes.items() if l["availability"].startswith("not assigned")}
+    assert {"mission_ops", "magnetic_interaction", "cathode_oxygen_exposure", "hardware_test"} <= unassigned
+    questions = " ".join(doc["open_questions_for_owner"])
+    for i in unassigned:
+        assert lanes[i]["deliverable"].startswith("TBD - no lane assigned"), i
+        assert i in questions, i
+    for a in doc["actions"]:
+        if a["lane"] in unassigned:
+            assert a["deliverable"].startswith(("TBD", "Measurement: TBD")), a["id"]
+        if a["kind"] == "measurement":
+            assert a["lane"] == "hardware_test", a["id"]
+            assert "specified_by" in a, a["id"]
+            assert set(a["specified_by"]) <= set(lanes) - unassigned, a["id"]
+    acts = {a["id"]: a for a in doc["actions"]}
+    assert acts["A-BFIELD"]["lane"] == "magnetic_interaction"
+    assert acts["A-OXEXPO"]["lane"] == "cathode_oxygen_exposure"
+
+
+def test_review_round2_resolution_sets(doc):
+    nodes = {n["id"]: n for n in doc["nodes"]}
+    # the exposure analysis is part of the jointly sufficient set for poisoning
+    assert set(nodes["N-CAT-01"]["cheapest_resolution"]) == {"A-FLOWENV", "A-OXEXPO", "M-CATHODE"}
+    # microwave-chain life is not settled by a thermal analysis
+    eff = {na["action"]: na["effect"] for na in nodes["N-ECR-03"]["actions"]}
+    assert eff["A-THERMAL"] == "informs" and eff["M-MWCHAIN"] == "contributes"
+    # no bus-power comparison in the two-stage coupling threshold, so no bus_power gate
+    assert "bus_power" not in nodes["N-SUS-03"]["decision_quantity"]["gates"]
+    # temperature-limit and plume-mode thresholds compare no power or mass
+    for nid in ("N-THM-01", "N-THM-02", "N-THM-03", "N-THM-04", "N-CAT-03"):
+        assert nodes[nid]["decision_quantity"]["gates"] == ["firing_life"], nid
+    # the ECR/Hall field comparison is stated as frequency-conditional
+    assert "MHz" in nodes["N-ECR-02"]["physical_cause"] and "GHz" in nodes["N-ECR-02"]["physical_cause"]
+
+
+def test_cathode_limit_covers_current_flow_poisoning_and_life(doc):
+    """The brief's cathode limits: current, flow, poisoning and life (intrinsic, not only through poisoning)."""
+    nodes = {n["id"]: n for n in doc["nodes"]}
+    cat = [n for n in doc["nodes"] if n["failure_class"] == "FC-CAT"]
+    text = " ".join(n["title"].lower() for n in cat)
+    for word in ("current", "flow", "poisoning", "life"):
+        assert word in text, word
+    assert "firing_life" in nodes["N-CAT-05"]["decision_quantity"]["gates"]
+    assert "evaporation" in nodes["N-CAT-05"]["mechanism"].lower()
+    assert "Xe-fed" in nodes["N-CAT-06"]["title"]
