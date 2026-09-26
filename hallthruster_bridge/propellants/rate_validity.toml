@@ -4,6 +4,8 @@
 #                          Maxwellian rate resting beyond the last cited cross-section point is < 1 %, capped at 255 eV
 #                          (HallThruster.jl interpolates tables on 0-255 eV and holds the end value beyond).
 #   status = "unresolved": the domain has not been audited. Any run using the file is NOT chemistry_trustworthy.
+# chemistry_trustworthy = true means no reaction was evaluated outside its declared chemistry-model domain; it does NOT mean
+# every reaction has experimental confirmation (see each basis).
 # A run is chemistry_trustworthy only if, over every saved frame of the averaging window, no reaction has activity
 # n_e n_target k_r at cells where 3/2 T_e exceeds its limit (f_out = 0 within 1e-12), and no file is unresolved.
 
@@ -31,6 +33,66 @@ basis = "Bell et al. JPCRD 1983 Eq. (1) N II (+-10 %), analytic Bethe form evalu
 status = "verified"
 max_mean_energy_eV = 255.0
 basis = "JPCRD 2023 Table 10 sigma(N++) spans 70-1000 eV (ramp from 53.885 eV); held-tail share 0.946 % at 255 eV mean energy (scripts/build_n2_to_n_z2plus_table.py)"
+
+["excitation_N2_vib_0_to_1.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["excitation_N2_vib_0_to_2.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["excitation_N2_vib_0_to_3.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["excitation_N2_vib_0_to_4.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["excitation_N2_vib_0_to_5.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["excitation_N2_vib_0_to_6.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["excitation_N2_vib_0_to_7.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["excitation_N2_vib_0_to_8.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["excitation_N2_vib_0_to_9.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["excitation_N2_vib_0_to_10.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation."
+
+["elastic_N_ragimkhanov2026.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "Ragimkhanov et al. EPJD 2026 Fig. 1b OPM MTCS, vector-extracted, 1 eV - 1 MeV; held-tail share 0.0000 % at 255 eV mean energy (scripts/build_n_elastic_tables.py)"
+
+["elastic_N_wang2014_bsr.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "Wang et al. 2014 BSR MTCS as re-plotted in Ragimkhanov Fig. 1b (0.95-128 eV), OPM above 128 eV; held-tail share 0.0000 % at 255 eV mean energy"
 
 ["ionization_N.dat"]
 status = "verified"

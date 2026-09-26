@@ -843,6 +843,52 @@ def test_n2_vibrational_audit_promotion_is_robust_at_low_te():
     assert fin[-1]["Te_eV"] == 3.0 and max(r["F_P_vs_included_plus_electronic"] for r in fin) > 0.01
 
 
+def test_n2_vibrational_tables_use_two_thirds_mean_energy():
+    """abep-n2n-0.7: ten tables v=0 -> v_f = 1..10. HallThruster's axis is mean electron energy eps_bar = 3/2 T_e, so the
+    row at eps_bar must equal Laporta's Eq. (10) at T_e = 2/3 eps_bar (NOT at T_e = eps_bar). Headers = eps_vf; the omitted
+    v_f > 10 tail stays < 1 % of the vibrational power over T_e = 0.2-30 eV; all ten are in n2_n.toml."""
+    import importlib.util, os, numpy as np
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_vibrational_tables.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    d = os.path.join(root, "hallthruster_bridge", "propellants")
+    cfg = open(os.path.join(d, "n2_n.toml")).read()
+    for vf in range(1, 11):
+        lines = open(os.path.join(d, b.fname(vf))).read().splitlines()
+        assert lines[0] == f"Excitation energy (eV): {b.vib.EPS_V[vf]}"
+        a = np.loadtxt(os.path.join(d, b.fname(vf)), skiprows=2)
+        for eps in (3.0, 15.0, 45.0):
+            row = a[a[:, 0] == eps][0, 1]
+            assert abs(row / b.vib.k_vib(2 * eps / 3, vf)[0][1] - 1) < 1e-5
+            assert abs(row / b.vib.k_vib(eps, vf)[0][1] - 1) > 0.05          # the wrong (T = eps_bar) reading differs
+        assert f'"{b.fname(vf)}"' in cfg
+    assert max(b.vib_tail_fraction(T) for T in (0.2, 1, 3, 10, 30)) < 0.01
+
+
+def test_n_elastic_tables_from_ragimkhanov_fig1b():
+    """abep-n2n-0.8: atomic-N momentum transfer, vector-extracted from Ragimkhanov et al. 2026 Fig. 1b (CC BY). The
+    committed extraction reproduces the calibration anchors (OPM 1-1e6 eV; Wang BSR 0.95-128 eV), the OPM/Wang
+    disagreement in the Hall range is carried as a variant (not resolved), and n2_n.toml uses the OPM table."""
+    import importlib.util, os, numpy as np
+    from abep_sim.rate_tables import maxwellian_rate
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n_elastic_tables.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    d = b.load()
+    Eo, So = d["opm"]; Ew, Sw = d["wang"]
+    assert abs(Eo[0] - 1.0) < 0.01 and abs(Eo[-1] / 1e6 - 1) < 0.01 and abs(Ew[-1] - 128) < 1
+    assert 12.5 < np.interp(10.0, Eo, So) < 14.5 and 21 < np.interp(10.0, Ew, Sw) < 24      # a0^2, checked 2026-09-26
+    for v, f in b.FILES.items():
+        a = np.loadtxt(os.path.join(b.PROP, f), skiprows=2)
+        E, s = b.cross_section(v)
+        for eps in (3.0, 15.0, 45.0):
+            assert abs(a[a[:, 0] == eps][0, 1] / maxwellian_rate(E, s, eps / 1.5, b.TAIL) - 1) < 1e-5
+    r = maxwellian_rate(*b.cross_section("opm"), 5.0) / maxwellian_rate(*b.cross_section("wang"), 5.0)
+    assert 0.4 < r < 0.7                                     # material disagreement: carried, not resolved
+    assert '"elastic_N_ragimkhanov2026.dat"' in open(os.path.join(b.PROP, "n2_n.toml")).read()
+    assert '"elastic_N_wang2014_bsr.dat"' in open(os.path.join(b.PROP, "n2_n_nel_wang.toml")).read()
+
+
 def test_variant_configs_are_regenerated_from_n2_n():
     """Every chemistry-variant config equals what scripts/make_n2_variant_configs.py produces from the current n2_n.toml."""
     import importlib.util, os

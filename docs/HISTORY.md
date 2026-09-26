@@ -1798,3 +1798,64 @@ Renames (the file contents and rates are unchanged; the files were never on main
 - `dissociative_ionization_N2_N2+.dat` → `dissociative_ionization_N2_to_N_Z2plus.dat`
 - `scripts/build_n_plus_ionization_table.py` → `scripts/build_n_z1plus_to_z2plus_table.py`
 - `scripts/build_n2_to_n2plus_table.py` → `scripts/build_n2_to_n_z2plus_table.py`
+
+## 2026-09-26 — Reaction set abep-n2n-0.7: N₂ vibrational excitation v = 0 → 1…10 (validity limit: owner decision pending)
+
+**Merged:** PR #22 (0.4–0.6, audit 2, nomenclature, wording).
+
+**Change:** ten fixed-energy excitation reactions e + N₂(v=0) → e + N₂(v_f), v_f = 1…10, built by `scripts/build_n2_vibrational_tables.py`.
+- **Rates:** Laporta Eq. (10) rate coefficients, used directly (nothing is integrated). The table row at mean energy ε̄ holds k(T_e = ⅔ ε̄). A regression test also checks that the wrong reading, T_e = ε̄, differs.
+- **Headers:** ε_vf from Laporta Table II.
+- **Why ten:** the omitted v_f = 11…58 tail is at most **0.145 %** of the vibrational power anywhere in T_e = 0.2–30 eV, hence below 0.145 % of P_e and the 1 % criterion. Ten is a result, not a choice.
+
+**Closure uncertainty for P5-N₂ (not a complete vibrational kinetics model):**
+- HallThruster does not track vibrational populations, so all N₂ is taken in v = 0.
+- There is no stepwise v_i > 0 excitation and no superelastic return; the model represents gross electron cooling.
+- Resonant excitation only (Laporta's cross sections integrated to 15 eV); non-resonant excitation is absent.
+
+**Validity domain — needs an owner decision.**
+- Laporta state no validated temperature range for the vibrational-excitation fits. Fig. 5b shows the calculated rates up to 50,000 K (4.31 eV) without a fit overlay; only the dissociation fits are compared with calculations (Fig. 7, up to 100 eV).
+- Following "use the source's fit domain", the limit carried is **6.47 eV mean energy (T_e = 4.31 eV)**.
+- Consequence: in the N1 smoke run (0.7 minus the missing files) 83–86 % of each vibrational channel's activity lies above that limit, so the run is not chemistry-trustworthy. **No P5-N₂ run can be chemistry-trustworthy with this limit.**
+- Evidence relevant to extending it:
+  1. For the 0→1 channel, the Eq. (10) fit matches an independent Maxwellian integral of JPCRD 2023 Table 7 σ₀₁ (1–5 eV) to within 6 % from T = 0.5 to 30 eV (ratios 0.97–1.06). Below that it degrades: 0.40 at T = 0.2 eV.
+  2. Eq. (10)'s T^(−3/2) high-T form is the exact Maxwellian limit for a cross section confined to low energy, which the resonant cross section is.
+  3. The same check cannot be made for the overtones, because no cross sections for them are in hand.
+- Only the upper limit is guarded. The 0.2–0.5 eV fit degradation matters only below the Hall range.
+
+## 2026-09-26 — Reaction set abep-n2n-0.8: atomic-N momentum transfer (Ragimkhanov 2026; Wang 2014 BSR variant)
+
+**Source access:**
+- Ragimkhanov et al., EPJD 80, 69 (2026), CC BY 4.0, was served by Springer as a PDF to a plain, honestly identified client (sha256 47489e8a…). No browser or trust-store change was involved.
+- Johnson 2005's Wiley supporting-information file (`jgra18077-sup-0001-t01.txt`) is still behind the Wiley bot challenge (HTTP 403 on all three supplement URL forms). Tier-1 electronic excitation stays open.
+
+**Extraction:**
+- The paper states its data are available only graphically. Fig. 1b (electron MTCS, a₀², log-log) is vector artwork.
+- The present OPM curve (solid red, 2,040 path points, 1 eV–1 MeV) and the "Wang et al. (B-spline R-matrix)/2014" comparison curve (green dashed, 0.95–128 eV) were extracted from the path coordinates.
+- Calibration is on the plot frame (edges = 10⁰/10⁶ eV and 10⁻⁷/10² a₀² ticks). The tick labels centre within 0.03 pt of the frame-derived positions: 0.1 % in E, 0.5 % in σ.
+- The points are committed as `propellants/sources/ragimkhanov2026_fig1b_mtcs.csv`, with CC BY attribution.
+
+**Disagreement, carried rather than resolved (owner rule):**
+
+| | 1 eV | 3 | 5 | 10 | 20 | 23 | 30–60 | 100–128 |
+|---|---|---|---|---|---|---|---|---|
+| σ_OPM / σ_Wang | 0.15 | 0.40 | 0.52 | 0.59 | 0.89 | 1.00 | 1.15–1.19 | 0.80–0.88 |
+
+| T_e (eV) | 2 | 5 | 10 | 20 | 30 |
+|---|---|---|---|---|---|
+| k_OPM / k_Wang-variant | 0.36 | 0.56 | 0.74 | 0.90 | 0.96 |
+
+- BSR resolves the low-energy structure (N⁻ resonance region); the optical-potential model does not aim to.
+- Nominal `n2_n.toml` uses OPM, the committed primary source.
+- Variants `n2_n_nel_wang.toml` and `n2_n_di_lower_nel_wang.toml` (generated) use Wang BSR, spliced to OPM above 128 eV. At T_e = 30 eV about 7 % of the Maxwellian flux lies above 128 eV.
+- The Wang curve is a secondary reproduction; its fidelity to the primary PRA numbers is unverified (that paper is closed).
+
+**Smoke test (N1, 0.8 minus the electronic-excitation placeholder).** Nominal and Wang variant both run. Neither is chemistry-trustworthy, solely because of the 0.7 vibrational validity limit, which awaits an owner decision.
+
+**Run matrix implied for P5-N₂:** 2 dissociative-ionization variants × 2 N-elastic variants = 4 chemistry configs per transport candidate.
+
+**Owner decision (2026-09-26), vibrational validity domain.** The 6.47 eV mean-energy limit is removed. It was taken from the highest temperature shown in a figure, not from a boundary the source states. Laporta publish the analytical fits without an upper cutoff, and JPCRD 2023 recommends them as the vibrational-rate representation.
+- Project applicability is capped at the pre-registered N₂ domain, T_e ≤ 30 eV (45 eV mean energy).
+- This is documented as source-model applicability, **not** experimental validation. 0→1 is independently cross-checked (≤ 6 % to 30 eV); v_f = 2…10 are model-supported only.
+- `chemistry_trustworthy` = true means no reaction was evaluated outside its declared chemistry-model domain. It does not mean experimental confirmation.
+- The more consequential limitations remain carried as closure uncertainty: v = 0 only, no vibrational population kinetics, no superelastic return.

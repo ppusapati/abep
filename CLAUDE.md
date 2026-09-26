@@ -95,7 +95,16 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    **Audit 2:** vibrational excitation → **PROMOTION ROBUST** (Laporta et al. 2014 Eq. (10) fits; `audit/n2_vibrational_excitation_v1.json`).
    The margin is large at low T_e with the presently completed denominator; reaction-set completeness remains pending.
    It dominates the inelastic loss at T_e ≤ 2 eV even with the electronic channels counted, and is > 1 % up to T_e ≈ 9 eV.
-   v_f ≤ 10 carries 99.9 % of it (v_f = 1 only ~22 %). Not yet in the reaction set.
+   v_f ≤ 10 carries 99.9 % of it (v_f = 1 only ~22 %). **abep-n2n-0.7:** included as v = 0 → v_f = 1…10, from Laporta's rate fits
+   evaluated at T_e = ⅔ ε̄ (omitted v_f > 10 ≤ 0.145 % of vib power). Closure-limited: v = 0 only, no superelastic, resonant only.
+   Project applicability is capped at the pre-registered domain, T_e ≤ 30 eV (45 eV mean energy); Laporta state no upper cutoff.
+   This is source-model applicability, not experimental validation: 0→1 is cross-checked against JPCRD Table 7 (≤ 6 %), and the
+   overtones are model-supported only. `chemistry_trustworthy` means "no numerical extrapolation outside the declared model domain",
+   not "experimentally confirmed".
+   **abep-n2n-0.8:** atomic-N momentum transfer from Ragimkhanov et al. EPJD 2026 (CC BY), vector-extracted from Fig. 1b (OPM curve;
+   `propellants/sources/ragimkhanov2026_fig1b_mtcs.csv`). The Wang et al. 2014 BSR curve re-plotted in the same figure disagrees
+   materially: OPM/Wang rate 0.36 at T_e 2 eV, 0.56 at 5, 0.74 at 10, 0.96 at 30. It is carried as variant `n2_n_nel_wang.toml`
+   (plus `n2_n_di_lower_nel_wang.toml`), not resolved. Tier 1 remaining: N₂ electronic excitation (Johnson 2005 not retrievable).
    **Completeness (project decision 2026-09-26):**
    "every file in n2_n.toml exists" ≠ "chemistry complete". `PINNED.toml` stays INCOMPLETE until an omitted-process audit is done:
    - Tier 1 (before P5-N₂ scoring): 8 N₂ excitation states, N momentum transfer.
