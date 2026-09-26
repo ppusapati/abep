@@ -61,7 +61,8 @@ def test_tracker_terminal_states(tmp_path, monkeypatch):
                      {"id": "lane_b", "workflow_run": "wf1", "workflow_key": "B", "deps": []},
                      {"id": "lane_c", "workflow_run": "wf1", "workflow_key": "C", "deps": ["lane_b"]},
                      {"id": "lane_d", "workflow_run": "wf1", "workflow_key": "D", "deps": []},
-                     {"id": "lane_e", "workflow_run": "wf1", "workflow_key": "E", "deps": []}],
+                     {"id": "lane_e", "workflow_run": "wf1", "workflow_key": "E", "deps": []},
+                     {"id": "lane_g", "workflow_run": "wf1", "workflow_key": "G", "deps": []}],
            "datasets": [{"id": "ds_x", "manifest": "staged_x", "role": "O4 first stage", "escalations": []}], "follow_ons": []}
     trig = {"triggers": [{"id": "T_AC", "prerequisites": [{"id": "lane_a", "state": "verified"}, {"id": "lane_c", "state": "verified"}]},
                          {"id": "T_A", "prerequisites": [{"id": "lane_a", "state": "verified"}]},
@@ -73,7 +74,12 @@ def test_tracker_terminal_states(tmp_path, monkeypatch):
         ("verify2:B:evidence", F), ("verify2:B:rules", P), ("fix2:B", B), ("verify3:B:evidence", F), ("verify3:B:rules", P),
         ("build:C", B), ("verify1:C:evidence", P), ("verify1:C:rules", P),                       # passes, but dep B is not verified
         ("build:D", B), ("verify1:D:evidence", P), ("verify1:D:rules", None),                    # one lens still running
-        ("build:E", None)])
+        ("build:E", None), ("build:G", B), ("verify1:G:evidence", P), ("verify1:G:rules", P),
+        ("verify2:G:evidence", None), ("verify2:G:rules", None)])                                  # stale attempts, failed below
+    jf = tmp_path / "j" / "wf1" / "journal.jsonl"
+    rows = [json.loads(l) for l in jf.read_text().splitlines()]
+    stale = [r["key"] for r in rows if r.get("label", "").startswith("verify2:G")]
+    jf.write_text(jf.read_text() + "".join(json.dumps({"type": "failed", "key": k}) + "\n" for k in stale))
     fo = tmp_path / "fo"; (fo / "staged_x").mkdir(parents=True)
     (fo / "staged_x" / "structural_check.json").write_text(json.dumps({"PASS": True}))
     monkeypatch.setattr(m, "ORCH", str(orch)); monkeypatch.setattr(m, "VAL", str(tmp_path / "val"))
@@ -81,6 +87,7 @@ def test_tracker_terminal_states(tmp_path, monkeypatch):
     st = s["state"]
     assert st["lane_a"] == "verified" and st["lane_b"] == "done_open_issues" and st["lane_c"] == "verified_provisional"
     assert st["lane_d"] == "verifying" and st["lane_e"] == "building" and st["ds_x"] == "structural_pass"
+    assert st["lane_g"] == "verified"                                                          # failed stale attempts ignored
     assert s["ready"] == ["T_A", "T_O4_SCORE:ds_x"]                                            # T_AC blocked by the provisional lane
     tl = m._ledger_module()                                                                      # claims live in the v2 ledger
     tl.claim("T_A", None, {}, {}); tl.claim("T_O4_SCORE", "ds_x", {}, {})

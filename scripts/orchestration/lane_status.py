@@ -35,14 +35,20 @@ def journal_lanes(journals_dir):
         wf, path = os.path.basename(d.rstrip("/")), os.path.join(d, "journal.jsonl")
         if not os.path.isfile(path):
             continue
-        lab, res = {}, {}
+        lab, res, failed = {}, {}, set()
         for line in open(path):
             j = json.loads(line)
             if j["type"] == "started":
                 lab[j["key"]] = j.get("label", "")
+                failed.discard(j["key"])
             elif j["type"] == "result":
                 res[j["key"]] = j.get("result")
+                failed.discard(j["key"])
+            elif j["type"] == "failed":                     # an agent that errored (e.g. usage limit) is not in progress;
+                failed.add(j["key"])                        # if the run is resumed and it re-runs, a later result supersedes
         for k, label in lab.items():
+            if k in failed and k not in res:
+                continue
             got = _obj(res[k]) if k in res else None
             m = re.match(r"^(build|verify(\d+)|fix(\d+)):([A-Za-z0-9_]+)(?::(evidence|rules))?$", label)
             m_old = re.match(r"^(verify|fix|reverify):([A-Za-z0-9_]+)$", label)   # first lanes script (single lens)
