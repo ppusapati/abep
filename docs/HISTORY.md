@@ -2263,3 +2263,20 @@ Binding rules:
 Sub-decisions: D-X1 NO, D-X12 NO (retain as support), D-X2 no change, D-X3 NO, D-X4 NO, D-X5 YES (bounded: rotational > 10 eV first,
 then electronic, non-resonant vibrational, then dissociation), D-X6..10 deferred, D-X11 n/a. Reopen only on genuinely new published
 evidence. O4 (stages 3–5, escalations, disposition matrix) and Bundle 1 continue unchanged.
+
+### 2026-09-26 — O4 first stage complete (5/5 fired); Johnson-low and rot-off escalations scored; 7 further escalations launched
+All scored once through the transactional lifecycle, with the mandatory scores reproduced exactly each time. Every trigger fired.
+First stages:
+- HMS-low: 148 run-level triggers, 2 member changes.
+- HMS-high: 120 triggers; sgb-09 goes INCONCLUSIVE → FAIL_VALIDATION.
+- N₂²⁺ dication (baseline DI-lower): 532 triggers; sgb-05 and sgb-09 → FAIL_VALIDATION.
+Johnson-low escalations:
+- nel_wang: 183 triggers.
+- di_lower_nel_wang: 212 triggers.
+- The earlier di_lower escalation: 209 triggers.
+Rot-off escalations:
+- di_lower: 390 triggers; sgb-09 → FAIL.
+- nel_wang: 362 triggers; sgb-06 and sgb-09 → FAIL.
+- di_lower_nel_wang: 353 triggers; sgb-09 → FAIL.
+These are sensitivity results; v1 is unchanged. The pinned escalations of HMS-low (3), HMS-high (3) and dication (1) are running.
+A container reboot (~19:15–19:35Z) cut off the non-gating facility campaign after 36 of 1080 records; it is not rerun without the owner.
