@@ -1,0 +1,1085 @@
+{
+ "id": "cathode_integration_data_v1",
+ "module_version": "cathode_integration_v1",
+ "lane": "CATHINT, lane 19: neutralizer/cathode system integration for the three thrust architectures",
+ "created": "2026-09-26",
+ "status": "DRAFT for owner review. Evidence register for abep_sim/cathode_integration.py; no Hall prediction, no operating point.",
+ "evidence_policy": "docs/EVIDENCE.md (evidence level 1-7 = source strength; quantity_type = measured / digitized / inferred / reconstructed / model-derived / assumed). Values from sources that were not read in full are never used.",
+ "architectures": [
+  "hall_only",
+  "rf_hall",
+  "ecr_hall"
+ ],
+ "cathode_baseline": "Xe-fed LaB6 hollow cathode (RFP context: air + Xe, Hall preferred). Alternatives appear only as evidence notes.",
+ "boundary": {
+  "version": "bus_power_boundary_v1",
+  "module": "abep_sim/arch_boundary.py",
+  "cathode_components": [
+   "cathode_keeper",
+   "cathode_heater"
+  ],
+  "note": "This lane reports load-side power on cathode_keeper and cathode_heater. Bus-side conversion (efficiencies) belongs to the boundary lane; abep_sim.cathode_integration.to_boundary_ledger resolves that module lazily and refuses with a clear error when it is absent."
+ },
+ "milestones": {
+  "A": "Supported: current-continuity identity (architecture-independent), a Hall-closure-free I_d envelope, cathode Xe mass vs the RFP 40 kg limit, start-up transient structure per architecture, and the poisoning evidence gaps written as explicit conditions ('architecture X is baseline provided the cathode is demonstrated at ...').",
+  "B_needs": "admitted Hall transport closure or hardware measurement for I_d and I_beam per architecture; declared pre-ionizer/interstage circuit topology (and its net electron current if separately biased); selected cathode hardware with measured spot-mode minimum Xe flow at the required emission current; a published or measured LaB6 threshold for atomic O and the emitter-region partial pressures (shielding by the Xe flow).",
+  "C_needs": "measured start-up profile and heater/keeper power on the selected cathode; heater start-cycle qualification; insert geometry and a wear/life test at the ABEP operating point; thermal integration (abep_sim/thermal_life.py); mission Xe closure including the Xe tank and any Xe used for thruster ignition."
+ },
+ "rfp": {
+  "source_id": "rfp",
+  "thrust_min_mN": {
+   "value": 12.0,
+   "unit": "mN"
+  },
+  "thrust_max_mN": {
+   "value": 25.0,
+   "unit": "mN"
+  },
+  "power_max_W": {
+   "value": 1500.0,
+   "unit": "W",
+   "note": "'< 1.5 kW'"
+  },
+  "mass_max_kg": {
+   "value": 40.0,
+   "unit": "kg",
+   "note": "'< 40 kg' (total system mass limit)"
+  },
+  "mission_h": {
+   "value": 26000.0,
+   "unit": "h"
+  },
+  "firing_h_min": {
+   "value": 15000.0,
+   "unit": "h",
+   "note": "'> 15,000 h firing': used as the minimum"
+  },
+  "altitude_km": {
+   "value": [
+    180.0,
+    230.0
+   ],
+   "unit": "km"
+  }
+ },
+ "sources": {
+  "goebel_katz_2008": {
+   "citation": "D. M. Goebel and I. Katz, Fundamentals of Electric Propulsion: Ion and Hall Thrusters, JPL Space Science and Technology Series, Jet Propulsion Laboratory / John Wiley & Sons, 2008",
+   "url": "https://descanso.jpl.nasa.gov/SciTechBook/series1/Goebel__cmprsd_opt.pdf",
+   "sha256": "a373c8a26137b7c7cd989880c303c4f6c1f84f20a11a02770047f6ba4c249e4e",
+   "access": "open_full_text",
+   "accessed": "2026-09-26",
+   "note": "Page numbers are the printed book pages. Textbook summaries of the authors' own and cited measurements are treated as level 5 (secondary) when the primary is not read; textbook relations as level 4."
+  },
+  "goebel_2017_iepc276": {
+   "citation": "D. M. Goebel, G. Becatti, J. E. Polk and P. Guerrero, 'Life Model for Lanthanum Hexaboride Hollow Cathodes for High-Power Hall Thrusters', IEPC-2017-276, 35th International Electric Propulsion Conference, Atlanta, 2017",
+   "url": "https://electricrocket.org/IEPC/IEPC_2017_276.pdf",
+   "sha256": "8431b06c57f50de5f8571509bcf0f0ba91b66362a6b88f71b48dee9155dba402",
+   "access": "open_full_text",
+   "accessed": "2026-09-26"
+  },
+  "goebel_polk_2015_iepc43": {
+   "citation": "D. M. Goebel and J. E. Polk, 'Lanthanum Hexaboride Hollow Cathode for the Asteroid Redirect Robotic Mission 12.5 kW Hall Thruster', IEPC-2015-43/ISTS-2015-b-43, 34th International Electric Propulsion Conference, Kobe, 2015",
+   "url": "https://electricrocket.org/IEPC/IEPC-2015-43_ISTS-2015-b-43.pdf",
+   "sha256": "6f5873d4ca95496714d427b0bdb568f57043d601085d2bd8f8d5b718829e1501",
+   "access": "open_full_text",
+   "accessed": "2026-09-26"
+  },
+  "pedrini_2017_iepc365": {
+   "citation": "D. Pedrini, F. Cannelli, C. Tellini, C. Ducci, T. Misuri, F. Paganucci and M. Andrenucci, 'Hollow Cathodes for Low-Power Hall Effect Thrusters', IEPC-2017-365, 35th International Electric Propulsion Conference, Atlanta, 2017",
+   "url": "https://electricrocket.org/IEPC/IEPC_2017_365.pdf",
+   "sha256": "d98374b080642877ed0b2aa2428173b104fa4ff4a633c6dc523203c5b6f81cf6",
+   "access": "open_full_text",
+   "accessed": "2026-09-26",
+   "note": "SITAEL HC1 (0.3-1 A) and HC3 (1-3 A) LaB6 hollow cathodes: the closest current class to a < 1.5 kW Hall thruster among the sources read. Values are read from text; figures are not digitized."
+  },
+  "brabston_2025_repo": {
+   "citation": "Brabston et al., J. Propuls. Power 2025, doi:10.2514/1.B39623, Table 2 (N2 points) and Table 4 (Xe points), as frozen in this repository",
+   "files": {
+    "hallthruster_bridge/identification/brabston_p5_n2_measurement_audit_v1.json": "f93ce2c25eb0a794ff192a5a0ab0dae1448cab824642bca8eff57e27079f4397",
+    "hallthruster_bridge/cases/p5_xenon.json": "1071684dca85a60cdd097c7efaccdf3f6ac29014b796b1aa4ce54e49b0e89f85"
+   },
+   "access": "repo_frozen",
+   "accessed": "2026-09-26",
+   "note": "The cathode type used on P5 is not recorded in these repository files; only its Xe flow is used here."
+  },
+  "andreussi_2017_iepc377": {
+   "citation": "T. Andreussi, G. Cifali, V. Giannetti, A. Piragino, E. Ferrato, A. Rossodivita, M. Andrenucci, J. Longo and L. Walpot, 'Development and Experimental Validation of a Hall Effect Thruster RAM-EP Concept', IEPC-2017-377, 35th International Electric Propulsion Conference, Atlanta, 2017",
+   "url": "https://electricrocket.org/IEPC/IEPC_2017_377.pdf",
+   "sha256": "2bc53d83320297735ce7276ba799fd713a1c7c4d629f522f790e18637c8f5398",
+   "access": "open_full_text",
+   "accessed": "2026-09-26"
+  },
+  "suzuki_2024_jap": {
+   "citation": "Suzuki, Cho, Watanabe and Kinefuchi, 'Plume mode instability enhanced by emitter surface poisoning in hollow cathode', J. Appl. Phys. 135, 103301 (2024), doi:10.1063/5.0188080 (CC BY 4.0)",
+   "url": "https://api.crossref.org/works/10.1063/5.0188080",
+   "access": "abstract_only",
+   "accessed": "2026-09-26",
+   "note": "Abstract read through the Crossref record; the publisher page returned HTTP 403 to the fetch tool, so the full text was not read. Qualitative use only."
+  },
+  "lafferty_1951": {
+   "citation": "J. M. Lafferty, 'Boride cathodes', J. Appl. Phys. 22(3), 299-309 (1951), doi:10.1063/1.1699946 (DOI as listed in IEPC-2017-276, ref. 9)",
+   "access": "not_accessed",
+   "used_for_values": false,
+   "note": "Primary source of A = 29 A/cm2/K2, phi = 2.66-2.67 eV and the evaporation fit; used here only through the secondary sources that quote it."
+  },
+  "gallagher_1969": {
+   "citation": "H. E. Gallagher, 'Poisoning of LaB6 cathodes', J. Appl. Phys. 40(1), 44-51 (1969), doi:10.1063/1.1657092 (DOI as listed in IEPC-2017-276, ref. 11)",
+   "access": "not_accessed",
+   "used_for_values": false
+  },
+  "goebel_watkins_jameson_2007": {
+   "citation": "D. M. Goebel, R. M. Watkins and K. K. Jameson, 'LaB6 hollow cathodes for ion and Hall thrusters', J. Propuls. Power 23(3), 552-558 (2007), doi:10.2514/1.25475 (DOI as listed in IEPC-2017-276, ref. 13)",
+   "access": "not_accessed",
+   "used_for_values": false,
+   "note": "Origin of Goebel & Katz Fig. 6-49 (O2 / water poisoning of LaB6 vs dispenser cathodes)."
+  },
+  "goebel_jameson_hofer_2012": {
+   "citation": "D. M. Goebel, K. K. Jameson and R. R. Hofer, 'Hall Thruster Cathode Flow Impact on Coupling Voltage and Cathode Life', J. Propuls. Power 28(2), 355-363 (2012) (as cited in IEPC-2017-365, ref. 3)",
+   "access": "not_accessed",
+   "used_for_values": false
+  },
+  "rfp": {
+   "citation": "DRDO TDF RFP DTDF/06/13516/DSP/ABEP/X/L/M/01, envelope as recorded in CLAUDE.md and abep_sim/constants.py (RFPConstraints, 'Part III Para 2')",
+   "access": "repo_frozen"
+  },
+  "frozen_atmosphere": {
+   "citation": "Frozen NRLMSIS 2.1 dataset abep_sim/data/atmosphere_msis21_v1.* read through abep_sim.atmosphere.atmosphere() and orbital_velocity()",
+   "access": "repo_frozen"
+  },
+  "repo_constants": {
+   "citation": "abep_sim/constants.py (E_CHARGE, AMU, K_B exact CODATA values; M_SPECIES['O'] = 16.0 u)",
+   "access": "repo_frozen"
+  },
+  "lane_derivation": {
+   "citation": "CATHINT lane 19: derivation or assumption made in this data file / abep_sim/cathode_integration.py (not a literature value)",
+   "access": "lane_derivation"
+  }
+ },
+ "relations": {
+  "current_continuity": {
+   "expression": "I_emit = I_d + I_keeper + I_interstage ; requires I_beam <= I_d + I_interstage",
+   "source_id": "goebel_katz_2008",
+   "locator": "Sec. 7.2.3, p. 339, Eqs. (7.2-24) to (7.2-26): the Hall beam is charge neutral, I_d = I_ea - I_ia = I_e + I_ic (keeper current neglected), so I_d is approximately the cathode emission; keeper and interstage terms added by Kirchhoff (lane derivation)",
+   "evidence_level": 4,
+   "quantity_type": "model-derived (circuit identity)",
+   "function": "electron_current_budget",
+   "applicability": "floating spacecraft, current-free plume, steady state; ambient-plasma current collection neglected"
+  },
+  "discharge_current_envelope": {
+   "expression": "(T^2/(2 mdot) - P_other)/V_d <= I_d <= P_available_for_discharge / V_d",
+   "source_id": "goebel_katz_2008",
+   "locator": "Eq. (7.3-3), p. 341: eta_T = T^2/(2 mdot_p P_in) <= 1 with P_in = I_d V_d + P_other (rearranged by this lane)",
+   "evidence_level": 4,
+   "quantity_type": "model-derived (energy/momentum conservation)",
+   "function": "discharge_current_bounds_A",
+   "applicability": "any thruster; mdot is the total exhaust mass flow; P_other must include every power that can reach the jet"
+  },
+  "richardson_dushman": {
+   "expression": "J = A T^2 exp(-e (phi0 + alpha T)/(k T))",
+   "source_id": "goebel_katz_2008",
+   "locator": "Sec. 6.3, p. 251, Eqs. (6.3-1) to (6.3-3); parameter sets in Table 6-1, p. 252",
+   "evidence_level": 4,
+   "quantity_type": "model-derived (thermionic emission law with fitted constants)",
+   "function": "richardson_current_density_A_cm2",
+   "applicability": "Schottky enhancement (Eq. 6.3-4) and plasma back-flow neglected, as in the IEPC-2017-276 life model (p. 5)"
+  },
+  "lafferty_evaporation": {
+   "expression": "W = 10^(C - B/T) / sqrt(T)  [g cm^-2 s^-1]",
+   "source_id": "goebel_2017_iepc276",
+   "locator": "Eq. (2), p. 5; constants in the Nomenclature, p. 1 (B = 36,850 K, C = 13); Lafferty's fit to polycrystalline LaB6 in vacuum",
+   "evidence_level": 5,
+   "quantity_type": "measured (Lafferty 1951, not read) -> fitted model -> transcribed from the secondary source",
+   "function": "lafferty_evaporation_rate_g_cm2_s",
+   "applicability": "LaB6 in vacuum. IEPC-2017-276 found the net loss in a 4000 h wear test below this rate (redeposition, pp. 6-7)"
+  },
+  "insert_life": {
+   "expression": "life = rho w_usable / (W(T_uniform + dT_peak) (1 - f_redep))",
+   "source_id": "goebel_katz_2008",
+   "locator": "Sec. 6.8.4, pp. 302-303 (evaporation-limited life; bore growth lowers T with time; 90 % of the insert assumed usable); non-uniform temperature and redeposition from IEPC-2017-276 pp. 4-7",
+   "evidence_level": 4,
+   "quantity_type": "model-derived (constant temperature and area simplification by this lane)",
+   "function": "evaporation_limited_life_h",
+   "applicability": "conservative against bore growth; not conservative against axial temperature peaking unless dT_peak covers it"
+  },
+  "flow_split": {
+   "expression": "mdot_p = mdot_a + mdot_c ; eta_c = mdot_a/(mdot_a + mdot_c)",
+   "source_id": "goebel_katz_2008",
+   "locator": "Sec. 7.3.1, pp. 341-342, Eqs. (7.3-4), (7.3-5)",
+   "evidence_level": 4,
+   "quantity_type": "model-derived (definition)",
+   "function": "cathode_xe_flow_mg_s",
+   "applicability": "the 'fraction_of_anode_flow' law is only a bookkeeping form; the Xe-thruster fraction is not transferable to an air-fed anode"
+  },
+  "thruster_input_power": {
+   "expression": "P_in = P_d + P_k + P_mag (P_k normally zero during operation)",
+   "source_id": "goebel_katz_2008",
+   "locator": "Eq. (7.3-6), p. 342; heater off once the discharge supply is on and keeper normally used only during start-up, Sec. 7.2.3, p. 337",
+   "evidence_level": 4,
+   "quantity_type": "model-derived (definition) + measured practice",
+   "function": "steady_cathode_boundary_loads_W",
+   "applicability": "keeper may be needed in steady state below the self-heating current (IEPC-2015-43 pp. 4-5; IEPC-2017-365 p. 8)"
+  },
+  "mission_xe": {
+   "expression": "m_Xe = mdot_c t_fire + mdot_ign t_ign N_starts + mdot_standby t_standby",
+   "source_id": "lane_derivation",
+   "locator": "mass = flow x time",
+   "evidence_level": 4,
+   "quantity_type": "model-derived (mass balance)",
+   "function": "mission_cathode_xe_kg",
+   "applicability": "cathode Xe only; anode Xe (including any Xe used for thruster ignition) belongs to the Xe budget lane"
+  },
+  "flux_equivalent_pressure": {
+   "expression": "p = Gamma sqrt(2 pi m k T_ref)",
+   "source_id": "goebel_katz_2008",
+   "locator": "Sec. 3.4, p. 45, Eqs. (3.4-8) and (3.4-12): one-sided flux n v_mean/4, v_mean = sqrt(8kT/(pi m)); with p = n k T",
+   "evidence_level": 4,
+   "quantity_type": "model-derived (kinetic theory)",
+   "function": "flux_equivalent_pressure_Pa",
+   "applicability": "compares a directed flux with a diode-test partial pressure only for the SAME species"
+  },
+  "startup_transient": {
+   "expression": "piecewise-constant load-side power per phase; peak and energy per boundary component",
+   "source_id": "goebel_2017_iepc276",
+   "locator": "pp. 3-4 (heater 18-20 min; gas flow, 150 V keeper, keeper current regulated to 2 A; heater off when the discharge starts; keeper off and floating once the anode current is at its nominal value); Goebel & Katz Sec. 7.2.3 p. 337; IEPC-2015-43 p. 4",
+   "evidence_level": 3,
+   "quantity_type": "measured (laboratory start-up procedure)",
+   "function": "startup_transient",
+   "applicability": "phase order sourced for a Hall/cathode start; phase powers and durations are inputs"
+  },
+  "o2_poisoning_screen": {
+   "expression": "lookup of (p_O2 at emitter, T_emitter) against poisoning_evidence_points_O2",
+   "source_id": "goebel_katz_2008",
+   "locator": "Sec. 6.8.5, pp. 304-306, Fig. 6-49 (from Goebel, Watkins & Jameson 2007)",
+   "evidence_level": 5,
+   "quantity_type": "measured (diode tests, primary not read) -> secondary statements",
+   "function": "oxygen_poisoning_screen",
+   "applicability": "molecular O2 only. No accessed source gives a LaB6 threshold for atomic O or N2"
+  }
+ },
+ "parameters": {
+  "xe_mg_s_per_sccm": {
+   "value": 0.0983009,
+   "unit": "mg/s per sccm",
+   "source_id": "goebel_katz_2008",
+   "locator": "Appendix B, Eq. (B-5), p. 464 (M_a = 131.293, compressibility correction 0.9931468)",
+   "evidence_level": 4,
+   "quantity_type": "model-derived (unit conversion with the source's compressibility factor)",
+   "uncertainty": "as printed (7 significant figures)",
+   "applicability_domain": "Xe, STP reference 273.15 K / 1 atm",
+   "validation_status": "textbook conversion",
+   "transformation_chain": "source constants -> printed coefficient -> used as is"
+  },
+  "xe_A_eq_per_sccm": {
+   "value": 0.0722399,
+   "unit": "A per sccm",
+   "source_id": "goebel_katz_2008",
+   "locator": "Appendix B, Eq. (B-5), p. 464",
+   "evidence_level": 4,
+   "quantity_type": "model-derived (unit conversion)",
+   "uncertainty": "as printed",
+   "applicability_domain": "Xe, singly charged equivalent current",
+   "validation_status": "textbook conversion",
+   "transformation_chain": "printed coefficient -> used as is"
+  },
+  "lab6_richardson_A_lafferty": {
+   "value": 29.0,
+   "unit": "A/cm2/K2",
+   "source_id": "goebel_2017_iepc276",
+   "locator": "p. 5 ('Lafferty determined that for a LaB6 surface in vacuum, A = 29 A/cm2K2'); same value as Goebel & Katz Table 6-1 (D = 29, ref. [13]), p. 252",
+   "evidence_level": 5,
+   "quantity_type": "measured (Lafferty 1951, not read) -> fitted constant -> transcribed",
+   "uncertainty": "not stated; the work function depends on surface stoichiometry LaB4/LaB6/LaB9 (IEPC-2017-276 p. 3-4; Goebel & Katz p. 255)",
+   "applicability_domain": "polycrystalline LaB6 surface in vacuum",
+   "validation_status": "used by JPL life models (IEPC-2017-276)",
+   "transformation_chain": "Lafferty thermionic data -> fit -> quoted by IEPC-2017-276 -> used as is",
+   "dossier_ref": "lab6.D.lafferty"
+  },
+  "lab6_work_function_lafferty_iepc2017": {
+   "value": 2.67,
+   "unit": "eV",
+   "source_id": "goebel_2017_iepc276",
+   "locator": "p. 5 (with A = 29)",
+   "evidence_level": 5,
+   "quantity_type": "measured (Lafferty 1951, not read) -> fitted constant -> transcribed",
+   "uncertainty": "Goebel & Katz Table 6-1 quotes 2.66 eV for the same reference (0.01 eV discrepancy between secondary sources, kept)",
+   "applicability_domain": "polycrystalline LaB6 in vacuum",
+   "validation_status": "secondary",
+   "transformation_chain": "as for lab6_richardson_A_lafferty"
+  },
+  "lab6_work_function_lafferty_gk": {
+   "value": 2.66,
+   "unit": "eV",
+   "source_id": "goebel_katz_2008",
+   "locator": "Table 6-1, p. 252 (LaB6 [13], D = 29)",
+   "evidence_level": 5,
+   "quantity_type": "measured (Lafferty 1951, not read) -> fitted constant -> transcribed",
+   "uncertainty": "see lab6_work_function_lafferty_iepc2017",
+   "applicability_domain": "polycrystalline LaB6 in vacuum",
+   "validation_status": "secondary",
+   "transformation_chain": "Lafferty -> Table 6-1 -> used as is",
+   "dossier_ref": "lab6.wf.lafferty"
+  },
+  "lab6_richardson_A_universal_gk": {
+   "value": 120.0,
+   "unit": "A/cm2/K2",
+   "source_id": "goebel_katz_2008",
+   "locator": "Table 6-1, p. 252 (LaB6 [8], used with the T-linear work function)",
+   "evidence_level": 5,
+   "quantity_type": "measured (ref. [8], not read) -> fitted constants -> transcribed",
+   "uncertainty": "not stated",
+   "applicability_domain": "LaB6",
+   "validation_status": "secondary",
+   "transformation_chain": "ref. [8] -> Table 6-1 -> used as is"
+  },
+  "lab6_work_function_T_linear_phi0_gk": {
+   "value": 2.66,
+   "unit": "eV",
+   "source_id": "goebel_katz_2008",
+   "locator": "Table 6-1, p. 252 (phi = 2.66 + 1.23e-4 T, LaB6 [8])",
+   "evidence_level": 5,
+   "quantity_type": "measured (ref. [8], not read) -> fitted constants -> transcribed",
+   "uncertainty": "not stated",
+   "applicability_domain": "LaB6",
+   "validation_status": "secondary",
+   "transformation_chain": "ref. [8] -> Table 6-1 -> used as is"
+  },
+  "lab6_work_function_T_linear_alpha_gk": {
+   "value": 0.000123,
+   "unit": "eV/K",
+   "source_id": "goebel_katz_2008",
+   "locator": "Table 6-1, p. 252",
+   "evidence_level": 5,
+   "quantity_type": "measured (ref. [8], not read) -> fitted constants -> transcribed",
+   "uncertainty": "not stated",
+   "applicability_domain": "LaB6",
+   "validation_status": "secondary",
+   "transformation_chain": "ref. [8] -> Table 6-1 -> used as is"
+  },
+  "lab6_evaporation_B_lafferty": {
+   "value": 36850.0,
+   "unit": "K",
+   "source_id": "goebel_2017_iepc276",
+   "locator": "Nomenclature p. 1 and text below Eq. (2), p. 5",
+   "evidence_level": 5,
+   "quantity_type": "measured (Lafferty evaporation data, not read) -> fitted model -> transcribed",
+   "uncertainty": "not stated; IEPC-2017-276 wear test: predicted 165.5 mg at 2065 h vs 152 mg measured; 302 mg predicted vs 226 mg measured at 4000 h (pp. 6-7)",
+   "applicability_domain": "polycrystalline LaB6 in vacuum",
+   "validation_status": "compared with one 4000 h wear test (1.5-cm cathode, 25 A)",
+   "transformation_chain": "Lafferty data -> Lafferty fit -> quoted in IEPC-2017-276 -> used as is"
+  },
+  "lab6_evaporation_C_lafferty": {
+   "value": 13.0,
+   "unit": "1",
+   "source_id": "goebel_2017_iepc276",
+   "locator": "Nomenclature p. 1 and text below Eq. (2), p. 5",
+   "evidence_level": 5,
+   "quantity_type": "measured (Lafferty evaporation data, not read) -> fitted model -> transcribed",
+   "uncertainty": "see lab6_evaporation_B_lafferty",
+   "applicability_domain": "polycrystalline LaB6 in vacuum",
+   "validation_status": "see lab6_evaporation_B_lafferty",
+   "transformation_chain": "as for B"
+  },
+  "lab6_reference_current_densities": {
+   "value": [
+    5.0,
+    10.0
+   ],
+   "unit": "A/cm2",
+   "source_id": "goebel_katz_2008",
+   "locator": "p. 306 ('LaB6 cathodes emitting at currents of 5 to 10 A/cm2 to produce pure oxygen plasmas'); p. 254 ('will emit over 10 A/cm2 at a temperature of 1650 C')",
+   "evidence_level": 5,
+   "quantity_type": "measured (reported operating range)",
+   "uncertainty": "range statement",
+   "applicability_domain": "LaB6 emitters (the authors' cathodes)",
+   "validation_status": "secondary",
+   "transformation_chain": "text -> used as tabulation points only (not an operating point of any Vyovrinda hardware)"
+  },
+  "lab6_10Acm2_temperature_statement_C": {
+   "value": 1650.0,
+   "unit": "degC",
+   "source_id": "goebel_katz_2008",
+   "locator": "p. 254 ('Polycrystalline LaB6 cathodes have a work function of about 2.67 eV ... and will emit over 10 A/cm2 at a temperature of 1650 C'); same sentence in IEPC-2017-276 p. 2",
+   "evidence_level": 5,
+   "quantity_type": "measured (statement)",
+   "uncertainty": "'over 10 A/cm2'",
+   "applicability_domain": "polycrystalline LaB6",
+   "validation_status": "used here as a consistency check of the Lafferty constants",
+   "transformation_chain": "text -> +273.15 K",
+   "dossier_ref": "lab6.t.goebel_10Acm2"
+  },
+  "lab6_usable_fraction_gk": {
+   "value": 0.9,
+   "unit": "1",
+   "source_id": "goebel_katz_2008",
+   "locator": "Sec. 6.8.4, p. 303 ('Assuming that 90% of the insert can be evaporated')",
+   "evidence_level": 5,
+   "quantity_type": "assumed (by the source)",
+   "uncertainty": "an assumption, not a measurement",
+   "applicability_domain": "Goebel & Katz Fig. 6-47 life estimates",
+   "validation_status": "none",
+   "transformation_chain": "text -> recorded; the module takes usable thickness explicitly"
+  },
+  "lab6_redeposition_fraction_1p5cm_25A": {
+   "value": 0.6,
+   "unit": "1",
+   "source_id": "goebel_2017_iepc276",
+   "locator": "pp. 6-7 (model reproduces the 68.5 mg loss of the second 2000 h if 60 % of the evaporated material is redeposited)",
+   "evidence_level": 3,
+   "quantity_type": "inferred (life model matched to measured insert mass loss)",
+   "uncertainty": "single wear test; outgassing and a possible LaB4 surface also lower the loss (p. 8)",
+   "applicability_domain": "1.5-cm LaB6 cathode, 3-mm orifice, 25 A, 14.8 sccm Xe, 2000-4000 h",
+   "validation_status": "one wear test",
+   "transformation_chain": "measured mass loss -> model fit by the source -> recorded; not transferable to a small cathode without evidence"
+  },
+  "p5_cathode_xe_flow_mg_s": {
+   "value": 0.44,
+   "unit": "mg/s",
+   "source_id": "brabston_2025_repo",
+   "locator": "Table 2 (N1-N5) and Table 4 (Xe1-Xe3), constant setpoint; raw I_d = P_d/V_d 7.40-8.59 A (Xe) and 13.28-17.45 A (N2)",
+   "evidence_level": 3,
+   "quantity_type": "measured (flow setpoint as tabulated)",
+   "uncertainty": "as tabulated; a setpoint, not a minimum-flow measurement",
+   "applicability_domain": "P5 (3-5 kW class) with its own cathode; anode 5.0-5.4 mg/s",
+   "validation_status": "reported test condition",
+   "transformation_chain": "Table -> repo audit JSON -> used as is",
+   "dossier_ref": "sys.p5.cathode_xe_flow"
+  },
+  "hc1_design_flow_range_mg_s": {
+   "value": [
+    0.08,
+    0.5
+   ],
+   "unit": "mg/s",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "abstract p. 1 and Sec. IV.A p. 5 (steady state, 0.3-1 A design current)",
+   "evidence_level": 3,
+   "quantity_type": "measured (design operating range stated by the developer)",
+   "uncertainty": "range statement",
+   "applicability_domain": "SITAEL HC1 LaB6, 0.3-1 A",
+   "validation_status": "developer characterization",
+   "transformation_chain": "text -> used as is"
+  },
+  "hc3_design_flow_range_mg_s": {
+   "value": [
+    0.08,
+    1.0
+   ],
+   "unit": "mg/s",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "Sec. V, p. 8 (0.08-1 mg/s at 1-3 A); the abstract (p. 1) states 0.08-0.5 mg/s for HC3 (internal inconsistency kept)",
+   "evidence_level": 3,
+   "quantity_type": "measured (design operating range stated by the developer)",
+   "uncertainty": "upper end 0.5 or 1.0 mg/s depending on the page",
+   "applicability_domain": "SITAEL HC3 LaB6, 1-3 A",
+   "validation_status": "developer characterization",
+   "transformation_chain": "text -> used as is"
+  },
+  "hc3_diode_spot_mode_min_flow_mg_s": {
+   "value": 0.6,
+   "unit": "mg/s",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "Sec. V, p. 9 ('A minimum mass flow rate of 0.6 mg/s Xe was needed to operate the cathode in the range of discharge current 2.5-4 A in spot mode, with floating keeper')",
+   "evidence_level": 3,
+   "quantity_type": "measured",
+   "uncertainty": "not stated",
+   "applicability_domain": "HC3, diode mode (anode plate 20 mm downstream), 2.5-4 A, no thruster magnetic field, Xe only",
+   "validation_status": "single cathode",
+   "transformation_chain": "text -> used as is"
+  },
+  "hc3_endurance_flow_mg_s": {
+   "value": 0.5,
+   "unit": "mg/s",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "Sec. V, p. 9 (150 h endurance with an anode plate at 4 A and 0.5 mg/s Xe)",
+   "evidence_level": 3,
+   "quantity_type": "measured (test condition)",
+   "uncertainty": "not stated",
+   "applicability_domain": "HC3, diode mode, 4 A",
+   "validation_status": "150 h test",
+   "transformation_chain": "text -> used as is"
+  },
+  "hc1_diode_flow_mg_s": {
+   "value": 0.8,
+   "unit": "mg/s",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "Sec. IV.B, p. 7 (floating keeper, anode 1.25-1.5 A at ~40 V; 'At mass flow rates lower than 0.8 mg/s, the cathode transitioned to the noisy plume mode'); heaterless HC1 200 h at 1.25 A and 0.8 mg/s, p. 8",
+   "evidence_level": 3,
+   "quantity_type": "measured",
+   "uncertainty": "not stated",
+   "applicability_domain": "HC1, diode mode, 1.25-1.5 A",
+   "validation_status": "single cathode",
+   "transformation_chain": "text -> used as is"
+  },
+  "xe_het_cathode_flow_fraction_range": {
+   "value": [
+    0.07,
+    0.1
+   ],
+   "unit": "1",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "Sec. I, p. 2 ('the cathode mass flow rate in xenon HETs is comprised between 7 and 10% of the anode mass flow rate', citing Goebel, Jameson & Hofer 2012)",
+   "evidence_level": 5,
+   "quantity_type": "measured (typical practice, secondary statement)",
+   "uncertainty": "range statement",
+   "applicability_domain": "xenon-fed Hall thrusters; NOT transferable to an air-fed anode (the cathode flow is set by cathode physics, not by the anode gas)",
+   "validation_status": "secondary",
+   "transformation_chain": "Goebel, Jameson & Hofer 2012 (not read) -> Pedrini 2017 -> recorded"
+  },
+  "cathode_power_fraction_low_power_het": {
+   "value": 0.2,
+   "unit": "1",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "Sec. I, p. 2 ('the cathode power consumption can reach 20% of the available power', citing Albertoni et al. IEPC-2013-137)",
+   "evidence_level": 5,
+   "quantity_type": "measured (upper-end statement, secondary)",
+   "uncertainty": "upper-end statement",
+   "applicability_domain": "low-power (< 500 W) Hall thrusters",
+   "validation_status": "secondary",
+   "transformation_chain": "text -> recorded"
+  },
+  "hc1_heater_power_W": {
+   "value": [
+    45.0,
+    60.0
+   ],
+   "unit": "W",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "Sec. IV.A, p. 5 (heating transient, Fig. 6b)",
+   "evidence_level": 3,
+   "quantity_type": "measured ('about')",
+   "uncertainty": "'about'; emitter thermocouple limited the maximum temperature",
+   "applicability_domain": "SITAEL HC1 (0.3-1 A)",
+   "validation_status": "developer test",
+   "transformation_chain": "text -> paired with hc1_heating_time_s"
+  },
+  "hc1_heating_time_s": {
+   "value": [
+    600.0,
+    200.0
+   ],
+   "unit": "s",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "Sec. IV.A, p. 5 (about 600 s at about 45 W, about 200 s at 60 W, to an emitter temperature of about 1460 K)",
+   "evidence_level": 3,
+   "quantity_type": "measured ('about')",
+   "uncertainty": "'about'",
+   "applicability_domain": "SITAEL HC1",
+   "validation_status": "developer test",
+   "transformation_chain": "text -> paired with hc1_heater_power_W"
+  },
+  "hc1_ignition_keeper_voltage_V": {
+   "value": [
+    45.0,
+    50.0,
+    800.0
+   ],
+   "unit": "V",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "Sec. IV.B, pp. 6-7 (45-50 V with ~45 W heater; up to 800 V heaterless, with 1 mg/s)",
+   "evidence_level": 3,
+   "quantity_type": "measured",
+   "uncertainty": "not stated",
+   "applicability_domain": "SITAEL HC1",
+   "validation_status": "120-ignition test and > 350 ignitions",
+   "transformation_chain": "text -> recorded"
+  },
+  "hc3_ignition_heater_power_W": {
+   "value": 60.0,
+   "unit": "W",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "Sec. V, p. 8 (about 60 W heater allowed ignitions below 300 V keeper at 0.4-0.8 mg/s; heaterless needed up to 700 V and 1-2 mg/s)",
+   "evidence_level": 3,
+   "quantity_type": "measured ('about')",
+   "uncertainty": "'about'; first-generation heater",
+   "applicability_domain": "SITAEL HC3 (1-3 A)",
+   "validation_status": "about 60 ignitions",
+   "transformation_chain": "text -> recorded"
+  },
+  "hc1_keeper_only_power_W": {
+   "value": [
+    9.0,
+    20.0
+   ],
+   "unit": "W",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "Sec. IV.B, p. 7 (keeper-only operation, 0.3-1.5 A, 30 to 15 V)",
+   "evidence_level": 3,
+   "quantity_type": "measured",
+   "uncertainty": "range",
+   "applicability_domain": "keeper used as the only anode (stand-alone), not a thruster-coupled keeper",
+   "validation_status": "developer test",
+   "transformation_chain": "text -> recorded"
+  },
+  "hc3_keeper_only_power_W": {
+   "value": [
+    25.0,
+    60.0
+   ],
+   "unit": "W",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "Sec. V, p. 8 (keeper discharge, 14-35 V)",
+   "evidence_level": 3,
+   "quantity_type": "measured",
+   "uncertainty": "range",
+   "applicability_domain": "keeper used as the only anode (stand-alone)",
+   "validation_status": "developer test",
+   "transformation_chain": "text -> recorded"
+  },
+  "hc1_msht100_keeper_current_A": {
+   "value": 0.5,
+   "unit": "A",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "Sec. IV.B, p. 8 (350 h endurance with MSHT100 on Xe with a keeper current of 0.5 A)",
+   "evidence_level": 3,
+   "quantity_type": "measured (test condition)",
+   "uncertainty": "not stated",
+   "applicability_domain": "HC1 coupled to a 100 W-class Hall thruster",
+   "validation_status": "350 h test",
+   "transformation_chain": "text -> recorded (evidence that a steady keeper current is used at low discharge current)"
+  },
+  "hc1_hc3_predicted_life_h": {
+   "value": 10000.0,
+   "unit": "h",
+   "source_id": "pedrini_2017_iepc365",
+   "locator": "abstract p. 1; Sec. IV.A p. 5; Sec. V p. 8 ('higher than 10^4 hours', from emitter evaporation in the developer's model)",
+   "evidence_level": 3,
+   "quantity_type": "model-derived (lower bound stated by the developer)",
+   "uncertainty": "model; the paper notes orifice clogging and ion bombardment may shorten life (p. 3)",
+   "applicability_domain": "HC1, HC3",
+   "validation_status": "not life-tested to that duration in the accessed paper",
+   "transformation_chain": "text -> recorded"
+  },
+  "jpl_h6_lab6_heater_W": {
+   "value": 120.0,
+   "unit": "W",
+   "source_id": "goebel_polk_2015_iepc43",
+   "locator": "Sec. 4, p. 3 (0.63-cm-dia. LaB6 cathode of the H6: 'routinely provides 120 W of heater power', over 1000 starts)",
+   "evidence_level": 3,
+   "quantity_type": "measured (routine operation)",
+   "uncertainty": "not stated",
+   "applicability_domain": "0.63-cm LaB6 cathode, ~6 kW Hall thruster",
+   "validation_status": "> 1000 starts",
+   "transformation_chain": "text -> recorded"
+  },
+  "jpl_h6_heater_starts_min": {
+   "value": 1000.0,
+   "unit": "1",
+   "source_id": "goebel_polk_2015_iepc43",
+   "locator": "Sec. 4, p. 3 ('has accumulated over 1000 starts to date')",
+   "evidence_level": 3,
+   "quantity_type": "measured (count, lower bound)",
+   "uncertainty": "lower bound",
+   "applicability_domain": "Al2O3-insulated Ta sheathed heater of the H6 LaB6 cathode",
+   "validation_status": "laboratory",
+   "transformation_chain": "text -> recorded"
+  },
+  "jpl_1p5cm_heater_max_W": {
+   "value": 300.0,
+   "unit": "W",
+   "source_id": "goebel_2017_iepc276",
+   "locator": "p. 3 ('capable of providing up to 300 W of heater power'); IEPC-2015-43 p. 3",
+   "evidence_level": 3,
+   "quantity_type": "measured (hardware capability)",
+   "uncertainty": "capability, not the used value",
+   "applicability_domain": "1.5-cm LaB6 cathode (HERMeS class)",
+   "validation_status": "laboratory",
+   "transformation_chain": "text -> recorded"
+  },
+  "jpl_1p5cm_preheat_min": {
+   "value": [
+    18.0,
+    20.0
+   ],
+   "unit": "min",
+   "source_id": "goebel_2017_iepc276",
+   "locator": "p. 3 ('heater is then turned on at typically 13 A for 18 to 20 minutes')",
+   "evidence_level": 3,
+   "quantity_type": "measured (procedure)",
+   "uncertainty": "typical",
+   "applicability_domain": "1.5-cm LaB6 cathode",
+   "validation_status": "laboratory procedure",
+   "transformation_chain": "text -> recorded"
+  },
+  "jpl_ignition_keeper_voltage_V": {
+   "value": 150.0,
+   "unit": "V",
+   "source_id": "goebel_polk_2015_iepc43",
+   "locator": "Sec. 5, p. 4 ('applying 150 V to the keeper electrode'); same in IEPC-2017-276 p. 3",
+   "evidence_level": 3,
+   "quantity_type": "measured (procedure)",
+   "uncertainty": "typical",
+   "applicability_domain": "1.5-cm LaB6 cathode",
+   "validation_status": "laboratory procedure",
+   "transformation_chain": "text -> recorded"
+  },
+  "jpl_ignition_keeper_current_A": {
+   "value": 2.0,
+   "unit": "A",
+   "source_id": "goebel_polk_2015_iepc43",
+   "locator": "Sec. 5, p. 4 ('The keeper current is typically regulated to 2 A'); keeper off once the anode current exceeded 10 A",
+   "evidence_level": 3,
+   "quantity_type": "measured (procedure)",
+   "uncertainty": "typical",
+   "applicability_domain": "1.5-cm LaB6 cathode",
+   "validation_status": "laboratory procedure",
+   "transformation_chain": "text -> recorded"
+  },
+  "jpl_keeper_voltage_after_ignition_V": {
+   "value": [
+    5.0,
+    15.0
+   ],
+   "unit": "V",
+   "source_id": "goebel_polk_2015_iepc43",
+   "locator": "Sec. 5, p. 4 (keeper voltage falls to 5-15 V depending on gas flow and discharge current); floating keeper 5-20 V in IEPC-2017-276 p. 4",
+   "evidence_level": 3,
+   "quantity_type": "measured (range)",
+   "uncertainty": "range",
+   "applicability_domain": "1.5-cm LaB6 cathode",
+   "validation_status": "laboratory procedure",
+   "transformation_chain": "text -> recorded"
+  },
+  "jpl_1p5cm_min_current_without_keeper_A": {
+   "value": 7.5,
+   "unit": "A",
+   "source_id": "goebel_polk_2015_iepc43",
+   "locator": "Sec. 5, pp. 4-5 (minimum stable current without keeper 7.5 A; below 5 A the cathode stopped unless keeper currents above 2 A were used: insufficient self-heating)",
+   "evidence_level": 3,
+   "quantity_type": "measured",
+   "uncertainty": "not stated",
+   "applicability_domain": "1.5-cm LaB6 cathode (sized for 7.5-40 A): an oversized cathode needs steady keeper power at low current",
+   "validation_status": "laboratory",
+   "transformation_chain": "text -> recorded"
+  },
+  "gk_keeper_ignition_voltages_V": {
+   "value": [
+    50.0,
+    150.0,
+    300.0,
+    600.0
+   ],
+   "unit": "V",
+   "source_id": "goebel_katz_2008",
+   "locator": "Sec. 6.10, pp. 310-311 (standard practice: DC keeper 50-150 V plus pulsed 300-600 V; LaB6 cathodes with large orifices ignite with 100-500 V)",
+   "evidence_level": 5,
+   "quantity_type": "measured (practice statement)",
+   "uncertainty": "ranges",
+   "applicability_domain": "hollow cathodes",
+   "validation_status": "secondary",
+   "transformation_chain": "text -> recorded ([DC low, DC high, pulse low, pulse high])"
+  },
+  "o2_in_xe_feed_ppm_1800h": {
+   "value": 10.0,
+   "unit": "ppm",
+   "source_id": "goebel_2017_iepc276",
+   "locator": "p. 2 ('1800-hour test of an identical cathode using a propellant grade xenon that contained 10 ppm oxygen ... The cathodes ran normally for the full duration')",
+   "evidence_level": 3,
+   "quantity_type": "measured (qualitative outcome at a stated impurity level)",
+   "uncertainty": "outcome only; internal pressure not stated so no partial pressure follows",
+   "applicability_domain": "1.5-cm LaB6 cathode (the discharge current of this test is not stated in the accessed sentence)",
+   "validation_status": "one test",
+   "transformation_chain": "text -> recorded"
+  },
+  "poisoning_flux_equivalence_T_ref_K": {
+   "value": 300.0,
+   "unit": "K",
+   "source_id": "lane_derivation",
+   "locator": "assumption: room-temperature gas in the diode poisoning tests (the accessed sources do not state the gas temperature)",
+   "evidence_level": 7,
+   "quantity_type": "assumed",
+   "uncertainty": "unknown; p_equiv scales as sqrt(T_ref)",
+   "applicability_domain": "flux-equivalent pressure only",
+   "validation_status": "none",
+   "transformation_chain": "lane assumption"
+  },
+  "atomic_oxygen_mass_kg": {
+   "value": 2.65686250656e-26,
+   "unit": "kg",
+   "source_id": "repo_constants",
+   "locator": "M_SPECIES['O'] = 16.0 u x AMU (1.66053906660e-27 kg)",
+   "evidence_level": 6,
+   "quantity_type": "assumed (rounded atomic mass; verify against the standard atomic weight)",
+   "uncertainty": "rounding; < 0.01 % on sqrt(m)",
+   "applicability_domain": "flux-equivalent pressure",
+   "validation_status": "repo constant",
+   "transformation_chain": "repo constant -> product"
+  }
+ },
+ "reference_cathode_flows": [
+  "p5_cathode_xe_flow_mg_s",
+  "hc1_design_flow_range_mg_s",
+  "hc3_design_flow_range_mg_s",
+  "hc3_endurance_flow_mg_s",
+  "hc3_diode_spot_mode_min_flow_mg_s",
+  "hc1_diode_flow_mg_s"
+ ],
+ "poisoning_evidence_points_O2": [
+  {
+   "id": "gk2008_o2_degradation_below_1440C",
+   "kind": "degradation_onset",
+   "T_K": {
+    "op": "<=",
+    "value": 1713.15
+   },
+   "p_O2_Torr": {
+    "op": ">=",
+    "value": 1e-05
+   },
+   "source_id": "goebel_katz_2008",
+   "locator": "Sec. 6.8.5, pp. 305-306, Fig. 6-49 (from Goebel, Watkins & Jameson 2007)",
+   "statement": "Partial pressures of oxygen in the 10^-5 torr range are required to degrade the emission of LaB6 at temperatures below 1440 C",
+   "quantity_type": "measured (diode tests, primary not read) -> secondary range statement",
+   "reading": "lower edge of the stated decade used (conservative reading of a range statement)",
+   "dossier_ref": "lab6.env.o2_degrade_1e-5"
+  },
+  {
+   "id": "gk2008_o2_below_degrading_range",
+   "kind": "no_degradation",
+   "T_K": {
+    "op": ">=",
+    "value": 1713.15
+   },
+   "p_O2_Torr": {
+    "op": "<",
+    "value": 1e-05
+   },
+   "source_id": "goebel_katz_2008",
+   "locator": "Sec. 6.8.5, pp. 305-306",
+   "statement": "same sentence as gk2008_o2_degradation_below_1440C",
+   "quantity_type": "inferred (below the range stated to be required for degradation at 1440 C; the source states higher temperature tolerates more)",
+   "reading": "inferred by this lane",
+   "dossier_ref": "lab6.env.o2_degrade_1e-5"
+  },
+  {
+   "id": "gk2008_o2_no_degradation_1570C",
+   "kind": "no_degradation",
+   "T_K": {
+    "op": ">=",
+    "value": 1843.15
+   },
+   "p_O2_Torr": {
+    "op": "<=",
+    "value": 0.0001
+   },
+   "source_id": "goebel_katz_2008",
+   "locator": "Sec. 6.8.5, p. 306",
+   "statement": "LaB6 at 1570 C ... can withstand oxygen partial pressures up to 10^-4 torr without degradation in the electron emission",
+   "quantity_type": "measured (diode tests, primary not read) -> secondary statement",
+   "reading": "as stated",
+   "dossier_ref": "lab6.env.o2_withstand_1570C"
+  }
+ ],
+ "qualitative_evidence": [
+  {
+   "id": "jpl_o2_n2_plasmas",
+   "source_id": "goebel_2017_iepc276",
+   "locator": "p. 2",
+   "text": "LaB6 cathodes have been used in oxygen and nitrogen plasma discharges at emission current densities exceeding 20 A/cm2 (no partial pressures or durations given)."
+  },
+  {
+   "id": "suzuki_poisoning_plume_mode",
+   "source_id": "suzuki_2024_jap",
+   "locator": "abstract",
+   "text": "Expansion of the unstable plume-mode region during a discharge experiment; O and C detected on the emitter; a cooler mid-emitter region with lanthanum carbide and a raised work function. Poisoning therefore couples to the spot-mode flow margin (and so to Xe consumption)."
+  },
+  {
+   "id": "andreussi_ram_het_cathode",
+   "source_id": "andreussi_2017_iepc377",
+   "locator": "p. 3 (Table 1), p. 7, p. 8 (Table 7)",
+   "text": "HT5k estimated cathode flow 1-4 mg/s Xe (Table 1, 2-8 kW class). RAM-HET with a Kaufman & Robinson SHC 1000 cathode: ~1.5 mg/s Xe always needed to prevent flame-out on N2-O2; after two days cathode ignition could not be achieved and the emitter was found damaged; Table 7 lists 'RAM-cathode failure (no insulation between keeper and emitter)'. The accessed text does not attribute the failure to poisoning. Ionization and acceleration supplies of the double-stage RAM-HET went into current limitation at 1 A and 3.7 A; where the first-stage current returns is not described (if through the cathode common, it is an interstage term in this module)."
+  }
+ ],
+ "startup_reference": {
+  "hall_only": {
+   "status": "phase order sourced (Goebel & Katz Sec. 7.2.3 p. 337; IEPC-2017-276 pp. 3-4; IEPC-2015-43 p. 4); powers and durations are inputs",
+   "phases": [
+    {
+     "name": "preheat",
+     "on": [
+      "cathode_heater",
+      "housekeeping"
+     ],
+     "note": "heater raises the emitter to emission temperature"
+    },
+    {
+     "name": "cathode_ignition",
+     "on": [
+      "cathode_heater",
+      "cathode_keeper",
+      "flow_control",
+      "housekeeping"
+     ],
+     "note": "cathode Xe flow on, keeper voltage applied, keeper current regulated"
+    },
+    {
+     "name": "discharge_ignition",
+     "on": [
+      "hall_discharge",
+      "hall_magnet",
+      "cathode_keeper",
+      "flow_control",
+      "housekeeping"
+     ],
+     "note": "heater off once the discharge starts; anode supply on"
+    },
+    {
+     "name": "keeper_off",
+     "on": [
+      "hall_discharge",
+      "hall_magnet",
+      "flow_control",
+      "compressor",
+      "thermal_control",
+      "housekeeping"
+     ],
+     "note": "keeper off/floating once the anode current is nominal, unless the discharge current is below the cathode's self-heating current"
+    }
+   ],
+   "open": "Magnet vs discharge order and the anode gas at ignition are not fixed by the accessed sources for ABEP. Cifali 2011 ignited on xenon and then transitioned the anode to N2/O2: if adopted, that anode Xe belongs to the Xe budget (not to the cathode)."
+  },
+  "rf_hall": {
+   "status": "PROPOSED (no accessed source fixes where the pre-ionizer starts; see docs/evidence/rf_source/ lane)",
+   "variants": {
+    "V1_preionizer_after_discharge": "hall_only sequence, then rf_source on after keeper_off: the heater never overlaps the pre-ionizer",
+    "V2_preionizer_seed_before_discharge": "rf_source on during cathode_ignition/discharge_ignition (seed hypothesis): check the peak against the bus limit when the heater is still on"
+   },
+   "note": "The experiment-protocol draft orders ignition as heater, keeper, flows, pre-ionizer, discharge (variant V2 here); whether the heater is still on when the pre-ionizer starts decides the start-up peak"
+  },
+  "ecr_hall": {
+   "status": "PROPOSED (see docs/evidence/ecr_source/ lane)",
+   "variants": {
+    "V1_preionizer_after_discharge": "hall_only sequence, then ecr_magnet, then ecr_source",
+    "V2_preionizer_seed_before_discharge": "ecr_magnet and ecr_source on before discharge_ignition (seed hypothesis)"
+   },
+   "note": "Resonance requires the magnetic field, so an electromagnet (ecr_magnet) is energized before ecr_source; a permanent-magnet design has ecr_magnet = 0 W.. The experiment-protocol draft orders ignition as heater, keeper, flows, pre-ionizer, discharge (variant V2 here)"
+  }
+ },
+ "proposed_thresholds": {
+  "life_margin_min": {
+   "value": 1.5,
+   "unit": "x required firing hours",
+   "status": "PROPOSED",
+   "note": "not in the RFP and not sourced; owner decides"
+  },
+  "dominance_fraction": {
+   "value": 0.25,
+   "unit": "1",
+   "status": "PROPOSED",
+   "note": "cathode Xe mass or steady cathode power above this fraction of its budget is flagged 'could dominate'; not in the RFP; owner decides"
+  },
+  "differs_rel_tol": {
+   "value": 0.01,
+   "unit": "1",
+   "status": "PROPOSED",
+   "note": "relative difference above which a cathode quantity is reported as differing between architectures"
+  },
+  "startup_peak_limit": {
+   "value": 1500.0,
+   "unit": "W",
+   "status": "PROPOSED",
+   "note": "interpretation that the RFP '< 1.5 kW' also bounds start-up transients; the owner confirms or replaces it"
+  },
+  "start_cycle_demonstration_factor": {
+   "value": "TBD — requires owner decision (demonstrated heater/ignition cycles vs mission starts)",
+   "status": "PROPOSED"
+  }
+ },
+ "tbd": [
+  {
+   "id": "hall_operating_point",
+   "requires": "TBD — requires an admitted Hall transport closure (credible set is empty) or hardware measurement for I_d and I_beam per architecture",
+   "milestone": "B"
+  },
+  {
+   "id": "interstage_topology",
+   "requires": "TBD — requires the RF / ECR pre-ionizer circuit topology and, if separately biased, its net electron current (docs/evidence/rf_source/, docs/evidence/ecr_source/)",
+   "milestone": "B"
+  },
+  {
+   "id": "cathode_hardware",
+   "requires": "TBD — requires cathode selection: emitting area, insert density and usable thickness, orifice",
+   "milestone": "B"
+  },
+  {
+   "id": "cathode_min_flow",
+   "requires": "TBD — requires the measured spot-mode minimum Xe flow at the required emission current, with the thruster magnetic field and an air-fed anode",
+   "milestone": "B"
+  },
+  {
+   "id": "atomic_o_threshold",
+   "requires": "TBD — requires a published or measured LaB6 emission-degradation threshold for atomic O (none in the accessed sources)",
+   "milestone": "B"
+  },
+  {
+   "id": "n2_effect",
+   "requires": "TBD — requires evidence on N2 (and NO/N) exposure of a LaB6 emitter at operating temperature (qualitative statements only)",
+   "milestone": "B"
+  },
+  {
+   "id": "emitter_partial_pressures",
+   "requires": "TBD — requires plume back-flow and ambient AO flux at the cathode plus the attenuation by the cathode Xe flow and orifice (DSMC or test)",
+   "milestone": "B"
+  },
+  {
+   "id": "steady_keeper",
+   "requires": "TBD — requires a thruster-coupled test at the ABEP discharge current (self-heating margin)",
+   "milestone": "C"
+  },
+  {
+   "id": "starts",
+   "requires": "TBD — requires the mission operations concept (eclipse / duty cycling, restarts)",
+   "milestone": "C"
+  },
+  {
+   "id": "heater_profile",
+   "requires": "TBD — requires the measured heater power-time profile of the selected cathode",
+   "milestone": "C"
+  },
+  {
+   "id": "insert_life_test",
+   "requires": "TBD — requires a wear test at the ABEP operating point (net evaporation incl. redeposition, temperature profile)",
+   "milestone": "C"
+  }
+ ],
+ "interfaces": {
+  "bus_boundary": "abep_sim/arch_boundary.py (bus_power_boundary_v1): components cathode_keeper, cathode_heater; abep_sim.cathode_integration.to_boundary_ledger calls its ledger function ('ledger' per the naming contract, else 'bus_power_ledger' as that lane names it) with the full component set",
+  "upstream_icd": "schemas/interfaces/upstream_icd_v1.json: mdot_xe_kgps ('anode + cathode') can take cathode_integration xe.cathode_flow_mg_s as its cathode term; its xe_purity gap relates to the dossier's lab6.purity.crudest_grade",
+  "hall_map_spec": "docs/hallmap/HALLMAP_PRODUCTION_SPEC.md: the bridge models no separate cathode flow; the cathode budget stays outside the Hall map",
+  "thermal_life": "abep_sim/thermal_life.py: cathode heater and emitter temperature feed the thermal/life framework",
+  "experiment_protocol": "docs/architecture_comparison/experiment_protocol/ (DRAFT): INV-CATH holds the same Xe-fed LaB6 cathode, Xe flow, heater/keeper settings and electrical configuration in every arm, and its ignition order is cathode heater, keeper, flows, pre-ionizer where applicable, then discharge. Tests should also log I_beam and any interstage electrode current so the current budget of this module can be closed per arm",
+  "cathode_dossier": "see cathode_dossier"
+ },
+ "cathode_dossier": {
+  "path": "docs/evidence/cathode/",
+  "files": [
+   "docs/evidence/cathode/CATHODE_DOSSIER.md",
+   "docs/evidence/cathode/cathode_evidence_v1.json"
+  ],
+  "observed": "read-only in the cathode evidence dossier lane's worktree on 2026-09-26 (dossier base commit efc4a4e); not in this lane's base commit, so it is referenced by path and resolved lazily (abep_sim.cathode_integration.cathode_dossier_path), never imported or copied",
+  "authority": "The dossier is the evidence authority for cathode candidates and alternatives, O2/H2O exposure statements, Xe purity, system precedents (PPS1350, P5, ECHT, NewOrbit), the uncertainty register U01-U18, the hardware-test gaps G01-G10 and the leads not read (e.g. lead.yang_2025, lead.andreussi_2022_aether). This file keeps only the values abep_sim.cathode_integration computes with (cross-referenced by dossier_ref) and integration-specific values that the dossier does not hold (Lafferty evaporation fit, SITAEL HC1/HC3 flows and heater powers, JPL start-up procedure and self-heating limit, Xe flow-unit conversion, RAM-HET cathode report, Suzuki 2024 abstract).",
+  "see_dossier_for": [
+   "lab6.env.o2_plasma_background",
+   "lab6.env.o2_plasma_temperature",
+   "lab6.claim.temperature_margin",
+   "lab6.claim.self_heating",
+   "lab6.purity.crudest_grade",
+   "sys.pps1350.claim",
+   "sys.p5.cathode_fraction_inferred",
+   "U03",
+   "U04",
+   "U05",
+   "U06",
+   "U14",
+   "U15",
+   "U16",
+   "G01",
+   "G02",
+   "G03",
+   "G04",
+   "G05",
+   "G06",
+   "G09"
+  ]
+ }
+}
