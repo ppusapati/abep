@@ -5,6 +5,7 @@ Fixture species "X", "X2", "X+", "X2+", "X++" and every fixture number below are
 nitrogen, oxygen or xenon. Hand-calculated checks against the cited sources use only the formulas and the published
 example numbers named in each test.
 """
+import ast
 import dataclasses
 import json
 import math
@@ -44,19 +45,26 @@ def species():
 
 def reactions():
     th = ist.RECOMBINING_ELECTRON_THERMAL
+    rw = ist.RECOMBINING_ELECTRON_RATE_WEIGHTED
     return (
         ist.VolumeReaction("dr_X2+", ("e", "X2+"), ("X", "X"), rate(2e-13, "electron_temperature_eV", 0.5, 50.0, -0.5),
-                           th),
-        ist.VolumeReaction("rr_X+", ("e", "X+"), ("X",), rate(1e-18, "electron_temperature_eV", 0.5, 50.0), th),
-        ist.VolumeReaction("rr_X++", ("e", "X++"), ("X+",), rate(1e-18, "electron_temperature_eV", 0.5, 50.0), th),
+                           rw, ist.P_RECOMBINATION),
+        ist.VolumeReaction("rr_X+", ("e", "X+"), ("X",), rate(1e-18, "electron_temperature_eV", 0.5, 50.0), th,
+                           ist.P_RECOMBINATION),
+        ist.VolumeReaction("rr_X++", ("e", "X++"), ("X+",), rate(1e-18, "electron_temperature_eV", 0.5, 50.0), th,
+                           ist.P_RECOMBINATION),
         ist.VolumeReaction("ct_X+_X2", ("X+", "X2"), ("X", "X2+"), rate(1e-16, "ion_axial_energy_eV", 0.1, 100.0),
-                           ist.NO_ELECTRON),
+                           ist.NO_ELECTRON, ist.P_CHARGE_TRANSFER),
         ist.VolumeReaction("iz_X2", ("e", "X2"), ("X2+", "e", "e"), rate(1e-15, "electron_temperature_eV", 1.0, 100.0),
-                           S(15.0, "eV")),
+                           S(15.0, "eV"), ist.P_IONIZATION),
         ist.VolumeReaction("iz_X", ("e", "X"), ("X+", "e", "e"), rate(1e-15, "electron_temperature_eV", 1.0, 100.0),
-                           S(14.0, "eV")),
+                           S(14.0, "eV"), ist.P_IONIZATION),
         ist.VolumeReaction("iz_X+", ("e", "X+"), ("X++", "e", "e"), rate(1e-16, "electron_temperature_eV", 1.0, 100.0),
-                           S(29.0, "eV")),
+                           S(29.0, "eV"), ist.P_IONIZATION),
+        ist.VolumeReaction("ex_X2", ("e", "X2"), ("X2", "e"), rate(1e-15, "electron_temperature_eV", 1.0, 100.0),
+                           S(7.0, "eV"), ist.P_EXCITATION),
+        ist.VolumeReaction("dis_X2", ("e", "X2"), ("X", "X", "e"), rate(1e-16, "electron_temperature_eV", 1.0, 100.0),
+                           S(10.0, "eV"), ist.P_DISSOCIATION),
     )
 
 
@@ -65,6 +73,13 @@ EXCLUSIONS = {
     "ion_neutral_charge_transfer:X++": "test fixture exclusion",
     "electron_impact_ionization:X2+": "test fixture exclusion",
     "electron_impact_ionization:X++": "test fixture exclusion",
+    "electron_impact_excitation:X": "test fixture exclusion",
+    "electron_impact_excitation:X2+": "test fixture exclusion",
+    "electron_impact_excitation:X+": "test fixture exclusion",
+    "electron_impact_excitation:X++": "test fixture exclusion",
+    "electron_elastic_energy_loss:X2": "test fixture exclusion",
+    "electron_elastic_energy_loss:X": "test fixture exclusion",
+    "electron_impact_dissociation:X2+": "test fixture exclusion",
 }
 
 
@@ -315,7 +330,7 @@ def test_catalogue_records_and_tbd_entries():
 def test_rate_outside_validity_is_refused():
     rx = list(reactions())
     rx[0] = ist.VolumeReaction("dr_X2+", ("e", "X2+"), ("X", "X"), rate(2e-13, "electron_temperature_eV", 0.01, 1.0),
-                               ist.RECOMBINING_ELECTRON_THERMAL)
+                               ist.RECOMBINING_ELECTRON_THERMAL, ist.P_RECOMBINATION)
     with pytest.raises(ist.InterstageDomainError, match="validity"):
         ist.solve_interstage(make_case(reactions=tuple(rx)))
 
@@ -333,12 +348,14 @@ def test_unaddressed_process_is_refused():
 
 def test_unbalanced_or_energy_inconsistent_reactions_are_refused():
     bad = reactions() + (ist.VolumeReaction("bad", ("e", "X2"), ("X+", "e", "e"),
-                                            rate(1e-15, "electron_temperature_eV", 1.0, 100.0), S(20.0, "eV")),)
+                                            rate(1e-15, "electron_temperature_eV", 1.0, 100.0), S(20.0, "eV"),
+                                            ist.P_IONIZATION),)
     with pytest.raises(ist.InterstageInputError, match="elements"):
         ist.solve_interstage(make_case(reactions=bad))
     rx = list(reactions())
     rx[4] = ist.VolumeReaction("iz_X2", ("e", "X2"), ("X2+", "e", "e"),
-                               rate(1e-15, "electron_temperature_eV", 1.0, 100.0), S(10.0, "eV"))   # < 15 eV
+                               rate(1e-15, "electron_temperature_eV", 1.0, 100.0), S(10.0, "eV"),
+                               ist.P_IONIZATION)   # 10 eV < 15 eV endothermicity
     with pytest.raises(ist.InterstageInputError, match="endothermicity"):
         ist.solve_interstage(make_case(reactions=tuple(rx)))
 
@@ -471,9 +488,14 @@ def test_case_from_dict_rejects_unknown_and_missing_keys():
 
 
 def test_module_is_not_wired_into_archengine():
-    src = open(os.path.join(ROOT, "abep_sim", "archengine.py")).read()
-    assert "interstage" not in src.replace("Interstage", "").lower() or "abep_sim.interstage" not in src
-    assert "from .interstage" not in src and "import interstage" not in src
+    """archengine must not import abep_sim/interstage.py (it has its own, older plasma_devices.Interstage)."""
+    tree = ast.parse(open(os.path.join(ROOT, "abep_sim", "archengine.py")).read())
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            assert not any(a.name.split(".")[-1] == "interstage" for a in node.names)
+        elif isinstance(node, ast.ImportFrom):
+            assert (node.module or "").split(".")[-1] != "interstage"
+            assert not any(a.name == "interstage" for a in node.names)
 
 
 # ------------------------------------------------------------------------------ common model, numerics invariance
@@ -511,3 +533,129 @@ def test_every_catalogue_record_is_sourced_or_tbd():
     # the abstract-only recombination rates are not labelled 'measured'
     assert ist.catalogue_entry("dissociative_recombination:O2+").evidence_class == "inferred"
     assert all(v.strip() for v in ist.SOURCES.values())
+
+
+# ------------------------------------------------------------------ single-ion analytic case (review regressions)
+SINGLE_EXCL = {
+    "volume_recombination:X+": "test fixture exclusion", "electron_impact_ionization:X+": "test fixture exclusion",
+    "electron_impact_ionization:X": "test fixture exclusion", "ion_neutral_charge_transfer:X+": "test fixture exclusion",
+    "electron_impact_excitation:X+": "test fixture exclusion", "electron_impact_excitation:X": "test fixture exclusion",
+    "electron_elastic_energy_loss:X": "test fixture exclusion",
+    "wall_atom_recombination:X": "test fixture exclusion",
+}
+SINGLE = dict(h=0.3, L=0.05, R=0.02, v=6000.0, Te=5.0, n=1e16)
+
+
+def single_ion_case(n_steps, convergence_rtol=1e-6):
+    """One ion X+ (wall-neutralized to X), no volume reactions, explicit h, ZERO neutral entry flow: every neutral in
+    the duct comes from wall neutralization. Ion flow is then exactly N0 exp(-a z), a = h u_B P / (v A)."""
+    sp = (ist.Species("X", 0, {"X": 1}, S(M_X, "kg"), S(0.0, "eV")),
+          ist.Species("X+", 1, {"X": 1}, S(ist.ion_mass_from_neutral(M_X, 1), "kg"), S(14.0, "eV")))
+    return ist.InterstageCase(
+        case_id="single", architecture="ecr_hall", energy_reference="fixture: X ground state = 0 eV (synthetic)",
+        species=sp,
+        source_exit=ist.SourceExitState({"X+": S(SINGLE["n"], "m^-3")}, {"X+": S(SINGLE["v"], "m s^-1")},
+                                        S(SINGLE["Te"], "eV"), {"X": S(0.0, "m^-3")}, {"X": S(0.0, "s^-1")},
+                                        S(300.0, "K")),
+        geometry=ist.CircularDuct(S(SINGLE["L"], "m"), S(SINGLE["R"], "m"), "fixture wall", S(0.0, "T")),
+        wall=ist.WallModel(ist.H_EXPLICIT, "floating", {"X+": ("X",)}, None, {"X+": S(SINGLE["h"], "-")}),
+        reactions=(), wall_atom_recombination=(), process_exclusions=dict(SINGLE_EXCL),
+        neutral_conductance=ist.NeutralConductanceModel(ist.NC_SANTELER, {"X": S(0.3e-18, "m^2")}, None, None),
+        junction=ist.JunctionModel({"X+": S(1.0, "-")}, S(1.0e-3, "m^2"), S(2.0e-4, "m^2"), S(0.02, "m")),
+        electron_energy_closure=ist.ELECTRON_CLOSURE_ISOTHERMAL,
+        numerics=ist.Numerics(n_steps, convergence_rtol, 1e-9, 1e-8, 1e-13, 200, 0.8, 4))
+
+
+def single_ion_attenuation():
+    u_B = math.sqrt(SINGLE["Te"] * E_CHARGE / ist.ion_mass_from_neutral(M_X, 1))
+    return SINGLE["h"] * u_B * 2.0 / (SINGLE["v"] * SINGLE["R"])        # P / A = 2 / R
+
+
+def test_zero_neutral_entry_flow_step_doubling_gate_is_not_bypassed():
+    """Review regression: with every neutral entry flow zero the step-doubling metric used to be NaN (GL / 1e-300) and
+    the gate passed silently. A one-step solve must now be MODEL_ERROR with no numbers and a finite diagnostic."""
+    res = ist.solve_interstage(single_ion_case(1, convergence_rtol=1e-14))
+    assert res["status"] == "MODEL_ERROR" and res["eta_duct"] is None and res["eta_transport"] is None
+    change = res["diagnostics"]["step_doubling_rel_change"]
+    assert change is not None and math.isfinite(change) and change > 1e-3
+    json.dumps(res, allow_nan=False)                                       # never NaN in the result
+
+
+def test_single_ion_case_matches_analytic_attenuation_and_entry_pressure():
+    case = consistent(single_ion_case(100))
+    res = ist.solve_interstage(case)
+    assert res["status"] == "OK", res["status_reason"]
+    a, L = single_ion_attenuation(), SINGLE["L"]
+    assert res["eta_duct"] == pytest.approx(math.exp(-a * L), rel=1e-8)
+    assert res["eta_transport"] == pytest.approx(math.exp(-a * L), rel=1e-8)      # capture 1
+    # entry pressure: G(z) = N0 (1 - exp(-a z)); p(L) = G(L) kT / C_J; p(0) = p(L) + kT/(C_duct L) int_0^L G dz
+    N0 = SINGLE["n"] * SINGLE["v"] * math.pi * SINGLE["R"] ** 2
+    kT = K_B * 300.0
+    vbar = math.sqrt(8 * K_B * 300.0 / (math.pi * M_X))
+    tau = ist.santeler_transmission_probability(L, SINGLE["R"])
+    C_duct = 0.25 * vbar * math.pi * SINGLE["R"] ** 2 * tau
+    C_J = 0.25 * vbar * 1.2e-3
+    G_L = N0 * (1.0 - math.exp(-a * L))
+    p0 = G_L * kT / C_J + kT / (C_duct * L) * N0 * (L - (1.0 - math.exp(-a * L)) / a)
+    assert res["neutrals"]["X"]["p_entry_Pa"] == pytest.approx(p0, rel=1e-7)
+    assert res["neutrals"]["X"]["entry_flow_s"] == 0.0
+    assert res["diagnostics"]["p_entry_step_doubling_rel_change"] < 1e-7
+    assert res["conservation"]["passed"]
+
+
+def test_recombination_electron_energy_basis_is_reported():
+    res = ist.solve_interstage(consistent(make_case()))
+    rx = res["reactions"]
+    assert rx["dr_X2+"]["electron_energy_loss_eV"] == pytest.approx((1.5 - 0.5) * 5.0, rel=1e-15)   # (3/2 + alpha) T_e
+    assert rx["dr_X2+"]["electron_energy_loss_basis"].startswith("model-derived")
+    assert rx["rr_X+"]["electron_energy_loss_eV"] == pytest.approx(1.5 * 5.0, rel=1e-15)
+    assert rx["rr_X+"]["electron_energy_loss_basis"].startswith("assumed")
+    assert rx["ex_X2"]["process"] == ist.P_EXCITATION
+    # (3/2 + alpha) < 0 is refused (the Maxwellian power-law relation does not apply)
+    r = list(reactions())
+    r[0] = ist.VolumeReaction("dr_X2+", ("e", "X2+"), ("X", "X"), rate(2e-13, "electron_temperature_eV", 0.5, 50.0, -2.0),
+                              ist.RECOMBINING_ELECTRON_RATE_WEIGHTED, ist.P_RECOMBINATION)
+    with pytest.raises(ist.InterstageDomainError, match="alpha"):
+        ist.solve_interstage(make_case(reactions=tuple(r)))
+
+
+def test_electron_energy_loss_processes_are_required_or_excluded():
+    rx = tuple(r for r in reactions() if r.reaction_id != "ex_X2")
+    with pytest.raises(ist.InterstageTBDError, match="electron_impact_excitation:X2"):
+        ist.solve_interstage(make_case(reactions=rx))
+    ex = dict(EXCLUSIONS)
+    del ex["electron_elastic_energy_loss:X2"]
+    with pytest.raises(ist.InterstageTBDError, match="electron_elastic_energy_loss:X2"):
+        ist.solve_interstage(make_case(exclusions=ex))
+    rx = tuple(r for r in reactions() if r.reaction_id != "dis_X2")
+    with pytest.raises(ist.InterstageTBDError, match="electron_impact_dissociation:X2"):
+        ist.solve_interstage(make_case(reactions=rx))
+    # a declared process must match the reaction structure
+    r = list(reactions())
+    r[7] = ist.VolumeReaction("ex_X2", ("e", "X2"), ("X2", "e"), rate(1e-15, "electron_temperature_eV", 1.0, 100.0),
+                              S(7.0, "eV"), ist.P_IONIZATION)
+    with pytest.raises(ist.InterstageInputError, match="does not match"):
+        ist.solve_interstage(make_case(reactions=tuple(r)))
+
+
+def test_compare_with_required_accepts_breakeven_unit_convention():
+    res = ist.solve_interstage(consistent(make_case()))
+
+    @dataclasses.dataclass(frozen=True)
+    class EvidencedLike:            # shape of abep_sim/breakeven.py Evidenced (no import of the sibling lane)
+        value: float
+        unit: str
+        evidence_class: str
+        source: str
+
+    out = ist.compare_with_required(res, EvidencedLike(0.5, "1", "model-derived", "breakeven fixture"))
+    assert out["eta_transport_required"] == 0.5 and out["required_source"] == "breakeven fixture"
+    with pytest.raises(ist.InterstageInputError, match="unit"):
+        ist.compare_with_required(res, EvidencedLike(0.5, "%", "model-derived", "breakeven fixture"))
+    ev = ist.eta_transport_evidence(res)
+    assert ev["unit"] == "1" and ev["value"] == res["eta_transport"] and ev["evidence_class"] == "model-derived"
+
+
+def test_santeler_citation_is_corrected():
+    src = ist.SOURCES["santeler_1986"]
+    assert "10.1116/1.573923" in src and "338-343" in src and "New concepts in molecular gas flow" in src

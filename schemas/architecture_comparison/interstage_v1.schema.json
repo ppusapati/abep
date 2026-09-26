@@ -26,7 +26,7 @@
    "additionalProperties": false,
    "properties": {
     "value": {"type": "number"},
-    "unit": {"type": "string", "enum": ["m", "m^2", "m^-3", "s^-1", "m s^-1", "eV", "K", "kg", "T", "-", "m^3 s^-1"]},
+    "unit": {"type": "string", "enum": ["m", "m^2", "m^-3", "s^-1", "m s^-1", "eV", "K", "kg", "T", "-", "1", "m^3 s^-1"], "description": "dimensionless: '-' or '1' (the breakeven_v1 spelling); both accepted"},
     "source": {"type": "string", "description": "citation actually accessed (DOI/URL, table/equation), or the producing lane/script"},
     "evidence_class": {"type": "string", "enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]},
     "uncertainty": {"type": "string", "description": "stated uncertainty, or why none is stated"}
@@ -120,14 +120,15 @@
   },
   "reaction": {
    "type": "object",
-   "required": ["reaction_id", "reactants", "products", "rate", "electron_energy_loss"],
+   "required": ["reaction_id", "reactants", "products", "rate", "electron_energy_loss", "process"],
    "additionalProperties": false,
    "properties": {
     "reaction_id": {"type": "string"},
     "reactants": {"type": "array", "items": {"type": "string"}, "description": "exactly two; 'e' = electron"},
     "products": {"type": "array", "items": {"type": "string"}},
     "rate": {"$ref": "#/$defs/rate"},
-    "electron_energy_loss": {"anyOf": [{"$ref": "#/$defs/sourced"}, {"$ref": "#/$defs/tbd"}, {"type": "string", "enum": ["recombining_electron_thermal_1.5Te", "none"]}]}
+    "electron_energy_loss": {"anyOf": [{"$ref": "#/$defs/sourced"}, {"$ref": "#/$defs/tbd"}, {"type": "string", "enum": ["recombining_electron_thermal_1.5Te", "recombining_electron_rate_weighted_(1.5+alpha)Te", "none"]}], "description": "eV per event (sourced), or for electron-consuming recombination: (3/2) T_e (assumed; biased high for rate exponent alpha < 0) or (3/2 + alpha) T_e (model-derived, Maxwellian electrons, power-law rate); 'none' for heavy-particle reactions"},
+    "process": {"type": "string", "enum": ["volume_recombination", "electron_impact_ionization", "ion_neutral_charge_transfer", "electron_impact_excitation", "electron_impact_dissociation", "electron_elastic_energy_loss"], "description": "declared process class; checked against the reaction structure; addresses the completeness key <process>:<each heavy reactant>"}
    }
   },
   "wall_atom_recombination": {
@@ -192,7 +193,7 @@
     "wall": {"$ref": "#/$defs/wall"},
     "reactions": {"type": "array", "items": {"$ref": "#/$defs/reaction"}},
     "wall_atom_recombination": {"type": "array", "items": {"$ref": "#/$defs/wall_atom_recombination"}},
-    "process_exclusions": {"type": "object", "additionalProperties": {"type": "string"}, "description": "required-process key -> justification (with source or bound); keys: volume_recombination:<ion>, electron_impact_ionization:<species>, ion_neutral_charge_transfer:<ion>, wall_atom_recombination:<atom>"},
+    "process_exclusions": {"type": "object", "additionalProperties": {"type": "string"}, "description": "required-process key -> justification (with source or bound); keys: volume_recombination:<ion>, electron_impact_ionization:<species>, ion_neutral_charge_transfer:<ion> (if neutrals exist), electron_impact_excitation:<species>, electron_elastic_energy_loss:<neutral>, electron_impact_dissociation:<molecular species>, wall_atom_recombination:<atomic neutral>"},
     "neutral_conductance": {"$ref": "#/$defs/neutral_conductance"},
     "junction": {"$ref": "#/$defs/junction"},
     "electron_energy_closure": {"type": "string", "enum": ["isothermal_source_conduction"]},
@@ -222,9 +223,9 @@
     "neutrals": {"type": ["object", "null"], "description": "per neutral species: entry/exit/to-Hall/leak flows [s^-1], entry/exit partial pressures and drop [Pa], duct and junction conductances [m^3 s^-1], supplied vs flow-path entry density and their mismatch"},
     "charge_state_fractions": {"type": ["object", "null"], "description": "entry / exit / delivered: element -> {charge Z: fraction of that element's ion particle flow}"},
     "neutral_transport": {"type": ["object", "null"], "description": "mode, duct regime and minimum Knudsen number, junction Knudsen number, transmission probability and its source, junction leak fraction, hydraulic diameter, fixed-point iterations"},
-    "reactions": {"type": ["object", "null"], "description": "reaction id -> events [s^-1], rate coefficient used [m^3 s^-1], heat released per event [eV]"},
+    "reactions": {"type": ["object", "null"], "description": "reaction id -> events [s^-1], rate coefficient used [m^3 s^-1], heat released per event [eV], process class, electron energy loss per event [eV] and its basis"},
     "wall": {"type": ["object", "null"], "description": "closure, sheath potential at entry/exit [V], ion wall impact energy [eV], wall heat [W] and mean heat flux [W m^-2], wall atom recombination events, magnetization diagnostics"},
-    "energy_ledger_W": {"type": ["object", "null"], "description": "in / electron_heat_from_source_W / out / sinks / residual_rel [W]"},
+    "energy_ledger_W": {"type": ["object", "null"], "description": "in / electron_heat_from_source_W / out / sinks / residual_rel [W]; under isothermal_source_conduction the residual is a bookkeeping consistency check (the conducted heat closes the electron energy balance by construction), not a physical conservation test"},
     "conservation": {"type": ["object", "null"], "description": "elements_rel, charge_rel, mass_rel, energy_rel, gate_rtol, passed"},
     "numerics": {"type": ["object", "null"], "description": "n_steps, step-doubling check and its tolerance"},
     "profiles": {"type": ["object", "null"], "description": "z_m, eta_duct(z), charge_state_fractions(z), neutral partial pressures(z)"},
@@ -233,7 +234,7 @@
     "assumptions": {"type": "array", "items": {"type": "string"}},
     "milestone_support": {"type": "object", "required": ["A", "B", "C"], "additionalProperties": {"type": "string"}},
     "not_a_comparison": {"type": "string"},
-    "diagnostics": {"type": "object", "description": "step-doubling change, flow-path vs supplied entry densities, boundary mismatch, conservation (present for non-OK results too)"}
+    "diagnostics": {"type": "object", "description": "step-doubling change (null if not finite), step-doubling change of the entry partial pressure (bounds the quadrature error; boundary_rtol must not be set below it), flow-path vs supplied entry densities, boundary mismatch, conservation (present for non-OK results too; non-finite numbers are reported as null)"}
    }
   }
  }
