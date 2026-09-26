@@ -107,7 +107,13 @@
    "workflow_key": "E",
    "deps": [],
    "verification_protocol": "single-lens-v1",
-   "answers": "iii"
+   "answers": "iii",
+   "second_lens": {
+    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_key": "E",
+    "status": "running",
+    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+   }
   },
   {
    "id": "lane_11_bus_boundary",
@@ -140,7 +146,13 @@
    "workflow_key": "D",
    "deps": [],
    "verification_protocol": "single-lens-v1",
-   "answers": "ii"
+   "answers": "ii",
+   "second_lens": {
+    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_key": "D",
+    "status": "running",
+    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+   }
   },
   {
    "id": "lane_14_dual_feed",
@@ -151,7 +163,13 @@
    "workflow_key": "H",
    "deps": [],
    "verification_protocol": "single-lens-v1",
-   "answers": "iii"
+   "answers": "iii",
+   "second_lens": {
+    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_key": "H",
+    "status": "running",
+    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+   }
   },
   {
    "id": "lane_15_thermal_life",
@@ -369,7 +387,13 @@
    "workflow_key": "B",
    "deps": [],
    "verification_protocol": "single-lens-v1",
-   "answers": null
+   "answers": null,
+   "second_lens": {
+    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_key": "B",
+    "status": "running",
+    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+   }
   },
   {
    "id": "lane_31_echt_disposition",
@@ -380,7 +404,13 @@
    "workflow_key": "C",
    "deps": [],
    "verification_protocol": "single-lens-v1",
-   "answers": "ii"
+   "answers": "ii",
+   "second_lens": {
+    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_key": "C",
+    "status": "running",
+    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+   }
   },
   {
    "id": "lane_32_wall_life",
@@ -391,7 +421,13 @@
    "workflow_key": "F",
    "deps": [],
    "verification_protocol": "single-lens-v1",
-   "answers": "iii"
+   "answers": "iii",
+   "second_lens": {
+    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_key": "F",
+    "status": "running",
+    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+   }
   },
   {
    "id": "lane_33_upstream_icd",
@@ -402,7 +438,13 @@
    "workflow_key": "G",
    "deps": [],
    "verification_protocol": "single-lens-v1",
-   "answers": "i"
+   "answers": "i",
+   "second_lens": {
+    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_key": "G",
+    "status": "running",
+    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+   }
   },
   {
    "id": "lane_34_ledgers",
@@ -413,7 +455,13 @@
    "workflow_key": "I",
    "deps": [],
    "verification_protocol": "single-lens-v1",
-   "answers": "iii"
+   "answers": "iii",
+   "second_lens": {
+    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_key": "I",
+    "status": "running",
+    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+   }
   },
   {
    "id": "lane_35_hallmap_spec",
@@ -424,7 +472,13 @@
    "workflow_key": "J",
    "deps": [],
    "verification_protocol": "single-lens-v1",
-   "answers": "ii"
+   "answers": "ii",
+   "second_lens": {
+    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_key": "J",
+    "status": "running",
+    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+   }
   },
   {
    "id": "lane_36_traceability",
@@ -435,7 +489,13 @@
    "workflow_key": "K",
    "deps": [],
    "verification_protocol": "single-lens-v1",
-   "answers": null
+   "answers": null,
+   "second_lens": {
+    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_key": "K",
+    "status": "running",
+    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+   }
   },
   {
    "id": "lane_37_iist_package",
@@ -446,7 +506,13 @@
    "workflow_key": "L",
    "deps": [],
    "verification_protocol": "single-lens-v1",
-   "answers": "i"
+   "answers": "i",
+   "second_lens": {
+    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_key": "L",
+    "status": "running",
+    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+   }
   }
  ],
  "datasets": [
