@@ -9,7 +9,8 @@
 #   and (v3) molecular N2^2+: sequential N2+ -> N2^2+ (Tabata 2006 n2-69 fit to Bahati 2001) plus direct N2 -> N2^2+
 #   (nominal 1 %-of-total and loose-upper envelopes), as shares of positive-ion production.
 # No I_d, thrust or fit-quality quantity is computed or written. This is NOT P5-N2 validation.
-# Optional sharding: ... <out.jsonl> <duration_s> <shard> <nshards>
+# Optional sharding: ... <out.jsonl> <duration_s> <shard> <nshards> [comma-separated keys to run]
+# Region diagnostics: reaction-weighted T_e and axial position z/L of each multiply-charged channel's activity.
 # julia --project=hallthruster_bridge hallthruster_bridge/checks/blind_state_envelope.jl <out.jsonl> [duration_s]
 include(joinpath(@__DIR__, "..", "bridge_lib.jl"))
 check_pin()
@@ -20,6 +21,7 @@ ens = JSON3.read(read(joinpath(@__DIR__, "..", "ensemble", "transport_ensemble_v
 configs = ["n2_n.toml", "n2_n_di_lower.toml", "n2_n_nel_wang.toml", "n2_n_di_lower_nel_wang.toml"]
 shard = length(ARGS) >= 4 ? parse(Int, ARGS[3]) : 0
 nshards = length(ARGS) >= 4 ? parse(Int, ARGS[4]) : 1
+only_keys = length(ARGS) >= 5 ? Set(split(ARGS[5], ",")) : nothing
 bt(f) = het.load_rate_coeff_file(joinpath(@__DIR__, "..", "audit", "bound_tables", f), "electron_impact")[2]
 kseq = bt("ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat")
 kdn = bt("ionization_N2_to_N2_Z2plus_nominal.dat"); kdu = bt("ionization_N2_to_N2_Z2plus_upper.dat")
@@ -32,6 +34,7 @@ for (ic, (cand, cfg, pt)) in enumerate(combos)
     (ic - 1) % nshards == shard || continue
     key = "$(cand.ensemble_member_id)|$(cfg)|$(pt.id)"
     key in done && continue
+    !isnothing(only_keys) && !(key in only_keys) && continue
     tp = cand.transport_parameters
     c = Dict{Symbol,Any}(k => v for (k, v) in pairs(pt) if k != :measured)     # measured targets removed
     c[:id] = key; c[:propellant_config] = "propellants/$(cfg)"; c[:duration_s] = dur; c[:average_start_s] = dur / 2
@@ -52,6 +55,7 @@ for (ic, (cand, cfg, pt)) in enumerate(combos)
             ratio_max = 0.0; R3t = 0.0; Riont = 0.0; Pz2t = 0.0; Fion_frame_max = 0.0; Te_at_ratio = 0.0
             Rddt = 0.0; Fdd_frame_max = 0.0; xN_w = 0.0; w_t = 0.0
             Rseqt = 0.0; Rdnt = 0.0; Rdut = 0.0; Fm_nom_frame_max = 0.0; Fm_up_frame_max = 0.0
+            L = c.L_m; rw = Dict(k => zeros(4) for k in ("NZ3", "Ndd", "N2seq", "N2dir"))   # sum R, sum R*Te, sum R*z/L, sum R*n_e
             for f in sol.frames[i0:end]
                 nN2 = reactant_density(f, :N2, 0); nZ2 = reactant_density(f, :N, 2); nN = reactant_density(f, :N, 0)
                 nN2p = reactant_density(f, :N2, 1)
@@ -66,6 +70,10 @@ for (ic, (cand, cfg, pt)) in enumerate(combos)
                     Rdd += w * nN[i] * rate_at(kdd, eps)
                     Rseq += w * nN2p[i] * rate_at(kseq, eps)
                     Rdn += w * nN2[i] * rate_at(kdn, eps); Rdu += w * nN2[i] * rate_at(kdu, eps)
+                    for (k, r) in (("NZ3", w * nZ2[i] * rate_at(k3, eps)), ("Ndd", w * nN[i] * rate_at(kdd, eps)),
+                                   ("N2seq", w * nN2p[i] * rate_at(kseq, eps)), ("N2dir", w * nN2[i] * rate_at(kdn, eps)))
+                        rw[k] .+= (r, r * f.Tev[i], r * z[i] / L, r * f.ne[i])
+                    end
                     xN_w += w * nN[i]; w_t += w * nN2[i]
                     for (q, n) in zip(ion_rx, dens_ion)
                         Rion += w * n[i] * rate_at(q.k, eps)
@@ -91,6 +99,9 @@ for (ic, (cand, cfg, pt)) in enumerate(combos)
             rec["F_ion_N2Z2_nominal"] = (Rseqt + Rdnt) / (Riont + Rseqt + Rdnt)
             rec["F_ion_N2Z2_upper"] = (Rseqt + Rdut) / (Riont + Rseqt + Rdut)
             rec["F_ion_N2Z2_nominal_frame_max"] = Fm_nom_frame_max; rec["F_ion_N2Z2_upper_frame_max"] = Fm_up_frame_max
+            for (k, v) in rw
+                v[1] > 0 && (rec["region_$(k)_Te_eV"] = v[2] / v[1]; rec["region_$(k)_z_over_L"] = v[3] / v[1]; rec["region_$(k)_ne_m3"] = v[4] / v[1])
+            end
             rec["chemistry_trustworthy"] = r["chemistry_trustworthy"]
         end
     catch err
