@@ -56,17 +56,25 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    Standing rules that still apply: published sources only, no contact with authors or labs; validation modes are never
    crossed; never move the HallThruster.jl pin automatically (`PINNED.toml` upgrade_policy); the ingestion-units issue is
    drafted in `hallthruster_bridge/upstream/`, and filing it is the owner's call.
-   **Next phase: formalize the Hall uncertainty ensemble** instead of a single closure. Its members are:
-   - the ScaledGaussianBohm transport region around a = 1/16, b = 0.8, c = 0.9 L, w = 0.25 L;
-   - the geometry hypotheses (L38-hist, L32-anode, L32-exit);
-   - the coil shapes (1.6 / 3.0 kW);
-   - the beam-efficiency reading (A/B).
-   Carry these as explicit discrete/continuous uncertainty into Hall maps and the architecture trade.
+   **Next phase: two-layer Hall uncertainty** (`hallthruster_bridge/ensemble/transport_ensemble_v0.json`,
+   `abep_sim/hall_ensemble.py`; project decision 2026-09-26):
+   - *Layer 1, calibration nuisance:* P5 registration (L38/L32-anode/L32-exit), historical coil shape (1.6/3.0 kW),
+     beam-efficiency reading (A/B), facility-ingestion interpretation. This is uncertainty in what the P5 experiment WAS.
+     It's marginalized when admitting closures and is **never** a Vyovrinda design variable, map axis or trade dimension.
+   - *Layer 2, transferable:* the credible set of transport closures that survives marginalization. It's an
+     **unweighted** scenario set (no probabilities) until evidence justifies elimination or weighting.
+   - Flow: P5 evidence ensemble → credible closure set → Vyovrinda design-specific Hall maps (own geometry and B(z), one
+     map set per member) → whole-system UQ reporting envelopes/robustness across members.
+   - **Admission rule PENDING a project decision** (I_d tolerance; whether super-Bohm sets count). Census in the ensemble
+     file: 15 % admits nothing; 20 % admits 1 defensible SGB set (plus 5 super-Bohm); 25 % admits 5 (plus 8). All
+     defensible sets are supported only by L32-anode. MultiLogBohm admits none. Until decided, `members` is empty and
+     `HallMap` rejects every map.
 2. N₂/N reaction set **v0.1: partial**. Add one provenance-backed table per commit. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited cross sections. Done: N ionisation
    (`ionization_N.dat`, Kim & Desclaux 2002 via NIST, `scripts/build_n_ionization_table.py`). Blocked on source access:
    N₂ dissociation (Cosby 1993 / Itikawa 2006), N₂ excitation, N elastic. LXCat's redistribution policy restricts
    commercial use, so the source choice is the project's decision (`hallthruster_bridge/propellants/PROVENANCE.md`).
-3. P5 on N₂ (`cases/p5_n2.json`, Table 2) and ECHT on N₂ (`cases/echt_n2.json`) with ONE transport parameter set.
+3. P5 on N₂ (`cases/p5_n2.json`, Table 2) and ECHT on N₂ (`cases/echt_n2.json`), run across the **credible Xe-informed
+   transport ensemble** with no retuning per case. N₂ is a discrimination experiment that can eliminate members.
    Blocked by the driver until every rate file in `propellants/n2_n.toml` exists. P5 B(z) shape is now available
    (`hallthruster_bridge/bfield/`, Peterson 2001; N₂ setpoints use 130 G). Still missing: ECHT B(z), B_max, per-point data.
 4. Only if 1–3 succeed: O₂/O chemistry, then intake-delivered mixtures.
@@ -78,8 +86,9 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    `wall_life_trustworthy` (converged ∧ sustained ∧ `ion_wall_losses=true` ∧ WallSheath, unshielded), which `HallMap`
    reports separately from performance `trustworthy`; map meta must carry `ion_wall_losses`. Never fill missing fields
    with placeholders.
-   Then generate frozen Hall maps (all fields in `hall_map.REQUIRED_FIELDS`), wire `archengine` Hall branch to `HallMap`,
-   rerun the architecture trade and gate-4 UQ.
+   Then generate frozen Hall maps (all fields in `hall_map.REQUIRED_FIELDS`), one set per ensemble member, each carrying
+   `meta.ensemble_member_id`. Wire the `archengine` Hall branch to `HallMap`, and rerun the architecture trade and gate-4
+   UQ across members (envelopes, not one deterministic answer).
 6. Replace the remaining unverified Arrhenius rates (O, O₂, N ionisation; dissociation; excitation) in `plasma_chem.py`
    with cross-section tables. The N₂ fit was off by ~3× and the N fit is ~2× below `ionization_N.dat` at T_e = 10 eV.
    The HallThruster.jl tables (`hallthruster_bridge/propellants/`) and the 0-D chemistry are **not unified**; wiring a

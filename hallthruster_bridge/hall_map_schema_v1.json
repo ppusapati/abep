@@ -12,7 +12,8 @@
   "dt_s": "base timestep [s]",
   "duration_s": "simulated duration [s]",
   "average_start_s": "start of the time-averaging window [s]",
-  "ion_wall_losses": "bool; true only if ion wall losses were removed from the ion fluid in the solve (HallThruster.jl Config.ion_wall_losses). With false, wall_ion_flux_m2s/wall_ion_energy_eV are diagnostic, not erosion-grade"
+  "ion_wall_losses": "bool; true only if ion wall losses were removed from the ion fluid in the solve (HallThruster.jl Config.ion_wall_losses). With false, wall_ion_flux_m2s/wall_ion_energy_eV are diagnostic, not erosion-grade",
+  "ensemble_member_id": "id of the transport-ensemble member (hallthruster_bridge/ensemble/transport_ensemble_v0.json) that produced this map; HallMap rejects ids not in the ensemble. Calibration-nuisance variables (P5 registration, coil shape, beam reading) are never map axes"
  },
  "conventions": {
   "sustained_min_Id_fraction": 0.01,

@@ -45,7 +45,7 @@ def pinned_commit(bridge_dir: str | None = None) -> str:
 
 
 class HallMap:
-    def __init__(self, path: str, bridge_dir: str | None = None):
+    def __init__(self, path: str, bridge_dir: str | None = None, ensemble: dict | None = None):
         d = json.load(open(path))
         meta = d["meta"]
         if meta.get("schema") != SCHEMA_NAME:
@@ -53,6 +53,14 @@ class HallMap:
         missing_meta = [k for k in REQUIRED_META if k not in meta]
         if missing_meta:
             raise ValueError(f"Hall map {path} missing required meta: {missing_meta}")
+        from abep_sim.hall_ensemble import load_ensemble, member_ids
+        ens = ensemble if ensemble is not None else load_ensemble()
+        if meta["ensemble_member_id"] not in member_ids(ens):
+            raise ValueError(f"Hall map {path}: ensemble_member_id {meta['ensemble_member_id']!r} is not an admitted "
+                             "transport-ensemble member (credible set pending or id unknown)")
+        leaked = set(ens["calibration_nuisance"]) & set(d["axes"])
+        if leaked:
+            raise ValueError(f"Hall map {path}: calibration-nuisance variables {sorted(leaked)} used as map axes")
         if pinned_commit(bridge_dir) not in meta.get("pinned", ""):
             raise ValueError(f"Hall map {path} was not produced with the pinned HallThruster.jl commit")
         missing = [f for f in REQUIRED_FIELDS if f not in d["fields"]]

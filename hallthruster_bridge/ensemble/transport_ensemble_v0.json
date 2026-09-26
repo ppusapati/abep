@@ -1,0 +1,22 @@
+{
+ "schema": "transport_ensemble_v0",
+ "description": "Two-layer Hall uncertainty structure (project decision 2026-09-26). Layer 1 (calibration nuisance) is uncertainty in what the P5 experiment WAS; it is marginalized when admitting transport closures and is NEVER a Vyovrinda design variable or an architecture-trade dimension. Layer 2 (transferable) is the credible set of Hall transport closures that survives after marginalizing layer 1; each member is evaluated on Vyovrinda's own geometry and B(z) to produce design-specific Hall maps. Members are an UNWEIGHTED scenario set (no probabilities) until evidence (e.g. N2 validation) justifies elimination or weighting.",
+ "calibration_nuisance": {
+  "p5_registration": {"values": ["L38-hist", "L32-anode", "L32-exit"], "evidence": "docs/EVIDENCE.md register: P5 channel depth (level 3, conflicting) and Peterson B(z) (level 3, vector-extracted)"},
+  "p5_coil_shape": {"values": ["1p6kW", "3p0kW"], "evidence": "Peterson 2001 historical coil settings; Brabston 2025 coil currents unpublished"},
+  "beam_efficiency_reading": {"values": ["A", "B"], "evidence": "Brabston Figs. 8/9 inconsistency; hallthruster_bridge/identification/brabston_fig8_fig9_xenon.json"},
+  "facility_ingestion_interpretation": {"values": ["vacuum (Eq. 14/16-corrected targets, primary)", "facility (Eq. 13 flow at anode, raw targets, consistency check)"], "evidence": "Brabston Eqs. 13-16; injection location is our modelling choice"}
+ },
+ "member_fields": ["ensemble_member_id", "transport_family", "transport_parameters", "calibration_hypotheses",
+                   "evidence_basis", "applicability_domain", "validation_status"],
+ "weighting": "unweighted",
+ "admission_rule": null,
+ "admission_rule_status": "PENDING project decision: required choices are the I_d tolerance for in-sample admission and whether super-Bohm (a > 1/16) sets are admitted. Census of candidate rules (vacuum mode, in-sample, all three points quiet (RMS < 50 %), |dT| <= 2 sigma, admitted if supported by at least one layer-1 combination): see candidate_rule_census.",
+ "candidate_rule_census": {
+  "source_runs": ["hallthruster_bridge/identification/p5_xe_identification_sgb_v1_vacuum_runs.csv", "hallthruster_bridge/identification/p5_xe_identification_mlb_v1_vacuum_runs.csv"],
+  "Id_tol_15pct": {"sgb_defensible": 0, "sgb_super_bohm": 0, "mlb": 0},
+  "Id_tol_20pct": {"sgb_defensible": 1, "sgb_super_bohm": 5, "mlb": 0, "defensible_sets": ["a=1/16_b=0.8_c=0.9L_w=0.25L (supported only by L32-anode/1.6 kW)"]},
+  "Id_tol_25pct": {"sgb_defensible": 5, "sgb_super_bohm": 8, "mlb": 0, "defensible_sets": ["a=1/16_b=0.8_c=0.9L_w=0.25L", "a=1/16_b=0.97_c=0.9L_w=0.1L", "a=1/16_b=0.97_c=1.1L_w=0.1L", "a=1/16_b=0.97_c=1L_w=0.1L", "a=1/16_b=0.9_c=1.1L_w=0.25L"], "note": "all defensible sets are supported only by L32-anode registrations"}
+ },
+ "members": []
+}
