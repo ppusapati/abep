@@ -1,0 +1,1 @@
+e + N2(X) -> e + N2(w_1Delta_u), JOHNSON-LOW sensitivity branch: Johnson et al. 2005 Table 2 at all energies, linear ramp from 0 at 10.27 eV to the first Johnson point, power-law continuation p = 0.53. Used only by n2_n_exc_johnsonlow.toml. Reaction set abep-n2n-0.10.

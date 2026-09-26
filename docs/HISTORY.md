@@ -1919,3 +1919,14 @@ Two excitation reactions, j = 0 → 2 and 0 → 4, built by `scripts/build_n2_ro
 The full 28-reaction N1 smoke run is chemistry-trustworthy.
 
 This inclusion follows the pre-registered rule literally (gross F_P 1.13 % > 1 %). If the owner decides the net (detailed-balance) loss is the relevant quantity, it is reversible as a documented model change.
+
+## 2026-09-26 — Johnson-low sensitivity branch (sequential design, owner decision)
+
+- `excitation_N2_<state>_johnsonlow.dat` use Johnson 2005 at all energies, with a linear ramp from σ = 0 at the experimental energy to Johnson's first point and the same power-law continuation.
+- The generated config `n2_n_exc_johnsonlow.toml` (nominal DI, OPM N elastic) differs from `n2_n.toml` in exactly those eight files; a test enforces this.
+- Its N1 smoke run is chemistry-trustworthy.
+
+**Run design:**
+- Primary: 4 chemistry configs × 9 transports = 36 runs.
+- Johnson-low: × 9 transports = +9 runs.
+- Escalation to the full 72 only if the trigger fires. The trigger's definition of "materially" is fixed in the P5-N₂ pre-registration from the audited measurement uncertainties, not a generic number.

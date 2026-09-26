@@ -952,6 +952,23 @@ def test_n2_rotational_tables():
         assert f'"{f}"' in cfg
 
 
+def test_johnson_low_sensitivity_branch():
+    """Johnson-low branch: Johnson 2005 at all energies with a ramp from the experimental threshold; used only by
+    n2_n_exc_johnsonlow.toml, which differs from n2_n.toml in exactly the eight electronic-excitation files."""
+    import importlib.util, os, numpy as np
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_electronic_excitation_tables.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    for key in b.STATES:
+        E, S = b.cross_section(key, variant="johnsonlow"); Ej, Sj, _ = b.johnson(key)
+        assert E[0] == b.STATES[key][2] and S[0] == 0.0 and np.all(np.isin(Ej, E))
+        assert os.path.isfile(os.path.join(b.PROP, b.fname(key, "johnsonlow")))
+    up = open(os.path.join(b.PROP, "n2_n.toml")).read().splitlines()
+    jl = open(os.path.join(b.PROP, "n2_n_exc_johnsonlow.toml")).read().splitlines()[1:]
+    diff = [(x, y) for x, y in zip(up, jl) if x != y]
+    assert len(up) == len(jl) and len(diff) == 8 and all("_johnsonlow.dat" in y for _, y in diff)
+
+
 def test_variant_configs_are_regenerated_from_n2_n():
     """Every chemistry-variant config equals what scripts/make_n2_variant_configs.py produces from the current n2_n.toml."""
     import importlib.util, os

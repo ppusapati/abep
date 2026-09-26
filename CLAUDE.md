@@ -112,6 +112,11 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    chemistry-trustworthy). **Final audit pass** (`audit/n2_completeness_final_v1.json`): DI and vib final on the complete denominator; rotational gross
    1.13 % → **abep-n2n-0.10** adds j 0→2, 0→4 (JPCRD Table 6, NIST B₀ headers; marginal, gross convention, owner may reverse);
    N²⁺ → N³⁺ excluded (reference-state margin ~200); direct N → N²⁺ unresolved-by-source. Completeness freeze is the owner's call.
+   **P5-N₂ run design (owner decision):** primary 4 chemistry configs × 9 transports = 36 runs, plus the Johnson-low sensitivity
+   branch (`n2_n_exc_johnsonlow.toml`: nominal DI + OPM N elastic) × 9 = +9. Expand Johnson-low to the other three chemistry
+   combinations (+27, full 72) only if its escalation trigger fires. The trigger ("changes a pass/fail, the surviving set, or
+   materially shifts an observable", with "materially" defined from the audited P5-N₂ uncertainties) is pre-registered
+   with the P5-N₂ criteria before any run.
    **Completeness (project decision 2026-09-26):**
    "every file in n2_n.toml exists" ≠ "chemistry complete". `PINNED.toml` stays INCOMPLETE until an omitted-process audit is done:
    - Tier 1 (before P5-N₂ scoring): 8 N₂ excitation states, N momentum transfer.

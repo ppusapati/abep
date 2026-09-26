@@ -21,6 +21,10 @@ Construction, per state:
   of the declared model; its share of the rate and the zero/hold-tail bounds are reported (continuation_sensitivity()),
   up to 10 keV and zero beyond.
 Evidence: level 4. Below 20 eV model-derived (R-matrix theory); 20-100/200 eV measured; above that assumed (continuation).
+Johnson-low sensitivity branch (owner decision 2026-09-26): excitation_N2_<state>_johnsonlow.dat use Johnson's points at
+all energies, with a linear ramp from sigma = 0 at the experimental excitation energy to Johnson's first point (10 or
+12.5 eV) and the same continuation above. Used only by the generated config n2_n_exc_johnsonlow.toml (nominal DI, OPM
+N elastic). Its escalation rule is pre-registered with the P5-N2 criteria, not here.
 Usage: python scripts/build_n2_electronic_excitation_tables.py
 """
 import os, sys
@@ -45,8 +49,8 @@ STATES = {"A": ("A3-Sigma_u.txt", "A_3Sigma_u+", 7.75, "A3Sigma_u"),
           "C": ("C3-Pi_u.txt", "C_3Pi_u", 11.19, "C3Pi_u")}
 
 
-def fname(key):
-    return f"excitation_N2_{STATES[key][3]}.dat"
+def fname(key, variant="nominal"):
+    return f"excitation_N2_{STATES[key][3]}{'_johnsonlow' if variant == 'johnsonlow' else ''}.dat"
 
 
 def su(key):
@@ -78,10 +82,13 @@ def slope(key):
     return -np.log(S[-1] / S[-2]) / np.log(E[-1] / E[-2])
 
 
-def cross_section(key, tail="powerlaw"):
+def cross_section(key, tail="powerlaw", variant="nominal"):
     Es, Ss = su(key); Ej, Sj, _ = johnson(key)
-    m = Es < E_JOIN; mj = Ej >= E_JOIN
-    E = np.concatenate([Es[m], Ej[mj]]); S = np.concatenate([Ss[m], Sj[mj]])
+    if variant == "johnsonlow":
+        E = np.concatenate([[STATES[key][2]], Ej]); S = np.concatenate([[0.0], Sj])
+    else:
+        m = Es < E_JOIN; mj = Ej >= E_JOIN
+        E = np.concatenate([Es[m], Ej[mj]]); S = np.concatenate([Ss[m], Sj[mj]])
     if tail == "powerlaw":
         e_last, s_last = E[-1], S[-1]
         Ec = np.geomspace(e_last, E_CONT_MAX, 200)[1:]
@@ -126,6 +133,12 @@ def main():
                + f". Header {dE} eV = experimental vertical excitation energy (Oddershede, Su 2021 Table 1); no threshold shift. "
                "Maxwellian-integrated by abep_sim/rate_tables.py (scripts/build_n2_electronic_excitation_tables.py). Reaction set abep-n2n-0.9.")
         write_hallthruster_table(os.path.join(PROP, fname(key)), E, S, dE, source=src, tail="zero", header_label="Excitation energy")
+        Ej_lo, Sj_lo = cross_section(key, variant="johnsonlow")
+        write_hallthruster_table(os.path.join(PROP, fname(key, "johnsonlow")), Ej_lo, Sj_lo, dE, tail="zero",
+                                 header_label="Excitation energy",
+                                 source=f"e + N2(X) -> e + N2({col}), JOHNSON-LOW sensitivity branch: Johnson et al. 2005 Table 2 at all "
+                                        f"energies, linear ramp from 0 at {dE} eV to the first Johnson point, power-law continuation "
+                                        f"p = {slope(key):.2f}. Used only by n2_n_exc_johnsonlow.toml. Reaction set abep-n2n-0.10.")
         print(f"{fname(key):32s} dE {dE:5.2f}  p {slope(key):.2f}  step@20 {st:.2f}  cont@30 {100 * cs[30][0]:.1f} % "
               f"(zero {100 * cs[30][1]:+.1f} / hold {100 * cs[30][2]:+.1f} %)")
 
