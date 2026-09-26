@@ -5971,7 +5971,7 @@
    "key": "evidence_hall_sustainment",
    "lane": "lane_09_hall_sustainment",
    "merge_commits": {
-    "lane_09_hall_sustainment": "a2c09b2ecfd144eaf6d10ca0235c191e9b554e7c"
+    "lane_09_hall_sustainment": "49604b6eee234314951b9cfee1181842bf604491"
    },
    "missing_files": [],
    "role": "Hall-only sustainment / ignition evidence matrix",
@@ -6103,7 +6103,7 @@
    "key": "overlay_hall_sustainment",
    "lane": "fo_hall_sustainment_envelope",
    "merge_commits": {
-    "fo_hall_sustainment_envelope": "bec7452e6edc8b2de158a21babcbf4e508a17a31"
+    "fo_hall_sustainment_envelope": "a1f45dab63b33c3072c3f2b1fc683b5a65ad64a4"
    },
    "missing_files": [],
    "role": "Hall-only sustainment evidence on the feed envelope",
@@ -6329,14 +6329,19 @@
    ],
    "files": [
     "docs/milestones/bundle1/BUNDLE1.md",
+    "docs/milestones/bundle1/BUNDLE1_v2.md",
     "docs/milestones/bundle1/build_bundle1.py",
     "docs/milestones/bundle1/bundle1_v1.json",
-    "docs/milestones/bundle1/bundle1_v1.schema.json"
+    "docs/milestones/bundle1/bundle1_v1.schema.json",
+    "docs/milestones/bundle1/bundle1_v2.json",
+    "docs/milestones/bundle1/bundle1_v2.schema.json",
+    "docs/milestones/bundle1/governance_snapshot_v2.json",
+    "docs/milestones/bundle1/__pycache__/build_bundle1.cpython-311.pyc"
    ],
    "key": "bundle1",
    "lane": "fo_bundle1_conditional_selection",
    "merge_commits": {
-    "fo_bundle1_conditional_selection": "29b54f1e6267032d580a434df1f2c2bd7930004d"
+    "fo_bundle1_conditional_selection": "8ba7dea27faaa988e00a54d93f0b4e20919f9a72"
    },
    "missing_files": [],
    "role": "Bundle 1 conditional-selection outcome (expected; never anticipated)",
@@ -6519,12 +6524,12 @@
    "provenance.generation.generated_at"
   ],
   "generation": {
-   "generated_at": "2026-09-26T20:35:57Z"
+   "generated_at": "2026-09-26T21:05:53Z"
   },
   "generator_sha256": {
    "scripts/architecture/build_decision_dossier.py": "9c6ff9ca58733357e94966f57d166d4255ba2742638d69a81704c60f0b03f3d3"
   },
-  "git_commit": "1cf9f0c7daf43fcd57fe97597877f2648e8a4273",
+  "git_commit": "8ba7dea27faaa988e00a54d93f0b4e20919f9a72",
   "input_files_sha256": {
    "CLAUDE.md": "8b6b5098011b5c16fae49298d435f2ba2e20535b150118bcac70673b494c0b2f",
    "abep_sim/arch_boundary.py": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
@@ -6562,8 +6567,8 @@
    "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json": "54b7b00a60134f2d92f2eb5c9fb49f18d23623a566e04a4b7d70325a0e332509",
    "docs/architecture_comparison/overlays/ecr/ECR_BREAKEVEN_OVERLAY.md": "0b622859abb49ef3b426b8aee7be893ee9c026a98d13e4f8ebdb5ab93ad7a5a1",
    "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json": "3ee12e66f94204955f61cbb78d7c5036044cc59a9bc50f675704592bfbfabfcd",
-   "docs/architecture_comparison/overlays/hall_sustainment/HALL_SUSTAINMENT_ENVELOPE.md": "ddb257d13cd1c6ca990f73ec80abe9deb6b04f9e87f047881787a6556a26ba1e",
-   "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json": "c7d05fd04aafe249ff0dce575902067dea9bdd048fa857283cb66066e612b19e",
+   "docs/architecture_comparison/overlays/hall_sustainment/HALL_SUSTAINMENT_ENVELOPE.md": "775b419617ea6359a691de5ca5dcdece47eb0612e2a0e71aa5d26a49aec08ec6",
+   "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json": "3381c88b81670c37836c04e1ee8dea78898718fa9219df12140f2dbe24f612bb",
    "docs/architecture_comparison/overlays/rf/RF_BREAKEVEN_OVERLAY.md": "12c777870fa3a34a80c1aca562d4e7527c31372a72d5e7238fbb07342b6716c9",
    "docs/architecture_comparison/overlays/rf/overlay_rf_v1.json": "ba739be2fdf431ac33900207cd8365d265456ad7b9d7e6a71e0875524c662359",
    "docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md": "2432edb7e9095fd630585768a62a811140b5230ba035afa3f0fc168636d11ca9",
@@ -6576,8 +6581,8 @@
    "docs/evidence/cathode/cathode_evidence_v1.json": "050060204e443d5583c307becadaab55a9f213d406ff4454be856bca21249110",
    "docs/evidence/ecr_source/ECR_SOURCE_EVIDENCE.md": "b543437f216335fd972de560345864c172472a12e3522566771413126677f440",
    "docs/evidence/ecr_source/ecr_evidence_matrix.json": "4a65dbeec34f16f048fa515ced3bb959c02a981113e25da89e8bb844337fec88",
-   "docs/evidence/hall_sustainment/HALL_SUSTAINMENT_EVIDENCE.md": "f9674b60b2a2852e6b960e227a95626a78096d28eb698b9237bc9a419fcf7c01",
-   "docs/evidence/hall_sustainment/hall_sustainment_matrix.json": "248aef28cfe6ffff90d9ee6d43c388488140547e1ce5659975ce30ca77f415b4",
+   "docs/evidence/hall_sustainment/HALL_SUSTAINMENT_EVIDENCE.md": "41a5f2c68851988251274d89d8298b9c027b5ac1de5986dc7913a739e45ac499",
+   "docs/evidence/hall_sustainment/hall_sustainment_matrix.json": "76bba594eb1175b2186a8066b38665a2ce5e4cf77487c90f4af2e187a0b82dcc",
    "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md": "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15",
    "docs/evidence/rf_source/rf_evidence_matrix.json": "5f6d4e0ede8b2e21e45b740c28ac9320e7ddd6cfd70ef05012f85712ae0ac8e8",
    "docs/evidence/wall_life/WALL_LIFE_EVIDENCE.md": "b8a58170271e90de2a14ff5b0f42f7bbd804799e6a610cfe8d4e9448b7c05864",
@@ -6588,9 +6593,14 @@
    "docs/hallmap/HALLMAP_PRODUCTION_SPEC.md": "993be3eb41ea6e8fc6c508022f3b0ac10d054c306f392d0bff2b70b1d91c34db",
    "docs/hallmap/drafts/hallmap_convergence_prereg_DRAFT.json": "0ccb3fad8cfb35edba49cc58d27ef833c6ecef4431514a99fffff96401fbd8f8",
    "docs/milestones/bundle1/BUNDLE1.md": "94f40ee2021a47b1c2390dd21a95faa6ef4fcedf55b979662fd713d14e0840fd",
-   "docs/milestones/bundle1/build_bundle1.py": "d285582b9fcf34700e716cd6d02524d117f0ea67c80ccebaf432a8549b8dad01",
+   "docs/milestones/bundle1/BUNDLE1_v2.md": "8375b0a9a7f1decfcd47f4404b479784947a28d122f6c832152cf4aabe9d2b6e",
+   "docs/milestones/bundle1/__pycache__/build_bundle1.cpython-311.pyc": "d7566f4fae3385795d61a9d952e3498af0362ff42217304c8758918028d57ee1",
+   "docs/milestones/bundle1/build_bundle1.py": "aa1eed6661909f8af838af1e9e1c8607c87ab07a2572323ccd0fa6117134459e",
    "docs/milestones/bundle1/bundle1_v1.json": "c07264b2f9f4126445bda95c888d1d29e9b52176b91cc044653269071ce65a3d",
    "docs/milestones/bundle1/bundle1_v1.schema.json": "10826077bd323d125d792662d8b06e616b676ed1b0f0fdb55a10dbcf3ab333a0",
+   "docs/milestones/bundle1/bundle1_v2.json": "32f25836a4736db7408b0b3cc25737e617cd8241b1ba0cc3f625002f03893e6a",
+   "docs/milestones/bundle1/bundle1_v2.schema.json": "f1fec9c00ac4721e47984c9d03526e7ef591410ceace351547b57b4e6af633b3",
+   "docs/milestones/bundle1/governance_snapshot_v2.json": "a8e0fd38a5fd45e1e907b2a16f4b17cc0bd4d178c789f20f6c6b23d25a944a49",
    "docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md": "273549ab336024701c46626c177ea33730212b447806420b464e1399884e903e",
    "docs/v2/question_a/QUESTION_A_DISPOSITION.json": "bdf3b404c8dc90ee72e3c4b43025d447e57d5aff167fb286e46b703a66d89cd2",
    "hallthruster_bridge/ensemble/transport_ensemble_v0.json": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
