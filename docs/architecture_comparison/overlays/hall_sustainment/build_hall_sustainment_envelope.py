@@ -75,12 +75,12 @@ INPUTS = {
     "p5_case_geometry": {
         "path": "hallthruster_bridge/cases/p5_xenon.json",
         "sha256": "1071684dca85a60cdd097c7efaccdf3f6ac29014b796b1aa4ce54e49b0e89f85",
-        "lane": "base checkout (read only)", "branch": "main", "commit": "fe1d79390f",
+        "lane": "base checkout (read only)", "branch": "claude/nifty-ramanujan-w68f9z", "commit": "fe1d79390f",
         "role": "P5 channel radii r_in / r_out and the published source cited for them (P5 channel cross-section only)"},
     "constants_module": {
         "path": "abep_sim/constants.py",
         "sha256": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
-        "lane": "base checkout (read only)", "branch": "main", "commit": "fe1d79390f",
+        "lane": "base checkout (read only)", "branch": "claude/nifty-ramanujan-w68f9z", "commit": "fe1d79390f",
         "role": "M_SPECIES (mass-fraction arithmetic on the feed envelope's own basis) and RFPConstraints"},
 }
 CLAUDE_MD_PROPELLANT_TOKEN = "air + Xe"          # RFP propellant set as recorded in CLAUDE.md (checked, not pinned)
@@ -99,6 +99,17 @@ B_DEFINITIONS = {
                           "exit plane'; Z-70: 'radial B at channel centreline, exit plane')",
 }
 CATHODE_GASES = ("Xe", "N2", "air", "Ar")
+# Relation of a cathode gas to the RFP propellant set 'air + Xe' (CLAUDE.md). N2 is a constituent of air, not itself a
+# listed RFP propellant: a pure-N2 cathode feed is conditional on a separate N2 supply or on separating N2 from the air
+# path (neither is assessed here).
+RFP_GAS_RELATION = {"Xe": "LISTED", "air": "LISTED", "N2": "AIR_CONSTITUENT_CONDITIONAL", "Ar": "NOT_LISTED"}
+RFP_GAS_RELATION_TEXT = {
+    "LISTED": "a listed RFP propellant (air + Xe)",
+    "AIR_CONSTITUENT_CONDITIONAL": "a constituent of air, not itself a listed RFP propellant (air + Xe): usable only "
+                                   "with a separate N2 supply or separation of N2 from the air path (conditional; not "
+                                   "assessed here)",
+    "NOT_LISTED": "outside the RFP propellant set air + Xe",
+}
 DESIGN_KEYS = ("channel_area_m2", "discharge_voltage_V", "magnetic_field", "cathode_gas", "discharge_power_W")
 DESIGN_TBD = {
     "channel_area_m2": "TBD - requires the Vyovrinda Hall channel geometry (inner/outer channel diameter); the "
@@ -259,7 +270,7 @@ EXTRACT = {
             "cathode": XE, "b": {"definition": "Br_exit_centreline"}, "power": "range"},
     "E02": {"device": "P5", "role": "extinction", "ext_kind": "voltage_window", "flow": None,
             "area": P5_AREA, "comp": PURE_N2, "cathode": XE, "b": {"definition": "Br_exit_centreline"},
-            "power": "range"},
+            "power": "range", "v_condition": "E02-WINDOW-EDGE"},
     "E03": {"device": "ECHT", "role": "support_air_only", "flow": ["@flow"], "area": ECHT_AREA, "comp": PURE_N2,
             "cathode": {"gas": "Ar", "token": "Ar"}, "b": {"definition": None, "why": "not_at_operating_points"},
             "power": "range"},
@@ -288,9 +299,16 @@ EXTRACT = {
     "E12": {"device": "MaSHEKT-100", "role": "support_air_only", "flow": None,
             "area": {"kind": "missing", "missing": "geometry not accessed"}, "comp": PURE_N2,
             "cathode": {"gas": None}, "v_numeric": False, "b": MISSING_B, "power": "range"},
-    "E13": {"device": "Z-70", "role": "extinction", "ext_kind": "xe_fraction", "flow": ["@flow"],
-            "flow_plus": ["lowest anode Xe flow that sustained (with N2 1.33-1.39 mg/s)"], "area": Z70_AREA,
-            "comp": {"kind": "xe_admixture", "base": ["N2"], "xe_q": "Xe mass fraction of anode flow at the lowest-Xe points"},
+    # E13: the matrix flow and Xe flow are those of the lowest-Xe points at which the Z-70 SUSTAINED; the flow (and Xe
+    # fraction) at which the discharge ceased is not reported. They are kept as a sustained reference point only and are
+    # never used as an extinction value on any axis.
+    "E13": {"device": "Z-70", "role": "extinction", "ext_kind": "xe_fraction", "flow": None,
+            "flow_at_extinction": "not_reported",
+            "sustained_reference": {"flow": ["@flow"],
+                                    "flow_plus": ["lowest anode Xe flow that sustained (with N2 1.33-1.39 mg/s)"]},
+            "area": Z70_AREA,
+            "comp": {"kind": "xe_admixture_extinction", "base": ["N2"],
+                     "xe_q": "Xe mass fraction of anode flow at the lowest-Xe points"},
             "cathode": XE, "b": {"definition": "Br_exit_centreline"}, "power": "range"},
     "E14": {"device": "Z-70", "role": "support_xe_admixture", "flow": ["total anode flow (Xe + air), runs XeAir-3/4"],
             "area": Z70_AREA,
@@ -342,6 +360,11 @@ CONDITIONS = {
                        "geometry.outer_diameter.ambiguity)",
     "E20-FLOW-BASIS": "the E20 flow is a review-reported 'total mass flow'; whether it includes the Xe cathode flow "
                       "(a separate matrix quantity) is not stated (matrix E20)",
+    "E02-WINDOW-EDGE": "the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are "
+                       "approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the "
+                       "matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case "
+                       "outside or straddling the stated window is therefore not placed against E02's extinction "
+                       "statement until the edge is resolved",
 }
 
 
@@ -440,12 +463,26 @@ def composition_record(entry, spec, M):
                 "evidence_class": "inferred", "xe_fraction": None,
                 "basis": f"'{gas}' read as mole fractions (matrix derived_checks: basis not stated by the source; "
                          f"verify) -> mass fractions with abep_sim.constants.M_SPECIES; our arithmetic"}
+    if kind == "xe_admixture_extinction":                   # extinction below the lowest SUSTAINING Xe fraction (E13)
+        q, xr = _num_q(entry, spec["xe_q"], "1")
+        return {"comparable": False, "species_present": sorted(set(spec["base"]) | {"Xe"}), "w": None,
+                "evidence_class": q["evidence_class"], "xe_fraction": None,
+                "xe_fraction_lowest_sustained": qrec(
+                    xr, "1", q["evidence_class"], _loc(entry, q),
+                    meaning="lowest Xe mass fraction at which the discharge sustained; the fraction at which it "
+                            "ceased is not reported; not an extinction value"),
+                "missing": f"Xe mass fraction (and anode flow) at extinction not reported: the lowest Xe mass fraction "
+                           f"that sustained was {fmt(xr)} (matrix '{q['name']}'); matrix outcome: "
+                           f"'{entry['outcome_statement']}' (anode gas '{gas}'); no Xe-fraction direction is used for an "
+                           f"extinction item (definitions.directions)",
+                "basis": f"'{gas}'"}
     if kind == "xe_admixture":
         q, xr = _num_q(entry, spec["xe_q"], "1")
         return {"comparable": False, "species_present": sorted(set(spec["base"]) | {"Xe"}), "w": None,
                 "base_comparable": len(spec["base"]) == 1 and not spec.get("base_note"),
                 "evidence_class": q["evidence_class"],
-                "xe_fraction": qrec(xr, "1", q["evidence_class"], _loc(entry, q)),
+                "xe_fraction": qrec(xr, "1", q["evidence_class"], _loc(entry, q),
+                                    meaning=f"Xe mass fraction of sustained runs (matrix '{q['name']}')"),
                 "missing": f"Xe-admixture feed ({' + '.join(spec['base'])} + Xe, Xe mass fraction {fmt(xr)}"
                            + (f"; {spec['base_note']}" if spec.get("base_note") else "")
                            + "): comparable only with a feed that contains Xe (mixed air + Xe variant)",
@@ -476,31 +513,50 @@ def evidence_region(entry, spec, p5, M, rfp_power_kW):
             reg["duration"] = qrec(r if r[0] != r[1] else r[0], "h", q["evidence_class"], _loc(entry, q))
         return reg
     conds = []
-    # flow (anode, atmospheric gas plus any Xe in the anode flow) -----------------------------------------------------
-    if spec["flow"] is None:
-        fq = entry["flow"]
-        if as_range(fq["value"]) is not None:
-            raise OverlayInputError(f"{eid}: flow is numeric in the matrix but the extraction map expects none")
-        reg["flow"] = {"value": None, "missing": f"matrix '{fq['name']}': {fq['value']}"}
-    else:
+
+    def flow_sum(fspec):
         lo, hi, classes, locs = math.inf, -math.inf, [], []
-        for n in spec["flow"]:
+        for n in fspec["flow"]:
             q, r = _num_q(entry, n, "mg/s")
             lo, hi = min(lo, r[0]), max(hi, r[1])
             classes.append(q["evidence_class"])
             locs.append(_loc(entry, q))
         deriv = "min / max over the named quantities"
-        if spec.get("flow_plus"):
-            for n in spec["flow_plus"]:
+        if fspec.get("flow_plus"):
+            for n in fspec["flow_plus"]:
                 q, r = _num_q(entry, n, "mg/s")
                 lo, hi = lo + r[0], hi + r[1]
                 locs.append(_loc(entry, q))
             classes = ["inferred"]
             deriv = "atmospheric-gas anode flow + Xe anode flow (total anode flow); our arithmetic"
-        cls = classes[0] if len(set(classes)) == 1 else "inferred"
+        return [lo, hi], (classes[0] if len(set(classes)) == 1 else "inferred"), "; ".join(locs), deriv
+
+    # flow (anode, atmospheric gas plus any Xe in the anode flow) -----------------------------------------------------
+    if spec.get("flow_at_extinction") == "not_reported":
+        # an extinction item whose matrix flow is a SUSTAINED reference point: the flow at extinction is not reported
+        if role != "extinction":
+            raise OverlayInputError(f"{eid}: 'flow_at_extinction' applies to extinction items only")
+        fq = entry["flow"]
+        rng, cls, locs, deriv = flow_sum(spec["sustained_reference"])
+        reg["sustained_reference_point"] = qrec(
+            rng, "mg/s", cls, locs, deriv,
+            meaning="total anode flow of the lowest-Xe points at which the discharge SUSTAINED; not an extinction "
+                    "value; not used on any axis or threshold")
+        reg["flow"] = {"value": None,
+                       "missing": f"anode flow at extinction not reported: the matrix flow ('{fq['name']}') and Xe flow "
+                                  f"are those of the lowest-Xe points at which the discharge sustained (total "
+                                  f"{fmt(rng)} mg/s, sustained_reference_point); matrix outcome: "
+                                  f"'{entry['outcome_statement']}'"}
+    elif spec["flow"] is None:
+        fq = entry["flow"]
+        if as_range(fq["value"]) is not None:
+            raise OverlayInputError(f"{eid}: flow is numeric in the matrix but the extraction map expects none")
+        reg["flow"] = {"value": None, "missing": f"matrix '{fq['name']}': {fq['value']}"}
+    else:
+        rng, cls, locs, deriv = flow_sum(spec)
         fc = [spec["flow_condition"]] if spec.get("flow_condition") else []
         conds += fc
-        reg["flow"] = qrec([lo, hi], "mg/s", cls, "; ".join(locs), deriv, conditional_on=fc)
+        reg["flow"] = qrec(rng, "mg/s", cls, locs, deriv, conditional_on=fc)
     # channel cross-section and flow density (scaling assumption S1) ---------------------------------------------------
     area, area_missing = area_record(entry, spec["area"], p5)
     reg["channel_area"] = area if area else {"value": None, "missing": area_missing}
@@ -530,8 +586,13 @@ def evidence_region(entry, spec, p5, M, rfp_power_kW):
     if vr is None:
         reg["discharge_voltage"] = {"value": None, "missing": f"matrix '{vq['name']}': {vq['value']}"}
     else:
+        vkw = {}
+        if spec.get("v_condition"):                         # a stated window whose edge is approximate (E02)
+            vkw = {"conditional_on": [spec["v_condition"]], "edge_note": f"matrix: '{vq['uncertainty']}'"}
+            conds.append(spec["v_condition"])
         reg["discharge_voltage"] = qrec(vr, "V", vq["evidence_class"], _loc(entry, vq),
-                                        kind=("window" if spec.get("ext_kind") == "voltage_window" else "operated"))
+                                        kind=("window" if spec.get("ext_kind") == "voltage_window" else "operated"),
+                                        **vkw)
     # magnetic field ---------------------------------------------------------------------------------------------------
     bq = entry["magnetic_field"]
     if spec["b"]["definition"] is None:
@@ -557,8 +618,9 @@ def evidence_region(entry, spec, p5, M, rfp_power_kW):
     else:
         if c["token"] not in entry["propellant"]["cathode_gas"]:
             raise OverlayInputError(f"{eid}: cathode_gas lacks token {c['token']!r}")
-        reg["cathode_gas"] = {"gas": c["gas"], "note": c.get("note"),
-                              "in_rfp_propellant_set": c["gas"] in ("Xe", "N2", "air")}
+        rel = RFP_GAS_RELATION[c["gas"]]
+        reg["cathode_gas"] = {"gas": c["gas"], "note": c.get("note"), "rfp_propellant_relation": rel,
+                              "rfp_propellant_relation_text": RFP_GAS_RELATION_TEXT[rel]}
     # power (informational; RFP total-power ceiling) -------------------------------------------------------------------
     pq = entry["thruster"]["power"]
     pr = as_range(pq["value"])
@@ -643,6 +705,11 @@ def axis_flow(case, reg):
     return cover_directional(case["mdot_kgps"], f["value"][0] * 1e-6, None, f.get("conditional_on", []), mode)
 
 
+def flow_density_range(mdot, area):
+    """Gamma = mdot / A_ch over the full ranges (no end of either range is dropped): [mdot_lo / A_hi, mdot_hi / A_lo]."""
+    return [mdot[0] / area[1], mdot[1] / area[0]]
+
+
 def axis_flow_density(case, reg):
     fd = reg["flow_density"]
     if fd["value"] is None:
@@ -653,7 +720,7 @@ def axis_flow_density(case, reg):
            if v is None]
     if blk:
         return {"coverage": UND, "blocked_by": blk}
-    g = [case["mdot_kgps"][0] / case["channel_area_m2"], case["mdot_kgps"][1] / case["channel_area_m2"]]
+    g = flow_density_range(case["mdot_kgps"], case["channel_area_m2"])
     mode = "extinction" if reg["role"] == "extinction" else "support"
     d = cover_directional(g, fd["value"][0], fd.get("bound"), fd.get("conditional_on", []), mode)
     d["assumptions"] = ["S1"]
@@ -672,9 +739,11 @@ def axis_composition(case, reg):
             return {"coverage": DNR, "species_absent_from_evidence": absent}
         if not comp.get("base_comparable"):
             return {"coverage": NC, "missing": comp["missing"]}
+        if reg["role"] != "support_xe_admixture":
+            # the declared Xe-fraction direction (definitions.directions) places SUPPORTING Xe-admixture items only;
+            # an extinction item would need its Xe fraction at extinction (E13 does not report it)
+            raise OverlayInputError(f"{reg['id']}: Xe-fraction comparison is defined for support_xe_admixture items only")
         f, lo = (w.get("Xe") or 0.0), comp["xe_fraction"]["value"][0]
-        if reg["role"] == "extinction":                   # extinguished below the lowest sustaining Xe fraction
-            return {"coverage": COVERS if f < lo else DNR, "case_xe_fraction": g6(f)}
         return {"coverage": COVERS if f >= lo else DNR, "case_xe_fraction": g6(f)}
     return cover_composition(w, reg)
 
@@ -687,7 +756,11 @@ def axis_voltage(case, reg):
         return {"coverage": UND, "blocked_by": ["B-DESIGN-VD"]}
     if v.get("kind") == "window":           # extinction outside a stated window
         inside = cover_interval(case["V_d"], v["value"])
-        return {"coverage": {COVERS: DNR, DNR: COVERS, PARTIAL: PARTIAL}[inside]}
+        cov = {COVERS: DNR, DNR: COVERS, PARTIAL: PARTIAL}[inside]
+        d = {"coverage": cov}
+        if cov != DNR and v.get("conditional_on"):      # outside / straddling an approximate window edge
+            d["conditional_on"] = sorted(v["conditional_on"])
+        return d
     return {"coverage": cover_interval(case["V_d"], v["value"])}
 
 
@@ -750,8 +823,12 @@ def compare(case, reg):
         verdict = "does_not_reach_case"
     else:
         verdict = "cannot_decide"
+    # S3: the item's region is the product of its per-axis ranges (flow density, V_d, B assessed independently); joint
+    # operating points are not checked. Every verdict that rests on more than one numeric axis carries it.
+    assumptions = sorted({s for a in REQUIRED_AXES for s in axes[a].get("assumptions", [])} | {"S3"})
     return {"item": reg["id"], "role": reg["role"], "status_bearing": reg["status_bearing"], "axes": axes,
-            "verdict": verdict, "reasons": reasons}
+            "verdict": verdict, "reasons": reasons, "assumptions": assumptions,
+            "joint_operating_point_check": "NOT_CHECKED (S3)"}
 
 
 # ---------------------------------------------------------------------------------------------------- design point
@@ -813,7 +890,7 @@ def design_values(dp):
     b = val("magnetic_field")
     c = val("cathode_gas")
     p = val("discharge_power_W")
-    return {"channel_area_m2": as_range(a["value"])[0] if a else None,
+    return {"channel_area_m2": as_range(a["value"]) if a else None,       # [lo, hi]: the full range is carried
             "V_d": as_range(v["value"]) if v else None,
             "B": {"value": as_range(b["value"]), "definition": b["definition"]} if b else None,
             "cathode_gas": c["value"] if c else None,
@@ -880,8 +957,24 @@ def case_blockers(cs, fc, comps, regs, max_tested_wO2, scen):
                       "detail": f"Vyovrinda design point '{dk}' is TBD" +
                                 (" (informational axis; not needed for a status)" if bid == "B-DESIGN-POWER" else ""),
                       "requires": DESIGN_TBD[dk], "resolved_by": ["DI-2"]})
-    if scen:
-        sup = [c for c in comps if c["role"] == "support_air_only"]
+    sup = [c for c in comps if c["role"] == "support_air_only"]
+    if cs.get("w_valve") is not None:
+        # a delivered valve-outlet composition is supplied: the composition blockers are evaluated on it, not on the
+        # free-stream scenarios (which only bound a TBD composition)
+        wv = cs["w_valve"]
+        if (wv.get("O") or 0.0) > EPS and sup and all(
+                c["axes"]["composition"]["coverage"] == DNR
+                and "O" in c["axes"]["composition"].get("species_absent_from_evidence", []) for c in sup):
+            B.append({"id": "B-EVID-ATOMIC-O", "kind": "evidence_gap",
+                      "detail": f"the delivered valve-outlet composition contains atomic O (w_O {fmt(wv['O'])}); no "
+                                "evidence item was tested with atomic O in the anode feed, so every item DOES_NOT_REACH "
+                                "on composition", "resolved_by": ["DM-1", "DM-2"]})
+        wo2 = wv.get("O2") or 0.0
+        if max_tested_wO2 is not None and wo2 > max_tested_wO2 + EPS:
+            B.append({"id": "B-EVID-O2-FRACTION", "kind": "evidence_gap",
+                      "detail": f"the delivered O2 mass fraction {fmt(wo2)} exceeds the largest O2 mass fraction "
+                                f"tested in any comparable item ({fmt(max_tested_wO2)})", "resolved_by": ["DM-2"]})
+    elif scen:
         if sup and all(scen["SC-FS"]["per_item"][c["item"]]["coverage"] == DNR and
                        "O" in scen["SC-FS"]["per_item"][c["item"]].get("species_absent_from_evidence", [])
                        for c in sup):
@@ -909,7 +1002,7 @@ def case_blockers(cs, fc, comps, regs, max_tested_wO2, scen):
     conds = sorted({x for c in comps if c["status_bearing"] for x in regs[c["item"]].get("conditional_on", [])})
     if conds:
         B.append({"id": "B-EVID-INTERPRETATION", "kind": "interpretation",
-                  "detail": "; ".join(f"{k}: {CONDITIONS[k]}" for k in conds), "resolved_by": ["DM-5"]})
+                  "detail": "; ".join(f"{k}: {CONDITIONS[k]}" for k in conds), "resolved_by": ["DM-5", "DM-2"]})
     lv = sorted(c["item"] for c in comps if not c["status_bearing"] and c["role"] == "support_air_only")
     if lv:
         B.append({"id": "B-EVID-LEVEL", "kind": "evidence_level",
@@ -1092,8 +1185,10 @@ def build(found, design_point=None, feed_override=None, feed_override_meta=None)
                                                       "the Vyovrinda channel cross-section (design point "
                                                       "channel_area_m2)"}
                                          if cs["mdot_kgps"] is None or cs["channel_area_m2"] is None else
-                                         qrec(cs["mdot_kgps"][0] / cs["channel_area_m2"], "kg m^-2 s^-1",
-                                              "model-derived", "delivered mdot / design channel_area_m2")),
+                                         qrec(flow_density_range(cs["mdot_kgps"], cs["channel_area_m2"]),
+                                              "kg m^-2 s^-1", "model-derived",
+                                              "delivered mdot / design channel_area_m2",
+                                              "[mdot_lo / A_hi, mdot_hi / A_lo]")),
                 "composition_scenarios": scen,
             },
             "H_RAM_bound": {
@@ -1108,9 +1203,13 @@ def build(found, design_point=None, feed_override=None, feed_override_meta=None)
             "comparisons": comps,
             "status": status, "supporting_items": sup, "contradicting_items": con,
             "blockers": blockers,
-            "decisive_measurement": {"id": "DM-2", "prerequisites": ["DI-1", "DI-2"],
+            "decisive_measurement": {"id": "DM-2", "prerequisites": ["DI-1", "DI-2", "DM-1"],
                                      "at": "this case's delivered flow density and valve-outlet composition, at the "
-                                           "design V_d, B and cathode gas"},
+                                           "design V_d, B and cathode gas",
+                                     "not_stand_alone": "DM-2 needs the delivered feed (DI-1) and the design point "
+                                                        "(DI-2), and DM-1 to set whether atomic O is part of the test "
+                                                        "composition; a second composition point is part of DM-2 to "
+                                                        "check the composition dependence"},
         }
         case["ignition"] = ignition_block(comps, regs, status, blockers)
         cases.append(case)
@@ -1141,8 +1240,12 @@ def build(found, design_point=None, feed_override=None, feed_override_meta=None)
     vm = {"case_id": "variant_mixed_air_xe", "kind": "mixed_air_xe_variant", "feed_envelope_status": mx["status"],
           "feed": {"mixed_air_xe_feed": {"value": None, "status": mx["status"], "requires": mx["requires"],
                                          "source": "feed_envelope_v1 xe_path.mixed_air_xe_feed"}},
-          "xe_fraction_evidence": {i: regs[i]["composition"]["xe_fraction"] for i in sorted(regs)
-                                   if (regs[i].get("composition") or {}).get("xe_fraction")},
+          "xe_fraction_evidence": {i: dict((regs[i]["composition"].get("xe_fraction")
+                                            or regs[i]["composition"]["xe_fraction_lowest_sustained"]),
+                                           item_role=regs[i]["role"])
+                                   for i in sorted(regs)
+                                   if (regs[i].get("composition") or {}).get("xe_fraction")
+                                   or (regs[i].get("composition") or {}).get("xe_fraction_lowest_sustained")},
           "comparisons": mcomps, "status": S_UND, "supporting_items": [], "contradicting_items": [],
           "blockers": [{"id": "B-MIXED-FEED", "kind": "feed_tbd", "detail": "mixed air + Xe feed is TBD in the feed "
                         "envelope", "requires": mx["requires"], "resolved_by": ["DI-1"]}]
@@ -1186,8 +1289,8 @@ def make_findings(cases, regs, rfp, T_max_N, max_tested_wO2, brackets):
                    and (r.get("cathode_gas") or {}).get("gas") not in ("Xe", None))
     xfree_txt = "; ".join(
         f"{i} ({regs[i]['device']}: {regs[i]['cathode_gas']['gas']} cathode, "
-        f"{'inside' if regs[i]['cathode_gas']['in_rfp_propellant_set'] else 'outside'} the RFP propellant set air + Xe; "
-        f"ignition {regs[i]['ignition']['mode']})" for i in xfree)
+        f"{regs[i]['cathode_gas']['rfp_propellant_relation_text']}; ignition {regs[i]['ignition']['mode']})"
+        for i in xfree)
     durations = {i: r["duration"]["value"] for i, r in regs.items() if r.get("duration")}
     dur_limit = sorted(i for i, r in regs.items() if r["role"] == "duration_limit" and r.get("duration"))
     sup_g = sorted(i for i in gam if regs[i]["role"] == "support_air_only")
@@ -1259,14 +1362,19 @@ def make_findings(cases, regs, rfp, T_max_N, max_tested_wO2, brackets):
          "source": "cases[*].feed.composition_scenarios (frozen NRLMSIS 2.1 free stream) and "
                    "evidence_regions[*].composition"},
         {"id": "F-5", "topic": "flow span one fixed design must sustain",
-         "statement": f"For a fixed design the delivered flow scales with rho V (feed envelope relation mdot = A_eff "
-                      f"rho V), so across solar levels it spans "
+         "statement": f"The free-stream mass flux rho V spans "
                       + ", ".join(f"x{fmt(v, 3)} at {k}" for k, v in span_alt.items())
-                      + f" and x{fmt(span_all, 3)} over all cases (lowest at {harsh}). The widest flow span demonstrated "
-                      f"within one air-only supporting item is x{fmt(max(dem.values()), 3)} "
-                      f"({max(dem, key=dem.get)}); demonstrated spans are what was tested, not device limits.",
+                      + f" across solar levels and x{fmt(span_all, 3)} over all cases (lowest at {harsh}). For a fixed "
+                      f"design these are the delivered-flow ratios only under S4 (A_eff the same at every case; feed "
+                      f"envelope relation mdot = A_eff rho V); the feed envelope records (FE-08) that eta_c, one factor "
+                      f"of A_eff, depends on the speed ratio, which changes across the cases, so the delivered-flow "
+                      f"span can differ from these ratios. The widest flow span demonstrated within one air-only "
+                      f"supporting item is x{fmt(max(dem.values()), 3)} ({max(dem, key=dem.get)}); demonstrated spans "
+                      f"are what was tested, not device limits.",
          "values": {"required_span_by_altitude": span_alt, "required_span_all_cases": span_all,
                     "demonstrated_span_by_item": dem, "harshest_flow_case": harsh},
+         "span_basis": "free-stream mass-flux ratio; equals the delivered-flow ratio only under S4",
+         "conditional_on": ["S4"],
          "evidence_class": "model-derived", "demonstrated_span_evidence_class": "inferred",
          "source": "this overlay: ratios of cases[*].feed.mass_flux_kgpm2ps (model-derived) and of evidence_regions"
                    "[*].flow (measured) values"},
@@ -1280,7 +1388,9 @@ def make_findings(cases, regs, rfp, T_max_N, max_tested_wO2, brackets):
         {"id": "F-7", "topic": "xenon-free operation and cathode gas",
          "statement": f"Air-only supporting items with no Xe on either electrode in steady state: {xfree_txt}. Every "
                       f"other air-only supporting item used a Xe cathode or did not report its cathode gas.",
-         "values": {"xenon_free_items": xfree}},
+         "values": {"xenon_free_items": xfree,
+                    "cathode_rfp_propellant_relation": {i: regs[i]["cathode_gas"]["rfp_propellant_relation"]
+                                                        for i in xfree}}},
         {"id": "F-8", "topic": "duration",
          "statement": "Demonstrated durations on atmospheric feeds: "
                       + ", ".join(f"{i} {fmt(v)} h" for i, v in sorted(durations.items()))
@@ -1288,7 +1398,58 @@ def make_findings(cases, regs, rfp, T_max_N, max_tested_wO2, brackets):
                       + " ".join(f"{i} (level {regs[i]['evidence_level']}): {regs[i]['reason']}." for i in dur_limit),
          "values": durations, "evidence_class": "measured",
          "source": "evidence_regions[*].duration (matrix quantities; E07 second-hand, level 5)"},
+        transfer_reach_finding(regs),
     ]
+
+
+def transfer_reach_finding(regs):
+    """F-9: can any O2- or O-containing (air) feed be covered by literature transfer with the current evidence?"""
+    sup = {i: r for i, r in regs.items() if r["role"] == "support_air_only" and r["status_bearing"]}
+    with_gamma = sorted(i for i, r in sup.items() if r["flow_density"].get("value") is not None)
+    tested_o2 = sorted(i for i, r in regs.items() if r["role"] == "support_air_only" and r["composition"]["comparable"]
+                       and "O2" in r["composition"]["species_present"])
+    tested_o = sorted(i for i, r in regs.items() if "O" in ((r.get("composition") or {}).get("species_present") or []))
+    # an item could cover an O2-containing feed on every required axis only if it has all of these
+    full = sorted(i for i in tested_o2 if i in sup and regs[i]["flow_density"].get("value") is not None
+                  and regs[i]["discharge_voltage"].get("value") is not None
+                  and regs[i]["magnetic_field"].get("value") is not None and regs[i]["cathode_gas"].get("gas"))
+    gamma_species = {i: regs[i]["composition"]["species_present"] for i in with_gamma}
+    o2_missing = {i: [a for a, k in (("flow density", "flow_density"), ("B", "magnetic_field"),
+                                     ("V_d", "discharge_voltage")) if regs[i][k].get("value") is None]
+                  for i in tested_o2}
+    o2_level = {i: ("" if i in sup else f"; evidence level {regs[i]['evidence_level']}, not status-bearing")
+                for i in tested_o2}
+    reach = bool(full)
+    stmt = (f"Under strict composition containment (no tolerance or bracketing rule adopted) a delivered feed that "
+            f"contains O2 or O can be covered on composition only by an item tested on O2 / O. The status-bearing "
+            f"air-only items with a flow per channel cross-section are "
+            + ", ".join(f"{i} ({regs[i]['device']}, {'+'.join(gamma_species[i])})" for i in with_gamma)
+            + "; the items tested with O2 are "
+            + ", ".join(f"{i} ({regs[i]['device']}: lacks {', '.join(o2_missing[i]) or 'no required quantity'}"
+                        f"{o2_level[i]})" for i in tested_o2)
+            + f"; items tested with atomic O: {', '.join(tested_o) or 'none'}. ")
+    if not reach:
+        stmt += ("Hence, with the current evidence, no air case (SC-FS, SC-REC or any O2- or O-containing delivered "
+                 "composition) can become SUSTAINMENT_SUPPORTED by literature transfer, even after DI-1 and DI-2 are "
+                 "supplied: the section-4 thresholds (area_ratio_required, A_ch_max_under_H_RAM_m2) exist only for "
+                 "pure-N2 items. What can change that: DM-2 (hardware on the delivered composition), or an "
+                 "owner-adopted composition tolerance or bracketing rule, which reaches an O2-containing feed only "
+                 "through a pure-N2 item within the tolerance or through an O2-tested item once DM-5 supplies its "
+                 "channel dimensions and B."
+                 + (" No tested composition contains atomic O, so a feed that keeps atomic O needs DM-2 unless the "
+                    "tolerance admits trace atomic O." if not tested_o else ""))
+    else:
+        stmt += (f"Items that could cover an O2-containing feed on every required axis: {', '.join(full)}.")
+    return {"id": "F-9", "topic": "reach of literature transfer for air feeds",
+            "statement": stmt,
+            "values": {"air_only_items_with_flow_density": with_gamma, "items_tested_with_O2": tested_o2,
+                       "items_tested_with_atomic_O": tested_o, "O2_items_missing": o2_missing,
+                       "O2_items_complete_on_required_axes": full,
+                       "air_case_supportable_by_literature_transfer": reach},
+            "evidence_class": None,
+            "source": "this overlay: evidence_regions[*] (flow_density, composition, magnetic_field, discharge_voltage) "
+                      "and the strict containment rule (definitions.directions); a logical consequence, not a physical "
+                      "quantity"}
 
 
 def milestone_conditions(findings, regs, cases, rfp):
@@ -1304,7 +1465,7 @@ def milestone_conditions(findings, regs, cases, rfp):
     for c in air:
         st.setdefault(c["status"], []).append(c["case_id"])
     if set(st) == {S_SUP}:
-        sust = "MET BY LITERATURE TRANSFER at every case (S1, S2 stated; DM-2 still needed for milestone B)"
+        sust = "MET BY LITERATURE TRANSFER at every case (S1-S3 stated; DM-2 still needed for milestone B)"
     elif S_CON in st:
         sust = f"CONTRADICTED at {len(st[S_CON])} of {n} cases: {', '.join(st[S_CON])}"
     else:
@@ -1323,23 +1484,27 @@ def milestone_conditions(findings, regs, cases, rfp):
                                      "extinction boundary of the Vyovrinda channel measured at the design point "
                                      "(DM-2) with a margin (PROPOSED, owner: none adopted); pending DM-2, at or above "
                                      "the lowest demonstrated flow density of a status-bearing sustained item that "
-                                     "COVERS the case on every required axis (S1, S2 stated)",
+                                     "COVERS the case on every required axis (S1-S3 stated)",
          "state": sust, "thresholds": "cases[*].thresholds (area_ratio_required, A_ch_max_under_H_RAM_m2)",
+         "note": ("with the current evidence no air case can be covered by literature transfer (F-9): only DM-2, or "
+                  "DM-5 with an owner-adopted composition tolerance, can change that"
+                  if not f["F-9"]["values"]["air_case_supportable_by_literature_transfer"] else "see F-9"),
          "resolved_by": ["DI-1", "DI-2", "DM-2"]},
         {"id": "HS-A3", "condition": "the delivered composition lies within the composition tested by the evidence "
                                      "used: atomic O shown negligible at the valve outlet (DM-1) or tested (DM-2), and "
                                      "the O2 fraction within the tested range",
          "state": sust, "values": f["F-4"]["values"], "resolved_by": ["DM-1", "DM-2"]},
         {"id": "HS-A4", "condition": "the design V_d, B and cathode gas lie inside the demonstrated window of that "
-                                     "evidence (cathode gas within the RFP propellant set air + Xe)",
+                                     "evidence (cathode gas within the RFP propellant set air + Xe; a pure-N2 cathode "
+                                     "only with a separate N2 supply or N2 separation from the air path)",
          "state": sust, "resolved_by": ["DI-2", "DM-2"]},
         {"id": "HS-A5", "condition": "the design sustains over the delivered flow span of the declared envelope, or the "
                                      "envelope is restricted, or chamber buffering is specified (not in the feed "
                                      "envelope: TBD)",
-         "state": "UNDETERMINED (required span x" + fmt(f["F-5"]["values"]["required_span_all_cases"], 3)
-                  + " over all cases vs widest demonstrated x"
+         "state": "UNDETERMINED (free-stream mass-flux span x" + fmt(f["F-5"]["values"]["required_span_all_cases"], 3)
+                  + " over all cases, the delivered-flow span only under S4, vs widest demonstrated x"
                   + fmt(max(f["F-5"]["values"]["demonstrated_span_by_item"].values()), 3) + ")",
-         "values": f["F-5"]["values"], "resolved_by": ["DM-2"]},
+         "values": f["F-5"]["values"], "conditional_on": ["S4"], "resolved_by": ["DI-1", "DM-2"]},
         {"id": "HS-A6", "condition": f"a start method: xenon-assisted start (precedent {', '.join(xs)}; within the RFP "
                                      "propellant set) with its Xe per start inside the Xe budget, or an air-only "
                                      "ignition demonstrated on the delivered composition (no precedent)",
@@ -1372,8 +1537,9 @@ DECISIVE = [
      "cross-device assumptions S1/S2 (the facility-to-orbit transfer and the composition dependence still have to be "
      "stated). A second composition point (the least O-rich case) checks that the boundary does not move the other "
      "way with composition",
-     "resolves": ["B-EVID-ATOMIC-O", "B-EVID-O2-FRACTION", "B-EVID-NOT-COMPARABLE", "B-EVID-CONFLICT",
-                  "B-NO-COVERING-ITEM", "B-IGN-XE-START-COVERAGE"]},
+     "prerequisites": ["DI-1", "DI-2", "DM-1"],
+     "resolves": ["B-EVID-ATOMIC-O", "B-EVID-O2-FRACTION", "B-EVID-NOT-COMPARABLE", "B-EVID-INTERPRETATION",
+                  "B-EVID-CONFLICT", "B-NO-COVERING-ITEM", "B-IGN-XE-START-COVERAGE"]},
     {"id": "DM-3", "type": "hardware_measurement", "what": "air-only ignition attempt: atmospheric-gas anode on the "
      "delivered composition, non-Xe cathode (if the cathode lane admits one), design V_d and B, at the lowest declared "
      "flow density; record success / failure and the start conditions",
@@ -1383,7 +1549,8 @@ DECISIVE = [
      "resolves": ["B-IGN-XE-START-COVERAGE", "B-IGN-XC-BASIS"]},
     {"id": "DM-5", "type": "desk_extraction", "what": "published-source extraction only (no contact): PPS1350 and "
      "HT5k channel dimensions and B from accessible primaries; digitization of MOSKOVITZ2026 Fig. 6 (E11 boundary); "
-     "the ECHT OD reading; access to the level-5 primaries (verify)",
+     "the ECHT OD reading; per-point (flow, V_d, B) data for joint-point checks (S3); the P5 N2 window edge (E02) "
+     "where a primary gives more than the text statement; access to the level-5 primaries (verify)",
      "resolves": ["B-EVID-NOT-COMPARABLE", "B-EVID-INTERPRETATION", "B-EVID-LEVEL"]},
     {"id": "DM-6", "type": "hardware_measurement", "what": "(milestone C) endurance on an O-containing feed with "
      "anode-oxidation mitigation (E07 flame-outs); thermal/life lane abep_sim/thermal_life.py and "
@@ -1464,7 +1631,8 @@ def assemble(found, feed, matrix, regs, rfp, cases, findings, dp, max_tested_wO2
             },
             "case_status": {
                 S_SUP: "a status-bearing sustained item (evidence level <= 3) covers the case on every required axis, "
-                       "with no interpretation condition, and no status-bearing extinction item does",
+                       "with no interpretation condition, and no status-bearing extinction item does (a literature "
+                       "transfer under the stated assumptions S1-S3, not a demonstration on the design)",
                 S_CON: "a status-bearing extinction item covers the case on every required axis (extinction at "
                        "comparable or milder conditions), and no supporting item does",
                 S_UND: "otherwise; blockers name what is missing",
@@ -1478,13 +1646,21 @@ def assemble(found, feed, matrix, regs, rfp, cases, findings, dp, max_tested_wO2
                  "evidence_class": "inferred", "basis": "E04 (ECHT quenching below a flow boundary, conditional on V "
                  "and B) and E11 (CAMILA voltage-dependent minimum flow); qualitative, level 3"},
                 {"axis": "discharge_voltage", "direction": "non-monotone: window containment",
-                 "evidence_class": "inferred", "basis": "E02 (P5 stated voltage window, both edges) and E04/E11 (low "
-                 "V needs more flow)"},
+                 "evidence_class": "inferred", "basis": "E02 (P5 stated voltage window, both edges; the edges are "
+                 "approximate, condition E02-WINDOW-EDGE) and E04/E11 (low V needs more flow)"},
                 {"axis": "magnetic_field", "direction": "non-monotone: range containment, same definition only",
                  "evidence_class": "inferred", "basis": "E04 (quench at increasing magnet current), E10 (a higher "
                  "field than for Xe needed on N2)"},
-                {"axis": "composition", "direction": "none established: containment only", "evidence_class": "inferred",
+                {"axis": "composition (atmospheric species N2, O2, O)", "direction": "none established: containment "
+                 "only", "evidence_class": "inferred",
                  "basis": "E06 (O2 addition did not degrade sustainment at low flow in the PPS1350)"},
+                {"axis": "composition: Xe mass fraction of an N2 + Xe or air + Xe anode feed",
+                 "direction": "lower Xe fraction is harsher; used only to place a SUPPORTING Xe-admixture item "
+                              "(mixed air + Xe variant). An extinction item would need its Xe fraction at extinction, "
+                              "which E13 does not report, so E13 is NOT_COMPARABLE on composition",
+                 "evidence_class": "inferred",
+                 "basis": "E13 (Z-70: the discharge ceased after the anode Xe flow was reduced below the lowest "
+                          "sustaining value; one device, level 3)"},
             ],
             "roles": ROLES,
             "status_bearing_rule": "evidence level <= 3 (docs/EVIDENCE.md: level 5 = second-hand / abstract); level-5 "
@@ -1503,6 +1679,18 @@ def assemble(found, feed, matrix, regs, rfp, cases, findings, dp, max_tested_wO2
                    "evidence_class": "assumed",
                    "limits": "the needed B depends on gas, geometry and discharge (E10: a higher field than for Xe on "
                              "N2; P5 ran N2 at a lower peak field than Xe, matrix cross-cutting observation 4)"},
+            "S3": {"statement": "an item's demonstrated operating region is taken as the product of its per-axis ranges "
+                                "(flow density, V_d and B are assessed independently); joint operating points, e.g. "
+                                "whether the lowest flow was run at every voltage, are not checked",
+                   "evidence_class": "assumed",
+                   "limits": "flow and voltage are coupled for sustainment (E04: quenched unless the potential is "
+                             "raised; E11: voltage-dependent minimum flow), so a case at a low-flow / low-voltage "
+                             "corner that no single operating point tested can be labelled COVERS on every axis. Every "
+                             "comparison carries S3 (comparisons[*].assumptions, joint_operating_point_check "
+                             "NOT_CHECKED); a joint-point check needs per-point (flow, V_d, B) data of the item (DM-5). "
+                             "PROPOSED (owner): recheck any SUSTAINMENT_SUPPORTED verdict at joint operating points "
+                             "before it is used for milestone B"},
+            "S4": aeff_assumption(feed),
         },
         "proposed_rules": {
             "H_RAM": {"status": "PROPOSED (owner to confirm)",
@@ -1552,13 +1740,16 @@ def assemble(found, feed, matrix, regs, rfp, cases, findings, dp, max_tested_wO2
         "milestones": {
             "supports": ["A"],
             "statement": "Supports milestone A (conditional selection): it states, per feed-envelope case, which "
-                         "conditions hall_only must meet for its sustainment part and which single measurement "
-                         "resolves each UNDETERMINED case. It does not need Physics Baseline 1.0 and contains no Hall "
-                         "prediction.",
+                         "conditions hall_only must meet for its sustainment part and which decisive measurement "
+                         "(DM-2, with its prerequisites DI-1, DI-2 and DM-1) resolves each UNDETERMINED case. It does "
+                         "not need Physics Baseline 1.0 and contains no Hall prediction.",
             "to_reach_B": ["DI-1 and DI-2 supplied (feed evaluated; Vyovrinda design point with provenance)",
                            "DM-1 (valve-outlet atomic O) and DM-2 (extinction boundary on representative hardware at "
                            "the design point) measured; hardware evidence supersedes the literature transfer within "
-                           "its domain (docs/EVIDENCE.md)",
+                           "its domain (docs/EVIDENCE.md). With the current evidence no air case can be supported by "
+                           "literature transfer alone (F-9)",
+                           "any SUSTAINMENT_SUPPORTED verdict from literature transfer rechecked at joint operating "
+                           "points (assumption S3)",
                            "a sustainment margin set by the owner",
                            "(Hall track) an admitted transport closure can add model-derived margins only after it is "
                            "validated against sustainment / extinction data; no v1 run is such data"],
@@ -1569,7 +1760,10 @@ def assemble(found, feed, matrix, regs, rfp, cases, findings, dp, max_tested_wO2
         },
         "open_questions_for_owner": [
             "Confirm or reject H_RAM (RFP thrust range as the thruster's thrust; full drag compensation).",
-            "Adopt or reject the composition bracketing rule and set a composition tolerance (trace atomic O).",
+            "Adopt or reject the composition bracketing rule and set a composition tolerance (trace atomic O); without "
+            "one, no air case can be supported by literature transfer (F-9).",
+            "Confirm the constant-A_eff reading of the flow span (S4) or supply the per-case A_eff (feed envelope "
+            "FE-08).",
             "Confirm that only evidence level <= 3 items can set a case status.",
             "Set a sustainment margin above the extinction boundary for milestone B.",
             "Declare the mission envelope subset hall_only must sustain (all nine cases, or a restricted set), since "
@@ -1583,6 +1777,33 @@ def assemble(found, feed, matrix, regs, rfp, cases, findings, dp, max_tested_wO2
             "interpretation) is a design variable or axis here; the P5 channel cross-section is not one of them",
         ],
     }
+
+
+def aeff_assumption(feed):
+    """S4 (constant A_eff across cases for one design), with its limits read from the feed envelope."""
+    reqs = sorted({c["feed_scaling"]["A_eff_m2"]["requires"] for c in feed["cases"]}) if all(
+        (c.get("feed_scaling") or {}).get("A_eff_m2", {}).get("requires") for c in feed["cases"]) else []
+    fe08 = [x for x in feed.get("chain_findings", []) if x.get("id") == "FE-08"]
+    sr = [x for x in feed.get("exposed_uncertainty", []) if str(x.get("quantity", "")).startswith("speed-ratio")]
+    if len(reqs) != 1 or "effective capture area" not in reqs[0] or len(fe08) != 1 or len(sr) != 1 \
+            or not isinstance(sr[0].get("exposed"), dict):
+        raise OverlayInputError("feed envelope lacks the A_eff definition (cases[*].feed_scaling.A_eff_m2.requires), "
+                                "finding FE-08 or the speed-ratio exposed_uncertainty entry needed for assumption S4")
+    aeff_def = reqs[0].split("provenance: ", 1)[-1]
+    ex = sr[0]["exposed"]
+    lo, hi = ex["computed_min_relative_change"], ex["computed_max_relative_change"]
+    return {"statement": "for one fixed design the effective capture area A_eff of the feed-envelope relation mdot = "
+                         "A_eff rho V is the same at every case, so the delivered-flow ratio between cases equals the "
+                         "free-stream mass-flux (rho V) ratio",
+            "evidence_class": "assumed",
+            "limits": f"the feed envelope defines A_eff as '{aeff_def}' (cases[*].feed_scaling.A_eff_m2.requires); its "
+                      f"finding FE-08 records that eta_c depends on the speed ratio, and its exposed_uncertainty gives "
+                      f"a speed-ratio change sqrt(T/m) relative to the TPMC build point of {lo:+.4g} "
+                      f"({ex['computed_min_at']}) to {hi:+.4g} ({ex['computed_max_at']}) across the cases "
+                      f"({sr[0]['evidence_class']}), against the code comment '{ex['statement_in_code']}'; the effect "
+                      f"on eta_c is not quantified there. The flow spans of F-5 are free-stream mass-flux ratios; they "
+                      f"equal delivered-flow ratios only under S4",
+            "source": "feed_envelope_v1 cases[*].feed_scaling, chain_findings FE-08, exposed_uncertainty (speed ratio)"}
 
 
 # ---------------------------------------------------------------------------------------------------- markdown
@@ -1635,7 +1856,10 @@ def render_md(doc):
     L.append("")
     L.append(F["F-1"]["statement"] + " The overlay therefore records, per case, the conditions under which each "
              "evidence item would cover it (sections 4-6), what the evidence can never cover as reported (sections "
-             "5-7), and the single measurement that resolves each case (section 9).")
+             "5-7), and the decisive measurement, with its prerequisites, that resolves each case (section 9)."
+             + (" With the current evidence no air case can become SUSTAINMENT_SUPPORTED by literature transfer, even "
+                "once the feed and the design point are supplied (F-9, section 4)."
+                if not F["F-9"]["values"]["air_case_supportable_by_literature_transfer"] else ""))
     L.append("")
     L.append("## 2. Method")
     L.append("")
@@ -1689,12 +1913,21 @@ def render_md(doc):
         bstr = (fmt(b["value"]) + " G") if b.get("value") else f"n/c: {b['missing']}"
         v = r["discharge_voltage"]
         vstr = fmt(v["value"]) if v.get("value") else f"n/c: {v['missing']}"
+        if v.get("edge_note"):
+            vstr += f" (stated window, approximate edges; {v['edge_note']})"
         p = r["discharge_power"]
         pstr = (f"{fmt(p['value'])} kW, {p['rfp_total_power_relation']}") if p.get("value") else "n/c"
         cg = r["cathode_gas"]
-        rows.append([i, r["device"], r["role"], r["evidence_level"], r["outcome"],
-                     _val(r["flow"]) if r["flow"].get("value") else f"n/c: {r['flow']['missing']}",
-                     fdv, cstr, vstr, bstr, cg["gas"] or f"n/c: {cg['missing']}", pstr,
+        cgs = (cg["gas"] + ("" if cg["rfp_propellant_relation"] == "LISTED" else
+                            f" ({cg['rfp_propellant_relation']})")) if cg["gas"] else f"n/c: {cg['missing']}"
+        if r.get("sustained_reference_point"):
+            fstr = (f"n/c at extinction (not reported); sustained at the lowest-Xe point, "
+                    f"{_val(r['sustained_reference_point'])} (N2 + Xe); anode gas '{r['anode_gas']}'")
+            fdv = "n/c: anode flow at extinction not reported"
+        else:
+            fstr = _val(r["flow"]) if r["flow"].get("value") else f"n/c: {r['flow']['missing']}"
+        rows.append([i, r["device"], r["role"], r["evidence_level"], r["outcome"], fstr,
+                     fdv, cstr, vstr, bstr, cgs, pstr,
                      f"{r['ignition']['mode']} ({r['ignition']['basis']})"])
     L.append(md_table(["id", "device", "role", "level", "outcome", "flow [mg/s]", "flow density [kg m^-2 s^-1] (S1)",
                        "composition (mass)", "V_d [V]", "B", "cathode", "power vs RFP ceiling", "ignition (basis)"],
@@ -1709,6 +1942,14 @@ def render_md(doc):
                             + (f"; {a['bound']} bound" if a.get("bound") else "") + ")")
     L.append("n/c = not comparable (the missing quantity is named). Flow densities use the channel cross-section: "
              + "; ".join(area_txt) + ".")
+    L.append("")
+    for i, r in sorted(regs.items()):
+        if r.get("sustained_reference_point"):
+            L.append(f"{i} ({r['device']}): {r['flow']['missing']}. The sustained reference point is not an "
+                     "extinction value and enters no axis, threshold or status.")
+            L.append("")
+    L.append("Cathode-gas relation to the RFP propellant set (air + Xe): "
+             + "; ".join(f"{k} = {v}" for k, v in RFP_GAS_RELATION_TEXT.items()) + ".")
     L.append("")
     L.append("Not used for hall_only: " + "; ".join(f"{x['item']} ({x['reason']})" for x in
                                                    doc["excluded_for_hall_only"])
@@ -1746,6 +1987,8 @@ def render_md(doc):
     L.append(F["F-2"]["statement"])
     L.append("")
     L.append(F["F-3"]["statement"])
+    L.append("")
+    L.append(f"**Reach of literature transfer for air feeds (F-9).** {F['F-9']['statement']}")
     L.append("")
     L.append("Same-size flow (`A_eff_required_m2`, no scaling) is listed per case and item in the JSON "
              "(`cases[*].thresholds`).")
@@ -1824,12 +2067,16 @@ def render_md(doc):
                       [[m["id"], m["condition"], m["state"], ", ".join(m["resolved_by"])]
                        for m in doc["milestone_A_conditions"]]))
     L.append("")
-    L.append(md_table(["id", "type", "what", "resolves"],
-                      [[d["id"], d["type"], d["what"], ", ".join(d["resolves"]) or "-"]
+    L.append(md_table(["id", "type", "what", "prerequisites", "resolves"],
+                      [[d["id"], d["type"], d["what"], ", ".join(d.get("prerequisites", [])) or "-",
+                        ", ".join(d["resolves"]) or "-"]
                        for d in doc["decisive_measurements"]]))
     L.append("")
-    L.append(f"Per case, the single measurement that resolves it is DM-2 at that case's delivered flow density and "
-             f"composition (prerequisites DI-1, DI-2). For one fixed design the lowest delivered flow is at "
+    dm = air[0]["decisive_measurement"]
+    L.append(f"Per case, the decisive measurement is {dm['id']} at that case's delivered flow density and "
+             f"composition. It is not a stand-alone measurement: {dm['not_stand_alone']} (prerequisites "
+             f"{', '.join(dm['prerequisites'])}). For one fixed design the lowest free-stream mass flux (the lowest "
+             f"delivered flow under S4) is at "
              f"{F['F-5']['values']['harshest_flow_case']}; the highest free-stream atomic-O fraction is at "
              f"{F['F-4']['values']['most_atomic_O_case_SC_FS']} and the highest O2 fraction after complete "
              f"recombination at {F['F-4']['values']['most_O2_case_SC_REC']}. These measurements feed the minimum "

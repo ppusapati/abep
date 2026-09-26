@@ -49,7 +49,7 @@
    "path": "hallthruster_bridge/cases/p5_xenon.json",
    "sha256": "1071684dca85a60cdd097c7efaccdf3f6ac29014b796b1aa4ce54e49b0e89f85",
    "lane": "base checkout (read only)",
-   "branch": "main",
+   "branch": "claude/nifty-ramanujan-w68f9z",
    "commit": "fe1d79390f",
    "role": "P5 channel radii r_in / r_out and the published source cited for them (P5 channel cross-section only)"
   },
@@ -57,7 +57,7 @@
    "path": "abep_sim/constants.py",
    "sha256": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
    "lane": "base checkout (read only)",
-   "branch": "main",
+   "branch": "claude/nifty-ramanujan-w68f9z",
    "commit": "fe1d79390f",
    "role": "M_SPECIES (mass-fraction arithmetic on the feed envelope's own basis) and RFPConstraints"
   }
@@ -132,7 +132,7 @@
    "UNDETERMINED": "the case-side quantity is TBD (named in 'blocked_by'); feed-envelope TBDs propagate here"
   },
   "case_status": {
-   "SUSTAINMENT_SUPPORTED": "a status-bearing sustained item (evidence level <= 3) covers the case on every required axis, with no interpretation condition, and no status-bearing extinction item does",
+   "SUSTAINMENT_SUPPORTED": "a status-bearing sustained item (evidence level <= 3) covers the case on every required axis, with no interpretation condition, and no status-bearing extinction item does (a literature transfer under the stated assumptions S1-S3, not a demonstration on the design)",
    "SUSTAINMENT_CONTRADICTED": "a status-bearing extinction item covers the case on every required axis (extinction at comparable or milder conditions), and no supporting item does",
    "UNDETERMINED": "otherwise; blockers name what is missing"
   },
@@ -163,7 +163,7 @@
     "axis": "discharge_voltage",
     "direction": "non-monotone: window containment",
     "evidence_class": "inferred",
-    "basis": "E02 (P5 stated voltage window, both edges) and E04/E11 (low V needs more flow)"
+    "basis": "E02 (P5 stated voltage window, both edges; the edges are approximate, condition E02-WINDOW-EDGE) and E04/E11 (low V needs more flow)"
    },
    {
     "axis": "magnetic_field",
@@ -172,10 +172,16 @@
     "basis": "E04 (quench at increasing magnet current), E10 (a higher field than for Xe needed on N2)"
    },
    {
-    "axis": "composition",
+    "axis": "composition (atmospheric species N2, O2, O)",
     "direction": "none established: containment only",
     "evidence_class": "inferred",
     "basis": "E06 (O2 addition did not degrade sustainment at low flow in the PPS1350)"
+   },
+   {
+    "axis": "composition: Xe mass fraction of an N2 + Xe or air + Xe anode feed",
+    "direction": "lower Xe fraction is harsher; used only to place a SUPPORTING Xe-admixture item (mixed air + Xe variant). An extinction item would need its Xe fraction at extinction, which E13 does not report, so E13 is NOT_COMPARABLE on composition",
+    "evidence_class": "inferred",
+    "basis": "E13 (Z-70: the discharge ceased after the anode Xe flow was reduced below the lowest sustaining value; one device, level 3)"
    }
   ],
   "roles": {
@@ -188,7 +194,8 @@
   "status_bearing_rule": "evidence level <= 3 (docs/EVIDENCE.md: level 5 = second-hand / abstract); level-5 items are reported as corroborating only (PROPOSED rule, owner to confirm)",
   "interpretation_conditions": {
    "ECHT-OD-READING": "the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
-   "E20-FLOW-BASIS": "the E20 flow is a review-reported 'total mass flow'; whether it includes the Xe cathode flow (a separate matrix quantity) is not stated (matrix E20)"
+   "E20-FLOW-BASIS": "the E20 flow is a review-reported 'total mass flow'; whether it includes the Xe cathode flow (a separate matrix quantity) is not stated (matrix E20)",
+   "E02-WINDOW-EDGE": "the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved"
   },
   "b_definitions": {
    "Br_exit_centreline": "radial B on the channel centreline at the exit plane (P5: 'peak radial B at channel centre, exit plane'; Z-70: 'radial B at channel centreline, exit plane')"
@@ -204,6 +211,17 @@
    "statement": "B values with the same definition are comparable across devices",
    "evidence_class": "assumed",
    "limits": "the needed B depends on gas, geometry and discharge (E10: a higher field than for Xe on N2; P5 ran N2 at a lower peak field than Xe, matrix cross-cutting observation 4)"
+  },
+  "S3": {
+   "statement": "an item's demonstrated operating region is taken as the product of its per-axis ranges (flow density, V_d and B are assessed independently); joint operating points, e.g. whether the lowest flow was run at every voltage, are not checked",
+   "evidence_class": "assumed",
+   "limits": "flow and voltage are coupled for sustainment (E04: quenched unless the potential is raised; E11: voltage-dependent minimum flow), so a case at a low-flow / low-voltage corner that no single operating point tested can be labelled COVERS on every axis. Every comparison carries S3 (comparisons[*].assumptions, joint_operating_point_check NOT_CHECKED); a joint-point check needs per-point (flow, V_d, B) data of the item (DM-5). PROPOSED (owner): recheck any SUSTAINMENT_SUPPORTED verdict at joint operating points before it is used for milestone B"
+  },
+  "S4": {
+   "statement": "for one fixed design the effective capture area A_eff of the feed-envelope relation mdot = A_eff rho V is the same at every case, so the delivered-flow ratio between cases equals the free-stream mass-flux (rho V) ratio",
+   "evidence_class": "assumed",
+   "limits": "the feed envelope defines A_eff as 'effective capture area eta_c x area x (1 - backflow) x anode share' (cases[*].feed_scaling.A_eff_m2.requires); its finding FE-08 records that eta_c depends on the speed ratio, and its exposed_uncertainty gives a speed-ratio change sqrt(T/m) relative to the TPMC build point of -0.1686 (alt180_low_orbit_averaged) to +0.1507 (alt230_high_orbit_averaged) across the cases (model-derived), against the code comment '< 10 %'; the effect on eta_c is not quantified there. The flow spans of F-5 are free-stream mass-flux ratios; they equal delivered-flow ratios only under S4",
+   "source": "feed_envelope_v1 cases[*].feed_scaling, chain_findings FE-08, exposed_uncertainty (speed ratio)"
   }
  },
  "proposed_rules": {
@@ -352,7 +370,8 @@
    "cathode_gas": {
     "gas": "Xe",
     "note": null,
-    "in_rfp_propellant_set": true
+    "rfp_propellant_relation": "LISTED",
+    "rfp_propellant_relation_text": "a listed RFP propellant (air + Xe)"
    },
    "discharge_power": {
     "value": [
@@ -426,7 +445,11 @@
     "unit": "V",
     "evidence_class": "measured",
     "source": "BRABSTON2025, BRABSTON2025 p.6; repository findings F4 (matrix E02: 'stated N2 stability window')",
-    "kind": "window"
+    "kind": "window",
+    "conditional_on": [
+     "E02-WINDOW-EDGE"
+    ],
+    "edge_note": "matrix: 'approximate: setpoints N3-N5 were run at 275.7-278.6 V (above the stated 275 V)'"
    },
    "magnetic_field": {
     "value": [
@@ -441,7 +464,8 @@
    "cathode_gas": {
     "gas": "Xe",
     "note": null,
-    "in_rfp_propellant_set": true
+    "rfp_propellant_relation": "LISTED",
+    "rfp_propellant_relation_text": "a listed RFP propellant (air + Xe)"
    },
    "discharge_power": {
     "value": [
@@ -455,7 +479,9 @@
     "rfp_total_power_relation": "ABOVE_RFP_CEILING"
    },
    "extinction_kind": "voltage_window",
-   "conditional_on": []
+   "conditional_on": [
+    "E02-WINDOW-EDGE"
+   ]
   },
   {
    "id": "E03",
@@ -544,7 +570,8 @@
    "cathode_gas": {
     "gas": "Ar",
     "note": null,
-    "in_rfp_propellant_set": false
+    "rfp_propellant_relation": "NOT_LISTED",
+    "rfp_propellant_relation_text": "outside the RFP propellant set air + Xe"
    },
    "discharge_power": {
     "value": [
@@ -642,7 +669,8 @@
    "cathode_gas": {
     "gas": "Ar",
     "note": null,
-    "in_rfp_propellant_set": false
+    "rfp_propellant_relation": "NOT_LISTED",
+    "rfp_propellant_relation_text": "outside the RFP propellant set air + Xe"
    },
    "discharge_power": {
     "value": [
@@ -729,7 +757,8 @@
    "cathode_gas": {
     "gas": "Xe",
     "note": null,
-    "in_rfp_propellant_set": true
+    "rfp_propellant_relation": "LISTED",
+    "rfp_propellant_relation_text": "a listed RFP propellant (air + Xe)"
    },
    "discharge_power": {
     "value": [
@@ -821,7 +850,8 @@
    "cathode_gas": {
     "gas": "Xe",
     "note": null,
-    "in_rfp_propellant_set": true
+    "rfp_propellant_relation": "LISTED",
+    "rfp_propellant_relation_text": "a listed RFP propellant (air + Xe)"
    },
    "discharge_power": {
     "value": [
@@ -943,7 +973,8 @@
    "cathode_gas": {
     "gas": "Xe",
     "note": null,
-    "in_rfp_propellant_set": true
+    "rfp_propellant_relation": "LISTED",
+    "rfp_propellant_relation_text": "a listed RFP propellant (air + Xe)"
    },
    "discharge_power": {
     "value": [
@@ -1030,7 +1061,8 @@
    "cathode_gas": {
     "gas": "N2",
     "note": "steady-state cathode on N2 after the transition from Xe",
-    "in_rfp_propellant_set": true
+    "rfp_propellant_relation": "AIR_CONSTITUENT_CONDITIONAL",
+    "rfp_propellant_relation_text": "a constituent of air, not itself a listed RFP propellant (air + Xe): usable only with a separate N2 supply or separation of N2 from the air path (conditional; not assessed here)"
    },
    "discharge_power": {
     "value": [
@@ -1132,7 +1164,8 @@
    "cathode_gas": {
     "gas": "Xe",
     "note": null,
-    "in_rfp_propellant_set": true
+    "rfp_propellant_relation": "LISTED",
+    "rfp_propellant_relation_text": "a listed RFP propellant (air + Xe)"
    },
    "discharge_power": {
     "value": [
@@ -1207,7 +1240,8 @@
    "cathode_gas": {
     "gas": "Xe",
     "note": null,
-    "in_rfp_propellant_set": true
+    "rfp_propellant_relation": "LISTED",
+    "rfp_propellant_relation_text": "a listed RFP propellant (air + Xe)"
    },
    "discharge_power": {
     "value": [
@@ -1315,7 +1349,7 @@
    "anode_gas": "Xe/N2 mixtures (Xe mass fraction down to about 10 %); pure N2 not sustained",
    "cathode_gas_reported": "Xe",
    "xenon_in_anode_flow": true,
-   "flow": {
+   "sustained_reference_point": {
     "value": [
      1.49,
      1.55
@@ -1324,7 +1358,11 @@
     "evidence_class": "inferred",
     "source": "GURCIULLO2020, p.177 (matrix E13: 'anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)'); GURCIULLO2020, p.177 (matrix E13: 'lowest anode Xe flow that sustained (with N2 1.33-1.39 mg/s)')",
     "derivation": "atmospheric-gas anode flow + Xe anode flow (total anode flow); our arithmetic",
-    "conditional_on": []
+    "meaning": "total anode flow of the lowest-Xe points at which the discharge SUSTAINED; not an extinction value; not used on any axis or threshold"
+   },
+   "flow": {
+    "value": null,
+    "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
    },
    "channel_area": {
     "value": 0.00268606,
@@ -1336,16 +1374,8 @@
     "conditional_on": []
    },
    "flow_density": {
-    "value": [
-     0.000554716,
-     0.000577053
-    ],
-    "unit": "kg m^-2 s^-1",
-    "evidence_class": "inferred",
-    "source": "flow and channel_area above",
-    "derivation": "Gamma = mdot / A_ch (scaling assumption S1)",
-    "bound": null,
-    "conditional_on": []
+    "value": null,
+    "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
    },
    "composition": {
     "comparable": false,
@@ -1354,18 +1384,19 @@
      "Xe"
     ],
     "w": null,
-    "base_comparable": true,
     "evidence_class": "inferred",
-    "xe_fraction": {
+    "xe_fraction": null,
+    "xe_fraction_lowest_sustained": {
      "value": [
       0.1032,
       0.1074
      ],
      "unit": "1",
      "evidence_class": "inferred",
-     "source": "GURCIULLO2020, our arithmetic on p.177 values (matrix E13: 'Xe mass fraction of anode flow at the lowest-Xe points')"
+     "source": "GURCIULLO2020, our arithmetic on p.177 values (matrix E13: 'Xe mass fraction of anode flow at the lowest-Xe points')",
+     "meaning": "lowest Xe mass fraction at which the discharge sustained; the fraction at which it ceased is not reported; not an extinction value"
     },
-    "missing": "Xe-admixture feed (N2 + Xe, Xe mass fraction 0.1032-0.1074): comparable only with a feed that contains Xe (mixed air + Xe variant)",
+    "missing": "Xe mass fraction (and anode flow) at extinction not reported: the lowest Xe mass fraction that sustained was 0.1032-0.1074 (matrix 'Xe mass fraction of anode flow at the lowest-Xe points'); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.' (anode gas 'Xe/N2 mixtures (Xe mass fraction down to about 10 %); pure N2 not sustained'); no Xe-fraction direction is used for an extinction item (definitions.directions)",
     "basis": "'Xe/N2 mixtures (Xe mass fraction down to about 10 %); pure N2 not sustained'"
    },
    "discharge_voltage": {
@@ -1391,7 +1422,8 @@
    "cathode_gas": {
     "gas": "Xe",
     "note": null,
-    "in_rfp_propellant_set": true
+    "rfp_propellant_relation": "LISTED",
+    "rfp_propellant_relation_text": "a listed RFP propellant (air + Xe)"
    },
    "discharge_power": {
     "value": [
@@ -1478,7 +1510,8 @@
      ],
      "unit": "1",
      "evidence_class": "inferred",
-     "source": "GURCIULLO2020, our arithmetic on Table 4.10 p.201 (matrix E14: 'Xe mass fraction of the anode flow, runs XeAir-3/4')"
+     "source": "GURCIULLO2020, our arithmetic on Table 4.10 p.201 (matrix E14: 'Xe mass fraction of the anode flow, runs XeAir-3/4')",
+     "meaning": "Xe mass fraction of sustained runs (matrix 'Xe mass fraction of the anode flow, runs XeAir-3/4')"
     },
     "missing": "Xe-admixture feed (N2 + O2 + Xe, Xe mass fraction 0.4845; air (composition not stated)): comparable only with a feed that contains Xe (mixed air + Xe variant)",
     "basis": "'Xe/air mixtures (Xe mass fraction 48-96 % per ANDREUSSI2022 p.26)'"
@@ -1506,7 +1539,8 @@
    "cathode_gas": {
     "gas": "Xe",
     "note": null,
-    "in_rfp_propellant_set": true
+    "rfp_propellant_relation": "LISTED",
+    "rfp_propellant_relation_text": "a listed RFP propellant (air + Xe)"
    },
    "discharge_power": {
     "value": [
@@ -1786,7 +1820,8 @@
    "cathode_gas": {
     "gas": "Xe",
     "note": null,
-    "in_rfp_propellant_set": true
+    "rfp_propellant_relation": "LISTED",
+    "rfp_propellant_relation_text": "a listed RFP propellant (air + Xe)"
    },
    "discharge_power": {
     "value": [
@@ -1866,7 +1901,8 @@
    "cathode_gas": {
     "gas": "Xe",
     "note": null,
-    "in_rfp_propellant_set": true
+    "rfp_propellant_relation": "LISTED",
+    "rfp_propellant_relation_text": "a listed RFP propellant (air + Xe)"
    },
    "discharge_power": {
     "value": [
@@ -2386,16 +2422,6 @@
       ]
      }
     },
-    "E13": {
-     "area_ratio_at_extinction": {
-      "value": 186.1,
-      "unit": "1",
-      "evidence_class": "model-derived",
-      "source": "feed_envelope_v1 cases[0].free_stream and evidence_regions[E13]; definition: threshold_definitions",
-      "bound": null,
-      "conditional_on": []
-     }
-    },
     "E16": {
      "A_eff_required_m2": {
       "value": [
@@ -2492,7 +2518,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E02",
@@ -2546,7 +2576,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E03",
@@ -2604,7 +2638,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E04",
@@ -2659,7 +2697,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E05",
@@ -2714,7 +2756,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E06",
@@ -2769,7 +2815,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E08",
@@ -2825,7 +2875,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E09",
@@ -2880,7 +2934,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E10",
@@ -2938,7 +2996,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E11",
@@ -2988,7 +3050,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E12",
@@ -3037,7 +3103,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E13",
@@ -3045,17 +3115,12 @@
      "status_bearing": true,
      "axes": {
       "anode_flow": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "anode_flow_density": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT",
-        "B-DESIGN-ACH"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "composition": {
        "coverage": "UNDETERMINED",
@@ -3091,12 +3156,16 @@
      },
      "verdict": "cannot_decide",
      "reasons": [
-      "anode_flow_density: UNDETERMINED",
+      "anode_flow_density: NOT_COMPARABLE",
       "composition: UNDETERMINED",
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E16",
@@ -3150,7 +3219,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E19",
@@ -3206,7 +3279,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E20",
@@ -3260,7 +3337,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     }
    ],
    "status": "UNDETERMINED",
@@ -3357,7 +3438,7 @@
     {
      "id": "B-EVID-NOT-COMPARABLE",
      "kind": "evidence_not_comparable",
-     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point)",
+     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point) | E13: anode_flow_density (anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.')",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -3366,9 +3447,10 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
      "resolved_by": [
-      "DM-5"
+      "DM-5",
+      "DM-2"
      ]
     },
     {
@@ -3384,9 +3466,11 @@
     "id": "DM-2",
     "prerequisites": [
      "DI-1",
-     "DI-2"
+     "DI-2",
+     "DM-1"
     ],
-    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas"
+    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas",
+    "not_stand_alone": "DM-2 needs the delivered feed (DI-1) and the design point (DI-2), and DM-1 to set whether atomic O is part of the test composition; a second composition point is part of DM-2 to check the composition dependence"
    },
    "ignition": {
     "xenon_assisted": {
@@ -3933,16 +4017,6 @@
       ]
      }
     },
-    "E13": {
-     "area_ratio_at_extinction": {
-      "value": 136.613,
-      "unit": "1",
-      "evidence_class": "model-derived",
-      "source": "feed_envelope_v1 cases[1].free_stream and evidence_regions[E13]; definition: threshold_definitions",
-      "bound": null,
-      "conditional_on": []
-     }
-    },
     "E16": {
      "A_eff_required_m2": {
       "value": [
@@ -4039,7 +4113,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E02",
@@ -4093,7 +4171,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E03",
@@ -4151,7 +4233,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E04",
@@ -4206,7 +4292,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E05",
@@ -4261,7 +4351,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E06",
@@ -4316,7 +4410,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E08",
@@ -4372,7 +4470,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E09",
@@ -4427,7 +4529,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E10",
@@ -4485,7 +4591,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E11",
@@ -4535,7 +4645,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E12",
@@ -4584,7 +4698,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E13",
@@ -4592,17 +4710,12 @@
      "status_bearing": true,
      "axes": {
       "anode_flow": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "anode_flow_density": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT",
-        "B-DESIGN-ACH"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "composition": {
        "coverage": "UNDETERMINED",
@@ -4638,12 +4751,16 @@
      },
      "verdict": "cannot_decide",
      "reasons": [
-      "anode_flow_density: UNDETERMINED",
+      "anode_flow_density: NOT_COMPARABLE",
       "composition: UNDETERMINED",
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E16",
@@ -4697,7 +4814,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E19",
@@ -4753,7 +4874,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E20",
@@ -4807,7 +4932,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     }
    ],
    "status": "UNDETERMINED",
@@ -4904,7 +5033,7 @@
     {
      "id": "B-EVID-NOT-COMPARABLE",
      "kind": "evidence_not_comparable",
-     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point)",
+     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point) | E13: anode_flow_density (anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.')",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -4913,9 +5042,10 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
      "resolved_by": [
-      "DM-5"
+      "DM-5",
+      "DM-2"
      ]
     },
     {
@@ -4931,9 +5061,11 @@
     "id": "DM-2",
     "prerequisites": [
      "DI-1",
-     "DI-2"
+     "DI-2",
+     "DM-1"
     ],
-    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas"
+    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas",
+    "not_stand_alone": "DM-2 needs the delivered feed (DI-1) and the design point (DI-2), and DM-1 to set whether atomic O is part of the test composition; a second composition point is part of DM-2 to check the composition dependence"
    },
    "ignition": {
     "xenon_assisted": {
@@ -5480,16 +5612,6 @@
       ]
      }
     },
-    "E13": {
-     "area_ratio_at_extinction": {
-      "value": 106.365,
-      "unit": "1",
-      "evidence_class": "model-derived",
-      "source": "feed_envelope_v1 cases[2].free_stream and evidence_regions[E13]; definition: threshold_definitions",
-      "bound": null,
-      "conditional_on": []
-     }
-    },
     "E16": {
      "A_eff_required_m2": {
       "value": [
@@ -5586,7 +5708,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E02",
@@ -5640,7 +5766,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E03",
@@ -5698,7 +5828,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E04",
@@ -5753,7 +5887,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E05",
@@ -5808,7 +5946,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E06",
@@ -5863,7 +6005,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E08",
@@ -5919,7 +6065,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E09",
@@ -5974,7 +6124,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E10",
@@ -6032,7 +6186,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E11",
@@ -6082,7 +6240,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E12",
@@ -6131,7 +6293,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E13",
@@ -6139,17 +6305,12 @@
      "status_bearing": true,
      "axes": {
       "anode_flow": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "anode_flow_density": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT",
-        "B-DESIGN-ACH"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "composition": {
        "coverage": "UNDETERMINED",
@@ -6185,12 +6346,16 @@
      },
      "verdict": "cannot_decide",
      "reasons": [
-      "anode_flow_density: UNDETERMINED",
+      "anode_flow_density: NOT_COMPARABLE",
       "composition: UNDETERMINED",
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E16",
@@ -6244,7 +6409,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E19",
@@ -6300,7 +6469,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E20",
@@ -6354,7 +6527,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     }
    ],
    "status": "UNDETERMINED",
@@ -6451,7 +6628,7 @@
     {
      "id": "B-EVID-NOT-COMPARABLE",
      "kind": "evidence_not_comparable",
-     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point)",
+     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point) | E13: anode_flow_density (anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.')",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -6460,9 +6637,10 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
      "resolved_by": [
-      "DM-5"
+      "DM-5",
+      "DM-2"
      ]
     },
     {
@@ -6478,9 +6656,11 @@
     "id": "DM-2",
     "prerequisites": [
      "DI-1",
-     "DI-2"
+     "DI-2",
+     "DM-1"
     ],
-    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas"
+    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas",
+    "not_stand_alone": "DM-2 needs the delivered feed (DI-1) and the design point (DI-2), and DM-1 to set whether atomic O is part of the test composition; a second composition point is part of DM-2 to check the composition dependence"
    },
    "ignition": {
     "xenon_assisted": {
@@ -7025,16 +7205,6 @@
       ]
      }
     },
-    "E13": {
-     "area_ratio_at_extinction": {
-      "value": 402.108,
-      "unit": "1",
-      "evidence_class": "model-derived",
-      "source": "feed_envelope_v1 cases[3].free_stream and evidence_regions[E13]; definition: threshold_definitions",
-      "bound": null,
-      "conditional_on": []
-     }
-    },
     "E16": {
      "A_eff_required_m2": {
       "value": [
@@ -7131,7 +7301,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E02",
@@ -7185,7 +7359,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E03",
@@ -7243,7 +7421,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E04",
@@ -7298,7 +7480,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E05",
@@ -7353,7 +7539,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E06",
@@ -7408,7 +7598,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E08",
@@ -7464,7 +7658,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E09",
@@ -7519,7 +7717,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E10",
@@ -7577,7 +7779,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E11",
@@ -7627,7 +7833,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E12",
@@ -7676,7 +7886,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E13",
@@ -7684,17 +7898,12 @@
      "status_bearing": true,
      "axes": {
       "anode_flow": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "anode_flow_density": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT",
-        "B-DESIGN-ACH"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "composition": {
        "coverage": "UNDETERMINED",
@@ -7730,12 +7939,16 @@
      },
      "verdict": "cannot_decide",
      "reasons": [
-      "anode_flow_density: UNDETERMINED",
+      "anode_flow_density: NOT_COMPARABLE",
       "composition: UNDETERMINED",
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E16",
@@ -7789,7 +8002,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E19",
@@ -7845,7 +8062,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E20",
@@ -7899,7 +8120,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     }
    ],
    "status": "UNDETERMINED",
@@ -8004,7 +8229,7 @@
     {
      "id": "B-EVID-NOT-COMPARABLE",
      "kind": "evidence_not_comparable",
-     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point)",
+     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point) | E13: anode_flow_density (anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.')",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -8013,9 +8238,10 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
      "resolved_by": [
-      "DM-5"
+      "DM-5",
+      "DM-2"
      ]
     },
     {
@@ -8031,9 +8257,11 @@
     "id": "DM-2",
     "prerequisites": [
      "DI-1",
-     "DI-2"
+     "DI-2",
+     "DM-1"
     ],
-    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas"
+    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas",
+    "not_stand_alone": "DM-2 needs the delivered feed (DI-1) and the design point (DI-2), and DM-1 to set whether atomic O is part of the test composition; a second composition point is part of DM-2 to check the composition dependence"
    },
    "ignition": {
     "xenon_assisted": {
@@ -8581,16 +8809,6 @@
       ]
      }
     },
-    "E13": {
-     "area_ratio_at_extinction": {
-      "value": 256.345,
-      "unit": "1",
-      "evidence_class": "model-derived",
-      "source": "feed_envelope_v1 cases[4].free_stream and evidence_regions[E13]; definition: threshold_definitions",
-      "bound": null,
-      "conditional_on": []
-     }
-    },
     "E16": {
      "A_eff_required_m2": {
       "value": [
@@ -8687,7 +8905,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E02",
@@ -8741,7 +8963,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E03",
@@ -8799,7 +9025,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E04",
@@ -8854,7 +9084,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E05",
@@ -8909,7 +9143,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E06",
@@ -8964,7 +9202,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E08",
@@ -9020,7 +9262,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E09",
@@ -9075,7 +9321,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E10",
@@ -9133,7 +9383,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E11",
@@ -9183,7 +9437,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E12",
@@ -9232,7 +9490,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E13",
@@ -9240,17 +9502,12 @@
      "status_bearing": true,
      "axes": {
       "anode_flow": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "anode_flow_density": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT",
-        "B-DESIGN-ACH"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "composition": {
        "coverage": "UNDETERMINED",
@@ -9286,12 +9543,16 @@
      },
      "verdict": "cannot_decide",
      "reasons": [
-      "anode_flow_density: UNDETERMINED",
+      "anode_flow_density: NOT_COMPARABLE",
       "composition: UNDETERMINED",
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E16",
@@ -9345,7 +9606,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E19",
@@ -9401,7 +9666,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E20",
@@ -9455,7 +9724,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     }
    ],
    "status": "UNDETERMINED",
@@ -9560,7 +9833,7 @@
     {
      "id": "B-EVID-NOT-COMPARABLE",
      "kind": "evidence_not_comparable",
-     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point)",
+     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point) | E13: anode_flow_density (anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.')",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -9569,9 +9842,10 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
      "resolved_by": [
-      "DM-5"
+      "DM-5",
+      "DM-2"
      ]
     },
     {
@@ -9587,9 +9861,11 @@
     "id": "DM-2",
     "prerequisites": [
      "DI-1",
-     "DI-2"
+     "DI-2",
+     "DM-1"
     ],
-    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas"
+    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas",
+    "not_stand_alone": "DM-2 needs the delivered feed (DI-1) and the design point (DI-2), and DM-1 to set whether atomic O is part of the test composition; a second composition point is part of DM-2 to check the composition dependence"
    },
    "ignition": {
     "xenon_assisted": {
@@ -10137,16 +10413,6 @@
       ]
      }
     },
-    "E13": {
-     "area_ratio_at_extinction": {
-      "value": 184.26,
-      "unit": "1",
-      "evidence_class": "model-derived",
-      "source": "feed_envelope_v1 cases[5].free_stream and evidence_regions[E13]; definition: threshold_definitions",
-      "bound": null,
-      "conditional_on": []
-     }
-    },
     "E16": {
      "A_eff_required_m2": {
       "value": [
@@ -10243,7 +10509,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E02",
@@ -10297,7 +10567,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E03",
@@ -10355,7 +10629,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E04",
@@ -10410,7 +10688,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E05",
@@ -10465,7 +10747,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E06",
@@ -10520,7 +10806,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E08",
@@ -10576,7 +10866,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E09",
@@ -10631,7 +10925,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E10",
@@ -10689,7 +10987,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E11",
@@ -10739,7 +11041,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E12",
@@ -10788,7 +11094,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E13",
@@ -10796,17 +11106,12 @@
      "status_bearing": true,
      "axes": {
       "anode_flow": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "anode_flow_density": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT",
-        "B-DESIGN-ACH"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "composition": {
        "coverage": "UNDETERMINED",
@@ -10842,12 +11147,16 @@
      },
      "verdict": "cannot_decide",
      "reasons": [
-      "anode_flow_density: UNDETERMINED",
+      "anode_flow_density: NOT_COMPARABLE",
       "composition: UNDETERMINED",
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E16",
@@ -10901,7 +11210,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E19",
@@ -10957,7 +11270,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E20",
@@ -11011,7 +11328,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     }
    ],
    "status": "UNDETERMINED",
@@ -11116,7 +11437,7 @@
     {
      "id": "B-EVID-NOT-COMPARABLE",
      "kind": "evidence_not_comparable",
-     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point)",
+     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point) | E13: anode_flow_density (anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.')",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -11125,9 +11446,10 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
      "resolved_by": [
-      "DM-5"
+      "DM-5",
+      "DM-2"
      ]
     },
     {
@@ -11143,9 +11465,11 @@
     "id": "DM-2",
     "prerequisites": [
      "DI-1",
-     "DI-2"
+     "DI-2",
+     "DM-1"
     ],
-    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas"
+    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas",
+    "not_stand_alone": "DM-2 needs the delivered feed (DI-1) and the design point (DI-2), and DM-1 to set whether atomic O is part of the test composition; a second composition point is part of DM-2 to check the composition dependence"
    },
    "ignition": {
     "xenon_assisted": {
@@ -11693,16 +12017,6 @@
       ]
      }
     },
-    "E13": {
-     "area_ratio_at_extinction": {
-      "value": 1104.82,
-      "unit": "1",
-      "evidence_class": "model-derived",
-      "source": "feed_envelope_v1 cases[6].free_stream and evidence_regions[E13]; definition: threshold_definitions",
-      "bound": null,
-      "conditional_on": []
-     }
-    },
     "E16": {
      "A_eff_required_m2": {
       "value": [
@@ -11799,7 +12113,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E02",
@@ -11853,7 +12171,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E03",
@@ -11911,7 +12233,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E04",
@@ -11966,7 +12292,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E05",
@@ -12021,7 +12351,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E06",
@@ -12076,7 +12410,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E08",
@@ -12132,7 +12470,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E09",
@@ -12187,7 +12529,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E10",
@@ -12245,7 +12591,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E11",
@@ -12295,7 +12645,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E12",
@@ -12344,7 +12698,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E13",
@@ -12352,17 +12710,12 @@
      "status_bearing": true,
      "axes": {
       "anode_flow": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "anode_flow_density": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT",
-        "B-DESIGN-ACH"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "composition": {
        "coverage": "UNDETERMINED",
@@ -12398,12 +12751,16 @@
      },
      "verdict": "cannot_decide",
      "reasons": [
-      "anode_flow_density: UNDETERMINED",
+      "anode_flow_density: NOT_COMPARABLE",
       "composition: UNDETERMINED",
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E16",
@@ -12457,7 +12814,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E19",
@@ -12513,7 +12874,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E20",
@@ -12567,7 +12932,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     }
    ],
    "status": "UNDETERMINED",
@@ -12672,7 +13041,7 @@
     {
      "id": "B-EVID-NOT-COMPARABLE",
      "kind": "evidence_not_comparable",
-     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point)",
+     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point) | E13: anode_flow_density (anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.')",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -12681,9 +13050,10 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
      "resolved_by": [
-      "DM-5"
+      "DM-5",
+      "DM-2"
      ]
     },
     {
@@ -12699,9 +13069,11 @@
     "id": "DM-2",
     "prerequisites": [
      "DI-1",
-     "DI-2"
+     "DI-2",
+     "DM-1"
     ],
-    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas"
+    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas",
+    "not_stand_alone": "DM-2 needs the delivered feed (DI-1) and the design point (DI-2), and DM-1 to set whether atomic O is part of the test composition; a second composition point is part of DM-2 to check the composition dependence"
    },
    "ignition": {
     "xenon_assisted": {
@@ -13249,16 +13621,6 @@
       ]
      }
     },
-    "E13": {
-     "area_ratio_at_extinction": {
-      "value": 570.621,
-      "unit": "1",
-      "evidence_class": "model-derived",
-      "source": "feed_envelope_v1 cases[7].free_stream and evidence_regions[E13]; definition: threshold_definitions",
-      "bound": null,
-      "conditional_on": []
-     }
-    },
     "E16": {
      "A_eff_required_m2": {
       "value": [
@@ -13355,7 +13717,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E02",
@@ -13409,7 +13775,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E03",
@@ -13467,7 +13837,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E04",
@@ -13522,7 +13896,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E05",
@@ -13577,7 +13955,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E06",
@@ -13632,7 +14014,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E08",
@@ -13688,7 +14074,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E09",
@@ -13743,7 +14133,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E10",
@@ -13801,7 +14195,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E11",
@@ -13851,7 +14249,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E12",
@@ -13900,7 +14302,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E13",
@@ -13908,17 +14314,12 @@
      "status_bearing": true,
      "axes": {
       "anode_flow": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "anode_flow_density": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT",
-        "B-DESIGN-ACH"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "composition": {
        "coverage": "UNDETERMINED",
@@ -13954,12 +14355,16 @@
      },
      "verdict": "cannot_decide",
      "reasons": [
-      "anode_flow_density: UNDETERMINED",
+      "anode_flow_density: NOT_COMPARABLE",
       "composition: UNDETERMINED",
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E16",
@@ -14013,7 +14418,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E19",
@@ -14069,7 +14478,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E20",
@@ -14123,7 +14536,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     }
    ],
    "status": "UNDETERMINED",
@@ -14228,7 +14645,7 @@
     {
      "id": "B-EVID-NOT-COMPARABLE",
      "kind": "evidence_not_comparable",
-     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point)",
+     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point) | E13: anode_flow_density (anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.')",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -14237,9 +14654,10 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
      "resolved_by": [
-      "DM-5"
+      "DM-5",
+      "DM-2"
      ]
     },
     {
@@ -14255,9 +14673,11 @@
     "id": "DM-2",
     "prerequisites": [
      "DI-1",
-     "DI-2"
+     "DI-2",
+     "DM-1"
     ],
-    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas"
+    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas",
+    "not_stand_alone": "DM-2 needs the delivered feed (DI-1) and the design point (DI-2), and DM-1 to set whether atomic O is part of the test composition; a second composition point is part of DM-2 to check the composition dependence"
    },
    "ignition": {
     "xenon_assisted": {
@@ -14805,16 +15225,6 @@
       ]
      }
     },
-    "E13": {
-     "area_ratio_at_extinction": {
-      "value": 367.704,
-      "unit": "1",
-      "evidence_class": "model-derived",
-      "source": "feed_envelope_v1 cases[8].free_stream and evidence_regions[E13]; definition: threshold_definitions",
-      "bound": null,
-      "conditional_on": []
-     }
-    },
     "E16": {
      "A_eff_required_m2": {
       "value": [
@@ -14911,7 +15321,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E02",
@@ -14965,7 +15379,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E03",
@@ -15023,7 +15441,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E04",
@@ -15078,7 +15500,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E05",
@@ -15133,7 +15559,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E06",
@@ -15188,7 +15618,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E08",
@@ -15244,7 +15678,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E09",
@@ -15299,7 +15737,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E10",
@@ -15357,7 +15799,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E11",
@@ -15407,7 +15853,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E12",
@@ -15456,7 +15906,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E13",
@@ -15464,17 +15918,12 @@
      "status_bearing": true,
      "axes": {
       "anode_flow": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "anode_flow_density": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-FEED-MDOT",
-        "B-DESIGN-ACH"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "composition": {
        "coverage": "UNDETERMINED",
@@ -15510,12 +15959,16 @@
      },
      "verdict": "cannot_decide",
      "reasons": [
-      "anode_flow_density: UNDETERMINED",
+      "anode_flow_density: NOT_COMPARABLE",
       "composition: UNDETERMINED",
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E16",
@@ -15569,7 +16022,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E19",
@@ -15625,7 +16082,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E20",
@@ -15679,7 +16140,11 @@
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: UNDETERMINED",
       "evidence level 5 (> 3): corroborating only, not status-bearing"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     }
    ],
    "status": "UNDETERMINED",
@@ -15784,7 +16249,7 @@
     {
      "id": "B-EVID-NOT-COMPARABLE",
      "kind": "evidence_not_comparable",
-     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point)",
+     "detail": "status-bearing items lacking a quantity needed on a required axis: E02: anode_flow_density (matrix 'anode N2 mass flow at the window boundary': not reported for the boundary (the window is stated generally for nitrogen)) | E03: magnetic_field (B not given at the operating points (matrix quantity 'centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)')) | E04: discharge_voltage (matrix 'discharge voltage at the flow boundary': not reported numerically; the source makes the boundary conditional on voltage ('if the potential was not raised sufficiently')); magnetic_field (matrix 'B at the flow boundary': not reported numerically; the source makes the boundary conditional on magnet current ('easily quenched at increasing magnet current')) | E05: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E06: anode_flow_density (channel dimensions not given in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E09: anode_flow_density (channel dimensions not reported in the accessed text); magnetic_field (matrix 'B': not reported in the accessed text) | E10: magnetic_field (B given only as a ratio (unit 'ratio to Xe/Kr field', matrix quantity 'B required relative to Xe/Kr'), not as an absolute value) | E11: anode_flow_density (matrix 'minimum N2 flow for > 5 min operation vs voltage': TBD - requires digitization of Fig. 6 (p.11); values not tabulated); discharge_voltage (matrix 'minimum discharge voltage for > 5 min operation': TBD - requires digitization of Fig. 6 (p.11)); magnetic_field (matrix 'B at the boundary': not legible / not reported per point) | E13: anode_flow_density (anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.')",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -15793,9 +16258,10 @@
     {
      "id": "B-EVID-INTERPRETATION",
      "kind": "interpretation",
-     "detail": "ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
+     "detail": "E02-WINDOW-EDGE: the P5 N2 voltage window of E02 is a text statement without boundary data and its edges are approximate: the same thruster sustained N2 setpoints beyond the stated upper edge (E01; the matrix's own note is quoted in evidence_regions[E02].discharge_voltage.edge_note). A case outside or straddling the stated window is therefore not placed against E02's extinction statement until the edge is resolved; ECHT-OD-READING: the ECHT channel area uses reading A of the stated BN-chamber outer diameter (taken as the channel outer-wall diameter); under reading B (BN piece OD) the channel is smaller, so the area is an upper bound and the flow density a lower bound (REPO_ECHT_AUDIT geometry.outer_diameter.ambiguity)",
      "resolved_by": [
-      "DM-5"
+      "DM-5",
+      "DM-2"
      ]
     },
     {
@@ -15811,9 +16277,11 @@
     "id": "DM-2",
     "prerequisites": [
      "DI-1",
-     "DI-2"
+     "DI-2",
+     "DM-1"
     ],
-    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas"
+    "at": "this case's delivered flow density and valve-outlet composition, at the design V_d, B and cathode gas",
+    "not_stand_alone": "DM-2 needs the delivered feed (DI-1) and the design point (DI-2), and DM-1 to set whether atomic O is part of the test composition; a second composition point is part of DM-2 to check the composition dependence"
    },
    "ignition": {
     "xenon_assisted": {
@@ -15991,7 +16459,9 @@
      ],
      "unit": "1",
      "evidence_class": "inferred",
-     "source": "GURCIULLO2020, our arithmetic on p.177 values (matrix E13: 'Xe mass fraction of anode flow at the lowest-Xe points')"
+     "source": "GURCIULLO2020, our arithmetic on p.177 values (matrix E13: 'Xe mass fraction of anode flow at the lowest-Xe points')",
+     "meaning": "lowest Xe mass fraction at which the discharge sustained; the fraction at which it ceased is not reported; not an extinction value",
+     "item_role": "extinction"
     },
     "E14": {
      "value": [
@@ -16000,7 +16470,9 @@
      ],
      "unit": "1",
      "evidence_class": "inferred",
-     "source": "GURCIULLO2020, our arithmetic on Table 4.10 p.201 (matrix E14: 'Xe mass fraction of the anode flow, runs XeAir-3/4')"
+     "source": "GURCIULLO2020, our arithmetic on Table 4.10 p.201 (matrix E14: 'Xe mass fraction of the anode flow, runs XeAir-3/4')",
+     "meaning": "Xe mass fraction of sustained runs (matrix 'Xe mass fraction of the anode flow, runs XeAir-3/4')",
+     "item_role": "support_xe_admixture"
     }
    },
    "comparisons": [
@@ -16010,17 +16482,12 @@
      "status_bearing": true,
      "axes": {
       "anode_flow": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-MIXED-FEED"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "anode_flow_density": {
-       "coverage": "UNDETERMINED",
-       "blocked_by": [
-        "B-DESIGN-ACH",
-        "B-MIXED-FEED"
-       ]
+       "coverage": "NOT_COMPARABLE",
+       "missing": "anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.'"
       },
       "composition": {
        "coverage": "UNDETERMINED",
@@ -16056,12 +16523,16 @@
      },
      "verdict": "cannot_decide",
      "reasons": [
-      "anode_flow_density: UNDETERMINED",
+      "anode_flow_density: NOT_COMPARABLE",
       "composition: UNDETERMINED",
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E14",
@@ -16120,7 +16591,11 @@
       "discharge_voltage: UNDETERMINED",
       "magnetic_field: UNDETERMINED",
       "cathode_gas: UNDETERMINED"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     },
     {
      "item": "E15",
@@ -16165,7 +16640,11 @@
       "discharge_voltage: NOT_COMPARABLE",
       "magnetic_field: NOT_COMPARABLE",
       "cathode_gas: NOT_COMPARABLE"
-     ]
+     ],
+     "assumptions": [
+      "S3"
+     ],
+     "joint_operating_point_check": "NOT_CHECKED (S3)"
     }
    ],
    "status": "UNDETERMINED",
@@ -16229,7 +16708,7 @@
     {
      "id": "B-EVID-NOT-COMPARABLE",
      "kind": "evidence_not_comparable",
-     "detail": "status-bearing items lacking a quantity needed on a required axis: E15: anode_flow_density (matrix 'flows': figure data not legible in the accessed scan; channel width not reported (anode diameters only)); discharge_voltage (matrix 'voltages': figure data not legible in the accessed scan); magnetic_field (matrix 'B': not reported in the accessed text); cathode_gas (matrix cathode_gas: not reported)",
+     "detail": "status-bearing items lacking a quantity needed on a required axis: E13: anode_flow_density (anode flow at extinction not reported: the matrix flow ('anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)') and Xe flow are those of the lowest-Xe points at which the discharge sustained (total 1.49-1.55 mg/s, sustained_reference_point); matrix outcome: 'With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.') | E15: anode_flow_density (matrix 'flows': figure data not legible in the accessed scan; channel width not reported (anode diameters only)); discharge_voltage (matrix 'voltages': figure data not legible in the accessed scan); magnetic_field (matrix 'B': not reported in the accessed text); cathode_gas (matrix cathode_gas: not reported)",
      "resolved_by": [
       "DM-5",
       "DM-2"
@@ -16275,7 +16754,7 @@
   {
    "id": "F-3",
    "topic": "flow density (S1) comparability",
-   "statement": "A flow per channel cross-section can be formed only for E01 (P5, 0.0004301-0.0004646 kg m^-2 s^-1), E03 (ECHT, 0.0007286 kg m^-2 s^-1, lower bound), E04 (ECHT, 0.0005659 kg m^-2 s^-1, lower bound), E10 (CAMILA, 0.0006193-0.0008488 kg m^-2 s^-1), E13 (Z-70, 0.0005547-0.0005771 kg m^-2 s^-1), E14 (Z-70, 0.0005994 kg m^-2 s^-1). Among the air-only supporting items only E01 (P5, N2), E03 (ECHT, N2), E10 (CAMILA, N2) qualify; E05 (PPS1350), E06 (PPS1350), E08 (HT5k-DM1), E09 (HT5k-DM2), E12 (MaSHEKT-100), E16 (BHT), E19 (HHT), E20 (MSTU-lab) lack the flow or channel dimensions in the accessed record.",
+   "statement": "A flow per channel cross-section can be formed only for E01 (P5, 0.0004301-0.0004646 kg m^-2 s^-1), E03 (ECHT, 0.0007286 kg m^-2 s^-1, lower bound), E04 (ECHT, 0.0005659 kg m^-2 s^-1, lower bound), E10 (CAMILA, 0.0006193-0.0008488 kg m^-2 s^-1), E14 (Z-70, 0.0005994 kg m^-2 s^-1). Among the air-only supporting items only E01 (P5, N2), E03 (ECHT, N2), E10 (CAMILA, N2) qualify; E05 (PPS1350), E06 (PPS1350), E08 (HT5k-DM1), E09 (HT5k-DM2), E12 (MaSHEKT-100), E16 (BHT), E19 (HHT), E20 (MSTU-lab) lack the flow or channel dimensions in the accessed record.",
    "values": {
     "flow_density_by_item": {
      "E01": [
@@ -16293,10 +16772,6 @@
      "E10": [
       0.000619296,
       0.000848825
-     ],
-     "E13": [
-      0.000554716,
-      0.000577053
      ],
      "E14": [
       0.000599391,
@@ -16372,7 +16847,7 @@
   {
    "id": "F-5",
    "topic": "flow span one fixed design must sustain",
-   "statement": "For a fixed design the delivered flow scales with rho V (feed envelope relation mdot = A_eff rho V), so across solar levels it spans x1.75 at 180 km, x2.18 at 200 km, x3 at 230 km and x10.4 over all cases (lowest at alt230_low_orbit_averaged). The widest flow span demonstrated within one air-only supporting item is x1.4 (E09); demonstrated spans are what was tested, not device limits.",
+   "statement": "The free-stream mass flux rho V spans x1.75 at 180 km, x2.18 at 200 km, x3 at 230 km across solar levels and x10.4 over all cases (lowest at alt230_low_orbit_averaged). For a fixed design these are the delivered-flow ratios only under S4 (A_eff the same at every case; feed envelope relation mdot = A_eff rho V); the feed envelope records (FE-08) that eta_c, one factor of A_eff, depends on the speed ratio, which changes across the cases, so the delivered-flow span can differ from these ratios. The widest flow span demonstrated within one air-only supporting item is x1.4 (E09); demonstrated spans are what was tested, not device limits.",
    "values": {
     "required_span_by_altitude": {
      "180 km": 1.74963,
@@ -16394,6 +16869,10 @@
     },
     "harshest_flow_case": "alt230_low_orbit_averaged"
    },
+   "span_basis": "free-stream mass-flux ratio; equals the delivered-flow ratio only under S4",
+   "conditional_on": [
+    "S4"
+   ],
    "evidence_class": "model-derived",
    "demonstrated_span_evidence_class": "inferred",
    "source": "this overlay: ratios of cases[*].feed.mass_flux_kgpm2ps (model-derived) and of evidence_regions[*].flow (measured) values"
@@ -16429,12 +16908,16 @@
   {
    "id": "F-7",
    "topic": "xenon-free operation and cathode gas",
-   "statement": "Air-only supporting items with no Xe on either electrode in steady state: E03 (ECHT: Ar cathode, outside the RFP propellant set air + Xe; ignition direct_on_atmospheric_gas); E09 (HT5k-DM2: N2 cathode, inside the RFP propellant set air + Xe; ignition xenon_start_then_transition). Every other air-only supporting item used a Xe cathode or did not report its cathode gas.",
+   "statement": "Air-only supporting items with no Xe on either electrode in steady state: E03 (ECHT: Ar cathode, outside the RFP propellant set air + Xe; ignition direct_on_atmospheric_gas); E09 (HT5k-DM2: N2 cathode, a constituent of air, not itself a listed RFP propellant (air + Xe): usable only with a separate N2 supply or separation of N2 from the air path (conditional; not assessed here); ignition xenon_start_then_transition). Every other air-only supporting item used a Xe cathode or did not report its cathode gas.",
    "values": {
     "xenon_free_items": [
      "E03",
      "E09"
-    ]
+    ],
+    "cathode_rfp_propellant_relation": {
+     "E03": "NOT_LISTED",
+     "E09": "AIR_CONSTITUENT_CONDITIONAL"
+    }
    }
   },
   {
@@ -16449,6 +16932,42 @@
    },
    "evidence_class": "measured",
    "source": "evidence_regions[*].duration (matrix quantities; E07 second-hand, level 5)"
+  },
+  {
+   "id": "F-9",
+   "topic": "reach of literature transfer for air feeds",
+   "statement": "Under strict composition containment (no tolerance or bracketing rule adopted) a delivered feed that contains O2 or O can be covered on composition only by an item tested on O2 / O. The status-bearing air-only items with a flow per channel cross-section are E01 (P5, N2), E03 (ECHT, N2), E10 (CAMILA, N2); the items tested with O2 are E06 (PPS1350: lacks flow density, B), E08 (HT5k-DM1: lacks flow density, B; evidence level 5, not status-bearing), E09 (HT5k-DM2: lacks flow density, B); items tested with atomic O: none. Hence, with the current evidence, no air case (SC-FS, SC-REC or any O2- or O-containing delivered composition) can become SUSTAINMENT_SUPPORTED by literature transfer, even after DI-1 and DI-2 are supplied: the section-4 thresholds (area_ratio_required, A_ch_max_under_H_RAM_m2) exist only for pure-N2 items. What can change that: DM-2 (hardware on the delivered composition), or an owner-adopted composition tolerance or bracketing rule, which reaches an O2-containing feed only through a pure-N2 item within the tolerance or through an O2-tested item once DM-5 supplies its channel dimensions and B. No tested composition contains atomic O, so a feed that keeps atomic O needs DM-2 unless the tolerance admits trace atomic O.",
+   "values": {
+    "air_only_items_with_flow_density": [
+     "E01",
+     "E03",
+     "E10"
+    ],
+    "items_tested_with_O2": [
+     "E06",
+     "E08",
+     "E09"
+    ],
+    "items_tested_with_atomic_O": [],
+    "O2_items_missing": {
+     "E06": [
+      "flow density",
+      "B"
+     ],
+     "E08": [
+      "flow density",
+      "B"
+     ],
+     "E09": [
+      "flow density",
+      "B"
+     ]
+    },
+    "O2_items_complete_on_required_axes": [],
+    "air_case_supportable_by_literature_transfer": false
+   },
+   "evidence_class": null,
+   "source": "this overlay: evidence_regions[*] (flow_density, composition, magnetic_field, discharge_voltage) and the strict containment rule (definitions.directions); a logical consequence, not a physical quantity"
   }
  ],
  "milestone_A_conditions": [
@@ -16462,9 +16981,10 @@
   },
   {
    "id": "HS-A2",
-   "condition": "at every declared case the delivered anode flow density is at or above the extinction boundary of the Vyovrinda channel measured at the design point (DM-2) with a margin (PROPOSED, owner: none adopted); pending DM-2, at or above the lowest demonstrated flow density of a status-bearing sustained item that COVERS the case on every required axis (S1, S2 stated)",
+   "condition": "at every declared case the delivered anode flow density is at or above the extinction boundary of the Vyovrinda channel measured at the design point (DM-2) with a margin (PROPOSED, owner: none adopted); pending DM-2, at or above the lowest demonstrated flow density of a status-bearing sustained item that COVERS the case on every required axis (S1-S3 stated)",
    "state": "UNDETERMINED at 9 of 9 cases",
    "thresholds": "cases[*].thresholds (area_ratio_required, A_ch_max_under_H_RAM_m2)",
+   "note": "with the current evidence no air case can be covered by literature transfer (F-9): only DM-2, or DM-5 with an owner-adopted composition tolerance, can change that",
    "resolved_by": [
     "DI-1",
     "DI-2",
@@ -16522,7 +17042,7 @@
   },
   {
    "id": "HS-A4",
-   "condition": "the design V_d, B and cathode gas lie inside the demonstrated window of that evidence (cathode gas within the RFP propellant set air + Xe)",
+   "condition": "the design V_d, B and cathode gas lie inside the demonstrated window of that evidence (cathode gas within the RFP propellant set air + Xe; a pure-N2 cathode only with a separate N2 supply or N2 separation from the air path)",
    "state": "UNDETERMINED at 9 of 9 cases",
    "resolved_by": [
     "DI-2",
@@ -16532,7 +17052,7 @@
   {
    "id": "HS-A5",
    "condition": "the design sustains over the delivered flow span of the declared envelope, or the envelope is restricted, or chamber buffering is specified (not in the feed envelope: TBD)",
-   "state": "UNDETERMINED (required span x10.4 over all cases vs widest demonstrated x1.4)",
+   "state": "UNDETERMINED (free-stream mass-flux span x10.4 over all cases, the delivered-flow span only under S4, vs widest demonstrated x1.4)",
    "values": {
     "required_span_by_altitude": {
      "180 km": 1.74963,
@@ -16554,7 +17074,11 @@
     },
     "harshest_flow_case": "alt230_low_orbit_averaged"
    },
+   "conditional_on": [
+    "S4"
+   ],
    "resolved_by": [
+    "DI-1",
     "DM-2"
    ]
   },
@@ -16619,10 +17143,16 @@
    "id": "DM-2",
    "type": "hardware_measurement",
    "what": "flow-down extinction scan on a Vyovrinda-representative channel at the design V_d, B and cathode gas, on the delivered composition (the most O-rich declared case; with atomic O if DM-1 shows it survives): lower the anode flow at fixed V_d and B until extinction; record the extinction flow density, I_d oscillation, facility background pressure and ingested flow. One scan gives the boundary for that design; with DI-1 each air case can then be placed against it on the same device, without the cross-device assumptions S1/S2 (the facility-to-orbit transfer and the composition dependence still have to be stated). A second composition point (the least O-rich case) checks that the boundary does not move the other way with composition",
+   "prerequisites": [
+    "DI-1",
+    "DI-2",
+    "DM-1"
+   ],
    "resolves": [
     "B-EVID-ATOMIC-O",
     "B-EVID-O2-FRACTION",
     "B-EVID-NOT-COMPARABLE",
+    "B-EVID-INTERPRETATION",
     "B-EVID-CONFLICT",
     "B-NO-COVERING-ITEM",
     "B-IGN-XE-START-COVERAGE"
@@ -16648,7 +17178,7 @@
   {
    "id": "DM-5",
    "type": "desk_extraction",
-   "what": "published-source extraction only (no contact): PPS1350 and HT5k channel dimensions and B from accessible primaries; digitization of MOSKOVITZ2026 Fig. 6 (E11 boundary); the ECHT OD reading; access to the level-5 primaries (verify)",
+   "what": "published-source extraction only (no contact): PPS1350 and HT5k channel dimensions and B from accessible primaries; digitization of MOSKOVITZ2026 Fig. 6 (E11 boundary); the ECHT OD reading; per-point (flow, V_d, B) data for joint-point checks (S3); the P5 N2 window edge (E02) where a primary gives more than the text statement; access to the level-5 primaries (verify)",
    "resolves": [
     "B-EVID-NOT-COMPARABLE",
     "B-EVID-INTERPRETATION",
@@ -16697,10 +17227,11 @@
   "supports": [
    "A"
   ],
-  "statement": "Supports milestone A (conditional selection): it states, per feed-envelope case, which conditions hall_only must meet for its sustainment part and which single measurement resolves each UNDETERMINED case. It does not need Physics Baseline 1.0 and contains no Hall prediction.",
+  "statement": "Supports milestone A (conditional selection): it states, per feed-envelope case, which conditions hall_only must meet for its sustainment part and which decisive measurement (DM-2, with its prerequisites DI-1, DI-2 and DM-1) resolves each UNDETERMINED case. It does not need Physics Baseline 1.0 and contains no Hall prediction.",
   "to_reach_B": [
    "DI-1 and DI-2 supplied (feed evaluated; Vyovrinda design point with provenance)",
-   "DM-1 (valve-outlet atomic O) and DM-2 (extinction boundary on representative hardware at the design point) measured; hardware evidence supersedes the literature transfer within its domain (docs/EVIDENCE.md)",
+   "DM-1 (valve-outlet atomic O) and DM-2 (extinction boundary on representative hardware at the design point) measured; hardware evidence supersedes the literature transfer within its domain (docs/EVIDENCE.md). With the current evidence no air case can be supported by literature transfer alone (F-9)",
+   "any SUSTAINMENT_SUPPORTED verdict from literature transfer rechecked at joint operating points (assumption S3)",
    "a sustainment margin set by the owner",
    "(Hall track) an admitted transport closure can add model-derived margins only after it is validated against sustainment / extinction data; no v1 run is such data"
   ],
@@ -16712,7 +17243,8 @@
  },
  "open_questions_for_owner": [
   "Confirm or reject H_RAM (RFP thrust range as the thruster's thrust; full drag compensation).",
-  "Adopt or reject the composition bracketing rule and set a composition tolerance (trace atomic O).",
+  "Adopt or reject the composition bracketing rule and set a composition tolerance (trace atomic O); without one, no air case can be supported by literature transfer (F-9).",
+  "Confirm the constant-A_eff reading of the flow span (S4) or supply the per-case A_eff (feed envelope FE-08).",
   "Confirm that only evidence level <= 3 items can set a case status.",
   "Set a sustainment margin above the extinction boundary for milestone B.",
   "Declare the mission envelope subset hall_only must sustain (all nine cases, or a restricted set), since the fixed-design flow span differs by altitude (F-5)."

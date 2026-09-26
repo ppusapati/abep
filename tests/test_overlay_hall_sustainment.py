@@ -233,6 +233,7 @@ def _reg(role="support_air_only", gamma=1e-3, bound=None, conds=(), w=None, V=(2
 
 
 def _case(mdot=None, area=None, w=None, V=None, Bv=None, cathode=None, P=None):
+    area = [area, area] if isinstance(area, float) else area             # the design area is carried as [lo, hi]
     return {"mdot_kgps": [mdot, mdot] if mdot is not None else None, "w_valve": w, "channel_area_m2": area,
             "V_d": [V, V] if V is not None else None,
             "B": {"value": [Bv, Bv], "definition": "Br_exit_centreline"} if Bv is not None else None,
@@ -313,11 +314,72 @@ def test_statuses_reachable_with_real_evidence_and_synthetic_inputs(found):
     # pure-N2 synthetic feed at a P5-like operating point: E01 covers every required axis -> SUPPORTED
     feed = _feed_with_case0(found, 3.0e-6, {"O": 0.0, "N2": 1.0, "O2": 0.0})
     d = B.build(found, design_point=_synthetic_design(250.0, 130.0, 6.0e-3), feed_override=feed)
-    assert d["cases"][0]["status"] == B.S_SUP and d["cases"][0]["supporting_items"] == ["E01"]
-    # pure-N2 synthetic feed at a Z-70-like point below E13's flow density at 290 V -> CONTRADICTED by E13
-    feed = _feed_with_case0(found, 1.3e-6, {"O": 0.0, "N2": 1.0, "O2": 0.0})
-    d = B.build(found, design_point=_synthetic_design(290.0, 135.0, 2.686e-3), feed_override=feed)
-    assert d["cases"][0]["status"] == B.S_CON and d["cases"][0]["contradicting_items"] == ["E13"]
+    c0 = d["cases"][0]
+    assert c0["status"] == B.S_SUP and c0["supporting_items"] == ["E01"]
+    e01 = next(x for x in c0["comparisons"] if x["item"] == "E01")
+    assert "S3" in e01["assumptions"] and e01["joint_operating_point_check"].startswith("NOT_CHECKED")
+    # a delivered pure-N2 composition carries no stale free-stream composition blockers
+    ids = {b["id"] for b in c0["blockers"]}
+    assert "B-EVID-ATOMIC-O" not in ids and "B-EVID-O2-FRACTION" not in ids
+
+
+def test_e13_sustained_point_is_not_an_extinction_threshold(found, doc):
+    # E13's matrix flow is the lowest-Xe point at which the Z-70 SUSTAINED: never an extinction flow / flow density
+    e13 = {r["id"]: r for r in doc["evidence_regions"]}["E13"]
+    assert e13["role"] == "extinction"
+    assert e13["flow"]["value"] is None and "not reported" in e13["flow"]["missing"]
+    assert e13["flow_density"]["value"] is None
+    ref = e13["sustained_reference_point"]
+    assert ref["evidence_class"] in CLASSES and ref["source"] and "SUSTAINED" in ref["meaning"]
+    comp = e13["composition"]
+    assert comp["xe_fraction"] is None and comp["xe_fraction_lowest_sustained"]["value"]
+    assert "at extinction not reported" in comp["missing"]
+    for c in doc["cases"]:
+        assert "E13" not in c.get("thresholds", {}), c["case_id"]
+    with open(MD_PATH, encoding="utf-8") as f:
+        row = next(line for line in f if line.startswith("| E13 "))
+    assert "n/c at extinction (not reported)" in row and "sustained at the lowest-Xe point" in row
+    # probe: pure N2 at a Z-70-like point (290 V, 135 G, Z-70 channel area, 1.45 mg/s) is not CONTRADICTED by E13
+    area = {r["id"]: r for r in doc["evidence_regions"]}["E13"]["channel_area"]["value"]
+    feed = _feed_with_case0(found, 1.45e-6, {"O": 0.0, "N2": 1.0, "O2": 0.0})
+    d = B.build(found, design_point=_synthetic_design(290.0, 135.0, area), feed_override=feed)
+    c0 = d["cases"][0]
+    assert c0["status"] == B.S_UND and c0["contradicting_items"] == []
+    x = next(x for x in c0["comparisons"] if x["item"] == "E13")
+    assert x["axes"]["anode_flow_density"]["coverage"] == B.NC
+    assert x["axes"]["composition"]["coverage"] == B.NC and x["verdict"] == "cannot_decide"
+
+
+def test_design_area_range_is_carried_not_collapsed(found):
+    # synthetic area range [4e-3, 8e-3] m^2 with 3.0e-6 kg/s: Gamma spans 3.75e-4..7.5e-4, straddling E01's lowest
+    # demonstrated flow density; taking only the small end would give SUPPORTED, the full range must not
+    feed = _feed_with_case0(found, 3.0e-6, {"O": 0.0, "N2": 1.0, "O2": 0.0})
+    d = B.build(found, design_point=_synthetic_design(250.0, 130.0, [4.0e-3, 8.0e-3]), feed_override=feed)
+    c0 = d["cases"][0]
+    assert c0["status"] == B.S_UND
+    x = next(x for x in c0["comparisons"] if x["item"] == "E01")
+    assert x["axes"]["anode_flow_density"]["coverage"] == B.PARTIAL
+    assert x["axes"]["anode_flow_density"]["case_value"] == [pytest.approx(3.75e-4), pytest.approx(7.5e-4)]
+    assert c0["feed"]["flow_density_kgpm2ps"]["value"] == [pytest.approx(3.75e-4), pytest.approx(7.5e-4)]
+    assert B.flow_density_range([1.0, 2.0], [4.0, 8.0]) == [0.125, 0.5]
+
+
+def test_composition_blockers_use_the_delivered_composition(found):
+    dp = _synthetic_design(250.0, 130.0, 6.0e-3)
+    # O-free N2 / O2 delivered feed: no atomic-O blocker; O2 fraction below the largest tested -> no O2 blocker
+    d = B.build(found, design_point=dp, feed_override=_feed_with_case0(found, 3.0e-6, {"O": 0.0, "N2": 0.7,
+                                                                                         "O2": 0.3}))
+    ids = {b["id"] for b in d["cases"][0]["blockers"]}
+    assert "B-EVID-ATOMIC-O" not in ids and "B-EVID-O2-FRACTION" not in ids
+    # delivered feed with atomic O: the blocker is raised from the delivered composition
+    d = B.build(found, design_point=dp, feed_override=_feed_with_case0(found, 3.0e-6, {"O": 0.2, "N2": 0.6,
+                                                                                         "O2": 0.2}))
+    blk = {b["id"]: b for b in d["cases"][0]["blockers"]}
+    assert "B-EVID-ATOMIC-O" in blk and "delivered" in blk["B-EVID-ATOMIC-O"]["detail"]
+    # O2 above the largest tested fraction
+    d = B.build(found, design_point=dp, feed_override=_feed_with_case0(found, 3.0e-6, {"O": 0.0, "N2": 0.3,
+                                                                                         "O2": 0.7}))
+    assert "B-EVID-O2-FRACTION" in {b["id"] for b in d["cases"][0]["blockers"]}
 
 
 def test_design_point_inputs_are_explicit():
@@ -435,3 +497,46 @@ def test_milestones_and_conditions(doc):
     for c in doc["cases"]:
         if c["kind"] == "air":
             assert c["decisive_measurement"]["id"] in routes
+
+
+def test_review_repairs_are_recorded(doc):
+    regs = {r["id"]: r for r in doc["evidence_regions"]}
+    # base-checkout inputs are labelled with the branch that holds the base commit, not 'main'
+    for k in ("p5_case_geometry", "constants_module"):
+        assert doc["inputs"][k]["branch"] != "main", k
+    # a pure-N2 cathode is conditional (air constituent, not a listed RFP propellant); Xe listed; Ar not listed
+    assert regs["E09"]["cathode_gas"]["rfp_propellant_relation"] == "AIR_CONSTITUENT_CONDITIONAL"
+    assert regs["E01"]["cathode_gas"]["rfp_propellant_relation"] == "LISTED"
+    assert regs["E03"]["cathode_gas"]["rfp_propellant_relation"] == "NOT_LISTED"
+    f7 = next(f for f in doc["findings"] if f["id"] == "F-7")
+    assert "not itself a listed RFP propellant" in f7["statement"]
+    # explicit assumptions: per-axis product region (S3) and constant A_eff for the flow span (S4)
+    for k in ("S3", "S4"):
+        assert doc["assumptions"][k]["evidence_class"] == "assumed" and doc["assumptions"][k]["limits"]
+    assert "FE-08" in doc["assumptions"]["S4"]["limits"]
+    f5 = next(f for f in doc["findings"] if f["id"] == "F-5")
+    assert f5["conditional_on"] == ["S4"] and "only under S4" in f5["statement"]
+    for c in doc["cases"]:
+        for x in c["comparisons"]:
+            assert "S3" in x["assumptions"], (c["case_id"], x["item"])
+    # E02: the stated window edge is approximate and carries an interpretation condition
+    assert regs["E02"]["discharge_voltage"]["conditional_on"] == ["E02-WINDOW-EDGE"]
+    assert "E02-WINDOW-EDGE" in doc["definitions"]["interpretation_conditions"]
+    case = {"mdot_kgps": None, "w_valve": None, "channel_area_m2": None, "V_d": [277.0, 277.0],   # synthetic V_d
+            "B": None, "cathode_gas": None, "P_d_kW": None, "mdot_max_H_RAM_kgps": None}
+    ax = B.compare(case, regs["E02"])["axes"]["discharge_voltage"]
+    assert ax["coverage"] == B.COVERS and ax["conditional_on"] == ["E02-WINDOW-EDGE"]
+    # F-9: with current evidence no air case can be supported by literature transfer
+    f9 = next(f for f in doc["findings"] if f["id"] == "F-9")
+    assert f9["values"]["air_case_supportable_by_literature_transfer"] is False
+    assert f9["values"]["O2_items_complete_on_required_axes"] == []
+    with open(MD_PATH, encoding="utf-8") as f:
+        md = f.read()
+    assert "no air case (SC-FS, SC-REC or any O2- or O-containing delivered composition) can become" in md
+    # the per-case decisive measurement is not overstated: DM-1 is a prerequisite
+    dms = {d["id"]: d for d in doc["decisive_measurements"]}
+    assert dms["DM-2"]["prerequisites"] == ["DI-1", "DI-2", "DM-1"]
+    for c in doc["cases"]:
+        if c["kind"] == "air":
+            assert c["decisive_measurement"]["prerequisites"] == ["DI-1", "DI-2", "DM-1"]
+    assert "single measurement" not in md
