@@ -103,6 +103,9 @@ for (ic, (cand, cfg, pt)) in enumerate(combos)
                 v[1] > 0 && (rec["region_$(k)_Te_eV"] = v[2] / v[1]; rec["region_$(k)_z_over_L"] = v[3] / v[1]; rec["region_$(k)_ne_m3"] = v[4] / v[1])
             end
             rec["chemistry_trustworthy"] = r["chemistry_trustworthy"]
+            for k in ("chemistry_extrapolated_fraction_max", "chemistry_limiting_rate_file", "chemistry_max_mean_energy_active_eV", "converged")
+                rec[k] = get(r, k, nothing)
+            end
         end
     catch err
         rec["retcode"] = "error"; rec["error"] = sprint(showerror, err)
