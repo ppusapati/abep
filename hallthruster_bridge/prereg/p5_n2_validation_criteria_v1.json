@@ -29,7 +29,20 @@
    "n2_n_rot_off.toml": "5fa1fafaba358ef8fdea716bd28c085bf48a2db2607c8f3808bed6f05412fbd0",
    "n2_n_ndd_hmslow.toml": "f9b64716cdd6294a4338c5708a94ba4db888ec671c2c6a26647566db04085b71",
    "n2_n_ndd_hmshigh.toml": "333d6071c035d83376f20a70a257579d7b838c591c374e2cdb5052331e0285d3",
-   "n2_n_n2dication.toml": "fb87c2c4328951bf7ead8d92bc2ffe94f17ce912e2977740d495d4d4cae2581f"
+   "n2_n_n2dication.toml": "fb87c2c4328951bf7ead8d92bc2ffe94f17ce912e2977740d495d4d4cae2581f",
+   "n2_n_exc_johnsonlow_di_lower.toml": "10aed98243c7972d5c86a7b460873bfa210ab43492ba6229bdbc44c9640a1405",
+   "n2_n_exc_johnsonlow_nel_wang.toml": "58c4b5ea1bd3c2d86ec83108486a44e788060a896f117b39aca695547205e6d3",
+   "n2_n_exc_johnsonlow_di_lower_nel_wang.toml": "793cc6e73e3cc4017fad8579aba26c0834b68666e9c87cfc882492ef674c7f4c",
+   "n2_n_rot_off_di_lower.toml": "0d9150d125528fae84dc64fc451741aa3c56c39860c86c2973d38787fc637392",
+   "n2_n_rot_off_nel_wang.toml": "2011dc1084eb3c4e51cac879b16bdd39658e72d204933ee8793065819aadf93c",
+   "n2_n_rot_off_di_lower_nel_wang.toml": "022caef866c283c6965c5bda6ea1fac7ecc3e2b4e349ce5067af481d6f70adee",
+   "n2_n_ndd_hmslow_di_lower.toml": "674438532bb897f0b724bf3b53059f0128cbbe27604fcaea05788e2a07fcf227",
+   "n2_n_ndd_hmslow_nel_wang.toml": "b7182f02dae5b4a49d1f16dab486fe52e2c42b2cae8596e35978017b636c288a",
+   "n2_n_ndd_hmslow_di_lower_nel_wang.toml": "2eec1906e39a1dd6e47a299430e94138db2ca9642a8e996e8fcc1e49aa9ea6a1",
+   "n2_n_ndd_hmshigh_di_lower.toml": "103541265e687fdeed302fb628efa176ca0c051ebca4ea3835df6d6e6ed4de91",
+   "n2_n_ndd_hmshigh_nel_wang.toml": "2ce2cda701c8607eedbe42436c2a9630a24b3dea6da550f2046e5d634c237836",
+   "n2_n_ndd_hmshigh_di_lower_nel_wang.toml": "88b6f77c52df50eb3becddbf649f08b7b8877b9c8a632dae23e0c1da42c2212f",
+   "n2_n_n2dication_nel_wang.toml": "cf54add54566f0af51125e70b680b689ec3953521dc0ef460d192e11c9a1b018"
   },
   "hallthruster_pin": "v0.23.1 bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
   "run_status_rule": [
@@ -104,13 +117,47 @@
   "n2_n_nel_wang.toml",
   "n2_n_di_lower_nel_wang.toml"
  ],
- "staged_sensitivities": [
-  "n2_n_exc_johnsonlow.toml",
-  "n2_n_rot_off.toml",
-  "n2_n_ndd_hmslow.toml",
-  "n2_n_ndd_hmshigh.toml",
-  "n2_n_n2dication.toml"
- ],
+ "staged_sensitivities": {
+  "n2_n_exc_johnsonlow.toml": {
+   "baseline": "n2_n.toml",
+   "escalation": {
+    "n2_n_di_lower.toml": "n2_n_exc_johnsonlow_di_lower.toml",
+    "n2_n_nel_wang.toml": "n2_n_exc_johnsonlow_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml": "n2_n_exc_johnsonlow_di_lower_nel_wang.toml"
+   }
+  },
+  "n2_n_rot_off.toml": {
+   "baseline": "n2_n.toml",
+   "escalation": {
+    "n2_n_di_lower.toml": "n2_n_rot_off_di_lower.toml",
+    "n2_n_nel_wang.toml": "n2_n_rot_off_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml": "n2_n_rot_off_di_lower_nel_wang.toml"
+   }
+  },
+  "n2_n_ndd_hmslow.toml": {
+   "baseline": "n2_n.toml",
+   "escalation": {
+    "n2_n_di_lower.toml": "n2_n_ndd_hmslow_di_lower.toml",
+    "n2_n_nel_wang.toml": "n2_n_ndd_hmslow_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml": "n2_n_ndd_hmslow_di_lower_nel_wang.toml"
+   }
+  },
+  "n2_n_ndd_hmshigh.toml": {
+   "baseline": "n2_n.toml",
+   "escalation": {
+    "n2_n_di_lower.toml": "n2_n_ndd_hmshigh_di_lower.toml",
+    "n2_n_nel_wang.toml": "n2_n_ndd_hmshigh_nel_wang.toml",
+    "n2_n_di_lower_nel_wang.toml": "n2_n_ndd_hmshigh_di_lower_nel_wang.toml"
+   }
+  },
+  "n2_n_n2dication.toml": {
+   "baseline": "n2_n_di_lower.toml",
+   "escalation": {
+    "n2_n_di_lower_nel_wang.toml": "n2_n_n2dication_nel_wang.toml"
+   },
+   "note": "defined only on DI-lower (the DI-upper table already counts N2^2+ as N+); compared against n2_n_di_lower.toml, never n2_n.toml; no DI-upper combinations exist"
+  }
+ },
  "run_count": {
   "mandatory": "9 candidates x 4 chemistry x 30 cases x 2 modes = 2160 runs (1080 vacuum first, then 1080 facility); readings A/B are post-processing",
   "staged": "9 x 30 x 2 = 540 runs per sensitivity branch when run"
@@ -140,14 +187,15 @@
    "facility": "reported with the same aggregation; never gates"
   },
   "O4_staged_escalation": {
-   "first_run": "each staged sensitivity (Johnson-low, rotational-off, HMS x0.5, HMS x1.3, molecular N2^2+) against nominal chemistry, in VACUUM, 9 candidates x 30 cases",
+   "first_run": "each staged sensitivity against ITS BASELINE (n2_n.toml for Johnson-low, rotational-off, HMS x0.5, HMS x1.3; n2_n_di_lower.toml for molecular N2^2+), in VACUUM, 9 candidates x 30 cases; deltas are sensitivity minus baseline for the same candidate, case and mode",
    "escalate_to_other_three_primary_combinations_if_any_vacuum": [
     "a run status changes",
     "|delta I_d| >= 0.075 x I_d,target",
     "|delta T_axial| >= 0.5 x T_tolerance: N1 2.6 mN, N2 2.8 mN, N3 2.8 mN",
     "replacing nominal chemistry by the sensitivity changes a provisional global-member or candidate verdict"
    ],
-   "facility": "facility sensitivity results may be produced as secondary evidence; facility-only differences never trigger escalation"
+   "facility": "facility sensitivity results may be produced as secondary evidence; facility-only differences never trigger escalation",
+   "escalation_configs": "pre-generated and hash-pinned (staged_sensitivities.*.escalation; scripts/make_n2_variant_configs.py ESCALATION): on escalation each sensitivity is run on every listed primary combination and compared with that combination"
   },
   "O5_ExB_diagnostic": {
    "model_observable": "V_a,s,model = m_s u_z,s^2 / (2 Z_s e) at the model-domain outlet, for N2+ and N+",
@@ -161,5 +209,6 @@
   }
  },
  "execution_order": "both modes are pre-registered and both are run. The 1080 mandatory VACUUM runs execute first and the promotion result is evaluated from them; the 1080 facility runs follow as secondary consistency evidence. No criterion changes between the two.",
- "no_score_bearing_run_before": "this pre-registration PR is merged"
+ "no_score_bearing_run_before": "this pre-registration PR is merged",
+ "review_fixes_before_merge": "PR #27 review (2026-09-26, before merge and before any run): the molecular-N2^2+ branch baseline set to n2_n_di_lower.toml (it differs from n2_n.toml in two changes), and all 13 escalation-combination configs generated and pinned now so that no chemistry is defined after results"
 }

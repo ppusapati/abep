@@ -6,6 +6,7 @@ never drift from the nominal set. Each variant differs from n2_n.toml in exactly
   n2_n_rot_off.toml: the two rotational reactions removed (lower-bound closure for rotational cooling).
   n2_n_exc_johnsonlow.toml: electronic excitation from Johnson 2005 at all energies (sensitivity branch; escalation rule in the
     P5-N2 pre-registration).
+  Escalation combinations (ESCALATION below): every staged sensitivity x the other primary chemistry combinations.
   n2_n_ndd_hmslow.toml / n2_n_ndd_hmshigh.toml: direct N -> N^2+ (Hahn, Muller & Savin 2017) x0.5 / x1.3 (sensitivity branches).
   n2_n_n2dication.toml: molecular N2^2+ UNCERTAINTY VARIANT (closure verdict: nominal < 1 % < upper): N2 max_charge = 2,
     N2 + e -> N2^2+ + 3e (upper envelope) and N2+ + e -> N2^2+ + 2e (Tabata 2006 n2-69), on the dissociative-ionization LOWER
@@ -63,6 +64,22 @@ VARIANTS = {"n2_n_di_lower.toml": ("dissociative-ionization LOWER chemistry vari
             "n2_n_n2dication.toml": ("molecular N2^2+ UNCERTAINTY VARIANT (DI lower, OPM N elastic)", N2_DICATION),
             "n2_n_rot_off.toml": ("rotational-OFF lower-bound closure (gross rotational cooling removed; nominal DI, OPM N elastic)",
                                   ROT_OFF)}
+
+# Escalation combinations of the staged sensitivities (pre-registered with p5_n2_validation_criteria_v1, PR #27 review): each
+# nominal-base sensitivity x the other three primary chemistry combinations, generated and hash-pinned BEFORE any run so that an
+# escalation never needs chemistry defined after results are seen. The molecular-N2^2+ branch is defined only on DI-lower (the
+# DI-upper table already counts N2^2+ as N+), so its baseline is n2_n_di_lower.toml and its only escalation is x Wang elastic.
+PRIMARY_COMBOS = {"di_lower": ("DI lower", DI_LOWER), "nel_wang": ("Wang-BSR N elastic", NEL_WANG),
+                  "di_lower_nel_wang": ("DI lower x Wang-BSR N elastic", {**DI_LOWER, **NEL_WANG})}
+STAGED = {"n2_n_exc_johnsonlow": ("electronic-excitation JOHNSON-LOW", EXC_JOHNSONLOW), "n2_n_rot_off": ("rotational-OFF", ROT_OFF),
+          "n2_n_ndd_hmslow": ("direct N -> N^2+ HMS x0.5", NDD_LOW), "n2_n_ndd_hmshigh": ("direct N -> N^2+ HMS x1.3", NDD_HIGH)}
+ESCALATION = {}
+for stem, (what, subs) in STAGED.items():
+    for tag, (cwhat, csubs) in PRIMARY_COMBOS.items():
+        ESCALATION[f"{stem}_{tag}.toml"] = (f"{what} sensitivity x {cwhat} (escalation combination)", {**subs, **csubs})
+ESCALATION["n2_n_n2dication_nel_wang.toml"] = ("molecular N2^2+ UNCERTAINTY VARIANT x Wang-BSR N elastic (escalation combination; "
+                                               "DI lower)", {**N2_DICATION, **NEL_WANG})
+VARIANTS.update(ESCALATION)
 
 
 def main():

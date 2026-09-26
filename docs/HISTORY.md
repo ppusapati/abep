@@ -2069,3 +2069,10 @@ flag is diagnostic only); O4 amended to exact half-tolerances (7.5 % I_d; 2.6 / 
 (facility-only differences never escalate). Execution order: the 1080 vacuum runs first (promotion decided from them), then the
 1080 facility runs. Final pre-registration hash-locked in `prereg/p5_n2_prereg_lock_v1.json`; no score-bearing run before the
 pre-registration PR merges.
+**PR #27 review fixes (before merge, before any run):** (1) the molecular-N₂²⁺ branch is compared against its true baseline
+`n2_n_di_lower.toml` (it is defined only on DI-lower, since the DI-upper table already counts N₂²⁺ as N⁺; comparing with
+`n2_n.toml` would mix two changes), and its only escalation combination is × Wang elastic; (2) all 13 escalation-combination
+configs (Johnson-low, rotational-off, HMS ×0.5, HMS ×1.3 × {DI-lower, Wang, DI-lower+Wang}; N₂²⁺ × Wang) are generated now by
+`scripts/make_n2_variant_configs.py` and sha256-pinned in the criteria (22 chemistry configs in all), so an escalation never needs
+chemistry defined after results. A test checks each combination carries exactly its sensitivity's rate-file change. The hash
+lock was regenerated for these fixes before merge.

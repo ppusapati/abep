@@ -1141,6 +1141,16 @@ def test_p5_n2_validation_preregistration():
     assert c["operational_rules"]["O2_precedence"]["order"] == ["NUMERICAL_FAILURE", "OUT_OF_DOMAIN", "FAIL_VALIDATION", "PASS"]
     assert "0.05 x I_d,target" in c["operational_rules"]["O1_extinction_SUSTAINMENT"]["rule"]
     assert "N2 2.8 mN" in " ".join(c["operational_rules"]["O4_staged_escalation"]["escalate_to_other_three_primary_combinations_if_any_vacuum"])
+    # every staged sensitivity and escalation config differs from its pair in exactly the intended rate files
+    import tomllib
+    files = lambda f: sorted(r["rate_coeff_file"] for r in tomllib.load(open(os.path.join(B, "propellants", f), "rb"))["reactions"])
+    for sens, spec in c["staged_sensitivities"].items():
+        d_sens = set(files(sens)) ^ set(files(spec["baseline"]))
+        assert d_sens, sens
+        for prim, esc in spec["escalation"].items():
+            assert set(files(esc)) ^ set(files(prim)) == d_sens, esc                 # same sensitivity change on each combination
+            assert set(files(esc)) ^ set(files(sens)) == set(files(prim)) ^ set(files(spec["baseline"])), esc
+    assert c["staged_sensitivities"]["n2_n_n2dication.toml"]["baseline"] == "n2_n_di_lower.toml"
     lock = json.load(open(os.path.join(B, "prereg", "p5_n2_prereg_lock_v1.json")))
     for f, sha in lock["files"].items():
         assert h(os.path.join(B, f)) == sha, f
