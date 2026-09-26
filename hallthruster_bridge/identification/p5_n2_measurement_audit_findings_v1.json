@@ -1,0 +1,39 @@
+{
+ "id": "p5_n2_measurement_audit_findings_v1",
+ "date": "2026-09-26",
+ "status": "AUDIT COMPLETE; pre-registration decisions open (owner). Nothing simulated or scored; no P5-N2 fit quality exists.",
+ "values": "brabston_p5_n2_measurement_audit_v1.json (scripts/audit_p5_n2_measurements.py, reproducible from the PDF, sha256-checked)",
+ "source": "Brabston, Marino, Lev & Walker, J. Propuls. Power 2025, doi:10.2514/1.B39623: Table 2 (N2 setpoints), Table 5 (max uncertainties), Figs. 5, 8, 9, 10",
+ "admissible_targets": {
+  "I_d": {"points": "N1-N5", "evidence": "raw = P_d/V_d: inferred (P_d to 3 significant figures, rounding 0.10-0.16 %; no discharge-current uncertainty is stated); corrected = Eq. (13)-(14) reconstruction (zeta_A = 1, correction 2.2-3.7 % of I_d)", "independent_of_chemistry_model": true},
+  "thrust": {"points": "N1-N5", "evidence": "stand measurement, ingestion-corrected by the paper (Eq. 16, zeta_en = 0.8 empirical); N1 61.4 and N5 90.0 mN from the abstract range end-points, N2-N4 digitized from Fig. 5 (marker centroids read +0.14..+0.37 mN high at the abstract points: digitization ~0.4 mN); raw = Eq. (16) inverted", "sigma_mN": 2.6, "independent_of_chemistry_model": true},
+  "species_acceleration_voltage": {"points": "N1-N3 only", "evidence": "E x B probe 1 m downstream on centreline, bi-Gaussian peaks, plasma-potential corrected (Eq. 11), plotted as eta_V,n = V_a,n/V_d in Fig. 10 and digitized", "sigma_V": 11.6, "values_V": {"N2+": [165.7, 172.1, 178.6], "N+": [209.7, 227.6, 243.7]}, "caveat": "far-field facility measurement (CEX and plume potential between the exit and 1 m); species-resolved, so sensitive to where N2+ and N+ are born", "independent_of_chemistry_model": true},
+  "sustained_discharge": {"points": "N1-N5", "evidence": "qualitative: all five setpoints ran; the text says the discharge cannot be sustained above 275 V or below 225 V (N3-N5 are at 275.7-278.6 V)"}
+ },
+ "supporting_not_targets": {
+  "Psi_b_eta_E_Phi_P": {"points": "N1-N3", "evidence": "paper-reconstructed from plume probes (Fig. 9, digitized); internally consistent for N2 (eta_E Phi_P Psi_b = Fig. 8 component eta_T to 0.0004)", "use": "divergence reading for any thrust comparison: axial factor reading A = sqrt(Psi_b as plotted) 0.765/0.773/0.775; reading B = consistent with measured thrust 0.773/0.829/0.864 (N1/N2/N3)"},
+  "facility": "chamber pressure 1.14-2.14e-5 Torr (N2); ingested N2 0.10-0.19 mg/s by Eq. (13) (2.0-3.6 % of the anode flow)"
+ },
+ "not_admissible_as_targets": {
+  "Phi_m_n_eta_SP_n_xi_N": "depend on the paper's own chemistry approximation for the atomic fraction (Eq. 17-20: Itikawa/Cosby rates at T_e = 0.1 V_d sqrt(m_N2/m_Xe), dissociation and ionization co-located); model-derived, digitized for the record only",
+  "Isp_eta_T": "Figs. 6, 7 are T and mdot restated; no independent information",
+  "Omega_i_n": "species current fractions are not published numerically"
+ },
+ "findings": [
+  "F1 Fig. 5 plots the N2 points 38-46 W (about 1 %) below the Eq. (14)-corrected power at every point, while the Xe points in the same figure match Eq. (14) to <= 3 W. Fig. 8 thrust-calculated eta_T agrees with Eq. (14) (N3: 0.1597 vs 0.1596) rather than with the plotted power, so the offset is in the plotting, not in the paper's current. Effect on an I_d target: about 1 %.",
+  "F2 Thrust-calculated and component-calculated eta_T differ by 2 %, 13 % and 19 % at N1, N2 and N3 (the paper: within error bars). The two divergence readings therefore differ by up to 11 % in axial thrust factor at N3, four times the thrust measurement uncertainty.",
+  "F3 No Psi_b, eta_V,n or species data exist for N4 and N5 (5.2 and 5.4 mg/s): Figs. 8-10 are 5.0 mg/s only.",
+  "F4 The text states the discharge is unsustainable above 275 V, but N3-N5 are 275.7-278.6 V; read as an approximate boundary.",
+  "F5 The cathode runs on xenon at 0.44 mg/s (8 % of the anode mass flow); not in the 1-D model. The paper found no resolvable xenon in the E x B spectra and assumes its contribution negligible.",
+  "F6 Peak radial B 130 G (Xe used 162.5 G); coil currents and the N2 field shape are unpublished, so the P5 B(z) shape and its registration remain layer-1 hypotheses as for Xe. The coils were tuned at N3 to minimise I_d and its oscillation, then held fixed.",
+  "F7 hallthruster_bridge/cases/p5_n2.json is out of date for scoring: Gaussian B, 32 mm only, no layer-1 registrations, no facility mode, raw I_d only. It must be regenerated like cases/p5_xenon.json (same machinery, 130 G) before any P5-N2 run; this is case construction, not a chemistry change."
+ ],
+ "open_decisions_for_preregistration": [
+  "D1 Observables: I_d and thrust at N1-N5 as primary; E x B V_a,n at N1-N3 as a criterion or as a reported diagnostic?",
+  "D2 Thrust at N4/N5 has no divergence data: restrict the thrust criterion to N1-N3, carry an assumed Psi_b, or another rule.",
+  "D3 Tolerances: I_d (the Xe blind criterion was 15 %); thrust (Table 5 sigma 2.6 mN, digitization ~0.4 mN, divergence reading A/B as layer-1).",
+  "D4 Comparison mode (facility with raw targets / vacuum with corrected targets), carried as the layer-1 facility-ingestion interpretation, never crossed.",
+  "D5 Layer-1 grid for N2: registrations L38-hist / L32-anode / L32-exit x coil shape 1.6 / 3.0 kW scaled to 130 G x divergence reading A/B x mode.",
+  "D6 Sustainment: the frozen run-status rule classifies a non-sustained run as NUMERICAL_FAILURE; the experiment sustained all five points. Confirm whether a simulated extinction at a measured stable setpoint stays NUMERICAL_FAILURE (candidate INCONCLUSIVE) or needs its own category. In the blind envelope sgb-screen-05 (N1-N4) and sgb-screen-09 (N1) did not sustain."
+ ]
+}

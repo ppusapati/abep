@@ -1,0 +1,259 @@
+{
+ "id": "brabston_p5_n2_measurement_audit_v1",
+ "source": "Brabston et al., J. Propuls. Power 2025, doi:10.2514/1.B39623",
+ "pdf_sha256": "14db7e8c1a0e7e4cae472038184a79b88ef4de6cb52071edb2a406d6a52e4d9d",
+ "script": "scripts/audit_p5_n2_measurements.py",
+ "calibration_max_residual": {
+  "fig5_mN": 0.25825973267487257,
+  "fig5_kW": 0.0016942257309606745,
+  "fig9": 0.0003745248929531986,
+  "fig8": 0.0004155211801540881,
+  "fig10": 0.0004140782416672817
+ },
+ "xenon_calibration_check": [
+  {
+   "point": "Xe1",
+   "P_fig5_kW": 1.6089772088096195,
+   "P_eq14_kW": 1.6065905261579716
+  },
+  {
+   "point": "Xe3",
+   "P_fig5_kW": 1.902804424231321,
+   "P_eq14_kW": 1.905492547222628
+  },
+  {
+   "point": "Xe2",
+   "P_fig5_kW": 2.01603306944334,
+   "P_eq14_kW": 2.0135251051513676
+  }
+ ],
+ "fig8_raw": {
+  "blobs": [
+   {
+    "V_d": 231.93599655705728,
+    "y": 0.1251724376411515,
+    "h_px": 32
+   },
+   {
+    "V_d": 255.089124592025,
+    "y": 0.1373808640785692,
+    "h_px": 46
+   },
+   {
+    "V_d": 278.60176588275056,
+    "y": 0.1289376180434112,
+    "h_px": 30
+   },
+   {
+    "V_d": 278.60309796580384,
+    "y": 0.15973512847273585,
+    "h_px": 28
+   }
+  ],
+  "note": "N1 and N2 component/thrust markers overlap into one blob; values used only as consistency checks"
+ },
+ "points": {
+  "N1": {
+   "table2": {
+    "mdot_anode_mg_s": 5.0,
+    "mdot_anode_sigma_mg_s": 0.05,
+    "mdot_cathode_Xe_mg_s": 0.44,
+    "V_d": 231.9,
+    "P_d_kW": 3.08,
+    "P_d_rounding_kW": 0.005,
+    "B_peak_G": 130,
+    "p_chamber_Torr_N2": 1.47e-05
+   },
+   "I_d_raw_A": 13.28158689090125,
+   "I_d_raw_rounding_rel": 0.0016233766233766233,
+   "mdot_ingested_eq13_mg_s": 0.12786610398422749,
+   "I_d_corr_eq14_A": 12.841183244271589,
+   "T_corr_mN": 61.4,
+   "T_corr_source": "abstract range end-point",
+   "T_sigma_mN": 2.6,
+   "T_raw_eq16_inverted_mN": 62.649764504815906,
+   "fig5": {
+    "T_mN": 61.747314447924595,
+    "P_kW": 2.935219227942029,
+    "P_eq14_kW": 2.977870394346582,
+    "P_offset_kW": -0.04265116640455302
+   },
+   "fig9": {
+    "eta_E": 0.5014593248675928,
+    "Phi_P": 0.42241611980818294,
+    "Psi_b": 0.584820367548142,
+    "Psi_b_err_upper": 0.057351193608705
+   },
+   "fig10": {
+    "eta_V_N2plus": 0.7146550498996149,
+    "eta_V_Nplus": 0.9043101140679494,
+    "eta_V_sigma": 0.05002156101768003,
+    "Va_N2plus_V": 165.72850607172072,
+    "Va_Nplus_V": 209.70951545235746,
+    "Phi_m_N2plus": 0.5299310173996572,
+    "Phi_m_Nplus": 0.18893121202499175,
+    "eta_SP_N2plus": 0.38048282683500956,
+    "eta_SP_Nplus": 0.17421784462645462
+   },
+   "consistency": {
+    "eta_T_thrust_from_T_Id_corr": 0.12659919676682985,
+    "eta_T_component_from_fig9": 0.12387928326283362,
+    "Psi_b_implied_reading_B": 0.5976607777701751,
+    "axial_factor_A": 0.764735488615601,
+    "axial_factor_B": 0.7730852331859502
+   }
+  },
+  "N2": {
+   "table2": {
+    "mdot_anode_mg_s": 5.0,
+    "mdot_anode_sigma_mg_s": 0.05,
+    "mdot_cathode_Xe_mg_s": 0.44,
+    "V_d": 255.1,
+    "P_d_kW": 3.69,
+    "P_d_rounding_kW": 0.005,
+    "B_peak_G": 130,
+    "p_chamber_Torr_N2": 1.14e-05
+   },
+   "I_d_raw_A": 14.464915719325756,
+   "I_d_raw_rounding_rel": 0.0013550135501355014,
+   "mdot_ingested_eq13_mg_s": 0.0991614683959315,
+   "I_d_corr_eq14_A": 14.123378197449693,
+   "T_corr_mN": 73.02,
+   "T_corr_source": "Fig. 5, digitized",
+   "T_sigma_mN": 2.6,
+   "T_raw_eq16_inverted_mN": 74.17394618762674,
+   "fig5": {
+    "T_mN": 73.02097531906398,
+    "P_kW": 3.557794319904385,
+    "P_eq14_kW": 3.6028737781694167,
+    "P_offset_kW": -0.04507945826503157
+   },
+   "fig9": {
+    "eta_E": 0.48954271746971467,
+    "Phi_P": 0.43944127319037984,
+    "Psi_b": 0.5978667819653174,
+    "Psi_b_err_upper": 0.0537340949109002
+   },
+   "fig10": {
+    "eta_V_N2plus": 0.6748274864242647,
+    "eta_V_Nplus": 0.892172189961176,
+    "eta_V_sigma": 0.04547236377891023,
+    "Va_N2plus_V": 172.14849178682994,
+    "Va_Nplus_V": 227.593125659096,
+    "Phi_m_N2plus": 0.5231034350895971,
+    "Phi_m_Nplus": 0.2663104782056722,
+    "eta_SP_N2plus": 0.354701818048509,
+    "eta_SP_Nplus": 0.2408832964223685
+   },
+   "consistency": {
+    "eta_T_thrust_from_T_Id_corr": 0.14799076315987664,
+    "eta_T_component_from_fig9": 0.12861625591113776,
+    "Psi_b_implied_reading_B": 0.6879282926111434,
+    "axial_factor_A": 0.7732184568188458,
+    "axial_factor_B": 0.8294144275397815
+   }
+  },
+  "N3": {
+   "table2": {
+    "mdot_anode_mg_s": 5.0,
+    "mdot_anode_sigma_mg_s": 0.05,
+    "mdot_cathode_Xe_mg_s": 0.44,
+    "V_d": 278.6,
+    "P_d_kW": 4.3,
+    "P_d_rounding_kW": 0.005,
+    "B_peak_G": 130,
+    "p_chamber_Torr_N2": 1.19e-05
+   },
+   "I_d_raw_A": 15.434314429289302,
+   "I_d_raw_rounding_rel": 0.0011627906976744186,
+   "mdot_ingested_eq13_mg_s": 0.10351065560627938,
+   "I_d_corr_eq14_A": 15.07779719154148,
+   "T_corr_mN": 81.87,
+   "T_corr_source": "Fig. 5, digitized",
+   "T_sigma_mN": 2.6,
+   "T_raw_eq16_inverted_mN": 83.22031589656861,
+   "fig5": {
+    "T_mN": 81.8674410711117,
+    "P_kW": 4.162283387350718,
+    "P_eq14_kW": 4.200674297563457,
+    "P_offset_kW": -0.03839091021273866
+   },
+   "fig9": {
+    "eta_E": 0.4773331530256282,
+    "Phi_P": 0.44782288716315366,
+    "Psi_b": 0.6012088858165796,
+    "Psi_b_err_upper": 0.05353509629942821
+   },
+   "fig10": {
+    "eta_V_N2plus": 0.6410688850023012,
+    "eta_V_Nplus": 0.8747239240576892,
+    "eta_V_sigma": 0.041636755204594394,
+    "Va_N2plus_V": 178.60179136164112,
+    "Va_Nplus_V": 243.69808524247222,
+    "Phi_m_N2plus": 0.5011034476460703,
+    "Phi_m_Nplus": 0.34520698489969937,
+    "eta_SP_N2plus": 0.3228397672682288,
+    "eta_SP_Nplus": 0.30609214650535177
+   },
+   "consistency": {
+    "eta_T_thrust_from_T_Id_corr": 0.15956240415706138,
+    "eta_T_component_from_fig9": 0.12851483872731634,
+    "Psi_b_implied_reading_B": 0.7464533759018076,
+    "axial_factor_A": 0.7753766090207904,
+    "axial_factor_B": 0.8639753329243883
+   }
+  },
+  "N4": {
+   "table2": {
+    "mdot_anode_mg_s": 5.2,
+    "mdot_anode_sigma_mg_s": 0.052,
+    "mdot_cathode_Xe_mg_s": 0.44,
+    "V_d": 277.0,
+    "P_d_kW": 4.56,
+    "P_d_rounding_kW": 0.005,
+    "B_peak_G": 130,
+    "p_chamber_Torr_N2": 1.38e-05
+   },
+   "I_d_raw_A": 16.462093862815884,
+   "I_d_raw_rounding_rel": 0.0010964912280701756,
+   "mdot_ingested_eq13_mg_s": 0.1200375670056013,
+   "I_d_corr_eq14_A": 16.048653704755385,
+   "T_corr_mN": 88.39,
+   "T_corr_source": "Fig. 5, digitized",
+   "T_sigma_mN": 2.6,
+   "T_raw_eq16_inverted_mN": 90.01482469949089,
+   "fig5": {
+    "T_mN": 88.39424387659093,
+    "P_kW": 4.399232594387612,
+    "P_eq14_kW": 4.445477076217241,
+    "P_offset_kW": -0.04624448182962926
+   }
+  },
+  "N5": {
+   "table2": {
+    "mdot_anode_mg_s": 5.4,
+    "mdot_anode_sigma_mg_s": 0.054,
+    "mdot_cathode_Xe_mg_s": 0.44,
+    "V_d": 275.7,
+    "P_d_kW": 4.81,
+    "P_d_rounding_kW": 0.005,
+    "B_peak_G": 130,
+    "p_chamber_Torr_N2": 2.14e-05
+   },
+   "I_d_raw_A": 17.446499818643453,
+   "I_d_raw_rounding_rel": 0.0010395010395010396,
+   "mdot_ingested_eq13_mg_s": 0.18614521260288897,
+   "I_d_corr_eq14_A": 16.805367979332246,
+   "T_corr_mN": 90.0,
+   "T_corr_source": "abstract range end-point",
+   "T_sigma_mN": 2.6,
+   "T_raw_eq16_inverted_mN": 92.46494219805663,
+   "fig5": {
+    "T_mN": 90.1765731526225,
+    "P_kW": 4.589993413389115,
+    "P_eq14_kW": 4.6332399519019,
+    "P_offset_kW": -0.04324653851278537
+   }
+  }
+ }
+}

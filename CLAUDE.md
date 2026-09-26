@@ -157,7 +157,11 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    Open: N₂ excitation (the recommended Su et al. 2021 per-state set ends at 20 eV, and the source for extending it above that is
    the owner's decision); N elastic (Ragimkhanov 2026 not yet located). See docs/HISTORY.md 2026-09-26 and
    `hallthruster_bridge/propellants/PROVENANCE.md`.
-3. P5 on N₂ (`cases/p5_n2.json`, Table 2) and ECHT on N₂ (`cases/echt_n2.json`), run across the **credible Xe-informed
+3. **P5-N₂ measurement audit: done** (`identification/p5_n2_measurement_audit_findings_v1.json`; values in
+   `brabston_p5_n2_measurement_audit_v1.json` from `scripts/audit_p5_n2_measurements.py`). Targets: I_d and thrust at N1–N5,
+   E×B species V_a at N1–N3, sustainment; Φ_m,n/η_SP,n/ξ_N are model-derived, not targets. Pre-registration decisions D1–D6 are
+   open (owner). `cases/p5_n2.json` must be regenerated like the Xe cases (layer-1 registrations, 130 G) before any run.
+   P5 on N₂ (`cases/p5_n2.json`, Table 2) and ECHT on N₂ (`cases/echt_n2.json`), run across the **credible Xe-informed
    transport screening set** (currently the 9 SGB screening candidates) with no retuning per case. N₂ is a
    discrimination experiment that can eliminate candidates or promote them to members. First audit the available N₂
    measurements and uncertainties, then pre-register the acceptance criteria, then simulate.
