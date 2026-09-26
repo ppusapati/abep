@@ -58,3 +58,20 @@ def test_json_and_tables_deterministic_and_committed():
     json.loads(js1)                                   # valid JSON
     assert open(exb.OUT_JSON).read() == js1
     assert open(exb.OUT_MD).read() == exb.tables_md(OUT)
+
+
+def test_reading_consistency_of_official_statuses():
+    rc = OUT["official_reading_consistency"]
+    assert rc["n_keys_ood_differs_between_readings"] == 0
+    assert rc["n_not_ood_keys"] == sum(r["domain_class"] != "OUT_OF_DOMAIN" for r in ROWS)
+    assert rc["n_mixed_reading_keys"] == len(rc["mixed_reading_keys"])
+    for m in rc["mixed_reading_keys"]:
+        assert {m["status_A"], m["status_B"]} == {"PASS", "FAIL_VALIDATION"}
+    assert rc["ordering_count_in_mixed_reading_keys"] == 0
+
+
+def test_fragment_ke_is_labelled_proxy_not_di_nplus():
+    f = OUT["fragment_kinetic_energy_context"]
+    assert "1765 (1975)" in f["source"] and "N^2+" in f["ion_measured"]
+    assert f["DI_Nplus_fragment_KE_eV"].startswith("TBD")
+    assert "max_peak_over_min_measured_D" not in f and "proxy_max_peak_over_min_measured_D" in f

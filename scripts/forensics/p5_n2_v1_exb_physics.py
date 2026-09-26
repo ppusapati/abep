@@ -45,14 +45,22 @@ EXB_SIGMA_V = 11.6                      # Brabston 2025 Table 5, max V_a,n (E x 
 POINTS = ("N1", "N2", "N3")             # E x B data exist for N1-N3 only (audit finding F3)
 ROUND_V, ROUND_F = 4, 6
 
-# Published fragment kinetic energies (literature context only; not a model input):
-# Song et al., J. Phys. Chem. Ref. Data 52, 023104 (2023), Sec. 2.8, p. 023104-17, summarising Crowe & McConkey,
-# J. Phys. B 6, 2108 (1973): ion kinetic-energy peaks ~2 eV (70 eV impact), +5 eV (90 eV), +8 eV (300 eV). The PDF text
-# extraction leaves the ion label ambiguous (N+ vs N2+); Crowe & McConkey II concerns N+ and N++ from N2, and the repo's DI
-# audit (scripts/audit_n2_dissociative_ionization.py) reads it as N+. Evidence level 5 (review summary); "verify".
+# Published ion kinetic-energy peaks quoted in a review (literature context only; not a model input, not a DI N+ value):
+# Song et al., J. Phys. Chem. Ref. Data 52, 023104 (2023), doi:10.1063/5.0150618, Sec. 2.8, p. 023104-17: "For N2+ ions [as
+# typeset] at 70 eV, Crowe and McConkey [ref. 115] observed a single broad peak in the ion kinetic energy around 2 eV, at 90 eV
+# (a second, superimposed peak at 5 eV), and at 300 eV collision energy (an additional peak around 8 eV)". Ref. 115 is
+# A. Crowe & J. W. McConkey, "Dissociative ionization by electron impact. IV. Energy and angular distributions of N^2+ from
+# N2", J. Phys. B 8, 1765 (1975), doi:10.1088/0022-3700/8/10/025 (title checked in the JPCRD reference list and in Crossref;
+# the paper itself was not accessed). The measured ion is therefore most likely the atomic dication N^2+ (inferred from the
+# cited title; the review body typesets N2+), NOT DI-born N+. These peaks are used below only as an order-of-magnitude PROXY
+# (level 5, "verify"). The DI N+ fragment KE (e.g. Crowe & McConkey II, J. Phys. B 6, 2108 (1973),
+# doi:10.1088/0022-3700/6/10/023, or Deleanu & Stockdale, J. Chem. Phys. 63, 3898 (1975), doi:10.1063/1.431831) is
+# TBD: requires reading those papers' full text (only their Crossref abstracts were accessed; no KE values are in them).
 FRAGMENT_KE_PEAKS_EV = (2.0, 5.0, 8.0)
 # Gurciullo, Lucca Fabris & Cappelli, J. Phys. D 52, 464003 (2019), Sec. 4.3.3 (XeAir-3, Wien filter 30 cm downstream):
-# most probable velocities 32 km/s (N2+) and 47 km/s (N+), published rounded to 1 km/s. Level 3 (different thruster, Z-70).
+# "The mean velocities of the ion species are ... 32 km s-1 (N2+) ... and 47 km s-1 (N+)" (rounded to 1 km/s). The preceding
+# sentence refers to the "most probable ion velocity" shown in its figures 23-24, so whether these are mean or most-probable
+# velocities is ambiguous in the source (verify). Level 3 (different thruster, Z-70).
 GURCIULLO_XEAIR3_KMS = {"N2+": 32.0, "N+": 47.0}
 
 
@@ -201,6 +209,21 @@ def reproduce(rows, scores):
             "ordering_true_recomputed": sum(r["ordering"] for r in rows), "ordering_true_official": official_true}
 
 
+def reading_consistency(rows):
+    """Official statuses under readings A and B (read, never recomputed). domain_class uses reading A; this checks that
+    OUT_OF_DOMAIN is identical under both readings and lists the keys whose A/B statuses differ (PASS vs FAIL_VALIDATION)."""
+    ood_diff = [r["key"] for r in rows if (r["status_A"] == "OUT_OF_DOMAIN") != (r["status_B"] == "OUT_OF_DOMAIN")]
+    mixed = sorted((r["key"], r["status_A"], r["status_B"]) for r in rows if r["status_A"] != r["status_B"])
+    scoreable = [r for r in rows if r["domain_class"] != "OUT_OF_DOMAIN"]
+    return {"n_keys_ood_differs_between_readings": len(ood_diff),
+            "n_not_ood_keys": len(scoreable),
+            "n_mixed_reading_keys": len(mixed),
+            "mixed_reading_keys": [{"key": k, "status_A": a, "status_B": b} for k, a, b in mixed],
+            "ordering_count_in_mixed_reading_keys": sum(r["ordering"] for r in rows if r["status_A"] != r["status_B"]),
+            "note": "OUT_OF_DOMAIN is decided per key (chemistry validity) and is the same under readings A and B; the "
+                    "mixed-reading keys differ only between PASS and FAIL_VALIDATION."}
+
+
 def group_summary(rows):
     return {
         "n": len(rows), "n_out_of_domain": sum(r["domain_class"] == "OUT_OF_DOMAIN" for r in rows),
@@ -337,6 +360,7 @@ def build():
         "script": "scripts/forensics/p5_n2_v1_exb_physics.py",
         "inputs_sha256": {os.path.relpath(p, ROOT): sha256(p) for p in (RAW, SCORES, AUDIT, FINDINGS, CASES, ENSEMBLE)},
         "official_status_counts": scores["status_counts"],
+        "official_reading_consistency": reading_consistency(rows),
         "reproduction_of_official_O5": rep,
         "measured": {"source": "Brabston et al., JPP 2025, doi:10.2514/1.B39623, Fig. 10 via the frozen measurement audit",
                      "evidence": "level 3; measured by E x B probe 1 m downstream of the exit plane on centreline, "
@@ -407,16 +431,29 @@ def build():
                                   "same c, so D is invariant: it cannot change the ordering or D. Algebraic, collisionless.",
         "fragment_kinetic_energy_context": {
             "published_peaks_eV": list(FRAGMENT_KE_PEAKS_EV),
-            "source": "Song et al., JPCRD 52, 023104 (2023) Sec. 2.8 (p. 023104-17) summarising Crowe & McConkey, J. Phys. B 6, "
-                      "2108 (1973); ion label ambiguous in text extraction (verify); level 5",
-            "max_peak_over_min_measured_D": rnd(ker_max / min(meas[p]["D"] for p in POINTS), 4),
-            "max_peak_over_min_model_Np_deficit": rnd(ker_max / min(-r["dVa_Np"] for r in rows), 4),
-            "note": "Upper-bound comparison: the whole fragment KE (not its axial component) expressed in volts for Z = 1."},
+            "ion_measured": "most likely N^2+ (atomic dication), inferred from the title of the cited ref. 115; the review body "
+                            "typesets N2+; NOT DI-born N+ (verify against Crowe & McConkey 1975 itself)",
+            "source": "Song et al., JPCRD 52, 023104 (2023), doi:10.1063/5.0150618, Sec. 2.8 (p. 023104-17), quoting ref. 115: "
+                      "Crowe & McConkey, 'Dissociative ionization by electron impact. IV. Energy and angular distributions of "
+                      "N^2+ from N2', J. Phys. B 8, 1765 (1975), doi:10.1088/0022-3700/8/10/025 (not accessed; title via the "
+                      "JPCRD reference list and Crossref); level 5, verify",
+            "DI_Nplus_fragment_KE_eV": "TBD - requires the full text of Crowe & McConkey II, J. Phys. B 6, 2108 (1973), "
+                                       "doi:10.1088/0022-3700/6/10/023, or Deleanu & Stockdale, J. Chem. Phys. 63, 3898 "
+                                       "(1975), doi:10.1063/1.431831 (Crossref abstracts accessed only: fast N+ >~1.5 eV "
+                                       "detected, structured KE spectra, near-isotropic angular distributions; no values)",
+            "proxy_max_peak_over_min_measured_D": rnd(ker_max / min(meas[p]["D"] for p in POINTS), 4),
+            "proxy_max_peak_over_min_model_Np_deficit": rnd(ker_max / min(-r["dVa_Np"] for r in rows), 4),
+            "note": "Order-of-magnitude PROXY only (the peaks belong to a different ion, most likely N^2+): the whole KE "
+                    "(not its axial component) expressed in volts for Z = 1. Not a bound on DI N+ fragment energy; no "
+                    "conclusion on mechanism 4 is drawn from it."},
         "literature_context_gurciullo2019": {
             "source": "Gurciullo, Lucca Fabris & Cappelli, J. Phys. D 52, 464003 (2019), doi:10.1088/1361-6463/ab36c5, "
                       "Sec. 4.3.3 (XeAir-3); author-hosted PDF sppl.stanford.edu; level 3, different thruster (Z-70), Wien "
                       "filter 30 cm downstream",
-            "most_probable_velocity_kms": GURCIULLO_XEAIR3_KMS,
+            "velocity_kms": GURCIULLO_XEAIR3_KMS,
+            "velocity_definition": "introduced in the source as 'The mean velocities of the ion species are ...'; the "
+                                   "preceding sentence refers to the 'most probable ion velocity' of figures 23-24; "
+                                   "ambiguous in the source (verify)",
             "u_ratio_Np_N2p": rnd(GURCIULLO_XEAIR3_KMS["N+"] / GURCIULLO_XEAIR3_KMS["N2+"], 4),
             "R_from_rounded_velocities": rnd((MASS["N"] * GURCIULLO_XEAIR3_KMS["N+"] ** 2) /
                                              (MASS["N2"] * GURCIULLO_XEAIR3_KMS["N2+"] ** 2), 4)},
@@ -444,6 +481,14 @@ def tables_md(out):
           f"- max |V_a recomputed - official|: N2+ {rep['max_abs_dev_Va_V']['N2+']:.3g} V, N+ {rep['max_abs_dev_Va_V']['N+']:.3g} V",
           f"- ordering V_a(N+) > V_a(N2+): recomputed {rep['ordering_true_recomputed']}, official {rep['ordering_true_official']}, "
           f"flag mismatches {rep['ordering_flag_mismatches']}", ""]
+    rc = out["official_reading_consistency"]
+    L += ["## Official statuses under readings A and B (read from the scores file)", "",
+          f"- keys whose OUT_OF_DOMAIN status differs between readings: {rc['n_keys_ood_differs_between_readings']}",
+          f"- not-OUT_OF_DOMAIN keys: {rc['n_not_ood_keys']}, of which mixed-reading (A != B): {rc['n_mixed_reading_keys']}; "
+          f"ordering count among mixed-reading keys: {rc['ordering_count_in_mixed_reading_keys']}", ""]
+    L += [f"  - {m['key']}: A {m['status_A']}, B {m['status_B']}" for m in rc["mixed_reading_keys"]]
+    if rc["mixed_reading_keys"]:
+        L.append("")
     L += ["## Per point", "",
           "| point | n (OOD) | V_a N2+ | V_a N+ | N^2+ per charge | D = V_a(N+) - V_a(N2+) | R | u(N+)/u(N2+) | ff N2+ / N+ / N^2+ | ordering |",
           "|---|---|---|---|---|---|---|---|---|---|"]
@@ -518,8 +563,9 @@ def tables_md(out):
         L.append(f"| {k} | " + " | ".join("—" if a[s_][k] is None else f"{a[s_][k]:+.3f}" for s_ in ("all",) + POINTS) + " |")
     f = out["fragment_kinetic_energy_context"]; g = out["literature_context_gurciullo2019"]
     L += ["", "## Literature context (computed from cited published values)", "",
-          f"- fragment KE peaks {f['published_peaks_eV']} eV (verify ion label): largest / smallest measured D = "
-          f"{f['max_peak_over_min_measured_D']:.3f}; largest / smallest model N+ deficit = {f['max_peak_over_min_model_Np_deficit']:.3f}",
+          f"- ion KE peaks {f['published_peaks_eV']} eV quoted from Crowe & McConkey 1975 (most likely N^2+, not DI N+; PROXY "
+          f"only, verify): largest / smallest measured D = {f['proxy_max_peak_over_min_measured_D']:.3f}; largest / smallest "
+          f"model N+ deficit = {f['proxy_max_peak_over_min_model_Np_deficit']:.3f}. DI N+ fragment KE: TBD",
           f"- Gurciullo 2019 XeAir-3 (Z-70, 30 cm): u(N+)/u(N2+) = {g['u_ratio_Np_N2p']:.3f}, R = {g['R_from_rounded_velocities']:.3f} "
           "from velocities rounded to 1 km/s", ""]
     return "\n".join(L) + "\n"

@@ -8423,15 +8423,17 @@
  },
  "common_mode_invariance": "Any species-independent potential offset c per unit charge (cathode-to-ground, plume potential beyond the 0.1 m outlet, the Eq. (11) V_p term) shifts V_a(N+) and V_a(N2+) by the same c, so D is invariant: it cannot change the ordering or D. Algebraic, collisionless.",
  "fragment_kinetic_energy_context": {
-  "max_peak_over_min_measured_D": 0.1819,
-  "max_peak_over_min_model_Np_deficit": 0.0942,
-  "note": "Upper-bound comparison: the whole fragment KE (not its axial component) expressed in volts for Z = 1.",
+  "DI_Nplus_fragment_KE_eV": "TBD - requires the full text of Crowe & McConkey II, J. Phys. B 6, 2108 (1973), doi:10.1088/0022-3700/6/10/023, or Deleanu & Stockdale, J. Chem. Phys. 63, 3898 (1975), doi:10.1063/1.431831 (Crossref abstracts accessed only: fast N+ >~1.5 eV detected, structured KE spectra, near-isotropic angular distributions; no values)",
+  "ion_measured": "most likely N^2+ (atomic dication), inferred from the title of the cited ref. 115; the review body typesets N2+; NOT DI-born N+ (verify against Crowe & McConkey 1975 itself)",
+  "note": "Order-of-magnitude PROXY only (the peaks belong to a different ion, most likely N^2+): the whole KE (not its axial component) expressed in volts for Z = 1. Not a bound on DI N+ fragment energy; no conclusion on mechanism 4 is drawn from it.",
+  "proxy_max_peak_over_min_measured_D": 0.1819,
+  "proxy_max_peak_over_min_model_Np_deficit": 0.0942,
   "published_peaks_eV": [
    2.0,
    5.0,
    8.0
   ],
-  "source": "Song et al., JPCRD 52, 023104 (2023) Sec. 2.8 (p. 023104-17) summarising Crowe & McConkey, J. Phys. B 6, 2108 (1973); ion label ambiguous in text extraction (verify); level 5"
+  "source": "Song et al., JPCRD 52, 023104 (2023), doi:10.1063/5.0150618, Sec. 2.8 (p. 023104-17), quoting ref. 115: Crowe & McConkey, 'Dissociative ionization by electron impact. IV. Energy and angular distributions of N^2+ from N2', J. Phys. B 8, 1765 (1975), doi:10.1088/0022-3700/8/10/025 (not accessed; title via the JPCRD reference list and Crossref); level 5, verify"
  },
  "id": "p5_n2_v1_exb_physics",
  "inputs_sha256": {
@@ -8444,12 +8446,13 @@
  },
  "literature_context_gurciullo2019": {
   "R_from_rounded_velocities": 1.0786,
-  "most_probable_velocity_kms": {
+  "source": "Gurciullo, Lucca Fabris & Cappelli, J. Phys. D 52, 464003 (2019), doi:10.1088/1361-6463/ab36c5, Sec. 4.3.3 (XeAir-3); author-hosted PDF sppl.stanford.edu; level 3, different thruster (Z-70), Wien filter 30 cm downstream",
+  "u_ratio_Np_N2p": 1.4688,
+  "velocity_definition": "introduced in the source as 'The mean velocities of the ion species are ...'; the preceding sentence refers to the 'most probable ion velocity' of figures 23-24; ambiguous in the source (verify)",
+  "velocity_kms": {
    "N+": 47.0,
    "N2+": 32.0
-  },
-  "source": "Gurciullo, Lucca Fabris & Cappelli, J. Phys. D 52, 464003 (2019), doi:10.1088/1361-6463/ab36c5, Sec. 4.3.3 (XeAir-3); author-hosted PDF sppl.stanford.edu; level 3, different thruster (Z-70), Wien filter 30 cm downstream",
-  "u_ratio_Np_N2p": 1.4688
+  }
  },
  "measured": {
   "evidence": "level 3; measured by E x B probe 1 m downstream of the exit plane on centreline, bi-Gaussian peak fit, Eq. (11) plasma-potential correction; digitized from a raster figure",
@@ -8546,6 +8549,35 @@
     "registration": "L38-hist"
    }
   ]
+ },
+ "official_reading_consistency": {
+  "mixed_reading_keys": [
+   {
+    "key": "sgb-screen-01|n2_n.toml|N3-L38-hist-1p6kW|vacuum",
+    "status_A": "PASS",
+    "status_B": "FAIL_VALIDATION"
+   },
+   {
+    "key": "sgb-screen-01|n2_n_di_lower.toml|N3-L38-hist-1p6kW|vacuum",
+    "status_A": "PASS",
+    "status_B": "FAIL_VALIDATION"
+   },
+   {
+    "key": "sgb-screen-01|n2_n_di_lower_nel_wang.toml|N3-L38-hist-1p6kW|vacuum",
+    "status_A": "PASS",
+    "status_B": "FAIL_VALIDATION"
+   },
+   {
+    "key": "sgb-screen-01|n2_n_nel_wang.toml|N3-L38-hist-1p6kW|vacuum",
+    "status_A": "PASS",
+    "status_B": "FAIL_VALIDATION"
+   }
+  ],
+  "n_keys_ood_differs_between_readings": 0,
+  "n_mixed_reading_keys": 4,
+  "n_not_ood_keys": 167,
+  "note": "OUT_OF_DOMAIN is decided per key (chemistry validity) and is the same under readings A and B; the mixed-reading keys differ only between PASS and FAIL_VALIDATION.",
+  "ordering_count_in_mixed_reading_keys": 0
  },
  "official_status_counts": {
   "facility": {},
