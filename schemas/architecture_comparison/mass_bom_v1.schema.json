@@ -1,0 +1,237 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "schemas/architecture_comparison/mass_bom_v1.schema.json",
+ "title": "Architecture mass BOM v1 (CBE / MGA / MEV) for hall_only, rf_hall, ecr_hall",
+ "description": "Document produced by `python -m abep_sim.mass_bom build` (docs/architecture_comparison/mass_bom/mass_bom_v1.json). Every CBE is a sourced value, a scaling relation with sourced inputs, or TBD; lower bounds feed the hard-gate G3 mass FAIL side only when sourced. Uses only the JSON-Schema subset implemented by abep_sim.mass_bom.validate_against_schema.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["schema", "bom_version", "created", "generator", "purpose", "architecture_ids", "milestones", "mev_definition", "sources", "margin_policy", "system_margin", "hall_closure_policy", "items", "architectures", "rollups", "plausibility_screen", "open_owner_decisions", "not_used"],
+ "properties": {
+  "schema": {"const": "schemas/architecture_comparison/mass_bom_v1.schema.json"},
+  "bom_version": {"const": "mass_bom_v1"},
+  "created": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+  "generator": {"type": "string", "minLength": 1},
+  "purpose": {"type": "string", "minLength": 1},
+  "architecture_ids": {"const": ["hall_only", "rf_hall", "ecr_hall"]},
+  "milestones": {
+   "type": "object", "additionalProperties": false, "required": ["supports", "A", "B", "C"],
+   "properties": {
+    "supports": {"type": "array", "minItems": 1, "items": {"enum": ["A", "B", "C"]}},
+    "A": {"type": "string", "minLength": 1}, "B": {"type": "string", "minLength": 1}, "C": {"type": "string", "minLength": 1}
+   }
+  },
+  "mev_definition": {"type": "string", "minLength": 1},
+  "sources": {
+   "type": "object",
+   "required": ["ESA_MARGIN_2012", "RFP_MASS_AS_RECORDED"],
+   "additionalProperties": {
+    "type": "object", "required": ["citation", "kind"],
+    "properties": {"citation": {"type": "string", "minLength": 1}, "kind": {"type": "string", "minLength": 1}},
+    "additionalProperties": {"type": "string"}
+   }
+  },
+  "margin_policy": {
+   "type": "object", "additionalProperties": false,
+   "required": ["id", "source", "maturity_categories", "aiaa_s120a", "legacy_repository_mga"],
+   "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "source": {"type": "string", "minLength": 1},
+    "maturity_categories": {"type": "object", "additionalProperties": {"$ref": "#/$defs/maturity_category"}},
+    "aiaa_s120a": {"type": "string", "minLength": 1},
+    "legacy_repository_mga": {"type": "string", "minLength": 1}
+   }
+  },
+  "system_margin": {
+   "type": "object", "additionalProperties": false,
+   "required": ["proposed_fraction", "status", "basis", "source", "base", "alternatives"],
+   "properties": {
+    "proposed_fraction": {"type": "number", "minimum": 0, "exclusiveMaximum": 1},
+    "status": {"const": "PROPOSED"},
+    "basis": {"type": "string", "minLength": 1},
+    "source": {"type": "string", "minLength": 1},
+    "base": {"type": "string", "minLength": 1},
+    "alternatives": {"type": "array", "items": {
+     "type": "object", "additionalProperties": false, "required": ["id", "fraction", "status", "text"],
+     "properties": {"id": {"type": "string"}, "fraction": {"type": "number", "minimum": 0, "exclusiveMaximum": 1},
+                    "status": {"type": "string"}, "text": {"type": "string", "minLength": 1}}}}
+   }
+  },
+  "hall_closure_policy": {"type": "string", "minLength": 1},
+  "items": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/item"}},
+  "architectures": {
+   "type": "object", "additionalProperties": false, "required": ["hall_only", "rf_hall", "ecr_hall"],
+   "properties": {
+    "hall_only": {"$ref": "#/$defs/architecture_items"},
+    "rf_hall": {"$ref": "#/$defs/architecture_items"},
+    "ecr_hall": {"$ref": "#/$defs/architecture_items"}
+   }
+  },
+  "rollups": {
+   "type": "object", "additionalProperties": false, "required": ["hall_only", "rf_hall", "ecr_hall"],
+   "properties": {
+    "hall_only": {"$ref": "#/$defs/architecture_rollup"},
+    "rf_hall": {"$ref": "#/$defs/architecture_rollup"},
+    "ecr_hall": {"$ref": "#/$defs/architecture_rollup"}
+   }
+  },
+  "plausibility_screen": {
+   "type": "object", "additionalProperties": false,
+   "required": ["threshold_kg", "comparator", "system_margin_fraction", "architectures", "any_architecture_excluded", "threshold_source", "statement"],
+   "properties": {
+    "threshold_kg": {"type": "number", "minimum": 0},
+    "comparator": {"type": "string"},
+    "system_margin_fraction": {"type": "number", "minimum": 0, "exclusiveMaximum": 1},
+    "architectures": {"type": "object", "additionalProperties": {"$ref": "#/$defs/screen_result"}},
+    "any_architecture_excluded": {"type": "boolean"},
+    "threshold_source": {"type": "string", "minLength": 1},
+    "statement": {"type": "string", "minLength": 1}
+   }
+  },
+  "open_owner_decisions": {"type": "array", "items": {
+   "type": "object", "additionalProperties": false, "required": ["id", "topic", "options", "current_handling"],
+   "properties": {"id": {"type": "string", "pattern": "^OD-M[0-9]+$"}, "topic": {"type": "string"},
+                  "options": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                  "current_handling": {"type": "string"}}}},
+  "not_used": {"type": "string", "minLength": 1}
+ },
+ "$defs": {
+  "evidence_class": {"enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]},
+  "quantity": {
+   "type": "object", "required": ["value", "unit", "source", "evidence_class"],
+   "properties": {"value": {"type": "number"}, "unit": {"type": "string", "minLength": 1},
+                  "source": {"type": "string", "minLength": 1}, "evidence_class": {"$ref": "#/$defs/evidence_class"},
+                  "note": {"type": "string"}},
+   "additionalProperties": false
+  },
+  "maturity_category": {
+   "type": "object", "additionalProperties": false,
+   "required": ["mga", "ecss_category", "requirement", "source", "text", "evidence_class", "note"],
+   "properties": {"mga": {"type": "number", "minimum": 0, "exclusiveMaximum": 1},
+                  "ecss_category": {"type": ["string", "null"]}, "requirement": {"type": "string"},
+                  "source": {"type": "string"}, "text": {"type": "string", "minLength": 1},
+                  "evidence_class": {"$ref": "#/$defs/evidence_class"}, "note": {"type": "string"}}
+  },
+  "maturity": {
+   "type": "object", "additionalProperties": false, "required": ["category", "status", "rationale"],
+   "properties": {"category": {"enum": ["ecss_ab_off_the_shelf", "ecss_c_minor_modification", "ecss_d_new_or_major_modification", "propellant_not_equipment", "policy_allocation_nominal", "TBD"]},
+                  "status": {"enum": ["PROPOSED", "OWNER_DECIDED"]}, "rationale": {"type": "string", "minLength": 1}}
+  },
+  "cbe": {
+   "oneOf": [
+    {"type": "object", "additionalProperties": false, "required": ["basis", "requires"],
+     "properties": {"basis": {"const": "TBD"}, "requires": {"type": "string", "minLength": 1}}},
+    {"type": "object", "additionalProperties": false,
+     "required": ["basis", "value_kg", "source", "evidence_class", "uncertainty", "applicability"],
+     "properties": {"basis": {"const": "sourced_value"}, "value_kg": {"type": "number", "minimum": 0},
+                    "source": {"type": "string", "minLength": 1}, "evidence_class": {"$ref": "#/$defs/evidence_class"},
+                    "evidence_level": {"type": "integer", "minimum": 1}, "uncertainty": {"type": "string", "minLength": 1},
+                    "applicability": {"type": "string", "minLength": 1}, "validation_status": {"type": "string"}}},
+    {"type": "object", "additionalProperties": false, "required": ["basis", "relation", "fraction"],
+     "properties": {"basis": {"const": "scaling_relation"}, "relation": {"enum": ["fraction_of_item", "fraction_of_nominal_dry"]},
+                    "of_item": {"type": "string", "minLength": 1}, "fraction": {"$ref": "#/$defs/quantity"}}}
+   ]
+  },
+  "lower_bound": {
+   "oneOf": [
+    {"type": "object", "additionalProperties": false, "required": ["basis", "requires"],
+     "properties": {"basis": {"const": "none"}, "requires": {"type": "string", "minLength": 1}}},
+    {"type": "object", "additionalProperties": false,
+     "required": ["basis", "value_kg", "source", "evidence_class", "gate_basis", "scope_justification"],
+     "properties": {"basis": {"const": "sourced_value"}, "value_kg": {"type": "number", "minimum": 0},
+                    "source": {"type": "string", "minLength": 1}, "evidence_class": {"$ref": "#/$defs/evidence_class"},
+                    "gate_basis": {"$ref": "#/$defs/gate_basis"}, "scope_justification": {"type": "string", "minLength": 1}}},
+    {"type": "object", "additionalProperties": false, "required": ["basis", "inputs", "gate_basis", "scope_justification"],
+     "properties": {"basis": {"const": "thin_wall_sphere_membrane"},
+                    "inputs": {"type": "object", "additionalProperties": false,
+                               "required": ["p_meop_Pa", "burst_factor", "sigma_ult_Pa", "rho_wall_kg_m3", "volume_m3"],
+                               "properties": {"p_meop_Pa": {"$ref": "#/$defs/quantity"}, "burst_factor": {"$ref": "#/$defs/quantity"},
+                                              "sigma_ult_Pa": {"$ref": "#/$defs/quantity"}, "rho_wall_kg_m3": {"$ref": "#/$defs/quantity"},
+                                              "volume_m3": {"$ref": "#/$defs/quantity"}}},
+                    "gate_basis": {"const": "hard_physical_bound"}, "scope_justification": {"type": "string", "minLength": 1}}}
+   ]
+  },
+  "gate_basis": {"enum": ["hard_physical_bound", "measurement_vyovrinda", "measurement_same_hardware", "model_closure_independent"]},
+  "item": {
+   "type": "object", "additionalProperties": false,
+   "required": ["id", "name", "scope", "rfp_block", "gate_element", "power_boundary_components", "mass_class", "hall_related", "maturity", "cbe", "lower_bound", "notes"],
+   "properties": {
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+    "name": {"type": "string", "minLength": 1},
+    "scope": {"enum": ["common", "hall_only", "rf_hall", "ecr_hall"]},
+    "rfp_block": {"type": "string", "minLength": 1},
+    "gate_element": {"enum": ["intake", "filter", "compressor", "atmospheric_gas_chamber", "xenon_chamber_and_xenon_load", "valves_and_flow_control", "hall_thruster", "cathode", "power_processing", "thermal_control", "harness_and_structure", "rf_source", "ecr_source", "ecr_magnet"]},
+    "power_boundary_components": {"type": "array", "items": {"enum": ["hall_discharge", "hall_magnet", "cathode_keeper", "cathode_heater", "flow_control", "compressor", "thermal_control", "housekeeping", "rf_source", "ecr_source", "ecr_magnet"]}},
+    "mass_class": {"enum": ["dry", "propellant"]},
+    "hall_related": {"type": "boolean"},
+    "maturity": {"$ref": "#/$defs/maturity"},
+    "cbe": {"$ref": "#/$defs/cbe"},
+    "lower_bound": {"$ref": "#/$defs/lower_bound"},
+    "notes": {"type": "string"}
+   }
+  },
+  "architecture_items": {
+   "type": "object", "additionalProperties": false, "required": ["item_ids", "common_item_ids", "specific_item_ids"],
+   "properties": {"item_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                  "common_item_ids": {"type": "array", "items": {"type": "string"}},
+                  "specific_item_ids": {"type": "array", "items": {"type": "string"}}}
+  },
+  "rollup_line": {
+   "type": "object", "additionalProperties": false,
+   "required": ["id", "mass_class", "basis", "maturity_category", "mga", "cbe_kg", "nominal_kg", "status", "missing_reason"],
+   "properties": {"id": {"type": "string"}, "mass_class": {"enum": ["dry", "propellant"]},
+                  "basis": {"enum": ["TBD", "sourced_value", "scaling_relation"]}, "maturity_category": {"type": "string"},
+                  "mga": {"type": ["number", "null"]}, "cbe_kg": {"type": ["number", "null"]},
+                  "nominal_kg": {"type": ["number", "null"]}, "status": {"enum": ["resolved", "missing"]},
+                  "missing_reason": {"type": ["string", "null"]}}
+  },
+  "totals": {
+   "type": "object", "additionalProperties": false,
+   "required": ["cbe_dry_kg", "mga_kg", "nominal_dry_kg", "system_margin_fraction", "system_margin_kg", "propellant_kg", "cbe_total_kg", "mev_kg"],
+   "properties": {"cbe_dry_kg": {"type": "number"}, "mga_kg": {"type": "number"}, "nominal_dry_kg": {"type": "number"},
+                  "system_margin_fraction": {"type": "number"}, "system_margin_kg": {"type": "number"},
+                  "propellant_kg": {"type": "number"}, "cbe_total_kg": {"type": "number"}, "mev_kg": {"type": "number"}}
+  },
+  "rollup": {
+   "type": "object",
+   "required": ["bom_version", "complete", "n_items", "n_missing", "missing_items", "lines", "mev_kg"],
+   "properties": {
+    "bom_version": {"const": "mass_bom_v1"}, "complete": {"type": "boolean"},
+    "n_items": {"type": "integer", "minimum": 1}, "n_missing": {"type": "integer", "minimum": 0},
+    "missing_items": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "reason"],
+                                                 "properties": {"id": {"type": "string"}, "reason": {"type": "string", "minLength": 1}}}},
+    "lines": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/rollup_line"}},
+    "mev_kg": {"type": ["number", "null"]},
+    "partial_known_items_only": {"$ref": "#/$defs/totals"},
+    "partial_note": {"type": "string"},
+    "g3_margin_floor": {"type": "number"}, "g3_bounding_mass_kg": {"type": "number"}
+   }
+  },
+  "architecture_rollup": {
+   "type": "object", "additionalProperties": false, "required": ["strict", "partial"],
+   "properties": {
+    "strict": {"type": "object", "additionalProperties": false, "required": ["status", "message"],
+               "properties": {"status": {"enum": ["COMPLETE", "REFUSED"]}, "message": {"type": "string"}}},
+    "partial": {"$ref": "#/$defs/rollup"}
+   }
+  },
+  "screen_result": {
+   "type": "object", "additionalProperties": false,
+   "required": ["verdict", "cbe_margin_free_lower_bound_kg", "mev_lower_bound_kg", "common_items_lower_bound_kg", "architecture_specific_lower_bound_kg", "n_items", "items_with_lower_bound", "items_without_lower_bound", "g3_fail_evidence", "g3_flags"],
+   "properties": {
+    "verdict": {"enum": ["EXCEEDS_LIMIT_MARGIN_FREE", "EXCEEDS_LIMIT_MEV_ONLY", "NOT_EXCLUDED_PARTIAL_COVERAGE", "NOT_EXCLUDED_FULL_COVERAGE", "LOWER_BOUNDS_UNAVAILABLE"]},
+    "cbe_margin_free_lower_bound_kg": {"type": "number", "minimum": 0},
+    "mev_lower_bound_kg": {"type": "number", "minimum": 0},
+    "common_items_lower_bound_kg": {"type": "number", "minimum": 0},
+    "architecture_specific_lower_bound_kg": {"type": "number", "minimum": 0},
+    "n_items": {"type": "integer", "minimum": 1},
+    "items_with_lower_bound": {"type": "array", "items": {"type": "object", "additionalProperties": false,
+                                                         "required": ["id", "lower_bound_kg", "gate_basis"],
+                                                         "properties": {"id": {"type": "string"}, "lower_bound_kg": {"type": "number", "minimum": 0},
+                                                                        "gate_basis": {"$ref": "#/$defs/gate_basis"}}}},
+    "items_without_lower_bound": {"type": "array", "items": {"type": "string"}},
+    "g3_fail_evidence": {"type": "boolean"},
+    "g3_flags": {"type": "array", "items": {"const": "mass_margin_free_lower_bound"}}
+   }
+  }
+ }
+}
