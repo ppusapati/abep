@@ -1,0 +1,24 @@
+{
+ "id": "p5_n2_run_status_rule_v1_addendum1_extinction",
+ "amends": "p5_n2_run_status_rule_v1",
+ "registered": "2026-09-26",
+ "registered_before": "any P5-N2 run is scored. Disclosure: the change was made after the P5-N2 measurement audit (PR #26) and after the blind state envelope, in which sgb-screen-05 (N1-N4) and sgb-screen-09 (N1) were flagged not sustained; no discharge current, thrust or residual from any N2 run has been inspected.",
+ "decided_by": "project owner",
+ "rule": {
+  "top_level_statuses_unchanged": [
+   "PASS",
+   "FAIL_VALIDATION",
+   "OUT_OF_DOMAIN",
+   "NUMERICAL_FAILURE"
+  ],
+  "NUMERICAL_FAILURE": "the solver crashes, diverges or cannot establish a solution (retcode != success, or non-finite state)",
+  "extinction": "a numerically valid run (retcode success, finite state) that evolves to extinction at a setpoint the experiment sustained is FAIL_VALIDATION with reason SUSTAINMENT, not NUMERICAL_FAILURE: it is physics-model evidence against the candidate",
+  "FAIL_VALIDATION_reasons": [
+   "CURRENT",
+   "THRUST",
+   "SUSTAINMENT"
+  ],
+  "blind_envelope_runs": "the blind state-envelope flags for sgb-screen-05 and -09 are not verdicts; only the pre-registered campaign runs are scored"
+ },
+ "operational_definition_of_extinction": "see p5_n2_validation_criteria_v1.json -> pending_owner_confirmation.O1"
+}

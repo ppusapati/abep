@@ -1,0 +1,125 @@
+{
+ "id": "p5_n2_validation_criteria_v1",
+ "registered": "2026-09-26",
+ "registered_before": "any P5-N2 simulation is scored or any P5-N2 discharge current / thrust prediction is inspected. Known: the measurement audit (PR #26) and the blind state envelope (chemistry-state quantities only, measured targets removed).",
+ "decided_by": "project owner (decisions D1-D6, 2026-09-26); operational details O1-O5 proposed by Claude and NOT frozen until the owner confirms them",
+ "purpose": "no-retuning discrimination of the 9 ScaledGaussianBohm screening candidates on P5-N2 (promotion rule, CLAUDE.md next work 1)",
+ "inputs_pinned": {
+  "measurement_audit": {
+   "file": "identification/brabston_p5_n2_measurement_audit_v1.json",
+   "sha256": "f93ce2c25eb0a794ff192a5a0ab0dae1448cab824642bca8eff57e27079f4397"
+  },
+  "cases": {
+   "file": "cases/p5_n2.json",
+   "generator": "scripts/make_p5_n2_cases.py",
+   "sha256": "03f8e838adbb9074f03d8e916b09f84bacc81c3efe9afa2947c6b4dbb73ab1df"
+  },
+  "transport_candidates": {
+   "file": "ensemble/transport_ensemble_v0.json",
+   "key": "screening_candidates",
+   "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"
+  },
+  "reaction_set": "abep-n2n-0.11 COMPLETE_FOR_P5_N2_VALIDATION",
+  "chemistry_configs_sha256": {
+   "n2_n.toml": "4f10db747cfb11cfefb8080a9cad52e502c2ab11f0e485ac644a532b929607de",
+   "n2_n_di_lower.toml": "8b679aca9b223719d521890c391e227727ff2dfacdea6e3ebbbdee93d1b84372",
+   "n2_n_nel_wang.toml": "398c795be786194d2caf9c8720f28b4c3cfab80033f43431d21c6e8b14ab1318",
+   "n2_n_di_lower_nel_wang.toml": "29325bda79f18006e9f3c62df2a1ccc6aa74b66a44040f08d1bbe4ccd4305749",
+   "n2_n_exc_johnsonlow.toml": "95c9bec9f69993691e2539fc55ec20713fccca93376f3ff4ded9133d62721f9e",
+   "n2_n_rot_off.toml": "5fa1fafaba358ef8fdea716bd28c085bf48a2db2607c8f3808bed6f05412fbd0",
+   "n2_n_ndd_hmslow.toml": "f9b64716cdd6294a4338c5708a94ba4db888ec671c2c6a26647566db04085b71",
+   "n2_n_ndd_hmshigh.toml": "333d6071c035d83376f20a70a257579d7b838c591c374e2cdb5052331e0285d3",
+   "n2_n_n2dication.toml": "fb87c2c4328951bf7ead8d92bc2ffe94f17ce912e2977740d495d4d4cae2581f"
+  },
+  "hallthruster_pin": "v0.23.1 bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "run_status_rule": [
+   "prereg/p5_n2_run_status_rule_v1.json",
+   "prereg/p5_n2_run_status_rule_v1_addendum1_extinction.json"
+  ]
+ },
+ "no_retuning": "transport parameters, chemistry, numerics (200 cells, dt 5 ns, 2 ms, average 1-2 ms), wall model and B-field hypotheses are fixed for every run; no parameter is adjusted per case, per point or after results are seen",
+ "D1_observables": {
+  "primary": {
+   "discharge_current": [
+    "N1",
+    "N2",
+    "N3",
+    "N4",
+    "N5"
+   ],
+   "thrust": [
+    "N1",
+    "N2",
+    "N3"
+   ],
+   "sustainment": [
+    "N1",
+    "N2",
+    "N3",
+    "N4",
+    "N5"
+   ]
+  },
+  "non_gating_diagnostic": "E x B species acceleration voltages V_a,N2+ and V_a,N+ at N1-N3: signed residuals and species ordering are recorded; never used to admit or reject (the 1 m far-field observation operator is not modelled)"
+ },
+ "D2_thrust_N4_N5": "not scored; measured values reported as unscored supporting evidence; no divergence factor is invented or extrapolated",
+ "D3_tolerances": {
+  "discharge_current": "|I_d,sim - I_d,exp| / I_d,exp <= 0.15 at each point (the P5-Xe blind scale; not tightened)",
+  "thrust_mN": {
+   "N1": 5.2,
+   "N2": 5.6,
+   "N3": 5.6
+  },
+  "thrust_definition": "|T_axial,sim - T_obs| <= tolerance, T_axial,sim = T_1D x f_reading, f from the audit (reading A: sqrt(Psi_b as plotted); reading B: consistent with measured thrust)",
+  "divergence_readings": "a discrete layer-1 nuisance (D5), not added to the tolerance"
+ },
+ "D4_modes": {
+  "vacuum": {
+   "role": "PRIMARY, admission mode",
+   "ingestion": "OFF",
+   "targets": {
+    "I_d": "Eq. (14) corrected",
+    "T": "Eq. (16) corrected (published)"
+   }
+  },
+  "facility": {
+   "role": "SECONDARY consistency evidence, non-gating",
+   "ingestion": "ON (Eq. 13 at the anode boundary)",
+   "targets": {
+    "I_d": "raw P_d/V_d",
+    "T": "raw, Eq. (16) inverted with zeta_en = 0.8"
+   }
+  },
+  "never_crossed": "a facility run is never compared with a vacuum-corrected target or vice versa"
+ },
+ "D5_layer1": {
+  "members": "3 registrations (L38-hist, L32-anode, L32-exit) x 2 coil shapes (1.6 kW, 3.0 kW scaled to 130 G; field-shape hypotheses) x 2 divergence readings (A, B) = 12 per mode",
+  "global": "a layer-1 member is fixed across the whole N1-N5 series; never chosen point by point",
+  "across_chemistry": "the same layer-1 member must support the candidate across all four mandatory chemistry configurations",
+  "vacuum_admission": "a candidate is PROMOTABLE iff there exists one layer-1 member such that, for every mandatory chemistry configuration and every point, the vacuum run is PASS on every primary criterion"
+ },
+ "mandatory_chemistry": [
+  "n2_n.toml",
+  "n2_n_di_lower.toml",
+  "n2_n_nel_wang.toml",
+  "n2_n_di_lower_nel_wang.toml"
+ ],
+ "staged_sensitivities": [
+  "n2_n_exc_johnsonlow.toml",
+  "n2_n_rot_off.toml",
+  "n2_n_ndd_hmslow.toml",
+  "n2_n_ndd_hmshigh.toml",
+  "n2_n_n2dication.toml"
+ ],
+ "run_count": {
+  "mandatory": "9 candidates x 4 chemistry x 30 cases (5 points x 3 registrations x 2 coils) x 2 modes = 2160 runs; readings A/B are post-processing",
+  "staged": "9 x 30 x 2 = 540 runs per sensitivity branch when run"
+ },
+ "pending_owner_confirmation": {
+  "O1_extinction": "Operational SUSTAINMENT failure: the averaging-window mean I_d is below 10 % of the measured I_d, or the last 10 % of the window has mean I_d below 1 % of the window mean (the discharge has died). A run that stays lit but whose instantaneous minimum dips below 1 % of the mean (the existing bookkeeping flag 'sustained' in hall_map_schema_v1) is NOT a SUSTAINMENT failure; its I_d RMS, peak-to-peak and frequency are reported and it is scored on CURRENT/THRUST. Rationale: the schema defines that flag as bookkeeping, and deep breathing is not extinction.",
+  "O2_precedence": "per run: NUMERICAL_FAILURE, then OUT_OF_DOMAIN, then FAIL_VALIDATION (all failing reasons listed), then PASS. The chemistry-domain test for OUT_OF_DOMAIN is f_out <= 1e-12 for every reaction and no unresolved table, evaluated independently of the sustained flag (the bridge's chemistry_trustworthy also requires sustained, so it cannot be used alone once extinction is a validation outcome).",
+  "O3_candidate_verdict": "per layer-1 member (vacuum, 4 chemistry x 5 points): PASS if every run PASS; FAIL if any run FAIL_VALIDATION; otherwise INCONCLUSIVE (some run OUT_OF_DOMAIN or NUMERICAL_FAILURE, none failing). Candidate: PROMOTABLE if any member PASS; else INCONCLUSIVE / NOT ELIGIBLE if any member INCONCLUSIVE; else FAIL_VALIDATION (falsified under every layer-1 member). Facility verdicts are reported the same way and do not gate.",
+  "O4_staged_escalation_trigger": "A staged sensitivity branch (run for the nominal chemistry only, x 9 candidates, both modes) escalates to the other three mandatory chemistry combinations if, for any candidate and any layer-1 member, it (a) changes any run status or the member or candidate verdict, or (b) shifts a scored observable by at least half its tolerance: |delta I_d| >= 7.5 % of I_d,exp, or |delta T_axial| >= 2.6 mN (1 sigma). Branches: Johnson-low, rotational-off, HMS x0.5, HMS x1.3, molecular N2^2+.",
+  "O5_ExB_model_observable": "V_a,n,model = m_n u_n^2 / (2 Z e) from the ion velocity at the domain outlet, per species; reported against the E x B values as a signed residual and as the ordering V_a(N+) > V_a(N2+)."
+ }
+}

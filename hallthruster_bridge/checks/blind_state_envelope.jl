@@ -18,7 +18,9 @@ include(joinpath(@__DIR__, "..", "bridge_lib.jl"))
 check_pin()
 out_path = ARGS[1]
 dur = length(ARGS) >= 2 ? parse(Float64, ARGS[2]) : 5e-4
-base = JSON3.read(read(joinpath(@__DIR__, "..", "cases", "p5_n2.json"), String))
+# immutable snapshot of the operating points the envelope was run on (audit/configs/MANIFEST.json); cases/p5_n2.json is the
+# scoring case set and may change
+base = JSON3.read(read(joinpath(@__DIR__, "..", "audit", "configs", "p5_n2_cases_blind_envelope_v1.json"), String))
 ens = JSON3.read(read(joinpath(@__DIR__, "..", "ensemble", "transport_ensemble_v0.json"), String))
 # The omitted-process closure is evaluated on the PRE-PROMOTION abep-n2n-0.10 chemistry, read from immutable snapshots
 # (audit/configs/, hash-pinned in MANIFEST.json), never from the mutable production TOMLs: the production set now contains

@@ -1107,6 +1107,36 @@ def test_p5_n2_measurement_audit_values():
     f = json.load(open(os.path.join(root, "hallthruster_bridge", "identification", "p5_n2_measurement_audit_findings_v1.json")))
     assert "Phi_m_n_eta_SP_n_xi_N" in f["not_admissible_as_targets"] and len(f["open_decisions_for_preregistration"]) == 6
 
+def test_p5_n2_validation_preregistration():
+    """P5-N2 criteria (owner decisions D1-D6): the addendum makes a numerically valid extinction FAIL_VALIDATION/SUSTAINMENT;
+    thrust scored at N1-N3 only with 5.2 / 5.6 / 5.6 mN; I_d 15 %; vacuum primary; the pinned inputs (audit values, case set,
+    transport candidates, chemistry configs) match their recorded sha256; the case set equals a fresh generation; and the
+    blind envelope reads its own immutable operating-point snapshot."""
+    import hashlib, importlib.util, json, os
+    root = os.path.dirname(os.path.dirname(__file__)); B = os.path.join(root, "hallthruster_bridge")
+    h = lambda p: hashlib.sha256(open(p, "rb").read()).hexdigest()
+    add = json.load(open(os.path.join(B, "prereg", "p5_n2_run_status_rule_v1_addendum1_extinction.json")))
+    assert add["amends"] == "p5_n2_run_status_rule_v1" and add["rule"]["FAIL_VALIDATION_reasons"] == ["CURRENT", "THRUST", "SUSTAINMENT"]
+    c = json.load(open(os.path.join(B, "prereg", "p5_n2_validation_criteria_v1.json")))
+    assert c["D1_observables"]["primary"]["thrust"] == ["N1", "N2", "N3"]
+    assert c["D3_tolerances"]["thrust_mN"] == {"N1": 5.2, "N2": 5.6, "N3": 5.6}
+    assert c["D4_modes"]["vacuum"]["role"].startswith("PRIMARY")
+    pin = c["inputs_pinned"]
+    assert h(os.path.join(B, pin["measurement_audit"]["file"])) == pin["measurement_audit"]["sha256"]
+    assert h(os.path.join(B, pin["cases"]["file"])) == pin["cases"]["sha256"]
+    assert h(os.path.join(B, pin["transport_candidates"]["file"])) == pin["transport_candidates"]["sha256"]
+    for f, sha in pin["chemistry_configs_sha256"].items():
+        assert h(os.path.join(B, "propellants", f)) == sha, f
+    spec = importlib.util.spec_from_file_location("m", os.path.join(root, "scripts", "make_p5_n2_cases.py"))
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    cases = json.load(open(os.path.join(B, "cases", "p5_n2.json")))["cases"]
+    assert cases == json.loads(json.dumps(m.cases())) and len(cases) == 30
+    assert all(("T_tolerance_mN" in x["measured"]) == (x["point"] in ("N1", "N2", "N3")) for x in cases)
+    man = json.load(open(os.path.join(B, "audit", "configs", "MANIFEST.json")))["case_files"]
+    snap = os.path.join(B, "audit", "configs", "p5_n2_cases_blind_envelope_v1.json")
+    assert h(snap) == man["p5_n2_cases_blind_envelope_v1.json"]["sha256"]
+    assert "p5_n2_cases_blind_envelope_v1.json" in open(os.path.join(B, "checks", "blind_state_envelope.jl")).read()
+
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""
     from abep_sim.rate_tables import maxwellian_rate, tail_sensitivity

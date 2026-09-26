@@ -160,7 +160,9 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 3. **P5-N₂ measurement audit: done** (`identification/p5_n2_measurement_audit_findings_v1.json`; values in
    `brabston_p5_n2_measurement_audit_v1.json` from `scripts/audit_p5_n2_measurements.py`). Targets: I_d and thrust at N1–N5,
    E×B species V_a at N1–N3, sustainment; Φ_m,n/η_SP,n/ξ_N are model-derived, not targets. Pre-registration decisions D1–D6 are
-   open (owner). `cases/p5_n2.json` must be regenerated like the Xe cases (layer-1 registrations, 130 G) before any run.
+   decided (owner D1–D6, `prereg/p5_n2_validation_criteria_v1.json`, extinction addendum to the run-status rule); operational
+   details O1–O5 await owner confirmation — **no score-bearing run before they are frozen**. `cases/p5_n2.json` regenerated
+   (`scripts/make_p5_n2_cases.py`, 30 cases, sha256-pinned in the criteria).
    P5 on N₂ (`cases/p5_n2.json`, Table 2) and ECHT on N₂ (`cases/echt_n2.json`), run across the **credible Xe-informed
    transport screening set** (currently the 9 SGB screening candidates) with no retuning per case. N₂ is a
    discrimination experiment that can eliminate candidates or promote them to members. First audit the available N₂
