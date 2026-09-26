@@ -56,14 +56,30 @@ def journal_lanes(journals_dir):
                 L = out.setdefault((wf, m_old.group(2)), {"build": None, "verify": {}, "fix_started": set(), "old": {}})
                 L["old"][m_old.group(1)] = got if k in res else "running"
             elif m:
-                L = out.setdefault((wf, m.group(4)), {"build": None, "verify": {}, "fix_started": set(), "old": {}})
+                L = out.setdefault((wf, m.group(4)), {"build": None, "verify": {}, "fix_started": set(), "old": {}, "fix": {}})
                 if m.group(1) == "build":
                     L["build"] = got
                 elif m.group(2):
                     L["verify"].setdefault(int(m.group(2)), {})[m.group(5)] = got if k in res else "running"
                 elif m.group(3):
                     L["fix_started"].add(int(m.group(3)))
+                    if got and got.get("commit"):
+                        L.setdefault("fix", {})[int(m.group(3))] = got
     return out
+
+
+def final_result(L):
+    """The lane's content identity: the latest fix-round result that reports a commit, else the build result. Verification
+    round r+1 covers fix round r, so the final verified state belongs to this commit, never to the pre-repair build commit
+    (2026-09-26 incident: lanes 09 and 18 were reported at their build commits although repairs had been verified)."""
+    if not L:
+        return {}
+    b = L.get("build") or {}
+    fx = L.get("fix") or {}
+    if fx:
+        last = fx[max(fx)]
+        return dict(b, **{k: last[k] for k in ("worktree_path", "branch", "commit") if last.get(k)})
+    return b
 
 
 def pinned_verified(journals_dir, pin):
@@ -203,7 +219,7 @@ def status(journals_dir, followon_dir):
         if L.get("repairs"):                                        # operator repair of done_open_issues: latest repair run rules
             src = (L["repairs"][-1]["workflow_run"], L["repairs"][-1]["workflow_key"])
         st[L["id"]] = lane_state(jl.get(src))
-        b = (jl.get(src) or {}).get("build") or {}
+        b = final_result(jl.get(src))
         if L.get("verified_pin"):                                   # a verified terminal state preserved against re-execution
             pin = L["verified_pin"]
             ok = pinned_verified(journals_dir, pin)
@@ -216,7 +232,7 @@ def status(journals_dir, followon_dir):
         if F.get("repairs"):                                        # targeted re-verification / repair runs, latest rules
             a = {"workflow_run": F["repairs"][-1]["workflow_run"], "workflow_key": F["repairs"][-1]["workflow_key"]}
         st[F["id"]] = lane_state(jl.get((a["workflow_run"], a["workflow_key"]))) if a else "not_started"
-        b = (jl.get((a["workflow_run"], a["workflow_key"])) or {}).get("build") or {} if a else {}
+        b = final_result(jl.get((a["workflow_run"], a["workflow_key"]))) if a else {}
         info[F["id"]] = {k: b.get(k) for k in ("worktree_path", "branch", "commit")}
     ds_fired, ds_ident = {}, {}
     for D in reg["datasets"]:

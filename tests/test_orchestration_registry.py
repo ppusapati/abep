@@ -239,3 +239,13 @@ def test_facility_relaunch_waits_for_s9_and_s12():
     for T in t.values():                                       # facility is never a prerequisite of anything but its own score
         if T["id"] not in ("T_FACILITY_SCORE",):
             assert all(p["id"] != "ds_facility_mandatory" for p in T.get("prerequisites", [])), T["id"]
+
+
+def test_lane_identity_is_the_final_fix_commit_not_the_build_commit():
+    """2026-09-26 incident: lanes 09 and 18 were reported at their build commits although repairs had been verified."""
+    ls = _load()
+    L = {"build": {"worktree_path": "/w", "branch": "b", "commit": "build0"}, "verify": {}, "fix_started": {1, 2}, "old": {},
+         "fix": {1: {"commit": "fix1"}, 2: {"commit": "fix2", "worktree_path": "/w"}}}
+    assert ls.final_result(L) == {"worktree_path": "/w", "branch": "b", "commit": "fix2"}
+    assert ls.final_result(dict(L, fix={}))["commit"] == "build0"
+    assert ls.final_result(None) == {}
