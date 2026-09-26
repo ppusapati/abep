@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "abep:docs/evidence/rf_source/rf_evidence_matrix.schema.json",
+  "title": "RF ionization / pre-ionization source evidence matrix (N2, O, O2, air)",
+  "description": "Evidence audit only. Each entry records one quantity from one accessed source, with its evidence class (docs/EVIDENCE.md quantity type), evidence level, conditions and ABEP regime match. Values are preserved as reported (units as reported); conditions are normalised to SI by unit conversion only. value_kind 'tbd' marks a quantity an accessed source explicitly leaves unmeasured or unstated.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["matrix_id", "matrix_version", "status", "scope", "abep_side", "conventions", "entries"],
+  "properties": {
+    "matrix_id": {"const": "rf_source_evidence_matrix"},
+    "matrix_version": {"type": "string", "pattern": "^v[0-9]+$"},
+    "status": {"type": "string", "minLength": 10},
+    "scope": {"type": "string", "minLength": 10},
+    "abep_side": {"type": "string", "minLength": 10},
+    "conventions": {"type": "object", "additionalProperties": {"type": "string"}},
+    "entries": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/entry"}}
+  },
+  "$defs": {
+    "range": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "min": {"type": "number"},
+        "max": {"type": "number"}
+      }
+    },
+    "num_or_range_or_null": {
+      "oneOf": [
+        {"type": "number"},
+        {"$ref": "#/$defs/range"},
+        {"type": "null"}
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["citation", "doi_or_url", "access"],
+      "properties": {
+        "citation": {"type": "string", "minLength": 20},
+        "doi_or_url": {"type": "string", "pattern": "^https://"},
+        "accessed_version_url": {"type": "string", "pattern": "^https://"},
+        "access": {"enum": ["open", "abstract_only"]}
+      }
+    },
+    "conditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gas", "power_W", "frequency_Hz", "B_T"],
+      "anyOf": [
+        {"required": ["pressure_Pa"]},
+        {"required": ["density_m3"]}
+      ],
+      "properties": {
+        "gas": {"type": "string", "minLength": 1},
+        "pressure_Pa": {"$ref": "#/$defs/num_or_range_or_null"},
+        "density_m3": {"$ref": "#/$defs/num_or_range_or_null"},
+        "power_W": {"$ref": "#/$defs/num_or_range_or_null"},
+        "frequency_Hz": {"$ref": "#/$defs/num_or_range_or_null"},
+        "B_T": {"$ref": "#/$defs/num_or_range_or_null"},
+        "mass_flow_mg_s": {"$ref": "#/$defs/num_or_range_or_null"},
+        "notes": {"type": "string"}
+      }
+    },
+    "derived": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["function", "inputs", "from_ids"],
+      "properties": {
+        "function": {"type": "string", "minLength": 3},
+        "inputs": {"type": "object"},
+        "from_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "assumed_inputs": {"type": "object", "additionalProperties": {"type": "string", "minLength": 10}}
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source", "evidence_class", "evidence_level", "topic", "quantity", "value_kind",
+                   "value", "units", "uncertainty", "locator", "transformation_chain", "conditions",
+                   "applicability_to_abep"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^RF-[A-Z0-9]+-[A-Z0-9]+$"},
+        "source": {"$ref": "#/$defs/source"},
+        "evidence_class": {
+          "enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed", null]
+        },
+        "evidence_level": {"type": "integer", "minimum": 1, "maximum": 7},
+        "topic": {
+          "enum": ["architecture_heritage", "operating_envelope", "pressure_mode_limits", "power_coupling",
+                   "rf_generator_efficiency", "ion_production_cost", "ionization_fraction", "plasma_state",
+                   "magnetic_field", "material_interaction", "thermal_load", "hardware_mass",
+                   "performance_context"]
+        },
+        "quantity": {"type": "string", "minLength": 5},
+        "value_kind": {"enum": ["number", "range", "bound", "qualitative", "tbd"]},
+        "value": {
+          "oneOf": [
+            {"type": "number"},
+            {"$ref": "#/$defs/range"},
+            {"type": "string", "minLength": 3},
+            {"type": "null"}
+          ]
+        },
+        "units": {"type": "string", "minLength": 1},
+        "uncertainty": {"type": "string", "minLength": 3},
+        "locator": {"type": "string", "minLength": 3},
+        "transformation_chain": {"type": "string", "minLength": 3},
+        "conditions": {"$ref": "#/$defs/conditions"},
+        "applicability_to_abep": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["regime_match", "notes"],
+          "properties": {
+            "regime_match": {"enum": ["yes", "partial", "no", "TBD"]},
+            "notes": {"type": "string", "minLength": 10}
+          }
+        },
+        "derived": {"$ref": "#/$defs/derived"}
+      }
+    }
+  }
+}
