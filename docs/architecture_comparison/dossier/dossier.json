@@ -778,7 +778,7 @@
      "formal_outcome": {
       "input": "docs/milestones/bundle1/ (fo_bundle1_conditional_selection)",
       "note": "the conditional-selection outcome is Bundle 1's; this dossier does not anticipate it",
-      "state": "UNRESOLVED"
+      "state": "PRESENT_NOT_INTERPRETED"
      },
      "hard_gate_conditions": [
       {
@@ -1035,7 +1035,6 @@
       "open owner item G7.mixed_feed (RFP_INTERPRETATION_OPEN)"
      ],
      "missing_input_lanes": [
-      "fo_bundle1_conditional_selection",
       "lane_10_cathode_dossier",
       "lane_13_o_o2_audit",
       "lane_32_wall_life",
@@ -2769,7 +2768,7 @@
      "formal_outcome": {
       "input": "docs/milestones/bundle1/ (fo_bundle1_conditional_selection)",
       "note": "the conditional-selection outcome is Bundle 1's; this dossier does not anticipate it",
-      "state": "UNRESOLVED"
+      "state": "PRESENT_NOT_INTERPRETED"
      },
      "hard_gate_conditions": [
       {
@@ -3024,7 +3023,6 @@
       "open owner item G7.mixed_feed (RFP_INTERPRETATION_OPEN)"
      ],
      "missing_input_lanes": [
-      "fo_bundle1_conditional_selection",
       "lane_10_cathode_dossier",
       "lane_13_o_o2_audit",
       "lane_32_wall_life",
@@ -4660,7 +4658,7 @@
      "formal_outcome": {
       "input": "docs/milestones/bundle1/ (fo_bundle1_conditional_selection)",
       "note": "the conditional-selection outcome is Bundle 1's; this dossier does not anticipate it",
-      "state": "UNRESOLVED"
+      "state": "PRESENT_NOT_INTERPRETED"
      },
      "hard_gate_conditions": [
       {
@@ -4913,7 +4911,6 @@
       "open owner item G7.mixed_feed (RFP_INTERPRETATION_OPEN)"
      ],
      "missing_input_lanes": [
-      "fo_bundle1_conditional_selection",
       "lane_10_cathode_dossier",
       "lane_13_o_o2_audit",
       "lane_32_wall_life",
@@ -6338,16 +6335,21 @@
    "expected_dirs": [
     "docs/milestones/bundle1"
    ],
-   "files": [],
+   "files": [
+    "docs/milestones/bundle1/BUNDLE1.md",
+    "docs/milestones/bundle1/build_bundle1.py",
+    "docs/milestones/bundle1/bundle1_v1.json",
+    "docs/milestones/bundle1/bundle1_v1.schema.json",
+    "docs/milestones/bundle1/__pycache__/build_bundle1.cpython-311.pyc"
+   ],
    "key": "bundle1",
    "lane": "fo_bundle1_conditional_selection",
-   "merge_commits": {},
-   "missing_files": [
-    "docs/milestones/bundle1"
-   ],
-   "reason": "pending: Bundle 1 (fo_bundle1_conditional_selection) is built in parallel and is not in this checkout; its outcome is not anticipated here",
+   "merge_commits": {
+    "fo_bundle1_conditional_selection": "29b54f1e6267032d580a434df1f2c2bd7930004d"
+   },
+   "missing_files": [],
    "role": "Bundle 1 conditional-selection outcome (expected; never anticipated)",
-   "state": "UNRESOLVED"
+   "state": "PRESENT_NOT_INTERPRETED"
   },
   {
    "files": [],
@@ -6526,12 +6528,12 @@
    "provenance.generation.generated_at"
   ],
   "generation": {
-   "generated_at": "2026-09-26T20:07:25Z"
+   "generated_at": "2026-09-26T20:11:50Z"
   },
   "generator_sha256": {
    "scripts/architecture/build_decision_dossier.py": "9c6ff9ca58733357e94966f57d166d4255ba2742638d69a81704c60f0b03f3d3"
   },
-  "git_commit": "68be96f74e60fc60c69bec3341b2c76beab5988c",
+  "git_commit": "29b54f1e6267032d580a434df1f2c2bd7930004d",
   "input_files_sha256": {
    "CLAUDE.md": "8b6b5098011b5c16fae49298d435f2ba2e20535b150118bcac70673b494c0b2f",
    "abep_sim/arch_boundary.py": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
@@ -6585,6 +6587,11 @@
    "docs/forensics/p5_n2_v1/exb_physics/exb_physics.json": "506fc900ada46e25afecd158ec5b4083e6236168e5997b674f669e76efdd8548",
    "docs/forensics/p5_n2_v1/ood_attribution/ood_attribution.json": "5c69fe1b4507566b11a69ab442c68362d5d2f52adda2bddd85ae11a2b8592660",
    "docs/forensics/p5_n2_v1/scoreable_subset/scoreable_subset.json": "45ec9f17a727e15b1e8d787127c55347dc67c73095c445eb28388e4fcc0c8144",
+   "docs/milestones/bundle1/BUNDLE1.md": "94f40ee2021a47b1c2390dd21a95faa6ef4fcedf55b979662fd713d14e0840fd",
+   "docs/milestones/bundle1/__pycache__/build_bundle1.cpython-311.pyc": "d7566f4fae3385795d61a9d952e3498af0362ff42217304c8758918028d57ee1",
+   "docs/milestones/bundle1/build_bundle1.py": "d285582b9fcf34700e716cd6d02524d117f0ea67c80ccebaf432a8549b8dad01",
+   "docs/milestones/bundle1/bundle1_v1.json": "c07264b2f9f4126445bda95c888d1d29e9b52176b91cc044653269071ce65a3d",
+   "docs/milestones/bundle1/bundle1_v1.schema.json": "10826077bd323d125d792662d8b06e616b676ed1b0f0fdb55a10dbcf3ab333a0",
    "docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md": "273549ab336024701c46626c177ea33730212b447806420b464e1399884e903e",
    "docs/v2/question_a/QUESTION_A_DISPOSITION.json": "bdf3b404c8dc90ee72e3c4b43025d447e57d5aff167fb286e46b703a66d89cd2",
    "hallthruster_bridge/ensemble/transport_ensemble_v0.json": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b",
@@ -6653,15 +6660,6 @@
     "docs/chemistry/o_o2"
    ],
    "reason": "not present in this checkout: produced by lane_13_o_o2_audit, not yet verified/merged into this base",
-   "state": "UNRESOLVED"
-  },
-  {
-   "key": "bundle1",
-   "lane": "fo_bundle1_conditional_selection",
-   "missing": [
-    "docs/milestones/bundle1"
-   ],
-   "reason": "pending: Bundle 1 (fo_bundle1_conditional_selection) is built in parallel and is not in this checkout; its outcome is not anticipated here",
    "state": "UNRESOLVED"
   },
   {
