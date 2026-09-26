@@ -1047,6 +1047,42 @@ def test_multiply_charged_tables_and_closure_status():
     dic = open(os.path.join(prop, "n2_n_n2dication.toml")).read()
     assert "N2 + e -> N2(2+) + 3e" in dic and "N2(+) + e -> N2(2+) + 2e" in dic and "dissociative_ionization_N2_lower.dat" in dic
 
+def test_audit_config_snapshots_are_immutable():
+    """Historical closure calculations read hash-pinned snapshots (audit/configs/MANIFEST.json), never the mutable production
+    TOMLs (PR #25 review P1/P2): each snapshot and every rate table it names match the recorded sha256; the 0.9 snapshot has
+    no rotation; the 0.10 snapshots have no assessed multiply-charged process; both closure scripts point at the snapshots."""
+    import hashlib, json, os, tomllib
+    root = os.path.dirname(os.path.dirname(__file__))
+    d = os.path.join(root, "hallthruster_bridge", "audit", "configs"); prop = os.path.join(root, "hallthruster_bridge", "propellants")
+    man = json.load(open(os.path.join(d, "MANIFEST.json")))
+    h = lambda p: hashlib.sha256(open(p, "rb").read()).hexdigest()
+    for f, m in man["configs"].items():
+        assert h(os.path.join(d, f)) == m["sha256"], f
+        cfg = tomllib.load(open(os.path.join(d, f), "rb"))
+        assert sorted({r["rate_coeff_file"] for r in cfg["reactions"]}) == sorted(m["rate_files"]), f
+        for x, sha in m["rate_files"].items():
+            assert h(os.path.join(prop, x)) == sha, (f, x)
+        files = " ".join(m["rate_files"])
+        assert not any(t in files for t in ("N_to_N_Z2plus", "N_Z2plus_to_N_Z3plus", "N2_to_N2_Z2plus", "N2_Z1plus_to_N2_Z2plus")), f
+    assert "rot_j0" not in " ".join(man["configs"]["n2_n_0p9_pre_rotation.toml"]["rate_files"])
+    env = open(os.path.join(root, "hallthruster_bridge", "checks", "blind_state_envelope.jl")).read()
+    assert env.count("audit/configs/n2_n_0p10_") == 4 and '"propellants/$(cfg)"' not in env
+    fa = open(os.path.join(root, "scripts", "audit_n2_completeness_final.py")).read()
+    assert '"n2_n_0p9_pre_rotation.toml"' in fa
+
+
+def test_p5_n2_run_status_rule_is_frozen():
+    """Owner decision 2026-09-26: four run statuses; chemistry-untrustworthy runs are OUT_OF_DOMAIN (not FAIL); admission
+    needs scoreable runs at every point under the four primary chemistry configs; the f_out = 0 rule is not relaxed."""
+    import json, os
+    r = json.load(open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "hallthruster_bridge", "prereg",
+                                    "p5_n2_run_status_rule_v1.json")))
+    assert list(r["run_status"]) == ["PASS", "FAIL_VALIDATION", "OUT_OF_DOMAIN", "NUMERICAL_FAILURE"]
+    assert r["candidate_status"]["not_all_mandatory_runs_scoreable"].startswith("INCONCLUSIVE")
+    assert r["mandatory_chemistry_for_admission"] == ["n2_n.toml", "n2_n_di_lower.toml", "n2_n_nel_wang.toml",
+                                                      "n2_n_di_lower_nel_wang.toml"]
+    assert r["chemistry_trust_rule"]["f_out_tolerance"] == 1e-12
+
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""
     from abep_sim.rate_tables import maxwellian_rate, tail_sensitivity

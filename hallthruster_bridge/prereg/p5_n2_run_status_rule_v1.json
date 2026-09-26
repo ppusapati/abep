@@ -1,0 +1,25 @@
+{
+ "id": "p5_n2_run_status_rule_v1",
+ "registered": "2026-09-26",
+ "registered_before": "the P5-N2 measurement audit and before any P5-N2 run is scored; no P5-N2 fit quality has been seen (all runs so far had measured targets removed). Known when registered: the blind state envelope showed chemistry-untrustworthy states (T_e > 30 eV) in every run of sgb-screen-02/03/04 and 9 runs of sgb-screen-05 under the pre-promotion 0.10 chemistry.",
+ "decided_by": "project owner",
+ "part_of": "the P5-N2 scoring pre-registration (acceptance criteria and escalation triggers are registered separately, after the measurement audit)",
+ "run_status": {
+  "PASS": "numerically valid (converged, sustained) AND chemistry_trustworthy AND every pre-registered experimental criterion met",
+  "FAIL_VALIDATION": "numerically valid AND chemistry_trustworthy, but a pre-registered experimental criterion is missed (a validation failure for that criterion)",
+  "OUT_OF_DOMAIN": "numerically valid but NOT chemistry_trustworthy: NOT SCOREABLE - OUTSIDE CHEMISTRY MODEL DOMAIN; no P5 score is computed. This is not evidence against the candidate: the chemistry model has left the domain in which it was agreed to be trusted",
+  "NUMERICAL_FAILURE": "not converged, not sustained, or solver error"
+ },
+ "candidate_status": {
+  "rule": "Promotion of a screening candidate (sgb-screen-*) into the admitted Hall closure set requires scoreable runs at EVERY pre-registered P5-N2 operating point under EVERY mandatory chemistry configuration, and the pre-registered acceptance criteria on those runs.",
+  "not_all_mandatory_runs_scoreable": "INCONCLUSIVE / NOT ELIGIBLE FOR PROMOTION in this campaign; the candidate stays a screening hypothesis and is NOT rejected as physically invalid",
+  "validation_failure": "decided by the acceptance criteria registered after the measurement audit"
+ },
+ "mandatory_chemistry_for_admission": ["n2_n.toml", "n2_n_di_lower.toml", "n2_n_nel_wang.toml", "n2_n_di_lower_nel_wang.toml"],
+ "staged_sensitivities": ["n2_n_exc_johnsonlow.toml", "n2_n_rot_off.toml", "n2_n_ndd_hmslow.toml", "n2_n_ndd_hmshigh.toml", "n2_n_n2dication.toml"],
+ "staged_sensitivities_note": "not mandatory for admission; run and escalated under the triggers registered with the acceptance criteria",
+ "chemistry_trust_rule": {
+  "f_out_tolerance": 1e-12,
+  "note": "The f_out = 0 rule (reaction-weighted activity beyond a table's validity limit, every saved frame and cell) was fixed before this validation and is NOT relaxed for scoring, whatever the extrapolated fraction. Extending the chemistry domain would be a separate model change with its own evidence and reruns, never a scoring accommodation."
+ }
+}

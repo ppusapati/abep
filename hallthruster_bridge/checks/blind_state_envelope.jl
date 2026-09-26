@@ -20,7 +20,14 @@ out_path = ARGS[1]
 dur = length(ARGS) >= 2 ? parse(Float64, ARGS[2]) : 5e-4
 base = JSON3.read(read(joinpath(@__DIR__, "..", "cases", "p5_n2.json"), String))
 ens = JSON3.read(read(joinpath(@__DIR__, "..", "ensemble", "transport_ensemble_v0.json"), String))
-configs = ["n2_n.toml", "n2_n_di_lower.toml", "n2_n_nel_wang.toml", "n2_n_di_lower_nel_wang.toml"]
+# The omitted-process closure is evaluated on the PRE-PROMOTION abep-n2n-0.10 chemistry, read from immutable snapshots
+# (audit/configs/, hash-pinned in MANIFEST.json), never from the mutable production TOMLs: the production set now contains
+# the promoted HMS reaction, which would both double-count it and change the plasma state (PR #25 review P1).
+# Labels keep the historical record keys.
+configs = ["n2_n.toml" => "audit/configs/n2_n_0p10_nominal_pre_hms.toml",
+           "n2_n_di_lower.toml" => "audit/configs/n2_n_0p10_di_lower_pre_hms.toml",
+           "n2_n_nel_wang.toml" => "audit/configs/n2_n_0p10_nel_wang_pre_hms.toml",
+           "n2_n_di_lower_nel_wang.toml" => "audit/configs/n2_n_0p10_di_lower_nel_wang_pre_hms.toml"]
 shard = length(ARGS) >= 4 ? parse(Int, ARGS[3]) : 0
 nshards = length(ARGS) >= 4 ? parse(Int, ARGS[4]) : 1
 only_keys = length(ARGS) >= 5 ? Set(split(ARGS[5], ",")) : nothing
@@ -31,21 +38,25 @@ _, kdd = het.load_rate_coeff_file(joinpath(@__DIR__, "..", "audit", "bound_table
 _, k3 = het.load_rate_coeff_file(joinpath(@__DIR__, "..", "audit", "bound_tables", "ionization_N_Z2plus_to_N_Z3plus_bell1983.dat"), "electron_impact")
 done = Set{String}()
 isfile(out_path) && for l in eachline(out_path); push!(done, String(JSON3.read(l).key)); end
-combos = [(cand, cfg, pt) for cand in ens.screening_candidates for cfg in configs for pt in base.cases]
-for (ic, (cand, cfg, pt)) in enumerate(combos)
+combos = [(cand, cfgpair, pt) for cand in ens.screening_candidates for cfgpair in configs for pt in base.cases]
+for (ic, (cand, (cfg, cfgpath), pt)) in enumerate(combos)
     (ic - 1) % nshards == shard || continue
     key = "$(cand.ensemble_member_id)|$(cfg)|$(pt.id)"
     key in done && continue
     !isnothing(only_keys) && !(key in only_keys) && continue
     tp = cand.transport_parameters
     c = Dict{Symbol,Any}(k => v for (k, v) in pairs(pt) if k != :measured)     # measured targets removed
-    c[:id] = key; c[:propellant_config] = "propellants/$(cfg)"; c[:duration_s] = dur; c[:average_start_s] = dur / 2
+    c[:id] = key; c[:propellant_config] = cfgpath; c[:duration_s] = dur; c[:average_start_s] = dur / 2
     c[:transport] = (model="ScaledGaussianBohm", anom_scale=tp.anom_scale, barrier_scale=tp.barrier_scale,
                      center=tp.center_L, width=tp.width_L)
     c = (; c...)
-    rec = Dict{String,Any}("key" => key, "candidate" => cand.ensemble_member_id, "config" => cfg, "point" => pt.id)
+    rec = Dict{String,Any}("key" => key, "candidate" => cand.ensemble_member_id, "config" => cfg, "config_file" => cfgpath, "point" => pt.id)
     try
         rx = chemistry_reactions(c)
+        # an assessed (omitted) process must not already be in the chemistry that generates the plasma state
+        assessed = r"(N_to_N_Z2plus|N_Z2plus_to_N_Z3plus|N2_to_N2_Z2plus|N2_Z1plus_to_N2_Z2plus)"
+        bad = [r.file for r in rx if occursin(assessed, r.file)]
+        isempty(bad) || error("$(cfgpath) already contains assessed process(es) $(bad); closure must use pre-promotion chemistry")
         ion_rx = [r for r in rx if r.file != "" && occursin(r"(ionization|dissociative_ionization)", r.file)]
         prod_Z2 = [r for r in rx if occursin("N_Z2plus", r.file)]
         n2p_rx = only([r for r in rx if r.file == "ionization_N2_song2023.dat"])     # the only N2+ source

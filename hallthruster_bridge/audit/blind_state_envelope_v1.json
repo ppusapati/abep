@@ -1896,5 +1896,5 @@
    "region_Ndd_z_over_L": 1.0107355105641478
   }
  },
- "authoritative_run_set": "v4 metric list (checks/blind_state_envelope.jl v4); prereg addendum 2: the v3 set is an implementation cross-check only, never averaged or selected. 72 v4 runs had picked up the abep-n2n-0.11 config mid-batch and were refused by the chemistry guard (no validity entry); they were deleted and rerun from a clean worktree at the 0.10 configs (commit 763026a) before any verdict. All common values then agree with v3 exactly."
+ "authoritative_run_set": "v4 metric list; regenerated 2026-09-26 from the IMMUTABLE pre-promotion 0.10 snapshots in audit/configs/ (PR #25 review P1). The regeneration reproduces the earlier authoritative records exactly (180/180 runs, 5829 values, max rel. diff 0, no status difference); those earlier records had been produced with the 0.10 production TOMLs before promotion (72 of them rerun from a clean 0.10 worktree after a mid-batch config change was refused by the chemistry guard). Prereg addendum 2: the v3 set is an implementation cross-check only, never averaged or selected."
 }

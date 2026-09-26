@@ -4,7 +4,9 @@ vibrational fractions below are final:
   * rerun of audit 1 (dissociative ionization) and audit 2 (vibrational excitation) with the complete 0.9 denominators;
   * the three tier-3 bounds: rotational excitation, N^2+ -> N^3+ (N_Z2plus -> N_Z3plus), direct N -> N^2+.
 
-Denominators are built from n2_n.toml itself: every N2-target inelastic reaction's committed rate table k_r(3/2 T_e) times
+Denominators are built from the IMMUTABLE abep-n2n-0.9 snapshot hallthruster_bridge/audit/configs/n2_n_0p9_pre_rotation.toml
+(hash-pinned in audit/configs/MANIFEST.json), never from the mutable production n2_n.toml, which since 0.10 contains the
+promoted rotational reactions: adding rot_bound() to that denominator would count rotation twice (PR #25 review P2). Denominators: every N2-target inelastic reaction's committed rate table k_r(3/2 T_e) times
 its header energy (elastic channels carry no inelastic loss), per unit N2 density with atomic fraction x_N = 0 (atomic N
 only adds to denominators, so x_N = 0 maximises every fraction). Shares are reported as the omitted/included channel's
 share of the TOTAL (the channel itself counted once in the denominator).
@@ -73,9 +75,14 @@ def load_table(f):
     return a, dE
 
 
-def n2_reactions(config="n2_n.toml"):
-    """(label, file, energy loss, is_ion_producing) for every N2-target inelastic reaction in the config."""
-    cfg = tomllib.load(open(os.path.join(PROP, config), "rb"))
+AUDIT_CONFIG = os.path.join(os.path.dirname(PROP), "audit", "configs", "n2_n_0p9_pre_rotation.toml")
+
+
+def n2_reactions(config=AUDIT_CONFIG):
+    """(label, file, energy loss, is_ion_producing) for every N2-target inelastic reaction in the config (a path)."""
+    cfg = tomllib.load(open(config, "rb"))
+    assert not any("rot_j0" in r["rate_coeff_file"] for r in cfg["reactions"]), \
+        "rotational excitation is the omitted process here; its denominator must not contain it"
     out = []
     for r in cfg["reactions"]:
         if r["type"] == "elastic":
@@ -94,7 +101,7 @@ def k_of(f, Te):
     return float(np.interp(1.5 * Te, a[:, 0], a[:, 1]))
 
 
-def budget(Te, config="n2_n.toml"):
+def budget(Te, config=AUDIT_CONFIG):
     P, K_ion, parts = 0.0, 0.0, {}
     for label, f, dE, ion in n2_reactions(config):
         k = k_of(f, Te); P += k * dE; parts[f] = (k, k * dE)

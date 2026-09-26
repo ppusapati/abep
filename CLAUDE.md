@@ -125,6 +125,13 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    excluded from nominal (F_ion ≤ 0.27 %), carried inside the variant. **Open for the P5-N₂ pre-registration:** in all runs of
    sgb-screen-02/03/04 (and 9 of 05) the 45-eV-capped tables (dissociation, electronic, vibrational, rotational) are used above their
    limit (T_e > 30 eV; ≤ 4.1 % of dissociation activity), so those runs are not `chemistry_trustworthy` and cannot be scored as is.
+   **Historical audits read immutable snapshots** (`hallthruster_bridge/audit/configs/`, sha256-pinned with every rate table in
+   `MANIFEST.json`; PR #25 review): the tier-2/3 final audit uses the 0.9 pre-rotation config, the closure envelope the four 0.10
+   pre-HMS configs. Never evaluate an omitted process against a mutable production TOML that may already contain it.
+   **P5-N₂ run statuses** (`prereg/p5_n2_run_status_rule_v1.json`, owner decision): PASS / FAIL_VALIDATION / OUT_OF_DOMAIN /
+   NUMERICAL_FAILURE. Chemistry-untrustworthy ⇒ OUT_OF_DOMAIN (not scoreable, **not** FAIL). Admission needs scoreable runs at every
+   point under the 4 primary chemistry configs; otherwise the candidate is INCONCLUSIVE / not eligible for promotion in this campaign
+   (not rejected). Staged sensitivities (Johnson-low, rot-off, HMS low/high, N₂²⁺) are not mandatory. f_out = 0 is not relaxed.
    **P5-N₂ run design (owner decision):** primary 4 chemistry configs × 9 transports = 36 runs, plus the Johnson-low sensitivity
    branch (`n2_n_exc_johnsonlow.toml`: nominal DI + OPM N elastic) × 9 = +9. Expand Johnson-low to the other three chemistry
    combinations (+27, full 72) only if its escalation trigger fires. The trigger ("changes a pass/fail, the surviving set, or

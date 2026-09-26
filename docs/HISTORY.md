@@ -2002,3 +2002,29 @@ audit bound tables byte-for-byte). Table: `scripts/n2_closure_table.py`. Status 
 Open for the P5-N₂ pre-registration (owner): all runs of sgb-screen-02/03/04 and 9 of sgb-screen-05 reach T_e > 30 eV, where every
 45-eV-capped table (dissociation, electronic, vibrational, rotational) is used beyond its limit (≤ 4.1 % of dissociation activity);
 they are not chemistry-trustworthy and cannot be scored as is.
+
+### 2026-09-26 — PR #25 review: historical audits pinned to immutable config snapshots (P1, P2)
+Review finding P1: `checks/blind_state_envelope.jl` read the mutable production TOMLs. At 0.11 they contain the promoted HMS
+reaction, so a rerun would both count it twice (F_S capped at 0.5) and generate the plasma state with it present.
+Review finding P2: `scripts/audit_n2_completeness_final.py` read the mutable `n2_n.toml`. Since 0.10 it contains the rotational
+reactions, so `rot_bound()` was added to a denominator that already held rotation.
+Fix: immutable snapshots in `hallthruster_bridge/audit/configs/` (0.9 pre-rotation from 32a919a; the four 0.10 pre-HMS configs from
+763026a), sha256-pinned together with every rate table they name (`MANIFEST.json`, test). The envelope refuses a config that
+already contains an assessed process; the final audit refuses a denominator containing rotation.
+Evidence regenerated from the snapshots, not argued indirectly:
+- Blind envelope, full 180-run rerun: reproduces the committed authoritative records exactly (5829 values, max rel. diff 0, no
+  status, trust or beyond-limit difference); the closure table `n2_closure_verdicts_v1.json` regenerates byte-identical; verdicts
+  unchanged. The committed records were valid (produced on the 0.10 TOMLs before promotion), but the PR head could not reproduce them.
+- Final tier-2/3 audit: the commits 6c9af2a and 653e074 had silently regenerated `n2_completeness_final_v1.json` on the 0.10
+  denominator (rotation counted twice) while still labelled 0.9. Recorded, not replaced silently:
+  | quantity | 0.9 (correct; 32a919a and now) | double-counted (6c9af2a, 653e074) |
+  |---|---|---|
+  | rotational F_P, spectroscopic max | 1.1306 % | 1.1182 % |
+  | rotational F_P, ceiling max | 3.528 % | 3.492 % |
+  | vibrational F_P max | 99.984 % | 99.126 % |
+  | DI F_P max | 17.443 % | 17.440 % |
+  All 16 rows now equal the 32a919a rows on every original column; the N₂²⁺ / N²⁺→N³⁺ columns do not involve rotation and are
+  unchanged. Every verdict is the same under the frozen thresholds (rotation still 1.13 % > 1 % → promoted).
+P5-N₂ run statuses frozen (`prereg/p5_n2_run_status_rule_v1.json`, owner decision): PASS / FAIL_VALIDATION / OUT_OF_DOMAIN /
+NUMERICAL_FAILURE. Chemistry-untrustworthy runs are OUT_OF_DOMAIN, not FAIL. A candidate needs scoreable runs at every point under
+the four primary chemistry configs; otherwise it is INCONCLUSIVE / not eligible for promotion in this campaign. f_out = 0 is not relaxed.
