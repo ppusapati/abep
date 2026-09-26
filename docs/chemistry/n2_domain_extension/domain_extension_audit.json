@@ -1,0 +1,5030 @@
+{
+ "id": "n2_domain_extension_audit_v1",
+ "status": "DRAFT_PENDING_OWNER",
+ "date": "2026-09-26",
+ "lane": "DOMX (N2 high-T_e domain-extension evidence audit)",
+ "v1_statement": "The pre-registered P5-N2 v1 vacuum validation is final and permanent: all nine SGB screening candidates INCONCLUSIVE / NOT ELIGIBLE, credible set empty, gate 3 FAIL. This audit re-scores nothing, re-labels nothing, and changes no limit, table, criterion or tolerance. Official statuses are read from hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores.json.",
+ "non_gating": true,
+ "numbers_from": "docs/chemistry/n2_domain_extension/domain_extension_requirements.json (scripts/chemistry/n2_domain_extension_requirements.py); every number here is {value, from} and re-checked by tests/test_n2_domain_extension_audit.py",
+ "verdict_rule": {
+  "name": "rule",
+  "value": {
+   "status": "DRAFT_PENDING_OWNER",
+   "C1_coverage": "share of the table's declared-model Maxwellian rate at L from energies above the last point covered by accessible published cross sections (the table's own sources plus independent sets passing C3) < 1 % (the rate_validity.toml convention, applied to the covered range)",
+   "C2_shape": "for every independent set passing C3, replacing the table's sigma above its own last source point by that set's shape (scaled to the table at the join) changes the rate at L by < 1 %",
+   "C3_join": "the independent set agrees with the table at the table's last source point within the stated uncertainty (combined in quadrature where both are published; the table's alone where the set's is not accessible)",
+   "readings": {
+    "measured": "C1 counts only MEASUREMENT-BASED independent sets: measured, or reconstructed by arithmetic from measured sets (e.g. Winters' neutral points = measured N-atom deposition minus measured dissociative ionization); digitized from a secondary figure allowed",
+    "evaluated": "C1 also counts EVALUATED/recommended sets (secondary reproductions of abstract-only primaries)"
+   },
+   "verdict_map": {
+    "SUPPORTED": "measured reading passes at >= 60 eV; proposal = largest candidate L passing (DRAFT)",
+    "PARTIAL": "only the evaluated reading passes at >= 60 eV, or the table content is supported but a documented omission needs the completeness re-audit",
+    "UNSUPPORTED": "accessible independent evidence passing C3 fails C2 at 60 eV",
+    "UNRESOLVED-BY-SOURCE": "no accessible independent set above the table's last source point passes C3"
+   },
+   "not_a_criterion_change": "C1 re-uses the existing 1 % convention; nothing in v1 (f_out tolerance, limits, criteria) changes"
+  },
+  "from": [
+   "verdict_criteria",
+   "rule"
+  ]
+ },
+ "sources": {
+  "song2023_jpcrd": {
+   "citation": "M.-Y. Song, H. Cho, G. P. Karwasz, V. Kokoouline, J. Tennyson, J. Phys. Chem. Ref. Data 52, 023104 (2023)",
+   "doi": "10.1063/5.0150618",
+   "access": "full text: NSF Public Access Repository copy https://par.nsf.gov/servlets/purl/10526876 (sha256 f35b73d1f5f11291e6d844cdd8e324f99b6f5b17a9661d2568fca59e9604875d), read 2026-09-26",
+   "evidence_class": "evaluated compilation (EVIDENCE.md level 4); tables transcribed, Fig. 19 vector-extracted",
+   "used_for": "Table 9 (dissociation, 12-200 eV), Table 6 (rotational, 0.01-10 eV), Table 7 (v 0->1, 1.00-5.00 eV), Sec. 2.5-2.7 statements, Fig. 19 (dissociation comparison)"
+  },
+  "cosby1993": {
+   "citation": "P. C. Cosby, J. Chem. Phys. 98, 9544 (1993)",
+   "doi": "10.1063/1.464385",
+   "access": "abstract only (Crossref metadata, re-read 2026-09-26: crossed beam, 18.5-148.5 eV measured; recommended values 10-200 eV)",
+   "evidence_class": "measured (primary), abstract-only",
+   "coverage": "measured 18.5-148.5 eV; recommended values 10-200 eV (abstract); Fig. 19 error bars end at 150 eV"
+  },
+  "winters1966": {
+   "citation": "H. F. Winters, J. Chem. Phys. 44, 1472 (1966)",
+   "doi": "10.1063/1.1726879",
+   "access": "abstract only (Crossref metadata, re-read 2026-09-26: total absolute dissociation cross section 0-300 eV, maximum 2e-16 cm^2 near 90 eV); neutral-dissociation points reproduced in Song 2023 Fig. 19 and vector-extracted here",
+   "evidence_class": "reconstructed from measured data -> digitized (vector) from a secondary figure (level 5: indirect). The neutral points are Winters' measured N-atom deposition (N + N+ fragments) minus a separately measured dissociative-ionization cross section (Song 2023 Fig. 19 caption: Tian & Vidal, J. Phys. B 31, 5369 (1998); Sec. 2.7 text: Rapp & Englander-Golden, J. Chem. Phys. 43, 1464 (1965))",
+   "coverage": "total dissociation 0-300 eV (abstract); neutral points 22.6-296.2 eV in Fig. 19",
+   "uncertainty": "+-20 % (Song 2023 Sec. 2.7)",
+   "independence": "Not independent of Table 9 at or below 200 eV: Cosby's recommended values are weighted averages between his and Winters' data (Song 2023 Sec. 2.7). Only the two neutral points above 200 eV (about 246 and 296 eV) are independent coverage."
+  },
+  "majeed_strickland1997": {
+   "citation": "T. Majeed, D. J. Strickland, J. Phys. Chem. Ref. Data 26, 335 (1997)",
+   "doi": "10.1063/1.556008",
+   "access": "abstract only (Crossref metadata; AIP page returned 403). Values used only via secondary reproductions: Song 2023 Fig. 19 curve (dissociation) and the QST open-data files of Tabata et al. 2006 (electronic states)",
+   "evidence_class": "evaluated recommendation -> secondary reproduction (level 5); construction above ~100 eV not verifiable (TBD - requires the MS1997 full text)",
+   "uncertainty": "TBD - requires MS1997 full text",
+   "independence": "For dissociation, MS1997 used Cosby's recommended values (Song 2023 Sec. 2.7), so its agreement with Table 9 at <= 200 eV is by construction; its > 200 eV construction is not accessible (TBD - requires the MS1997 full text)."
+  },
+  "kawaguchi2021": {
+   "citation": "S. Kawaguchi, K. Takahashi, K. Satoh, Plasma Sources Sci. Technol. 30, 035010 (2021)",
+   "doi": "10.1088/1361-6595/abe1d4",
+   "access": "abstract only (IOP article page, not open access); dissociation curve via Song 2023 Fig. 19 (vector-extracted); electronic ICS 'up to 10 keV for 17 states' per Song 2023 Sec. 2.6 (secondary statement). Not taken from LXCat.",
+   "evidence_class": "evaluated (swarm-tested cross-section set) -> secondary reproduction (level 5)",
+   "uncertainty": "TBD - requires the full text"
+  },
+  "tabata2006": {
+   "citation": "T. Tabata, T. Shirai, M. Sataka, H. Kubo, At. Data Nucl. Data Tables 92, 375 (2006); erratum ADNDT 98, 74 (2012)",
+   "doi": "10.1016/j.adt.2006.02.002 (erratum 10.1016/j.adt.2011.06.002, not checked)",
+   "access": "paper not accessed; QST open-data page https://www.qst.go.jp/site/jt60-english/6475.html (analytic-fit Fortran and compiled-data files, read 2026-09-26; sha256 in the script)",
+   "evidence_class": "model-derived (analytic fits to compiled data) and secondary compiled data",
+   "coverage": "fit ranges: n2-61 N+N 12-200 eV; n2-10/11/12/13/16/35 (A,B,W,B',w,C) up to 200 eV; n2-14/15 (a',a) up to 1000 eV; n2-5 v0->1 1.05-48.5 eV; n2-4 rot j0->2 0.0296-2.94 eV"
+  },
+  "itikawa2006": {
+   "citation": "Y. Itikawa, J. Phys. Chem. Ref. Data 35, 31 (2006)",
+   "doi": "10.1063/1.1937426",
+   "access": "abstract only (Crossref); content cited via Song 2023 Sec. 2.5-2.7 (secondary)",
+   "evidence_class": "evaluated compilation (not accessed)"
+  },
+  "itikawa1986": {
+   "citation": "Y. Itikawa et al., J. Phys. Chem. Ref. Data 15, 985 (1986) (as cited in the QST n2-4/n2-5 data files; full author list: verify)",
+   "access": "not accessed; data points reproduced in the QST n2-5 file and fitted by Tabata n2-5",
+   "evidence_class": "evaluated compilation -> secondary reproduction (level 5)"
+  },
+  "johnson2005": {
+   "citation": "P. V. Johnson, C. P. Malone, I. Kanik, K. Tran, M. A. Khakoo, J. Geophys. Res. 110, A11311 (2005)",
+   "doi": "10.1029/2005JA011295",
+   "access": "abstract (Crossref, re-read 2026-09-26) confirms ICS at 10-100 eV and new a 1Pi_g DCS at 200 eV; Table 2 values = owner transcription in hallthruster_bridge/propellants/sources/johnson2005_table2_ics.tsv",
+   "evidence_class": "measured (EEL DCS integrated), level 4 in the EVIDENCE.md register",
+   "uncertainty": "per point, Table 2 (16-35 % at the last point)"
+  },
+  "su2021": {
+   "citation": "H. Su, X. Cheng, H. Zhang, J. Tennyson, J. Phys. B 54, 115203 (2021)",
+   "doi": "10.1088/1361-6455/abf9f0",
+   "access": "CC BY 4.0 supplementary data committed in hallthruster_bridge/propellants/sources/su2021/ (0.01-20 eV)",
+   "evidence_class": "model-derived (R-matrix)"
+  },
+  "laporta2014": {
+   "citation": "V. Laporta, D. A. Little, R. Celiberto, J. Tennyson, Plasma Sources Sci. Technol. 23, 065002 (2014)",
+   "doi": "10.1088/0963-0252/23/6/065002",
+   "access": "full text arXiv:1402.3814 (sha256 6995677ca041a9324b3da6750a92c0884e3ca69145699fc986868430fcf34a7a)",
+   "evidence_class": "model-derived (resonant LCP / R-matrix theory); rate fits",
+   "coverage": "resonant cross sections; rate integrals taken to 15 eV ('negligible beyond 15 eV', Sec. III); Eq. (10) fits published without a temperature validity range; Fig. 5b plotted to 50 000 K"
+  },
+  "tanaka1981": {
+   "citation": "H. Tanaka, T. Yamamoto, T. Okada, J. Phys. B 14, 2081 (1981)",
+   "doi": "10.1088/0022-3700/14/12/019",
+   "access": "metadata only (title: v = 0 -> 1 at 3-30 eV); used by Itikawa 2006 for 7.5-30 eV per Song 2023 Sec. 2.5",
+   "evidence_class": "measured (not accessed)"
+  },
+  "truhlar1972": {
+   "citation": "D. G. Truhlar, J. Chem. Phys. 57, 3260 (1972) (single author per Crossref metadata, re-read 2026-09-26)",
+   "doi": "10.1063/1.1678748",
+   "access": "abstract only (Crossref)",
+   "evidence_class": "model-derived (polarized Born) compared with measured DCS",
+   "statement": "non-resonant vibrational excitation of N2 at 30-83 eV; 'dominated by the polarization interaction at 33-50 eV' (abstract)"
+  },
+  "samaddar2022": {
+   "citation": "S. Samaddar, S. M. Bailey, J. Yonker, K. Venkataramani, B. Thurairajah, arXiv:2209.11185 (peer-reviewed version: verify)",
+   "access": "full text (arXiv PDF, sha256 508ef2c11a79ee7cdc25b7536bf59f9d4e6c3c4a13db6941f0bc0b44b3e4b154)",
+   "evidence_class": "model-derived (Tabata-form fits of the Johnson 2005 / Malone data, extrapolated); NOT independent of Johnson above 100 eV; not used for verdicts"
+  },
+  "zipf_mclaughlin1978": {
+   "citation": "E. C. Zipf, R. W. McLaughlin, Planet. Space Sci. 26, 449 (1978)",
+   "access": "not accessed; Song 2023 Sec. 2.7 quotes up to 0.6e-16 cm^2 at 200 eV from emission + predissociation",
+   "evidence_class": "inferred (emission x dissociation probabilities), secondary statement; not used for verdicts"
+  },
+  "brunger_buckman2002": {
+   "citation": "M. J. Brunger, S. J. Buckman, Phys. Rep. 357, 215 (2002)",
+   "doi": "10.1016/S0370-1573(01)00032-1",
+   "access": "metadata only; not used",
+   "evidence_class": "review (not accessed)"
+  },
+  "liu2017": {
+   "citation": "Y. W. Liu et al., J. Geophys. Res. Space Phys. 122, 3459 (2017)",
+   "doi": "10.1002/2016JA023857",
+   "access": "metadata only; cited for the dipole-allowed states (completeness)",
+   "evidence_class": "measured + Born-scaled (not accessed)"
+  },
+  "malone2009_2012": {
+   "citation": "C. P. Malone et al., J. Phys. B 42, 225202 (2009); Phys. Rev. A 85, 062704 (2012) (as cited by Song 2023 refs. 90, 92)",
+   "access": "not accessed",
+   "evidence_class": "measured ICS of higher states, 13/17.5-100 eV (per Song 2023 Sec. 2.6)"
+  },
+  "hallthruster_jl": {
+   "citation": "HallThruster.jl v0.23.1 (pinned commit bfb3019f...), src/collisions/collision_frequencies.jl and reactions.jl (read-only)",
+   "evidence_class": "model code",
+   "statement": "rate looked up at 3/2 Tev on a 0-255 eV mean-energy grid"
+  }
+ },
+ "v1_summary_numbers": [
+  {
+   "name": "n_runs_out_of_domain",
+   "value": 714,
+   "from": [
+    "v1_inventory",
+    "n_runs_out_of_domain"
+   ]
+  },
+  {
+   "name": "n_capped_tables",
+   "value": 21,
+   "from": [
+    "v1_inventory",
+    "n_capped_tables"
+   ]
+  },
+  {
+   "name": "n_ood_runs_dissociation_beyond",
+   "value": 714,
+   "from": [
+    "v1_inventory",
+    "n_ood_runs_dissociation_beyond"
+   ]
+  },
+  {
+   "name": "n_ood_runs_dissociation_only_beyond",
+   "value": 36,
+   "from": [
+    "v1_inventory",
+    "n_ood_runs_dissociation_only_beyond"
+   ]
+  },
+  {
+   "name": "tables_with_255eV_limit_beyond",
+   "value": [],
+   "from": [
+    "v1_inventory",
+    "tables_with_255eV_limit_beyond"
+   ]
+  },
+  {
+   "name": "max_time_averaged_Te_max_eV_ood",
+   "value": 25.2481,
+   "from": [
+    "v1_inventory",
+    "Te_max_eV_time_averaged",
+    "ood",
+    "max"
+   ]
+  },
+  {
+   "name": "proxy_caveat_n_in_domain_runs_with_eps_active_above_45",
+   "value": 175,
+   "from": [
+    "hypothetical_coverage",
+    "proxy_caveat_n_in_domain_runs_with_eps_active_above_45"
+   ]
+  }
+ ],
+ "hypothetical_coverage_numbers": [
+  {
+   "name": "all_capped_tables_at_L_60",
+   "value": 211,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "60",
+    "all_capped_tables_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_dissociation_at_L_60",
+   "value": 0,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "60",
+    "all_capped_except_dissociation_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_rotational_at_L_60",
+   "value": 6,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "60",
+    "all_capped_except_rotational_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_vibrational_at_L_60",
+   "value": 54,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "60",
+    "all_capped_except_vibrational_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_electronic_at_L_60",
+   "value": 7,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "60",
+    "all_capped_except_electronic_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_tables_at_L_75",
+   "value": 423,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "75",
+    "all_capped_tables_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_dissociation_at_L_75",
+   "value": 0,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "75",
+    "all_capped_except_dissociation_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_rotational_at_L_75",
+   "value": 22,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "75",
+    "all_capped_except_rotational_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_vibrational_at_L_75",
+   "value": 105,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "75",
+    "all_capped_except_vibrational_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_electronic_at_L_75",
+   "value": 25,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "75",
+    "all_capped_except_electronic_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_tables_at_L_90",
+   "value": 609,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "90",
+    "all_capped_tables_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_dissociation_at_L_90",
+   "value": 0,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "90",
+    "all_capped_except_dissociation_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_rotational_at_L_90",
+   "value": 30,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "90",
+    "all_capped_except_rotational_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_vibrational_at_L_90",
+   "value": 149,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "90",
+    "all_capped_except_vibrational_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_electronic_at_L_90",
+   "value": 33,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "90",
+    "all_capped_except_electronic_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_tables_at_L_120",
+   "value": 710,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "120",
+    "all_capped_tables_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_dissociation_at_L_120",
+   "value": 0,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "120",
+    "all_capped_except_dissociation_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_rotational_at_L_120",
+   "value": 37,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "120",
+    "all_capped_except_rotational_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_vibrational_at_L_120",
+   "value": 171,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "120",
+    "all_capped_except_vibrational_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_electronic_at_L_120",
+   "value": 40,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "120",
+    "all_capped_except_electronic_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_tables_at_L_150",
+   "value": 714,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "150",
+    "all_capped_tables_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_dissociation_at_L_150",
+   "value": 0,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "150",
+    "all_capped_except_dissociation_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_rotational_at_L_150",
+   "value": 37,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "150",
+    "all_capped_except_rotational_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_vibrational_at_L_150",
+   "value": 171,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "150",
+    "all_capped_except_vibrational_at_L",
+    "newly_covered_ood_runs"
+   ]
+  },
+  {
+   "name": "all_capped_except_electronic_at_L_150",
+   "value": 40,
+   "from": [
+    "hypothetical_coverage",
+    "limits",
+    "150",
+    "all_capped_except_electronic_at_L",
+    "newly_covered_ood_runs"
+   ]
+  }
+ ],
+ "draft_proposals": {
+  "status": "DRAFT_PENDING_OWNER",
+  "limits": {
+   "dissociation_N2.dat": 60.0
+  },
+  "numbers": [
+   {
+    "name": "newly_covered_ood_runs_if_applied",
+    "value": 6,
+    "from": [
+     "draft_proposed_limits_mean_energy_eV",
+     "hypothetical_coverage_if_applied",
+     "newly_covered_ood_runs"
+    ]
+   },
+   {
+    "name": "newly_covered_ood_runs_evaluated_reading",
+    "value": 22,
+    "from": [
+     "draft_proposed_limits_mean_energy_eV",
+     "hypothetical_coverage_evaluated_reading",
+     "newly_covered_ood_runs"
+    ]
+   }
+  ],
+  "note": "a v2 limited to evidence-supported extensions would leave almost every v1 OUT_OF_DOMAIN run out of domain (proxy count); see the v2 outline"
+ },
+ "tables": {
+  "dissociation_N2.dat": {
+   "family": "dissociation",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "JPCRD 2023 Table 9 ends at 200 eV; held tail carries 0.95 % of the rate at 45 eV mean energy (T_e = 30 eV), 3.8 % at 60 eV (scripts/build_n2_dissociation_table.py)",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "song2023_jpcrd",
+    "cosby1993",
+    "winters1966"
+   ],
+   "provenance_refs": [
+    "hallthruster_bridge/propellants/PROVENANCE.md (dissociation_N2.dat row)",
+    "scripts/build_n2_dissociation_table.py"
+   ],
+   "source_coverage": [
+    {
+     "source": "song2023_jpcrd",
+     "range_eV": [
+      12,
+      200
+     ],
+     "what": "Table 9 recommended N + N cross section (16 points), +-20 %",
+     "evidence_class": "evaluated measurement, transcribed"
+    },
+    {
+     "source": "cosby1993",
+     "range_eV": [
+      18.5,
+      148.5
+     ],
+     "what": "Cosby's own crossed-beam measurement; the recommended set (weighted average with Winters) is given 10-200 eV",
+     "evidence_class": "measured (abstract-only access)"
+    },
+    {
+     "source": "winters1966",
+     "range_eV": [
+      0,
+      300
+     ],
+     "what": "total dissociation (N + N+ fragments); neutral part by subtracting dissociative ionization (Song Sec. 2.7)",
+     "evidence_class": "measured total (N + N+) deposition; neutral part reconstructed (abstract-only access)"
+    }
+   ],
+   "construction_above_source": "sigma held at the 200 eV value (0.95e-16 cm^2) at all higher energies ('hold' tail), energy loss 12.14 eV fixed",
+   "independent_evidence": [
+    {
+     "source": "winters1966",
+     "coverage_eV": [
+      22.6,
+      296.2
+     ],
+     "evidence_class": "reconstructed from measured data -> digitized (vector, Song Fig. 19)",
+     "uncertainty": "+-20 %",
+     "agreement": "normalisation 1.10-1.25 x Cosby at 50-200 eV (within the combined +-28 %); shape above 200 eV falls (sigma(250)/sigma(200) = 0.914): the held tail is above it",
+     "numbers": [
+      {
+       "name": "over_Cosby_at_200eV",
+       "value": 1.24883,
+       "from": [
+        "independent_comparisons",
+        "dissociation_song2023_fig19",
+        "series",
+        "Winters1966_N_points",
+        "points",
+        "200",
+        "over_Cosby_Table9"
+       ]
+      },
+      {
+       "name": "shape_250_over_200",
+       "value": 0.914009,
+       "from": [
+        "independent_comparisons",
+        "dissociation_song2023_fig19",
+        "series",
+        "Winters1966_N_points",
+        "points",
+        "250",
+        "shape_sigma_over_sigma200"
+       ]
+      }
+     ],
+     "independence": "not independent at the 200 eV join (Table 9 averages Cosby and Winters); independent above 200 eV (2 points: ~246, ~296 eV)"
+    },
+    {
+     "source": "majeed_strickland1997",
+     "coverage_eV": [
+      11.0,
+      974.6
+     ],
+     "evidence_class": "evaluated -> digitized (vector, Song Fig. 19)",
+     "uncertainty": "TBD - requires MS1997 full text",
+     "agreement": "0.90-1.02 x Cosby at 50-200 eV; falls above 200 eV (0.82 at 300 eV, 0.61 at 500 eV relative to 200 eV)",
+     "numbers": [
+      {
+       "name": "over_Cosby_at_200eV",
+       "value": 0.89999,
+       "from": [
+        "independent_comparisons",
+        "dissociation_song2023_fig19",
+        "series",
+        "MS1997_curve",
+        "points",
+        "200",
+        "over_Cosby_Table9"
+       ]
+      },
+      {
+       "name": "shape_300_over_200",
+       "value": 0.816199,
+       "from": [
+        "independent_comparisons",
+        "dissociation_song2023_fig19",
+        "series",
+        "MS1997_curve",
+        "points",
+        "300",
+        "shape_sigma_over_sigma200"
+       ]
+      },
+      {
+       "name": "shape_500_over_200",
+       "value": 0.60556,
+       "from": [
+        "independent_comparisons",
+        "dissociation_song2023_fig19",
+        "series",
+        "MS1997_curve",
+        "points",
+        "500",
+        "shape_sigma_over_sigma200"
+       ]
+      }
+     ],
+     "independence": "not independent at the 200 eV join (MS1997 used Cosby's recommended values); > 200 eV construction TBD"
+    },
+    {
+     "source": "kawaguchi2021",
+     "coverage_eV": [
+      14.0,
+      1002.0
+     ],
+     "evidence_class": "evaluated -> digitized (vector, Song Fig. 19)",
+     "uncertainty": "TBD - requires the full text",
+     "agreement": "0.75-0.83 x Cosby at 50-200 eV (outside +-20 % at 200 eV: fails C3); shape above 200 eV as MS1997 (0.81 at 300 eV, 0.62 at 500 eV)",
+     "numbers": [
+      {
+       "name": "over_Cosby_at_200eV",
+       "value": 0.748661,
+       "from": [
+        "independent_comparisons",
+        "dissociation_song2023_fig19",
+        "series",
+        "Kawaguchi2021_curve",
+        "points",
+        "200",
+        "over_Cosby_Table9"
+       ]
+      },
+      {
+       "name": "shape_300_over_200",
+       "value": 0.810435,
+       "from": [
+        "independent_comparisons",
+        "dissociation_song2023_fig19",
+        "series",
+        "Kawaguchi2021_curve",
+        "points",
+        "300",
+        "shape_sigma_over_sigma200"
+       ]
+      }
+     ]
+    },
+    {
+     "source": "tabata2006",
+     "coverage_eV": [
+      12,
+      200
+     ],
+     "evidence_class": "model-derived fit to the Cosby set",
+     "uncertainty": "fit",
+     "agreement": "not independent (fitted to the same Cosby values) and no coverage above 200 eV (n2-61 EMAX = 0.2 keV)",
+     "numbers": []
+    },
+    {
+     "source": "zipf_mclaughlin1978",
+     "coverage_eV": null,
+     "evidence_class": "inferred, secondary statement",
+     "uncertainty": "not accessed",
+     "agreement": "Song quotes up to 0.6e-16 cm^2 at 200 eV (below Cosby's 0.95); not used",
+     "numbers": []
+    }
+   ],
+   "extraction_check": [
+    {
+     "name": "fig19_diamonds_vs_Table9_max_abs_dsigma_1e-16cm2",
+     "value": 0.00087,
+     "from": [
+      "independent_comparisons",
+      "dissociation_song2023_fig19",
+      "calibration_vs_Table9",
+      "max_abs_dsigma_1e-16cm2"
+     ]
+    },
+    {
+     "name": "fig19_diamonds_vs_Table9_max_rel_dE",
+     "value": 0.0010185,
+     "from": [
+      "independent_comparisons",
+      "dissociation_song2023_fig19",
+      "calibration_vs_Table9",
+      "max_rel_dE"
+     ]
+    }
+   ],
+   "criteria_numbers": [
+    {
+     "name": "C1_share_beyond_296eV_at_60eV",
+     "value": 0.00473828,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "dissociation_N2.dat",
+      "by_limit",
+      "60",
+      "coverage_share_measured_reading"
+     ]
+    },
+    {
+     "name": "C1_share_beyond_296eV_at_75eV",
+     "value": 0.0168772,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "dissociation_N2.dat",
+      "by_limit",
+      "75",
+      "coverage_share_measured_reading"
+     ]
+    },
+    {
+     "name": "C2_max_shape_impact_at_60eV",
+     "value": 0.0033773,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "dissociation_N2.dat",
+      "by_limit",
+      "60",
+      "max_abs_shape_impact_passing_sets"
+     ]
+    },
+    {
+     "name": "C2_max_shape_impact_at_75eV",
+     "value": 0.00927776,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "dissociation_N2.dat",
+      "by_limit",
+      "75",
+      "max_abs_shape_impact_passing_sets"
+     ]
+    },
+    {
+     "name": "C2_max_shape_impact_at_90eV",
+     "value": 0.0185631,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "dissociation_N2.dat",
+      "by_limit",
+      "90",
+      "max_abs_shape_impact_passing_sets"
+     ]
+    },
+    {
+     "name": "L_star_measured_coverage_eV",
+     "value": 67.9612,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "dissociation_N2.dat",
+      "L_star_measured_coverage_eV"
+     ]
+    },
+    {
+     "name": "max_candidate_L_measured_reading",
+     "value": 60.0,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "dissociation_N2.dat",
+      "max_candidate_L_measured_reading"
+     ]
+    },
+    {
+     "name": "max_candidate_L_evaluated_reading",
+     "value": 75.0,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "dissociation_N2.dat",
+      "max_candidate_L_evaluated_reading"
+     ]
+    }
+   ],
+   "verdict": "SUPPORTED",
+   "proposed_extended_limit_mean_energy_eV": 60.0,
+   "reasoning": "Three published descriptions above 200 eV are accessible, all via the vector Fig. 19 of Song 2023: one measurement-based (Winters' neutral points, reconstructed from measured data, to 296 eV) and two evaluated (to ~1 keV). None is independent of Table 9 at the 200 eV join (Table 9 averages Cosby and Winters; MS1997 used Cosby), so C3 there is a consistency check, not an independent test; the independent content is the > 200 eV part only (for Winters, two points). All three fall above 200 eV, so the table's held tail is an upper envelope. Winters (measurement-based, within the combined uncertainty at 200 eV) covers the energies carrying the rate at 60 eV to within 0.47 % (C1), and replacing the held tail by any accessible shape changes the 60 eV rate by <= 0.35 % (C2). 75 eV passes only in the evaluated reading (Winters ends at 296 eV; C1 1.7 %), with a shape impact of 0.93 % that is within 0.1 % of the 1 % convention; it is not proposed. Neither 1e-6 nor 1e-12 coverage is available at any candidate limit from a measured set (E_req(1e-6) at 60 eV = 664 eV).",
+   "conditions": [
+    "table unchanged (no rebuild); proposal concerns the validity limit only",
+    "the fixed 12.14 eV energy loss is supported by Cosby's 48.5 eV translational spectra only; its model uncertainty 9.75-13.33 eV stays carried",
+    "Kawaguchi 2021 is 25 % below Cosby at 200 eV (outside +-20 %): a normalisation disagreement that also exists inside the v1 domain (0.76 at 50 eV); recorded, not resolved here",
+    "the SUPPORTED verdict rests on two reconstructed Winters points above 200 eV (about 246 and 296 eV), digitized from a secondary figure; whether that suffices is an owner decision (D-X12)"
+   ],
+   "what_would_change_the_verdict": [
+    "measured data between 296 eV and ~330 eV (E_req(1e-2) at 75 eV is 327 eV); 90 eV also fails C2 for the unchanged table (held-tail bias 1.86 %)",
+    "the MS1997 / Kawaguchi full texts showing how their >200 eV parts were built (evaluated reading)"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 714,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "dissociation_N2.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "dissociation_N2.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 71.0882,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "dissociation_N2.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.046152,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "dissociation_N2.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_45eV",
+     "value": 0.00953517,
+     "from": [
+      "requirements",
+      "per_table",
+      "dissociation_N2.dat",
+      "by_limit",
+      "45",
+      "share_above_last_point_hold"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_60eV",
+     "value": 0.0374634,
+     "from": [
+      "requirements",
+      "per_table",
+      "dissociation_N2.dat",
+      "by_limit",
+      "60",
+      "share_above_last_point_hold"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_90eV",
+     "value": 0.140524,
+     "from": [
+      "requirements",
+      "per_table",
+      "dissociation_N2.dat",
+      "by_limit",
+      "90",
+      "share_above_last_point_hold"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_150eV",
+     "value": 0.377465,
+     "from": [
+      "requirements",
+      "per_table",
+      "dissociation_N2.dat",
+      "by_limit",
+      "150",
+      "share_above_last_point_hold"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_60eV",
+     "value": {
+      "0.01": 262.026,
+      "1e-06": 664.308,
+      "1e-12": 1240.85
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "dissociation_N2.dat",
+      "by_limit",
+      "60",
+      "hold_envelope_E_req_eV"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_150eV",
+     "value": {
+      "0.01": 655.441,
+      "1e-06": 1661.12,
+      "1e-12": 3102.46
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "dissociation_N2.dat",
+      "by_limit",
+      "150",
+      "hold_envelope_E_req_eV"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_A3Sigma_u.dat": {
+   "family": "electronic",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "su2021",
+    "johnson2005"
+   ],
+   "provenance_refs": [
+    "hallthruster_bridge/propellants/PROVENANCE.md (excitation_N2_{...}.dat row)",
+    "scripts/build_n2_electronic_excitation_tables.py",
+    "hallthruster_bridge/propellants/sources/su2021/",
+    "hallthruster_bridge/propellants/sources/johnson2005_table2_ics.tsv"
+   ],
+   "source_coverage": [
+    {
+     "source": "su2021",
+     "range_eV": [
+      0.01,
+      20
+     ],
+     "what": "R-matrix ICS used below 20 eV",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "johnson2005",
+     "range_eV": [
+      10,
+      100.0
+     ],
+     "what": "measured ICS used from 20 eV",
+     "evidence_class": "measured"
+    }
+   ],
+   "construction_above_source": "power law sigma_last (E/E_last)^-p from Johnson's last two points (p = 2.29311), to 10 keV, zero beyond (declared model)",
+   "independent_evidence": [
+    {
+     "source": "majeed_strickland1997",
+     "coverage_eV": [
+      6.5,
+      200.0
+     ],
+     "evidence_class": "evaluated -> secondary numeric reproduction (QST files of Tabata 2006)",
+     "uncertainty": "TBD - requires MS1997 full text",
+     "agreement": "disagrees with Johnson's measured value at the 100 eV join beyond Johnson's stated uncertainty (fails C3), so it can neither support nor refute the continuation",
+     "numbers": [
+      {
+       "name": "MS1997_over_table_at_100eV",
+       "value": 0.351648,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_A3Sigma_u.dat",
+        "points",
+        "100",
+        "MS1997_over_table"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_min_E_ge_100",
+       "value": 0.215413,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_A3Sigma_u.dat",
+        "MS1997_over_table_E_ge_100",
+        "min"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_max_E_ge_100",
+       "value": 0.351648,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_A3Sigma_u.dat",
+        "MS1997_over_table_E_ge_100",
+        "max"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_shape_at_60eV",
+       "value": -0.0050066,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_A3Sigma_u.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "shape",
+        "60"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_absolute_at_60eV",
+       "value": -0.02186,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_A3Sigma_u.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "absolute",
+        "60"
+       ]
+      }
+     ]
+    },
+    {
+     "source": "tabata2006",
+     "coverage_eV": [
+      6.5,
+      200.0
+     ],
+     "evidence_class": "model-derived analytic fit (to MS1997, Trajmar 1983, Campbell 2001 and others per the QST data file)",
+     "uncertainty": "fit",
+     "agreement": "not independent of MS1997; tracks it (see points)",
+     "numbers": []
+    },
+    {
+     "source": "kawaguchi2021",
+     "coverage_eV": "up to 10 keV (Song 2023 Sec. 2.6)",
+     "evidence_class": "evaluated (abstract-only)",
+     "uncertainty": "TBD",
+     "agreement": "not accessible numerically (not taken from LXCat)",
+     "numbers": []
+    },
+    {
+     "source": "samaddar2022",
+     "coverage_eV": "fits extrapolated to keV",
+     "evidence_class": "model-derived, not independent of Johnson 2005",
+     "agreement": "not used",
+     "numbers": []
+    }
+   ],
+   "criteria_numbers": [
+    {
+     "name": "L_star_own_sources_eV",
+     "value": 39.9781,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_A3Sigma_u.dat",
+      "L_star_own_sources_eV"
+     ]
+    },
+    {
+     "name": "max_candidate_L_measured_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_A3Sigma_u.dat",
+      "max_candidate_L_measured_reading"
+     ]
+    },
+    {
+     "name": "max_candidate_L_evaluated_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_A3Sigma_u.dat",
+      "max_candidate_L_evaluated_reading"
+     ]
+    },
+    {
+     "name": "C1_share_beyond_measured_coverage_at_60eV",
+     "value": 0.0310009,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_A3Sigma_u.dat",
+      "by_limit",
+      "60",
+      "coverage_share_measured_reading"
+     ]
+    }
+   ],
+   "verdict": "UNRESOLVED-BY-SOURCE",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The only accessible independent set above Johnson's 100 eV point (MS1997 via the QST files; the Tabata fit follows it) disagrees with Johnson's measured value at 100 eV by more than Johnson's stated uncertainty (C3 fails), so it cannot test the continuation. The modern evaluation that extends the same California EEL data to 10 keV (Kawaguchi 2021) is abstract-only. Under the 1 % convention, the declared continuation already carries more than 1 % of this table's rate at or below 45 eV for several states (context only: this audit proposes no change to any v1 limit).",
+   "own_source_note": null,
+   "what_would_change_the_verdict": [
+    "numerical access to Kawaguchi 2021 ICS above 100 eV (full text, not via LXCat)",
+    "measured ICS above 100 eV for this state",
+    "Itikawa 2006 full text (recommended ICS and their range)"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 636,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_A3Sigma_u.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_A3Sigma_u.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 68.5788,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_A3Sigma_u.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.017035,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_A3Sigma_u.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_45eV",
+     "value": 0.0145767,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_A3Sigma_u.dat",
+      "by_limit",
+      "45",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_60eV",
+     "value": 0.0310009,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_A3Sigma_u.dat",
+      "by_limit",
+      "60",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_90eV",
+     "value": 0.0670253,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_A3Sigma_u.dat",
+      "by_limit",
+      "90",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_150eV",
+     "value": 0.128452,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_A3Sigma_u.dat",
+      "by_limit",
+      "150",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_60eV",
+     "value": {
+      "0.01": 191.531,
+      "1e-06": 600.656,
+      "1e-12": 1179.01
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_A3Sigma_u.dat",
+      "by_limit",
+      "60",
+      "hold_envelope_E_req_eV"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_150eV",
+     "value": {
+      "0.01": 580.548,
+      "1e-06": 1592.7,
+      "1e-12": 3035.91
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_A3Sigma_u.dat",
+      "by_limit",
+      "150",
+      "hold_envelope_E_req_eV"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_B3Pi_g.dat": {
+   "family": "electronic",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "su2021",
+    "johnson2005"
+   ],
+   "provenance_refs": [
+    "hallthruster_bridge/propellants/PROVENANCE.md (excitation_N2_{...}.dat row)",
+    "scripts/build_n2_electronic_excitation_tables.py",
+    "hallthruster_bridge/propellants/sources/su2021/",
+    "hallthruster_bridge/propellants/sources/johnson2005_table2_ics.tsv"
+   ],
+   "source_coverage": [
+    {
+     "source": "su2021",
+     "range_eV": [
+      0.01,
+      20
+     ],
+     "what": "R-matrix ICS used below 20 eV",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "johnson2005",
+     "range_eV": [
+      10,
+      100.0
+     ],
+     "what": "measured ICS used from 20 eV",
+     "evidence_class": "measured"
+    }
+   ],
+   "construction_above_source": "power law sigma_last (E/E_last)^-p from Johnson's last two points (p = 2.86754), to 10 keV, zero beyond (declared model)",
+   "independent_evidence": [
+    {
+     "source": "majeed_strickland1997",
+     "coverage_eV": [
+      7.6,
+      200.0
+     ],
+     "evidence_class": "evaluated -> secondary numeric reproduction (QST files of Tabata 2006)",
+     "uncertainty": "TBD - requires MS1997 full text",
+     "agreement": "disagrees with Johnson's measured value at the 100 eV join beyond Johnson's stated uncertainty (fails C3), so it can neither support nor refute the continuation",
+     "numbers": [
+      {
+       "name": "MS1997_over_table_at_100eV",
+       "value": 0.691928,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_B3Pi_g.dat",
+        "points",
+        "100",
+        "MS1997_over_table"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_min_E_ge_100",
+       "value": 0.360652,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_B3Pi_g.dat",
+        "MS1997_over_table_E_ge_100",
+        "min"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_max_E_ge_100",
+       "value": 0.691928,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_B3Pi_g.dat",
+        "MS1997_over_table_E_ge_100",
+        "max"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_shape_at_60eV",
+       "value": -0.00106765,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_B3Pi_g.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "shape",
+        "60"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_absolute_at_60eV",
+       "value": -0.0052502,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_B3Pi_g.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "absolute",
+        "60"
+       ]
+      }
+     ]
+    },
+    {
+     "source": "tabata2006",
+     "coverage_eV": [
+      7.6,
+      200.0
+     ],
+     "evidence_class": "model-derived analytic fit (to MS1997, Trajmar 1983, Campbell 2001 and others per the QST data file)",
+     "uncertainty": "fit",
+     "agreement": "not independent of MS1997; tracks it (see points)",
+     "numbers": []
+    },
+    {
+     "source": "kawaguchi2021",
+     "coverage_eV": "up to 10 keV (Song 2023 Sec. 2.6)",
+     "evidence_class": "evaluated (abstract-only)",
+     "uncertainty": "TBD",
+     "agreement": "not accessible numerically (not taken from LXCat)",
+     "numbers": []
+    },
+    {
+     "source": "samaddar2022",
+     "coverage_eV": "fits extrapolated to keV",
+     "evidence_class": "model-derived, not independent of Johnson 2005",
+     "agreement": "not used",
+     "numbers": []
+    }
+   ],
+   "criteria_numbers": [
+    {
+     "name": "L_star_own_sources_eV",
+     "value": 51.4429,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_B3Pi_g.dat",
+      "L_star_own_sources_eV"
+     ]
+    },
+    {
+     "name": "max_candidate_L_measured_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_B3Pi_g.dat",
+      "max_candidate_L_measured_reading"
+     ]
+    },
+    {
+     "name": "max_candidate_L_evaluated_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_B3Pi_g.dat",
+      "max_candidate_L_evaluated_reading"
+     ]
+    },
+    {
+     "name": "C1_share_beyond_measured_coverage_at_60eV",
+     "value": 0.0146442,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_B3Pi_g.dat",
+      "by_limit",
+      "60",
+      "coverage_share_measured_reading"
+     ]
+    }
+   ],
+   "verdict": "UNRESOLVED-BY-SOURCE",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The only accessible independent set above Johnson's 100 eV point (MS1997 via the QST files; the Tabata fit follows it) disagrees with Johnson's measured value at 100 eV by more than Johnson's stated uncertainty (C3 fails), so it cannot test the continuation. The modern evaluation that extends the same California EEL data to 10 keV (Kawaguchi 2021) is abstract-only. Under the 1 % convention, the declared continuation already carries more than 1 % of this table's rate at or below 45 eV for several states (context only: this audit proposes no change to any v1 limit).",
+   "own_source_note": "Johnson's own measured coverage (to 100 eV) keeps the continuation below 1 % of the rate up to 51.4 eV mean energy (L* own): not a candidate limit, not independent evidence, and not proposed.",
+   "what_would_change_the_verdict": [
+    "numerical access to Kawaguchi 2021 ICS above 100 eV (full text, not via LXCat)",
+    "measured ICS above 100 eV for this state",
+    "Itikawa 2006 full text (recommended ICS and their range)"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 633,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_B3Pi_g.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_B3Pi_g.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 68.4561,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_B3Pi_g.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.0159527,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_B3Pi_g.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_45eV",
+     "value": 0.00683795,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_B3Pi_g.dat",
+      "by_limit",
+      "45",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_60eV",
+     "value": 0.0146442,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_B3Pi_g.dat",
+      "by_limit",
+      "60",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_90eV",
+     "value": 0.0319661,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_B3Pi_g.dat",
+      "by_limit",
+      "90",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_150eV",
+     "value": 0.0617944,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_B3Pi_g.dat",
+      "by_limit",
+      "150",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_60eV",
+     "value": {
+      "0.01": 161.676,
+      "1e-06": 574.666,
+      "1e-12": 1153.84
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_B3Pi_g.dat",
+      "by_limit",
+      "60",
+      "hold_envelope_E_req_eV"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_150eV",
+     "value": {
+      "0.01": 531.797,
+      "1e-06": 1548.75,
+      "1e-12": 2993.22
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_B3Pi_g.dat",
+      "by_limit",
+      "150",
+      "hold_envelope_E_req_eV"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_Bprime3Sigma_u.dat": {
+   "family": "electronic",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "su2021",
+    "johnson2005"
+   ],
+   "provenance_refs": [
+    "hallthruster_bridge/propellants/PROVENANCE.md (excitation_N2_{...}.dat row)",
+    "scripts/build_n2_electronic_excitation_tables.py",
+    "hallthruster_bridge/propellants/sources/su2021/",
+    "hallthruster_bridge/propellants/sources/johnson2005_table2_ics.tsv"
+   ],
+   "source_coverage": [
+    {
+     "source": "su2021",
+     "range_eV": [
+      0.01,
+      20
+     ],
+     "what": "R-matrix ICS used below 20 eV",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "johnson2005",
+     "range_eV": [
+      10,
+      100.0
+     ],
+     "what": "measured ICS used from 20 eV",
+     "evidence_class": "measured"
+    }
+   ],
+   "construction_above_source": "power law sigma_last (E/E_last)^-p from Johnson's last two points (p = 2.23055), to 10 keV, zero beyond (declared model)",
+   "independent_evidence": [
+    {
+     "source": "majeed_strickland1997",
+     "coverage_eV": [
+      9.0,
+      200.0
+     ],
+     "evidence_class": "evaluated -> secondary numeric reproduction (QST files of Tabata 2006)",
+     "uncertainty": "TBD - requires MS1997 full text",
+     "agreement": "disagrees with Johnson's measured value at the 100 eV join beyond Johnson's stated uncertainty (fails C3), so it can neither support nor refute the continuation",
+     "numbers": [
+      {
+       "name": "MS1997_over_table_at_100eV",
+       "value": 1.91336,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_Bprime3Sigma_u.dat",
+        "points",
+        "100",
+        "MS1997_over_table"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_min_E_ge_100",
+       "value": 0.67765,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_Bprime3Sigma_u.dat",
+        "MS1997_over_table_E_ge_100",
+        "min"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_max_E_ge_100",
+       "value": 1.91336,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_Bprime3Sigma_u.dat",
+        "MS1997_over_table_E_ge_100",
+        "max"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_shape_at_60eV",
+       "value": -0.00580987,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_Bprime3Sigma_u.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "shape",
+        "60"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_absolute_at_60eV",
+       "value": 0.0157585,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_Bprime3Sigma_u.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "absolute",
+        "60"
+       ]
+      }
+     ]
+    },
+    {
+     "source": "tabata2006",
+     "coverage_eV": [
+      9.0,
+      200.0
+     ],
+     "evidence_class": "model-derived analytic fit (to MS1997, Trajmar 1983, Campbell 2001 and others per the QST data file)",
+     "uncertainty": "fit",
+     "agreement": "not independent of MS1997; tracks it (see points)",
+     "numbers": []
+    },
+    {
+     "source": "kawaguchi2021",
+     "coverage_eV": "up to 10 keV (Song 2023 Sec. 2.6)",
+     "evidence_class": "evaluated (abstract-only)",
+     "uncertainty": "TBD",
+     "agreement": "not accessible numerically (not taken from LXCat)",
+     "numbers": []
+    },
+    {
+     "source": "samaddar2022",
+     "coverage_eV": "fits extrapolated to keV",
+     "evidence_class": "model-derived, not independent of Johnson 2005",
+     "agreement": "not used",
+     "numbers": []
+    }
+   ],
+   "criteria_numbers": [
+    {
+     "name": "L_star_own_sources_eV",
+     "value": 40.4787,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "L_star_own_sources_eV"
+     ]
+    },
+    {
+     "name": "max_candidate_L_measured_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "max_candidate_L_measured_reading"
+     ]
+    },
+    {
+     "name": "max_candidate_L_evaluated_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "max_candidate_L_evaluated_reading"
+     ]
+    },
+    {
+     "name": "C1_share_beyond_measured_coverage_at_60eV",
+     "value": 0.0294242,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "by_limit",
+      "60",
+      "coverage_share_measured_reading"
+     ]
+    }
+   ],
+   "verdict": "UNRESOLVED-BY-SOURCE",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The only accessible independent set above Johnson's 100 eV point (MS1997 via the QST files; the Tabata fit follows it) disagrees with Johnson's measured value at 100 eV by more than Johnson's stated uncertainty (C3 fails), so it cannot test the continuation. The modern evaluation that extends the same California EEL data to 10 keV (Kawaguchi 2021) is abstract-only. Under the 1 % convention, the declared continuation already carries more than 1 % of this table's rate at or below 45 eV for several states (context only: this audit proposes no change to any v1 limit).",
+   "own_source_note": null,
+   "what_would_change_the_verdict": [
+    "numerical access to Kawaguchi 2021 ICS above 100 eV (full text, not via LXCat)",
+    "measured ICS above 100 eV for this state",
+    "Itikawa 2006 full text (recommended ICS and their range)"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 651,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 68.9565,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.0192196,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_45eV",
+     "value": 0.0139154,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "by_limit",
+      "45",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_60eV",
+     "value": 0.0294242,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "by_limit",
+      "60",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_90eV",
+     "value": 0.0637676,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "by_limit",
+      "90",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_150eV",
+     "value": 0.123411,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "by_limit",
+      "150",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_60eV",
+     "value": {
+      "0.01": 188.393,
+      "1e-06": 597.891,
+      "1e-12": 1176.33
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "by_limit",
+      "60",
+      "hold_envelope_E_req_eV"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_150eV",
+     "value": {
+      "0.01": 575.086,
+      "1e-06": 1587.75,
+      "1e-12": 3031.1
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_Bprime3Sigma_u.dat",
+      "by_limit",
+      "150",
+      "hold_envelope_E_req_eV"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_C3Pi_u.dat": {
+   "family": "electronic",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "su2021",
+    "johnson2005"
+   ],
+   "provenance_refs": [
+    "hallthruster_bridge/propellants/PROVENANCE.md (excitation_N2_{...}.dat row)",
+    "scripts/build_n2_electronic_excitation_tables.py",
+    "hallthruster_bridge/propellants/sources/su2021/",
+    "hallthruster_bridge/propellants/sources/johnson2005_table2_ics.tsv"
+   ],
+   "source_coverage": [
+    {
+     "source": "su2021",
+     "range_eV": [
+      0.01,
+      20
+     ],
+     "what": "R-matrix ICS used below 20 eV",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "johnson2005",
+     "range_eV": [
+      10,
+      100.0
+     ],
+     "what": "measured ICS used from 20 eV",
+     "evidence_class": "measured"
+    }
+   ],
+   "construction_above_source": "power law sigma_last (E/E_last)^-p from Johnson's last two points (p = 2.4686), to 10 keV, zero beyond (declared model)",
+   "independent_evidence": [
+    {
+     "source": "majeed_strickland1997",
+     "coverage_eV": [
+      12.0,
+      200.0
+     ],
+     "evidence_class": "evaluated -> secondary numeric reproduction (QST files of Tabata 2006)",
+     "uncertainty": "TBD - requires MS1997 full text",
+     "agreement": "disagrees with Johnson's measured value at the 100 eV join beyond Johnson's stated uncertainty (fails C3), so it can neither support nor refute the continuation",
+     "numbers": [
+      {
+       "name": "MS1997_over_table_at_100eV",
+       "value": 1.27306,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_C3Pi_u.dat",
+        "points",
+        "100",
+        "MS1997_over_table"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_min_E_ge_100",
+       "value": 1.27306,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_C3Pi_u.dat",
+        "MS1997_over_table_E_ge_100",
+        "min"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_max_E_ge_100",
+       "value": 2.04224,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_C3Pi_u.dat",
+        "MS1997_over_table_E_ge_100",
+        "max"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_shape_at_60eV",
+       "value": 0.00301477,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_C3Pi_u.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "shape",
+        "60"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_absolute_at_60eV",
+       "value": 0.0097453,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_C3Pi_u.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "absolute",
+        "60"
+       ]
+      }
+     ]
+    },
+    {
+     "source": "tabata2006",
+     "coverage_eV": [
+      11.3,
+      200.0
+     ],
+     "evidence_class": "model-derived analytic fit (to MS1997, Trajmar 1983, Campbell 2001 and others per the QST data file)",
+     "uncertainty": "fit",
+     "agreement": "not independent of MS1997; tracks it (see points)",
+     "numbers": []
+    },
+    {
+     "source": "kawaguchi2021",
+     "coverage_eV": "up to 10 keV (Song 2023 Sec. 2.6)",
+     "evidence_class": "evaluated (abstract-only)",
+     "uncertainty": "TBD",
+     "agreement": "not accessible numerically (not taken from LXCat)",
+     "numbers": []
+    },
+    {
+     "source": "samaddar2022",
+     "coverage_eV": "fits extrapolated to keV",
+     "evidence_class": "model-derived, not independent of Johnson 2005",
+     "agreement": "not used",
+     "numbers": []
+    }
+   ],
+   "criteria_numbers": [
+    {
+     "name": "L_star_own_sources_eV",
+     "value": 44.8375,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_C3Pi_u.dat",
+      "L_star_own_sources_eV"
+     ]
+    },
+    {
+     "name": "max_candidate_L_measured_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_C3Pi_u.dat",
+      "max_candidate_L_measured_reading"
+     ]
+    },
+    {
+     "name": "max_candidate_L_evaluated_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_C3Pi_u.dat",
+      "max_candidate_L_evaluated_reading"
+     ]
+    },
+    {
+     "name": "C1_share_beyond_measured_coverage_at_60eV",
+     "value": 0.0216335,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_C3Pi_u.dat",
+      "by_limit",
+      "60",
+      "coverage_share_measured_reading"
+     ]
+    }
+   ],
+   "verdict": "UNRESOLVED-BY-SOURCE",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The only accessible independent set above Johnson's 100 eV point (MS1997 via the QST files; the Tabata fit follows it) disagrees with Johnson's measured value at 100 eV by more than Johnson's stated uncertainty (C3 fails), so it cannot test the continuation. The modern evaluation that extends the same California EEL data to 10 keV (Kawaguchi 2021) is abstract-only. Under the 1 % convention, the declared continuation already carries more than 1 % of this table's rate at or below 45 eV for several states (context only: this audit proposes no change to any v1 limit).",
+   "own_source_note": null,
+   "what_would_change_the_verdict": [
+    "numerical access to Kawaguchi 2021 ICS above 100 eV (full text, not via LXCat)",
+    "measured ICS above 100 eV for this state",
+    "Itikawa 2006 full text (recommended ICS and their range)"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 642,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_C3Pi_u.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_C3Pi_u.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 68.5788,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_C3Pi_u.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.0178163,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_C3Pi_u.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_45eV",
+     "value": 0.0101098,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_C3Pi_u.dat",
+      "by_limit",
+      "45",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_60eV",
+     "value": 0.0216335,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_C3Pi_u.dat",
+      "by_limit",
+      "60",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_90eV",
+     "value": 0.0474312,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_C3Pi_u.dat",
+      "by_limit",
+      "90",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_150eV",
+     "value": 0.0925732,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_C3Pi_u.dat",
+      "by_limit",
+      "150",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_60eV",
+     "value": {
+      "0.01": 176.361,
+      "1e-06": 587.357,
+      "1e-12": 1166.12
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_C3Pi_u.dat",
+      "by_limit",
+      "60",
+      "hold_envelope_E_req_eV"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_150eV",
+     "value": {
+      "0.01": 556.966,
+      "1e-06": 1571.38,
+      "1e-12": 3015.19
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_C3Pi_u.dat",
+      "by_limit",
+      "150",
+      "hold_envelope_E_req_eV"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_W3Delta_u.dat": {
+   "family": "electronic",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "su2021",
+    "johnson2005"
+   ],
+   "provenance_refs": [
+    "hallthruster_bridge/propellants/PROVENANCE.md (excitation_N2_{...}.dat row)",
+    "scripts/build_n2_electronic_excitation_tables.py",
+    "hallthruster_bridge/propellants/sources/su2021/",
+    "hallthruster_bridge/propellants/sources/johnson2005_table2_ics.tsv"
+   ],
+   "source_coverage": [
+    {
+     "source": "su2021",
+     "range_eV": [
+      0.01,
+      20
+     ],
+     "what": "R-matrix ICS used below 20 eV",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "johnson2005",
+     "range_eV": [
+      10,
+      100.0
+     ],
+     "what": "measured ICS used from 20 eV",
+     "evidence_class": "measured"
+    }
+   ],
+   "construction_above_source": "power law sigma_last (E/E_last)^-p from Johnson's last two points (p = 2.25256), to 10 keV, zero beyond (declared model)",
+   "independent_evidence": [
+    {
+     "source": "majeed_strickland1997",
+     "coverage_eV": [
+      8.0,
+      200.0
+     ],
+     "evidence_class": "evaluated -> secondary numeric reproduction (QST files of Tabata 2006)",
+     "uncertainty": "TBD - requires MS1997 full text",
+     "agreement": "disagrees with Johnson's measured value at the 100 eV join beyond Johnson's stated uncertainty (fails C3), so it can neither support nor refute the continuation",
+     "numbers": [
+      {
+       "name": "MS1997_over_table_at_100eV",
+       "value": 0.455192,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_W3Delta_u.dat",
+        "points",
+        "100",
+        "MS1997_over_table"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_min_E_ge_100",
+       "value": 0.271116,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_W3Delta_u.dat",
+        "MS1997_over_table_E_ge_100",
+        "min"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_max_E_ge_100",
+       "value": 0.455192,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_W3Delta_u.dat",
+        "MS1997_over_table_E_ge_100",
+        "max"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_shape_at_60eV",
+       "value": -0.00340529,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_W3Delta_u.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "shape",
+        "60"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_absolute_at_60eV",
+       "value": -0.0153332,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_W3Delta_u.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "absolute",
+        "60"
+       ]
+      }
+     ]
+    },
+    {
+     "source": "tabata2006",
+     "coverage_eV": [
+      8.0,
+      200.0
+     ],
+     "evidence_class": "model-derived analytic fit (to MS1997, Trajmar 1983, Campbell 2001 and others per the QST data file)",
+     "uncertainty": "fit",
+     "agreement": "not independent of MS1997; tracks it (see points)",
+     "numbers": []
+    },
+    {
+     "source": "kawaguchi2021",
+     "coverage_eV": "up to 10 keV (Song 2023 Sec. 2.6)",
+     "evidence_class": "evaluated (abstract-only)",
+     "uncertainty": "TBD",
+     "agreement": "not accessible numerically (not taken from LXCat)",
+     "numbers": []
+    },
+    {
+     "source": "samaddar2022",
+     "coverage_eV": "fits extrapolated to keV",
+     "evidence_class": "model-derived, not independent of Johnson 2005",
+     "agreement": "not used",
+     "numbers": []
+    }
+   ],
+   "criteria_numbers": [
+    {
+     "name": "L_star_own_sources_eV",
+     "value": 42.7676,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_W3Delta_u.dat",
+      "L_star_own_sources_eV"
+     ]
+    },
+    {
+     "name": "max_candidate_L_measured_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_W3Delta_u.dat",
+      "max_candidate_L_measured_reading"
+     ]
+    },
+    {
+     "name": "max_candidate_L_evaluated_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_W3Delta_u.dat",
+      "max_candidate_L_evaluated_reading"
+     ]
+    },
+    {
+     "name": "C1_share_beyond_measured_coverage_at_60eV",
+     "value": 0.0252992,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_W3Delta_u.dat",
+      "by_limit",
+      "60",
+      "coverage_share_measured_reading"
+     ]
+    }
+   ],
+   "verdict": "UNRESOLVED-BY-SOURCE",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The only accessible independent set above Johnson's 100 eV point (MS1997 via the QST files; the Tabata fit follows it) disagrees with Johnson's measured value at 100 eV by more than Johnson's stated uncertainty (C3 fails), so it cannot test the continuation. The modern evaluation that extends the same California EEL data to 10 keV (Kawaguchi 2021) is abstract-only. Under the 1 % convention, the declared continuation already carries more than 1 % of this table's rate at or below 45 eV for several states (context only: this audit proposes no change to any v1 limit).",
+   "own_source_note": null,
+   "what_would_change_the_verdict": [
+    "numerical access to Kawaguchi 2021 ICS above 100 eV (full text, not via LXCat)",
+    "measured ICS above 100 eV for this state",
+    "Itikawa 2006 full text (recommended ICS and their range)"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 641,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_W3Delta_u.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_W3Delta_u.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 68.5987,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_W3Delta_u.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.0175991,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_W3Delta_u.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_45eV",
+     "value": 0.0117203,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_W3Delta_u.dat",
+      "by_limit",
+      "45",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_60eV",
+     "value": 0.0252992,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_W3Delta_u.dat",
+      "by_limit",
+      "60",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_90eV",
+     "value": 0.0560827,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_W3Delta_u.dat",
+      "by_limit",
+      "90",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_150eV",
+     "value": 0.110751,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_W3Delta_u.dat",
+      "by_limit",
+      "150",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_60eV",
+     "value": {
+      "0.01": 181.475,
+      "1e-06": 591.82,
+      "1e-12": 1170.45
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_W3Delta_u.dat",
+      "by_limit",
+      "60",
+      "hold_envelope_E_req_eV"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_150eV",
+     "value": {
+      "0.01": 566.158,
+      "1e-06": 1579.67,
+      "1e-12": 3023.25
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_W3Delta_u.dat",
+      "by_limit",
+      "150",
+      "hold_envelope_E_req_eV"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_a1Pi_g.dat": {
+   "family": "electronic",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-200 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "su2021",
+    "johnson2005"
+   ],
+   "provenance_refs": [
+    "hallthruster_bridge/propellants/PROVENANCE.md (excitation_N2_{...}.dat row)",
+    "scripts/build_n2_electronic_excitation_tables.py",
+    "hallthruster_bridge/propellants/sources/su2021/",
+    "hallthruster_bridge/propellants/sources/johnson2005_table2_ics.tsv"
+   ],
+   "source_coverage": [
+    {
+     "source": "su2021",
+     "range_eV": [
+      0.01,
+      20
+     ],
+     "what": "R-matrix ICS used below 20 eV",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "johnson2005",
+     "range_eV": [
+      10,
+      200.0
+     ],
+     "what": "measured ICS used from 20 eV (a 1Pi_g: new 200 eV point)",
+     "evidence_class": "measured"
+    }
+   ],
+   "construction_above_source": "power law sigma_last (E/E_last)^-p from Johnson's last two points (p = 1.07019), to 10 keV, zero beyond (declared model)",
+   "independent_evidence": [
+    {
+     "source": "majeed_strickland1997",
+     "coverage_eV": [
+      10.0,
+      1000.0
+     ],
+     "evidence_class": "evaluated -> secondary numeric reproduction (QST files of Tabata 2006)",
+     "uncertainty": "TBD - requires MS1997 full text",
+     "agreement": "agrees at the 200 eV join within Johnson's +-25.5 % and in shape to 1 keV",
+     "numbers": [
+      {
+       "name": "MS1997_over_table_at_200eV",
+       "value": 0.821114,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_a1Pi_g.dat",
+        "points",
+        "200",
+        "MS1997_over_table"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_min_E_ge_100",
+       "value": 0.780726,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_a1Pi_g.dat",
+        "MS1997_over_table_E_ge_100",
+        "min"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_max_E_ge_100",
+       "value": 0.919267,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_a1Pi_g.dat",
+        "MS1997_over_table_E_ge_100",
+        "max"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_shape_at_60eV",
+       "value": 0.000106512,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_a1Pi_g.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "shape",
+        "60"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_absolute_at_60eV",
+       "value": -0.00176375,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_a1Pi_g.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "absolute",
+        "60"
+       ]
+      }
+     ]
+    },
+    {
+     "source": "tabata2006",
+     "coverage_eV": [
+      10.0,
+      1000.0
+     ],
+     "evidence_class": "model-derived analytic fit (to MS1997, Trajmar 1983, Campbell 2001 and others per the QST data file)",
+     "uncertainty": "fit",
+     "agreement": "not independent of MS1997; tracks it (see points)",
+     "numbers": []
+    },
+    {
+     "source": "kawaguchi2021",
+     "coverage_eV": "up to 10 keV (Song 2023 Sec. 2.6)",
+     "evidence_class": "evaluated (abstract-only)",
+     "uncertainty": "TBD",
+     "agreement": "not accessible numerically (not taken from LXCat)",
+     "numbers": []
+    },
+    {
+     "source": "samaddar2022",
+     "coverage_eV": "fits extrapolated to keV",
+     "evidence_class": "model-derived, not independent of Johnson 2005",
+     "agreement": "not used",
+     "numbers": []
+    }
+   ],
+   "criteria_numbers": [
+    {
+     "name": "L_star_own_sources_eV",
+     "value": 59.5464,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_a1Pi_g.dat",
+      "L_star_own_sources_eV"
+     ]
+    },
+    {
+     "name": "max_candidate_L_measured_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_a1Pi_g.dat",
+      "max_candidate_L_measured_reading"
+     ]
+    },
+    {
+     "name": "max_candidate_L_evaluated_reading",
+     "value": 150.0,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_a1Pi_g.dat",
+      "max_candidate_L_evaluated_reading"
+     ]
+    },
+    {
+     "name": "C1_share_beyond_measured_coverage_at_60eV",
+     "value": 0.0103485,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_a1Pi_g.dat",
+      "by_limit",
+      "60",
+      "coverage_share_measured_reading"
+     ]
+    }
+   ],
+   "verdict": "PARTIAL",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "Measured coverage ends at Johnson's 200 eV point, where the declared continuation already carries 1.03 % of the rate at 60 eV (L* = 59.5 eV from own sources). Above 200 eV the only accessible independent set is MS1997 (evaluated, secondary reproduction), which agrees at the join within Johnson's +-25.5 % and follows the continuation's ~1/E shape to 1 keV (shape impact <= 0.34 % up to 150 eV; absolute impact -0.18 % at 60 eV, -1.6 % at 120 eV). The evaluated reading passes to 150 eV; the measured reading passes no candidate limit. No limit is proposed.",
+   "what_would_change_the_verdict": [
+    "a measured a 1Pi_g ICS or emission-derived excitation function above 200 eV (e.g. Ajello & Shemansky 1985, cited by Samaddar et al.; not accessed - verify)",
+    "owner acceptance of evaluated secondary data as coverage (evaluated reading)"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 674,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_a1Pi_g.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_a1Pi_g.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 69.9856,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_a1Pi_g.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.02731,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_a1Pi_g.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_45eV",
+     "value": 0.00230236,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_a1Pi_g.dat",
+      "by_limit",
+      "45",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_60eV",
+     "value": 0.0103485,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_a1Pi_g.dat",
+      "by_limit",
+      "60",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_90eV",
+     "value": 0.0461815,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_a1Pi_g.dat",
+      "by_limit",
+      "90",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_150eV",
+     "value": 0.15271,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_a1Pi_g.dat",
+      "by_limit",
+      "150",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_60eV",
+     "value": {
+      "0.01": 210.81,
+      "1e-06": 617.792,
+      "1e-12": 1195.63
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_a1Pi_g.dat",
+      "by_limit",
+      "60",
+      "hold_envelope_E_req_eV"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_150eV",
+     "value": {
+      "0.01": 591.222,
+      "1e-06": 1602.39,
+      "1e-12": 3045.33
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_a1Pi_g.dat",
+      "by_limit",
+      "150",
+      "hold_envelope_E_req_eV"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_aprime1Sigma_u.dat": {
+   "family": "electronic",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "su2021",
+    "johnson2005"
+   ],
+   "provenance_refs": [
+    "hallthruster_bridge/propellants/PROVENANCE.md (excitation_N2_{...}.dat row)",
+    "scripts/build_n2_electronic_excitation_tables.py",
+    "hallthruster_bridge/propellants/sources/su2021/",
+    "hallthruster_bridge/propellants/sources/johnson2005_table2_ics.tsv"
+   ],
+   "source_coverage": [
+    {
+     "source": "su2021",
+     "range_eV": [
+      0.01,
+      20
+     ],
+     "what": "R-matrix ICS used below 20 eV",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "johnson2005",
+     "range_eV": [
+      10,
+      100.0
+     ],
+     "what": "measured ICS used from 20 eV",
+     "evidence_class": "measured"
+    }
+   ],
+   "construction_above_source": "power law sigma_last (E/E_last)^-p from Johnson's last two points (p = 1.67411), to 10 keV, zero beyond (declared model)",
+   "independent_evidence": [
+    {
+     "source": "majeed_strickland1997",
+     "coverage_eV": [
+      11.0,
+      1000.0
+     ],
+     "evidence_class": "evaluated -> secondary numeric reproduction (QST files of Tabata 2006)",
+     "uncertainty": "TBD - requires MS1997 full text",
+     "agreement": "disagrees with Johnson's measured value at the 100 eV join beyond Johnson's stated uncertainty (fails C3), so it can neither support nor refute the continuation",
+     "numbers": [
+      {
+       "name": "MS1997_over_table_at_100eV",
+       "value": 3.8247,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_aprime1Sigma_u.dat",
+        "points",
+        "100",
+        "MS1997_over_table"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_min_E_ge_100",
+       "value": 3.8247,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_aprime1Sigma_u.dat",
+        "MS1997_over_table_E_ge_100",
+        "min"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_max_E_ge_100",
+       "value": 15.0453,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_aprime1Sigma_u.dat",
+        "MS1997_over_table_E_ge_100",
+        "max"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_shape_at_60eV",
+       "value": 0.00883283,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_aprime1Sigma_u.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "shape",
+        "60"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_absolute_at_60eV",
+       "value": 0.174493,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_aprime1Sigma_u.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "absolute",
+        "60"
+       ]
+      }
+     ]
+    },
+    {
+     "source": "tabata2006",
+     "coverage_eV": [
+      11.0,
+      1000.0
+     ],
+     "evidence_class": "model-derived analytic fit (to MS1997, Trajmar 1983, Campbell 2001 and others per the QST data file)",
+     "uncertainty": "fit",
+     "agreement": "not independent of MS1997; tracks it (see points)",
+     "numbers": []
+    },
+    {
+     "source": "kawaguchi2021",
+     "coverage_eV": "up to 10 keV (Song 2023 Sec. 2.6)",
+     "evidence_class": "evaluated (abstract-only)",
+     "uncertainty": "TBD",
+     "agreement": "not accessible numerically (not taken from LXCat)",
+     "numbers": []
+    },
+    {
+     "source": "samaddar2022",
+     "coverage_eV": "fits extrapolated to keV",
+     "evidence_class": "model-derived, not independent of Johnson 2005",
+     "agreement": "not used",
+     "numbers": []
+    }
+   ],
+   "criteria_numbers": [
+    {
+     "name": "L_star_own_sources_eV",
+     "value": 34.9005,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "L_star_own_sources_eV"
+     ]
+    },
+    {
+     "name": "max_candidate_L_measured_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "max_candidate_L_measured_reading"
+     ]
+    },
+    {
+     "name": "max_candidate_L_evaluated_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "max_candidate_L_evaluated_reading"
+     ]
+    },
+    {
+     "name": "C1_share_beyond_measured_coverage_at_60eV",
+     "value": 0.0498142,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "by_limit",
+      "60",
+      "coverage_share_measured_reading"
+     ]
+    }
+   ],
+   "verdict": "UNRESOLVED-BY-SOURCE",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The only accessible independent set above Johnson's 100 eV point (MS1997 via the QST files; the Tabata fit follows it) disagrees with Johnson's measured value at 100 eV by more than Johnson's stated uncertainty (C3 fails), so it cannot test the continuation. The modern evaluation that extends the same California EEL data to 10 keV (Kawaguchi 2021) is abstract-only. Under the 1 % convention, the declared continuation already carries more than 1 % of this table's rate at or below 45 eV for several states (context only: this audit proposes no change to any v1 limit).",
+   "own_source_note": null,
+   "what_would_change_the_verdict": [
+    "numerical access to Kawaguchi 2021 ICS above 100 eV (full text, not via LXCat)",
+    "measured ICS above 100 eV for this state",
+    "Itikawa 2006 full text (recommended ICS and their range)"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 655,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 69.0427,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.0202489,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_45eV",
+     "value": 0.0235067,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "by_limit",
+      "45",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_60eV",
+     "value": 0.0498142,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "by_limit",
+      "60",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_90eV",
+     "value": 0.108178,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "by_limit",
+      "90",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_150eV",
+     "value": 0.209277,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "by_limit",
+      "150",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_60eV",
+     "value": {
+      "0.01": 206.638,
+      "1e-06": 614.063,
+      "1e-12": 1192.01
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "by_limit",
+      "60",
+      "hold_envelope_E_req_eV"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_150eV",
+     "value": {
+      "0.01": 602.302,
+      "1e-06": 1612.47,
+      "1e-12": 3055.13
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_aprime1Sigma_u.dat",
+      "by_limit",
+      "150",
+      "hold_envelope_E_req_eV"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_rot_j0_to_j2.dat": {
+   "family": "rotational",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "JPCRD 2023 Table 6 (0.01-10 eV), held at the 10 eV value above (declared model), capped at the preregistered T_e <= 30 eV; gross j = 0 loss, no superelastic return",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "song2023_jpcrd"
+   ],
+   "provenance_refs": [
+    "scripts/build_n2_rotational_tables.py",
+    "scripts/audit_n2_completeness_final.py (TABLE6)"
+   ],
+   "source_coverage": [
+    {
+     "source": "song2023_jpcrd",
+     "range_eV": [
+      0.01,
+      10.0
+     ],
+     "what": "Table 6 R-matrix SEP calculation ('present'); j 0->2 still rising at 10 eV",
+     "evidence_class": "model-derived (theory)"
+    }
+   ],
+   "construction_above_source": "sigma held at the 10 eV value (declared model); gross j = 0 loss, no superelastic return",
+   "independent_evidence": [
+    {
+     "source": "tabata2006",
+     "coverage_eV": [
+      0.0296,
+      2.94
+     ],
+     "evidence_class": "model-derived fit to Itikawa 1986 (secondary)",
+     "uncertainty": "fit",
+     "agreement": "no coverage above 2.94 eV",
+     "numbers": []
+    },
+    {
+     "source": "kawaguchi2021",
+     "coverage_eV": "31 rotational excitations; energy range not accessible",
+     "evidence_class": "evaluated (abstract-only)",
+     "uncertainty": "TBD",
+     "agreement": "not accessible",
+     "numbers": []
+    },
+    {
+     "source": "itikawa2006",
+     "coverage_eV": "not accessible",
+     "evidence_class": "evaluated (abstract-only)",
+     "uncertainty": "TBD",
+     "agreement": "not accessible",
+     "numbers": []
+    }
+   ],
+   "criteria_numbers": [
+    {
+     "name": "share_beyond_10eV_at_60eV",
+     "value": 0.978093,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_rot_j0_to_j2.dat",
+      "by_limit",
+      "60",
+      "coverage_share_measured_reading"
+     ]
+    }
+   ],
+   "verdict": "UNRESOLVED-BY-SOURCE",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The source ends at 10 eV and no accessible independent cross section exists above it. At the v1 limit the held part already carries 92-96 % of the rate (the 45 eV cap is a declared-model cap, not data coverage); any extension would rest entirely on the hold assumption.",
+   "what_would_change_the_verdict": [
+    "published rotational cross sections above 10 eV (theory or measurement)",
+    "owner decision whether a theory-only envelope (e.g. a Born quadrupole estimate - Gerjuoy & Stein 1955, from memory: verify) may count as coverage"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 677,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_rot_j0_to_j2.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_rot_j0_to_j2.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 70.2205,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_rot_j0_to_j2.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.0300483,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_rot_j0_to_j2.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_45eV",
+     "value": 0.963085,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_rot_j0_to_j2.dat",
+      "by_limit",
+      "45",
+      "share_above_last_point_hold"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_60eV",
+     "value": 0.978093,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_rot_j0_to_j2.dat",
+      "by_limit",
+      "60",
+      "share_above_last_point_hold"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_90eV",
+     "value": 0.989716,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_rot_j0_to_j2.dat",
+      "by_limit",
+      "90",
+      "share_above_last_point_hold"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_150eV",
+     "value": 0.996129,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_rot_j0_to_j2.dat",
+      "by_limit",
+      "150",
+      "share_above_last_point_hold"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_60eV",
+     "value": {
+      "0.01": 265.751,
+      "1e-06": 667.736,
+      "1e-12": 1244.19
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_rot_j0_to_j2.dat",
+      "by_limit",
+      "60",
+      "hold_envelope_E_req_eV"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_150eV",
+     "value": {
+      "0.01": 663.929,
+      "1e-06": 1668.93,
+      "1e-12": 3110.07
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_rot_j0_to_j2.dat",
+      "by_limit",
+      "150",
+      "hold_envelope_E_req_eV"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_rot_j0_to_j4.dat": {
+   "family": "rotational",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "JPCRD 2023 Table 6 (0.01-10 eV), held at the 10 eV value above (declared model), capped at the preregistered T_e <= 30 eV; gross j = 0 loss, no superelastic return",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "song2023_jpcrd"
+   ],
+   "provenance_refs": [
+    "scripts/build_n2_rotational_tables.py",
+    "scripts/audit_n2_completeness_final.py (TABLE6)"
+   ],
+   "source_coverage": [
+    {
+     "source": "song2023_jpcrd",
+     "range_eV": [
+      0.01,
+      10.0
+     ],
+     "what": "Table 6 R-matrix SEP calculation ('present'); j 0->2 still rising at 10 eV",
+     "evidence_class": "model-derived (theory)"
+    }
+   ],
+   "construction_above_source": "sigma held at the 10 eV value (declared model); gross j = 0 loss, no superelastic return",
+   "independent_evidence": [
+    {
+     "source": "tabata2006",
+     "coverage_eV": [
+      0.0296,
+      2.94
+     ],
+     "evidence_class": "model-derived fit to Itikawa 1986 (secondary)",
+     "uncertainty": "fit",
+     "agreement": "no coverage above 2.94 eV",
+     "numbers": []
+    },
+    {
+     "source": "kawaguchi2021",
+     "coverage_eV": "31 rotational excitations; energy range not accessible",
+     "evidence_class": "evaluated (abstract-only)",
+     "uncertainty": "TBD",
+     "agreement": "not accessible",
+     "numbers": []
+    },
+    {
+     "source": "itikawa2006",
+     "coverage_eV": "not accessible",
+     "evidence_class": "evaluated (abstract-only)",
+     "uncertainty": "TBD",
+     "agreement": "not accessible",
+     "numbers": []
+    }
+   ],
+   "criteria_numbers": [
+    {
+     "name": "share_beyond_10eV_at_60eV",
+     "value": 0.951565,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_rot_j0_to_j4.dat",
+      "by_limit",
+      "60",
+      "coverage_share_measured_reading"
+     ]
+    }
+   ],
+   "verdict": "UNRESOLVED-BY-SOURCE",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The source ends at 10 eV and no accessible independent cross section exists above it. At the v1 limit the held part already carries 92-96 % of the rate (the 45 eV cap is a declared-model cap, not data coverage); any extension would rest entirely on the hold assumption.",
+   "what_would_change_the_verdict": [
+    "published rotational cross sections above 10 eV (theory or measurement)",
+    "owner decision whether a theory-only envelope (e.g. a Born quadrupole estimate - Gerjuoy & Stein 1955, from memory: verify) may count as coverage"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 659,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_rot_j0_to_j4.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_rot_j0_to_j4.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 69.9132,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_rot_j0_to_j4.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.0252151,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_rot_j0_to_j4.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_45eV",
+     "value": 0.918853,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_rot_j0_to_j4.dat",
+      "by_limit",
+      "45",
+      "share_above_last_point_hold"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_60eV",
+     "value": 0.951565,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_rot_j0_to_j4.dat",
+      "by_limit",
+      "60",
+      "share_above_last_point_hold"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_90eV",
+     "value": 0.977238,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_rot_j0_to_j4.dat",
+      "by_limit",
+      "90",
+      "share_above_last_point_hold"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_150eV",
+     "value": 0.991456,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_rot_j0_to_j4.dat",
+      "by_limit",
+      "150",
+      "share_above_last_point_hold"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_60eV",
+     "value": {
+      "0.01": 264.485,
+      "1e-06": 666.571,
+      "1e-12": 1243.05
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_rot_j0_to_j4.dat",
+      "by_limit",
+      "60",
+      "hold_envelope_E_req_eV"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_150eV",
+     "value": {
+      "0.01": 663.388,
+      "1e-06": 1668.43,
+      "1e-12": 3109.59
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_rot_j0_to_j4.dat",
+      "by_limit",
+      "150",
+      "hold_envelope_E_req_eV"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_vib_0_to_1.dat": {
+   "family": "vibrational",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "laporta2014",
+    "song2023_jpcrd"
+   ],
+   "provenance_refs": [
+    "scripts/build_n2_vibrational_tables.py",
+    "scripts/audit_n2_vibrational_excitation.py (LAPORTA_V0, EPS_V)"
+   ],
+   "source_coverage": [
+    {
+     "source": "laporta2014",
+     "range_eV": "resonant cross sections; rates integrated to 15 eV; Eq. (10) fits without a stated temperature range",
+     "what": "Maxwellian rate fit, evaluated at T_e = 2/3 x mean energy",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "song2023_jpcrd",
+     "range_eV": [
+      1.0,
+      5.0
+     ],
+     "what": "Table 7 (Laporta sigma 0->1) used by the repository's 0->1 cross-check (<= 6 %)",
+     "evidence_class": "model-derived (theory), evaluated"
+    }
+   ],
+   "construction_above_source": "none needed for the resonant part (a Maxwellian average of a cross section confined below 15 eV; the fit's T^-3/2 asymptote has that form); non-resonant excitation is absent by declaration ('resonant only')",
+   "independent_evidence": [
+    {
+     "source": "itikawa1986",
+     "coverage_eV": [
+      1.05,
+      48.5
+     ],
+     "evidence_class": "evaluated -> secondary (Tabata n2-5 fit to the Itikawa 1986 points)",
+     "uncertainty": "Itikawa 2006 recommended v 0->1 +-30 % (Song Sec. 2.5)",
+     "agreement": "resonance region: 0.73-0.85 of the table's rate (T_e 1-100 eV); the non-resonant 5-48.5 eV part, absent from the table, equals 2.05 x the table's rate at T_e = 30 eV and 2.4-2.9 x at 40-60 eV",
+     "numbers": [
+      {
+       "name": "resonance_region_ratio_Te2",
+       "value": 0.767961,
+       "from": [
+        "independent_comparisons",
+        "vibrational_0to1_Tabata2006_n2-5",
+        "rows",
+        "2",
+        "Tabata_below_5eV_over_Laporta"
+       ]
+      },
+      {
+       "name": "nonresonant_over_table_Te30",
+       "value": 2.05033,
+       "from": [
+        "independent_comparisons",
+        "vibrational_0to1_Tabata2006_n2-5",
+        "rows",
+        "30",
+        "Tabata_5_to_48p5eV_over_Laporta"
+       ]
+      },
+      {
+       "name": "nonresonant_over_table_Te40",
+       "value": 2.437,
+       "from": [
+        "independent_comparisons",
+        "vibrational_0to1_Tabata2006_n2-5",
+        "rows",
+        "40",
+        "Tabata_5_to_48p5eV_over_Laporta"
+       ]
+      },
+      {
+       "name": "nonresonant_over_table_Te60",
+       "value": 2.90856,
+       "from": [
+        "independent_comparisons",
+        "vibrational_0to1_Tabata2006_n2-5",
+        "rows",
+        "60",
+        "Tabata_5_to_48p5eV_over_Laporta"
+       ]
+      }
+     ]
+    },
+    {
+     "source": "tanaka1981",
+     "coverage_eV": [
+      3,
+      30
+     ],
+     "evidence_class": "measured (metadata only)",
+     "uncertainty": "not accessed",
+     "agreement": "basis of Itikawa 2006 at 7.5-30 eV",
+     "numbers": []
+    },
+    {
+     "source": "truhlar1972",
+     "coverage_eV": [
+      30,
+      83
+     ],
+     "evidence_class": "model-derived vs measured (abstract)",
+     "uncertainty": "not accessed",
+     "agreement": "confirms non-resonant vibrational excitation at 30-83 eV",
+     "numbers": []
+    }
+   ],
+   "verdict": "PARTIAL",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The resonant rate has no data-tail extrapolation at higher T_e. Independent evidence (Itikawa 1986 via Tabata n2-5; Tanaka 1981; Truhlar 1972) shows a non-resonant 0->1 component that the table omits by declaration and that exceeds the table's rate from T_e ~ 20 eV. Whether that omission matters is a completeness question (F_P rule) that must be re-audited on the extended domain before a limit can be proposed.",
+   "what_would_change_the_verdict": [
+    "an extended-domain completeness re-audit (pre-registered) bounding the omitted non-resonant vibrational power",
+    "owner decision whether 'resonant only' remains an acceptable declared closure above T_e = 30 eV"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 537,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_1.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_1.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 65.3981,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_1.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.00473689,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_1.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_vib_0_to_10.dat": {
+   "family": "vibrational",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "laporta2014",
+    "song2023_jpcrd"
+   ],
+   "provenance_refs": [
+    "scripts/build_n2_vibrational_tables.py",
+    "scripts/audit_n2_vibrational_excitation.py (LAPORTA_V0, EPS_V)"
+   ],
+   "source_coverage": [
+    {
+     "source": "laporta2014",
+     "range_eV": "resonant cross sections; rates integrated to 15 eV; Eq. (10) fits without a stated temperature range",
+     "what": "Maxwellian rate fit, evaluated at T_e = 2/3 x mean energy",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "song2023_jpcrd",
+     "range_eV": [
+      1.0,
+      5.0
+     ],
+     "what": "Table 7 (Laporta sigma 0->1) used by the repository's 0->1 cross-check (<= 6 %)",
+     "evidence_class": "model-derived (theory), evaluated"
+    }
+   ],
+   "construction_above_source": "none needed for the resonant part (a Maxwellian average of a cross section confined below 15 eV; the fit's T^-3/2 asymptote has that form); non-resonant excitation is absent by declaration ('resonant only')",
+   "independent_evidence": [
+    {
+     "source": "tabata2006",
+     "coverage_eV": "v 0->2 and 0->4 data 1.9-3.0 eV only (Brennan 1992, Sweeney & Shyn 1997 in the QST files)",
+     "evidence_class": "measured (secondary)",
+     "uncertainty": "not assessed",
+     "agreement": "resonance region only; no accessible non-resonant overtone data",
+     "numbers": []
+    }
+   ],
+   "verdict": "PARTIAL",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The resonant rate has no data-tail extrapolation at higher T_e (model-supported only, as in v1). Non-resonant overtone excitation is not covered by any accessible source, so its omission can only be bounded in the completeness re-audit.",
+   "what_would_change_the_verdict": [
+    "an extended-domain completeness re-audit (pre-registered) bounding the omitted non-resonant vibrational power",
+    "owner decision whether 'resonant only' remains an acceptable declared closure above T_e = 30 eV"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 543,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_10.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_10.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 66.1676,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_10.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.00506908,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_10.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_vib_0_to_2.dat": {
+   "family": "vibrational",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "laporta2014",
+    "song2023_jpcrd"
+   ],
+   "provenance_refs": [
+    "scripts/build_n2_vibrational_tables.py",
+    "scripts/audit_n2_vibrational_excitation.py (LAPORTA_V0, EPS_V)"
+   ],
+   "source_coverage": [
+    {
+     "source": "laporta2014",
+     "range_eV": "resonant cross sections; rates integrated to 15 eV; Eq. (10) fits without a stated temperature range",
+     "what": "Maxwellian rate fit, evaluated at T_e = 2/3 x mean energy",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "song2023_jpcrd",
+     "range_eV": [
+      1.0,
+      5.0
+     ],
+     "what": "Table 7 (Laporta sigma 0->1) used by the repository's 0->1 cross-check (<= 6 %)",
+     "evidence_class": "model-derived (theory), evaluated"
+    }
+   ],
+   "construction_above_source": "none needed for the resonant part (a Maxwellian average of a cross section confined below 15 eV; the fit's T^-3/2 asymptote has that form); non-resonant excitation is absent by declaration ('resonant only')",
+   "independent_evidence": [
+    {
+     "source": "tabata2006",
+     "coverage_eV": "v 0->2 and 0->4 data 1.9-3.0 eV only (Brennan 1992, Sweeney & Shyn 1997 in the QST files)",
+     "evidence_class": "measured (secondary)",
+     "uncertainty": "not assessed",
+     "agreement": "resonance region only; no accessible non-resonant overtone data",
+     "numbers": []
+    }
+   ],
+   "verdict": "PARTIAL",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The resonant rate has no data-tail extrapolation at higher T_e (model-supported only, as in v1). Non-resonant overtone excitation is not covered by any accessible source, so its omission can only be bounded in the completeness re-audit.",
+   "what_would_change_the_verdict": [
+    "an extended-domain completeness re-audit (pre-registered) bounding the omitted non-resonant vibrational power",
+    "owner decision whether 'resonant only' remains an acceptable declared closure above T_e = 30 eV"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 537,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_2.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_2.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 65.3981,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_2.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.00473689,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_2.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_vib_0_to_3.dat": {
+   "family": "vibrational",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "laporta2014",
+    "song2023_jpcrd"
+   ],
+   "provenance_refs": [
+    "scripts/build_n2_vibrational_tables.py",
+    "scripts/audit_n2_vibrational_excitation.py (LAPORTA_V0, EPS_V)"
+   ],
+   "source_coverage": [
+    {
+     "source": "laporta2014",
+     "range_eV": "resonant cross sections; rates integrated to 15 eV; Eq. (10) fits without a stated temperature range",
+     "what": "Maxwellian rate fit, evaluated at T_e = 2/3 x mean energy",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "song2023_jpcrd",
+     "range_eV": [
+      1.0,
+      5.0
+     ],
+     "what": "Table 7 (Laporta sigma 0->1) used by the repository's 0->1 cross-check (<= 6 %)",
+     "evidence_class": "model-derived (theory), evaluated"
+    }
+   ],
+   "construction_above_source": "none needed for the resonant part (a Maxwellian average of a cross section confined below 15 eV; the fit's T^-3/2 asymptote has that form); non-resonant excitation is absent by declaration ('resonant only')",
+   "independent_evidence": [
+    {
+     "source": "tabata2006",
+     "coverage_eV": "v 0->2 and 0->4 data 1.9-3.0 eV only (Brennan 1992, Sweeney & Shyn 1997 in the QST files)",
+     "evidence_class": "measured (secondary)",
+     "uncertainty": "not assessed",
+     "agreement": "resonance region only; no accessible non-resonant overtone data",
+     "numbers": []
+    }
+   ],
+   "verdict": "PARTIAL",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The resonant rate has no data-tail extrapolation at higher T_e (model-supported only, as in v1). Non-resonant overtone excitation is not covered by any accessible source, so its omission can only be bounded in the completeness re-audit.",
+   "what_would_change_the_verdict": [
+    "an extended-domain completeness re-audit (pre-registered) bounding the omitted non-resonant vibrational power",
+    "owner decision whether 'resonant only' remains an acceptable declared closure above T_e = 30 eV"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 537,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_3.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_3.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 65.3981,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_3.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.00473689,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_3.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_vib_0_to_4.dat": {
+   "family": "vibrational",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "laporta2014",
+    "song2023_jpcrd"
+   ],
+   "provenance_refs": [
+    "scripts/build_n2_vibrational_tables.py",
+    "scripts/audit_n2_vibrational_excitation.py (LAPORTA_V0, EPS_V)"
+   ],
+   "source_coverage": [
+    {
+     "source": "laporta2014",
+     "range_eV": "resonant cross sections; rates integrated to 15 eV; Eq. (10) fits without a stated temperature range",
+     "what": "Maxwellian rate fit, evaluated at T_e = 2/3 x mean energy",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "song2023_jpcrd",
+     "range_eV": [
+      1.0,
+      5.0
+     ],
+     "what": "Table 7 (Laporta sigma 0->1) used by the repository's 0->1 cross-check (<= 6 %)",
+     "evidence_class": "model-derived (theory), evaluated"
+    }
+   ],
+   "construction_above_source": "none needed for the resonant part (a Maxwellian average of a cross section confined below 15 eV; the fit's T^-3/2 asymptote has that form); non-resonant excitation is absent by declaration ('resonant only')",
+   "independent_evidence": [
+    {
+     "source": "tabata2006",
+     "coverage_eV": "v 0->2 and 0->4 data 1.9-3.0 eV only (Brennan 1992, Sweeney & Shyn 1997 in the QST files)",
+     "evidence_class": "measured (secondary)",
+     "uncertainty": "not assessed",
+     "agreement": "resonance region only; no accessible non-resonant overtone data",
+     "numbers": []
+    }
+   ],
+   "verdict": "PARTIAL",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The resonant rate has no data-tail extrapolation at higher T_e (model-supported only, as in v1). Non-resonant overtone excitation is not covered by any accessible source, so its omission can only be bounded in the completeness re-audit.",
+   "what_would_change_the_verdict": [
+    "an extended-domain completeness re-audit (pre-registered) bounding the omitted non-resonant vibrational power",
+    "owner decision whether 'resonant only' remains an acceptable declared closure above T_e = 30 eV"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 537,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_4.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_4.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 65.3981,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_4.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.00473689,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_4.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_vib_0_to_5.dat": {
+   "family": "vibrational",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "laporta2014",
+    "song2023_jpcrd"
+   ],
+   "provenance_refs": [
+    "scripts/build_n2_vibrational_tables.py",
+    "scripts/audit_n2_vibrational_excitation.py (LAPORTA_V0, EPS_V)"
+   ],
+   "source_coverage": [
+    {
+     "source": "laporta2014",
+     "range_eV": "resonant cross sections; rates integrated to 15 eV; Eq. (10) fits without a stated temperature range",
+     "what": "Maxwellian rate fit, evaluated at T_e = 2/3 x mean energy",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "song2023_jpcrd",
+     "range_eV": [
+      1.0,
+      5.0
+     ],
+     "what": "Table 7 (Laporta sigma 0->1) used by the repository's 0->1 cross-check (<= 6 %)",
+     "evidence_class": "model-derived (theory), evaluated"
+    }
+   ],
+   "construction_above_source": "none needed for the resonant part (a Maxwellian average of a cross section confined below 15 eV; the fit's T^-3/2 asymptote has that form); non-resonant excitation is absent by declaration ('resonant only')",
+   "independent_evidence": [
+    {
+     "source": "tabata2006",
+     "coverage_eV": "v 0->2 and 0->4 data 1.9-3.0 eV only (Brennan 1992, Sweeney & Shyn 1997 in the QST files)",
+     "evidence_class": "measured (secondary)",
+     "uncertainty": "not assessed",
+     "agreement": "resonance region only; no accessible non-resonant overtone data",
+     "numbers": []
+    }
+   ],
+   "verdict": "PARTIAL",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The resonant rate has no data-tail extrapolation at higher T_e (model-supported only, as in v1). Non-resonant overtone excitation is not covered by any accessible source, so its omission can only be bounded in the completeness re-audit.",
+   "what_would_change_the_verdict": [
+    "an extended-domain completeness re-audit (pre-registered) bounding the omitted non-resonant vibrational power",
+    "owner decision whether 'resonant only' remains an acceptable declared closure above T_e = 30 eV"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 539,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_5.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_5.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 65.6601,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_5.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.00481023,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_5.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_vib_0_to_6.dat": {
+   "family": "vibrational",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "laporta2014",
+    "song2023_jpcrd"
+   ],
+   "provenance_refs": [
+    "scripts/build_n2_vibrational_tables.py",
+    "scripts/audit_n2_vibrational_excitation.py (LAPORTA_V0, EPS_V)"
+   ],
+   "source_coverage": [
+    {
+     "source": "laporta2014",
+     "range_eV": "resonant cross sections; rates integrated to 15 eV; Eq. (10) fits without a stated temperature range",
+     "what": "Maxwellian rate fit, evaluated at T_e = 2/3 x mean energy",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "song2023_jpcrd",
+     "range_eV": [
+      1.0,
+      5.0
+     ],
+     "what": "Table 7 (Laporta sigma 0->1) used by the repository's 0->1 cross-check (<= 6 %)",
+     "evidence_class": "model-derived (theory), evaluated"
+    }
+   ],
+   "construction_above_source": "none needed for the resonant part (a Maxwellian average of a cross section confined below 15 eV; the fit's T^-3/2 asymptote has that form); non-resonant excitation is absent by declaration ('resonant only')",
+   "independent_evidence": [
+    {
+     "source": "tabata2006",
+     "coverage_eV": "v 0->2 and 0->4 data 1.9-3.0 eV only (Brennan 1992, Sweeney & Shyn 1997 in the QST files)",
+     "evidence_class": "measured (secondary)",
+     "uncertainty": "not assessed",
+     "agreement": "resonance region only; no accessible non-resonant overtone data",
+     "numbers": []
+    }
+   ],
+   "verdict": "PARTIAL",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The resonant rate has no data-tail extrapolation at higher T_e (model-supported only, as in v1). Non-resonant overtone excitation is not covered by any accessible source, so its omission can only be bounded in the completeness re-audit.",
+   "what_would_change_the_verdict": [
+    "an extended-domain completeness re-audit (pre-registered) bounding the omitted non-resonant vibrational power",
+    "owner decision whether 'resonant only' remains an acceptable declared closure above T_e = 30 eV"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 539,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_6.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_6.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 65.6601,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_6.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.00481023,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_6.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_vib_0_to_7.dat": {
+   "family": "vibrational",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "laporta2014",
+    "song2023_jpcrd"
+   ],
+   "provenance_refs": [
+    "scripts/build_n2_vibrational_tables.py",
+    "scripts/audit_n2_vibrational_excitation.py (LAPORTA_V0, EPS_V)"
+   ],
+   "source_coverage": [
+    {
+     "source": "laporta2014",
+     "range_eV": "resonant cross sections; rates integrated to 15 eV; Eq. (10) fits without a stated temperature range",
+     "what": "Maxwellian rate fit, evaluated at T_e = 2/3 x mean energy",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "song2023_jpcrd",
+     "range_eV": [
+      1.0,
+      5.0
+     ],
+     "what": "Table 7 (Laporta sigma 0->1) used by the repository's 0->1 cross-check (<= 6 %)",
+     "evidence_class": "model-derived (theory), evaluated"
+    }
+   ],
+   "construction_above_source": "none needed for the resonant part (a Maxwellian average of a cross section confined below 15 eV; the fit's T^-3/2 asymptote has that form); non-resonant excitation is absent by declaration ('resonant only')",
+   "independent_evidence": [
+    {
+     "source": "tabata2006",
+     "coverage_eV": "v 0->2 and 0->4 data 1.9-3.0 eV only (Brennan 1992, Sweeney & Shyn 1997 in the QST files)",
+     "evidence_class": "measured (secondary)",
+     "uncertainty": "not assessed",
+     "agreement": "resonance region only; no accessible non-resonant overtone data",
+     "numbers": []
+    }
+   ],
+   "verdict": "PARTIAL",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The resonant rate has no data-tail extrapolation at higher T_e (model-supported only, as in v1). Non-resonant overtone excitation is not covered by any accessible source, so its omission can only be bounded in the completeness re-audit.",
+   "what_would_change_the_verdict": [
+    "an extended-domain completeness re-audit (pre-registered) bounding the omitted non-resonant vibrational power",
+    "owner decision whether 'resonant only' remains an acceptable declared closure above T_e = 30 eV"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 540,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_7.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_7.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 65.8367,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_7.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.00488967,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_7.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_vib_0_to_8.dat": {
+   "family": "vibrational",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "laporta2014",
+    "song2023_jpcrd"
+   ],
+   "provenance_refs": [
+    "scripts/build_n2_vibrational_tables.py",
+    "scripts/audit_n2_vibrational_excitation.py (LAPORTA_V0, EPS_V)"
+   ],
+   "source_coverage": [
+    {
+     "source": "laporta2014",
+     "range_eV": "resonant cross sections; rates integrated to 15 eV; Eq. (10) fits without a stated temperature range",
+     "what": "Maxwellian rate fit, evaluated at T_e = 2/3 x mean energy",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "song2023_jpcrd",
+     "range_eV": [
+      1.0,
+      5.0
+     ],
+     "what": "Table 7 (Laporta sigma 0->1) used by the repository's 0->1 cross-check (<= 6 %)",
+     "evidence_class": "model-derived (theory), evaluated"
+    }
+   ],
+   "construction_above_source": "none needed for the resonant part (a Maxwellian average of a cross section confined below 15 eV; the fit's T^-3/2 asymptote has that form); non-resonant excitation is absent by declaration ('resonant only')",
+   "independent_evidence": [
+    {
+     "source": "tabata2006",
+     "coverage_eV": "v 0->2 and 0->4 data 1.9-3.0 eV only (Brennan 1992, Sweeney & Shyn 1997 in the QST files)",
+     "evidence_class": "measured (secondary)",
+     "uncertainty": "not assessed",
+     "agreement": "resonance region only; no accessible non-resonant overtone data",
+     "numbers": []
+    }
+   ],
+   "verdict": "PARTIAL",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The resonant rate has no data-tail extrapolation at higher T_e (model-supported only, as in v1). Non-resonant overtone excitation is not covered by any accessible source, so its omission can only be bounded in the completeness re-audit.",
+   "what_would_change_the_verdict": [
+    "an extended-domain completeness re-audit (pre-registered) bounding the omitted non-resonant vibrational power",
+    "owner decision whether 'resonant only' remains an acceptable declared closure above T_e = 30 eV"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 541,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_8.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_8.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 66.1676,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_8.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.00497582,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_8.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_vib_0_to_9.dat": {
+   "family": "vibrational",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Laporta et al. 2014 publish analytical fits to the computed state-to-state rate coefficients without specifying an upper temperature validity cutoff. Project use is capped at the preregistered P5-N2 domain, T_e <= 30 eV (mean energy 45 eV). The 0->1 fit is independently cross-checked against JPCRD 2023 recommended cross sections (Table 7; within 6 % for T_e = 0.5-30 eV); higher overtones remain model-supported rather than independently validated. Source-model applicability, not experimental validation.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "laporta2014",
+    "song2023_jpcrd"
+   ],
+   "provenance_refs": [
+    "scripts/build_n2_vibrational_tables.py",
+    "scripts/audit_n2_vibrational_excitation.py (LAPORTA_V0, EPS_V)"
+   ],
+   "source_coverage": [
+    {
+     "source": "laporta2014",
+     "range_eV": "resonant cross sections; rates integrated to 15 eV; Eq. (10) fits without a stated temperature range",
+     "what": "Maxwellian rate fit, evaluated at T_e = 2/3 x mean energy",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "song2023_jpcrd",
+     "range_eV": [
+      1.0,
+      5.0
+     ],
+     "what": "Table 7 (Laporta sigma 0->1) used by the repository's 0->1 cross-check (<= 6 %)",
+     "evidence_class": "model-derived (theory), evaluated"
+    }
+   ],
+   "construction_above_source": "none needed for the resonant part (a Maxwellian average of a cross section confined below 15 eV; the fit's T^-3/2 asymptote has that form); non-resonant excitation is absent by declaration ('resonant only')",
+   "independent_evidence": [
+    {
+     "source": "tabata2006",
+     "coverage_eV": "v 0->2 and 0->4 data 1.9-3.0 eV only (Brennan 1992, Sweeney & Shyn 1997 in the QST files)",
+     "evidence_class": "measured (secondary)",
+     "uncertainty": "not assessed",
+     "agreement": "resonance region only; no accessible non-resonant overtone data",
+     "numbers": []
+    }
+   ],
+   "verdict": "PARTIAL",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The resonant rate has no data-tail extrapolation at higher T_e (model-supported only, as in v1). Non-resonant overtone excitation is not covered by any accessible source, so its omission can only be bounded in the completeness re-audit.",
+   "what_would_change_the_verdict": [
+    "an extended-domain completeness re-audit (pre-registered) bounding the omitted non-resonant vibrational power",
+    "owner decision whether 'resonant only' remains an acceptable declared closure above T_e = 30 eV"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 541,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_9.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_9.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 66.1676,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_9.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.00497581,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_vib_0_to_9.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    }
+   ]
+  },
+  "excitation_N2_w1Delta_u.dat": {
+   "family": "electronic",
+   "current_limit_mean_energy_eV": 45.0,
+   "current_basis": "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range.",
+   "verdict_status": "DRAFT_PENDING_OWNER",
+   "proposal_status": "DRAFT_PENDING_OWNER",
+   "cited_sources": [
+    "su2021",
+    "johnson2005"
+   ],
+   "provenance_refs": [
+    "hallthruster_bridge/propellants/PROVENANCE.md (excitation_N2_{...}.dat row)",
+    "scripts/build_n2_electronic_excitation_tables.py",
+    "hallthruster_bridge/propellants/sources/su2021/",
+    "hallthruster_bridge/propellants/sources/johnson2005_table2_ics.tsv"
+   ],
+   "source_coverage": [
+    {
+     "source": "su2021",
+     "range_eV": [
+      0.01,
+      20
+     ],
+     "what": "R-matrix ICS used below 20 eV",
+     "evidence_class": "model-derived"
+    },
+    {
+     "source": "johnson2005",
+     "range_eV": [
+      10,
+      100.0
+     ],
+     "what": "measured ICS used from 20 eV",
+     "evidence_class": "measured"
+    }
+   ],
+   "construction_above_source": "power law sigma_last (E/E_last)^-p from Johnson's last two points (p = 0.527994), to 10 keV, zero beyond (declared model)",
+   "independent_evidence": [
+    {
+     "source": "majeed_strickland1997",
+     "coverage_eV": [
+      9.0,
+      200.0
+     ],
+     "evidence_class": "evaluated -> secondary numeric reproduction (QST files of Tabata 2006)",
+     "uncertainty": "TBD - requires MS1997 full text",
+     "agreement": "disagrees with Johnson's measured value at the 100 eV join beyond Johnson's stated uncertainty (fails C3), so it can neither support nor refute the continuation",
+     "numbers": [
+      {
+       "name": "MS1997_over_table_at_100eV",
+       "value": 0.173565,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_w1Delta_u.dat",
+        "points",
+        "100",
+        "MS1997_over_table"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_min_E_ge_100",
+       "value": 0.0192511,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_w1Delta_u.dat",
+        "MS1997_over_table_E_ge_100",
+        "min"
+       ]
+      },
+      {
+       "name": "MS1997_over_table_max_E_ge_100",
+       "value": 0.173565,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_w1Delta_u.dat",
+        "MS1997_over_table_E_ge_100",
+        "max"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_shape_at_60eV",
+       "value": -0.0772255,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_w1Delta_u.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "shape",
+        "60"
+       ]
+      },
+      {
+       "name": "rate_impact_MS1997_absolute_at_60eV",
+       "value": -0.130673,
+       "from": [
+        "independent_comparisons",
+        "electronic_MS1997_and_Tabata2006",
+        "excitation_N2_w1Delta_u.dat",
+        "rate_impact_if_MS1997_above_last_point",
+        "absolute",
+        "60"
+       ]
+      }
+     ]
+    },
+    {
+     "source": "tabata2006",
+     "coverage_eV": [
+      9.0,
+      200.0
+     ],
+     "evidence_class": "model-derived analytic fit (to MS1997, Trajmar 1983, Campbell 2001 and others per the QST data file)",
+     "uncertainty": "fit",
+     "agreement": "not independent of MS1997; tracks it (see points)",
+     "numbers": []
+    },
+    {
+     "source": "kawaguchi2021",
+     "coverage_eV": "up to 10 keV (Song 2023 Sec. 2.6)",
+     "evidence_class": "evaluated (abstract-only)",
+     "uncertainty": "TBD",
+     "agreement": "not accessible numerically (not taken from LXCat)",
+     "numbers": []
+    },
+    {
+     "source": "samaddar2022",
+     "coverage_eV": "fits extrapolated to keV",
+     "evidence_class": "model-derived, not independent of Johnson 2005",
+     "agreement": "not used",
+     "numbers": []
+    }
+   ],
+   "criteria_numbers": [
+    {
+     "name": "L_star_own_sources_eV",
+     "value": 27.5357,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_w1Delta_u.dat",
+      "L_star_own_sources_eV"
+     ]
+    },
+    {
+     "name": "max_candidate_L_measured_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_w1Delta_u.dat",
+      "max_candidate_L_measured_reading"
+     ]
+    },
+    {
+     "name": "max_candidate_L_evaluated_reading",
+     "value": null,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_w1Delta_u.dat",
+      "max_candidate_L_evaluated_reading"
+     ]
+    },
+    {
+     "name": "C1_share_beyond_measured_coverage_at_60eV",
+     "value": 0.141898,
+     "from": [
+      "verdict_criteria",
+      "per_table",
+      "excitation_N2_w1Delta_u.dat",
+      "by_limit",
+      "60",
+      "coverage_share_measured_reading"
+     ]
+    }
+   ],
+   "verdict": "UNRESOLVED-BY-SOURCE",
+   "proposed_extended_limit_mean_energy_eV": null,
+   "reasoning": "The only accessible independent set above Johnson's 100 eV point (MS1997 via the QST files; the Tabata fit follows it) disagrees with Johnson's measured value at 100 eV by more than Johnson's stated uncertainty (C3 fails), so it cannot test the continuation. The modern evaluation that extends the same California EEL data to 10 keV (Kawaguchi 2021) is abstract-only. Under the 1 % convention, the declared continuation already carries more than 1 % of this table's rate at or below 45 eV for several states (context only: this audit proposes no change to any v1 limit).",
+   "own_source_note": null,
+   "what_would_change_the_verdict": [
+    "numerical access to Kawaguchi 2021 ICS above 100 eV (full text, not via LXCat)",
+    "measured ICS above 100 eV for this state",
+    "Itikawa 2006 full text (recommended ICS and their range)"
+   ],
+   "key_numbers": [
+    {
+     "name": "n_ood_runs_beyond_limit",
+     "value": 659,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_w1Delta_u.dat",
+      "n_ood_runs_beyond_limit"
+     ]
+    },
+    {
+     "name": "max_eps_active_eV_runs_beyond",
+     "value": 127.935,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_w1Delta_u.dat",
+      "eps_active_eV_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "median_eps_active_eV_runs_beyond",
+     "value": 69.4774,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_w1Delta_u.dat",
+      "eps_active_eV_runs_beyond",
+      "p50"
+     ]
+    },
+    {
+     "name": "max_f_out_runs_beyond",
+     "value": 0.0213982,
+     "from": [
+      "v1_inventory",
+      "tables",
+      "excitation_N2_w1Delta_u.dat",
+      "f_out_runs_beyond",
+      "max"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_45eV",
+     "value": 0.0671149,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_w1Delta_u.dat",
+      "by_limit",
+      "45",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_60eV",
+     "value": 0.141898,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_w1Delta_u.dat",
+      "by_limit",
+      "60",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_90eV",
+     "value": 0.296796,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_w1Delta_u.dat",
+      "by_limit",
+      "90",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "declared_share_above_last_source_point_at_150eV",
+     "value": 0.522795,
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_w1Delta_u.dat",
+      "by_limit",
+      "150",
+      "share_above_last_point_declared"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_60eV",
+     "value": {
+      "0.01": 240.15,
+      "1e-06": 644.286,
+      "1e-12": 1221.37
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_w1Delta_u.dat",
+      "by_limit",
+      "60",
+      "hold_envelope_E_req_eV"
+     ]
+    },
+    {
+     "name": "E_req_hold_envelope_at_150eV",
+     "value": {
+      "0.01": 643.781,
+      "1e-06": 1650.4,
+      "1e-12": 3092.03
+     },
+     "from": [
+      "requirements",
+      "per_table",
+      "excitation_N2_w1Delta_u.dat",
+      "by_limit",
+      "150",
+      "hold_envelope_E_req_eV"
+     ]
+    }
+   ]
+  }
+ },
+ "completeness_implications": {
+  "status": "DRAFT_PENDING_OWNER",
+  "basis": "hallthruster_bridge/prereg/n2_completeness_audit_v1.json (+ addenda 1, 2), hallthruster_bridge/audit/n2_completeness_final_v1.json, hallthruster_bridge/audit/n2_closure_verdicts_v1.json: every verdict there holds on T_e 2-30 eV (vib/rot 0.2-30 eV) only",
+  "items": [
+   {
+    "process": "N^2+ -> N^3+ (Bell 1983 N III, threshold 47.45 eV)",
+    "v1_verdict": "EXCLUDED (F_ion <= 1.5e-6; activity at T_e 19-26 eV)",
+    "why_reaudit": "threshold 47.45 eV lies inside an extended domain; its rate coefficient rises 1.6x (T_e 40) to 3.8x (T_e 100) over the T_e 30 value",
+    "numbers": [
+     {
+      "name": "rate_ratio_Te40",
+      "value": 1.60308,
+      "from": [
+       "completeness_indicators",
+       "by_mean_energy_eV",
+       "60",
+       "N_Z2plus_to_N_Z3plus_rate_over_its_45eV_value"
+      ]
+     },
+     {
+      "name": "rate_ratio_Te100",
+      "value": 3.84474,
+      "from": [
+       "completeness_indicators",
+       "by_mean_energy_eV",
+       "150",
+       "N_Z2plus_to_N_Z3plus_rate_over_its_45eV_value"
+      ]
+     }
+    ]
+   },
+   {
+    "process": "N2 -> N2^2+ direct (appearance 42.9 eV)",
+    "v1_verdict": "UNCERTAINTY VARIANT (nominal F_ion <= 0.39 %, upper 2.6 %)",
+    "why_reaudit": "nominal and upper rates relative to N2+ production keep rising above T_e 30 eV; the nominal could cross 1 % F_ion",
+    "numbers": [
+     {
+      "name": "upper_over_N2_ionization_Te30",
+      "value": 0.0639188,
+      "from": [
+       "completeness_indicators",
+       "by_mean_energy_eV",
+       "45",
+       "N2_to_N2dication_upper_over_N2_ionization"
+      ]
+     },
+     {
+      "name": "upper_over_N2_ionization_Te100",
+      "value": 0.0860168,
+      "from": [
+       "completeness_indicators",
+       "by_mean_energy_eV",
+       "150",
+       "N2_to_N2dication_upper_over_N2_ionization"
+      ]
+     }
+    ]
+   },
+   {
+    "process": "N2+ -> N2^2+ sequential (Tabata/Bahati)",
+    "v1_verdict": "EXCLUDED from nominal (F_ion <= 0.27 %, margin 3.7)",
+    "why_reaudit": "smallest margin of the closure; rate rises 1.4x to 2.7x between T_e 40 and 100 eV",
+    "numbers": [
+     {
+      "name": "rate_ratio_Te100",
+      "value": 2.70139,
+      "from": [
+       "completeness_indicators",
+       "by_mean_energy_eV",
+       "150",
+       "N2plus_to_N2dication_rate_over_its_45eV_value"
+      ]
+     }
+    ]
+   },
+   {
+    "process": "N -> N^2+ direct (HMS 2017)",
+    "v1_verdict": "PROMOTED",
+    "why_reaudit": "stays promoted; its x0.5/x1.3 sensitivity should be re-run on the extended domain",
+    "numbers": []
+   },
+   {
+    "process": "non-resonant vibrational excitation",
+    "v1_verdict": "outside the declared closure ('resonant only'; vib verdict a lower bound)",
+    "why_reaudit": "independent data show it exceeds the resonant 0->1 rate by 2-3x at T_e 30-60 eV; F_P must be bounded on the extended domain",
+    "numbers": []
+   },
+   {
+    "process": "rotational excitation above 10 eV",
+    "v1_verdict": "PROMOTE (marginal, gross F_P 1.13 % at T_e 1-2 eV)",
+    "why_reaudit": "no cross section above 10 eV; the held tail dominates at any T_e > 3 eV; a bound is needed if the domain is extended",
+    "numbers": []
+   },
+   {
+    "process": "dipole-allowed and higher states (b 1Pi_u, c3 1Pi_u, o3 1Pi_u, b' 1Sigma_u+, c'4 1Sigma_u+, E 3Sigma_g+, a'' 1Sigma_g+, G 3Pi_u, F 3Pi_u)",
+    "v1_verdict": "not in the pre-registered tier lists (no verdict recorded)",
+    "why_reaudit": "their predissociating part is inside the channel-summed Cosby dissociation; the radiating part is an omitted energy loss that grows with energy (dipole-allowed, Born ln E / E: from memory, verify); measured ICS 13/17.5-100 eV exist (Malone 2009/2012, Liu 2017: not accessed)",
+    "numbers": []
+   },
+   {
+    "process": "triple / multiple ionization (N2^3+, N -> N^3+, extra N+ from triple events)",
+    "v1_verdict": "not assessed (the N++ table does not add the extra N+ from triple events)",
+    "why_reaudit": "thresholds lie inside an extended domain",
+    "numbers": []
+   },
+   {
+    "process": "dissociation energy-loss representativeness (12.14 eV fixed)",
+    "v1_verdict": "model uncertainty 9.75-13.33 eV carried",
+    "why_reaudit": "channel mix at higher energies is not covered by Cosby's 48.5 eV translational analysis",
+    "numbers": []
+   }
+  ],
+  "rule": "the extended-domain re-audit must be pre-registered (domain, processes, denominators, thresholds F_P 1 %, F_ion 1 %, F_S 5 % unchanged unless the owner decides otherwise) and completed before any v2 run"
+ },
+ "owner_decisions": [
+  "D-X1: open a v2 at all? Evidence supports extending only dissociation_N2.dat (to 60 eV, measured reading); applied alone it would newly cover about 6 of 714 v1 OOD runs (proxy), 22 under the evaluated reading",
+  "D-X2: coverage reading: measured-only (default here) or evaluated-inclusive (secondary reproductions of abstract-only evaluations)",
+  "D-X3: extension threshold: the existing 1 % convention (used here) or 1e-6 / 1e-12 (no accessible measured set supports any extension at those levels)",
+  "D-X4: join-consistency tolerance (C3): source uncertainty, combined in quadrature; treatment of sets whose uncertainty is not accessible (MS1997, Kawaguchi 2021)",
+  "D-X5: seek legitimate full-text access (library/purchase, no paywall bypass, no LXCat) to Kawaguchi 2021, Majeed & Strickland 1997, Itikawa 2006, Cosby 1993, Winters 1966",
+  "D-X6: dissociation: keep the held tail (unchanged table) or rebuild with an evidence-shaped tail (a model change: every run reruns); whether the Kawaguchi -25 % normalisation warrants a chemistry variant",
+  "D-X7: vibrational: keep 'resonant only' above T_e 30 eV, add non-resonant excitation (model change), or bound it in the completeness re-audit",
+  "D-X8: rotational: accept a theory-only envelope above 10 eV or keep 45 eV",
+  "D-X9: electronic (7 states): the MS1997 vs Johnson conflict at 50-100 eV (inside the v1 domain) - record only, or carry as a chemistry variant in a future version (never in v1)",
+  "D-X10: pre-register the extended-domain completeness re-audit (domain, processes incl. dipole-allowed states and multiple ionization)",
+  "D-X11: v2 run scope and whether the driver should save per-frame T_e / activity so a future limit change can be evaluated without reruns (bridge_lib.jl change: owner)",
+  "D-X12: whether two reconstructed Winters points above 200 eV (measured N deposition minus measured dissociative ionization), digitized from Song 2023 Fig. 19 and not independent of Table 9 at the 200 eV join, are sufficient evidence for the draft dissociation extension to 60 eV"
+ ]
+}
