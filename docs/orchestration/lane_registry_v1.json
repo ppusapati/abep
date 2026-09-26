@@ -322,7 +322,14 @@
     "lane_26_failure_tree"
    ],
    "verification_protocol": "two-lens-v2",
-   "answers": "i"
+   "answers": "i",
+   "repairs": [
+    {
+     "workflow_run": "wf_2eff22ef-8fe",
+     "workflow_key": "DOSSIER",
+     "reason": "targeted T_DOSSIER run (owner resume rule: wf_e3c01fb8-eed is not resumed because lanes 24 and 26 reached terminal states); base 68be96f with all verified lanes merged"
+    }
+   ]
   },
   {
    "id": "lane_28_break_even",
