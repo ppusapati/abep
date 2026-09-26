@@ -10,7 +10,8 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    # main, plus the pinned execution branch (CLAUDE.md: nobody executes from main until claude/nifty-ramanujan-w68f9z merges).
+    branches: [main, claude/nifty-ramanujan-w68f9z]
 
 permissions:
   contents: read
@@ -35,6 +36,10 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history: several provenance tests resolve pinned lane commits with `git show` and skip in a shallow clone,
+          # which would break the CLAUDE.md rule-9 outcome (5 SUPERSEDED skips). ci_checks.py --pytest-junit refuses a shallow repo.
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -65,6 +70,10 @@ jobs:
         pymsis: [present, absent]
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history: several provenance tests resolve pinned lane commits with `git show` and skip in a shallow clone,
+          # which would break the CLAUDE.md rule-9 outcome (5 SUPERSEDED skips). ci_checks.py --pytest-junit refuses a shallow repo.
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
