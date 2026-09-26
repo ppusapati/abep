@@ -50,8 +50,10 @@ voltage and B ranges, channel geometry, oscillations and extinction, cathode flo
   Brabston et al., JPP 2025 (doi:10.2514/1.B39623) and Marchioni's 2020 MSc thesis. The builder recomputes each value
   from those files, and their sha256 hashes are recorded in `meta.repository_inputs`.
 - **Simulation results are not evidence.** The P5-N2 v1 vacuum simulation campaign is not used as evidence that a
-  discharge physically sustains. v1 is INCONCLUSIVE. Its status counts appear only under `context_not_evidence`: 1080
-  records, and among the 2160 run × reading evaluations, 1428 OUT_OF_DOMAIN, 700 FAIL_VALIDATION and 32 PASS.
+  discharge physically sustains. v1 is INCONCLUSIVE: no candidate is admitted and the credible set is empty. That v1
+  outcome is final and permanent; it is never re-scored or re-labelled, and this audit reads the official statuses
+  unchanged from the frozen scores file. The status counts appear only under `context_not_evidence`: 1080 records,
+  and among the 2160 run × reading evaluations, 1428 OUT_OF_DOMAIN, 700 FAIL_VALIDATION and 32 PASS.
 - **Scope.** The audit covers Hall discharges only. Excluded items and the reasons are in `excluded`: cusped-field MCFT,
   RIT-10, ABIE, IPT and other non-Hall devices.
 - **ABEP regime.** Every entry states that the ABEP flow and density regime is *TBD - requires the upstream ICD*. No
@@ -63,36 +65,36 @@ voltage and B ranges, channel geometry, oscillations and extinction, cathode flo
 
 | id | thruster (family) | anode gas / cathode gas | ignition | flow | voltage | B | outcome | level | pre-ionization implication |
 |---|---|---|---|---|---|---|---|---|---|
-| E01 | P5 (5 kW-class laboratory Hall thruster) (single-stage Hall (SPT-type)) | N2 (pure) / Xe | not_reported | 5-5.4 mg/s | 231.9-278.6 V | 130 G | **sustained** | 3 | operation_without_preionizer_demonstrated |
-| E02 | P5 (5 kW-class laboratory Hall thruster) (single-stage Hall (SPT-type)) | N2 (pure) / Xe | not_reported | n/r | 225-275 V | 130 G | **extinguished** | 3 | operation_bounded_extinction_observed |
-| E03 | ECHT (Stanford extended-channel Hall thruster) (single-stage Hall (SPT-type, extended channel)) | N2 (pure) / Ar | direct_on_atmospheric_gas | 2.06 mg/s | 180-220 V | 85.3 G | **sustained** | 3 | operation_without_preionizer_demonstrated |
-| E04 | ECHT (Stanford extended-channel Hall thruster) (single-stage Hall (SPT-type, extended channel)) | N2 (pure) / Ar | direct_on_atmospheric_gas | 1.6 mg/s | n/r | n/r | **extinguished** | 3 | operation_bounded_extinction_observed |
-| E05 | Snecma PPS1350-TSD (reconverted to PPS1350 configuration) (single-stage Hall (SPT-type)) | N2 (pure) / Xe | xenon_start_then_transition | 2.3-2.85 mg/s | n/r | n/r | **sustained** | 3 | operation_without_preionizer_demonstrated_xenon_start |
-| E06 | Snecma PPS1350-TSD (reconverted to PPS1350 configuration) (single-stage Hall (SPT-type)) | N2/O2, 1.27N2 + O2 (molecular composition) / Xe | xenon_start_then_transition | 2.1 mg/s | 220-350 V | n/r | **sustained** | 3 | operation_without_preionizer_demonstrated_xenon_start |
-| E07 | Snecma PPS1350-TSD (reconverted to PPS1350 configuration) (single-stage Hall (SPT-type)) | N2/O2 mixture with a 10 % xenon mass-flow addition / not reported | not_reported | 2.75 mg/s | 305 V | n/r | **extinguished** | 5 | not_informative |
-| E08 | SITAEL HT5k (first development model) (single-stage Hall (SPT-type)) | 0.56N2/0.44O2 (= 1.27N2 + O2) / Xe | not_reported | 4.3-4.7 mg/s | 225 V | n/r | **sustained** | 5 | operation_without_preionizer_demonstrated |
-| E09 | SITAEL HT5k DM2 with HC20h hollow cathode (magnetically shielded Hall) | 0.56N2 + 0.44O2 / N2 (after transition from Xe) | xenon_start_then_transition | 5-7 mg/s | 225-300 V | n/r | **sustained** | 3 | operation_without_preionizer_demonstrated_xenon_start |
-| E10 | Simplified CAMILA (ASRI Technion) (single-stage Hall with coaxial anodes extending into the channel (low power)) | N2 (pure) / Xe | direct_on_atmospheric_gas | 1.144-1.568 mg/s | 180-250 V | 1.48 ratio to Xe/Kr field | **sustained** | 3 | operation_without_preionizer_demonstrated |
-| E11 | Simplified CAMILA (ASRI Technion) (single-stage Hall with coaxial anodes extending into the channel (low power)) | N2 (pure) / Xe | direct_on_atmospheric_gas | n/r | n/r | n/r | **extinguished** | 3 | operation_bounded_extinction_observed |
-| E12 | MaSHEKT-100 (Southampton) (magnetically shielded Hall (low power)) | N2 (pure) / not accessed | direct_on_atmospheric_gas | n/r | n/r | n/r | **sustained** | 3 | operation_without_preionizer_demonstrated |
-| E13 | Z-70 (Stanford, refurbished) (single-stage Hall (SPT-type)) | Xe/N2 mixtures (Xe mass fraction down to about 10 %); pure N2 not sustained / Xe | xenon_admixture_required | 0.16 mg/s | 290 V | 135 G | **extinguished** | 3 | xenon_admixture_required_in_tested_regime |
-| E14 | Z-70 (Stanford, refurbished) (single-stage Hall (SPT-type)) | Xe/air mixtures (Xe mass fraction 48-96 % per ANDREUSSI2022 p.26) / Xe | xenon_admixture_required | 0.78-0.83 mg/s | 290 V | 135-160 G | **sustained** | 3 | xenon_admixture_required_in_tested_regime |
+| E01 | P5 (5 kW-class laboratory Hall thruster) (single-stage Hall (SPT-type)) | N2 (pure) / Xe | not_reported | 5-5.4 mg/s (anode N2 mass flow (N1-N5)) | 231.9-278.6 V | 130 G (peak radial B at channel centre, exit plane) | **sustained** | 3 | operation_without_preionizer_demonstrated |
+| E02 | P5 (5 kW-class laboratory Hall thruster) (single-stage Hall (SPT-type)) | N2 (pure) / Xe | not_reported | n/r | 225-275 V | 130 G (peak radial B at channel centre, exit plane) | **extinguished** | 3 | operation_bounded_extinction_observed |
+| E03 | ECHT (Stanford extended-channel Hall thruster) (single-stage Hall (SPT-type, extended channel)) | N2 (pure) / Ar | direct_on_atmospheric_gas | 2.06 mg/s (anode N2 mass flow) | 180-220 V | 85.3 G (centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)) | **sustained** | 3 | operation_without_preionizer_demonstrated |
+| E04 | ECHT (Stanford extended-channel Hall thruster) (single-stage Hall (SPT-type, extended channel)) | N2 (pure) / Ar | direct_on_atmospheric_gas | 1.6 mg/s (anode N2 flow below which the discharge was unstable / quenched) | n/r | n/r | **extinguished** | 3 | operation_bounded_extinction_observed |
+| E05 | Snecma PPS1350-TSD (reconverted to PPS1350 configuration) (single-stage Hall (SPT-type)) | N2 (pure) / Xe | xenon_start_then_transition | 2.3-2.85 mg/s (anode N2 flow, characterization) | n/r | n/r | **sustained** | 3 | operation_without_preionizer_demonstrated_xenon_start |
+| E06 | Snecma PPS1350-TSD (reconverted to PPS1350 configuration) (single-stage Hall (SPT-type)) | N2/O2, 1.27N2 + O2 (molecular composition) / Xe | xenon_start_then_transition | 2.1 mg/s (minimum stable mixture flow) | 220-350 V | n/r | **sustained** | 3 | operation_without_preionizer_demonstrated_xenon_start |
+| E07 | Snecma PPS1350-TSD (reconverted to PPS1350 configuration) (single-stage Hall (SPT-type)) | N2/O2 mixture with a 10 % xenon mass-flow addition / not reported | not_reported | 2.75 mg/s (mixture flow) | 305 V | n/r | **extinguished** | 5 | not_informative |
+| E08 | SITAEL HT5k (first development model) (single-stage Hall (SPT-type)) | 0.56N2/0.44O2 (= 1.27N2 + O2) / Xe | not_reported | 4.3-4.7 mg/s (anode mixture flow) | 225 V | n/r | **sustained** | 5 | operation_without_preionizer_demonstrated |
+| E09 | SITAEL HT5k DM2 with HC20h hollow cathode (magnetically shielded Hall) | 0.56N2 + 0.44O2 / N2 (after transition from Xe) | xenon_start_then_transition | 5-7 mg/s (anode N2/O2 flow) | 225-300 V | n/r | **sustained** | 3 | operation_without_preionizer_demonstrated_xenon_start |
+| E10 | Simplified CAMILA (ASRI Technion) (single-stage Hall with coaxial anodes extending into the channel (low power)) | N2 (pure) / Xe | direct_on_atmospheric_gas (inferred by us, not stated by the source; verify) | 1.144-1.568 mg/s (anode N2 flow range operated) | 180-250 V | 1.48 ratio to Xe/Kr field (B required relative to Xe/Kr) | **sustained** | 3 | operation_without_preionizer_demonstrated |
+| E11 | Simplified CAMILA (ASRI Technion) (single-stage Hall with coaxial anodes extending into the channel (low power)) | N2 (pure) / Xe | direct_on_atmospheric_gas (inferred by us, not stated by the source; verify) | n/r | n/r | n/r | **extinguished** | 3 | operation_bounded_extinction_observed |
+| E12 | MaSHEKT-100 (Southampton) (magnetically shielded Hall (low power)) | N2 (pure) / not accessed | direct_on_atmospheric_gas (second-hand; verify) | n/r | n/r | n/r | **sustained** | 5 | operation_without_preionizer_demonstrated |
+| E13 | Z-70 (Stanford, refurbished) (single-stage Hall (SPT-type)) | Xe/N2 mixtures (Xe mass fraction down to about 10 %); pure N2 not sustained / Xe | xenon_admixture_required | 1.33-1.39 mg/s (anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)) | 290 V | 135 G (radial B at channel centreline, exit plane) | **extinguished** | 3 | xenon_admixture_required_in_tested_regime |
+| E14 | Z-70 (Stanford, refurbished) (single-stage Hall (SPT-type)) | Xe/air mixtures (Xe mass fraction 48-96 % per ANDREUSSI2022 p.26) / Xe | xenon_admixture_required | 0.83 mg/s (anode air flow, runs XeAir-3/4 (+ 0.78 mg/s Xe in the anode flow)) | 290 V | 135-160 G (radial B at channel-exit centreline (XeAir-3 135 G, XeAir-4 160 G)) | **sustained** | 3 | xenon_admixture_required_in_tested_regime |
 | E15 | TsNIIMASH anode-layer thrusters, 27 mm and 55 mm (D-55) anode diameter (anode-layer Hall (TAL)) | Xe + air mixtures (fractions not legible in the accessed scan) / not reported | xenon_admixture_required | n/r | n/r | n/r | **sustained** | 3 | xenon_admixture_required_in_tested_regime |
-| E16 | Busek BHT (2 kW nominal) (single-stage Hall (SPT-type)) | air simulant 68.3 % N2, 6.7 % O2, 25 % Ar (Ar as surrogate for atomic O) / not reported | not_reported | 2.94 mg/s | 200-350 V | n/r | **sustained** | 5 | operation_without_preionizer_demonstrated |
+| E16 | Busek BHT (2 kW nominal) (single-stage Hall (SPT-type)) | air simulant 68.3 % N2, 6.7 % O2, 25 % Ar (Ar as surrogate for atomic O) / not reported | not_reported | 2.94 mg/s (best-efficiency point flow) | 200-350 V | n/r | **sustained** | 5 | operation_without_preionizer_demonstrated |
 | E17 | Busek ABHET LX2 prototype (single-stage Hall (open-ended, extended channel per patent; details unpublished)) | air simulant in an inlet duct, or collected flow from an RF Hall source / not reported (the RF Hall source used a Xe cathode) | not_reported | n/r | n/r | n/r | **sustained** | 5 | not_informative |
-| E18 | SITAEL RAM-EP prototype (two-stage Hall (ionization stage + Hall-like acceleration stage)) | intake-collected flow from the HT5k PFG (4.7 mg/s 1.27N2 + O2 at the PFG); PFG also run on Xe / Xe (hollow cathode neutralizer) | not_reported | 4.7 mg/s | n/r | n/r | **sustained** | 3 | preionization_stage_present_effect_not_isolated |
-| E19 | Helicon Hall thruster (HHT) (two-stage Hall (helicon RF first stage + Hall stage)) | N2 (pure) / Xe | not_reported | 2.6 mg/s | 200 V | n/r | **sustained** | 5 | preionization_stage_tested_no_net_benefit_reported |
-| E20 | laboratory model, Moscow State Technical University per review Table 3 (xenon design) (anode-layer / closed-drift Hall (title: 'thruster with anode layer')) | air; N2/O2 2:1 / Xe | not_reported | 0.8-1 mg/s | n/r | n/r | **sustained** | 5 | operation_without_preionizer_demonstrated |
+| E18 | SITAEL RAM-EP prototype (two-stage Hall (ionization stage + Hall-like acceleration stage)) | intake-collected flow from the HT5k PFG (4.7 mg/s 1.27N2 + O2 at the PFG); PFG also run on Xe / Xe (hollow cathode neutralizer) | not_reported | 4.7 mg/s (PFG anode flow (upstream source, not the thruster inlet flow)) | n/r | n/r | **sustained** | 3 | preionization_stage_present_effect_not_isolated |
+| E19 | Helicon Hall thruster (HHT) (two-stage Hall (helicon RF first stage + Hall stage)) | N2 (pure) / Xe | not_reported | 2.6 mg/s (anode N2 flow) | 200 V | n/r | **sustained** | 5 | preionization_stage_tested_no_net_benefit_reported |
+| E20 | laboratory model, Moscow State Technical University per review Table 3 (xenon design) (anode-layer / closed-drift Hall (title: 'thruster with anode layer')) | air; N2/O2 2:1 / Xe | not_reported | 0.8-1 mg/s (total mass flow (review wording; whether it includes the 0.19 mg/s Xe cathode flow is not stated)) | n/r | n/r | **sustained** | 5 | operation_without_preionizer_demonstrated |
 | E21 | ABCHT prototype (two-stage Hall (ECR ionization + cylindrical Hall acceleration)) | xenon only (no atmospheric gas test reported) / not reported (1 % thoriated W filament selected for the concept, review p.38) | not_reported | n/r | n/r | n/r | **not_reported** | 5 | not_informative |
 
-n/r = not reported in the accessed text (or TBD); ranges are min-max over the reported points.
+n/r = not reported in the accessed text (or TBD); ranges are min-max over the reported points. The flow and B cells name the quantity shown (read the name: some rows carry one gas of a two-gas anode flow, or a total flow). Ignition qualifiers: 'inferred by us' = the source does not state the gas at ignition; 'second-hand' = known only via another publication; both need verification in the primary.
 
 ### Per-item statements
 
 #### E01 - P5 on pure N2, five setpoints N1-N5 (GT VTF-1)
 
 - Sources / access: REPO_P5_N2_AUDIT (repository_audit_file), BRABSTON2025 (licensed_full_text_sha_pinned), BRABSTON_IEPC2024 (open_full_text). Evidence level 3; outcome evidence class: measured; repository-derived values recomputed by the builder.
-- Pre-ionizer: none. Ignition (not_reported, measured): The start-up / ignition procedure (gas at ignition) is not described in the accessed text (verify in the full paper if needed).
+- Pre-ionizer: none. Ignition (not_reported, measured, basis primary): The start-up / ignition procedure (gas at ignition) is not described in the accessed text (verify in the full paper if needed).
 - Outcome: **sustained**. All five N2 setpoints were operated and measured (thrust, plume probes at N1-N3). Coils were tuned at N3 to minimise I_d and its peak-to-peak oscillation, then held fixed. The Xe cathode flow (4.5 sccm) was chosen as the lowest that kept stable operation on all propellants.
 - Observations: oscillations: qualitative only: B tuned to minimise I_d peak-to-peak oscillation; no amplitudes or spectra published (repository findings F6; BRABSTON2025 p.6); extinction: see E02 (voltage window); erosion: not reported; cathode: Xe hollow cathode at 0.44 mg/s; paper assumes the Xe contribution negligible (no resolvable Xe in E x B spectra; findings F5).
 - **Implication for 'is pre-ionization required?'** (operation_without_preionizer_demonstrated): A single-stage Hall discharge without a dedicated pre-ionization stage sustained on a pure N2 anode flow of 5.0-5.4 mg/s at 232-279 V and 130 G in this thruster and facility.
@@ -112,13 +114,13 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   | chamber pressure (N2-corrected ion gauge) | 1.14e-05-2.14e-05 | Torr | measured | not stated | REPO_P5_N2_AUDIT, Table 2 |
   | ingested background N2 flow, Eq. (13) | 0.0992-0.1861 | mg/s | inferred | engineering correlation (evidence level 6) | REPO_P5_N2_AUDIT, audit points.*.mdot_ingested_eq13_mg_s |
   | ingested / anode flow | 0.0198-0.0345 | 1 | inferred | inherits Eq. (13) uncertainty | REPO_P5_N2_AUDIT, our arithmetic |
-  | thrust, ingestion-corrected (N1..N5) | 61.4-90 | mN | reconstructed | 2.6 | REPO_P5_N2_AUDIT, abstract end-points (N1, N5); Fig. 5 digitized (N2-N4) |
+  | thrust, ingestion-corrected (N1..N5) | 61.4-90 | mN | reconstructed | max uncertainty 2.6 mN (BRABSTON2025 Table 5, audit points.*.T_sigma_mN); Fig. 5 digitization about 0.4 mN at N2-N4 (repository findings) | REPO_P5_N2_AUDIT, abstract end-points (N1, N5); Fig. 5 digitized (N2-N4) |
   | discharge channel length | 32-38 | mm | measured | conflicting sources; carried as hypotheses | REPO_P5_N2_AUDIT, docs/EVIDENCE.md register: 32 mm (Brabston 2025) vs 38 mm (Peterson 2001, Hofer 2004) |
 
 #### E02 - P5 on pure N2 outside about 225-275 V (operating-window statement)
 
 - Sources / access: REPO_P5_N2_AUDIT (repository_audit_file), BRABSTON2025 (licensed_full_text_sha_pinned), BRABSTON_IEPC2024 (open_full_text). Evidence level 3; outcome evidence class: measured; repository-derived values recomputed by the builder.
-- Pre-ionizer: none. Ignition (not_reported, measured): not described in the accessed text
+- Pre-ionizer: none. Ignition (not_reported, measured, basis primary): not described in the accessed text
 - Outcome: **extinguished**. The paper states that above 275 V and below 225 V the thruster becomes unstable and cannot sustain a discharge on nitrogen (text statement, no boundary data). qualitative: all five setpoints ran; the text says the discharge cannot be sustained above 275 V or below 225 V (N3-N5 are at 275.7-278.6 V)
 - Observations: oscillations: not quantified; extinction: loss of discharge outside the window; erosion: not reported; cathode: Xe hollow cathode 0.44 mg/s.
 - **Implication for 'is pre-ionization required?'** (operation_bounded_extinction_observed): Without a pre-ionizer, sustained N2 operation of this thruster was confined to a narrow voltage window at about 5 mg/s and fixed B.
@@ -133,7 +135,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E03 - ECHT on pure N2 with an argon cathode, 180-220 V (SPPL LVF)
 
 - Sources / access: REPO_ECHT_AUDIT (repository_audit_file), MARCHIONI2020 (open_full_text_restrictive_license), MARCHIONI2021 (abstract_only). Evidence level 3; outcome evidence class: measured; repository-derived values recomputed by the builder.
-- Pre-ionizer: none. Ignition (direct_on_atmospheric_gas, measured): S2 pp.84-85 give an ignition procedure with N2 set on the anode and Ar on the cathode (cathode puff, low B at ignition, B applied after the anode stabilises); S2 p.97 states a stable discharge was maintained on 100 % nitrogen with no xenon present.
+- Pre-ionizer: none. Ignition (direct_on_atmospheric_gas, measured, basis primary): S2 pp.84-85 give an ignition procedure with N2 set on the anode and Ar on the cathode (cathode puff, low B at ignition, B applied after the anode stabilises); S2 p.97 states a stable discharge was maintained on 100 % nitrogen with no xenon present.
 - Outcome: **sustained**. 13 operating points (Table 6.1) and 7 thrust runs (Table 6.2) on pure N2 at 2.06 mg/s. Runs 1, 3, 7 are flagged 'strong instability during calibration'; mode changes and quenching were attributed by the author to a degraded BaO cathode.
 - Observations: oscillations: qualitative only: mode changes during calibration (Fig. 6.12 LVDT trace), quenching, keeper runaway; discharge unstable/quenches below ~80 sccm (1.6 mg/s). No I_d time traces, spectra, or oscillation amplitudes.; extinction: quenching linked to keeper-voltage runaway (30-40 V) of a degraded emitter; cathode flow raised ad hoc to keep the cathode running (repository audit, cathode.flow_mgps note; S2 p.98); erosion: not reported; cathode: argon, 0.15-0.74 mg/s (Table 6.1).
 - **Implication for 'is pre-ionization required?'** (operation_without_preionizer_demonstrated): The only accessed Hall case that both ignited and ran on a pure N2 anode flow with no xenon anywhere (Ar cathode) and no pre-ionization stage, at about 2 mg/s in an 86 mm channel.
@@ -147,7 +149,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
   | discharge voltage | 180-220 | V | measured | not stated | REPO_ECHT_AUDIT, S2 Table 6.1 |
   | discharge current | 1.5-3.9 | A | measured | 2 s.f. (rounding +-0.05 A) | REPO_ECHT_AUDIT, S2 Table 6.1 |
   | magnet coil current | 0.8-3 | A | measured | not stated | REPO_ECHT_AUDIT, S2 Table 6.1 |
-  | measured centreline B plateau at 2 A coil current | 85.3 | G | digitized | reading +-0.2 G; probe uncertainty not stated | REPO_ECHT_AUDIT, S2 Fig. 4.7 p.66 (digitized by the repository audit) |
+  | centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured) | 85.3 | G | digitized | reading +-0.2 G; probe uncertainty not stated | REPO_ECHT_AUDIT, S2 Fig. 4.7 p.66 (digitized by the repository audit) |
   | cathode Ar mass flow | 0.15-0.74 | mg/s | measured | not stated | REPO_ECHT_AUDIT, S2 Table 6.1 |
   | cathode Ar / anode N2 mass-flow ratio | 0.0728-0.3592 | 1 | inferred | inherits the 2.06/2.083 mg/s ambiguity | REPO_ECHT_AUDIT, our arithmetic on Table 6.1 |
   | chamber pressure (ion gauge) | 8.1e-05-0.00022 | Torr | measured | gauge location and gas correction not stated | REPO_ECHT_AUDIT, S2 Table 6.1 |
@@ -160,7 +162,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E04 - ECHT on pure N2 below about 80 sccm (1.6 mg/s)
 
 - Sources / access: REPO_ECHT_AUDIT (repository_audit_file), MARCHIONI2020 (open_full_text_restrictive_license), MARCHIONI2021 (abstract_only). Evidence level 3; outcome evidence class: measured; repository-derived values recomputed by the builder.
-- Pre-ionizer: none. Ignition (direct_on_atmospheric_gas, measured): as E03
+- Pre-ionizer: none. Ignition (direct_on_atmospheric_gas, measured, basis primary): as E03
 - Outcome: **extinguished**. Qualitative: the discharge was unstable / quenched below about 80 sccm (1.6 mg/s) N2.
 - Observations: oscillations: not quantified; extinction: flow floor about 1.6 mg/s; erosion: not reported; cathode: Ar, degraded BaO emitter.
 - **Implication for 'is pre-ionization required?'** (operation_bounded_extinction_observed): Even with an 86 mm channel, pure-N2 operation without a pre-ionizer had a flow floor near 1.6 mg/s in this set-up.
@@ -171,7 +173,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E05 - PPS1350-TSD on pure N2 (Alta IV10, ESA contract)
 
 - Sources / access: CIFALI2011 (open_full_text), ANDREUSSI2022 (open_full_text). Evidence level 3; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (xenon_start_then_transition, measured): Always ignited with xenon, then a smooth anode transition from 100 % Xe to 100 % N2; the cathode stayed on xenon (CIFALI2011 p.2).
+- Pre-ionizer: none. Ignition (xenon_start_then_transition, measured, basis primary): Always ignited with xenon, then a smooth anode transition from 100 % Xe to 100 % N2; the cathode stayed on xenon (CIFALI2011 p.2).
 - Outcome: **sustained**. Operated over 2.3-2.85 mg/s N2; 10 h long firing at 305 V, 3 A 'very stable', thrust always 19-21 mN; Xe performance afterwards substantially unaffected.
 - Observations: oscillations: not reported; extinction: none reported; erosion: visual inspection after the campaign (see E06); cathode: Xe hollow cathode throughout.
 - **Implication for 'is pre-ionization required?'** (operation_without_preionizer_demonstrated_xenon_start): Steady single-stage operation on pure N2 without a pre-ionizer, once lit on xenon and with a Xe cathode.
@@ -193,7 +195,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E06 - PPS1350-TSD on N2/O2 mixture 1.27N2 + O2 (200 km-representative)
 
 - Sources / access: CIFALI2011 (open_full_text), ANDREUSSI2022 (open_full_text). Evidence level 3; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (xenon_start_then_transition, measured): as E05 (always ignited with xenon, CIFALI2011 p.2)
+- Pre-ionizer: none. Ignition (xenon_start_then_transition, measured, basis primary): as E05 (always ignited with xenon, CIFALI2011 p.2)
 - Outcome: **sustained**. Stable operation down to 2.1 mg/s; 10 h stable test at 305 V, 2.75 mg/s, thrust 24 mN.
 - Observations: oscillations: flow-controller perturbations 'induced by oscillations on the main discharge circuit' mentioned for the Xe re-check after the mixture test (p.5); not quantified; extinction: none reported; erosion: anode 'rusty' (oxidation) and signs of oxygen operation on the ceramics after the test; anode oxidation named the main concern for endurance (p.5); cathode: Xe.
 - **Implication for 'is pre-ionization required?'** (operation_without_preionizer_demonstrated_xenon_start): Steady operation on an N2/O2 anode flow without a pre-ionizer after a xenon start; O2 addition did not degrade sustainment at low flow in this test (stable to 2.1 mg/s).
@@ -212,7 +214,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E07 - PPS1350 endurance on N2/O2 + 10 % Xe (secondary report)
 
 - Sources / access: ANDREUSSI2022 (open_full_text), CIFALI2012 (not_accessed). Evidence level 5; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (not_reported, measured): not reported in the review
+- Pre-ionizer: none. Ignition (not_reported, measured, basis second_hand): not reported in the review
 - Outcome: **extinguished**. Steady for about 314 h at 3.8-4 A; then severe anode oxidation produced anomalous discharge behaviour and a spontaneous flame-out; after refurbishment, several flame-outs in the next 75 h and the test was stopped early.
 - Observations: oscillations: anomalous discharge behaviour (not quantified); extinction: flame-outs attributed to anode oxidation; erosion: ceramic erosion reported compatible with 7000-9500 h lifetime; anode oxidation life-limiting; cathode: not reported.
 - **Implication for 'is pre-ionization required?'** (not_informative): Says nothing on pre-ionization; shows that with oxygen in the anode flow, sustainment over hundreds of hours was limited by anode oxidation (flame-outs), with 10 % Xe already added.
@@ -232,7 +234,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E08 - SITAEL HT5k (first development model) as particle-flow generator on N2/O2 (2017)
 
 - Sources / access: ANDREUSSI2022 (open_full_text), FERRATO2019_IEPC886 (open_full_text), ANDREUSSI2017_IEPC377 (not_accessed). Evidence level 5; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (not_reported, measured): not reported
+- Pre-ionizer: none. Ignition (not_reported, measured, basis second_hand): not reported
 - Outcome: **sustained**. Stable operation verified at 225 V, 4.3-4.7 mg/s; 64 mN at 2.4 kW; plume half-angle divergence 52 deg (review p.43).
 - Observations: oscillations: not reported; extinction: not reported; erosion: not reported; cathode: Xe.
 - **Implication for 'is pre-ionization required?'** (operation_without_preionizer_demonstrated): Single-stage operation on an N2/O2 anode flow without a pre-ionizer at 4.3-4.7 mg/s.
@@ -249,9 +251,9 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E09 - SITAEL HT5k DM2 (magnetically shielded), AETHER particle-flow generator, N2/O2 anode and N2 cathode (Nov 2021)
 
 - Sources / access: ANDREUSSI2022_IEPC435 (open_full_text), FERRATO2022_PSST (abstract_only), ANDREUSSI2022 (open_full_text). Evidence level 3; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (xenon_start_then_transition, measured): Ignited at 225 V on 10 mg/s Xe (anode) + 1 mg/s Xe (cathode); anode switched gradually to 6 mg/s N2/O2; then cathode Xe reduced to 0 while N2 raised to 0.6 mg/s (p.3).
+- Pre-ionizer: none. Ignition (xenon_start_then_transition, measured, basis primary): Ignited at 225 V on 10 mg/s Xe (anode) + 1 mg/s Xe (cathode); anode switched gradually to 6 mg/s N2/O2; then cathode Xe reduced to 0 while N2 raised to 0.6 mg/s (p.3).
 - Outcome: **sustained**. Discharge and thermal stability demonstrated at 225 V and 300 V, 5-7 mg/s, with the N2-fed cathode (xenon-free steady state after the xenon start); six operating conditions; cumulative 10 h on atmospheric propellant; Xe reference tests before/after repeatable.
-- Observations: oscillations: I_d acquired at 10 MHz; the review reports the discharge current signal stable in all points (Page 25 of 57); no spectra published; extinction: none reported; erosion: magnetic shielding 'seems effective'; plasma detachment from channel walls visible (p.5); no PFG critical damage after the air test; cathode: HC20h (LaB6) on N2 0.5-0.7 mg/s (PSST abstract); N2 cathode reduced I_d, thrust and efficiency vs Xe cathode at the same V_d and anode flow (p.5). The review reports severe erosion/embrittlement of the HC20h after tests with the N2/O2 mixture (Page 38 of 57).
+- Observations: oscillations: I_d acquired at 10 MHz; the review reports the discharge current signal stable in all points (Page 25 of 57); no spectra published; extinction: none reported; erosion: magnetic shielding 'seems effective'; plasma detachment from channel walls visible (p.5); no PFG critical damage after the air test; cathode: HC20h hollow cathode (LaB6 emitter per ANDREUSSI2022 Page 38 of 57) on N2 0.5-0.7 mg/s (FERRATO2022_PSST abstract); N2 cathode reduced I_d, thrust and efficiency vs Xe cathode at the same V_d and anode flow (p.5). The review reports severe erosion/embrittlement of the HC20h after tests with the N2/O2 mixture (Page 38 of 57).
 - **Implication for 'is pre-ionization required?'** (operation_without_preionizer_demonstrated_xenon_start): After a xenon start, a single-stage magnetically shielded Hall discharge was sustained with no xenon anywhere (N2/O2 anode, N2 cathode) and no pre-ionizer at 5-7 mg/s.
   - Uncertainty: Ignition itself used xenon; B and geometry not published; only 10 h; efficiency range differs between the two SITAEL sources.
   - Applicability limits: 5 kW class, 1.2-5.2 kW, 225-300 V, facility < 2.5e-5 mbar, lab-fed gas (no atomic O).
@@ -271,7 +273,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E10 - Simplified CAMILA low-power Hall thruster on pure N2 (inside its operating envelope)
 
 - Sources / access: MOSKOVITZ2026 (open_full_text). Evidence level 3; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (direct_on_atmospheric_gas, inferred): The thruster was ignited at known stable points and re-ignited after shutdowns with a higher flow (p.9); the gas at ignition is not stated explicitly, read here as direct ignition on the N2 anode flow with a Xe cathode (inferred, verify).
+- Pre-ionizer: none. Ignition (direct_on_atmospheric_gas, inferred, basis our_inference): The thruster was ignited at known stable points and re-ignited after shutdowns with a higher flow (p.9); the gas at ignition is not stated explicitly, read here as direct ignition on the N2 anode flow with a Xe cathode (inferred, verify).
 - Outcome: **sustained**. Operated on N2 within an envelope (stability = discharge sustained > 5 min); the authors call N2 the narrowest envelope and note numerous spontaneous shutdowns with light gases.
 - Observations: oscillations: not quantified; I_d/I_b described as highly sensitive to changes (p.9); extinction: see E11; erosion: not measured (endurance recommended as future work, p.21); cathode: Xe only, 0.15 or 0.20 mg/s; 2.00 sccm for Ar/CO2/N2 vs 1.50 sccm for Xe/Kr (p.6, p.14).
 - **Implication for 'is pre-ionization required?'** (operation_without_preionizer_demonstrated): A low-power single-stage Hall thruster sustained pure-N2 discharges without a pre-ionizer at 1.1-1.6 mg/s, but only with about 1.48x the Xe magnetic field and within a narrow, voltage-dependent flow envelope.
@@ -297,7 +299,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E11 - Simplified CAMILA on pure N2 below its minimum voltage/flow envelope
 
 - Sources / access: MOSKOVITZ2026 (open_full_text). Evidence level 3; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (direct_on_atmospheric_gas, inferred): as E10
+- Pre-ionizer: none. Ignition (direct_on_atmospheric_gas, inferred, basis our_inference): as E10 (gas at ignition not stated in the source; inferred, verify)
 - Outcome: **extinguished**. Below the minimum voltage/flow combination the discharge shut down spontaneously; lower voltages required more flow, and the boundary slope is steepest for light gases.
 - Observations: oscillations: not quantified; extinction: spontaneous shutdowns; restart needed a more stable parameter set; erosion: not measured; cathode: Xe.
 - **Implication for 'is pre-ionization required?'** (operation_bounded_extinction_observed): Without a pre-ionizer, pure-N2 sustainment in this thruster has a voltage-dependent minimum flow.
@@ -311,8 +313,8 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 
 #### E12 - MaSHEKT-100 low-power magnetically shielded Hall thruster on N2 (abstract only)
 
-- Sources / access: MUNRO2023 (abstract_only), MOSKOVITZ2026 (open_full_text). Evidence level 3; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (direct_on_atmospheric_gas, measured): Second-hand: MOSKOVITZ2026 p.4 reports that the thruster could 'eventually' be ignited with pure N2, and that only three N2 data points were collected because of a component failure (verify in the primary).
+- Sources / access: MUNRO2023 (abstract_only), MOSKOVITZ2026 (open_full_text). Evidence level 5; outcome evidence class: measured.
+- Pre-ionizer: none. Ignition (direct_on_atmospheric_gas, measured, basis second_hand): Second-hand: MOSKOVITZ2026 p.4 reports that the thruster could 'eventually' be ignited with pure N2, and that only three N2 data points were collected because of a component failure (verify in the primary).
 - Outcome: **sustained**. The abstract states that the thruster was operated on diatomic nitrogen successfully (neon: unstable).
 - Observations: oscillations: not accessed; extinction: not accessed; erosion: not accessed; cathode: not accessed.
 - **Implication for 'is pre-ionization required?'** (operation_without_preionizer_demonstrated): Indicates direct N2 ignition and operation of a ~100 W single-stage Hall thruster without a pre-ionizer, but with few points.
@@ -329,7 +331,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E13 - Z-70 on Xe/N2 mixtures: xenon needed to sustain the discharge at <= about 0.7 kW
 
 - Sources / access: GURCIULLO2020 (open_full_text_restrictive_license), GURCIULLO2019 (abstract_only), ANDREUSSI2022 (open_full_text). Evidence level 3; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (xenon_admixture_required, measured): A share of xenon was used because the discharge could not be sustained at the anode power investigated, which was limited by the 300 V supply (p.126).
+- Pre-ionizer: none. Ignition (xenon_admixture_required, measured, basis primary): A share of xenon was used because the discharge could not be sustained at the anode power investigated, which was limited by the 300 V supply (p.126).
 - Outcome: **extinguished**. With Xe reduced below 0.16 mg/s at this power range the discharge became unstable and eventually ceased (p.177); pure N2 was not operated at the available power.
 - Observations: oscillations: not reported; extinction: loss of discharge below 0.16 mg/s Xe; erosion: not reported; cathode: IonTech HC-252 (BaO) on Xe, 0.46 mg/s (p.148).
 - **Implication for 'is pre-ionization required?'** (xenon_admixture_required_in_tested_regime): In a short (23 mm) xenon-optimized channel at <= 0.7 kW and 290 V, pure-N2 operation without a pre-ionizer was not achieved; about 10 % Xe by mass was the lowest admixture that sustained.
@@ -339,6 +341,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | lowest anode Xe flow that sustained (with N2 1.33-1.39 mg/s) | 0.16 | mg/s | measured | not stated | GURCIULLO2020, p.177 |
   | anode power at the lowest-Xe points | 603.2-681.5 | W | measured | not stated | GURCIULLO2020, Tables 4.6/4.7 captions |
   | anode current at the lowest-Xe points | 2.08-2.35 | A | measured | not stated | GURCIULLO2020, Tables 4.6/4.7 captions |
   | Xe mass fraction of anode flow at the lowest-Xe points | 0.1032-0.1074 | 1 | inferred | not stated | GURCIULLO2020, our arithmetic on p.177 values |
@@ -348,23 +351,31 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E14 - Z-70 on Xe/air mixtures (sustained with xenon admixture)
 
 - Sources / access: GURCIULLO2020 (open_full_text_restrictive_license), GURCIULLO2019 (abstract_only), ANDREUSSI2022 (open_full_text). Evidence level 3; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (xenon_admixture_required, measured): as E13
+- Pre-ionizer: none. Ignition (xenon_admixture_required, measured, basis primary): as E13
 - Outcome: **sustained**. Operated on Xe/air mixtures down to about 48 % Xe (review) / 0.78 mg/s Xe with 0.83 mg/s air (thesis); the author reports better performance with air than with N2.
 - Observations: oscillations: not reported; extinction: not reported for air; erosion: not reported; cathode: Xe 0.46 mg/s.
 - **Implication for 'is pre-ionization required?'** (xenon_admixture_required_in_tested_regime): Air operation in this thruster was only shown with substantial xenon admixture; no pre-ionizer was used and pure air was not attempted at the available power.
-  - Uncertainty: Minimum Xe share for air not reported in the thesis text read here.
+  - Uncertainty: Lowest Xe share run with air in the thesis is 0.78 mg/s Xe with 0.83 mg/s air (48 % Xe by mass, our arithmetic); a minimum Xe share for air was not reported. Performance ratios are Wien-filter-based estimates, not thrust-stand data.
   - Applicability limits: as E13
   - ABEP flow/density regime: TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
+  | anode Xe flow, runs XeAir-3/4 | 0.78 | mg/s | measured | not stated | GURCIULLO2020, Table 4.10 p.201 |
+  | anode air flow, runs XeAir-3/4 | 0.83 | mg/s | measured | not stated | GURCIULLO2020, Table 4.10 p.201 |
+  | total anode flow (Xe + air), runs XeAir-3/4 | 1.61 | mg/s | inferred | not stated | GURCIULLO2020, our arithmetic on Table 4.10 p.201 |
+  | Xe mass fraction of the anode flow, runs XeAir-3/4 | 0.4845 | 1 | inferred | not stated | GURCIULLO2020, our arithmetic on Table 4.10 p.201 |
   | anode current XeAir-3 (135 G) | 2.57 | A | measured | not stated | GURCIULLO2020, Table 4.10 p.201 |
   | anode current XeAir-4 (160 G) | 2.45 | A | measured | not stated | GURCIULLO2020, Table 4.10 p.201 |
+  | total thrust ratio to Xe-only run XeAir-1, XeAir-3 (135 G) | 0.83 | 1 | inferred | not stated; estimated from uncorrected Wien filter spectra, not a thrust-stand measurement | GURCIULLO2020, Table 4.10 p.201 |
+  | total thrust ratio to Xe-only run XeAir-1, XeAir-4 (160 G) | 0.79 | 1 | inferred | not stated; estimated from uncorrected Wien filter spectra, not a thrust-stand measurement | GURCIULLO2020, Table 4.10 p.201 |
+  | anode efficiency ratio to XeAir-1, XeAir-3 (135 G) | 0.64 | 1 | inferred | not stated; Wien-filter-based estimate | GURCIULLO2020, Table 4.10 p.201 |
+  | anode efficiency ratio to XeAir-1, XeAir-4 (160 G) | 0.61 | 1 | inferred | not stated; Wien-filter-based estimate | GURCIULLO2020, Table 4.10 p.201 |
 
 #### E15 - TsNIIMASH anode-layer thrusters on Xe + air mixtures (1995)
 
 - Sources / access: SEMENKIN1995 (open_full_text), ANDREUSSI2022 (open_full_text). Evidence level 3; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (xenon_admixture_required, measured): Xe addition to light propellants changed the operating mode and enabled the 'acceleration mode' (pp.3-4); pure-air operation is not characterized in the text.
+- Pre-ionizer: none. Ignition (xenon_admixture_required, measured, basis primary): Xe addition to light propellants changed the operating mode and enabled the 'acceleration mode' (pp.3-4); pure-air operation is not characterized in the text.
 - Outcome: **sustained**. Volt-ampere characteristics for Xe + air were measured; Xe additions allowed an effective 'acceleration mode' (p.4).
 - Observations: oscillations: not reported; extinction: not reported; erosion: not reported; cathode: not reported.
 - **Implication for 'is pre-ionization required?'** (xenon_admixture_required_in_tested_regime): Early evidence that a heavy-gas (Xe) discharge acts as the ionizer for light gases in a TAL; it does not test pure air or a separate pre-ionizer.
@@ -375,7 +386,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E16 - Busek 2 kW-class BHT on 'air simulant' 68.3 % N2 / 6.7 % O2 / 25 % Ar (2005; secondary)
 
 - Sources / access: ANDREUSSI2022 (open_full_text), HRUBY2022 (not_accessed). Evidence level 5; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (not_reported, measured): not reported in the review
+- Pre-ionizer: none. Ignition (not_reported, measured, basis second_hand): not reported in the review
 - Outcome: **sustained**. Tested over 200-350 V and 1-5.5 kW; best anodic efficiency about 27 % at 350 V, 2.94 mg/s.
 - Observations: oscillations: not reported; extinction: not reported; erosion: not reported; cathode: not reported.
 - **Implication for 'is pre-ionization required?'** (operation_without_preionizer_demonstrated): A conventional Hall thruster ran on an N2-rich simulant without a pre-ionizer.
@@ -391,7 +402,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E17 - Busek ABHET prototype fed by duct / RF-Hall-generated flow (secondary)
 
 - Sources / access: ANDREUSSI2022 (open_full_text), HRUBY2022 (not_accessed). Evidence level 5; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (not_reported, measured): not reported
+- Pre-ionizer: none. Ignition (not_reported, measured, basis second_hand): not reported
 - Outcome: **sustained**. The review states the ABHET was able to operate with the simulated VLEO flow; no performance data (stand impingement, facility > 1e-4 Torr).
 - Observations: oscillations: not reported; extinction: not reported; erosion: not reported; cathode: not reported.
 - **Implication for 'is pre-ionization required?'** (not_informative): Qualitative operation with a pre-ionized upstream flow source; cannot separate the role of the incoming ions from the thruster's own ionization.
@@ -406,7 +417,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E18 - SITAEL RAM-EP double-stage thruster, end-to-end with intake and PFG (2017)
 
 - Sources / access: FERRATO2019_IEPC886 (open_full_text), ANDREUSSI2022 (open_full_text), ANDREUSSI2017_IEPC377 (not_accessed). Evidence level 3; outcome evidence class: measured.
-- Pre-ionizer: yes - dedicated first (ionization) stage of a double-stage device. Ignition (not_reported, measured): 'first ignition and stable operation' of the full system is claimed (IEPC-2019-886 p.3); procedure not given
+- Pre-ionizer: yes - dedicated first (ionization) stage of a double-stage device. Ignition (not_reported, measured, basis primary): 'first ignition and stable operation' of the full system is claimed (IEPC-2019-886 p.3); procedure not given
 - Outcome: **sustained**. The integrated system operated on the collected flow; 'good ionization capability', acceleration stage below expectations.
 - Observations: oscillations: not reported; extinction: not reported; erosion: not reported; cathode: conventional Xe-fed hollow cathode.
 - **Implication for 'is pre-ionization required?'** (preionization_stage_present_effect_not_isolated): The only accessed intake-fed Hall-type operation used a dedicated ionization stage; it does not show whether that stage was necessary.
@@ -416,14 +427,14 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 
   | quantity | value | unit | class | uncertainty | source, locator |
   |---|---|---|---|---|---|
-  | thrust produced by the system on the collected flow | 6 | mN | measured | 1 | FERRATO2019_IEPC886, Fig. 1b caption and text p.3 |
-  | drag on system with thruster off | 26 | mN | measured | 1 | FERRATO2019_IEPC886, Fig. 1b caption and text p.3 |
+  | thrust produced by the system on the collected flow | 6 | mN | measured | +-1 mN as stated (meaning of the bound not defined) | FERRATO2019_IEPC886, Fig. 1b caption and text p.3 |
+  | drag on system with thruster off | 26 | mN | measured | +-1 mN as stated (meaning of the bound not defined) | FERRATO2019_IEPC886, Fig. 1b caption and text p.3 |
   | PFG-to-intake distance | 500 | mm | measured | not stated | FERRATO2019_IEPC886, Fig. 2 caption p.3 |
 
 #### E19 - Michigan helicon Hall thruster on N2: single-stage vs RF-assisted (secondary)
 
 - Sources / access: ANDREUSSI2022 (open_full_text), SHABSHELOWITZ2014 (not_accessed). Evidence level 5; outcome evidence class: measured.
-- Pre-ionizer: yes - helicon RF stage (0-302 W). Ignition (not_reported, measured): not reported in the review
+- Pre-ionizer: yes - helicon RF stage (0-302 W). Ignition (not_reported, measured, basis second_hand): not reported in the review
 - Outcome: **sustained**. Operated on N2 in single-stage mode (RF off) and with RF up to 302 W. RF produced a minor thrust increase while thrust-to-power and anode efficiency decreased consistently.
 - Observations: oscillations: not reported; extinction: not reported; erosion: not reported; cathode: Xe 1 mg/s (38.4 % cathode flow fraction per the review).
 - **Implication for 'is pre-ionization required?'** (preionization_stage_tested_no_net_benefit_reported): The single-stage Hall mode sustained on N2 without the RF stage; adding RF pre-ionization raised utilization slightly but did not pay for its power in this device.
@@ -442,7 +453,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E20 - Laboratory closed-drift thruster (38 mm mean channel diameter) on air and 2:1 N2/O2
 
 - Sources / access: DUKHOPELNIKOV2021 (abstract_only), ANDREUSSI2022 (open_full_text). Evidence level 5; outcome evidence class: measured.
-- Pre-ionizer: none. Ignition (not_reported, measured): not reported
+- Pre-ionizer: none. Ignition (not_reported, measured, basis second_hand): not reported
 - Outcome: **sustained**. Operated on air and N2/O2; I_d-V plateau 50-100 V higher than Xe; I_d 2.1-2.4x (air) and 1.9-2.7x (N2/O2) the Xe value at 200-350 V; mass utilization on average 2.3x lower than Xe.
 - Observations: oscillations: not reported; extinction: not reported; erosion: not reported; cathode: Xe 0.19 mg/s.
 - **Implication for 'is pre-ionization required?'** (operation_without_preionizer_demonstrated): A small xenon-design closed-drift thruster operated on air and N2/O2 at about 1 mg/s without a pre-ionizer (Xe cathode).
@@ -459,7 +470,7 @@ n/r = not reported in the accessed text (or TBD); ranges are min-max over the re
 #### E21 - Aerospace Corp. 2-stage air-breathing cylindrical Hall thruster (ECR + CHT) - xenon only
 
 - Sources / access: ANDREUSSI2022 (open_full_text), DIAMANT2010 (not_accessed). Evidence level 5; outcome evidence class: measured.
-- Pre-ionizer: yes - ECR stage. Ignition (not_reported, measured): not reported
+- Pre-ionizer: yes - ECR stage. Ignition (not_reported, measured, basis second_hand): not reported
 - Outcome: **not_reported**. Prototype assembled but only tested with xenon (review p.37).
 - Observations: oscillations: not reported; extinction: not reported; erosion: not reported; cathode: filament.
 - **Implication for 'is pre-ionization required?'** (not_informative): No atmospheric-gas evidence; a pre-ionizer concept without a test on N2/O2/air.
@@ -483,8 +494,12 @@ limits.
    - the low-power CAMILA and MaSHEKT-100 (E10, E12);
    - a small closed-drift laboratory model (E20).
 
-   Every one of these was fed from laboratory mass-flow controllers at 1.1-7 mg/s, in facilities with background
-   pressures from < 6e-6 mbar to 2.2e-4 Torr. None was fed through an intake at orbital density.
+   Every one of these was fed laboratory-supplied gas, not an intake at orbital density. Where a flow is reported, it
+   is 0.8-7 mg/s (`derived_checks.no_preionizer_n2_o2_sustained_flow_range`; E12's flow was not accessed). The low end
+   is E20, whose 0.8-1.0 mg/s is a "total mass flow" in the review (ANDREUSSI2022 Page 26 of 57); the review does not
+   say whether that total includes the 0.19 mg/s Xe cathode flow (verify in the primary). Without E20, the lowest
+   reported anode flow is 1.144 mg/s N2 (CAMILA, E10), so the range is 1.144-7 mg/s. Facility pressures run from
+   < 6e-6 mbar (< 4.5e-6 Torr, our conversion; PPS1350, E05) to 2.2e-4 Torr (ECHT, E03).
 2. **Xenon is present in most cases.** Most cases use xenon in the cathode (E01, E05, E06, E08, E10, E19, E20), for
    ignition (E05, E06, E09) or in the anode flow (E07, E13-E15). The accessed record shows only two xenon-free cases:
    - **E03 (ECHT).** The discharge was ignited directly on N2 with an argon cathode. Argon was 7-36 % of the anode mass
@@ -492,8 +507,10 @@ limits.
    - **E09 (HT5k DM2).** The discharge ran xenon-free in steady state (N2/O2 anode, N2 cathode), but only after a
      xenon start.
 
-   E10 points to direct N2 ignition with a Xe cathode, but that reading is our inference. E12 points to direct N2
-   ignition, but the statement is second-hand and its cathode gas was not accessed.
+   E10 and E11 point to direct N2 ignition with a Xe cathode, but the source does not state the gas at ignition; the
+   classification is our inference (ignition basis `our_inference`, verify). E12 points to direct N2 ignition, but the
+   statement is second-hand through MOSKOVITZ2026 (basis `second_hand`, evidence level 5) and its cathode gas was not
+   accessed.
 3. **Extinction boundaries are reported, but mostly qualitatively.** Four entries give a boundary:
    - **E02:** P5 had a narrow voltage window of about 225-275 V at 5 mg/s and fixed B.
    - **E04:** ECHT had a flow floor near 1.6 mg/s.
@@ -504,8 +521,13 @@ limits.
    (breakdown voltage or pressure) for atmospheric gas.
 4. **Magnetic field.** CAMILA needed about 1.48× the xenon field on molecular gases (E10). P5-N2 instead ran at a lower
    peak field than P5-Xe (130 G vs 162.5 G, BRABSTON2025 Tables 2 and 4). In both P5 cases the coils were tuned to minimise I_d and its oscillation
-   (E01), so the two observations are not directly comparable. The Z-70 on Xe/air did worse at 160 G than at 135 G (E14).
-   B(z) shapes are published only for ECHT: a flat plateau with 85.3 G measured at 2 A.
+   (E01), so the two observations are not directly comparable. On the Z-70 at a fixed 0.78 mg/s Xe + 0.83 mg/s air,
+   raising the exit-plane B from about 135 G to about 160 G lowered the anode current from 2.57 A to 2.45 A. It also
+   lowered the author's Wien-filter-based estimates of total thrust (0.83 to 0.79 of the Xe-only run) and anode
+   efficiency (0.64 to 0.61) (E14, GURCIULLO2020 Table 4.10 p.201). These are estimates from uncorrected spectra, not
+   thrust-stand data, and one pair of runs.
+   Among the atmospheric-gas tests, a measured B(z) is published only for ECHT: a flat plateau of 85.3 G, measured at a
+   2 A coil current only, while the operating points used 0.8-3.0 A (E03). For P5 the N2 coil currents are unpublished.
 5. **Channel length.** Channel lengths in the set are 23 mm (Z-70), 32 or 38 mm (P5) and 86 mm (ECHT). Only the
    longest channel ran pure N2 at about 2 mg/s with no xenon anywhere. The short Z-70 did not run pure N2 at ≤ 0.7 kW.
    The source attributes that limit to available power, not to the channel. There is no controlled comparison, so this
@@ -515,7 +537,8 @@ limits.
    - HT5k DM2 acquired I_d at 10 MHz and describes the signal only as "stable" (E09).
    - ECHT reports mode changes and quenching tied to a degraded cathode (E03).
    - CAMILA reports numerous spontaneous shutdowns (E10, E11).
-7. **Oxygen and life.** On N2/O2 the anode oxidised within 10 h (E06). With 10 % Xe added, flame-outs appeared after
+7. **Oxygen and life.** After the PPS1350 N2/O2 campaign, which included characterization as well as the 10 h firing,
+   the anode was found "rusty" (oxidised) (E06, CIFALI2011 p.5); the time at which oxidation set in is not reported. With 10 % Xe added, flame-outs appeared after
    about 314 h and were attributed to anode oxidation (E07, second-hand). The HC20h cathode eroded on an N2/O2 mixture
    (E09 observations, second-hand). Ceramic erosion was reported as compatible with 7000-9500 h, but that figure is an
    extrapolation in the source (E07).
@@ -531,9 +554,10 @@ limits.
 
 - It does not show ignition or sustainment at the number densities, flows and compositions an intake would deliver in
   orbit (including atomic O). That regime is **TBD - requires the upstream ICD**, and no entry is scaled to it.
-- It does not isolate facility effects. Background pressure is between about 1e-5 and 2e-4 Torr, and inferred ingestion
-  is about 2-3.4 % of the anode flow at P5 and 2-6 % at ECHT, both from correlations. That ingested flow may assist
-  sustainment in ground tests.
+- It does not isolate facility effects. Reported facility pressures run from < 6e-6 mbar (< 4.5e-6 Torr, our
+  conversion; PPS1350, E05) through 1.1-2.1e-5 Torr (P5, E01) to 2.2e-4 Torr (ECHT, E03), and > 1e-4 Torr for the
+  Busek ABHET (E17). Inferred ingestion is about 2-3.4 % of the anode flow at P5 and 2-6 % at ECHT, both from
+  correlations. That ingested flow may assist sustainment in ground tests.
 - For the cases that used a xenon cathode, it does not separate the cathode's xenon from the atmospheric gas.
 - Long-duration xenon-free operation is not covered. The longest xenon-free duration found is 10 h cumulative (E09).
 - It provides no validated threshold (flow, voltage, B or channel length) that could be carried into a design. Every

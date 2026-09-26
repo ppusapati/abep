@@ -120,11 +120,12 @@
     },
     "ignition": {
      "type": "object",
-     "required": ["mode", "evidence_class", "statement"],
+     "required": ["mode", "evidence_class", "basis", "statement"],
      "additionalProperties": false,
      "properties": {
       "mode": {"type": "string", "enum": ["direct_on_atmospheric_gas", "xenon_start_then_transition", "xenon_admixture_required", "not_reported"]},
       "evidence_class": {"$ref": "#/$defs/evidence_class"},
+      "basis": {"type": "string", "enum": ["primary", "second_hand", "our_inference"], "description": "where the ignition classification comes from: the accessed primary text, a second-hand report (verify in the primary), or our inference because the source does not state the gas at ignition (verify)"},
       "statement": {"type": "string"}
      }
     },

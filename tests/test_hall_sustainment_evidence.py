@@ -334,3 +334,66 @@ def test_derived_arithmetic(m):
     assert d["composition_1p27N2_O2_mass_fraction_N2"] == pytest.approx(1.27 * 28.0134 / (1.27 * 28.0134 + 31.998), abs=1e-4)
     assert d["gurciullo_min_xe_mass_fraction"] == [pytest.approx(0.16 / 1.55, abs=1e-4), pytest.approx(0.16 / 1.49, abs=1e-4)]
     assert d["moskovitz_n2_55sccm_mg_s"] == pytest.approx(1.144, rel=3e-3)   # published conversion agrees within 0.3 %
+
+
+# ---------------------------------------------------------------- review repairs (flow basis, ignition basis, wording)
+def test_ignition_basis_is_explicit(m, entries):
+    for e in m["entries"]:
+        assert e["ignition"]["basis"] in ("primary", "second_hand", "our_inference"), e["id"]
+        if e["evidence_level"] >= 5:
+            assert e["ignition"]["basis"] != "primary", e["id"]
+    for i in ("E10", "E11"):
+        assert entries[i]["ignition"]["basis"] == "our_inference" and entries[i]["ignition"]["evidence_class"] == "inferred"
+    assert entries["E12"]["ignition"]["basis"] == "second_hand" and entries["E12"]["evidence_level"] == 5
+    with open(MDFILE) as f:
+        md = f.read()
+    for i in ("E10", "E11", "E12"):
+        row = next(l for l in md.splitlines() if l.startswith("| %s |" % i))
+        assert "verify" in row, i
+
+
+def test_flow_fields_name_one_gas_and_match_sources(entries, m):
+    e13, e14, e20 = entries["E13"], entries["E14"], entries["E20"]
+    assert e13["flow"]["value"] == [1.33, 1.39] and "N2" in e13["flow"]["name"]
+    assert any(qd["value"] == 0.16 and "Xe" in qd["name"] for qd in e13["quantities"])
+    assert e14["flow"]["value"] == 0.83 and "air" in e14["flow"]["name"]
+    assert any(qd["value"] == 0.78 and "Xe" in qd["name"] for qd in e14["quantities"])
+    d = m["derived_checks"]
+    assert d["gurciullo_xeair_xe_mass_fraction_XeAir3_4"] == pytest.approx(0.78 / 1.61, abs=1e-4)
+    assert d["gurciullo_xeair_xe_mass_fraction_XeAir2"] == pytest.approx(1.97 / 2.06, abs=1e-4)
+    assert "total mass flow" in e20["flow"]["name"] and e20["flow"]["value"] == [0.8, 1.0]
+    assert d["pps1350_pressure_bound_6e-6_mbar_in_Torr"] == pytest.approx(6e-6 * 100 / 133.322368, rel=5e-3)
+
+
+def test_observation_flow_range_matches_matrix(m, entries):
+    """Cross-cutting observation 1 quotes the no-pre-ionizer N2/O2 flow range; it must equal the matrix min/max."""
+    d = m["derived_checks"]
+    rng = d["no_preionizer_n2_o2_sustained_flow_range"]
+    vals = []
+    for i in rng["entries_with_numeric_flow"]:
+        v = entries[i]["flow"]["value"]
+        vals += v if isinstance(v, list) else [v]
+    assert rng["range_mg_s"] == [min(vals), max(vals)] == [0.8, 7]
+    assert d["no_preionizer_n2_o2_sustained_flow_range_excluding_E20"]["range_mg_s"] == [1.144, 7]
+    with open(MDFILE) as f:
+        md = f.read()
+    obs = md[md.index("## Cross-cutting observations"):md.index("## What this evidence does not establish")]
+    assert "0.8-7 mg/s" in obs and "1.144-7 mg/s" in obs and "1.1-7 mg/s" not in obs
+    for bad in ("did worse at 160 G", "within 10 h", "between about 1e-5 and 2e-4 Torr"):
+        assert bad not in md, bad
+
+
+def test_uncertainties_carry_units(m, entries):
+    for e in m["entries"]:
+        for qd in _all_quantities(e):
+            assert isinstance(qd["uncertainty"], str), (e["id"], qd["name"])
+    a = _json(os.path.join(IDENT, "brabston_p5_n2_measurement_audit_v1.json"))
+    sig = {p["T_sigma_mN"] for p in a["points"].values()}
+    t = next(qd for qd in entries["E01"]["quantities"] if qd["name"].startswith("thrust"))
+    assert len(sig) == 1 and ("%g mN" % sig.pop()) in t["uncertainty"] and "Table 5" in t["uncertainty"]
+
+
+def test_v1_outcome_stated_final(m):
+    assert "final and permanent" in m["context_not_evidence"]["p5_n2_v1_vacuum"]["status"]
+    with open(MDFILE) as f:
+        assert "final and permanent" in f.read()

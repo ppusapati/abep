@@ -37,6 +37,7 @@ REPO_FILES = {
 # Molar masses (g/mol) used only for the arithmetic consistency checks below (IUPAC standard atomic weights, rounded).
 M_N2, M_O2 = 28.0134, 31.998
 SCCM_TO_MOL_S = 1.0 / 22413.97 / 60.0   # 1 sccm = 1 cm^3/min at 0 degC, 1 atm (ideal gas, 22413.97 cm^3/mol)
+TORR_PER_MBAR = 100.0 / 133.322368      # 1 mbar = 100 Pa; 1 Torr = 101325/760 Pa = 133.322368 Pa (definitions)
 
 ABEP_REGIME_TBD = ("TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, "
                    "number density and composition at the thruster inlet, including transients). No comparison of this "
@@ -253,6 +254,8 @@ def p5_entries():
     mc = sorted({t2[k]["mdot_cathode_Xe_mg_s"] for k in names})
     idr = [pts[k]["I_d_raw_A"] for k in names]
     tc = [pts[k]["T_corr_mN"] for k in names]
+    tsig = sorted({pts[k]["T_sigma_mN"] for k in names})
+    assert len(tsig) == 1, tsig
     ing = [pts[k]["mdot_ingested_eq13_mg_s"] for k in names]
     frac_c = [t2[k]["mdot_cathode_Xe_mg_s"] / t2[k]["mdot_anode_mg_s"] for k in names]
     frac_i = [pts[k]["mdot_ingested_eq13_mg_s"] / t2[k]["mdot_anode_mg_s"] for k in names]
@@ -276,7 +279,9 @@ def p5_entries():
         q("ingested / anode flow", [r4(min(frac_i)), r4(max(frac_i))], "1", "inferred", S, "our arithmetic",
           "inherits Eq. (13) uncertainty"),
         q("thrust, ingestion-corrected (N1..N5)", [min(tc), max(tc)], "mN", "reconstructed", S,
-          "abstract end-points (N1, N5); Fig. 5 digitized (N2-N4)", 2.6),
+          "abstract end-points (N1, N5); Fig. 5 digitized (N2-N4)",
+          "max uncertainty %g mN (BRABSTON2025 Table 5, audit points.*.T_sigma_mN); Fig. 5 digitization about 0.4 mN "
+          "at N2-N4 (repository findings)" % tsig[0]),
         q("discharge channel length", [32, 38], "mm", "measured", S,
           "docs/EVIDENCE.md register: 32 mm (Brabston 2025) vs 38 mm (Peterson 2001, Hofer 2004)",
           "conflicting sources; carried as hypotheses"),
@@ -380,7 +385,8 @@ def echt_entries():
         q("discharge voltage", [min(vd), max(vd)], "V", "measured", S, "S2 Table 6.1", "not stated"),
         q("discharge current", [min(idd), max(idd)], "A", "measured", S, "S2 Table 6.1", "2 s.f. (rounding +-0.05 A)"),
         q("magnet coil current", [min(im), max(im)], "A", "measured", S, "S2 Table 6.1", "not stated"),
-        q("measured centreline B plateau at 2 A coil current", plateau, "G", "digitized", S,
+        q("centreline B plateau measured at 2 A coil current only (operating points used %g-%g A; B at those "
+          "currents not measured)" % (min(im), max(im)), plateau, "G", "digitized", S,
           "S2 Fig. 4.7 p.66 (digitized by the repository audit)", "reading +-0.2 G; probe uncertainty not stated"),
         q("cathode Ar mass flow", [min(mc), max(mc)], "mg/s", "measured", S, "S2 Table 6.1", "not stated"),
         q("cathode Ar / anode N2 mass-flow ratio", [r4(min(frac)), r4(max(frac))], "1", "inferred", S,
@@ -490,6 +496,16 @@ def derived_checks():
         "gurciullo_min_xe_mass_fraction": [r4(0.16 / (0.16 + 1.39)), r4(0.16 / (0.16 + 1.33))],
         "gurciullo_note": "lowest Xe 0.16 mg/s with N2 1.33-1.39 mg/s (GURCIULLO2020 p.177): Xe mass fraction of the "
                           "anode flow 10.3-10.7 % (our arithmetic).",
+        "gurciullo_xeair_xe_mass_fraction_XeAir3_4": r4(0.78 / (0.78 + 0.83)),
+        "gurciullo_xeair_xe_mass_fraction_XeAir2": r4(1.97 / (1.97 + 0.09)),
+        "gurciullo_xeair_total_anode_flow_XeAir3_4_mg_s": r4(0.78 + 0.83),
+        "gurciullo_xeair_note": "GURCIULLO2020 Table 4.10 p.201: XeAir-2 1.97 mg/s Xe + 0.09 mg/s air; XeAir-3/4 0.78 mg/s "
+                                "Xe + 0.83 mg/s air. Xe mass fractions 0.956 and 0.484 (our arithmetic) agree with the "
+                                "48-96 % quoted by ANDREUSSI2022 Page 26 of 57.",
+        "pps1350_pressure_bound_6e-6_mbar_in_Torr": float("%.3g" % (6.0e-6 * TORR_PER_MBAR)),
+        "ht5k_dm2_pressure_bound_2.5e-5_mbar_in_Torr": float("%.3g" % (2.5e-5 * TORR_PER_MBAR)),
+        "pressure_note": "unit conversions of the stated upper bounds (CIFALI2011 p.2; ANDREUSSI2022_IEPC435 p.2), our "
+                         "arithmetic",
         "shabshelowitz_cathode_fraction": r4(1.0 / 2.6),
         "shabshelowitz_note": "ANDREUSSI2022 p.27: 1 mg/s Xe cathode with 2.6 mg/s N2 anode, 'a 38.4 % cathode flow "
                               "fraction' (1/2.6 = 0.385, our arithmetic).",
@@ -674,7 +690,8 @@ def literature_entries(dc):
             "extinction": "none reported",
             "erosion": "magnetic shielding 'seems effective'; plasma detachment from channel walls visible (p.5); no "
                        "PFG critical damage after the air test",
-            "cathode": "HC20h (LaB6) on N2 0.5-0.7 mg/s (PSST abstract); N2 cathode reduced I_d, thrust and efficiency vs "
+            "cathode": "HC20h hollow cathode (LaB6 emitter per ANDREUSSI2022 Page 38 of 57) on N2 0.5-0.7 mg/s "
+                       "(FERRATO2022_PSST abstract); N2 cathode reduced I_d, thrust and efficiency vs "
                        "Xe cathode at the same V_d and anode flow (p.5). The review reports severe erosion/embrittlement "
                        "of the HC20h after tests with the N2/O2 mixture (Page 38 of 57)"},
         "quantities": [
@@ -706,7 +723,7 @@ def literature_entries(dc):
         "sources": [M], "evidence_level": 3, "evidence_class": "measured", "thruster": cam,
         "propellant": {"anode_gas": "N2 (pure)", "cathode_gas": "Xe", "xenon_in_anode_flow": False},
         "preionizer": {"present": False, "type": None, "note": "single-stage; BaO hollow cathode on Xe"},
-        "ignition": {"mode": "direct_on_atmospheric_gas", "evidence_class": "inferred",
+        "ignition": {"mode": "direct_on_atmospheric_gas", "evidence_class": "inferred", "basis": "our_inference",
                      "statement": "The thruster was ignited at known stable points and re-ignited after shutdowns with a "
                                   "higher flow (p.9); the gas at ignition is not stated explicitly, read here as direct "
                                   "ignition on the N2 anode flow with a Xe cathode (inferred, verify)."},
@@ -755,7 +772,8 @@ def literature_entries(dc):
         "sources": [M], "evidence_level": 3, "evidence_class": "measured", "thruster": cam,
         "propellant": {"anode_gas": "N2 (pure)", "cathode_gas": "Xe", "xenon_in_anode_flow": False},
         "preionizer": {"present": False, "type": None, "note": "single-stage"},
-        "ignition": {"mode": "direct_on_atmospheric_gas", "evidence_class": "inferred", "statement": "as E10"},
+        "ignition": {"mode": "direct_on_atmospheric_gas", "evidence_class": "inferred", "basis": "our_inference",
+                     "statement": "as E10 (gas at ignition not stated in the source; inferred, verify)"},
         "flow": q("minimum N2 flow for > 5 min operation vs voltage", "TBD - requires digitization of Fig. 6 (p.11); "
                   "values not tabulated", "mg/s", "digitized", M, "Fig. 6 p.11"),
         "voltage": q("minimum discharge voltage for > 5 min operation", "TBD - requires digitization of Fig. 6 (p.11)",
@@ -777,12 +795,12 @@ def literature_entries(dc):
     U = "MUNRO2023"
     E.append({
         "id": "E12", "title": "MaSHEKT-100 low-power magnetically shielded Hall thruster on N2 (abstract only)",
-        "sources": [U, M], "evidence_level": 3, "evidence_class": "measured",
+        "sources": [U, M], "evidence_level": 5, "evidence_class": "measured",
         "thruster": {"name": "MaSHEKT-100 (Southampton)", "family": "magnetically shielded Hall (low power)",
                      "power_class_kW": "0.03-0.81 across all propellants", "geometry_note": "not accessed"},
         "propellant": {"anode_gas": "N2 (pure)", "cathode_gas": "not accessed", "xenon_in_anode_flow": False},
         "preionizer": {"present": False, "type": None, "note": "single-stage (from the abstract)"},
-        "ignition": {"mode": "direct_on_atmospheric_gas", "evidence_class": "measured",
+        "ignition": {"mode": "direct_on_atmospheric_gas", "evidence_class": "measured", "basis": "second_hand",
                      "statement": "Second-hand: MOSKOVITZ2026 p.4 reports that the thruster could 'eventually' be ignited "
                                   "with pure N2, and that only three N2 data points were collected because of a component "
                                   "failure (verify in the primary)."},
@@ -819,7 +837,8 @@ def literature_entries(dc):
         "ignition": {"mode": "xenon_admixture_required", "evidence_class": "measured",
                      "statement": "A share of xenon was used because the discharge could not be sustained at the anode "
                                   "power investigated, which was limited by the 300 V supply (p.126)."},
-        "flow": q("lowest Xe flow with N2 1.33-1.39 mg/s", 0.16, "mg/s", "measured", G, "p.177", "not stated"),
+        "flow": q("anode N2 flow at the lowest-Xe points (+ 0.16 mg/s Xe in the anode flow)", [1.33, 1.39], "mg/s",
+                  "measured", G, "p.177", "not stated"),
         "voltage": q("anode voltage", 290, "V", "measured", G, "p.177, Tables 4.6/4.7 pp.198-199"),
         "magnetic_field": q("radial B at channel centreline, exit plane", 135, "G", "measured", G, "p.148"),
         "outcome": "extinguished",
@@ -828,6 +847,8 @@ def literature_entries(dc):
         "observations": {"oscillation_modes": "not reported", "extinction": "loss of discharge below 0.16 mg/s Xe",
                          "erosion": "not reported", "cathode": "IonTech HC-252 (BaO) on Xe, 0.46 mg/s (p.148)"},
         "quantities": [
+            q("lowest anode Xe flow that sustained (with N2 1.33-1.39 mg/s)", 0.16, "mg/s", "measured", G, "p.177",
+              "not stated"),
             q("anode power at the lowest-Xe points", [603.2, 681.5], "W", "measured", G, "Tables 4.6/4.7 captions"),
             q("anode current at the lowest-Xe points", [2.08, 2.35], "A", "measured", G, "Tables 4.6/4.7 captions"),
             q("Xe mass fraction of anode flow at the lowest-Xe points", dc["gurciullo_min_xe_mass_fraction"], "1",
@@ -851,22 +872,43 @@ def literature_entries(dc):
                        "cathode_gas": "Xe", "xenon_in_anode_flow": True},
         "preionizer": {"present": False, "type": None, "note": "single-stage"},
         "ignition": {"mode": "xenon_admixture_required", "evidence_class": "measured", "statement": "as E13"},
-        "flow": q("Xe + air flows (runs XeAir-3/4)", [0.78, 0.83], "mg/s", "measured", G, "Table 4.10 p.201",
-                  note="0.78 mg/s Xe + 0.83 mg/s air"),
+        "flow": q("anode air flow, runs XeAir-3/4 (+ 0.78 mg/s Xe in the anode flow)", 0.83, "mg/s", "measured", G,
+                  "Table 4.10 p.201", "not stated", note="the anode flow is 0.78 mg/s Xe plus 0.83 mg/s air (two gases)"),
         "voltage": q("anode voltage", 290, "V", "measured", G, "Table 4.10 p.201"),
-        "magnetic_field": q("radial B at channel exit (XeAir-3 / XeAir-4)", [135, 160], "G", "measured", G, "p.201"),
+        "magnetic_field": q("radial B at channel-exit centreline (XeAir-3 135 G, XeAir-4 160 G)", [135, 160], "G",
+                            "measured", G, "p.201", "'about' (text)"),
         "outcome": "sustained",
         "outcome_statement": "Operated on Xe/air mixtures down to about 48 % Xe (review) / 0.78 mg/s Xe with 0.83 mg/s air "
                              "(thesis); the author reports better performance with air than with N2.",
         "observations": {"oscillation_modes": "not reported", "extinction": "not reported for air",
                          "erosion": "not reported", "cathode": "Xe 0.46 mg/s"},
-        "quantities": [q("anode current XeAir-3 (135 G)", 2.57, "A", "measured", G, "Table 4.10 p.201"),
-                       q("anode current XeAir-4 (160 G)", 2.45, "A", "measured", G, "Table 4.10 p.201")],
+        "quantities": [q("anode Xe flow, runs XeAir-3/4", 0.78, "mg/s", "measured", G, "Table 4.10 p.201"),
+                       q("anode air flow, runs XeAir-3/4", 0.83, "mg/s", "measured", G, "Table 4.10 p.201"),
+                       q("total anode flow (Xe + air), runs XeAir-3/4",
+                         dc["gurciullo_xeair_total_anode_flow_XeAir3_4_mg_s"], "mg/s", "inferred", G,
+                         "our arithmetic on Table 4.10 p.201"),
+                       q("Xe mass fraction of the anode flow, runs XeAir-3/4",
+                         dc["gurciullo_xeair_xe_mass_fraction_XeAir3_4"], "1", "inferred", G,
+                         "our arithmetic on Table 4.10 p.201"),
+                       q("anode current XeAir-3 (135 G)", 2.57, "A", "measured", G, "Table 4.10 p.201"),
+                       q("anode current XeAir-4 (160 G)", 2.45, "A", "measured", G, "Table 4.10 p.201"),
+                       q("total thrust ratio to Xe-only run XeAir-1, XeAir-3 (135 G)", 0.83, "1", "inferred", G,
+                         "Table 4.10 p.201", "not stated; estimated from uncorrected Wien filter spectra, not a "
+                         "thrust-stand measurement"),
+                       q("total thrust ratio to Xe-only run XeAir-1, XeAir-4 (160 G)", 0.79, "1", "inferred", G,
+                         "Table 4.10 p.201", "not stated; estimated from uncorrected Wien filter spectra, not a "
+                         "thrust-stand measurement"),
+                       q("anode efficiency ratio to XeAir-1, XeAir-3 (135 G)", 0.64, "1", "inferred", G,
+                         "Table 4.10 p.201", "not stated; Wien-filter-based estimate"),
+                       q("anode efficiency ratio to XeAir-1, XeAir-4 (160 G)", 0.61, "1", "inferred", G,
+                         "Table 4.10 p.201", "not stated; Wien-filter-based estimate")],
         "implication": {
             "direction": "xenon_admixture_required_in_tested_regime",
             "statement": "Air operation in this thruster was only shown with substantial xenon admixture; no pre-ionizer "
                          "was used and pure air was not attempted at the available power.",
-            "uncertainty": "Minimum Xe share for air not reported in the thesis text read here.",
+            "uncertainty": "Lowest Xe share run with air in the thesis is 0.78 mg/s Xe with 0.83 mg/s air (48 % Xe by "
+                           "mass, our arithmetic); a minimum Xe share for air was not reported. Performance ratios are "
+                           "Wien-filter-based estimates, not thrust-stand data.",
             "applicability_limits": "as E13", "abep_regime": ABEP_REGIME_TBD},
         "repository_derived": False})
     SM = "SEMENKIN1995"
@@ -971,8 +1013,9 @@ def literature_entries(dc):
         "observations": {"oscillation_modes": "not reported", "extinction": "not reported", "erosion": "not reported",
                          "cathode": "conventional Xe-fed hollow cathode"},
         "quantities": [q("thrust produced by the system on the collected flow", 6, "mN", "measured", F,
-                         "Fig. 1b caption and text p.3", 1),
-                       q("drag on system with thruster off", 26, "mN", "measured", F, "Fig. 1b caption and text p.3", 1),
+                         "Fig. 1b caption and text p.3", "+-1 mN as stated (meaning of the bound not defined)"),
+                       q("drag on system with thruster off", 26, "mN", "measured", F, "Fig. 1b caption and text p.3",
+                         "+-1 mN as stated (meaning of the bound not defined)"),
                        q("PFG-to-intake distance", 500, "mm", "measured", F, "Fig. 2 caption p.3")],
         "implication": {
             "direction": "preionization_stage_present_effect_not_isolated",
@@ -1025,7 +1068,9 @@ def literature_entries(dc):
         "propellant": {"anode_gas": "air; N2/O2 2:1", "cathode_gas": "Xe", "xenon_in_anode_flow": False},
         "preionizer": {"present": False, "type": None, "note": "single-stage"},
         "ignition": {"mode": "not_reported", "evidence_class": "measured", "statement": "not reported"},
-        "flow": q("total mass flow", [0.8, 1.0], "mg/s", "measured", A, "Page 26 of 57", note="0.8, 0.9, 1.0 mg/s"),
+        "flow": q("total mass flow (review wording; whether it includes the 0.19 mg/s Xe cathode flow is not stated)",
+                  [0.8, 1.0], "mg/s", "measured", A, "Page 26 of 57", "not stated",
+                  note="0.8, 0.9, 1.0 mg/s; verify the flow basis in the primary (DUKHOPELNIKOV2021, abstract only)"),
         "voltage": q("discharge voltage", "from below 100 up to 350", "V", "measured", A, "Page 26 of 57"),
         "magnetic_field": nr("B", "G", A),
         "outcome": "sustained",
@@ -1087,17 +1132,55 @@ def v1_context():
     return {
         "status": "CONTEXT ONLY - NOT EVIDENCE. These are counts of simulated run x reading evaluations of the P5-N2 v1 "
                   "vacuum campaign. They are model results and say nothing about whether a physical discharge ignites "
-                  "or sustains. v1 is INCONCLUSIVE; no candidate is admitted; the credible set is empty.",
+                  "or sustains. v1 is INCONCLUSIVE; no candidate is admitted; the credible set is empty. The v1 outcome "
+                  "is final and permanent: it is never re-scored or re-labelled, and these counts are read unchanged "
+                  "from the official frozen scores file.",
         "file": REPO_FILES["v1_scores"],
         "n_records": s["n_records"],
         "vacuum_status_counts": s["status_counts"]["vacuum"],
     }
 
 
+# Single-stage entries without a pre-ionizer that sustained on pure N2 or N2/O2 (no Ar, no Xe in the anode flow);
+# the list quoted in cross-cutting observation 1 of HALL_SUSTAINMENT_EVIDENCE.md.
+NO_PREIONIZER_N2_O2_IDS = ["E01", "E03", "E05", "E06", "E08", "E09", "E10", "E12", "E20"]
+
+
+def _ignition_basis(e):
+    """Where the ignition classification comes from: primary text, second-hand report, or our inference."""
+    ig = e["ignition"]
+    if "basis" not in ig:
+        ig["basis"] = "second_hand" if e["evidence_level"] >= 5 else "primary"
+    return e
+
+
+def _flow_range(entries, ids):
+    by = {e["id"]: e for e in entries}
+    vals, used, skipped = [], [], []
+    for i in ids:
+        f = by[i]["flow"]
+        assert not by[i]["preionizer"]["present"] and by[i]["outcome"] == "sustained", i
+        if isinstance(f["value"], str):
+            skipped.append(i)
+            continue
+        assert f["unit"] == "mg/s", i
+        vals += f["value"] if isinstance(f["value"], list) else [f["value"]]
+        used.append(i)
+    return {"entries": ids, "entries_with_numeric_flow": used, "entries_without_flow": skipped,
+            "range_mg_s": [min(vals), max(vals)],
+            "note": "min/max of the entries' flow fields; " + (
+                "E20 is a review-reported 'total mass flow' whose basis relative to the 0.19 mg/s Xe cathode flow is "
+                "not stated, every other value is an anode flow" if "E20" in used else "every value is an anode flow")}
+
+
 def build():
     dc = derived_checks()
     entries = p5_entries() + echt_entries() + literature_entries(dc)
     entries.sort(key=lambda e: int(e["id"][1:]))
+    entries = [_ignition_basis(e) for e in entries]
+    dc["no_preionizer_n2_o2_sustained_flow_range"] = _flow_range(entries, NO_PREIONIZER_N2_O2_IDS)
+    dc["no_preionizer_n2_o2_sustained_flow_range_excluding_E20"] = _flow_range(
+        entries, [i for i in NO_PREIONIZER_N2_O2_IDS if i != "E20"])
     return {
         "id": "hall_sustainment_matrix_v1",
         "date": "2026-09-26",
@@ -1114,6 +1197,10 @@ def build():
                 "xenon_start_then_transition": "discharge started on xenon, then the anode (and possibly cathode) moved to atmospheric gas",
                 "xenon_admixture_required": "xenon kept in the anode flow because the atmospheric gas alone did not sustain",
                 "not_reported": "the accessed text does not say"},
+            "ignition_basis": {
+                "primary": "classification read from the accessed primary text",
+                "second_hand": "classification known only from a review or another paper's report (verify in the primary)",
+                "our_inference": "gas at ignition not stated by the source; the classification is our inference (verify)"},
             "outcomes": {
                 "sustained": "discharge operated steadily at the reported condition(s)",
                 "extinguished": "discharge could not be sustained / ceased / flamed out at the reported condition",
@@ -1144,8 +1231,27 @@ def _fmt(v):
     return str(v)
 
 
-def _qfmt(qd):
-    return "n/r" if isinstance(qd["value"], str) else "%s %s" % (_fmt(qd["value"]), qd["unit"])
+def _qfmt(qd, named=False):
+    if isinstance(qd["value"], str):
+        return "n/r"
+    txt = "%s %s" % (_fmt(qd["value"]), qd["unit"])
+    return "%s (%s)" % (txt, qd["name"]) if named else txt
+
+
+def _ufmt(qd):
+    u = qd["uncertainty"]
+    return "%s %s" % (_fmt(u), qd["unit"]) if isinstance(u, (int, float)) else _fmt(u)
+
+
+def _igfmt(ig):
+    quals = []
+    if ig["basis"] == "our_inference":
+        quals.append("inferred by us, not stated by the source")
+    elif ig["evidence_class"] != "measured":
+        quals.append(ig["evidence_class"])
+    if ig["mode"] != "not_reported" and ig["basis"] == "second_hand":
+        quals.append("second-hand")
+    return ig["mode"] + (" (%s; verify)" % ", ".join(quals) if quals else "")
 
 
 def render_md(m):
@@ -1157,9 +1263,12 @@ def render_md(m):
     for e in m["entries"]:
         L.append("| %s | %s (%s) | %s / %s | %s | %s | %s | %s | **%s** | %d | %s |" % (
             e["id"], e["thruster"]["name"], e["thruster"]["family"], e["propellant"]["anode_gas"],
-            e["propellant"]["cathode_gas"], e["ignition"]["mode"], _qfmt(e["flow"]), _qfmt(e["voltage"]),
-            _qfmt(e["magnetic_field"]), e["outcome"], e["evidence_level"], e["implication"]["direction"]))
-    L += ["", "n/r = not reported in the accessed text (or TBD); ranges are min-max over the reported points.", "",
+            e["propellant"]["cathode_gas"], _igfmt(e["ignition"]), _qfmt(e["flow"], True), _qfmt(e["voltage"]),
+            _qfmt(e["magnetic_field"], True), e["outcome"], e["evidence_level"], e["implication"]["direction"]))
+    L += ["", "n/r = not reported in the accessed text (or TBD); ranges are min-max over the reported points. The flow "
+          "and B cells name the quantity shown (read the name: some rows carry one gas of a two-gas anode flow, or a "
+          "total flow). Ignition qualifiers: 'inferred by us' = the source does not state the gas at ignition; 'second-hand' = "
+          "known only via another publication; both need verification in the primary.", "",
           "### Per-item statements", ""]
     for e in m["entries"]:
         srcs = ", ".join("%s (%s)" % (k, m["sources"][k]["access"]) for k in e["sources"])
@@ -1167,9 +1276,10 @@ def render_md(m):
               "- Sources / access: %s. Evidence level %d; outcome evidence class: %s%s." % (
                   srcs, e["evidence_level"], e["evidence_class"],
                   "; repository-derived values recomputed by the builder" if e["repository_derived"] else ""),
-              "- Pre-ionizer: %s. Ignition (%s, %s): %s" % (
+              "- Pre-ionizer: %s. Ignition (%s, %s, basis %s): %s" % (
                   "yes - " + e["preionizer"]["type"] if e["preionizer"]["present"] else "none",
-                  e["ignition"]["mode"], e["ignition"]["evidence_class"], e["ignition"]["statement"]),
+                  e["ignition"]["mode"], e["ignition"]["evidence_class"], e["ignition"]["basis"],
+                  e["ignition"]["statement"]),
               "- Outcome: **%s**. %s" % (e["outcome"], e["outcome_statement"]),
               "- Observations: oscillations: %s; extinction: %s; erosion: %s; cathode: %s." % (
                   e["observations"]["oscillation_modes"], e["observations"]["extinction"],
@@ -1183,7 +1293,7 @@ def render_md(m):
             L += ["  | quantity | value | unit | class | uncertainty | source, locator |", "  |---|---|---|---|---|---|"]
             for qd in e["quantities"]:
                 L.append("  | %s | %s | %s | %s | %s | %s, %s |" % (
-                    qd["name"], _fmt(qd["value"]), qd["unit"], qd["evidence_class"], _fmt(qd["uncertainty"]),
+                    qd["name"], _fmt(qd["value"]), qd["unit"], qd["evidence_class"], _ufmt(qd),
                     qd["source"], qd["locator"]))
             L.append("")
     L.append(END)
