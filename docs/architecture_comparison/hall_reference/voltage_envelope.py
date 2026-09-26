@@ -9,6 +9,18 @@ this script computes
     P_jet(T) = T v_b / 2               jet power of that ideal beam at the two ends of the RFP thrust band, and the share of
                                        the RFP power ceiling taken by the jet power at the upper thrust end
 
+It also computes, for the measured light-propellant operating points recorded in
+discharge_voltage_interface.measured_discharge_power_check (published V_d, I_d and thrust),
+
+    P_d        = V_d I_d                              discharge (anode) power of the published point
+    T / P_d                                            measured thrust per unit discharge power
+    P_d / P_max                                        share of the RFP power ceiling taken by the discharge alone
+    eta*_ref   = P_jet,ideal(ref ion) / P_d = T v_b(ref ion, V_d) / (2 P_d)
+
+eta* is the ratio of the ideal-beam jet power to the discharge power. By ER-1/ER-2 it equals
+eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged beam of the reference ion; it is NOT the anodic efficiency
+eta_a = T^2 / (2 m_dot_a P_d), and eta_a must never be applied to the ideal-beam jet power (P_d != P_jet / eta_a).
+
 These are physics identities under the stated assumptions (evidence class: model-derived). They are NOT Hall-thruster
 performance predictions and NOT bounds on the discharge power. A real beam has voltage losses, a velocity spread,
 divergence, multiply charged ions and incomplete mass utilization. Those come only from an admitted transport closure or
@@ -27,8 +39,8 @@ Pure and deterministic: the same inputs always give the same rounded numbers.
 
 Usage (from the repository root):
     python docs/architecture_comparison/hall_reference/voltage_envelope.py            # print the table
-    python docs/architecture_comparison/hall_reference/voltage_envelope.py --check    # exit 1 if the JSON table differs
-    python docs/architecture_comparison/hall_reference/voltage_envelope.py --write    # rewrite the table in the JSON
+    python docs/architecture_comparison/hall_reference/voltage_envelope.py --check    # exit 1 if the JSON differs
+    python docs/architecture_comparison/hall_reference/voltage_envelope.py --write    # rewrite the computed parts
 """
 from __future__ import annotations
 
@@ -55,6 +67,9 @@ V_DECIMALS = 1        # v_b rounded to 0.1 m/s
 TP_DECIMALS = 3       # T/P_jet rounded to 0.001 mN/kW
 PJ_DECIMALS = 3       # P_jet rounded to 0.001 kW
 FRAC_DECIMALS = 3     # P_jet / power ceiling rounded to 0.001
+PD_DECIMALS = 1       # P_d = V_d I_d rounded to 0.1 W
+TPD_DECIMALS = 2      # measured T / P_d rounded to 0.01 mN/kW
+ETA_DECIMALS = 3      # eta* rounded to 0.001
 
 
 def _constants():
@@ -160,7 +175,9 @@ def quantity_rows(rows: dict, voltages_pointer: str, thrust_pointer: str, power_
     out = {}
     for ion, r in rows.items():
         pj_note = ("exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge "
-                   "power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate")
+                   "power P_d and not a bus-power estimate. P_d is NOT P_jet / eta_a: with ER-1/ER-2, "
+                   "P_jet / P_d = eta* = eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged beam of this ion, "
+                   "and eta* is TBD (admitted closure or hardware); see measured_discharge_power_check")
         parent, factor = ION_MASS_RULE[ion]
         out[ion] = {
             "ion_mass_u": {
@@ -194,7 +211,7 @@ def quantity_rows(rows: dict, voltages_pointer: str, thrust_pointer: str, power_
                 "source": ["SRC-VENV-SCRIPT", "SRC-CONSTANTS"],
                 "locator": f"{SCRIPT_REL} compute_rows()",
                 "uncertainty": ("exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster "
-                                "thrust-to-power ratio (that needs the discharge efficiency, TBD)"),
+                                "thrust-to-power ratio: T / P_d = (2 / v_b) eta*, with eta* = eta_a / (gamma eta_m sqrt(eta_v)) TBD)"),
             },
             "jet_power_at_thrust_min_kW": {
                 "definition": (f"ideal-beam jet power T v_b / 2 of {ion} at the lower end of {thrust_pointer}, at each V_d "
@@ -235,6 +252,103 @@ def quantity_rows(rows: dict, voltages_pointer: str, thrust_pointer: str, power_
     return out
 
 
+# ------------------------------------------------------------------------------------ measured (T, P_d) pairs
+def compute_pair(v_d: float, i_d: float, thrust_mN: list, power_max_W: float, reference_ion: str) -> dict:
+    """Pure: derived numbers of one published light-propellant operating point.
+
+    thrust_mN = [T_lo, T_hi] (a published thrust range or two published readings). No defaults: all inputs explicit."""
+    v_d = _positive(v_d, "V_d [V]")
+    i_d = _positive(i_d, "I_d [A]")
+    if not (isinstance(thrust_mN, (list, tuple)) and len(thrust_mN) == 2):
+        raise ValueError(f"thrust must be [T_lo, T_hi] in mN, got {thrust_mN!r}")
+    t_lo = _positive(thrust_mN[0], "T_lo [mN]")
+    t_hi = _positive(thrust_mN[1], "T_hi [mN]")
+    if not t_lo <= t_hi:
+        raise ValueError(f"thrust range must be increasing, got {thrust_mN!r}")
+    p_max = _positive(power_max_W, "power ceiling [W]")
+    p_d = v_d * i_d                                            # W
+    vb = beam_velocity_m_s(v_d, ion_mass_kg(reference_ion))    # m/s
+    pj = [t * vb / 2.0 / 1.0e3 for t in (t_lo, t_hi)]          # mN * m/s / 2 = mW -> W
+    return {
+        "discharge_power_W": round(p_d, PD_DECIMALS),
+        "thrust_per_discharge_power_mN_per_kW": [round(t / p_d * 1.0e3, TPD_DECIMALS) for t in (t_lo, t_hi)],
+        "discharge_power_fraction_of_power_max": round(p_d / p_max, FRAC_DECIMALS),
+        "eta_star_reference_ion": [round(x / p_d, ETA_DECIMALS) for x in pj],
+    }
+
+
+def pair_quantities(point: dict, derived: dict, reference_ion: str, power_pointer: str) -> dict:
+    """Wrap the derived numbers of one point in quantity objects (status SOURCED, model-derived, this script)."""
+    src = ["SRC-VENV-SCRIPT"] + sorted({x for k in ("discharge_voltage_V", "discharge_current_A", "thrust_mN")
+                                        for x in point[k]["source"]})
+    loc = f"{SCRIPT_REL} compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN"
+    return {
+        "discharge_power_W": {
+            "definition": "discharge (anode) power P_d = V_d I_d of this published point",
+            "value": derived["discharge_power_W"],
+            "unit": "W",
+            "status": "SOURCED",
+            "evidence_class": "model-derived",
+            "source": src,
+            "locator": loc,
+            "uncertainty": "inherits the rounding of the published V_d and I_d; rounded to 0.1 W",
+        },
+        "thrust_per_discharge_power_mN_per_kW": {
+            "definition": "published thrust per unit discharge power T / P_d, at [T_lo, T_hi] of thrust_mN",
+            "value": derived["thrust_per_discharge_power_mN_per_kW"],
+            "unit": "mN kW^-1",
+            "status": "SOURCED",
+            "evidence_class": "model-derived",
+            "source": src,
+            "locator": loc,
+            "uncertainty": "inherits the thrust and P_d uncertainties; rounded to 0.01 mN/kW; a published device's value, "
+                           "not a Vyovrinda prediction",
+        },
+        "discharge_power_fraction_of_power_max": {
+            "definition": f"P_d of this published point divided by {power_pointer} (discharge alone; no cathode, magnet, "
+                          "pre-ionizer or other bus load)",
+            "value": derived["discharge_power_fraction_of_power_max"],
+            "unit": "-",
+            "status": "SOURCED",
+            "evidence_class": "model-derived",
+            "source": src,
+            "locator": loc,
+            "uncertainty": "rounded to 0.001; not a feasibility verdict",
+        },
+        "eta_star_reference_ion": {
+            "definition": (f"eta* = P_jet,ideal / P_d = T v_b({reference_ion}, V_d) / (2 P_d) at [T_lo, T_hi]: ideal "
+                           f"{reference_ion}-beam jet power per unit discharge power (equals eta_a / (gamma eta_m "
+                           f"sqrt(eta_v)) for a singly charged {reference_ion} beam; NOT the anodic efficiency eta_a)"),
+            "value": derived["eta_star_reference_ion"],
+            "unit": "-",
+            "status": "SOURCED",
+            "evidence_class": "model-derived",
+            "source": src,
+            "locator": loc,
+            "uncertainty": (f"rounded to 0.001; referenced to {reference_ion} by convention: the real beam composition "
+                            "(N2+, N+, multiply charged ions) is not published, and a lighter reference ion gives a larger "
+                            "value"),
+        },
+    }
+
+
+def expected_pair_derived(ref: dict) -> dict:
+    """{point id: derived quantity objects} for discharge_voltage_interface.measured_discharge_power_check."""
+    chk = ref["discharge_voltage_interface"]["measured_discharge_power_check"]
+    power_max = _valued(ref, chk["power_ceiling_from"])
+    ion = chk["reference_ion"]
+    out = {}
+    for pt in chk["points"]:
+        vals = {}
+        for k in ("discharge_voltage_V", "discharge_current_A", "thrust_mN"):
+            if pt[k].get("value") is None:
+                raise ValueError(f"{pt['id']}: {k} has no value (status {pt[k].get('status')!r})")
+            vals[k] = pt[k]["value"]
+        d = compute_pair(vals["discharge_voltage_V"], vals["discharge_current_A"], vals["thrust_mN"], power_max, ion)
+        out[pt["id"]] = pair_quantities(pt, d, ion, chk["power_ceiling_from"])
+    return out
+
+
 def load_reference(path: str = REFERENCE_FILE) -> dict:
     with open(path, encoding="utf-8") as f:
         return json.load(f)
@@ -256,18 +370,30 @@ def main(argv=None) -> int:
     ref = load_reference()
     rows = expected_table_rows(ref)
     table = ref["discharge_voltage_interface"]["ideal_beam_reference_table"]
+    pairs = expected_pair_derived(ref)
+    points = ref["discharge_voltage_interface"]["measured_discharge_power_check"]["points"]
     if args.check:
+        ok = True
         if table["rows"] != rows:
             print("ideal_beam_reference_table.rows differs from voltage_envelope.py output", file=sys.stderr)
+            ok = False
+        for pt in points:
+            if pt.get("derived") != pairs[pt["id"]]:
+                print(f"measured_discharge_power_check {pt['id']} differs from voltage_envelope.py output",
+                      file=sys.stderr)
+                ok = False
+        if not ok:
             return 1
-        print("OK: ideal_beam_reference_table.rows matches voltage_envelope.py")
+        print("OK: ideal_beam_reference_table.rows and measured_discharge_power_check match voltage_envelope.py")
         return 0
     if args.write:
         table["rows"] = rows
+        for pt in points:
+            pt["derived"] = pairs[pt["id"]]
         with open(REFERENCE_FILE, "w", encoding="utf-8") as f:
             json.dump(ref, f, indent=1, ensure_ascii=False)
             f.write("\n")
-        print(f"wrote {len(rows)} ion rows to {os.path.relpath(REFERENCE_FILE, ROOT)}")
+        print(f"wrote {len(rows)} ion rows and {len(points)} measured points to {os.path.relpath(REFERENCE_FILE, ROOT)}")
         return 0
     voltages, _, thrust_band, power_max = inputs_from_reference(ref)
     print("V_d [V]: " + ", ".join(str(v) for v in voltages) + f"   RFP thrust band {thrust_band} mN, ceiling {power_max} W")
@@ -277,6 +403,10 @@ def main(argv=None) -> int:
         print(f"     P_jet(T_min) [kW] = {r['jet_power_at_thrust_min_kW']['value']}  "
               f"P_jet(T_max) [kW] = {r['jet_power_at_thrust_max_kW']['value']}  "
               f"share of ceiling at T_max = {r['jet_power_at_thrust_max_fraction_of_power_max']['value']}")
+    for pid, d in pairs.items():
+        print(f"{pid}: P_d = {d['discharge_power_W']['value']} W  T/P_d = "
+              f"{d['thrust_per_discharge_power_mN_per_kW']['value']} mN/kW  P_d/P_max = "
+              f"{d['discharge_power_fraction_of_power_max']['value']}  eta* = {d['eta_star_reference_ion']['value']}")
     return 0
 
 

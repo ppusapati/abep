@@ -211,11 +211,57 @@
                   "rows"],
      "additionalProperties": false
     },
+    "measured_discharge_power_check": {
+     "type": "object",
+     "description": "Measured light-propellant (V_d, I_d, thrust) points of published devices and the numbers voltage_envelope.py derives from them (P_d = V_d I_d, T / P_d, P_d / ceiling, eta* = P_jet,ideal / P_d). It ties the voltage range to the power ceiling without applying an anodic efficiency to the ideal-beam jet power.",
+     "properties": {
+      "generated_by": {"type": "string", "pattern": "^docs/architecture_comparison/hall_reference/[A-Za-z0-9_]+\\.py$"},
+      "role": {"type": "string", "minLength": 1},
+      "efficiency_definitions": {"type": "string", "minLength": 1},
+      "reference_ion": {"type": "string", "minLength": 1},
+      "power_ceiling_from": {"type": "string", "pattern": "^/"},
+      "selection_rule": {"type": "string", "minLength": 1},
+      "points": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "type": "object",
+        "properties": {
+         "id": {"type": "string", "minLength": 1},
+         "device": {"type": "string", "minLength": 1},
+         "gas": {"type": "string", "minLength": 1},
+         "selection": {"type": "string", "minLength": 1},
+         "discharge_voltage_V": {"$ref": "#/$defs/quantity"},
+         "discharge_current_A": {"$ref": "#/$defs/quantity"},
+         "thrust_mN": {"$ref": "#/$defs/quantity"},
+         "derived": {
+          "type": "object",
+          "properties": {
+           "discharge_power_W": {"$ref": "#/$defs/quantity"},
+           "thrust_per_discharge_power_mN_per_kW": {"$ref": "#/$defs/quantity"},
+           "discharge_power_fraction_of_power_max": {"$ref": "#/$defs/quantity"},
+           "eta_star_reference_ion": {"$ref": "#/$defs/quantity"}
+          },
+          "required": ["discharge_power_W", "thrust_per_discharge_power_mN_per_kW",
+                       "discharge_power_fraction_of_power_max", "eta_star_reference_ion"],
+          "additionalProperties": false
+         }
+        },
+        "required": ["id", "device", "gas", "selection", "discharge_voltage_V", "discharge_current_A", "thrust_mN",
+                     "derived"],
+        "additionalProperties": false
+       }
+      }
+     },
+     "required": ["generated_by", "role", "efficiency_definitions", "reference_ion", "power_ceiling_from", "selection_rule",
+                  "points"],
+     "additionalProperties": false
+    },
     "superseded_grid_note": {"type": "string"}
    },
    "required": ["description", "supply_definition", "proposed_range_V", "proposed_evaluation_set_V", "span_rule", "requirements",
                 "literature_operating_points", "voltage_evidence_notes", "envelope_relations",
-                "ideal_beam_reference_table", "superseded_grid_note"],
+                "measured_discharge_power_check", "ideal_beam_reference_table", "superseded_grid_note"],
    "additionalProperties": false
   },
   "cathode_interface": {

@@ -196,6 +196,14 @@
    "evidence_level": "3"
   },
   {
+   "id": "SRC-ECHT-TABLES",
+   "kind": "repository_file",
+   "citation": "ECHT-N2 table checks v1: per-run V_d, I_d, P_anode and thrust (one-side and averaged reductions) transcribed from F. Marchioni, MSc thesis, Politecnico di Torino / Stanford, 2020, Tables 6.1-6.3, by the repository ECHT audit (scripts/check_echt_tables.py).",
+   "path": "hallthruster_bridge/identification/echt_n2/echt_table_checks_v1.json",
+   "access": "repository",
+   "evidence_level": "3"
+  },
+  {
    "id": "SRC-ARCHENGINE",
    "kind": "repository_file",
    "citation": "abep_sim/archengine.py: _variables (superseded 0-D Hall grid, 225-325 V; not reused) and its import and use of LaB6Cathode from abep_sim/plasma_devices.py (SRC-PLASMADEV).",
@@ -339,7 +347,7 @@
      "SiliconDioxide",
      "SiliconCarbide"
     ],
-    "maps_to": "HallThruster.jl WallSheath(material, loss_scale); the bridge currently runs the solver default WallSheath(BNSiO2, 1.0)",
+    "maps_to": "HallThruster.jl WallSheath(material, loss_scale) (Config.wall_loss_model). Solver support: SUPPORTED_NOT_WIRED: bridge_lib.jl run_case never sets wall_loss_model, so every bridge run uses the solver default WallSheath(BNSiO2, 1.0) (configuration.jl line 218); wiring the Vyovrinda material needs a bridge change (outside this lane)",
     "notes": "allowed_values = the WallMaterial constants of the pinned solver (src/physics/wall_losses.jl lines 114-123); a material outside that list needs a solver-side material definition (model change).",
     "evidence": [
      "EV-G9"
@@ -351,7 +359,8 @@
     "unit": "-",
     "status": "TBD",
     "requires": "TBD — requires the Vyovrinda magnetic-circuit design decision (owner).",
-    "notes": "hall_map_schema_v1 has no wall-flux producer for shielded thrusters (wall fields absent), so a shielded design cannot produce wall-life maps under schema v1 (SRC-HALLMAP-SPEC section 6)."
+    "notes": "hall_map_schema_v1 has no wall-flux producer for shielded thrusters (wall fields absent), so a shielded design cannot produce wall-life maps under schema v1 (SRC-HALLMAP-SPEC section 6).",
+    "maps_to": "HallThruster.jl Thruster.shielded (thruster.jl line 28, default false). Solver support: SUPPORTED_NOT_WIRED: bridge_lib.jl run_case builds het.Thruster(name, geometry, magnetic_field) without the shielded keyword (line 224), so every bridge run is unshielded; wiring it needs a bridge change (outside this lane)"
    }
   },
   "bridge_mapping": {
@@ -530,7 +539,7 @@
     ],
     "locator": "Table 9-8, p. 441",
     "evidence_level": "5",
-    "quantity_type": "measured (flight data as tabulated in a textbook)",
+    "quantity_type": "nominal performance as tabulated in a textbook (measurement basis not stated)",
     "applicability": "xenon flight thrusters",
     "transfer_note": "Air species give a lower thrust per unit jet power at the same voltage for the same efficiency (see the ideal-beam table), and published light-propellant efficiencies are lower than xenon's (SRC-AFG2022 pp. 23-28).",
     "stated_values": {
@@ -539,33 +548,36 @@
       "value": 5,
       "unit": "cm",
       "status": "SOURCED",
-      "evidence_class": "measured",
+      "evidence_class": "inferred",
       "source": [
        "SRC-GK2008"
       ],
-      "locator": "Table 9-8, p. 441"
+      "locator": "Table 9-8, p. 441",
+      "notes": "Goebel & Katz Table 9-8 is a nominal performance summary; its measurement basis is not stated (reported, classed inferred)"
      },
      "spt50_input_power": {
       "definition": "SPT-50 thruster input power",
       "value": 350,
       "unit": "W",
       "status": "SOURCED",
-      "evidence_class": "measured",
+      "evidence_class": "inferred",
       "source": [
        "SRC-GK2008"
       ],
-      "locator": "Table 9-8, p. 441"
+      "locator": "Table 9-8, p. 441",
+      "notes": "Goebel & Katz Table 9-8 is a nominal performance summary; its measurement basis is not stated (reported, classed inferred)"
      },
      "spt50_thrust": {
       "definition": "SPT-50 thrust",
       "value": 20,
       "unit": "mN",
       "status": "SOURCED",
-      "evidence_class": "measured",
+      "evidence_class": "inferred",
       "source": [
        "SRC-GK2008"
       ],
-      "locator": "Table 9-8, p. 441"
+      "locator": "Table 9-8, p. 441",
+      "notes": "Goebel & Katz Table 9-8 is a nominal performance summary; its measurement basis is not stated (reported, classed inferred)"
      }
     },
     "role": "evidence, not a decision"
@@ -943,7 +955,7 @@
     "SRC-GK2008"
    ],
    "locator": "span rule VR-1 (span_rule): span of span_voltages_V over literature_operating_points with span_role 'span_defining': lowest 180 V (ECHT, measured thrust), highest 305 V (PPS1350-TSD on pure N2, measured thrust 19-21 mN)",
-   "rationale": "Under span rule VR-1 it is the span of discharge voltages at which Hall-channel devices fed with air species (no xenon admixture) had a thrust that the consulted source states was measured (180-305 V). The Busek BHT air-simulant point at 350 V (anodic efficiency about 27 %) is recorded but excluded under VR-1(c) because the review does not state its thrust basis; with that point VR-1 would give 180-350 V (span_rule.alternative_spans_on_record). The unfiltered span of all reported Hall-channel air-species voltages is '<100' to 350 V (Dukhopelnikov et al. sweep with estimated thrust, recorded and excluded under VR-1(c)); the cusped-field MCFT-2139 (30-2000 V) is recorded and excluded under VR-1(a). VR-1 was stated at repair, not pre-declared, and its criterion (c) was tightened at a second repair (span_rule.provenance_of_rule). The range lies inside the 200-500 V tested range of the xenon SPT family except its 180 V end. Tie to the RFP envelope (ideal_beam_reference_table, model-derived identities only): at the 25 mN upper thrust end an ideal singly charged beam over this range needs a jet power of 0.412 kW (O2+, 180 V) to 0.81 kW (N+, 305 V), i.e. 27.5-54.0 % of the 1.5 kW ceiling before any efficiency loss or cathode, magnet and pre-ionizer power; published light-propellant anodic efficiencies are far below 1 (HT5k 8-18 %, BHT about 27 % (EV-V2, thrust basis not stated), ECHT 13-23 %; SRC-AFG2022 pp. 25-26), so the ceiling is tight across the whole range. The envelope relations ER-1 to ER-6 show that the best V_d is not fixed a priori: at fixed efficiencies the jet-power cost of a given thrust rises as sqrt(V_d) (the <1.5 kW ceiling favours low V_d), the harvested flow sets a floor on V_d, and published light-propellant data show efficiency improving with voltage. Choosing a point would need an admitted closure or hardware; the range is therefore the filtered evidence span, not an optimum. The superseded 0-D grid (225-325 V) is not reused.",
+   "rationale": "Under span rule VR-1 it is the span of discharge voltages at which Hall-channel devices fed with air species (no xenon admixture) had a thrust that the consulted source states was measured (180-305 V). The Busek BHT air-simulant point at 350 V (anodic efficiency about 27 %) is recorded but excluded under VR-1(c) because the review does not state its thrust basis; with that point VR-1 would give 180-350 V (span_rule.alternative_spans_on_record). The unfiltered span of all reported Hall-channel air-species voltages is '<100' to 350 V (Dukhopelnikov et al. sweep with estimated thrust, recorded and excluded under VR-1(c)); the cusped-field MCFT-2139 (30-2000 V) is recorded and excluded under VR-1(a). VR-1 was stated at repair, not pre-declared, and its criterion (c) was tightened at a second repair (span_rule.provenance_of_rule). The range lies inside the 200-500 V tested range of the xenon SPT family except its 180 V end. Tie to the RFP envelope (no performance prediction): the measured light-propellant points in or just below the RFP thrust band (measured_discharge_power_check: ECHT Runs 2/4/5/6 at 180-200 V and PPS1350-TSD on pure N2 at 305 V, 17.29-22.79 mN) drew a discharge power of 0.54-0.915 kW, i.e. 36.0-61.0 % of the 1.5 kW ceiling for the discharge alone, before cathode, magnet, pre-ionizer and other bus loads (thrust per discharge power 20.77-42.15 mN/kW). The ideal-beam table (model-derived identities only) shows the scaling: at the 25 mN upper thrust end an ideal singly charged beam over this range needs a jet power of 0.412 kW (O2+, 180 V) to 0.81 kW (N+, 305 V), i.e. 27.5-54.0 % of the 1.5 kW ceiling, rising as sqrt(V_d) and as 1/sqrt(M). The published anodic efficiencies (HT5k 8-18 %, BHT about 27 % (EV-V2, thrust basis not stated), ECHT 13-23 %; SRC-AFG2022 pp. 25-26) must NOT be applied to that ideal-beam jet power: P_jet,ideal / P_d = eta* = eta_a / (gamma eta_m sqrt(eta_v)), not eta_a (measured_discharge_power_check.efficiency_definitions); for ECHT Run 2 eta* (N2+ reference) is 0.695-0.742 while its reconstructed eta_a is 0.23 (SRC-ECHT-TABLES). The ceiling therefore constrains the high-V_d, light-ion corner most. The envelope relations ER-1 to ER-6 show that the best V_d is not fixed a priori: at fixed efficiencies the jet-power cost of a given thrust rises as sqrt(V_d) (the <1.5 kW ceiling favours low V_d), the harvested flow sets a floor on V_d, and published light-propellant data show efficiency improving with voltage. Choosing a point would need an admitted closure or hardware; the range is therefore the filtered evidence span, not an optimum. The superseded 0-D grid (225-325 V) is not reused.",
    "uncertainty": "The range edges are set by what was published and by the span rule VR-1 (stated at repair, owner decision), not by physics limits; the owner may adopt the relaxed-(c) span (180-350 V), the unfiltered span or a different rule. It must also fit the Vyovrinda PPU design range (TBD).",
    "evidence": [
     "ER-1",
@@ -1364,11 +1376,12 @@
      ],
      "unit": "V",
      "status": "SOURCED",
-     "evidence_class": "measured",
+     "evidence_class": "inferred",
      "source": [
       "SRC-GK2008"
      ],
-     "locator": "p. 440"
+     "locator": "p. 440",
+     "notes": "reported tested range from a textbook summary, not a measured operating point"
     },
     "evidence_level": "5",
     "span_role": "context_only",
@@ -1486,14 +1499,14 @@
    },
    {
     "id": "ER-5",
-    "relation": "From ER-2: at fixed thrust T, harvested anode flow m_dot_a and fixed efficiencies gamma, eta_m, eta_v, the required voltage is V_d = (M / (2 e eta_v)) (T / (gamma eta_m m_dot_a))^2 (an equality). Because gamma, eta_m, eta_v <= 1, a hard floor independent of the efficiencies is V_d >= (M / (2 e)) (T / m_dot_a)^2; the intake-delivered flow (IF-A5, TBD) therefore sets a floor on V_d that rises as the flow falls.",
+    "relation": "From ER-2: at fixed thrust T, harvested anode flow m_dot_a and fixed efficiencies gamma, eta_m, eta_v, the required voltage is V_d = (M / (2 e eta_v)) (T / (gamma eta_m m_dot_a))^2 (an equality). For a beam of singly charged ions of mass M (gamma <= 1 then covers divergence only; eta_m, eta_v <= 1) this gives the floor V_d >= (M / (2 e)) (T / m_dot_a)^2, independent of the efficiencies; the intake-delivered flow (IF-A5, TBD) therefore sets a floor on V_d that rises as the flow falls. The floor holds only for a singly charged beam: with multiply charged ions T / m_dot_i can exceed sqrt(2 e V_b / M) (by up to sqrt(2) for a fully doubly charged beam), so the floor can be undercut by up to a factor 2 in V_d.",
     "source": [
      "SRC-GK2008"
     ],
     "locator": "Eqs. (7.3-9) to (7.3-14), pp. 342-343 (rearranged)",
     "evidence_level": "5",
     "quantity_type": "model-derived consequence",
-    "applicability": "needs m_dot_a from the upstream chain and gamma, eta_m, eta_v from an admitted closure or hardware (all TBD)",
+    "applicability": "needs m_dot_a from the upstream chain and gamma, eta_m, eta_v from an admitted closure or hardware (all TBD); the efficiency-independent floor is restricted to a singly charged beam",
     "role": "identity used for rationale"
    },
    {
@@ -1509,6 +1522,564 @@
     "role": "evidence, not a decision"
    }
   ],
+  "measured_discharge_power_check": {
+   "generated_by": "docs/architecture_comparison/hall_reference/voltage_envelope.py",
+   "role": "Ties the voltage range to the RFP power ceiling with MEASURED light-propellant (thrust, discharge power) pairs, not with an anodic efficiency applied to the ideal-beam jet power. Published devices only; not a Vyovrinda prediction, not an input to any trade.",
+   "efficiency_definitions": "eta_a = T^2 / (2 m_dot_a P_d) (ER-1) is the anodic efficiency. The ideal-beam jet power of the table is P_jet,ideal = T v_b / 2 with v_b = sqrt(2 e V_d / M). By ER-1 and ER-2, P_d = T v_eff / (2 eta_a) with v_eff = gamma eta_m sqrt(eta_v) v_b, so P_jet,ideal / P_d = eta* = eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged beam. eta_a must NEVER be applied to the ideal-beam jet power: P_d != P_jet,ideal / eta_a (that overstates P_d by 1 / (gamma eta_m sqrt(eta_v))).",
+   "reference_ion": "N2+",
+   "power_ceiling_from": "/discharge_voltage_interface/requirements/power_max_W",
+   "selection_rule": "Air-species (no xenon admixture) Hall-channel points among literature_operating_points whose published thrust is inside or just below the 12-25 mN RFP band and whose V_d and I_d are both published. P5 N1-N5 (61-90 mN, cases/p5_n2.json) and the HT5k (30-120 mN at 1.2-5.2 kW) are outside the band and are not used; the BHT, Dukhopelnikov et al. and MCFT-2139 points fail VR-1 (thrust basis or device family).",
+   "points": [
+    {
+     "id": "ECHT-Run2",
+     "device": "ECHT (Stanford extended-channel Hall thruster)",
+     "gas": "N2 anode (argon cathode)",
+     "selection": "Run 2: a thrust run with both published reductions and not flagged strongly unstable (Runs 1, 3 and 7 are flagged; SRC-ECHT-AUDIT)",
+     "discharge_voltage_V": {
+      "definition": "published discharge voltage",
+      "value": 180,
+      "unit": "V",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-ECHT-TABLES",
+       "SRC-ECHT-AUDIT"
+      ],
+      "locator": "echt_table_checks_v1.json runs['Run 2'] 'Vd' (Marchioni Table 6.1)"
+     },
+     "discharge_current_A": {
+      "definition": "published discharge current",
+      "value": 3.0,
+      "unit": "A",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-ECHT-TABLES",
+       "SRC-ECHT-AUDIT"
+      ],
+      "locator": "echt_table_checks_v1.json runs['Run 2'] 'Id' (Marchioni Table 6.1)",
+      "uncertainty": "2 significant figures; I_d may not be simultaneous with the thrust reading (mode changes during calibration; ECHT audit open assumption A11)"
+     },
+     "thrust_mN": {
+      "definition": "published thrust [averaged reduction, one-side reduction]",
+      "value": [
+       21.31,
+       22.76
+      ],
+      "unit": "mN",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-ECHT-TABLES",
+       "SRC-ECHT-AUDIT"
+      ],
+      "locator": "echt_table_checks_v1.json runs['Run 2'] 'T_avg_mN', 'T_mN' (Marchioni Tables 6.2/6.3)",
+      "uncertainty": "the two published reductions differ; the published +- values are calibration-fit only (ECHT audit)"
+     },
+     "derived": {
+      "discharge_power_W": {
+       "definition": "discharge (anode) power P_d = V_d I_d of this published point",
+       "value": 540.0,
+       "unit": "W",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "inherits the rounding of the published V_d and I_d; rounded to 0.1 W"
+      },
+      "thrust_per_discharge_power_mN_per_kW": {
+       "definition": "published thrust per unit discharge power T / P_d, at [T_lo, T_hi] of thrust_mN",
+       "value": [
+        39.46,
+        42.15
+       ],
+       "unit": "mN kW^-1",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "inherits the thrust and P_d uncertainties; rounded to 0.01 mN/kW; a published device's value, not a Vyovrinda prediction"
+      },
+      "discharge_power_fraction_of_power_max": {
+       "definition": "P_d of this published point divided by /discharge_voltage_interface/requirements/power_max_W (discharge alone; no cathode, magnet, pre-ionizer or other bus load)",
+       "value": 0.36,
+       "unit": "-",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "rounded to 0.001; not a feasibility verdict"
+      },
+      "eta_star_reference_ion": {
+       "definition": "eta* = P_jet,ideal / P_d = T v_b(N2+, V_d) / (2 P_d) at [T_lo, T_hi]: ideal N2+-beam jet power per unit discharge power (equals eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged N2+ beam; NOT the anodic efficiency eta_a)",
+       "value": [
+        0.695,
+        0.742
+       ],
+       "unit": "-",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "rounded to 0.001; referenced to N2+ by convention: the real beam composition (N2+, N+, multiply charged ions) is not published, and a lighter reference ion gives a larger value"
+      }
+     }
+    },
+    {
+     "id": "ECHT-Run4",
+     "device": "ECHT (Stanford extended-channel Hall thruster)",
+     "gas": "N2 anode (argon cathode)",
+     "selection": "Run 4: a thrust run with both published reductions and not flagged strongly unstable (Runs 1, 3 and 7 are flagged; SRC-ECHT-AUDIT)",
+     "discharge_voltage_V": {
+      "definition": "published discharge voltage",
+      "value": 200,
+      "unit": "V",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-ECHT-TABLES",
+       "SRC-ECHT-AUDIT"
+      ],
+      "locator": "echt_table_checks_v1.json runs['Run 4'] 'Vd' (Marchioni Table 6.1)"
+     },
+     "discharge_current_A": {
+      "definition": "published discharge current",
+      "value": 3.5,
+      "unit": "A",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-ECHT-TABLES",
+       "SRC-ECHT-AUDIT"
+      ],
+      "locator": "echt_table_checks_v1.json runs['Run 4'] 'Id' (Marchioni Table 6.1)",
+      "uncertainty": "2 significant figures; I_d may not be simultaneous with the thrust reading (mode changes during calibration; ECHT audit open assumption A11)"
+     },
+     "thrust_mN": {
+      "definition": "published thrust [averaged reduction, one-side reduction]",
+      "value": [
+       20.05,
+       22.79
+      ],
+      "unit": "mN",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-ECHT-TABLES",
+       "SRC-ECHT-AUDIT"
+      ],
+      "locator": "echt_table_checks_v1.json runs['Run 4'] 'T_avg_mN', 'T_mN' (Marchioni Tables 6.2/6.3)",
+      "uncertainty": "the two published reductions differ; the published +- values are calibration-fit only (ECHT audit)"
+     },
+     "derived": {
+      "discharge_power_W": {
+       "definition": "discharge (anode) power P_d = V_d I_d of this published point",
+       "value": 700.0,
+       "unit": "W",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "inherits the rounding of the published V_d and I_d; rounded to 0.1 W"
+      },
+      "thrust_per_discharge_power_mN_per_kW": {
+       "definition": "published thrust per unit discharge power T / P_d, at [T_lo, T_hi] of thrust_mN",
+       "value": [
+        28.64,
+        32.56
+       ],
+       "unit": "mN kW^-1",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "inherits the thrust and P_d uncertainties; rounded to 0.01 mN/kW; a published device's value, not a Vyovrinda prediction"
+      },
+      "discharge_power_fraction_of_power_max": {
+       "definition": "P_d of this published point divided by /discharge_voltage_interface/requirements/power_max_W (discharge alone; no cathode, magnet, pre-ionizer or other bus load)",
+       "value": 0.467,
+       "unit": "-",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "rounded to 0.001; not a feasibility verdict"
+      },
+      "eta_star_reference_ion": {
+       "definition": "eta* = P_jet,ideal / P_d = T v_b(N2+, V_d) / (2 P_d) at [T_lo, T_hi]: ideal N2+-beam jet power per unit discharge power (equals eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged N2+ beam; NOT the anodic efficiency eta_a)",
+       "value": [
+        0.532,
+        0.604
+       ],
+       "unit": "-",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "rounded to 0.001; referenced to N2+ by convention: the real beam composition (N2+, N+, multiply charged ions) is not published, and a lighter reference ion gives a larger value"
+      }
+     }
+    },
+    {
+     "id": "ECHT-Run5",
+     "device": "ECHT (Stanford extended-channel Hall thruster)",
+     "gas": "N2 anode (argon cathode)",
+     "selection": "Run 5: a thrust run with both published reductions and not flagged strongly unstable (Runs 1, 3 and 7 are flagged; SRC-ECHT-AUDIT)",
+     "discharge_voltage_V": {
+      "definition": "published discharge voltage",
+      "value": 200,
+      "unit": "V",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-ECHT-TABLES",
+       "SRC-ECHT-AUDIT"
+      ],
+      "locator": "echt_table_checks_v1.json runs['Run 5'] 'Vd' (Marchioni Table 6.1)"
+     },
+     "discharge_current_A": {
+      "definition": "published discharge current",
+      "value": 2.7,
+      "unit": "A",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-ECHT-TABLES",
+       "SRC-ECHT-AUDIT"
+      ],
+      "locator": "echt_table_checks_v1.json runs['Run 5'] 'Id' (Marchioni Table 6.1)",
+      "uncertainty": "2 significant figures; I_d may not be simultaneous with the thrust reading (mode changes during calibration; ECHT audit open assumption A11)"
+     },
+     "thrust_mN": {
+      "definition": "published thrust [averaged reduction, one-side reduction]",
+      "value": [
+       17.29,
+       20.85
+      ],
+      "unit": "mN",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-ECHT-TABLES",
+       "SRC-ECHT-AUDIT"
+      ],
+      "locator": "echt_table_checks_v1.json runs['Run 5'] 'T_avg_mN', 'T_mN' (Marchioni Tables 6.2/6.3)",
+      "uncertainty": "the two published reductions differ; the published +- values are calibration-fit only (ECHT audit)"
+     },
+     "derived": {
+      "discharge_power_W": {
+       "definition": "discharge (anode) power P_d = V_d I_d of this published point",
+       "value": 540.0,
+       "unit": "W",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "inherits the rounding of the published V_d and I_d; rounded to 0.1 W"
+      },
+      "thrust_per_discharge_power_mN_per_kW": {
+       "definition": "published thrust per unit discharge power T / P_d, at [T_lo, T_hi] of thrust_mN",
+       "value": [
+        32.02,
+        38.61
+       ],
+       "unit": "mN kW^-1",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "inherits the thrust and P_d uncertainties; rounded to 0.01 mN/kW; a published device's value, not a Vyovrinda prediction"
+      },
+      "discharge_power_fraction_of_power_max": {
+       "definition": "P_d of this published point divided by /discharge_voltage_interface/requirements/power_max_W (discharge alone; no cathode, magnet, pre-ionizer or other bus load)",
+       "value": 0.36,
+       "unit": "-",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "rounded to 0.001; not a feasibility verdict"
+      },
+      "eta_star_reference_ion": {
+       "definition": "eta* = P_jet,ideal / P_d = T v_b(N2+, V_d) / (2 P_d) at [T_lo, T_hi]: ideal N2+-beam jet power per unit discharge power (equals eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged N2+ beam; NOT the anodic efficiency eta_a)",
+       "value": [
+        0.594,
+        0.717
+       ],
+       "unit": "-",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "rounded to 0.001; referenced to N2+ by convention: the real beam composition (N2+, N+, multiply charged ions) is not published, and a lighter reference ion gives a larger value"
+      }
+     }
+    },
+    {
+     "id": "ECHT-Run6",
+     "device": "ECHT (Stanford extended-channel Hall thruster)",
+     "gas": "N2 anode (argon cathode)",
+     "selection": "Run 6: a thrust run with both published reductions and not flagged strongly unstable (Runs 1, 3 and 7 are flagged; SRC-ECHT-AUDIT)",
+     "discharge_voltage_V": {
+      "definition": "published discharge voltage",
+      "value": 200,
+      "unit": "V",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-ECHT-TABLES",
+       "SRC-ECHT-AUDIT"
+      ],
+      "locator": "echt_table_checks_v1.json runs['Run 6'] 'Vd' (Marchioni Table 6.1)"
+     },
+     "discharge_current_A": {
+      "definition": "published discharge current",
+      "value": 2.7,
+      "unit": "A",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-ECHT-TABLES",
+       "SRC-ECHT-AUDIT"
+      ],
+      "locator": "echt_table_checks_v1.json runs['Run 6'] 'Id' (Marchioni Table 6.1)",
+      "uncertainty": "2 significant figures; I_d may not be simultaneous with the thrust reading (mode changes during calibration; ECHT audit open assumption A11)"
+     },
+     "thrust_mN": {
+      "definition": "published thrust [averaged reduction, one-side reduction]",
+      "value": [
+       18.22,
+       22.32
+      ],
+      "unit": "mN",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-ECHT-TABLES",
+       "SRC-ECHT-AUDIT"
+      ],
+      "locator": "echt_table_checks_v1.json runs['Run 6'] 'T_avg_mN', 'T_mN' (Marchioni Tables 6.2/6.3)",
+      "uncertainty": "the two published reductions differ; the published +- values are calibration-fit only (ECHT audit)"
+     },
+     "derived": {
+      "discharge_power_W": {
+       "definition": "discharge (anode) power P_d = V_d I_d of this published point",
+       "value": 540.0,
+       "unit": "W",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "inherits the rounding of the published V_d and I_d; rounded to 0.1 W"
+      },
+      "thrust_per_discharge_power_mN_per_kW": {
+       "definition": "published thrust per unit discharge power T / P_d, at [T_lo, T_hi] of thrust_mN",
+       "value": [
+        33.74,
+        41.33
+       ],
+       "unit": "mN kW^-1",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "inherits the thrust and P_d uncertainties; rounded to 0.01 mN/kW; a published device's value, not a Vyovrinda prediction"
+      },
+      "discharge_power_fraction_of_power_max": {
+       "definition": "P_d of this published point divided by /discharge_voltage_interface/requirements/power_max_W (discharge alone; no cathode, magnet, pre-ionizer or other bus load)",
+       "value": 0.36,
+       "unit": "-",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "rounded to 0.001; not a feasibility verdict"
+      },
+      "eta_star_reference_ion": {
+       "definition": "eta* = P_jet,ideal / P_d = T v_b(N2+, V_d) / (2 P_d) at [T_lo, T_hi]: ideal N2+-beam jet power per unit discharge power (equals eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged N2+ beam; NOT the anodic efficiency eta_a)",
+       "value": [
+        0.626,
+        0.767
+       ],
+       "unit": "-",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-ECHT-AUDIT",
+        "SRC-ECHT-TABLES"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "rounded to 0.001; referenced to N2+ by convention: the real beam composition (N2+, N+, multiply charged ions) is not published, and a lighter reference ion gives a larger value"
+      }
+     }
+    },
+    {
+     "id": "PPS1350-TSD-N2-305V",
+     "device": "PPS1350-TSD",
+     "gas": "pure N2 anode (xenon cathode)",
+     "selection": "the only pure-N2 point of this device with a thrust the review states was measured (span-defining 305 V end)",
+     "discharge_voltage_V": {
+      "definition": "published discharge voltage",
+      "value": 305,
+      "unit": "V",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-AFG2022"
+      ],
+      "locator": "p. 23 ('A 305 V and 3 A pure nitrogen operating point')"
+     },
+     "discharge_current_A": {
+      "definition": "published discharge current",
+      "value": 3,
+      "unit": "A",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-AFG2022"
+      ],
+      "locator": "p. 23 ('A 305 V and 3 A pure nitrogen operating point')",
+      "uncertainty": "as reported by the review (1 significant figure); read as the discharge current, consistent with the review's 'neighboring 1kW of discharge power' (verify against the primary source)"
+     },
+     "thrust_mN": {
+      "definition": "published thrust range",
+      "value": [
+       19,
+       21
+      ],
+      "unit": "mN",
+      "status": "SOURCED",
+      "evidence_class": "measured",
+      "source": [
+       "SRC-AFG2022"
+      ],
+      "locator": "p. 23 ('measured thrust between 19 and 21 mN')",
+      "uncertainty": "range as reported by the review"
+     },
+     "derived": {
+      "discharge_power_W": {
+       "definition": "discharge (anode) power P_d = V_d I_d of this published point",
+       "value": 915.0,
+       "unit": "W",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-AFG2022"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "inherits the rounding of the published V_d and I_d; rounded to 0.1 W"
+      },
+      "thrust_per_discharge_power_mN_per_kW": {
+       "definition": "published thrust per unit discharge power T / P_d, at [T_lo, T_hi] of thrust_mN",
+       "value": [
+        20.77,
+        22.95
+       ],
+       "unit": "mN kW^-1",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-AFG2022"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "inherits the thrust and P_d uncertainties; rounded to 0.01 mN/kW; a published device's value, not a Vyovrinda prediction"
+      },
+      "discharge_power_fraction_of_power_max": {
+       "definition": "P_d of this published point divided by /discharge_voltage_interface/requirements/power_max_W (discharge alone; no cathode, magnet, pre-ionizer or other bus load)",
+       "value": 0.61,
+       "unit": "-",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-AFG2022"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "rounded to 0.001; not a feasibility verdict"
+      },
+      "eta_star_reference_ion": {
+       "definition": "eta* = P_jet,ideal / P_d = T v_b(N2+, V_d) / (2 P_d) at [T_lo, T_hi]: ideal N2+-beam jet power per unit discharge power (equals eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged N2+ beam; NOT the anodic efficiency eta_a)",
+       "value": [
+        0.476,
+        0.526
+       ],
+       "unit": "-",
+       "status": "SOURCED",
+       "evidence_class": "model-derived",
+       "source": [
+        "SRC-VENV-SCRIPT",
+        "SRC-AFG2022"
+       ],
+       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_pair() from this point's discharge_voltage_V, discharge_current_A and thrust_mN",
+       "uncertainty": "rounded to 0.001; referenced to N2+ by convention: the real beam composition (N2+, N+, multiply charged ions) is not published, and a lighter reference ion gives a larger value"
+      }
+     }
+    }
+   ]
+  },
   "ideal_beam_reference_table": {
    "generated_by": "docs/architecture_comparison/hall_reference/voltage_envelope.py",
    "role": "Physics identities (model-derived) showing how the jet-power cost of thrust scales with V_d and ion mass. Not a Hall performance prediction, not a bound on P_d, not an input to any trade.",
@@ -1577,7 +2148,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio (that needs the discharge efficiency, TBD)"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio: T / P_d = (2 / v_b) eta*, with eta* = eta_a / (gamma eta_m sqrt(eta_v)) TBD)"
      },
      "jet_power_at_thrust_min_kW": {
       "definition": "ideal-beam jet power T v_b / 2 of N2+ at the lower end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -1596,7 +2167,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d and not a bus-power estimate. P_d is NOT P_jet / eta_a: with ER-1/ER-2, P_jet / P_d = eta* = eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged beam of this ion, and eta* is TBD (admitted closure or hardware); see measured_discharge_power_check"
      },
      "jet_power_at_thrust_max_kW": {
       "definition": "ideal-beam jet power T v_b / 2 of N2+ at the upper end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -1615,7 +2186,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d and not a bus-power estimate. P_d is NOT P_jet / eta_a: with ER-1/ER-2, P_jet / P_d = eta* = eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged beam of this ion, and eta* is TBD (admitted closure or hardware); see measured_discharge_power_check"
      },
      "jet_power_at_thrust_max_fraction_of_power_max": {
       "definition": "jet_power_at_thrust_max_kW of N2+ divided by /discharge_voltage_interface/requirements/power_max_W (share of the RFP power ceiling taken by the ideal-beam jet power alone, before any loss), at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -1685,7 +2256,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio (that needs the discharge efficiency, TBD)"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio: T / P_d = (2 / v_b) eta*, with eta* = eta_a / (gamma eta_m sqrt(eta_v)) TBD)"
      },
      "jet_power_at_thrust_min_kW": {
       "definition": "ideal-beam jet power T v_b / 2 of N+ at the lower end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -1704,7 +2275,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d and not a bus-power estimate. P_d is NOT P_jet / eta_a: with ER-1/ER-2, P_jet / P_d = eta* = eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged beam of this ion, and eta* is TBD (admitted closure or hardware); see measured_discharge_power_check"
      },
      "jet_power_at_thrust_max_kW": {
       "definition": "ideal-beam jet power T v_b / 2 of N+ at the upper end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -1723,7 +2294,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d and not a bus-power estimate. P_d is NOT P_jet / eta_a: with ER-1/ER-2, P_jet / P_d = eta* = eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged beam of this ion, and eta* is TBD (admitted closure or hardware); see measured_discharge_power_check"
      },
      "jet_power_at_thrust_max_fraction_of_power_max": {
       "definition": "jet_power_at_thrust_max_kW of N+ divided by /discharge_voltage_interface/requirements/power_max_W (share of the RFP power ceiling taken by the ideal-beam jet power alone, before any loss), at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -1793,7 +2364,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio (that needs the discharge efficiency, TBD)"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio: T / P_d = (2 / v_b) eta*, with eta* = eta_a / (gamma eta_m sqrt(eta_v)) TBD)"
      },
      "jet_power_at_thrust_min_kW": {
       "definition": "ideal-beam jet power T v_b / 2 of O2+ at the lower end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -1812,7 +2383,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d and not a bus-power estimate. P_d is NOT P_jet / eta_a: with ER-1/ER-2, P_jet / P_d = eta* = eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged beam of this ion, and eta* is TBD (admitted closure or hardware); see measured_discharge_power_check"
      },
      "jet_power_at_thrust_max_kW": {
       "definition": "ideal-beam jet power T v_b / 2 of O2+ at the upper end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -1831,7 +2402,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d and not a bus-power estimate. P_d is NOT P_jet / eta_a: with ER-1/ER-2, P_jet / P_d = eta* = eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged beam of this ion, and eta* is TBD (admitted closure or hardware); see measured_discharge_power_check"
      },
      "jet_power_at_thrust_max_fraction_of_power_max": {
       "definition": "jet_power_at_thrust_max_kW of O2+ divided by /discharge_voltage_interface/requirements/power_max_W (share of the RFP power ceiling taken by the ideal-beam jet power alone, before any loss), at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -1901,7 +2472,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio (that needs the discharge efficiency, TBD)"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio: T / P_d = (2 / v_b) eta*, with eta* = eta_a / (gamma eta_m sqrt(eta_v)) TBD)"
      },
      "jet_power_at_thrust_min_kW": {
       "definition": "ideal-beam jet power T v_b / 2 of O+ at the lower end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -1920,7 +2491,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d and not a bus-power estimate. P_d is NOT P_jet / eta_a: with ER-1/ER-2, P_jet / P_d = eta* = eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged beam of this ion, and eta* is TBD (admitted closure or hardware); see measured_discharge_power_check"
      },
      "jet_power_at_thrust_max_kW": {
       "definition": "ideal-beam jet power T v_b / 2 of O+ at the upper end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -1939,7 +2510,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d and not a bus-power estimate. P_d is NOT P_jet / eta_a: with ER-1/ER-2, P_jet / P_d = eta* = eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged beam of this ion, and eta* is TBD (admitted closure or hardware); see measured_discharge_power_check"
      },
      "jet_power_at_thrust_max_fraction_of_power_max": {
       "definition": "jet_power_at_thrust_max_kW of O+ divided by /discharge_voltage_interface/requirements/power_max_W (share of the RFP power ceiling taken by the ideal-beam jet power alone, before any loss), at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -2009,7 +2580,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio (that needs the discharge efficiency, TBD)"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 mN/kW; not a thruster thrust-to-power ratio: T / P_d = (2 / v_b) eta*, with eta* = eta_a / (gamma eta_m sqrt(eta_v)) TBD)"
      },
      "jet_power_at_thrust_min_kW": {
       "definition": "ideal-beam jet power T v_b / 2 of Xe+ at the lower end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -2028,7 +2599,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d and not a bus-power estimate. P_d is NOT P_jet / eta_a: with ER-1/ER-2, P_jet / P_d = eta* = eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged beam of this ion, and eta* is TBD (admitted closure or hardware); see measured_discharge_power_check"
      },
      "jet_power_at_thrust_max_kW": {
       "definition": "ideal-beam jet power T v_b / 2 of Xe+ at the upper end of /discharge_voltage_interface/requirements/thrust_mN, at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -2047,7 +2618,7 @@
        "SRC-CONSTANTS"
       ],
       "locator": "docs/architecture_comparison/hall_reference/voltage_envelope.py compute_rows()",
-      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d (P_d = P_jet / efficiency, efficiency TBD) and not a bus-power estimate"
+      "uncertainty": "exact under the stated assumptions; rounded to 0.001 kW; ideal-beam jet power only, NOT the discharge power P_d and not a bus-power estimate. P_d is NOT P_jet / eta_a: with ER-1/ER-2, P_jet / P_d = eta* = eta_a / (gamma eta_m sqrt(eta_v)) for a singly charged beam of this ion, and eta* is TBD (admitted closure or hardware); see measured_discharge_power_check"
      },
      "jet_power_at_thrust_max_fraction_of_power_max": {
       "definition": "jet_power_at_thrust_max_kW of Xe+ divided by /discharge_voltage_interface/requirements/power_max_W (share of the RFP power ceiling taken by the ideal-beam jet power alone, before any loss), at each V_d of /discharge_voltage_interface/proposed_evaluation_set_V (same order)",
@@ -2579,7 +3150,7 @@
     "definition": "ion current crossing HALL_INLET_Z0 toward the exit, per ion species and charge state (e.g. N2+, N+, N2+ doubly charged, O+, Xe+)",
     "hall_only_rule": "exactly zero",
     "solver_support": "NOT_SUPPORTED",
-    "solver_locator": "heavy_species_update.jl apply_left_boundary! lines 303-420: positive ions leave through the anode at the (sheath-corrected) Bohm speed and their flux is returned as ground-state neutrals (line 395); no ion inflow",
+    "solver_locator": "heavy_species_update.jl apply_left_boundary! lines 303-429: positive ions leave through the anode at the (sheath-corrected) Bohm speed and their flux is returned as ground-state neutrals (line 395); no ion inflow",
     "interstage_field": "interstage_v1 result.ions[<ion species>].delivered_to_hall_flow_s [s^-1] x charge x e (interstage ion species carry their charge); fractions in result.charge_state_fractions.delivered"
    },
    "u_ion_axial_m_s": {
@@ -2680,7 +3251,7 @@
      "source": [
       "SRC-HTJL"
      ],
-     "locator": "src/simulation/heavy_species_update.jl apply_left_boundary!, lines 303-420 (comment at line 395)",
+     "locator": "src/simulation/heavy_species_update.jl apply_left_boundary!, lines 303-429 (comment at line 395)",
      "evidence_level": "4",
      "quantity_type": "software behaviour (read from source)",
      "applicability": "pinned HallThruster.jl v0.23.1",

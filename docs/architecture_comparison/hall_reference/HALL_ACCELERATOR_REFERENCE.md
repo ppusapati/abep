@@ -83,8 +83,8 @@ All values are **TBD — requires a Vyovrinda thruster design release** (drawing
 | `exit_plane_axial_position` | m | z = L by definition | convention |
 | `domain_length_m` (1-D cathode boundary) | m | `domain_m` | TBD (needs the cathode position) |
 | `anode_gas_distributor` | – | the plane `HALL_INLET_Z0` | TBD |
-| `wall_material` | – | `WallSheath(material, loss_scale)`. The solver provides Alumina, BoronNitride, SiliconDioxide, BNSiO2 and SiliconCarbide (`src/physics/wall_losses.jl` lines 114–123). The bridge runs the default `WallSheath(BNSiO2, 1.0)`. | TBD |
-| `magnetically_shielded` | – | `Thruster.shielded` | TBD. A shielded design has no wall fields under `hall_map_schema_v1`. |
+| `wall_material` | – | `WallSheath(material, loss_scale)`. The solver provides Alumina, BoronNitride, SiliconDioxide, BNSiO2 and SiliconCarbide (`src/physics/wall_losses.jl` lines 114–123). **Solver-supported, not wired in the bridge** (`SUPPORTED_NOT_WIRED`): `bridge_lib.jl` `run_case` never sets `wall_loss_model`, so every bridge run uses the solver default `WallSheath(BNSiO2, 1.0)` (`configuration.jl` line 218). Wiring needs a bridge change. | TBD |
+| `magnetically_shielded` | – | `Thruster.shielded` (`thruster.jl` line 28, default false). **Solver-supported, not wired in the bridge** (`SUPPORTED_NOT_WIRED`): `run_case` builds `het.Thruster(name, geometry, magnetic_field)` without `shielded` (`bridge_lib.jl` line 224), so every bridge run is unshielded. | TBD. A shielded design has no wall fields under `hall_map_schema_v1`. |
 
 **Sizing relations are evidence, not decisions.** They come from xenon literature. Transferring them to N₂/O/O₂ is a
 hypothesis (evidence level 6 for the database correlations).
@@ -107,8 +107,9 @@ hypothesis (evidence level 6 for the database correlations).
   2008 Eq. 4.6, p. 14).
 - **EV-G7:** In the SPT family, power, thrust, I_d and ṁ scale as R². The current density is typically 0.1–0.15 A cm⁻² for
   xenon (Goebel & Katz Eq. 7.2-20, pp. 336–337).
-- **EV-G8:** The xenon SPT-50 has a 5 cm slot and delivers 20 mN at 350 W (Goebel & Katz Table 9-8, p. 441). This is not
-  transferable to air species.
+- **EV-G8:** The xenon SPT-50 has a 5 cm slot and delivers 20 mN at 350 W (Goebel & Katz Table 9-8, p. 441). Table 9-8 is
+  a nominal performance summary with no stated measurement basis, so these values are classed inferred (reported), not
+  measured. This is not transferable to air species.
 - **EV-G9:** Flight Hall channels use BN or BN-SiO₂ (Goebel & Katz p. 325). The ECHT used BN and an extended channel for
   light neutrals (repository ECHT audit; Andreussi et al. 2022 p. 26).
 
@@ -250,8 +251,10 @@ The envelope relations show why no single voltage can be chosen today:
   RFP ceiling (< 1.5 kW; `abep_sim/constants.py` `power_max_W`) applies to the bus total as the bus-boundary lane accounts it.
 - **ER-4:** At fixed thrust and fixed γ, η_m, η_v and η_a, P_d ∝ √V_d. The power ceiling therefore favours the low end.
 - **ER-5:** At fixed thrust, harvested flow and fixed efficiencies, the required voltage is V_d = (M/(2 e η_v))·(T/(γ η_m ṁ_a))²
-  (an equality). Because γ, η_m, η_v ≤ 1, the hard floor is V_d ≥ (M/2e)·(T/ṁ_a)². The intake flow (IF-A5, TBD) therefore
-  sets a floor.
+  (an equality). For a beam of **singly charged** ions (γ ≤ 1 then covers divergence only; η_m, η_v ≤ 1), the floor is
+  V_d ≥ (M/2e)·(T/ṁ_a)², independent of the efficiencies. The intake flow (IF-A5, TBD) therefore sets a floor. The floor
+  holds only for a singly charged beam: with multiply charged ions T/ṁ_i can exceed √(2 e V_b/M), by up to √2 for a fully
+  doubly charged beam, so the floor can be undercut by up to a factor 2 in V_d.
 - **ER-6:** Published light-propellant data show efficiency rising with voltage, which opposes ER-4:
   - The I_d(V_d) plateau sits 50–100 V higher than with xenon (EV-V1, p. 26).
   - The best air-simulant anodic efficiency, about 27 %, came at the highest tested 350 V (EV-V2, p. 25; thrust basis not
@@ -268,6 +271,9 @@ RFP requirements recorded in the JSON (12–25 mN, 1500 W). The JSON is authorit
 - The table uses physics identities for a singly charged, monoenergetic, collimated beam accelerated through the full V_d:
   v_b = √(2 e V_d / m) and T/P_jet = 2/v_b.
 - It is **not** a thruster prediction, **not** a bound on P_d, and not an input to any trade.
+- P_jet here is the ideal-beam jet power. **An anodic efficiency must never be applied to it.** By ER-1 and ER-2,
+  P_d = T v_eff/(2 η_a) with v_eff = γ η_m √η_v v_b, so P_jet/P_d = η* = η_a/(γ η_m √η_v), not η_a. Dividing P_jet by η_a
+  overstates P_d by 1/(γ η_m √η_v).
 - It only shows how the jet-power cost of thrust scales with V_d and ion mass, and how much of the RFP power ceiling an
   ideal beam alone would take.
 
@@ -294,14 +300,42 @@ parentheses:
 | O+ | 0.582 (38.8 %) | 0.614 (40.9 %) | 0.686 (45.8 %) | 0.752 (50.1 %) | 0.758 (50.5 %) |
 | Xe+ | 0.203 (13.6 %) | 0.214 (14.3 %) | 0.24 (16.0 %) | 0.262 (17.5 %) | 0.265 (17.6 %) |
 
-**Envelope tie (no performance prediction).** Across the air-species ions (N₂⁺, N⁺, O₂⁺, O⁺) and the proposed range, an
-ideal beam alone at 25 mN needs 0.412 kW (O₂⁺, 180 V) to 0.81 kW (N⁺, 305 V). That is
-27.5–54.0 % of the 1.5 kW ceiling before any efficiency loss, and before cathode, magnet, pre-ionizer and other
-bus loads. The published light-propellant anodic efficiencies are far below 1: 8–18 % for the HT5k, about 27 % for the BHT
-(EV-V2, thrust basis not stated), and 13–23 % for the ECHT (Andreussi et al. 2022 pp. 25–26). The ceiling is therefore tight across the whole range,
-and tightest at the high-V_d, light-ion corner. This is the quantitative form of ER-4, and it is why the power ceiling
-favours the low end while ER-5 and ER-6 push the other way. The lower RFP thrust end (12 mN) is in the JSON
-(`jet_power_at_thrust_min_kW`).
+**Envelope tie (no performance prediction).** The tie to the power ceiling uses **measured** light-propellant (thrust,
+discharge power) pairs of published devices, not an efficiency applied to the ideal beam. The points are in
+`measured_discharge_power_check` in the JSON. They are the air-species Hall-channel points whose thrust is in or just below the
+RFP band and whose V_d and I_d are both published. `voltage_envelope.py` computes P_d = V_d I_d, T/P_d, the share of the ceiling
+and η* (N₂⁺ reference):
+
+| point | V_d (V) | I_d (A) | thrust (mN) | P_d (W) | T/P_d (mN/kW) | P_d / 1.5 kW | η* (N₂⁺ ref.) |
+|---|---|---|---|---|---|---|---|
+| ECHT-Run2 | 180 | 3.0 | 21.31–22.76 | 540.0 | 39.46–42.15 | 36.0 % | 0.695–0.742 |
+| ECHT-Run4 | 200 | 3.5 | 20.05–22.79 | 700.0 | 28.64–32.56 | 46.7 % | 0.532–0.604 |
+| ECHT-Run5 | 200 | 2.7 | 17.29–20.85 | 540.0 | 32.02–38.61 | 36.0 % | 0.594–0.717 |
+| ECHT-Run6 | 200 | 2.7 | 18.22–22.32 | 540.0 | 33.74–41.33 | 36.0 % | 0.626–0.767 |
+| PPS1350-TSD-N2-305V | 305 | 3 | 19–21 | 915.0 | 20.77–22.95 | 61.0 % | 0.476–0.526 |
+
+Sources: ECHT Runs 2, 4, 5 and 6 from the repository ECHT audit (`echt_table_checks_v1.json`, Marchioni Tables 6.1–6.3).
+These are the runs with both thrust reductions (averaged–one-side) that are not flagged strongly unstable. I_d has 2
+significant figures and may not be simultaneous with the thrust reading (audit assumption A11). PPS1350-TSD from Andreussi
+et al. 2022 p. 23 ("A 305 V and 3 A pure nitrogen operating point", "measured thrust between 19 and 21 mN", "neighboring 1kW
+of discharge power"). The 3 A is read as the discharge current (verify against the primary source). P5 N1–N5 (61–90 mN) and
+the HT5k (30–120 mN at 1.2–5.2 kW) are outside the band and are not used.
+
+These published points gave 17.29–22.79 mN, just below the 25 mN upper end, at a discharge power of 0.54–0.915 kW. That is
+36.0–61.0 % of the 1.5 kW ceiling for the discharge alone, before cathode, magnet, pre-ionizer and other bus loads. Their
+thrust per discharge power is 20.77–42.15 mN/kW.
+
+The η* column shows why the anodic efficiency must not be applied to the ideal-beam jet power. For ECHT Run 2, η* is
+0.695–0.742, while its reconstructed anodic efficiency is 0.23 (`echt_table_checks_v1.json`). The published light-propellant
+anodic efficiencies (8–18 % for the HT5k, about 27 % for the BHT with thrust basis not stated (EV-V2), 13–23 % for the ECHT;
+Andreussi et al. 2022 pp. 25–26) are therefore **not** P_jet/P_d ratios. η* depends on the beam composition, which is not
+published: an N⁺ reference gives larger values.
+
+The ideal-beam table gives the scaling. Across the air-species ions (N₂⁺, N⁺, O₂⁺, O⁺) and the proposed range, an ideal
+beam alone at 25 mN needs 0.412 kW (O₂⁺, 180 V) to 0.81 kW (N⁺, 305 V). That is 27.5–54.0 % of the 1.5 kW ceiling, and it
+rises as √V_d and as 1/√M. At fixed η*, P_d scales the same way. The ceiling therefore constrains the high-V_d, light-ion
+corner most. This is the quantitative form of ER-4, and it is why the power ceiling favours the low end while ER-5 and ER-6
+push the other way. The lower RFP thrust end (12 mN) is in the JSON (`jet_power_at_thrust_min_kW`).
 
 ## 6. Cathode interface
 
@@ -420,7 +454,7 @@ condition of the 1-D solver would need. An optional tabulated axial velocity dis
 **Solver capability: GAP.** These findings come from the pinned HallThruster.jl v0.23.1 source, read but not executed:
 
 - **SC-1:** At the anode, positive ions leave at the sheath-corrected Bohm speed, and their flux is returned as ground-state
-  neutrals. There is no ion inflow (`heavy_species_update.jl` `apply_left_boundary!`, lines 303–420, line 395).
+  neutrals. There is no ion inflow (`heavy_species_update.jl` `apply_left_boundary!`, lines 303–429, line 395).
 - **SC-2:** The anode feeds the ground state only, and excited states have no anode inflow (lines 337 and 422).
 - **SC-3:** The neutral velocity and temperature exist in `Propellant`, but the bridge does not pass them.
 - **SC-4:** The only user hook is `Config.source_heavy_species` (`configuration.jl` lines 200 and 240;
@@ -542,7 +576,9 @@ they are merged.
    second repair, which moved the upper end from 350 V to 305 V. The alternatives on record are VR-1 with relaxed (c)
    (180–350 V, adding the Busek BHT point whose thrust basis is not stated; it would also follow if the primary Busek report
    shows a measured thrust), the unfiltered Hall-channel span "<100"–350 V, and light-propellant operation far above 350 V
-   in another device family (MCFT-2139, 1000 V).
+   in another device family (MCFT-2139, 1000 V). The evaluation-set rule (both range ends plus the multiples of 50 V strictly
+   inside) is a design-of-experiment assumption; it yields 300 V and 305 V only 5 V apart, and a rule such as "drop an interior
+   node closer than 10 V to a range end" would give 180, 200, 250 and 305 V. The owner chooses.
 2. `hall_only` hardware: no pre-ionizer, or pre-ionizer installed but unpowered?
 3. Per-arm magnet re-optimization as a sensitivity branch?
 4. The solver-gap model change and the INV-S1 tolerance.
@@ -582,5 +618,7 @@ Its identity with the pinned commit: verify.
 - `CLAUDE.md`
 - `hallthruster_bridge/cases/p5_n2.json`
 - `hallthruster_bridge/identification/echt_n2/README.md`
+- `hallthruster_bridge/identification/echt_n2/echt_table_checks_v1.json` (ECHT per-run V_d, I_d and thrust for the
+  measured (T, P_d) pairs)
 - `abep_sim/archengine.py`
 - `abep_sim/plasma_devices.py` (`LaB6Cathode` only)

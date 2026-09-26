@@ -10,6 +10,8 @@ requirements-lock.txt), and checks that:
   - the discharge-voltage range is the span of the span-defining points under rule VR-1, and every other literature
     point (incl. the Dukhopelnikov sweep and the MCFT-2139) stays on record with an exclusion reason;
   - the ideal-beam table (incl. jet power at the RFP thrust ends) equals the output of its committed generator script;
+  - the envelope tie uses measured (thrust, discharge power) pairs, whose derived numbers equal the generator's output,
+    and never applies an anodic efficiency to the ideal-beam jet power;
   - provisional other-lane mappings and the 0.0 V solver coupling placeholder are labelled as such.
 Other lanes' contracts (bus boundary, harness, ICD, Hall-map spec, evidence matrices) are referenced by path only and
 are NOT required to exist.
@@ -38,7 +40,7 @@ BUS_COMPONENTS = {"hall_discharge", "hall_magnet", "cathode_keeper", "cathode_he
                   "thermal_control", "housekeeping", "rf_source", "ecr_source", "ecr_magnet"}
 EVIDENCE_CLASSES = {"measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"}
 VALUED_STATUSES = {"SOURCED", "PROPOSED", "OWNER_DECIDED"}
-P5_ECHT_SOURCE_IDS = {"SRC-P5N2-CASES", "SRC-ECHT-AUDIT"}
+P5_ECHT_SOURCE_IDS = {"SRC-P5N2-CASES", "SRC-ECHT-AUDIT", "SRC-ECHT-TABLES"}
 
 
 def _load(path):
@@ -593,6 +595,119 @@ def test_generator_refuses_missing_inputs(ref):
     bad["discharge_voltage_interface"]["requirements"]["power_max_W"]["value"] = None
     with pytest.raises(ValueError):
         mod.expected_table_rows(bad)
+
+
+# ----------------------------------------------------------------------------------------------- measured (T, P_d) pairs
+def test_measured_pairs_match_generator(ref):
+    mod = _load_script()
+    chk = ref["discharge_voltage_interface"]["measured_discharge_power_check"]
+    assert chk["generated_by"] == "docs/architecture_comparison/hall_reference/voltage_envelope.py"
+    assert chk["power_ceiling_from"] == "/discharge_voltage_interface/requirements/power_max_W"
+    expected = mod.expected_pair_derived(ref)
+    ids = [pt["id"] for pt in chk["points"]]
+    assert len(ids) == len(set(ids)) and set(ids) == set(expected)
+    p_max = ref["discharge_voltage_interface"]["requirements"]["power_max_W"]["value"]
+    for pt in chk["points"]:
+        assert pt["derived"] == expected[pt["id"]], pt["id"]
+        # the inputs are published measurements, the derived numbers model-derived arithmetic on them
+        for k in ("discharge_voltage_V", "discharge_current_A", "thrust_mN"):
+            assert pt[k]["status"] == "SOURCED" and pt[k]["evidence_class"] == "measured", (pt["id"], k)
+        for q in pt["derived"].values():
+            assert q["evidence_class"] == "model-derived" and "SRC-VENV-SCRIPT" in q["source"]
+        v, i = pt["discharge_voltage_V"]["value"], pt["discharge_current_A"]["value"]
+        t_lo, t_hi = pt["thrust_mN"]["value"]
+        d = pt["derived"]
+        assert d["discharge_power_W"]["value"] == pytest.approx(v * i, abs=0.06)
+        assert d["discharge_power_fraction_of_power_max"]["value"] == pytest.approx(v * i / p_max, abs=6e-4)
+        assert d["thrust_per_discharge_power_mN_per_kW"]["value"] == pytest.approx(
+            [t_lo / (v * i) * 1e3, t_hi / (v * i) * 1e3], abs=6e-3)
+        # eta* = P_jet,ideal / P_d with the reference ion's ideal beam velocity
+        vb = mod.beam_velocity_m_s(v, mod.ion_mass_kg(chk["reference_ion"]))
+        assert d["eta_star_reference_ion"]["value"] == pytest.approx(
+            [t_lo * vb / 2e3 / (v * i), t_hi * vb / 2e3 / (v * i)], abs=6e-4)
+    # every measured pair is a published air-species point inside or just below the RFP thrust band
+    t_max = ref["discharge_voltage_interface"]["requirements"]["thrust_mN"]["value"][1]
+    for pt in chk["points"]:
+        assert pt["thrust_mN"]["value"][1] <= t_max and "xe" not in pt["gas"].split("(")[0].lower(), pt["id"]
+
+
+def test_eta_star_is_not_the_anodic_efficiency(ref):
+    """The ideal-beam jet power is never divided by an anodic efficiency (P_d != P_jet,ideal / eta_a)."""
+    text = json.dumps(ref) + open(DOC_FILE, encoding="utf-8").read() + open(SCRIPT_FILE, encoding="utf-8").read()
+    for bad in ("P_jet / efficiency", "P_d = P_jet / eta", "P_jet/efficiency"):
+        assert bad not in text, bad
+    defs = ref["discharge_voltage_interface"]["measured_discharge_power_check"]["efficiency_definitions"]
+    assert "eta_a / (gamma eta_m sqrt(eta_v))" in defs and "NEVER" in defs
+    rows = ref["discharge_voltage_interface"]["ideal_beam_reference_table"]["rows"]
+    for row in rows.values():
+        for k in ("jet_power_at_thrust_min_kW", "jet_power_at_thrust_max_kW"):
+            assert "P_d is NOT P_jet / eta_a" in row[k]["uncertainty"]
+    # ECHT Run 2: eta* (N2+) exceeds its reconstructed anodic efficiency (0.23, echt_table_checks_v1.json) by > 3x,
+    # so applying eta_a to the ideal-beam jet power would overstate P_d several-fold
+    checks = _load(os.path.join(ROOT, "hallthruster_bridge", "identification", "echt_n2", "echt_table_checks_v1.json"))
+    eta_a = {r["run"]: r["eta_anode_T2_over_2mPa"] for r in checks["runs"]}
+    pts = {pt["id"]: pt for pt in ref["discharge_voltage_interface"]["measured_discharge_power_check"]["points"]}
+    run2 = pts["ECHT-Run2"]
+    assert run2["derived"]["eta_star_reference_ion"]["value"][1] > 3 * eta_a["Run 2"]
+    # the ECHT inputs are the audit's transcription
+    by_run = {r["run"]: r for r in checks["runs"]}
+    for pid, pt in pts.items():
+        if pid.startswith("ECHT-"):
+            r = by_run[pid.replace("ECHT-Run", "Run ")]
+            assert pt["discharge_voltage_V"]["value"] == r["Vd"] and pt["discharge_current_A"]["value"] == r["Id"]
+            assert pt["thrust_mN"]["value"] == [r["T_avg_mN"], r["T_mN"]]
+
+
+def test_document_quotes_measured_pairs(ref):
+    doc = open(DOC_FILE, encoding="utf-8").read()
+    rat = ref["discharge_voltage_interface"]["proposed_range_V"]["rationale"]
+    pts = ref["discharge_voltage_interface"]["measured_discharge_power_check"]["points"]
+    for pt in pts:
+        d = pt["derived"]
+        t = pt["thrust_mN"]["value"]
+        tp = d["thrust_per_discharge_power_mN_per_kW"]["value"]
+        es = d["eta_star_reference_ion"]["value"]
+        line = (f"| {pt['id']} | {pt['discharge_voltage_V']['value']} | {pt['discharge_current_A']['value']} | "
+                f"{t[0]}–{t[1]} | {d['discharge_power_W']['value']} | {tp[0]}–{tp[1]} | "
+                f"{round(d['discharge_power_fraction_of_power_max']['value'] * 100, 1)} % | {es[0]}–{es[1]} |")
+        assert line in doc, f"document row for {pt['id']} differs from the JSON"
+    t_lo = min(pt["thrust_mN"]["value"][0] for pt in pts)
+    t_hi = max(pt["thrust_mN"]["value"][1] for pt in pts)
+    p_lo = min(pt["derived"]["discharge_power_W"]["value"] for pt in pts) / 1e3
+    p_hi = max(pt["derived"]["discharge_power_W"]["value"] for pt in pts) / 1e3
+    f_lo = min(pt["derived"]["discharge_power_fraction_of_power_max"]["value"] for pt in pts)
+    f_hi = max(pt["derived"]["discharge_power_fraction_of_power_max"]["value"] for pt in pts)
+    tp_lo = min(pt["derived"]["thrust_per_discharge_power_mN_per_kW"]["value"][0] for pt in pts)
+    tp_hi = max(pt["derived"]["thrust_per_discharge_power_mN_per_kW"]["value"][1] for pt in pts)
+    assert f"{t_lo}–{t_hi} mN" in doc and f"{p_lo}–{p_hi} kW" in doc, (t_lo, t_hi, p_lo, p_hi)
+    assert f"{round(f_lo * 100, 1)}–{round(f_hi * 100, 1)} % of the 1.5 kW ceiling for the discharge alone" in doc
+    assert f"{tp_lo}–{tp_hi} mN/kW" in doc
+    assert f"{t_lo}-{t_hi} mN" in rat and f"{p_lo}-{p_hi} kW" in rat and f"{tp_lo}-{tp_hi} mN/kW" in rat
+    assert f"{round(f_lo * 100, 1)}-{round(f_hi * 100, 1)} % of the 1.5 kW ceiling" in rat
+
+
+def test_efficiency_independent_voltage_floor_is_singly_charged_only(ref):
+    er5 = {e["id"]: e for e in ref["discharge_voltage_interface"]["envelope_relations"]}["ER-5"]
+    assert "singly charged" in er5["relation"] and "multiply charged" in er5["relation"]
+    assert "singly charged" in er5["applicability"]
+    doc = open(DOC_FILE, encoding="utf-8").read()
+    assert "holds only for a singly charged beam" in doc
+
+
+def test_unwired_solver_fields_are_labelled(ref):
+    f = ref["geometry_interface"]["fields"]
+    for name in ("wall_material", "magnetically_shielded"):
+        assert "SUPPORTED_NOT_WIRED" in f[name]["maps_to"], name
+    assert "Solver-supported, not wired in the bridge" in open(DOC_FILE, encoding="utf-8").read()
+
+
+def test_textbook_summaries_are_not_classed_measured(ref):
+    ev = {r["id"]: r for r in ref["geometry_interface"]["sizing_relations"]}["EV-G8"]
+    for q in ev["stated_values"].values():
+        assert q["evidence_class"] != "measured"
+    for op in ref["discharge_voltage_interface"]["literature_operating_points"]:
+        if op["span_role"] == "context_only" and op["propellant_family"] == "xenon":
+            assert op["discharge_voltage_V"]["evidence_class"] != "measured", op["device"]
 
 
 # ----------------------------------------------------------------------------------------------- document
