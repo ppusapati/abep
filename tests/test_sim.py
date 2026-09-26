@@ -1241,6 +1241,191 @@ def test_p5_n2_scorer_implements_frozen_rules():
     assert m.score(base2)[1]["vacuum"]["c1"]["candidate"] == "FAIL_VALIDATION"
     assert m.verdict_change(sens(True, True), base2, "n2_n.toml") == {}
 
+def test_p5_n2_freeze_and_score_once(tmp_path):
+    """Synthetic records only: canonical merge is shard-order independent, duplicates are refused, the dataset hash is bound in
+    the manifest, the frozen scorer refuses a tampered dataset and refuses to score twice."""
+    import importlib.util, json, os, gzip
+    root = os.path.dirname(os.path.dirname(__file__))
+    load = lambda n: (lambda spec: (spec, importlib.util.module_from_spec(spec)))(
+        importlib.util.spec_from_file_location(n, os.path.join(root, "scripts", n + ".py")))
+    spec, fz = load("freeze_p5_n2_dataset"); spec.loader.exec_module(fz)
+    spec, sf = load("score_p5_n2_frozen"); spec.loader.exec_module(sf)
+    recs = [{"key": f"c1|n2_n.toml|N{i}-L32-anode-1p6kW|vacuum", "candidate": "c1", "chemistry": "n2_n.toml",
+             "case": f"N{i}-L32-anode-1p6kW", "point": f"N{i}", "registration": "L32-anode", "coil_shape": "1p6kW",
+             "mode": "vacuum", "retcode": "failure", "smoke": False} for i in range(1, 6)]
+    a, b = tmp_path / "a.jsonl", tmp_path / "b.jsonl"
+    a.write_text("".join(json.dumps(r) + "\n" for r in recs[:3])); b.write_text("".join(json.dumps(r) + "\n" for r in recs[3:]))
+    d1, n1 = fz.canonical([str(a), str(b)]); d2, _ = fz.canonical([str(b), str(a)])
+    assert d1 == d2 and n1 == 5
+    dup = tmp_path / "dup.jsonl"; dup.write_text(json.dumps(recs[0]) + "\n")
+    with _pytest.raises(SystemExit):
+        fz.canonical([str(a), str(dup)])
+    fz._gate = lambda: type("G", (), {"audit": staticmethod(lambda mode, paths: {"PASS": True, "n_records": 5, "n_expected": 5,
+                                                                                 "retcode_counts": {}, "grid": {}})})
+    out = tmp_path / "val"
+    perm = tmp_path / "perm.jsonl"                                                     # identity fields permuted vs keys
+    rp_ = [dict(r) for r in recs]; rp_[0]["point"], rp_[1]["point"] = rp_[1]["point"], rp_[0]["point"]
+    perm.write_text("".join(json.dumps(r) + "\n" for r in rp_))
+    assert fz.record_identity([str(perm)]) and not fz.record_identity([str(a), str(b)])
+    with _pytest.raises(SystemExit):
+        fz.freeze("vacuum", [str(perm)], tag="perm", outdir=str(out))
+    man = fz.freeze("vacuum", [str(a), str(b)], tag="test", outdir=str(out))
+    assert man["n_records"] == 5 and len(man["sha256_canonical_jsonl"]) == 64
+    with _pytest.raises(SystemExit):                                                   # never overwrite a frozen dataset
+        fz.freeze("vacuum", [str(a), str(b)], tag="test", outdir=str(out))
+    mp = str(out / "p5_n2_campaign_test_vacuum_raw_manifest.json")
+    man_rel = json.load(open(mp)); man_rel["dataset"] = os.path.relpath(str(out / "p5_n2_campaign_test_vacuum_raw.jsonl.gz"), sf.BR)
+    json.dump(man_rel, open(mp, "w"))
+    p = sf.score_frozen(mp)
+    assert p["input_sha256_canonical_jsonl"] == man["sha256_canonical_jsonl"] and p["input_n_records"] == 5
+    assert json.load(open(os.path.join(sf.BR, p["output"])))["status_counts"]["vacuum"] == {"NUMERICAL_FAILURE": 10}
+    with _pytest.raises(SystemExit):                                                   # score once
+        sf.score_frozen(mp)
+    # a scorer that differs from the frozen scorer is refused BEFORE it produces anything
+    fake = tmp_path / "score_p5_n2_campaign.py"; fake.write_text(open(sf.SCORER).read() + "\n# modified\n")
+    real_scorer, sf.SCORER = sf.SCORER, str(fake)
+    try:
+        with _pytest.raises(SystemExit):
+            sf.score_frozen(mp, allow_existing=True)
+    finally:
+        sf.SCORER = real_scorer
+    # an interrupted scoring attempt leaves no official artifact
+    os.remove(os.path.join(sf.BR, p["output"])); os.remove(mp.replace("_raw_manifest.json", "_scores_provenance.json"))
+    class Boom:
+        def main(self, argv):
+            open(argv[argv.index("--out") + 1], "w").write("{partial")
+            raise RuntimeError("interrupted")
+    real_load, sf._load_scorer = sf._load_scorer, (lambda: Boom())
+    try:
+        with _pytest.raises(RuntimeError):
+            sf.score_frozen(mp)
+    finally:
+        sf._load_scorer = real_load
+    assert not os.path.exists(os.path.join(sf.BR, p["output"]))
+    assert not any(f.name.startswith("p5_n2_campaign_test_vacuum_scores") for f in out.iterdir())
+    orphan = mp.replace("_raw_manifest.json", "_scores.json")                         # hard-interruption orphan (no provenance)
+    open(orphan, "w").write("{}")
+    real_replace = sf.os.replace
+    def failing_replace(src, dst):
+        if dst.endswith("_scores_provenance.json"):
+            raise OSError("simulated failure publishing provenance")
+        return real_replace(src, dst)
+    sf.os.replace = failing_replace
+    try:
+        with _pytest.raises(OSError):
+            sf.score_frozen(mp)
+    finally:
+        sf.os.replace = real_replace
+    assert not os.path.exists(orphan)                                                  # rolled back, nothing official
+    open(orphan, "w").write("{}")
+    assert sf.score_frozen(mp)["output_sha256"]                                        # orphan removed; clean attempt succeeds
+    # release manifest binds the whole chain and refuses a broken link
+    spec = importlib.util.spec_from_file_location("rp", os.path.join(root, "scripts", "report_p5_n2_campaign.py"))
+    rp = importlib.util.module_from_spec(spec); spec.loader.exec_module(rp)
+    scores_path = mp.replace("_raw_manifest.json", "_scores.json")
+    rp.main([scores_path])
+    spec = importlib.util.spec_from_file_location("rel", os.path.join(root, "scripts", "make_validation_release.py"))
+    rl = importlib.util.module_from_spec(spec); spec.loader.exec_module(rl)
+    r = rl.release(mp, bridge_dir=sf.BR)
+    assert all(r["link_checks"].values()) and r["dataset"]["n_records"] == 5 and r["decision"]["promotable"] == []
+    dec_path = scores_path.replace(".json", "_decision.json")
+    d = json.load(open(dec_path)); d["source_scores_sha256"] = "0" * 64; json.dump(d, open(dec_path, "w"))
+    with _pytest.raises(SystemExit):
+        rl.release(mp, bridge_dir=sf.BR)
+    for suffix in ("_decision.json", "_report.md"):
+        os.remove(scores_path.replace(".json", suffix))
+    gz = out / "p5_n2_campaign_test_vacuum_raw.jsonl.gz"                               # tampering is detected
+    gz.write_bytes(gzip.compress(gzip.decompress(gz.read_bytes()).replace(b"failure", b"success")))
+    with _pytest.raises(SystemExit):
+        sf.score_frozen(mp, allow_existing=True)
+
+def test_p5_n2_report_and_decision_are_mechanical(tmp_path):
+    """Synthetic scorer output only: the decision file transcribes the vacuum O3 verdicts (facility never gates), and the report
+    contains the five sections in the pre-agreed order with signed residuals."""
+    import importlib.util, json, os
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("s", os.path.join(root, "scripts", "score_p5_n2_campaign.py"))
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    spec = importlib.util.spec_from_file_location("r", os.path.join(root, "scripts", "report_p5_n2_campaign.py"))
+    rp = importlib.util.module_from_spec(spec); spec.loader.exec_module(rp)
+
+    def rec(cand, chem, p, mode="vacuum", scale=1.0):
+        It, Tt = m.targets(p, mode); f = m.axial_factor(p, "A") or 1.0
+        return {"key": f"{cand}|{chem}|{p}-L32-anode-1p6kW|{mode}", "candidate": cand, "chemistry": chem, "case": f"{p}-L32-anode-1p6kW",
+                "point": p, "registration": "L32-anode", "coil_shape": "1p6kW", "mode": mode, "retcode": "success", "finite": True,
+                "discharge_current_A": scale * It, "thrust_N": Tt / f * 1e-3, "Id_final10_samples_A": [scale * It] * 20,
+                "chemistry_per_reaction": [{"extrapolated_fraction": 0.0}], "chemistry_unresolved_rate_files": []}
+    recs = [rec("good", c, p) for c in m.MANDATORY for p in m.POINTS] + [rec("low", c, p, scale=0.8) for c in m.MANDATORY for p in m.POINTS] \
+        + [rec("good", c, p, mode="facility", scale=0.8) for c in m.MANDATORY for p in m.POINTS]
+    runs, members = m.score(recs)
+    scores = {"preregistration": "x", "n_records": len(recs), "candidates": members, "runs": runs, "exb_diagnostic": {}, "staged_escalation": {}}
+    d = rp.decision(scores)
+    assert d["promotable"] == ["good"] and d["failed_validation"] == ["low"] and d["candidates"]["good"] == "PROMOTABLE"
+    assert d["facility_verdicts_non_gating"]["good"] == "FAIL_VALIDATION"                # facility shown, never gates
+    md = rp.report(scores)
+    heads = [md.index(h) for h in ("## 1. Candidate verdicts", "## 2. Global layer-1", "## 3. Run status", "## 4. Signed residuals", "## 5. E×B")]
+    assert heads == sorted(heads) and "-0.200" in md                                       # signed, not absolute
+
+def test_admission_gate_and_launch_manifests(tmp_path):
+    """Admitted members need an offline-verifiable admission record (decision + provenance files, sha256, PROMOTABLE, passing
+    layer-1 members); screening candidates are refused by require_admitted; the launch manifests equal a fresh build and their
+    structural check works."""
+    import copy, hashlib, importlib.util, json, os
+    from abep_sim import hall_ensemble as he
+    root = os.path.dirname(os.path.dirname(__file__))
+    e = json.load(open(he.ENSEMBLE_FILE))
+    bdir = tmp_path / "bridge"; (bdir / "ensemble").mkdir(parents=True); (bdir / "validation").mkdir()
+    (bdir / "validation" / "s.json").write_text('{"scores": 1}')
+    s_sha = hashlib.sha256((bdir / "validation" / "s.json").read_bytes()).hexdigest()
+    dec = {"candidates": {"sgb-screen-01": "PROMOTABLE"}, "passing_members": {"sgb-screen-01": ["L32-anode|1p6kW|A"]},
+           "source_scores_sha256": s_sha}
+    (bdir / "validation" / "d.json").write_text(json.dumps(dec))
+    (bdir / "validation" / "p.json").write_text(json.dumps({"output": "validation/s.json", "output_sha256": s_sha}))
+    sha = lambda f: hashlib.sha256((bdir / "validation" / f).read_bytes()).hexdigest()
+    cand = copy.deepcopy(e["screening_candidates"][0])
+    adm = {"promoted_from_screening_id": "sgb-screen-01", "campaign_id": "p5_n2_campaign_v1", "preregistration": "prereg/x.json",
+           "decision_file": "validation/d.json", "decision_sha256": sha("d.json"), "scores_provenance_file": "validation/p.json",
+           "scores_provenance_sha256": sha("p.json"), "passing_layer1_members": ["L32-anode|1p6kW|A"], "admitted_utc": "t", "decided_by": "owner"}
+    def write(member, drop_from_screening=True):
+        ee = copy.deepcopy(e); ee["members"] = [member]
+        if drop_from_screening:
+            ee["screening_candidates"] = [c for c in ee["screening_candidates"] if c["ensemble_member_id"] != member["ensemble_member_id"]]
+        pth = bdir / "ensemble" / "transport_ensemble_v0.json"; pth.write_text(json.dumps(ee)); return str(pth)
+    with _pytest.raises(ValueError):                                        # no admission record
+        he.load_ensemble(write(copy.deepcopy(cand)))
+    ok = he.load_ensemble(write(dict(copy.deepcopy(cand), admission=adm)))
+    he.require_admitted("sgb-screen-01", ok)
+    with _pytest.raises(ValueError):                                        # still also listed as screening
+        he.load_ensemble(write(dict(copy.deepcopy(cand), admission=adm), drop_from_screening=False))
+    with _pytest.raises(ValueError):                                        # tampered decision
+        he.load_ensemble(write(dict(copy.deepcopy(cand), admission=dict(adm, decision_sha256="0" * 64))))
+    (bdir / "validation" / "p3.json").write_text(json.dumps({"output": "validation/missing.json", "output_sha256": s_sha}))
+    with _pytest.raises(ValueError):                                        # scores file named by provenance is missing
+        he.load_ensemble(write(dict(copy.deepcopy(cand), admission=dict(adm, scores_provenance_file="validation/p3.json",
+                                                                           scores_provenance_sha256=sha("p3.json")))))
+    (bdir / "validation" / "p2.json").write_text(json.dumps({"output_sha256": "b" * 64}))   # provenance of a different scores file
+    with _pytest.raises(ValueError):
+        he.load_ensemble(write(dict(copy.deepcopy(cand), admission=dict(adm, scores_provenance_file="validation/p2.json",
+                                                                           scores_provenance_sha256=sha("p2.json")))))
+    with _pytest.raises(ValueError):                                        # unsupported passing member
+        he.load_ensemble(write(dict(copy.deepcopy(cand), admission=dict(adm, passing_layer1_members=["L38-hist|3p0kW|B"]))))
+    with _pytest.raises(ValueError):                                        # the real ensemble: screening refused
+        he.require_admitted("sgb-screen-01")
+    spec = importlib.util.spec_from_file_location("mm", os.path.join(root, "scripts", "make_p5_n2_launch_manifests.py"))
+    mm = importlib.util.module_from_spec(spec); spec.loader.exec_module(mm)
+    built = {m["name"]: m for m in mm.build()}
+    assert len(built) == 19 and built["facility_mandatory"]["n_runs"] == 1080
+    assert built["staged_n2_n_n2dication"]["baseline"] == "n2_n_di_lower.toml"
+    for name, m in built.items():
+        assert json.load(open(os.path.join(mm.OUT, name + ".json"))) == json.loads(json.dumps(m)), name
+    m = built["staged_n2_n_rot_off"]
+    lock = m["prereg_lock_sha256"]; commit = "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5"
+    f = tmp_path / "s.jsonl"
+    f.write_text("".join(json.dumps({"key": k, "mode": "vacuum", "smoke": False, "prereg_lock_sha256": lock,
+                                     "hallthruster_commit": commit, "retcode": "success"}) + "\n" for k in m["expected_keys"]))
+    assert mm.check(m, [str(f)])["PASS"]
+    assert not mm.check(built["staged_n2_n_ndd_hmslow"], [str(f)])["PASS"]
+
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""
     from abep_sim.rate_tables import maxwellian_rate, tail_sensitivity
