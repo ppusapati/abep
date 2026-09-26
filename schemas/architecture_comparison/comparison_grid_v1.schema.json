@@ -1,0 +1,284 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "schemas/architecture_comparison/comparison_grid_v1.schema.json",
+ "title": "Common operating-envelope comparison grid v1 (hall_only / rf_hall / ecr_hall)",
+ "description": "Structure of docs/architecture_comparison/comparison_grid/comparison_grid_v1.json, produced by scripts/architecture/build_comparison_grid.py. Uses only the keyword subset implemented by that script's built-in validator (type, required, properties, additionalProperties, items, enum, const, minItems, maxItems, uniqueItems, pattern, minimum, maximum, minLength, $ref, anyOf).",
+ "type": "object",
+ "required": ["schema", "grid_id", "version", "status", "what_it_is", "what_it_is_not", "generated_by", "architectures",
+              "milestones", "prerequisites", "inputs", "axes", "forbidden_axes", "rules", "base_points", "evaluations",
+              "summary", "freeze_procedure", "open_questions_for_owner", "hashes"],
+ "additionalProperties": false,
+ "properties": {
+  "schema": {"const": "schemas/architecture_comparison/comparison_grid_v1.schema.json"},
+  "grid_id": {"const": "comparison_grid_v1"},
+  "version": {"type": "string", "minLength": 1},
+  "status": {"enum": ["DRAFT_PENDING_OWNER", "FROZEN"]},
+  "what_it_is": {"type": "string", "minLength": 1},
+  "what_it_is_not": {"type": "string", "minLength": 1},
+  "generated_by": {
+   "type": "object",
+   "required": ["script", "deterministic", "command"],
+   "additionalProperties": false,
+   "properties": {
+    "script": {"const": "scripts/architecture/build_comparison_grid.py"},
+    "deterministic": {"const": true},
+    "command": {"type": "string", "minLength": 1}
+   }
+  },
+  "architectures": {"$ref": "#/$defs/architecture_list"},
+  "milestones": {
+   "type": "object",
+   "required": ["supports", "A", "B", "C"],
+   "additionalProperties": false,
+   "properties": {
+    "supports": {"type": "array", "minItems": 1, "items": {"enum": ["A", "B", "C"]}, "uniqueItems": true},
+    "A": {"$ref": "#/$defs/milestone"},
+    "B": {"$ref": "#/$defs/milestone"},
+    "C": {"$ref": "#/$defs/milestone"}
+   }
+  },
+  "prerequisites": {
+   "type": "object",
+   "required": ["feed_envelope", "hall_reference", "calibration_nuisance", "referenced_not_read"],
+   "additionalProperties": false,
+   "properties": {
+    "feed_envelope": {"$ref": "#/$defs/prerequisite"},
+    "hall_reference": {"$ref": "#/$defs/prerequisite"},
+    "calibration_nuisance": {
+     "type": "object", "required": ["path", "used_for"], "additionalProperties": false,
+     "properties": {"path": {"const": "hallthruster_bridge/ensemble/transport_ensemble_v0.json"},
+                    "used_for": {"type": "string"}}
+    },
+    "referenced_not_read": {"type": "object", "additionalProperties": {"type": "string"}}
+   }
+  },
+  "inputs": {
+   "type": "object",
+   "required": ["feed_envelope", "hall_reference", "calibration_nuisance"],
+   "additionalProperties": false,
+   "properties": {
+    "feed_envelope": {"type": "object", "required": ["path", "sha256", "cases", "xe_path", "mixed_air_xe_feed"],
+                      "properties": {"sha256": {"$ref": "#/$defs/sha256"},
+                                     "cases": {"type": "array", "minItems": 1}}},
+    "hall_reference": {"type": "object", "required": ["path", "sha256", "discharge_voltage", "power_max_W",
+                                                       "bus_power_boundary"],
+                       "properties": {"sha256": {"$ref": "#/$defs/sha256"}}},
+    "calibration_nuisance": {"type": "object", "required": ["path", "names", "values"],
+                             "properties": {"names": {"type": "array", "minItems": 1, "items": {"type": "string"}}}}
+   }
+  },
+  "axes": {
+   "type": "object",
+   "required": ["feed_mode", "feed_state", "xe_anode_mass_fraction", "discharge_voltage_V", "p_source_W"],
+   "additionalProperties": false,
+   "properties": {
+    "feed_mode": {
+     "type": "object", "required": ["status", "evidence_class", "source", "rationale", "levels"],
+     "properties": {
+      "status": {"$ref": "#/$defs/level_status"},
+      "levels": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/feed_mode_level"}}
+     }
+    },
+    "feed_state": {
+     "type": "object", "required": ["status", "source", "definition", "levels"],
+     "properties": {"levels": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/feed_level"}}}
+    },
+    "xe_anode_mass_fraction": {
+     "type": "object", "required": ["status", "definition", "source", "levels"],
+     "properties": {"levels": {"type": "array", "items": {"$ref": "#/$defs/scalar_level"}}}
+    },
+    "discharge_voltage_V": {
+     "type": "object", "required": ["status", "source", "range_V", "levels"],
+     "properties": {"levels": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/scalar_level"}}}
+    },
+    "p_source_W": {
+     "type": "object", "required": ["definition", "level_structure", "bound", "boundary", "levels"],
+     "properties": {
+      "definition": {"type": "object", "required": ["status", "evidence_class", "source", "definition"]},
+      "level_structure": {"type": "object", "required": ["nonzero_levels", "status", "evidence_class", "source"]},
+      "bound": {"type": "object", "required": ["rule", "P_bus_max_W"]},
+      "levels": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/p_source_level"}}
+     }
+    }
+   }
+  },
+  "forbidden_axes": {
+   "type": "object", "required": ["names", "calibration_nuisance_values", "rule"], "additionalProperties": false,
+   "properties": {"names": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+                  "calibration_nuisance_values": {"type": "array", "items": {"type": "string"}},
+                  "rule": {"const": "GR-5"}}
+  },
+  "rules": {
+   "type": "array", "minItems": 1,
+   "items": {"type": "object", "required": ["id", "rule"], "additionalProperties": false,
+             "properties": {"id": {"type": "string", "pattern": "^GR-[0-9]+$"}, "rule": {"type": "string", "minLength": 1}}}
+  },
+  "base_points": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/base_point"}},
+  "evaluations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evaluation"}},
+  "summary": {
+   "type": "object",
+   "required": ["n_base_points", "n_base_points_by_mode", "n_evaluations", "n_evaluations_by_architecture",
+                "p_source_levels_by_architecture", "identical_base_point_sets", "n_base_points_pending_tbd",
+                "n_evaluations_pending_tbd"],
+   "properties": {"identical_base_point_sets": {"const": true},
+                  "n_base_points": {"type": "integer", "minimum": 1},
+                  "n_evaluations": {"type": "integer", "minimum": 1}}
+  },
+  "freeze_procedure": {
+   "type": "object", "required": ["current_status", "steps", "blocker_kinds", "blockers"], "additionalProperties": false,
+   "properties": {"current_status": {"enum": ["DRAFT_PENDING_OWNER", "FROZEN"]},
+                  "steps": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                  "blocker_kinds": {"type": "array", "items": {"type": "string"}},
+                  "blockers": {"type": "array", "items": {"type": "string"}}}
+  },
+  "open_questions_for_owner": {"type": "array", "items": {"type": "string", "pattern": "^GQ-[0-9]+ "}},
+  "hashes": {
+   "type": "object",
+   "required": ["algorithm", "grid_content_sha256", "grid_content_covers", "inputs_sha256"],
+   "additionalProperties": false,
+   "properties": {"algorithm": {"type": "string"},
+                  "grid_content_sha256": {"$ref": "#/$defs/sha256"},
+                  "grid_content_covers": {"type": "array", "items": {"type": "string"}},
+                  "inputs_sha256": {"$ref": "#/$defs/sha256"}}
+  }
+ },
+ "$defs": {
+  "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+  "architecture": {"enum": ["hall_only", "rf_hall", "ecr_hall"]},
+  "architecture_list": {"type": "array", "items": {"$ref": "#/$defs/architecture"}, "minItems": 1, "uniqueItems": true},
+  "level_status": {"enum": ["TBD", "PROPOSED", "SOURCED", "OWNER_DECIDED", "DEFINITION"]},
+  "evidence_class": {"enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed", "TBD"]},
+  "milestone": {
+   "type": "object", "required": ["supported"],
+   "properties": {"supported": {"type": "string", "minLength": 1},
+                  "to_reach_next": {"type": "array", "items": {"type": "string"}},
+                  "needs": {"type": "array", "items": {"type": "string"}}}
+  },
+  "prerequisite": {
+   "type": "object",
+   "required": ["path", "sha256", "status", "lane", "commit_at_authoring", "lane_verified_at_authoring"],
+   "properties": {"path": {"type": "string", "pattern": "^docs/architecture_comparison/"},
+                  "sha256": {"$ref": "#/$defs/sha256"},
+                  "commit_at_authoring": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+                  "lane_verified_at_authoring": {"type": "boolean"}}
+  },
+  "tbd_requires": {"type": "string", "pattern": "^TBD"},
+  "scalar_level": {
+   "type": "object",
+   "required": ["id", "value", "unit", "status", "evidence_class"],
+   "properties": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9_]+$"},
+    "value": {"type": ["number", "null"]},
+    "status": {"$ref": "#/$defs/level_status"},
+    "evidence_class": {"$ref": "#/$defs/evidence_class"},
+    "requires": {"$ref": "#/$defs/tbd_requires"}
+   },
+   "anyOf": [
+    {"properties": {"status": {"const": "TBD"}, "value": {"type": "null"}}, "required": ["requires"]},
+    {"properties": {"status": {"enum": ["PROPOSED", "SOURCED", "OWNER_DECIDED", "DEFINITION"]},
+                    "value": {"type": "number"}}}
+   ]
+  },
+  "p_source_level": {
+   "type": "object",
+   "required": ["id", "value", "unit", "status", "evidence_class", "architectures"],
+   "additionalProperties": false,
+   "properties": {
+    "id": {"type": "string", "pattern": "^PS[A-Z0-9_]*$"},
+    "value": {"type": ["number", "null"], "minimum": 0},
+    "unit": {"const": "W"},
+    "status": {"$ref": "#/$defs/level_status"},
+    "evidence_class": {"$ref": "#/$defs/evidence_class"},
+    "source": {"type": "string"},
+    "requires": {"$ref": "#/$defs/tbd_requires"},
+    "architectures": {"$ref": "#/$defs/architecture_list"}
+   },
+   "anyOf": [
+    {"properties": {"status": {"const": "TBD"}, "value": {"type": "null"}}, "required": ["requires"]},
+    {"properties": {"status": {"enum": ["PROPOSED", "SOURCED", "OWNER_DECIDED", "DEFINITION"]},
+                    "value": {"type": "number"}}, "required": ["source"]}
+   ]
+  },
+  "feed_mode_level": {
+   "type": "object",
+   "required": ["id", "definition", "feed_levels", "xe_anode_mass_fraction", "dual_feed_state_reference"],
+   "additionalProperties": false,
+   "properties": {
+    "id": {"enum": ["xe_start", "mixed", "atmosphere_dominant"]},
+    "definition": {"type": "string", "minLength": 1},
+    "feed_levels": {"enum": ["xe_path", "atmospheric_cases", "atmospheric_cases_x_xe_mixing_levels"]},
+    "xe_anode_mass_fraction": {
+     "type": "object", "required": ["value", "unit", "status", "evidence_class"],
+     "properties": {"value": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+                    "status": {"$ref": "#/$defs/level_status"},
+                    "evidence_class": {"$ref": "#/$defs/evidence_class"}}
+    },
+    "dual_feed_state_reference": {"type": "array", "items": {"type": "string"}}
+   }
+  },
+  "quantity": {
+   "type": "object",
+   "required": ["unit", "evidence_class", "source_pointer", "status"],
+   "properties": {
+    "status": {"enum": ["TBD", "SOURCED"]},
+    "source_pointer": {"type": "string", "pattern": "^docs/architecture_comparison/feed_envelope/feed_envelope_v1\\.json#/"},
+    "value": {"type": ["number", "null"]},
+    "values": {"type": "object", "additionalProperties": {"type": ["number", "null"]}}
+   },
+   "anyOf": [{"required": ["value"]}, {"required": ["values"]}]
+  },
+  "feed_level": {
+   "type": "object",
+   "required": ["id", "path", "alt_km", "atmosphere_level", "averaging", "interface", "feed_state",
+                "free_stream_context", "status", "tbd_fields", "applies_to_modes", "source_pointer"],
+   "additionalProperties": false,
+   "properties": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9_]+$"},
+    "path": {"enum": ["atmospheric", "xenon"]},
+    "alt_km": {"type": ["number", "null"]},
+    "atmosphere_level": {"type": ["string", "null"]},
+    "averaging": {"type": ["string", "null"]},
+    "interface": {"enum": ["IF-A5", "IF-X2"]},
+    "feed_state": {"type": "object", "additionalProperties": {"$ref": "#/$defs/quantity"}},
+    "free_stream_context": {"type": ["object", "null"]},
+    "status": {"enum": ["TBD", "SOURCED"]},
+    "tbd_fields": {"type": "array", "items": {"type": "string"}},
+    "applies_to_modes": {"type": "array", "minItems": 1,
+                         "items": {"enum": ["xe_start", "mixed", "atmosphere_dominant"]}},
+    "source_pointer": {"type": "string"}
+   }
+  },
+  "base_point": {
+   "type": "object",
+   "required": ["base_point_id", "feed_mode", "feed_level_id", "xe_mix_level_id", "vd_level_id", "V_d_V",
+                "architectures", "tbd_dependencies", "status"],
+   "additionalProperties": false,
+   "properties": {
+    "base_point_id": {"type": "string", "pattern": "^(xe_start|mixed|atmosphere_dominant)/[A-Za-z0-9_/]+$"},
+    "feed_mode": {"enum": ["xe_start", "mixed", "atmosphere_dominant"]},
+    "feed_level_id": {"type": "string"},
+    "xe_mix_level_id": {"type": ["string", "null"]},
+    "vd_level_id": {"type": "string", "pattern": "^V[0-9p]+$"},
+    "V_d_V": {"type": ["number", "null"]},
+    "architectures": {"type": "array", "items": {"$ref": "#/$defs/architecture"}, "minItems": 3, "maxItems": 3,
+                      "uniqueItems": true},
+    "tbd_dependencies": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "status": {"enum": ["DEFINED", "PENDING_TBD_LEVELS"]}
+   }
+  },
+  "evaluation": {
+   "type": "object",
+   "required": ["evaluation_id", "base_point_id", "architecture", "p_source_level_id",
+                "tbd_dependencies_beyond_base_point", "status"],
+   "additionalProperties": false,
+   "properties": {
+    "evaluation_id": {"type": "string", "minLength": 1},
+    "base_point_id": {"type": "string", "minLength": 1},
+    "architecture": {"$ref": "#/$defs/architecture"},
+    "p_source_level_id": {"type": "string", "pattern": "^PS[A-Z0-9_]*$"},
+    "tbd_dependencies_beyond_base_point": {"type": "array", "items": {"type": "string"}},
+    "status": {"enum": ["DEFINED", "PENDING_TBD_LEVELS"]}
+   }
+  }
+ }
+}
