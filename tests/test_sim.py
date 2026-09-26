@@ -747,7 +747,7 @@ def test_n2_dissociative_ionization_audit_promotes_under_the_preregistered_rule(
     spec = importlib.util.spec_from_file_location("a", os.path.join(root, "scripts", "audit_n2_dissociative_ionization.py"))
     a = importlib.util.module_from_spec(spec); spec.loader.exec_module(a)
     res = json.load(open(os.path.join(root, "hallthruster_bridge", "audit", "n2_dissociative_ionization_v1.json")))
-    assert res["prereg"] == "n2_completeness_audit_v1" and res["status"] == "PROVISIONAL"
+    assert res["prereg"] == "n2_completeness_audit_v1" and res["status"].startswith("PROMOTION FINAL (forced by F_ion)")
     assert res["verdict"]["dissociative_ionization"].startswith("PROMOTE")
     assert abs(a.E_TH_DI - 24.284) < 1e-9
     r20 = next(r for r in res["rows"] if r["Te_eV"] == 20.0)

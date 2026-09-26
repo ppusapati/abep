@@ -1,7 +1,7 @@
 {
  "audit": "N2 dissociative ionization",
  "prereg": "n2_completeness_audit_v1",
- "status": "PROVISIONAL",
+ "status": "PROMOTION FINAL (forced by F_ion); F_P PROVISIONAL",
  "denominator_reaction_set": "abep-n2n-0.3 without the 8 excitation and vibrational channels (inelastic denominator too small -> F_P over-estimated; F_ion unaffected)",
  "E_th_DI_eV": 24.284,
  "KER_max_eV": 16.0,
@@ -18,7 +18,7 @@
   "F_S_N_production_max_upper": 0.1402651311748417,
   "F_ion_Npp_max_upper": 0.030524992426495857,
   "rule": "Promote the omitted process if F_P > 0.01 OR F_ion > 0.01 OR F_S_s > 0.05 anywhere in its applicable Te domain.",
-  "dissociative_ionization": "PROMOTE (even the lower bound exceeds the pre-registered threshold)"
+  "dissociative_ionization": "PROMOTE. Promotion is already forced by F_ion (lower bound), which is independent of the still-incomplete excitation/vibrational power denominator; F_P is provisional and will be recomputed after the reaction set is complete."
  },
  "rows": [
   {

@@ -1678,7 +1678,7 @@ This audit was run under `prereg/n2_completeness_audit_v1` (merged in PR #20 bef
 | F_P | 0.24 % / 1.2 % | 1.8 / 4.5 % | 8.1 / 15 % | 18 / 31 % | 24 / 40 % |
 | F_ion | 0.43 / 2.6 % | 2.6 / 7.8 % | 9.7 / 21 % | 19 / 40 % | 25 / 50 % |
 
-- **Verdict: PROMOTE.** Even the lower bound exceeds 1 % from T_e ≈ 4–4.5 eV.
+- **Verdict: PROMOTE.** Promotion is already forced by F_ion, which is independent of the still-incomplete excitation/vibrational power denominator. Its lower bound exceeds 1 % from T_e ≈ 4 eV. F_P is provisional and will be recomputed after the reaction set is complete.
 - Removing an N₂²⁺ share of about 1 % of total ionization from the column changes the lower-bound F_ion at 30 eV only from 24.7 % to 23.5 %.
 - Species-specific shares:
   - F_S(N₂ destruction) up to 14 %.

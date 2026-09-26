@@ -96,11 +96,16 @@ def main():
         "F_S_N_production_max_upper": max(r["F_S_N_production_upper"] for r in rows),
         "F_ion_Npp_max_upper": max(r["F_ion_Npp_upper"] for r in rows),
     }
-    promote = verdict["F_P_max_lower"] > th["F_P"] or verdict["F_ion_max_lower"] > th["F_ion"]
+    # F_ion's denominator (ion production) does not involve the still-missing excitation/vibrational channels, so a
+    # promotion forced by F_ion is final; F_P's inelastic-power denominator is incomplete, so F_P stays provisional.
+    promote = verdict["F_ion_max_lower"] > th["F_ion"]
     verdict["rule"] = pre["rule"]
-    verdict["dissociative_ionization"] = ("PROMOTE (even the lower bound exceeds the pre-registered threshold)" if promote
-                                          else "not decided by the lower bound; see upper bounds")
-    out = {"audit": "N2 dissociative ionization", "prereg": pre["id"], "status": "PROVISIONAL",
+    verdict["dissociative_ionization"] = (
+        "PROMOTE. Promotion is already forced by F_ion (lower bound), which is independent of the still-incomplete "
+        "excitation/vibrational power denominator; F_P is provisional and will be recomputed after the reaction set is "
+        "complete." if promote else "not decided by F_ion; F_P is provisional until the reaction set is complete")
+    out = {"audit": "N2 dissociative ionization", "prereg": pre["id"],
+           "status": "PROMOTION FINAL (forced by F_ion); F_P PROVISIONAL",
            "denominator_reaction_set": "abep-n2n-0.3 without the 8 excitation and vibrational channels (inelastic denominator too small -> F_P over-estimated; F_ion unaffected)",
            "E_th_DI_eV": E_TH_DI, "KER_max_eV": KER_MAX_EV, "atomic_fraction_x": 0.0,
            "source": "Song et al. JPCRD 52, 023104 (2023) Table 10, columns sigma(N+ + N2++) and sigma(N++)",
