@@ -1,9 +1,11 @@
-"""Tests for Bundle 1 (Milestone A, conditional selection): fo_bundle1_conditional_selection, bundle versions v1 and v2.
+"""Tests for Bundle 1 (Milestone A, conditional selection): fo_bundle1_conditional_selection, bundle versions v1, v2 and v3.
 
-v1 (bundle1_v1.json / BUNDLE1.md / bundle1_v1.schema.json) is the historical record of T_BUNDLE1 attempt 2: it is verified
-by its recorded sha256 and never rebuilt. v2: checks that docs/milestones/bundle1/build_bundle1.py reproduces
-bundle1_v2.json and BUNDLE1_v2.md byte for byte from the pinned inputs and the pinned governance snapshot (never the live
-governance files), that the v1 -> v2 change log is consistent, that the ECHT-N2 status is carried, that the JSON
+v1 (bundle1_v1.json / BUNDLE1.md / bundle1_v1.schema.json) is the historical record of T_BUNDLE1 attempt 2 and v2
+(bundle1_v2.json / BUNDLE1_v2.md / bundle1_v2.schema.json / governance_snapshot_v2.json) the record of the bundle1_v2
+repair: both are verified by their recorded sha256 and never rebuilt. v3: checks that docs/milestones/bundle1/build_bundle1.py
+reproduces bundle1_v3.json and BUNDLE1_v3.md byte for byte from the pinned inputs and the pinned governance snapshot (never
+the live governance files), that the v2 -> v3 change log is consistent (fo_veto_layer context re-pin only, 0
+decision-relevant changes), that the ECHT-N2 status is carried, that the JSON
 validates against its schema, that every architecture x mandatory-field cell carries the full metadata, that the
 outcome is one of the two allowed forms, that any ELIMINATED_WITHIN_TESTED_ENVELOPE traces to a lane-24 demonstrated
 gate, that P_feed / T_feed stay EXPLICITLY_UNAVAILABLE, that the input sha256 pins hold (and that a changed or missing
@@ -249,7 +251,7 @@ def test_claim_identities_and_repin_log(doc, snap):
     assert doc["claim"]["prerequisite_identities_match_pins"] is False
     assert sorted(r["lane"] for r in doc["claim"]["repin_log"]) == differ
     for r in doc["claim"]["repin_log"]:
-        assert r["claim_identity"] == claim[r["lane"]]["identity"] and r["v2_identity"] == bb.PREREQUISITES[r["lane"]]
+        assert r["claim_identity"] == claim[r["lane"]]["identity"] and r["pinned_identity"] == bb.PREREQUISITES[r["lane"]]
         assert r["reason"].strip() and r["verification_record"].strip()
     for i in doc["inputs"]:
         commit = bb.PREREQUISITES.get(i["lane"]) or bb.CONTEXT[i["lane"]]
@@ -298,7 +300,7 @@ def test_three_questions_and_owner_questions(doc, snap):
 
 
 def test_forbidden_wording_absent():
-    for p in (JSON_PATH, MD_PATH, REPO / bb.GOV_SNAPSHOT_REL):
+    for p in (JSON_PATH, MD_PATH, REPO / bb.GOV_SNAPSHOT_REL, REPO / bb.SCHEMA_REL):
         assert bb.forbidden_hits(p.read_text(encoding="utf-8")) == [], p
 
 
@@ -368,19 +370,69 @@ def test_governance_snapshot_matches_captured_commit(snap):
 
 def test_change_log(doc):
     cl = doc["change_log"]
-    assert cl["from"] == "bundle1_v1" and cl["to"] == "bundle1_v2"
+    assert cl["from"] == "bundle1_v2" and cl["to"] == "bundle1_v3"
     assert all(cl["unchanged"].values()), cl["unchanged"]
     assert cl["decision_relevant_changes"] == []
-    assert {i["lane"] for i in cl["inputs_changed"]} == {"lane_09_hall_sustainment", "fo_hall_sustainment_envelope"}
-    assert {i["lane"] for i in cl["inputs_added"]} == {"fo_aux_bus_comparison", "fo_veto_layer", "fo_experiment_package",
-                                                       "fo_dx5_cross_section_evidence"}
-    changed = {f["path"]: f for i in cl["inputs_changed"] for f in i["files"]}
-    m = changed["docs/evidence/hall_sustainment/hall_sustainment_matrix.json"]
-    assert m["v1_sha256"].startswith("248aef28") and m["v2_sha256"].startswith("76bba594")
+    assert cl["inputs_added"] == [] and cl["inputs_removed"] == []
+    assert [(i["lane"], i["role"]) for i in cl["inputs_changed"]] == [("fo_veto_layer", "context")]
+    ch = cl["inputs_changed"][0]
+    assert ch["from_commit"].startswith("3e7805c") and ch["to_commit"] == bb.CONTEXT["fo_veto_layer"]
+    assert [f["path"] for f in ch["files"]] == ["docs/architecture_comparison/veto_layer/veto_layer_v1.json"]
+    assert ch["files"][0]["from_sha256"].startswith("01a3dc8e") and ch["files"][0]["to_sha256"].startswith("1f4c2d8d")
+    v2 = json.loads((REPO / bb.V2_RECORD["json"]).read_text(encoding="utf-8"))
+    assert bb.change_log(v2, doc) == cl
     v1 = json.loads((REPO / "docs/milestones/bundle1/bundle1_v1.json").read_text(encoding="utf-8"))
-    assert bb.change_log(v1, doc) == cl
-    assert doc["outcome"]["label"] == v1["outcome"]["label"] == "NO_BASELINE_YET"
-    assert doc["decision_rule"] == v1["decision_rule"] and doc["decision_rule"]["id"] == "B1-DR-1"
+    assert doc["outcome"]["label"] == v2["outcome"]["label"] == v1["outcome"]["label"] == "NO_BASELINE_YET"
+    assert doc["decision_rule"] == v2["decision_rule"] == v1["decision_rule"] and doc["decision_rule"]["id"] == "B1-DR-1"
+    # the veto-layer context re-pin changes no veto cell status and no elimination / candidate list
+    assert doc["context_followons"]["fo_veto_layer"]["cells"] == v2["context_followons"]["fo_veto_layer"]["cells"]
+    assert doc["context_followons"]["fo_veto_layer"]["status_counts"] == v2["context_followons"]["fo_veto_layer"]["status_counts"]
+
+
+def test_v2_record_verified_by_sha256(tmp_path):
+    for rel, digest in bb.V2_RECORD["files"].items():
+        assert hashlib.sha256((REPO / rel).read_bytes()).hexdigest() == digest, rel
+    v2 = bb.verify_v2_record()
+    assert v2["id"] == "bundle1_v2" and v2["outcome"]["label"] == "NO_BASELINE_YET"
+    root = tmp_path / "repo"
+    for rel in bb.V2_RECORD["files"]:
+        (root / Path(rel).parent).mkdir(parents=True, exist_ok=True)
+        shutil.copy(REPO / rel, root / rel)
+    bb.verify_v2_record(root)
+    with open(root / "docs/milestones/bundle1/BUNDLE1_v2.md", "ab") as fh:
+        fh.write(b"\n")
+    with pytest.raises(bb.InputError):
+        bb.verify_v2_record(root)
+
+
+def test_v2_files_equal_their_verified_commit():
+    if shutil.which("git") is None:
+        pytest.skip("git not available")
+    for rel, digest in bb.V2_RECORD["files"].items():
+        r = subprocess.run(["git", "show", f"{bb.V2_RECORD['commit']}:{rel}"], capture_output=True, cwd=REPO)
+        if r.returncode != 0:
+            pytest.skip("v2 commit not available in this clone")
+        assert hashlib.sha256(r.stdout).hexdigest() == digest, rel
+    r = subprocess.run(["git", "show", f"{bb.V2_RECORD['commit']}:{bb.SCRIPT_REL}"], capture_output=True, cwd=REPO)
+    assert hashlib.sha256(r.stdout).hexdigest() == bb.V2_RECORD["builder_sha256_at_commit"]
+
+
+def test_historical_records_and_repair_records(doc, snap):
+    assert [h["id"] for h in doc["historical_records"]] == ["bundle1_v1", "bundle1_v2"]
+    assert doc["supersedes"]["id"] == "bundle1_v2" and doc["supersedes"]["commit"] == bb.V2_RECORD["commit"]
+    recs = {(r["lane"], r["pinned_identity"]): r for r in snap["repair_records"]}
+    assert ("fo_veto_layer", bb.CONTEXT["fo_veto_layer"]) in recs
+    assert ("fo_hall_sustainment_envelope", bb.PREREQUISITES["fo_hall_sustainment_envelope"]) in recs
+    assert ("fo_bundle1_conditional_selection", bb.V2_RECORD["commit"]) in recs
+    for r in recs.values():
+        assert r["registry_repair"]["workflow_run"] == "wf_e16cec30-7b2"
+        assert r["merge_commit_subject"].startswith(f"Merge verified {r['lane']} repair ({r['pinned_identity']})")
+    # HSENV / VETO repair verification is recorded (no TBD left)
+    for r in doc["claim"]["repin_log"] + doc["claim"]["context_repin_log"]:
+        assert "TBD" not in r["verification_record"]
+    assert [r["lane"] for r in doc["claim"]["context_repin_log"]] == ["fo_veto_layer"]
+    vl = doc["context_followons"]["fo_veto_layer"]["verified"]
+    assert vl["commit"] == bb.CONTEXT["fo_veto_layer"] and vl["ledger_verified_commit"].startswith("3e7805c")
 
 
 def test_echt_status_carried(doc):
@@ -408,6 +460,8 @@ def test_context_lanes_metadata_only(doc):
     cx = doc["context_followons"]
     for lane, trig in bb.CONTEXT_TRIGGERS.items():
         assert cx[lane]["verified"]["trigger"] == trig and cx[lane]["verified"]["commit"] == bb.CONTEXT[lane]
+        if lane not in bb.CONTEXT_REPINS:
+            assert "ledger_verified_commit" not in cx[lane]["verified"]
     assert cx["fo_veto_layer"]["eliminated_within_tested_envelope"] == [] and cx["fo_veto_layer"]["veto_candidates"] == []
     for a in bb.ARCHS:
         assert "fo_aux_bus_comparison" in " ".join(doc["admissibility"]["cells"][a]["P_bus"]["notes"])
