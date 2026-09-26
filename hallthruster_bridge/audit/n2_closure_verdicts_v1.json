@@ -1,0 +1,582 @@
+{
+ "id": "n2_closure_verdicts_v1",
+ "rule": "n2_completeness_audit_v1 + addendum1 (ambiguity) + addendum2 (cross-check)",
+ "n_runs": 180,
+ "n_chemistry_trustworthy": 100,
+ "rows": {
+  "N -> N^2+ (direct)": {
+   "source": "Hahn, Muller & Savin 2017 (semi-empirical; no experimental neutral-N data); no published band: lower = nominal = upper",
+   "criteria": {
+    "F_S(N^2+ production)": {
+     "threshold": 0.05,
+     "lower_min_over_runs": 0.6325949228797475,
+     "nominal_range": [
+      0.6325949228797475,
+      0.8526170413564788
+     ],
+     "upper_max_over_runs": 0.8526170413564788,
+     "lower_max_over_runs": 0.8526170413564788,
+     "worst_case": "sgb-screen-03|n2_n_nel_wang.toml|N5",
+     "verdict": "PROMOTE",
+     "transport_sensitive": false,
+     "chemistry_sensitive": false,
+     "point_sensitive": false,
+     "n_runs": 180
+    },
+    "F_ion": {
+     "threshold": 0.01,
+     "lower_min_over_runs": 0.004672426858582541,
+     "nominal_range": [
+      0.004672426858582541,
+      0.010998462067924845
+     ],
+     "upper_max_over_runs": 0.010998462067924845,
+     "lower_max_over_runs": 0.010998462067924845,
+     "worst_case": "sgb-screen-01|n2_n_di_lower_nel_wang.toml|N5",
+     "verdict": "UNCERTAINTY VARIANT",
+     "transport_sensitive": true,
+     "chemistry_sensitive": false,
+     "point_sensitive": true,
+     "n_runs": 180
+    }
+   },
+   "verdict": "PROMOTE",
+   "deciding_criterion": "F_S(N^2+ production)",
+   "margin_factor_nominal_must_fall_to_reverse": 32.71403767450186,
+   "worst_case_reaction_weighted_region": {
+    "case": "sgb-screen-03|n2_n_nel_wang.toml|N5",
+    "Te_eV": 24.606057681689936,
+    "z_over_L": 0.931507371604211,
+    "ne_m3": 4.868085332426976e+17
+   },
+   "reaction_weighted_region_range_all_runs": {
+    "Te_eV": [
+     19.665872812971124,
+     24.94362183661726
+    ],
+    "z_over_L": [
+     0.8809385717497931,
+     1.0609124657979503
+    ],
+    "ne_m3": [
+     3.714347697433937e+17,
+     9.825603418775188e+17
+    ]
+   }
+  },
+  "N^2+ -> N^3+": {
+   "source": "Bell et al. 1983 Eq. (1), stated +-10 %",
+   "criteria": {
+    "F_ion": {
+     "threshold": 0.01,
+     "lower_min_over_runs": 2.6586912769195884e-07,
+     "nominal_range": [
+      2.954101331532393e-07,
+      1.335030396237665e-06
+     ],
+     "upper_max_over_runs": 1.4685332398077801e-06,
+     "lower_max_over_runs": 1.335030396237665e-06,
+     "worst_case": "sgb-screen-05|n2_n.toml|N5",
+     "verdict": "EXCLUDE",
+     "transport_sensitive": false,
+     "chemistry_sensitive": false,
+     "point_sensitive": false,
+     "n_runs": 180
+    },
+    "F_ion (per-frame max)": {
+     "threshold": 0.01,
+     "lower_min_over_runs": 5.19561716557176e-07,
+     "nominal_range": [
+      5.772907628481755e-07,
+      1.0301486307732484e-05
+     ],
+     "upper_max_over_runs": 1.1331623265249541e-05,
+     "lower_max_over_runs": 1.0301486307732484e-05,
+     "worst_case": "sgb-screen-04|n2_n.toml|N1",
+     "verdict": "EXCLUDE",
+     "transport_sensitive": false,
+     "chemistry_sensitive": false,
+     "point_sensitive": false,
+     "n_runs": 180
+    },
+    "F_S(N^2+ destruction)": {
+     "threshold": 0.05,
+     "lower_min_over_runs": 0.00014732002377689735,
+     "nominal_range": [
+      0.00016368623594542245,
+      0.0004918446536876958
+     ],
+     "upper_max_over_runs": 0.0005410025101372412,
+     "lower_max_over_runs": 0.0004918446536876958,
+     "worst_case": "sgb-screen-04|n2_n.toml|N1",
+     "verdict": "EXCLUDE",
+     "transport_sensitive": false,
+     "chemistry_sensitive": false,
+     "point_sensitive": false,
+     "n_runs": 180
+    }
+   },
+   "verdict": "EXCLUDE",
+   "deciding_criterion": "F_S(N^2+ destruction)",
+   "margin_factor_upper_must_rise_to_reverse": 97.23264521952234,
+   "worst_case_reaction_weighted_region": {
+    "case": "sgb-screen-04|n2_n.toml|N1",
+    "Te_eV": 19.316049122088064,
+    "z_over_L": 1.0029526644373237,
+    "ne_m3": 1.451044891415788e+18
+   },
+   "reaction_weighted_region_range_all_runs": {
+    "Te_eV": [
+     18.82556589344894,
+     25.5733573393381
+    ],
+    "z_over_L": [
+     0.893520053414753,
+     1.0688704340742305
+    ],
+    "ne_m3": [
+     3.9364468154585645e+17,
+     1.690243412986813e+18
+    ]
+   }
+  },
+  "N2 -> N2^2+ (direct)": {
+   "source": "lower/nominal: JPCRD 2023 Sec. 2.8 '~1 % of total ionization' from 42.9 eV (no lower band published); upper: all double ionization 0.14e-16 cm^2 flat (Tian & Vidal via JPCRD)",
+   "criteria": {
+    "F_ion": {
+     "threshold": 0.01,
+     "lower_min_over_runs": 0.001670648761279432,
+     "nominal_range": [
+      0.001670648761279432,
+      0.0038522909047391672
+     ],
+     "upper_max_over_runs": 0.025760723912173638,
+     "lower_max_over_runs": 0.0038522909047391672,
+     "worst_case": "sgb-screen-09|n2_n_di_lower.toml|N1",
+     "verdict": "UNCERTAINTY VARIANT",
+     "transport_sensitive": false,
+     "chemistry_sensitive": false,
+     "point_sensitive": false,
+     "n_runs": 180
+    }
+   },
+   "verdict": "UNCERTAINTY VARIANT",
+   "deciding_criterion": "F_ion",
+   "worst_case_reaction_weighted_region": {
+    "case": "sgb-screen-09|n2_n_di_lower.toml|N1",
+    "Te_eV": 17.9831893456798,
+    "z_over_L": 0.8401905672251286,
+    "ne_m3": 6.90870165702374e+17
+   },
+   "reaction_weighted_region_range_all_runs": {
+    "Te_eV": [
+     14.824564656478275,
+     19.422120626654443
+    ],
+    "z_over_L": [
+     0.750246644191668,
+     0.8819354302861991
+    ],
+    "ne_m3": [
+     5.00981316610322e+17,
+     1.0379120974759351e+18
+    ]
+   }
+  },
+  "N2+ -> N2^2+ (sequential)": {
+   "source": "Tabata et al. 2006 n2-69 fit to Bahati et al. 2001 (fit/data 0.86-1.11 used as the band; Bahati's own absolute uncertainty not applied: verify)",
+   "criteria": {
+    "F_ion": {
+     "threshold": 0.01,
+     "lower_min_over_runs": 0.0008140686863940965,
+     "nominal_range": [
+      0.0009464660674648145,
+      0.002467751242033828
+     ],
+     "upper_max_over_runs": 0.002738460516330102,
+     "lower_max_over_runs": 0.002467751242033828,
+     "worst_case": "sgb-screen-05|n2_n_nel_wang.toml|N5",
+     "verdict": "EXCLUDE",
+     "transport_sensitive": false,
+     "chemistry_sensitive": false,
+     "point_sensitive": false,
+     "n_runs": 180
+    },
+    "F_S(N2+ destruction)": {
+     "threshold": 0.05,
+     "lower_min_over_runs": 0.0016911307320097446,
+     "nominal_range": [
+      0.0019658898735586228,
+      0.0054294343605389254
+     ],
+     "upper_max_over_runs": 0.00602307493229892,
+     "lower_max_over_runs": 0.0054294343605389254,
+     "worst_case": "sgb-screen-05|n2_n_nel_wang.toml|N5",
+     "verdict": "EXCLUDE",
+     "transport_sensitive": false,
+     "chemistry_sensitive": false,
+     "point_sensitive": false,
+     "n_runs": 180
+    }
+   },
+   "within_N2Z2_variant": {
+    "F_S(N2^2+ production), with nominal direct": {
+     "threshold": 0.05,
+     "lower_min_over_runs": 0.24265350885729134,
+     "nominal_range": [
+      0.24265350885729134,
+      0.5462527655128495
+     ],
+     "upper_max_over_runs": 0.5462527655128495,
+     "lower_max_over_runs": 0.5462527655128495,
+     "worst_case": "sgb-screen-04|n2_n_nel_wang.toml|N5",
+     "verdict": "PROMOTE",
+     "transport_sensitive": false,
+     "chemistry_sensitive": false,
+     "point_sensitive": false,
+     "n_runs": 180
+    },
+    "F_S(N2^2+ production), with upper direct": {
+     "threshold": 0.05,
+     "lower_min_over_runs": 0.04489550412034747,
+     "nominal_range": [
+      0.04489550412034747,
+      0.14410481823843135
+     ],
+     "upper_max_over_runs": 0.14410481823843135,
+     "lower_max_over_runs": 0.14410481823843135,
+     "worst_case": "sgb-screen-04|n2_n_nel_wang.toml|N5",
+     "verdict": "UNCERTAINTY VARIANT",
+     "transport_sensitive": true,
+     "chemistry_sensitive": false,
+     "point_sensitive": true,
+     "n_runs": 180
+    }
+   },
+   "verdict": "EXCLUDE",
+   "deciding_criterion": "F_ion",
+   "margin_factor_upper_must_rise_to_reverse": 3.678471470961009,
+   "worst_case_reaction_weighted_region": {
+    "case": "sgb-screen-05|n2_n_nel_wang.toml|N5",
+    "Te_eV": 19.09498266627134,
+    "z_over_L": 0.934454535124368,
+    "ne_m3": 1.5858866209175767e+18
+   },
+   "reaction_weighted_region_range_all_runs": {
+    "Te_eV": [
+     17.05296162186217,
+     20.020894661743316
+    ],
+    "z_over_L": [
+     0.8044030954382858,
+     0.9692168940179587
+    ],
+    "ne_m3": [
+     5.631441605924461e+17,
+     1.5858866209175767e+18
+    ]
+   }
+  }
+ },
+ "verdicts_trustworthy_runs_only": {
+  "N -> N^2+ (direct)": "PROMOTE",
+  "N^2+ -> N^3+": "EXCLUDE",
+  "N2 -> N2^2+ (direct)": "UNCERTAINTY VARIANT",
+  "N2+ -> N2^2+ (sequential)": "EXCLUDE"
+ },
+ "validity_limit_exceedances": {
+  "dissociation_N2.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.04111103842345144,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_A3Sigma_u.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.007469223494864841,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_B3Pi_g.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.006735697047475971,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_Bprime3Sigma_u.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.01052996408918538,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_C3Pi_u.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.009460507352813648,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_W3Delta_u.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.00895833233383848,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_a1Pi_g.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.017389611704281837,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_aprime1Sigma_u.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.011264340294378127,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_rot_j0_to_j2.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.013736680263534608,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_rot_j0_to_j4.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.008471504446867194,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_vib_0_to_1.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.0007451950551245465,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_vib_0_to_10.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.0008175735617588864,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_vib_0_to_2.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.0007451950514062198,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_vib_0_to_3.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.0007451949715218834,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_vib_0_to_4.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.0007451950505157528,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_vib_0_to_5.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.0007609773352509455,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_vib_0_to_6.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.0007609772542502139,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_vib_0_to_7.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.0007781977938197967,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_vib_0_to_8.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.0007970185397560984,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_vib_0_to_9.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.0007970183552505709,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  },
+  "excitation_N2_w1Delta_u.dat": {
+   "n_runs": 69,
+   "max_fraction": 0.011471467940208641,
+   "candidates": [
+    "sgb-screen-02",
+    "sgb-screen-03",
+    "sgb-screen-04",
+    "sgb-screen-05"
+   ]
+  }
+ },
+ "N2plus_abundance_vs_N3plus_activity": {
+  "Te_at_max_nNZ2_over_nN2_eV": [
+   1.9874970364538547,
+   4.66077783675543
+  ],
+  "max_nNZ2_over_nN2": [
+   0.004524127223227053,
+   0.07830110038657252
+  ],
+  "NZ3_reaction_weighted_Te_eV": [
+   18.82556589344894,
+   25.5733573393381
+  ],
+  "N^3+ threshold_eV": 47.45
+ },
+ "reaction_weighted_regions_argmax_reruns": {
+  "Ndd": {
+   "Te_eV": [
+    19.68917986121259,
+    24.606057681689936
+   ],
+   "z_over_L": [
+    0.9218905200392515,
+    1.0512173736198376
+   ],
+   "ne_m3": [
+    3.7290544323248474e+17,
+    9.825603418775188e+17
+   ]
+  },
+  "NZ3": {
+   "Te_eV": [
+    19.316049122088064,
+    25.097869225607017
+   ],
+   "z_over_L": [
+    0.9344605771962021,
+    1.0294651398326347
+   ],
+   "ne_m3": [
+    4.0175225399829574e+17,
+    1.690243412986813e+18
+   ]
+  },
+  "N2dir": {
+   "Te_eV": [
+    15.722046279739041,
+    18.42417298007454
+   ],
+   "z_over_L": [
+    0.7510981854373221,
+    0.8673852189543237
+   ],
+   "ne_m3": [
+    5.019656843762782e+17,
+    1.0379120974759351e+18
+   ]
+  },
+  "N2seq": {
+   "Te_eV": [
+    17.05296162186217,
+    19.537570063801375
+   ],
+   "z_over_L": [
+    0.8060690861063927,
+    0.9692168940179587
+   ],
+   "ne_m3": [
+    5.6984561042580717e+17,
+    1.5858866209175767e+18
+   ]
+  }
+ },
+ "N2plus_abundance_vs_activity": {
+  "Te_at_max_nNZ2_over_nN2_eV_range": [
+   1.9874970364538547,
+   4.66077783675543
+  ],
+  "max_nNZ2_over_nN2_range": [
+   0.004524127223227053,
+   0.07830110038657252
+  ]
+ }
+}

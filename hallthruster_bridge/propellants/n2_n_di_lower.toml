@@ -157,3 +157,8 @@ rate_coeff_file = "ionization_N.dat"                # Kim & Desclaux 2002 BEB vi
 type = "electron_impact"
 equation = "N(+) + e -> N(2+) + 2e"
 rate_coeff_file = "ionization_N_Z1plus_to_N_Z2plus.dat"           # Bell et al. JPCRD 1983 Eq. (1), N II (abep-n2n-0.5)
+
+[[reactions]]
+type = "electron_impact"
+equation = "N + e -> N(2+) + 3e"
+rate_coeff_file = "ionization_N_to_N_Z2plus_hms2017.dat"          # Hahn, Muller & Savin 2017 Eqs. (2)+(3), direct N -> N^2+ (abep-n2n-0.11); sensitivity x0.5 / x1.3: n2_n_ndd_hmslow/high.toml

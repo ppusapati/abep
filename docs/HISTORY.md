@@ -1974,3 +1974,31 @@ not with chemistry config), F_S(N²⁺ production) 63–85 % in all 180; N₂²�
 upper 1.26–2.73 % (all 180 > 1 %). Region reruns (argmax cases): N²⁺ channels weighted to T_e ≈ 19–25 eV, z/L ≈ 0.92–1.05,
 n_e ≈ 0.4–1.7e18 m⁻³; N₂²⁺ channels T_e ≈ 16–20 eV, z/L ≈ 0.75–0.97. Verdicts under addendum 1 await the owner.
 Records: `hallthruster_bridge/audit/blind_state_envelope_v1*.json[l]`.
+
+### 2026-09-26 — Tier-3 closure; reaction set abep-n2n-0.11 COMPLETE_FOR_P5_N2_VALIDATION
+Pre-registration addendum 2 (owner): earlier/later envelope run sets are an implementation cross-check, never averaged or
+selected; the newest set is authoritative; a verdict-altering discrepancy blocks the rule. (It reached the session after the
+v3/older-batch cross-check had been computed: identical, max rel. diff 6e-16; disclosed in the addendum.)
+Authoritative v4 envelope (180 runs; adds the two N₂²⁺ routes separately, F_S(N₂⁺ destruction), and every file beyond its
+validity limit). Process incident, resolved before any verdict: 72 v4 runs picked up the new 0.11 `n2_n.toml` mid-batch and
+were refused by the chemistry guard (no validity entry); they were deleted and rerun from a clean worktree at the 0.10 configs.
+All 2520 values common with v3 then agree exactly; no status differs.
+Closure table (addendum 1 literally; L = min over runs of the lower bound, U = max over runs of the upper bound):
+- direct N → N²⁺ (HMS 2017; no published band): F_S(N²⁺ production) 0.633–0.853 > 0.05 in every run → **PROMOTE** (the rate would
+  have to fall ×33 to reverse); F_ion 0.47–1.10 % flips with transport and point, not chemistry. Region: T_e 19.7–24.9 eV, z/L 0.88–1.06.
+- N²⁺ → N³⁺ (Bell ±10 %): U F_ion 1.5e-6 (frame max 1.1e-5), F_S 5.4e-4 → **EXCLUDE** (×97 margin). N²⁺/N₂ peaks at T_e 2.0–4.7 eV,
+  while the N³⁺-channel activity is weighted to T_e 18.8–25.6 eV, far below its 47.45 eV threshold.
+- N₂ → N₂²⁺ (nominal "~1 %" / upper all-double-ionization): F_ion nominal 0.17–0.39 %, upper ≤ 2.58 % → **UNCERTAINTY VARIANT**.
+- N₂⁺ → N₂²⁺ (Tabata/Bahati, fit/data 0.86–1.11): F_ion ≤ 0.27 %, F_S(N₂⁺ destruction) ≤ 0.60 % → **EXCLUDE** from nominal; inside
+  the N₂²⁺ variant it carries 4.5–55 % of N₂²⁺ production and supplies the energy link, so it is part of the variant.
+Verdicts are identical on the 100 chemistry-trustworthy runs alone, and none changes with the chemistry configuration.
+abep-n2n-0.11: `N + e -> N(2+) + 3e` (HMS Eqs. (2)+(3); header 44.1354 eV closes 14.534 + 29.601) in nominal; generated
+variants `n2_n_ndd_hmslow/high.toml` (×0.5, HMS Sec. 3.7 neutral-O precedent; ×1.3, Sec. 3.19 "~30 %") and
+`n2_n_n2dication.toml` (N2 max_charge 2; upper direct + Tabata sequential; on DI-lower so N₂²⁺ is not counted twice; sequential
+header 27.32 = 42.9 − 15.58 because HallThruster.jl requires one consistent N₂²⁺ energy — the solver refused 15.58 + 27.9 ≠ 42.9).
+Smoke runs (P5-N₂ N3, sgb-screen-01, targets removed) of n2_n, n2_n_n2dication, hmslow, hmshigh: converged, sustained,
+chemistry-trustworthy; N₂²⁺ peak 1.3e16 m⁻³ in the variant. Build: `scripts/build_multiply_charged_tables.py` (also rebuilds the
+audit bound tables byte-for-byte). Table: `scripts/n2_closure_table.py`. Status COMPLETE_FOR_P5_N2_VALIDATION; N₂ chemistry frozen.
+Open for the P5-N₂ pre-registration (owner): all runs of sgb-screen-02/03/04 and 9 of sgb-screen-05 reach T_e > 30 eV, where every
+45-eV-capped table (dissociation, electronic, vibrational, rotational) is used beyond its limit (≤ 4.1 % of dissociation activity);
+they are not chemistry-trustworthy and cannot be scored as is.

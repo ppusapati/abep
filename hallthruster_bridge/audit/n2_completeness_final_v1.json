@@ -1,7 +1,7 @@
 {
  "audit": "N2 completeness, closure pass",
  "prereg": "n2_completeness_audit_v1",
- "status": "CLOSURE_PENDING: DI and vibrational fractions final; N -> N^2+ direct, molecular N2^2+ and the transport-envelope check of N^2+ -> N^3+ still open",
+ "status": "CLOSED: every tier-2/3 process has a final verdict (multiply-charged processes from audit/n2_closure_verdicts_v1.json); reaction set abep-n2n-0.11 COMPLETE_FOR_P5_N2_VALIDATION",
  "reaction_set": "abep-n2n-0.9",
  "atomic_fraction_x": 0.0,
  "rot_energy_ceiling_eV": 0.01,
@@ -47,16 +47,16 @@
     "F_ion_N_Z2plus_to_N_Z3plus": 4.72e-07,
     "F_S_N_Z2plus_destruction": 0.000214
    },
-   "verdict": "EXCLUDED: reference-state n(N^2+)/n(N2) <= 1.2e-3 vs x_crit >= 0.25 (margin ~200); F_ion 4.7e-7, F_S 2.1e-4"
+   "verdict": "EXCLUDED: reference-state n(N^2+)/n(N2) <= 1.2e-3 vs x_crit >= 0.25 (margin ~200); F_ion 4.7e-7, F_S 2.1e-4. Confirmed EXCLUDED by the 180-case blind state envelope (audit/n2_closure_verdicts_v1.json)"
   },
   "N2_Z2plus_molecular": {
    "F_ion_nominal_max": 0.007924746113887614,
    "F_ion_upper_max": 0.048153163361007945,
    "F_ion_upper_th40_max": 0.05078931234087897,
-   "verdict": "BRACKETED, NOT EXCLUDABLE BY BOUND: nominal (JPCRD ~1 % statement) stays below 1 % (max 0.79 %); the loose upper envelope crosses (4.8 %). In ion-count terms the DI upper/lower chemistry variants already bracket it. Owner decision."
+   "verdict": "BRACKETED on the reference state: nominal (JPCRD ~1 % statement) stays below 1 % (max 0.79 %); the loose upper envelope crosses (4.8 %). Closure (180-case blind state envelope, addendum 1): UNCERTAINTY VARIANT n2_n_n2dication.toml (audit/n2_closure_verdicts_v1.json)"
   },
   "N_to_N_Z2plus_direct": {
-   "verdict": "UNRESOLVED-BY-SOURCE: no cross section in hand; not inferred or scaled"
+   "verdict": "Closure: PROMOTED into nominal chemistry (abep-n2n-0.11) from Hahn, Muller & Savin 2017, by F_S(N^2+ production) in all 180 blind-envelope runs; HMS x0.5 / x1.3 sensitivity branches (audit/n2_closure_verdicts_v1.json)"
   },
   "rule": "Promote the omitted process if F_P > 0.01 OR F_ion > 0.01 OR F_S_s > 0.05 anywhere in its applicable Te domain."
  },

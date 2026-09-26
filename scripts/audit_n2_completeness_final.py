@@ -1,5 +1,5 @@
 """Omitted-process audit, closure pass (prereg n2_completeness_audit_v1), on reaction set abep-n2n-0.9.
-Overall status CLOSURE_PENDING until every omitted channel has a verdict (owner decision 2026-09-26); the DI and
+Overall status CLOSED (2026-09-26; was CLOSURE_PENDING until every omitted channel had a verdict); the DI and
 vibrational fractions below are final:
   * rerun of audit 1 (dissociative ionization) and audit 2 (vibrational excitation) with the complete 0.9 denominators;
   * the three tier-3 bounds: rotational excitation, N^2+ -> N^3+ (N_Z2plus -> N_Z3plus), direct N -> N^2+.
@@ -172,19 +172,22 @@ def main():
         "N_Z2plus_to_N_Z3plus": {"x_crit_min": min(r["x_crit_N2plus_over_N2_for_1pct_ion"] for r in in_dom),
                                  "reference_state": REFERENCE_STATE,
                                  "verdict": "EXCLUDED: reference-state n(N^2+)/n(N2) <= 1.2e-3 vs x_crit >= 0.25 (margin ~200); "
-                                            "F_ion 4.7e-7, F_S 2.1e-4"},
+                                            "F_ion 4.7e-7, F_S 2.1e-4. Confirmed EXCLUDED by the 180-case blind state envelope "
+                                            "(audit/n2_closure_verdicts_v1.json)"},
         "N2_Z2plus_molecular": {"F_ion_nominal_max": max(r["F_ion_N2pp_nominal"] for r in in_dom),
                                 "F_ion_upper_max": max(r["F_ion_N2pp_upper"] for r in in_dom),
                                 "F_ion_upper_th40_max": max(r["F_ion_N2pp_upper_th40"] for r in in_dom),
-                                "verdict": "BRACKETED, NOT EXCLUDABLE BY BOUND: nominal (JPCRD ~1 % statement) stays below 1 % "
-                                           "(max 0.79 %); the loose upper envelope crosses (4.8 %). In ion-count terms the DI "
-                                           "upper/lower chemistry variants already bracket it. Owner decision."},
-        "N_to_N_Z2plus_direct": {"verdict": "UNRESOLVED-BY-SOURCE: no cross section in hand; not inferred or scaled"},
+                                "verdict": "BRACKETED on the reference state: nominal (JPCRD ~1 % statement) stays below 1 % "
+                                           "(max 0.79 %); the loose upper envelope crosses (4.8 %). Closure (180-case blind state "
+                                           "envelope, addendum 1): UNCERTAINTY VARIANT n2_n_n2dication.toml (audit/n2_closure_verdicts_v1.json)"},
+        "N_to_N_Z2plus_direct": {"verdict": "Closure: PROMOTED into nominal chemistry (abep-n2n-0.11) from Hahn, Muller & Savin 2017, "
+                                            "by F_S(N^2+ production) in all 180 blind-envelope runs; HMS x0.5 / x1.3 sensitivity branches "
+                                            "(audit/n2_closure_verdicts_v1.json)"},
         "rule": pre["rule"],
     }
     out = {"audit": "N2 completeness, closure pass", "prereg": pre["id"],
-           "status": "CLOSURE_PENDING: DI and vibrational fractions final; N -> N^2+ direct, molecular N2^2+ and the "
-                     "transport-envelope check of N^2+ -> N^3+ still open", "reaction_set": "abep-n2n-0.9", "atomic_fraction_x": 0.0,
+           "status": "CLOSED: every tier-2/3 process has a final verdict (multiply-charged processes from "
+                     "audit/n2_closure_verdicts_v1.json); reaction set abep-n2n-0.11 COMPLETE_FOR_P5_N2_VALIDATION", "reaction_set": "abep-n2n-0.9", "atomic_fraction_x": 0.0,
            "rot_energy_ceiling_eV": ROT_DE_CEILING_EV, "verdict": verdict, "rows": rows}
     json.dump(out, open(OUT, "w"), indent=1, default=float)
     print(json.dumps(verdict, indent=1, default=float))

@@ -111,20 +111,27 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    of the electronic power, recorded as uncertainty. **`n2_n.toml` is now file-complete** (26 reactions; full-set smoke run is
    chemistry-trustworthy). **Final audit pass** (`audit/n2_completeness_final_v1.json`): DI and vib final on the complete denominator; rotational gross
    1.13 % → **abep-n2n-0.10** adds j 0→2, 0→4 (JPCRD Table 6, NIST B₀ headers; marginal, gross convention, owner may reverse);
-   N²⁺ → N³⁺ excluded (reference-state margin ~200); direct N → N²⁺ unresolved-by-source. Completeness freeze is the owner's call.
+   N²⁺ → N³⁺ excluded (reference-state margin ~200); direct N → N²⁺ then unresolved-by-source (closed below).
    **Closure pass (owner decision 2026-09-26):** 0.10 rotational stays on (the pre-registered gross F_P; switching to net after seeing
    1.13 % would be post hoc). The generated `n2_n_rot_off.toml` is a lower-bound sensitivity branch (nominal DI + OPM N elastic × 9,
-   expand only on trigger). Audit status is CLOSURE_PENDING. Molecular N₂²⁺ envelope: JPCRD "~1 %" nominal F_ion ≤ 0.79 %; the loose
-   upper bound (all double ionization) reaches 4.8 %, so it is bracketed and not excludable by bound. The DI variant pair already brackets
-   its ion count. Direct N → N²⁺: Deutsch, Becker & Märk 2000 (PPCF 42, 489) not retrievable here (IOP JS gate). The blind 5 × 9 × 4
-   state-envelope check of N²⁺ → N³⁺ (`checks/blind_state_envelope.jl`) is running.
+   expand only on trigger).
+   **Tier-3 closure → abep-n2n-0.11, status `COMPLETE_FOR_P5_N2_VALIDATION`** (domain T_e 2–30 eV; vib/rot 0.2–30 eV; not a general
+   completeness claim; **no further N₂ chemistry changes** unless P5-N₂ evidence forces one). Blind 5 × 9 × 4 = 180-run state envelope
+   (measured targets removed; v4 authoritative, v3 = implementation cross-check, identical; prereg addenda 1 ambiguity rule, 2 cross-check
+   rule), `audit/n2_closure_verdicts_v1.json`: direct N → N²⁺ (Hahn–Müller–Savin 2017) **PROMOTED** into nominal (F_S(N²⁺ production)
+   63–85 % in every run; sensitivity `n2_n_ndd_hmslow/high.toml` ×0.5/×1.3); N²⁺ → N³⁺ **EXCLUDED** (F_ion ≤ 1.5e-6; its activity sits
+   at T_e 19–26 eV, far below the 47.45 eV threshold, while N²⁺/N₂ peaks in cold 2–5 eV cells); N₂ → N₂²⁺ **UNCERTAINTY VARIANT**
+   (nominal F_ion ≤ 0.39 % < 1 % < upper 2.6 %) as `n2_n_n2dication.toml` (N2 max_charge 2, both routes, on DI-lower); N₂⁺ → N₂²⁺
+   excluded from nominal (F_ion ≤ 0.27 %), carried inside the variant. **Open for the P5-N₂ pre-registration:** in all runs of
+   sgb-screen-02/03/04 (and 9 of 05) the 45-eV-capped tables (dissociation, electronic, vibrational, rotational) are used above their
+   limit (T_e > 30 eV; ≤ 4.1 % of dissociation activity), so those runs are not `chemistry_trustworthy` and cannot be scored as is.
    **P5-N₂ run design (owner decision):** primary 4 chemistry configs × 9 transports = 36 runs, plus the Johnson-low sensitivity
    branch (`n2_n_exc_johnsonlow.toml`: nominal DI + OPM N elastic) × 9 = +9. Expand Johnson-low to the other three chemistry
    combinations (+27, full 72) only if its escalation trigger fires. The trigger ("changes a pass/fail, the surviving set, or
    materially shifts an observable", with "materially" defined from the audited P5-N₂ uncertainties) is pre-registered
    with the P5-N₂ criteria before any run.
    **Completeness (project decision 2026-09-26):**
-   "every file in n2_n.toml exists" ≠ "chemistry complete". `PINNED.toml` stays INCOMPLETE until an omitted-process audit is done:
+   "every file in n2_n.toml exists" ≠ "chemistry complete". `PINNED.toml` stayed INCOMPLETE until the omitted-process audit was done (now closed, 0.11):
    - Tier 1 (before P5-N₂ scoring): 8 N₂ excitation states, N momentum transfer.
    - Tier 2 (assess before calling the set complete): N₂ vibrational excitation, dissociative ionization.
    - Tier 3 (assessed/not included unless a bound says otherwise): rotational excitation, double ionization.

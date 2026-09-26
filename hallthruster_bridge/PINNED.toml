@@ -17,8 +17,25 @@ install = "https://julialang.org/downloads  (tested with 1.11.7 from julialang-s
 [reaction_set]
 # Any change to which rate files n2_n.toml uses, or to their contents, is a reaction-set model change: bump the version
 # and add a history line. A version label never refers to two different chemistry definitions.
-version = "abep-n2n-0.10"
-status = "INCOMPLETE — stays INCOMPLETE until the omitted-process importance audit (prereg/n2_completeness_audit_v1.json) is done, even when every file named in n2_n.toml exists. Tier 1 (required before P5-N2 scoring): N2 electronic excitation (8 states) [included 0.9], N momentum transfer [included 0.8, OPM + Wang-BSR variant]. Tier 2 (must be assessed before completeness): N2 vibrational excitation (audited: PROMOTION ROBUST; included 0.7 as v=0 -> 1..10, closure-limited); dissociative ionization (audited: PROMOTED, included from 0.4). Tier 3 (assessed/not included unless a bound shows otherwise): rotational excitation (PROMOTED marginally, included 0.10); double ionization (atomic N2+ from N2: PROMOTED, included 0.5/0.6 with sequential N+ -> N2+; molecular N2++: unresolved, no recommended data; N -> N2+ direct and N2+ -> N3+: to be bounded)"
+version = "abep-n2n-0.11"
+status = "COMPLETE_FOR_P5_N2_VALIDATION"
+status_scope = "Complete under the pre-registered omitted-process audit (prereg/n2_completeness_audit_v1.json + addendum 1 ambiguity rule + addendum 2 cross-check rule) for P5-N2 validation only; not a general N2/N chemistry completeness claim. Every tier-1/2/3 process has a final verdict: audit/n2_completeness_final_v1.json (DI, vibrational, rotational) and audit/n2_closure_verdicts_v1.json (multiply-charged, from the 180-case blind state envelope). No further N2 chemistry changes unless the P5-N2 evidence itself forces one."
+domain = "T_e 2-30 eV (mean energy 3-45 eV); vibrational and rotational excitation audited over T_e 0.2-30 eV. States beyond a table's validity limit are not chemistry_trustworthy (driver guard); they are outside this status, not covered by it."
+verdicts = [
+  "tier 1: N2 electronic excitation 8 states INCLUDED (0.9); N momentum transfer INCLUDED (0.8)",
+  "tier 2: N2 vibrational excitation PROMOTED, included v=0 -> 1..10 (0.7, closure-limited); dissociative ionization PROMOTED (0.4)",
+  "tier 3: rotational j 0->2, 0->4 PROMOTED marginally (0.10, gross F_P 1.13 %); N2 -> N^2+ + N PROMOTED (0.6); N+ -> N^2+ INCLUDED (0.5, energy link)",
+  "tier 3 closure: direct N -> N^2+ PROMOTED (0.11; F_S(N^2+ production) 63-85 % in all 180 runs); N^2+ -> N^3+ EXCLUDED (F_ion <= 1.5e-6, F_S <= 5.4e-4 at Bell +10 %); N2 -> N2^2+ UNCERTAINTY VARIANT (nominal F_ion < 1 % < upper); N2+ -> N2^2+ EXCLUDED from nominal (F_ion <= 0.27 %, F_S(N2+ destruction) <= 0.6 % at fit/data 1.11), carried inside the N2^2+ variant (N2^2+ production share and energy link)",
+]
+uncertainty_variants = [
+  "n2_n_di_lower.toml: dissociative ionization LOWER (primary chemistry dimension)",
+  "n2_n_nel_wang.toml: atomic-N momentum transfer Wang BSR (primary chemistry dimension)",
+  "n2_n_di_lower_nel_wang.toml: both (primary chemistry dimension)",
+  "n2_n_exc_johnsonlow.toml: electronic excitation Johnson 2005 at all energies (sensitivity branch)",
+  "n2_n_rot_off.toml: rotational excitation removed (lower-bound sensitivity branch)",
+  "n2_n_ndd_hmslow.toml / n2_n_ndd_hmshigh.toml: direct N -> N^2+ HMS x0.5 / x1.3 (sensitivity branches)",
+  "n2_n_n2dication.toml: molecular N2^2+ (N2 max_charge 2; upper direct envelope + Tabata sequential; on DI LOWER) (uncertainty variant)",
+]
 history = [
   "abep-n2n-0.1: N2 ionization + N2 elastic shipped with HallThruster.jl (Itikawa 2006); N ionization (Kim & Desclaux via NIST, 2026-09-25); N2 dissociation (Song 2023 Table 9, 2026-09-26)",
   "abep-n2n-0.2 (2026-09-26): N2 ionization -> ionization_N2_song2023.dat (Song et al. JPCRD 2023 Table 10 sigma(N2+)); rest as 0.1",
@@ -30,4 +47,5 @@ history = [
   "abep-n2n-0.8 (2026-09-26): + atomic-N elastic momentum transfer elastic_N_ragimkhanov2026.dat (Ragimkhanov et al. EPJD 2026 Fig. 1b OPM, vector-extracted); variant n2_n_nel_wang.toml uses Wang et al. 2014 BSR via the same figure (OPM above 128 eV); rest as 0.7",
   "abep-n2n-0.9 (2026-09-26): lumped excitation_N2.dat placeholder replaced by 8 state-resolved electronic excitations (Su et al. 2021 < 20 eV, Johnson et al. 2005 >= 20 eV, power-law continuation; headers = experimental vertical energies); rest as 0.8",
   "abep-n2n-0.10 (2026-09-26): + rotational excitation j 0->2, 0->4 (JPCRD 2023 Table 6; NIST B_0 headers), promoted marginally by the final audit (gross 1.13 %); rest as 0.9",
+  "abep-n2n-0.11 (2026-09-26): + direct N -> N^2+ (Hahn, Muller & Savin 2017 Eqs. (2)+(3); header 44.1354 eV) promoted by the tier-3 closure; status COMPLETE_FOR_P5_N2_VALIDATION; variants n2_n_ndd_hmslow/high.toml and n2_n_n2dication.toml added; rest as 0.10",
 ]

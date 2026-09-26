@@ -923,7 +923,7 @@ def test_n2_electronic_excitation_tables_su_johnson_splice():
 def test_n2_completeness_final_audit():
     """Final omitted-process pass on abep-n2n-0.9 (prereg v1): DI and vibrational fractions recomputed on the complete
     denominator; rotational gross bound uses NIST B_0 (0->2 = 1.480 meV, 0->4 = 4.933 meV); N^2+ -> N^3+ excluded on the
-    reference state; direct N -> N^2+ unresolved-by-source (never inferred)."""
+    reference state; direct N -> N^2+ and molecular N2^2+ closed by the blind state envelope (promoted / uncertainty variant)."""
     import importlib.util, json, os
     root = os.path.dirname(os.path.dirname(__file__))
     spec = importlib.util.spec_from_file_location("a", os.path.join(root, "scripts", "audit_n2_completeness_final.py"))
@@ -933,9 +933,10 @@ def test_n2_completeness_final_audit():
     assert v["dissociative_ionization"]["final_F_ion_max"] > 0.01 and v["vibrational_excitation"]["final_F_P_max"] > 0.01
     assert 0.01 < v["rotational_excitation"]["F_P_spectroscopic_max"] < 0.02
     assert v["N_Z2plus_to_N_Z3plus"]["verdict"].startswith("EXCLUDED") and v["N_Z2plus_to_N_Z3plus"]["x_crit_min"] > 0.2
-    assert v["N_to_N_Z2plus_direct"]["verdict"].startswith("UNRESOLVED-BY-SOURCE")
+    assert v["N_to_N_Z2plus_direct"]["verdict"].startswith("Closure: PROMOTED")
+    assert "UNCERTAINTY VARIANT" in v["N2_Z2plus_molecular"]["verdict"]
     res = json.load(open(os.path.join(root, "hallthruster_bridge", "audit", "n2_completeness_final_v1.json")))
-    assert res["status"].startswith("CLOSURE_PENDING")
+    assert res["status"].startswith("CLOSED")
     m = v["N2_Z2plus_molecular"]
     assert m["F_ion_nominal_max"] < 0.01 < m["F_ion_upper_max"]           # envelope straddles the criterion
     up = open(os.path.join(root, "hallthruster_bridge", "propellants", "n2_n.toml")).read()
@@ -1002,6 +1003,49 @@ def test_completeness_ambiguity_addendum_is_frozen():
     assert r["rule"]["lower_bound_above_threshold"].startswith("PROMOTE")
     assert r["rule"]["threshold_between_lower_and_upper"].startswith("PROMOTE AS AN UNCERTAINTY VARIANT")
 
+
+def test_completeness_crosscheck_addendum_is_frozen():
+    """Addendum 2: earlier/later envelope run sets are an implementation cross-check, never averaged or selected; the newest
+    set is authoritative; a verdict-altering discrepancy blocks the completeness rule until resolved."""
+    import json, os
+    p = os.path.join(os.path.dirname(os.path.dirname(__file__)), "hallthruster_bridge", "prereg",
+                     "n2_completeness_audit_v1_addendum2_crosscheck.json")
+    r = json.load(open(p))
+    assert r["amends"] == "n2_completeness_audit_v1" and r["registered"] == "2026-09-26"
+    assert "never averaged" in r["rule"]["authoritative_set"]
+    assert r["rule"]["discrepancy"].startswith("Any discrepancy")
+
+def test_multiply_charged_tables_and_closure_status():
+    """abep-n2n-0.11: every multiply-charged table (bound and propellant) equals a fresh build; HMS = Eqs. (2)+(3) with the
+    VizieR N parameters; energy headers close (N: 14.53 + 29.60 = 44.14 eV; N2^2+: both routes give 42.9 eV); the reaction
+    set is COMPLETE_FOR_P5_N2_VALIDATION with the audited domain and every listed variant config present."""
+    import importlib.util, os, tempfile, filecmp, tomllib, numpy as np
+    from abep_sim.rate_tables import write_hallthruster_table
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("m", os.path.join(root, "scripts", "build_multiply_charged_tables.py"))
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    with tempfile.TemporaryDirectory() as t:
+        for d, name, E, sg, th, src in m.tables():
+            p = os.path.join(t, name); write_hallthruster_table(p, E, sg, th, source=src)
+            assert filecmp.cmp(p, os.path.join(d, name), shallow=False), name
+    assert m.HMS_D == (44.1354, 43.0) and m.HMS_IA == (403.0, 0.9926, 3.6, 5.0)
+    u = 2.0; E = np.array([u * 44.1354])
+    assert abs(m.hms_sigma(E)[0] / ((1 - np.exp(-3)) * 43 / 44.1354 ** 3 * 1 / 2.5 ** 2 * 1e-17) - 1) < 1e-12
+    prop = os.path.join(root, "hallthruster_bridge", "propellants")
+    hdr = lambda f: float(open(os.path.join(prop, f)).readline().split(":")[1])
+    assert abs(hdr("ionization_N.dat") + hdr("ionization_N_Z1plus_to_N_Z2plus.dat") - hdr("ionization_N_to_N_Z2plus_hms2017.dat")) < 1e-3
+    assert abs(hdr("ionization_N2_song2023.dat") + hdr("ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat")
+               - hdr("ionization_N2_to_N2_Z2plus_upper.dat")) < 1e-3
+    rs = tomllib.load(open(os.path.join(root, "hallthruster_bridge", "PINNED.toml"), "rb"))["reaction_set"]
+    assert rs["version"] == "abep-n2n-0.11" and rs["status"] == "COMPLETE_FOR_P5_N2_VALIDATION"
+    assert "T_e 2-30 eV" in rs["domain"] and "0.2-30 eV" in rs["domain"]
+    for v in rs["uncertainty_variants"]:
+        for f in v.split(":")[0].split(" / "):
+            assert os.path.exists(os.path.join(prop, f.strip())), f
+    cfg = open(os.path.join(prop, "n2_n.toml")).read()
+    assert '"ionization_N_to_N_Z2plus_hms2017.dat"' in cfg and "N2(2+)" not in cfg
+    dic = open(os.path.join(prop, "n2_n_n2dication.toml")).read()
+    assert "N2 + e -> N2(2+) + 3e" in dic and "N2(+) + e -> N2(2+) + 2e" in dic and "dissociative_ionization_N2_lower.dat" in dic
 
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""

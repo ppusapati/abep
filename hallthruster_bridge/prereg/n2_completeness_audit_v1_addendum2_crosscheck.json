@@ -1,0 +1,16 @@
+{
+ "id": "n2_completeness_audit_v1_addendum2_crosscheck",
+ "amends": "n2_completeness_audit_v1",
+ "registered": "2026-09-26",
+ "registered_before": "the omitted-process verdicts are applied. Disclosure: the owner stated this rule before seeing the completed summary, but it reached the session after the summary and the cross-check had been computed (all 180 common records agree to max relative difference 6e-16 on F_ion(N2+ -> N3+), F_S(N2+ destruction) and max n(N2+)/n(N2)). The rule therefore could not have been shaped by a discrepancy; none exists.",
+ "decided_by": "project owner",
+ "rule": {
+  "status_of_runs": "Earlier and later envelope run sets are not independent physics datasets. Their common metrics are an implementation-consistency check only.",
+  "authoritative_set": "The newest run set (the one carrying the full metric list) is authoritative. Run sets are never averaged, and no set is selected by preference.",
+  "discrepancy": "Any discrepancy in a common metric large enough to alter a threshold verdict must be investigated and resolved before the completeness rule is applied."
+ },
+ "application": {
+  "verdict_rule": "addendum 1 applied literally: U < T -> EXCLUDE; L > T -> PROMOTE; L < T < U -> UNCERTAINTY VARIANT. No judgment adjustment for values close to a threshold.",
+  "closure_table": "one row per process: primary criterion, lower / nominal / upper, worst case, transport-sensitive, chemistry-sensitive, verdict"
+ }
+}

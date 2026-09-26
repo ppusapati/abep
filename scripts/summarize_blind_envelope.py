@@ -20,6 +20,9 @@ METRICS = {  # key -> (process, criterion, threshold)
     "F_ion_N2Z2_seq_only": ("N2^2+ sequential only", "F_ion", 0.01),
     "F_ion_N2Z2_nominal": ("N2^2+ (nominal direct + sequential)", "F_ion", 0.01),
     "F_ion_N2Z2_upper": ("N2^2+ (upper direct + sequential)", "F_ion", 0.01),
+    "F_ion_N2Z2_direct_nominal": ("N2 -> N2^2+ direct, nominal", "F_ion", 0.01),
+    "F_ion_N2Z2_direct_upper": ("N2 -> N2^2+ direct, upper", "F_ion", 0.01),
+    "F_S_N2p_destruction_seq": ("N2+ -> N2^2+ sequential", "F_S(N2+ destruction)", 0.05),
 }
 
 
@@ -59,8 +62,8 @@ def main(argv):
                            "verdict_flips_with_nuisance": 0 < len(above) < len(vals), "ranges": by}
     if check:
         old = load([check]); common = [k for k in old if k in recs and old[k].get("retcode") == "success" and recs[k].get("retcode") == "success"]
-        d = max((abs(old[k][m] / recs[k][m] - 1) for k in common for m in ("F_ion_NZ2_to_NZ3", "F_S_NZ2_destruction", "max_ratio_NZ2_over_N2")
-                 if recs[k].get(m)), default=None)
+        d = max((abs(old[k][m] / recs[k][m] - 1) for k in common for m in old[k]
+                 if isinstance(old[k][m], float) and old[k][m] and isinstance(recs[k].get(m), float)), default=None)
         s["cross_check_vs_independent_batch"] = {"file": os.path.basename(check), "n_common": len(common), "max_rel_diff_common_metrics": d}
     if region:
         s["region_of_maxima"] = {r["key"]: {k: v for k, v in r.items() if k.startswith("region_") or k.startswith("chemistry_") or k in ("max_ratio_NZ2_over_N2", "Te_at_max_ratio_eV")}

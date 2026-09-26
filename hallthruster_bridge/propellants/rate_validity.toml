@@ -29,6 +29,31 @@ status = "verified"
 max_mean_energy_eV = 255.0
 basis = "Bell et al. JPCRD 1983 Eq. (1) N II (+-10 %), analytic Bethe form evaluated 29.60 eV-10 keV; held-tail share 0.0000 % at 255 eV mean energy (scripts/build_n_z1plus_to_z2plus_table.py)"
 
+["ionization_N_to_N_Z2plus_hms2017.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "HMS 2017 semi-empirical Eqs. (2)+(3), evaluated 44.14 eV-10 keV (source-model applicability; no neutral-N measurement exists; HMS state ~30 % for double ionization) (scripts/build_multiply_charged_tables.py)"
+
+["ionization_N_to_N_Z2plus_hms2017_x0p5.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "x0.5 sensitivity of the nominal table; HMS 2017 semi-empirical Eqs. (2)+(3), evaluated 44.14 eV-10 keV (source-model applicability; no neutral-N measurement exists; HMS state ~30 % for double ionization) (scripts/build_multiply_charged_tables.py)"
+
+["ionization_N_to_N_Z2plus_hms2017_x1p3.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "x1.3 sensitivity of the nominal table; HMS 2017 semi-empirical Eqs. (2)+(3), evaluated 44.14 eV-10 keV (source-model applicability; no neutral-N measurement exists; HMS state ~30 % for double ionization) (scripts/build_multiply_charged_tables.py)"
+
+["ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "Tabata et al. 2006 n2-69 analytic fit to Bahati et al. 2001 (fit/data 0.86-1.11), fit range 29 eV-2.5 keV, held to 10 keV; N2^2+ uncertainty variant only (scripts/build_multiply_charged_tables.py)"
+
+["ionization_N2_to_N2_Z2plus_upper.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "flat 0.14e-16 cm^2 envelope from 42.9 eV to 10 keV (all double ionization, JPCRD 2023 Sec. 2.8); an envelope, not energy-resolved physics; N2^2+ uncertainty variant only (scripts/build_multiply_charged_tables.py)"
+
 ["dissociative_ionization_N2_to_N_Z2plus.dat"]
 status = "verified"
 max_mean_energy_eV = 255.0

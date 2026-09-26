@@ -6,6 +6,10 @@ never drift from the nominal set. Each variant differs from n2_n.toml in exactly
   n2_n_rot_off.toml: the two rotational reactions removed (lower-bound closure for rotational cooling).
   n2_n_exc_johnsonlow.toml: electronic excitation from Johnson 2005 at all energies (sensitivity branch; escalation rule in the
     P5-N2 pre-registration).
+  n2_n_ndd_hmslow.toml / n2_n_ndd_hmshigh.toml: direct N -> N^2+ (Hahn, Muller & Savin 2017) x0.5 / x1.3 (sensitivity branches).
+  n2_n_n2dication.toml: molecular N2^2+ UNCERTAINTY VARIANT (closure verdict: nominal < 1 % < upper): N2 max_charge = 2,
+    N2 + e -> N2^2+ + 3e (upper envelope) and N2+ + e -> N2^2+ + 2e (Tabata 2006 n2-69), on the dissociative-ionization LOWER
+    table (the N+ + N2++ column minus its ~1 % N2++ share), so that N2^2+ is not counted twice.
 Usage: python scripts/make_n2_variant_configs.py
 """
 import os
@@ -27,12 +31,36 @@ target_species = "N2"
 rate_coeff_file = "excitation_N2_rot_j0_to_j4.dat"      # JPCRD 2023 Table 6, dE = 20 B_0 = 4.933 meV (abep-n2n-0.10)
 
 """: ""}
+NDD = 'rate_coeff_file = "ionization_N_to_N_Z2plus_hms2017.dat"          # Hahn, Muller & Savin 2017 Eqs. (2)+(3), direct N -> N^2+ (abep-n2n-0.11); sensitivity x0.5 / x1.3: n2_n_ndd_hmslow/high.toml'
+NDD_LOW = {NDD: 'rate_coeff_file = "ionization_N_to_N_Z2plus_hms2017_x0p5.dat"     # HMS 2017 x 0.5: direct N -> N^2+ SENSITIVITY branch (abep-n2n-0.11)'}
+NDD_HIGH = {NDD: 'rate_coeff_file = "ionization_N_to_N_Z2plus_hms2017_x1p3.dat"     # HMS 2017 x 1.3: direct N -> N^2+ SENSITIVITY branch (abep-n2n-0.11)'}
+N2_DICATION = {
+    """symbol = "N2"
+name = "Molecular Nitrogen"
+max_charge = 1""": """symbol = "N2"
+name = "Molecular Nitrogen"
+max_charge = 2                                      # molecular N2^2+ UNCERTAINTY VARIANT (abep-n2n-0.11)""",
+    NDD: NDD + """
+
+[[reactions]]
+type = "electron_impact"
+equation = "N2 + e -> N2(2+) + 3e"
+rate_coeff_file = "ionization_N2_to_N2_Z2plus_upper.dat"           # all double ionization 0.14e-16 cm^2 from 42.9 eV: N2^2+ UNCERTAINTY VARIANT (abep-n2n-0.11)
+
+[[reactions]]
+type = "electron_impact"
+equation = "N2(+) + e -> N2(2+) + 2e"
+rate_coeff_file = "ionization_N2_Z1plus_to_N2_Z2plus_tabata2006.dat"  # Tabata 2006 n2-69 fit to Bahati 2001: N2^2+ UNCERTAINTY VARIANT (abep-n2n-0.11)""",
+    **DI_LOWER}
 VARIANTS = {"n2_n_di_lower.toml": ("dissociative-ionization LOWER chemistry variant", DI_LOWER),
             "n2_n_nel_wang.toml": ("atomic-N momentum-transfer WANG-BSR chemistry variant", NEL_WANG),
             "n2_n_di_lower_nel_wang.toml": ("dissociative-ionization LOWER x atomic-N momentum-transfer WANG-BSR variant",
                                             {**DI_LOWER, **NEL_WANG}),
             "n2_n_exc_johnsonlow.toml": ("electronic-excitation JOHNSON-LOW sensitivity branch (nominal DI, OPM N elastic)",
                                          EXC_JOHNSONLOW),
+            "n2_n_ndd_hmslow.toml": ("direct N -> N^2+ HMS x0.5 sensitivity branch (nominal DI, OPM N elastic)", NDD_LOW),
+            "n2_n_ndd_hmshigh.toml": ("direct N -> N^2+ HMS x1.3 sensitivity branch (nominal DI, OPM N elastic)", NDD_HIGH),
+            "n2_n_n2dication.toml": ("molecular N2^2+ UNCERTAINTY VARIANT (DI lower, OPM N elastic)", N2_DICATION),
             "n2_n_rot_off.toml": ("rotational-OFF lower-bound closure (gross rotational cooling removed; nominal DI, OPM N elastic)",
                                   ROT_OFF)}
 
