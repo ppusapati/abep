@@ -18,7 +18,8 @@ orders *evidence to acquire*, not architectures.
 ## Milestones this supports
 - **Supports A (conditional selection).** Each open node carries a `milestone_A_condition` sentence. For any architecture,
   the list of its open nodes is the condition list that a statement like "architecture X is baseline provided that ..."
-  must carry.
+  must carry: the core nodes plus the nodes of the design-branch options the statement assumes (cathode feed; for
+  `rf_hall`, the RF source type). A conditional selection names the options it assumes.
 - **To reach B (physics-backed selection),** every `resolve_by_milestone = B` node of the selected architecture must be
   resolved. Nodes marked *analysis needs admitted Hall closure* can be resolved by analysis only on design Hall maps from
   **admitted** closures. The credible set is empty today, so for now they can only be resolved by measurement.
@@ -38,6 +39,16 @@ orders *evidence to acquire*, not architectures.
   architecture-specific: interstage loss (`rf_hall`, `ecr_hall`), RF-source modes (`rf_hall`: E–H transition,
   matching, magnetized-source field interaction, RF interference) and ECR modes (`ecr_hall`: cutoff/overdense limit,
   ECR–Hall magnetic interaction, microwave power chain).
+- **Design branches** (`design_branches`). Some failure paths exist only under a design choice whose options are
+  mutually exclusive:
+  - `cathode_feed` (all three architectures): `xe_fed_thermionic` (Xe-fed LaB6/BaO-W hollow cathode; nodes N-CAT-01,
+    -02, -03, -05, -06, -07) or `air_fed_plasma` (air-fed microwave/RF plasma cathode; N-CAT-04, -08, -09).
+  - `rf_source_type` (`rf_hall`): `magnetized_helicon` (N-RF-03) or `unmagnetized` (no specific node).
+
+  A node specific to one option carries `branch` and a `condition` sentence. Neither cathode option is a baseline in v1:
+  the laboratory air tests cited used Xe-fed thermionic cathodes, which describes those tests, not a Vyovrinda choice.
+  The cathode test is split accordingly into M-CATHXE (Xe-fed) and M-CATHAIR (air-fed); each carries its option in
+  `branch` and may be credited only with nodes of that option.
 - **Hard gates** (ids used by `decision_quantity.gates`):
   - `thrust`: 12–25 mN.
   - `bus_power`: < 1.5 kW.
@@ -70,11 +81,13 @@ orders *evidence to acquire*, not architectures.
   - `air_specific`: true when the decision quantity is evaluated on the atmospheric (air / N₂ / O₂) feed, or the
     mechanism depends on N/O species. Evidence whose source does not state the gas cannot decide such a node (see
     Evidence discipline).
-  - `sub_cause_of` (optional): the node is an architecture-specific contributor to a parent node's threshold
-    comparison. It carries the parent's gates, its threshold says the parent decides it, and it is **not counted** in the
-    ranking. Today N-MAS-02 (`rf_hall` RF chain) and N-MAS-03 (`ecr_hall` microwave chain and ECR magnets) are
-    sub-causes of N-MAS-01 (total < 40 kg). No subsystem mass allocation exists; if the owner sets one, the node becomes
-    a comparison of its own.
+  - `sub_cause_of` (optional): the node is a contributing cause of a parent node's threshold comparison. It carries the
+    parent's gates, its threshold says the parent decides it, and it is **not counted** in the ranking. Today N-MAS-02
+    (`rf_hall` RF chain) and N-MAS-03 (`ecr_hall` microwave chain and ECR magnets) are sub-causes of N-MAS-01 (total
+    < 40 kg). No subsystem mass allocation exists; if the owner sets one, the node becomes a comparison of its own.
+    N-UTL-01 (low utilization of air in the Hall stage) is a sub-cause of N-PWR-01: both compare 12 mN on air against
+    the discharge power the 1.5 kW bus leaves, so counting both counted one comparison twice. N-UTL-01 keeps the
+    utilization class and mechanism in the tree.
   - `mechanism` and `physical_cause`.
   - `evidence`: each item gives a source, a direction (`supports` / `contradicts` / `context`), the EVIDENCE.md quantity
     type (`evidence_class`), an evidence level, a quoted or paraphrased statement, a verified locator and its
@@ -115,12 +128,15 @@ orders *evidence to acquire*, not architectures.
 - **unknown** covers everything else: no evidence, context only, or conflicting evidence. A node with nothing decisive
   must state an `evidence_gap`.
 
-A `contradicted` status is only as broad as the evidence behind it. For example, N-PWR-01 is contradicted by laboratory
-N₂ measurements taken in a ground facility with a noble-gas cathode. That does not show that a Vyovrinda design meets the
-gate.
+A `contradicted` status is only as broad as the evidence behind it. For example, N-PWR-01 and its sub-cause N-UTL-01 are
+contradicted by laboratory N₂ operating points (S-CIFALI2011: 305 V, 3.48 A at 41.6 W/mN, i.e. about 25.5 mN,
+D-CIFALI-THRUST-N2; S-MARCHIONI2020: 17–22 mN at 500–800 W). These were taken in ground facilities with a noble-gas
+cathode and controller-set flow. They do not show that a Vyovrinda design meets the gate. A source is never `supports`
+on one node and `contradicts` on another node that makes the same comparison; the test enforces this.
 
-## Ranking rule for "what evidence to acquire next" (stated in the JSON as `decisiveness_lexicographic_v1`)
-For each architecture, and only over its open nodes and unblocked actions, actions are sorted by these keys in order:
+## Ranking rule for "what evidence to acquire next" (stated in the JSON as `decisiveness_lexicographic_v2`)
+For each architecture, and only over its counted open nodes and unblocked actions, actions are sorted by these keys in
+order:
 1. The number of nodes the action **decides**.
 2. The number of distinct hard gates linked by those decided nodes.
 3. The number of nodes it **contributes** to (needed jointly with other actions).
@@ -132,34 +148,48 @@ No weights, probabilities or expert scores are used. A blocked action is listed 
 action is `A-HALLMAP`, which is blocked by the empty credible set and the incomplete O4 dispositions. Sub-cause nodes
 (`sub_cause_of`) are not counted.
 
+The rule is applied separately to two kinds of node set (`branch_rule`):
+- the **core** set: the nodes that apply whatever design branches are chosen. The core ranking never counts a
+  branch-specific node.
+- each **design-branch option**'s own set, ranked in `branch_rankings`. Options of one decision are alternatives, so
+  their nodes are not added to each other or to the core.
+
+Version 1 counted conditional nodes (N-CAT-04, N-RF-03) in the core ranking, while the Xe-fed cathode nodes were not
+marked conditional, and one cathode test was credited with both cathode options. Version 2 removes both inflations.
+
 `cheapest_resolution` is either a single `decides` action or a jointly sufficient set of `contributes` actions. Its
 cost class is never above that of the cheapest `decides` action.
 
-**How to read the ranking.** The ranking counts labels and nothing else. Most performance nodes (utilization, bus
-power, interstage transmission, break-even) compare a measurement with another lane's analysis, so they have no single
-deciding action. There, the common-condition test M-PREION *contributes* together with A-ELEC or A-BREAKEVEN. Actions
-that settle several nodes on their own, such as the thermal balance test and the cathode test, can therefore rank above
-M-PREION on key 1 or key 2. M-PREION has the largest contributes count (key 3) for `rf_hall` and `ecr_hall`. The two
-top-ranked actions (M-THERMAL, M-CATHODE) are measurements that no lane executes yet (`hardware_test`); A-BFIELD, the
-only deciding action for the two magnetic-interaction nodes, has no lane either. The ranking orders evidence within one
-architecture's tree. It says nothing about which architecture is better.
+**How to read the ranking.** The ranking counts labels and nothing else. Most performance nodes (bus power, interstage
+transmission, break-even) compare a measurement with another lane's analysis, so they have no single deciding action.
+There, the common-condition test M-PREION *contributes* together with A-ELEC or A-BREAKEVEN. In the core lists the
+thermal balance test M-THERMAL ranks first in all three architectures on key 1: it alone decides the magnet/coil and
+wall-temperature nodes (and the RF-coupler or ECR-magnet node), all of which link only `firing_life`. M-PREION ranks
+second in `rf_hall` and `ecr_hall`, with the largest contributes count. In `ecr_hall`, A-BFIELD (field superposition;
+no lane) is the only deciding action for the ECR–Hall field-interaction node. In each cathode-branch list the option's
+own cathode test ranks first: M-CATHXE on the Xe-fed branch and M-CATHAIR on the air-fed branch. The measurement
+actions have no executing lane yet (`hardware_test`). The ranking orders evidence within one architecture's tree
+(core, or one branch option). It says nothing about which architecture, or which cathode option, is better.
 
 ## Per-architecture trees (generated)
 <!-- BEGIN GENERATED:trees -->
-### `hall_only` (20 nodes, 0 of them sub-causes: 8 supported, 1 contradicted, 11 unknown; all decision_state = open)
+### `hall_only` (23 nodes, 1 sub-cause(s), 9 branch-specific: 7 supported, 2 contradicted, 14 unknown; all decision_state = open)
 
 | class | node | failure path | evidence status | gates | cheapest resolution | resolve by | analysis needs admitted Hall closure |
 |---|---|---|---|---|---|---|---|
 | ignition | N-IGN-01 | Hall-stage cold start on atmospheric anode flow fails; start needs Xe | unknown | restart_sustainment, air_xe | A-OPS + M-IGN | C | no |
 | sustainment_extinction | N-SUS-01 | Hall stage extinguishes or runs unstably on N2/O2 within the needed window | unknown | restart_sustainment, thrust, air_xe | A-FLOWENV + M-SUSWIN | B | yes |
 | sustainment_extinction | N-SUS-02 | Delivered-flow range over altitude and solar activity exceeds the sustainment range | unknown | restart_sustainment, thrust | A-FLOWENV + M-SUSWIN | B | yes |
-| utilization | N-UTL-01 | Low ion utilization of N2/O2 in the Hall stage prevents 12 mN within the bus power | supported | thrust, bus_power | A-ELEC + M-PREION | B | yes |
-| cathode_limit | N-CAT-01 | Emitter poisoning by oxygen from the feed, plume backflow or ram exposure | supported | firing_life, mission_life, restart_sustainment | A-FLOWENV + A-OXEXPO + M-CATHODE | C | no |
-| cathode_limit | N-CAT-02 | Cathode Xe consumption over the firing life exceeds the Xe allocation in the mass gate | supported | mass, air_xe | A-MASS + M-CATHODE | C | yes |
-| cathode_limit | N-CAT-03 | Cathode flow minimized for mass drives plume mode and energetic-ion erosion | supported | firing_life | M-CATHODE | C | yes |
-| cathode_limit | N-CAT-04 | Air-fed cathode route: electron current or coupling insufficient at the discharge current (conditional) | unknown | thrust, restart_sustainment, air_xe | M-CATHODE | C | yes |
-| cathode_limit | N-CAT-05 | Intrinsic cathode life: emitter evaporation at the required emission current ends insert life before the firing hours | supported | firing_life, mission_life | A-CATHODE + M-CATHODE | C | no |
-| cathode_limit | N-CAT-06 | Baseline Xe-fed cathode current range does not cover the required emission current | unknown | thrust, restart_sustainment | A-CATHODE + M-CATHODE | C | no |
+| utilization | N-UTL-01 | Low ion utilization of N2/O2 in the Hall stage prevents 12 mN within the bus power (sub-cause of N-PWR-01; not counted) | contradicted | bus_power, thrust | A-ELEC + M-PREION | B | yes |
+| cathode_limit | N-CAT-01 | Emitter poisoning by oxygen from the feed, plume backflow or ram exposure (branch cathode_feed = xe_fed_thermionic) | supported | firing_life, mission_life, restart_sustainment | A-FLOWENV + A-OXEXPO + M-CATHXE | C | no |
+| cathode_limit | N-CAT-02 | Cathode Xe consumption over the firing life exceeds the Xe allocation in the mass gate (branch cathode_feed = xe_fed_thermionic) | supported | mass, air_xe | A-MASS + M-CATHXE | C | yes |
+| cathode_limit | N-CAT-03 | Cathode flow minimized for mass drives plume mode and energetic-ion erosion (branch cathode_feed = xe_fed_thermionic) | supported | firing_life | M-CATHXE | C | yes |
+| cathode_limit | N-CAT-04 | Air-fed cathode route: electron current or coupling insufficient at the discharge current (branch cathode_feed = air_fed_plasma) | unknown | thrust, restart_sustainment, air_xe | M-CATHAIR | C | yes |
+| cathode_limit | N-CAT-05 | Intrinsic cathode life: emitter evaporation at the required emission current ends insert life before the firing hours (branch cathode_feed = xe_fed_thermionic) | supported | firing_life, mission_life | A-CATHODE + M-CATHXE | C | no |
+| cathode_limit | N-CAT-06 | Xe-fed cathode current range does not cover the required emission current (branch cathode_feed = xe_fed_thermionic) | unknown | thrust, restart_sustainment | A-CATHODE + M-CATHXE | C | no |
+| cathode_limit | N-CAT-07 | Restart count exceeds the thermionic cathode's heater/ignition cycle capability (branch cathode_feed = xe_fed_thermionic) | unknown | restart_sustainment, firing_life, mission_life | A-OPS + M-CATHXE | C | no |
+| cathode_limit | N-CAT-08 | Air-fed plasma cathode wears out before the firing hours (branch cathode_feed = air_fed_plasma) | unknown | firing_life, mission_life | A-THERMAL + M-CATHAIR | C | no |
+| cathode_limit | N-CAT-09 | Restart count exceeds the air-fed plasma cathode's ignition cycle capability (branch cathode_feed = air_fed_plasma) | unknown | restart_sustainment, firing_life, mission_life | A-OPS + M-CATHAIR | C | no |
 | thermal_limit | N-THM-01 | Hall magnetic circuit (coils or permanent magnets) exceeds its temperature limit | supported | firing_life | M-THERMAL | C | yes |
 | thermal_limit | N-THM-04 | Hall channel wall or anode exceeds its temperature limit | unknown | firing_life | M-THERMAL | C | yes |
 | erosion_wall_life | N-ERO-01 | Channel-wall erosion (physical and chemical) by N/O species limits firing life | supported | firing_life | A-THERMAL + M-EROSION | C | yes |
@@ -168,10 +198,10 @@ architecture's tree. It says nothing about which architecture is better.
 | power_limit | N-PWR-04 | Non-thruster loads consume the bus margin | unknown | bus_power | A-ELEC + M-PREION | B | no |
 | mass_limit | N-MAS-01 | Total propulsion-system mass exceeds 40 kg | unknown | mass | A-MASS | C | no |
 | control_startup | N-CTL-01 | Xe -> mixed -> atmosphere transition loses the discharge or leaves the operating window | unknown | restart_sustainment, air_xe | M-TRANS | C | no |
-| control_startup | N-CTL-02 | Restart count exceeds cathode heater/ignition cycles or the Xe start budget | unknown | restart_sustainment, firing_life, mission_life, mass | A-OPS + M-IGN + M-CATHODE | C | no |
+| control_startup | N-CTL-02 | Restart count exceeds the demonstrated Hall-stage starts or the Xe start budget | unknown | restart_sustainment, firing_life, mission_life, mass | A-OPS + M-IGN | C | no |
 | control_startup | N-CTL-03 | Feed-system start transient too slow or overshoots after start or eclipse | unknown | restart_sustainment | A-FLOWENV | C | no |
 
-### `rf_hall` (33 nodes, 1 of them sub-causes: 11 supported, 1 contradicted, 21 unknown; all decision_state = open)
+### `rf_hall` (36 nodes, 2 sub-cause(s), 10 branch-specific: 9 supported, 2 contradicted, 25 unknown; all decision_state = open)
 
 | class | node | failure path | evidence status | gates | cheapest resolution | resolve by | analysis needs admitted Hall closure |
 |---|---|---|---|---|---|---|---|
@@ -180,15 +210,18 @@ architecture's tree. It says nothing about which architecture is better.
 | ignition | N-IGN-04 | Pre-ionizer seed plasma does not lower the Hall-stage start requirement | unknown | restart_sustainment, air_xe | A-FLOWENV + M-IGN | C | no |
 | sustainment_extinction | N-SUS-01 | Hall stage extinguishes or runs unstably on N2/O2 within the needed window | unknown | restart_sustainment, thrust, air_xe | A-FLOWENV + M-SUSWIN | B | yes |
 | sustainment_extinction | N-SUS-02 | Delivered-flow range over altitude and solar activity exceeds the sustainment range | unknown | restart_sustainment, thrust | A-FLOWENV + M-SUSWIN | B | yes |
-| sustainment_extinction | N-SUS-03 | Two-stage coupling: excess acceleration-stage current or unstable interaction limits the Hall stage | supported | thrust, restart_sustainment | M-PREION | B | yes |
-| utilization | N-UTL-01 | Low ion utilization of N2/O2 in the Hall stage prevents 12 mN within the bus power | supported | thrust, bus_power | A-ELEC + M-PREION | B | yes |
+| sustainment_extinction | N-SUS-03 | Two-stage coupling: excess acceleration-stage current or unstable interaction limits the Hall stage | unknown | thrust, restart_sustainment | M-PREION | B | yes |
+| utilization | N-UTL-01 | Low ion utilization of N2/O2 in the Hall stage prevents 12 mN within the bus power (sub-cause of N-PWR-01; not counted) | contradicted | bus_power, thrust | A-ELEC + M-PREION | B | yes |
 | utilization | N-UTL-02 | RF pre-ionization gains less utilization than its power costs (thrust-to-power falls) | unknown | thrust, bus_power | A-BREAKEVEN + A-ELEC + M-PREION | B | yes |
-| cathode_limit | N-CAT-01 | Emitter poisoning by oxygen from the feed, plume backflow or ram exposure | supported | firing_life, mission_life, restart_sustainment | A-FLOWENV + A-OXEXPO + M-CATHODE | C | no |
-| cathode_limit | N-CAT-02 | Cathode Xe consumption over the firing life exceeds the Xe allocation in the mass gate | supported | mass, air_xe | A-MASS + M-CATHODE | C | yes |
-| cathode_limit | N-CAT-03 | Cathode flow minimized for mass drives plume mode and energetic-ion erosion | supported | firing_life | M-CATHODE | C | yes |
-| cathode_limit | N-CAT-04 | Air-fed cathode route: electron current or coupling insufficient at the discharge current (conditional) | unknown | thrust, restart_sustainment, air_xe | M-CATHODE | C | yes |
-| cathode_limit | N-CAT-05 | Intrinsic cathode life: emitter evaporation at the required emission current ends insert life before the firing hours | supported | firing_life, mission_life | A-CATHODE + M-CATHODE | C | no |
-| cathode_limit | N-CAT-06 | Baseline Xe-fed cathode current range does not cover the required emission current | unknown | thrust, restart_sustainment | A-CATHODE + M-CATHODE | C | no |
+| cathode_limit | N-CAT-01 | Emitter poisoning by oxygen from the feed, plume backflow or ram exposure (branch cathode_feed = xe_fed_thermionic) | supported | firing_life, mission_life, restart_sustainment | A-FLOWENV + A-OXEXPO + M-CATHXE | C | no |
+| cathode_limit | N-CAT-02 | Cathode Xe consumption over the firing life exceeds the Xe allocation in the mass gate (branch cathode_feed = xe_fed_thermionic) | supported | mass, air_xe | A-MASS + M-CATHXE | C | yes |
+| cathode_limit | N-CAT-03 | Cathode flow minimized for mass drives plume mode and energetic-ion erosion (branch cathode_feed = xe_fed_thermionic) | supported | firing_life | M-CATHXE | C | yes |
+| cathode_limit | N-CAT-04 | Air-fed cathode route: electron current or coupling insufficient at the discharge current (branch cathode_feed = air_fed_plasma) | unknown | thrust, restart_sustainment, air_xe | M-CATHAIR | C | yes |
+| cathode_limit | N-CAT-05 | Intrinsic cathode life: emitter evaporation at the required emission current ends insert life before the firing hours (branch cathode_feed = xe_fed_thermionic) | supported | firing_life, mission_life | A-CATHODE + M-CATHXE | C | no |
+| cathode_limit | N-CAT-06 | Xe-fed cathode current range does not cover the required emission current (branch cathode_feed = xe_fed_thermionic) | unknown | thrust, restart_sustainment | A-CATHODE + M-CATHXE | C | no |
+| cathode_limit | N-CAT-07 | Restart count exceeds the thermionic cathode's heater/ignition cycle capability (branch cathode_feed = xe_fed_thermionic) | unknown | restart_sustainment, firing_life, mission_life | A-OPS + M-CATHXE | C | no |
+| cathode_limit | N-CAT-08 | Air-fed plasma cathode wears out before the firing hours (branch cathode_feed = air_fed_plasma) | unknown | firing_life, mission_life | A-THERMAL + M-CATHAIR | C | no |
+| cathode_limit | N-CAT-09 | Restart count exceeds the air-fed plasma cathode's ignition cycle capability (branch cathode_feed = air_fed_plasma) | unknown | restart_sustainment, firing_life, mission_life | A-OPS + M-CATHAIR | C | no |
 | thermal_limit | N-THM-01 | Hall magnetic circuit (coils or permanent magnets) exceeds its temperature limit | supported | firing_life | M-THERMAL | C | yes |
 | thermal_limit | N-THM-02 | RF coil/antenna, matching network or discharge tube overheats | unknown | firing_life | M-THERMAL | C | no |
 | thermal_limit | N-THM-04 | Hall channel wall or anode exceeds its temperature limit | unknown | firing_life | M-THERMAL | C | yes |
@@ -201,15 +234,15 @@ architecture's tree. It says nothing about which architecture is better.
 | mass_limit | N-MAS-01 | Total propulsion-system mass exceeds 40 kg | unknown | mass | A-MASS | C | no |
 | mass_limit | N-MAS-02 | RF generator, matching network, coil and shielding push the total propulsion mass above 40 kg (sub-cause of N-MAS-01; not counted) | unknown | mass | A-MASS | C | no |
 | control_startup | N-CTL-01 | Xe -> mixed -> atmosphere transition loses the discharge or leaves the operating window | unknown | restart_sustainment, air_xe | M-TRANS | C | no |
-| control_startup | N-CTL-02 | Restart count exceeds cathode heater/ignition cycles or the Xe start budget | unknown | restart_sustainment, firing_life, mission_life, mass | A-OPS + M-IGN + M-CATHODE | C | no |
+| control_startup | N-CTL-02 | Restart count exceeds the demonstrated Hall-stage starts or the Xe start budget | unknown | restart_sustainment, firing_life, mission_life, mass | A-OPS + M-IGN | C | no |
 | control_startup | N-CTL-03 | Feed-system start transient too slow or overshoots after start or eclipse | unknown | restart_sustainment | A-FLOWENV | C | no |
 | interstage_loss | N-ISL-RF | Ions made in the RF stage are lost before the Hall acceleration zone | unknown | thrust, bus_power | A-BREAKEVEN + M-PREION | B | yes |
 | rf_source_specific | N-RF-01 | E-H (or helicon) mode transition with hysteresis drops the RF stage to a low-density mode | supported | restart_sustainment, bus_power, thrust | A-FLOWENV + M-RFSRC | B | no |
 | rf_source_specific | N-RF-02 | Impedance mismatch (reflected power) across ignition, Xe <-> air change and flow envelope | unknown | bus_power, restart_sustainment | A-ELEC + M-RFSRC | C | no |
-| rf_source_specific | N-RF-03 | Magnetized RF (helicon) source field interacts with the Hall magnetic circuit (conditional) | unknown | thrust, restart_sustainment | A-BFIELD | B | no |
+| rf_source_specific | N-RF-03 | Magnetized RF (helicon) source field interacts with the Hall magnetic circuit (branch rf_source_type = magnetized_helicon) | unknown | thrust, restart_sustainment | A-BFIELD | B | no |
 | rf_source_specific | N-RF-04 | RF interference coupling into the Hall discharge circuit, cathode or PPU sensing | unknown | restart_sustainment | M-PREION | C | no |
 
-### `ecr_hall` (32 nodes, 1 of them sub-causes: 11 supported, 1 contradicted, 20 unknown; all decision_state = open)
+### `ecr_hall` (35 nodes, 2 sub-cause(s), 9 branch-specific: 8 supported, 2 contradicted, 25 unknown; all decision_state = open)
 
 | class | node | failure path | evidence status | gates | cheapest resolution | resolve by | analysis needs admitted Hall closure |
 |---|---|---|---|---|---|---|---|
@@ -218,15 +251,18 @@ architecture's tree. It says nothing about which architecture is better.
 | ignition | N-IGN-04 | Pre-ionizer seed plasma does not lower the Hall-stage start requirement | unknown | restart_sustainment, air_xe | A-FLOWENV + M-IGN | C | no |
 | sustainment_extinction | N-SUS-01 | Hall stage extinguishes or runs unstably on N2/O2 within the needed window | unknown | restart_sustainment, thrust, air_xe | A-FLOWENV + M-SUSWIN | B | yes |
 | sustainment_extinction | N-SUS-02 | Delivered-flow range over altitude and solar activity exceeds the sustainment range | unknown | restart_sustainment, thrust | A-FLOWENV + M-SUSWIN | B | yes |
-| sustainment_extinction | N-SUS-03 | Two-stage coupling: excess acceleration-stage current or unstable interaction limits the Hall stage | supported | thrust, restart_sustainment | M-PREION | B | yes |
-| utilization | N-UTL-01 | Low ion utilization of N2/O2 in the Hall stage prevents 12 mN within the bus power | supported | thrust, bus_power | A-ELEC + M-PREION | B | yes |
+| sustainment_extinction | N-SUS-03 | Two-stage coupling: excess acceleration-stage current or unstable interaction limits the Hall stage | unknown | thrust, restart_sustainment | M-PREION | B | yes |
+| utilization | N-UTL-01 | Low ion utilization of N2/O2 in the Hall stage prevents 12 mN within the bus power (sub-cause of N-PWR-01; not counted) | contradicted | bus_power, thrust | A-ELEC + M-PREION | B | yes |
 | utilization | N-UTL-03 | ECR pre-ionization gains less utilization on air than its power costs | unknown | thrust, bus_power | A-BREAKEVEN + A-ELEC + M-PREION | B | yes |
-| cathode_limit | N-CAT-01 | Emitter poisoning by oxygen from the feed, plume backflow or ram exposure | supported | firing_life, mission_life, restart_sustainment | A-FLOWENV + A-OXEXPO + M-CATHODE | C | no |
-| cathode_limit | N-CAT-02 | Cathode Xe consumption over the firing life exceeds the Xe allocation in the mass gate | supported | mass, air_xe | A-MASS + M-CATHODE | C | yes |
-| cathode_limit | N-CAT-03 | Cathode flow minimized for mass drives plume mode and energetic-ion erosion | supported | firing_life | M-CATHODE | C | yes |
-| cathode_limit | N-CAT-04 | Air-fed cathode route: electron current or coupling insufficient at the discharge current (conditional) | unknown | thrust, restart_sustainment, air_xe | M-CATHODE | C | yes |
-| cathode_limit | N-CAT-05 | Intrinsic cathode life: emitter evaporation at the required emission current ends insert life before the firing hours | supported | firing_life, mission_life | A-CATHODE + M-CATHODE | C | no |
-| cathode_limit | N-CAT-06 | Baseline Xe-fed cathode current range does not cover the required emission current | unknown | thrust, restart_sustainment | A-CATHODE + M-CATHODE | C | no |
+| cathode_limit | N-CAT-01 | Emitter poisoning by oxygen from the feed, plume backflow or ram exposure (branch cathode_feed = xe_fed_thermionic) | supported | firing_life, mission_life, restart_sustainment | A-FLOWENV + A-OXEXPO + M-CATHXE | C | no |
+| cathode_limit | N-CAT-02 | Cathode Xe consumption over the firing life exceeds the Xe allocation in the mass gate (branch cathode_feed = xe_fed_thermionic) | supported | mass, air_xe | A-MASS + M-CATHXE | C | yes |
+| cathode_limit | N-CAT-03 | Cathode flow minimized for mass drives plume mode and energetic-ion erosion (branch cathode_feed = xe_fed_thermionic) | supported | firing_life | M-CATHXE | C | yes |
+| cathode_limit | N-CAT-04 | Air-fed cathode route: electron current or coupling insufficient at the discharge current (branch cathode_feed = air_fed_plasma) | unknown | thrust, restart_sustainment, air_xe | M-CATHAIR | C | yes |
+| cathode_limit | N-CAT-05 | Intrinsic cathode life: emitter evaporation at the required emission current ends insert life before the firing hours (branch cathode_feed = xe_fed_thermionic) | supported | firing_life, mission_life | A-CATHODE + M-CATHXE | C | no |
+| cathode_limit | N-CAT-06 | Xe-fed cathode current range does not cover the required emission current (branch cathode_feed = xe_fed_thermionic) | unknown | thrust, restart_sustainment | A-CATHODE + M-CATHXE | C | no |
+| cathode_limit | N-CAT-07 | Restart count exceeds the thermionic cathode's heater/ignition cycle capability (branch cathode_feed = xe_fed_thermionic) | unknown | restart_sustainment, firing_life, mission_life | A-OPS + M-CATHXE | C | no |
+| cathode_limit | N-CAT-08 | Air-fed plasma cathode wears out before the firing hours (branch cathode_feed = air_fed_plasma) | unknown | firing_life, mission_life | A-THERMAL + M-CATHAIR | C | no |
+| cathode_limit | N-CAT-09 | Restart count exceeds the air-fed plasma cathode's ignition cycle capability (branch cathode_feed = air_fed_plasma) | unknown | restart_sustainment, firing_life, mission_life | A-OPS + M-CATHAIR | C | no |
 | thermal_limit | N-THM-01 | Hall magnetic circuit (coils or permanent magnets) exceeds its temperature limit | supported | firing_life | M-THERMAL | C | yes |
 | thermal_limit | N-THM-03 | ECR magnets lose remanence or the resonator/coupler overheats | supported | firing_life | M-THERMAL | C | no |
 | thermal_limit | N-THM-04 | Hall channel wall or anode exceeds its temperature limit | unknown | firing_life | M-THERMAL | C | yes |
@@ -239,9 +275,9 @@ architecture's tree. It says nothing about which architecture is better.
 | mass_limit | N-MAS-01 | Total propulsion-system mass exceeds 40 kg | unknown | mass | A-MASS | C | no |
 | mass_limit | N-MAS-03 | Microwave generator, waveguide/coupler and ECR magnets push the total propulsion mass above 40 kg (sub-cause of N-MAS-01; not counted) | unknown | mass | A-MASS | C | no |
 | control_startup | N-CTL-01 | Xe -> mixed -> atmosphere transition loses the discharge or leaves the operating window | unknown | restart_sustainment, air_xe | M-TRANS | C | no |
-| control_startup | N-CTL-02 | Restart count exceeds cathode heater/ignition cycles or the Xe start budget | unknown | restart_sustainment, firing_life, mission_life, mass | A-OPS + M-IGN + M-CATHODE | C | no |
+| control_startup | N-CTL-02 | Restart count exceeds the demonstrated Hall-stage starts or the Xe start budget | unknown | restart_sustainment, firing_life, mission_life, mass | A-OPS + M-IGN | C | no |
 | control_startup | N-CTL-03 | Feed-system start transient too slow or overshoots after start or eclipse | unknown | restart_sustainment | A-FLOWENV | C | no |
-| interstage_loss | N-ISL-ECR | Ions made in the ECR stage are trapped or lost before the Hall acceleration zone | supported | thrust, bus_power | A-BREAKEVEN + M-PREION | B | yes |
+| interstage_loss | N-ISL-ECR | Ions made in the ECR stage are trapped or lost before the Hall acceleration zone | unknown | thrust, bus_power | A-BREAKEVEN + M-PREION | B | yes |
 | ecr_source_specific | N-ECR-01 | Cutoff (overdense) limit: ECR-stage density saturates below the Hall-stage feed need | unknown | thrust, bus_power | A-INTERSTAGE + M-ECRSRC | B | yes |
 | ecr_source_specific | N-ECR-02 | ECR resonance field interacts with the Hall magnetic circuit | unknown | thrust, restart_sustainment | A-BFIELD | B | no |
 | ecr_source_specific | N-ECR-03 | Microwave power chain (generator, transmission, coupler) efficiency or life insufficient | unknown | bus_power, firing_life, mission_life | A-ELEC + M-MWCHAIN | C | no |
@@ -249,91 +285,153 @@ architecture's tree. It says nothing about which architecture is better.
 
 ## What evidence to acquire next, per architecture (generated)
 <!-- BEGIN GENERATED:ranking -->
-### `hall_only` (20 open nodes counted; 0 sub-causes not counted)
+### `hall_only` core (13 open nodes counted; 1 sub-cause(s) and 9 branch-specific node(s) not counted)
 
 | rank | action | kind | decides | gates decided | contributes | informs |
 |---|---|---|---|---|---|---|
-| 1 | M-CATHODE (Cathode integration test) | measurement | 2 | 4 (thrust, firing_life, restart_sustainment, air_xe) | 5 | 0 |
-| 2 | M-THERMAL (Thermal balance test) | measurement | 2 | 1 (firing_life) | 0 | 0 |
-| 3 | M-TRANS (Xe -> mixed -> air transition) | measurement | 1 | 2 (restart_sustainment, air_xe) | 0 | 0 |
-| 4 | A-FLOWENV (Delivered-feed envelope and start transient (upstream only)) | analysis | 1 | 1 (restart_sustainment) | 3 | 0 |
-| 5 | A-MASS (Mass ledger) | analysis | 1 | 1 (mass) | 1 | 0 |
-| 6 | A-ELEC (Electrical closure on the common bus boundary) | analysis | 0 | 0 (-) | 3 | 0 |
-| 7 | M-PREION (Common-condition pre-ionizer A/B/C test) | measurement | 0 | 0 (-) | 3 | 0 |
-| 8 | A-CATHODE (Cathode integration analysis) | analysis | 0 | 0 (-) | 2 | 3 |
-| 9 | A-THERMAL (Thermal/life analysis) | analysis | 0 | 0 (-) | 2 | 2 |
-| 10 | A-OPS (Restart count from the operations concept) | analysis | 0 | 0 (-) | 2 | 0 |
-| 11 | M-EROSION (Short erosion/oxidation test on air) | measurement | 0 | 0 (-) | 2 | 0 |
-| 12 | M-IGN (Ignition and restart on the atmospheric feed) | measurement | 0 | 0 (-) | 2 | 0 |
+| 1 | M-THERMAL (Thermal balance test) | measurement | 2 | 1 (firing_life) | 0 | 0 |
+| 2 | M-TRANS (Xe -> mixed -> air transition) | measurement | 1 | 2 (restart_sustainment, air_xe) | 0 | 0 |
+| 3 | A-FLOWENV (Delivered-feed envelope and start transient (upstream only)) | analysis | 1 | 1 (restart_sustainment) | 2 | 0 |
+| 4 | A-MASS (Mass ledger) | analysis | 1 | 1 (mass) | 0 | 0 |
+| 5 | A-THERMAL (Thermal/life analysis) | analysis | 0 | 0 (-) | 2 | 2 |
+| 6 | A-ELEC (Electrical closure on the common bus boundary) | analysis | 0 | 0 (-) | 2 | 0 |
+| 7 | A-OPS (Restart count from the operations concept) | analysis | 0 | 0 (-) | 2 | 0 |
+| 8 | M-EROSION (Short erosion/oxidation test on air) | measurement | 0 | 0 (-) | 2 | 0 |
+| 9 | M-IGN (Ignition and restart on the atmospheric feed) | measurement | 0 | 0 (-) | 2 | 0 |
+| 10 | M-PREION (Common-condition pre-ionizer A/B/C test) | measurement | 0 | 0 (-) | 2 | 0 |
+| 11 | M-SUSWIN (Sustainment-window map) | measurement | 0 | 0 (-) | 2 | 0 |
+| 12 | L-SITAEL (SITAEL / AETHER air-operation records) | literature | 0 | 0 (-) | 0 | 4 |
+| 13 | L-WALL (Wall and anode erosion/oxidation with N and O) | literature | 0 | 0 (-) | 0 | 3 |
+| 14 | L-THERMAL (Thermal limits of magnets and couplers) | literature | 0 | 0 (-) | 0 | 2 |
+| blocked | A-HALLMAP (Design Hall maps from admitted closures) | not ranked | - | - | - | touches 3 |
+
+#### `hall_only` branch `cathode_feed = xe_fed_thermionic` (6 open nodes counted; applies only if this option is chosen)
+
+| rank | action | kind | decides | gates decided | contributes | informs |
+|---|---|---|---|---|---|---|
+| 1 | M-CATHXE (Xe-fed thermionic cathode integration test) | measurement | 1 | 1 (firing_life) | 5 | 0 |
+| 2 | A-CATHODE (Cathode integration analysis) | analysis | 0 | 0 (-) | 2 | 3 |
+| 3 | A-FLOWENV (Delivered-feed envelope and start transient (upstream only)) | analysis | 0 | 0 (-) | 1 | 0 |
+| 4 | A-MASS (Mass ledger) | analysis | 0 | 0 (-) | 1 | 0 |
+| 5 | A-OPS (Restart count from the operations concept) | analysis | 0 | 0 (-) | 1 | 0 |
+| 6 | A-OXEXPO (Oxygen exposure at the cathode emitter) | analysis | 0 | 0 (-) | 1 | 0 |
+| 7 | L-CATHODE (Cathode oxygen tolerance and plume-mode records) | literature | 0 | 0 (-) | 0 | 6 |
+
+#### `hall_only` branch `cathode_feed = air_fed_plasma` (3 open nodes counted; applies only if this option is chosen)
+
+| rank | action | kind | decides | gates decided | contributes | informs |
+|---|---|---|---|---|---|---|
+| 1 | M-CATHAIR (Air-fed plasma cathode integration test) | measurement | 1 | 3 (thrust, restart_sustainment, air_xe) | 2 | 0 |
+| 2 | A-OPS (Restart count from the operations concept) | analysis | 0 | 0 (-) | 1 | 0 |
+| 3 | A-THERMAL (Thermal/life analysis) | analysis | 0 | 0 (-) | 1 | 0 |
+| 4 | L-CATHODE (Cathode oxygen tolerance and plume-mode records) | literature | 0 | 0 (-) | 0 | 3 |
+
+### `rf_hall` core (24 open nodes counted; 2 sub-cause(s) and 10 branch-specific node(s) not counted)
+
+| rank | action | kind | decides | gates decided | contributes | informs |
+|---|---|---|---|---|---|---|
+| 1 | M-THERMAL (Thermal balance test) | measurement | 3 | 1 (firing_life) | 0 | 0 |
+| 2 | M-PREION (Common-condition pre-ionizer A/B/C test) | measurement | 2 | 2 (thrust, restart_sustainment) | 6 | 0 |
+| 3 | M-TRANS (Xe -> mixed -> air transition) | measurement | 1 | 2 (restart_sustainment, air_xe) | 0 | 1 |
+| 4 | A-FLOWENV (Delivered-feed envelope and start transient (upstream only)) | analysis | 1 | 1 (restart_sustainment) | 5 | 0 |
+| 5 | A-MASS (Mass ledger) | analysis | 1 | 1 (mass) | 0 | 0 |
+| 6 | A-ELEC (Electrical closure on the common bus boundary) | analysis | 0 | 0 (-) | 5 | 1 |
+| 7 | M-IGN (Ignition and restart on the atmospheric feed) | measurement | 0 | 0 (-) | 4 | 0 |
+| 8 | A-THERMAL (Thermal/life analysis) | analysis | 0 | 0 (-) | 3 | 3 |
+| 9 | M-EROSION (Short erosion/oxidation test on air) | measurement | 0 | 0 (-) | 3 | 0 |
+| 10 | M-RFSRC (RF source standalone on N2/O2) | measurement | 0 | 0 (-) | 3 | 0 |
+| 11 | A-BREAKEVEN (Break-even surfaces) | analysis | 0 | 0 (-) | 2 | 1 |
+| 12 | A-OPS (Restart count from the operations concept) | analysis | 0 | 0 (-) | 2 | 0 |
 | 13 | M-SUSWIN (Sustainment-window map) | measurement | 0 | 0 (-) | 2 | 0 |
-| 14 | A-OXEXPO (Oxygen exposure at the cathode emitter) | analysis | 0 | 0 (-) | 1 | 0 |
-| 15 | L-CATHODE (Cathode oxygen tolerance and plume-mode records) | literature | 0 | 0 (-) | 0 | 6 |
-| 16 | L-SITAEL (SITAEL / AETHER air-operation records) | literature | 0 | 0 (-) | 0 | 4 |
-| 17 | L-WALL (Wall and anode erosion/oxidation with N and O) | literature | 0 | 0 (-) | 0 | 3 |
-| 18 | L-THERMAL (Thermal limits of magnets and couplers) | literature | 0 | 0 (-) | 0 | 2 |
-| blocked | A-HALLMAP (Design Hall maps from admitted closures) | not ranked | - | - | - | touches 4 |
+| 14 | L-SITAEL (SITAEL / AETHER air-operation records) | literature | 0 | 0 (-) | 0 | 5 |
+| 15 | L-HHT (Helicon-Hall two-stage records) | literature | 0 | 0 (-) | 0 | 4 |
+| 16 | L-WALL (Wall and anode erosion/oxidation with N and O) | literature | 0 | 0 (-) | 0 | 4 |
+| 17 | L-THERMAL (Thermal limits of magnets and couplers) | literature | 0 | 0 (-) | 0 | 3 |
+| 18 | A-INTERSTAGE (Interstage transport model) | analysis | 0 | 0 (-) | 0 | 3 |
+| 19 | L-RFMODE (RF mode transitions in N2/O2/air) | literature | 0 | 0 (-) | 0 | 2 |
+| 20 | L-ECRHALL (ECR-stage and ECR-ABEP records) | literature | 0 | 0 (-) | 0 | 1 |
+| blocked | A-HALLMAP (Design Hall maps from admitted closures) | not ranked | - | - | - | touches 3 |
 
-### `rf_hall` (32 open nodes counted; 1 sub-causes not counted)
+#### `rf_hall` branch `cathode_feed = xe_fed_thermionic` (6 open nodes counted; applies only if this option is chosen)
+
+| rank | action | kind | decides | gates decided | contributes | informs |
+|---|---|---|---|---|---|---|
+| 1 | M-CATHXE (Xe-fed thermionic cathode integration test) | measurement | 1 | 1 (firing_life) | 5 | 0 |
+| 2 | A-CATHODE (Cathode integration analysis) | analysis | 0 | 0 (-) | 2 | 3 |
+| 3 | A-FLOWENV (Delivered-feed envelope and start transient (upstream only)) | analysis | 0 | 0 (-) | 1 | 0 |
+| 4 | A-MASS (Mass ledger) | analysis | 0 | 0 (-) | 1 | 0 |
+| 5 | A-OPS (Restart count from the operations concept) | analysis | 0 | 0 (-) | 1 | 0 |
+| 6 | A-OXEXPO (Oxygen exposure at the cathode emitter) | analysis | 0 | 0 (-) | 1 | 0 |
+| 7 | L-CATHODE (Cathode oxygen tolerance and plume-mode records) | literature | 0 | 0 (-) | 0 | 6 |
+
+#### `rf_hall` branch `cathode_feed = air_fed_plasma` (3 open nodes counted; applies only if this option is chosen)
+
+| rank | action | kind | decides | gates decided | contributes | informs |
+|---|---|---|---|---|---|---|
+| 1 | M-CATHAIR (Air-fed plasma cathode integration test) | measurement | 1 | 3 (thrust, restart_sustainment, air_xe) | 2 | 0 |
+| 2 | A-OPS (Restart count from the operations concept) | analysis | 0 | 0 (-) | 1 | 0 |
+| 3 | A-THERMAL (Thermal/life analysis) | analysis | 0 | 0 (-) | 1 | 0 |
+| 4 | L-CATHODE (Cathode oxygen tolerance and plume-mode records) | literature | 0 | 0 (-) | 0 | 3 |
+
+#### `rf_hall` branch `rf_source_type = magnetized_helicon` (1 open nodes counted; applies only if this option is chosen)
+
+| rank | action | kind | decides | gates decided | contributes | informs |
+|---|---|---|---|---|---|---|
+| 1 | A-BFIELD (Magnetic-field superposition) | analysis | 1 | 2 (thrust, restart_sustainment) | 0 | 0 |
+| 2 | L-HHT (Helicon-Hall two-stage records) | literature | 0 | 0 (-) | 0 | 1 |
+| 3 | M-PREION (Common-condition pre-ionizer A/B/C test) | measurement | 0 | 0 (-) | 0 | 1 |
+
+#### `rf_hall` branch `rf_source_type = unmagnetized` (0 open nodes counted; applies only if this option is chosen)
+
+No node is specific to this option.
+
+### `ecr_hall` core (24 open nodes counted; 2 sub-cause(s) and 9 branch-specific node(s) not counted)
 
 | rank | action | kind | decides | gates decided | contributes | informs |
 |---|---|---|---|---|---|---|
 | 1 | M-THERMAL (Thermal balance test) | measurement | 3 | 1 (firing_life) | 0 | 0 |
-| 2 | M-CATHODE (Cathode integration test) | measurement | 2 | 4 (thrust, firing_life, restart_sustainment, air_xe) | 5 | 0 |
-| 3 | M-PREION (Common-condition pre-ionizer A/B/C test) | measurement | 2 | 2 (thrust, restart_sustainment) | 7 | 1 |
-| 4 | M-TRANS (Xe -> mixed -> air transition) | measurement | 1 | 2 (restart_sustainment, air_xe) | 0 | 1 |
-| 5 | A-BFIELD (Magnetic-field superposition) | analysis | 1 | 2 (thrust, restart_sustainment) | 0 | 0 |
-| 6 | A-FLOWENV (Delivered-feed envelope and start transient (upstream only)) | analysis | 1 | 1 (restart_sustainment) | 6 | 0 |
-| 7 | A-MASS (Mass ledger) | analysis | 1 | 1 (mass) | 1 | 0 |
-| 8 | A-ELEC (Electrical closure on the common bus boundary) | analysis | 0 | 0 (-) | 6 | 1 |
-| 9 | M-IGN (Ignition and restart on the atmospheric feed) | measurement | 0 | 0 (-) | 4 | 0 |
-| 10 | A-THERMAL (Thermal/life analysis) | analysis | 0 | 0 (-) | 3 | 3 |
-| 11 | M-EROSION (Short erosion/oxidation test on air) | measurement | 0 | 0 (-) | 3 | 0 |
-| 12 | M-RFSRC (RF source standalone on N2/O2) | measurement | 0 | 0 (-) | 3 | 0 |
-| 13 | A-CATHODE (Cathode integration analysis) | analysis | 0 | 0 (-) | 2 | 3 |
-| 14 | A-BREAKEVEN (Break-even surfaces) | analysis | 0 | 0 (-) | 2 | 1 |
-| 15 | A-OPS (Restart count from the operations concept) | analysis | 0 | 0 (-) | 2 | 0 |
-| 16 | M-SUSWIN (Sustainment-window map) | measurement | 0 | 0 (-) | 2 | 0 |
-| 17 | A-OXEXPO (Oxygen exposure at the cathode emitter) | analysis | 0 | 0 (-) | 1 | 0 |
-| 18 | L-CATHODE (Cathode oxygen tolerance and plume-mode records) | literature | 0 | 0 (-) | 0 | 6 |
-| 19 | L-HHT (Helicon-Hall two-stage records) | literature | 0 | 0 (-) | 0 | 5 |
-| 20 | L-SITAEL (SITAEL / AETHER air-operation records) | literature | 0 | 0 (-) | 0 | 5 |
-| 21 | L-WALL (Wall and anode erosion/oxidation with N and O) | literature | 0 | 0 (-) | 0 | 4 |
-| 22 | L-THERMAL (Thermal limits of magnets and couplers) | literature | 0 | 0 (-) | 0 | 3 |
-| 23 | A-INTERSTAGE (Interstage transport model) | analysis | 0 | 0 (-) | 0 | 3 |
-| 24 | L-RFMODE (RF mode transitions in N2/O2/air) | literature | 0 | 0 (-) | 0 | 2 |
-| 25 | L-ECRHALL (ECR-stage and ECR-ABEP records) | literature | 0 | 0 (-) | 0 | 1 |
-| blocked | A-HALLMAP (Design Hall maps from admitted closures) | not ranked | - | - | - | touches 4 |
+| 2 | M-PREION (Common-condition pre-ionizer A/B/C test) | measurement | 1 | 2 (thrust, restart_sustainment) | 6 | 0 |
+| 3 | A-BFIELD (Magnetic-field superposition) | analysis | 1 | 2 (thrust, restart_sustainment) | 0 | 1 |
+| 4 | M-TRANS (Xe -> mixed -> air transition) | measurement | 1 | 2 (restart_sustainment, air_xe) | 0 | 0 |
+| 5 | A-FLOWENV (Delivered-feed envelope and start transient (upstream only)) | analysis | 1 | 1 (restart_sustainment) | 4 | 0 |
+| 6 | A-MASS (Mass ledger) | analysis | 1 | 1 (mass) | 0 | 0 |
+| 7 | A-ELEC (Electrical closure on the common bus boundary) | analysis | 0 | 0 (-) | 5 | 0 |
+| 8 | M-IGN (Ignition and restart on the atmospheric feed) | measurement | 0 | 0 (-) | 4 | 0 |
+| 9 | A-THERMAL (Thermal/life analysis) | analysis | 0 | 0 (-) | 3 | 4 |
+| 10 | M-EROSION (Short erosion/oxidation test on air) | measurement | 0 | 0 (-) | 3 | 0 |
+| 11 | A-BREAKEVEN (Break-even surfaces) | analysis | 0 | 0 (-) | 2 | 1 |
+| 12 | M-ECRSRC (ECR source standalone on air) | measurement | 0 | 0 (-) | 2 | 1 |
+| 13 | A-OPS (Restart count from the operations concept) | analysis | 0 | 0 (-) | 2 | 0 |
+| 14 | M-SUSWIN (Sustainment-window map) | measurement | 0 | 0 (-) | 2 | 0 |
+| 15 | A-INTERSTAGE (Interstage transport model) | analysis | 0 | 0 (-) | 1 | 3 |
+| 16 | M-MWCHAIN (Microwave power-chain efficiency and life test) | measurement | 0 | 0 (-) | 1 | 0 |
+| 17 | L-ECRHALL (ECR-stage and ECR-ABEP records) | literature | 0 | 0 (-) | 0 | 10 |
+| 18 | L-SITAEL (SITAEL / AETHER air-operation records) | literature | 0 | 0 (-) | 0 | 5 |
+| 19 | L-THERMAL (Thermal limits of magnets and couplers) | literature | 0 | 0 (-) | 0 | 3 |
+| 20 | L-WALL (Wall and anode erosion/oxidation with N and O) | literature | 0 | 0 (-) | 0 | 3 |
+| 21 | L-HHT (Helicon-Hall two-stage records) | literature | 0 | 0 (-) | 0 | 1 |
+| blocked | A-HALLMAP (Design Hall maps from admitted closures) | not ranked | - | - | - | touches 3 |
 
-### `ecr_hall` (31 open nodes counted; 1 sub-causes not counted)
+#### `ecr_hall` branch `cathode_feed = xe_fed_thermionic` (6 open nodes counted; applies only if this option is chosen)
 
 | rank | action | kind | decides | gates decided | contributes | informs |
 |---|---|---|---|---|---|---|
-| 1 | M-THERMAL (Thermal balance test) | measurement | 3 | 1 (firing_life) | 0 | 0 |
-| 2 | M-CATHODE (Cathode integration test) | measurement | 2 | 4 (thrust, firing_life, restart_sustainment, air_xe) | 5 | 0 |
-| 3 | M-PREION (Common-condition pre-ionizer A/B/C test) | measurement | 1 | 2 (thrust, restart_sustainment) | 7 | 0 |
-| 4 | A-BFIELD (Magnetic-field superposition) | analysis | 1 | 2 (thrust, restart_sustainment) | 0 | 1 |
-| 5 | M-TRANS (Xe -> mixed -> air transition) | measurement | 1 | 2 (restart_sustainment, air_xe) | 0 | 0 |
-| 6 | A-FLOWENV (Delivered-feed envelope and start transient (upstream only)) | analysis | 1 | 1 (restart_sustainment) | 5 | 0 |
-| 7 | A-MASS (Mass ledger) | analysis | 1 | 1 (mass) | 1 | 0 |
-| 8 | A-ELEC (Electrical closure on the common bus boundary) | analysis | 0 | 0 (-) | 6 | 0 |
-| 9 | M-IGN (Ignition and restart on the atmospheric feed) | measurement | 0 | 0 (-) | 4 | 0 |
-| 10 | A-THERMAL (Thermal/life analysis) | analysis | 0 | 0 (-) | 3 | 4 |
-| 11 | M-EROSION (Short erosion/oxidation test on air) | measurement | 0 | 0 (-) | 3 | 0 |
-| 12 | A-CATHODE (Cathode integration analysis) | analysis | 0 | 0 (-) | 2 | 3 |
-| 13 | A-BREAKEVEN (Break-even surfaces) | analysis | 0 | 0 (-) | 2 | 1 |
-| 14 | M-ECRSRC (ECR source standalone on air) | measurement | 0 | 0 (-) | 2 | 1 |
-| 15 | A-OPS (Restart count from the operations concept) | analysis | 0 | 0 (-) | 2 | 0 |
-| 16 | M-SUSWIN (Sustainment-window map) | measurement | 0 | 0 (-) | 2 | 0 |
-| 17 | A-INTERSTAGE (Interstage transport model) | analysis | 0 | 0 (-) | 1 | 3 |
-| 18 | A-OXEXPO (Oxygen exposure at the cathode emitter) | analysis | 0 | 0 (-) | 1 | 0 |
-| 19 | M-MWCHAIN (Microwave power-chain efficiency and life test) | measurement | 0 | 0 (-) | 1 | 0 |
-| 20 | L-ECRHALL (ECR-stage and ECR-ABEP records) | literature | 0 | 0 (-) | 0 | 10 |
-| 21 | L-CATHODE (Cathode oxygen tolerance and plume-mode records) | literature | 0 | 0 (-) | 0 | 6 |
-| 22 | L-SITAEL (SITAEL / AETHER air-operation records) | literature | 0 | 0 (-) | 0 | 5 |
-| 23 | L-THERMAL (Thermal limits of magnets and couplers) | literature | 0 | 0 (-) | 0 | 3 |
-| 24 | L-WALL (Wall and anode erosion/oxidation with N and O) | literature | 0 | 0 (-) | 0 | 3 |
-| 25 | L-HHT (Helicon-Hall two-stage records) | literature | 0 | 0 (-) | 0 | 1 |
-| blocked | A-HALLMAP (Design Hall maps from admitted closures) | not ranked | - | - | - | touches 4 |
+| 1 | M-CATHXE (Xe-fed thermionic cathode integration test) | measurement | 1 | 1 (firing_life) | 5 | 0 |
+| 2 | A-CATHODE (Cathode integration analysis) | analysis | 0 | 0 (-) | 2 | 3 |
+| 3 | A-FLOWENV (Delivered-feed envelope and start transient (upstream only)) | analysis | 0 | 0 (-) | 1 | 0 |
+| 4 | A-MASS (Mass ledger) | analysis | 0 | 0 (-) | 1 | 0 |
+| 5 | A-OPS (Restart count from the operations concept) | analysis | 0 | 0 (-) | 1 | 0 |
+| 6 | A-OXEXPO (Oxygen exposure at the cathode emitter) | analysis | 0 | 0 (-) | 1 | 0 |
+| 7 | L-CATHODE (Cathode oxygen tolerance and plume-mode records) | literature | 0 | 0 (-) | 0 | 6 |
+
+#### `ecr_hall` branch `cathode_feed = air_fed_plasma` (3 open nodes counted; applies only if this option is chosen)
+
+| rank | action | kind | decides | gates decided | contributes | informs |
+|---|---|---|---|---|---|---|
+| 1 | M-CATHAIR (Air-fed plasma cathode integration test) | measurement | 1 | 3 (thrust, restart_sustainment, air_xe) | 2 | 0 |
+| 2 | A-OPS (Restart count from the operations concept) | analysis | 0 | 0 (-) | 1 | 0 |
+| 3 | A-THERMAL (Thermal/life analysis) | analysis | 0 | 0 (-) | 1 | 0 |
+| 4 | L-CATHODE (Cathode oxygen tolerance and plume-mode records) | literature | 0 | 0 (-) | 0 | 3 |
 <!-- END GENERATED:ranking -->
 
 ## Derived values (generated; model-derived arithmetic on cited inputs)
@@ -350,6 +448,7 @@ architecture's tree. It says nothing about which architecture is better.
 | D-RATIO-BECR-P5XE | Ratio of the 2.45 GHz ECR resonance field to the P5 peak radial field | 5.386 | 1 | - |
 | D-XE-PER-0.1MGPS-15000H | Xe mass consumed per 0.1 mg/s of cathode flow over the RFP firing hours | 5.4 | kg | - |
 | D-XE-DIAMANT-CHECK | Xe mass for 0.5 sccm continuous cathode flow over 5 years (reproduces the source's estimate) | 7.70262 | kg | 8.0 (S-DIAMANT2009 Sec. V pdf p. 4: 'about 8 kg'); rel. diff -0.03717 |
+| D-CIFALI-THRUST-N2 | Thrust implied by the S-CIFALI2011 pure-N2 operating point, V_d I_d / (W/mN) | 25.5144 | mN | - |
 | D-RFP-FIRING-FRACTION | Firing hours / mission hours | 0.5769 | 1 | - |
 <!-- END GENERATED:derived -->
 
@@ -375,8 +474,8 @@ Vyovrinda design value.
   gas the source states for that result (`gas_stated`). A further test requires the flag on every node whose title,
   quantity or threshold names air, N₂/O₂, the atmospheric or delivered feed, N/O species, oxygen or oxidation. So
   S-STASTNY2026 is context for N-IGN-03, and S-SHABSHELOWITZ2014 (two-stage gas not stated in the abstract) is context
-  for N-UTL-02 and N-PWR-02. Its N-UTL-01 item stays `supports`, because the quoted abstract sentence names argon and
-  nitrogen.
+  for N-UTL-02 and N-PWR-02. Its N-UTL-01 item names argon and nitrogen, but it says only that utilization is low, not
+  that 12 mN is out of reach within the bus, so it is `context` there too (1.3.0).
 - **Repository evidence.** Brabston 2025 (P5 on N₂) and Marchioni 2020 (ECHT) enter only through the repository's frozen
   audits (`hallthruster_bridge/identification/...`). They are not re-read here.
 - **Hall results.** No Hall transport closure, screening candidate (`sgb-screen-*`) or withdrawn 0-D Hall result is used
@@ -458,10 +557,39 @@ Vyovrinda design value.
   its docstring says: RFP numbers appear only with an RFP label, and no other number with a unit appears in a
   threshold.
 
+## Changes in 1.3.0 (review round 3)
+- **Design branches, ranked separately.** The cathode feed and the RF source type are explicit `design_branches`.
+  N-CAT-01/02/03/05/06 are now conditional on `xe_fed_thermionic`, as N-CAT-04 was on the air-fed option, and N-RF-03
+  is conditional on `magnetized_helicon`. Branch-specific nodes leave the core ranking and are ranked per option
+  (rule `decisiveness_lexicographic_v2`). With v1 counting, M-CATHODE ranked first in `hall_only` (2 decides, 4 gates).
+  That rank depended on counting the Xe-fed and air-fed alternatives together.
+- **Cathode test split.** M-CATHODE bundled the Xe-fed hollow-cathode test and the air-fed plasma-cathode alternative.
+  It is now M-CATHXE and M-CATHAIR, each tied to its option.
+- **Cathode branches completed.** The cathode start cycles moved out of N-CTL-02, which now covers only Hall-stage
+  starts and start Xe (A-OPS + M-IGN). The new N-CAT-07 covers Xe-fed heater/ignition cycles. The new N-CAT-08 covers
+  air-fed cathode wear life (M-CATHAIR + A-THERMAL extrapolation), and N-CAT-09 air-fed ignition cycles. All three
+  are `unknown`, with their gaps stated. Their physical causes are hypotheses marked "verify".
+- **N-UTL-01.** Its two `supports` items were relative-to-Xe or generic statements, so they are now `context`. It
+  now carries the measured N₂ operating points that already contradicted N-PWR-01 (S-CIFALI2011, S-MARCHIONI2020), so
+  its status moved supported → contradicted. It became a sub-cause of N-PWR-01, which removes the double count of one
+  comparison for A-ELEC and M-PREION. New derived value D-CIFALI-THRUST-N2 = 305 V × 3.48 A / 41.6 W/mN ≈ 25.5 mN. It
+  assumes that the W/mN figure is discharge power per thrust (verify against the source).
+- **Out-of-regime support relabelled `context`.** S-FOSTER2006 on N-ISL-ECR is a xenon gridded-ion ECR design remark
+  with no transfer into a Hall stage. S-ANDREUSSI2017 on N-SUS-03 has a DC first stage, not an RF or ECR one. Both
+  nodes moved supported → unknown, with the gap stated.
+- **N-THM-01.** The unsourced claim of a "higher fraction of power lost on molecular propellants" was removed. The
+  physical cause now says that the propellant dependence is not shown by the cited items, and marks it "verify".
+- **Tests.** New tests check that conditional nodes carry a declared branch, and that branch-specific actions touch
+  only their option. They check that no core ranking row names a branch or sub-cause node, and that every branch
+  combination covers every generic class and gate. A further test checks that a source never both supports and
+  contradicts one comparison.
+
 ## Open questions for the owner
 See `open_questions_for_owner` in the JSON. In short:
 - Confirm the gate-id mapping to the hard-gate matrix, and decide whether `P1_thermal` / `P2_cathode` become binding.
 - Set the restart count, the allowed Xe roles and the Xe allocation.
+- Choose the cathode feed (`xe_fed_thermionic` / `air_fed_plasma`) and the `rf_hall` RF source type, or keep both
+  open. A conditional selection must name the options it assumes.
 - Accept or replace the PROPOSED thresholds and the PROPOSED elimination rule.
 - Confirm the lane deliverable paths that were taken from other lanes' drafts.
 - Assign lanes, or accept the gaps, for the operations analysis (A-OPS), the magnetic-field superposition (A-BFIELD),

@@ -467,10 +467,14 @@ def test_derived_values_reproduce_source_statements(doc):
 
 
 # ------------------------------------------------------------------ ranking and generator
-def _rank_independent(doc, arch):
+def _counted(doc, arch, branch=None):
+    """Open, non-sub-cause nodes of arch; branch=None gives the core set (no branch), else that option's set."""
+    return [n for n in doc["nodes"] if arch in n["architectures"] and n["decision_state"] == "open"
+            and not n.get("sub_cause_of") and n.get("branch") == branch]
+
+
+def _rank_independent(doc, nodes):
     gates_of = {n["id"]: set(n["decision_quantity"]["gates"]) for n in doc["nodes"]}
-    nodes = [n for n in doc["nodes"] if arch in n["architectures"] and n["decision_state"] == "open"
-             and not n.get("sub_cause_of")]
     rows = []
     for a in doc["actions"]:
         if a["blocked_by"]:
@@ -490,17 +494,24 @@ def _rank_independent(doc, arch):
 
 def test_ranking_follows_the_stated_rule(doc):
     rule = doc["ranking_rule"]
-    assert rule["id"] == doc["ranked_next_evidence"]["rule_id"] == "decisiveness_lexicographic_v1"
+    assert rule["id"] == doc["ranked_next_evidence"]["rule_id"] == "decisiveness_lexicographic_v2"
     assert rule["cost_rank"] == COST
     for arch in ARCHS:
         r = doc["ranked_next_evidence"]["per_architecture"][arch]
-        assert [x["action"] for x in r["ranked"]] == _rank_independent(doc, arch), arch
+        assert [x["action"] for x in r["ranked"]] == _rank_independent(doc, _counted(doc, arch)), arch
         assert [x["rank"] for x in r["ranked"]] == list(range(1, len(r["ranked"]) + 1))
         assert {b["action"] for b in r["blocked"]} <= {"A-HALLMAP"}
         mine = [n for n in doc["nodes"] if arch in n["architectures"]]
-        assert r["n_nodes"] == sum(1 for n in mine if not n.get("sub_cause_of"))
+        assert r["n_nodes"] == sum(1 for n in mine if not n.get("sub_cause_of") and not n.get("branch"))
         assert r["n_sub_causes_not_counted"] == sum(1 for n in mine if n.get("sub_cause_of"))
+        assert r["n_branch_nodes_not_counted"] == sum(1 for n in mine if n.get("branch") and not n.get("sub_cause_of"))
         assert r["ranked"], arch
+        expected = [(b["id"], o["id"]) for b in doc["design_branches"] if arch in b["applies_to"] for o in b["options"]]
+        assert [(br["decision"], br["option"]) for br in r["branch_rankings"]] == expected, arch
+        for br in r["branch_rankings"]:
+            bn = _counted(doc, arch, {"decision": br["decision"], "option": br["option"]})
+            assert br["n_nodes"] == len(bn), (arch, br["option"])
+            assert [x["action"] for x in br["ranked"]] == _rank_independent(doc, bn), (arch, br["option"])
 
 
 def _load_generator():
@@ -532,11 +543,13 @@ def test_sub_causes_repeat_their_parent_and_are_not_counted(doc):
     ranking (so one comparison is never counted twice)."""
     nodes = {n["id"]: n for n in doc["nodes"]}
     subs = [n for n in doc["nodes"] if n.get("sub_cause_of")]
-    assert {n["id"] for n in subs} == {"N-MAS-02", "N-MAS-03"}
+    assert {n["id"] for n in subs} == {"N-MAS-02", "N-MAS-03", "N-UTL-01"}
     for n in subs:
         p = nodes[n["sub_cause_of"]]
         assert not p.get("sub_cause_of"), n["id"]
-        assert p["failure_class"] == n["failure_class"], n["id"]
+        # the class may differ only when the sub-cause is the mechanism behind the parent's quantity (N-UTL-01 -> N-PWR-01)
+        assert p["failure_class"] == n["failure_class"] or n["id"] == "N-UTL-01", n["id"]
+        assert n.get("branch") == p.get("branch"), n["id"]
         assert set(n["architectures"]) <= set(p["architectures"]), n["id"]
         assert n["decision_quantity"]["gates"] == p["decision_quantity"]["gates"], n["id"]
         assert p["id"] in n["decision_quantity"]["threshold"], n["id"]
@@ -575,7 +588,7 @@ def test_unassigned_work_is_named_not_hidden(doc):
 def test_review_round2_resolution_sets(doc):
     nodes = {n["id"]: n for n in doc["nodes"]}
     # the exposure analysis is part of the jointly sufficient set for poisoning
-    assert set(nodes["N-CAT-01"]["cheapest_resolution"]) == {"A-FLOWENV", "A-OXEXPO", "M-CATHODE"}
+    assert set(nodes["N-CAT-01"]["cheapest_resolution"]) == {"A-FLOWENV", "A-OXEXPO", "M-CATHXE"}
     # microwave-chain life is not settled by a thermal analysis
     eff = {na["action"]: na["effect"] for na in nodes["N-ECR-03"]["actions"]}
     assert eff["A-THERMAL"] == "informs" and eff["M-MWCHAIN"] == "contributes"
@@ -591,10 +604,137 @@ def test_review_round2_resolution_sets(doc):
 def test_cathode_limit_covers_current_flow_poisoning_and_life(doc):
     """The brief's cathode limits: current, flow, poisoning and life (intrinsic, not only through poisoning)."""
     nodes = {n["id"]: n for n in doc["nodes"]}
-    cat = [n for n in doc["nodes"] if n["failure_class"] == "FC-CAT"]
-    text = " ".join(n["title"].lower() for n in cat)
-    for word in ("current", "flow", "poisoning", "life"):
-        assert word in text, word
+    for option, words in (("xe_fed_thermionic", ("current", "flow", "poisoning", "life", "cycle")),
+                          ("air_fed_plasma", ("current", "wears out", "cycle"))):
+        cat = [n for n in doc["nodes"] if n["failure_class"] == "FC-CAT"
+               and n.get("branch") == {"decision": "cathode_feed", "option": option}]
+        text = " ".join(n["title"].lower() for n in cat)
+        for word in words:
+            assert word in text, (option, word)
     assert "firing_life" in nodes["N-CAT-05"]["decision_quantity"]["gates"]
     assert "evaporation" in nodes["N-CAT-05"]["mechanism"].lower()
     assert "Xe-fed" in nodes["N-CAT-06"]["title"]
+
+
+# ------------------------------------------------------------------ review round 3: design branches and one comparison, one direction
+def _branch_options(doc):
+    return {(b["id"], o["id"]): b for b in doc["design_branches"] for o in b["options"]}
+
+
+def test_conditional_nodes_carry_a_declared_branch(doc):
+    """A node that applies only under a design choice says so twice: a 'condition' sentence and a machine-readable
+    'branch' naming a declared option. Mutually exclusive options are never both counted in one ranking."""
+    opts = _branch_options(doc)
+    for n in doc["nodes"]:
+        assert bool(n.get("condition")) == bool(n.get("branch")), n["id"]
+        if n.get("branch"):
+            key = (n["branch"]["decision"], n["branch"]["option"])
+            assert key in opts, n["id"]
+            assert set(n["architectures"]) <= set(opts[key]["applies_to"]), n["id"]
+            assert n["branch"]["option"] in n["condition"], n["id"]
+    # the Xe-fed cathode nodes are conditional on their branch just like the air-fed alternative (review round 3)
+    nodes = {n["id"]: n for n in doc["nodes"]}
+    for nid in ("N-CAT-01", "N-CAT-02", "N-CAT-03", "N-CAT-05", "N-CAT-06", "N-CAT-07"):
+        assert nodes[nid]["branch"] == {"decision": "cathode_feed", "option": "xe_fed_thermionic"}, nid
+    for nid in ("N-CAT-04", "N-CAT-08", "N-CAT-09"):
+        assert nodes[nid]["branch"] == {"decision": "cathode_feed", "option": "air_fed_plasma"}, nid
+    assert not [n for n in doc["nodes"] if n["failure_class"] == "FC-CAT" and not n.get("branch")]
+
+
+def test_branch_specific_actions_touch_only_their_branch(doc):
+    """An action tied to one option (the Xe-fed or the air-fed cathode test) cannot be credited with nodes of the other
+    option or of the core; the old single cathode test that bundled both is gone."""
+    acts = {a["id"]: a for a in doc["actions"]}
+    assert "M-CATHODE" not in acts
+    assert acts["M-CATHXE"]["branch"]["option"] == "xe_fed_thermionic"
+    assert acts["M-CATHAIR"]["branch"]["option"] == "air_fed_plasma"
+    opts = _branch_options(doc)
+    for a in acts.values():
+        if a.get("branch"):
+            assert (a["branch"]["decision"], a["branch"]["option"]) in opts, a["id"]
+    for n in doc["nodes"]:
+        for na in n["actions"]:
+            b = acts[na["action"]].get("branch")
+            if b:
+                assert n.get("branch") == b, (n["id"], na["action"])
+
+
+def test_core_ranking_counts_no_branch_or_sub_cause_node(doc):
+    """Guards the counted set, not only the arithmetic: no core row names a branch-specific or sub-cause node, and each
+    branch list names only nodes of its own option."""
+    nodes = {n["id"]: n for n in doc["nodes"]}
+    for arch in ARCHS:
+        r = doc["ranked_next_evidence"]["per_architecture"][arch]
+        for x in r["ranked"]:
+            for nid in x["nodes_decided"] + x["nodes_contributed"] + x["nodes_informed"]:
+                assert not nodes[nid].get("branch") and not nodes[nid].get("sub_cause_of"), (arch, x["action"], nid)
+        for b in r["blocked"]:
+            for nid in b["nodes_touched"]:
+                assert not nodes[nid].get("branch") and not nodes[nid].get("sub_cause_of"), (arch, b["action"], nid)
+        for br in r["branch_rankings"]:
+            want = {"decision": br["decision"], "option": br["option"]}
+            for x in br["ranked"]:
+                for nid in x["nodes_decided"] + x["nodes_contributed"] + x["nodes_informed"]:
+                    assert nodes[nid].get("branch") == want and not nodes[nid].get("sub_cause_of"), (arch, x["action"], nid)
+
+
+def test_every_branch_combination_covers_every_generic_class_and_gate(doc):
+    """Whatever options are chosen, each architecture's tree (core plus the chosen options' nodes) still covers every
+    generic failure class and reaches every hard gate."""
+    import itertools
+    classes = {c["id"]: c["name"] for c in doc["failure_classes"]}
+    for arch in ARCHS:
+        decisions = [b for b in doc["design_branches"] if arch in b["applies_to"]]
+        for combo in itertools.product(*[[(b["id"], o["id"]) for o in b["options"]] for b in decisions]):
+            chosen = [{"decision": d, "option": o} for d, o in combo]
+            mine = [n for n in doc["nodes"] if arch in n["architectures"] and (not n.get("branch") or n["branch"] in chosen)]
+            present = {classes[n["failure_class"]] for n in mine}
+            assert GENERIC_CLASSES <= present, (arch, combo, GENERIC_CLASSES - present)
+            gates = {g for n in mine for g in n["decision_quantity"]["gates"]}
+            assert gates == set(GATES), (arch, combo, set(GATES) - gates)
+
+
+def test_one_comparison_one_direction_per_source(doc):
+    """A source cannot support a failure path on one node and contradict the same threshold comparison on another.
+    Nodes are the same comparison when one is a sub-cause of the other, or when their thresholds and gates are equal."""
+    nodes = {n["id"]: n for n in doc["nodes"]}
+    groups = {}
+    for n in doc["nodes"]:
+        root = n.get("sub_cause_of") or n["id"]
+        groups.setdefault(("parent", root), []).append(n)
+        key = ("threshold", n["decision_quantity"]["threshold"], tuple(sorted(n["decision_quantity"]["gates"])))
+        groups.setdefault(key, []).append(n)
+    for key, members in groups.items():
+        dirs = {}
+        for n in members:
+            for e in n["evidence"]:
+                dirs.setdefault(e["source"], set()).add(e["direction"])
+        for src, ds in dirs.items():
+            assert not {"supports", "contradicts"} <= ds or len(members) == 1, (key, src, [m["id"] for m in members])
+    # the review-round-3 case: low utilization vs discharge power per thrust within the bus
+    assert nodes["N-UTL-01"]["sub_cause_of"] == "N-PWR-01"
+    assert nodes["N-UTL-01"]["evidence_status"] == nodes["N-PWR-01"]["evidence_status"] == "contradicted"
+    assert not [e for e in nodes["N-UTL-01"]["evidence"] if e["direction"] == "supports"]
+    cifali = {e["direction"] for e in nodes["N-UTL-01"]["evidence"] if e["source"] == "S-CIFALI2011"}
+    assert cifali == {"context", "contradicts"}
+
+
+def test_review_round3_applicability_relabels(doc):
+    """Support from another regime (a xenon gridded-ion ECR discharge; a DC first stage) is context for the
+    RF/ECR-to-Hall nodes, with the gap stated; a comparative physical cause without a source is marked verify."""
+    nodes = {n["id"]: n for n in doc["nodes"]}
+    for nid, src in (("N-ISL-ECR", "S-FOSTER2006"), ("N-SUS-03", "S-ANDREUSSI2017")):
+        items = [e for e in nodes[nid]["evidence"] if e["source"] == src]
+        assert items and all(e["direction"] == "context" for e in items), nid
+        assert nodes[nid]["evidence_status"] == "unknown" and nodes[nid].get("evidence_gap"), nid
+    pc = nodes["N-THM-01"]["physical_cause"]
+    assert "verify" in pc and "higher fraction of power lost" not in pc
+    # a node whose physical cause is only a hypothesis says so
+    for nid in ("N-CAT-07", "N-CAT-08", "N-CAT-09"):
+        assert "verify" in nodes[nid]["physical_cause"] and not nodes[nid]["evidence"], nid
+
+
+def test_cifali_operating_point_arithmetic(doc):
+    v = {x["id"]: x for x in doc["derived_values"]["values"]}["D-CIFALI-THRUST-N2"]
+    assert v["unit"] == "mN" and abs(v["value"] - 305.0 * 3.48 / 41.6) < 1e-3
+    assert "verify" in v["note"]

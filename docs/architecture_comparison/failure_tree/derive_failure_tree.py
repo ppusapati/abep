@@ -110,6 +110,16 @@ def derived_values() -> dict:
                  "cross_check": {"source_stated": 8.0, "where": "S-DIAMANT2009 Sec. V pdf p. 4: 'about 8 kg'", "rel_diff": rel(m_kg, 8.0)},
                  "note": "Checks the source's arithmetic only; 0.5 sccm is the source's notional flow, not a Vyovrinda value."})
 
+    v_d, i_d, w_per_mn = 305.0, 3.48, 41.6          # S-CIFALI2011 Sec. II.B (pdf p. 3): '305 V, 3.48 A, 41.6 W/mN'
+    vals.append({"id": "D-CIFALI-THRUST-N2", "quantity": "Thrust implied by the S-CIFALI2011 pure-N2 operating point, V_d I_d / (W/mN)",
+                 "value": _sig(v_d * i_d / w_per_mn), "unit": "mN", "evidence_class": "model-derived",
+                 "inputs": {"V_d_V": v_d, "I_d_A": i_d, "power_per_thrust_W_per_mN": w_per_mn,
+                            "source": "S-CIFALI2011 Sec. II.B (pdf p. 3), PPS1350-TSD on pure N2"},
+                 "cross_check": None,
+                 "note": ("Assumes the source's W/mN is discharge power V_d x I_d per unit thrust (verify against the source's "
+                          "definition). Laboratory setpoint with a Xe cathode and controller-set flow; not a Vyovrinda operating point, "
+                          "and no power-per-thrust at 12 mN is implied.")})
+
     vals.append({"id": "D-RFP-FIRING-FRACTION", "quantity": "Firing hours / mission hours",
                  "value": _sig(RFP.ignition_hours / RFP.mission_hours, 4), "unit": "1", "evidence_class": "model-derived",
                  "inputs": {"firing_hours": RFP.ignition_hours, "mission_hours": RFP.mission_hours,
@@ -124,42 +134,65 @@ def derived_values() -> dict:
             "values": vals}
 
 
-def rank(doc: dict) -> dict:
+def _branch_key(n: dict):
+    b = n.get("branch")
+    return (b["decision"], b["option"]) if b else None
+
+
+def _rank_nodes(doc: dict, nodes: list) -> tuple[list, list]:
+    """Apply the lexicographic rule to one counted node set; returns (ranked, blocked)."""
     gate_order = [g["id"] for g in doc["hard_gates"]]
-    actions = doc["actions"]
+    ranked, blocked = [], []
+    for a in doc["actions"]:
+        by = {"decides": [], "contributes": [], "informs": []}
+        for n in nodes:
+            for na in n["actions"]:
+                if na["action"] == a["id"]:
+                    by[na["effect"]].append(n["id"])
+        touched = by["decides"] + by["contributes"] + by["informs"]
+        if not touched:
+            continue
+        if a["blocked_by"]:
+            blocked.append({"action": a["id"], "blocked_by": list(a["blocked_by"]),
+                            "nodes_touched": [n["id"] for n in nodes if n["id"] in touched]})
+            continue
+        gset = {g for n in nodes if n["id"] in by["decides"] for g in n["decision_quantity"]["gates"]}
+        ranked.append({"action": a["id"], "kind": a["kind"], "n_decides": len(by["decides"]),
+                       "n_gates_decided": len(gset), "n_contributes": len(by["contributes"]),
+                       "n_informs": len(by["informs"]), "gates_decided": [g for g in gate_order if g in gset],
+                       "nodes_decided": by["decides"], "nodes_contributed": by["contributes"],
+                       "nodes_informed": by["informs"]})
+    ranked.sort(key=lambda r: (-r["n_decides"], -r["n_gates_decided"], -r["n_contributes"], -r["n_informs"],
+                               COST_RANK[r["kind"]], r["action"]))
+    out = []
+    for i, r in enumerate(ranked, 1):
+        r_ordered = {"rank": i}
+        r_ordered.update(r)
+        out.append(r_ordered)
+    return out, blocked
+
+
+def rank(doc: dict) -> dict:
     out = {}
     for arch in ARCHS:
         arch_open = [n for n in doc["nodes"] if arch in n["architectures"] and n["decision_state"] == "open"]
         # a sub-cause repeats its parent's threshold comparison: listed in the tree, not counted
-        nodes = [n for n in arch_open if not n.get("sub_cause_of")]
-        n_sub = len(arch_open) - len(nodes)
-        ranked, blocked = [], []
-        for a in actions:
-            by = {"decides": [], "contributes": [], "informs": []}
-            for n in nodes:
-                for na in n["actions"]:
-                    if na["action"] == a["id"]:
-                        by[na["effect"]].append(n["id"])
-            touched = by["decides"] + by["contributes"] + by["informs"]
-            if not touched:
+        counted = [n for n in arch_open if not n.get("sub_cause_of")]
+        # a branch-specific node applies only under its design-branch option: ranked in that option's own list
+        core = [n for n in counted if _branch_key(n) is None]
+        ranked, blocked = _rank_nodes(doc, core)
+        branch_rankings = []
+        for b in doc["design_branches"]:
+            if arch not in b["applies_to"]:
                 continue
-            if a["blocked_by"]:
-                blocked.append({"action": a["id"], "blocked_by": list(a["blocked_by"]),
-                                "nodes_touched": [n["id"] for n in nodes if n["id"] in touched]})
-                continue
-            gset = {g for n in nodes if n["id"] in by["decides"] for g in n["decision_quantity"]["gates"]}
-            ranked.append({"action": a["id"], "kind": a["kind"], "n_decides": len(by["decides"]),
-                           "n_gates_decided": len(gset), "n_contributes": len(by["contributes"]),
-                           "n_informs": len(by["informs"]), "gates_decided": [g for g in gate_order if g in gset],
-                           "nodes_decided": by["decides"], "nodes_contributed": by["contributes"],
-                           "nodes_informed": by["informs"]})
-        ranked.sort(key=lambda r: (-r["n_decides"], -r["n_gates_decided"], -r["n_contributes"], -r["n_informs"],
-                                   COST_RANK[r["kind"]], r["action"]))
-        for i, r in enumerate(ranked, 1):
-            r_ordered = {"rank": i}
-            r_ordered.update(r)
-            ranked[i - 1] = r_ordered
-        out[arch] = {"n_nodes": len(nodes), "n_sub_causes_not_counted": n_sub, "ranked": ranked, "blocked": blocked}
+            for o in b["options"]:
+                bn = [n for n in counted if _branch_key(n) == (b["id"], o["id"])]
+                br, bb = _rank_nodes(doc, bn)
+                branch_rankings.append({"decision": b["id"], "option": o["id"], "n_nodes": len(bn),
+                                        "ranked": br, "blocked": bb})
+        out[arch] = {"n_nodes": len(core), "n_sub_causes_not_counted": len(arch_open) - len(counted),
+                     "n_branch_nodes_not_counted": len(counted) - len(core), "ranked": ranked, "blocked": blocked,
+                     "branch_rankings": branch_rankings}
     return {"generated_by": GENERATOR, "rule_id": doc["ranking_rule"]["id"], "per_architecture": out}
 
 
@@ -180,7 +213,8 @@ def md_sections(doc: dict) -> dict:
         c = status_counts(doc, arch)
         nodes = [n for n in doc["nodes"] if arch in n["architectures"]]
         n_sub = sum(1 for n in nodes if n.get("sub_cause_of"))
-        lines.append(f"### `{arch}` ({len(nodes)} nodes, {n_sub} of them sub-causes: {c['supported']} supported, "
+        n_br = sum(1 for n in nodes if n.get("branch"))
+        lines.append(f"### `{arch}` ({len(nodes)} nodes, {n_sub} sub-cause(s), {n_br} branch-specific: {c['supported']} supported, "
                      f"{c['contradicted']} contradicted, {c['unknown']} unknown; all decision_state = open)")
         lines.append("")
         lines.append("| class | node | failure path | evidence status | gates | cheapest resolution | resolve by | analysis needs admitted Hall closure |")
@@ -191,7 +225,8 @@ def md_sections(doc: dict) -> dict:
             for n in nodes:
                 if n["failure_class"] != fc["id"]:
                     continue
-                cond = " (conditional)" if n.get("condition") else ""
+                b = n.get("branch")
+                cond = f" (branch {b['decision']} = {b['option']})" if b else ""
                 if n.get("sub_cause_of"):
                     cond += f" (sub-cause of {n['sub_cause_of']}; not counted)"
                 lines.append(f"| {classes[fc['id']]['name']} | {n['id']} | {n['title']}{cond} | {n['evidence_status']} | "
@@ -200,19 +235,32 @@ def md_sections(doc: dict) -> dict:
         lines.append("")
     sec["trees"] = "\n".join(lines).rstrip() + "\n"
 
+    def table(rows, blocked):
+        t = ["| rank | action | kind | decides | gates decided | contributes | informs |", "|---|---|---|---|---|---|---|"]
+        for x in rows:
+            t.append(f"| {x['rank']} | {x['action']} ({titles[x['action']]}) | {x['kind']} | {x['n_decides']} | "
+                     f"{x['n_gates_decided']} ({', '.join(x['gates_decided']) or '-'}) | {x['n_contributes']} | {x['n_informs']} |")
+        for b in blocked:
+            t.append(f"| blocked | {b['action']} ({titles[b['action']]}) | not ranked | - | - | - | touches {len(b['nodes_touched'])} |")
+        return t
+
     lines = []
     for arch in ARCHS:
         r = doc["ranked_next_evidence"]["per_architecture"][arch]
-        lines.append(f"### `{arch}` ({r['n_nodes']} open nodes counted; {r['n_sub_causes_not_counted']} sub-causes not counted)")
+        lines.append(f"### `{arch}` core ({r['n_nodes']} open nodes counted; {r['n_sub_causes_not_counted']} sub-cause(s) and "
+                     f"{r['n_branch_nodes_not_counted']} branch-specific node(s) not counted)")
         lines.append("")
-        lines.append("| rank | action | kind | decides | gates decided | contributes | informs |")
-        lines.append("|---|---|---|---|---|---|---|")
-        for x in r["ranked"]:
-            lines.append(f"| {x['rank']} | {x['action']} ({titles[x['action']]}) | {x['kind']} | {x['n_decides']} | "
-                         f"{x['n_gates_decided']} ({', '.join(x['gates_decided']) or '-'}) | {x['n_contributes']} | {x['n_informs']} |")
-        for b in r["blocked"]:
-            lines.append(f"| blocked | {b['action']} ({titles[b['action']]}) | not ranked | - | - | - | touches {len(b['nodes_touched'])} |")
+        lines += table(r["ranked"], r["blocked"])
         lines.append("")
+        for br in r["branch_rankings"]:
+            lines.append(f"#### `{arch}` branch `{br['decision']} = {br['option']}` ({br['n_nodes']} open nodes counted; "
+                         "applies only if this option is chosen)")
+            lines.append("")
+            if br["ranked"] or br["blocked"]:
+                lines += table(br["ranked"], br["blocked"])
+            else:
+                lines.append("No node is specific to this option.")
+            lines.append("")
     sec["ranking"] = "\n".join(lines).rstrip() + "\n"
 
     lines = ["| id | quantity | value | unit | cross-check |", "|---|---|---|---|---|"]

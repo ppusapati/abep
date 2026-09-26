@@ -6,7 +6,7 @@
  "type": "object",
  "additionalProperties": false,
  "required": ["schema", "id", "version", "status", "date", "base_commit", "lane", "scope", "no_winner_statement", "milestones",
-  "architectures", "hard_gates", "hard_gate_matrix_link", "lanes", "failure_classes", "evidence_status_rule", "elimination_rule", "eliminations",
+  "architectures", "hard_gates", "hard_gate_matrix_link", "lanes", "failure_classes", "design_branches", "evidence_status_rule", "elimination_rule", "eliminations",
   "sources", "actions", "action_effects", "nodes", "ranking_rule", "derived_values", "ranked_next_evidence", "open_questions_for_owner"],
  "properties": {
   "schema": {"const": "failure_tree_v1"},
@@ -24,6 +24,7 @@
   "hard_gate_matrix_link": {"$ref": "#/$defs/hard_gate_matrix_link"},
   "lanes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/lane"}},
   "failure_classes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/failure_class"}},
+  "design_branches": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/design_branch"}},
   "evidence_status_rule": {"$ref": "#/$defs/evidence_status_rule"},
   "elimination_rule": {"$ref": "#/$defs/elimination_rule"},
   "eliminations": {"type": "array", "items": {"$ref": "#/$defs/elimination"}},
@@ -119,6 +120,24 @@
     "description": {"type": "string", "minLength": 1}
    }
   },
+  "design_branch": {
+   "description": "A design decision with mutually exclusive options whose failure paths differ (e.g. cathode feed). Nodes specific to one option carry it in 'branch' and are ranked per option, never in the core ranking.",
+   "type": "object", "additionalProperties": false,
+   "required": ["id", "applies_to", "status", "description", "options"],
+   "properties": {
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+    "applies_to": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/arch_id"}},
+    "status": {"type": "string", "minLength": 1},
+    "description": {"type": "string", "minLength": 1},
+    "options": {"type": "array", "minItems": 2, "items": {"type": "object", "additionalProperties": false, "required": ["id", "description"],
+     "properties": {"id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}, "description": {"type": "string", "minLength": 1}}}}
+   }
+  },
+  "branch_ref": {
+   "description": "One design-branch option (design_branches[].id and one of its options[].id). A node or action carrying it applies only if that option is chosen.",
+   "type": "object", "additionalProperties": false, "required": ["decision", "option"],
+   "properties": {"decision": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}, "option": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}}
+  },
   "evidence_status_rule": {
    "type": "object", "additionalProperties": false,
    "required": ["meaning", "directions", "rule", "unknown_basis"],
@@ -167,6 +186,7 @@
     "lane": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
     "deliverable": {"type": "string", "minLength": 1},
     "blocked_by": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "branch": {"$ref": "#/$defs/branch_ref"},
     "specified_by": {"description": "Lanes that specify the protocol or requirement of a measurement action; the executing lane is 'lane'.", "type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}},
     "targets": {"type": "array", "items": {"type": "string"}}
    }
@@ -225,9 +245,10 @@
     "id": {"type": "string", "pattern": "^N-[A-Z]{2,3}-[A-Z0-9]+$"},
     "architectures": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/arch_id"}},
     "failure_class": {"type": "string", "pattern": "^FC-[A-Z]{3}$"},
-    "sub_cause_of": {"description": "Parent node whose threshold comparison this node repeats (an architecture-specific contributor). Sub-causes are listed but not counted in the ranking.", "type": "string", "pattern": "^N-[A-Z]{2,3}-[A-Z0-9]+$"},
+    "sub_cause_of": {"description": "Parent node whose threshold comparison this node repeats (a contributing cause: an architecture-specific component, or the mechanism behind the parent's quantity). Sub-causes are listed but not counted in the ranking.", "type": "string", "pattern": "^N-[A-Z]{2,3}-[A-Z0-9]+$"},
     "title": {"type": "string", "minLength": 1},
-    "condition": {"type": "string", "minLength": 1},
+    "condition": {"description": "Plain-text applicability condition; present exactly when 'branch' is (the test enforces the pairing).", "type": "string", "minLength": 1},
+    "branch": {"$ref": "#/$defs/branch_ref"},
     "rfp_blocks": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/rfp_block"}},
     "air_specific": {"description": "true when the node's decision quantity is evaluated on the atmospheric (air / N2 / O2) feed or its mechanism depends on N/O species; evidence whose gas is not stated cannot decide it.", "type": "boolean"},
     "mechanism": {"type": "string", "minLength": 1},
@@ -248,11 +269,12 @@
   },
   "ranking_rule": {
    "type": "object", "additionalProperties": false,
-   "required": ["id", "text", "eligibility", "key", "cost_rank", "no_weighting"],
+   "required": ["id", "text", "eligibility", "branch_rule", "key", "cost_rank", "no_weighting"],
    "properties": {
-    "id": {"const": "decisiveness_lexicographic_v1"},
+    "id": {"const": "decisiveness_lexicographic_v2"},
     "text": {"type": "string", "minLength": 1},
     "eligibility": {"type": "string", "minLength": 1},
+    "branch_rule": {"type": "string", "minLength": 1},
     "key": {"type": "array", "minItems": 6, "items": {"type": "string"}},
     "cost_rank": {"type": "object", "additionalProperties": false, "required": ["literature", "analysis", "measurement"],
      "properties": {"literature": {"const": 0}, "analysis": {"const": 1}, "measurement": {"const": 2}}},
@@ -274,32 +296,44 @@
    "required": ["generated_by", "rule_id", "per_architecture"],
    "properties": {
     "generated_by": {"const": "docs/architecture_comparison/failure_tree/derive_failure_tree.py"},
-    "rule_id": {"const": "decisiveness_lexicographic_v1"},
+    "rule_id": {"const": "decisiveness_lexicographic_v2"},
     "per_architecture": {"type": "object", "additionalProperties": false, "required": ["hall_only", "rf_hall", "ecr_hall"],
      "properties": {"hall_only": {"$ref": "#/$defs/arch_ranking"}, "rf_hall": {"$ref": "#/$defs/arch_ranking"}, "ecr_hall": {"$ref": "#/$defs/arch_ranking"}}}
    }
   },
   "arch_ranking": {
    "type": "object", "additionalProperties": false,
-   "required": ["n_nodes", "n_sub_causes_not_counted", "ranked", "blocked"],
+   "required": ["n_nodes", "n_sub_causes_not_counted", "n_branch_nodes_not_counted", "ranked", "blocked", "branch_rankings"],
    "properties": {
-    "n_nodes": {"description": "Open nodes of the architecture that are counted (sub-causes excluded).", "type": "integer", "minimum": 1},
+    "n_nodes": {"description": "Open core nodes of the architecture that are counted (sub-causes and branch-specific nodes excluded).", "type": "integer", "minimum": 1},
     "n_sub_causes_not_counted": {"type": "integer", "minimum": 0},
-    "ranked": {"type": "array", "items": {"type": "object", "additionalProperties": false,
-     "required": ["rank", "action", "kind", "n_decides", "n_gates_decided", "n_contributes", "n_informs", "gates_decided", "nodes_decided", "nodes_contributed", "nodes_informed"],
-     "properties": {
-      "rank": {"type": "integer", "minimum": 1}, "action": {"type": "string"}, "kind": {"$ref": "#/$defs/action_kind"},
-      "n_decides": {"type": "integer", "minimum": 0}, "n_gates_decided": {"type": "integer", "minimum": 0},
-      "n_contributes": {"type": "integer", "minimum": 0}, "n_informs": {"type": "integer", "minimum": 0},
-      "gates_decided": {"type": "array", "items": {"$ref": "#/$defs/gate_id"}},
-      "nodes_decided": {"type": "array", "items": {"type": "string"}},
-      "nodes_contributed": {"type": "array", "items": {"type": "string"}},
-      "nodes_informed": {"type": "array", "items": {"type": "string"}}
-     }}},
-    "blocked": {"type": "array", "items": {"type": "object", "additionalProperties": false,
-     "required": ["action", "blocked_by", "nodes_touched"],
-     "properties": {"action": {"type": "string"}, "blocked_by": {"type": "array", "items": {"type": "string"}}, "nodes_touched": {"type": "array", "items": {"type": "string"}}}}}
+    "n_branch_nodes_not_counted": {"description": "Open nodes specific to a design-branch option; ranked in branch_rankings, not in the core list.", "type": "integer", "minimum": 0},
+    "ranked": {"type": "array", "items": {"$ref": "#/$defs/ranked_row"}},
+    "blocked": {"type": "array", "items": {"$ref": "#/$defs/blocked_row"}},
+    "branch_rankings": {"type": "array", "items": {"type": "object", "additionalProperties": false,
+     "required": ["decision", "option", "n_nodes", "ranked", "blocked"],
+     "properties": {"decision": {"type": "string"}, "option": {"type": "string"}, "n_nodes": {"type": "integer", "minimum": 0},
+      "ranked": {"type": "array", "items": {"$ref": "#/$defs/ranked_row"}},
+      "blocked": {"type": "array", "items": {"$ref": "#/$defs/blocked_row"}}}}}
    }
+  },
+  "ranked_row": {
+   "type": "object", "additionalProperties": false,
+   "required": ["rank", "action", "kind", "n_decides", "n_gates_decided", "n_contributes", "n_informs", "gates_decided", "nodes_decided", "nodes_contributed", "nodes_informed"],
+   "properties": {
+    "rank": {"type": "integer", "minimum": 1}, "action": {"type": "string"}, "kind": {"$ref": "#/$defs/action_kind"},
+    "n_decides": {"type": "integer", "minimum": 0}, "n_gates_decided": {"type": "integer", "minimum": 0},
+    "n_contributes": {"type": "integer", "minimum": 0}, "n_informs": {"type": "integer", "minimum": 0},
+    "gates_decided": {"type": "array", "items": {"$ref": "#/$defs/gate_id"}},
+    "nodes_decided": {"type": "array", "items": {"type": "string"}},
+    "nodes_contributed": {"type": "array", "items": {"type": "string"}},
+    "nodes_informed": {"type": "array", "items": {"type": "string"}}
+   }
+  },
+  "blocked_row": {
+   "type": "object", "additionalProperties": false,
+   "required": ["action", "blocked_by", "nodes_touched"],
+   "properties": {"action": {"type": "string"}, "blocked_by": {"type": "array", "items": {"type": "string"}}, "nodes_touched": {"type": "array", "items": {"type": "string"}}}
   }
  }
 }

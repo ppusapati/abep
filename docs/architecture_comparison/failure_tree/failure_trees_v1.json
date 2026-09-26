@@ -1,7 +1,7 @@
 {
  "schema": "failure_tree_v1",
  "id": "failure_trees_v1",
- "version": "1.2.0",
+ "version": "1.3.0",
  "status": "DRAFT for owner review (2026-09-26). Evidence map and decision structure only: nothing here is a performance prediction, a validation claim or a selection.",
  "date": "2026-09-26",
  "base_commit": "c53b75a",
@@ -17,7 +17,7 @@
    "B": "Physics-backed selection: credible envelopes from validated Hall transport, chemistry and common-boundary performance.",
    "C": "Proposal/PDR freeze: mass, power, thermal, life, startup, cathode and mission closure integrated."
   },
-  "provides_for_A": "For each architecture the open nodes of its tree, each with a milestone_A_condition sentence, are the explicit condition list a conditional selection must carry ('baseline provided that ...'). The per-architecture ranked list says which single piece of evidence would retire the most conditions.",
+  "provides_for_A": "For each architecture the open nodes of its tree, each with a milestone_A_condition sentence, are the explicit condition list a conditional selection must carry ('baseline provided that ...'): the core nodes plus the nodes of the chosen design-branch options (cathode feed; for rf_hall, the RF source type). The per-architecture core ranking says which single piece of evidence would retire the most branch-independent conditions; each branch option has its own ranking.",
   "to_reach_B": [
    "Every node with resolve_by_milestone = 'B' in the selected architecture's tree moved to resolved_pass (none may be resolved_fail on a hard gate).",
    "Nodes flagged analysis_requires_admitted_hall_closure resolved either by measurement or by analysis on design Hall maps from ADMITTED closures (credible set non-empty, O4 dispositions complete; CLAUDE.md Next work 1 and 3). Today the credible set is empty, so these nodes can only be resolved by measurement.",
@@ -25,7 +25,7 @@
    "Evidence for architecture-specific physics (E-H transition, ECR cutoff and field interaction, interstage transmission) at the Vyovrinda design point, not only at literature devices."
   ],
   "to_reach_C": [
-   "Every node with resolve_by_milestone = 'C' resolved_pass: cathode (poisoning, Xe consumption, plume mode, current), thermal (magnets, RF coupler, ECR magnets/resonator), erosion and anode oxidation, mass ledger, start/restart and Xe -> air transition, feed-system start transient.",
+   "Every node with resolve_by_milestone = 'C' resolved_pass: cathode on the chosen cathode_feed branch (Xe-fed: poisoning, Xe consumption, plume mode, current, insert life, heater/ignition cycles; air-fed: current and coupling, wear life, ignition cycles), thermal (magnets, RF coupler, ECR magnets/resonator), erosion and anode oxidation, mass ledger, start/restart and Xe -> air transition, feed-system start transient.",
    "Restart count and Xe allocation fixed by the owner (open questions below) so that thresholds marked TBD become numbers.",
    "Mass (schemas/ledgers/) and thermal/life (abep_sim/thermal_life.py) closures integrated with the electrical closure and mission closure."
   ]
@@ -471,6 +471,46 @@
     "ecr_hall"
    ],
    "description": "ECR-specific modes: cutoff/overdense limit, interaction between ECR and Hall magnetic fields, microwave power chain."
+  }
+ ],
+ "design_branches": [
+  {
+   "id": "cathode_feed",
+   "applies_to": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "status": "open - design/owner decision; no option is a baseline in v1",
+   "description": "How the common cathode/neutralizer is fed. The options are mutually exclusive and their failure paths differ, so the nodes specific to one option carry that option in 'branch' and are ranked in that option's own list, not in the branch-independent (core) ranking.",
+   "options": [
+    {
+     "id": "xe_fed_thermionic",
+     "description": "Xe-fed thermionic (LaB6 or BaO-W) hollow cathode. This is the cathode configuration of the laboratory air/N2 Hall tests cited here (S-CIFALI2011, S-ANDREUSSI2017, S-BRABSTON2025), which is a statement about those tests, not a Vyovrinda choice."
+    },
+    {
+     "id": "air_fed_plasma",
+     "description": "Air-fed non-thermionic (microwave or RF) plasma cathode that removes cathode Xe (S-TISAEV2023A/B at 24-70 W microwave power, 100-300 W Hall class)."
+    }
+   ]
+  },
+  {
+   "id": "rf_source_type",
+   "applies_to": [
+    "rf_hall"
+   ],
+   "status": "open - design decision",
+   "description": "Whether the rf_hall pre-ionizer uses an applied (helicon) magnetic field.",
+   "options": [
+    {
+     "id": "magnetized_helicon",
+     "description": "Helicon source with an external solenoid field."
+    },
+    {
+     "id": "unmagnetized",
+     "description": "Inductive RF source without an applied field; no node is specific to this option in v1."
+    }
+   ]
   }
  ],
  "evidence_status_rule": {
@@ -1076,17 +1116,38 @@
    "specified_by": []
   },
   {
-   "id": "M-CATHODE",
+   "id": "M-CATHXE",
    "kind": "measurement",
-   "title": "Cathode integration test",
-   "description": "Minimum cathode Xe flow at the required current before plume-mode onset; emission vs oxygen-bearing partial pressure (feed, backflow, ram exposure when off); heater/ignition cycles; air-fed plasma-cathode alternative at the required current.",
+   "title": "Xe-fed thermionic cathode integration test",
+   "description": "On the selected Xe-fed hollow cathode: minimum Xe flow at the required current before plume-mode onset; emission and discharge stability vs oxygen-bearing partial pressure (feed, backflow, ram exposure when off); heater/ignition cycles; emitter temperature and demonstrated current range at the required emission current.",
    "lane": "hardware_test",
    "deliverable": "Measurement: TBD - no lane executes it (lane hardware_test). Requirements: docs/architecture_comparison/cathode_integration/ with docs/evidence/cathode/ (evidence matrix).",
    "blocked_by": [],
    "specified_by": [
     "cathode_integration",
     "evidence_cathode"
-   ]
+   ],
+   "branch": {
+    "decision": "cathode_feed",
+    "option": "xe_fed_thermionic"
+   }
+  },
+  {
+   "id": "M-CATHAIR",
+   "kind": "measurement",
+   "title": "Air-fed plasma cathode integration test",
+   "description": "On the selected air-fed (microwave or RF) plasma cathode: extracted electron current and coupling voltage at the required discharge current and air flow; ignition cycles; wear or oxidation of chamber, antenna/coupler and orifice after a defined run, for life extrapolation.",
+   "lane": "hardware_test",
+   "deliverable": "Measurement: TBD - no lane executes it (lane hardware_test). Requirements: docs/architecture_comparison/cathode_integration/ with docs/evidence/cathode/ (evidence matrix).",
+   "blocked_by": [],
+   "specified_by": [
+    "cathode_integration",
+    "evidence_cathode"
+   ],
+   "branch": {
+    "decision": "cathode_feed",
+    "option": "air_fed_plasma"
+   }
   },
   {
    "id": "M-EROSION",
@@ -1665,15 +1726,15 @@
    "evidence": [
     {
      "source": "S-ANDREUSSI2017",
-     "direction": "supports",
+     "direction": "context",
      "evidence_class": "measured",
      "evidence_level": 3,
      "statement": "'the current circulating in the acceleration stage was always significantly higher than expected. This phenomenon posed a limit to the applicable acceleration voltage and, in turn, to the achievable thrust'; in standalone Xe tests both supplies went to current limitation and both voltages dropped to around 100 V.",
      "locator": "Sec. IV (pdf p. 10); Sec. III.E (pdf p. 7)",
-     "applicability": "Double-stage Hall (DC first stage); mechanism class is two-stage coupling, not specific to RF or ECR."
+     "applicability": "Double-stage Hall thruster whose first stage is a DC discharge, not an RF or ECR pre-ionizer; it shows two-stage coupling in a DC/DC device, so context for the rf_hall and ecr_hall coupling node."
     }
    ],
-   "evidence_status": "supported",
+   "evidence_status": "unknown",
    "decision_quantity": {
     "quantity": "Acceleration-stage current and usable acceleration voltage with the pre-ionizer on, and stability of the coupled discharges",
     "threshold": "Acceleration voltage and current at the design point reachable with bounded oscillation (PROPOSED)",
@@ -1714,7 +1775,8 @@
    "resolve_by_milestone": "B",
    "milestone_A_condition": "Demonstrate the design acceleration voltage and current with the pre-ionizer on, without runaway acceleration-stage current.",
    "analysis_requires_admitted_hall_closure": true,
-   "decision_state": "open"
+   "decision_state": "open",
+   "evidence_gap": "No open item read by this lane shows acceleration-stage current runaway or coupled-discharge instability with an RF or ECR first stage feeding a Hall stage (TBD - requires L-HHT / L-ECRHALL, or M-PREION)."
   },
   {
    "id": "N-UTL-01",
@@ -1724,6 +1786,7 @@
     "ecr_hall"
    ],
    "failure_class": "FC-UTL",
+   "sub_cause_of": "N-PWR-01",
    "title": "Low ion utilization of N2/O2 in the Hall stage prevents 12 mN within the bus power",
    "rfp_blocks": [
     "ionization_discharge",
@@ -1735,22 +1798,22 @@
    "evidence": [
     {
      "source": "S-SHABSHELOWITZ2014",
-     "direction": "supports",
+     "direction": "context",
      "evidence_class": "measured",
      "evidence_level": 3,
      "statement": "Abstract: 'The helicon Hall thruster performance during operation with argon and nitrogen is characterized by low beam divergence efficiency and low propellant utilization efficiency.'",
      "locator": "Abstract",
-     "applicability": "Helicon Hall thruster, nitrogen at 200 V.",
+     "applicability": "Helicon Hall thruster, nitrogen at 200 V. Says utilization is low; it does not show that 12 mN is out of reach within a 1.5 kW bus, so context (same policy as its items on N-UTL-02 and N-PWR-02).",
      "gas_stated": "argon and nitrogen (named in the abstract sentence quoted)"
     },
     {
      "source": "S-CIFALI2011",
-     "direction": "supports",
+     "direction": "context",
      "evidence_class": "measured",
      "evidence_level": 3,
      "statement": "'The computation of the ionisation efficiency shows that this last is lower for nitrogen than for xenon'; conclusion: 'a substantial deterioration of performance with respect to Xe, especially due to the low ionization efficiency of the atmospheric propellants'.",
      "locator": "Sec. II.B (pdf p. 3); Sec. IV (pdf p. 11)",
-     "applicability": "PPS1350-TSD and RIT-10 in laboratory facilities."
+     "applicability": "PPS1350-TSD and RIT-10 in laboratory facilities. A comparison with xenon; it does not show the 12 mN / bus-power threshold being missed. The same source's measured N2 operating point contradicts that (next item and N-PWR-01)."
     },
     {
      "source": "S-WANG2026",
@@ -1760,21 +1823,42 @@
      "statement": "Abstract: 'Simplified collision frequency estimations indicate that N2 vibrational losses are likely the dominant electron energy loss channel across the tested ratios.'",
      "locator": "Abstract",
      "applicability": "Helicon plasma, N2:O2 1:4 to 4:1; an energy-sink mechanism, not a Hall-stage measurement."
+    },
+    {
+     "source": "S-CIFALI2011",
+     "direction": "contradicts",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "PPS1350-TSD on pure N2: 'the operating point 305 V, 3.48 A, 41.6 W/mN is of particular interest' as fulfilling the RAM-EP power-to-thrust requirement of that study.",
+     "locator": "Sec. II.B (pdf p. 3)",
+     "applicability": "Laboratory facility, Xe cathode, Xe start, flow set by a controller; not the ABEP feed state or composition."
+    },
+    {
+     "source": "S-MARCHIONI2020",
+     "direction": "contradicts",
+     "evidence_class": "measured",
+     "evidence_level": 3,
+     "statement": "ECHT journal abstract: 17-22 mN at 500-800 W anode power on 2 mg/s N2.",
+     "locator": "Repo audit echt_n2_evidence_audit_v1.json source S1 abstract_values",
+     "applicability": "Facility pressure 0.8-2.5e-4 Torr without a published facility correction; argon cathode."
     }
    ],
-   "evidence_status": "supported",
+   "evidence_status": "contradicted",
    "decision_quantity": {
-    "quantity": "Ion (current) utilization and resulting thrust on the delivered composition at the discharge power left by the electrical closure",
-    "threshold": ">= 12 mN sustained on air within the 1.5 kW bus (RFP)",
+    "quantity": "Ion (current) utilization on the delivered composition, as a cause of the discharge power per thrust compared in N-PWR-01 (sub-cause of N-PWR-01)",
+    "threshold": "Decided by the parent N-PWR-01 comparison: P_discharge(12 mN) <= 1500 W minus all other loads (RFP)",
     "threshold_status": "RFP",
-    "requires": "A-ELEC for the discharge power available",
+    "requires": "A-ELEC for the discharge power available (as in N-PWR-01)",
     "requires_actions": [
      "A-ELEC"
     ],
     "requires_owner_inputs": [],
+    "derived_values": [
+     "D-CIFALI-THRUST-N2"
+    ],
     "gates": [
-     "thrust",
-     "bus_power"
+     "bus_power",
+     "thrust"
     ]
    },
    "actions": [
@@ -2052,12 +2136,12 @@
    "evidence": [
     {
      "source": "S-FOSTER2006",
-     "direction": "supports",
+     "direction": "context",
      "evidence_class": "inferred",
      "evidence_level": 3,
      "statement": "Higher frequencies need higher fields; 'These high magnetic fields make it difficult for plasma to diffuse away from ECR plasma production zones. Additionally, ECR zones occur much closer to the magnet surface which gives rise to increases in plasma losses to the walls.'",
      "locator": "Section 'Basic Design and Discharge Performance Implications' (pdf p. 8)",
-     "applicability": "ECR ion-thruster discharge (xenon); the same transport physics applies to an ECR pre-ionizer feeding a downstream stage."
+     "applicability": "Design remark on a xenon gridded-ion-engine ECR discharge at GHz frequencies; it states the trapping and wall-loss physics but reports no transfer of ECR-made ions into a downstream Hall stage, so context for this node."
     },
     {
      "source": "S-DIAMANT2010",
@@ -2070,7 +2154,7 @@
      "gas_not_stated": true
     }
    ],
-   "evidence_status": "supported",
+   "evidence_status": "unknown",
    "decision_quantity": {
     "quantity": "Interstage ion transmission fraction from the ECR zone to the acceleration zone",
     "threshold": ">= the transmission the break-even surfaces require at the design point (TBD - requires the break-even surfaces evaluated at a Vyovrinda design point)",
@@ -2117,7 +2201,8 @@
    "resolve_by_milestone": "B",
    "milestone_A_condition": "Show ECR-to-Hall interstage transmission at or above the break-even requirement.",
    "analysis_requires_admitted_hall_closure": true,
-   "decision_state": "open"
+   "decision_state": "open",
+   "evidence_gap": "No open item read by this lane measures ion transmission from an ECR ionization stage into a Hall acceleration stage (S-DIAMANT2010 is abstract only, gas not stated). TBD - requires L-ECRHALL, or the interstage ion flux in M-PREION."
   },
   {
    "id": "N-RF-01",
@@ -2283,7 +2368,11 @@
    ],
    "failure_class": "FC-RFS",
    "title": "Magnetized RF (helicon) source field interacts with the Hall magnetic circuit",
-   "condition": "Applies only if a magnetized (helicon) RF source is chosen.",
+   "condition": "Applies only if a magnetized (helicon) RF source is chosen (design_branches rf_source_type = magnetized_helicon).",
+   "branch": {
+    "decision": "rf_source_type",
+    "option": "magnetized_helicon"
+   },
    "rfp_blocks": [
     "ionization_discharge",
     "acceleration_thrust"
@@ -2641,6 +2730,11 @@
    ],
    "failure_class": "FC-CAT",
    "title": "Emitter poisoning by oxygen from the feed, plume backflow or ram exposure",
+   "condition": "Applies only if the cathode has a thermionic emitter, i.e. on the Xe-fed hollow-cathode branch (design_branches cathode_feed = xe_fed_thermionic).",
+   "branch": {
+    "decision": "cathode_feed",
+    "option": "xe_fed_thermionic"
+   },
    "rfp_blocks": [
     "cathode"
    ],
@@ -2708,11 +2802,11 @@
     "quantity": "Emission and discharge stability vs oxygen-bearing partial pressure at the emitter (from cathode feed, plume backflow and ram exposure during off periods)",
     "threshold": "Tolerated partial pressure (TBD - requires cathode data) above the predicted exposure over firing and mission life",
     "threshold_status": "TBD",
-    "requires": "predicted oxygen-bearing exposure at the emitter: feed composition from A-FLOWENV; plume back-flow and ram exposure after attenuation by the cathode flow, orifice and keeper from A-OXEXPO (no lane assigned); tolerated partial pressure from M-CATHODE",
+    "requires": "predicted oxygen-bearing exposure at the emitter: feed composition from A-FLOWENV; plume back-flow and ram exposure after attenuation by the cathode flow, orifice and keeper from A-OXEXPO (no lane assigned); tolerated partial pressure from M-CATHXE",
     "requires_actions": [
      "A-FLOWENV",
      "A-OXEXPO",
-     "M-CATHODE"
+     "M-CATHXE"
     ],
     "requires_owner_inputs": [
      "exposure margin"
@@ -2725,7 +2819,7 @@
    },
    "actions": [
     {
-     "action": "M-CATHODE",
+     "action": "M-CATHXE",
      "effect": "contributes"
     },
     {
@@ -2748,7 +2842,7 @@
    "cheapest_resolution": [
     "A-FLOWENV",
     "A-OXEXPO",
-    "M-CATHODE"
+    "M-CATHXE"
    ],
    "resolve_by_milestone": "C",
    "milestone_A_condition": "Demonstrate cathode emission and restart after exposure to the predicted oxygen-bearing environment over the firing and mission life.",
@@ -2767,6 +2861,11 @@
    ],
    "failure_class": "FC-CAT",
    "title": "Cathode Xe consumption over the firing life exceeds the Xe allocation in the mass gate",
+   "condition": "Applies only on the Xe-fed thermionic hollow-cathode branch (design_branches cathode_feed = xe_fed_thermionic).",
+   "branch": {
+    "decision": "cathode_feed",
+    "option": "xe_fed_thermionic"
+   },
    "rfp_blocks": [
     "cathode",
     "structure_mass"
@@ -2817,10 +2916,10 @@
     "quantity": "m_Xe,cathode = cathode flow x firing hours (+ Xe per start and per transition)",
     "threshold": "Within the Xe allocation inside the 40 kg mass gate (RFP; allocation TBD from the mass ledger)",
     "threshold_status": "TBD",
-    "requires": "A-MASS allocation; minimum cathode flow (M-CATHODE)",
+    "requires": "A-MASS allocation; minimum cathode flow (M-CATHXE)",
     "requires_actions": [
      "A-MASS",
-     "M-CATHODE"
+     "M-CATHXE"
     ],
     "requires_owner_inputs": [
      "Xe allocation (owner)"
@@ -2840,7 +2939,7 @@
      "effect": "contributes"
     },
     {
-     "action": "M-CATHODE",
+     "action": "M-CATHXE",
      "effect": "contributes"
     },
     {
@@ -2854,7 +2953,7 @@
    ],
    "cheapest_resolution": [
     "A-MASS",
-    "M-CATHODE"
+    "M-CATHXE"
    ],
    "resolve_by_milestone": "C",
    "milestone_A_condition": "Show the cathode Xe inventory for 15,000 h (plus starts and transitions) fits the Xe allocation, or qualify an air-fed cathode.",
@@ -2873,6 +2972,11 @@
    ],
    "failure_class": "FC-CAT",
    "title": "Cathode flow minimized for mass drives plume mode and energetic-ion erosion",
+   "condition": "Applies only on the Xe-fed thermionic hollow-cathode branch (design_branches cathode_feed = xe_fed_thermionic).",
+   "branch": {
+    "decision": "cathode_feed",
+    "option": "xe_fed_thermionic"
+   },
    "rfp_blocks": [
     "cathode"
    ],
@@ -2915,7 +3019,7 @@
    },
    "actions": [
     {
-     "action": "M-CATHODE",
+     "action": "M-CATHXE",
      "effect": "decides"
     },
     {
@@ -2928,7 +3032,7 @@
     }
    ],
    "cheapest_resolution": [
-    "M-CATHODE"
+    "M-CATHXE"
    ],
    "resolve_by_milestone": "C",
    "milestone_A_condition": "Demonstrate spot-mode cathode operation at the flow used in the Xe budget.",
@@ -2947,7 +3051,11 @@
    ],
    "failure_class": "FC-CAT",
    "title": "Air-fed cathode route: electron current or coupling insufficient at the discharge current",
-   "condition": "Applies only if the cathode is fed from the atmospheric path (to avoid cathode Xe).",
+   "condition": "Applies only on the air-fed plasma-cathode branch (design_branches cathode_feed = air_fed_plasma), chosen to avoid cathode Xe.",
+   "branch": {
+    "decision": "cathode_feed",
+    "option": "air_fed_plasma"
+   },
    "rfp_blocks": [
     "cathode"
    ],
@@ -2992,7 +3100,7 @@
    },
    "actions": [
     {
-     "action": "M-CATHODE",
+     "action": "M-CATHAIR",
      "effect": "decides"
     },
     {
@@ -3001,7 +3109,7 @@
     }
    ],
    "cheapest_resolution": [
-    "M-CATHODE"
+    "M-CATHAIR"
    ],
    "resolve_by_milestone": "C",
    "milestone_A_condition": "If an air-fed cathode is used: demonstrate its current and coupling at the required discharge current.",
@@ -3020,6 +3128,11 @@
    ],
    "failure_class": "FC-CAT",
    "title": "Intrinsic cathode life: emitter evaporation at the required emission current ends insert life before the firing hours",
+   "condition": "Applies only on the Xe-fed thermionic hollow-cathode branch (design_branches cathode_feed = xe_fed_thermionic).",
+   "branch": {
+    "decision": "cathode_feed",
+    "option": "xe_fed_thermionic"
+   },
    "rfp_blocks": [
     "cathode"
    ],
@@ -3051,10 +3164,10 @@
     "quantity": "Evaporation-limited insert life at the emitter temperature needed for the required emission current (I_emit from current continuity)",
     "threshold": "Insert life > 15,000 h firing (RFP) with a life margin (PROPOSED; margin TBD)",
     "threshold_status": "RFP",
-    "requires": "required emission and evaporation-limited life (A-CATHODE) at the emitter temperature measured on the selected cathode at that current (M-CATHODE); a model alone uses a Richardson-Dushman temperature that has not been measured on the Vyovrinda cathode",
+    "requires": "required emission and evaporation-limited life (A-CATHODE) at the emitter temperature measured on the selected cathode at that current (M-CATHXE); a model alone uses a Richardson-Dushman temperature that has not been measured on the Vyovrinda cathode",
     "requires_actions": [
      "A-CATHODE",
-     "M-CATHODE"
+     "M-CATHXE"
     ],
     "requires_owner_inputs": [
      "life margin (PROPOSED)"
@@ -3070,7 +3183,7 @@
      "effect": "contributes"
     },
     {
-     "action": "M-CATHODE",
+     "action": "M-CATHXE",
      "effect": "contributes"
     },
     {
@@ -3080,7 +3193,7 @@
    ],
    "cheapest_resolution": [
     "A-CATHODE",
-    "M-CATHODE"
+    "M-CATHXE"
    ],
    "resolve_by_milestone": "C",
    "milestone_A_condition": "Show that the selected cathode's evaporation-limited insert life at the required emission current exceeds the firing hours with margin, using a measured emitter temperature.",
@@ -3098,7 +3211,12 @@
     "ecr_hall"
    ],
    "failure_class": "FC-CAT",
-   "title": "Baseline Xe-fed cathode current range does not cover the required emission current",
+   "title": "Xe-fed cathode current range does not cover the required emission current",
+   "condition": "Applies only on the Xe-fed thermionic hollow-cathode branch (design_branches cathode_feed = xe_fed_thermionic).",
+   "branch": {
+    "decision": "cathode_feed",
+    "option": "xe_fed_thermionic"
+   },
    "rfp_blocks": [
     "cathode"
    ],
@@ -3116,16 +3234,16 @@
      "applicability": "Current ranges of a family of LaB6 cathodes and of one 1.5-cm high-power cathode; no range is given for the cathode size and current of a < 1.5 kW ABEP system, so context only."
     }
    ],
-   "evidence_gap": "No open item read by this lane gives the demonstrated current range of a Xe-fed cathode sized for a < 1.5 kW Hall stage (TBD - requires L-CATHODE, or M-CATHODE on the selected cathode).",
+   "evidence_gap": "No open item read by this lane gives the demonstrated current range of a Xe-fed cathode sized for a < 1.5 kW Hall stage (TBD - requires L-CATHODE, or M-CATHXE on the selected cathode).",
    "evidence_status": "unknown",
    "decision_quantity": {
     "quantity": "Required emission current I_emit = I_d + I_keeper + I_interstage (I_d bounded by P_avail / V_d without a Hall closure) against the demonstrated current range of the selected cathode",
     "threshold": "I_emit inside the demonstrated current range with margin at every operating point (PROPOSED; margin TBD)",
     "threshold_status": "PROPOSED",
-    "requires": "required emission from A-CATHODE and the demonstrated current range of the selected cathode from M-CATHODE",
+    "requires": "required emission from A-CATHODE and the demonstrated current range of the selected cathode from M-CATHXE",
     "requires_actions": [
      "A-CATHODE",
-     "M-CATHODE"
+     "M-CATHXE"
     ],
     "requires_owner_inputs": [
      "current margin (PROPOSED)"
@@ -3141,7 +3259,7 @@
      "effect": "contributes"
     },
     {
-     "action": "M-CATHODE",
+     "action": "M-CATHXE",
      "effect": "contributes"
     },
     {
@@ -3151,10 +3269,220 @@
    ],
    "cheapest_resolution": [
     "A-CATHODE",
-    "M-CATHODE"
+    "M-CATHXE"
    ],
    "resolve_by_milestone": "C",
    "milestone_A_condition": "Show that the selected Xe-fed cathode has demonstrated emission over the required current range, including keeper and interstage current, with margin.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open",
+   "proposed_gate_links": [
+    "P2_cathode"
+   ]
+  },
+  {
+   "id": "N-CAT-07",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-CAT",
+   "title": "Restart count exceeds the thermionic cathode's heater/ignition cycle capability",
+   "condition": "Applies only on the Xe-fed thermionic hollow-cathode branch (design_branches cathode_feed = xe_fed_thermionic).",
+   "branch": {
+    "decision": "cathode_feed",
+    "option": "xe_fed_thermionic"
+   },
+   "rfp_blocks": [
+    "cathode",
+    "operations"
+   ],
+   "air_specific": false,
+   "mechanism": "Each restart of a thermionic hollow cathode needs a heater cycle and a cathode ignition; a heater or ignition circuit with a smaller demonstrated cycle count than the restart count limits the mission.",
+   "physical_cause": "Cycle-limited heater and ignition hardware (stated as the failure hypothesis; no cycle-life source was read by this lane - verify through L-CATHODE).",
+   "evidence": [],
+   "evidence_gap": "No open item read by this lane gives the heater/ignition cycle capability of a Xe-fed cathode sized for a < 1.5 kW Hall stage (TBD - requires L-CATHODE, or heater/ignition cycling in M-CATHXE on the selected cathode).",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Required starts N_start (A-OPS) against the demonstrated heater/ignition cycles of the selected Xe-fed cathode",
+    "threshold": "Demonstrated cycles >= N_start with a cycle margin (TBD - requires the owner's restart count; margin PROPOSED)",
+    "threshold_status": "TBD",
+    "requires": "A-OPS for the restart count (from owner assumptions) and the demonstrated cycle count from M-CATHXE",
+    "requires_actions": [
+     "A-OPS",
+     "M-CATHXE"
+    ],
+    "requires_owner_inputs": [
+     "operations-concept assumptions",
+     "cycle margin (PROPOSED)"
+    ],
+    "derived_values": [
+     "D-RFP-FIRING-FRACTION"
+    ],
+    "gates": [
+     "restart_sustainment",
+     "firing_life",
+     "mission_life"
+    ]
+   },
+   "actions": [
+    {
+     "action": "A-OPS",
+     "effect": "contributes"
+    },
+    {
+     "action": "M-CATHXE",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-CATHODE",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-OPS",
+    "M-CATHXE"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "Show that the selected Xe-fed cathode's demonstrated heater/ignition cycles cover the restart count with margin.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open",
+   "proposed_gate_links": [
+    "P2_cathode"
+   ]
+  },
+  {
+   "id": "N-CAT-08",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-CAT",
+   "title": "Air-fed plasma cathode wears out before the firing hours",
+   "condition": "Applies only on the air-fed plasma-cathode branch (design_branches cathode_feed = air_fed_plasma).",
+   "branch": {
+    "decision": "cathode_feed",
+    "option": "air_fed_plasma"
+   },
+   "rfp_blocks": [
+    "cathode"
+   ],
+   "air_specific": true,
+   "mechanism": "A non-thermionic cathode has no emitter to poison, but its discharge chamber, antenna/coupler and extraction orifice face an oxygen-bearing plasma for the firing hours; their wear or oxidation sets the cathode life.",
+   "physical_cause": "Ion sputtering and oxidation of cathode surfaces in an N/O plasma (stated as the failure hypothesis; no life data for an air-fed plasma cathode was read by this lane - verify).",
+   "evidence": [],
+   "evidence_gap": "No open item read by this lane reports the wear or life of an air-fed plasma cathode; S-TISAEV2023A/B report extracted current and coupling, not life (TBD - requires L-CATHODE, or an M-CATHAIR wear run with the A-THERMAL life extrapolation).",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Wear- or oxidation-limited life of the air-fed cathode at the required current and air flow",
+    "threshold": "Cathode life > 15,000 h firing (RFP) with a life margin (PROPOSED; margin TBD)",
+    "threshold_status": "RFP",
+    "requires": "wear or oxidation rate from a defined run (M-CATHAIR) and its extrapolation to the firing hours (A-THERMAL)",
+    "requires_actions": [
+     "M-CATHAIR",
+     "A-THERMAL"
+    ],
+    "requires_owner_inputs": [
+     "life margin (PROPOSED)"
+    ],
+    "gates": [
+     "firing_life",
+     "mission_life"
+    ]
+   },
+   "actions": [
+    {
+     "action": "M-CATHAIR",
+     "effect": "contributes"
+    },
+    {
+     "action": "A-THERMAL",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-CATHODE",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-THERMAL",
+    "M-CATHAIR"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "If an air-fed cathode is used: show its wear-limited life at the required current exceeds the firing hours with margin.",
+   "analysis_requires_admitted_hall_closure": false,
+   "decision_state": "open",
+   "proposed_gate_links": [
+    "P2_cathode"
+   ]
+  },
+  {
+   "id": "N-CAT-09",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "failure_class": "FC-CAT",
+   "title": "Restart count exceeds the air-fed plasma cathode's ignition cycle capability",
+   "condition": "Applies only on the air-fed plasma-cathode branch (design_branches cathode_feed = air_fed_plasma).",
+   "branch": {
+    "decision": "cathode_feed",
+    "option": "air_fed_plasma"
+   },
+   "rfp_blocks": [
+    "cathode",
+    "operations"
+   ],
+   "air_specific": true,
+   "mechanism": "Each restart needs an ignition of the air-fed plasma cathode (microwave or RF breakdown on air); a smaller demonstrated ignition count than the restart count limits the mission.",
+   "physical_cause": "Ignition reliability and cycle-limited ignition hardware (stated as the failure hypothesis; no source read by this lane - verify).",
+   "evidence": [],
+   "evidence_gap": "No open item read by this lane gives ignition cycle data for an air-fed plasma cathode (TBD - requires L-CATHODE, or ignition cycling in M-CATHAIR).",
+   "evidence_status": "unknown",
+   "decision_quantity": {
+    "quantity": "Required starts N_start (A-OPS) against the demonstrated ignition cycles of the selected air-fed cathode",
+    "threshold": "Demonstrated cycles >= N_start with a cycle margin (TBD - requires the owner's restart count; margin PROPOSED)",
+    "threshold_status": "TBD",
+    "requires": "A-OPS for the restart count (from owner assumptions) and the demonstrated ignition count from M-CATHAIR",
+    "requires_actions": [
+     "A-OPS",
+     "M-CATHAIR"
+    ],
+    "requires_owner_inputs": [
+     "operations-concept assumptions",
+     "cycle margin (PROPOSED)"
+    ],
+    "derived_values": [
+     "D-RFP-FIRING-FRACTION"
+    ],
+    "gates": [
+     "restart_sustainment",
+     "firing_life",
+     "mission_life"
+    ]
+   },
+   "actions": [
+    {
+     "action": "A-OPS",
+     "effect": "contributes"
+    },
+    {
+     "action": "M-CATHAIR",
+     "effect": "contributes"
+    },
+    {
+     "action": "L-CATHODE",
+     "effect": "informs"
+    }
+   ],
+   "cheapest_resolution": [
+    "A-OPS",
+    "M-CATHAIR"
+   ],
+   "resolve_by_milestone": "C",
+   "milestone_A_condition": "If an air-fed cathode is used: show its demonstrated ignition cycles cover the restart count with margin.",
    "analysis_requires_admitted_hall_closure": false,
    "decision_state": "open",
    "proposed_gate_links": [
@@ -3176,7 +3504,7 @@
    ],
    "air_specific": true,
    "mechanism": "Discharge losses deposited on the walls flow into the magnetic circuit; magnets and coils lose field or insulation above their limit.",
-   "physical_cause": "Wall heat flux (higher fraction of power lost on molecular propellants) conducted to the magnetic circuit.",
+   "physical_cause": "Wall heat flux conducted to the magnetic circuit. Whether molecular propellants deposit a larger fraction of the discharge power on the walls than xenon is not shown by the items cited here (S-SIMMONDS2022 and S-MYERS2016 are propellant-agnostic; S-CIFALI2011 records only a designers' expectation for an RF ion thruster) - verify.",
    "evidence": [
     {
      "source": "S-SIMMONDS2022",
@@ -3763,6 +4091,9 @@
     "gates": [
      "bus_power",
      "thrust"
+    ],
+    "derived_values": [
+     "D-CIFALI-THRUST-N2"
     ]
    },
    "actions": [
@@ -3773,6 +4104,10 @@
     {
      "action": "A-ELEC",
      "effect": "contributes"
+    },
+    {
+     "action": "L-SITAEL",
+     "effect": "informs"
     },
     {
      "action": "A-HALLMAP",
@@ -4220,20 +4555,20 @@
     "ecr_hall"
    ],
    "failure_class": "FC-CTL",
-   "title": "Restart count exceeds cathode heater/ignition cycles or the Xe start budget",
+   "title": "Restart count exceeds the demonstrated Hall-stage starts or the Xe start budget",
    "rfp_blocks": [
     "operations",
-    "cathode"
+    "ionization_discharge"
    ],
    "air_specific": false,
-   "mechanism": "With the repository's modelling choice of firing 15,000 h within a 26,000 h mission (abep_sim/system.py duty_cycle; the RFP figure '> 15,000 h' is a lower bound), the thruster is off for part of the mission (eclipse, safe mode, duty cycling); each restart costs a cathode heater cycle, an ignition and possibly Xe.",
-   "physical_cause": "Cycle-limited parts and per-start consumables.",
+   "mechanism": "With the repository's modelling choice of firing 15,000 h within a 26,000 h mission (abep_sim/system.py duty_cycle; the RFP figure '> 15,000 h' is a lower bound), the thruster is off for part of the mission (eclipse, safe mode, duty cycling); each restart costs a Hall-stage ignition and possibly Xe. The cathode's own start cycles depend on the cathode_feed branch and are nodes N-CAT-07 (Xe-fed) and N-CAT-09 (air-fed).",
+   "physical_cause": "Per-start consumables (Xe) and the start reliability of the Hall stage.",
    "evidence": [],
-   "evidence_gap": "The restart count is an operations-concept quantity (TBD - owner); cycle-life data for the chosen cathode not yet collected.",
+   "evidence_gap": "The restart count is an operations-concept quantity (TBD - owner); Hall-stage start records over repeated starts on the start sequence not yet collected.",
    "evidence_status": "unknown",
    "decision_quantity": {
-    "quantity": "Required starts N_start (operations) against demonstrated start cycles and Xe per start",
-    "threshold": "Demonstrated cycles >= N_start with margin; Xe for N_start within the allocation (TBD)",
+    "quantity": "Required starts N_start (operations) against demonstrated Hall-stage start success and Xe per start",
+    "threshold": "Hall-stage starts demonstrated with margin over N_start; Xe for N_start within the allocation (TBD)",
     "threshold_status": "TBD",
     "requires": "A-OPS (from owner assumptions)",
     "requires_actions": [
@@ -4261,24 +4596,16 @@
     {
      "action": "M-IGN",
      "effect": "contributes"
-    },
-    {
-     "action": "M-CATHODE",
-     "effect": "contributes"
     }
    ],
    "cheapest_resolution": [
     "A-OPS",
-    "M-IGN",
-    "M-CATHODE"
+    "M-IGN"
    ],
    "resolve_by_milestone": "C",
-   "milestone_A_condition": "Fix the restart count and show cathode/ignition cycle capability and start Xe cover it.",
+   "milestone_A_condition": "Fix the restart count and show Hall-stage start capability and start Xe cover it (cathode start cycles: N-CAT-07 or N-CAT-09 on the chosen cathode branch).",
    "analysis_requires_admitted_hall_closure": false,
-   "decision_state": "open",
-   "proposed_gate_links": [
-    "P2_cathode"
-   ]
+   "decision_state": "open"
   },
   {
    "id": "N-CTL-03",
@@ -4339,9 +4666,10 @@
   }
  ],
  "ranking_rule": {
-  "id": "decisiveness_lexicographic_v1",
-  "text": "For each architecture, rank every eligible action by how many of that architecture's open nodes it decides, then by how many distinct hard gates those decided nodes link, then by how many nodes it contributes to (needed jointly with other actions), then by how many it informs, then cheapest kind first, then action id. Ties are broken only by these keys. Actions touching no node of the architecture are omitted.",
+  "id": "decisiveness_lexicographic_v2",
+  "text": "For each architecture, rank every eligible action by how many of that architecture's counted open nodes it decides, then by how many distinct hard gates those decided nodes link, then by how many counted nodes it contributes to (needed jointly with other actions), then by how many it informs, then cheapest kind first, then action id. Ties are broken only by these keys. Actions touching no counted node are omitted. The rule is applied separately to the core set (nodes that apply whatever the design branches) and to each design-branch option's own set; the core ranking never counts a branch-specific node.",
   "eligibility": "An action is eligible if blocked_by is empty. Blocked actions (today only A-HALLMAP, blocked by the empty credible set and incomplete O4 dispositions) are listed separately with the nodes they touch and are not ranked. Only open nodes without sub_cause_of are counted: a sub-cause node repeats its parent's threshold comparison, so counting it would count one comparison twice. Sub-causes are listed in the trees and in n_sub_causes_not_counted.",
+  "branch_rule": "A node with 'branch' applies only if that design-branch option is chosen (design_branches). Options of one decision are mutually exclusive, so their nodes are alternatives, not additions: they are excluded from the core ranking (counted in n_branch_nodes_not_counted) and ranked in branch_rankings, one list per option, over that option's nodes only. An action whose 'branch' names an option may touch only nodes of that option. A conditional selection (milestone A) states the chosen options and carries the core conditions plus those of the chosen options.",
   "key": [
    "-n_decides",
    "-n_gates_decided",
@@ -4355,7 +4683,7 @@
    "analysis": 1,
    "measurement": 2
   },
-  "no_weighting": "No weights, probabilities or expert scores enter the ranking. The only non-count key is the categorical cost rank literature < analysis < measurement, used as a tie-break after all counts."
+  "no_weighting": "No weights, probabilities or expert scores enter the ranking. The only non-count key is the categorical cost rank literature < analysis < measurement, used as a tie-break after all counts. No option of a design branch is weighted or preferred."
  },
  "derived_values": {
   "generated_by": "docs/architecture_comparison/failure_tree/derive_failure_tree.py",
@@ -4524,6 +4852,21 @@
     "note": "Checks the source's arithmetic only; 0.5 sccm is the source's notional flow, not a Vyovrinda value."
    },
    {
+    "id": "D-CIFALI-THRUST-N2",
+    "quantity": "Thrust implied by the S-CIFALI2011 pure-N2 operating point, V_d I_d / (W/mN)",
+    "value": 25.5144,
+    "unit": "mN",
+    "evidence_class": "model-derived",
+    "inputs": {
+     "V_d_V": 305.0,
+     "I_d_A": 3.48,
+     "power_per_thrust_W_per_mN": 41.6,
+     "source": "S-CIFALI2011 Sec. II.B (pdf p. 3), PPS1350-TSD on pure N2"
+    },
+    "cross_check": null,
+    "note": "Assumes the source's W/mN is discharge power V_d x I_d per unit thrust (verify against the source's definition). Laboratory setpoint with a Xe cathode and controller-set flow; not a Vyovrinda operating point, and no power-per-thrust at 12 mN is implied."
+   },
+   {
     "id": "D-RFP-FIRING-FRACTION",
     "quantity": "Firing hours / mission hours",
     "value": 0.5769,
@@ -4541,41 +4884,15 @@
  },
  "ranked_next_evidence": {
   "generated_by": "docs/architecture_comparison/failure_tree/derive_failure_tree.py",
-  "rule_id": "decisiveness_lexicographic_v1",
+  "rule_id": "decisiveness_lexicographic_v2",
   "per_architecture": {
    "hall_only": {
-    "n_nodes": 20,
-    "n_sub_causes_not_counted": 0,
+    "n_nodes": 13,
+    "n_sub_causes_not_counted": 1,
+    "n_branch_nodes_not_counted": 9,
     "ranked": [
      {
       "rank": 1,
-      "action": "M-CATHODE",
-      "kind": "measurement",
-      "n_decides": 2,
-      "n_gates_decided": 4,
-      "n_contributes": 5,
-      "n_informs": 0,
-      "gates_decided": [
-       "thrust",
-       "firing_life",
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-CAT-03",
-       "N-CAT-04"
-      ],
-      "nodes_contributed": [
-       "N-CAT-01",
-       "N-CAT-02",
-       "N-CAT-05",
-       "N-CAT-06",
-       "N-CTL-02"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 2,
       "action": "M-THERMAL",
       "kind": "measurement",
       "n_decides": 2,
@@ -4593,7 +4910,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 3,
+      "rank": 2,
       "action": "M-TRANS",
       "kind": "measurement",
       "n_decides": 1,
@@ -4611,12 +4928,12 @@
       "nodes_informed": []
      },
      {
-      "rank": 4,
+      "rank": 3,
       "action": "A-FLOWENV",
       "kind": "analysis",
       "n_decides": 1,
       "n_gates_decided": 1,
-      "n_contributes": 3,
+      "n_contributes": 2,
       "n_informs": 0,
       "gates_decided": [
        "restart_sustainment"
@@ -4626,18 +4943,17 @@
       ],
       "nodes_contributed": [
        "N-SUS-01",
-       "N-SUS-02",
-       "N-CAT-01"
+       "N-SUS-02"
       ],
       "nodes_informed": []
      },
      {
-      "rank": 5,
+      "rank": 4,
       "action": "A-MASS",
       "kind": "analysis",
       "n_decides": 1,
       "n_gates_decided": 1,
-      "n_contributes": 1,
+      "n_contributes": 0,
       "n_informs": 0,
       "gates_decided": [
        "mass"
@@ -4645,67 +4961,11 @@
       "nodes_decided": [
        "N-MAS-01"
       ],
-      "nodes_contributed": [
-       "N-CAT-02"
-      ],
+      "nodes_contributed": [],
       "nodes_informed": []
      },
      {
-      "rank": 6,
-      "action": "A-ELEC",
-      "kind": "analysis",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 3,
-      "n_informs": 0,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [
-       "N-UTL-01",
-       "N-PWR-01",
-       "N-PWR-04"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 7,
-      "action": "M-PREION",
-      "kind": "measurement",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 3,
-      "n_informs": 0,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [
-       "N-UTL-01",
-       "N-PWR-01",
-       "N-PWR-04"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 8,
-      "action": "A-CATHODE",
-      "kind": "analysis",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 2,
-      "n_informs": 3,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [
-       "N-CAT-05",
-       "N-CAT-06"
-      ],
-      "nodes_informed": [
-       "N-CAT-01",
-       "N-CAT-02",
-       "N-CAT-03"
-      ]
-     },
-     {
-      "rank": 9,
+      "rank": 5,
       "action": "A-THERMAL",
       "kind": "analysis",
       "n_decides": 0,
@@ -4724,7 +4984,23 @@
       ]
      },
      {
-      "rank": 10,
+      "rank": 6,
+      "action": "A-ELEC",
+      "kind": "analysis",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 2,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-PWR-01",
+       "N-PWR-04"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 7,
       "action": "A-OPS",
       "kind": "analysis",
       "n_decides": 0,
@@ -4740,7 +5016,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 11,
+      "rank": 8,
       "action": "M-EROSION",
       "kind": "measurement",
       "n_decides": 0,
@@ -4756,7 +5032,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 12,
+      "rank": 9,
       "action": "M-IGN",
       "kind": "measurement",
       "n_decides": 0,
@@ -4772,7 +5048,23 @@
       "nodes_informed": []
      },
      {
-      "rank": 13,
+      "rank": 10,
+      "action": "M-PREION",
+      "kind": "measurement",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 2,
+      "n_informs": 0,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [
+       "N-PWR-01",
+       "N-PWR-04"
+      ],
+      "nodes_informed": []
+     },
+     {
+      "rank": 11,
       "action": "M-SUSWIN",
       "kind": "measurement",
       "n_decides": 0,
@@ -4788,42 +5080,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 14,
-      "action": "A-OXEXPO",
-      "kind": "analysis",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 1,
-      "n_informs": 0,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [
-       "N-CAT-01"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 15,
-      "action": "L-CATHODE",
-      "kind": "literature",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 0,
-      "n_informs": 6,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [],
-      "nodes_informed": [
-       "N-CAT-01",
-       "N-CAT-02",
-       "N-CAT-03",
-       "N-CAT-04",
-       "N-CAT-05",
-       "N-CAT-06"
-      ]
-     },
-     {
-      "rank": 16,
+      "rank": 12,
       "action": "L-SITAEL",
       "kind": "literature",
       "n_decides": 0,
@@ -4836,12 +5093,12 @@
       "nodes_informed": [
        "N-IGN-01",
        "N-SUS-01",
-       "N-UTL-01",
+       "N-PWR-01",
        "N-CTL-01"
       ]
      },
      {
-      "rank": 17,
+      "rank": 13,
       "action": "L-WALL",
       "kind": "literature",
       "n_decides": 0,
@@ -4858,7 +5115,7 @@
       ]
      },
      {
-      "rank": 18,
+      "rank": 14,
       "action": "L-THERMAL",
       "kind": "literature",
       "n_decides": 0,
@@ -4883,16 +5140,226 @@
       ],
       "nodes_touched": [
        "N-SUS-01",
-       "N-UTL-01",
        "N-ERO-01",
        "N-PWR-01"
       ]
      }
+    ],
+    "branch_rankings": [
+     {
+      "decision": "cathode_feed",
+      "option": "xe_fed_thermionic",
+      "n_nodes": 6,
+      "ranked": [
+       {
+        "rank": 1,
+        "action": "M-CATHXE",
+        "kind": "measurement",
+        "n_decides": 1,
+        "n_gates_decided": 1,
+        "n_contributes": 5,
+        "n_informs": 0,
+        "gates_decided": [
+         "firing_life"
+        ],
+        "nodes_decided": [
+         "N-CAT-03"
+        ],
+        "nodes_contributed": [
+         "N-CAT-01",
+         "N-CAT-02",
+         "N-CAT-05",
+         "N-CAT-06",
+         "N-CAT-07"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 2,
+        "action": "A-CATHODE",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 2,
+        "n_informs": 3,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-05",
+         "N-CAT-06"
+        ],
+        "nodes_informed": [
+         "N-CAT-01",
+         "N-CAT-02",
+         "N-CAT-03"
+        ]
+       },
+       {
+        "rank": 3,
+        "action": "A-FLOWENV",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-01"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 4,
+        "action": "A-MASS",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-02"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 5,
+        "action": "A-OPS",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-07"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 6,
+        "action": "A-OXEXPO",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-01"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 7,
+        "action": "L-CATHODE",
+        "kind": "literature",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 0,
+        "n_informs": 6,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [],
+        "nodes_informed": [
+         "N-CAT-01",
+         "N-CAT-02",
+         "N-CAT-03",
+         "N-CAT-05",
+         "N-CAT-06",
+         "N-CAT-07"
+        ]
+       }
+      ],
+      "blocked": []
+     },
+     {
+      "decision": "cathode_feed",
+      "option": "air_fed_plasma",
+      "n_nodes": 3,
+      "ranked": [
+       {
+        "rank": 1,
+        "action": "M-CATHAIR",
+        "kind": "measurement",
+        "n_decides": 1,
+        "n_gates_decided": 3,
+        "n_contributes": 2,
+        "n_informs": 0,
+        "gates_decided": [
+         "thrust",
+         "restart_sustainment",
+         "air_xe"
+        ],
+        "nodes_decided": [
+         "N-CAT-04"
+        ],
+        "nodes_contributed": [
+         "N-CAT-08",
+         "N-CAT-09"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 2,
+        "action": "A-OPS",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-09"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 3,
+        "action": "A-THERMAL",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-08"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 4,
+        "action": "L-CATHODE",
+        "kind": "literature",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 0,
+        "n_informs": 3,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [],
+        "nodes_informed": [
+         "N-CAT-04",
+         "N-CAT-08",
+         "N-CAT-09"
+        ]
+       }
+      ],
+      "blocked": []
+     }
     ]
    },
    "rf_hall": {
-    "n_nodes": 32,
-    "n_sub_causes_not_counted": 1,
+    "n_nodes": 24,
+    "n_sub_causes_not_counted": 2,
+    "n_branch_nodes_not_counted": 10,
     "ranked": [
      {
       "rank": 1,
@@ -4915,39 +5382,12 @@
      },
      {
       "rank": 2,
-      "action": "M-CATHODE",
-      "kind": "measurement",
-      "n_decides": 2,
-      "n_gates_decided": 4,
-      "n_contributes": 5,
-      "n_informs": 0,
-      "gates_decided": [
-       "thrust",
-       "firing_life",
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-CAT-03",
-       "N-CAT-04"
-      ],
-      "nodes_contributed": [
-       "N-CAT-01",
-       "N-CAT-02",
-       "N-CAT-05",
-       "N-CAT-06",
-       "N-CTL-02"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 3,
       "action": "M-PREION",
       "kind": "measurement",
       "n_decides": 2,
       "n_gates_decided": 2,
-      "n_contributes": 7,
-      "n_informs": 1,
+      "n_contributes": 6,
+      "n_informs": 0,
       "gates_decided": [
        "thrust",
        "restart_sustainment"
@@ -4958,19 +5398,16 @@
       ],
       "nodes_contributed": [
        "N-IGN-04",
-       "N-UTL-01",
        "N-UTL-02",
        "N-ISL-RF",
        "N-PWR-01",
        "N-PWR-02",
        "N-PWR-04"
       ],
-      "nodes_informed": [
-       "N-RF-03"
-      ]
+      "nodes_informed": []
      },
      {
-      "rank": 4,
+      "rank": 3,
       "action": "M-TRANS",
       "kind": "measurement",
       "n_decides": 1,
@@ -4990,30 +5427,12 @@
       ]
      },
      {
-      "rank": 5,
-      "action": "A-BFIELD",
-      "kind": "analysis",
-      "n_decides": 1,
-      "n_gates_decided": 2,
-      "n_contributes": 0,
-      "n_informs": 0,
-      "gates_decided": [
-       "thrust",
-       "restart_sustainment"
-      ],
-      "nodes_decided": [
-       "N-RF-03"
-      ],
-      "nodes_contributed": [],
-      "nodes_informed": []
-     },
-     {
-      "rank": 6,
+      "rank": 4,
       "action": "A-FLOWENV",
       "kind": "analysis",
       "n_decides": 1,
       "n_gates_decided": 1,
-      "n_contributes": 6,
+      "n_contributes": 5,
       "n_informs": 0,
       "gates_decided": [
        "restart_sustainment"
@@ -5026,18 +5445,17 @@
        "N-IGN-04",
        "N-SUS-01",
        "N-SUS-02",
-       "N-RF-01",
-       "N-CAT-01"
+       "N-RF-01"
       ],
       "nodes_informed": []
      },
      {
-      "rank": 7,
+      "rank": 5,
       "action": "A-MASS",
       "kind": "analysis",
       "n_decides": 1,
       "n_gates_decided": 1,
-      "n_contributes": 1,
+      "n_contributes": 0,
       "n_informs": 0,
       "gates_decided": [
        "mass"
@@ -5045,23 +5463,20 @@
       "nodes_decided": [
        "N-MAS-01"
       ],
-      "nodes_contributed": [
-       "N-CAT-02"
-      ],
+      "nodes_contributed": [],
       "nodes_informed": []
      },
      {
-      "rank": 8,
+      "rank": 6,
       "action": "A-ELEC",
       "kind": "analysis",
       "n_decides": 0,
       "n_gates_decided": 0,
-      "n_contributes": 6,
+      "n_contributes": 5,
       "n_informs": 1,
       "gates_decided": [],
       "nodes_decided": [],
       "nodes_contributed": [
-       "N-UTL-01",
        "N-UTL-02",
        "N-RF-02",
        "N-PWR-01",
@@ -5073,7 +5488,7 @@
       ]
      },
      {
-      "rank": 9,
+      "rank": 7,
       "action": "M-IGN",
       "kind": "measurement",
       "n_decides": 0,
@@ -5091,7 +5506,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 10,
+      "rank": 8,
       "action": "A-THERMAL",
       "kind": "analysis",
       "n_decides": 0,
@@ -5112,7 +5527,7 @@
       ]
      },
      {
-      "rank": 11,
+      "rank": 9,
       "action": "M-EROSION",
       "kind": "measurement",
       "n_decides": 0,
@@ -5129,7 +5544,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 12,
+      "rank": 10,
       "action": "M-RFSRC",
       "kind": "measurement",
       "n_decides": 0,
@@ -5146,27 +5561,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 13,
-      "action": "A-CATHODE",
-      "kind": "analysis",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 2,
-      "n_informs": 3,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [
-       "N-CAT-05",
-       "N-CAT-06"
-      ],
-      "nodes_informed": [
-       "N-CAT-01",
-       "N-CAT-02",
-       "N-CAT-03"
-      ]
-     },
-     {
-      "rank": 14,
+      "rank": 11,
       "action": "A-BREAKEVEN",
       "kind": "analysis",
       "n_decides": 0,
@@ -5184,7 +5579,7 @@
       ]
      },
      {
-      "rank": 15,
+      "rank": 12,
       "action": "A-OPS",
       "kind": "analysis",
       "n_decides": 0,
@@ -5200,7 +5595,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 16,
+      "rank": 13,
       "action": "M-SUSWIN",
       "kind": "measurement",
       "n_decides": 0,
@@ -5216,61 +5611,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 17,
-      "action": "A-OXEXPO",
-      "kind": "analysis",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 1,
-      "n_informs": 0,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [
-       "N-CAT-01"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 18,
-      "action": "L-CATHODE",
-      "kind": "literature",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 0,
-      "n_informs": 6,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [],
-      "nodes_informed": [
-       "N-CAT-01",
-       "N-CAT-02",
-       "N-CAT-03",
-       "N-CAT-04",
-       "N-CAT-05",
-       "N-CAT-06"
-      ]
-     },
-     {
-      "rank": 19,
-      "action": "L-HHT",
-      "kind": "literature",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 0,
-      "n_informs": 5,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [],
-      "nodes_informed": [
-       "N-SUS-03",
-       "N-UTL-02",
-       "N-ISL-RF",
-       "N-RF-03",
-       "N-PWR-02"
-      ]
-     },
-     {
-      "rank": 20,
+      "rank": 14,
       "action": "L-SITAEL",
       "kind": "literature",
       "n_decides": 0,
@@ -5284,12 +5625,30 @@
        "N-IGN-01",
        "N-SUS-01",
        "N-SUS-03",
-       "N-UTL-01",
+       "N-PWR-01",
        "N-CTL-01"
       ]
      },
      {
-      "rank": 21,
+      "rank": 15,
+      "action": "L-HHT",
+      "kind": "literature",
+      "n_decides": 0,
+      "n_gates_decided": 0,
+      "n_contributes": 0,
+      "n_informs": 4,
+      "gates_decided": [],
+      "nodes_decided": [],
+      "nodes_contributed": [],
+      "nodes_informed": [
+       "N-SUS-03",
+       "N-UTL-02",
+       "N-ISL-RF",
+       "N-PWR-02"
+      ]
+     },
+     {
+      "rank": 16,
       "action": "L-WALL",
       "kind": "literature",
       "n_decides": 0,
@@ -5307,7 +5666,7 @@
       ]
      },
      {
-      "rank": 22,
+      "rank": 17,
       "action": "L-THERMAL",
       "kind": "literature",
       "n_decides": 0,
@@ -5324,7 +5683,7 @@
       ]
      },
      {
-      "rank": 23,
+      "rank": 18,
       "action": "A-INTERSTAGE",
       "kind": "analysis",
       "n_decides": 0,
@@ -5341,7 +5700,7 @@
       ]
      },
      {
-      "rank": 24,
+      "rank": 19,
       "action": "L-RFMODE",
       "kind": "literature",
       "n_decides": 0,
@@ -5357,7 +5716,7 @@
       ]
      },
      {
-      "rank": 25,
+      "rank": 20,
       "action": "L-ECRHALL",
       "kind": "literature",
       "n_decides": 0,
@@ -5381,16 +5740,289 @@
       ],
       "nodes_touched": [
        "N-SUS-01",
-       "N-UTL-01",
        "N-ERO-01",
        "N-PWR-01"
       ]
      }
+    ],
+    "branch_rankings": [
+     {
+      "decision": "cathode_feed",
+      "option": "xe_fed_thermionic",
+      "n_nodes": 6,
+      "ranked": [
+       {
+        "rank": 1,
+        "action": "M-CATHXE",
+        "kind": "measurement",
+        "n_decides": 1,
+        "n_gates_decided": 1,
+        "n_contributes": 5,
+        "n_informs": 0,
+        "gates_decided": [
+         "firing_life"
+        ],
+        "nodes_decided": [
+         "N-CAT-03"
+        ],
+        "nodes_contributed": [
+         "N-CAT-01",
+         "N-CAT-02",
+         "N-CAT-05",
+         "N-CAT-06",
+         "N-CAT-07"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 2,
+        "action": "A-CATHODE",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 2,
+        "n_informs": 3,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-05",
+         "N-CAT-06"
+        ],
+        "nodes_informed": [
+         "N-CAT-01",
+         "N-CAT-02",
+         "N-CAT-03"
+        ]
+       },
+       {
+        "rank": 3,
+        "action": "A-FLOWENV",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-01"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 4,
+        "action": "A-MASS",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-02"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 5,
+        "action": "A-OPS",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-07"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 6,
+        "action": "A-OXEXPO",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-01"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 7,
+        "action": "L-CATHODE",
+        "kind": "literature",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 0,
+        "n_informs": 6,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [],
+        "nodes_informed": [
+         "N-CAT-01",
+         "N-CAT-02",
+         "N-CAT-03",
+         "N-CAT-05",
+         "N-CAT-06",
+         "N-CAT-07"
+        ]
+       }
+      ],
+      "blocked": []
+     },
+     {
+      "decision": "cathode_feed",
+      "option": "air_fed_plasma",
+      "n_nodes": 3,
+      "ranked": [
+       {
+        "rank": 1,
+        "action": "M-CATHAIR",
+        "kind": "measurement",
+        "n_decides": 1,
+        "n_gates_decided": 3,
+        "n_contributes": 2,
+        "n_informs": 0,
+        "gates_decided": [
+         "thrust",
+         "restart_sustainment",
+         "air_xe"
+        ],
+        "nodes_decided": [
+         "N-CAT-04"
+        ],
+        "nodes_contributed": [
+         "N-CAT-08",
+         "N-CAT-09"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 2,
+        "action": "A-OPS",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-09"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 3,
+        "action": "A-THERMAL",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-08"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 4,
+        "action": "L-CATHODE",
+        "kind": "literature",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 0,
+        "n_informs": 3,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [],
+        "nodes_informed": [
+         "N-CAT-04",
+         "N-CAT-08",
+         "N-CAT-09"
+        ]
+       }
+      ],
+      "blocked": []
+     },
+     {
+      "decision": "rf_source_type",
+      "option": "magnetized_helicon",
+      "n_nodes": 1,
+      "ranked": [
+       {
+        "rank": 1,
+        "action": "A-BFIELD",
+        "kind": "analysis",
+        "n_decides": 1,
+        "n_gates_decided": 2,
+        "n_contributes": 0,
+        "n_informs": 0,
+        "gates_decided": [
+         "thrust",
+         "restart_sustainment"
+        ],
+        "nodes_decided": [
+         "N-RF-03"
+        ],
+        "nodes_contributed": [],
+        "nodes_informed": []
+       },
+       {
+        "rank": 2,
+        "action": "L-HHT",
+        "kind": "literature",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 0,
+        "n_informs": 1,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [],
+        "nodes_informed": [
+         "N-RF-03"
+        ]
+       },
+       {
+        "rank": 3,
+        "action": "M-PREION",
+        "kind": "measurement",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 0,
+        "n_informs": 1,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [],
+        "nodes_informed": [
+         "N-RF-03"
+        ]
+       }
+      ],
+      "blocked": []
+     },
+     {
+      "decision": "rf_source_type",
+      "option": "unmagnetized",
+      "n_nodes": 0,
+      "ranked": [],
+      "blocked": []
+     }
     ]
    },
    "ecr_hall": {
-    "n_nodes": 31,
-    "n_sub_causes_not_counted": 1,
+    "n_nodes": 24,
+    "n_sub_causes_not_counted": 2,
+    "n_branch_nodes_not_counted": 9,
     "ranked": [
      {
       "rank": 1,
@@ -5413,38 +6045,11 @@
      },
      {
       "rank": 2,
-      "action": "M-CATHODE",
-      "kind": "measurement",
-      "n_decides": 2,
-      "n_gates_decided": 4,
-      "n_contributes": 5,
-      "n_informs": 0,
-      "gates_decided": [
-       "thrust",
-       "firing_life",
-       "restart_sustainment",
-       "air_xe"
-      ],
-      "nodes_decided": [
-       "N-CAT-03",
-       "N-CAT-04"
-      ],
-      "nodes_contributed": [
-       "N-CAT-01",
-       "N-CAT-02",
-       "N-CAT-05",
-       "N-CAT-06",
-       "N-CTL-02"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 3,
       "action": "M-PREION",
       "kind": "measurement",
       "n_decides": 1,
       "n_gates_decided": 2,
-      "n_contributes": 7,
+      "n_contributes": 6,
       "n_informs": 0,
       "gates_decided": [
        "thrust",
@@ -5455,7 +6060,6 @@
       ],
       "nodes_contributed": [
        "N-IGN-04",
-       "N-UTL-01",
        "N-UTL-03",
        "N-ISL-ECR",
        "N-PWR-01",
@@ -5465,7 +6069,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 4,
+      "rank": 3,
       "action": "A-BFIELD",
       "kind": "analysis",
       "n_decides": 1,
@@ -5485,7 +6089,7 @@
       ]
      },
      {
-      "rank": 5,
+      "rank": 4,
       "action": "M-TRANS",
       "kind": "measurement",
       "n_decides": 1,
@@ -5503,12 +6107,12 @@
       "nodes_informed": []
      },
      {
-      "rank": 6,
+      "rank": 5,
       "action": "A-FLOWENV",
       "kind": "analysis",
       "n_decides": 1,
       "n_gates_decided": 1,
-      "n_contributes": 5,
+      "n_contributes": 4,
       "n_informs": 0,
       "gates_decided": [
        "restart_sustainment"
@@ -5520,18 +6124,17 @@
        "N-IGN-03",
        "N-IGN-04",
        "N-SUS-01",
-       "N-SUS-02",
-       "N-CAT-01"
+       "N-SUS-02"
       ],
       "nodes_informed": []
      },
      {
-      "rank": 7,
+      "rank": 6,
       "action": "A-MASS",
       "kind": "analysis",
       "n_decides": 1,
       "n_gates_decided": 1,
-      "n_contributes": 1,
+      "n_contributes": 0,
       "n_informs": 0,
       "gates_decided": [
        "mass"
@@ -5539,23 +6142,20 @@
       "nodes_decided": [
        "N-MAS-01"
       ],
-      "nodes_contributed": [
-       "N-CAT-02"
-      ],
+      "nodes_contributed": [],
       "nodes_informed": []
      },
      {
-      "rank": 8,
+      "rank": 7,
       "action": "A-ELEC",
       "kind": "analysis",
       "n_decides": 0,
       "n_gates_decided": 0,
-      "n_contributes": 6,
+      "n_contributes": 5,
       "n_informs": 0,
       "gates_decided": [],
       "nodes_decided": [],
       "nodes_contributed": [
-       "N-UTL-01",
        "N-UTL-03",
        "N-ECR-03",
        "N-PWR-01",
@@ -5565,7 +6165,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 9,
+      "rank": 8,
       "action": "M-IGN",
       "kind": "measurement",
       "n_decides": 0,
@@ -5583,7 +6183,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 10,
+      "rank": 9,
       "action": "A-THERMAL",
       "kind": "analysis",
       "n_decides": 0,
@@ -5605,7 +6205,7 @@
       ]
      },
      {
-      "rank": 11,
+      "rank": 10,
       "action": "M-EROSION",
       "kind": "measurement",
       "n_decides": 0,
@@ -5622,27 +6222,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 12,
-      "action": "A-CATHODE",
-      "kind": "analysis",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 2,
-      "n_informs": 3,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [
-       "N-CAT-05",
-       "N-CAT-06"
-      ],
-      "nodes_informed": [
-       "N-CAT-01",
-       "N-CAT-02",
-       "N-CAT-03"
-      ]
-     },
-     {
-      "rank": 13,
+      "rank": 11,
       "action": "A-BREAKEVEN",
       "kind": "analysis",
       "n_decides": 0,
@@ -5660,7 +6240,7 @@
       ]
      },
      {
-      "rank": 14,
+      "rank": 12,
       "action": "M-ECRSRC",
       "kind": "measurement",
       "n_decides": 0,
@@ -5678,7 +6258,7 @@
       ]
      },
      {
-      "rank": 15,
+      "rank": 13,
       "action": "A-OPS",
       "kind": "analysis",
       "n_decides": 0,
@@ -5694,7 +6274,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 16,
+      "rank": 14,
       "action": "M-SUSWIN",
       "kind": "measurement",
       "n_decides": 0,
@@ -5710,7 +6290,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 17,
+      "rank": 15,
       "action": "A-INTERSTAGE",
       "kind": "analysis",
       "n_decides": 0,
@@ -5729,22 +6309,7 @@
       ]
      },
      {
-      "rank": 18,
-      "action": "A-OXEXPO",
-      "kind": "analysis",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 1,
-      "n_informs": 0,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [
-       "N-CAT-01"
-      ],
-      "nodes_informed": []
-     },
-     {
-      "rank": 19,
+      "rank": 16,
       "action": "M-MWCHAIN",
       "kind": "measurement",
       "n_decides": 0,
@@ -5759,7 +6324,7 @@
       "nodes_informed": []
      },
      {
-      "rank": 20,
+      "rank": 17,
       "action": "L-ECRHALL",
       "kind": "literature",
       "n_decides": 0,
@@ -5783,27 +6348,7 @@
       ]
      },
      {
-      "rank": 21,
-      "action": "L-CATHODE",
-      "kind": "literature",
-      "n_decides": 0,
-      "n_gates_decided": 0,
-      "n_contributes": 0,
-      "n_informs": 6,
-      "gates_decided": [],
-      "nodes_decided": [],
-      "nodes_contributed": [],
-      "nodes_informed": [
-       "N-CAT-01",
-       "N-CAT-02",
-       "N-CAT-03",
-       "N-CAT-04",
-       "N-CAT-05",
-       "N-CAT-06"
-      ]
-     },
-     {
-      "rank": 22,
+      "rank": 18,
       "action": "L-SITAEL",
       "kind": "literature",
       "n_decides": 0,
@@ -5817,12 +6362,12 @@
        "N-IGN-01",
        "N-SUS-01",
        "N-SUS-03",
-       "N-UTL-01",
+       "N-PWR-01",
        "N-CTL-01"
       ]
      },
      {
-      "rank": 23,
+      "rank": 19,
       "action": "L-THERMAL",
       "kind": "literature",
       "n_decides": 0,
@@ -5839,7 +6384,7 @@
       ]
      },
      {
-      "rank": 24,
+      "rank": 20,
       "action": "L-WALL",
       "kind": "literature",
       "n_decides": 0,
@@ -5856,7 +6401,7 @@
       ]
      },
      {
-      "rank": 25,
+      "rank": 21,
       "action": "L-HHT",
       "kind": "literature",
       "n_decides": 0,
@@ -5880,10 +6425,219 @@
       ],
       "nodes_touched": [
        "N-SUS-01",
-       "N-UTL-01",
        "N-ERO-01",
        "N-PWR-01"
       ]
+     }
+    ],
+    "branch_rankings": [
+     {
+      "decision": "cathode_feed",
+      "option": "xe_fed_thermionic",
+      "n_nodes": 6,
+      "ranked": [
+       {
+        "rank": 1,
+        "action": "M-CATHXE",
+        "kind": "measurement",
+        "n_decides": 1,
+        "n_gates_decided": 1,
+        "n_contributes": 5,
+        "n_informs": 0,
+        "gates_decided": [
+         "firing_life"
+        ],
+        "nodes_decided": [
+         "N-CAT-03"
+        ],
+        "nodes_contributed": [
+         "N-CAT-01",
+         "N-CAT-02",
+         "N-CAT-05",
+         "N-CAT-06",
+         "N-CAT-07"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 2,
+        "action": "A-CATHODE",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 2,
+        "n_informs": 3,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-05",
+         "N-CAT-06"
+        ],
+        "nodes_informed": [
+         "N-CAT-01",
+         "N-CAT-02",
+         "N-CAT-03"
+        ]
+       },
+       {
+        "rank": 3,
+        "action": "A-FLOWENV",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-01"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 4,
+        "action": "A-MASS",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-02"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 5,
+        "action": "A-OPS",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-07"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 6,
+        "action": "A-OXEXPO",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-01"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 7,
+        "action": "L-CATHODE",
+        "kind": "literature",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 0,
+        "n_informs": 6,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [],
+        "nodes_informed": [
+         "N-CAT-01",
+         "N-CAT-02",
+         "N-CAT-03",
+         "N-CAT-05",
+         "N-CAT-06",
+         "N-CAT-07"
+        ]
+       }
+      ],
+      "blocked": []
+     },
+     {
+      "decision": "cathode_feed",
+      "option": "air_fed_plasma",
+      "n_nodes": 3,
+      "ranked": [
+       {
+        "rank": 1,
+        "action": "M-CATHAIR",
+        "kind": "measurement",
+        "n_decides": 1,
+        "n_gates_decided": 3,
+        "n_contributes": 2,
+        "n_informs": 0,
+        "gates_decided": [
+         "thrust",
+         "restart_sustainment",
+         "air_xe"
+        ],
+        "nodes_decided": [
+         "N-CAT-04"
+        ],
+        "nodes_contributed": [
+         "N-CAT-08",
+         "N-CAT-09"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 2,
+        "action": "A-OPS",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-09"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 3,
+        "action": "A-THERMAL",
+        "kind": "analysis",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 1,
+        "n_informs": 0,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [
+         "N-CAT-08"
+        ],
+        "nodes_informed": []
+       },
+       {
+        "rank": 4,
+        "action": "L-CATHODE",
+        "kind": "literature",
+        "n_decides": 0,
+        "n_gates_decided": 0,
+        "n_contributes": 0,
+        "n_informs": 3,
+        "gates_decided": [],
+        "nodes_decided": [],
+        "nodes_contributed": [],
+        "nodes_informed": [
+         "N-CAT-04",
+         "N-CAT-08",
+         "N-CAT-09"
+        ]
+       }
+      ],
+      "blocked": []
      }
     ]
    }
@@ -5891,15 +6645,17 @@
  },
  "open_questions_for_owner": [
   "Hard-gate ids: this file uses thrust, bus_power, mass, firing_life, mission_life, restart_sustainment, air_xe and maps them one-to-one to the hard-gate matrix ids G1_thrust ... G7_air_xenon (matrix_gate_id; docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json, DRAFT in another lane). Confirm the mapping when the matrix is merged, and whether the PROPOSED P1_thermal / P2_cathode gates should become binding.",
-  "restart_sustainment: set the restart count (eclipse, safe mode, duty cycling) and a sustainment margin; until then N-IGN-01, N-CTL-02 and N-CTL-03 thresholds stay TBD.",
+  "restart_sustainment: set the restart count (eclipse, safe mode, duty cycling) and a sustainment margin; until then N-IGN-01, N-CTL-02, N-CTL-03, N-CAT-07 and N-CAT-09 thresholds stay TBD.",
   "air_xe: confirm from the RFP text which Xe roles are allowed (cathode, ignition, transition, peak augmentation) and whether a Xe share limit applies.",
   "Xe allocation inside the 40 kg gate (N-CAT-02, N-CTL-02): owner decision for the mass ledger.",
   "PROPOSED thresholds (oscillation bound, RF mode-transition margin, reflected power, cathode current and flow margins, break-even criterion): accept, change or replace before any of them decides a node.",
   "PROPOSED elimination rule (hardware evidence at levels 1-2, or a closure-independent physics bound): accept or amend.",
   "Lane deliverable paths for break-even, interstage, feed envelope, minimum decisive experiment and cathode integration are taken from drafts in other worktrees; confirm them when those lanes merge.",
   "CLAUDE.md lists 'RF/helicon pre-ionisers add nothing' as probably robust at mechanism level, from the superseded 0-D work. This lane does not use it as evidence (the section says 'do not quote'); the break-even lane (A-BREAKEVEN) is where it should be re-derived without any Hall closure, and the owner may decide whether it bears on N-UTL-02 / N-PWR-02.",
-  "Unassigned lanes: mission_ops (A-OPS restart count), magnetic_interaction (A-BFIELD, the only deciding action for N-RF-03 and N-ECR-02; the interstage lane takes the axial field as one input and does not compute field superposition or the resonance surface), cathode_oxygen_exposure (A-OXEXPO, needed jointly for N-CAT-01) and hardware_test (no lane executes any measurement action, including the top-ranked M-THERMAL and M-CATHODE and M-MWCHAIN). Assign each, fold it into an existing lane, or accept it as open.",
+  "Unassigned lanes: mission_ops (A-OPS restart count), magnetic_interaction (A-BFIELD, the only deciding action for N-RF-03 and N-ECR-02; the interstage lane takes the axial field as one input and does not compute field superposition or the resonance surface), cathode_oxygen_exposure (A-OXEXPO, needed jointly for N-CAT-01) and hardware_test (no lane executes any measurement action, including M-THERMAL, M-CATHXE, M-CATHAIR and M-MWCHAIN). Assign each, fold it into an existing lane, or accept it as open.",
   "Subsystem mass allocations: N-MAS-02/03 are counted only through the total (sub_cause_of N-MAS-01). If the owner sets RF-chain or microwave-chain mass allocations, they become separate nodes with their own threshold.",
-  "Microwave-chain life (N-ECR-03): accept that it needs a life or accelerated-life test of the candidate chain (M-MWCHAIN), or name a rated component whose datasheet life would be a design-fixed input."
+  "Microwave-chain life (N-ECR-03): accept that it needs a life or accelerated-life test of the candidate chain (M-MWCHAIN), or name a rated component whose datasheet life would be a design-fixed input.",
+  "Design branches: choose the cathode feed (xe_fed_thermionic or air_fed_plasma) and, for rf_hall, the RF source type (magnetized_helicon or unmagnetized), or keep both open. Until then a conditional selection must name the option it assumes; branch-specific nodes are ranked per option and never enter the core ranking.",
+  "N-UTL-01 (low utilization of air in the Hall stage) is now a sub-cause of N-PWR-01 and, like it, 'contradicted' by laboratory N2 operating points (S-CIFALI2011, S-MARCHIONI2020) that do not represent the ABEP feed state; confirm this reading of relative-to-Xe statements as context."
  ]
 }
