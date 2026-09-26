@@ -586,6 +586,18 @@ def test_v17_itikawa_n2_table_is_authoritative():
     assert 8.0e-15 < k_rate("N2", "iz", 10.0) < 9.0e-15                 # table value at 3/2 Te = 15 eV
 
 
+def _synthetic_ensemble():
+    """Real layer-1 definition with one synthetic layer-2 member whose id matches the synthetic maps' meta."""
+    import copy
+    from abep_sim.hall_ensemble import load_ensemble
+    e = copy.deepcopy(load_ensemble())
+    e["admission_rule"] = "synthetic (tests only)"
+    e["members"] = [{"ensemble_member_id": "synthetic", "transport_family": "ScaledGaussianBohm",
+                     "transport_parameters": {"anom_scale": 0.0625}, "calibration_hypotheses": ["p5_registration"],
+                     "evidence_basis": "test", "applicability_domain": "test", "validation_status": "test"}]
+    return e
+
+
 def test_v17_hall_map_loader_enforces_pin_schema_and_bounds(tmp_path):
     import json, numpy as np, pytest
     from abep_sim.hall_map import HallMap, REQUIRED_FIELDS, REQUIRED_META, pinned_commit
@@ -596,7 +608,7 @@ def test_v17_hall_map_loader_enforces_pin_schema_and_bounds(tmp_path):
     meta.update(schema="hall_map_schema_v1", pinned=f"commit = \"{pinned_commit()}\"")
     good = {"meta": meta, "axes": axes, "fields": f}
     p = tmp_path / "m.json"; p.write_text(json.dumps(good))
-    m = HallMap(str(p))                                              # SYNTHETIC map: tests the loader only
+    m = HallMap(str(p), ensemble=_synthetic_ensemble())              # SYNTHETIC map: tests the loader only
     assert m(Vd=260.0, mdot_kgps=1.2e-6)["trustworthy"] is False    # touches the unconverged node
     q = m(Vd=255.0, mdot_kgps=1.1e-6)
     assert q["wall_life_trustworthy"] is False                       # meta ion_wall_losses is the string "synthetic", not True
@@ -605,7 +617,7 @@ def test_v17_hall_map_loader_enforces_pin_schema_and_bounds(tmp_path):
     bad = dict(good); bad["meta"] = dict(meta, pinned="commit = \"deadbeef\"")
     p2 = tmp_path / "b.json"; p2.write_text(json.dumps(bad))
     with pytest.raises(ValueError):
-        HallMap(str(p2))
+        HallMap(str(p2), ensemble=_synthetic_ensemble())
 
 
 def test_golden_comparator_near_zero_tolerance():
@@ -677,7 +689,7 @@ def test_wall_life_trust_is_separate_from_performance_trust(tmp_path):
         meta = {k: "synthetic" for k in REQUIRED_META}
         meta.update(schema="hall_map_schema_v1", pinned=f"commit = \"{pinned_commit()}\"", ion_wall_losses=ion_wall_losses)
         p = tmp_path / f"m{ion_wall_losses}{wl}.json"; p.write_text(json.dumps({"meta": meta, "axes": axes, "fields": f}))
-        return HallMap(str(p))(Vd=275.0, mdot_kgps=1.5e-6)
+        return HallMap(str(p), ensemble=_synthetic_ensemble())(Vd=275.0, mdot_kgps=1.5e-6)
     assert make(False, [[1, 1], [1, 1]])["trustworthy"] is True
     assert make(False, [[1, 1], [1, 1]])["wall_life_trustworthy"] is False
     assert make(True, [[1, 1], [1, 0]])["wall_life_trustworthy"] is False
@@ -724,3 +736,37 @@ def test_rescore_same_combo_requires_actual_selections():
     assert m.same_combo([{"combo": None}] * 3) is False
     assert m.same_combo([{"combo": "x"}, {"combo": None}, {"combo": "x"}]) is False
     assert m.same_combo([{"combo": "x"}] * 3) is True
+
+
+def test_transport_ensemble_two_layer_structure(tmp_path):
+    """Layer 1 (P5 calibration nuisance) never becomes a transport parameter or a map axis; the credible set stays
+    unweighted; while admission is pending, no Hall map can be loaded."""
+    import copy, json, numpy as np, pytest
+    from abep_sim.hall_ensemble import load_ensemble
+    from abep_sim.hall_map import HallMap, REQUIRED_FIELDS, REQUIRED_META, pinned_commit
+    real = load_ensemble()
+    assert real["weighting"] == "unweighted" and set(real["calibration_nuisance"]) >= {
+        "p5_registration", "p5_coil_shape", "beam_efficiency_reading"}
+    assert real["members"] == [] and real["admission_rule"] is None          # credible set pending a project decision
+    axes = {"Vd": [250.0, 300.0], "mdot_kgps": [1e-6, 2e-6]}
+    f = {k: (np.ones((2, 2)) * 0.02).tolist() for k in REQUIRED_FIELDS}
+    f["converged"] = [[1, 1], [1, 1]]; f["sustained"] = [[1, 1], [1, 1]]
+    meta = {k: "synthetic" for k in REQUIRED_META}
+    meta.update(schema="hall_map_schema_v1", pinned=f"commit = \"{pinned_commit()}\"")
+    p = tmp_path / "m.json"; p.write_text(json.dumps({"meta": meta, "axes": axes, "fields": f}))
+    with pytest.raises(ValueError, match="not an admitted"):
+        HallMap(str(p))                                                     # real ensemble: nothing admitted yet
+    HallMap(str(p), ensemble=_synthetic_ensemble())
+    bad_axes = dict(axes, p5_registration=[0, 1])
+    f2 = {k: (np.ones((2, 2, 2)) * 0.02).tolist() for k in REQUIRED_FIELDS}
+    p2 = tmp_path / "m2.json"; p2.write_text(json.dumps({"meta": meta, "axes": bad_axes, "fields": f2}))
+    with pytest.raises(ValueError, match="calibration-nuisance"):
+        HallMap(str(p2), ensemble=_synthetic_ensemble())
+    leak = copy.deepcopy(_synthetic_ensemble()); leak["members"][0]["transport_parameters"]["p5_coil_shape"] = "1p6kW"
+    pe = tmp_path / "e.json"; pe.write_text(json.dumps(leak))
+    with pytest.raises(ValueError, match="calibration nuisance"):
+        load_ensemble(str(pe))
+    weighted = copy.deepcopy(_synthetic_ensemble()); weighted["weighting"] = "bayesian"
+    pw = tmp_path / "w.json"; pw.write_text(json.dumps(weighted))
+    with pytest.raises(ValueError, match="unweighted"):
+        load_ensemble(str(pw))

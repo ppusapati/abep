@@ -1430,3 +1430,31 @@ Final state:
 
 **Next phase:** a Hall uncertainty ensemble (ScaledGaussianBohm region × geometry × coil shape × Ψ_b reading), carried into
 Hall maps and the architecture trade. The N₂/N chemistry work continues in parallel.
+
+## Two-layer Hall uncertainty structure (2026-09-26, project decision)
+P5-specific ambiguity must not leak into the Vyovrinda spacecraft model. So the Hall uncertainty is split in two:
+- **Layer 1, calibration nuisance:** P5 registration, historical coil shape, beam-efficiency reading, facility-ingestion
+  interpretation. It's uncertainty in the P5 evidence, and it's marginalized when admitting transport closures. It is
+  **never** a Vyovrinda design variable, map axis or architecture-trade dimension. `HallMap` rejects maps that use a layer-1
+  variable as an axis, and `hall_ensemble.load_ensemble` rejects members that use one as a transport parameter.
+- **Layer 2, transferable:** the credible set of transport closures surviving marginalization. It's an **unweighted**
+  scenario set; the loader rejects any other weighting until evidence-based weighting is justified and logged. Each member
+  carries `ensemble_member_id`, `transport_family`, `transport_parameters`, `calibration_hypotheses`, `evidence_basis`,
+  `applicability_domain` and `validation_status`. Each Hall map names its member in `meta.ensemble_member_id` (now required
+  by `hall_map_schema_v1`; no maps existed yet).
+
+**Admission rule: pending.** Census from the existing vacuum-mode runs: in-sample, all three points quiet, thrust within 2σ,
+admitted if at least one layer-1 combination supports it.
+
+| I_d tolerance | ScaledGaussianBohm ≤ Bohm | super-Bohm | MultiLogBohm |
+|---|---|---|---|
+| 15 % | 0 | 0 | 0 |
+| 20 % | 1 | 5 | 0 |
+| 25 % | 5 | 8 | 0 |
+
+All defensible sets are supported only by L32-anode. Until the rule is chosen, `members` is empty and no Hall map can be
+loaded.
+
+**Roadmap fix:** N₂ validation (P5-N₂, ECHT-N₂) runs across the credible Xe-informed ensemble with no retuning per case,
+replacing "ONE transport parameter set", which contradicted the closed Xe campaign. N₂ becomes a discrimination
+experiment that can shrink the ensemble.
