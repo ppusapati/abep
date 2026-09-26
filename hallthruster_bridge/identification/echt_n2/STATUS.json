@@ -1,0 +1,257 @@
+{
+ "id": "echt_n2_status_v1",
+ "date": "2026-09-26",
+ "subject": "ECHT (Marchioni & Cappelli extended-channel Hall thruster) on N2 as Hall validation evidence",
+ "status": "HISTORICAL_UNSUPPORTED",
+ "score_bearing": false,
+ "transport_discriminator": false,
+ "independent_scoreable_validation_dataset": false,
+ "basis": {
+  "audit_file": "hallthruster_bridge/identification/echt_n2/echt_n2_evidence_audit_v1.json",
+  "audit_sha256": "87243283ed9e0d23eb6e17c5bf1daf789e1f51c845c33b5f0eeb165a9c3d0922",
+  "audit_findings_used": [
+   "E1",
+   "E2",
+   "E3",
+   "E4",
+   "E5",
+   "E6",
+   "E7",
+   "E8"
+  ],
+  "audit_verdict": "NOT USABLE AS AN INDEPENDENT, SCOREABLE VALIDATION DATASET WITHOUT FORCED ASSUMPTIONS. Usable at most as a supporting, pre-registered qualitative/semi-quantitative check (sustainment at 180-220 V, 2.06 mg/s; I_d magnitude and its decrease with coil current; thrust ~20-23 mN) with every forced assumption carried as a declared layer-1 nuisance, never as a promotion-deciding criterion on its own.",
+  "sources": [
+   "S1 Marchioni & Cappelli, J. Appl. Phys. 130, 053306 (2021), doi:10.1063/5.0048283 (paywalled; abstract only, via Crossref)",
+   "S2 F. Marchioni, MSc thesis, Politecnico di Torino / Stanford, 2020, https://webthesis.biblio.polito.it/14618/ (open, CC BY-NC-ND 3.0)"
+  ]
+ },
+ "disposition": {
+  "may_be_used_for": [
+   "At most a supporting check that is pre-registered before any ECHT simulation: sustainment at 180-220 V and 2.06 mg/s; I_d magnitude and its decrease with coil current; thrust ~20-23 mN. Forced assumptions A1-A11 are carried as declared layer-1 nuisance.",
+   "Context for the published ECHT operating envelope (180-220 V, 2.06 mg/s N2), quoted with its evidence class."
+  ],
+  "must_not_be_used_for": [
+   "a transport discriminator: it cannot promote, eliminate or rank screening candidates or admitted members",
+   "a score-bearing validation result, or any gate-3 pass/fail",
+   "tuning or retuning any transport closure, chemistry or boundary condition",
+   "replacement simulation cases: none were created, and none may be created under this status",
+   "the 250 V anchor or the 225-275 V points as evidence of ECHT behaviour"
+  ],
+  "supporting_check_preregistered": false,
+  "supporting_check_note": "No ECHT supporting check is pre-registered. As of 2026-09-26, no file in hallthruster_bridge/prereg/ defines an ECHT criterion. Creating one is an owner decision, and it must be frozen before any ECHT simulation.",
+  "forced_assumptions": [
+   "A1 channel radii: 100 mm = channel OD (r 40/50 mm) vs BN piece OD (unknown wall thickness)",
+   "A2 anode axial position and the B(z) axis origin (exit at 86 vs 87.3 mm)",
+   "A3 B magnitude per run: FEMM interpolated in coil current, scaled (or not) by the single 2 A measured/FEMM ratio; 0.8 A extrapolated; radial position/component of the measured profile",
+   "A4 B(z) beyond 10.1-10.3 cm (plume region of the 1-D domain)",
+   "A5 cathode: neglect the argon cathode flow (7-36 % of anode mass) and choose a cathode coupling voltage/position",
+   "A6 facility: background pressure/ingestion model (0.8-2.5e-4 Torr, no published correction; comparison mode facility vs vacuum)",
+   "A7 thrust reduction reading (one-side vs averaged, 6-18 %) and a total thrust uncertainty (published +- are fit-only)",
+   "A8 plume divergence (no data) for any thrust comparison",
+   "A9 anode flow 2.06 vs 2.083 mg/s (1 %) and I_d uncertainty (rounding only)",
+   "A10 wall material/SEE (BN grade unknown)",
+   "A11 treatment of the strongly unstable runs (1, 3, 7) and of mode changes during calibration (I_d possibly not simultaneous with thrust)"
+  ]
+ },
+ "historical_artifacts": [
+  {
+   "path": "hallthruster_bridge/cases/echt_n2.json",
+   "status": "HISTORICAL_UNSUPPORTED",
+   "score_bearing": false,
+   "unsupported": [
+    "V_d 225/250/275 V (no open source)",
+    "exit-peaked Gaussian B(z) (contradicted by the published flat plateau); B_max_T null",
+    "no coil current per case, so no case matches a tabulated S2 operating point"
+   ],
+   "kept_as": "record of the superseded plan; content unchanged apart from the status fields",
+   "enforcement": "hallthruster_bridge/run_cases.jl refuses a case file whose top-level status is HISTORICAL_UNSUPPORTED unless ABEP_ALLOW_HISTORICAL=1. When allowed, every result record, summary row and the meta carry score_bearing = false."
+  },
+  {
+   "path": "abep_sim/validation.py (CAL, calibration_anchor())",
+   "status": "HISTORICAL_UNSUPPORTED",
+   "score_bearing": false,
+   "unsupported": [
+    "250 V operating point",
+    "'250 V -> 24 mN, 690 W, 1230 s' record in docs/HISTORY.md"
+   ],
+   "kept_as": "superseded 0-D calibration anchor; only documentation added (docstring and CAL_ANCHOR_PROVENANCE), no value or behaviour changed; golden benchmarks unaffected"
+  }
+ ],
+ "items": [
+  {
+   "item": "sustainment on N2 (100 % N2 anode, argon cathode)",
+   "value": "stable discharge at 180-220 V, 2.06 mg/s, magnet 0.8-3.0 A; unstable/quenching below ~1.6 mg/s; Runs 1, 3, 7 strongly unstable",
+   "source": "S2 Table 6.1 p.98; p.104, p.107-110 (audit gap_register 'stability / sustainment')",
+   "evidence_level": 3,
+   "quantity_type": "measured (qualitative)",
+   "uncertainty": "qualitative; no oscillation data",
+   "use": "SUPPORTING_CHECK_CANDIDATE"
+  },
+  {
+   "item": "discharge current I_d (13 operating points)",
+   "value": "1.5-3.9 A at V_d 180/200/220 V, coil current 0.8-3.0 A, anode 2.06 mg/s N2",
+   "source": "S2 Table 6.1 p.98 (audit values.operating_points_table_6_1)",
+   "evidence_level": 3,
+   "quantity_type": "measured (tabulated)",
+   "uncertainty": "2 significant figures only (rounding +-0.05 A = 1.3-3.3 %); no measurement uncertainty or oscillation amplitude stated",
+   "use": "SUPPORTING_CHECK_CANDIDATE (magnitude and decrease with coil current only; forced assumptions A1-A11 as layer-1 nuisance)"
+  },
+  {
+   "item": "thrust (7 runs)",
+   "value": "one-side reduction 20.62-23.41 mN (Table 6.2, 7 runs); averaged reduction 17.29-21.31 mN (Table 6.3, Runs 2/4/5/6), 6-18 % lower",
+   "source": "S2 Table 6.2 p.101, Table 6.3 p.108 (audit values.performance_table_6_2)",
+   "evidence_level": 3,
+   "quantity_type": "measured (thrust stand) + reduced by the author",
+   "uncertainty": "published +- are calibration-fit only (no total uncertainty, no N2 cold-flow tare); reduction reading ambiguity 6-18 % (A7); Runs 1, 3, 7 flagged strongly unstable (A11)",
+   "use": "SUPPORTING_CHECK_CANDIDATE (thrust ~20-23 mN magnitude only; needs a divergence assumption, A8)"
+  },
+  {
+   "item": "anode mass flow",
+   "value": "2.06 mg/s N2 (99 sccm, text) vs 2.083 mg/s (100 sccm, used for Isp)",
+   "source": "S2 p.97, p.104 and Table 6.2 (audit values.derived_checks)",
+   "evidence_level": 3,
+   "quantity_type": "measured (stated), with a 1 % internal ambiguity",
+   "uncertainty": "1 % (A9); controller uncertainty and leakage not stated",
+   "use": "INPUT (with A9)"
+  },
+  {
+   "item": "channel geometry",
+   "value": "length 86 mm; channel height 10 mm; '100 mm outer diameter' of the BN chamber; pure-iron pole walls 46 mm",
+   "source": "S2 Sec. 4.1.1 p.63",
+   "evidence_level": 3,
+   "quantity_type": "measured (design dimension)",
+   "uncertainty": "not stated",
+   "use": "INPUT (with A1, A2)"
+  },
+  {
+   "item": "channel radii r_in / r_out",
+   "value": "40 / 50 mm (reading A: 100 mm = channel OD) or unknown (reading B: 100 mm = BN piece OD)",
+   "source": "S2 p.63 plus our reading (audit forced assumption A1)",
+   "evidence_level": 3,
+   "quantity_type": "inferred (verify)",
+   "uncertainty": "TBD — requires the BN wall thickness or the S1 full text",
+   "use": "FORCED ASSUMPTION A1"
+  },
+  {
+   "item": "anode axial position / B(z) axis origin",
+   "value": "TBD — requires anode geometry not published in any open source (exit plane at 8.73 cm on the digitized B(z) axis vs 86 mm stated length)",
+   "source": "S2 p.64, Figs. 4.7/4.8 (audit gap_register)",
+   "evidence_level": 3,
+   "quantity_type": "digitized (exit-plane marker); anode position missing",
+   "uncertainty": "1.3 mm offset between the marker and the stated length (origin unknown)",
+   "use": "FORCED ASSUMPTION A2"
+  },
+  {
+   "item": "measured centreline B(z) at 2 A coil current",
+   "value": "14 points; flat plateau ~4.7-8.6 cm, plateau mean 85.3 G, peak 86.09 G",
+   "source": "S2 Fig. 4.7 p.66 (digitized: echt_bfield_digitized_v1.json)",
+   "evidence_level": 3,
+   "quantity_type": "digitized (of measured)",
+   "uncertainty": "reading +-0.014 cm, +-0.2 G; probe uncertainty, component and radial position not stated",
+   "use": "INPUT (shape) with A3/A4; not a target"
+  },
+  {
+   "item": "FEMM B(z) at 1.5/2/2.5/3 A",
+   "value": "flat-topped profiles; at 2 A the measured plateau is ~12 % below FEMM (measured/FEMM 0.881, reconstructed)",
+   "source": "S2 Fig. 4.8 p.67 (digitized: echt_bfield_digitized_v1.json)",
+   "evidence_level": 3,
+   "quantity_type": "model-derived + digitized",
+   "uncertainty": "no curve below 1.5 A (Table 6.1 has a 0.8 A point)",
+   "use": "INPUT under forced assumption A3 (B per run)"
+  },
+  {
+   "item": "'130 G' peak field",
+   "value": "130 G",
+   "source": "S2 p.104, p.114",
+   "evidence_level": 3,
+   "quantity_type": "model-derived (matches FEMM at 3 A, 133.5 G digitized)",
+   "uncertainty": "not a measured B_max",
+   "use": "NOT A TARGET; not a measured B_max"
+  },
+  {
+   "item": "facility background pressure",
+   "value": "8.1e-5 - 2.2e-4 Torr per point (Table 6.1); up to 2.5e-4 Torr in the text",
+   "source": "S2 Table 6.1 p.98; Sec. 5.1 p.79-82, p.110, p.114",
+   "evidence_level": 3,
+   "quantity_type": "measured (hot-cathode ion gauge)",
+   "uncertainty": "gauge location and gas correction not stated; no published facility correction",
+   "use": "FORCED ASSUMPTION A6 (facility/ingestion model)"
+  },
+  {
+   "item": "background ingestion",
+   "value": "~2-6 % of the anode flow (order of magnitude)",
+   "source": "audit values.derived_checks.ingestion_order_of_magnitude",
+   "evidence_level": 6,
+   "quantity_type": "inferred (free-molecular N2 at 300 K, gauge = local pressure, exit-annulus area of reading A)",
+   "uncertainty": "order of magnitude only",
+   "use": "NOT A TARGET"
+  },
+  {
+   "item": "cathode argon flow",
+   "value": "0.15-0.74 mg/s Ar per point (7-36 % of the anode mass flow)",
+   "source": "S2 Table 6.1 p.98",
+   "evidence_level": 3,
+   "quantity_type": "measured (tabulated)",
+   "uncertainty": "not stated; cathode position and coupling voltage not published",
+   "use": "FORCED ASSUMPTION A5"
+  },
+  {
+   "item": "plume divergence, beam current, species fractions, E x B, ion energy",
+   "value": "TBD — requires plume measurements that no open source publishes",
+   "source": "S2 p.106-107 (no quantitative plume diagnostics)",
+   "evidence_level": null,
+   "quantity_type": "missing",
+   "uncertainty": "n/a",
+   "use": "NONE (A8 for any thrust comparison)"
+  },
+  {
+   "item": "JAP 2021 abstract ranges",
+   "value": "500-800 W anode, 17-22 mN, 1000-1100 s, 14-18 % total thrust efficiency, 2 mg/s N2; performance degrades with voltage",
+   "source": "S1 abstract via https://api.crossref.org/works/10.1063/5.0048283",
+   "evidence_level": 3,
+   "quantity_type": "measured (author-reported ranges; abstract only)",
+   "uncertainty": "ranges only, no per-point values; S1 very probably reports the same campaign as S2 (inferred, verify)",
+   "use": "CONTEXT ONLY (no per-point target)"
+  },
+  {
+   "item": "cases/echt_n2.json discharge voltages 225/250/275 V",
+   "value": "225, 250, 275 V",
+   "source": "none (placeholders; the file's own 'source' field says 'voltages placeholders')",
+   "evidence_level": 7,
+   "quantity_type": "assumed (no open source)",
+   "uncertainty": "n/a",
+   "use": "HISTORICAL_UNSUPPORTED"
+  },
+  {
+   "item": "cases/echt_n2.json exit-peaked Gaussian B(z) (B_sigma_in_m 0.03, B_sigma_out_m 0.02; B_max_T null)",
+   "value": "Gaussian peaked at the exit plane",
+   "source": "none; contradicted by S2 Figs. 4.7/4.8 (flat plateau), audit finding E3",
+   "evidence_level": 7,
+   "quantity_type": "assumed (contradicted by level-3 evidence)",
+   "uncertainty": "n/a",
+   "use": "HISTORICAL_UNSUPPORTED"
+  },
+  {
+   "item": "'2 mg/s, 250 V -> 24 mN, 690 W, 1230 s' calibration record (docs/HISTORY.md) and the 250 V point of abep_sim/validation.py calibration_anchor()",
+   "value": "250 V, 24 mN, 690 W, 1230 s (as recorded in docs/HISTORY.md)",
+   "source": "no openly accessible source (S1 abstract gives ranges only; S2 has no data above 220 V); audit finding E2",
+   "evidence_level": 7,
+   "quantity_type": "assumed (unverified; verify against the S1 full text if it ever becomes legitimately accessible)",
+   "uncertainty": "n/a",
+   "use": "HISTORICAL_UNSUPPORTED (kept only to reproduce the withdrawn 0-D results)"
+  }
+ ],
+ "item_fields": {
+  "evidence_level": "docs/EVIDENCE.md hierarchy (1 highest ... 7 assumption); null = nothing published",
+  "quantity_type": "measured / digitized / inferred / reconstructed / model-derived / assumed, or missing",
+  "use": "SUPPORTING_CHECK_CANDIDATE, INPUT, FORCED ASSUMPTION, NOT A TARGET, CONTEXT ONLY, NONE or HISTORICAL_UNSUPPORTED"
+ },
+ "reopen_only_if": "Genuinely new published information becomes available legitimately: the S1 full text through library access or an openly licensed copy (radii, anode or cathode position, thrust uncertainty, any 250 V data), or a new open ECHT measurement paper. Standing rules: published sources only, no contact with authors or labs, no paywall bypass.",
+ "owner_follow_up_outside_this_change": [
+  "CLAUDE.md 'Next work' item 3 still lists ECHT on N2 (cases/echt_n2.json) as a discrimination run; the owner integrates the status change there",
+  "docs/HISTORY.md entry for this disposition (owner integrates)",
+  "abep_sim/plasma_devices.py: the COUPLED_* calibration comment refers to the same 250 V anchor (unchanged)",
+  "abep_sim/hall1d.py ECHT dict (r_in 0.040, r_out 0.050) is reading A of forced assumption A1 (unchanged; sanity model only)"
+ ],
+ "companion_document": "hallthruster_bridge/identification/echt_n2/ECHT_N2_EVIDENCE_STATUS.md"
+}

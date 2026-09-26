@@ -1,4 +1,7 @@
 {
+ "status": "HISTORICAL_UNSUPPORTED",
+ "status_basis": "ECHT-N2 evidence audit hallthruster_bridge/identification/echt_n2/echt_n2_evidence_audit_v1.json (2026-09-26; findings E2, E3; conclusion): no openly accessible source has ECHT data at 225-275 V (the open Marchioni 2020 thesis tabulates 180/200/220 V only; the paywalled JAP 2021 abstract gives ranges only), and the published B(z) is a flat plateau (~4.7-8.6 cm), which contradicts the exit-peaked Gaussian used here; B_max_T is null. Kept unchanged as a record of the superseded plan. Not a transport discriminator; no replacement cases. Disposition: hallthruster_bridge/identification/echt_n2/STATUS.json. run_cases.jl refuses this file unless ABEP_ALLOW_HISTORICAL=1, and then marks every record score_bearing=false.",
+ "score_bearing": false,
  "source": "Marchioni & Cappelli JAP 2021; geometry Sec. 3; B_max NOT in our sources \u2014 must be obtained; voltages placeholders until the per-point data are digitised",
  "assumptions": "B(z) Gaussian peaked at the exit plane (widths assumed; replace with measured profiles)",
  "cases": [
