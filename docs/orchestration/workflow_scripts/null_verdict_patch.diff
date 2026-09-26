@@ -1,0 +1,11 @@
+--- ORIGINAL.js
++++ PATCHED.js
+@@ -67,7 +67,7 @@
+ Lane brief: ${lane.prompt}
+ ALLOWED paths: ${lane.allowed.join(', ')}
+ An adversarial reviewer reported these issues — fix every blocker and major one (and minors where cheap); if a flagged claim cannot be sourced, mark it TBD/verify or remove it rather than inventing support. If something was changed outside ALLOWED paths, revert it (git checkout ${BASE} -- <path> or delete new files).
+-ISSUES: ${JSON.stringify(rv.v.issues)}
++ISSUES: ${JSON.stringify(rv.v ? rv.v.issues : [{severity: 'major', description: 'reviewer unavailable: re-check the whole lane against the brief'}])}
+ Commit the repair as a new commit in the same worktree (same trailer lines). Report as before.`
+ 
+ const lanes = args.lanes

@@ -68,5 +68,32 @@
  },
  "known_limitations": [
   "Orphan claim file (owner review of debce16): if the process dies after the exclusive claim file is created but before the CLAIMED event is appended, O_EXCL still prevents a duplicate execution, but the tracker may show the trigger READY while every new claim of that attempt fails on the orphan file. This is a liveness/diagnostics issue, not an idempotency failure. Owner decision: address it only if it actually occurs (recovery: inspect claims/<key>.<attempt>.claim and record the event with evidence)."
- ]
+ ],
+ "executed_workflow_scripts": {
+  "location": "docs/orchestration/workflow_scripts",
+  "note": "exact copies of the session-local workflow scripts that were executed (the harness stores them outside the repo); resume-*.js = original script + the original run's args embedded verbatim (ARGS_EMBEDDED) so cached agents replay",
+  "sha256": {
+   "abep-lanes-v2-wf_17c9b0e6-1cb.js": "26c98a8b21bbb0efebc3e7a58998104c84b007ca3e301d9545d91bb5b04722db",
+   "abep-lanes-v3-deps-wf_3da51c0c-3b4.js": "f50dc479ab51536434ce0f40fdfe3242c02171865a53b9f35b9bb0f77b33a116",
+   "abep-parallel-lanes-wf_020ac47f-09d.ORIGINAL.js": "f681e520ba539b3ab9216fe1d530ae4cdfc1ee6c9d44abf2c7304ebd84e17c84",
+   "abep-parallel-lanes-wf_020ac47f-09d.PATCHED.js": "57fe4068a44e76e69d2db486afafc1c897be98109c0499261069f0bdee5e17ef",
+   "null_verdict_patch.diff": "8fcca479c7afeee12980ad4c4a9443d58ea9fad9181a48db836a3923849a020d",
+   "resume-wf_020ac47f-09d.js": "d3ac818dc0b937079c7aa869fe793728bbfb86575f839c9df27d0cf9c24ef8c0",
+   "resume-wf_15f0f2f8-8d4.js": "5ecc680b8b65a0638bec21992840a6dd2bccedf62c4a3494a835bdc7f16112aa",
+   "resume-wf_17c9b0e6-1cb.js": "ae4883744b56219bb6f2bf9376acefbeceb3bfb90c21fecfb82f65f52fe3fe94",
+   "resume-wf_22d6b4cf-10a.js": "36d6a5ecb52a024bb5726973c11ec8a9a88048e1712ce1b2f60823a590bd9c55",
+   "resume-wf_2bcadd98-5ff.js": "f22cd5024f652d8411528d08592556061a1af1078d42132ca1a6152ef20b47b0",
+   "resume-wf_3da51c0c-3b4.js": "22460cc2786d02d4bde6250d99afed7662618f0aa0113c784b4487301c07f048",
+   "resume-wf_828d7b1a-ca8.js": "1aacf6f66d0c87074d7c20eca75eaf2124fc1f263fefb0c41ec132e4d13a40b8",
+   "resume-wf_e3c01fb8-eed.js": "0aa25aaab1a0af7a45e3f06727bec0f5c278c47b65d8f5a5e5e5d5ec108a0a9e"
+  },
+  "null_verdict_patch": {
+   "script": "abep-parallel-lanes-wf_020ac47f-09d (earlier lanes B-L)",
+   "applied_utc": "2026-09-26T13:21Z",
+   "diff": "docs/orchestration/workflow_scripts/null_verdict_patch.diff",
+   "scope": "orchestration robustness only: when a reviewer agent returns no verdict (null, e.g. usage-limit failure), the fix stage receives a single 'reviewer unavailable: re-check the whole lane' issue instead of crashing the pipeline; no scoring, verification criterion or lane brief changed",
+   "note": "the ORIGINAL file is reconstructed by reverting exactly this one-expression replacement; the pipeline crash it fixes is visible in the wf_020ac47f-09d failure list ('null is not an object (evaluating rv.v.issues)')"
+  }
+ },
+ "runtime_claims_note": "PIDs, Monitor tasks and process liveness in this file are snapshots at recorded_utc; current liveness is established only by the daemon heartbeat file and process evidence, never by this committed snapshot"
 }
