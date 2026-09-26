@@ -1575,3 +1575,24 @@ This replaces the first version (commit d2009b3). That version used the time-ave
 - Consequence: no N₂ run can be chemistry-trustworthy until these two tables are audited or rebuilt from Song et al. JPCRD 2023 Tables 10/5.
 
 **Driver fix found by the N₂ smoke run:** Gaussian-B cases wrote `B_peak_minus_exit_m = NaN`, which is invalid JSON and aborted the output. It now reads 0: the Gaussian profile peaks at the exit plane by construction.
+
+## 2026-09-26 — Reaction set abep-n2n-0.2: N₂ ionization rebuilt from Song et al. JPCRD 2023 Table 10
+
+**Decision (owner):** rebuild the HallThruster-shipped N₂ tables from Song 2023 rather than audit them, because their cross-section inputs are not shipped. The rebuilt tables are new project-owned files. The shipped files stay in the repo for provenance.
+
+**Change:**
+- `ionization_N2_song2023.dat` is built from the Table 10 **partial σ(N₂⁺)** column (±5 %, 16–1000 eV) by `scripts/build_n2_ionization_song2023_table.py`. The transcription was checked row by row against the PDF text; the source has no 750 eV row.
+- Explicit choices: σ = 0 below 16 eV; held above 1000 eV (tail share 0.96 % at 255 eV, so verified to 255 eV); header 15.58 eV (JPCRD Sec. 3).
+- `n2_n.toml` now uses it. The reaction set moves `abep-n2n-0.1` → `abep-n2n-0.2` (`PINNED.toml` `[reaction_set]` version plus history). This is a reaction-set model change. No N₂ run had been scored, so no validated result moves.
+
+**Why partial, not total:** the reaction produces N₂⁺ only. The total column also counts N⁺ + N₂²⁺ and N²⁺, which amounts to +5 % in rate at T_e = 7 eV and +25–31 % at T_e = 30–60 eV. **Known gap:** dissociative ionization (N₂ → N⁺ + N) and double ionization are not in the reaction set. Adding them is a separate owner decision.
+
+**Diagnostic comparison, not used for tuning:** Song σ(N₂⁺) against the shipped HallThruster table. The bridge copy is byte-identical to the package file and to the 0-D model's `abep_sim/data/rates/ionization_N2_N2+.dat`.
+
+| mean energy (eV) | 10 | 30 | 45 | 60 | 90 | 150 | 255 |
+|---|---|---|---|---|---|---|---|
+| k_Song / k_shipped | 1.000 | 1.000 | 1.000 | 1.000 | 0.997 | 0.975 | 0.903 |
+
+- Up to 60 eV mean energy, the shipped table is reproduced to < 0.1 %. So it was built from the same Lindsay–Mangan / Itikawa partial cross section.
+- Above that, the shipped rate is higher by up to 11 %. That points to a different, unknown high-energy tail treatment.
+- Consequence for the 0-D chemistry: none. It still reads its own copy; the two chemistry databases stay separate (not unified).

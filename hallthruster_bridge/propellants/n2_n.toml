@@ -1,4 +1,4 @@
-# N2/N propellant for HallThruster.jl v0.23.1 (Stage A). Rate files are Maxwellian tables vs mean energy (3/2 Te).
+# N2/N propellant for HallThruster.jl v0.23.1 (Stage A). Reaction-set version: PINNED.toml [reaction_set]. Rate files are Maxwellian tables vs mean energy (3/2 Te).
 [[species]]
 symbol = "N"
 name = "Nitrogen"
@@ -25,7 +25,7 @@ rate_coeff_file = "elastic_N2.dat"                  # Itikawa 2006 (shipped)
 [[reactions]]
 type = "electron_impact"
 equation = "N2 + e -> N2(+) + 2e"
-rate_coeff_file = "ionization_N2_N2+.dat"           # Itikawa 2006 (shipped)
+rate_coeff_file = "ionization_N2_song2023.dat"      # Song et al. JPCRD 2023 Table 10 sigma(N2+) (abep-n2n-0.2; replaces shipped ionization_N2_N2+.dat)
 
 [[reactions]]
 type = "electron_impact"
