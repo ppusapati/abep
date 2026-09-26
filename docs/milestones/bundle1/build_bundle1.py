@@ -1,17 +1,29 @@
 #!/usr/bin/env python3
-"""Bundle 1 (Milestone A, conditional selection) builder: fo_bundle1_conditional_selection.
+"""Bundle 1 (Milestone A, conditional selection) builder: fo_bundle1_conditional_selection, bundle version v2.
 
-Synthesis only. It reads the verified deliverables of the twelve registered T_BUNDLE1 prerequisites (plus two context
-lanes), pins every input file by sha256 + lane id + lane commit, and writes
+Synthesis only. It reads the verified deliverables of the twelve registered T_BUNDLE1 prerequisites (plus context lanes),
+pins every input file by sha256 + lane id + lane commit, and writes
 
-    docs/milestones/bundle1/bundle1_v1.json   (validated against bundle1_v1.schema.json)
-    docs/milestones/bundle1/BUNDLE1.md        (generated tables + short prose)
+    docs/milestones/bundle1/bundle1_v2.json   (validated against bundle1_v2.schema.json)
+    docs/milestones/bundle1/BUNDLE1_v2.md     (generated tables + short prose)
 
 It introduces no physics, no sources and no numbers of its own: every value in the output is read from a pinned input,
 or is a count/identity of pinned records. Missing or changed inputs raise; nothing falls back to a default.
 
-    python docs/milestones/bundle1/build_bundle1.py            # write both files
-    python docs/milestones/bundle1/build_bundle1.py --check    # exit 1 unless both files are reproduced byte for byte
+Versions
+  v1  bundle1_v1.json / BUNDLE1.md / bundle1_v1.schema.json: the verified historical record of T_BUNDLE1 attempt 2
+      (commit f79eb6c). They are never rebuilt: their inputs have since changed (lane_09 repair f458811, HSENV re-pin
+      da9b71b), and the v1 builder read mutable governance files. They are verified by their recorded sha256 (V1_RECORD).
+  v2  this builder. Every input re-pinned to the merged versions; the governance content it relies on is read ONLY from
+      the pinned snapshot governance_snapshot_v2.json (sha256 in GOV_SNAPSHOT_SHA256), so later registry / ledger
+      bookkeeping cannot break reproduction. The v1 -> v2 change log is computed against the hash-verified v1 JSON.
+
+    python docs/milestones/bundle1/build_bundle1.py                        # write bundle1_v2.json and BUNDLE1_v2.md
+    python docs/milestones/bundle1/build_bundle1.py --check                # exit 1 unless both are reproduced byte for
+                                                                           # byte and the v1 record matches its sha256
+    python docs/milestones/bundle1/build_bundle1.py --snapshot-governance  # (maintainer) re-capture the governance
+                                                                           # snapshot from the live files; changes its
+                                                                           # sha256, so it needs a new bundle version
 
 Pure standard library. The only module import from the repository is the lane-11 boundary module
 (abep_sim/arch_boundary.py), resolved lazily inside a function and cross-checked against the lane-17 component list;
@@ -24,33 +36,58 @@ import hashlib
 import importlib.util
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[3]
-OUT_JSON_REL = "docs/milestones/bundle1/bundle1_v1.json"
-OUT_MD_REL = "docs/milestones/bundle1/BUNDLE1.md"
-SCHEMA_REL = "docs/milestones/bundle1/bundle1_v1.schema.json"
+BUNDLE_DIR_REL = "docs/milestones/bundle1"
+OUT_JSON_REL = "docs/milestones/bundle1/bundle1_v2.json"
+OUT_MD_REL = "docs/milestones/bundle1/BUNDLE1_v2.md"
+SCHEMA_REL = "docs/milestones/bundle1/bundle1_v2.schema.json"
 SCRIPT_REL = "docs/milestones/bundle1/build_bundle1.py"
+GOV_SNAPSHOT_REL = "docs/milestones/bundle1/governance_snapshot_v2.json"
+GOV_SNAPSHOT_SHA256 = "a8e0fd38a5fd45e1e907b2a16f4b17cc0bd4d178c789f20f6c6b23d25a944a49"
 
-BUNDLE_ID = "bundle1_v1"
+BUNDLE_ID = "bundle1_v2"
+BUNDLE_VERSION = "v2"
 FOLLOW_ON = "fo_bundle1_conditional_selection"
 TRIGGER = "T_BUNDLE1"
 ATTEMPT = 2
 EXECUTION_KEY = "d45eda8e144c71eae9f5ebf0d1c1a560af20903571c60bbcdb605e361b68a148"
-BASE_COMMIT = "1a1f7e4b7767d41ca99e20641c11dc4d3cafcda7"
+# v2 base: integrated branch 49604b6eee (lane_09 repair f458811 merged) + fast-forward of the HSENV repair branch
+# worktree-wf_f7a015b9-2b7-1 (da9b71b); governance snapshot captured at this commit.
+BASE_COMMIT = "da9b71bfda112c7deceb301169071af944444c3b"
+INTEGRATION_COMMIT = "49604b6eee234314951b9cfee1181842bf604491"
 PREPARED = "2026-09-26"
 ARCHS = ("hall_only", "rf_hall", "ecr_hall")
 BOUNDARY_VERSION = "bus_power_boundary_v1"
 OUTCOME_FORMS = ("CONDITIONAL_BASELINE", "NO_BASELINE_YET")
 
 # --------------------------------------------------------------------------------------------------------------------
-# Input pins: (lane id, role, lane commit) -> files with sha256. Identity = the lane's verified commit (T_BUNDLE1 claim).
+# Historical v1 record (T_BUNDLE1 attempt 2, VERIFIED at f79eb6c): verified by sha256, never rebuilt.
+# --------------------------------------------------------------------------------------------------------------------
+V1_RECORD = {
+    "id": "bundle1_v1",
+    "commit": "f79eb6cb4b865b05a1324632a4b6cff9fc646094",
+    "builder_sha256_at_commit": "d285582b9fcf34700e716cd6d02524d117f0ea67c80ccebaf432a8549b8dad01",
+    "files": {
+        "docs/milestones/bundle1/bundle1_v1.json": "c07264b2f9f4126445bda95c888d1d29e9b52176b91cc044653269071ce65a3d",
+        "docs/milestones/bundle1/BUNDLE1.md": "94f40ee2021a47b1c2390dd21a95faa6ef4fcedf55b979662fd713d14e0840fd",
+        "docs/milestones/bundle1/bundle1_v1.schema.json": "10826077bd323d125d792662d8b06e616b676ed1b0f0fdb55a10dbcf3ab333a0",
+    },
+    "why_not_rebuilt": ("its pinned inputs changed after verification (lane_09 matrix/Markdown at f458811; fo_hall_sustainment_envelope "
+                        "JSON/Markdown at da9b71b) and the v1 builder read mutable governance files (lane-registry repair notes), so "
+                        "a rebuild cannot reproduce it; the v1 builder is recoverable as git blob f79eb6c:" + "docs/milestones/bundle1/build_bundle1.py"),
+}
+
+# --------------------------------------------------------------------------------------------------------------------
+# Input pins: (lane id, role, lane commit) -> files with sha256. Identity = the lane's verified commit.
 # --------------------------------------------------------------------------------------------------------------------
 PREREQUISITES = {
     "lane_07_rf_evidence": "336d548042359f8559d0bf50a409a976c0158fc2",
     "lane_08_ecr_evidence": "a85fd592618cb15a02f14123659a0698db90df19",
-    "lane_09_hall_sustainment": "ac7970917fd0e88c065d75406ea90c1d7ebaca7b",
+    "lane_09_hall_sustainment": "f458811a5720a20216379dd1f701a54d21faf2b6",
     "lane_16_feed_envelope": "ab27dcc449690606defa09af59725c0ad2eeaab4",
     "lane_17_hall_reference": "91ebd8a4017eb8609804846603063a25c41405c1",
     "lane_18_interstage": "870514285c087382b21812c65bd9db196a5a985f",
@@ -59,19 +96,45 @@ PREREQUISITES = {
     "lane_28_break_even": "2ad4c463d7a7bd7b983e2de30f8fb34d8cac92fa",
     "fo_rf_breakeven_overlay": "9ef356b536f84e203b87b583b7246e72dcc07d71",
     "fo_ecr_breakeven_overlay": "d22bc6053a64230dd01b8df0e764d884bab722a9",
-    "fo_hall_sustainment_envelope": "de0ebd25f43e3302e659bf5a0d4d7df8aee97637",
+    "fo_hall_sustainment_envelope": "da9b71bfda112c7deceb301169071af944444c3b",
+}
+# Prerequisites whose v2 identity differs from the T_BUNDLE1 attempt-2 claim identity: why, and on what record.
+REPINS = {
+    "lane_09_hall_sustainment": {
+        "claim_identity": "ac7970917fd0e88c065d75406ea90c1d7ebaca7b",
+        "reason": ("integration repair (registry lanes[lane_09_hall_sustainment].repairs, workflow run wf_6eb2fc0f-3f2; merged in "
+                   "49604b6eee as 'Merge verified lane_09_hall_sustainment integration repair (f458811)'): ECHT-N2 items E03/E04 "
+                   "carry repository_status HISTORICAL_UNSUPPORTED (lane 31) with forced assumptions A1/A3/A5/A6; per the repair "
+                   "record no item id, outcome, level/class, flow/V/B value, implication or derived check changed"),
+        "verification_record": "governance snapshot: lane registry repairs entry wf_6eb2fc0f-3f2 (two-lens-v2 lane)",
+    },
+    "fo_hall_sustainment_envelope": {
+        "claim_identity": "de0ebd25f43e3302e659bf5a0d4d7df8aee97637",
+        "reason": ("HSENV repair commit da9b71b (branch worktree-wf_f7a015b9-2b7-1, fast-forwarded into this base): lane-09 matrix "
+                   "re-pinned 248aef28... -> 76bba594...; ECHT channel area carries forced assumption A1; per its input_repin_log no "
+                   "case status, coverage, finding or count changed"),
+        "verification_record": ("repair run of the orchestrator immediately before this bundle repair (stated in the bundle1_v2 repair "
+                                "brief); no registry or ledger entry for it exists in the governance snapshot: TBD - requires the "
+                                "orchestrator to register the HSENV repair verification"),
+    },
 }
 CONTEXT = {
     "lane_23_comparison_grid": "3b9af54be83e63102a437d15197117a03977c246",
     "lane_11_bus_boundary": "a2a139686dd25ea0f5f4fa908f9d57c25d3746dd",
+    "fo_aux_bus_comparison": "2f83aa41bbdefa7a6f0aa800e185ecd820dacae3",
+    "fo_veto_layer": "3e7805c376b1489b2de62f3977c0c413a0adcdef",
+    "fo_experiment_package": "c09fac4cda6da476a355d41c9f46e38b1ef3b816",
+    "fo_dx5_cross_section_evidence": "768bb894636e0de73336221a6003d98dede5aff0",
 }
+CONTEXT_TRIGGERS = {"fo_aux_bus_comparison": "T_AUX_BUS", "fo_veto_layer": "T_VETO_LAYER",
+                    "fo_experiment_package": "T_EXPERIMENT_PACKAGE", "fo_dx5_cross_section_evidence": "T_DX5_EVIDENCE"}
 PINS = [
     ("lane_07_rf_evidence", "docs/evidence/rf_source/rf_evidence_matrix.json", "5f6d4e0ede8b2e21e45b740c28ac9320e7ddd6cfd70ef05012f85712ae0ac8e8"),
     ("lane_07_rf_evidence", "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md", "88fb9015e7b864796b13f6d1485d0bf1273f0660035299b032fa414904fb1e15"),
     ("lane_08_ecr_evidence", "docs/evidence/ecr_source/ecr_evidence_matrix.json", "4a65dbeec34f16f048fa515ced3bb959c02a981113e25da89e8bb844337fec88"),
     ("lane_08_ecr_evidence", "docs/evidence/ecr_source/ECR_SOURCE_EVIDENCE.md", "b543437f216335fd972de560345864c172472a12e3522566771413126677f440"),
-    ("lane_09_hall_sustainment", "docs/evidence/hall_sustainment/hall_sustainment_matrix.json", "248aef28cfe6ffff90d9ee6d43c388488140547e1ce5659975ce30ca77f415b4"),
-    ("lane_09_hall_sustainment", "docs/evidence/hall_sustainment/HALL_SUSTAINMENT_EVIDENCE.md", "f9674b60b2a2852e6b960e227a95626a78096d28eb698b9237bc9a419fcf7c01"),
+    ("lane_09_hall_sustainment", "docs/evidence/hall_sustainment/hall_sustainment_matrix.json", "76bba594eb1175b2186a8066b38665a2ce5e4cf77487c90f4af2e187a0b82dcc"),
+    ("lane_09_hall_sustainment", "docs/evidence/hall_sustainment/HALL_SUSTAINMENT_EVIDENCE.md", "41a5f2c68851988251274d89d8298b9c027b5ac1de5986dc7913a739e45ac499"),
     ("lane_16_feed_envelope", "docs/architecture_comparison/feed_envelope/feed_envelope_v1.json", "ada3ee720b1b8d60526d3b092492589f62a4144112845b4d813dbc8dc7d5ca02"),
     ("lane_16_feed_envelope", "docs/architecture_comparison/feed_envelope/FEED_ENVELOPE.md", "e3f9f1fc5dd57b6569065d2750842dd9792dd74ae8d483b271e7d10e4d3f262d"),
     ("lane_17_hall_reference", "docs/architecture_comparison/hall_reference/hall_reference_v1.json", "c60e0adfbef2c6f8dddaa9b7e89cea6b0ce760d3c9777dff5a47c2bfda7cb2e6"),
@@ -94,15 +157,19 @@ PINS = [
     ("fo_rf_breakeven_overlay", "docs/architecture_comparison/overlays/rf/RF_BREAKEVEN_OVERLAY.md", "12c777870fa3a34a80c1aca562d4e7527c31372a72d5e7238fbb07342b6716c9"),
     ("fo_ecr_breakeven_overlay", "docs/architecture_comparison/overlays/ecr/overlay_ecr_v1.json", "3ee12e66f94204955f61cbb78d7c5036044cc59a9bc50f675704592bfbfabfcd"),
     ("fo_ecr_breakeven_overlay", "docs/architecture_comparison/overlays/ecr/ECR_BREAKEVEN_OVERLAY.md", "0b622859abb49ef3b426b8aee7be893ee9c026a98d13e4f8ebdb5ab93ad7a5a1"),
-    ("fo_hall_sustainment_envelope", "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json", "c7d05fd04aafe249ff0dce575902067dea9bdd048fa857283cb66066e612b19e"),
-    ("fo_hall_sustainment_envelope", "docs/architecture_comparison/overlays/hall_sustainment/HALL_SUSTAINMENT_ENVELOPE.md", "ddb257d13cd1c6ca990f73ec80abe9deb6b04f9e87f047881787a6556a26ba1e"),
+    ("fo_hall_sustainment_envelope", "docs/architecture_comparison/overlays/hall_sustainment/hall_sustainment_envelope_v1.json", "3381c88b81670c37836c04e1ee8dea78898718fa9219df12140f2dbe24f612bb"),
+    ("fo_hall_sustainment_envelope", "docs/architecture_comparison/overlays/hall_sustainment/HALL_SUSTAINMENT_ENVELOPE.md", "775b419617ea6359a691de5ca5dcdece47eb0612e2a0e71aa5d26a49aec08ec6"),
     ("lane_23_comparison_grid", "docs/architecture_comparison/comparison_grid/comparison_grid_v1.json", "1b8a6a13065223fd397599a4bbae6e269f92721e7a680b27dce38029504657f4"),
     ("lane_23_comparison_grid", "docs/architecture_comparison/comparison_grid/COMPARISON_GRID.md", "30aca15e05ff39d3970fb2b1d32bcfd8b2ec5ec3ab2e6572e440b659bb4e0b55"),
     ("lane_11_bus_boundary", "abep_sim/arch_boundary.py", "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae"),
     ("lane_11_bus_boundary", "docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md", "2432edb7e9095fd630585768a62a811140b5230ba035afa3f0fc168636d11ca9"),
     ("lane_11_bus_boundary", "schemas/architecture_comparison/bus_power_boundary_v1.json", "a78068a31ad097d94d83f36b9860c6992d0e560cfdc51335b4c222a3feaed3e9"),
+    ("fo_aux_bus_comparison", "docs/architecture_comparison/aux_bus/aux_bus_comparison_v1.json", "db4792bf65e041895e26206e122e54e944a742dc0aba467d7b0241706584bd57"),
+    ("fo_veto_layer", "docs/architecture_comparison/veto_layer/veto_layer_v1.json", "01a3dc8e73580dd745ac15e667469c66c096adbb63e3704d1426ff53bf96b475"),
+    ("fo_experiment_package", "docs/architecture_comparison/experiment_package/experiment_package_v1.json", "4c2d107dcf8c80da42972811a77616c4d4b18750b35a74d8d885bdeeeaf5a362"),
+    ("fo_dx5_cross_section_evidence", "docs/chemistry/n2_domain_extension/dx5/dx5_evidence_v1.json", "d6240659bb9e81dac0d9fa20ca7f608ddf2b6bd60147689b64d0d01d304cbcea"),
 ]
-# Governance files: content-checked (append-only ledger / registries), not hash-pinned (they grow as work proceeds).
+# Governance files: read ONLY when (re)capturing the pinned snapshot (--snapshot-governance); the build reads the snapshot.
 GOV = {
     "operating_model": "docs/orchestration/OPERATING_MODEL.md",
     "lane_registry": "docs/orchestration/lane_registry_v1.json",
@@ -117,6 +184,10 @@ FOLLOW_ON_WORKFLOW_SCRIPTS = {
                                  "docs/orchestration/workflow_scripts/reverify-ecr-hsenv-ftree.js"],
     "fo_hall_sustainment_envelope": ["docs/orchestration/workflow_scripts/followon-fo_hall_sustainment_envelope.js",
                                      "docs/orchestration/workflow_scripts/reverify-ecr-hsenv-ftree.js"],
+    "fo_aux_bus_comparison": ["docs/orchestration/workflow_scripts/followon-aux-veto-exppkg.js"],
+    "fo_veto_layer": ["docs/orchestration/workflow_scripts/followon-aux-veto-exppkg.js"],
+    "fo_experiment_package": ["docs/orchestration/workflow_scripts/followon-aux-veto-exppkg.js"],
+    "fo_dx5_cross_section_evidence": ["docs/orchestration/workflow_scripts/dx5-cross-section-evidence-wf_7a9892b9-5b6.js"],
 }
 
 MANDATORY_FIELDS = [
@@ -176,53 +247,60 @@ def _json(rel: str):
     return json.loads((REPO / rel).read_text(encoding="utf-8"))
 
 
-def _gov_text(key: str) -> str:
-    p = REPO / GOV[key]
-    if not p.is_file():
-        raise InputError(f"missing governance file {GOV[key]}")
-    return p.read_text(encoding="utf-8")
-
-
 def _need(cond: bool, msg: str):
     if not cond:
         raise InputError(msg)
 
 
-def check_governance() -> dict:
-    """Content checks of the (unpinned, append-only / growing) governance files."""
-    om = " ".join(_gov_text("operating_model").split())
-    _need(OPERATING_MODEL_FIELD_SET in om, "OPERATING_MODEL.md no longer states the frozen field set " + OPERATING_MODEL_FIELD_SET)
-    for phrase in ("CONDITIONAL_BASELINE(X)", "NO_BASELINE_YET", "ELIMINATED_WITHIN_TESTED_ENVELOPE", "bus_power_boundary_v1",
-                   "single-lens-v1"):
-        _need(phrase in om, f"OPERATING_MODEL.md no longer contains {phrase!r}")
-    ev = _gov_text("evidence_policy")
-    for cls in EVIDENCE_CLASSES[:-1]:
-        _need(f"*{cls}*" in ev, f"docs/EVIDENCE.md no longer lists quantity type {cls!r}")
+def _live_gov_text(rel: str) -> str:
+    p = REPO / rel
+    if not p.is_file():
+        raise InputError(f"missing governance file {rel}")
+    return p.read_text(encoding="utf-8")
 
-    reg = json.loads(_gov_text("lane_registry"))
+
+def snapshot_governance() -> dict:
+    """Capture, from the LIVE governance files, exactly the governance content this bundle relies on.
+
+    Used only by --snapshot-governance. The result is written to GOV_SNAPSHOT_REL and pinned by GOV_SNAPSHOT_SHA256; the
+    build never reads the live (mutable, append-only) governance files, so later bookkeeping cannot change the bundle.
+    """
+    om_raw = _live_gov_text(GOV["operating_model"])
+    om = " ".join(om_raw.split())
+    _need(OPERATING_MODEL_FIELD_SET in om, "OPERATING_MODEL.md no longer states the frozen field set " + OPERATING_MODEL_FIELD_SET)
+    om_phrases = ["CONDITIONAL_BASELINE(X)", "NO_BASELINE_YET", "ELIMINATED_WITHIN_TESTED_ENVELOPE", "bus_power_boundary_v1", "single-lens-v1"]
+    for phrase in om_phrases:
+        _need(phrase in om, f"OPERATING_MODEL.md no longer contains {phrase!r}")
+    ev_txt = _live_gov_text(GOV["evidence_policy"])
+    for cls in EVIDENCE_CLASSES[:-1]:
+        _need(f"*{cls}*" in ev_txt, f"docs/EVIDENCE.md no longer lists quantity type {cls!r}")
+
+    reg = json.loads(_live_gov_text(GOV["lane_registry"]))
     lane_ids = {l["id"]: l for l in reg["lanes"]}
     fo_ids = {l["id"]: l for l in reg["follow_ons"]}
     _need(FOLLOW_ON in fo_ids, f"{FOLLOW_ON} is not a registered follow-on")
-    trg = json.loads(_gov_text("trigger_registry"))
+    trg = json.loads(_live_gov_text(GOV["trigger_registry"]))
     triggers = {t["id"]: t for t in trg["triggers"]}
     _need(TRIGGER in triggers and triggers[TRIGGER].get("produces") == FOLLOW_ON, f"{TRIGGER} does not produce {FOLLOW_ON}")
     prereq = [p["id"] for p in triggers[TRIGGER]["prerequisites"]]
     _need(sorted(prereq) == sorted(PREREQUISITES), f"{TRIGGER} prerequisites changed: {prereq}")
     _need(all(p["state"] == "verified" for p in triggers[TRIGGER]["prerequisites"]), "T_BUNDLE1 requires verified prerequisites")
 
-    claim = None
-    for line in _gov_text("trigger_ledger").splitlines():
-        if not line.strip():
-            continue
-        ev_ = json.loads(line)
-        if ev_.get("execution_key") == EXECUTION_KEY and ev_.get("event") == "CLAIMED":
-            claim = ev_
-    _need(claim is not None, f"no CLAIMED event for execution key {EXECUTION_KEY} in {GOV['trigger_ledger']}")
+    events = [json.loads(line) for line in _live_gov_text(GOV["trigger_ledger"]).splitlines() if line.strip()]
+    claims = [e for e in events if e.get("execution_key") == EXECUTION_KEY and e.get("event") == "CLAIMED"]
+    _need(len(claims) == 1, f"expected one CLAIMED event for execution key {EXECUTION_KEY}, found {len(claims)}")
+    claim = claims[0]
     _need(claim["trigger"] == TRIGGER and claim["attempt"] == ATTEMPT, "claim is not T_BUNDLE1 attempt 2")
-    for lane, commit in PREREQUISITES.items():
-        got = claim["prerequisites"].get(lane)
-        _need(got is not None and got["identity"] == commit and got["state"] == "verified",
-              f"claim identity for {lane} is {got}, pinned {commit}")
+    v1_ver = [e for e in events if e.get("execution_key") == EXECUTION_KEY and e.get("event") == "VERIFIED"]
+    _need(len(v1_ver) == 1 and v1_ver[0]["evidence"]["commit"] == V1_RECORD["commit"],
+          "T_BUNDLE1 attempt-2 VERIFIED event missing or not at the v1 commit")
+    ctx_events = {}
+    for lane, trig in CONTEXT_TRIGGERS.items():
+        hits = [e for e in events if e.get("trigger") == trig and e.get("event") == "VERIFIED"]
+        _need(len(hits) >= 1, f"no VERIFIED event for {trig}")
+        e = hits[-1]
+        _need(e["evidence"]["commit"] == CONTEXT[lane], f"{trig} VERIFIED commit {e['evidence']['commit']} != pinned {CONTEXT[lane]}")
+        ctx_events[lane] = e
 
     protocols = {}
     for lane in list(PREREQUISITES) + list(CONTEXT):
@@ -237,26 +315,91 @@ def check_governance() -> dict:
                 notes.append("verified_pin at commit " + entry["verified_pin"]["commit"])
         elif lane in fo_ids:
             scripts = FOLLOW_ON_WORKFLOW_SCRIPTS[lane]
-            for s in scripts:
-                txt = (REPO / s).read_text(encoding="utf-8") if (REPO / s).is_file() else ""
-                _need("['evidence', 'rules']" in txt and lane in txt, f"workflow script {s} does not show the two-lens loop for {lane}")
+            for sc in scripts:
+                txt = (REPO / sc).read_text(encoding="utf-8") if (REPO / sc).is_file() else ""
+                _need("['evidence', 'rules']" in txt and lane in txt, f"workflow script {sc} does not show the two-lens loop for {lane}")
             proto = "two-lens (evidence + rules lenses)"
             src = (f"{GOV['lane_registry']} decided.terminal_states.follow_on ('verified, exactly as a workflow_lane'); "
                    "verification loop in " + ", ".join(scripts))
             notes = []
             if fo_ids[lane].get("repairs"):
-                notes.append("repairs registered (" + ", ".join(r["workflow_run"] for r in fo_ids[lane]["repairs"]) + "): targeted two-lens re-verification of the unchanged commit")
+                notes.append("repairs registered (" + ", ".join(r["workflow_run"] for r in fo_ids[lane]["repairs"]) + "): targeted two-lens re-verification")
         else:
             raise InputError(f"{lane} is not in the lane registry")
         protocols[lane] = {"protocol": proto, "protocol_source": src, "notes": notes}
-    qa = json.loads(_gov_text("question_a_disposition"))
+    qa = json.loads(_live_gov_text(GOV["question_a_disposition"]))
     _need(qa.get("id") == "od_v2_question_a" and qa.get("decision") == "A-NO" and qa.get("domain_path") == "closed",
           "v2 Question A disposition is no longer A-NO / closed: the Milestone-B blocker text must be revisited")
     single_lens = sorted(l for l, e in lane_ids.items() if e.get("verification_protocol") == "single-lens-v1")
-    return {"lane_ids": set(lane_ids), "fo_ids": set(fo_ids), "trigger_ids": set(triggers), "protocols": protocols,
-            "single_lens_lanes": single_lens, "lane_titles": {**{k: v["title"] for k, v in lane_ids.items()},
-                                                              **{k: v["title"] for k, v in fo_ids.items()}},
-            "claim_utc": claim["utc"], "dependency_state_hash": claim["dependency_state_hash"]}
+    try:
+        head = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, cwd=REPO, check=True).stdout.strip()
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise InputError(f"cannot determine the commit the governance snapshot is captured from: {exc}")
+    src_files = sorted(set(GOV.values()) | {sc for v in FOLLOW_ON_WORKFLOW_SCRIPTS.values() for sc in v})
+    return {
+        "id": "bundle1_governance_snapshot_v2",
+        "captured_from_commit": head,
+        "note": ("Exactly the governance content bundle1_v2 relies on, captured from the live files at captured_from_commit. The "
+                 "builder reads only this file (pinned by sha256), never the live registry / ledger, which keep growing."),
+        "source_files_sha256": {rel: sha256_file(REPO / rel) for rel in src_files},
+        "operating_model_checked": {"field_set": OPERATING_MODEL_FIELD_SET, "phrases": om_phrases},
+        "evidence_policy_checked": list(EVIDENCE_CLASSES[:-1]),
+        "lane_ids": sorted(lane_ids), "fo_ids": sorted(fo_ids), "trigger_ids": sorted(triggers),
+        "lane_titles": {k: v["title"] for k, v in sorted({**lane_ids, **fo_ids}.items())},
+        "single_lens_lanes": single_lens,
+        "protocols": protocols,
+        "registry_repairs": {l: (lane_ids.get(l) or fo_ids.get(l) or {}).get("repairs", [])
+                             for l in list(PREREQUISITES) + list(CONTEXT)},
+        "t_bundle1": {"produces": triggers[TRIGGER]["produces"], "prerequisites": triggers[TRIGGER]["prerequisites"]},
+        "claim": claim,
+        "v1_verified_event": v1_ver[0],
+        "context_verified_events": ctx_events,
+        "question_a_disposition": {"id": qa["id"], "decision": qa["decision"], "domain_path": qa["domain_path"]},
+    }
+
+
+def load_governance(path: Path | None = None, expected_sha256: str | None = None) -> dict:
+    """Read the pinned governance snapshot (never the live governance files). Raises on a missing or changed snapshot."""
+    p = path or (REPO / GOV_SNAPSHOT_REL)
+    if not p.is_file():
+        raise InputError(f"missing governance snapshot {GOV_SNAPSHOT_REL}")
+    got = sha256_file(p)
+    exp = expected_sha256 or GOV_SNAPSHOT_SHA256
+    if got != exp:
+        raise InputError(f"governance snapshot changed: sha256 {got} != pinned {exp}. A re-captured snapshot needs a new bundle version.")
+    snap = json.loads(p.read_text(encoding="utf-8"))
+    claim = snap["claim"]
+    _need(claim["execution_key"] == EXECUTION_KEY and claim["trigger"] == TRIGGER and claim["attempt"] == ATTEMPT,
+          "snapshot claim is not T_BUNDLE1 attempt 2")
+    repin_log = []
+    for lane, commit in PREREQUISITES.items():
+        got_c = claim["prerequisites"].get(lane)
+        _need(got_c is not None and got_c["state"] == "verified", f"claim has no verified identity for {lane}")
+        if got_c["identity"] == commit:
+            continue
+        _need(lane in REPINS and REPINS[lane]["claim_identity"] == got_c["identity"],
+              f"claim identity for {lane} is {got_c['identity']}, v2 pin {commit}, and no documented re-pin covers it")
+        repin_log.append({"lane": lane, "claim_identity": got_c["identity"], "v2_identity": commit,
+                          "reason": REPINS[lane]["reason"], "verification_record": REPINS[lane]["verification_record"]})
+    _need(sorted(r["lane"] for r in repin_log) == sorted(REPINS), "documented re-pins do not match the claim/pin differences")
+    return {"lane_ids": set(snap["lane_ids"]), "fo_ids": set(snap["fo_ids"]), "trigger_ids": set(snap["trigger_ids"]),
+            "protocols": snap["protocols"], "single_lens_lanes": snap["single_lens_lanes"], "lane_titles": snap["lane_titles"],
+            "claim_utc": claim["utc"], "dependency_state_hash": claim["dependency_state_hash"], "repin_log": repin_log,
+            "captured_from_commit": snap["captured_from_commit"], "v1_verified_event": snap["v1_verified_event"],
+            "context_verified_events": snap["context_verified_events"], "registry_repairs": snap["registry_repairs"],
+            "source_files_sha256": snap["source_files_sha256"]}
+
+
+def verify_v1_record(repo: Path = REPO) -> dict:
+    """The v1 files are a historical record: verify them by their recorded sha256 (never rebuilt)."""
+    for rel, digest in V1_RECORD["files"].items():
+        p = repo / rel
+        if not p.is_file():
+            raise InputError(f"missing historical v1 file {rel}")
+        got = sha256_file(p)
+        if got != digest:
+            raise InputError(f"historical v1 file changed: {rel}: sha256 {got} != recorded {digest}")
+    return json.loads((repo / "docs/milestones/bundle1/bundle1_v1.json").read_text(encoding="utf-8"))
 
 
 def boundary_components() -> dict:
@@ -459,6 +602,123 @@ def electrical_extract() -> dict:
     return {"components": {k: {"load_status": v["load_status"], "efficiency_status": v["efficiency_status"],
                                 "in_architectures": v["in_architectures"]} for k, v in sorted(ec["components"].items())},
             "open_questions": ec["open_questions_for_owner"]}
+
+
+AUX = "docs/architecture_comparison/aux_bus/aux_bus_comparison_v1.json"
+VETO = "docs/architecture_comparison/veto_layer/veto_layer_v1.json"
+EXPPKG = "docs/architecture_comparison/experiment_package/experiment_package_v1.json"
+DX5 = "docs/chemistry/n2_domain_extension/dx5/dx5_evidence_v1.json"
+FIELD_VETO_DIMENSIONS = {"m": ["mass"], "Q_reject": ["thermal"], "life": ["life_firing", "life_mission"], "startup": ["startup"]}
+
+
+def echt_extract() -> dict:
+    """ECHT-N2 repository status carried by the repaired lane-09 matrix (E03/E04) and the re-pinned HSENV overlay."""
+    m = _json(HSM)
+    items = [e for e in m["entries"] if "repository_status" in e]
+    _need([e["id"] for e in items] == ["E03", "E04"], "lane-09 items carrying repository_status are no longer exactly E03/E04")
+    out_items = []
+    for e in items:
+        rs = e["repository_status"]
+        out_items.append({
+            "item": e["id"], "status": rs["status"], "literature_transfer_use": rs["literature_transfer_use"],
+            "score_bearing": rs["score_bearing"], "transport_discriminator": rs["transport_discriminator"],
+            "supporting_check_preregistered": rs["supporting_check_preregistered"],
+            "sustainment_item": {k: rs["sustainment_item"][k] for k in ("evidence_level", "quantity_type", "value", "source")},
+            "forced_assumptions_relevant_to_transfer": rs["forced_assumptions_relevant_to_transfer"],
+            "status_file": rs["status_file"], "companion_document": rs["companion_document"],
+            "source": f"{HSM} entries[{e['id']}].repository_status (lane_09_hall_sustainment @ {PREREQUISITES['lane_09_hall_sustainment'][:10]})",
+        })
+    _need(all(i["status"] == "HISTORICAL_UNSUPPORTED" and i["score_bearing"] is False and i["transport_discriminator"] is False
+              for i in out_items), "ECHT-N2 repository status changed: the carried text is stale")
+    hs = _json(HSE)
+    du = []
+    for i, r in enumerate(hs["evidence_regions"]):
+        d = (r.get("channel_area") or {}).get("declared_uncertainty")
+        if d is not None:
+            du.append({"path": f"{HSE} evidence_regions[{i}] ({r['id']}).channel_area.declared_uncertainty",
+                       "forced_assumption": d["forced_assumption"], "evidence_class": d["evidence_class"],
+                       "repository_status": d["repository_status"], "effect": d["effect"]})
+    _need([x["forced_assumption"] for x in du] == ["A1", "A1"], "HSENV declared uncertainties on the ECHT channel area changed")
+    repin = hs["input_repin_log"]
+    _need(len(repin) == 1 and repin[0]["to"]["sha256"] == dict((r, d) for _, r, d in PINS)[HSM],
+          "HSENV input_repin_log does not re-pin the lane-09 matrix to the v2 pin")
+    return {
+        "lane09_items": out_items,
+        "hsenv_interpretation_condition": {"id": "ECHT-OD-READING", "text": hs["definitions"]["interpretation_conditions"]["ECHT-OD-READING"],
+                                           "source": f"{HSE} definitions.interpretation_conditions"},
+        "hsenv_declared_uncertainties": du,
+        "hsenv_repin_effect": {"text": repin[0]["effect_on_this_overlay"], "source": f"{HSE} input_repin_log[0].effect_on_this_overlay"},
+        "bundle_reading": ("Carried as metadata only. HISTORICAL_UNSUPPORTED governs scoring and transport discrimination; the published "
+                           "ECHT sustainment on pure N2 stays quotable as a level-3 measurement of that thruster, and any transfer "
+                           "needing unpublished quantities inherits the forced assumptions listed. No Bundle-1 cell status, "
+                           "hall_only air-case status or F-9 depends on it (the HSENV re-pin log states that no case status, coverage, "
+                           "finding or count changed)."),
+    }
+
+
+def context_extract(gov: dict) -> dict:
+    """Context follow-ons (verified, merged; not T_BUNDLE1 prerequisites): read to fill cell metadata only."""
+    aux = _json(AUX)
+    veto = _json(VETO)
+    exp = _json(EXPPKG)
+    dx5 = _json(DX5)
+    _need(aux["hard_gates"]["eliminated"] == [] and veto["eliminated_within_tested_envelope"] == [] and veto["veto_candidates"] == [],
+          "a context follow-on now reports an elimination / veto candidate: Bundle 1 must be revisited through lane 24")
+    ledgers = {a: {l["mode"]: {"status": l["status"], "blocking_components": l["blocking_components"]}
+                   for l in aux["ledgers"] if l["architecture"] == a} for a in ARCHS}
+    veto_cells = {a: {d: veto["cells"][a][d]["status"] for d in veto["dimensions"]} for a in ARCHS}
+
+    def ver(lane):
+        e = gov["context_verified_events"][lane]
+        return {"trigger": e["trigger"], "event": "VERIFIED", "commit": e["evidence"]["commit"], "utc": e["utc"]}
+    return {
+        "fo_aux_bus_comparison": {"source": AUX, "verified": ver("fo_aux_bus_comparison"), "status": aux["status"],
+                                  "ledger_summary": aux["ledger_summary"], "ledgers": ledgers,
+                                  "G2_bus_power_verdicts": aux["hard_gates"]["G2_bus_power_verdicts"],
+                                  "why_no_evidence": aux["hard_gates"]["why_no_evidence"], "to_reach_B": aux["milestones"]["to_reach_B"]},
+        "fo_veto_layer": {"source": VETO, "verified": ver("fo_veto_layer"), "status": veto["status"], "status_counts": veto["status_counts"],
+                          "cells": veto_cells, "eliminated_within_tested_envelope": veto["eliminated_within_tested_envelope"],
+                          "veto_candidates": veto["veto_candidates"]},
+        "fo_experiment_package": {"source": EXPPKG, "verified": ver("fo_experiment_package"), "status": exp["status"],
+                                  "not_locked": exp["not_locked"], "supports": exp["milestones"]["supports"]},
+        "fo_dx5_cross_section_evidence": {"source": DX5, "verified": ver("fo_dx5_cross_section_evidence"), "status": dx5["status"],
+                                          "priority_status": {k: v["status"] for k, v in dx5["priorities"].items()},
+                                          "scope_statement": dx5["scope_statement"]},
+        "role": ("context only (not T_BUNDLE1 prerequisites): they fill cell metadata (P_bus, m, Q_reject, life, startup notes; "
+                 "verified-trigger annotations on blockers). They change no cell status, no blocker set, no decision-rule input."),
+    }
+
+
+def annotate_context(cells: dict, ctx: dict, echt: dict) -> None:
+    """Add context-lane readings to cell notes / evidence and annotate blockers whose trigger is now VERIFIED (metadata only)."""
+    trig_lane = {v: k for k, v in CONTEXT_TRIGGERS.items()}
+    for a in ARCHS:
+        aux = ctx["fo_aux_bus_comparison"]
+        c = cells[a]["P_bus"]
+        c["evidence"].append(ev(AUX, "fo_aux_bus_comparison", f"ledgers[architecture={a}]; hard_gates.G2_bus_power_verdicts"))
+        c["notes"].append(
+            f"fo_aux_bus_comparison (context; {aux['verified']['trigger']} VERIFIED at {aux['verified']['commit'][:10]}): ledger for {a} "
+            + "; ".join(f"{mode} {v['status']} (blocking components: {', '.join(v['blocking_components'])})" for mode, v in sorted(aux["ledgers"][a].items()))
+            + f"; G2_bus_power {aux['G2_bus_power_verdicts'][a]}. P_bus stays unavailable.")
+        vl = ctx["fo_veto_layer"]
+        for f, dims in FIELD_VETO_DIMENSIONS.items():
+            cells[a][f]["evidence"].append(ev(VETO, "fo_veto_layer", f"cells.{a}." + "/".join(dims)))
+            cells[a][f]["notes"].append(
+                f"fo_veto_layer (context; {vl['verified']['trigger']} VERIFIED at {vl['verified']['commit'][:10]}): "
+                + ", ".join(f"{d} {vl['cells'][a][d]}" for d in dims) + f" for {a}; the field stays unavailable.")
+        for f in cells[a]:
+            for b in cells[a][f]["blocking"]:
+                if b["kind"] == "trigger" and b["id"] in trig_lane:
+                    lane = trig_lane[b["id"]]
+                    b["what"] += (f" [{b['id']} VERIFIED at {ctx[lane]['verified']['commit'][:10]} (context input {lane}, status "
+                                  f"{ctx[lane]['status']}); the field stays unavailable]")
+    st = cells["hall_only"]["stability"]
+    st["notes"].append("lane_09 E03/E04 (ECHT on pure N2) carry repository_status "
+                       + echt["lane09_items"][0]["status"] + " (literature_transfer_use "
+                       + echt["lane09_items"][0]["literature_transfer_use"] + "; not score-bearing, not a transport discriminator); "
+                       "transfer needing unpublished quantities inherits forced assumptions "
+                       + ", ".join(x.split(" ", 1)[0] for x in echt["lane09_items"][0]["forced_assumptions_relevant_to_transfer"])
+                       + "; the HSENV overlay carries A1 on the ECHT channel area. " + echt["hsenv_repin_effect"]["text"] + ".")
 
 
 def md_owner_items(rel: str, start_pat: str, stop_pat: str) -> list[str]:
@@ -821,9 +1081,98 @@ def check_prose_premises(gates, ovl) -> int:
     return ns.pop()
 
 
+def _leaf_diff(a, b, path: str) -> list[str]:
+    """Paths at which two JSON values differ (deterministic; lists compared by index, dict keys sorted)."""
+    if isinstance(a, dict) and isinstance(b, dict):
+        out = []
+        for k in sorted(set(a) | set(b)):
+            if k not in a:
+                out.append(f"{path}.{k} (added)")
+            elif k not in b:
+                out.append(f"{path}.{k} (removed)")
+            else:
+                out += _leaf_diff(a[k], b[k], f"{path}.{k}")
+        return out
+    if isinstance(a, list) and isinstance(b, list):
+        out = [f"{path} (length {len(a)} -> {len(b)})"] if len(a) != len(b) else []
+        for i, (x, y) in enumerate(zip(a, b)):
+            out += _leaf_diff(x, y, f"{path}[{i}]")
+        return out
+    return [] if a == b else [path]
+
+
+DECISION_CELL_KEYS = ("status", "value", "units", "evidence_class", "basis", "hall_closure_dependent")
+
+
+def change_log(v1: dict, v2: dict) -> dict:
+    """v1 -> v2 change log, computed against the hash-verified historical v1 JSON."""
+    i1 = {i["lane"]: i for i in v1["inputs"]}
+    i2 = {i["lane"]: i for i in v2["inputs"]}
+    inputs_changed, inputs_added = [], []
+    for lane, i in i2.items():
+        if lane not in i1:
+            inputs_added.append({"lane": lane, "role": i["role"], "commit": i["commit"], "files": [f["path"] for f in i["files"]]})
+            continue
+        f1 = {f["path"]: f["sha256"] for f in i1[lane]["files"]}
+        f2 = {f["path"]: f["sha256"] for f in i["files"]}
+        files = [{"path": p_, "v1_sha256": f1.get(p_), "v2_sha256": f2.get(p_)} for p_ in sorted(set(f1) | set(f2)) if f1.get(p_) != f2.get(p_)]
+        if files or i1[lane]["commit"] != i["commit"]:
+            inputs_changed.append({"lane": lane, "v1_commit": i1[lane]["commit"], "v2_commit": i["commit"], "files": files})
+    removed = sorted(set(i1) - set(i2))
+
+    decision = []
+    for k in ("form", "architecture", "label", "blocking_fields", "blocking_lanes", "blocking_triggers", "blocking_measurements",
+              "blocking_owner_decisions", "discriminators", "rule_trace", "conditions"):
+        decision += _leaf_diff(v1["outcome"][k], v2["outcome"][k], f"outcome.{k}")
+    for k in ("verdict", "problems", "counts", "populated_fields", "populated_fields_that_differ_between_architectures"):
+        decision += _leaf_diff(v1["admissibility"][k], v2["admissibility"][k], f"admissibility.{k}")
+    for a in ARCHS:
+        for f, _, _ in MANDATORY_FIELDS:
+            for k in DECISION_CELL_KEYS:
+                decision += _leaf_diff(v1["admissibility"]["cells"][a][f][k], v2["admissibility"]["cells"][a][f][k],
+                                       f"admissibility.cells.{a}.{f}.{k}")
+    for k in ("lane24_eliminated", "lane24_not_eliminated", "per_architecture", "overlays", "evidence_register_items"):
+        decision += _leaf_diff(v1["hard_gates"][k], v2["hard_gates"][k], f"hard_gates.{k}")
+    for k in ("decision_rule", "conditions_on_record", "mandatory_fields"):
+        decision += _leaf_diff(v1[k], v2[k], k)
+
+    metadata = []
+    for a in ARCHS:
+        for f, _, _ in MANDATORY_FIELDS:
+            c1, c2 = v1["admissibility"]["cells"][a][f], v2["admissibility"]["cells"][a][f]
+            for k in sorted(set(c1) | set(c2)):
+                if k not in DECISION_CELL_KEYS:
+                    metadata += _leaf_diff(c1.get(k), c2.get(k), f"admissibility.cells.{a}.{f}.{k}")
+    for k in ("three_questions", "evidence_weight", "owner_questions_open", "milestones"):
+        metadata += _leaf_diff(v1[k], v2[k], k)
+    new_sections = sorted(k for k in v2 if k not in v1 and k != "change_log")
+
+    unchanged = {
+        "outcome": v1["outcome"]["label"] == v2["outcome"]["label"],
+        "admissibility_verdict": v1["admissibility"]["verdict"] == v2["admissibility"]["verdict"],
+        "cell_statuses": all(v1["admissibility"]["cells"][a][f]["status"] == v2["admissibility"]["cells"][a][f]["status"]
+                             for a in ARCHS for f, _, _ in MANDATORY_FIELDS),
+        "eliminations": v1["hard_gates"]["lane24_eliminated"] == v2["hard_gates"]["lane24_eliminated"],
+        "overlay_readings": v1["hard_gates"]["overlays"] == v2["hard_gates"]["overlays"],
+        "decision_rule": v1["decision_rule"] == v2["decision_rule"],
+    }
+    return {
+        "from": v1["id"], "to": v2["id"],
+        "inputs_changed": inputs_changed, "inputs_added": inputs_added, "inputs_removed": removed,
+        "decision_relevant_changes": decision,
+        "metadata_changes": metadata,
+        "new_sections": new_sections,
+        "unchanged": unchanged,
+        "summary": (f"outcome {v1['outcome']['label']} -> {v2['outcome']['label']}; admissibility {v1['admissibility']['verdict']} -> "
+                    f"{v2['admissibility']['verdict']}; {len(inputs_changed)} input lane(s) re-pinned, {len(inputs_added)} context lane(s) "
+                    f"added; {len(decision)} decision-relevant path(s) changed, {len(metadata)} metadata path(s) changed."),
+    }
+
+
 def build(gov=None) -> dict:
     pins = verify_pins()
-    gov = gov or check_governance()
+    gov = gov or load_governance()
+    v1 = verify_v1_record()
     comps = boundary_components()
     feed = feed_extract()
     vd = vd_extract()
@@ -834,6 +1183,9 @@ def build(gov=None) -> dict:
     be = _json(BE)
     n_cond = check_prose_premises(gates, ovl)
     cells = build_cells(feed, vd, grid, gates, ovl, elec, comps)
+    echt = echt_extract()
+    ctx = context_extract(gov)
+    annotate_context(cells, ctx, echt)
     adm = admissibility(cells)
     res = apply_rule(cells, adm, gates)
 
@@ -972,7 +1324,9 @@ def build(gov=None) -> dict:
             "commit": PREREQUISITES.get(lane) or CONTEXT[lane],
             "verification_protocol": gov["protocols"][lane]["protocol"],
             "protocol_source": gov["protocols"][lane]["protocol_source"],
-            "protocol_notes": gov["protocols"][lane]["notes"],
+            "protocol_notes": gov["protocols"][lane]["notes"] + ([f"v2 re-pin from claim identity {REPINS[lane]['claim_identity'][:10]}; "
+                                                                  f"verification record: {REPINS[lane]['verification_record']}"]
+                                                                 if lane in REPINS else []),
             "decisive_for_B_or_C_allowed": not gov["protocols"][lane]["protocol"].startswith("single-lens"),
             "files": [{"path": p["path"], "sha256": p["sha256"]} for p in pins if p["lane"] == lane],
         })
@@ -1004,14 +1358,18 @@ def build(gov=None) -> dict:
 
     doc = {
         "id": BUNDLE_ID,
+        "version": BUNDLE_VERSION,
         "title": "Bundle 1: Architecture Conditional Selection (Milestone A)",
         "follow_on": FOLLOW_ON,
         "trigger": TRIGGER,
         "attempt": ATTEMPT,
         "execution_key": EXECUTION_KEY,
         "claim": {"utc": gov["claim_utc"], "dependency_state_hash": gov["dependency_state_hash"],
-                  "source": GOV["trigger_ledger"], "prerequisite_identities_match_pins": True},
+                  "source": GOV["trigger_ledger"] + " (read through " + GOV_SNAPSHOT_REL + ")",
+                  "prerequisite_identities_match_pins": not gov["repin_log"],
+                  "repin_log": gov["repin_log"]},
         "base_commit": BASE_COMMIT,
+        "integration_commit": INTEGRATION_COMMIT,
         "prepared": PREPARED,
         "status": "DRAFT_FOR_OWNER_REVIEW",
         "architectures": list(ARCHS),
@@ -1035,6 +1393,12 @@ def build(gov=None) -> dict:
                            "every TBD threshold and open lane-24 reading resolved (OD1-OD14)", "integrated mission closure"],
         },
         "inputs": inputs,
+        "supersedes": {"id": V1_RECORD["id"], "commit": V1_RECORD["commit"], "files_sha256": V1_RECORD["files"],
+                       "status": "historical record of T_BUNDLE1 attempt 2 (VERIFIED at " + V1_RECORD["commit"][:10] + "); kept byte-identical",
+                       "verified_event_utc": gov["v1_verified_event"]["utc"], "why_not_rebuilt": V1_RECORD["why_not_rebuilt"]},
+        "change_log": None,
+        "carried_statuses": {"echt_n2": echt},
+        "context_followons": ctx,
         "decision_rule": DECISION_RULE,
         "mandatory_fields": [{"id": f, "symbol": s, "meaning": m} for f, s, m in MANDATORY_FIELDS],
         "admissibility": {**adm, "cells": cells},
@@ -1064,18 +1428,25 @@ def build(gov=None) -> dict:
                      "verification (OPERATING_MODEL.md section 1)."),
             "inputs_single_lens": [i["lane"] for i in inputs if not i["decisive_for_B_or_C_allowed"]],
             "blocking_lanes_single_lens": single_lens_blocking,
-            "note": ("Every Bundle-1 input is two-lens verified. The single-lens-v1 lanes above are named only as blocking lanes: their future "
-                     "results need the second lens before they can be decisive for Milestone B or C."),
+            "note": ("Every Bundle-1 input is registered under a two-lens protocol. The single-lens-v1 lanes above are named only as "
+                     "blocking lanes: their future results need the second lens before they can be decisive for Milestone B or C."
+                     + ("" if not gov["repin_log"] else " Re-pinned in v2: " + "; ".join(
+                         f"{r['lane']} {r['claim_identity'][:10]} -> {r['v2_identity'][:10]} (verification record: {r['verification_record']})"
+                         for r in gov["repin_log"]) + ".")),
         },
         "owner_questions_open": owner_q,
         "provenance": {"generated_by": SCRIPT_REL, "check": f"python {SCRIPT_REL} --check", "schema": SCHEMA_REL,
+                       "governance_snapshot": {"path": GOV_SNAPSHOT_REL, "sha256": GOV_SNAPSHOT_SHA256,
+                                               "captured_from_commit": gov["captured_from_commit"],
+                                               "source_files_sha256": gov["source_files_sha256"]},
                        "governance_checked": sorted(GOV.values())},
     }
+    doc["change_log"] = change_log(v1, doc)
     return doc
 
 
 # --------------------------------------------------------------------------------------------------------------------
-# Minimal JSON-Schema validator (draft 2020-12 keyword subset used by bundle1_v1.schema.json)
+# Minimal JSON-Schema validator (draft 2020-12 keyword subset used by bundle1_v1/v2.schema.json)
 # --------------------------------------------------------------------------------------------------------------------
 def validate(inst, schema, root=None, path="$") -> list[str]:
     root = root or schema
@@ -1143,23 +1514,52 @@ def render_md(doc: dict) -> str:
     w = L.append
     oc = doc["outcome"]
     adm = doc["admissibility"]
-    w("# Bundle 1: Architecture Conditional Selection (Milestone A)")
+    w(f"# Bundle 1: Architecture Conditional Selection (Milestone A), {doc['version']}")
     w("")
     w("> Generated by `docs/milestones/bundle1/build_bundle1.py` from pinned inputs. Do not edit by hand; rerun the script "
-      "(`--check` reproduces this file and `bundle1_v1.json` byte for byte).")
+      f"(`--check` reproduces this file and `{Path(OUT_JSON_REL).name}` byte for byte). The historical v1 record "
+      "(`bundle1_v1.json`, `BUNDLE1.md`) is kept byte-identical and verified by its recorded sha256.")
     w("")
     w("| | |")
     w("|---|---|")
     w(f"| status | **{doc['status']}**: a proposal for the owner, not a decision |")
     w(f"| follow-on / trigger | `{doc['follow_on']}` / `{doc['trigger']}` attempt {doc['attempt']} (execution key `{doc['execution_key'][:16]}…`) |")
-    w(f"| base commit | `{doc['base_commit']}` |")
+    w(f"| base commit | `{doc['base_commit']}` (integration `{doc['integration_commit'][:10]}` + HSENV repair fast-forward) |")
+    w(f"| supersedes | `{doc['supersedes']['id']}` @ `{doc['supersedes']['commit'][:10]}` ({_esc(doc['supersedes']['status'])}) |")
+    w(f"| governance | read only from the pinned snapshot `{Path(GOV_SNAPSHOT_REL).name}` (captured at "
+      f"`{doc['provenance']['governance_snapshot']['captured_from_commit'][:10]}`) |")
     w(f"| boundary | `{doc['boundary_version']}` |")
     w("| milestone | supports **A**; what B and C need is in section 7 |")
-    w(f"| machine-readable | `bundle1_v1.json` (schema `bundle1_v1.schema.json`) |")
+    w(f"| machine-readable | `{Path(OUT_JSON_REL).name}` (schema `{Path(SCHEMA_REL).name}`) |")
     w("")
     w(f"**Outcome (PROPOSED rule, applied mechanically): `{oc['label']}`.** {oc['why_no_single_architecture']}")
     w("")
     w(doc["what_it_is_not"])
+    w("")
+    cl = doc["change_log"]
+    w(f"## 0. Change log {cl['from']} -> {cl['to']}")
+    w("")
+    w(cl["summary"])
+    w("")
+    w("Unchanged: " + ", ".join(f"{k} {'yes' if v else 'NO'}" for k, v in cl["unchanged"].items()) + ".")
+    w("")
+    w("| input lane | v1 commit | v2 commit | files re-pinned (v1 sha256 -> v2 sha256) |")
+    w("|---|---|---|---|")
+    for i in cl["inputs_changed"]:
+        fs = "<br>".join(f"`{f['path']}` `{(f['v1_sha256'] or '-')[:12]}` -> `{(f['v2_sha256'] or '-')[:12]}`" for f in i["files"])
+        w(f"| `{i['lane']}` | `{i['v1_commit'][:10]}` | `{i['v2_commit'][:10]}` | {fs} |")
+    w("")
+    w("Why re-pinned (claim identity -> v2 identity):")
+    w("")
+    for r in doc["claim"]["repin_log"]:
+        w(f"- `{r['lane']}` `{r['claim_identity'][:10]}` -> `{r['v2_identity'][:10]}`: {r['reason']}. Verification record: {r['verification_record']}.")
+    w("")
+    w("Context lanes added (not prerequisites; metadata only): " + ", ".join(f"`{i['lane']}` @ `{i['commit'][:10]}`" for i in cl["inputs_added"]) + ".")
+    w("")
+    w("Decision-relevant paths changed: " + (", ".join(f"`{x}`" for x in cl["decision_relevant_changes"]) or "none") + ".")
+    w("")
+    w(f"Metadata paths changed: {len(cl['metadata_changes'])} (listed in the JSON `change_log.metadata_changes`: context notes on "
+      "cells, verified-trigger annotations on blockers, re-pin notes). New sections: " + ", ".join(f"`{x}`" for x in cl["new_sections"]) + ".")
     w("")
     w("## 1. Decision rule (PROPOSED, stated before the tables)")
     w("")
@@ -1242,6 +1642,23 @@ def render_md(doc: dict) -> str:
     w("")
     w("Break-even placements and literature transfer are not hard-gate evidence (lane-24 basis table): they eliminate nothing here.")
     w("")
+    ec = doc["carried_statuses"]["echt_n2"]
+    w("### 3.1 ECHT-N2 repository status (carried from the repaired lane 09 and the re-pinned HSENV overlay)")
+    w("")
+    w("| item | status | literature transfer use | score-bearing | transport discriminator | sustainment item (level, type) | forced assumptions for transfer |")
+    w("|---|---|---|---|---|---|---|")
+    for it in ec["lane09_items"]:
+        fa = "; ".join(it["forced_assumptions_relevant_to_transfer"])
+        w(f"| {it['item']} | {it['status']} | {it['literature_transfer_use']} | {it['score_bearing']} | {it['transport_discriminator']} | "
+          f"{it['sustainment_item']['evidence_level']}, {it['sustainment_item']['quantity_type']} | {_esc(fa)} |")
+    w("")
+    w(f"HSENV `ECHT-OD-READING`: {_esc(ec['hsenv_interpretation_condition']['text'])}")
+    w("")
+    for d in ec["hsenv_declared_uncertainties"]:
+        w(f"- `{d['path']}`: forced assumption {d['forced_assumption']} ({d['evidence_class']}, {d['repository_status']})")
+    w("")
+    w(ec["bundle_reading"])
+    w("")
     w("## 4. Outcome")
     w("")
     w(f"**`{oc['label']}`** ({oc['proposal_status']}).")
@@ -1280,6 +1697,25 @@ def render_md(doc: dict) -> str:
     for c in cr["per_architecture"]["rf_hall"]["fo_rf_breakeven_overlay"]:
         w(f"- `rf_hall`: {_esc(c)}")
     w(f"- `ecr_hall`: {_esc(cr['per_architecture']['ecr_hall']['fo_ecr_breakeven_overlay']['condition_set'])}")
+    w("")
+    cx = doc["context_followons"]
+    w("### 4.2 Context follow-ons (verified; metadata only)")
+    w("")
+    w(cx["role"])
+    w("")
+    w("| follow-on | verified | status | reading used |")
+    w("|---|---|---|---|")
+    ab = cx["fo_aux_bus_comparison"]
+    w(f"| `fo_aux_bus_comparison` | {ab['verified']['trigger']} @ `{ab['verified']['commit'][:10]}` | {_esc(ab['status'].split('.')[0])} | "
+      f"ledger summary {_esc(json.dumps(ab['ledger_summary']))}; G2 verdicts {_esc(json.dumps(ab['G2_bus_power_verdicts']))} |")
+    vl = cx["fo_veto_layer"]
+    w(f"| `fo_veto_layer` | {vl['verified']['trigger']} @ `{vl['verified']['commit'][:10]}` | {vl['status']} | "
+      f"status counts {_esc(json.dumps(vl['status_counts']))}; eliminated {vl['eliminated_within_tested_envelope'] or 'none'} |")
+    xp = cx["fo_experiment_package"]
+    w(f"| `fo_experiment_package` | {xp['verified']['trigger']} @ `{xp['verified']['commit'][:10]}` | {xp['status']} | {_esc(xp['not_locked'])} |")
+    dx = cx["fo_dx5_cross_section_evidence"]
+    w(f"| `fo_dx5_cross_section_evidence` | {dx['verified']['trigger']} @ `{dx['verified']['commit'][:10]}` | {dx['status']} | "
+      f"priorities {_esc(json.dumps(dx['priority_status']))} |")
     w("")
     w("## 5. The three questions")
     w("")
@@ -1330,8 +1766,8 @@ def render_md(doc: dict) -> str:
     w("## 8. Reproduce")
     w("")
     w("```")
-    w(f"python {SCRIPT_REL}            # rewrite bundle1_v1.json and BUNDLE1.md")
-    w(f"python {SCRIPT_REL} --check    # exit 1 unless both are reproduced byte for byte")
+    w(f"python {SCRIPT_REL}            # rewrite {Path(OUT_JSON_REL).name} and {Path(OUT_MD_REL).name}")
+    w(f"python {SCRIPT_REL} --check    # exit 1 unless both are reproduced byte for byte and the v1 record matches its sha256")
     w("python -m pytest -q tests/test_bundle1.py")
     w("```")
     w("")
@@ -1360,7 +1796,14 @@ def render_all() -> tuple[str, str]:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--check", action="store_true", help="verify the committed files are reproduced byte for byte")
+    ap.add_argument("--snapshot-governance", action="store_true",
+                    help="(maintainer) capture the governance snapshot from the live files; its new sha256 must be pinned")
     args = ap.parse_args(argv)
+    if args.snapshot_governance:
+        text = json.dumps(snapshot_governance(), indent=1, ensure_ascii=False, sort_keys=True) + "\n"
+        (REPO / GOV_SNAPSHOT_REL).write_text(text, encoding="utf-8")
+        print(f"wrote {GOV_SNAPSHOT_REL} sha256 {hashlib.sha256(text.encode('utf-8')).hexdigest()} (pin it in GOV_SNAPSHOT_SHA256)")
+        return 0
     js, md = render_all()
     targets = ((REPO / OUT_JSON_REL, js), (REPO / OUT_MD_REL, md))
     if args.check:
@@ -1368,7 +1811,7 @@ def main(argv=None) -> int:
         if bad:
             print("NOT REPRODUCED: " + ", ".join(bad))
             return 1
-        print("OK: bundle1_v1.json and BUNDLE1.md reproduced")
+        print(f"OK: {Path(OUT_JSON_REL).name} and {Path(OUT_MD_REL).name} reproduced; v1 record verified by sha256")
         return 0
     for p, t in targets:
         p.write_text(t, encoding="utf-8")
