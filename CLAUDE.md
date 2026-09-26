@@ -104,7 +104,12 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    **abep-n2n-0.8:** atomic-N momentum transfer from Ragimkhanov et al. EPJD 2026 (CC BY), vector-extracted from Fig. 1b (OPM curve;
    `propellants/sources/ragimkhanov2026_fig1b_mtcs.csv`). The Wang et al. 2014 BSR curve re-plotted in the same figure disagrees
    materially: OPM/Wang rate 0.36 at T_e 2 eV, 0.56 at 5, 0.74 at 10, 0.96 at 30. It is carried as variant `n2_n_nel_wang.toml`
-   (plus `n2_n_di_lower_nel_wang.toml`), not resolved. Tier 1 remaining: N₂ electronic excitation (Johnson 2005 not retrievable).
+   (plus `n2_n_di_lower_nel_wang.toml`), not resolved.
+   **abep-n2n-0.9:** eight state-resolved electronic excitations: Su 2021 below 20 eV, Johnson 2005 Table 2 (owner-supplied TSV) from
+   20 eV, and a power-law continuation above Johnson's last point (≤ 6.7 % of the rate at T_e = 30 eV). Headers are the experimental
+   energies. The overlap disagreement Su/Johnson is 0.6–3.8 (step at 20 eV 0.84–2.13); a Johnson-below-20 alternative gives 0.80–0.94
+   of the electronic power, recorded as uncertainty. **`n2_n.toml` is now file-complete** (26 reactions; full-set smoke run is
+   chemistry-trustworthy). PINNED stays INCOMPLETE: the tier-3 bounds and the audit reruns with complete denominators are pending.
    **Completeness (project decision 2026-09-26):**
    "every file in n2_n.toml exists" ≠ "chemistry complete". `PINNED.toml` stays INCOMPLETE until an omitted-process audit is done:
    - Tier 1 (before P5-N₂ scoring): 8 N₂ excitation states, N momentum transfer.

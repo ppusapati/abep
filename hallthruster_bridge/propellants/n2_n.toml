@@ -44,9 +44,43 @@ rate_coeff_file = "dissociation_N2.dat"             # Song et al. JPCRD 2023 Tab
 
 [[reactions]]
 type = "excitation"
-energy_eV = 9.37
 target_species = "N2"
-rate_coeff_file = "excitation_N2.dat"               # REQUIRED: lumped electronic + vibrational (Itikawa 2006) — not yet generated
+rate_coeff_file = "excitation_N2_A3Sigma_u.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 7.75 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_B3Pi_g.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 8.04 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_W3Delta_u.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 8.88 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_Bprime3Sigma_u.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 9.67 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_a1Pi_g.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 9.31 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_aprime1Sigma_u.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 9.92 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_w1Delta_u.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 10.27 eV (abep-n2n-0.9)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_C3Pi_u.dat"   # Su 2021 (<20 eV) + Johnson 2005 (>=20 eV), dE = 11.19 eV (abep-n2n-0.9)
 
 [[reactions]]
 type = "excitation"

@@ -94,6 +94,46 @@ status = "verified"
 max_mean_energy_eV = 255.0
 basis = "Wang et al. 2014 BSR MTCS as re-plotted in Ragimkhanov Fig. 1b (0.95-128 eV), OPM above 128 eV; held-tail share 0.0000 % at 255 eV mean energy"
 
+["excitation_N2_A3Sigma_u.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["excitation_N2_B3Pi_g.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["excitation_N2_W3Delta_u.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["excitation_N2_Bprime3Sigma_u.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["excitation_N2_a1Pi_g.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-200 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["excitation_N2_aprime1Sigma_u.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["excitation_N2_w1Delta_u.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
+["excitation_N2_C3Pi_u.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
+
 ["ionization_N.dat"]
 status = "verified"
 max_mean_energy_eV = 255.0

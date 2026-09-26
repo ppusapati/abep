@@ -1859,3 +1859,37 @@ Renames (the file contents and rates are unchanged; the files were never on main
 - This is documented as source-model applicability, **not** experimental validation. 0→1 is independently cross-checked (≤ 6 % to 30 eV); v_f = 2…10 are model-supported only.
 - `chemistry_trustworthy` = true means no reaction was evaluated outside its declared chemistry-model domain. It does not mean experimental confirmation.
 - The more consequential limitations remain carried as closure uncertainty: v = 0 only, no vibrational population kinetics, no superelastic return.
+
+## 2026-09-26 — PR #23 merged; reaction set abep-n2n-0.9: eight N₂ electronic excitations (n2_n.toml now file-complete)
+
+**Merged:** PR #23 (0.7 + 0.8 + the vibrational applicability correction).
+
+**Data:**
+- Su et al. 2021 supplementary files (CC BY), committed unmodified under `propellants/sources/su2021/`.
+- Johnson et al. 2005 Table 2 (8-state ICS, 10–100 eV; a¹Π_g also at 200 eV; 10⁻¹⁸ cm² with uncertainties). The owner transcribed it from the Wiley article page and it is committed as `sources/johnson2005_table2_ics.tsv`. The file the article exposes as `…-t01.txt` is Table 1 (a¹Π_g DCS at 200 eV), not the ICS table.
+- Yonker & Bailey 2020 could not be located from here, so it is not used.
+
+**Construction** (`scripts/build_n2_electronic_excitation_tables.py`):
+- Su below 20 eV; Johnson's points exactly from 20 eV.
+- No renormalization and no −1.5 eV shift.
+- Headers are the experimental vertical energies (7.75, 8.04, 8.88, 9.67, 9.31, 9.92, 10.27, 11.19 eV).
+- Above Johnson's last point: a documented power law σ_last (E/E_last)^−p, with p from the last two points: A 2.29, B 2.87, W 2.25, B′ 2.23, a 1.07, a′ 1.67, w 0.53, C 2.47.
+- The triplets fall steeply (towards the E⁻³ exchange limit); the singlets slowly.
+- A normalization bug (anchoring at 10 keV instead of the last point) was caught in development; a test now pins the anchoring.
+
+**Diagnostics:**
+
+| state | A | B | W | B′ | a | a′ | w | C |
+|---|---|---|---|---|---|---|---|---|
+| Su/Johnson step at 20 eV | 1.83 | 1.17 | 1.09 | 1.12 | 0.84 | 1.51 | 1.34 | 2.13 |
+| continuation share of rate, T_e 30 eV | 1.5 % | 0.7 | 1.2 | 1.4 | 0.2 | 2.4 | 6.7 | 1.0 |
+
+- Across the 10–20 eV overlap, Su/Johnson ranges from 0.59 to 3.8 (e.g. w¹Δ_u 3.8 at 12.5 eV, W 3.2 at 10 eV). This is genuine evidence disagreement and is recorded, not smoothed.
+- At rate level, a Johnson-below-20 eV alternative (ramp from the experimental threshold to Johnson's first point) gives 0.81/0.80/0.81/0.86/0.91/0.94 of the nominal total electronic power at T_e = 2/3/5/10/20/30 eV.
+- Carrying that alternative as a chemistry variant is an owner decision; it would double the configs to 8.
+- Zero/hold tail bounds on the continuation: within −6.7/+1.2 % (w¹Δ_u widest).
+
+**n2_n.toml is file-complete for the first time:** 26 reactions, the lumped `excitation_N2.dat` placeholder removed.
+- Full-set N1 smoke run (0.5 ms, no measured targets): loads, runs and is chemistry-trustworthy. The limiting file is dissociation (36.2 of 45 eV).
+- The combined variant `n2_n_di_lower_nel_wang.toml` gives the same verdict.
+- `PINNED.toml` stays INCOMPLETE (owner rule). Remaining: the tier-3 bounds (rotational excitation, N → N²⁺ direct, N²⁺ → N³⁺), then re-running audits 1–2 with the complete denominators.
