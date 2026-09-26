@@ -20,7 +20,7 @@ temperature_K = 500.0
 [[reactions]]
 type = "elastic"
 target_species = "N2"
-rate_coeff_file = "elastic_N2.dat"                  # Itikawa 2006 (shipped)
+rate_coeff_file = "elastic_N2_song2023.dat"         # Song et al. JPCRD 2023 Table 5 MTCS (abep-n2n-0.3; replaces shipped elastic_N2.dat)
 
 [[reactions]]
 type = "electron_impact"

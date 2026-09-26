@@ -674,7 +674,7 @@ def test_n2_ionization_song2023_table_reproduces_jpcrd_table10():
     """ionization_N2_song2023.dat (Song et al. JPCRD 2023 Table 10, partial sigma(N2+); build script): header 15.58 eV,
     zero below the 16 eV first point, every row equals a fresh integration of the transcribed partial column, the partial
     column never exceeds the total, the tail share is < 1 % over the whole 0-255 eV Hall grid, and n2_n.toml uses it
-    under reaction set abep-n2n-0.2."""
+    (introduced in reaction set abep-n2n-0.2)."""
     import importlib.util, os, tomllib, numpy as np
     from abep_sim.rate_tables import maxwellian_rate, tail_sensitivity
     root = os.path.dirname(os.path.dirname(__file__))
@@ -695,7 +695,34 @@ def test_n2_ionization_song2023_table_reproduces_jpcrd_table10():
     cfg = open(os.path.join(d, "n2_n.toml")).read()
     assert '"ionization_N2_song2023.dat"' in cfg and '"ionization_N2_N2+.dat"' not in cfg
     pinned = tomllib.load(open(os.path.join(root, "hallthruster_bridge", "PINNED.toml"), "rb"))["reaction_set"]
-    assert pinned["version"] == "abep-n2n-0.2" and pinned["history"][-1].startswith("abep-n2n-0.2")
+    assert any(h.startswith("abep-n2n-0.2") and "ionization_N2_song2023.dat" in h for h in pinned["history"])
+
+
+def test_n2_elastic_song2023_table_reproduces_jpcrd_table5():
+    """elastic_N2_song2023.dat (Song et al. JPCRD 2023 Table 5 momentum-transfer cross section; build script): 40
+    transcribed points 0.001 eV-10 keV, each row equals a fresh integration with linear-in-E interpolation, the log-log
+    interpolation alternative stays within 3 % over the Hall grid, n2_n.toml uses it, and the reaction set is abep-n2n-0.3
+    with one history line per version."""
+    import importlib.util, os, tomllib, numpy as np
+    from abep_sim.rate_tables import maxwellian_rate
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_elastic_song2023_table.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    d = os.path.join(root, "hallthruster_bridge", "propellants")
+    lines = open(os.path.join(d, "elastic_N2_song2023.dat")).read().splitlines()
+    assert lines[0].endswith("(eV): 0.0")
+    a = np.loadtxt(os.path.join(d, "elastic_N2_song2023.dat"), skiprows=2)
+    E = np.array([r[0] for r in b.TABLE5], float); sig = np.array([r[1] for r in b.TABLE5]) * 1e-20
+    assert len(E) == 40 and E[0] == 0.001 and E[-1] == 10000 and (np.diff(E) > 0).all()
+    for eps in (3.0, 15.0, 45.0, 150.0, 255.0):
+        row = a[a[:, 0] == eps][0, 1]
+        assert abs(row / maxwellian_rate(E, sig, eps / 1.5, b.TAIL) - 1) < 1e-5
+    assert all(abs(dd) < 0.03 for _, dd in b.interpolation_sensitivity(E, sig, [3, 30, 255]))
+    cfg = open(os.path.join(d, "n2_n.toml")).read()
+    assert '"elastic_N2_song2023.dat"' in cfg and '"elastic_N2.dat"' not in cfg
+    pinned = tomllib.load(open(os.path.join(root, "hallthruster_bridge", "PINNED.toml"), "rb"))["reaction_set"]
+    assert pinned["version"] == "abep-n2n-0.3"
+    assert [h.split()[0].rstrip(":") for h in pinned["history"]] == ["abep-n2n-0.1", "abep-n2n-0.2", "abep-n2n-0.3"]
 
 
 def test_rate_table_tail_policy_is_explicit():
@@ -769,6 +796,7 @@ def test_every_committed_rate_table_has_a_validity_domain():
     assert val["ionization_N.dat"]["max_mean_energy_eV"] == 255.0
     assert {f for f, e in val.items() if e["status"] == "unresolved"} == {"ionization_N2_N2+.dat", "elastic_N2.dat"}
     assert val["ionization_N2_song2023.dat"]["max_mean_energy_eV"] == 255.0
+    assert val["elastic_N2_song2023.dat"]["max_mean_energy_eV"] == 255.0
 
 
 def test_bridge_and_0d_chemistry_are_not_unified():

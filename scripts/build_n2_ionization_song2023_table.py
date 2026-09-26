@@ -60,7 +60,7 @@ def main():
            "(tail share: " + ", ".join(f"{100 * d:.4f} % at {eps:.0f} eV" for eps, d in sens) + "). "
            f"Header {THRESHOLD_EV} eV = N2 ionization threshold (JPCRD 2023 Sec. 3). "
            "Maxwellian-integrated by abep_sim/rate_tables.py (scripts/build_n2_ionization_song2023_table.py). "
-           "Energy column = mean electron energy 3/2 Te. Evidence level 4 (docs/EVIDENCE.md). Reaction set abep-n2n-0.2.")
+           "Energy column = mean electron energy 3/2 Te. Evidence level 4 (docs/EVIDENCE.md). Introduced in reaction set abep-n2n-0.2.")
     write_hallthruster_table(OUT, E, sig, THRESHOLD_EV, source=src, tail=TAIL)
     print("wrote", os.path.normpath(OUT))
 

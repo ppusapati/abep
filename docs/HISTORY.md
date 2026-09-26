@@ -1596,3 +1596,34 @@ This replaces the first version (commit d2009b3). That version used the time-ave
 - Up to 60 eV mean energy, the shipped table is reproduced to < 0.1 %. So it was built from the same Lindsay–Mangan / Itikawa partial cross section.
 - Above that, the shipped rate is higher by up to 11 %. That points to a different, unknown high-energy tail treatment.
 - Consequence for the 0-D chemistry: none. It still reads its own copy; the two chemistry databases stay separate (not unified).
+
+## 2026-09-26 — Reaction set abep-n2n-0.3: N₂ elastic momentum transfer rebuilt from Song et al. JPCRD 2023 Table 5
+
+**Change:**
+- `elastic_N2_song2023.dat` is built from Table 5 (elastic **MTCS**, Kawaguchi et al. recommendation, "a few percent"; 40 points, 0.001 eV–10 keV) by `scripts/build_n2_elastic_song2023_table.py`. The transcription was checked row by row against the PDF text.
+- It is MTCS, not integral elastic, because HallThruster uses this rate as the electron–neutral momentum-transfer frequency.
+- The held tail above 10 keV contributes nil, so the table is verified to 255 eV.
+- Table 5 is sparse at 4–31 eV (points at 4.0, 10.9, 21.9, 30.7 eV). The linear-in-E interpolation is ours; log-log would lower the rate by ≈ 2 % (a transformation uncertainty, not applied).
+- `n2_n.toml` now uses it. The reaction set moves `abep-n2n-0.2` → `abep-n2n-0.3`. The shipped `elastic_N2.dat` is kept for provenance but is unused.
+
+**Diagnostic, not used for tuning:** rate ratios against the shipped `elastic_N2.dat`.
+
+| mean energy (eV) | 1 | 3 | 10 | 15 | 30 | 45 | 60 | 90 | 100 |
+|---|---|---|---|---|---|---|---|---|---|
+| Song MTCS / shipped | 1.007 | 1.041 | 0.963 | 0.908 | 0.817 | 0.769 | 0.730 | 0.652 | 0.627 |
+| Song integral elastic (Table 4) / shipped | — | 1.10 | 1.20 | 1.26 | 1.39 | 1.50 | 1.58 | 1.66 | 1.66 |
+
+- The shipped table matches neither the Song MTCS nor the Song integral elastic cross section. It lies between them, so its origin remains unknown.
+- In the Hall range, electron–N₂ momentum transfer is now 18–27 % lower (mean energy 30–60 eV) than in 0.1/0.2. That is a real change to classical cross-field mobility in N₂ runs. Nothing validated moves: no N₂ run has been scored.
+
+**Smoke test (N1, 0.5 ms):**
+- It used the 0.3 set minus the not-yet-built excitation and N-elastic reactions, via an uncommitted temporary config.
+- All four tables are verified, and f_out = 0 for every reaction. The limiting file is dissociation: active up to 35.7 eV mean energy against its 45 eV limit. `chemistry_trustworthy` = true.
+- **This is not a validation-grade run:**
+  - `chemistry_trustworthy` certifies the validity domains of the tables used, not completeness.
+  - Completeness is enforced separately: the driver refuses `n2_n.toml` while any listed rate file is missing.
+  - The P5-N₂ pre-registration must require the complete reaction-set version.
+
+**Remaining N₂/N gaps:**
+- the 8 excitation reactions and N elastic, both blocked on source access;
+- dissociative/double ionization, rotational/vibrational excitation (not in the set; owner decision).

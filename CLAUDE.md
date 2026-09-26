@@ -83,9 +83,9 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 2. N₂/N reaction set **v0.1: partial**. Add one provenance-backed table per commit. Complete the N₂/N reaction set with `abep_sim/rate_tables.py` from cited cross sections. Done: N ionisation
    (`ionization_N.dat`, Kim & Desclaux 2002 via NIST, `scripts/build_n_ionization_table.py`); N₂ dissociation
    (`dissociation_N2.dat`, Song et al. JPCRD 2023 Table 9 = Cosby 1993, `scripts/build_n2_dissociation_table.py`); N₂
-   ionization rebuilt (`ionization_N2_song2023.dat`, Table 10 partial σ(N₂⁺); reaction set **abep-n2n-0.2**, versioned in
-   `PINNED.toml`; the shipped table is kept but unused). Next: N₂ momentum transfer from Table 5. Gap: dissociative and double
-   ionization are not in the set. Sources are open literature, not LXCat.
+   ionization (`ionization_N2_song2023.dat`, Table 10 partial σ(N₂⁺)) and N₂ elastic momentum transfer
+   (`elastic_N2_song2023.dat`, Table 5 MTCS) rebuilt; reaction set **abep-n2n-0.3**, versioned in `PINNED.toml` (the shipped
+   tables are kept but unused). Gaps: dissociative/double ionization and rot/vib excitation are not in the set. Sources are open literature, not LXCat.
    Open: N₂ excitation (the recommended Su et al. 2021 per-state set ends at 20 eV, and the source for extending it above that is
    the owner's decision); N elastic (Ragimkhanov 2026 not yet located). See docs/HISTORY.md 2026-09-26 and
    `hallthruster_bridge/propellants/PROVENANCE.md`.
@@ -108,9 +108,9 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    A run is `chemistry_trustworthy` only if no file is unresolved and, for every reaction, the activity
    n_e·n_target·k_r(3/2 T_e) summed over every saved frame and cell has zero share (≤ 1e-12) beyond its limit
    (reaction-weighted, per frame; `checks/chemistry_validity_check.jl`). Limits: dissociation_N2 45 eV,
-   ionization_N and ionization_N2_song2023 255 eV. The HallThruster-shipped `ionization_N2_N2+.dat` (now unused) and
-   `elastic_N2.dat` are **unresolved** (cross-section inputs not shipped; the elastic table ends at 100 eV), so no N₂ run is
-   chemistry-trustworthy until elastic is rebuilt (JPCRD 2023 Table 5). `HallMap` performance `trustworthy` requires it; N₂ validation
+   ionization_N, ionization_N2_song2023 and elastic_N2_song2023 255 eV. The unused HallThruster-shipped N₂ tables stay
+   `unresolved`. `chemistry_trustworthy` certifies the validity of the tables used, not completeness; the driver enforces
+   completeness separately (it refuses `n2_n.toml` while a listed file is missing). `HallMap` performance `trustworthy` requires it; N₂ validation
    scoring must too. No reaction-contribution allowance until one is pre-registered.
    Then generate frozen Hall maps (all fields in `hall_map.REQUIRED_FIELDS`), one set per ensemble member, each carrying
    `meta.ensemble_member_id`. Wire the `archengine` Hall branch to `HallMap`, and rerun the architecture trade and gate-4
