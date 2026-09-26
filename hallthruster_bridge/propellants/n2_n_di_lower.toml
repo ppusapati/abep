@@ -1,3 +1,4 @@
+# GENERATED VARIANT of n2_n.toml (dissociative-ionization LOWER chemistry variant); identical except that one rate file.
 # N2/N propellant for HallThruster.jl v0.23.1 (Stage A). Reaction-set version: PINNED.toml [reaction_set]. Rate files are Maxwellian tables vs mean energy (3/2 Te).
 [[species]]
 symbol = "N"
@@ -30,7 +31,7 @@ rate_coeff_file = "ionization_N2_song2023.dat"      # Song et al. JPCRD 2023 Tab
 [[reactions]]
 type = "electron_impact"
 equation = "N2 + e -> N(+) + N + 2e"
-rate_coeff_file = "dissociative_ionization_N2_upper.dat"  # Song 2023 Table 10 sigma(N+ + N2++), upper variant (abep-n2n-0.4); lower variant: n2_n_di_lower.toml
+rate_coeff_file = "dissociative_ionization_N2_lower.dat"  # Song 2023 Table 10 sigma(N+ + N2++) - 0.01 sigma_total, lower variant (abep-n2n-0.4)
 
 [[reactions]]
 type = "electron_impact"

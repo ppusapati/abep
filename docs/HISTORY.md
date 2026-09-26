@@ -1693,3 +1693,26 @@ This audit was run under `prereg/n2_completeness_audit_v1` (merged in PR #20 bef
 **Implementation note for the promotion.** HallThruster.jl supports dissociative ionization through `electron_impact` equations (`PINNED.toml`, molecular_support). The table would come from the same Table 10 column. Two choices for the owner:
 1. How to treat 24.28–30 eV: the table as published versus a documented threshold treatment.
 2. The header energy loss: threshold versus threshold plus kinetic-energy release.
+
+## 2026-09-26 — Reaction set abep-n2n-0.4: N₂ dissociative ionization added (promoted by audit 1)
+
+**Table.** `scripts/build_n2_dissociative_ionization_table.py` builds from Table 10 σ(N⁺ + N₂²⁺). Owner decisions:
+- Nominal: a linear ramp from σ = 0 at E_th = 24.284 eV up to the published 30 eV point.
+  - Sensitivity bounds (not tables): zero below 30 eV, and σ(30 eV) held down to E_th.
+  - Their rate effect is −42/+75 % at T_e = 3 eV, −4/+4 % at 10 eV, and < 1 % from 20 eV.
+- Header energy loss 24.284 eV (the appearance energy). No fixed kinetic-energy add-on.
+  - Sensitivity: charging +16 eV of fragment kinetic energy per event would add 1.4 % (T_e 5 eV), 5.1 % (10 eV), 10 % (20 eV) and 13 % (30 eV) to P_e (0.4 set, excitation not yet in).
+  - That is material. It is the case for energy-dependent reaction losses if HallThruster ever supports them.
+- Held tail above 1000 eV: < 0.76 % of the rate at 255 eV, so verified to 255 eV.
+
+**The N⁺/N₂²⁺ ambiguity is carried explicitly, not resolved silently.**
+- **upper** (`n2_n.toml`): the published column.
+- **lower** (`n2_n_di_lower.toml`): the column minus 0.01 σ_total. This applies JPCRD Sec. 2.8's "N₂²⁺ ≈ 1 % of total ionization" at all energies (statement-derived, approximate).
+- The variant config is generated and differs in exactly one line; a test enforces this.
+- Molecular N₂²⁺ remains a separate, **unresolved** channel.
+
+**Smoke test (N1, 0.5 ms, reaction subset without excitation or N elastic).**
+- Loads and runs; chemistry_trustworthy; dissociation is still the limiting file (35.3 eV active vs 45).
+- The atomic share of exit ion flux rises from 0.42 (0.3) to 0.53 (0.4). This is a chemistry diagnostic, not a fit comparison.
+
+**Hygiene.** Smoke-test case copies now omit `measured`, so the driver computes no P5-N₂ target comparison before the pre-registration.

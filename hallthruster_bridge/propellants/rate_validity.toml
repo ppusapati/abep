@@ -12,6 +12,16 @@ status = "verified"
 max_mean_energy_eV = 45.0
 basis = "JPCRD 2023 Table 9 ends at 200 eV; held tail carries 0.95 % of the rate at 45 eV mean energy (T_e = 30 eV), 3.8 % at 60 eV (scripts/build_n2_dissociation_table.py)"
 
+["dissociative_ionization_N2_upper.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "JPCRD 2023 Table 10 sigma(N+ + N2++) spans 30-1000 eV (ramp from 24.284 eV); held-tail share < 1 % at 255 eV mean energy (scripts/build_n2_dissociative_ionization_table.py)"
+
+["dissociative_ionization_N2_lower.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "as the upper variant, minus 0.01 x sigma_total (JPCRD Sec. 2.8 N2++ statement); held-tail share < 1 % at 255 eV mean energy"
+
 ["ionization_N.dat"]
 status = "verified"
 max_mean_energy_eV = 255.0

@@ -721,8 +721,9 @@ def test_n2_elastic_song2023_table_reproduces_jpcrd_table5():
     cfg = open(os.path.join(d, "n2_n.toml")).read()
     assert '"elastic_N2_song2023.dat"' in cfg and '"elastic_N2.dat"' not in cfg
     pinned = tomllib.load(open(os.path.join(root, "hallthruster_bridge", "PINNED.toml"), "rb"))["reaction_set"]
-    assert pinned["version"] == "abep-n2n-0.3"
-    assert [h.split()[0].rstrip(":") for h in pinned["history"]] == ["abep-n2n-0.1", "abep-n2n-0.2", "abep-n2n-0.3"]
+    assert any(h.startswith("abep-n2n-0.3") and "elastic_N2_song2023.dat" in h for h in pinned["history"])
+    versions = [h.split()[0].rstrip(":") for h in pinned["history"]]
+    assert versions == [f"abep-n2n-0.{i}" for i in range(1, len(versions) + 1)] and pinned["version"] == versions[-1]
 
 
 def test_n2_completeness_audit_preregistration_is_frozen():
@@ -754,6 +755,33 @@ def test_n2_dissociative_ionization_audit_promotes_under_the_preregistered_rule(
     k_iz = a.table_rate("ionization_N2_song2023.dat", 20.0); k_tab = a.omitted_rate(a.TABLE10_NPLUS, 20.0)
     assert abs(k_tab / k_iz - r20["F_ion_lower"]) < 1e-9 and r20["F_ion_lower"] > 0.01
     assert all(r["F_P_lower"] <= r["F_P_upper"] and r["F_ion_lower"] <= r["F_ion_upper"] for r in res["rows"])
+
+
+def test_n2_dissociative_ionization_tables_and_chemistry_variants():
+    """Dissociative ionization (promoted by the pre-registered audit): header = appearance energy 24.284 eV (no fixed
+    kinetic-energy add-on), nominal linear ramp from sigma = 0 at threshold, rows equal a fresh integration, lower <= upper
+    everywhere, and the two chemistry-variant configs differ only in that one rate file."""
+    import importlib.util, os, numpy as np
+    from abep_sim.rate_tables import maxwellian_rate
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_dissociative_ionization_table.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    d = os.path.join(root, "hallthruster_bridge", "propellants")
+    tabs = {}
+    for v, f in b.FILES.items():
+        lines = open(os.path.join(d, f)).read().splitlines()
+        assert lines[0].endswith("(eV): 24.284")
+        a = np.loadtxt(os.path.join(d, f), skiprows=2); tabs[v] = a
+        E, s = b.cross_section(v)
+        assert E[0] == b.E_TH and s[0] == 0.0 and E[1] == 30.0
+        for eps in (15.0, 45.0, 150.0):
+            assert abs(a[a[:, 0] == eps][0, 1] / maxwellian_rate(E, s, eps / 1.5, b.TAIL) - 1) < 1e-5
+    assert (tabs["lower"][:, 1] <= tabs["upper"][:, 1]).all()
+    up = open(os.path.join(d, "n2_n.toml")).read().splitlines()
+    lo = open(os.path.join(d, "n2_n_di_lower.toml")).read().splitlines()
+    diff = [(x, y) for x, y in zip(up, lo[1:]) if x != y]
+    assert lo[0].startswith("# GENERATED VARIANT") and len(up) == len(lo) - 1 and len(diff) == 1
+    assert "dissociative_ionization_N2_upper.dat" in diff[0][0] and "dissociative_ionization_N2_lower.dat" in diff[0][1]
 
 
 def test_rate_table_tail_policy_is_explicit():

@@ -17,10 +17,11 @@ install = "https://julialang.org/downloads  (tested with 1.11.7 from julialang-s
 [reaction_set]
 # Any change to which rate files n2_n.toml uses, or to their contents, is a reaction-set model change: bump the version
 # and add a history line. A version label never refers to two different chemistry definitions.
-version = "abep-n2n-0.3"
-status = "INCOMPLETE — stays INCOMPLETE until the omitted-process importance audit (prereg/n2_completeness_audit_v1.json) is done, even when every file named in n2_n.toml exists. Tier 1 (required before P5-N2 scoring): N2 excitation (8 states), N momentum transfer. Tier 2 (must be assessed before completeness): N2 vibrational excitation, dissociative ionization. Tier 3 (assessed/not included unless a bound shows otherwise): rotational excitation, double ionization"
+version = "abep-n2n-0.4"
+status = "INCOMPLETE — stays INCOMPLETE until the omitted-process importance audit (prereg/n2_completeness_audit_v1.json) is done, even when every file named in n2_n.toml exists. Tier 1 (required before P5-N2 scoring): N2 excitation (8 states), N momentum transfer. Tier 2 (must be assessed before completeness): N2 vibrational excitation; dissociative ionization (audited: PROMOTED, included from 0.4). Tier 3 (assessed/not included unless a bound shows otherwise): rotational excitation, double ionization"
 history = [
   "abep-n2n-0.1: N2 ionization + N2 elastic shipped with HallThruster.jl (Itikawa 2006); N ionization (Kim & Desclaux via NIST, 2026-09-25); N2 dissociation (Song 2023 Table 9, 2026-09-26)",
   "abep-n2n-0.2 (2026-09-26): N2 ionization -> ionization_N2_song2023.dat (Song et al. JPCRD 2023 Table 10 sigma(N2+)); rest as 0.1",
   "abep-n2n-0.3 (2026-09-26): N2 elastic -> elastic_N2_song2023.dat (Song et al. JPCRD 2023 Table 5 momentum transfer); rest as 0.2",
+  "abep-n2n-0.4 (2026-09-26): + dissociative ionization N2 -> N+ + N (Song 2023 Table 10 sigma(N+ + N2++), ramp from 24.284 eV, header 24.284 eV); chemistry variants upper (n2_n.toml) / lower (n2_n_di_lower.toml); rest as 0.3",
 ]
