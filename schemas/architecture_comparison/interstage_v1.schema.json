@@ -1,0 +1,240 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:abep:schemas:architecture_comparison:interstage_v1",
+ "title": "ABEP pre-ionizer -> Hall interstage model, interchange format v1",
+ "description": "Inputs ($defs/case) and outputs ($defs/result) of abep_sim/interstage.py (lane 18). One common model for rf_hall and ecr_hall; hall_only has no interstage and is not a valid case. Every numeric input is a sourced record (value, unit, source, evidence class, uncertainty) or an explicit {\"tbd\": \"<what is required>\"}; a TBD anywhere makes the solver refuse. There are no defaults: every property listed in 'required' must be present, and null is allowed only where the schema says so (mode-specific inputs). Equations, sources, validity domain and limitations: docs/architecture_comparison/interstage/INTERSTAGE_MODEL.md. This schema defines an interface; it is not a validation claim and ranks no architecture.",
+ "x-model": {
+  "module": "abep_sim/interstage.py",
+  "model_version": "interstage_v1",
+  "documentation": "docs/architecture_comparison/interstage/INTERSTAGE_MODEL.md",
+  "tests": "tests/test_interstage.py",
+  "architectures": ["rf_hall", "ecr_hall"],
+  "excluded_architectures": {"hall_only": "no interstage: the Hall channel is fed directly; eta_transport is undefined and the interstage block is absent from the comparison"},
+  "status": "DRAFT for owner review (2026-09-26)",
+  "versioning": "semantic: removing/renaming a field, changing a unit or a vocabulary = major; adding an optional output field = minor; description/source updates = patch",
+  "milestones": {
+   "A": "supports: the conditional statement 'rf_hall / ecr_hall is baseline provided eta_transport >= eta_transport_required (abep_sim/breakeven.py, breakeven_v1: place_evidence()['eta_transport_min'])' becomes computable and input-traceable",
+   "B": "requires: admitted Hall transport closure (for eta_transport_required), sourced rates valid at the interstage T_e, magnetized wall-flux closure or measurement, junction capture data, transitional-flow conductance for the actual gas",
+   "C": "requires: wall-heat and ion-wall-energy outputs coupled to abep_sim/thermal_life.py and the energy ledger coupled to bus_power_boundary_v1 (rf_source / ecr_source), with milestone-B inputs"
+  }
+ },
+ "$defs": {
+  "sourced": {
+   "type": "object",
+   "description": "A numeric input with provenance (docs/EVIDENCE.md).",
+   "required": ["value", "unit", "source", "evidence_class", "uncertainty"],
+   "additionalProperties": false,
+   "properties": {
+    "value": {"type": "number"},
+    "unit": {"type": "string", "enum": ["m", "m^2", "m^-3", "s^-1", "m s^-1", "eV", "K", "kg", "T", "-", "m^3 s^-1"]},
+    "source": {"type": "string", "description": "citation actually accessed (DOI/URL, table/equation), or the producing lane/script"},
+    "evidence_class": {"type": "string", "enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]},
+    "uncertainty": {"type": "string", "description": "stated uncertainty, or why none is stated"}
+   }
+  },
+  "tbd": {
+   "type": "object",
+   "description": "An input that is not available; the solver refuses (InterstageTBDError) until it is supplied.",
+   "required": ["tbd"],
+   "additionalProperties": false,
+   "properties": {"tbd": {"type": "string", "description": "what is required"}}
+  },
+  "sourced_or_tbd": {"anyOf": [{"$ref": "#/$defs/sourced"}, {"$ref": "#/$defs/tbd"}]},
+  "sourced_or_tbd_or_null": {"anyOf": [{"$ref": "#/$defs/sourced"}, {"$ref": "#/$defs/tbd"}, {"type": "null"}]},
+  "species_map": {
+   "type": "object",
+   "description": "species name -> sourced value; must list exactly the species the property applies to (ions or neutrals)",
+   "additionalProperties": {"$ref": "#/$defs/sourced_or_tbd"}
+  },
+  "species_map_or_null": {"anyOf": [{"$ref": "#/$defs/species_map"}, {"type": "null"}]},
+  "rate_record": {
+   "type": "object",
+   "description": "k = k_ref_m3_s * (x / x_ref) ** exponent [m^3 s^-1] with x = variable; refused outside [validity_min, validity_max] (null = no bound stated by the source on that side; at least one bound required).",
+   "required": ["variable", "k_ref_m3_s", "x_ref", "exponent", "validity_min", "validity_max", "source", "evidence_class", "uncertainty"],
+   "additionalProperties": false,
+   "properties": {
+    "variable": {"type": "string", "enum": ["electron_temperature_eV", "electron_temperature_K", "ion_axial_energy_eV"]},
+    "k_ref_m3_s": {"type": "number", "minimum": 0},
+    "x_ref": {"type": "number"},
+    "exponent": {"type": "number"},
+    "validity_min": {"type": ["number", "null"]},
+    "validity_max": {"type": ["number", "null"]},
+    "source": {"type": "string"},
+    "evidence_class": {"type": "string", "enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]},
+    "uncertainty": {"type": "string"}
+   }
+  },
+  "rate": {"anyOf": [{"$ref": "#/$defs/rate_record"}, {"$ref": "#/$defs/tbd"}]},
+  "species": {
+   "type": "object",
+   "required": ["name", "charge", "composition", "mass", "formation_energy"],
+   "additionalProperties": false,
+   "properties": {
+    "name": {"type": "string"},
+    "charge": {"type": "integer", "minimum": 0, "description": "0 = neutral; Z >= 1 = ion (negative ions not implemented)"},
+    "composition": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 1}},
+    "mass": {"$ref": "#/$defs/sourced_or_tbd", "description": "kg; ion mass = neutral mass - Z m_e (mass closure)"},
+    "formation_energy": {"$ref": "#/$defs/sourced_or_tbd", "description": "eV relative to case.energy_reference"}
+   }
+  },
+  "source_exit": {
+   "type": "object",
+   "description": "Pre-ionizer exit state (RF / ECR source lanes).",
+   "required": ["ion_density", "ion_axial_speed", "electron_temperature", "neutral_density", "neutral_flow", "neutral_temperature"],
+   "additionalProperties": false,
+   "properties": {
+    "ion_density": {"$ref": "#/$defs/species_map", "description": "m^-3, every ion species"},
+    "ion_axial_speed": {"$ref": "#/$defs/species_map", "description": "m s^-1, every ion species (constant along the duct)"},
+    "electron_temperature": {"$ref": "#/$defs/sourced_or_tbd", "description": "eV"},
+    "neutral_density": {"$ref": "#/$defs/species_map", "description": "m^-3, every neutral species; gated against the flow-path value"},
+    "neutral_flow": {"$ref": "#/$defs/species_map", "description": "s^-1, every neutral species entering the duct"},
+    "neutral_temperature": {"$ref": "#/$defs/sourced_or_tbd", "description": "K"}
+   }
+  },
+  "geometry": {
+   "type": "object",
+   "description": "circular: radius set, inner/outer null; annular: inner/outer set, radius null.",
+   "required": ["kind", "length", "radius", "inner_radius", "outer_radius", "wall_material", "axial_magnetic_field"],
+   "additionalProperties": false,
+   "properties": {
+    "kind": {"type": "string", "enum": ["circular", "annular"]},
+    "length": {"$ref": "#/$defs/sourced_or_tbd", "description": "m; 0 allowed (no interstage length)"},
+    "radius": {"$ref": "#/$defs/sourced_or_tbd_or_null"},
+    "inner_radius": {"$ref": "#/$defs/sourced_or_tbd_or_null"},
+    "outer_radius": {"$ref": "#/$defs/sourced_or_tbd_or_null"},
+    "wall_material": {"type": "string", "description": "label only; wall coefficients are separate sourced inputs"},
+    "axial_magnetic_field": {"$ref": "#/$defs/sourced_or_tbd", "description": "T; 0 = unmagnetized"}
+   }
+  },
+  "wall": {
+   "type": "object",
+   "required": ["radial_loss_closure", "wall_electrical", "neutralization_products", "ion_neutral_cross_section", "explicit_h"],
+   "additionalProperties": false,
+   "properties": {
+    "radial_loss_closure": {"type": "string", "enum": ["lieberman_unmagnetized", "strong_axial_B_no_radial_loss", "explicit_h"]},
+    "wall_electrical": {"type": "string", "enum": ["floating"]},
+    "neutralization_products": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string"}}},
+    "ion_neutral_cross_section": {"$ref": "#/$defs/species_map_or_null", "description": "m^2 per ion; lieberman_unmagnetized only"},
+    "explicit_h": {"$ref": "#/$defs/species_map_or_null", "description": "- per ion, in [0, 1]; explicit_h only"}
+   }
+  },
+  "reaction": {
+   "type": "object",
+   "required": ["reaction_id", "reactants", "products", "rate", "electron_energy_loss"],
+   "additionalProperties": false,
+   "properties": {
+    "reaction_id": {"type": "string"},
+    "reactants": {"type": "array", "items": {"type": "string"}, "description": "exactly two; 'e' = electron"},
+    "products": {"type": "array", "items": {"type": "string"}},
+    "rate": {"$ref": "#/$defs/rate"},
+    "electron_energy_loss": {"anyOf": [{"$ref": "#/$defs/sourced"}, {"$ref": "#/$defs/tbd"}, {"type": "string", "enum": ["recombining_electron_thermal_1.5Te", "none"]}]}
+   }
+  },
+  "wall_atom_recombination": {
+   "type": "object",
+   "required": ["atom", "product", "probability"],
+   "additionalProperties": false,
+   "properties": {
+    "atom": {"type": "string"},
+    "product": {"type": "string"},
+    "probability": {"$ref": "#/$defs/sourced_or_tbd"}
+   }
+  },
+  "neutral_conductance": {
+   "type": "object",
+   "required": ["mode", "collision_cross_section", "transmission_probability", "explicit_conductance"],
+   "additionalProperties": false,
+   "properties": {
+    "mode": {"type": "string", "enum": ["molecular_santeler_circular", "molecular_explicit_transmission", "explicit_conductance"]},
+    "collision_cross_section": {"$ref": "#/$defs/species_map", "description": "m^2 per neutral species (mean free path, Knudsen number)"},
+    "transmission_probability": {"$ref": "#/$defs/sourced_or_tbd_or_null", "description": "molecular_explicit_transmission only"},
+    "explicit_conductance": {"$ref": "#/$defs/species_map_or_null", "description": "m^3 s^-1 per neutral; explicit_conductance only"}
+   }
+  },
+  "junction": {
+   "type": "object",
+   "required": ["ion_capture_fraction", "hall_path_effective_area", "leak_path_effective_area", "characteristic_dimension"],
+   "additionalProperties": false,
+   "properties": {
+    "ion_capture_fraction": {"$ref": "#/$defs/species_map", "description": "- per ion, in [0, 1]"},
+    "hall_path_effective_area": {"$ref": "#/$defs/sourced_or_tbd", "description": "m^2 (area x transmission probability, exit -> space through the Hall channel)"},
+    "leak_path_effective_area": {"$ref": "#/$defs/sourced_or_tbd", "description": "m^2"},
+    "characteristic_dimension": {"$ref": "#/$defs/sourced_or_tbd", "description": "m (junction Knudsen number)"}
+   }
+  },
+  "numerics": {
+   "type": "object",
+   "required": ["n_steps", "convergence_rtol", "conservation_rtol", "boundary_rtol", "fixed_point_rtol", "max_fixed_point_iterations", "fixed_point_relaxation", "fixed_point_anderson_depth"],
+   "additionalProperties": false,
+   "properties": {
+    "n_steps": {"type": "integer", "minimum": 1},
+    "convergence_rtol": {"type": "number"},
+    "conservation_rtol": {"type": "number"},
+    "boundary_rtol": {"type": "number"},
+    "fixed_point_rtol": {"type": "number"},
+    "max_fixed_point_iterations": {"type": "integer", "minimum": 1},
+    "fixed_point_relaxation": {"type": "number", "maximum": 1},
+    "fixed_point_anderson_depth": {"type": "integer", "minimum": 0}
+   }
+  },
+  "case": {
+   "type": "object",
+   "required": ["schema", "case_id", "architecture", "energy_reference", "species", "source_exit", "geometry", "wall", "reactions", "wall_atom_recombination", "process_exclusions", "neutral_conductance", "junction", "electron_energy_closure", "numerics"],
+   "additionalProperties": false,
+   "properties": {
+    "schema": {"const": "interstage_v1"},
+    "case_id": {"type": "string"},
+    "architecture": {"type": "string", "enum": ["rf_hall", "ecr_hall"]},
+    "energy_reference": {"type": "string", "description": "reference state of the species formation energies"},
+    "species": {"type": "array", "items": {"$ref": "#/$defs/species"}},
+    "source_exit": {"$ref": "#/$defs/source_exit"},
+    "geometry": {"$ref": "#/$defs/geometry"},
+    "wall": {"$ref": "#/$defs/wall"},
+    "reactions": {"type": "array", "items": {"$ref": "#/$defs/reaction"}},
+    "wall_atom_recombination": {"type": "array", "items": {"$ref": "#/$defs/wall_atom_recombination"}},
+    "process_exclusions": {"type": "object", "additionalProperties": {"type": "string"}, "description": "required-process key -> justification (with source or bound); keys: volume_recombination:<ion>, electron_impact_ionization:<species>, ion_neutral_charge_transfer:<ion>, wall_atom_recombination:<atom>"},
+    "neutral_conductance": {"$ref": "#/$defs/neutral_conductance"},
+    "junction": {"$ref": "#/$defs/junction"},
+    "electron_energy_closure": {"type": "string", "enum": ["isothermal_source_conduction"]},
+    "numerics": {"$ref": "#/$defs/numerics"}
+   }
+  },
+  "result": {
+   "type": "object",
+   "description": "Output of solve_interstage. Only status OK carries performance numbers; INFEASIBLE / MODEL_ERROR results carry null performance fields and a status_reason plus diagnostics (never a half-converged state). Refusals (missing / TBD / out-of-domain inputs) raise instead of returning.",
+   "required": ["schema", "model_version", "case_id", "architecture", "status", "status_reason", "converged", "eta_transport", "eta_duct", "eta_junction", "eta_transport_particle", "eta_transport_mass", "mass_delivery_fraction", "ions", "neutrals", "charge_state_fractions", "neutral_transport", "reactions", "wall", "energy_ledger_W", "conservation", "numerics", "profiles", "provenance", "process_exclusions", "assumptions", "milestone_support", "not_a_comparison", "diagnostics"],
+   "additionalProperties": false,
+   "properties": {
+    "schema": {"const": "interstage_v1"},
+    "model_version": {"const": "interstage_v1"},
+    "case_id": {"type": "string"},
+    "architecture": {"type": "string", "enum": ["rf_hall", "ecr_hall"]},
+    "status": {"type": "string", "enum": ["OK", "INFEASIBLE", "MODEL_ERROR"]},
+    "status_reason": {"type": "string"},
+    "converged": {"type": "boolean"},
+    "eta_transport": {"type": ["number", "null"], "minimum": 0, "description": "ion current delivered into the Hall channel / ion current leaving the source = eta_duct * eta_junction (can exceed 1 only if the case ionizes inside the duct)"},
+    "eta_duct": {"type": ["number", "null"], "minimum": 0, "description": "ion current at the duct exit / ion current at the duct entry"},
+    "eta_junction": {"type": ["number", "null"], "minimum": 0, "maximum": 1, "description": "captured / arriving ion current (null if no ion current arrives)"},
+    "eta_transport_particle": {"type": ["number", "null"], "minimum": 0, "description": "ion particles delivered / ion particles entering"},
+    "eta_transport_mass": {"type": ["number", "null"], "minimum": 0, "description": "ion mass flow delivered / ion mass flow entering"},
+    "mass_delivery_fraction": {"type": ["number", "null"], "minimum": 0, "maximum": 1, "description": "(ion + neutral) mass flow into the Hall channel / total mass flow entering the duct"},
+    "ions": {"type": ["object", "null"], "description": "per ion species: entry/exit/delivered/plume/wall-loss flows [s^-1], net volume-reaction change, speed, charge, Bohm speed and h at entry/exit"},
+    "neutrals": {"type": ["object", "null"], "description": "per neutral species: entry/exit/to-Hall/leak flows [s^-1], entry/exit partial pressures and drop [Pa], duct and junction conductances [m^3 s^-1], supplied vs flow-path entry density and their mismatch"},
+    "charge_state_fractions": {"type": ["object", "null"], "description": "entry / exit / delivered: element -> {charge Z: fraction of that element's ion particle flow}"},
+    "neutral_transport": {"type": ["object", "null"], "description": "mode, duct regime and minimum Knudsen number, junction Knudsen number, transmission probability and its source, junction leak fraction, hydraulic diameter, fixed-point iterations"},
+    "reactions": {"type": ["object", "null"], "description": "reaction id -> events [s^-1], rate coefficient used [m^3 s^-1], heat released per event [eV]"},
+    "wall": {"type": ["object", "null"], "description": "closure, sheath potential at entry/exit [V], ion wall impact energy [eV], wall heat [W] and mean heat flux [W m^-2], wall atom recombination events, magnetization diagnostics"},
+    "energy_ledger_W": {"type": ["object", "null"], "description": "in / electron_heat_from_source_W / out / sinks / residual_rel [W]"},
+    "conservation": {"type": ["object", "null"], "description": "elements_rel, charge_rel, mass_rel, energy_rel, gate_rtol, passed"},
+    "numerics": {"type": ["object", "null"], "description": "n_steps, step-doubling check and its tolerance"},
+    "profiles": {"type": ["object", "null"], "description": "z_m, eta_duct(z), charge_state_fractions(z), neutral partial pressures(z)"},
+    "provenance": {"type": "array", "items": {"type": "object"}, "description": "every sourced input with source and evidence class"},
+    "process_exclusions": {"type": "object", "additionalProperties": {"type": "string"}},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "milestone_support": {"type": "object", "required": ["A", "B", "C"], "additionalProperties": {"type": "string"}},
+    "not_a_comparison": {"type": "string"},
+    "diagnostics": {"type": "object", "description": "step-doubling change, flow-path vs supplied entry densities, boundary mismatch, conservation (present for non-OK results too)"}
+   }
+  }
+ }
+}
