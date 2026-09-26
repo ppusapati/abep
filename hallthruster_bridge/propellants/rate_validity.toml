@@ -22,6 +22,11 @@ status = "verified"
 max_mean_energy_eV = 255.0
 basis = "as the upper variant, minus 0.01 x sigma_total (JPCRD Sec. 2.8 N2++ statement); held-tail share < 1 % at 255 eV mean energy"
 
+["ionization_N+_N2+.dat"]
+status = "verified"
+max_mean_energy_eV = 255.0
+basis = "Bell et al. JPCRD 1983 Eq. (1) N II (+-10 %), analytic Bethe form evaluated 29.60 eV-10 keV; held-tail share 0.0000 % at 255 eV mean energy (scripts/build_n_plus_ionization_table.py)"
+
 ["ionization_N.dat"]
 status = "verified"
 max_mean_energy_eV = 255.0

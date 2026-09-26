@@ -2,7 +2,7 @@
 [[species]]
 symbol = "N"
 name = "Nitrogen"
-max_charge = 1
+max_charge = 2                                      # N2+ promoted by the pre-registered audit (abep-n2n-0.5)
 gamma = 1.666667
 mass = 14.0067
 flow_rate_kg_s = 0.0
@@ -52,3 +52,8 @@ rate_coeff_file = "elastic_N.dat"                   # REQUIRED — not yet gener
 type = "electron_impact"
 equation = "N + e -> N(+) + 2e"
 rate_coeff_file = "ionization_N.dat"                # Kim & Desclaux 2002 BEB via NIST SRD 107 (PROVENANCE.md)
+
+[[reactions]]
+type = "electron_impact"
+equation = "N(+) + e -> N(2+) + 2e"
+rate_coeff_file = "ionization_N+_N2+.dat"           # Bell et al. JPCRD 1983 Eq. (1), N II (abep-n2n-0.5)

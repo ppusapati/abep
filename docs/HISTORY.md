@@ -1716,3 +1716,21 @@ This audit was run under `prereg/n2_completeness_audit_v1` (merged in PR #20 bef
 - The atomic share of exit ion flux rises from 0.42 (0.3) to 0.53 (0.4). This is a chemistry diagnostic, not a fit comparison.
 
 **Hygiene.** Smoke-test case copies now omit `measured`, so the driver computes no P5-N₂ target comparison before the pre-registration.
+
+## 2026-09-26 — Reaction set abep-n2n-0.5: N²⁺ promoted; sequential ionization N⁺ → N²⁺ (Bell et al. 1983)
+
+**Change:**
+- N `max_charge` 1 → 2, because audit 1 promoted N²⁺ production: the N⁺⁺ column crosses F_ion = 1 % inside T_e ≤ 30 eV.
+- New `ionization_N+_N2+.dat`, from Bell, Gilbody, Hughes, Kingston & Smith, JPCRD 12, 891 (1983). Eq. (1) is used with the Table 5 N II parameters, ±10 %.
+  - The parameters were read from the page image of the NIST-hosted reprint; the OCR had dropped a sign in the N I row.
+  - Formula check: Bell's N I row reproduces NIST Kim & Desclaux (30 % ²D mix, i.e. the Brook beam Bell follow) to 1–5 % from 30 eV to 1 keV.
+  - The N II curve peaks at 0.51×10⁻¹⁶ cm² near 118 eV. Header 29.60125 eV (IE(N II), NIST ASD).
+- This reaction is structurally required: HallThruster.jl derives species energies only through one-to-one reactions, so N²⁺ cannot load without an N⁺ → N²⁺ (or N → N²⁺) link. It is also the sequential N²⁺ source route. It is included, not only bounded; its importance relative to the direct N₂ → N²⁺ + N route is evaluated when that route is added (0.6).
+
+**Driver fixes found by the 0.5 smoke run:**
+- The chemistry guard assumed neutral targets and split equations on a bare "+". `reactant_term` / `reactant_density` now parse `N(+)` / `N(2+)` and read the matching ion density per frame (checked in `checks/chemistry_validity_check.jl`).
+- Ion-velocity profile keys are now `profile_ui_<sym>_Z<Z>_ms`. The old `N21+` (N₂, Z = 1) vs `N2+` (N, Z = 2) naming was ambiguous. Historical output files keep the old keys.
+
+**Smoke test (0.5 minus excitation and N elastic).** Loads and runs with an N Z = 2 fluid. All six tables have f_out = 0; chemistry_trustworthy.
+
+**Omitted routes to bound later:** direct N → N²⁺ and N²⁺ → N³⁺ (tier 3).

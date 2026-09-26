@@ -1,9 +1,9 @@
-# GENERATED VARIANT of n2_n.toml (dissociative-ionization LOWER chemistry variant); identical except that one rate file.
+# GENERATED VARIANT of n2_n.toml (dissociative-ionization LOWER chemistry variant) by scripts/make_n2_variant_configs.py; do not edit by hand.
 # N2/N propellant for HallThruster.jl v0.23.1 (Stage A). Reaction-set version: PINNED.toml [reaction_set]. Rate files are Maxwellian tables vs mean energy (3/2 Te).
 [[species]]
 symbol = "N"
 name = "Nitrogen"
-max_charge = 1
+max_charge = 2                                      # N2+ promoted by the pre-registered audit (abep-n2n-0.5)
 gamma = 1.666667
 mass = 14.0067
 flow_rate_kg_s = 0.0
@@ -31,7 +31,7 @@ rate_coeff_file = "ionization_N2_song2023.dat"      # Song et al. JPCRD 2023 Tab
 [[reactions]]
 type = "electron_impact"
 equation = "N2 + e -> N(+) + N + 2e"
-rate_coeff_file = "dissociative_ionization_N2_lower.dat"  # Song 2023 Table 10 sigma(N+ + N2++) - 0.01 sigma_total, lower variant (abep-n2n-0.4)
+rate_coeff_file = "dissociative_ionization_N2_lower.dat"  # Song 2023 Table 10 sigma(N+ + N2++) - 0.01 sigma_total, LOWER variant (abep-n2n-0.4)
 
 [[reactions]]
 type = "electron_impact"
@@ -53,3 +53,8 @@ rate_coeff_file = "elastic_N.dat"                   # REQUIRED — not yet gener
 type = "electron_impact"
 equation = "N + e -> N(+) + 2e"
 rate_coeff_file = "ionization_N.dat"                # Kim & Desclaux 2002 BEB via NIST SRD 107 (PROVENANCE.md)
+
+[[reactions]]
+type = "electron_impact"
+equation = "N(+) + e -> N(2+) + 2e"
+rate_coeff_file = "ionization_N+_N2+.dat"           # Bell et al. JPCRD 1983 Eq. (1), N II (abep-n2n-0.5)
