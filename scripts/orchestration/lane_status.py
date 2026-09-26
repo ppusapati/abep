@@ -76,6 +76,9 @@ def final_result(L):
         return {}
     b = L.get("build") or {}
     fx = L.get("fix") or {}
+    ofx = (L.get("old") or {}).get("fix")                          # first lanes script: single 'fix:KEY' round
+    if isinstance(ofx, dict) and ofx.get("commit"):
+        fx = {1: ofx}
     if fx:
         last = fx[max(fx)]
         return dict(b, **{k: last[k] for k in ("worktree_path", "branch", "commit") if last.get(k)})

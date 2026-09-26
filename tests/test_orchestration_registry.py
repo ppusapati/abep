@@ -249,3 +249,10 @@ def test_lane_identity_is_the_final_fix_commit_not_the_build_commit():
     assert ls.final_result(L) == {"worktree_path": "/w", "branch": "b", "commit": "fix2"}
     assert ls.final_result(dict(L, fix={}))["commit"] == "build0"
     assert ls.final_result(None) == {}
+
+
+def test_lane_identity_includes_single_lens_fix_round():
+    ls = _load()
+    L = {"build": {"worktree_path": "/w", "branch": "b", "commit": "build0"}, "verify": {}, "fix_started": set(),
+         "old": {"verify": {"pass": False}, "fix": {"commit": "fixA"}, "reverify": {"pass": True}}}
+    assert ls.final_result(L)["commit"] == "fixA"
