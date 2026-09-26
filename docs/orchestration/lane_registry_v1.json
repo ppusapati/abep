@@ -682,13 +682,25 @@
      "workflow_run": "wf_ca08ec6e-665",
      "workflow_key": "HSENV",
      "reason": "2026-09-26 container reboot interrupted verification; targeted re-verify run (state confirmation of the unchanged worktree commit, then the standard two-lens loop) instead of resuming a workflow that contains a verified lane (commit de0ebd2)"
+    },
+    {
+     "workflow_run": "wf_e16cec30-7b2",
+     "workflow_key": "HSENV",
+     "reason": "re-pin after the lane_09 integration repair (f458811); tests must fail, not skip, on a pinned-hash mismatch (8 silent skips raised the suite skip count 5 -> 13)"
     }
    ]
   },
   {
    "id": "fo_bundle1_conditional_selection",
    "kind": "follow_on",
-   "title": "Bundle 1: Architecture Conditional Selection"
+   "title": "Bundle 1: Architecture Conditional Selection",
+   "repairs": [
+    {
+     "workflow_run": "wf_e16cec30-7b2",
+     "workflow_key": "BUNDLE1",
+     "reason": "Bundle 1 v2 (new files; v1 kept byte-identical as the T_BUNDLE1 attempt-2 record): re-pinned inputs incl. repaired lane_09 and re-pinned envelope; governance inputs pinned so bookkeeping cannot break reproduction"
+    }
+   ]
   },
   {
    "id": "fo_aux_bus_comparison",
@@ -698,7 +710,14 @@
   {
    "id": "fo_veto_layer",
    "kind": "follow_on",
-   "title": "Mass / thermal / life veto layer"
+   "title": "Mass / thermal / life veto layer",
+   "repairs": [
+    {
+     "workflow_run": "wf_e16cec30-7b2",
+     "workflow_key": "VETO",
+     "reason": "re-pin after the lane_09 integration repair (f458811)"
+    }
+   ]
   },
   {
    "id": "fo_experiment_package",
