@@ -377,11 +377,19 @@
     {
      "id": "ds_escalation_n2_n_n2dication_nel_wang",
      "state": "scored"
+    },
+    {
+     "id": "fo_johnsonlow_escalation_assessment",
+     "state": "verified"
+    },
+    {
+     "id": "fo_o4_disposition_matrix",
+     "state": "verified"
     }
    ],
    "kind": "mechanical_owner_ordered",
    "action": "launch a fresh facility_mandatory campaign (pinned manifest, 4 shards) into <scratchpad>/followon/facility_mandatory_attempt2 with fresh execution provenance linked to validation/interrupted/facility_mandatory_attempt1/STATUS.json",
-   "note": "owner decision 2026-09-26: facility waits for the gating O4 escalations; the interrupted attempt 1 is preserved and never reused"
+   "note": "owner decision 2026-09-26: facility waits for the gating O4 escalations; the interrupted attempt 1 is preserved and never reused; sequence (owner 2026-09-26): 7 escalations scored + S9 (Johnson-low assessment) verified + S12 (O4 disposition matrix) verified -> relaunch. Scheduling order only: facility is not an admission or O4-disposition input."
   }
  ]
 }

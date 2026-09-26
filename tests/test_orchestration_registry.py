@@ -227,3 +227,15 @@ def test_pinned_lane_identity_is_the_pin_and_worktree_must_match(tmp_path, monke
     g("reset", "-q", "--hard", c1)
     s = m.status(str(tmp_path / "j"), str(tmp_path / "fo"))
     assert s["state"]["lane_p"] == "verified" and s["lane_build"]["lane_p"]["commit"] == c1
+
+
+def test_facility_relaunch_waits_for_s9_and_s12():
+    """Owner 2026-09-26: the non-gating facility attempt 2 may launch only after the 7 remaining O4 escalations are scored AND
+    the Johnson-low assessment (S9) and the O4 disposition matrix (S12) are verified; facility never feeds admission/O4."""
+    t = {T["id"]: T for T in json.load(open(os.path.join(ORCH, "trigger_registry_v1.json")))["triggers"]}
+    pre = {(p["id"], p["state"]) for p in t["T_FACILITY_RELAUNCH"]["prerequisites"]}
+    assert ("fo_johnsonlow_escalation_assessment", "verified") in pre and ("fo_o4_disposition_matrix", "verified") in pre
+    assert sum(1 for i, s in pre if i.startswith("ds_escalation_") and s == "scored") == 7
+    for T in t.values():                                       # facility is never a prerequisite of anything but its own score
+        if T["id"] not in ("T_FACILITY_SCORE",):
+            assert all(p["id"] != "ds_facility_mandatory" for p in T.get("prerequisites", [])), T["id"]
