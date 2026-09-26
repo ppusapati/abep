@@ -1083,6 +1083,30 @@ def test_p5_n2_run_status_rule_is_frozen():
                                                       "n2_n_di_lower_nel_wang.toml"]
     assert r["chemistry_trust_rule"]["f_out_tolerance"] == 1e-12
 
+def test_p5_n2_measurement_audit_values():
+    """P5-N2 measurement audit (Brabston 2025): Table 2 transcribed; I_d raw = P_d/V_d and Eq. (13)-(14) correction recomputed;
+    thrust targets from the abstract end-points and Fig. 5; the digitization reproduces the abstract N1/N5 thrust within 0.4 mN
+    and the Xe Eq. (14) powers within 5 W; N2 Fig. 9 components reproduce the Fig. 8 component eta_T."""
+    import json, math, os, importlib.util
+    root = os.path.dirname(os.path.dirname(__file__))
+    d = json.load(open(os.path.join(root, "hallthruster_bridge", "identification", "brabston_p5_n2_measurement_audit_v1.json")))
+    spec = importlib.util.spec_from_file_location("a", os.path.join(root, "scripts", "audit_p5_n2_measurements.py"))
+    a = importlib.util.module_from_spec(spec); spec.loader.exec_module(a)
+    for p, (ma, mc, vd, pd, bg, pr) in a.TABLE2.items():
+        v = d["points"][p]
+        assert abs(v["I_d_raw_A"] - pd * 1e3 / vd) < 1e-9
+        men = a.ingestion(pr, a.M_N2)
+        assert abs(v["I_d_corr_eq14_A"] - (pd * 1e3 / vd - men * a.E_CH / a.M_N2)) < 1e-9
+        assert v["T_sigma_mN"] == 2.6 and bg == 130
+    assert d["points"]["N1"]["T_corr_mN"] == 61.4 and d["points"]["N5"]["T_corr_mN"] == 90.0
+    assert abs(d["points"]["N1"]["fig5"]["T_mN"] - 61.4) < 0.4 and abs(d["points"]["N5"]["fig5"]["T_mN"] - 90.0) < 0.4
+    assert all(abs(x["P_fig5_kW"] - x["P_eq14_kW"]) < 0.005 for x in d["xenon_calibration_check"])
+    fig8 = sorted(b["y"] for b in d["fig8_raw"]["blobs"] if abs(b["V_d"] - 278.6) < 0.5)
+    assert abs(d["points"]["N3"]["consistency"]["eta_T_component_from_fig9"] - fig8[0]) < 0.002
+    assert abs(d["points"]["N3"]["consistency"]["eta_T_thrust_from_T_Id_corr"] - fig8[1]) < 0.002
+    f = json.load(open(os.path.join(root, "hallthruster_bridge", "identification", "p5_n2_measurement_audit_findings_v1.json")))
+    assert "Phi_m_n_eta_SP_n_xi_N" in f["not_admissible_as_targets"] and len(f["open_decisions_for_preregistration"]) == 6
+
 def test_rate_table_tail_policy_is_explicit():
     """Beyond the last tabulated energy, "hold" keeps the last value and "zero" drops it; anything else is refused."""
     from abep_sim.rate_tables import maxwellian_rate, tail_sensitivity

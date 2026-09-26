@@ -2028,3 +2028,18 @@ Evidence regenerated from the snapshots, not argued indirectly:
 P5-N₂ run statuses frozen (`prereg/p5_n2_run_status_rule_v1.json`, owner decision): PASS / FAIL_VALIDATION / OUT_OF_DOMAIN /
 NUMERICAL_FAILURE. Chemistry-untrustworthy runs are OUT_OF_DOMAIN, not FAIL. A candidate needs scoreable runs at every point under
 the four primary chemistry configs; otherwise it is INCONCLUSIVE / not eligible for promotion in this campaign. f_out = 0 is not relaxed.
+
+### 2026-09-26 — P5-N₂ measurement audit (before the validation pre-registration; nothing simulated or scored)
+PR #25 merged (4231331); N₂ chemistry frozen (abep-n2n-0.11 COMPLETE_FOR_P5_N2_VALIDATION). Audit of Brabston et al. JPP 2025
+(Table 2, Table 5, Figs. 5, 8, 9, 10) with a reproducible digitizer (`scripts/audit_p5_n2_measurements.py`, PDF sha256-checked,
+not redistributed; calibration residuals ≤ 0.26 mN / 0.002 kW in Fig. 5 and ≤ 0.0004 in Figs. 8–10; validated on the Fig. 5 Xe
+markers, which reproduce the Eq. 14 powers to ≤ 3 W). Values: `identification/brabston_p5_n2_measurement_audit_v1.json`;
+classification, findings F1–F7 and open decisions D1–D6: `identification/p5_n2_measurement_audit_findings_v1.json`.
+- Admissible targets (independent of any chemistry model): I_d at N1–N5 (raw inferred; Eq. 14 corrected), thrust at N1–N5
+  (±2.6 mN; N1/N5 abstract, N2–N4 Fig. 5), E×B species acceleration voltages at N1–N3 (N₂⁺ 166–179 V, N⁺ 210–244 V, ±11.6 V),
+  sustained discharge at all five points.
+- Not targets: Φ_m,n, η_SP,n, ξ_N (the paper's own Itikawa/Cosby approximation), Isp/η_T (restated), Ω_i,n (unpublished).
+- Findings: Fig. 5 N₂ powers ~43 W below Eq. 14 (a plotting offset; Fig. 8 follows Eq. 14); component vs thrust η_T differ
+  2/13/19 % at N1/N2/N3, so divergence readings A/B differ up to 11 % in axial factor; no divergence or species data at N4/N5;
+  xenon cathode flow 8 % of anode flow unmodelled; 130 G field shape unpublished; `cases/p5_n2.json` must be regenerated like
+  the Xe cases before any run.
