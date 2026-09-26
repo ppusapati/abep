@@ -159,7 +159,26 @@
       "abep_regime": {"type": "string", "pattern": "^TBD - requires "}
      }
     },
-    "repository_derived": {"type": "boolean"}
+    "repository_derived": {"type": "boolean"},
+    "repository_status": {
+     "type": "object",
+     "required": ["status", "status_file", "companion_document", "score_bearing", "transport_discriminator", "supporting_check_preregistered", "may_be_used_for", "must_not_be_used_for_ref", "sustainment_item", "forced_assumptions_relevant_to_transfer", "literature_transfer_use", "literature_transfer_statement"],
+     "additionalProperties": false,
+     "properties": {
+      "status": {"type": "string", "enum": ["HISTORICAL_UNSUPPORTED"]},
+      "status_file": {"type": "string", "minLength": 1},
+      "companion_document": {"type": "string", "minLength": 1},
+      "score_bearing": {"type": "boolean", "enum": [false]},
+      "transport_discriminator": {"type": "boolean", "enum": [false]},
+      "supporting_check_preregistered": {"type": "boolean"},
+      "may_be_used_for": {"type": "string", "minLength": 1},
+      "must_not_be_used_for_ref": {"type": "string", "minLength": 1},
+      "sustainment_item": {"type": "object", "required": ["value", "source", "evidence_level", "quantity_type", "use"]},
+      "forced_assumptions_relevant_to_transfer": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+      "literature_transfer_use": {"type": "string", "enum": ["PERMITTED_AS_PUBLISHED_MEASUREMENT_OF_THAT_THRUSTER", "NOT_PERMITTED"]},
+      "literature_transfer_statement": {"type": "string", "minLength": 1}
+     }
+    }
    }
   }
  }

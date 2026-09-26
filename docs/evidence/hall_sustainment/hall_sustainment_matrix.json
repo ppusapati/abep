@@ -512,17 +512,18 @@
    },
    "implication": {
     "abep_regime": "TBD - requires the upstream ICD (intake/compressor/gas-chamber/valve delivered mass flow, pressure, number density and composition at the thruster inlet, including transients). No comparison of this test regime with the ABEP delivered regime is made here.",
-    "applicability_limits": "0.27-0.77 kW, 180-220 V only (300 V supply limit, no data above 220 V), one flow (2.06 mg/s), elevated facility pressure; MSc-thesis measurement with fit-only thrust uncertainty.",
+    "applicability_limits": "0.27-0.77 kW, 180-220 V only (300 V supply limit, no data above 220 V), one flow (2.06 mg/s), elevated facility pressure; MSc-thesis measurement with fit-only thrust uncertainty. Any quantity the thesis does not publish (channel cross-section, B at the operating coil current, cathode or facility contribution) needs forced assumptions A1/A3/A5/A6 of the repository ECHT disposition.",
     "direction": "operation_without_preionizer_demonstrated",
-    "statement": "The only accessed Hall case that both ignited and ran on a pure N2 anode flow with no xenon anywhere (Ar cathode) and no pre-ionization stage, at about 2 mg/s in an 86 mm channel.",
+    "statement": "The only accessed Hall case that both ignited and ran on a pure N2 anode flow with no xenon anywhere (Ar cathode) and no pre-ionization stage, at about 2 mg/s in an 86 mm channel. Repository status HISTORICAL_UNSUPPORTED (not score-bearing, not a transport discriminator) does not withdraw this published measurement; it stays a level-3 measurement of that thruster (see repository_status).",
     "uncertainty": "Argon cathode flow was large (7.3-35.9 % of anode mass) and co-varied with the best points; facility background 8.1e-05-2.2e-04 Torr (inferred ingestion 2.0-6.0 % of anode flow, repository audit); 3 of 7 thrust runs strongly unstable; per-point I_d to 2 s.f.; no oscillation data."
    },
    "magnetic_field": {
     "evidence_class": "digitized",
     "locator": "S2 Fig. 4.7 p.66 (digitized by the repository audit)",
     "name": "centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)",
+    "note": "digitized of a measured centreline profile: a flat plateau at about 4.7-8.6 cm, not exit-peaked. The '130 G' quoted in S2 (p.104, p.114) is the FEMM value at 3 A (model-derived), not a measured B_max, and is not used here (repository STATUS.json item \"'130 G' peak field\").",
     "source": "REPO_ECHT_AUDIT",
-    "uncertainty": "reading +-0.2 G; probe uncertainty not stated",
+    "uncertainty": "reading +-0.2 G; probe uncertainty, component and radial position not stated; B at the operating coil currents needs forced assumption A3 (repository STATUS.json)",
     "unit": "G",
     "value": 85.3
    },
@@ -594,8 +595,9 @@
      "evidence_class": "digitized",
      "locator": "S2 Fig. 4.7 p.66 (digitized by the repository audit)",
      "name": "centreline B plateau measured at 2 A coil current only (operating points used 0.8-3 A; B at those currents not measured)",
+     "note": "digitized of a measured centreline profile: a flat plateau at about 4.7-8.6 cm, not exit-peaked. The '130 G' quoted in S2 (p.104, p.114) is the FEMM value at 3 A (model-derived), not a measured B_max, and is not used here (repository STATUS.json item \"'130 G' peak field\").",
      "source": "REPO_ECHT_AUDIT",
-     "uncertainty": "reading +-0.2 G; probe uncertainty not stated",
+     "uncertainty": "reading +-0.2 G; probe uncertainty, component and radial position not stated; B at the operating coil currents needs forced assumption A3 (repository STATUS.json)",
      "unit": "G",
      "value": 85.3
     },
@@ -651,8 +653,9 @@
      "evidence_class": "measured",
      "locator": "S2 Table 6.2 p.101",
      "name": "thrust, one-side reduction (7 runs)",
+     "note": "measured on a thrust stand and reduced by the author (repository STATUS.json quantity type)",
      "source": "REPO_ECHT_AUDIT",
-     "uncertainty": "published +- are calibration-fit only (0.02-2.66 mN)",
+     "uncertainty": "published +- are calibration-fit only (0.02-2.66 mN); no total uncertainty; which reduction applies is forced assumption A7",
      "unit": "mN",
      "value": [
       20.62,
@@ -663,8 +666,9 @@
      "evidence_class": "measured",
      "locator": "S2 Table 6.3 p.108",
      "name": "thrust, averaged reduction (4 runs)",
+     "note": "measured on a thrust stand and reduced by the author (repository STATUS.json quantity type)",
      "source": "REPO_ECHT_AUDIT",
-     "uncertainty": "published +- 2.68-4.56 mN; 6-18 % below one-side",
+     "uncertainty": "published +- 2.68-4.56 mN; 6-18 % below one-side; which reduction applies is forced assumption A7",
      "unit": "mN",
      "value": [
       17.29,
@@ -695,6 +699,31 @@
     }
    ],
    "repository_derived": true,
+   "repository_status": {
+    "companion_document": "hallthruster_bridge/identification/echt_n2/ECHT_N2_EVIDENCE_STATUS.md",
+    "forced_assumptions_relevant_to_transfer": [
+     "A1 channel radii: 100 mm = channel OD (r 40/50 mm) vs BN piece OD (unknown wall thickness)",
+     "A3 B magnitude per run: FEMM interpolated in coil current, scaled (or not) by the single 2 A measured/FEMM ratio; 0.8 A extrapolated; radial position/component of the measured profile",
+     "A5 cathode: neglect the argon cathode flow (7-36 % of anode mass) and choose a cathode coupling voltage/position",
+     "A6 facility: background pressure/ingestion model (0.8-2.5e-4 Torr, no published correction; comparison mode facility vs vacuum)"
+    ],
+    "literature_transfer_statement": "Decided from STATUS.json: the disposition lists 'Context for the published ECHT operating envelope ..., quoted with its evidence class' under may_be_used_for, and classes the sustainment observation as evidence level 3, 'measured (qualitative)'. Its must_not_be_used_for list concerns transport discrimination, score-bearing validation or gate-3 verdicts, tuning, replacement simulation cases and the 250 V anchor / 225-275 V points; none of these is a literature-transfer sustainment statement. The published sustainment on pure N2 therefore remains a level-3 measurement of the ECHT in its own facility and may be quoted as such. HISTORICAL_UNSUPPORTED governs scoring and transport discrimination: ECHT is not score-bearing, cannot select, eliminate or rank any Hall closure, and no ECHT supporting check is pre-registered. Any transfer that needs a quantity the thesis does not publish (channel cross-section, B at the operating coil current, cathode or facility contribution) inherits the forced assumptions listed here and their evidence class.",
+    "literature_transfer_use": "PERMITTED_AS_PUBLISHED_MEASUREMENT_OF_THAT_THRUSTER",
+    "may_be_used_for": "Context for the published ECHT operating envelope (180-220 V, 2.06 mg/s N2), quoted with its evidence class.",
+    "must_not_be_used_for_ref": "hallthruster_bridge/identification/echt_n2/STATUS.json disposition.must_not_be_used_for (5 items: transport discrimination, score-bearing validation or gate-3 verdicts, tuning, replacement simulation cases, the 250 V anchor and 225-275 V points)",
+    "score_bearing": false,
+    "status": "HISTORICAL_UNSUPPORTED",
+    "status_file": "hallthruster_bridge/identification/echt_n2/STATUS.json",
+    "supporting_check_preregistered": false,
+    "sustainment_item": {
+     "evidence_level": 3,
+     "quantity_type": "measured (qualitative)",
+     "source": "S2 Table 6.1 p.98; p.104, p.107-110 (audit gap_register 'stability / sustainment')",
+     "use": "SUPPORTING_CHECK_CANDIDATE",
+     "value": "stable discharge at 180-220 V, 2.06 mg/s, magnet 0.8-3.0 A; unstable/quenching below ~1.6 mg/s; Runs 1, 3, 7 strongly unstable"
+    },
+    "transport_discriminator": false
+   },
    "sources": [
     "REPO_ECHT_AUDIT",
     "MARCHIONI2020",
@@ -825,6 +854,31 @@
    },
    "quantities": [],
    "repository_derived": true,
+   "repository_status": {
+    "companion_document": "hallthruster_bridge/identification/echt_n2/ECHT_N2_EVIDENCE_STATUS.md",
+    "forced_assumptions_relevant_to_transfer": [
+     "A1 channel radii: 100 mm = channel OD (r 40/50 mm) vs BN piece OD (unknown wall thickness)",
+     "A3 B magnitude per run: FEMM interpolated in coil current, scaled (or not) by the single 2 A measured/FEMM ratio; 0.8 A extrapolated; radial position/component of the measured profile",
+     "A5 cathode: neglect the argon cathode flow (7-36 % of anode mass) and choose a cathode coupling voltage/position",
+     "A6 facility: background pressure/ingestion model (0.8-2.5e-4 Torr, no published correction; comparison mode facility vs vacuum)"
+    ],
+    "literature_transfer_statement": "Decided from STATUS.json: the disposition lists 'Context for the published ECHT operating envelope ..., quoted with its evidence class' under may_be_used_for, and classes the sustainment observation as evidence level 3, 'measured (qualitative)'. Its must_not_be_used_for list concerns transport discrimination, score-bearing validation or gate-3 verdicts, tuning, replacement simulation cases and the 250 V anchor / 225-275 V points; none of these is a literature-transfer sustainment statement. The published sustainment on pure N2 therefore remains a level-3 measurement of the ECHT in its own facility and may be quoted as such. HISTORICAL_UNSUPPORTED governs scoring and transport discrimination: ECHT is not score-bearing, cannot select, eliminate or rank any Hall closure, and no ECHT supporting check is pre-registered. Any transfer that needs a quantity the thesis does not publish (channel cross-section, B at the operating coil current, cathode or facility contribution) inherits the forced assumptions listed here and their evidence class.",
+    "literature_transfer_use": "PERMITTED_AS_PUBLISHED_MEASUREMENT_OF_THAT_THRUSTER",
+    "may_be_used_for": "Context for the published ECHT operating envelope (180-220 V, 2.06 mg/s N2), quoted with its evidence class.",
+    "must_not_be_used_for_ref": "hallthruster_bridge/identification/echt_n2/STATUS.json disposition.must_not_be_used_for (5 items: transport discrimination, score-bearing validation or gate-3 verdicts, tuning, replacement simulation cases, the 250 V anchor and 225-275 V points)",
+    "score_bearing": false,
+    "status": "HISTORICAL_UNSUPPORTED",
+    "status_file": "hallthruster_bridge/identification/echt_n2/STATUS.json",
+    "supporting_check_preregistered": false,
+    "sustainment_item": {
+     "evidence_level": 3,
+     "quantity_type": "measured (qualitative)",
+     "source": "S2 Table 6.1 p.98; p.104, p.107-110 (audit gap_register 'stability / sustainment')",
+     "use": "SUPPORTING_CHECK_CANDIDATE",
+     "value": "stable discharge at 180-220 V, 2.06 mg/s, magnet 0.8-3.0 A; unstable/quenching below ~1.6 mg/s; Runs 1, 3, 7 strongly unstable"
+    },
+    "transport_discriminator": false
+   },
    "sources": [
     "REPO_ECHT_AUDIT",
     "MARCHIONI2020",
@@ -3328,13 +3382,21 @@
     "path": "hallthruster_bridge/identification/echt_n2/echt_n2_evidence_audit_v1.json",
     "sha256": "87243283ed9e0d23eb6e17c5bf1daf789e1f51c845c33b5f0eeb165a9c3d0922"
    },
+   "echt_status": {
+    "path": "hallthruster_bridge/identification/echt_n2/STATUS.json",
+    "sha256": "eee3e13fff2e96bafe1e8d10f7e54514f6a9a7cb25dfe1c76550229ec3650c12"
+   },
+   "echt_status_md": {
+    "path": "hallthruster_bridge/identification/echt_n2/ECHT_N2_EVIDENCE_STATUS.md",
+    "sha256": "42df0adae8c11ab427b850cc3f90e0d0198cd61bb98d3606f11e4847da2866c1"
+   },
    "echt_tables": {
     "path": "hallthruster_bridge/identification/echt_n2/echt_table_checks_v1.json",
     "sha256": "d4bb2151dcb2059390712143a769d13cfa55c098af52ecac01de3a6df0a5624c"
    },
    "evidence_policy": {
     "path": "docs/EVIDENCE.md",
-    "sha256": "73d0fe8c64c060e1293569c50ab1d553a612656fad36d9eff9ac966e0dc776d8"
+    "sha256": "a2950352141890c12ad33e66766cd003215c807cb29203d21df090349ab90b61"
    },
    "p5_audit": {
     "path": "hallthruster_bridge/identification/brabston_p5_n2_measurement_audit_v1.json",
@@ -3545,12 +3607,15 @@
   "REPO_ECHT_AUDIT": {
    "access": "repository_audit_file",
    "access_note": "frozen repository files (sha256 recorded in meta)",
-   "citation": "Repository ECHT-N2 evidence audit v1 (values from MARCHIONI2020 Tables 6.1-6.3, Figs. 4.7/4.8)",
+   "citation": "Repository ECHT-N2 evidence audit v1 (values from MARCHIONI2020 Tables 6.1-6.3, Figs. 4.7/4.8) and the ECHT-N2 status disposition (STATUS.json: HISTORICAL_UNSUPPORTED, not score-bearing, not a transport discriminator)",
    "doi": null,
    "license": "repository",
    "repository_files": [
     "hallthruster_bridge/identification/echt_n2/echt_n2_evidence_audit_v1.json",
-    "hallthruster_bridge/identification/echt_n2/echt_table_checks_v1.json"
+    "hallthruster_bridge/identification/echt_n2/echt_table_checks_v1.json",
+    "hallthruster_bridge/identification/echt_n2/STATUS.json",
+    "hallthruster_bridge/identification/echt_n2/ECHT_N2_EVIDENCE_STATUS.md",
+    "docs/EVIDENCE.md"
    ],
    "sha256": null,
    "urls_accessed": []
