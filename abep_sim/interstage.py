@@ -14,7 +14,11 @@ What it computes (steady, quasi-1-D plug flow along the duct, then a junction sp
   * charge-state fraction evolution, ion transport efficiency ``eta_transport`` (= ion current delivered into the Hall
     channel / ion current leaving the source), neutral delivery / leakage, plume leakage of uncaptured ions;
   * an energy ledger (electron heat drawn from the source to hold T_e, wall heat, reaction heat, junction outflows);
-  * element (particle), charge, mass and energy conservation residuals, gated (CLAUDE.md rule 4).
+  * element (particle), charge, mass and energy conservation residuals, gated (CLAUDE.md rule 4). Under the isothermal
+    electron closure the energy residual is a bookkeeping-consistency check only (the conducted source heat closes the
+    electron energy balance by construction); the element, charge and mass gates are independent checks;
+  * process completeness: every required process class (recombination, ionization, charge transfer, electron-impact
+    excitation / dissociation / elastic loss, wall atom recombination) is modelled or explicitly excluded per species.
 
 Rules this module follows (CLAUDE.md rules 3, 4, 6, 10; docs/EVIDENCE.md):
   * No default physical, efficiency or numerical values. Every numeric input is a ``Sourced`` record (value, unit,
@@ -60,7 +64,11 @@ SOURCES = {
                                     "https://people.eecs.berkeley.edu/~lieber/Day1View150315crop.pdf"),
     "chiggiato_2014": ("P. Chiggiato, 'Vacuum Technology for Ion Sources', CAS-CERN Accelerator School: Ion Sources, "
                        "arXiv:1404.0960, https://arxiv.org/abs/1404.0960"),
-    "santeler_1986": "D. J. Santeler, J. Vac. Sci. Technol. A 4 (1986) 348 - as given by Chiggiato 2014 Eq. 21 (ref. [9])",
+    "santeler_1986": ("D. J. Santeler, 'New concepts in molecular gas flow', J. Vac. Sci. Technol. A 4(3) (1986) 338-343, "
+                      "doi:10.1116/1.573923 (bibliographic data via Crossref 2026-09-26; full text not accessed) - "
+                      "formula as given by Chiggiato 2014 Eq. 21. Chiggiato's ref. [9] prints page 348, which Crossref "
+                      "assigns to Santeler, 'Exit loss in viscous tube flow', JVST A 4, 348-352 (doi:10.1116/1.573925): "
+                      "a citation error in the secondary source"),
     "leybold_fundamentals_2016": ("Leybold GmbH, 'Fundamentals of Vacuum Technology', Part No. 199 90, Edition 2016, "
                                   "https://www.leybold.com/content/dam/brands/leybold/downloads/brochures/"
                                   "general-brochures/Fundamentals_of_Vacuum_Technology_EN.pdf"),
@@ -83,8 +91,29 @@ NC_EXPLICIT = "explicit_conductance"
 NEUTRAL_CONDUCTANCE_MODES = (NC_SANTELER, NC_TRANSMISSION, NC_EXPLICIT)
 ELECTRON_CLOSURE_ISOTHERMAL = "isothermal_source_conduction"
 ELECTRON_ENERGY_CLOSURES = (ELECTRON_CLOSURE_ISOTHERMAL,)
-RECOMBINING_ELECTRON_THERMAL = "recombining_electron_thermal_1.5Te"   # electron energy loss = (3/2) T_e (assumed)
+# Electron energy removed from the electron fluid per recombination event (explicit choice per reaction, no default):
+#  * RECOMBINING_ELECTRON_THERMAL: (3/2) T_e, the mean energy of a Maxwellian electron. ASSUMED: it ignores the energy
+#    dependence of the cross section. For k proportional to T_e^alpha the rate-weighted value is (3/2 + alpha) T_e, so
+#    (3/2) T_e over-states the removed energy for alpha < 0 (e.g. 1.11 T_e for alpha = -0.39, 0.80 T_e for -0.70).
+#  * RECOMBINING_ELECTRON_RATE_WEIGHTED: (3/2 + alpha) T_e, where alpha = d ln k / d ln T_e is the exponent of the
+#    power-law rate. MODEL-DERIVED: for a Maxwellian, k = <sigma v> and dk/dT = (<sigma v eps>/T - 3k/2)/T, hence
+#    <sigma v eps>/<sigma v> = (3/2 + alpha) T (derivation in INTERSTAGE_MODEL.md section 2). Exact only for Maxwellian
+#    electrons and a rate that is a power law in T_e over the case's T_e; refused if 3/2 + alpha < 0.
+RECOMBINING_ELECTRON_THERMAL = "recombining_electron_thermal_1.5Te"
+RECOMBINING_ELECTRON_RATE_WEIGHTED = "recombining_electron_rate_weighted_(1.5+alpha)Te"
+RECOMBINING_ELECTRON_OPTIONS = (RECOMBINING_ELECTRON_THERMAL, RECOMBINING_ELECTRON_RATE_WEIGHTED)
 NO_ELECTRON = "none"                                                   # heavy-particle reaction: no electron energy
+# Process class each volume reaction declares (checked against its structure; drives the completeness gate).
+P_RECOMBINATION = "volume_recombination"
+P_IONIZATION = "electron_impact_ionization"
+P_CHARGE_TRANSFER = "ion_neutral_charge_transfer"
+P_EXCITATION = "electron_impact_excitation"
+P_DISSOCIATION = "electron_impact_dissociation"
+P_ELASTIC = "electron_elastic_energy_loss"
+PROCESS_KINDS = (P_RECOMBINATION, P_IONIZATION, P_CHARGE_TRANSFER, P_EXCITATION, P_DISSOCIATION, P_ELASTIC)
+WALL_ATOM_RECOMBINATION = "wall_atom_recombination"
+#: Accepted spellings of the dimensionless unit ("-" in this module; "1" in abep_sim/breakeven.py, breakeven_v1).
+DIMENSIONLESS_UNITS = ("-", "1")
 RATE_VARIABLES = ("electron_temperature_eV", "electron_temperature_K", "ion_axial_energy_eV")
 ELECTRON = "e"
 
@@ -267,7 +296,8 @@ class VolumeReaction:
     reactants: tuple[str, ...]
     products: tuple[str, ...]
     rate: RateCoefficient | TBD
-    electron_energy_loss: Sourced | TBD | str   # eV per event, RECOMBINING_ELECTRON_THERMAL, or NO_ELECTRON
+    electron_energy_loss: Sourced | TBD | str   # eV per event, one of RECOMBINING_ELECTRON_OPTIONS, or NO_ELECTRON
+    process: str                                # one of PROCESS_KINDS (checked against the reaction's structure)
 
 
 @dataclass(frozen=True)
@@ -385,8 +415,8 @@ def aperture_conductance(area_m2: float, T_K: float, mass_kg: float) -> float:
 
 
 def santeler_transmission_probability(L_m: float, R_m: float) -> float:
-    """tau = 1 / (1 + (3L/8R) (1 + 1 / (3 (1 + L/(7R))))) for a circular tube, < 0.7 % error (Santeler 1986 as given
-    by Chiggiato 2014, Eq. 21). tau(0) = 1."""
+    """tau = 1 / (1 + (3L/8R) (1 + 1 / (3 (1 + L/(7R))))) for a circular tube, < 0.7 % error (Santeler 1986, JVST A 4,
+    338, doi:10.1116/1.573923, as given by Chiggiato 2014, Eq. 21; see SOURCES['santeler_1986']). tau(0) = 1."""
     if L_m < 0 or R_m <= 0:
         raise InterstageInputError("santeler_transmission_probability needs L >= 0 and R > 0")
     return 1.0 / (1.0 + (3.0 * L_m / (8.0 * R_m)) * (1.0 + 1.0 / (3.0 * (1.0 + L_m / (7.0 * R_m)))))
@@ -424,7 +454,8 @@ def flow_regime(Kn: float) -> str:
 
 def knudsen_conductance_air_20C_leybold(d_m: float, l_m: float, p1_Pa: float, p2_Pa: float) -> float:
     """Knudsen equation for a straight circular pipe, air at 20 C, l >= 10 d (Leybold GmbH, "Fundamentals of Vacuum
-    Technology", Part No. 199 90, Edition 2016, Section 1.5.2, Eq. 1.26, p. 16; accessed 2026-09-26): C = 135 d^4/l p_bar + 12.1 d^3/l (1 + 192 d p_bar) / (1 + 237 d p_bar) [l/s] with d, l in
+    Technology", Part No. 199 90, Edition 2016, Section 1.5.3 a) "Conductance for piping and orifices", Eq. 1.26, p. 16;
+    accessed 2026-09-26): C = 135 d^4/l p_bar + 12.1 d^3/l (1 + 192 d p_bar) / (1 + 237 d p_bar) [l/s] with d, l in
     cm and p in mbar. Returned in m^3/s. Refuses outside the stated domain (air at 20 C is the caller's responsibility:
     the formula carries air properties in its coefficients and is not valid for other gases or temperatures)."""
     if d_m <= 0 or l_m <= 0 or p1_Pa < 0 or p2_Pa < 0:
@@ -575,7 +606,7 @@ def _need(x, path: str, unit: str, *, lo=None, hi=None, lo_open=False) -> float:
         raise InterstageTBDError(f"{path}: TBD - requires {x.requires}")
     if not isinstance(x, Sourced):
         raise InterstageInputError(f"{path}: must be a Sourced record, got {type(x).__name__}")
-    if x.unit != unit:
+    if x.unit != unit and not (unit in DIMENSIONLESS_UNITS and x.unit in DIMENSIONLESS_UNITS):
         raise InterstageInputError(f"{path}: unit {x.unit!r}, expected {unit!r}")
     v = float(x.value)
     if lo is not None and (v <= lo if lo_open else v < lo):
@@ -841,23 +872,55 @@ class _Compiled:
             else:
                 x = self.Te if r.rate.variable == "electron_temperature_eV" else self.Te * E_CHARGE / K_B
             k = r.rate.evaluate(x, where)
+            # declared process class must match the reaction's structure (drives the completeness gate)
+            heavy_in = sorted(s for s in r.reactants if s != ELECTRON)
+            heavy_out = sorted(s for s in r.products if s != ELECTRON)
+            d_q = sum(self.sp[s]["Z"] for s in heavy_out) - sum(self.sp[s]["Z"] for s in heavy_in)
+            proc = r.process
+            if proc not in PROCESS_KINDS:
+                raise InterstageInputError(f"{where}: process {proc!r} not in {PROCESS_KINDS}")
+            structure_ok = {
+                P_RECOMBINATION: e_in == 1 and d_q < 0,
+                P_IONIZATION: e_in == 1 and d_q > 0,
+                P_CHARGE_TRANSFER: e_in == 0 and len(heavy_ions) == 1
+                and any(s in self.neutrals for s in r.reactants),
+                P_EXCITATION: e_in == 1 and e_out == 1 and heavy_out == heavy_in,
+                P_ELASTIC: e_in == 1 and e_out == 1 and heavy_out == heavy_in,
+                P_DISSOCIATION: e_in == 1 and e_out == 1 and d_q == 0 and len(heavy_out) >= 2 and heavy_out != heavy_in,
+            }[proc]
+            if not structure_ok:
+                raise InterstageInputError(f"{where}: declared process {proc!r} does not match the reaction "
+                                           f"{r.reactants} -> {r.products}")
             # electron energy loss per event
             eel = r.electron_energy_loss
+            eel_basis = None
             if e_in == 0:
                 if eel != NO_ELECTRON:
                     raise InterstageInputError(f"{where}: heavy-particle reaction must declare electron_energy_loss "
                                                f"= {NO_ELECTRON!r}")
                 eps_e = 0.0
-            elif eel == RECOMBINING_ELECTRON_THERMAL:
-                if e_out != 0:
-                    raise InterstageInputError(f"{where}: {RECOMBINING_ELECTRON_THERMAL} only for electron-consuming "
-                                               "reactions")
-                eps_e = 1.5 * self.Te
+                eel_basis = NO_ELECTRON
+            elif isinstance(eel, str) and eel in RECOMBINING_ELECTRON_OPTIONS:
+                if e_out != 0 or proc != P_RECOMBINATION:
+                    raise InterstageInputError(f"{where}: {eel} only for electron-consuming recombination reactions")
+                if eel == RECOMBINING_ELECTRON_THERMAL:
+                    eps_e = 1.5 * self.Te
+                    eel_basis = "assumed: (3/2) T_e (mean Maxwellian energy; ignores the cross-section energy dependence)"
+                else:
+                    if r.rate.variable not in ("electron_temperature_eV", "electron_temperature_K"):
+                        raise InterstageInputError(f"{where}: {eel} needs a rate that is a power law in T_e")
+                    if 1.5 + r.rate.exponent < 0:
+                        raise InterstageDomainError(f"{where}: {eel} gives (3/2 + alpha) = {1.5 + r.rate.exponent:.4g} "
+                                                    "< 0; the Maxwellian power-law relation does not apply")
+                    eps_e = (1.5 + r.rate.exponent) * self.Te
+                    eel_basis = (f"model-derived: (3/2 + alpha) T_e with alpha = {r.rate.exponent:g} "
+                                 "(Maxwellian electrons, power-law rate)")
             elif isinstance(eel, (Sourced, TBD)) or eel is None:
                 eps_e = _need(eel, f"{where}.electron_energy_loss", "eV", lo=0.0)
+                eel_basis = f"{eel.evidence_class}: {eel.source}"
             else:
-                raise InterstageInputError(f"{where}: electron_energy_loss must be Sourced (eV), "
-                                           f"{RECOMBINING_ELECTRON_THERMAL!r} or {NO_ELECTRON!r}")
+                raise InterstageInputError(f"{where}: electron_energy_loss must be Sourced (eV), one of "
+                                           f"{RECOMBINING_ELECTRON_OPTIONS} or {NO_ELECTRON!r}")
             d_ion = np.zeros(len(self.ions))
             d_neu = np.zeros(len(self.neutrals))
             for s in r.reactants:
@@ -887,7 +950,8 @@ class _Compiled:
                 "idx": [("e", -1) if s == ELECTRON else ("i", self.ions.index(s)) if s in self.ions
                         else ("n", self.neutrals.index(s)) for s in r.reactants],
                 "d_charge": float(d_ion @ self.Z), "eps_e_J": eps_e * E_CHARGE, "prod_ion_KE": prod_ion_KE,
-                "heat_J": q, "e_in": e_in, "rate": r.rate})
+                "heat_J": q, "e_in": e_in, "rate": r.rate, "process": proc,
+                "heavy_reactants": heavy_in, "eps_e_eV": eps_e, "eel_basis": eel_basis})
 
     def _wall_atom(self, recs):
         self.wr = []
@@ -913,26 +977,25 @@ class _Compiled:
 
     # -- process completeness: nothing may be omitted silently
     def required_processes(self) -> list[str]:
-        req = [f"volume_recombination:{i}" for i in self.ions]
-        req += [f"electron_impact_ionization:{s}" for s in self.ions + self.neutrals]
+        """Process classes every case must model (a reaction declaring that ``process`` with the species as a heavy
+        reactant) or explicitly exclude with a justification. The electron-energy-loss classes (excitation, elastic,
+        dissociation) are included because ``electron_heat_from_source_W`` is otherwise under-counted silently."""
+        molecular = [s for s in self.ions + self.neutrals if sum(self.sp[s]["comp"].values()) >= 2]
+        req = [f"{P_RECOMBINATION}:{i}" for i in self.ions]
+        req += [f"{P_IONIZATION}:{s}" for s in self.ions + self.neutrals]
         if self.neutrals:
-            req += [f"ion_neutral_charge_transfer:{i}" for i in self.ions]
-        req += [f"wall_atom_recombination:{k}" for k in self.neutrals if sum(self.sp[k]["comp"].values()) == 1]
+            req += [f"{P_CHARGE_TRANSFER}:{i}" for i in self.ions]
+        req += [f"{P_EXCITATION}:{s}" for s in self.ions + self.neutrals]
+        req += [f"{P_ELASTIC}:{k}" for k in self.neutrals]
+        req += [f"{P_DISSOCIATION}:{s}" for s in molecular]
+        req += [f"{WALL_ATOM_RECOMBINATION}:{k}" for k in self.neutrals if sum(self.sp[k]["comp"].values()) == 1]
         return req
 
     def _addressed(self, key: str) -> bool:
         kind, sp = key.split(":", 1)
-        for r in self.rx:
-            rs = r["reactants"]
-            if kind == "volume_recombination" and ELECTRON in rs and sp in rs and r["d_charge"] < 0:
-                return True
-            if kind == "ion_neutral_charge_transfer" and sp in rs and ELECTRON not in rs:
-                return True
-            if kind == "electron_impact_ionization" and ELECTRON in rs and sp in rs and r["d_charge"] > 0:
-                return True
-        if kind == "wall_atom_recombination":
+        if kind == WALL_ATOM_RECOMBINATION:
             return any(w["name"] == sp for w in self.wr)
-        return False
+        return any(r["process"] == kind and sp in r["heavy_reactants"] for r in self.rx)
 
     def _completeness(self, exclusions):
         if exclusions is None:
@@ -970,7 +1033,7 @@ class _Compiled:
             if nc.transmission_probability is not None or nc.explicit_conductance is not None:
                 raise InterstageInputError("molecular_santeler_circular takes no transmission/conductance input")
             self.tau = santeler_transmission_probability(self.L, self.R)
-            self.tau_source = "Santeler 1986 via Chiggiato 2014 Eq. 21 (model-derived)"
+            self.tau_source = "Santeler 1986 (doi:10.1116/1.573923) via Chiggiato 2014 Eq. 21 (model-derived)"
         elif nc.mode == NC_TRANSMISSION:
             if nc.explicit_conductance is not None:
                 raise InterstageInputError("molecular_explicit_transmission takes no explicit_conductance")
@@ -1031,9 +1094,15 @@ def _layout(c: _Compiled):
 def _pressure_profile(c: _Compiled, zg: np.ndarray, Gprof: np.ndarray, strict: bool = True) -> np.ndarray:
     """Partial pressures p_k(z_j) [Pa] for a net-flow profile Gprof[k, j] [s^-1]: p_k(L) = Q_k(L)/C_J,k (downstream
     back-pressure zero), p_k(z) = p_k(L) + int_z^L Q_k dz' / (C_duct,k L) (duct resistance distributed uniformly, i.e.
-    one-dimensional free-molecular diffusion). A species may flow upstream inside the duct (Q_k < 0 locally, e.g. a
-    product formed downstream diffusing back); its partial pressure must stay >= 0 and its net flow into the junction
-    must be >= 0. A zero-length duct (two coincident grid points) is its entrance aperture: p(0) = p(L) + Q/C_duct.
+    one-dimensional free-molecular diffusion). Entry boundary: the net flow of species k across the source-exit plane
+    is the supplied G_k(0) (zero for a species the source does not emit); p_k(0) is whatever the integral gives, so a
+    species formed in the duct has p_k(0) > 0 with zero net entry flow (a reflecting entry: no net back-flow into the
+    source). Inside the duct a species may flow upstream (Q_k < 0 locally, e.g. a product formed downstream diffusing
+    back); its partial pressure must stay >= 0 and its net flow into the junction must be >= 0. The integral is the
+    end-corrected (Euler-Maclaurin) trapezoidal rule on the RK4 grid, O(dz^4), so p_k(0) still carries a quadrature
+    error; its step-doubling change is reported (diagnostics.p_entry_step_doubling_rel_change) and ``boundary_rtol``
+    must not be set below it. Source lanes must take the entry densities from ``flow_path_entry_densities`` (same grid,
+    same quadrature), not from an independent calculation, or the boundary gate can reject an otherwise exact state. A zero-length duct (two coincident grid points) is its entrance aperture: p(0) = p(L) + Q/C_duct.
     ``strict=False`` is used for intermediate fixed-point iterates only (non-physical iterates are clipped, not
     accepted); the converged profile is always re-checked with ``strict=True``."""
     nK, nz = Gprof.shape
@@ -1062,8 +1131,13 @@ def _pressure_profile(c: _Compiled, zg: np.ndarray, Gprof: np.ndarray, strict: b
                 raise _Infeasible(f"closed duct (conductance 0) for {c.neutrals[k]} with nonzero throughput")
             p[k, :] = p_out
         else:
-            seg = 0.5 * (Q[1:] + Q[:-1]) * np.diff(zg)
+            # end-corrected trapezoid (Euler-Maclaurin, uniform grid): int_z^L Q = T(z) - dz^2/12 (Q'(L) - Q'(z))
+            # + O(dz^4); Q' by second-order finite differences of the grid profile (first order on a 2-point grid)
+            dz = zg[1] - zg[0]
+            seg = 0.5 * (Q[1:] + Q[:-1]) * dz
             tail = np.concatenate([np.cumsum(seg[::-1])[::-1], [0.0]])
+            dQ = np.gradient(Q, zg, edge_order=2 if len(zg) >= 3 else 1)
+            tail = tail - dz * dz / 12.0 * (dQ[-1] - dQ)
             p[k] = p_out + tail / (c.C_duct[k] * c.L)
         p_scale = max(float(np.max(np.abs(p[k]))), 1e-300)
         if strict and np.any(p[k] < -1e-9 * p_scale):
@@ -1137,24 +1211,6 @@ def _derivs(c: _Compiled, y: np.ndarray, pz: np.ndarray, idx) -> tuple[np.ndarra
     return dy, {"h": h, "u_B": u_B, "V_s": V_s, "n_i": n_i, "n_e": n_e}
 
 
-def _knudsen_gate(c: _Compiled, p: np.ndarray, stage: str):
-    """Refuse (raise) when the neutral state is outside the free-molecular domain of the conductance model in use."""
-    if c.nc_mode not in (NC_SANTELER, NC_TRANSMISSION) or not len(c.neutrals):
-        return
-    n = p / (K_B * c.Tn)
-    ntot = n.sum(axis=0)
-    for j in range(p.shape[1]):
-        if ntot[j] <= 0:
-            continue
-        lam = molecular_mean_free_path(float(ntot[j]), float(n[:, j] @ c.sigma_c) / float(ntot[j]))
-        Kn = knudsen_number(lam, c.Dh)
-        if Kn <= KN_MOLECULAR_MIN:
-            raise InterstageDomainError(
-                f"duct Knudsen number {Kn:.4g} <= {KN_MOLECULAR_MIN} ({flow_regime(Kn)}, {stage}): the free-molecular "
-                "conductance does not apply. TBD: supply a sourced transitional/viscous conductance via "
-                "neutral_conductance.mode = explicit_conductance")
-
-
 def _anderson_update(x: np.ndarray, gx: np.ndarray, hist_x: list, hist_f: list, depth: int, omega: float):
     """Next iterate of the fixed point x = g(x) (neutral-flow profile). depth = 0: under-relaxed Picard,
     x' = omega g(x) + (1 - omega) x. depth > 0: Anderson acceleration (Walker & Ni, SIAM J. Numer. Anal. 49(4) (2011)
@@ -1193,8 +1249,8 @@ def _integrate(c: _Compiled, n_steps: int):
     zg = np.linspace(0.0, c.L, n_steps + 1) if c.L > 0 else np.zeros(2)   # L = 0: entry and exit planes coincide
     nK = len(c.neutrals)
     Gprof = np.repeat(y0[idx["G"]][:, None], len(zg), axis=1) if nK else np.zeros((0, len(zg)))
-    if nK:
-        _knudsen_gate(c, _pressure_profile(c, zg, Gprof), "entry-flow estimate")
+    # No Knudsen gate on this entry-flow estimate: the domain is judged on the converged profile only
+    # (_domain_gates), so a case whose converged state is in-domain is never refused on a provisional iterate.
     history = None
     converged = False
     it = 0
@@ -1203,20 +1259,32 @@ def _integrate(c: _Compiled, n_steps: int):
     hist_x, hist_f = [], []            # Anderson history (flattened neutral-flow profiles and their residuals)
     for it in range(1, c.nm.max_fixed_point_iterations + 1):
         p = _pressure_profile(c, zg, Gprof, strict=False) if nK else np.zeros((0, len(zg)))
+        # dp_k/dz = -Q_k / (C_duct,k L) (the pressure-profile equation), used for cubic-Hermite mid-step pressures so
+        # that the neutral coupling keeps the RK4 order (linear interpolation would make it O(dz^2))
+        dpdz = np.zeros_like(p)
+        if nK and c.L > 0:
+            for k in range(nK):
+                if c.C_duct[k] > 0:
+                    dpdz[k] = -Gprof[k] * K_B * c.Tn / (c.C_duct[k] * c.L)
         Y = np.zeros((len(zg), size))
         Y[0] = y0
         diag0 = None
         for j in range(len(zg) - 1):
             dz = zg[j + 1] - zg[j]
-            pa, pm, pb = p[:, j], 0.5 * (p[:, j] + p[:, j + 1]), p[:, j + 1]
+            pa, pb = p[:, j], p[:, j + 1]
+            pm = np.maximum(0.5 * (pa + pb) + dz / 8.0 * (dpdz[:, j] - dpdz[:, j + 1]), 0.0)
             yj = Y[j]
-            k1, d = _derivs(c, yj, pa, idx)
-            if j == 0:
-                diag0 = d
-            k2, _ = _derivs(c, yj + 0.5 * dz * k1, pm, idx)
-            k3, _ = _derivs(c, yj + 0.5 * dz * k2, pm, idx)
-            k4, _ = _derivs(c, yj + dz * k3, pb, idx)
-            Y[j + 1] = yj + dz / 6.0 * (k1 + 2 * k2 + 2 * k3 + k4)
+            with np.errstate(over="ignore", invalid="ignore"):     # blow-up is detected explicitly below
+                k1, d = _derivs(c, yj, pa, idx)
+                if j == 0:
+                    diag0 = d
+                k2, _ = _derivs(c, yj + 0.5 * dz * k1, pm, idx)
+                k3, _ = _derivs(c, yj + 0.5 * dz * k2, pm, idx)
+                k4, _ = _derivs(c, yj + dz * k3, pb, idx)
+                Y[j + 1] = yj + dz / 6.0 * (k1 + 2 * k2 + 2 * k3 + k4)
+            if not np.all(np.isfinite(Y[j + 1])):
+                raise _ModelError(f"non-finite state at z = {zg[j + 1]:.6g} m (integration blew up; refine "
+                                  "numerics.n_steps or check the rate inputs)")
         if diag0 is None:
             _, diag0 = _derivs(c, y0, p[:, 0], idx)
         _, diagL = _derivs(c, Y[-1], p[:, -1], idx)
@@ -1229,8 +1297,15 @@ def _integrate(c: _Compiled, n_steps: int):
         Gnew = Y[:, idx["G"]].T.copy()      # may be locally negative (upstream diffusion inside the duct)
         # true fixed-point residual: pressures implied by the new flows vs the pressures this trajectory used
         p_check = _pressure_profile(c, zg, Gnew, strict=False)
-        p_scale = max(float(p[:, 0].sum()), 1e-300)
-        residual = float(np.max(np.abs(p_check - p))) / p_scale
+        # scale-safe: an all-zero trial profile (e.g. zero neutral entry flow) cannot be accepted by a 0/0 or x/tiny
+        p_scale = max(float(p[:, 0].sum()), float(p_check[:, 0].sum()), float(np.max(np.abs(p_check))),
+                      float(np.max(np.abs(p))))
+        if p_scale == 0.0:
+            residual = 0.0                  # no neutrals anywhere in either profile: trivially self-consistent
+        else:
+            residual = float(np.max(np.abs(p_check - p))) / p_scale
+        if not math.isfinite(residual):
+            raise _ModelError("non-finite neutral-pressure fixed-point residual")
         if residual <= c.nm.fixed_point_rtol:
             _pressure_profile(c, zg, Gnew, strict=True)       # the accepted state must be physical
             converged = True
@@ -1244,10 +1319,21 @@ def _integrate(c: _Compiled, n_steps: int):
     return {"z": zg, "Y": Y, "p": p, "idx": idx, "N0": N0, "diag0": diag0, "diagL": diagL, "iterations": it}
 
 
+def _json_safe(x):
+    """Replace non-finite floats by None (NaN/inf are not JSON numbers and must never be reported as values)."""
+    if isinstance(x, dict):
+        return {k: _json_safe(v) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [_json_safe(v) for v in x]
+    if isinstance(x, (float, np.floating)) and not math.isfinite(float(x)):
+        return None
+    return x
+
+
 def _null_result(c_or_case, status: str, reason: str, diagnostics: dict | None = None) -> dict:
     case = c_or_case.case if isinstance(c_or_case, _Compiled) else c_or_case
     res = _empty_result(case)
-    res.update(status=status, status_reason=reason, converged=False, diagnostics=diagnostics or {})
+    res.update(status=status, status_reason=reason, converged=False, diagnostics=_json_safe(diagnostics or {}))
     return res
 
 
@@ -1295,7 +1381,19 @@ ASSUMPTIONS = (
     "its length; downstream back-pressure of the Hall and leak paths is zero",
     "conductances in series/parallel combine as for elements separated by volumes (Chiggiato 2014 Eqs. 26-28); "
     "a transmission-probability combination for directly joined elements is not implemented",
-    "species produced inside the duct flow downstream only (no back-diffusion into the source)",
+    "entry boundary: the net flow of each neutral species across the source-exit plane is the supplied neutral_flow "
+    "(zero for species the source does not emit); species formed in the duct may have nonzero entry partial pressure "
+    "but no net back-flow into the source (reflecting entry); inside the duct local upstream flow is allowed",
+    "Gamma_wall = h n u_B uses the plug-flow (cross-section-average) density N/(v A) in place of the centre density n_0 "
+    "of Lieberman slides 41/44 (assumed; the h values of the closures refer to n_0, so the wall flux is biased by "
+    "the ratio of centre to mean density, not modelled)",
+    "Lieberman h_R (slide 44) is the edge-to-centre ratio of an ionization-sustained low-pressure discharge in argon; "
+    "applying it to a drifting, decaying (source-free) interstage plasma and to other gases is an extrapolation of both "
+    "configuration and gas (model-derived applicability, not validated)",
+    "electron energy removed per recombination: declared per reaction, either (3/2) T_e (assumed; biased high for rate "
+    "exponents alpha < 0) or (3/2 + alpha) T_e (model-derived from the power-law rate, Maxwellian electrons)",
+    "energy gate under isothermal_source_conduction: the conducted source heat is the electron-energy residual, so the "
+    "energy residual checks ledger bookkeeping consistency, not physical energy conservation",
     "uncaptured ions at the junction leave as plume leakage together with their electrons",
     "the mixture mean free path uses 1 / (sqrt(2) sum_k n_k sigma_k) (generalization of Chiggiato Eq. 7)",
 )
@@ -1417,6 +1515,33 @@ def _domain_gates(c: _Compiled, r: dict):
             f"neutral pressure {r['p_max_total']:.4g} Pa >= 100 mTorr: outside the stated domain of Lieberman h_R")
 
 
+def _refuse_if_entry_estimate_out_of_domain(c: _Compiled, exc: Exception):
+    """Called only when no converged state exists. The formula domain is normally judged on the converged profile
+    (_domain_gates); without one, the entry-flow estimate (uniform supplied neutral flows) is the only state available.
+    If that estimate is itself outside the free-molecular domain, the failure is reported as a domain refusal (the
+    formulas were never applicable), not as a solver status."""
+    if not c.neutrals or c.nc_mode not in (NC_SANTELER, NC_TRANSMISSION):
+        return
+    zg = np.linspace(0.0, c.L, c.nm.n_steps + 1) if c.L > 0 else np.zeros(2)
+    G = np.repeat(np.array([c.G0[k] for k in c.neutrals])[:, None], len(zg), axis=1)
+    try:
+        p = _pressure_profile(c, zg, G, strict=False)
+    except (_Infeasible, _ModelError):
+        return
+    n = p / (K_B * c.Tn)
+    ntot = n.sum(axis=0)
+    for j in range(len(zg)):
+        if ntot[j] <= 0:
+            continue
+        Kn = knudsen_number(molecular_mean_free_path(float(ntot[j]), float(n[:, j] @ c.sigma_c) / float(ntot[j])),
+                            c.Dh)
+        if Kn <= KN_MOLECULAR_MIN:
+            raise InterstageDomainError(
+                f"no converged state ({exc}); the entry-flow estimate has duct Knudsen number {Kn:.4g} <= "
+                f"{KN_MOLECULAR_MIN} ({flow_regime(Kn)}), outside the free-molecular conductance domain. TBD: supply a "
+                "sourced transitional/viscous conductance via neutral_conductance.mode = explicit_conductance") from None
+
+
 def solve_interstage(case: InterstageCase) -> dict:
     """Solve one interstage case. Raises (refuses) on missing/invalid/TBD/out-of-domain inputs; returns a result dict
     (schemas/architecture_comparison/interstage_v1.schema.json, ``result``) whose ``status`` is OK, INFEASIBLE or
@@ -1426,35 +1551,51 @@ def solve_interstage(case: InterstageCase) -> dict:
         r1 = _run(c, c.nm.n_steps)
         r2 = _run(c, 2 * c.nm.n_steps)
     except _Infeasible as exc:
+        _refuse_if_entry_estimate_out_of_domain(c, exc)
         return _null_result(c, "INFEASIBLE", str(exc))
     except _ModelError as exc:
+        _refuse_if_entry_estimate_out_of_domain(c, exc)
         return _null_result(c, "MODEL_ERROR", str(exc))
     _domain_gates(c, r1)
     _domain_gates(c, r2)
-    # --- numerical convergence (step doubling) and fixed point
-    def vec(r):
-        g0 = max(float(r["G0"].sum()), 1e-300) if c.neutrals else 1.0
-        parts = [np.array([r["eta"], r["eta_duct"]]), r["NL"] / float(r["N0"].sum()), r["cap"] / float(r["N0"].sum())]
-        if c.neutrals:
-            p0 = max(float(r["p"][:, 0].sum()), 1e-300)
-            parts += [r["GL"] / g0, r["p"][:, 0] / p0]
-        return np.concatenate(parts)
-    step_change = float(np.max(np.abs(vec(r1) - vec(r2))))
+    # --- numerical convergence (step doubling). Scale-safe normalisation: one common scale per quantity, taken over
+    # BOTH runs (never a 1e-300 floor that turns a zero entry flow into inf/NaN), and a non-finite change is an error.
+    n_scale = float(r1["N0"].sum())                                   # > 0 (checked in _Compiled._state)
+    parts1 = [np.array([r1["eta"], r1["eta_duct"]]), r1["NL"] / n_scale, r1["cap"] / n_scale]
+    parts2 = [np.array([r2["eta"], r2["eta_duct"]]), r2["NL"] / n_scale, r2["cap"] / n_scale]
+    p_entry_change = 0.0
+    if c.neutrals:
+        g_scale = max(float(r1["G0"].sum()), float(np.abs(r1["GL"]).sum()), float(np.abs(r2["GL"]).sum()))
+        p_scale = max(float(r1["p"][:, 0].sum()), float(r2["p"][:, 0].sum()))
+        if g_scale > 0:
+            parts1.append(r1["GL"] / g_scale)
+            parts2.append(r2["GL"] / g_scale)
+        if p_scale > 0:
+            parts1.append(r1["p"][:, 0] / p_scale)
+            parts2.append(r2["p"][:, 0] / p_scale)
+            p_entry_change = float(np.max(np.abs(r1["p"][:, 0] - r2["p"][:, 0]))) / p_scale
+    step_change = float(np.max(np.abs(np.concatenate(parts1) - np.concatenate(parts2))))
     r = r2
     cons = {"elements_rel": r["elem_res"], "charge_rel": r["charge_res"], "mass_rel": r["mass_res"],
             "energy_rel": r["energy_res"], "gate_rtol": c.nm.conservation_rtol}
-    cons["passed"] = bool(max([*r["elem_res"].values(), r["charge_res"], r["mass_res"], r["energy_res"]])
-                          <= c.nm.conservation_rtol)
+    # every residual must be finite AND within tolerance (max() over a list with NaN is order-dependent)
+    cons["passed"] = all(math.isfinite(v) and v <= c.nm.conservation_rtol
+                         for v in [*r["elem_res"].values(), r["charge_res"], r["mass_res"], r["energy_res"]])
     # --- neutral boundary consistency: supplied source-exit densities vs the flow-path densities
     n_path = {k: float(r["p"][a, 0]) / (K_B * c.Tn) for a, k in enumerate(c.neutrals)}
     n_path_tot = sum(n_path.values())
     mismatch = {k: (abs(c.n_n0_supplied[k] - n_path[k]) / n_path_tot if n_path_tot > 0 else abs(c.n_n0_supplied[k]))
                 for k in c.neutrals}
     boundary_ok = (max(mismatch.values()) <= c.nm.boundary_rtol) if c.neutrals else True
-    diagnostics = {"step_doubling_rel_change": step_change,
+    finite = math.isfinite(step_change)
+    diagnostics = {"step_doubling_rel_change": step_change if finite else None,
+                   "p_entry_step_doubling_rel_change": p_entry_change if math.isfinite(p_entry_change) else None,
                    "flow_path_entry_density_m3": n_path,
                    "supplied_entry_density_m3": dict(c.n_n0_supplied),
                    "boundary_mismatch_rel": mismatch, "conservation": cons}
+    if not finite:
+        return _null_result(c, "MODEL_ERROR", "step-doubling change is not finite (NaN/inf in the solution); the "
+                                              "convergence gate cannot be evaluated", diagnostics)
     if step_change > c.nm.convergence_rtol:
         return _null_result(c, "MODEL_ERROR", f"step-doubling change {step_change:.3e} > convergence_rtol "
                                               f"{c.nm.convergence_rtol:g} (increase numerics.n_steps)", diagnostics)
@@ -1511,7 +1652,9 @@ def solve_interstage(case: InterstageCase) -> dict:
                               "junction_leak_fraction": c.leak_fraction,
                               "hydraulic_diameter_m": c.Dh, "fixed_point_iterations": r["iterations"]},
         "reactions": {rx["id"]: {"events_s": float(r["react"][b]), "rate_coefficient_m3_s": rx["k"],
-                                 "heat_per_event_eV": rx["heat_J"] / E_CHARGE}
+                                 "heat_per_event_eV": rx["heat_J"] / E_CHARGE, "process": rx["process"],
+                                 "electron_energy_loss_eV": rx["eps_e_eV"],
+                                 "electron_energy_loss_basis": rx["eel_basis"]}
                       for b, rx in enumerate(c.rx)},
         "wall": {"radial_loss_closure": c.h_mode, "wall_electrical": "floating",
                  "wall_material": case.geometry.wall_material, "side_wall_area_m2": wall_area,
@@ -1525,12 +1668,15 @@ def solve_interstage(case: InterstageCase) -> dict:
                  "magnetization": mag},
         "energy_ledger_W": {"in": r["E_in"], "electron_heat_from_source_W": r["E_cond"], "out": r["E_out"],
                             "sinks": r["sinks"], "residual_rel": r["energy_res"],
-                            "note": "bookkeeping closure check; neutral thermal enthalpy excluded (isothermal walls)"},
+                            "note": ("bookkeeping consistency check, not a physical energy-conservation test: under "
+                                     "isothermal_source_conduction electron_heat_from_source_W is the electron-energy "
+                                     "residual, so the balance closes by construction; neutral thermal enthalpy "
+                                     "excluded (isothermal walls)")},
         "conservation": cons,
         "numerics": {"n_steps": c.nm.n_steps, "n_steps_check": 2 * c.nm.n_steps,
                      "step_doubling_rel_change": step_change, "convergence_rtol": c.nm.convergence_rtol,
                      "integrator": "classical RK4 on a uniform grid (linear invariants preserved to round-off)"},
-        "profiles": r["profiles"], "diagnostics": diagnostics,
+        "profiles": r["profiles"], "diagnostics": _json_safe(diagnostics),
     })
     return res
 
@@ -1543,23 +1689,57 @@ def flow_path_entry_densities(case: InterstageCase) -> dict:
     try:
         r = _run(c, 2 * c.nm.n_steps)        # the resolution solve_interstage reports and gates on
     except (_Infeasible, _ModelError) as exc:
+        _refuse_if_entry_estimate_out_of_domain(c, exc)
         raise InterstageError(f"flow path not solvable: {exc}") from None
     _domain_gates(c, r)
     return {k: float(r["p"][a, 0]) / (K_B * c.Tn) for a, k in enumerate(c.neutrals)}
 
 
-def compare_with_required(result: dict, eta_transport_required: Sourced) -> dict:
-    """Per-architecture condition check against the break-even lane's required eta_transport (abep_sim/breakeven.py, breakeven_v1: place_evidence()['eta_transport_min']).
-    Not an architecture comparison: it answers only 'does this case meet its own break-even condition'."""
+def _as_sourced_requirement(x) -> Sourced:
+    """Accept this module's ``Sourced`` or a duck-typed record with value / unit / evidence_class / source attributes
+    (e.g. abep_sim/breakeven.py ``Evidenced``, which has no uncertainty field) without importing the sibling module."""
+    if isinstance(x, (Sourced, TBD)) or x is None:
+        return x
+    try:
+        value, unit, ev, src = x.value, x.unit, x.evidence_class, x.source
+    except AttributeError:
+        raise InterstageInputError("eta_transport_required must be Sourced or an evidenced record with value, unit, "
+                                   "evidence_class and source") from None
+    unc = getattr(x, "uncertainty", None)
+    return Sourced(value, unit, src, ev, unc if isinstance(unc, str) and unc.strip()
+                   else "not carried by the supplying record (propagate before use)")
+
+
+def compare_with_required(result: dict, eta_transport_required) -> dict:
+    """Per-architecture condition check against the break-even lane's required eta_transport (abep_sim/breakeven.py,
+    breakeven_v1: place_evidence()['eta_transport_min']). ``eta_transport_required`` is a ``Sourced`` or a duck-typed
+    evidenced record (breakeven ``Evidenced``); the dimensionless unit may be spelled '-' (this module) or '1'
+    (breakeven_v1). Not an architecture comparison: it answers only 'does this case meet its own break-even condition'."""
     if result.get("status") != "OK":
         raise InterstageInputError("compare_with_required needs an OK interstage result")
-    req = _need(eta_transport_required, "eta_transport_required", "-", lo=0.0)
+    rec = _as_sourced_requirement(eta_transport_required)
+    req = _need(rec, "eta_transport_required", "-", lo=0.0)
     eta = result["eta_transport"]
     return {"architecture": result["architecture"], "case_id": result["case_id"], "eta_transport": eta,
             "eta_transport_required": req, "margin": eta - req, "condition_met": bool(eta >= req),
-            "required_source": eta_transport_required.source,
-            "required_evidence_class": eta_transport_required.evidence_class,
+            "required_source": rec.source,
+            "required_evidence_class": rec.evidence_class,
             "note": "a single-case condition; uncertainty envelopes of both sides must be propagated before any use"}
+
+
+def eta_transport_evidence(result: dict) -> dict:
+    """The keyword arguments of a breakeven_v1 ``Evidenced(value, unit, evidence_class, source)`` for this result's
+    eta_transport (unit '1', the breakeven_v1 convention; evidence class model-derived). Only for an OK result; the
+    caller constructs the sibling record, this module does not import it. breakeven_v1 accepts only 0 < value <= 1;
+    an eta_transport > 1 (in-duct ionization) is passed through unchanged and will be refused there."""
+    if result.get("status") != "OK":
+        raise InterstageInputError("eta_transport_evidence needs an OK interstage result")
+    eta = result["eta_transport"]
+    if not (isinstance(eta, (int, float)) and math.isfinite(eta)):
+        raise InterstageInputError("eta_transport is not a finite number")
+    return {"value": float(eta), "unit": "1", "evidence_class": "model-derived",
+            "source": (f"abep_sim/interstage.py {MODEL_VERSION}, case {result['case_id']!r} ({result['architecture']}); "
+                       "conditional on every input in result['provenance']")}
 
 
 # -------------------------------------------------------------------------------------- dict (de)serialization
@@ -1647,7 +1827,8 @@ def case_to_dict(case: InterstageCase) -> dict:
         "reactions": [{"reaction_id": r.reaction_id, "reactants": list(r.reactants), "products": list(r.products),
                        "rate": _rate_to(r.rate),
                        "electron_energy_loss": (r.electron_energy_loss if isinstance(r.electron_energy_loss, str)
-                                                else _s_to(r.electron_energy_loss))} for r in case.reactions],
+                                                else _s_to(r.electron_energy_loss)),
+                       "process": r.process} for r in case.reactions],
         "wall_atom_recombination": [{"atom": x.atom, "product": x.product, "probability": _s_to(x.probability)}
                                     for x in case.wall_atom_recombination],
         "process_exclusions": dict(case.process_exclusions),
@@ -1705,11 +1886,12 @@ def case_from_dict(d: Mapping) -> InterstageCase:
                      _map_from(w["explicit_h"], "explicit_h"))
     reactions = []
     for r in d["reactions"]:
-        _strict(r, ("reaction_id", "reactants", "products", "rate", "electron_energy_loss"), "reactions[]")
+        _strict(r, ("reaction_id", "reactants", "products", "rate", "electron_energy_loss", "process"), "reactions[]")
         eel = r["electron_energy_loss"]
         reactions.append(VolumeReaction(r["reaction_id"], tuple(r["reactants"]), tuple(r["products"]),
                                         _rate_from(r["rate"], r["reaction_id"]),
-                                        eel if isinstance(eel, str) else _s_from(eel, r["reaction_id"])))
+                                        eel if isinstance(eel, str) else _s_from(eel, r["reaction_id"]),
+                                        r["process"]))
     war = []
     for x in d["wall_atom_recombination"]:
         _strict(x, ("atom", "product", "probability"), "wall_atom_recombination[]")
