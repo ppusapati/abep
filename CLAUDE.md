@@ -182,28 +182,24 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    break-even surfaces, hard-gate eliminations). **Fan-out rule:** whenever a lane finishes, immediately ask whether its result lets
    another lane start, removes a dependency, or creates a new parallel branch; never fall back to a sequential queue.
    **O4 first stage:** Johnson-low trigger FIRED (scored 2026-09-26) → its three pre-registered escalations are running.
-   **Operating rules (owner decision 2026-09-26, after lanes 16–27 were launched):** no new broad lanes; every lane must answer one of
-   (i) can an architecture be conditionally selected now, (ii) what evidence prevents physics-backed selection, (iii) what engineering
-   issue could later overturn the choice. Results are reported in **milestone bundles**, not lane by lane (unless a dependency changes).
-   Bundle 1 = *Architecture Conditional Selection* (lanes 7 RF, 8 ECR, 9 Hall sustainment, 16 feed envelope, 17 Hall reference,
-   18 interstage, break-even, 20 PPU/magnets, + available hard gates 24) → first serious Hall-only vs RF+Hall vs ECR+Hall answer from
-   inequalities and source-backed ranges (e.g. "RF+Hall is preferable only if it delivers ≥ X at ≤ Y W/A and ≥ Z interstage
-   efficiency"), not absolute Hall predictions. Event triggers: 16+17 → grid; 7+18 → RF break-even overlay; 8+18 → ECR overlay;
-   9+16 → direct-Hall sustainment envelope; 7+8+9+break-even → first conditional comparison; 20+cathode → full auxiliary bus-power
-   comparison; 21+15 → mass/thermal/life veto layer; 24+26 → dossier; 25 → experimental decision package; N₂ domain audit → owner
-   decides whether v2 is justified; all O4 first stages → O4 disposition matrix; Johnson-low escalations → does the excitation
-   uncertainty survive across the other chemistry combinations; admitted closure → absolute grid + Hall maps + whole-system UQ.
-   **Common comparison boundary (binding):** every architecture is reported with the same fields {ṁ_s, P_feed, T_feed, x_s, V_d, T,
-   P_bus, m, Q_reject, life, startup, η_u, stability}, and P_bus is always the DC-bus input = discharge + pre-ionizer + cathode +
-   magnets + PPU losses + gas path + controls/thermal (in `bus_power_boundary_v1` terms: Σ P_load/η over hall_discharge,
-   rf_source|ecr_source(+ecr_magnet), cathode_keeper+cathode_heater, hall_magnet, flow_control+compressor, thermal_control+
-   housekeeping; PPU loss = Σ P_load(1/η − 1)). Never compare absorbed RF power, ECR DC input and Hall discharge-only power.
-   **v2 chemistry asks two separate questions:** is a wider energy domain source-supported (fixes OOD), and, within it, which
-   electronic-excitation representation is justified (Johnson-low is a *material* model uncertainty: 221 triggers, status and
-   verdict changes). Never make Johnson-low nominal merely because it changes results. **Execution provenance:** running score-bearing
-   jobs are never altered; future campaigns record JULIA_NUM_THREADS / BLAS / OMP threads, Julia and HallThruster commit per run, so
-   resource-induced failures stay distinguishable (observed environment of the follow-on runs:
-   `hallthruster_bridge/validation/execution_environment/`).
+   **Operating model (binding; owner decisions 2026-09-26): `docs/orchestration/OPERATING_MODEL.md`.** Machine ids in
+   `lane_registry_v1.json` (lane_NN_*, ds_*, fo_*; break-even = lane_28_break_even); follow-on work launches ONLY from
+   `trigger_registry_v1.json` (incl. T_O4_SCORE / T_O4_ESCALATE / T_O4_DISPOSITION_MATRIX / T_JOHNSONLOW_ESCALATION_ASSESSMENT /
+   T_V2_QUESTION_A / T_V2_QUESTION_B / T_FACILITY_SCORE); every firing goes to the ledger `fired_triggers.jsonl`. A lane satisfies a
+   trigger only when `verified` (final round passed under its protocol AND deps verified). **Bundle 1 prerequisites include
+   lane_24_hard_gates as a hard prerequisite.** Bundle 1 outcomes: CONDITIONAL_BASELINE(X) with explicit conditions / NO_BASELINE_YET
+   with blocking fields and lanes / per architecture ELIMINATED_WITHIN_TESTED_ENVELOPE only via a demonstrated hard gate. No new broad
+   lanes; each lane answers (i) conditional selection now, (ii) what blocks physics-backed selection, (iii) what could overturn it;
+   results come in milestone bundles. **Admissibility:** a comparison is admissible only when all architectures are normalized to
+   `bus_power_boundary_v1` and every mandatory field {ṁ_s, P_feed, T_feed, x_s, V_d, T, P_bus, m, Q_reject, life, startup, η_u,
+   stability} is populated or explicitly unavailable, each with units, operating point, evidence/source, uncertainty/status and
+   derivation (P_feed, T_feed = feed-state pressure and temperature). P_bus = all electrical power crossing the spacecraft-side DC
+   boundary (discharge + pre-ionizer + cathode + magnets + PPU losses + gas path incl. compressor/flow control + controls/thermal);
+   never absorbed RF, ECR source or Hall discharge-only power. **v2 chemistry:** Question A (is a wider domain source-supported?)
+   and Question B (conditional on A, which excitation representation is supportable?) stay separate; Johnson-low remains a
+   sensitivity until B supports it. **Execution provenance:** running jobs never altered; future campaigns record thread/BLAS
+   environment, Julia version and HallThruster commit per run; orchestration runtime (daemon PID, Monitor, restart semantics,
+   the 2026-09-26 silent watcher-death incident) in `docs/orchestration/runtime_state.json`.
    **P5-N₂ measurement audit: done** (`identification/p5_n2_measurement_audit_findings_v1.json`; values in
    `brabston_p5_n2_measurement_audit_v1.json` from `scripts/audit_p5_n2_measurements.py`). Targets: I_d and thrust at N1–N5,
    E×B species V_a at N1–N3, sustainment; Φ_m,n/η_SP,n/ξ_N are model-derived, not targets. Pre-registration decisions D1–D6 are

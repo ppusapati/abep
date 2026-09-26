@@ -1,0 +1,334 @@
+{
+ "schema": "abep_trigger_registry_v1",
+ "decided": "owner operating rules 2026-09-26",
+ "rule": "follow-on work launches ONLY from these triggers; a trigger fires once (fired-trigger ledger docs/orchestration/fired_triggers.jsonl); prerequisites are machine ids with explicit terminal states",
+ "triggers": [
+  {
+   "id": "T_RF_OVERLAY",
+   "prerequisites": [
+    {
+     "id": "lane_07_rf_evidence",
+     "state": "verified"
+    },
+    {
+     "id": "lane_18_interstage",
+     "state": "verified"
+    },
+    {
+     "id": "lane_28_break_even",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_rf_breakeven_overlay",
+   "kind": "follow_on_launch"
+  },
+  {
+   "id": "T_ECR_OVERLAY",
+   "prerequisites": [
+    {
+     "id": "lane_08_ecr_evidence",
+     "state": "verified"
+    },
+    {
+     "id": "lane_18_interstage",
+     "state": "verified"
+    },
+    {
+     "id": "lane_28_break_even",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_ecr_breakeven_overlay",
+   "kind": "follow_on_launch"
+  },
+  {
+   "id": "T_HALL_SUSTAIN_ENVELOPE",
+   "prerequisites": [
+    {
+     "id": "lane_09_hall_sustainment",
+     "state": "verified"
+    },
+    {
+     "id": "lane_16_feed_envelope",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_hall_sustainment_envelope",
+   "kind": "follow_on_launch"
+  },
+  {
+   "id": "T_BUNDLE1",
+   "prerequisites": [
+    {
+     "id": "lane_07_rf_evidence",
+     "state": "verified"
+    },
+    {
+     "id": "lane_08_ecr_evidence",
+     "state": "verified"
+    },
+    {
+     "id": "lane_09_hall_sustainment",
+     "state": "verified"
+    },
+    {
+     "id": "lane_16_feed_envelope",
+     "state": "verified"
+    },
+    {
+     "id": "lane_17_hall_reference",
+     "state": "verified"
+    },
+    {
+     "id": "lane_18_interstage",
+     "state": "verified"
+    },
+    {
+     "id": "lane_20_ppu_magnet",
+     "state": "verified"
+    },
+    {
+     "id": "lane_24_hard_gates",
+     "state": "verified"
+    },
+    {
+     "id": "lane_28_break_even",
+     "state": "verified"
+    },
+    {
+     "id": "fo_rf_breakeven_overlay",
+     "state": "verified"
+    },
+    {
+     "id": "fo_ecr_breakeven_overlay",
+     "state": "verified"
+    },
+    {
+     "id": "fo_hall_sustainment_envelope",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_bundle1_conditional_selection",
+   "kind": "bundle",
+   "note": "lane_24_hard_gates is a HARD prerequisite (owner 2026-09-26): elimination statements need the gate logic. The three overlays are triggered by subsets of these prerequisites, so they are always launched first."
+  },
+  {
+   "id": "T_AUX_BUS",
+   "prerequisites": [
+    {
+     "id": "lane_20_ppu_magnet",
+     "state": "verified"
+    },
+    {
+     "id": "lane_19_cathode_integration",
+     "state": "verified"
+    },
+    {
+     "id": "lane_11_bus_boundary",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_aux_bus_comparison",
+   "kind": "follow_on_launch",
+   "note": "lane_11 added to the owner's '20 + cathode' because the comparison must use the bus_power_boundary_v1 module; lane_10 (cathode dossier) is consumed by lane_19 when present"
+  },
+  {
+   "id": "T_VETO_LAYER",
+   "prerequisites": [
+    {
+     "id": "lane_21_mass_bom",
+     "state": "verified"
+    },
+    {
+     "id": "lane_15_thermal_life",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_veto_layer",
+   "kind": "follow_on_launch"
+  },
+  {
+   "id": "T_EXPERIMENT_PACKAGE",
+   "prerequisites": [
+    {
+     "id": "lane_25_min_decisive_experiment",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_experiment_package",
+   "kind": "follow_on_launch"
+  },
+  {
+   "id": "T_DOSSIER",
+   "prerequisites": [
+    {
+     "id": "lane_24_hard_gates",
+     "state": "verified"
+    },
+    {
+     "id": "lane_26_failure_tree",
+     "state": "verified"
+    }
+   ],
+   "produces": "lane_27_decision_dossier",
+   "kind": "workflow_internal",
+   "note": "runs inside workflow wf_e3c01fb8-eed, which starts the dependent lane at its prerequisites' terminal state and passes their verification flag; lane_27 counts as verified only if both prerequisites are verified (registry terminal-state rule)"
+  },
+  {
+   "id": "T_GRID",
+   "prerequisites": [
+    {
+     "id": "lane_16_feed_envelope",
+     "state": "verified"
+    },
+    {
+     "id": "lane_17_hall_reference",
+     "state": "verified"
+    }
+   ],
+   "produces": "lane_23_comparison_grid",
+   "kind": "workflow_internal",
+   "note": "as T_DOSSIER, inside wf_3da51c0c-3b4"
+  },
+  {
+   "id": "T_V2_QUESTION_A",
+   "prerequisites": [
+    {
+     "id": "lane_01_n2_domain_extension",
+     "state": "verified"
+    },
+    {
+     "id": "lane_02_ood_attribution",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_v2_domain_question_a",
+   "kind": "owner_decision_brief"
+  },
+  {
+   "id": "T_O4_SCORE",
+   "family": [
+    "ds_staged_n2_n_exc_johnsonlow",
+    "ds_staged_n2_n_rot_off",
+    "ds_staged_n2_n_ndd_hmslow",
+    "ds_staged_n2_n_ndd_hmshigh",
+    "ds_staged_n2_n_n2dication",
+    "ds_escalation_n2_n_exc_johnsonlow_di_lower",
+    "ds_escalation_n2_n_exc_johnsonlow_nel_wang",
+    "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+    "ds_escalation_n2_n_rot_off_di_lower",
+    "ds_escalation_n2_n_rot_off_nel_wang",
+    "ds_escalation_n2_n_rot_off_di_lower_nel_wang",
+    "ds_escalation_n2_n_ndd_hmslow_di_lower",
+    "ds_escalation_n2_n_ndd_hmslow_nel_wang",
+    "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+    "ds_escalation_n2_n_ndd_hmshigh_di_lower",
+    "ds_escalation_n2_n_ndd_hmshigh_nel_wang",
+    "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+    "ds_escalation_n2_n_n2dication_nel_wang"
+   ],
+   "prerequisite_state": "structural_pass",
+   "action": "freeze + score once (scripts/score_p5_n2_staged.py freeze|score)",
+   "kind": "mechanical_preregistered"
+  },
+  {
+   "id": "T_O4_ESCALATE",
+   "family": [
+    "ds_staged_n2_n_exc_johnsonlow",
+    "ds_staged_n2_n_rot_off",
+    "ds_staged_n2_n_ndd_hmslow",
+    "ds_staged_n2_n_ndd_hmshigh",
+    "ds_staged_n2_n_n2dication"
+   ],
+   "prerequisite_state": "scored AND o4_trigger_fired",
+   "action": "launch the pinned escalation manifests of that first stage exactly as registered",
+   "kind": "mechanical_preregistered"
+  },
+  {
+   "id": "T_JOHNSONLOW_ESCALATION_ASSESSMENT",
+   "prerequisites": [
+    {
+     "id": "ds_escalation_n2_n_exc_johnsonlow_di_lower",
+     "state": "scored"
+    },
+    {
+     "id": "ds_escalation_n2_n_exc_johnsonlow_nel_wang",
+     "state": "scored"
+    },
+    {
+     "id": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+     "state": "scored"
+    }
+   ],
+   "produces": "fo_johnsonlow_escalation_assessment",
+   "kind": "follow_on_launch"
+  },
+  {
+   "id": "T_V2_QUESTION_B",
+   "prerequisites": [
+    {
+     "id": "lane_01_n2_domain_extension",
+     "state": "verified"
+    },
+    {
+     "id": "fo_johnsonlow_escalation_assessment",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_v2_excitation_question_b",
+   "kind": "follow_on_launch",
+   "note": "Question B is conditional on Question A; Johnson-low stays a sensitivity/alternative until Question B independently supports it"
+  },
+  {
+   "id": "T_O4_DISPOSITION_MATRIX",
+   "prerequisites": [
+    {
+     "id": "ds_staged_n2_n_exc_johnsonlow",
+     "state": "scored"
+    },
+    {
+     "id": "ds_staged_n2_n_rot_off",
+     "state": "scored"
+    },
+    {
+     "id": "ds_staged_n2_n_ndd_hmslow",
+     "state": "scored"
+    },
+    {
+     "id": "ds_staged_n2_n_ndd_hmshigh",
+     "state": "scored"
+    },
+    {
+     "id": "ds_staged_n2_n_n2dication",
+     "state": "scored"
+    }
+   ],
+   "plus": "every escalation dataset of each first stage whose o4_trigger_fired is true must be 'scored'",
+   "produces": "fo_o4_disposition_matrix",
+   "kind": "owner_decision_brief"
+  },
+  {
+   "id": "T_FACILITY_SCORE",
+   "prerequisites": [
+    {
+     "id": "ds_facility_mandatory",
+     "state": "structural_pass"
+    }
+   ],
+   "action": "freeze (freeze_p5_n2_dataset.py facility) + score once (score_p5_n2_frozen.py) + report (non-gating)",
+   "kind": "mechanical_preregistered"
+  },
+  {
+   "id": "T_ABSOLUTE_COMPARISON",
+   "prerequisites": [
+    {
+     "id": "ensemble_admitted_members",
+     "state": "non_empty"
+    }
+   ],
+   "produces": "fo_absolute_comparison",
+   "kind": "follow_on_launch",
+   "note": "only when hall_ensemble.load_ensemble() returns >= 1 admitted member (admission incl. O4 dispositions)"
+  }
+ ]
+}

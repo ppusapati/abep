@@ -2198,3 +2198,22 @@ Per the pre-registration, Johnson-low is now run on the other three primary comb
 with the remaining first-stage branches; the driver has no wall-clock limit, so oversubscribing the CPUs changes speed, not results.
 Also recorded (owner): decision milestones A/B/C, the two-track structure, and the fan-out rule (CLAUDE.md next-work 3). The
 Architecture Decision Acceleration lanes 16–27 and break-even surfaces were launched as dependency-aware workflows.
+
+### 2026-09-26 — Orchestration governance tightened (owner review of the operating model)
+The owner found two governance inconsistencies in my operating-model summary and asked for precision fixes. All are now implemented
+in `docs/orchestration/`:
+- Bundle 1 had an ambiguous dependency on lane 24 ("whatever … by then"). **lane_24_hard_gates is now a hard prerequisite**, because the
+  bundle's elimination statements need the gate logic.
+- The O4 disposition matrix was not a registered trigger. It is now registered as `T_O4_DISPOSITION_MATRIX`: all 5 first stages scored,
+  plus every escalation of a fired first stage scored. The mechanical steps are registered too (`T_O4_SCORE`, `T_O4_ESCALATE`,
+  `T_FACILITY_SCORE`), as are the v2 briefs `T_V2_QUESTION_A` / `T_V2_QUESTION_B` and `T_JOHNSONLOW_ESCALATION_ASSESSMENT`.
+- Every dependency is now a machine id (lane_NN_*, ds_*, fo_*; break-even = lane_28_break_even). Triggers require the terminal state
+  `verified` (both lenses, verified deps), not completion. A tracker test pins these semantics.
+- The watcher claim was overstated. Two harness background-shell watchers (byu2qv4f0, bbdjklhst) had died silently: empty output, no
+  exit notice, cause not determined. They are replaced by a detached daemon (setsid, PPID 1, PID 27068) that derives state every 60 s
+  and appends transitions and READY triggers to a durable event log, plus a harness Monitor on that log (30-min expiry, re-armed).
+  PIDs, survival limits and restart semantics are recorded in `runtime_state.json`. No event was lost, because state is re-derived
+  rather than event-sourced.
+- Other recorded changes: an admissibility rule with per-field metadata for the frozen comparison vector (P_feed/T_feed are
+  feed-state pressure/temperature; electrically driven feed loads are inside P_bus); the strict Bundle-1 outcome vocabulary; and the
+  separation of v2 Question A and Question B.

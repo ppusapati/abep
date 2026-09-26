@@ -1,0 +1,608 @@
+{
+ "schema": "abep_lane_registry_v1",
+ "decided": "owner operating rules 2026-09-26",
+ "terminal_states": {
+  "workflow_lane": "verified = the final verification round passed under the lane's protocol (two-lens-v2: evidence AND rules lenses; single-lens-v1: the single adversarial reviewer) AND every registered dep is verified; 'verified_provisional' (a dep not verified) and 'done_open_issues' never satisfy a trigger",
+  "campaign_dataset": "scored = frozen and scored once (provenance manifest present); structural_pass = runner finished and the pinned structural check passed",
+  "follow_on": "verified, exactly as a workflow_lane; its workflow run/key is recorded in the fired-trigger ledger when launched"
+ },
+ "answers_key": {
+  "i": "can an architecture be conditionally selected now",
+  "ii": "what evidence prevents physics-backed selection",
+  "iii": "what engineering issue could later overturn the choice"
+ },
+ "lanes": [
+  {
+   "id": "lane_01_n2_domain_extension",
+   "owner_number": 1,
+   "title": "N2 high-T_e domain-extension evidence audit (+ DRAFT v2 outline)",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_17c9b0e6-1cb",
+   "workflow_key": "DOMX",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "ii"
+  },
+  {
+   "id": "lane_02_ood_attribution",
+   "owner_number": 2,
+   "title": "OOD attribution (v1 vacuum)",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_17c9b0e6-1cb",
+   "workflow_key": "OOD",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "ii"
+  },
+  {
+   "id": "lane_03_scoreable_subset",
+   "owner_number": 3,
+   "title": "Scoreable-subset forensics",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_17c9b0e6-1cb",
+   "workflow_key": "SCORE",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "ii"
+  },
+  {
+   "id": "lane_06_experiment_protocol",
+   "owner_number": 6,
+   "title": "Common-condition experiment protocol (DRAFT)",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_828d7b1a-ca8",
+   "workflow_key": "XPROT",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_07_rf_evidence",
+   "owner_number": 7,
+   "title": "RF source evidence audit",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_2bcadd98-5ff",
+   "workflow_key": "RF",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_08_ecr_evidence",
+   "owner_number": 8,
+   "title": "ECR source evidence audit",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_2bcadd98-5ff",
+   "workflow_key": "ECR",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_09_hall_sustainment",
+   "owner_number": 9,
+   "title": "Hall-only sustainment evidence",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_2bcadd98-5ff",
+   "workflow_key": "HSUS",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_10_cathode_dossier",
+   "owner_number": 10,
+   "title": "Cathode / neutralizer evidence dossier",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_020ac47f-09d",
+   "workflow_key": "E",
+   "deps": [],
+   "verification_protocol": "single-lens-v1",
+   "answers": "iii"
+  },
+  {
+   "id": "lane_11_bus_boundary",
+   "owner_number": 11,
+   "title": "Common bus-power boundary module",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_828d7b1a-ca8",
+   "workflow_key": "BUS",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_12_arch_harness",
+   "owner_number": 12,
+   "title": "Architecture comparison harness",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_828d7b1a-ca8",
+   "workflow_key": "HARN",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "ii"
+  },
+  {
+   "id": "lane_13_o_o2_audit",
+   "owner_number": 13,
+   "title": "O / O2 chemistry source audit",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_020ac47f-09d",
+   "workflow_key": "D",
+   "deps": [],
+   "verification_protocol": "single-lens-v1",
+   "answers": "ii"
+  },
+  {
+   "id": "lane_14_dual_feed",
+   "owner_number": 14,
+   "title": "Dual-feed state machine",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_020ac47f-09d",
+   "workflow_key": "H",
+   "deps": [],
+   "verification_protocol": "single-lens-v1",
+   "answers": "iii"
+  },
+  {
+   "id": "lane_15_thermal_life",
+   "owner_number": 15,
+   "title": "Thermal / life framework",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_828d7b1a-ca8",
+   "workflow_key": "THL",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "iii"
+  },
+  {
+   "id": "lane_16_feed_envelope",
+   "owner_number": 16,
+   "title": "Thruster feed envelope",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_3da51c0c-3b4",
+   "workflow_key": "FEED",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_17_hall_reference",
+   "owner_number": 17,
+   "title": "Common Hall accelerator reference",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_3da51c0c-3b4",
+   "workflow_key": "HALLREF",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_18_interstage",
+   "owner_number": 18,
+   "title": "Pre-ionizer -> Hall interstage physics",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_15f0f2f8-8d4",
+   "workflow_key": "INTERSTAGE",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_19_cathode_integration",
+   "owner_number": 19,
+   "title": "Neutralizer/cathode system integration",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_22d6b4cf-10a",
+   "workflow_key": "CATHINT",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "iii"
+  },
+  {
+   "id": "lane_20_ppu_magnet",
+   "owner_number": 20,
+   "title": "PPU + magnet electrical closure",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_15f0f2f8-8d4",
+   "workflow_key": "PPUMAG",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_21_mass_bom",
+   "owner_number": 21,
+   "title": "Architecture mass BOM",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_22d6b4cf-10a",
+   "workflow_key": "MASS",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "iii"
+  },
+  {
+   "id": "lane_22_scaling",
+   "owner_number": 22,
+   "title": "Scaling / similarity audit P5 -> Vyovrinda",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_22d6b4cf-10a",
+   "workflow_key": "SCALING",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "ii"
+  },
+  {
+   "id": "lane_23_comparison_grid",
+   "owner_number": 23,
+   "title": "Common operating-envelope comparison grid",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_3da51c0c-3b4",
+   "workflow_key": "GRID",
+   "deps": [
+    "lane_16_feed_envelope",
+    "lane_17_hall_reference"
+   ],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_24_hard_gates",
+   "owner_number": 24,
+   "title": "Architecture hard-gate matrix + evaluator",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_e3c01fb8-eed",
+   "workflow_key": "GATES",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_25_min_decisive_experiment",
+   "owner_number": 25,
+   "title": "Minimum decisive experiment (DRAFT)",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_22d6b4cf-10a",
+   "workflow_key": "MINEXP",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_26_failure_tree",
+   "owner_number": 26,
+   "title": "Architecture failure trees",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_e3c01fb8-eed",
+   "workflow_key": "FTREE",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "iii"
+  },
+  {
+   "id": "lane_27_decision_dossier",
+   "owner_number": 27,
+   "title": "Decision-dossier generator",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_e3c01fb8-eed",
+   "workflow_key": "DOSSIER",
+   "deps": [
+    "lane_24_hard_gates",
+    "lane_26_failure_tree"
+   ],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_28_break_even",
+   "owner_number": 28,
+   "title": "Break-even surfaces (power, utilization, mass, life)",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_15f0f2f8-8d4",
+   "workflow_key": "BRKEVEN",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "i"
+  },
+  {
+   "id": "lane_29_exb_physics",
+   "owner_number": 29,
+   "title": "E x B / species-acceleration physics forensics",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_17c9b0e6-1cb",
+   "workflow_key": "EXB",
+   "deps": [],
+   "verification_protocol": "two-lens-v2",
+   "answers": "ii"
+  },
+  {
+   "id": "lane_30_ci",
+   "owner_number": null,
+   "title": "CI / repository integrity (earlier lane B)",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_020ac47f-09d",
+   "workflow_key": "B",
+   "deps": [],
+   "verification_protocol": "single-lens-v1",
+   "answers": null
+  },
+  {
+   "id": "lane_31_echt_disposition",
+   "owner_number": null,
+   "title": "ECHT historical/unsupported disposition (earlier lane C)",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_020ac47f-09d",
+   "workflow_key": "C",
+   "deps": [],
+   "verification_protocol": "single-lens-v1",
+   "answers": "ii"
+  },
+  {
+   "id": "lane_32_wall_life",
+   "owner_number": null,
+   "title": "Wall erosion / life evidence (earlier lane F)",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_020ac47f-09d",
+   "workflow_key": "F",
+   "deps": [],
+   "verification_protocol": "single-lens-v1",
+   "answers": "iii"
+  },
+  {
+   "id": "lane_33_upstream_icd",
+   "owner_number": null,
+   "title": "Upstream interface control document (earlier lane G)",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_020ac47f-09d",
+   "workflow_key": "G",
+   "deps": [],
+   "verification_protocol": "single-lens-v1",
+   "answers": "i"
+  },
+  {
+   "id": "lane_34_ledgers",
+   "owner_number": null,
+   "title": "Engineering ledgers (earlier lane I)",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_020ac47f-09d",
+   "workflow_key": "I",
+   "deps": [],
+   "verification_protocol": "single-lens-v1",
+   "answers": "iii"
+  },
+  {
+   "id": "lane_35_hallmap_spec",
+   "owner_number": null,
+   "title": "Hall-map production specification (earlier lane J)",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_020ac47f-09d",
+   "workflow_key": "J",
+   "deps": [],
+   "verification_protocol": "single-lens-v1",
+   "answers": "ii"
+  },
+  {
+   "id": "lane_36_traceability",
+   "owner_number": null,
+   "title": "RFP traceability matrix (earlier lane K)",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_020ac47f-09d",
+   "workflow_key": "K",
+   "deps": [],
+   "verification_protocol": "single-lens-v1",
+   "answers": null
+  },
+  {
+   "id": "lane_37_iist_package",
+   "owner_number": null,
+   "title": "Experimental decision package for IIST (earlier lane L)",
+   "kind": "workflow_lane",
+   "workflow_run": "wf_020ac47f-09d",
+   "workflow_key": "L",
+   "deps": [],
+   "verification_protocol": "single-lens-v1",
+   "answers": "i"
+  }
+ ],
+ "datasets": [
+  {
+   "id": "ds_staged_n2_n_exc_johnsonlow",
+   "kind": "campaign_dataset",
+   "manifest": "staged_n2_n_exc_johnsonlow",
+   "role": "O4 first stage",
+   "escalations": [
+    "ds_escalation_n2_n_exc_johnsonlow_di_lower",
+    "ds_escalation_n2_n_exc_johnsonlow_nel_wang",
+    "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang"
+   ]
+  },
+  {
+   "id": "ds_staged_n2_n_rot_off",
+   "kind": "campaign_dataset",
+   "manifest": "staged_n2_n_rot_off",
+   "role": "O4 first stage",
+   "escalations": [
+    "ds_escalation_n2_n_rot_off_di_lower",
+    "ds_escalation_n2_n_rot_off_nel_wang",
+    "ds_escalation_n2_n_rot_off_di_lower_nel_wang"
+   ]
+  },
+  {
+   "id": "ds_staged_n2_n_ndd_hmslow",
+   "kind": "campaign_dataset",
+   "manifest": "staged_n2_n_ndd_hmslow",
+   "role": "O4 first stage",
+   "escalations": [
+    "ds_escalation_n2_n_ndd_hmslow_di_lower",
+    "ds_escalation_n2_n_ndd_hmslow_nel_wang",
+    "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang"
+   ]
+  },
+  {
+   "id": "ds_staged_n2_n_ndd_hmshigh",
+   "kind": "campaign_dataset",
+   "manifest": "staged_n2_n_ndd_hmshigh",
+   "role": "O4 first stage",
+   "escalations": [
+    "ds_escalation_n2_n_ndd_hmshigh_di_lower",
+    "ds_escalation_n2_n_ndd_hmshigh_nel_wang",
+    "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang"
+   ]
+  },
+  {
+   "id": "ds_staged_n2_n_n2dication",
+   "kind": "campaign_dataset",
+   "manifest": "staged_n2_n_n2dication",
+   "role": "O4 first stage",
+   "escalations": [
+    "ds_escalation_n2_n_n2dication_nel_wang"
+   ]
+  },
+  {
+   "id": "ds_escalation_n2_n_exc_johnsonlow_di_lower",
+   "kind": "campaign_dataset",
+   "manifest": "escalation_n2_n_exc_johnsonlow_di_lower",
+   "role": "O4 escalation of ds_staged_n2_n_exc_johnsonlow"
+  },
+  {
+   "id": "ds_escalation_n2_n_exc_johnsonlow_nel_wang",
+   "kind": "campaign_dataset",
+   "manifest": "escalation_n2_n_exc_johnsonlow_nel_wang",
+   "role": "O4 escalation of ds_staged_n2_n_exc_johnsonlow"
+  },
+  {
+   "id": "ds_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+   "kind": "campaign_dataset",
+   "manifest": "escalation_n2_n_exc_johnsonlow_di_lower_nel_wang",
+   "role": "O4 escalation of ds_staged_n2_n_exc_johnsonlow"
+  },
+  {
+   "id": "ds_escalation_n2_n_rot_off_di_lower",
+   "kind": "campaign_dataset",
+   "manifest": "escalation_n2_n_rot_off_di_lower",
+   "role": "O4 escalation of ds_staged_n2_n_rot_off"
+  },
+  {
+   "id": "ds_escalation_n2_n_rot_off_nel_wang",
+   "kind": "campaign_dataset",
+   "manifest": "escalation_n2_n_rot_off_nel_wang",
+   "role": "O4 escalation of ds_staged_n2_n_rot_off"
+  },
+  {
+   "id": "ds_escalation_n2_n_rot_off_di_lower_nel_wang",
+   "kind": "campaign_dataset",
+   "manifest": "escalation_n2_n_rot_off_di_lower_nel_wang",
+   "role": "O4 escalation of ds_staged_n2_n_rot_off"
+  },
+  {
+   "id": "ds_escalation_n2_n_ndd_hmslow_di_lower",
+   "kind": "campaign_dataset",
+   "manifest": "escalation_n2_n_ndd_hmslow_di_lower",
+   "role": "O4 escalation of ds_staged_n2_n_ndd_hmslow"
+  },
+  {
+   "id": "ds_escalation_n2_n_ndd_hmslow_nel_wang",
+   "kind": "campaign_dataset",
+   "manifest": "escalation_n2_n_ndd_hmslow_nel_wang",
+   "role": "O4 escalation of ds_staged_n2_n_ndd_hmslow"
+  },
+  {
+   "id": "ds_escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+   "kind": "campaign_dataset",
+   "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
+   "role": "O4 escalation of ds_staged_n2_n_ndd_hmslow"
+  },
+  {
+   "id": "ds_escalation_n2_n_ndd_hmshigh_di_lower",
+   "kind": "campaign_dataset",
+   "manifest": "escalation_n2_n_ndd_hmshigh_di_lower",
+   "role": "O4 escalation of ds_staged_n2_n_ndd_hmshigh"
+  },
+  {
+   "id": "ds_escalation_n2_n_ndd_hmshigh_nel_wang",
+   "kind": "campaign_dataset",
+   "manifest": "escalation_n2_n_ndd_hmshigh_nel_wang",
+   "role": "O4 escalation of ds_staged_n2_n_ndd_hmshigh"
+  },
+  {
+   "id": "ds_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+   "kind": "campaign_dataset",
+   "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
+   "role": "O4 escalation of ds_staged_n2_n_ndd_hmshigh"
+  },
+  {
+   "id": "ds_escalation_n2_n_n2dication_nel_wang",
+   "kind": "campaign_dataset",
+   "manifest": "escalation_n2_n_n2dication_nel_wang",
+   "role": "O4 escalation of ds_staged_n2_n_n2dication"
+  },
+  {
+   "id": "ds_facility_mandatory",
+   "kind": "campaign_dataset",
+   "manifest": "facility_mandatory",
+   "role": "facility (secondary, never gates)"
+  }
+ ],
+ "follow_ons": [
+  {
+   "id": "fo_rf_breakeven_overlay",
+   "kind": "follow_on",
+   "title": "RF evidence placed on the break-even surfaces with interstage transport efficiency"
+  },
+  {
+   "id": "fo_ecr_breakeven_overlay",
+   "kind": "follow_on",
+   "title": "ECR evidence placed on the break-even surfaces with interstage transport efficiency"
+  },
+  {
+   "id": "fo_hall_sustainment_envelope",
+   "kind": "follow_on",
+   "title": "Direct-Hall sustainment envelope over the common feed envelope"
+  },
+  {
+   "id": "fo_bundle1_conditional_selection",
+   "kind": "follow_on",
+   "title": "Bundle 1: Architecture Conditional Selection"
+  },
+  {
+   "id": "fo_aux_bus_comparison",
+   "kind": "follow_on",
+   "title": "Full auxiliary / DC-bus power comparison"
+  },
+  {
+   "id": "fo_veto_layer",
+   "kind": "follow_on",
+   "title": "Mass / thermal / life veto layer"
+  },
+  {
+   "id": "fo_experiment_package",
+   "kind": "follow_on",
+   "title": "Experimental decision package from the minimum decisive experiment"
+  },
+  {
+   "id": "fo_v2_domain_question_a",
+   "kind": "follow_on",
+   "title": "v2 Question A brief: is a wider energy domain source-supported? (owner decides)"
+  },
+  {
+   "id": "fo_johnsonlow_escalation_assessment",
+   "kind": "follow_on",
+   "title": "Does the Johnson-low excitation uncertainty survive across the other primary chemistry combinations?"
+  },
+  {
+   "id": "fo_v2_excitation_question_b",
+   "kind": "follow_on",
+   "title": "v2 Question B: which electronic-excitation representation is supportable (conditional on Question A)"
+  },
+  {
+   "id": "fo_o4_disposition_matrix",
+   "kind": "follow_on",
+   "title": "O4 disposition matrix (owner records dispositions; ensemble/o4_dispositions_schema_v1.json)"
+  },
+  {
+   "id": "fo_absolute_comparison",
+   "kind": "follow_on",
+   "title": "Absolute comparison grid + design Hall maps + whole-system UQ"
+  }
+ ]
+}
