@@ -1,0 +1,6 @@
+{
+ "schema": "hard_gate_evidence_v1",
+ "matrix_version": "1.0.0",
+ "items": [],
+ "note": "No evidence item is registered (2026-09-26). No closure-independent hard bound for these architectures has been computed by a committed script; the credible Hall-transport set is empty (gate 3 FAIL), so no admitted-closure evidence exists; the repository holds no Vyovrinda hardware measurement; absolute Hall results of the withdrawn 0-D closure are not evidence, and screening-candidate results never are. Every gate is therefore UNDETERMINED for all three architectures and nothing is eliminated. Items are added only with the full docs/EVIDENCE.md attributes (source, quantity type, evidence level, uncertainty, applicability domain, validation status, transformation chain) through a reviewed change, and the status file is regenerated with: python -m abep_sim.hard_gates status --out docs/architecture_comparison/hard_gates/hard_gate_status_v1.json"
+}
