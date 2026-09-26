@@ -161,7 +161,10 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    scores, provenance, report, decision, `VALIDATION_RELEASE_v1.json`, all links verified). Result: no candidate PROMOTABLE; all nine
    INCONCLUSIVE / NOT ELIGIBLE; credible set ∅; no admission, no design Hall maps. Next (owner plan): O4 staged-sensitivity first stage
    (5 × 270 vacuum) and the 1080 facility runs as pre-registered; non-gating failure/OOD forensics; no retuning, no criteria change.
-   Admission/Hall maps stay gated until the O4 dispositions are complete even if a later campaign yields PROMOTABLE.
+   Admission/Hall maps stay gated until the O4 dispositions are complete even if a later campaign yields PROMOTABLE: enforced by
+   `hall_ensemble._check_o4` (admission records need `o4_dispositions_file`, `ensemble/o4_dispositions_schema_v1.json`; triggers are
+   read from the scored O4 files). O4 datasets: `scripts/score_p5_n2_staged.py freeze|score` (pinned launch manifest gate, score once
+   on mandatory + staged, mandatory scores reproduced exactly). Facility: the standard freeze/score pipeline in mode `facility`.
    **P5-N₂ measurement audit: done** (`identification/p5_n2_measurement_audit_findings_v1.json`; values in
    `brabston_p5_n2_measurement_audit_v1.json` from `scripts/audit_p5_n2_measurements.py`). Targets: I_d and thrust at N1–N5,
    E×B species V_a at N1–N3, sustainment; Φ_m,n/η_SP,n/ξ_N are model-derived, not targets. Pre-registration decisions D1–D6 are

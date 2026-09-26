@@ -1,0 +1,29 @@
+{
+ "schema": "o4_dispositions_v1",
+ "purpose": "The owner's disposition of the pre-registered O4 staged sensitivities (prereg/p5_n2_validation_criteria_v1.json operational_rules.O4_staged_escalation, staged_sensitivities) for one mandatory-vacuum decision. Required by every admission record (admission_record_schema_v1 o4_dispositions_file/sha256). abep_sim/hall_ensemble._check_o4 verifies it offline; trigger values are read from the scored O4 files, never taken from this record.",
+ "required_fields": {
+  "schema": "\"o4_dispositions_v1\"",
+  "campaign_id": "e.g. p5_n2_campaign_v1",
+  "mandatory_decision_sha256": "sha256 of the mandatory-vacuum decision file the admission cites",
+  "sensitivities": {
+   "<staged sensitivity config, one per prereg staged_sensitivities entry>": {
+    "baseline": "its pre-registered baseline chemistry (must equal the pre-registration)",
+    "first_stage": {
+     "scores_provenance_file": "validation/..._scores_provenance.json from scripts/score_p5_n2_staged.py",
+     "scores_provenance_sha256": "sha256"
+    },
+    "trigger_fired": "bool; must equal the scored staged_escalation[<config>].trigger_fired",
+    "escalations": "required when trigger_fired: {<escalation config>: {scores_provenance_file, scores_provenance_sha256}} for EVERY pre-registered escalation combination of this sensitivity",
+    "disposition": "the owner's recorded disposition (non-empty text)"
+   }
+  },
+  "cleared_for_admission": "list of ensemble_member_ids the owner clears for admission after the O4 dispositions",
+  "decided_by": "who decided",
+  "decided_utc": "ISO time"
+ },
+ "rules": [
+  "every O4 result must be scored against the same mandatory dataset and scores as the admission (input_mandatory_sha256, mandatory_scores_sha256)",
+  "facility-only differences never trigger escalation (O4); facility results are not required here",
+  "no criterion, tolerance, chemistry or transport parameter changes as a result of an O4 disposition (no retuning)"
+ ]
+}

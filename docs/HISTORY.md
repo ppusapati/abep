@@ -2140,3 +2140,18 @@ across all runs; sgb-screen-05…09 closer, 08/09 under-predict at N1); axial th
 E×B (non-gating): model N⁺ acceleration voltage 85–172 V below the measured value; the measured ordering V_a(N⁺) > V_a(N₂⁺) holds
 in 0 of 648 model runs. Credible set stays ∅ (gate 3 FAIL). No criteria, chemistry, transport or tolerance changed.
 Release follow-up (owner): `make_validation_release.py` now publishes atomically (temporary file → parse/verify → os.replace).
+
+### 2026-09-26 — O4 gating before admission; O4 dataset freeze/score path (owner follow-up on PR #29)
+Owner decision: a PROMOTABLE mandatory-vacuum result alone never admits a member or enables design Hall maps; the O4 first stage and
+every escalation its trigger requires must be scored and dispositioned first. Enforced offline in `abep_sim/hall_ensemble.py`
+(`_check_o4`, called by `_check_admission`, hence by `load_ensemble`/`require_admitted`): admission records now also require
+`o4_dispositions_file`/`o4_dispositions_sha256` (amendment to `ensemble/admission_record_schema_v1.json`, made before any admission
+record existed) pointing to an `o4_dispositions_v1` record (`ensemble/o4_dispositions_schema_v1.json`) that is bound to the same
+mandatory decision, covers every pre-registered staged sensitivity against its baseline, cites scored O4 files (scored against the
+same mandatory dataset and scores), carries a trigger value equal to the scored one, includes every pre-registered escalation when
+fired, a non-empty owner disposition, and lists the member as cleared. What a disposition concludes stays the owner's decision.
+`scripts/score_p5_n2_staged.py`: the fcd6720 gate is pinned to the 1080-run mandatory grid, so O4 datasets are frozen against their
+pinned launch manifest (manifest == fresh build; `make_p5_n2_launch_manifests.check`; record identity; canonical sha256; deterministic
+gzip) and scored once by the frozen scorer on mandatory + staged records (scorer byte-identical to 10842ce; mandatory candidates and
+runs must be reproduced exactly; provenance renamed last). Dry-run controls (scratch, not results): the baseline relabelled as a
+sensitivity fires no trigger; +10 % I_d fires it. No scorer, criterion, threshold, chemistry or record changed.

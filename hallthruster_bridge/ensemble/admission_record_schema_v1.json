@@ -11,7 +11,10 @@
   "scores_provenance_sha256": "sha256 of scores_provenance_file",
   "passing_layer1_members": "non-empty list of global layer-1 members (registration|coil|reading) that passed; calibration nuisance stays provenance, never a parameter",
   "admitted_utc": "ISO time",
-  "decided_by": "who approved the admission"
+  "decided_by": "who approved the admission",
+  "o4_dispositions_file": "path (relative to hallthruster_bridge/) of the owner's O4 dispositions record (ensemble/o4_dispositions_schema_v1.json)",
+  "o4_dispositions_sha256": "sha256 of o4_dispositions_file"
  },
- "evidence_matrix_note": "The Xe screening evidence that selected a candidate and the new evidence that promoted it are recorded separately (screening_rule / admission.campaign_id); the same evidence is never counted twice."
+ "evidence_matrix_note": "The Xe screening evidence that selected a candidate and the new evidence that promoted it are recorded separately (screening_rule / admission.campaign_id); the same evidence is never counted twice.",
+ "amendment_2026_09_26": "Owner follow-up on PR #29, made before any admission record existed: a PROMOTABLE mandatory-vacuum result alone never admits a member or enables design Hall maps. The O4 first stage (every pre-registered staged sensitivity, scored against its baseline) and every escalation its trigger requires must be scored (scripts/score_p5_n2_staged.py) and dispositioned by the owner before admission; load_ensemble() verifies this offline (_check_o4)."
 }
