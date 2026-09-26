@@ -1,0 +1,5364 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:abep:schemas:interfaces:upstream_icd_v1",
+ "title": "ABEP upstream gas-chain interface control document (ICD) v1",
+ "description": "JSON Schema for one upstream-state record crossing the ABEP gas-supply chain intake -> filter -> compressor -> atmospheric gas chamber -> valve -> thruster, and Xe chamber -> valve -> thruster (RFP architecture, CLAUDE.md 'Next work' 1, scope note). Each property of an interface is a quantity object (value, unit, evidence class, uncertainty). The 'x-field' annotation on each property records the code that produces and consumes it at this commit, its status (supplied / partial / derivable / gap), validity domain and uncertainty source. The explanation is docs/interfaces/UPSTREAM_ICD.md; tests/test_upstream_icd.py checks the references. This is an interface definition, not a physics model, a validation claim or an ABEP closure claim. 'Upstream' here means the gas-supply chain upstream of the thruster, not hallthruster_bridge/upstream/ (the HallThruster.jl project).",
+ "x-icd": {
+  "name": "upstream_icd",
+  "version": "1.0.0",
+  "versioning": "semantic: removing or renaming a field, changing a unit or the species set = major; adding a field or an interface = minor; annotation/status/producer updates = patch. The instance's icd_version must equal this version.",
+  "status": "DRAFT for owner review (2026-09-26)",
+  "code_baseline_commit": "7b219ba",
+  "architecture_source": "CLAUDE.md, Next work 1, 'Scope' paragraph (RFP architecture)",
+  "chain": {
+   "atmospheric": [
+    "ambient",
+    "intake",
+    "filter",
+    "compressor",
+    "atmospheric gas chamber",
+    "atmospheric valve",
+    "thruster ionization/discharge"
+   ],
+   "xenon": [
+    "Xe chamber (tank)",
+    "Xe valve",
+    "thruster ionization/discharge"
+   ]
+  },
+  "interface_order": [
+   "IF-A0",
+   "IF-A1",
+   "IF-A2",
+   "IF-A3",
+   "IF-A4",
+   "IF-A5",
+   "IF-X1",
+   "IF-X2"
+  ],
+  "thruster_boundary": [
+   "IF-A5",
+   "IF-X2"
+  ],
+  "species": [
+   "O",
+   "N2",
+   "O2",
+   "Xe"
+  ],
+  "species_source": "abep_sim/constants.py M_SPECIES (the atmospheric path carries O, N2, O2; the Xe path carries Xe)",
+  "evidence_classes": [
+   "measured",
+   "digitized",
+   "inferred",
+   "reconstructed",
+   "model-derived",
+   "assumed"
+  ],
+  "evidence_source": "docs/EVIDENCE.md (quantity type); CLAUDE.md rules 6 and 10",
+  "status_values": {
+   "supplied": "an existing function/attribute returns the quantity (output_key, in the ICD unit or a stated native unit)",
+   "derivable": "no function returns it, but it follows from supplied quantities by the stated derivation",
+   "partial": "produced only on a non-production path, only in part, or under a stated simplifying assumption; 'requires' says what is missing",
+   "gap": "no producer; 'requires' says what is needed (TBD)"
+  },
+  "variable_classes": {
+   "mdot_s": "species-resolved (and total) mass flow crossing the interface, incl. leak/recirculation branches",
+   "p": "static pressure at the interface (total and partial), or the ratio that sets it",
+   "T": "gas (and where relevant wall) temperature at the interface",
+   "x_s": "composition: mole fraction x_s, mass fraction w_s, composition-changing wall chemistry",
+   "dmdot_dt": "time derivative of the mass flow crossing the interface",
+   "inventory": "gas mass held in the element upstream of the interface",
+   "residence_time": "mean residence time (or wall-collision count) of gas in the upstream element",
+   "conductance": "flow conductance / pumping speed / transmission probability of the upstream element",
+   "pressure_loss": "static-pressure drop across the upstream element",
+   "shaft_power": "mechanical shaft power (and the electrical input that drives it)",
+   "rejected_heat": "heat the upstream element rejects to the thermal network",
+   "contamination": "non-propellant loading: AO flux/fluence, erosion products, outgassing carried or accumulated",
+   "quality": "state-quality flags: domain, convergence, feasibility, trust"
+  },
+  "units": {
+   "kg s^-1": "mass flow",
+   "kg s^-2": "rate of change of mass flow",
+   "Pa": "pressure",
+   "K": "temperature",
+   "-": "dimensionless (fraction, ratio, probability, count, flag)",
+   "kg": "mass",
+   "s": "time",
+   "m^3": "volume",
+   "m^3 s^-1": "volumetric conductance / pumping speed",
+   "W": "power / heat flow",
+   "W m^-2": "heat flux",
+   "m^-2 s^-1": "number flux",
+   "m^-2": "number fluence",
+   "eV": "particle energy",
+   "kg m^-3": "mass density",
+   "m^-3": "number density",
+   "m s^-1": "speed or recession rate",
+   "m": "length / depth",
+   "kg m^-2 s^-1": "mass flux",
+   "N m": "torque"
+  },
+  "validity_domains": {
+   "D-ATM-FROZEN": "Frozen NRLMSIS 2.1 scenario dataset abep_sim/data/atmosphere_msis21_v1.{csv,json}: altitude 150-300 km, F10.7 = F10.7A in {70, 100, 150, 190, 230}, ap 15, orbit-averaged (atmosphere.ATM_VERSION: lat -60..60 x 4 LST sectors), epoch 2028-03-21T12:00. Outside the grid atmosphere() raises ValueError (_interp_frozen). Composition carried: O, N2, O2 only (He/H/Ar/N dropped, per the atmosphere.py code comment: verify). RFP operating envelope 180-230 km (constants.RFP alt_min_km/alt_max_km).",
+   "D-TPMC-FROZEN": "Frozen TPMC response surface abep_sim/data/intake_surface_v1.{csv,json}: L/d {3,5,10,20}, phi {0.8,0.9}, alpha {0,0.2,0.5,0.8,1.0}, theta {0,2,5} deg, species O/N2/O2, scattering maxwell or cll, built at 200 km, F10.7 150. IntakeSurface.__call__ raises ValueError outside the grid (no extrapolation). The surface has no filter column: response_surface() builds IntakeGeometry without a filter.",
+   "D-TPMC-DIRECT": "Direct TPMC (intake_tpmc.intake_response): free-molecular (Kn >> 1) honeycomb of circular channels, Maxwell or CLL wall scattering; converged when unresolved_fraction <= 1e-3. Not used on the production path (system.evaluate uses the frozen surface).",
+   "D-INTAKE-PARAM": "Parametric intake/compressor (intake.IntakeParams/CompressorParams with use_tpmc=False): eta_c is a blend of two code priors times cos^2(off-axis); compress() uses a total number-density ratio. Code defaults, evidence class assumed.",
+   "D-DRAGCOMP": "compressor.DragCompressor: free-molecular turbomolecular rows + Holweck/Gaede drag stages with a linear Gaede throughput characteristic, per-species K clipped to [1, K0]; rotor_ok requires tip speed <= u_max (materials DB yield / (stress_safety x density)); size_for() searches turbo rows 1-6, drag stages 0-4, rpm 5000..min(rpm_max, stress limit) in 2500 steps. No Knudsen-number check. Coefficients are code defaults.",
+   "D-RESERVOIR": "reservoir.Reservoir: isothermal lumped volume, species O/O2/N2 only, molecular-flow orifice conductance K*A*c_bar/4, O wall recombination gamma(T) from the materials DB (literature-class priors per materials.py). size_orifice_for_pressure() bisects the anode-feed area in [1e-8, 3e-2] m^2. No Knudsen-number check.",
+   "D-SYSTEM-BUDGET": "system.Budgets / system.evaluate parametric budget values (code defaults, evidence class assumed).",
+   "D-CARD": "thruster.py card model (module docstring: every card number is a prior to be replaced by test data). Used by system.evaluate and transient.run_mission; not the HallThruster.jl path.",
+   "D-ARCH": "archengine.gas_path_state -> archengine._propulsion hand-off (gas-path variables area and reservoir pressure are search variables of close_architecture).",
+   "D-AO": "aochem.py / life.py / materials.py AO and erosion relations: literature-class priors (aochem.py and materials.py docstrings) to be replaced by coupon / AO-beam test data.",
+   "D-THERMAL": "thermal.py lumped node network (default_nodes / solve_network / size_radiator); code defaults.",
+   "D-MISSION": "transient.run_mission quasi-static time stepping (dt_h, default 1 h); no valve or line dynamics.",
+   "D-TBD": "No producer, so no validity domain is defined. TBD with the producer."
+  },
+  "closure_independence": {
+   "rule": "The thruster boundary (IF-A5, IF-X2) and every upstream interface are defined identically for every Hall transport closure. No field may name, depend on, or be produced by a transport closure, an ensemble member, or a layer-1 calibration-nuisance variable (P5 registration, coil shape, beam-efficiency reading, facility-ingestion interpretation). Calibration nuisance is marginalized when admitting closures and never leaks upstream into intake, filter, compressor, gas chambers or valves (CLAUDE.md Next work 1; abep_sim/hall_ensemble.py docstring). Hall maps are queried WITH the boundary state; they never write into it.",
+   "calibration_nuisance_keys_source": "hallthruster_bridge/ensemble/transport_ensemble_v0.json -> calibration_nuisance",
+   "identifiers": [
+    "p5_registration",
+    "p5_coil_shape",
+    "beam_efficiency_reading",
+    "facility_ingestion_interpretation",
+    "ensemble_member_id",
+    "transport",
+    "transport_family",
+    "transport_parameters",
+    "calibration_hypotheses",
+    "anom_model",
+    "alpha_anom",
+    "facility_ingestion",
+    "background_pressure_Torr",
+    "registration",
+    "coil_shape",
+    "L_iz_frac"
+   ],
+   "forbidden_producer_prefixes": [
+    "abep_sim.hall_map",
+    "abep_sim.hall_ensemble",
+    "abep_sim.hall1d",
+    "abep_sim.plasma_devices",
+    "abep_sim.plasma_chem",
+    "hallthruster_bridge/"
+   ]
+  },
+  "out_of_scope": [
+   "intake drag and C_D (intake -> spacecraft/mission: intake.collection drag_N, C_D -> mission_env.spacecraft_drag)",
+   "masses, BOM and indigenous content",
+   "thruster-side injector properties (neutral injection velocity; HallThruster.jl Propellant.velocity_m_s)",
+   "thruster electrical inputs (discharge voltage, magnet current) and all Hall outputs (hall_map_schema_v1)",
+   "facility background pressure (a ground-test facility interface, never a flight upstream field)"
+  ]
+ },
+ "type": "object",
+ "properties": {
+  "icd": {
+   "const": "upstream_icd"
+  },
+  "icd_version": {
+   "const": "1.0.0"
+  },
+  "record_provenance": {
+   "$ref": "#/$defs/record_provenance"
+  },
+  "interfaces": {
+   "type": "object",
+   "description": "one entry per interface present in this record (the Xe entries are absent in air-only operation)",
+   "properties": {
+    "IF-A0": {
+     "$ref": "#/$defs/IF-A0"
+    },
+    "IF-A1": {
+     "$ref": "#/$defs/IF-A1"
+    },
+    "IF-A2": {
+     "$ref": "#/$defs/IF-A2"
+    },
+    "IF-A3": {
+     "$ref": "#/$defs/IF-A3"
+    },
+    "IF-A4": {
+     "$ref": "#/$defs/IF-A4"
+    },
+    "IF-A5": {
+     "$ref": "#/$defs/IF-A5"
+    },
+    "IF-X1": {
+     "$ref": "#/$defs/IF-X1"
+    },
+    "IF-X2": {
+     "$ref": "#/$defs/IF-X2"
+    }
+   },
+   "additionalProperties": false
+  },
+  "commands": {
+   "$ref": "#/$defs/commands"
+  }
+ },
+ "required": [
+  "icd",
+  "icd_version",
+  "interfaces"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "species": {
+   "enum": [
+    "O",
+    "N2",
+    "O2",
+    "Xe"
+   ]
+  },
+  "evidence_class": {
+   "enum": [
+    "measured",
+    "digitized",
+    "inferred",
+    "reconstructed",
+    "model-derived",
+    "assumed",
+    "TBD"
+   ],
+   "description": "quantity type of the value (docs/EVIDENCE.md). 'TBD' only when the value is null (no producer or not evaluated); a non-null value must carry one of the six classes"
+  },
+  "uncertainty": {
+   "type": "object",
+   "description": "uncertainty of the value; kind 'TBD' when no uncertainty model exists (the usual case upstream today)",
+   "properties": {
+    "kind": {
+     "enum": [
+      "TBD",
+      "not_applicable",
+      "standard_abs_1sigma",
+      "standard_rel_1sigma",
+      "interval",
+      "scenario_set"
+     ]
+    },
+    "value": {
+     "type": [
+      "number",
+      "object",
+      "null"
+     ]
+    },
+    "lower": {
+     "type": [
+      "number",
+      "object",
+      "null"
+     ]
+    },
+    "upper": {
+     "type": [
+      "number",
+      "object",
+      "null"
+     ]
+    },
+    "scenarios": {
+     "type": "array"
+    },
+    "basis": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "kind"
+   ],
+   "additionalProperties": false
+  },
+  "scalar_quantity": {
+   "type": "object",
+   "properties": {
+    "value": {
+     "type": [
+      "number",
+      "null"
+     ]
+    },
+    "unit": {
+     "type": "string"
+    },
+    "evidence_class": {
+     "$ref": "#/$defs/evidence_class"
+    },
+    "uncertainty": {
+     "$ref": "#/$defs/uncertainty"
+    },
+    "source": {
+     "type": "string"
+    },
+    "validity_domain": {
+     "type": "string"
+    },
+    "in_domain": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "required": [
+    "value",
+    "unit",
+    "evidence_class",
+    "uncertainty"
+   ],
+   "additionalProperties": false,
+   "anyOf": [
+    {
+     "properties": {
+      "value": {
+       "type": "number"
+      },
+      "evidence_class": {
+       "enum": [
+        "measured",
+        "digitized",
+        "inferred",
+        "reconstructed",
+        "model-derived",
+        "assumed"
+       ]
+      }
+     }
+    },
+    {
+     "properties": {
+      "value": {
+       "type": "null"
+      }
+     }
+    }
+   ]
+  },
+  "species_quantity": {
+   "type": "object",
+   "properties": {
+    "values": {
+     "type": "object",
+     "propertyNames": {
+      "$ref": "#/$defs/species"
+     },
+     "additionalProperties": {
+      "type": [
+       "number",
+       "null"
+      ]
+     }
+    },
+    "unit": {
+     "type": "string"
+    },
+    "evidence_class": {
+     "$ref": "#/$defs/evidence_class"
+    },
+    "uncertainty": {
+     "$ref": "#/$defs/uncertainty"
+    },
+    "source": {
+     "type": "string"
+    },
+    "validity_domain": {
+     "type": "string"
+    },
+    "in_domain": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "required": [
+    "values",
+    "unit",
+    "evidence_class",
+    "uncertainty"
+   ],
+   "additionalProperties": false
+  },
+  "flag": {
+   "type": "object",
+   "properties": {
+    "value": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "unit": {
+     "type": "string"
+    },
+    "source": {
+     "type": "string"
+    },
+    "reason": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "value",
+    "unit",
+    "source"
+   ],
+   "additionalProperties": false
+  },
+  "label": {
+   "type": "object",
+   "properties": {
+    "value": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "unit": {
+     "type": "string"
+    },
+    "source": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "value",
+    "unit",
+    "source"
+   ],
+   "additionalProperties": false
+  },
+  "record_provenance": {
+   "type": "object",
+   "properties": {
+    "producer": {
+     "type": "string"
+    },
+    "git_commit": {
+     "type": "string"
+    },
+    "created_utc": {
+     "type": "string"
+    },
+    "atmosphere_dataset": {
+     "type": "string"
+    },
+    "intake_surface_dataset": {
+     "type": "string"
+    },
+    "notes": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "producer",
+    "git_commit"
+   ],
+   "additionalProperties": false
+  },
+  "commands": {
+   "type": "object",
+   "title": "Commands: controller -> valves",
+   "description": "Demand signals from the propulsion controller to the valves. The definitions below are the same for every Hall transport-ensemble member; the member id is never an input to an upstream element.",
+   "properties": {
+    "atm_mdot_setpoint_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "command",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "commanded air mass flow to the thruster",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.transient",
+        "attribute": "run_mission",
+        "output_key": "frac"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no valve model"
+       }
+      ],
+      "validity_domain": "D-MISSION",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "TBD - requires a controller model",
+      "note": "transient.run_mission throttles by scaling the collected flow by frac = T_cmd / T_air (quasi-static)",
+      "requires": "TBD - requires a valve model and a controller definition"
+     }
+    },
+    "xe_mdot_setpoint_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "command",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "commanded Xe anode mass flow",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.transient",
+        "attribute": "run_mission",
+        "output_key": "xe_rate"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no valve model"
+       }
+      ],
+      "validity_domain": "D-MISSION",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "TBD - requires a controller model",
+      "note": "xe_rate = thruster.xe_for_thrust(...) when air thrust is short and the Xe policy allows",
+      "requires": "TBD - requires a valve model and a controller definition"
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "IF-A0": {
+   "type": "object",
+   "title": "IF-A0: free stream -> intake aperture",
+   "description": "Free-molecular free-stream state presented to the ram aperture. Producer: abep_sim.atmosphere.atmosphere() (frozen NRLMSIS by default, live MSIS only when asked, CLAUDE.md rule 3); consumer: abep_sim.intake.collection().",
+   "x-interface": {
+    "id": "IF-A0",
+    "name": "free stream -> intake aperture",
+    "from": "ambient (VLEO free stream)",
+    "to": "intake",
+    "path": "atmospheric",
+    "thruster_boundary": false,
+    "not_applicable": {
+     "inventory": "free stream holds no inventory",
+     "residence_time": "free stream",
+     "conductance": "free stream",
+     "pressure_loss": "free stream",
+     "shaft_power": "free stream",
+     "rejected_heat": "free stream (aero heating is booked on IF-A1)"
+    }
+   },
+   "properties": {
+    "mdot_incident_s_kgps": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "species",
+      "definition": "species mass flow of the free stream through the intake aperture area (rho w_s V A)",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "collection",
+        "output_key": "mdot_incident"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "atmosphere",
+        "output_key": "fO"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "collection"
+       }
+      ],
+      "validity_domain": "D-ATM-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "mdot_incident (total, collection) x w_s (atmosphere fO/fN2/fO2)"
+     }
+    },
+    "mass_flux_kgpm2ps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg m^-2 s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg m^-2 s^-1",
+      "shape": "scalar",
+      "definition": "free-stream mass flux rho V on the ram face",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "atmosphere",
+        "output_key": "flux_kg_m2_s"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "collection"
+       }
+      ],
+      "validity_domain": "D-ATM-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "rho_kgpm3": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg m^-3"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg m^-3",
+      "shape": "scalar",
+      "definition": "free-stream mass density",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "atmosphere",
+        "output_key": "rho"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "collection"
+       }
+      ],
+      "validity_domain": "D-ATM-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "n_total_m3": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "m^-3"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "m^-3",
+      "shape": "scalar",
+      "definition": "free-stream total number density (O+N2+O2)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "atmosphere",
+        "output_key": "n"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "compress"
+       }
+      ],
+      "validity_domain": "D-ATM-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "V_mps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "m s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "m s^-1",
+      "shape": "scalar",
+      "definition": "flow speed relative to the intake; atmosphere() returns the circular orbital speed 'V'",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "atmosphere",
+        "output_key": "V"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "collection"
+       }
+      ],
+      "validity_domain": "D-ATM-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "Consumers read atm.get('V_rel', atm['V']), but atmosphere() does not return 'V_rel' (co-rotation, winds), so the relative speed equals the orbital speed on every current path.",
+      "requires": "TBD - requires a relative-velocity producer (atmosphere co-rotation and winds) if V_rel is to differ from V"
+     }
+    },
+    "p_ambient_Pa": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "p",
+      "unit": "Pa",
+      "shape": "scalar",
+      "definition": "free-stream static pressure n k T",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "atmosphere",
+        "output_key": "p_ambient_Pa"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no current consumer; informational"
+       }
+      ],
+      "validity_domain": "D-ATM-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "T_ambient_K": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "K"
+      }
+     },
+     "x-field": {
+      "variable_class": "T",
+      "unit": "K",
+      "shape": "scalar",
+      "definition": "free-stream neutral temperature",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "atmosphere",
+        "output_key": "T"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake_tpmc",
+        "attribute": "intake_response"
+       }
+      ],
+      "validity_domain": "D-ATM-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "w_s": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "species",
+      "definition": "free-stream mass fractions (keys O, N2, O2)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "atmosphere",
+        "output_key": "fO"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "atmosphere",
+        "output_key": "fN2"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "atmosphere",
+        "output_key": "fO2"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "collection"
+       }
+      ],
+      "validity_domain": "D-ATM-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "x_s": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "species",
+      "definition": "free-stream mole fractions",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "atmosphere",
+        "output_key": "fO"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.constants",
+        "attribute": "M_SPECIES"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no current consumer"
+       }
+      ],
+      "validity_domain": "D-ATM-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "x_s = (w_s / M_s) / sum_k (w_k / M_k), M_s from constants.M_SPECIES"
+     }
+    },
+    "m_mean_kg": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "kg",
+      "shape": "scalar",
+      "definition": "mean molecular mass of the free stream",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "atmosphere",
+        "output_key": "m_mean"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "passive_compression"
+       }
+      ],
+      "validity_domain": "D-ATM-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "dmdot_dt_kgps2": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-2"
+      }
+     },
+     "x-field": {
+      "variable_class": "dmdot_dt",
+      "unit": "kg s^-2",
+      "shape": "scalar",
+      "definition": "time derivative of the incident mass flow (orbit-scale and solar-cycle variation)",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "atmosphere() is orbit-averaged by construction, so intra-orbit variation is absent"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires an orbit-resolved (non-averaged) density/composition producer; transient.run_mission only steps the orbit-averaged state at dt_h"
+     }
+    },
+    "ao_number_flux_m2s": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "m^-2 s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "contamination",
+      "unit": "m^-2 s^-1",
+      "shape": "scalar",
+      "definition": "ram atomic-oxygen number flux n_O V",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.aochem",
+        "attribute": "ao_flux",
+        "output_key": "ao_flux"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.life",
+        "attribute": "intake_life"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.life",
+        "attribute": "blade_life"
+       }
+      ],
+      "validity_domain": "D-AO",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "ao_energy_eV": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "eV"
+      }
+     },
+     "x-field": {
+      "variable_class": "contamination",
+      "unit": "eV",
+      "shape": "scalar",
+      "definition": "ram atomic-oxygen impact kinetic energy 0.5 m_O V^2",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.aochem",
+        "attribute": "ao_flux",
+        "output_key": "ao_energy_eV"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no current consumer"
+       }
+      ],
+      "validity_domain": "D-AO",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "atmosphere_source": {
+     "$ref": "#/$defs/label",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "label",
+      "definition": "provenance string of the atmosphere state (frozen dataset hash, live pymsis, or explicitly allowed table)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "atmosphere",
+        "output_key": "source"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate",
+        "output_key": "atm_source"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "gas_path_state",
+        "output_key": "atmosphere"
+       }
+      ],
+      "validity_domain": "D-ATM-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not applicable to a label"
+     }
+    },
+    "atmosphere_in_domain": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "true if the requested altitude/F10.7 lies inside the frozen grid (else atmosphere() raises)",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.atmosphere",
+        "attribute": "_interp_frozen"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no flag consumer; the exception stops the run"
+       }
+      ],
+      "validity_domain": "D-ATM-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not applicable to a flag",
+      "derivation": "flag = atmosphere() returned without ValueError"
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "IF-A1": {
+   "type": "object",
+   "title": "IF-A1: intake -> filter",
+   "description": "Gas collected by the intake and delivered to the filter inlet. In the code the filter is lumped into the intake: the production path (intake.collection with use_tpmc=True) interpolates the frozen TPMC surface, which has no filter, so this record is what the code actually delivers downstream.",
+   "x-interface": {
+    "id": "IF-A1",
+    "name": "intake -> filter",
+    "from": "intake (collimator + plenum)",
+    "to": "filter",
+    "path": "atmospheric",
+    "thruster_boundary": false,
+    "not_applicable": {
+     "pressure_loss": "passive ram compression raises pressure; represented by passive_compression_ratio",
+     "shaft_power": "passive element"
+    }
+   },
+   "properties": {
+    "mdot_total_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "collected mass flow eta_c x rho V A",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "collection",
+        "output_key": "mdot_collected"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "compress"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced; the only upstream uncertainty in code is the accommodation prior uq_modular.PRIORS['accommodation'] (evidence class assumed), propagated by sampling, not carried as a field"
+     }
+    },
+    "mdot_s_kgps": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "species",
+      "definition": "species-resolved collected mass flow",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate",
+        "output_key": "md_in"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor.run"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "system.evaluate splits the total by the free-stream mass fractions (md_in = mdot x atm fO/fN2/fO2). The frozen surface is species-resolved, but IntakeSurface.__call__ returns only the mass-weighted mean eta_c, so species-selective collection is not propagated.",
+      "requires": "TBD - requires IntakeSurface to return per-species eta_c (code change outside this ICD)"
+     }
+    },
+    "eta_c": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "-",
+      "shape": "scalar",
+      "definition": "collection efficiency referenced to the free-stream flux on the aperture",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "collection",
+        "output_key": "eta_c"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.intake_tpmc",
+        "attribute": "IntakeSurface.__call__",
+        "output_key": "eta_c"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "compress"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "TPMC statistical: IntakeSurface.max_unresolved; physical (accommodation) not carried"
+     }
+    },
+    "p_plenum_Pa": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "p",
+      "unit": "Pa",
+      "shape": "scalar",
+      "definition": "plenum pressure after passive ram compression",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "compress",
+        "output_key": "p_passive_Pa"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor.run"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "evaluated with CompressorParams.T_out_K as the gas temperature"
+     }
+    },
+    "passive_compression_ratio": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "p",
+      "unit": "-",
+      "shape": "scalar",
+      "definition": "plenum/free-stream number-density ratio (TPMC flux balance)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "collection",
+        "output_key": "passive_override"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "compress",
+        "output_key": "passive_ratio"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "compress"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "T_gas_K": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "K"
+      }
+     },
+     "x-field": {
+      "variable_class": "T",
+      "unit": "K",
+      "shape": "scalar",
+      "definition": "plenum gas temperature (thermally accommodated to the wall)",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake_tpmc",
+        "attribute": "IntakeGeometry",
+        "output_key": "T_wall_K"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "CompressorParams",
+        "output_key": "T_out_K"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "compress"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "two code parameters, no energy balance: TPMC CR_passive uses IntakeGeometry.T_wall_K, compress() uses CompressorParams.T_out_K",
+      "requires": "TBD - requires an intake/plenum thermal state from the thermal network"
+     }
+    },
+    "w_s": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "species",
+      "definition": "collected mass fractions",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate",
+        "output_key": "md_in"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor.run"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "set equal to the free-stream mass fractions (see mdot_s_kgps)",
+      "requires": "TBD - requires per-species eta_c from IntakeSurface"
+     }
+    },
+    "x_s": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "species",
+      "definition": "collected mole fractions",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate",
+        "output_key": "md_in"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.constants",
+        "attribute": "M_SPECIES"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no current consumer"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "x_s = (mdot_s / M_s) / sum_k (mdot_k / M_k)"
+     }
+    },
+    "dmdot_dt_kgps2": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-2"
+      }
+     },
+     "x-field": {
+      "variable_class": "dmdot_dt",
+      "unit": "kg s^-2",
+      "shape": "scalar",
+      "definition": "time derivative of the collected mass flow",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires an orbit-resolved free stream (IF-A0) and intake dynamics"
+     }
+    },
+    "plenum_inventory_kg": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg"
+      }
+     },
+     "x-field": {
+      "variable_class": "inventory",
+      "unit": "kg",
+      "shape": "scalar",
+      "definition": "gas mass in the intake plenum",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "plenum volume not modelled"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires plenum geometry (volume) and state"
+     }
+    },
+    "mean_wall_hits": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "residence_time",
+      "unit": "-",
+      "shape": "scalar",
+      "definition": "mean wall collisions per test particle in the channels",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake_tpmc",
+        "attribute": "intake_response",
+        "output_key": "mean_wall_hits"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no current consumer"
+       }
+      ],
+      "validity_domain": "D-TPMC-DIRECT",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "direct TPMC only; the frozen CSV has the column but IntakeSurface does not interpolate it"
+     }
+    },
+    "residence_time_s": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "s"
+      }
+     },
+     "x-field": {
+      "variable_class": "residence_time",
+      "unit": "s",
+      "shape": "scalar",
+      "definition": "mean gas residence time in intake + plenum",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires plenum volume and outflow (residence = inventory / throughput)"
+     }
+    },
+    "K_back": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "conductance",
+      "unit": "-",
+      "shape": "scalar",
+      "definition": "Clausing transmission of the channel array for thermal molecules returning from the plenum",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake_tpmc",
+        "attribute": "IntakeSurface.__call__",
+        "output_key": "K_back"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "used inside CR_passive only"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "rejected_heat_W": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "W"
+      }
+     },
+     "x-field": {
+      "variable_class": "rejected_heat",
+      "unit": "W",
+      "shape": "scalar",
+      "definition": "heat absorbed by the intake (ram aero heating) and rejected to the thermal network",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.thermal",
+        "attribute": "aero_heating_W_m2",
+        "native_unit": "W m^-2"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.thermal",
+        "attribute": "default_nodes",
+        "output_key": "intake"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.thermal",
+        "attribute": "solve_network"
+       }
+      ],
+      "validity_domain": "D-THERMAL",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "only a flux 0.5 rho V^3 x accommodation is produced; the intake node's internal power is 0 and the flux enters through its ram_view area inside solve_network",
+      "requires": "TBD - requires the integrated intake heat load as an output"
+     }
+    },
+    "contaminant_mass_flow_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "contamination",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "non-propellant mass flow (coating erosion products, outgassing, particulates) carried downstream",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires an erosion-product and outgassing transport model (materials.Material tml_pct/cvcm_pct exist only as properties)"
+     }
+    },
+    "coating_erosion_depth_m": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "m"
+      }
+     },
+     "x-field": {
+      "variable_class": "contamination",
+      "unit": "m",
+      "shape": "scalar",
+      "definition": "mission-integrated AO erosion depth of the intake coating",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.life",
+        "attribute": "intake_life",
+        "output_key": "coating_erosion_um",
+        "native_unit": "um"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-AO",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "intake_rom_in_bounds": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "query inside the frozen TPMC grid (else ValueError)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake_tpmc",
+        "attribute": "IntakeSurface.in_bounds"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake_tpmc",
+        "attribute": "IntakeSurface.__call__"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not applicable to a flag"
+     }
+    },
+    "tpmc_max_unresolved": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "scalar",
+      "definition": "largest unresolved-particle fraction in the frozen surface",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake_tpmc",
+        "attribute": "IntakeSurface.__init__",
+        "output_key": "max_unresolved"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not applicable (it is itself a numerical-quality measure)"
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "IF-A2": {
+   "type": "object",
+   "title": "IF-A2: filter -> compressor",
+   "description": "Filtered gas presented to the compressor inlet. The filter has no separate model: only the direct TPMC (intake_tpmc.intake_response with IntakeGeometry.filter=True) applies filter transmission; the production path adds filter mass only (intake.collection: 0.8 x area). The compressor consumes compress()['p_passive_Pa'] and the species split md_in (system.evaluate).",
+   "x-interface": {
+    "id": "IF-A2",
+    "name": "filter -> compressor",
+    "from": "filter",
+    "to": "compressor",
+    "path": "atmospheric",
+    "thruster_boundary": false,
+    "not_applicable": {
+     "shaft_power": "passive element"
+    }
+   },
+   "properties": {
+    "mdot_total_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "mass flow leaving the filter",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "compress",
+        "output_key": "mdot_net"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.intake_tpmc",
+        "attribute": "intake_response",
+        "output_key": "eta_c",
+        "note": "filter branch: eta_c x filter_open_frac x filter_transmission^0.5"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor.run"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "production path: mdot_collected x (1 - CompressorParams.backflow_frac); filter transmission not applied",
+      "requires": "TBD - requires the filter transmission on the production path (frozen surface has no filter)"
+     }
+    },
+    "mdot_s_kgps": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "species",
+      "definition": "species mass flow leaving the filter",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate",
+        "output_key": "md_in"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor.run"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "same record as IF-A1 (filter not modelled on this path)",
+      "requires": "TBD - requires a species-resolved filter transmission"
+     }
+    },
+    "p_inlet_Pa": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "p",
+      "unit": "Pa",
+      "shape": "scalar",
+      "definition": "compressor inlet pressure",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "compress",
+        "output_key": "p_passive_Pa"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor.size_for"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "no filter pressure change is applied"
+     }
+    },
+    "T_gas_K": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "K"
+      }
+     },
+     "x-field": {
+      "variable_class": "T",
+      "unit": "K",
+      "shape": "scalar",
+      "definition": "gas temperature at the compressor inlet",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor",
+        "output_key": "T_gas_K"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "compressor parameter, not a propagated state",
+      "requires": "TBD - requires a propagated gas temperature from IF-A1"
+     }
+    },
+    "w_s": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "species",
+      "definition": "mass fractions at the compressor inlet",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate",
+        "output_key": "md_in"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor.run"
+       }
+      ],
+      "validity_domain": "D-TPMC-FROZEN",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "free-stream fractions (see IF-A1)",
+      "requires": "TBD - requires per-species eta_c and filter transmission"
+     }
+    },
+    "x_s": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "species",
+      "definition": "mole fractions at the compressor inlet",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once",
+        "output_key": "nflow"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "x_s = nflow_s / sum nflow (inside _run_once: p_s_in = p_in x nflow_s / ntot)"
+     }
+    },
+    "dmdot_dt_kgps2": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-2"
+      }
+     },
+     "x-field": {
+      "variable_class": "dmdot_dt",
+      "unit": "kg s^-2",
+      "shape": "scalar",
+      "definition": "time derivative of the mass flow into the compressor",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires IF-A1 dynamics and a filter model"
+     }
+    },
+    "filter_inventory_kg": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg"
+      }
+     },
+     "x-field": {
+      "variable_class": "inventory",
+      "unit": "kg",
+      "shape": "scalar",
+      "definition": "gas mass inside the filter element",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "filter geometry not modelled"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires filter geometry"
+     }
+    },
+    "residence_time_s": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "s"
+      }
+     },
+     "x-field": {
+      "variable_class": "residence_time",
+      "unit": "s",
+      "shape": "scalar",
+      "definition": "mean residence time in the filter",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires filter geometry"
+     }
+    },
+    "filter_transmission": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "conductance",
+      "unit": "-",
+      "shape": "scalar",
+      "definition": "thermal Clausing factor of the filter element",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake_tpmc",
+        "attribute": "IntakeGeometry",
+        "output_key": "filter_transmission"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake_tpmc",
+        "attribute": "intake_response"
+       }
+      ],
+      "validity_domain": "D-TPMC-DIRECT",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "code default; used only by the direct TPMC",
+      "requires": "TBD - requires a filter design and a source for its transmission"
+     }
+    },
+    "pressure_loss_Pa": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "pressure_loss",
+      "unit": "Pa",
+      "shape": "scalar",
+      "definition": "static-pressure drop across the filter",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a filter flow model"
+     }
+    },
+    "rejected_heat_W": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "W"
+      }
+     },
+     "x-field": {
+      "variable_class": "rejected_heat",
+      "unit": "W",
+      "shape": "scalar",
+      "definition": "heat deposited in and rejected by the filter",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a filter thermal model"
+     }
+    },
+    "contaminant_mass_flow_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "contamination",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "non-propellant mass flow passed downstream by the filter",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a filter capture model and IF-A1 contaminant input"
+     }
+    },
+    "filter_retained_mass_rate_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "contamination",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "mass captured by the filter",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a filter capture model"
+     }
+    },
+    "filter_flow_effect_applied": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "true only when the filter transmission was applied to the delivered flow",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "not applicable to a flag",
+      "requires": "TBD - requires the path to report whether IntakeGeometry.filter was applied (production path: never)"
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "IF-A3": {
+   "type": "object",
+   "title": "IF-A3: compressor -> atmospheric gas chamber",
+   "description": "Compressed gas delivered to the atmospheric gas chamber. Physics path: compressor.DragCompressor.run/size_for (system.evaluate with gaspath_physics=True). Parametric path: intake.compress.",
+   "x-interface": {
+    "id": "IF-A3",
+    "name": "compressor -> atmospheric gas chamber",
+    "from": "compressor (turbomolecular + drag stages)",
+    "to": "atmospheric gas chamber (reservoir)",
+    "path": "atmospheric",
+    "thruster_boundary": false,
+    "not_applicable": {
+     "pressure_loss": "the compressor raises pressure; represented by compression_ratio_s"
+    }
+   },
+   "properties": {
+    "mdot_s_kgps": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "species",
+      "definition": "species mass flow delivered to the chamber (steady state = captured inflow)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor.run",
+        "output_key": "delivered_kgps"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "size_orifice_for_pressure"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "mdot_total_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "total delivered mass flow",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor.run",
+        "output_key": "delivered_kgps"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "compress",
+        "output_key": "mdot_net"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "sum of delivered_kgps (physics) or compress mdot_net (parametric)"
+     }
+    },
+    "recirculated_s_kgps": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "species",
+      "definition": "leak flow recirculated from outlet to inlet (internal)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor.run",
+        "output_key": "recirculated_kgps"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "reported only"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "p_out_Pa": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "p",
+      "unit": "Pa",
+      "shape": "scalar",
+      "definition": "compressor outlet pressure",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once",
+        "output_key": "p_out_Pa"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "compress",
+        "output_key": "p_out_Pa"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "p_s_Pa": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "p",
+      "unit": "Pa",
+      "shape": "species",
+      "definition": "outlet partial pressures",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once",
+        "output_key": "composition_out"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no current consumer"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "p_s = composition_out[s] x p_out_Pa"
+     }
+    },
+    "compression_ratio_s": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "p",
+      "unit": "-",
+      "shape": "species",
+      "definition": "per-species active compression ratio across all rows and stages",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once",
+        "output_key": "CR_by_species"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "T_gas_K": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "K"
+      }
+     },
+     "x-field": {
+      "variable_class": "T",
+      "unit": "K",
+      "shape": "scalar",
+      "definition": "gas temperature at the compressor outlet",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor",
+        "output_key": "T_gas_K"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "not propagated; reservoir uses its own T_K"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "parameter (isothermal compression assumed)",
+      "requires": "TBD - requires a gas energy balance through the compressor"
+     }
+    },
+    "T_machine_K": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "K"
+      }
+     },
+     "x-field": {
+      "variable_class": "T",
+      "unit": "K",
+      "shape": "scalar",
+      "definition": "lumped compressor machine temperature",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once",
+        "output_key": "T_comp_K"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "system.evaluate sets the reservoir T_K = clamp(T_comp_K, 300, 500) K"
+     }
+    },
+    "x_s": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "species",
+      "definition": "outlet mole fractions (partial-pressure fractions)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once",
+        "output_key": "composition_out"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no current consumer"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "w_s": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "species",
+      "definition": "outlet mass fractions",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor.run",
+        "output_key": "delivered_kgps"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no current consumer"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "w_s = delivered_s / sum delivered"
+     }
+    },
+    "dmdot_dt_kgps2": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-2"
+      }
+     },
+     "x-field": {
+      "variable_class": "dmdot_dt",
+      "unit": "kg s^-2",
+      "shape": "scalar",
+      "definition": "time derivative of the delivered mass flow",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "startup_transient",
+        "output_key": "spinup_s"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "startup_transient"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "spin-up only: delivered fraction f(t) = min(t / spinup_s, 1), so dmdot/dt = mdot / spinup_s during the ramp; no throttling dynamics",
+      "requires": "TBD - requires compressor speed/throttle dynamics"
+     }
+    },
+    "compressor_inventory_kg": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg"
+      }
+     },
+     "x-field": {
+      "variable_class": "inventory",
+      "unit": "kg",
+      "shape": "scalar",
+      "definition": "gas mass held inside the compressor channels",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires channel volumes and the internal pressure distribution"
+     }
+    },
+    "upstream_wall_collisions": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "residence_time",
+      "unit": "-",
+      "shape": "scalar",
+      "definition": "wall collisions per molecule assigned to the compressor for O recombination",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate",
+        "output_key": "upstream_collisions"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state"
+       }
+      ],
+      "validity_domain": "D-SYSTEM-BUDGET",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "system.evaluate sets 10 x turbo_rows + 50 x n_stages (heuristic in code, no cited source)",
+      "requires": "TBD - requires a computed collision count or residence time for the compressor"
+     }
+    },
+    "pumping_speed_turbo_m3ps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "m^3 s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "conductance",
+      "unit": "m^3 s^-1",
+      "shape": "scalar",
+      "definition": "turbomolecular-stage pumping speed",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once",
+        "output_key": "S_turbo_m3_s"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "reported only"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "pumping_speed_drag_m3ps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "m^3 s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "conductance",
+      "unit": "m^3 s^-1",
+      "shape": "scalar",
+      "definition": "drag-stage zero-pressure pumping speed",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once",
+        "output_key": "S0_drag_m3_s"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "reported only"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "leak_conductance_m3ps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "m^3 s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "conductance",
+      "unit": "m^3 s^-1",
+      "shape": "scalar",
+      "definition": "outlet-to-inlet leak conductance",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor",
+        "output_key": "leak_conductance_m3_s"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "parameter (code default)"
+     }
+    },
+    "shaft_power_W": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "W"
+      }
+     },
+     "x-field": {
+      "variable_class": "shaft_power",
+      "unit": "W",
+      "shape": "scalar",
+      "definition": "mechanical shaft power (gas drag + bearings)",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once",
+        "output_key": "P_gas_W"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once",
+        "output_key": "P_bear_W"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer of the shaft value"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "P_gas_W + P_bear_W (= torque_Nm x omega)"
+     }
+    },
+    "electrical_power_W": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "W"
+      }
+     },
+     "x-field": {
+      "variable_class": "shaft_power",
+      "unit": "W",
+      "shape": "scalar",
+      "definition": "compressor electrical input (motor + control)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once",
+        "output_key": "P_el_W"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "compress",
+        "output_key": "comp_power_W"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "close_architecture"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "torque_Nm": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "N m"
+      }
+     },
+     "x-field": {
+      "variable_class": "shaft_power",
+      "unit": "N m",
+      "shape": "scalar",
+      "definition": "shaft torque",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once",
+        "output_key": "torque_Nm"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "used for motor mass only"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "rejected_heat_W": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "W"
+      }
+     },
+     "x-field": {
+      "variable_class": "rejected_heat",
+      "unit": "W",
+      "shape": "scalar",
+      "definition": "heat rejected by the compressor to the thermal network",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.thermal",
+        "attribute": "default_nodes",
+        "output_key": "compressor"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.thermal",
+        "attribute": "solve_network"
+       }
+      ],
+      "validity_domain": "D-THERMAL",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "consumer-side assumption: the compressor node's internal heat equals the full electrical input P_comp_W; archengine books gas['comp_power'] as the 'compressor' ledger line",
+      "requires": "TBD - requires the compressor to report its own heat split (motor, bearings, gas work)"
+     }
+    },
+    "contaminant_mass_flow_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "contamination",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "non-propellant mass flow (blade coating erosion products, outgassing) carried to the chamber",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires converting blade erosion rates to a mass flow and an outgassing model"
+     }
+    },
+    "blade_coating_recession_mps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "m s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "contamination",
+      "unit": "m s^-1",
+      "shape": "scalar",
+      "definition": "AO recession rate of the rotor-blade coating",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.life",
+        "attribute": "blade_life",
+        "output_key": "coating_rate_um_per_kh",
+        "native_unit": "um per 1000 h"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "gas_path_state"
+       }
+      ],
+      "validity_domain": "D-AO",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "rotor_ok": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "rotor tip speed within the material stress limit",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor._run_once",
+        "output_key": "rotor_ok"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not applicable to a flag"
+     }
+    },
+    "sized": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "size_for reached the required compression ratio",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.compressor",
+        "attribute": "DragCompressor.size_for",
+        "output_key": "sized"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not applicable to a flag"
+     }
+    },
+    "comp_feasible": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "compressor feasible (sized and rotor_ok; parametric: active ratio <= max_ratio)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.intake",
+        "attribute": "compress",
+        "output_key": "comp_feasible"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate",
+        "output_key": "comp_feasible"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-DRAGCOMP",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not applicable to a flag"
+     }
+    },
+    "recirculation_converged": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "self-consistent leak/recirculation fixed point met its tolerance",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "DragCompressor.run iterates up to 40 times and returns the last iterate without a flag"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "not applicable to a flag",
+      "requires": "TBD - requires DragCompressor.run to report convergence (CLAUDE.md rule 3; code change outside this ICD)"
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "IF-A4": {
+   "type": "object",
+   "title": "IF-A4: atmospheric gas chamber -> atmospheric valve",
+   "description": "Chamber outflow toward the valve. The code has no valve model: Reservoir.anode_orifice_area_m2 x anode_orifice_K lumps valve, feed line and anode distributor into one molecular-flow restriction, and size_orifice_for_pressure() chooses its area to hit the target chamber pressure.",
+   "x-interface": {
+    "id": "IF-A4",
+    "name": "atmospheric gas chamber -> atmospheric valve",
+    "from": "atmospheric gas chamber (reservoir)",
+    "to": "atmospheric valve",
+    "path": "atmospheric",
+    "thruster_boundary": false,
+    "not_applicable": {
+     "shaft_power": "passive element"
+    }
+   },
+   "properties": {
+    "mdot_s_kgps": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "species",
+      "definition": "species mass flow through the anode-feed restriction",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "mdot_anode"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "mdot_leak_s_kgps": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "species",
+      "definition": "species mass flow lost through the chamber leak path",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "mdot_leak"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "reported only"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "p_total_Pa": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "p",
+      "unit": "Pa",
+      "shape": "scalar",
+      "definition": "chamber pressure",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "p_total_Pa"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "p_s_Pa": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "p",
+      "unit": "Pa",
+      "shape": "species",
+      "definition": "chamber partial pressures",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "p_species_Pa"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no current consumer"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "T_gas_K": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "K"
+      }
+     },
+     "x-field": {
+      "variable_class": "T",
+      "unit": "K",
+      "shape": "scalar",
+      "definition": "chamber gas temperature (isothermal)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "T_K"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "not propagated to the thruster"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "set by system.evaluate from the compressor machine temperature, clamped to 300-500 K"
+     }
+    },
+    "w_s": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "species",
+      "definition": "mass fractions of the flow to the anode feed",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "composition_anode_mass"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "x_s": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "species",
+      "definition": "chamber mole fractions",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "n_species"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no current consumer"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "x_s = n_s / sum n_k"
+     }
+    },
+    "O_survival": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "scalar",
+      "definition": "fraction of inflowing atomic O that reaches the anode feed as O (wall recombination)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "O_survival"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.aochem",
+        "attribute": "inlet_composition",
+        "output_key": "O_survival"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "dmdot_dt_kgps2": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-2"
+      }
+     },
+     "x-field": {
+      "variable_class": "dmdot_dt",
+      "unit": "kg s^-2",
+      "shape": "scalar",
+      "definition": "time derivative of the chamber outflow",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "startup_transient",
+        "output_key": "tau_s"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "startup_transient returns the time constant V/C and a (t, p) history only; outflow is proportional to p at fixed conductance, so dmdot/dt follows from dp/dt",
+      "requires": "TBD - requires a species-resolved outflow history"
+     }
+    },
+    "inventory_s_kg": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg"
+      }
+     },
+     "x-field": {
+      "variable_class": "inventory",
+      "unit": "kg",
+      "shape": "species",
+      "definition": "gas mass in the chamber",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "n_species"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "volume_m3"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no current consumer"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "m_s = n_s x M_s x volume_m3"
+     }
+    },
+    "chamber_volume_m3": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "m^3"
+      }
+     },
+     "x-field": {
+      "variable_class": "inventory",
+      "unit": "m^3",
+      "shape": "scalar",
+      "definition": "chamber volume",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "volume_m3"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "reported only; system.evaluate calls mass_bom.reservoir_vessel with its own literal volume, not this value"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "parameter (code default)"
+     }
+    },
+    "residence_time_s": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "s"
+      }
+     },
+     "x-field": {
+      "variable_class": "residence_time",
+      "unit": "s",
+      "shape": "scalar",
+      "definition": "mean residence time in the chamber",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "residence_time_s"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "wall_collisions": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "residence_time",
+      "unit": "-",
+      "shape": "scalar",
+      "definition": "wall collisions per molecule in the chamber",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "wall_collisions_reservoir"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "feed_conductance_s_m3ps": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "m^3 s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "conductance",
+      "unit": "m^3 s^-1",
+      "shape": "species",
+      "definition": "molecular-flow conductance of the lumped valve/feed restriction K x A x c_bar_s / 4",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.conductance"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "pressure_loss_Pa": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "pressure_loss",
+      "unit": "Pa",
+      "shape": "scalar",
+      "definition": "static-pressure drop from chamber to valve inlet",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a feed-line flow model (the lumped orifice has no separate line drop)"
+     }
+    },
+    "rejected_heat_W": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "W"
+      }
+     },
+     "x-field": {
+      "variable_class": "rejected_heat",
+      "unit": "W",
+      "shape": "scalar",
+      "definition": "heat rejected by the chamber",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "isothermal chamber, no heat balance"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a chamber thermal node"
+     }
+    },
+    "contaminant_mass_flow_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "contamination",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "non-propellant mass flow toward the valve",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires IF-A3 contaminant input and chamber wall model"
+     }
+    },
+    "steady_state_converged": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "chamber species balance fixed point met its tolerance",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "Reservoir.steady_state iterates up to 200 times and returns the last iterate without a flag"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "not applicable to a flag",
+      "requires": "TBD - requires Reservoir.steady_state to report convergence (CLAUDE.md rule 3; code change outside this ICD)"
+     }
+    },
+    "orifice_sizing_converged": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "size_orifice_for_pressure reached the target pressure inside its area bracket",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "size_orifice_for_pressure returns an area after 60 bisection steps without a residual or a bracket-end flag"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "not applicable to a flag",
+      "requires": "TBD - requires the sizing routine to return its pressure residual"
+     }
+    },
+    "molecular_flow_regime_ok": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "Knudsen number in the feed high enough for the molecular-flow conductance used",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no Knudsen check in reservoir.py"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "not applicable to a flag",
+      "requires": "TBD - requires a Knudsen-number check against a stated regime limit"
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "IF-A5": {
+   "type": "object",
+   "title": "IF-A5: atmospheric valve -> thruster (air port)",
+   "description": "THRUSTER BOUNDARY, atmospheric port. The only record the thruster block receives from the atmospheric chain. It is independent of which Hall transport closure is admitted: it carries no transport parameter, no ensemble member id and no calibration-nuisance variable (see x-icd.closure_independence). Current producers: archengine.gas_path_state (architecture engine) and system.evaluate (single configuration); consumers: archengine._propulsion and, when wired, HallThruster.jl Propellant inputs via hallthruster_bridge (bridge_lib.jl).",
+   "x-interface": {
+    "id": "IF-A5",
+    "name": "atmospheric valve -> thruster (air port)",
+    "from": "atmospheric valve",
+    "to": "thruster ionization/discharge block",
+    "path": "atmospheric",
+    "thruster_boundary": true,
+    "not_applicable": {
+     "shaft_power": "passive element"
+    }
+   },
+   "properties": {
+    "mdot_total_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "total air mass flow delivered to the thruster",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "gas_path_state",
+        "output_key": "mdot_air"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate",
+        "output_key": "mdot_air_mgps",
+        "native_unit": "mg s^-1"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "_propulsion",
+        "output_key": "mdot_air"
+       }
+      ],
+      "validity_domain": "D-ARCH",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "mdot_s_kgps": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "species",
+      "definition": "species air mass flow delivered to the thruster",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "gas_path_state",
+        "output_key": "mdot_air"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "gas_path_state",
+        "output_key": "fO"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "_propulsion",
+        "output_key": "flows"
+       },
+       {
+        "kind": "repo_file",
+        "file": "hallthruster_bridge/bridge_lib.jl",
+        "token": "flow_rate_kg_s",
+        "note": "HallThruster.jl Propellant(flow_rate_kg_s=...); the bridge currently passes one propellant from a case file, not from this record"
+       }
+      ],
+      "validity_domain": "D-ARCH",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "mdot_air x w_s (as archengine._propulsion does)"
+     }
+    },
+    "mdot_cathode_air_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "air diverted to an air-fed neutralizer/cathode (taken from the captured air)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "Neutralizer",
+        "output_key": "air_mgps",
+        "native_unit": "mg s^-1"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.thruster",
+        "attribute": "Cathode",
+        "output_key": "air_flow_mgps",
+        "native_unit": "mg s^-1"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "_propulsion",
+        "output_key": "air_mgps"
+       }
+      ],
+      "validity_domain": "D-ARCH",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "neutralizer parameter; archengine._propulsion subtracts it from mdot_air before the anode"
+     }
+    },
+    "mdot_anode_s_kgps": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "species",
+      "definition": "species air mass flow to the anode",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "_propulsion",
+        "output_key": "flows"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "_propulsion"
+       }
+      ],
+      "validity_domain": "D-ARCH",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "(mdot_air - air_mgps x 1e-6) x w_s (archengine._propulsion)"
+     }
+    },
+    "p_feed_Pa": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "p",
+      "unit": "Pa",
+      "shape": "scalar",
+      "definition": "feed pressure presented to the thruster (chamber pressure; no line drop modelled)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "gas_path_state",
+        "output_key": "p_in"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate",
+        "output_key": "p_in_Pa"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "_propulsion",
+        "output_key": "p_in"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "P_ion_envelope_violation"
+       }
+      ],
+      "validity_domain": "D-ARCH",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "off-design, archengine scales p_in with mdot at fixed conductance (propulsion_map, close_architecture envelope)"
+     }
+    },
+    "T_gas_K": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "K"
+      }
+     },
+     "x-field": {
+      "variable_class": "T",
+      "unit": "K",
+      "shape": "scalar",
+      "definition": "neutral gas temperature at injection",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state",
+        "output_key": "T_K"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "external",
+        "reference": "HallThruster.jl v0.23.1 src/physics/gas.jl, struct Propellant field temperature_K (default DEFAULT_NEUTRAL_TEMPERATURE_K in src/physics/constants.jl of the installed pinned package)",
+        "note": "bridge_lib.jl does not pass temperature_K to Propellant(...)"
+       },
+       {
+        "kind": "repo_file",
+        "file": "hallthruster_bridge/propellants/n2_n.toml",
+        "token": "temperature_K",
+        "note": "the N2/N propellant config declares its own per-species temperature_K"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "the chamber temperature exists but gas_path_state does not pass it on; the Hall-side neutral temperature comes from the solver default or the propellant config, never from the upstream chain",
+      "requires": "TBD - requires gas_path_state to carry T and the bridge to pass it (code change outside this ICD)"
+     }
+    },
+    "w_s": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "species",
+      "definition": "delivered mass fractions (O, N2, O2)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "gas_path_state",
+        "output_key": "fO"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "gas_path_state",
+        "output_key": "fN2"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "gas_path_state",
+        "output_key": "fO2"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate",
+        "output_key": "fO_inlet"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "_propulsion",
+        "output_key": "fO"
+       }
+      ],
+      "validity_domain": "D-ARCH",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "fN2 is formed as 1 - fO - fO2 in gas_path_state"
+     }
+    },
+    "x_s": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "species",
+      "definition": "delivered mole fractions",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "gas_path_state",
+        "output_key": "fO"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.constants",
+        "attribute": "M_SPECIES"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "Hall-map composition axes (hall_map.py docstring names e.g. 'x_O') have no declared basis yet"
+       }
+      ],
+      "validity_domain": "D-ARCH",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "x_s = (w_s / M_s) / sum_k (w_k / M_k)"
+     }
+    },
+    "dmdot_dt_kgps2": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-2"
+      }
+     },
+     "x-field": {
+      "variable_class": "dmdot_dt",
+      "unit": "kg s^-2",
+      "shape": "scalar",
+      "definition": "time derivative of the delivered flow",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "quasi-static only: transient.run_mission throttles by scaling mdot per time step"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires valve and feed-line dynamics"
+     }
+    },
+    "feed_line_inventory_kg": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg"
+      }
+     },
+     "x-field": {
+      "variable_class": "inventory",
+      "unit": "kg",
+      "shape": "scalar",
+      "definition": "gas mass between valve and anode",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires feed-line geometry"
+     }
+    },
+    "feed_line_residence_time_s": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "s"
+      }
+     },
+     "x-field": {
+      "variable_class": "residence_time",
+      "unit": "s",
+      "shape": "scalar",
+      "definition": "gas residence time between valve and anode",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires feed-line geometry"
+     }
+    },
+    "valve_conductance_s_m3ps": {
+     "$ref": "#/$defs/species_quantity",
+     "properties": {
+      "unit": {
+       "const": "m^3 s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "conductance",
+      "unit": "m^3 s^-1",
+      "shape": "species",
+      "definition": "valve (open) conductance",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.conductance"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.reservoir",
+        "attribute": "Reservoir.steady_state"
+       }
+      ],
+      "validity_domain": "D-RESERVOIR",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "only as part of the lumped reservoir anode-feed orifice",
+      "requires": "TBD - requires a separate valve model (flow coefficient, position)"
+     }
+    },
+    "pressure_loss_Pa": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "pressure_loss",
+      "unit": "Pa",
+      "shape": "scalar",
+      "definition": "static-pressure drop across valve and feed line",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a valve/line flow model"
+     }
+    },
+    "valve_rejected_heat_W": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "W"
+      }
+     },
+     "x-field": {
+      "variable_class": "rejected_heat",
+      "unit": "W",
+      "shape": "scalar",
+      "definition": "valve/control electrical power dissipated as heat",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "Budgets",
+        "output_key": "p_ctrl_valves_sensors_W"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-SYSTEM-BUDGET",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "one lumped budget for valves, sensors and control (both paths); not a valve model",
+      "requires": "TBD - requires a valve power model"
+     }
+    },
+    "contaminant_mass_flow_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "contamination",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "non-propellant mass flow delivered to the thruster",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires contaminant transport through IF-A1..IF-A4"
+     }
+    },
+    "feed_pressure_envelope_ok": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "delivered pressure inside the ionizer pressure envelope (consumer-side check)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "P_ion_envelope_violation"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "_propulsion"
+       }
+      ],
+      "validity_domain": "D-ARCH",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not applicable to a flag",
+      "note": "computed by the consumer; flag = not violation"
+     }
+    },
+    "upstream_state_trustworthy": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "conjunction of every upstream quality flag (IF-A0..IF-A4) for this delivered state",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no aggregate flag"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "not applicable to a flag",
+      "requires": "TBD - requires the upstream convergence/domain flags listed as gaps in IF-A2..IF-A4"
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "IF-X1": {
+   "type": "object",
+   "title": "IF-X1: Xe chamber (tank) -> Xe valve",
+   "description": "Xenon storage outflow. The code sizes the tank mass (mass_bom.xe_tank) and books Xe consumption (thruster.xe_for_thrust, cathode/neutralizer Xe flows, transient.run_mission Xe budget); it has no storage thermodynamic state or regulator model.",
+   "x-interface": {
+    "id": "IF-X1",
+    "name": "Xe chamber (tank) -> Xe valve",
+    "from": "Xe chamber (storage tank)",
+    "to": "Xe valve / regulator",
+    "path": "xenon",
+    "thruster_boundary": false,
+    "not_applicable": {
+     "residence_time": "storage element; residence time is not a meaningful interface variable",
+     "shaft_power": "passive element"
+    }
+   },
+   "properties": {
+    "mdot_xe_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "Xe mass flow leaving the tank (anode + cathode)",
+      "status": "derivable",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.thruster",
+        "attribute": "xe_for_thrust"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.thruster",
+        "attribute": "Cathode",
+        "output_key": "xe_flow_mgps",
+        "native_unit": "mg s^-1"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "Neutralizer",
+        "output_key": "xe_mgps",
+        "native_unit": "mg s^-1"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.transient",
+        "attribute": "run_mission"
+       }
+      ],
+      "validity_domain": "D-CARD",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "derivation": "xe_for_thrust (anode topping) + cathode/neutralizer Xe flow"
+     }
+    },
+    "p_storage_Pa": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "p",
+      "unit": "Pa",
+      "shape": "scalar",
+      "definition": "tank pressure",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.mass_bom",
+        "attribute": "xe_tank",
+        "output_key": "p_MPa",
+        "native_unit": "MPa"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "used only to size the tank wall"
+       }
+      ],
+      "validity_domain": "D-SYSTEM-BUDGET",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "design pressure used only for wall sizing (code default), not an operating state",
+      "requires": "TBD - requires a storage equation of state (Xe is near-critical at storage conditions: verify)"
+     }
+    },
+    "T_storage_K": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "K"
+      }
+     },
+     "x-field": {
+      "variable_class": "T",
+      "unit": "K",
+      "shape": "scalar",
+      "definition": "tank gas temperature",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a tank thermal node"
+     }
+    },
+    "xe_purity": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "scalar",
+      "definition": "Xe mole fraction of the stored propellant",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "pure Xe assumed implicitly"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a propellant purity specification"
+     }
+    },
+    "dmdot_dt_kgps2": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-2"
+      }
+     },
+     "x-field": {
+      "variable_class": "dmdot_dt",
+      "unit": "kg s^-2",
+      "shape": "scalar",
+      "definition": "time derivative of the Xe outflow",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires regulator/valve dynamics"
+     }
+    },
+    "xe_inventory_kg": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg"
+      }
+     },
+     "x-field": {
+      "variable_class": "inventory",
+      "unit": "kg",
+      "shape": "scalar",
+      "definition": "Xe mass remaining for anode topping",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.transient",
+        "attribute": "run_mission",
+        "output_key": "xe_left_kg"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.transient",
+        "attribute": "run_mission"
+       }
+      ],
+      "validity_domain": "D-MISSION",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "topping budget only; cathode Xe is accounted separately (transient.py)",
+      "requires": "TBD - requires a single tank inventory including cathode Xe"
+     }
+    },
+    "tank_volume_m3": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "m^3"
+      }
+     },
+     "x-field": {
+      "variable_class": "inventory",
+      "unit": "m^3",
+      "shape": "scalar",
+      "definition": "tank internal volume",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.mass_bom",
+        "attribute": "xe_tank",
+        "output_key": "V_L",
+        "native_unit": "L"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "reported only (callers use mass_kg)"
+       }
+      ],
+      "validity_domain": "D-SYSTEM-BUDGET",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+     }
+    },
+    "regulator_conductance_m3ps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "m^3 s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "conductance",
+      "unit": "m^3 s^-1",
+      "shape": "scalar",
+      "definition": "regulator/valve flow conductance",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a regulator model"
+     }
+    },
+    "pressure_loss_Pa": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "pressure_loss",
+      "unit": "Pa",
+      "shape": "scalar",
+      "definition": "pressure reduction from tank to valve outlet",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a regulator model"
+     }
+    },
+    "rejected_heat_W": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "W"
+      }
+     },
+     "x-field": {
+      "variable_class": "rejected_heat",
+      "unit": "W",
+      "shape": "scalar",
+      "definition": "tank/regulator heater power rejected",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a tank thermal model"
+     }
+    },
+    "contaminant_mass_flow_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "contamination",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "impurity mass flow in the Xe feed",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a purity specification"
+     }
+    },
+    "xe_topping_exhausted": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "anode-topping Xe budget exhausted during the mission",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.transient",
+        "attribute": "run_mission",
+        "output_key": "xe_topping_exhausted"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "reported only"
+       }
+      ],
+      "validity_domain": "D-MISSION",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not applicable to a flag"
+     }
+    }
+   },
+   "additionalProperties": false
+  },
+  "IF-X2": {
+   "type": "object",
+   "title": "IF-X2: Xe valve -> thruster (Xe port)",
+   "description": "THRUSTER BOUNDARY, xenon port. Same closure-independence rule as IF-A5. Current producers are the card model (thruster.xe_for_thrust for anode topping) and the neutralizer/cathode Xe parameters; the Hall-physics branch of archengine has no anode Xe flow, and the HallThruster bridge takes one propellant per case.",
+   "x-interface": {
+    "id": "IF-X2",
+    "name": "Xe valve -> thruster (Xe port)",
+    "from": "Xe valve / regulator",
+    "to": "thruster ionization/discharge block (anode and cathode)",
+    "path": "xenon",
+    "thruster_boundary": true,
+    "not_applicable": {
+     "shaft_power": "passive element"
+    }
+   },
+   "properties": {
+    "mdot_xe_anode_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "Xe mass flow to the anode (thrust topping)",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.thruster",
+        "attribute": "xe_for_thrust"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.thruster",
+        "attribute": "performance",
+        "output_key": "mdot_xe_anode"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.transient",
+        "attribute": "run_mission"
+       }
+      ],
+      "validity_domain": "D-CARD",
+      "evidence_class_current": "model-derived",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "card model only"
+     }
+    },
+    "mdot_xe_cathode_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "mdot_s",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "Xe mass flow to the cathode/neutralizer",
+      "status": "supplied",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.thruster",
+        "attribute": "Cathode",
+        "output_key": "xe_flow_mgps",
+        "native_unit": "mg s^-1"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "Neutralizer",
+        "output_key": "xe_mgps",
+        "native_unit": "mg s^-1"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.archengine",
+        "attribute": "close_architecture",
+        "output_key": "xe_mgps"
+       },
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-CARD",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "parameters (code defaults)"
+     }
+    },
+    "p_feed_Pa": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "p",
+      "unit": "Pa",
+      "shape": "scalar",
+      "definition": "Xe feed pressure at the thruster",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a regulator/valve model"
+     }
+    },
+    "T_gas_K": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "K"
+      }
+     },
+     "x-field": {
+      "variable_class": "T",
+      "unit": "K",
+      "shape": "scalar",
+      "definition": "Xe temperature at injection",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "external",
+        "reference": "HallThruster.jl v0.23.1 src/physics/gas.jl, struct Propellant field temperature_K (solver default when unset; bridge_lib.jl does not set it)"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a feed thermal state"
+     }
+    },
+    "xe_purity": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "x_s",
+      "unit": "-",
+      "shape": "scalar",
+      "definition": "Xe mole fraction at the thruster",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "pure Xe assumed implicitly"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a purity specification"
+     }
+    },
+    "dmdot_dt_kgps2": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-2"
+      }
+     },
+     "x-field": {
+      "variable_class": "dmdot_dt",
+      "unit": "kg s^-2",
+      "shape": "scalar",
+      "definition": "time derivative of the Xe feed",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires valve dynamics"
+     }
+    },
+    "feed_line_inventory_kg": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg"
+      }
+     },
+     "x-field": {
+      "variable_class": "inventory",
+      "unit": "kg",
+      "shape": "scalar",
+      "definition": "Xe mass between valve and thruster",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires feed-line geometry"
+     }
+    },
+    "feed_line_residence_time_s": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "s"
+      }
+     },
+     "x-field": {
+      "variable_class": "residence_time",
+      "unit": "s",
+      "shape": "scalar",
+      "definition": "Xe residence time between valve and thruster",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires feed-line geometry"
+     }
+    },
+    "valve_conductance_m3ps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "m^3 s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "conductance",
+      "unit": "m^3 s^-1",
+      "shape": "scalar",
+      "definition": "Xe valve conductance",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a valve model"
+     }
+    },
+    "pressure_loss_Pa": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "Pa"
+      }
+     },
+     "x-field": {
+      "variable_class": "pressure_loss",
+      "unit": "Pa",
+      "shape": "scalar",
+      "definition": "pressure drop across the Xe valve and line",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a valve/line model"
+     }
+    },
+    "valve_rejected_heat_W": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "W"
+      }
+     },
+     "x-field": {
+      "variable_class": "rejected_heat",
+      "unit": "W",
+      "shape": "scalar",
+      "definition": "Xe valve electrical power dissipated as heat",
+      "status": "partial",
+      "producers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "Budgets",
+        "output_key": "p_ctrl_valves_sensors_W"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "python",
+        "module": "abep_sim.system",
+        "attribute": "evaluate"
+       }
+      ],
+      "validity_domain": "D-SYSTEM-BUDGET",
+      "evidence_class_current": "assumed",
+      "uncertainty": "not produced by any upstream module; TBD - requires an uncertainty model for this producer",
+      "note": "same single lumped budget as IF-A5 (not additive)",
+      "requires": "TBD - requires a valve power model"
+     }
+    },
+    "contaminant_mass_flow_kgps": {
+     "$ref": "#/$defs/scalar_quantity",
+     "properties": {
+      "unit": {
+       "const": "kg s^-1"
+      }
+     },
+     "x-field": {
+      "variable_class": "contamination",
+      "unit": "kg s^-1",
+      "shape": "scalar",
+      "definition": "impurity mass flow delivered with the Xe",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "TBD - requires a producer first",
+      "requires": "TBD - requires a purity specification"
+     }
+    },
+    "xe_feed_state_trustworthy": {
+     "$ref": "#/$defs/flag",
+     "properties": {
+      "unit": {
+       "const": "-"
+      }
+     },
+     "x-field": {
+      "variable_class": "quality",
+      "unit": "-",
+      "shape": "flag",
+      "definition": "Xe feed state produced inside a declared model domain",
+      "status": "gap",
+      "producers": [
+       {
+        "kind": "TBD",
+        "requires": "no producer"
+       }
+      ],
+      "consumers": [
+       {
+        "kind": "TBD",
+        "requires": "no consumer"
+       }
+      ],
+      "validity_domain": "D-TBD",
+      "evidence_class_current": "TBD",
+      "uncertainty": "not applicable to a flag",
+      "requires": "TBD - requires a Xe feed model with a declared domain"
+     }
+    }
+   },
+   "additionalProperties": false
+  }
+ }
+}
