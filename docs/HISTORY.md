@@ -2125,3 +2125,18 @@ Marchioni point in the superseded 0-D calibration (above) has no open source. Ne
 Release manifest: `scripts/make_validation_release.py` (run only after scoring) writes `validation/VALIDATION_RELEASE_v1.json`
 binding pre-registration lock → driver commit → dataset SHA → gate/scorer identity → scores SHA → decision → admission records,
 after verifying every link (refuses on any break or an existing release). No interpretation beyond copying the decision lists.
+
+### 2026-09-26 — P5-N₂ v1 vacuum campaign: frozen, scored once, released (pre-registered; no retuning)
+Chain: pre-registration PR #27 → driver 79d4e12 → 1080 raw vacuum records → integrity gate PASS (fcd6720; 9 × 4 × 30, all
+`success`) → record-identity PASS → canonical freeze (sha256 20e926d507598a2ca3d4789929f7e99b179e5fc56c81403286552bbd54097468,
+committed before scoring, fdcc4fa) → frozen scorer (byte-identical to 10842ce) run once → scores sha256 87895820…be1bc →
+report + bound decision → `validation/VALIDATION_RELEASE_v1.json` (10/10 link checks pass; published atomically).
+**Result (mechanical, from the frozen rules): no candidate PROMOTABLE; all nine sgb-screen-01…09 are INCONCLUSIVE / NOT ELIGIBLE.**
+No global layer-1 member passes for any candidate; every candidate has members that FAIL (a scoreable validation failure) and
+members that are INCONCLUSIVE (no failure among scoreable runs, but runs OUT_OF_DOMAIN). Run-reading statuses: PASS 32,
+FAIL_VALIDATION 700 (CURRENT 552, THRUST 308, SUSTAINMENT 260), OUT_OF_DOMAIN 1428 (66 %), NUMERICAL_FAILURE 0.
+Signed residuals (descriptive, non-gating): discharge current over-predicted at N2–N5 for most candidates (medians +24 to +31 %
+across all runs; sgb-screen-05…09 closer, 08/09 under-predict at N1); axial thrust over-predicted at N2/N3 for 01–04.
+E×B (non-gating): model N⁺ acceleration voltage 85–172 V below the measured value; the measured ordering V_a(N⁺) > V_a(N₂⁺) holds
+in 0 of 648 model runs. Credible set stays ∅ (gate 3 FAIL). No criteria, chemistry, transport or tolerance changed.
+Release follow-up (owner): `make_validation_release.py` now publishes atomically (temporary file → parse/verify → os.replace).

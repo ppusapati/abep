@@ -34,7 +34,7 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 |---|---|
 | 1 clean-install reproducibility | pass (frozen atmosphere; pinned deps; runs with pymsis absent) |
 | 2 grid-life consistency | pass (optimiser degeneracy flagged; perveance-window tests) |
-| 3 multi-point Hall validation | **FAIL** — P5-Xe closed: transport not identifiable; credible set ∅, 9 SGB screening candidates await no-retuning N₂ prediction |
+| 3 multi-point Hall validation | **FAIL** — P5-Xe closed: transport not identifiable. P5-N₂ v1 (pre-registered, no retuning, 1080 vacuum runs): **all 9 SGB candidates INCONCLUSIVE / NOT ELIGIBLE**, none PROMOTABLE; 66 % of run-readings OUT_OF_DOMAIN (chemistry T_e > 30 eV). Credible set stays ∅ |
 | 4 cross-family mission UQ | done but **conditional on gate 3** (all absolute Hall numbers withdrawn) |
 | 5 numerical convergence | pass |
 | 6 golden benchmarks | pass (near-zero `ledger_resid` compared with an absolute tolerance, 2026-09-25) |
@@ -157,7 +157,12 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    Open: N₂ excitation (the recommended Su et al. 2021 per-state set ends at 20 eV, and the source for extending it above that is
    the owner's decision); N elastic (Ragimkhanov 2026 not yet located). See docs/HISTORY.md 2026-09-26 and
    `hallthruster_bridge/propellants/PROVENANCE.md`.
-3. **P5-N₂ measurement audit: done** (`identification/p5_n2_measurement_audit_findings_v1.json`; values in
+3. **P5-N₂ v1 vacuum campaign SCORED (2026-09-26)** — `hallthruster_bridge/validation/` (frozen raw dataset sha256 20e926d5…,
+   scores, provenance, report, decision, `VALIDATION_RELEASE_v1.json`, all links verified). Result: no candidate PROMOTABLE; all nine
+   INCONCLUSIVE / NOT ELIGIBLE; credible set ∅; no admission, no design Hall maps. Next (owner plan): O4 staged-sensitivity first stage
+   (5 × 270 vacuum) and the 1080 facility runs as pre-registered; non-gating failure/OOD forensics; no retuning, no criteria change.
+   Admission/Hall maps stay gated until the O4 dispositions are complete even if a later campaign yields PROMOTABLE.
+   **P5-N₂ measurement audit: done** (`identification/p5_n2_measurement_audit_findings_v1.json`; values in
    `brabston_p5_n2_measurement_audit_v1.json` from `scripts/audit_p5_n2_measurements.py`). Targets: I_d and thrust at N1–N5,
    E×B species V_a at N1–N3, sustainment; Φ_m,n/η_SP,n/ξ_N are model-derived, not targets. Pre-registration decisions D1–D6 are
    decided (owner D1–D6, `prereg/p5_n2_validation_criteria_v1.json`, extinction addendum to the run-status rule); operational

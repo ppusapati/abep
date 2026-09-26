@@ -3,7 +3,8 @@
   pre-registration -> driver -> raw dataset -> dataset SHA -> integrity gate -> scorer -> scores SHA -> decision -> admission records
 
 and verifies every link before writing anything. It is a manifest, not an interpretation: the only result content it carries is
-a copy of the mechanical decision's candidate lists. Refuses to overwrite an existing release.
+a copy of the mechanical decision's candidate lists. Refuses to overwrite an existing release; published atomically
+(temporary file -> parse/verify -> os.replace), so an interruption cannot leave a truncated release that blocks a retry.
 Usage: python scripts/make_validation_release.py <freeze_manifest.json> [--out VALIDATION_RELEASE_v1.json]
 (the scores / provenance / decision / report files are located next to the freeze manifest by the standard names)
 """
@@ -74,6 +75,20 @@ def release(freeze_manifest, bridge_dir=BR, ensemble_members=None, check_git=Tru
             "admission_records": adm, "link_checks": checks}
 
 
+def publish(r, out):
+    """Atomic publication: temporary file -> parse/verify -> os.replace. An interruption never leaves a truncated release."""
+    tmp = out + f".partial-{os.getpid()}"
+    try:
+        with open(tmp, "w") as fh:
+            json.dump(r, fh, indent=1)
+        if json.load(open(tmp)) != json.loads(json.dumps(r)):
+            raise SystemExit("release verification failed")
+        os.replace(tmp, out)
+    finally:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+
+
 if __name__ == "__main__":
     fm = sys.argv[1]
     out = sys.argv[sys.argv.index("--out") + 1] if "--out" in sys.argv else os.path.join(BR, "validation", "VALIDATION_RELEASE_v1.json")
@@ -82,5 +97,5 @@ if __name__ == "__main__":
     sys.path.insert(0, ROOT)
     from abep_sim.hall_ensemble import load_ensemble
     r = release(fm, ensemble_members=load_ensemble()["members"])
-    json.dump(r, open(out, "w"), indent=1)
+    publish(r, out)
     print(out)

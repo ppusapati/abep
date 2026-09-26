@@ -1328,6 +1328,19 @@ def test_p5_n2_freeze_and_score_once(tmp_path):
     rl = importlib.util.module_from_spec(spec); spec.loader.exec_module(rl)
     r = rl.release(mp, bridge_dir=sf.BR)
     assert all(r["link_checks"].values()) and r["dataset"]["n_records"] == 5 and r["decision"]["promotable"] == []
+    rel_out = str(tmp_path / "VALIDATION_RELEASE_test.json")
+    real_dump = rl.json.dump
+    def dying_dump(obj, fh, **kw):
+        fh.write("{trunc"); raise KeyboardInterrupt
+    rl.json.dump = dying_dump
+    try:
+        with _pytest.raises(KeyboardInterrupt):
+            rl.publish(r, rel_out)
+    finally:
+        rl.json.dump = real_dump
+    assert not os.path.exists(rel_out) and not any("VALIDATION_RELEASE_test" in f.name for f in tmp_path.iterdir())
+    rl.publish(r, rel_out)
+    assert json.load(open(rel_out))["link_checks"] == r["link_checks"]
     dec_path = scores_path.replace(".json", "_decision.json")
     d = json.load(open(dec_path)); d["source_scores_sha256"] = "0" * 64; json.dump(d, open(dec_path, "w"))
     with _pytest.raises(SystemExit):
