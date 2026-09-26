@@ -843,6 +843,28 @@ def test_n2_vibrational_audit_promotion_is_robust_at_low_te():
     assert fin[-1]["Te_eV"] == 3.0 and max(r["F_P_vs_included_plus_electronic"] for r in fin) > 0.01
 
 
+def test_n2_vibrational_tables_use_two_thirds_mean_energy():
+    """abep-n2n-0.7: ten tables v=0 -> v_f = 1..10. HallThruster's axis is mean electron energy eps_bar = 3/2 T_e, so the
+    row at eps_bar must equal Laporta's Eq. (10) at T_e = 2/3 eps_bar (NOT at T_e = eps_bar). Headers = eps_vf; the omitted
+    v_f > 10 tail stays < 1 % of the vibrational power over T_e = 0.2-30 eV; all ten are in n2_n.toml."""
+    import importlib.util, os, numpy as np
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_vibrational_tables.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    d = os.path.join(root, "hallthruster_bridge", "propellants")
+    cfg = open(os.path.join(d, "n2_n.toml")).read()
+    for vf in range(1, 11):
+        lines = open(os.path.join(d, b.fname(vf))).read().splitlines()
+        assert lines[0] == f"Excitation energy (eV): {b.vib.EPS_V[vf]}"
+        a = np.loadtxt(os.path.join(d, b.fname(vf)), skiprows=2)
+        for eps in (3.0, 15.0, 45.0):
+            row = a[a[:, 0] == eps][0, 1]
+            assert abs(row / b.vib.k_vib(2 * eps / 3, vf)[0][1] - 1) < 1e-5
+            assert abs(row / b.vib.k_vib(eps, vf)[0][1] - 1) > 0.05          # the wrong (T = eps_bar) reading differs
+        assert f'"{b.fname(vf)}"' in cfg
+    assert max(b.vib_tail_fraction(T) for T in (0.2, 1, 3, 10, 30)) < 0.01
+
+
 def test_variant_configs_are_regenerated_from_n2_n():
     """Every chemistry-variant config equals what scripts/make_n2_variant_configs.py produces from the current n2_n.toml."""
     import importlib.util, os

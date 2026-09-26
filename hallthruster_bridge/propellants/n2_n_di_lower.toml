@@ -50,6 +50,56 @@ target_species = "N2"
 rate_coeff_file = "excitation_N2.dat"               # REQUIRED: lumped electronic + vibrational (Itikawa 2006) — not yet generated
 
 [[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_1.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 1, dE = 0.288 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_2.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 2, dE = 0.573 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_3.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 3, dE = 0.855 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_4.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 4, dE = 1.133 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_5.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 5, dE = 1.408 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_6.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 6, dE = 1.679 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_7.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 7, dE = 1.947 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_8.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 8, dE = 2.211 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_9.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 9, dE = 2.471 eV (abep-n2n-0.7)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_vib_0_to_10.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 10, dE = 2.728 eV (abep-n2n-0.7)
+
+[[reactions]]
 type = "elastic"
 target_species = "N"
 rate_coeff_file = "elastic_N.dat"                   # REQUIRED — not yet generated

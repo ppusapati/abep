@@ -95,7 +95,10 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    **Audit 2:** vibrational excitation → **PROMOTION ROBUST** (Laporta et al. 2014 Eq. (10) fits; `audit/n2_vibrational_excitation_v1.json`).
    The margin is large at low T_e with the presently completed denominator; reaction-set completeness remains pending.
    It dominates the inelastic loss at T_e ≤ 2 eV even with the electronic channels counted, and is > 1 % up to T_e ≈ 9 eV.
-   v_f ≤ 10 carries 99.9 % of it (v_f = 1 only ~22 %). Not yet in the reaction set.
+   v_f ≤ 10 carries 99.9 % of it (v_f = 1 only ~22 %). **abep-n2n-0.7:** included as v = 0 → v_f = 1…10, from Laporta's rate fits
+   evaluated at T_e = ⅔ ε̄ (omitted v_f > 10 ≤ 0.145 % of vib power). Closure-limited: v = 0 only, no superelastic, resonant only.
+   Its validity limit is 6.47 eV mean energy, the range Laporta show (no stated fit domain). With it no Hall run is
+   chemistry-trustworthy (smoke: 83–86 % of vib activity is above it). Extending it is an owner decision.
    **Completeness (project decision 2026-09-26):**
    "every file in n2_n.toml exists" ≠ "chemistry complete". `PINNED.toml` stays INCOMPLETE until an omitted-process audit is done:
    - Tier 1 (before P5-N₂ scoring): 8 N₂ excitation states, N momentum transfer.

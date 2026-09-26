@@ -1798,3 +1798,27 @@ Renames (the file contents and rates are unchanged; the files were never on main
 - `dissociative_ionization_N2_N2+.dat` → `dissociative_ionization_N2_to_N_Z2plus.dat`
 - `scripts/build_n_plus_ionization_table.py` → `scripts/build_n_z1plus_to_z2plus_table.py`
 - `scripts/build_n2_to_n2plus_table.py` → `scripts/build_n2_to_n_z2plus_table.py`
+
+## 2026-09-26 — Reaction set abep-n2n-0.7: N₂ vibrational excitation v = 0 → 1…10 (validity limit: owner decision pending)
+
+**Merged:** PR #22 (0.4–0.6, audit 2, nomenclature, wording).
+
+**Change:** ten fixed-energy excitation reactions e + N₂(v=0) → e + N₂(v_f), v_f = 1…10, built by `scripts/build_n2_vibrational_tables.py`.
+- **Rates:** Laporta Eq. (10) rate coefficients, used directly (nothing is integrated). The table row at mean energy ε̄ holds k(T_e = ⅔ ε̄). A regression test also checks that the wrong reading, T_e = ε̄, differs.
+- **Headers:** ε_vf from Laporta Table II.
+- **Why ten:** the omitted v_f = 11…58 tail is at most **0.145 %** of the vibrational power anywhere in T_e = 0.2–30 eV, hence below 0.145 % of P_e and the 1 % criterion. Ten is a result, not a choice.
+
+**Closure uncertainty for P5-N₂ (not a complete vibrational kinetics model):**
+- HallThruster does not track vibrational populations, so all N₂ is taken in v = 0.
+- There is no stepwise v_i > 0 excitation and no superelastic return; the model represents gross electron cooling.
+- Resonant excitation only (Laporta's cross sections integrated to 15 eV); non-resonant excitation is absent.
+
+**Validity domain — needs an owner decision.**
+- Laporta state no validated temperature range for the vibrational-excitation fits. Fig. 5b shows the calculated rates up to 50,000 K (4.31 eV) without a fit overlay; only the dissociation fits are compared with calculations (Fig. 7, up to 100 eV).
+- Following "use the source's fit domain", the limit carried is **6.47 eV mean energy (T_e = 4.31 eV)**.
+- Consequence: in the N1 smoke run (0.7 minus the missing files) 83–86 % of each vibrational channel's activity lies above that limit, so the run is not chemistry-trustworthy. **No P5-N₂ run can be chemistry-trustworthy with this limit.**
+- Evidence relevant to extending it:
+  1. For the 0→1 channel, the Eq. (10) fit matches an independent Maxwellian integral of JPCRD 2023 Table 7 σ₀₁ (1–5 eV) to within 6 % from T = 0.5 to 30 eV (ratios 0.97–1.06). Below that it degrades: 0.40 at T = 0.2 eV.
+  2. Eq. (10)'s T^(−3/2) high-T form is the exact Maxwellian limit for a cross section confined to low energy, which the resonant cross section is.
+  3. The same check cannot be made for the overtones, because no cross sections for them are in hand.
+- Only the upper limit is guarded. The 0.2–0.5 eV fit degradation matters only below the Hall range.

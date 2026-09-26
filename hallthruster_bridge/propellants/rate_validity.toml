@@ -32,6 +32,56 @@ status = "verified"
 max_mean_energy_eV = 255.0
 basis = "JPCRD 2023 Table 10 sigma(N++) spans 70-1000 eV (ramp from 53.885 eV); held-tail share 0.946 % at 255 eV mean energy (scripts/build_n2_to_n_z2plus_table.py)"
 
+["excitation_N2_vib_0_to_1.dat"]
+status = "verified"
+max_mean_energy_eV = 6.47
+basis = "Laporta et al. 2014 Eq. (10) RVE rate fit; no validated T range stated by the source; limit = the range over which Laporta present the calculated RVE rates (Fig. 5b, T <= 50,000 K = 4.31 eV -> mean energy 6.47 eV). Owner decision pending on extension (docs/HISTORY.md 2026-09-26)"
+
+["excitation_N2_vib_0_to_2.dat"]
+status = "verified"
+max_mean_energy_eV = 6.47
+basis = "Laporta et al. 2014 Eq. (10) RVE rate fit; no validated T range stated by the source; limit = the range over which Laporta present the calculated RVE rates (Fig. 5b, T <= 50,000 K = 4.31 eV -> mean energy 6.47 eV). Owner decision pending on extension (docs/HISTORY.md 2026-09-26)"
+
+["excitation_N2_vib_0_to_3.dat"]
+status = "verified"
+max_mean_energy_eV = 6.47
+basis = "Laporta et al. 2014 Eq. (10) RVE rate fit; no validated T range stated by the source; limit = the range over which Laporta present the calculated RVE rates (Fig. 5b, T <= 50,000 K = 4.31 eV -> mean energy 6.47 eV). Owner decision pending on extension (docs/HISTORY.md 2026-09-26)"
+
+["excitation_N2_vib_0_to_4.dat"]
+status = "verified"
+max_mean_energy_eV = 6.47
+basis = "Laporta et al. 2014 Eq. (10) RVE rate fit; no validated T range stated by the source; limit = the range over which Laporta present the calculated RVE rates (Fig. 5b, T <= 50,000 K = 4.31 eV -> mean energy 6.47 eV). Owner decision pending on extension (docs/HISTORY.md 2026-09-26)"
+
+["excitation_N2_vib_0_to_5.dat"]
+status = "verified"
+max_mean_energy_eV = 6.47
+basis = "Laporta et al. 2014 Eq. (10) RVE rate fit; no validated T range stated by the source; limit = the range over which Laporta present the calculated RVE rates (Fig. 5b, T <= 50,000 K = 4.31 eV -> mean energy 6.47 eV). Owner decision pending on extension (docs/HISTORY.md 2026-09-26)"
+
+["excitation_N2_vib_0_to_6.dat"]
+status = "verified"
+max_mean_energy_eV = 6.47
+basis = "Laporta et al. 2014 Eq. (10) RVE rate fit; no validated T range stated by the source; limit = the range over which Laporta present the calculated RVE rates (Fig. 5b, T <= 50,000 K = 4.31 eV -> mean energy 6.47 eV). Owner decision pending on extension (docs/HISTORY.md 2026-09-26)"
+
+["excitation_N2_vib_0_to_7.dat"]
+status = "verified"
+max_mean_energy_eV = 6.47
+basis = "Laporta et al. 2014 Eq. (10) RVE rate fit; no validated T range stated by the source; limit = the range over which Laporta present the calculated RVE rates (Fig. 5b, T <= 50,000 K = 4.31 eV -> mean energy 6.47 eV). Owner decision pending on extension (docs/HISTORY.md 2026-09-26)"
+
+["excitation_N2_vib_0_to_8.dat"]
+status = "verified"
+max_mean_energy_eV = 6.47
+basis = "Laporta et al. 2014 Eq. (10) RVE rate fit; no validated T range stated by the source; limit = the range over which Laporta present the calculated RVE rates (Fig. 5b, T <= 50,000 K = 4.31 eV -> mean energy 6.47 eV). Owner decision pending on extension (docs/HISTORY.md 2026-09-26)"
+
+["excitation_N2_vib_0_to_9.dat"]
+status = "verified"
+max_mean_energy_eV = 6.47
+basis = "Laporta et al. 2014 Eq. (10) RVE rate fit; no validated T range stated by the source; limit = the range over which Laporta present the calculated RVE rates (Fig. 5b, T <= 50,000 K = 4.31 eV -> mean energy 6.47 eV). Owner decision pending on extension (docs/HISTORY.md 2026-09-26)"
+
+["excitation_N2_vib_0_to_10.dat"]
+status = "verified"
+max_mean_energy_eV = 6.47
+basis = "Laporta et al. 2014 Eq. (10) RVE rate fit; no validated T range stated by the source; limit = the range over which Laporta present the calculated RVE rates (Fig. 5b, T <= 50,000 K = 4.31 eV -> mean energy 6.47 eV). Owner decision pending on extension (docs/HISTORY.md 2026-09-26)"
+
 ["ionization_N.dat"]
 status = "verified"
 max_mean_energy_eV = 255.0
