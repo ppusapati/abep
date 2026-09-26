@@ -2122,3 +2122,6 @@ uncertainty, plume/divergence, facility correction, anything above 220 V. Conclu
 discriminator without forced assumptions (A1–A11 in the audit); at most a pre-registered supporting check. Flags:
 `cases/echt_n2.json` (225–275 V, exit-peaked Gaussian B) is unsupported by any open source, and the "250 V, 24 mN, 690 W"
 Marchioni point in the superseded 0-D calibration (above) has no open source. Neither is changed here.
+Release manifest: `scripts/make_validation_release.py` (run only after scoring) writes `validation/VALIDATION_RELEASE_v1.json`
+binding pre-registration lock → driver commit → dataset SHA → gate/scorer identity → scores SHA → decision → admission records,
+after verifying every link (refuses on any break or an existing release). No interpretation beyond copying the decision lists.

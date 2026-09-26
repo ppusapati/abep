@@ -1298,6 +1298,21 @@ def test_p5_n2_freeze_and_score_once(tmp_path):
     assert not os.path.exists(os.path.join(sf.BR, p["output"]))
     assert not any(f.name.startswith("p5_n2_campaign_test_vacuum_scores") for f in out.iterdir())
     assert sf.score_frozen(mp)["output_sha256"]                                        # a clean attempt then succeeds
+    # release manifest binds the whole chain and refuses a broken link
+    spec = importlib.util.spec_from_file_location("rp", os.path.join(root, "scripts", "report_p5_n2_campaign.py"))
+    rp = importlib.util.module_from_spec(spec); spec.loader.exec_module(rp)
+    scores_path = mp.replace("_raw_manifest.json", "_scores.json")
+    rp.main([scores_path])
+    spec = importlib.util.spec_from_file_location("rel", os.path.join(root, "scripts", "make_validation_release.py"))
+    rl = importlib.util.module_from_spec(spec); spec.loader.exec_module(rl)
+    r = rl.release(mp, bridge_dir=sf.BR)
+    assert all(r["link_checks"].values()) and r["dataset"]["n_records"] == 5 and r["decision"]["promotable"] == []
+    dec_path = scores_path.replace(".json", "_decision.json")
+    d = json.load(open(dec_path)); d["source_scores_sha256"] = "0" * 64; json.dump(d, open(dec_path, "w"))
+    with _pytest.raises(SystemExit):
+        rl.release(mp, bridge_dir=sf.BR)
+    for suffix in ("_decision.json", "_report.md"):
+        os.remove(scores_path.replace(".json", suffix))
     gz = out / "p5_n2_campaign_test_vacuum_raw.jsonl.gz"                               # tampering is detected
     gz.write_bytes(gzip.compress(gzip.decompress(gz.read_bytes()).replace(b"failure", b"success")))
     with _pytest.raises(SystemExit):
