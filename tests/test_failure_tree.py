@@ -240,33 +240,83 @@ def test_regression_requires_relabelled_nodes(doc):
     """Nodes whose threshold needs another action's output (review round 1) have no lone decider."""
     nodes = {n["id"]: n for n in doc["nodes"]}
     for nid in ("N-PWR-01", "N-PWR-02", "N-PWR-03", "N-UTL-01", "N-UTL-02", "N-UTL-03", "N-ISL-RF", "N-ISL-ECR",
-                "N-ECR-01", "N-SUS-02", "N-CAT-02", "N-CTL-02"):
+                "N-ECR-01", "N-SUS-02", "N-CAT-02", "N-CTL-02",
+                # review round 4: a ground thermal-vacuum test predicts flight temperatures only through the correlated
+                # thermal network, and nodes on the delivered feed need that feed
+                "N-THM-01", "N-THM-02", "N-THM-03", "N-THM-04", "N-CTL-01", "N-SUS-03", "N-RF-02",
+                "N-ERO-01", "N-ERO-02", "N-ERO-03", "N-ERO-04", "N-IGN-01"):
         assert not [na for na in nodes[nid]["actions"] if na["effect"] == "decides"], nid
 
 
-_UNSTATED_GAS = re.compile(r"(gas|composition)[^.;]{0,60}(not stated|does not state)|does not state the (gas|composition)", re.I)
+_UNSTATED_GAS = re.compile(r"(gas|composition|propellant)[^.;]{0,60}(not stated|does not state)|"
+                          r"(does not state|states no|names neither|states neither)[^.;]{0,40}(gas|composition|propellant)", re.I)
+# gas vocabulary: each key is matched as a whole token; aliases count as the same gas
+_GAS_ALIASES = {"n2": {"n2", "nitrogen"}, "o2": {"o2", "oxygen"}, "o": {"o", "oxygen"}, "n": {"n", "nitrogen"},
+                "nitrogen": {"n2", "nitrogen"}, "oxygen": {"o2", "oxygen"}, "air": {"air"}, "atmospheric": {"atmospheric"},
+                "xenon": {"xenon", "xe"}, "xe": {"xenon", "xe"}, "argon": {"argon", "ar"}, "ar": {"argon", "ar"},
+                "krypton": {"krypton", "kr"}, "kr": {"krypton", "kr"}}
+_ATMOSPHERIC = {"n2", "o2", "o", "n", "nitrogen", "oxygen", "air", "atmospheric"}
+
+
+def _tokens(text):
+    """Word tokens, also splitting chemistry such as '1.27N2+O2' or '0.48O2' into its species."""
+    toks = set()
+    for t in re.findall(r"[A-Za-z][A-Za-z0-9]*", text):
+        toks.add(t.lower())
+    toks |= {m.lower() for m in re.findall(r"(?<![A-Za-z])(N2|O2|Xe|Ar|Kr)(?![a-z])", text)}
+    return toks
 
 
 def test_unstated_gas_is_not_decisive_for_air_nodes(doc):
-    """An item whose source does not state the gas/composition for the cited result (gas_not_stated) cannot support or
-    contradict an air_specific node: it is 'context' until the gas is known. The rule is keyed on the explicit
-    air_specific and gas_not_stated flags, not on titles, and the flags cannot be dropped silently:
-    - an applicability text that says the gas is not stated must carry gas_not_stated;
-    - once a source has an unstated-gas item anywhere, each of its decisive items on an air_specific node must name the
-      gas the source states for that result (gas_stated)."""
-    unstated_sources = {e["source"] for n in doc["nodes"] for e in n["evidence"] if e.get("gas_not_stated")}
+    """Keyed on the substance of each item, not only on its applicability wording (review round 4):
+    - every item on an air_specific node declares the gas of its cited result, gas_stated or gas_not_stated (never both);
+    - a gas_not_stated item is 'context' there, whatever it reports;
+    - a decisive item (supports / contradicts) there carries gas_stated, and that gas must appear in the item's own
+      statement or applicability (it cannot be asserted without text behind it);
+    - a decisive item whose stated gas names no atmospheric species (e.g. xenon only) must carry a
+      gas_independent_rationale, so a different-gas result never decides an air node silently;
+    - an applicability text that says the gas is not stated must carry gas_not_stated, on any node."""
     for n in doc["nodes"]:
         assert isinstance(n["air_specific"], bool), n["id"]
         for e in n["evidence"]:
+            key = (n["id"], e["source"], e["direction"])
             if _UNSTATED_GAS.search(e["applicability"]):
-                assert e.get("gas_not_stated") is True, (n["id"], e["source"])
-            assert not (e.get("gas_not_stated") and e.get("gas_stated")), (n["id"], e["source"])
+                assert e.get("gas_not_stated") is True, key
+            assert not (e.get("gas_not_stated") and e.get("gas_stated")), key
             if not n["air_specific"]:
                 continue
+            assert e.get("gas_not_stated") is True or e.get("gas_stated"), ("gas not declared", key)
             if e.get("gas_not_stated"):
-                assert e["direction"] == "context", (n["id"], e["source"])
-            elif e["source"] in unstated_sources and e["direction"] != "context":
-                assert e.get("gas_stated"), (n["id"], e["source"])
+                assert e["direction"] == "context", key
+                assert not e.get("gas_independent_rationale"), key
+                continue
+            gas = {t for t in _tokens(e["gas_stated"]) if t in _GAS_ALIASES}
+            assert gas, ("gas_stated names no known gas", key, e["gas_stated"])
+            text = _tokens(e["statement"] + " " + e["applicability"])
+            assert any(_GAS_ALIASES[g] & text for g in gas), ("gas_stated not in the item's text", key, e["gas_stated"])
+            if e["direction"] != "context" and not gas & _ATMOSPHERIC:
+                assert e.get("gas_independent_rationale", "").strip(), ("different-gas item decides an air node", key)
+
+
+def test_known_unstated_gas_items_are_context(doc):
+    """Review round 4 regressions: items whose source states no gas for the cited result."""
+    nodes = {n["id"]: n for n in doc["nodes"]}
+    for nid, src in (("N-THM-01", "S-SIMMONDS2022"), ("N-THM-01", "S-MYERS2016"), ("N-THM-04", "S-MYERS2016"),
+                     ("N-RF-01", "S-TURNER1999"), ("N-RF-02", "S-ROMANO2020"), ("N-ECR-01", "S-TISAEV2023A")):
+        items = [e for e in nodes[nid]["evidence"] if e["source"] == src]
+        assert items and all(e.get("gas_not_stated") and e["direction"] == "context" for e in items), (nid, src)
+    # both thermal nodes treat S-MYERS2016 the same way, and the paraphrase keeps the components the abstract names
+    for nid in ("N-THM-01", "N-THM-04"):
+        (m,) = [e for e in nodes[nid]["evidence"] if e["source"] == "S-MYERS2016"]
+        assert "(primarily the magnet coils and the discharge channel)" in m["statement"], nid
+        assert "xenon" not in m["applicability"].lower() and "verify" in m["applicability"], nid
+        assert nodes[nid]["evidence_status"] == "unknown" and nodes[nid].get("evidence_gap"), nid
+        overheat = [e for e in nodes[nid]["evidence"] if e["source"] == "S-CIFALI2011" and "overheating" in e["statement"]]
+        assert overheat and overheat[0]["direction"] == "context" and overheat[0]["locator"] == "Sec. II.B (pdf p. 4)", nid
+    # a xenon result may bear on the ECR cutoff only with its gas-independence stated
+    for e in nodes["N-ECR-01"]["evidence"]:
+        if e["source"] in ("S-FOSTER2006", "S-DIAMANT2009"):
+            assert "frequency" in e["gas_independent_rationale"], e["source"]
 
 
 def test_air_specific_flag_covers_the_air_nodes(doc):
@@ -537,29 +587,68 @@ def test_generator_imports_no_other_lane_module():
 
 
 # ------------------------------------------------------------------ review round 2: structure that keeps the counts honest
+def _resolving(n):
+    return {(na["action"], na["effect"]) for na in n["actions"] if na["effect"] in ("decides", "contributes")}
+
+
 def test_sub_causes_repeat_their_parent_and_are_not_counted(doc):
-    """A sub-cause names an architecture-specific contributor to its parent's threshold comparison. It carries the
-    parent's gates and deciding action, says in its threshold that the parent decides it, and is not counted in the
-    ranking (so one comparison is never counted twice)."""
+    """A sub-cause repeats its parent's threshold comparison (node_rules.sub_cause_rule). It takes the parent's
+    comparison_id, gates, requires_actions, cheapest_resolution and deciding/contributing actions (informs may differ:
+    they are not counted), names the parent in its threshold, and is not counted in the ranking, so one comparison is
+    never counted twice. The failure class may differ: a sub-cause can be the mechanism behind the parent's quantity."""
     nodes = {n["id"]: n for n in doc["nodes"]}
     subs = [n for n in doc["nodes"] if n.get("sub_cause_of")]
-    assert {n["id"] for n in subs} == {"N-MAS-02", "N-MAS-03", "N-UTL-01"}
+    # regression (review rounds 2-4): the bus comparison at 12 mN, the start-count/start-Xe comparison, the mass total
+    assert {"N-MAS-02", "N-MAS-03", "N-UTL-01", "N-PWR-02", "N-PWR-03", "N-PWR-04", "N-CTL-02"} <= {n["id"] for n in subs}
     for n in subs:
         p = nodes[n["sub_cause_of"]]
+        pq, q = p["decision_quantity"], n["decision_quantity"]
         assert not p.get("sub_cause_of"), n["id"]
-        # the class may differ only when the sub-cause is the mechanism behind the parent's quantity (N-UTL-01 -> N-PWR-01)
-        assert p["failure_class"] == n["failure_class"] or n["id"] == "N-UTL-01", n["id"]
         assert n.get("branch") == p.get("branch"), n["id"]
         assert set(n["architectures"]) <= set(p["architectures"]), n["id"]
-        assert n["decision_quantity"]["gates"] == p["decision_quantity"]["gates"], n["id"]
-        assert p["id"] in n["decision_quantity"]["threshold"], n["id"]
-        assert {na["action"] for na in n["actions"]} <= {na["action"] for na in p["actions"]}, n["id"]
+        assert q["comparison_id"] == pq["comparison_id"], n["id"]
+        assert q["gates"] == pq["gates"], n["id"]
+        assert set(q["requires_actions"]) == set(pq["requires_actions"]), n["id"]
+        assert n["cheapest_resolution"] == p["cheapest_resolution"], n["id"]
+        assert _resolving(n) == _resolving(p), n["id"]
+        assert p["id"] in q["threshold"] and "parent" in q["threshold"], n["id"]
     for arch in ARCHS:
         r = doc["ranked_next_evidence"]["per_architecture"][arch]
         for x in r["ranked"]:
             assert not set(x["nodes_decided"] + x["nodes_contributed"] + x["nodes_informed"]) & {n["id"] for n in subs}
         a_mass = [x for x in r["ranked"] if x["action"] == "A-MASS"]
         assert a_mass and a_mass[0]["n_decides"] == 1, arch
+
+
+def _combinations(doc, arch):
+    """Counted node sets of one architecture: the core plus every choice of one option per design branch."""
+    import itertools
+    decisions = [b for b in doc["design_branches"] if arch in b["applies_to"]]
+    for combo in itertools.product(*[[{"decision": b["id"], "option": o["id"]} for o in b["options"]] for b in decisions]):
+        yield combo, [n for n in doc["nodes"] if arch in n["architectures"] and n["decision_state"] == "open"
+                      and not n.get("sub_cause_of") and (not n.get("branch") or n["branch"] in combo)]
+
+
+_BUS_AT_12MN = (re.compile(r"\b12 mN\b"), re.compile(r"\b1500 W\b|\b1\.5 kW\b"))
+
+
+def test_one_comparison_is_counted_once(doc):
+    """Counted nodes never share a comparison (node_rules.comparison_rule), checked three ways in every architecture and
+    every choice of design-branch options: distinct comparison_id (and a counted node's id follows from its node id, so
+    it cannot be made to look distinct by renaming), distinct threshold text, and - on the substance - at most one
+    counted node states the RFP bus-power inequality at 12 mN (review round 4 found N-PWR-02/03/04 restating it)."""
+    for n in doc["nodes"]:
+        if not n.get("sub_cause_of"):
+            assert n["decision_quantity"]["comparison_id"] == "CMP-" + n["id"][2:], n["id"]
+    for arch in ARCHS:
+        for combo, counted in _combinations(doc, arch):
+            ids = [n["decision_quantity"]["comparison_id"] for n in counted]
+            assert len(ids) == len(set(ids)), (arch, combo)
+            thr = [" ".join(n["decision_quantity"]["threshold"].lower().split()) for n in counted]
+            assert len(thr) == len(set(thr)), (arch, combo, [t for t in thr if thr.count(t) > 1])
+            bus = [n["id"] for n in counted if all(p.search(n["decision_quantity"]["quantity"] + " " +
+                                                            n["decision_quantity"]["threshold"]) for p in _BUS_AT_12MN)]
+            assert bus == ["N-PWR-01"], (arch, combo, bus)
 
 
 def test_unassigned_work_is_named_not_hidden(doc):
@@ -705,12 +794,16 @@ def test_one_comparison_one_direction_per_source(doc):
         key = ("threshold", n["decision_quantity"]["threshold"], tuple(sorted(n["decision_quantity"]["gates"])))
         groups.setdefault(key, []).append(n)
     for key, members in groups.items():
-        dirs = {}
+        by_src = {}
         for n in members:
             for e in n["evidence"]:
-                dirs.setdefault(e["source"], set()).add(e["direction"])
-        for src, ds in dirs.items():
-            assert not {"supports", "contradicts"} <= ds or len(members) == 1, (key, src, [m["id"] for m in members])
+                by_src.setdefault(e["source"], set()).add((n["id"], e["direction"]))
+        for src, pairs in by_src.items():
+            sup = {nid for nid, dr in pairs if dr == "supports"}
+            con = {nid for nid, dr in pairs if dr == "contradicts"}
+            # conflicting items of one source on one node are allowed (the node is then 'unknown'); across two nodes of one
+            # comparison they are not
+            assert not any(a != b for a in sup for b in con), (key, src, [m["id"] for m in members])
     # the review-round-3 case: low utilization vs discharge power per thrust within the bus
     assert nodes["N-UTL-01"]["sub_cause_of"] == "N-PWR-01"
     assert nodes["N-UTL-01"]["evidence_status"] == nodes["N-PWR-01"]["evidence_status"] == "contradicted"
@@ -730,11 +823,149 @@ def test_review_round3_applicability_relabels(doc):
     pc = nodes["N-THM-01"]["physical_cause"]
     assert "verify" in pc and "higher fraction of power lost" not in pc
     # a node whose physical cause is only a hypothesis says so
-    for nid in ("N-CAT-07", "N-CAT-08", "N-CAT-09"):
+    for nid in ("N-CAT-07", "N-CAT-09"):
         assert "verify" in nodes[nid]["physical_cause"] and not nodes[nid]["evidence"], nid
+    # N-CAT-08 is now carried by S-TISAEV2024 (read in round 4); the life part stays 'verify'
+    assert "S-TISAEV2024" in nodes["N-CAT-08"]["physical_cause"] and "verify" in nodes["N-CAT-08"]["physical_cause"]
 
 
 def test_cifali_operating_point_arithmetic(doc):
     v = {x["id"]: x for x in doc["derived_values"]["values"]}["D-CIFALI-THRUST-N2"]
     assert v["unit"] == "mN" and abs(v["value"] - 305.0 * 3.48 / 41.6) < 1e-3
     assert "verify" in v["note"]
+
+
+# ------------------------------------------------------------------ review round 4: rules applied the same way everywhere
+_DELIVERED = re.compile(r"\bdelivered\b|IF-A5|flow envelope|composition envelope")
+
+
+def test_delivered_feed_rule(doc):
+    """A node evaluated on the delivered feed needs that feed from A-FLOWENV (node_rules.delivered_feed_rule): A-FLOWENV
+    is then required (or decides the node). The rule is keyed on the node's own quantity and threshold text."""
+    for n in doc["nodes"]:
+        dq = n["decision_quantity"]
+        if _DELIVERED.search(dq["quantity"] + " " + dq["threshold"]):
+            eff = {na["action"]: na["effect"] for na in n["actions"]}
+            assert "A-FLOWENV" in dq["requires_actions"] or eff.get("A-FLOWENV") == "decides", n["id"]
+    nodes = {n["id"]: n for n in doc["nodes"]}
+    for nid in ("N-CTL-01", "N-SUS-03", "N-IGN-01", "N-PWR-01", "N-RF-02"):
+        assert "A-FLOWENV" in nodes[nid]["decision_quantity"]["requires_actions"], nid
+
+
+# what the quantity + threshold must mention for each gate link (hard_gates[].links_when, node_rules.gate_link_rule)
+_GATE_WORDS = {
+    "thrust": r"thrust|\bmN\b|operating point|design point|setpoint|sustain|acceleration|discharge current|emission current|"
+              r"I_emit|ion flux|B\(z\)|transmission|break-even",
+    "bus_power": r"\bbus\b|\b\d+ W\b|kW|power|efficiency|reflected",
+    "mass": r"\bkg\b|\bmass\b",
+    "firing_life": r"firing|\blife\b|temperature|erosion|wear|oxidation|resistance",
+    "mission_life": r"\bmission\b|off periods?\b|calendar|deplet",
+    "restart_sustainment": r"start|sustain|extinction|oscillation|regulation|breakdown|ignit|\btrips?\b|\bmode\b|B\(z\)|"
+                           r"resonance|continuity|pressure reached",
+    "air_xe": r"\bXe\b|xenon|noble|air_xe",
+}
+
+
+def test_gate_links_match_what_the_threshold_compares(doc):
+    """A node links only gates whose criterion its threshold compares. Checked on the text: each linked gate's
+    vocabulary appears in the node's quantity or threshold (review round 4: start-count thresholds had linked firing
+    and mission life). Every gate states what a link to it means."""
+    for g in doc["hard_gates"]:
+        assert g["links_when"].strip(), g["id"]
+    for n in doc["nodes"]:
+        dq = n["decision_quantity"]
+        text = dq["quantity"] + " " + dq["threshold"]
+        for gate in dq["gates"]:
+            assert re.search(_GATE_WORDS[gate], text, re.I), (n["id"], gate)
+    nodes = {n["id"]: n for n in doc["nodes"]}
+    for nid in ("N-CAT-07", "N-CAT-09"):                       # start cycles: restart only
+        assert nodes[nid]["decision_quantity"]["gates"] == ["restart_sustainment"], nid
+    for nid in ("N-IGN-01", "N-CTL-02"):                       # start success and start Xe (consumable depletion)
+        assert not {"firing_life", "mass"} & set(nodes[nid]["decision_quantity"]["gates"]), nid
+    # the proposed cathode gate is 'cathode life and start cycles': not Xe mass, not current
+    for n in doc["nodes"]:
+        if "P2_cathode" in n.get("proposed_gate_links", []):
+            assert {"firing_life", "restart_sustainment"} & set(n["decision_quantity"]["gates"]), n["id"]
+    for nid in ("N-CAT-02", "N-CAT-04", "N-CAT-06"):
+        assert "P2_cathode" not in nodes[nid].get("proposed_gate_links", []), nid
+
+
+def _set_key(acts, s):
+    return (max(COST[acts[a]["kind"]] for a in s), len(s), tuple(sorted(s)))
+
+
+def test_cheapest_resolution_tie_break(doc):
+    """cheapest_resolution is the minimum of (highest cost class, number of actions, sorted ids) over the unblocked
+    deciding actions, itself and the listed alternative_resolutions; every contributing action belongs to one of those
+    sets, so no jointly sufficient set is chosen by hand (review round 4: N-IGN-02 vs N-IGN-03)."""
+    acts = {a["id"]: a for a in doc["actions"]}
+    for n in doc["nodes"]:
+        eff = {na["action"]: na["effect"] for na in n["actions"]}
+        alts = n.get("alternative_resolutions", [])
+        for s in alts:
+            assert all(eff.get(a) == "contributes" and not acts[a]["blocked_by"] for a in s), (n["id"], s)
+            assert set(n["decision_quantity"]["requires_actions"]) <= set(s), (n["id"], s)
+        cands = [[a] for a, e in eff.items() if e == "decides" and not acts[a]["blocked_by"]] + [n["cheapest_resolution"]] + alts
+        best = min(cands, key=lambda s: _set_key(acts, s))
+        assert sorted(best) == sorted(n["cheapest_resolution"]), (n["id"], best)
+        covered = set().union(*[set(s) for s in [n["cheapest_resolution"]] + alts])
+        for a, e in eff.items():
+            if e == "contributes":
+                assert a in covered, (n["id"], a)
+
+
+def test_physical_cause_basis(doc):
+    """Every physical cause says what carries it: cited ids (which must exist), a ledger/budget definition, or a
+    hypothesis marked 'verify' (review round 4: N-RF-04, N-ECR-03, N-ERO-04 and N-THM-02 were unmarked)."""
+    src = {s["id"] for s in doc["sources"]}
+    dv = {v["id"] for v in doc["derived_values"]["values"]}
+    for n in doc["nodes"]:
+        pc, basis = n["physical_cause"], n["physical_cause_basis"]
+        ids = re.findall(r"\b([SD]-[A-Z0-9][A-Z0-9.-]*[A-Z0-9])", pc)
+        for i in ids:
+            assert i in src or i in dv, (n["id"], i)
+        if basis == "cited":
+            assert ids, n["id"]
+        elif basis == "hypothesis":
+            assert "verify" in pc, n["id"]
+        else:
+            assert basis == "definition" and "identity" in pc, n["id"]
+    nodes = {n["id"]: n for n in doc["nodes"]}
+    for nid in ("N-RF-04", "N-ECR-03", "N-THM-02"):
+        assert nodes[nid]["physical_cause_basis"] == "hypothesis", nid
+
+
+def test_review_round4_evidence_and_citations(doc):
+    nodes = {n["id"]: n for n in doc["nodes"]}
+    src = {s["id"]: s for s in doc["sources"]}
+    acts = {a["id"]: a for a in doc["actions"]}
+    # the SITAEL follow-up is AIAA 2019-3995 (10.2514/6.2019-3996 is an iodine feed-system paper)
+    assert "AIAA 2019-3995" in acts["L-SITAEL"]["description"] and "3996" not in acts["L-SITAEL"]["description"]
+    assert src["S-ANDREUSSI2019"]["doi"] == "10.2514/6.2019-3995"
+    assert "Molecular Propellant" in src["S-BRABSTON2025"]["citation"] and "41(6)" in src["S-BRABSTON2025"]["citation"]
+    assert "(2007)" in src["S-GOEBEL2007"]["citation"] and "23(3)" in src["S-GOEBEL2007"]["citation"]
+    assert src["S-ROMANO2020"]["doi"] == "10.1016/j.actaastro.2020.07.008"
+    # the thermal test predicts flight temperatures only with the correlated network: it never decides alone
+    for n in doc["nodes"]:
+        for na in n["actions"]:
+            if na["action"] == "M-THERMAL":
+                assert na["effect"] == "contributes", n["id"]
+                assert {"effect": "contributes", "action": "A-THERMAL"} in n["actions"], n["id"]
+    # one direction label per regime: relative or magnitude statements on the air-fed cathode current are context
+    assert all(e["direction"] == "context" for e in nodes["N-CAT-04"]["evidence"])
+    # a matched air flow range covers one leg of the N-RF-02 disjunction only
+    assert all(e["direction"] == "context" for e in nodes["N-RF-02"]["evidence"])
+    assert nodes["N-RF-02"]["evidence_status"] == "unknown"
+    # S-TISAEV2024 read in full: air-plasma antenna sputtering and coating (supports), mitigation over hours (context)
+    assert src["S-TISAEV2024"]["access"] == "full_text_open" and "sha256" in src["S-TISAEV2024"]
+    for nid in ("N-CAT-08", "N-ERO-04"):
+        dirs = {e["direction"] for e in nodes[nid]["evidence"] if e["source"] == "S-TISAEV2024"}
+        assert dirs == {"supports", "context"} and nodes[nid]["evidence_status"] == "supported", nid
+        assert nodes[nid].get("status_note"), nid
+    # 'supported' on an intrinsic-life mechanism is not a life verdict
+    assert "50,000" in nodes["N-CAT-05"]["status_note"] and "does not mean" in nodes["N-CAT-05"]["status_note"]
+    # the interstage model is unvalidated: it informs, never contributes
+    for n in doc["nodes"]:
+        for na in n["actions"]:
+            if na["action"] == "A-INTERSTAGE":
+                assert na["effect"] == "informs", n["id"]

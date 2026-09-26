@@ -207,6 +207,7 @@ def status_counts(doc: dict, arch: str) -> dict:
 def md_sections(doc: dict) -> dict:
     classes = {c["id"]: c for c in doc["failure_classes"]}
     titles = {a["id"]: a["title"] for a in doc["actions"]}
+    matrix = {g["id"]: g["matrix_gate_id"].split("_")[0] for g in doc["hard_gates"]}   # e.g. thrust -> G1
     sec = {}
     lines = []
     for arch in ARCHS:
@@ -217,7 +218,7 @@ def md_sections(doc: dict) -> dict:
         lines.append(f"### `{arch}` ({len(nodes)} nodes, {n_sub} sub-cause(s), {n_br} branch-specific: {c['supported']} supported, "
                      f"{c['contradicted']} contradicted, {c['unknown']} unknown; all decision_state = open)")
         lines.append("")
-        lines.append("| class | node | failure path | evidence status | gates | cheapest resolution | resolve by | analysis needs admitted Hall closure |")
+        lines.append("| class | node | failure path | evidence status | gates (matrix id) | cheapest resolution | resolve by | analysis needs admitted Hall closure |")
         lines.append("|---|---|---|---|---|---|---|---|")
         for fc in doc["failure_classes"]:
             if arch not in fc["applies_to"]:
@@ -229,8 +230,9 @@ def md_sections(doc: dict) -> dict:
                 cond = f" (branch {b['decision']} = {b['option']})" if b else ""
                 if n.get("sub_cause_of"):
                     cond += f" (sub-cause of {n['sub_cause_of']}; not counted)"
+                gates = ", ".join(f"{g} ({matrix[g]})" for g in n["decision_quantity"]["gates"])
                 lines.append(f"| {classes[fc['id']]['name']} | {n['id']} | {n['title']}{cond} | {n['evidence_status']} | "
-                             f"{', '.join(n['decision_quantity']['gates'])} | {' + '.join(n['cheapest_resolution'])} | "
+                             f"{gates} | {' + '.join(n['cheapest_resolution'])} | "
                              f"{n['resolve_by_milestone']} | {'yes' if n['analysis_requires_admitted_hall_closure'] else 'no'} |")
         lines.append("")
     sec["trees"] = "\n".join(lines).rstrip() + "\n"

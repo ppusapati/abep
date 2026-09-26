@@ -7,7 +7,7 @@
  "additionalProperties": false,
  "required": ["schema", "id", "version", "status", "date", "base_commit", "lane", "scope", "no_winner_statement", "milestones",
   "architectures", "hard_gates", "hard_gate_matrix_link", "lanes", "failure_classes", "design_branches", "evidence_status_rule", "elimination_rule", "eliminations",
-  "sources", "actions", "action_effects", "nodes", "ranking_rule", "derived_values", "ranked_next_evidence", "open_questions_for_owner"],
+  "sources", "actions", "action_effects", "node_rules", "nodes", "ranking_rule", "derived_values", "ranked_next_evidence", "open_questions_for_owner"],
  "properties": {
   "schema": {"const": "failure_tree_v1"},
   "id": {"const": "failure_trees_v1"},
@@ -31,6 +31,7 @@
   "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}},
   "actions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/action"}},
   "action_effects": {"$ref": "#/$defs/action_effects"},
+  "node_rules": {"$ref": "#/$defs/node_rules"},
   "nodes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/node"}},
   "ranking_rule": {"$ref": "#/$defs/ranking_rule"},
   "derived_values": {"$ref": "#/$defs/derived_values"},
@@ -82,7 +83,7 @@
   },
   "hard_gate": {
    "type": "object", "additionalProperties": false,
-   "required": ["id", "matrix_gate_id", "title", "threshold", "threshold_status", "source", "existing_checks"],
+   "required": ["id", "matrix_gate_id", "title", "threshold", "threshold_status", "source", "existing_checks", "links_when"],
    "properties": {
     "id": {"$ref": "#/$defs/gate_id"},
     "matrix_gate_id": {"$ref": "#/$defs/matrix_gate_id"},
@@ -96,6 +97,7 @@
     "threshold_status": {"enum": ["RFP", "RFP_with_TBD_count", "RFP_with_TBD_share"]},
     "source": {"type": "string", "minLength": 1},
     "existing_checks": {"type": "array", "items": {"type": "string"}},
+    "links_when": {"description": "What a node's threshold must compare for the node to link this gate (the gate-link rule in node_rules).", "type": "string", "minLength": 1},
     "tbd": {"type": "string"}
    }
   },
@@ -140,9 +142,10 @@
   },
   "evidence_status_rule": {
    "type": "object", "additionalProperties": false,
-   "required": ["meaning", "directions", "rule", "unknown_basis"],
+   "required": ["meaning", "directions", "rule", "unknown_basis", "gas_rule"],
    "properties": {
     "meaning": {"type": "string", "minLength": 1},
+    "gas_rule": {"type": "string", "minLength": 1},
     "directions": {"type": "object"},
     "rule": {"type": "array", "minItems": 3, "items": {"type": "string"}},
     "unknown_basis": {"type": "object"}
@@ -191,6 +194,15 @@
     "targets": {"type": "array", "items": {"type": "string"}}
    }
   },
+  "node_rules": {
+   "type": "object", "additionalProperties": false,
+   "required": ["sub_cause_rule", "comparison_rule", "gate_link_rule", "delivered_feed_rule", "cheapest_resolution_rule", "physical_cause_basis"],
+   "properties": {
+    "sub_cause_rule": {"type": "string", "minLength": 1}, "comparison_rule": {"type": "string", "minLength": 1},
+    "gate_link_rule": {"type": "string", "minLength": 1}, "delivered_feed_rule": {"type": "string", "minLength": 1},
+    "cheapest_resolution_rule": {"type": "string", "minLength": 1}, "physical_cause_basis": {"type": "string", "minLength": 1}
+   }
+  },
   "action_effects": {
    "type": "object", "additionalProperties": false,
    "required": ["decides", "contributes", "informs", "rule"],
@@ -211,7 +223,8 @@
     "locator": {"type": "string", "minLength": 1},
     "applicability": {"type": "string", "minLength": 1},
     "gas_not_stated": {"description": "true when the source does not state the gas or composition for the cited result; on an air_specific node such an item can only be 'context'.", "type": "boolean"},
-    "gas_stated": {"description": "The gas the source states for the cited result. Required on a decisive item (supports/contradicts) of an air_specific node when another item of the same source is gas_not_stated.", "type": "string", "minLength": 1}
+    "gas_stated": {"description": "The gas the source states for the cited result; it must appear in the item's statement or applicability. Every item on an air_specific node carries gas_stated or gas_not_stated, and every decisive item (supports/contradicts) there carries gas_stated.", "type": "string", "minLength": 1},
+    "gas_independent_rationale": {"description": "Required on a decisive item of an air_specific node whose gas_stated names no atmospheric species: why the mechanism does not depend on the gas.", "type": "string", "minLength": 1}
    }
   },
   "node_action": {
@@ -224,8 +237,9 @@
   },
   "decision_quantity": {
    "type": "object", "additionalProperties": false,
-   "required": ["quantity", "threshold", "threshold_status", "requires_actions", "requires_owner_inputs", "gates"],
+   "required": ["comparison_id", "quantity", "threshold", "threshold_status", "requires_actions", "requires_owner_inputs", "gates"],
    "properties": {
+    "comparison_id": {"description": "Names the threshold comparison. A counted node's id is CMP- plus its node id without the N- prefix; a sub-cause carries its parent's.", "type": "string", "pattern": "^CMP-[A-Z]{2,3}-[A-Z0-9]+$"},
     "quantity": {"type": "string", "minLength": 1},
     "threshold": {"type": "string", "minLength": 1},
     "threshold_status": {"enum": ["RFP", "PROPOSED", "TBD", "physics_bound"]},
@@ -238,7 +252,7 @@
   },
   "node": {
    "type": "object", "additionalProperties": false,
-   "required": ["id", "architectures", "failure_class", "title", "rfp_blocks", "air_specific", "mechanism", "physical_cause", "evidence",
+   "required": ["id", "architectures", "failure_class", "title", "rfp_blocks", "air_specific", "mechanism", "physical_cause", "physical_cause_basis", "evidence",
     "evidence_status", "decision_quantity", "actions", "cheapest_resolution", "resolve_by_milestone", "milestone_A_condition",
     "analysis_requires_admitted_hall_closure", "decision_state"],
    "properties": {
@@ -253,12 +267,15 @@
     "air_specific": {"description": "true when the node's decision quantity is evaluated on the atmospheric (air / N2 / O2) feed or its mechanism depends on N/O species; evidence whose gas is not stated cannot decide it.", "type": "boolean"},
     "mechanism": {"type": "string", "minLength": 1},
     "physical_cause": {"type": "string", "minLength": 1},
+    "physical_cause_basis": {"description": "cited: the physical cause names the source or derived-value ids that state it; definition: a ledger or budget identity; hypothesis: the failure hypothesis, marked 'verify'.", "enum": ["cited", "definition", "hypothesis"]},
     "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence_item"}},
+    "status_note": {"description": "Plain-text caveat on what the evidence status does and does not mean for this node.", "type": "string", "minLength": 1},
     "evidence_gap": {"type": "string", "minLength": 1},
     "evidence_status": {"enum": ["supported", "contradicted", "unknown"]},
     "decision_quantity": {"$ref": "#/$defs/decision_quantity"},
     "actions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/node_action"}},
     "cheapest_resolution": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[LAM]-[A-Z0-9]+$"}},
+    "alternative_resolutions": {"description": "Other jointly sufficient sets of contributing actions; cheapest_resolution is the minimum under node_rules.cheapest_resolution_rule.", "type": "array", "minItems": 1, "items": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "pattern": "^[LAM]-[A-Z0-9]+$"}}},
     "resolve_by_milestone": {"enum": ["B", "C"]},
     "milestone_A_condition": {"type": "string", "minLength": 1},
     "analysis_requires_admitted_hall_closure": {"type": "boolean"},
