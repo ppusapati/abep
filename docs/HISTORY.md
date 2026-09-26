@@ -1908,3 +1908,14 @@ Renames (the file contents and rates are unchanged; the files were never on main
 
 - The reference state is the full-set N1 smoke run (0.5 ms, default transport, no measured targets).
 - The driver now writes ion density profiles (`profile_ni_<sym>_Z<Z>_m3`).
+
+## 2026-09-26 — Reaction set abep-n2n-0.10: rotational excitation (marginal promotion)
+
+Two excitation reactions, j = 0 → 2 and 0 → 4, built by `scripts/build_n2_rotational_tables.py`:
+- Cross sections from JPCRD 2023 Table 6 (0.01–10 eV), held at the 10 eV value above.
+- Headers 1.480 meV and 4.933 meV (NIST B₀).
+- Gross loss from j = 0 with no superelastic return. This deliberately over-states net rotational cooling, consistent with the vibrational closure.
+
+The full 28-reaction N1 smoke run is chemistry-trustworthy.
+
+This inclusion follows the pre-registered rule literally (gross F_P 1.13 % > 1 %). If the owner decides the net (detailed-balance) loss is the relevant quantity, it is reversible as a documented model change.

@@ -936,6 +936,22 @@ def test_n2_completeness_final_audit():
     assert v["N_to_N_Z2plus_direct"]["verdict"].startswith("UNRESOLVED-BY-SOURCE")
 
 
+def test_n2_rotational_tables():
+    """abep-n2n-0.10: rotational j 0->2 / 0->4 from JPCRD Table 6 with NIST-B_0 headers; rows = fresh integration."""
+    import importlib.util, os, numpy as np
+    from abep_sim.rate_tables import maxwellian_rate
+    root = os.path.dirname(os.path.dirname(__file__))
+    spec = importlib.util.spec_from_file_location("b", os.path.join(root, "scripts", "build_n2_rotational_tables.py"))
+    b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+    cfg = open(os.path.join(b.PROP, "n2_n.toml")).read()
+    for col, f in b.FILES.items():
+        assert open(os.path.join(b.PROP, f)).readline().strip() == f"Excitation energy (eV): {round(b.aud.ROT_DE_SPECTRO_EV[col], 7)}"
+        a = np.loadtxt(os.path.join(b.PROP, f), skiprows=2); E, s = b.cross_section(col)
+        for eps in (2.0, 15.0):
+            assert abs(a[a[:, 0] == eps][0, 1] / maxwellian_rate(E, s, eps / 1.5, "hold") - 1) < 1e-5
+        assert f'"{f}"' in cfg
+
+
 def test_variant_configs_are_regenerated_from_n2_n():
     """Every chemistry-variant config equals what scripts/make_n2_variant_configs.py produces from the current n2_n.toml."""
     import importlib.util, os

@@ -134,6 +134,16 @@ target_species = "N2"
 rate_coeff_file = "excitation_N2_vib_0_to_10.dat"      # Laporta et al. 2014 Eq. (10), v=0 -> 10, dE = 2.728 eV (abep-n2n-0.7)
 
 [[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_rot_j0_to_j2.dat"      # JPCRD 2023 Table 6, dE = 6 B_0 = 1.480 meV (abep-n2n-0.10)
+
+[[reactions]]
+type = "excitation"
+target_species = "N2"
+rate_coeff_file = "excitation_N2_rot_j0_to_j4.dat"      # JPCRD 2023 Table 6, dE = 20 B_0 = 4.933 meV (abep-n2n-0.10)
+
+[[reactions]]
 type = "elastic"
 target_species = "N"
 rate_coeff_file = "elastic_N_wang2014_bsr.dat"        # Wang et al. 2014 BSR MTCS via Ragimkhanov Fig. 1b, OPM above 128 eV: N-elastic VARIANT (abep-n2n-0.8)

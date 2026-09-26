@@ -109,7 +109,9 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
    20 eV, and a power-law continuation above Johnson's last point (≤ 6.7 % of the rate at T_e = 30 eV). Headers are the experimental
    energies. The overlap disagreement Su/Johnson is 0.6–3.8 (step at 20 eV 0.84–2.13); a Johnson-below-20 alternative gives 0.80–0.94
    of the electronic power, recorded as uncertainty. **`n2_n.toml` is now file-complete** (26 reactions; full-set smoke run is
-   chemistry-trustworthy). PINNED stays INCOMPLETE: the tier-3 bounds and the audit reruns with complete denominators are pending.
+   chemistry-trustworthy). **Final audit pass** (`audit/n2_completeness_final_v1.json`): DI and vib final on the complete denominator; rotational gross
+   1.13 % → **abep-n2n-0.10** adds j 0→2, 0→4 (JPCRD Table 6, NIST B₀ headers; marginal, gross convention, owner may reverse);
+   N²⁺ → N³⁺ excluded (reference-state margin ~200); direct N → N²⁺ unresolved-by-source. Completeness freeze is the owner's call.
    **Completeness (project decision 2026-09-26):**
    "every file in n2_n.toml exists" ≠ "chemistry complete". `PINNED.toml` stays INCOMPLETE until an omitted-process audit is done:
    - Tier 1 (before P5-N₂ scoring): 8 N₂ excitation states, N momentum transfer.

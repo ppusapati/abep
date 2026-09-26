@@ -134,6 +134,16 @@ status = "verified"
 max_mean_energy_eV = 45.0
 basis = "Declared model: Su et al. 2021 (R-matrix, CC BY) below 20 eV, Johnson et al. 2005 measured ICS 20-100 eV, power-law continuation (p from Johnson's last two points) above, all integrated here; capped at the preregistered T_e <= 30 eV. Continuation share of the rate at T_e = 30 eV per scripts/build_n2_electronic_excitation_tables.py (<= 6.7 %, zero/hold bounds reported). Model applicability, not validation above Johnson's range."
 
+["excitation_N2_rot_j0_to_j2.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "JPCRD 2023 Table 6 (0.01-10 eV), held at the 10 eV value above (declared model), capped at the preregistered T_e <= 30 eV; gross j = 0 loss, no superelastic return"
+
+["excitation_N2_rot_j0_to_j4.dat"]
+status = "verified"
+max_mean_energy_eV = 45.0
+basis = "JPCRD 2023 Table 6 (0.01-10 eV), held at the 10 eV value above (declared model), capped at the preregistered T_e <= 30 eV; gross j = 0 loss, no superelastic return"
+
 ["ionization_N.dat"]
 status = "verified"
 max_mean_energy_eV = 255.0
