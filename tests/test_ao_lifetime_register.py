@@ -4,10 +4,11 @@ Covers: deterministic build (--check), schema conformance (small local validator
 discipline (every numeric value sourced and classed; life numbers only measured / other-device literature / TBD; no
 screening candidate or Hall-closure life), referential integrity (mechanisms <-> requirements <-> coupons <-> interface
 table), the derived AO environment against the frozen atmosphere, and the 314 h datum against the hall-sustainment
-matrix when that file is present. v3 (current): re-verification of every W3/W4 reference against the merged, sha256-pinned
-W3 and W4 v1-r2 files and the control-C5 adoption check with the W4 c5_adoption dispositions. v1 (pinned by W3 SRC-AOL)
-and v2 (pinned by W4 v1-r2) are historical records: byte-identical and still reproduced by the builder (v2 from its
-pinned inputs in git history). Does not require any in-flight lane (W3/W4 are merged in the base).
+matrix when that file is present. v4 (current): re-verification of every W3/W4 reference against the merged, sha256-pinned
+W3 (after the owner addendum A3 integration review) and W4 v1-r2 files, the control-C5 adoption check with the W4
+c5_adoption dispositions, and the check of W3's integration review of register v3. v1 (pinned by W3 SRC-AOL), v2 (pinned
+by W4 v1-r2) and v3 (pinned by W3 SRC-AOL-V3) are historical records: byte-identical and still reproduced by the builder
+(v2 and v3 from their pinned inputs in git history). Does not require any in-flight lane (W3/W4 are merged in the base).
 """
 import csv
 import importlib.util
@@ -29,11 +30,15 @@ MD_V1_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER.md")
 JSON_V2_PATH = os.path.join(DIR, "ao_lifetime_register_v2.json")
 SCHEMA_V2_PATH = os.path.join(DIR, "ao_lifetime_register_v2.schema.json")
 MD_V2_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v2.md")
-JSON_PATH = os.path.join(DIR, "ao_lifetime_register_v3.json")
-SCHEMA_PATH = os.path.join(DIR, "ao_lifetime_register_v3.schema.json")
-MD_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v3.md")
+JSON_V3_PATH = os.path.join(DIR, "ao_lifetime_register_v3.json")
+SCHEMA_V3_PATH = os.path.join(DIR, "ao_lifetime_register_v3.schema.json")
+MD_V3_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v3.md")
+JSON_PATH = os.path.join(DIR, "ao_lifetime_register_v4.json")
+SCHEMA_PATH = os.path.join(DIR, "ao_lifetime_register_v4.schema.json")
+MD_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v4.md")
 V1_SHA256 = "237c99aa8ee582b520d17aecff262020d79f3776f47af69b9c46185a230a2e12"
 V2_SHA256 = "e922aff24a49c4dbf4b192548c6fe26caf20a20249c2c7b4c6ee7212af9e095b"
+V3_SHA256 = "4dea755df9252486f6e2234aacba17f9346c33fad722e6e562fd61cd404d6866"
 W4_PINS = os.path.join(ROOT, "docs", "experiments", "instrumentation", "pinned_inputs.json")
 W3_JSON = os.path.join(ROOT, "docs", "experiments", "hardware", "hardware_requirements_v1.json")
 W4_JSON = os.path.join(ROOT, "docs", "experiments", "instrumentation", "instrumentation_definition_v1.json")
@@ -50,6 +55,18 @@ def reg():
 @pytest.fixture(scope="module")
 def schema():
     with open(SCHEMA_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def reg_v3():
+    with open(JSON_V3_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def schema_v3():
+    with open(SCHEMA_V3_PATH, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -171,8 +188,8 @@ def test_builder_is_pure_and_not_wired():
     assert "archengine" not in re.findall(r"^\s*(?:import|from)\s+(\S+)", src, re.M)
 
 
-def test_schema_uses_only_supported_keywords(schema, schema_v2, schema_v1):
-    for sch in (schema, schema_v2, schema_v1):
+def test_schema_uses_only_supported_keywords(schema, schema_v3, schema_v2, schema_v1):
+    for sch in (schema, schema_v3, schema_v2, schema_v1):
         used = _schema_keywords(sch, set())
         unknown = used - _SUPPORTED_KEYWORDS - _ANNOTATION_KEYWORDS
         assert not unknown, f"schema keywords not implemented by the local validator: {sorted(unknown)}"
@@ -189,8 +206,10 @@ def test_local_validator_rejects_bad_documents(reg, schema):
     assert "not in enum" in errs
 
 
-def test_schema_conformance(reg, schema, reg_v2, schema_v2, reg_v1, schema_v1):
+def test_schema_conformance(reg, schema, reg_v3, schema_v3, reg_v2, schema_v2, reg_v1, schema_v1):
     errs = _validate(reg, schema, schema)
+    assert not errs, "\n".join(errs[:30])
+    errs = _validate(reg_v3, schema_v3, schema_v3)
     assert not errs, "\n".join(errs[:30])
     errs = _validate(reg_v2, schema_v2, schema_v2)
     assert not errs, "\n".join(errs[:30])
@@ -363,16 +382,18 @@ def test_frozen_atmosphere_pin_enforced(tmp_path, monkeypatch):
 
 
 def test_markdown_mentions_c5_and_primary_output():
-    for path in (MD_PATH, MD_V2_PATH, MD_V1_PATH):
+    for path in (MD_PATH, MD_V3_PATH, MD_V2_PATH, MD_V1_PATH):
         md = open(path, encoding="utf-8").read()
         for s in ("control C5", "Witness coupons", "DRAFT", "AOL-WC-01", "AOL-RC-01", "AOL-CX-01", "AOL-PM-01"):
             assert s in md, (path, s)
-    for path in (MD_PATH, MD_V2_PATH):
+    for path in (MD_PATH, MD_V3_PATH, MD_V2_PATH):
         md = open(path, encoding="utf-8").read()
         for s in ("Re-verification of the v1 draft references", "C5 adoption check", "Not adopted", V1_SHA256):
             assert s in md, (path, s)
     md = open(MD_PATH, encoding="utf-8").read()
     for s in ("Partially adopted", V2_SHA256, "v1-r2", "W4 adopting ids"):
+        assert s in md, s
+    for s in (V3_SHA256, "SRC-AOL-V3", "W3 integration review of register v3", "owner addendum A3"):
         assert s in md, s
 
 
@@ -463,14 +484,15 @@ def test_v1_is_byte_identical_historical_record(reg, reg_v2):
 
 
 def test_v2_is_byte_identical_historical_record(reg, reg_v2):
-    """W4 v1-r2 pins v2; v3 supersedes it and v2 stays byte-identical."""
+    """W4 v1-r2 pins v2; v3 and v4 supersede it and v2 stays byte-identical."""
     assert _sha(JSON_V2_PATH) == V2_SHA256
     pins = json.load(open(W4_PINS, encoding="utf-8"))
     assert pins["docs/experiments/lifetime_ao/ao_lifetime_register_v2.json"] == V2_SHA256
-    assert reg["version"] == "v3" and reg["supersedes"]["version"] == "v2"
-    assert reg["supersedes"]["sha256"] == V2_SHA256
-    assert [(h["version"], h["sha256"]) for h in reg["history"]] == [("v1", V1_SHA256), ("v2", V2_SHA256)]
-    assert [c["version"] for c in reg["change_log"]] == ["v1", "v2", "v3"]
+    assert reg["version"] == "v4" and reg["supersedes"]["version"] == "v3"
+    assert reg["supersedes"]["sha256"] == V3_SHA256
+    assert [(h["version"], h["sha256"]) for h in reg["history"]] == [("v1", V1_SHA256), ("v2", V2_SHA256),
+                                                                     ("v3", V3_SHA256)]
+    assert [c["version"] for c in reg["change_log"]] == ["v1", "v2", "v3", "v4"]
     assert reg["change_log"][:2] == reg_v2["change_log"]
     assert reg["merged_inputs"]["w4_pins_this_register"]["sha256"] == V2_SHA256
 
@@ -485,19 +507,55 @@ def test_merged_inputs_pinned(reg):
 
 def test_merged_pin_enforced(monkeypatch):
     mod = _builder_module()
-    monkeypatch.setitem(mod.MERGED_PINS_V3, mod.W4_JSON_REL, "0" * 64)
+    monkeypatch.setitem(mod.MERGED_PINS_V4, mod.W4_JSON_REL, "0" * 64)
     with pytest.raises(RuntimeError, match="sha256"):
-        mod.build_register_v3()
+        mod.build_register_v4()
 
 
-def test_v2_historical_inputs_are_not_the_working_tree():
-    """v2 must be rebuilt from its pinned inputs (git history), never from the moved W4 working-tree file."""
+def test_v2_v3_historical_inputs_are_not_the_working_tree():
+    """v2 and v3 must be rebuilt from their pinned inputs (git history), never from the moved working-tree W3/W4."""
     mod = _builder_module()
     assert mod.MERGED_PINS[mod.W4_JSON_REL] != mod.MERGED_PINS_V3[mod.W4_JSON_REL]
     assert mod.MERGED_PINS[mod.W3_JSON_REL] == mod.MERGED_PINS_V3[mod.W3_JSON_REL]
-    assert _sha(W4_JSON) == mod.MERGED_PINS_V3[mod.W4_JSON_REL]
-    with pytest.raises(RuntimeError, match="sha256"):
-        mod._load_merged(mod.MERGED_PINS, None)
+    assert mod.MERGED_PINS_V3[mod.W3_JSON_REL] != mod.MERGED_PINS_V4[mod.W3_JSON_REL]
+    assert mod.MERGED_PINS_V3[mod.W4_JSON_REL] != mod.MERGED_PINS_V4[mod.W4_JSON_REL]
+    assert _sha(W3_JSON) == mod.MERGED_PINS_V4[mod.W3_JSON_REL]
+    assert _sha(W4_JSON) == mod.MERGED_PINS_V4[mod.W4_JSON_REL]
+    for pins in (mod.MERGED_PINS, mod.MERGED_PINS_V3):
+        with pytest.raises(RuntimeError, match="sha256"):
+            mod._load_merged(pins, None)
+
+
+def test_v3_is_byte_identical_historical_record(reg, reg_v3):
+    """W3 pins v3 as SRC-AOL-V3 (A3 integration review); v4 supersedes it and v3 stays byte-identical."""
+    assert _sha(JSON_V3_PATH) == V3_SHA256
+    w3 = json.load(open(W3_JSON, encoding="utf-8"))
+    src = w3["references"]["SRC-AOL-V3"]
+    assert src["path"] == "docs/experiments/lifetime_ao/ao_lifetime_register_v3.json" and src["sha256"] == V3_SHA256
+    assert w3["w3_integration_review"]["reviewed_against"]["SRC-AOL-V3"] == V3_SHA256
+    assert reg_v3["version"] == "v3" and reg["change_log"][:3] == reg_v3["change_log"]
+    assert reg["merged_inputs"]["w3_pins_register_v3"]["sha256"] == V3_SHA256
+
+
+def test_owner_addendum_a3_pinned(reg):
+    a3 = reg["merged_inputs"]["owner_addendum_a3"]
+    assert _sha(os.path.join(ROOT, a3["path"])) == a3["sha256"]
+
+
+def test_w3_integration_review_check(reg):
+    w3 = json.load(open(W3_JSON, encoding="utf-8"))
+    hw = {r["id"]: r for r in w3["requirements"]}
+    aol = {r["id"] for r in reg["requirements"]}
+    chk = reg["w3_integration_review_check"]
+    src = w3["w3_integration_review"]["provisions"]
+    assert [r["provision"] for r in chk["rows"]] == [p["provision"] for p in src]
+    for r, p in zip(chk["rows"], src):
+        assert r["w3_status"] == p["status"] and r["hw_requirement_ids"] == p["hw_requirement_ids"]
+        assert set(r["hw_requirement_ids"]) <= set(hw) and set(r["aol_traces"]) <= aol
+        for t, ids in r["aol_back_trace"].items():
+            assert ids == sorted(h for h in r["hw_requirement_ids"] if t in hw[h].get("traces_to", []))
+        assert r["aol_without_hw_trace"] == [t for t, v in r["aol_back_trace"].items() if not v]
+    assert chk["counts"]["provisions"] == len(src)
 
 
 def test_every_v1_draft_id_has_one_verdict(reg, reg_v1):
@@ -534,17 +592,18 @@ def test_every_v1_draft_id_has_one_verdict(reg, reg_v1):
                 assert i in hw, i
 
 
-def test_v2_v3_have_no_unmerged_draft_wording(reg, reg_v2):
-    for r in (reg, reg_v2):
+def test_v2_v3_have_no_unmerged_draft_wording(reg, reg_v3, reg_v2):
+    for r in (reg, reg_v3, reg_v2):
         blob = json.dumps({k: v for k, v in r.items() if k not in ("draft_reference_verification", "change_log")})
         assert "W3 draft" not in blob and "W4 draft" not in blob and "UNVERIFIED_UNMERGED_DRAFT" not in blob
 
 
-def test_v3_content_equals_v2(reg, reg_v2):
-    """v3 changes only the W3/W4 re-verification layer; register content is identical to v2."""
+def test_v3_v4_content_equals_v2(reg, reg_v3, reg_v2):
+    """v3 and v4 change only the W3/W4 re-verification layer; register content is identical to v2."""
     for k in ("mechanisms", "witness_coupons", "requirements", "proposed_thresholds", "derived", "sources",
               "open_owner_questions", "vocabulary", "repository_references"):
         assert reg[k] == reg_v2[k], k
+        assert reg_v3[k] == reg_v2[k], k
 
 
 def test_v2_content_unchanged_in_meaning(reg_v2, reg_v1):
