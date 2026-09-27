@@ -16,20 +16,85 @@
  "repair_base_commit": "af6e4948605081f6cab761ce3a74f67658738e44",
  "change_log": [
   {
+   "entry": "v1-r1",
    "revision": "v1-r1",
    "date": "2026-09-27",
    "base_commit": "510e464fb8e128e4cf3325572a4d36ad33a4899d",
    "change": "initial W4 instrumentation definition (INS-01..INS-18)"
   },
   {
+   "entry": "v1-r2/C5",
    "revision": "v1-r2",
    "date": "2026-09-27",
    "base_commit": "af6e4948605081f6cab761ce3a74f67658738e44",
    "change": "control C5 (A2 addendum): adopts the 19 W4 provisions of the AO/lifetime register v2 and MCQ-W4-01..03: new INS-19..INS-24 and procedures INS-P-01..INS-P-12, c5_adoption table, five new pinned inputs, four references cited via those lanes; existing ids, values, thresholds and decision quantities unchanged (only a traces_to_provisions key added to every instrument)",
    "material": false,
    "why_v1": "additive: no existing requirement, threshold, derived number or decision-quantity role changed, so the file stays instrumentation_definition_v1.json (downstream lanes reference this path)"
+  },
+  {
+   "entry": "v1-r2/A3",
+   "revision": "v1-r2",
+   "amendment": "A3",
+   "date": "2026-09-27",
+   "base_commit": "7d373374dcd47eb6c2464423eb5f45a1fa14ef78",
+   "change": "owner addendum A3 applied without changing any id or value: metrology specification (INS-19 / INS-20 calibration), cathode temperature semantics (INS-23 tube thermocouple mandatory, never labelled emitter temperature, pyrometer optional, emitter 'unmeasured' without one; INS-18 note; W3 HW-C1-09 traced), near-cathode RGA data-use rule (INS-22 / INS-11), INS-P-12 planning k = 2; a3_adoption table; A3 pinned and the W3 hardware definition re-pinned (HW-C1-09 added by the W3 integration review); four C5 open owner decisions marked decided",
+   "material": false,
+   "why_v1": "owner addendum A3 decisions.instrumentation_version: keep v1-r2 (additive)"
+  },
+  {
+   "entry": "v1-r2/A3-repair",
+   "revision": "v1-r2",
+   "amendment": "A3",
+   "date": "2026-09-27",
+   "base_commit": "7d373374dcd47eb6c2464423eb5f45a1fa14ef78",
+   "change": "review repair of the A3 entry: the W3 register is pinned as an immutable snapshot (snapshots/w3_hardware_requirements_v1_at_9a33979.json, sha256 identical to the W3 file at commit 9a33979) instead of W3's live file, which removes the W3 <-> W4 pin cycle; downstream consumers whose pins of this file are stale are declared (downstream_repin_required); change-log entries get a unique 'entry' key (the revision label stays v1-r2 per A3); INS-13 wording: 10-20 % is the ion-gauge uncertainty of the background neutral density that dominates the CEX correction, not the correction's uncertainty; Markdown header names both the original and the current base commit",
+   "material": false,
+   "why_v1": "no id, threshold, derived number or decision-quantity role changed"
+  },
+  {
+   "entry": "v1-r2/A3-repair-2",
+   "revision": "v1-r2",
+   "amendment": "A3",
+   "date": "2026-09-27",
+   "base_commit": "7d373374dcd47eb6c2464423eb5f45a1fa14ef78",
+   "change": "second review repair: the W3 dependency commit 9a33979 is no longer carried in this branch's history (W4 relies only on its immutable snapshot, which the snapshot-vs-git test checks when the commit is available and skips otherwise); lane-25 values copied into requirement_basis are stored bit-for-bit instead of rounded to 6 significant figures (e.g. k_primary[n=4] 3.1726749, previously 3.17267); merge-order statement updated",
+   "material": false,
+   "why_v1": "no id, threshold, derived number or decision-quantity role changed (copied values gain digits only)"
   }
  ],
+ "downstream_repin_required": {
+  "consumers": [
+   {
+    "file": "docs/experiments/lifetime_ao/ao_lifetime_register_v3.json",
+    "owner": "fo_ao_lifetime_register (v3)",
+    "pins": "merged_inputs entries for docs/experiments/instrumentation/instrumentation_definition_v1.json and INSTRUMENTATION_DEFINITION.md",
+    "stale_pin": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f (JSON, pre-A3); f35266c778af134117f56108367c5eefee45ddf6d60ef54b192009abc336b4d5 (Markdown, pre-A3)",
+    "test_affected": "tests/test_ao_lifetime_register.py::test_merged_inputs_pinned"
+   },
+   {
+    "file": "docs/experiments/hardware/hardware_requirements_v1.json",
+    "owner": "fo_hardware_definition (W3)",
+    "pins": "references['SRC-INS-V1R2'].sha256 and w3_integration_review.reviewed_against['SRC-INS-V1R2']",
+    "stale_pin": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f (pre-A3)",
+    "test_affected": "tests/test_hardware_definition.py::test_a3_review_traces_exist_in_sources"
+   },
+   {
+    "file": "docs/experiments/s1_readiness/s1_readiness_status_current.json",
+    "owner": "fo_s1_readiness_gate",
+    "pins": "input sha256 entries for docs/experiments/instrumentation/instrumentation_definition_v1.json",
+    "stale_pin": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f (pre-A3)",
+    "test_affected": "regenerate with the S1 readiness builder (status report, not a W4 test)"
+   }
+  ],
+  "merge_order": "This branch carries only W4-authored commits on top of base 7d37337 (the W3 integration-review commit 9a33979 was removed from this branch's history in the A3-repair-2 review repair). W4's pin of the W3 register is the immutable snapshot of 9a33979, so W4 merges and verifies independently of W3's live bytes. The W3 branch (worktree-wf_b92499f0-718-3) is merged and verified by its own lane; the downstream re-pins listed above are sequenced by the merge controller after both merges.",
+  "w3_snapshot": {
+   "snapshot": "docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json",
+   "source_path": "docs/experiments/hardware/hardware_requirements_v1.json",
+   "source_commit": "9a33979c5198a04cbbc8abdd988e9578aa589b1a",
+   "reproduce": "git show 9a33979c5198a04cbbc8abdd988e9578aa589b1a:docs/experiments/hardware/hardware_requirements_v1.json",
+   "why": "W3 pins this file (instrumentation_definition_v1.json); W4 pinning W3's live bytes created a pin cycle (each re-pin changes the other's bytes). W4 therefore pins an immutable historical snapshot of the W3 register (the W3 integration-review version that adds HW-C1-09), the same pattern as the AO register v2 pin. W3 may now re-pin W4 once and the pair settles; a later W3 change reaches W4 only through a deliberate new snapshot and a new W4 revision."
+  }
+ },
  "generated_by": "docs/experiments/instrumentation/build_instrumentation_definition.py",
  "companion_document": "docs/experiments/instrumentation/INSTRUMENTATION_DEFINITION.md",
  "not_locked": "Nothing here is pre-registered, locked or decided. Thresholds not in the RFP are PROPOSED. No score-bearing reading before LOCK-1 and LOCK-2 (lane 25 Sec. 10). Instrument choices are principles, not product selections; no instrument accuracy is claimed.",
@@ -78,9 +143,14 @@
    "sha256": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6"
   },
   {
-   "path": "docs/experiments/hardware/hardware_requirements_v1.json",
-   "lane": "fo_hardware_definition (W3)",
-   "sha256": "552f4ca0e3c84f8f10f03d103d10b169e360e9c28f2a7a4d44e65c1d1b915d04"
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+   "lane": "od_hardware_pivot A3 (owner)",
+   "sha256": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e"
+  },
+  {
+   "path": "docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json",
+   "lane": "fo_hardware_definition (W3), immutable snapshot of commit 9a33979",
+   "sha256": "4752aafd4a42326f2cdf8387c3d9280d274ea96108be0450568d72e785f7ca61"
   },
   {
    "path": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
@@ -179,37 +249,37 @@
   "lane25_by_n": {
    "4": {
     "u_T_max": {
-     "value": 0.00498361,
+     "value": 0.0049836144,
      "unit": "relative (1 sigma, per reading)",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_T_max (lane 25, minexp_numbers.py)"
     },
     "u_P_max": {
-     "value": 0.00498361,
+     "value": 0.0049836144,
      "unit": "relative (1 sigma, per reading)",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_P_max (lane 25, minexp_numbers.py)"
     },
     "u_inst_max": {
-     "value": 0.00249181,
+     "value": 0.0024918072,
      "unit": "ln-ratio (1 sigma, per installation)",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_inst_max (lane 25, minexp_numbers.py)"
     },
     "sigma_lnR_max": {
-     "value": 0.00787979,
+     "value": 0.0078797862,
      "unit": "ln-ratio",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.sigma_lnR_max (lane 25, minexp_numbers.py)"
     },
     "k_primary": {
-     "value": 3.17267,
+     "value": 3.1726749,
      "unit": "-",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.k_primary (lane 25, minexp_numbers.py)"
     },
     "G4_share": {
-     "value": 0.00352395,
+     "value": 0.0035239475,
      "unit": "ln-ratio",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.group_share_max.G4 (lane 25, minexp_numbers.py)"
@@ -217,37 +287,37 @@
    },
    "6": {
     "u_T_max": {
-     "value": 0.00626956,
+     "value": 0.0062695641,
      "unit": "relative (1 sigma, per reading)",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.u_T_max (lane 25, minexp_numbers.py)"
     },
     "u_P_max": {
-     "value": 0.00626956,
+     "value": 0.0062695641,
      "unit": "relative (1 sigma, per reading)",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.u_P_max (lane 25, minexp_numbers.py)"
     },
     "u_inst_max": {
-     "value": 0.00255954,
+     "value": 0.0025595388,
      "unit": "ln-ratio (1 sigma, per installation)",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.u_inst_max (lane 25, minexp_numbers.py)"
     },
     "sigma_lnR_max": {
-     "value": 0.00809397,
+     "value": 0.0080939725,
      "unit": "ln-ratio",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.sigma_lnR_max (lane 25, minexp_numbers.py)"
     },
     "k_primary": {
-     "value": 3.08872,
+     "value": 3.0887182,
      "unit": "-",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.k_primary (lane 25, minexp_numbers.py)"
     },
     "G4_share": {
-     "value": 0.00361973,
+     "value": 0.0036197345,
      "unit": "ln-ratio",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.group_share_max.G4 (lane 25, minexp_numbers.py)"
@@ -255,37 +325,37 @@
    },
    "8": {
     "u_T_max": {
-     "value": 0.00732191,
+     "value": 0.0073219142,
      "unit": "relative (1 sigma, per reading)",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.u_T_max (lane 25, minexp_numbers.py)"
     },
     "u_P_max": {
-     "value": 0.00732191,
+     "value": 0.0073219142,
      "unit": "relative (1 sigma, per reading)",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.u_P_max (lane 25, minexp_numbers.py)"
     },
     "u_inst_max": {
-     "value": 0.00258869,
+     "value": 0.0025886876,
      "unit": "ln-ratio (1 sigma, per installation)",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.u_inst_max (lane 25, minexp_numbers.py)"
     },
     "sigma_lnR_max": {
-     "value": 0.00818615,
+     "value": 0.0081861489,
      "unit": "ln-ratio",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.sigma_lnR_max (lane 25, minexp_numbers.py)"
     },
     "k_primary": {
-     "value": 3.05394,
+     "value": 3.0539391,
      "unit": "-",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.k_primary (lane 25, minexp_numbers.py)"
     },
     "G4_share": {
-     "value": 0.00366096,
+     "value": 0.0036609571,
      "unit": "ln-ratio",
      "evidence_class": "model-derived",
      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.group_share_max.G4 (lane 25, minexp_numbers.py)"
@@ -294,25 +364,25 @@
   },
   "lane25_u_src_max_by_f_src": {
    "0.1": {
-    "value": 0.0352395,
+    "value": 0.035239475,
     "unit": "relative (1 sigma)",
     "evidence_class": "model-derived",
     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.1 (lane 25, minexp_numbers.py)"
    },
    "0.2": {
-    "value": 0.0176197,
+    "value": 0.017619738,
     "unit": "relative (1 sigma)",
     "evidence_class": "model-derived",
     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.2 (lane 25, minexp_numbers.py)"
    },
    "0.3": {
-    "value": 0.0117465,
+    "value": 0.011746492,
     "unit": "relative (1 sigma)",
     "evidence_class": "model-derived",
     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.3 (lane 25, minexp_numbers.py)"
    },
    "0.4": {
-    "value": 0.00880987,
+    "value": 0.0088098688,
     "unit": "relative (1 sigma)",
     "evidence_class": "model-derived",
     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.4 (lane 25, minexp_numbers.py)"
@@ -1127,7 +1197,7 @@
    "required_uncertainty": {
     "per_reading_repeatability": {
      "n4": {
-      "value": 0.00498361,
+      "value": 0.0049836144,
       "unit": "relative (1 sigma, per reading)",
       "evidence_class": "model-derived",
       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_T_max (lane 25, minexp_numbers.py)"
@@ -1147,7 +1217,7 @@
     },
     "installation_reproducibility": {
      "n4": {
-      "value": 0.00249181,
+      "value": 0.0024918072,
       "unit": "ln-ratio (1 sigma, per installation)",
       "evidence_class": "model-derived",
       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_inst_max (lane 25, minexp_numbers.py)"
@@ -1209,7 +1279,7 @@
    "required_uncertainty": {
     "per_channel_repeatability": {
      "n4": {
-      "value": 0.00498361,
+      "value": 0.0049836144,
       "unit": "relative (1 sigma, per reading)",
       "evidence_class": "model-derived",
       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_P_max (lane 25, minexp_numbers.py)"
@@ -1224,7 +1294,7 @@
     },
     "common_consumer_scale": {
      "G4_share_n4": {
-      "value": 0.00352395,
+      "value": 0.0035239475,
       "unit": "ln-ratio",
       "evidence_class": "model-derived",
       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.group_share_max.G4 (lane 25, minexp_numbers.py)"
@@ -1275,25 +1345,25 @@
    "required_uncertainty": {
     "source_scale_max": {
      "0.1": {
-      "value": 0.0352395,
+      "value": 0.035239475,
       "unit": "relative (1 sigma)",
       "evidence_class": "model-derived",
       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.1 (lane 25, minexp_numbers.py)"
      },
      "0.2": {
-      "value": 0.0176197,
+      "value": 0.017619738,
       "unit": "relative (1 sigma)",
       "evidence_class": "model-derived",
       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.2 (lane 25, minexp_numbers.py)"
      },
      "0.3": {
-      "value": 0.0117465,
+      "value": 0.011746492,
       "unit": "relative (1 sigma)",
       "evidence_class": "model-derived",
       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.3 (lane 25, minexp_numbers.py)"
      },
      "0.4": {
-      "value": 0.00880987,
+      "value": 0.0088098688,
       "unit": "relative (1 sigma)",
       "evidence_class": "model-derived",
       "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.4 (lane 25, minexp_numbers.py)"
@@ -1636,7 +1706,9 @@
     "status": "OPTIONAL",
     "why": "no reference located by this lane; qualitative O2 background check"
    },
-   "notes": [],
+   "notes": [
+    "owner addendum A3 (near_cathode_rga): the INS-22 near-cathode sample through this RGA is quantitative only after species calibration or traceable sensitivity factors; uncalibrated records are qualitative S1a engineering data and never exposure-dose or lifetime evidence"
+   ],
    "traces_to_provisions": [
     "AOL-CX-03"
    ]
@@ -1690,7 +1762,7 @@
    "required_uncertainty": {
     "value": {
      "value": "TBD",
-     "tbd_requires": "W5 pre-registered species-fraction tolerance; CEX correction uncertainty is dominated by the background neutral density from ion gauges, typically 10-20 % (REF-ROVEY2025 via lane 25)"
+     "tbd_requires": "W5 pre-registered species-fraction tolerance; the CEX correction is dominated by the background neutral density, whose ion-gauge uncertainty is typically 10-20 % (REF-ROVEY2025 via lane 25); 10-20 % is that density's uncertainty, not the correction's"
     }
    },
    "calibration": [
@@ -1892,7 +1964,9 @@
     "status": "FEASIBLE_IN_PRINCIPLE",
     "why": "standard"
    },
-   "notes": [],
+   "notes": [
+    "owner addendum A3 (cathode_temperature, W3 HW-C1-09): the INS-23 cathode-tube thermocouple is logged continuously during firing under a cathode-tube label; no channel is labelled emitter temperature unless an INS-23 pyrometer is installed, otherwise the emitter-temperature field is recorded as 'unmeasured'"
+   ],
    "traces_to_provisions": [
     "AOL-CX-01",
     "AOL-CX-02",
@@ -1918,7 +1992,7 @@
     }
    },
    "calibration": [
-    "balance calibration with traceable reference masses at each session (class TBD - requires owner / metrology lab)",
+    "balance calibration at each session (owner addendum A3): SI-traceable microbalance calibration with OIML E2 or better certified reference masses where appropriate (OIML R111 certificates and traceability), performed by an ISO/IEC 17025-accredited laboratory with this measurement inside its accredited scope; lab not yet named (W4 measurement specification first, then procurement)",
     "control-coupon repeatability demonstration before S1 (AOL-PM-02 verification)",
     "lab-stored control coupon weighed in every session (AOL-WC-06 control (d))"
    ],
@@ -1959,8 +2033,9 @@
     }
    },
    "calibration": [
-    "profilometer calibration on a certified step-height standard (class TBD - requires metrology lab)",
-    "SEM magnification / EDS and XPS energy-scale calibration per the lab's procedure, recorded with each report",
+    "profilometer calibration / verification with traceable surface standards consistent with ISO 25178-700 (owner addendum A3)",
+    "quantitative SEM/EDS by a documented method consistent with ASTM E1508; XPS energy-scale calibration per ISO 15472 or an equivalent traceable procedure (owner addendum A3); each recorded with the report",
+    "performed by an ISO/IEC 17025-accredited laboratory with the measurement inside its accredited scope (A3); lab not yet named (W4 measurement specification first, then procurement)",
     "baseline before first ignition for every serialized item (INS-P-02)"
    ],
    "serves": {
@@ -2044,7 +2119,8 @@
    },
    "calibration": [
     "calibrate the sampled O2 and N2 response against known mixtures from the INS-05 flows; H2O response method TBD - requires the RGA and facility choice",
-    "record the sampling-line transit delay against INS-18 with a flow step"
+    "record the sampling-line transit delay against INS-18 with a flow step",
+    "owner addendum A3: quantitative for the AO/lifetime programme (at least O2 / N2 / H2O partial pressures or a calibrated response); before any score-bearing or life use the relevant species are calibrated or traceable sensitivity factors are established"
    ],
    "serves": {
     "DQ-RARCH": "-",
@@ -2061,7 +2137,8 @@
     "why": "a sampled partial pressure near the cathode is a proxy for the emitter region (AO register v2 AOL-CX-03 rationale); H2O calibration method not identified by this lane"
    },
    "notes": [
-    "closes the review finding 'INS-11 has no near-C-1 sampling point' without changing INS-11"
+    "closes the review finding 'INS-11 has no near-C-1 sampling point' without changing INS-11",
+    "data-use rule (owner addendum A3): an uncalibrated near-cathode RGA record is QUALITATIVE and usable only for S1a engineering checkout; it never supports an exposure-dose or lifetime claim; every record carries its calibration state (calibrated species / sensitivity-factor reference, or 'uncalibrated')"
    ],
    "traces_to_provisions": [
     "AOL-CX-03"
@@ -2071,8 +2148,8 @@
    "id": "INS-23",
    "name": "life-mechanism and C-1 emitter / cathode-tube temperatures (extends INS-17)",
    "lane25_measurements": [],
-   "quantity": "temperatures of the anode, each exit-region wall ring, next to each witness coupon (HW-H1-12 positions), and the C-1 emitter or cathode tube during firing",
-   "principle": "thermocouples at the fixed W3 positions (HW-H1-12, identical in every arm); C-1: thermocouple on the cathode tube as the baseline, a pyrometer on the emitter only if the W3 C-1 design gives a view (proposed; choice W3 / owner)",
+   "quantity": "temperatures of the anode, each exit-region wall ring, next to each witness coupon (HW-H1-12 positions), and the C-1 cathode tube (mandatory) and emitter (only where a pyrometer view exists) during firing",
+   "principle": "thermocouples at the fixed W3 positions (HW-H1-12, identical in every arm); C-1 (owner addendum A3, W3 HW-C1-09): a cathode-tube thermocouple is MANDATORY and logged continuously on INS-18; an emitter pyrometer is added only if HW-C1-09 (b) records a defensible line of sight and an emissivity treatment",
    "references": [],
    "required_uncertainty": {
     "value": {
@@ -2083,7 +2160,7 @@
    },
    "calibration": [
     "thermocouple calibration and cold-junction check (as INS-17)",
-    "pyrometer (if used) calibrated against a thermocouple on a reference body at the emitter temperature range; emissivity recorded"
+    "pyrometer (if used) calibrated against a thermocouple on a reference body at the emitter temperature range; emissivity treatment recorded (from the HW-C1-09 (b) C-1 design record)"
    ],
    "serves": {
     "DQ-RARCH": "-",
@@ -2095,10 +2172,11 @@
    "validation_observables": [],
    "feasibility": {
     "status": "AT_RISK",
-    "why": "the emitter itself is usually not directly instrumentable; a cathode-tube thermocouple gives the tube, not the emitter (from memory - verify against the C-1 design)"
+    "why": "the emitter temperature is measured only if the C-1 design gives a defensible pyrometer view (HW-C1-09 (b), not yet decided); a cathode-tube thermocouple gives the tube, not the emitter (owner addendum A3)"
    },
    "notes": [
-    "closes the review finding that no temperature channel is placed near the cathode (INS-17 is unchanged; the finding named INS-14, which is the RPA)"
+    "closes the review finding that no temperature channel is placed near the cathode (INS-17 is unchanged; the finding named INS-14, which is the RPA)",
+    "labelling rule (owner addendum A3, W3 HW-C1-09 (c)): the thermocouple channel is recorded as 'cathode-tube temperature' and never as emitter temperature; without a pyrometer the emitter temperature is reported as 'unmeasured' (no value inferred from the tube reading)"
    ],
    "traces_to_provisions": [
     "AOL-CX-04",
@@ -2322,14 +2400,14 @@
    "provisions": [
     "AOL-WC-01"
    ],
-   "statement": "AOL-WC-01 verification asks that a B(z) re-map and a thrust-stand tare with the HW-SVC-06 holder installed show no change beyond W4 instrument uncertainty. W4 answer: the detection limits are the INS-09 map repeatability and the INS-01 in-situ calibration repeatability, both measured in S1a; the planning value for the thrust side is the lane-25 per-reading target (INS-01 required_uncertainty, n = 4). A change is 'beyond' when it exceeds the pre-registered coverage factor times the combined standard uncertainty of the two maps / tares (k: owner, LOCK-1).",
+   "statement": "AOL-WC-01 verification asks that a B(z) re-map and a thrust-stand tare with the HW-SVC-06 holder installed show no change beyond W4 instrument uncertainty. W4 answer: the detection limits are the INS-09 map repeatability and the INS-01 in-situ calibration repeatability, both measured in S1a; the planning value for the thrust side is the lane-25 per-reading target (INS-01 required_uncertainty, n = 4). A change is 'beyond' when it exceeds the coverage factor times the combined standard uncertainty of the two maps / tares. Owner addendum A3: planning coverage factor k = 2 (the ~95 % expanded-uncertainty convention, not a substitute for the measured uncertainty model); with low effective degrees of freedom the evaluated coverage factor is used and documented with its degrees of freedom.",
    "instruments": [
     "INS-01",
     "INS-09"
    ],
    "required_uncertainty": "INS-01 and INS-09 values (no new number)",
    "calibration": "as INS-01 / INS-09",
-   "open": "coverage factor for the non-interference test: owner at LOCK-1"
+   "open": "none for the planning coverage factor (A3: k = 2); the evaluated k and effective degrees of freedom are documented per test"
   }
  ],
  "c5_adoption": {
@@ -2339,10 +2417,18 @@
    "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
    "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json"
   ],
-  "w3_ids_cited_verified_in": "docs/experiments/hardware/hardware_requirements_v1.json",
+  "w3_ids_cited_verified_in": "docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json",
+  "w3_snapshot": {
+   "snapshot": "docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json",
+   "source_path": "docs/experiments/hardware/hardware_requirements_v1.json",
+   "source_commit": "9a33979c5198a04cbbc8abdd988e9578aa589b1a",
+   "reproduce": "git show 9a33979c5198a04cbbc8abdd988e9578aa589b1a:docs/experiments/hardware/hardware_requirements_v1.json",
+   "why": "W3 pins this file (instrumentation_definition_v1.json); W4 pinning W3's live bytes created a pin cycle (each re-pin changes the other's bytes). W4 therefore pins an immutable historical snapshot of the W3 register (the W3 integration-review version that adds HW-C1-09), the same pattern as the AO register v2 pin. W3 may now re-pin W4 once and the pair settles; a later W3 change reaches W4 only through a deliberate new snapshot and a new W4 revision."
+  },
   "w3_ids_cited": [
    "HW-C1-03",
    "HW-C1-08",
+   "HW-C1-09",
    "HW-ELEC-04",
    "HW-ENV-01",
    "HW-H1-10",
@@ -2437,7 +2523,7 @@
     "adopted_ids": [
      "INS-23"
     ],
-    "how": "INS-23 (cathode-tube thermocouple baseline, emitter pyrometer if the C-1 design gives a view)",
+    "how": "INS-23 (cathode-tube thermocouple mandatory, emitter pyrometer only where W3 HW-C1-09 gives a view; owner addendum A3)",
     "needs": null
    },
    {
@@ -2699,6 +2785,58 @@
   ],
   "milestones": "supports A (S1-readiness condition 'instrumentation capability demonstrated' now covers the C5 provisions) and prepares C (measured life evidence records); B not affected. Next: the metrology lab, facility and C-1 view choices, and S1 scatter data for the TBD detection limits and triggers (AOL-PT-02, AOL-PT-03)."
  },
+ "a3_adoption": {
+  "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+  "decided_utc": "2026-09-27",
+  "rows": [
+   {
+    "decision": "cathode_temperature",
+    "owner_text": "Both where mechanically possible: a cathode-tube thermocouple is mandatory (robust, continuous); add an emitter pyrometer if there is a defensible line of sight and emissivity treatment. The tube thermocouple is never labelled emitter temperature; if pyrometry is impossible, emitter temperature is reported as unmeasured.",
+    "carried_by": [
+     "INS-23",
+     "INS-18"
+    ],
+    "how": "INS-23: cathode-tube thermocouple mandatory (W3 HW-C1-09 (a)), emitter pyrometer only with a HW-C1-09 (b) view; labelling rule in the INS-23 notes; INS-18 logs the tube channel continuously and never labels it emitter temperature; emitter reported 'unmeasured' without a pyrometer"
+   },
+   {
+    "decision": "ins_p12_coverage_factor",
+    "owner_text": "Planning coverage factor k = 2 for the witness-holder non-interference demonstration (the ~95 % expanded-uncertainty convention, not a substitute for the measured uncertainty model); with low effective degrees of freedom use the evaluated coverage factor and document it.",
+    "carried_by": [
+     "INS-P-12"
+    ],
+    "how": "INS-P-12 statement: planning k = 2; evaluated k with low effective degrees of freedom, documented"
+   },
+   {
+    "decision": "instrumentation_version",
+    "owner_text": "Keep v1-r2 (additive changes). v2 is reserved for a breaking schema change, changed measurement semantics, changed acceptance rules or incompatible id meaning.",
+    "carried_by": [],
+    "how": "stays instrumentation_definition_v1.json revision v1-r2 (change-log entry 'A3'); no schema, measurement-semantics-breaking, acceptance-rule or id-meaning change"
+   },
+   {
+    "decision": "metrology_lab",
+    "owner_text": "ISO/IEC 17025-accredited laboratory with the relevant measurement explicitly inside its accredited scope (in India normally an appropriate NABL-accredited scope). Witness mass: SI-traceable microbalance calibration with OIML E2 or better certified reference masses where appropriate (OIML R111 certificates and traceability). Profilometry: calibration/verification with traceable surface standards consistent with ISO 25178-700. Quantitative SEM/EDS: documented quantitative method consistent with ASTM E1508. XPS energy-scale calibration per ISO 15472 or equivalent traceable procedure. No commercial lab is named yet: W4 issues the measurement specification first, then a lab satisfying it is procured.",
+    "carried_by": [
+     "INS-19",
+     "INS-20",
+     "INS-P-02",
+     "INS-P-04",
+     "INS-P-05"
+    ],
+    "how": "INS-19 / INS-20 calibration items name the A3 metrology specification (ISO/IEC 17025 accredited scope, OIML E2 / R111 reference masses, ISO 25178-700, ASTM E1508, ISO 15472); the procedures inherit it; no lab is named (specification first, then procurement)"
+   },
+   {
+    "decision": "near_cathode_rga",
+    "owner_text": "Quantitative for the AO/lifetime programme (at least O2/N2/H2O partial pressures or calibrated response). For S1a engineering checkout an uncalibrated RGA may be used qualitatively, but such data cannot support an exposure-dose or lifetime claim. Before score-bearing or life use, calibrate the relevant species or establish traceable sensitivity factors.",
+    "carried_by": [
+     "INS-22",
+     "INS-11"
+    ],
+    "how": "INS-22 calibration item (quantitative for AO/lifetime use) and data-use note (uncalibrated = qualitative S1a engineering only, never exposure-dose / life evidence); INS-11 note"
+   }
+  ],
+  "w3_provision": "HW-C1-09 (cathode temperature provision) and HW-C1-07 (b) (near-cathode RGA port) in docs/experiments/hardware/hardware_requirements_v1.json (read from the pinned snapshot docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json)",
+  "milestones": "supports A (S1a engineering checkout can use the qualitative RGA and the tube thermocouple under the labelling rule) and prepares C (quantitative RGA and accredited metrology are preconditions for exposure-dose / life evidence); B not affected. Next: W4 measurement specification issued to procure an accredited lab; RGA species calibration or sensitivity factors before score-bearing / life use; HW-C1-09 (b) view decision in the C-1 design release."
+ },
  "bus_power_channels": [
   {
    "component": "hall_discharge",
@@ -2935,10 +3073,10 @@
   "dwell (hold time) for 'sustained >= 12 mN' and its zero-drift allowance",
   "whether OES, RGA and Langmuir probes are in the minimum instrument set",
   "absolute-gate facility rule: report T_measured with the S5 p_b slope and the ingestion scale (proposed) or require a p_b ceiling for Phase 3",
-  "C5: metrology lab for INS-19 / INS-20 (mass, profile, SEM/EDS, XPS) and its reference-standard classes",
-  "C5: C-1 temperature sensing - cathode-tube thermocouple (proposed baseline) and/or emitter pyrometer (needs a view in the W3 C-1 design)",
-  "C5: coverage factor for the witness-holder non-interference test (INS-P-12)",
-  "C5: whether the near-cathode RGA proxy (INS-22) is quantitative (needs an H2O calibration method)"
+  "C5 (specification DECIDED by owner addendum A3; open: lab procurement): metrology lab for INS-19 / INS-20 (mass, profile, SEM/EDS, XPS) and its reference-standard classes",
+  "C5 (DECIDED by owner addendum A3; open: HW-C1-09 (b) view in the C-1 design): C-1 temperature sensing - cathode-tube thermocouple mandatory, emitter pyrometer where a view exists",
+  "C5 (DECIDED by owner addendum A3: planning k = 2): coverage factor for the witness-holder non-interference test (INS-P-12)",
+  "C5 (DECIDED by owner addendum A3: quantitative for AO/lifetime use; open: H2O calibration method): whether the near-cathode RGA proxy (INS-22) is quantitative"
  ],
  "tbd_register": [
   {
