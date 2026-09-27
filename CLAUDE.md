@@ -257,3 +257,13 @@ air + Xe. Python owns the whole chain; HallThruster.jl (offline) owns Hall-disch
 `archengine.py` (modular architecture engine, nested constrained search, energy ledger, mission envelope),
 `mission_env.py`/`mission5.py` (J2 propagator, eclipse, arrays), `uq_modular.py` (paired UQ, Sobol), `golden.py`,
 `convergence.py`, `validation.py`, `hall_map.py`, `rate_tables.py`, `hall1d.py` (sanity model only).
+
+## Hardware-experiment pivot (owner decision 2026-09-27, `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json`)
+The decisive-thrust question moves from literature/simulation to a controlled common-hardware experiment (HW-0 Hall-only /
+HW-RF / HW-ECR on one Hall accelerator H-1 and cathode C-1; R_arch plus an absolute thrust gate T_measured on the delivered
+feed: >= 12 mN sustained, 25 mN capability, P_bus < 1.5 kW). Sequence: Phase 1 Hall-only sustainment knee (N2 first) ->
+Phase 2 common-condition comparison -> Phase 3 absolute demonstration. D-01..D-15 -> LOCK-1 -> S1 -> LOCK-2 -> score-bearing
+runs; the paired design is not simplified. Part of the new data is pre-registered, before any data, as held-out Hall-transport
+validation evidence (P5-N2 v1 unchanged). Parallel workstreams (`T_PIVOT_*`): feed-state closure, LOCK-1 brief, hardware,
+instrumentation, validation prereg, O/O2 chemistry v0, D-X5 closed-access acquisition (legitimate access only; P4 deferred).
+Modelling, O4/S12 and repository hardening continue in parallel and never gate hardware preparation.
