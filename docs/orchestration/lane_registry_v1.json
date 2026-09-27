@@ -187,7 +187,14 @@
    "workflow_key": "THL",
    "deps": [],
    "verification_protocol": "two-lens-v2",
-   "answers": "iii"
+   "answers": "iii",
+   "repairs": [
+    {
+     "workflow_run": "wf_60b458bb-a8d",
+     "workflow_key": "THL",
+     "reason": "admission / wall_life_trustworthy gate on Hall wall-flux inputs (thermal_life._check_hall_discharge, hallmap_wall_inputs): finding G11 from lane_32's second-lens verification"
+    }
+   ]
   },
   {
    "id": "lane_16_feed_envelope",
@@ -828,6 +835,11 @@
      "workflow_run": "wf_e6704550-845",
      "workflow_key": "BUNDLE1",
      "reason": "Bundle 1 v4: experiment-package context pin updated to the re-verified 83fe4c4 (second occurrence of the parallel re-pin race); run alone, all pins checked current"
+    },
+    {
+     "workflow_run": "wf_60b458bb-a8d",
+     "workflow_key": "BUNDLE1",
+     "reason": "Bundle 1 v5: veto-layer context re-pin (ordered after VETO)"
     }
    ]
   },
@@ -845,6 +857,11 @@
      "workflow_run": "wf_e16cec30-7b2",
      "workflow_key": "VETO",
      "reason": "re-pin after the lane_09 integration repair (f458811)"
+    },
+    {
+     "workflow_run": "wf_60b458bb-a8d",
+     "workflow_key": "VETO",
+     "reason": "re-pin thermal_life.py / THERMAL_LIFE_FRAMEWORK.md after the lane-15 admission-gate fix (ordered after THL)"
     }
    ]
   },
