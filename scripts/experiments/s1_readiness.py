@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """S1-readiness gate (fo_s1_readiness_gate; trigger T_PIVOT_S1_READINESS_GATE; owner disposition od_hardware_pivot).
 
-Evaluates the eight owner conditions of docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json
-(execution_directive_2026_09_27.S1_readiness_conditions) against machine-checkable evidence artifacts defined in the
+Evaluates the eight owner conditions of the execution directive
+docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json
+(execution_directive_2026_09_27.S1_readiness_conditions; an addendum to the immutable original pivot
+docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json) against machine-checkable evidence artifacts defined in the
 spec docs/experiments/s1_readiness/s1_readiness_conditions_v1.json, and returns
 
-    S1_READY      only if the owner disposition is APPROVED and all eight conditions are SATISFIED
+    S1_READY      only if the authority holds (every owner decision file present and byte-identical to its pinned
+                  sha256, each addendum's amends_sha256 = sha256 of the original on disk, the original APPROVED, the
+                  conditions read from A2 equal to the spec's) and all eight conditions are SATISFIED
     S1_NOT_READY  otherwise, listing every unsatisfied condition, its expected artifact(s), the failed checks and producer.
 
 Rules (CLAUDE.md rule 3, docs/EVIDENCE.md): nothing is inferred or filled by assumption; a DRAFT / PROPOSED / PENDING
@@ -185,9 +189,29 @@ def validate_spec(spec: dict) -> None:
     if not sem.get("draft_status_tokens") or not sem.get("draft_status_fields"):
         raise SpecError("gate_semantics must list draft_status_tokens and draft_status_fields")
     auth = spec.get("authority")
-    if not isinstance(auth, dict) or safe_relpath(auth.get("path")) is None:
-        raise SpecError("authority must name a repository-relative path")
-    _validate_rules(auth.get("rules"), "authority", cond_ids)
+    docs = auth.get("documents") if isinstance(auth, dict) else None
+    if not isinstance(docs, list) or not docs:
+        raise SpecError("authority.documents must be a non-empty list")
+    roles = [d.get("role") if isinstance(d, dict) else None for d in docs]
+    if len(set(roles)) != len(roles) or not all(isinstance(r, str) and r for r in roles):
+        raise SpecError("authority document roles must be unique non-empty strings")
+    n_cond_src = 0
+    for d in docs:
+        where = f"authority/{d['role']}"
+        if safe_relpath(d.get("path")) is None:
+            raise SpecError(f"{where}: path must be repository-relative")
+        if not (isinstance(d.get("sha256"), str) and _SHA_RE.match(d["sha256"])):
+            raise SpecError(f"{where}: sha256 must pin the document (64 lowercase hex)")
+        _validate_rules(d.get("rules"), where, cond_ids)
+        if "amends_role" in d and (d["amends_role"] not in roles or d["amends_role"] == d["role"]
+                                   or not isinstance(d.get("amends_sha256_field"), str)):
+            raise SpecError(f"{where}: amends_role must name another authority document, with amends_sha256_field")
+        if "conditions_field" in d:
+            n_cond_src += 1
+            if not isinstance(d["conditions_field"], str) or not d["conditions_field"]:
+                raise SpecError(f"{where}: conditions_field must be a dotted field path")
+    if n_cond_src != 1:
+        raise SpecError("exactly one authority document must carry conditions_field (the owner's condition list)")
     for c in conds:
         if not _is_nonempty_str(c.get("owner_condition")):
             raise SpecError(f"{c['id']}: owner_condition missing")
@@ -433,6 +457,59 @@ def _eval_alternative(root: Path, alt: dict, sem: dict, resolved: dict) -> dict:
     return out
 
 
+def evaluate_authority(root: Path, spec: dict, resolved: dict) -> dict:
+    """Fail-closed check of the owner decision files the gate derives from. Records each file's sha256 on disk."""
+    sem = spec["gate_semantics"]
+    docs, objs, shas = [], {}, {}
+    for d in spec["authority"]["documents"]:
+        rel = safe_relpath(d["path"])
+        ent = {"role": d["role"], "path": rel, "expected_sha256": d["sha256"], "sha256": None, "ok": False,
+               "failures": []}
+        p = _inside(root, rel)
+        if p is None or not p.is_file():
+            ent["failures"].append(f"owner decision file {rel} not found")
+        else:
+            ent["sha256"] = shas[d["role"]] = sha256_file(p)
+            if ent["sha256"] != d["sha256"]:
+                ent["failures"].append(f"{rel} altered: sha256 on disk {ent['sha256']}, pinned {d['sha256']}")
+            obj, err = _load_json(root, rel)
+            if err:
+                ent["failures"].append(f"{rel} {err}")
+            elif not isinstance(obj, dict):
+                ent["failures"].append(f"{rel} is not a JSON object")
+            else:
+                objs[d["role"]] = obj
+                ctx = _Ctx(root, resolved, rel, sem["draft_status_tokens"])
+                for r in d["rules"]:
+                    ent["failures"].extend(f"{rel}: {e}" for e in check_rule(r, obj, ctx))
+        docs.append(ent)
+    for d, ent in zip(spec["authority"]["documents"], docs):
+        obj = objs.get(d["role"])
+        if obj is None:
+            continue
+        if "amends_role" in d:
+            target = shas.get(d["amends_role"])
+            got = get_field(obj, d["amends_sha256_field"])
+            if target is None:
+                ent["failures"].append(f"{ent['path']}: amended document ({d['amends_role']}) missing; chain unverifiable")
+            elif got != target:
+                ent["failures"].append(f"{ent['path']}: {d['amends_sha256_field']} = {_show(got)} does not equal the "
+                                       f"sha256 of the {d['amends_role']} file on disk ({target})")
+        if "conditions_field" in d:
+            got = get_field(obj, d["conditions_field"])
+            want = [c["owner_condition"] for c in spec["conditions"]]
+            if got != want:
+                ent["failures"].append(f"{ent['path']}: {d['conditions_field']} = {_show(got)} does not equal the "
+                                       f"spec's {len(want)} owner conditions verbatim and in order")
+    for ent in docs:
+        ent["ok"] = not ent["failures"]
+    cond_doc = next(d for d in spec["authority"]["documents"] if "conditions_field" in d)
+    return {"ok": all(e["ok"] for e in docs),
+            "conditions_source": {"path": safe_relpath(cond_doc["path"]), "field": cond_doc["conditions_field"]},
+            "documents": docs,
+            "failures": [f for e in docs for f in e["failures"]]}
+
+
 _STATE_ORDER = ("SATISFIED", "REJECTED_DRAFT", "INVALID", "AMBIGUOUS", "MISSING")
 
 
@@ -454,22 +531,8 @@ def evaluate(repo_root: Path | str | None = None, spec_path: Path | str | None =
         hits = [f for a in c["alternatives"] for f in _locate(root, a["paths"])]
         resolved[c["id"]] = hits[0] if len(hits) == 1 else None
 
-    # authority
-    arel = safe_relpath(spec["authority"]["path"])
-    auth = {"path": arel, "sha256": None, "ok": False, "failures": []}
-    ap = _inside(root, arel)
-    if ap is None or not ap.is_file():
-        auth["failures"] = [f"owner disposition {arel} not found"]
-    else:
-        auth["sha256"] = sha256_file(ap)
-        aobj, err = _load_json(root, arel)
-        if err:
-            auth["failures"] = [f"{arel} {err}"]
-        else:
-            ctx = _Ctx(root, resolved, arel, sem["draft_status_tokens"])
-            for r in spec["authority"]["rules"]:
-                auth["failures"].extend(check_rule(r, aobj, ctx))
-        auth["ok"] = not auth["failures"]
+    # authority: every owner decision file present, byte-identical to its pin, amendment chain intact, conditions verbatim
+    auth = evaluate_authority(root, spec, resolved)
 
     results, missing = [], []
     for c in conds:

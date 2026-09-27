@@ -48,6 +48,9 @@ LIMITS = ["discharge_voltage_max", "discharge_current_max", "magnet_current_max"
           "cathode_keeper_current_max", "background_pressure_max", "component_temperature_max", "gas_handling_oxidizer"]
 
 P_OD = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"
+P_A1 = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json"
+P_A2 = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json"
+OD_FILES = (P_OD, P_A1, P_A2)
 P_BRIEF = "docs/architecture_comparison/lock1/lock1_decision_brief_v1.json"
 P_LOCK1 = "docs/architecture_comparison/lock1/LOCK1.json"
 P_HWREQ = "docs/experiments/hardware/hardware_requirements_v1.json"
@@ -77,10 +80,10 @@ def _ref(root: Path, rel: str) -> dict:
 
 
 def _base(root: Path) -> Path:
-    """Spec + owner disposition only (the gate's authority); every condition artifact absent."""
-    (root / SPEC.relative_to(ROOT)).parent.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(SPEC, root / SPEC.relative_to(ROOT))
-    _write(root, P_OD, {"id": "od_hardware_pivot", "decided_by": "owner", "decision": "APPROVED"})
+    """Spec + the real, immutable owner decision files (the gate's authority); every condition artifact absent."""
+    for rel in (str(SPEC.relative_to(ROOT)),) + OD_FILES:
+        (root / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / rel, root / rel)
     return root
 
 
@@ -114,15 +117,16 @@ def _complete(root: Path, feed_alt: str = "points", lock1_path: str = P_LOCK1, d
                   for i in ("H-1", "C-1", "MC-1")],
     })
     test_points = [
-        {"id": "TP-1", "label": "PROPOSED_FLIGHT_REPRESENTATIVE", "gas": "N2", "m_dot_s": _q(1.0, "mg/s"),
+        {"id": "TP-1", "flight_status": "GROUND_QUALIFICATION_POINT", "gas": "N2", "m_dot_s": _q(1.0, "mg/s"),
          "P_feed": _q(1.0, "Pa"), "T_feed": _q(1.0, "K"), "x_s": _q({"N2": 1.0}, "mole fraction")},
-        {"id": "TP-2", "label": "GROUND_QUALIFICATION_POINT", "gas": "N2/O2", "m_dot_s": _q(1.0, "mg/s"),
+        {"id": "TP-2", "flight_status": "GROUND_QUALIFICATION_POINT", "gas": "N2/O2", "m_dot_s": _q(1.0, "mg/s"),
          "P_feed": _q(1.0, "Pa"), "T_feed": _q(1.0, "K"), "x_s": _q({"N2": 0.5, "O2": 0.5}, "mole fraction")},
     ]
     if feed_alt == "points":
+        _write(root, P_CLOSURE, {"schema": "synthetic closure"})
         put(P_POINTS, {
             "status": "RELEASED_FOR_S1", "decided_by": "owner", "decided_utc": "2026-10-02", "lock1": lock1,
-            "test_points": test_points,
+            "source_closure": _ref(root, P_CLOSURE), "test_points": test_points,
         })
     else:
         _write(root, P_CLOSURE, {"schema": "synthetic closure"})
@@ -169,8 +173,11 @@ def _cond(rep, cid):
 # ------------------------------------------------------------------------------------------------------ spec
 def test_spec_matches_owner_conditions_verbatim():
     spec = G.load_spec(SPEC)
-    od = json.loads((ROOT / P_OD).read_text())
-    assert od["execution_directive_2026_09_27"]["S1_readiness_conditions"] == OWNER_CONDITIONS
+    a2 = json.loads((ROOT / P_A2).read_text())
+    assert a2["execution_directive_2026_09_27"]["S1_readiness_conditions"] == OWNER_CONDITIONS
+    assert a2["amends"] == P_OD and a2["amends_sha256"] == hashlib.sha256((ROOT / P_OD).read_bytes()).hexdigest()
+    pins = {d["path"]: d["sha256"] for d in spec["authority"]["documents"]}
+    assert pins == {p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in OD_FILES}
     assert [c["owner_condition"] for c in spec["conditions"]] == OWNER_CONDITIONS
     assert spec["status"].startswith("DRAFT")
     assert set(spec["milestones"]["supports"]) <= {"A", "B", "C"}
@@ -239,12 +246,61 @@ def test_lock1_at_other_d05_locations(tmp_path, d05, where):
     assert rep["verdict"] == "S1_READY"
 
 
-def test_authority_required(tmp_path):
+@pytest.mark.parametrize("rel", OD_FILES)
+def test_authority_fails_closed_if_a_decision_file_is_missing(tmp_path, rel):
     root = _complete(tmp_path)
-    (root / P_OD).unlink()
+    (root / rel).unlink()
     rep = G.evaluate(root)
     assert rep["n_satisfied"] == 8 and rep["authority"]["ok"] is False
     assert rep["verdict"] == "S1_NOT_READY"
+    assert "not found" in " ".join(rep["authority"]["failures"])
+
+
+@pytest.mark.parametrize("rel", OD_FILES)
+def test_authority_fails_closed_if_a_decision_file_is_altered(tmp_path, rel):
+    root = _complete(tmp_path)
+    obj = json.loads((root / rel).read_text())
+    obj["decided_utc"] = "2026-09-28"
+    (root / rel).write_text(json.dumps(obj, indent=1))
+    rep = G.evaluate(root)
+    assert rep["authority"]["ok"] is False and rep["verdict"] == "S1_NOT_READY"
+    assert "altered" in " ".join(rep["authority"]["failures"])
+
+
+def test_authority_records_both_hashes_and_reads_conditions_from_a2(tmp_path):
+    rep = G.evaluate(_base(tmp_path))
+    docs = {d["path"]: d for d in rep["authority"]["documents"]}
+    for rel in OD_FILES:
+        assert docs[rel]["ok"] and docs[rel]["sha256"] == hashlib.sha256((ROOT / rel).read_bytes()).hexdigest()
+    assert rep["authority"]["conditions_source"] == {
+        "path": P_A2, "field": "execution_directive_2026_09_27.S1_readiness_conditions"}
+
+
+def test_authority_checks_amendment_chain_and_conditions(tmp_path):
+    # the original pivot no longer carries the directive: pointing the condition source at it fails closed
+    root = _complete(tmp_path)
+    spec = json.loads(SPEC.read_text())
+    for d in spec["authority"]["documents"]:
+        if "conditions_field" in d:
+            d["path"] = P_OD
+            d["sha256"] = hashlib.sha256((ROOT / P_OD).read_bytes()).hexdigest()
+            d.pop("amends_role"), d.pop("amends_sha256_field")
+            d["rules"] = [{"type": "equals", "field": "decided_by", "value": "owner"}]
+    spec["authority"]["documents"] = [d for d in spec["authority"]["documents"] if d["role"] != "original_disposition"] + \
+        [{"role": "original_disposition", "path": "docs/other/x.json", "sha256": "0" * 64,
+          "rules": [{"type": "equals", "field": "id", "value": "x"}]}]
+    sp = tmp_path / "spec.json"
+    sp.write_text(json.dumps(spec))
+    rep = G.evaluate(root, sp)
+    fails = " ".join(rep["authority"]["failures"])
+    assert rep["authority"]["ok"] is False and "owner conditions verbatim" in fails and "amended document" in fails
+    assert rep["verdict"] == "S1_NOT_READY"
+    # a spec whose condition wording drifts from A2 fails closed too
+    spec = json.loads(SPEC.read_text())
+    spec["conditions"][6]["owner_condition"] = "facility selected"
+    sp.write_text(json.dumps(spec))
+    rep = G.evaluate(_complete(tmp_path / "b"), sp)
+    assert rep["authority"]["ok"] is False and rep["verdict"] == "S1_NOT_READY"
 
 
 # ------------------------------------------------------------------------------------------------------ rejections
@@ -345,15 +401,49 @@ def test_capability_needs_every_instrument_category_and_raw_data(tmp_path):
 
 def test_feed_points_need_explicit_labels_and_no_flight_assertion(tmp_path):
     def m(o):
-        o["test_points"][1]["label"] = "FLIGHT_CONDITION"
+        o["test_points"][1]["flight_status"] = "FLIGHT_CONDITION"
         return o
     c3 = _cond(G.evaluate(_complete(tmp_path, mutate={P_POINTS: m})), "S1-C3")
-    assert c3["state"] == "INVALID" and "label" in " ".join(c3["alternatives"][1]["failures"])
+    assert c3["state"] == "INVALID" and "flight_status" in " ".join(c3["alternatives"][1]["failures"])
 
     def m2(o):
-        del o["test_points"][0]["label"]
+        del o["test_points"][0]["flight_status"]
         return o
     assert _cond(G.evaluate(_complete(tmp_path / "b", mutate={P_POINTS: m2})), "S1-C3")["state"] == "INVALID"
+
+
+@pytest.mark.parametrize("feed_alt,rel", [("points", P_POINTS), ("di1", P_DI1)])
+def test_proposed_flight_representative_points_are_precursors_only(tmp_path, feed_alt, rel):
+    def m(o):
+        o["test_points"][0]["flight_status"] = "PROPOSED_FLIGHT_REPRESENTATIVE"
+        return o
+    rep = G.evaluate(_complete(tmp_path, feed_alt=feed_alt, mutate={rel: m}))
+    assert _cond(rep, "S1-C3")["state"] == "REJECTED_DRAFT" and rep["verdict"] == "S1_NOT_READY"
+
+
+def test_labels_alone_never_satisfy_feed_condition(tmp_path):
+    root = _complete(tmp_path)
+    # an unapproved record carrying only correctly labelled points (as the W1 closure does) never satisfies S1-C3
+    def m(o):
+        del o["decided_by"], o["decided_utc"]
+        o["status"] = "SELECTED"
+        return o
+    c3 = _cond(G.evaluate(_complete(root, mutate={P_POINTS: m})), "S1-C3")
+    fails = " ".join(c3["alternatives"][1]["failures"])
+    assert c3["state"] == "INVALID" and "decided_by" in fails and "status" in fails
+
+    def m2(o):
+        del o["source_closure"]
+        return o
+    assert _cond(G.evaluate(_complete(tmp_path / "b", mutate={P_POINTS: m2})), "S1-C3")["state"] == "INVALID"
+
+
+def test_w1_closure_is_only_a_precursor(tmp_path):
+    root = _base(tmp_path)
+    _write(root, P_CLOSURE, {"status": "DRAFT", "test_points": {"phase1_knee_N2": [
+        {"id": "TP1", "flight_status": "GROUND_QUALIFICATION_POINT", "status": "PROPOSED (candidate-conditional)"}]}})
+    c3 = _cond(G.evaluate(root), "S1-C3")
+    assert c3["state"] == "MISSING" and c3["availability"] == "PARTIAL_PRECURSORS_ONLY"
 
 
 def test_tbd_values_never_fill_a_condition(tmp_path):
@@ -556,6 +646,9 @@ def test_committed_status_report_is_a_not_ready_snapshot_of_this_spec():
     assert rep["spec"]["path"] == "docs/experiments/s1_readiness/s1_readiness_conditions_v1.json"
     assert rep["spec"]["sha256"] == hashlib.sha256(SPEC.read_bytes()).hexdigest()
     assert rep["verdict"] == "S1_NOT_READY" and rep["n_conditions"] == 8
+    assert rep["authority"]["ok"] is True
+    assert {d["path"]: d["sha256"] for d in rep["authority"]["documents"]} == \
+        {p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in OD_FILES}
     assert rep["n_missing_items"] == 8 and [m["owner_condition"] for m in rep["missing"]] == OWNER_CONDITIONS
     assert all(c["state"] != "SATISFIED" for c in rep["conditions"])
     assert os.sep + "home" + os.sep not in REPORT.read_text()

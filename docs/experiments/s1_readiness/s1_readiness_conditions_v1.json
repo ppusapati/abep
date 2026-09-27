@@ -8,26 +8,94 @@
   "owner_disposition": {
     "id": "od_hardware_pivot",
     "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
-    "locator": "execution_directive_2026_09_27.S1_readiness_conditions (the eight conditions); execution_directive_2026_09_27.chain; controls_addendum_2026_09_27.C1_W5_partition, C2_W1_flight_status, convergence_point"
+    "addenda": [
+      "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json",
+      "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json"
+    ],
+    "locator": "A2 execution_directive_2026_09_27.S1_readiness_conditions (the eight conditions), .chain, .S1_purpose, .LOCK2; A1 controls_addendum_2026_09_27.C1_W5_partition, C2_W1_flight_status, convergence_point",
+    "immutability_note": "Owner decision files are immutable and pinned by sha256 in authority.documents. The original pivot file was restored byte-identical; the execution directive (with the S1-readiness conditions) now lives only in the A2 addendum, and the controls C1-C4 in the A1 addendum. Each addendum's amends_sha256 must equal the sha256 of the original file on disk."
   },
   "authority": {
-    "rule": "The gate evaluates only while the owner disposition that created it exists and is APPROVED; otherwise the verdict is S1_NOT_READY with an authority item.",
-    "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
-    "rules": [
+    "rule": "The gate evaluates only while the owner decision files that create it exist unaltered: the original pivot disposition (APPROVED) and its A1 (controls) and A2 (execution directive) addenda, each byte-identical to the sha256 pinned here; each addendum's amends_sha256 equals the sha256 of the original file on disk; and the eight owner conditions are read from A2 execution_directive_2026_09_27.S1_readiness_conditions and must equal this spec's owner_condition list verbatim and in order. If any document is missing or altered, or any check fails, the authority fails closed and the verdict is S1_NOT_READY. The sha256 of every document is recorded in the report.",
+    "documents": [
       {
-        "type": "equals",
-        "field": "id",
-        "value": "od_hardware_pivot"
+        "role": "original_disposition",
+        "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+        "sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+        "rules": [
+          {
+            "type": "equals",
+            "field": "id",
+            "value": "od_hardware_pivot"
+          },
+          {
+            "type": "equals",
+            "field": "decided_by",
+            "value": "owner"
+          },
+          {
+            "type": "equals",
+            "field": "decision",
+            "value": "APPROVED"
+          }
+        ]
       },
       {
-        "type": "equals",
-        "field": "decided_by",
-        "value": "owner"
+        "role": "controls_addendum_A1",
+        "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json",
+        "sha256": "04c5a6f46ed2cb3e3fb174bcc7305d129e15ef53af2349d2a8abc4f6d8975992",
+        "amends_role": "original_disposition",
+        "amends_sha256_field": "amends_sha256",
+        "rules": [
+          {
+            "type": "equals",
+            "field": "schema",
+            "value": "owner_disposition_addendum_v1"
+          },
+          {
+            "type": "equals",
+            "field": "decided_by",
+            "value": "owner"
+          },
+          {
+            "type": "iso_date",
+            "field": "decided_utc"
+          },
+          {
+            "type": "equals",
+            "field": "amends",
+            "value": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"
+          }
+        ]
       },
       {
-        "type": "equals",
-        "field": "decision",
-        "value": "APPROVED"
+        "role": "execution_directive_A2",
+        "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
+        "sha256": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6",
+        "amends_role": "original_disposition",
+        "amends_sha256_field": "amends_sha256",
+        "conditions_field": "execution_directive_2026_09_27.S1_readiness_conditions",
+        "rules": [
+          {
+            "type": "equals",
+            "field": "schema",
+            "value": "owner_disposition_addendum_v1"
+          },
+          {
+            "type": "equals",
+            "field": "decided_by",
+            "value": "owner"
+          },
+          {
+            "type": "iso_date",
+            "field": "decided_utc"
+          },
+          {
+            "type": "equals",
+            "field": "amends",
+            "value": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"
+          }
+        ]
       }
     ]
   },
@@ -40,7 +108,7 @@
     "condition_states": {
       "SATISFIED": "an artifact exists at an expected path and passes every rule",
       "MISSING": "no artifact exists at any expected path",
-      "REJECTED_DRAFT": "a 'status' or 'decision' field ANYWHERE in the artifact (top level or nested, e.g. one LOCK-1 decision, one hardware item or one feed point) contains DRAFT, PROPOSED or PENDING; such an artifact never satisfies a condition, whatever else it contains. The feed-point flight-status 'label' is not a status field.",
+      "REJECTED_DRAFT": "a 'status', 'decision' or 'flight_status' field ANYWHERE in the artifact (top level or nested, e.g. one LOCK-1 decision, one hardware item or one feed point) contains DRAFT, PROPOSED or PENDING; such an artifact never satisfies a condition, whatever else it contains. In particular a feed point labelled flight_status = PROPOSED_FLIGHT_REPRESENTATIVE (control C2) is a precursor only and never satisfies S1-C3.",
       "INVALID": "the artifact exists but fails one or more rules (the failures are listed)",
       "AMBIGUOUS": "an artifact exists at more than one candidate location (the gate never chooses between them)"
     },
@@ -61,7 +129,8 @@
     ],
     "draft_status_fields": [
       "status",
-      "decision"
+      "decision",
+      "flight_status"
     ],
     "date_format": "decided/approved/calibration dates: ISO 8601 calendar date YYYY-MM-DD, optionally followed by THH:MM[:SS]Z (UTC); the date and time must exist (e.g. 2026-13-45 is rejected)",
     "sha256_ref_format": "an object {\"path\": <repository-relative path>, \"sha256\": <64 lowercase hex>}; the gate recomputes the sha256 of the file on disk and requires equality",
@@ -284,7 +353,7 @@
     {
       "id": "S1-C3",
       "owner_condition": "DI-1 or explicitly labelled ground-qualification feed points available",
-      "why": "S1b runs HW-0 at OP3 (mdot_nom, V_nom, N2) (lane 25 s1_plan.S1b_hall_on); feed states from assumed intake/compressor candidates carry PROPOSED_FLIGHT_REPRESENTATIVE until DI-1 is frozen and are never asserted as flight conditions (controls_addendum C2).",
+      "why": "S1b runs HW-0 at OP3 (mdot_nom, V_nom, N2) (lane 25 s1_plan.S1b_hall_on). Control C2 (A1 addendum): feed states derived from assumed intake/compressor candidates carry flight_status PROPOSED_FLIGHT_REPRESENTATIVE until the owner freezes DI-1 and are never asserted as flight conditions. The W1 closure (feed_state_closure_v1.json flight_status_control) labels points PROPOSED_FLIGHT_REPRESENTATIVE or GROUND_QUALIFICATION_POINT; those labels are precursors only. S1-C3 is satisfied only by (a) an owner-frozen DI-1 record or (b) owner-approved ground-qualification feed points, never by a label alone.",
       "alternatives": [
         {
           "id": "S1-C3-DI1-frozen",
@@ -329,12 +398,9 @@
                   "field": "id"
                 },
                 {
-                  "type": "in",
-                  "field": "label",
-                  "values": [
-                    "PROPOSED_FLIGHT_REPRESENTATIVE",
-                    "GROUND_QUALIFICATION_POINT"
-                  ]
+                  "type": "nonempty_string",
+                  "field": "flight_status",
+                  "what": "the post-freeze label is defined by the owner's DI-1 freeze; PROPOSED_FLIGHT_REPRESENTATIVE is rejected as a draft marker"
                 },
                 {
                   "type": "nonempty_string",
@@ -371,17 +437,16 @@
               ]
             }
           ],
-          "symmetry_note": "PROPOSED: the frozen DI-1 record must carry the same explicitly labelled S1 feed points as alternative (b) (test_points[] with label, gas and {m_dot_s, P_feed, T_feed, x_s} each as {value, unit, source, evidence_class}, and at least one N2 point), so that either alternative gives the S1 operator the same machine-checkable feed state. The owner may relax this for DI-1."
+          "symmetry_note": "PROPOSED: the frozen DI-1 record must carry explicitly labelled S1 feed points like alternative (b) (test_points[] with flight_status, gas and {m_dot_s, P_feed, T_feed, x_s} each as {value, unit, source, evidence_class}, and at least one N2 point). After the freeze no point may still carry PROPOSED_FLIGHT_REPRESENTATIVE (control C2: that label holds only until DI-1 is frozen). The owner may relax the symmetry for DI-1."
         },
         {
           "id": "S1-C3-ground-qualification-points",
-          "artifact": "owner-released, explicitly labelled S1 feed points",
+          "artifact": "owner-approved ground-qualification S1 feed points",
           "paths": [
             "docs/architecture_comparison/feed_state_closure/s1_feed_points.json"
           ],
           "path_basis": "PROPOSED file in the W1 directory",
-          "produced_by": "W1 feed-state closure (fo_feed_state_closure) selects the points; owner releases them for S1",
-          "label_note": "The per-point label PROPOSED_FLIGHT_REPRESENTATIVE is the controls_addendum C2 flight-status label, not a document status; it is accepted as a label. The document itself must be owner-released (a DRAFT document never satisfies).",
+          "produced_by": "W1 feed-state closure (fo_feed_state_closure) selects GROUND_QUALIFICATION_POINT points; owner approves and releases them for S1",
           "rules": [
             {
               "type": "equals",
@@ -404,6 +469,12 @@
               "what": "the signed LOCK-1 (it fixes mdot_nom and composition, lane 25 preregistration.locks[0])"
             },
             {
+              "type": "sha256_ref",
+              "field": "source_closure",
+              "path_equals": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
+              "what": "the W1 feed-state closure the ground-qualification points are selected from"
+            },
+            {
               "type": "each_item",
               "field": "test_points",
               "rules": [
@@ -412,12 +483,10 @@
                   "field": "id"
                 },
                 {
-                  "type": "in",
-                  "field": "label",
-                  "values": [
-                    "PROPOSED_FLIGHT_REPRESENTATIVE",
-                    "GROUND_QUALIFICATION_POINT"
-                  ]
+                  "type": "equals",
+                  "field": "flight_status",
+                  "value": "GROUND_QUALIFICATION_POINT",
+                  "what": "only ground-qualification points are released before DI-1 is frozen; PROPOSED_FLIGHT_REPRESENTATIVE points are precursors only (rejected as a draft marker)"
                 },
                 {
                   "type": "nonempty_string",
@@ -453,13 +522,14 @@
                 }
               ]
             }
-          ]
+          ],
+          "flight_status_note": "Control C2 (A1 addendum): flight_status labels alone never satisfy S1-C3. Every point must carry flight_status GROUND_QUALIFICATION_POINT and the document must be owner-approved (status RELEASED_FOR_S1, decided_by owner). A PROPOSED_FLIGHT_REPRESENTATIVE point can be used in S1 only after DI-1 is frozen (alternative a). The file must also pin the W1 closure it selects the points from."
         }
       ],
       "precursors": [
         {
           "path": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
-          "what": "W1 feed-state closure (planned; DRAFT for owner review)"
+          "what": "W1 feed-state closure (DRAFT for owner review): test points labelled flight_status PROPOSED_FLIGHT_REPRESENTATIVE / GROUND_QUALIFICATION_POINT with status 'PROPOSED (candidate-conditional)'; precursor only, labels never satisfy S1-C3"
         },
         {
           "path": "docs/architecture_comparison/feed_envelope/feed_envelope_v1.json",
