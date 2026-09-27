@@ -415,7 +415,11 @@ HW-H1-02, HW-H1-04, HW-H1-05, HW-H1-07, HW-MC-02..04, HW-PIM-03, HW-PIM-04, HW-E
 Owner addendum A3 (`docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json`,
 `next_execution.W3_integration_review`) asks for one bounded check. H-1 must carry ten named provisions, checked against
 N1 (AO/lifetime register v3), N3 (magnet/coil qualification v1) and W4 (instrumentation v1-r2). The sha256 pins are in
-`w3_integration_review.reviewed_against`.
+`w3_integration_review.reviewed_against`. W4 is pinned as an immutable snapshot, never as its live file:
+`docs/experiments/hardware/snapshots/w4_instrumentation_definition_v1_at_fe2c05e.json` is the byte-identical git blob of
+`docs/experiments/instrumentation/instrumentation_definition_v1.json` at W4's merged commit
+`fe2c05ef2de952e7622c1b6fc668b6c2b0ab9265`. W4 pins W3 the same way (its snapshot of 9a33979), so the two documents
+do not form a pin cycle.
 
 | provision | status | HW ids | traces (AOL / MCQ / INS) |
 |---|---|---|---|

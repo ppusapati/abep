@@ -3425,10 +3425,13 @@
    "note": "fo_ao_lifetime_register v3 (N1; merged at a92a856); requirement set identical to v1 (SRC-AOL), wording of four W3/W4 references updated; read for the W3 integration review"
   },
   "SRC-INS-V1R2": {
-   "kind": "repository",
-   "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
-   "sha256": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f",
-   "note": "W4 instrumentation definition v1-r2 (merged at a92a856); read for the W3 integration review"
+   "kind": "repository_snapshot",
+   "path": "docs/experiments/hardware/snapshots/w4_instrumentation_definition_v1_at_fe2c05e.json",
+   "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+   "source_path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "source_commit": "fe2c05ef2de952e7622c1b6fc668b6c2b0ab9265",
+   "reproduce": "git show fe2c05ef2de952e7622c1b6fc668b6c2b0ab9265:docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "note": "W4 instrumentation definition v1-r2 at its merged commit fe2c05e, pinned as an immutable snapshot (byte-identical git blob) so W3 never pins W4's live file (W4 pins W3 through its own snapshot docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json; pin-cycle rule, runtime_state 2026-09-27); read for the W3 integration review"
   }
  },
  "compliance": {
@@ -4190,6 +4193,11 @@
    "date": "2026-09-27",
    "base": "7d373374dcd47eb6c2464423eb5f45a1fa14ef78",
    "what": "A3 bounded W3 integration review (w3_integration_review): 9 of 10 provisions PRESENT; cathode temperature ADDED as HW-C1-09 (tube thermocouple mandatory, emitter pyrometer view where possible); HW-C1-07 (a) now points to HW-C1-09; five traces_to back-traces added; AOL-CX-04 C5 row names HW-C1-09; references SRC-OD-A3, SRC-AOL-V3, SRC-INS-V1R2 added. No existing id or numeric value changed; SRC-AOL (v1) pin unchanged"
+  },
+  {
+   "date": "2026-09-27",
+   "base": "0c4d26e63fe420277b4712bb3c107a7dd122c1bf",
+   "what": "pin-only integration round: SRC-INS-V1R2 re-pinned from W4's live file to the immutable snapshot snapshots/w4_instrumentation_definition_v1_at_fe2c05e.json (git blob of W4 at merged commit fe2c05e), breaking the W3<->W4 pin cycle; w3_integration_review.reviewed_against updated to the snapshot hash; all INS-* traces re-verified in the snapshot. No requirement, value, verdict, condition or finding changed"
   }
  ],
  "w3_integration_review": {
@@ -4198,7 +4206,7 @@
   "reviewed_against": {
    "SRC-AOL-V3": "4dea755df9252486f6e2234aacba17f9346c33fad722e6e562fd61cd404d6866",
    "SRC-MCQ": "53e92f4536f7b30054d3521adbd504eca725c4c6d79a6cb3b51c2fc4ce220b32",
-   "SRC-INS-V1R2": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f",
+   "SRC-INS-V1R2": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
    "SRC-OD-A3": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e"
   },
   "statuses": {

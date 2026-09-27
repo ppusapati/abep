@@ -20,11 +20,13 @@ no other lane's in-progress path is required.
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import json
 import math
 import os
 import re
+import subprocess
 
 import pytest
 
@@ -431,6 +433,24 @@ def test_a3_review_traces_exist_in_sources(reg):
         text = open(path, encoding="utf-8").read()
         for i in sorted(x for x in ids if x.startswith(prefix)):
             assert f'"{i}"' in text, (ref, i)
+
+
+def test_w4_pin_is_immutable_snapshot(reg):
+    """W3 pins W4 only through an immutable snapshot (never W4's live file); the snapshot equals the git blob."""
+    r = reg["references"]["SRC-INS-V1R2"]
+    assert r["kind"] == "repository_snapshot"
+    assert r["path"].startswith("docs/experiments/hardware/snapshots/")
+    assert r["path"] != r["source_path"]
+    for ref in reg["references"].values():
+        assert ref.get("path") != "docs/experiments/instrumentation/instrumentation_definition_v1.json"
+    path = os.path.join(ROOT, r["path"])
+    assert _sha(path) == r["sha256"] == reg["w3_integration_review"]["reviewed_against"]["SRC-INS-V1R2"]
+    try:
+        blob = subprocess.run(["git", "-C", ROOT, "show", f"{r['source_commit']}:{r['source_path']}"],
+                              capture_output=True, check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        pytest.skip(f"commit {r['source_commit']} not available in this checkout")
+    assert hashlib.sha256(blob).hexdigest() == r["sha256"]
 
 
 def test_a3_owner_decision_pin(reg):
