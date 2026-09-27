@@ -53,6 +53,12 @@ PINNED = {   # path -> lane; the sha256 pins live in pinned_inputs.json (written
     "docs/architecture_comparison/experiment_package/experiment_package_v1.json": "fo_experiment_package",
     "docs/architecture_comparison/experiment_protocol/protocol_draft.json": "lane_06_experiment_protocol",
     "abep_sim/constants.py": "repository (RFP record, physical constants)",
+    # control C5 repair (v1-r2)
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json": "od_hardware_pivot A2 (owner; C5)",
+    "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json": "fo_ao_lifetime_register (v2)",
+    "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json": "fo_magnet_coil_qualification",
+    "docs/experiments/hardware/hardware_requirements_v1.json": "fo_hardware_definition (W3)",
+    "schemas/thermal_life/inputs_v1.json": "thermal_life input schema (measured_hardware record)",
 }
 
 
@@ -819,6 +825,392 @@ def bus_power_channels() -> list:
     return out
 
 
+# ----------------------------------------------------------------------------------------------------------------------
+# control C5 (A2 addendum): AO/lifetime register v2 W4 provisions and magnet/coil MCQ-W4-* items (revision v1-r2)
+# ----------------------------------------------------------------------------------------------------------------------
+AOL = "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json"
+MCQ = "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json"
+HWR = "docs/experiments/hardware/hardware_requirements_v1.json"
+A2 = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json"
+TL_SCHEMA = "schemas/thermal_life/inputs_v1.json"
+REPAIR_BASE_COMMIT = "af6e4948605081f6cab761ce3a74f67658738e44"
+
+# instrument id -> provisions it adopts (AOL-* rows of the register's W4 interface table, MCQ-W4-*); instruments not
+# listed trace to none. Adopted ids in the C5 table are DERIVED from this map and from PROCEDURES (never typed twice).
+INSTRUMENT_PROVISIONS = {
+    "INS-02": ["MCQ-W4-02"],
+    "INS-04": ["AOL-CX-01", "MCQ-W4-02"],
+    "INS-09": ["AOL-PM-08", "MCQ-W4-03"],
+    "INS-10": ["AOL-CX-06"],
+    "INS-11": ["AOL-CX-03"],
+    "INS-18": ["AOL-CX-01", "AOL-CX-02", "AOL-CX-05", "AOL-CX-06", "AOL-DC-01"],
+    "INS-19": ["AOL-WC-01", "AOL-WC-06", "AOL-PM-01", "AOL-PM-02"],
+    "INS-20": ["AOL-WC-01", "AOL-WC-06", "AOL-PM-01", "AOL-PM-04", "AOL-PM-05", "AOL-PM-08"],
+    "INS-21": ["AOL-RC-02", "AOL-PM-01", "AOL-PM-06"],
+    "INS-22": ["AOL-CX-03"],
+    "INS-23": ["AOL-CX-04", "AOL-CX-07"],
+    "INS-24": ["MCQ-W4-01", "MCQ-W4-02", "MCQ-W4-03"],
+}
+
+C5_REFERENCES = [
+    {"id": "REF-CIFALI2011", "citation": "G. Cifali, T. Misuri, P. Rossetti, M. Andrenucci, D. Valentian, D. Feili, "
+     "B. Lotz, 'Experimental characterization of HET and RIT with atmospheric propellants', IEPC-2011-224 (2011)",
+     "url": "https://electricrocket.org/IEPC/IEPC-2011-224.pdf",
+     "access": "as accessed and cited by the AO/lifetime register v2 (source CIFALI2011; anode resistance increase from "
+     "oxidation named as the main endurance concern, p. 5, per AOL-RC-02); not re-accessed by this lane"},
+    {"id": "REF-DEGROH2006", "citation": "K. K. de Groh, B. A. Banks, C. E. McCarthy, R. N. Rucker, L. M. Roberts, "
+     "L. A. Berger, 'MISSE PEACE Polymers Atomic Oxygen Erosion Results', NASA/TM-2006-214482 (2006)",
+     "url": "https://ntrs.nasa.gov/api/citations/20070002707/downloads/20070002707.pdf",
+     "access": "as accessed and cited by the AO/lifetime register v2 (source DEGROH2006; dehydrated-mass rationale, "
+     "moisture uptake of Kapton, p. 3, per AOL-PM-02); not re-accessed by this lane"},
+    {"id": "REF-JANKOVSKY1999", "citation": "R. S. Jankovsky, 'Preliminary Evaluation of a 10 kW Hall Thruster', "
+     "NASA/TM-1999-209075, AIAA-99-0456", "url": "https://ntrs.nasa.gov/api/citations/19990046494/downloads/"
+     "19990046494.pdf", "access": "as accessed and cited by the magnet/coil qualification lane (4-wire potential-probe "
+     "coil resistance for average winding temperature, p. 4, per MCQ-W4-01); not re-accessed by this lane"},
+    {"id": "REF-KAMHAWI2013", "citation": "H. Kamhawi et al., 'Performance and Thermal Characterization of the "
+     "NASA-300MS 20 kW Hall Effect Thruster', IEPC-2013-444 (NTRS 20140017775)",
+     "url": "https://ntrs.nasa.gov/api/citations/20140017775/downloads/20140017775.pdf",
+     "access": "as accessed and cited by the magnet/coil qualification lane (thermocouples at coil positions, pp. 11, "
+     "21, per MCQ-W4-01); not re-accessed by this lane"},
+]
+
+
+def c5_instruments(der: dict) -> list:
+    """New instruments adopting the W4 parts of the AO/lifetime register v2 and MCQ-W4-* (control C5)."""
+    none = {"DQ-RARCH": "-", "DQ-TABS": "-", "DQ-PBUS": "-", "DQ-SUST": "-", "DQ-KNEE": "-"}
+    sust = dict(none, **{"DQ-SUST": "S"})
+    return [
+        _inst("INS-19", "witness-coupon and part mass metrology (dehydrated protocol)", [], "mass of every witness "
+              "coupon (plume array, controls, cathode-vicinity, magnetic-circuit, interstage), anode, wall ring and C-1 "
+              "keeper, at baseline and after each removal", "analytical balance in the metrology lab under the "
+              "dehydrated protocol INS-P-03 (vacuum desiccation for a fixed time, repeated readings averaged, room "
+              "temperature and humidity logged, identical pre and post), coded sample ids (INS-P-01)",
+              ["REF-DEGROH2006"],
+              {"value": tbd("a mass-change detection limit: no admitted source gives an expected N/O-environment mass "
+                            "change for the H-1 wall, anode or pole grades (AO register v2: no N/O yield on BN, BN-SiO2 "
+                            "or SiC), so the requirement is set from the demonstrated repeatability of a control coupon "
+                            "(AOL-PM-02) before S1 and reported as a detection limit, not a target",
+                            "metrology lab + S1")},
+              ["balance calibration with traceable reference masses at each session (class TBD - requires owner / "
+               "metrology lab)", "control-coupon repeatability demonstration before S1 (AOL-PM-02 verification)",
+               "lab-stored control coupon weighed in every session (AOL-WC-06 control (d))"],
+              none, [],
+              {"status": "TBD", "why": "achievable resolution relative to the (unknown) plume-induced mass change is "
+               "not known; hygroscopic items (polymers, BN) need the dehydrated protocol (AO register v2 AOL-PM-02)"},
+              ["adopts the W4 (metrology) part of AOL-WC-01; the holder is W3 HW-SVC-06"]),
+        _inst("INS-20", "surface, profile and post-test inspection metrology", [], "surface profile against fiducials, "
+              "morphology and deposits (SEM/EDS), oxidation state and depth profile (XPS), photographs; C-1 orifice "
+              "diameter and keeper-face profile; pole-face inspection", "external metrology lab: stylus or optical "
+              "profilometry against the W3 fiducials (HW-H1-11), SEM/EDS, XPS with sealed dry transfer and custody "
+              "record, calibrated optical measurement of the orifice diameter, photographs under fixed lighting; the "
+              "same instruments and operators (coded ids) pre and post", [],
+              {"value": tbd("per-technique uncertainty from the metrology lab's calibration records; the profile "
+                            "resolution needed follows from the erosion depth to be resolved, which no admitted source "
+                            "gives for the H-1 wall grade in N/O (AO register v2); report as detection limits",
+                            "metrology lab")},
+              ["profilometer calibration on a certified step-height standard (class TBD - requires metrology lab)",
+               "SEM magnification / EDS and XPS energy-scale calibration per the lab's procedure, recorded with each "
+               "report", "baseline before first ignition for every serialized item (INS-P-02)"],
+              none, [],
+              {"status": "FEASIBLE_IN_PRINCIPLE", "why": "standard laboratory techniques; needs a metrology lab "
+               "(not chosen) and sealed-transfer custody (INS-P-04)"},
+              ["adopts the W4 parts of AOL-WC-01, AOL-PM-01, AOL-PM-04, AOL-PM-05 (with W3 HW-C1-08) and the pole-face "
+               "inspection of AOL-PM-08 (with W3 HW-MC-06)"]),
+        _inst("INS-21", "anode resistance (4-wire) and insulation resistance", [], "anode-to-terminal resistance via "
+              "the W3 sense lead (HW-ELEC-04); insulation resistance of the anode isolator, coils and harness",
+              "4-wire (Kelvin) resistance measurement through the HW-ELEC-04 sense lead between blocks, discharge "
+              "off; insulation-resistance tester at a test voltage within the HW-ENV-01 rating (voltage TBD - W3)",
+              ["REF-CIFALI2011"],
+              {"value": tbd("S1 baseline scatter of the anode resistance (sets the AOL-PT-02 trigger, LOCK-2) and the "
+                            "W3 isolator / coil insulation specification", "S1 + fo_hardware_definition")},
+              ["meter calibration against traceable resistance standards (class TBD - requires owner)",
+               "lead-resistance and contact check with the sense lead shorted at the feedthrough at baseline",
+               "measured at baseline, every phase boundary and campaign end (INS-P-06)"],
+              sust, [],
+              {"status": "FEASIBLE_IN_PRINCIPLE", "why": "standard electrical measurement once HW-ELEC-04 exists; "
+               "the trigger threshold is TBD until the S1 scatter exists"},
+              ["closes the review finding 'INS-04 has no anode-resistance measurement' without changing INS-04"]),
+        _inst("INS-22", "near-cathode gas sampling point to the RGA (extends INS-11)", [], "O2 / H2O / N2 partial "
+              "pressures near C-1 during O-bearing operation (a proxy: the emitter-region O partial pressure is not "
+              "measurable directly)", "sampling tube with its inlet at a fixed recorded position near C-1 (outside the "
+              "cathode plume core, identical in every arm) feeding the INS-11 RGA; switched against the chamber "
+              "sample and logged on INS-18", [],
+              {"value": tbd("W5 / owner decision on whether the near-cathode proxy is quantitative; calibration of O2 "
+                            "and H2O response at the sampling point (AOL-CX-03: 'calibration TBD')")},
+              ["calibrate the sampled O2 and N2 response against known mixtures from the INS-05 flows; H2O response "
+               "method TBD - requires the RGA and facility choice", "record the sampling-line transit delay against "
+               "INS-18 with a flow step"],
+              sust, ["VO-FEED"],
+              {"status": "AT_RISK", "why": "a sampled partial pressure near the cathode is a proxy for the emitter "
+               "region (AO register v2 AOL-CX-03 rationale); H2O calibration method not identified by this lane"},
+              ["closes the review finding 'INS-11 has no near-C-1 sampling point' without changing INS-11"]),
+        _inst("INS-23", "life-mechanism and C-1 emitter / cathode-tube temperatures (extends INS-17)", [],
+              "temperatures of the anode, each exit-region wall ring, next to each witness coupon (HW-H1-12 positions), "
+              "and the C-1 emitter or cathode tube during firing", "thermocouples at the fixed W3 positions "
+              "(HW-H1-12, identical in every arm); C-1: thermocouple on the cathode tube as the baseline, a pyrometer "
+              "on the emitter only if the W3 C-1 design gives a view (proposed; choice W3 / owner)", [],
+              {"value": tbd("the temperature resolution the oxidation / sputter-yield evidence needs (lane 32, lane 15 "
+                            "limits) and the LaB6 temperature bands cited in W3 HW-C1-03; pyrometer emissivity "
+                            "uncertainty TBD - requires the emitter material and view", "fo_hardware_definition")},
+              ["thermocouple calibration and cold-junction check (as INS-17)", "pyrometer (if used) calibrated "
+               "against a thermocouple on a reference body at the emitter temperature range; emissivity recorded"],
+              sust, [],
+              {"status": "AT_RISK", "why": "the emitter itself is usually not directly instrumentable; a cathode-tube "
+               "thermocouple gives the tube, not the emitter (from memory - verify against the C-1 design)"},
+              ["closes the review finding that no temperature channel is placed near the cathode (INS-17 is unchanged; "
+               "the finding named INS-14, which is the RPA)"]),
+        _inst("INS-24", "coil winding temperature and coil electrical record", [], "average winding temperature per "
+              "coil (4-wire potential-probe resistance), hot-spot temperatures (thermocouples at the predicted hot "
+              "spots), coil current and voltage per reading", "4-wire coil resistance from the INS-02 hall_magnet / "
+              "ecr_magnet V and I at the coil terminals (potential probes at the winding) converted by the coil's "
+              "own R(T) (the magnet/coil lane records the method and the copper alpha source); embedded thermocouples "
+              "at the predicted hot spots; the hot-spot minus average offset is measured, not assumed",
+              ["REF-JANKOVSKY1999", "REF-KAMHAWI2013"],
+              {"value": tbd("coil hot-spot margin to the insulation class of the selected magnet wire (magnet/coil "
+                            "qualification MCQ-QT-06) and the H-1 thermal model (lane 15 hall_magnet inputs)",
+                            "fo_magnet_coil_qualification + fo_hardware_definition")},
+              ["R0 and T0 of each coil measured isothermally before S1 (reference resistance at a recorded temperature)",
+               "thermocouples calibrated as INS-17", "coil V/I channels are INS-02 channels (same calibration)"],
+              dict(none, **{"DQ-PBUS": "S"}), ["VO-BZ"],
+              {"status": "FEASIBLE_IN_PRINCIPLE", "why": "the method was used on NASA Hall thrusters (as cited by the "
+               "magnet/coil lane); hot-spot placement needs the W3 coil design"}),
+    ]
+
+
+PROCEDURES = [
+    {"id": "INS-P-01", "name": "witness lot, control coupons and coupon/part register",
+     "provisions": ["AOL-WC-06", "AOL-DC-01"],
+     "statement": "Every witness lot carries four controls: (a) facility-background (chamber wall), (b) beam-dump-facing, "
+                  "(c) shadowed (on the W3 HW-SVC-06 holder) and (d) lab-stored. A register records serial, lot "
+                  "(HW-H1-14), material, position, install/remove timestamps and cumulative exposure per feed "
+                  "composition, arm and block (from INS-18); metrology operators receive coded sample ids (PROPOSED). "
+                  "Kept under the W5 data-custody plan.",
+     "instruments": ["INS-18", "INS-19", "INS-20"],
+     "required_uncertainty": "n/a (register); timestamps on the INS-18 time base",
+     "calibration": "register audit before LOCK-2 (AOL-DC-01 verification)",
+     "open": "positions of controls (a) and (b) are facility items: TBD - requires the facility choice (S1-readiness "
+             "condition 'facility chosen')"},
+    {"id": "INS-P-02", "name": "baseline metrology before first ignition", "provisions": ["AOL-PM-01"],
+     "statement": "Every witness coupon, replaceable part (anode HW-H1-10, wall rings HW-H1-11), and the C-1 keeper is "
+                  "measured before first ignition: mass (INS-19), profile, SEM/EDS, XPS as listed per item and "
+                  "photographs (INS-20), anode resistance (INS-21); instrument, uncertainty and operator recorded.",
+     "instruments": ["INS-19", "INS-20", "INS-21"],
+     "required_uncertainty": "as INS-19 / INS-20 / INS-21 (TBD, detection limits)",
+     "calibration": "per instrument", "open": "metrology lab not chosen"},
+    {"id": "INS-P-03", "name": "dehydrated mass protocol", "provisions": ["AOL-PM-02"],
+     "statement": "Hygroscopic items (polymers, BN) are weighed after vacuum desiccation for a fixed time, repeated "
+                  "readings averaged, room temperature and humidity logged, identically pre and post.",
+     "instruments": ["INS-19"],
+     "required_uncertainty": "TBD - the control-coupon repeatability demonstrated before S1 is the detection limit",
+     "calibration": "desiccation time, pressure and number of readings: TBD - requires the metrology lab and a pre-S1 "
+                    "repeatability trial (no value is assumed here)",
+     "open": "parameters TBD (AOL-PM-02 leaves them to W4 / metrology lab)"},
+    {"id": "INS-P-04", "name": "post-test surface analysis and sample custody", "provisions": ["AOL-PM-04"],
+     "statement": "After each removal, SEM/EDS and XPS as listed per item; samples transferred in sealed dry containers "
+                  "with a custody record; each report references the item's baseline (INS-P-02).",
+     "instruments": ["INS-20"], "required_uncertainty": "as INS-20", "calibration": "as INS-20",
+     "open": "container specification TBD - requires the metrology lab"},
+    {"id": "INS-P-05", "name": "C-1 post-test inspection", "provisions": ["AOL-PM-05"],
+     "statement": "At campaign end or C-1 retirement (disassembly retires the unit, W3 HW-C1-08): orifice diameter, "
+                  "keeper-face profile, SEM/EDS and XPS of the insert surface.",
+     "instruments": ["INS-20"], "required_uncertainty": "as INS-20", "calibration": "as INS-20",
+     "open": "none beyond INS-20"},
+    {"id": "INS-P-06", "name": "electrical resistance and insulation schedule", "provisions": ["AOL-RC-02", "AOL-PM-06"],
+     "statement": "Anode resistance (4-wire via HW-ELEC-04) and insulation resistance of the anode isolator, coils and "
+                  "harness at baseline, every phase boundary and campaign end; the anode resistance also between "
+                  "blocks without disassembly.",
+     "instruments": ["INS-21"], "required_uncertainty": "as INS-21 (TBD from the S1 baseline scatter)",
+     "calibration": "as INS-21", "open": "AOL-PT-02 trigger value TBD (LOCK-2)"},
+    {"id": "INS-P-07", "name": "B(z) map record and magnetic-circuit inspection", "provisions": ["AOL-PM-08", "MCQ-W4-03"],
+     "statement": "INS-09 maps follow W3 HW-MC-03 (actual coil currents, before/after each configuration's block "
+                  "series) and HW-MC-04 (reference sensor during firing; cold re-map after soak); every map record "
+                  "carries the coil currents, coil average (INS-24) and hot-spot temperatures and the magnet "
+                  "temperatures at the time of mapping, probe calibration and sha256. Pole faces: visual / XPS "
+                  "inspection at campaign end (INS-20).",
+     "instruments": ["INS-09", "INS-20", "INS-24"],
+     "required_uncertainty": "as INS-09 (TBD from the W5 B(z) tolerance)", "calibration": "as INS-09",
+     "open": "HW-MC-04 reference-sensor feasibility TBD (W3)"},
+    {"id": "INS-P-08", "name": "C-1 logs: daily Xe reference, start log, hot-emitter O-exposure log",
+     "provisions": ["AOL-CX-01", "AOL-CX-02", "AOL-CX-05"],
+     "statement": "(1) daily keeper and coupling voltage at the fixed Xe reference condition (frozen in LOCK-1; aligns "
+                  "W3 HW-C1-03); (2) every C-1 start: heater power, heater time to ignition, keeper ignition voltage, "
+                  "outcome; (3) every interval with a hot emitter while O2 is in the chamber or feed, with the Xe "
+                  "cathode flow state and interlock states (HW-C1-03 rule). All on the INS-18 time base.",
+     "instruments": ["INS-04", "INS-18"],
+     "required_uncertainty": "keeper / coupling voltage as the INS-02 / INS-04 channels; AOL-PT-03 shift trigger TBD "
+                             "from the S1 day-to-day scatter (LOCK-2)",
+     "calibration": "as INS-02 / INS-04", "open": "Xe reference condition: LOCK-1"},
+    {"id": "INS-P-09", "name": "extinction and anomaly record", "provisions": ["AOL-CX-06"],
+     "statement": "Every spontaneous extinction, ignition failure and anomalous-discharge episode detected by INS-10 is "
+                  "time-stamped with feed composition (INS-05 flows, INS-11 / INS-22), the I_d trace (INS-04) and the "
+                  "cathode state (INS-P-08 fields). AOL-PT-01 (PROPOSED in the register): a flame-out during "
+                  "O-bearing operation stops the block at its end and triggers an anode inspection.",
+     "instruments": ["INS-10", "INS-04", "INS-18"], "required_uncertainty": "as INS-10",
+     "calibration": "as INS-10", "open": "AOL-PT-01 is an owner confirmation in the register"},
+    {"id": "INS-P-10", "name": "life evidence record format (thermal_life measured_hardware)", "provisions": ["AOL-DC-02"],
+     "statement": "Every life-relevant measurement (INS-19..INS-24, INS-P-02..INS-P-09) is recorded with the "
+                  "measured_hardware evidence_record fields of the pinned schema (listed in c5_adoption."
+                  "measured_hardware_fields) so it can later enter abep_sim/thermal_life.py without an admitted "
+                  "closure; quantity_type 'measured'.",
+     "instruments": ["INS-18"], "required_uncertainty": "n/a (format); the 'uncertainty' field is mandatory",
+     "calibration": "schema check of records", "open": "none"},
+    {"id": "INS-P-11", "name": "no life extrapolation from an unadmitted closure (control C6)", "provisions": ["AOL-LF-01"],
+     "statement": "No H-1 life number is computed here or from these records with a Hall map, a transport screening "
+                  "candidate or a withdrawn 0-D result; life statements are measured on H-1, literature for another "
+                  "device (labelled), or TBD. This document contains no life number (validate() refuses any quantity with unit 'h').",
+     "instruments": [], "required_uncertainty": "n/a", "calibration": "n/a", "open": "none"},
+    {"id": "INS-P-12", "name": "witness-holder non-interference check", "provisions": ["AOL-WC-01"],
+     "statement": "AOL-WC-01 verification asks that a B(z) re-map and a thrust-stand tare with the HW-SVC-06 holder "
+                  "installed show no change beyond W4 instrument uncertainty. W4 answer: the detection limits are the "
+                  "INS-09 map repeatability and the INS-01 in-situ calibration repeatability, both measured in S1a; "
+                  "the planning value for the thrust side is the lane-25 per-reading target (INS-01 "
+                  "required_uncertainty, n = 4). A change is 'beyond' when it exceeds the pre-registered coverage "
+                  "factor times the combined standard uncertainty of the two maps / tares (k: owner, LOCK-1).",
+     "instruments": ["INS-01", "INS-09"],
+     "required_uncertainty": "INS-01 and INS-09 values (no new number)", "calibration": "as INS-01 / INS-09",
+     "open": "coverage factor for the non-interference test: owner at LOCK-1"},
+]
+
+# hand disposition per provision; adopted ids are derived. status in ADOPTED / ADOPTED_PARTIAL / NOT_ADOPTED
+C5_DISPOSITION = {
+    "AOL-WC-01": ("ADOPTED", "metrology (mass INS-19, surface/profile INS-20) and the non-interference detection limit "
+                  "(INS-P-12); holder is W3 HW-SVC-06", None),
+    "AOL-WC-06": ("ADOPTED_PARTIAL", "register and metrology of all four controls adopted (INS-P-01, INS-19, INS-20)",
+                  "positions of the facility-background and beam-dump-facing controls need the facility choice"),
+    "AOL-RC-02": ("ADOPTED", "new INS-21 through the W3 HW-ELEC-04 sense lead; schedule INS-P-06", None),
+    "AOL-CX-01": ("ADOPTED", "INS-04 / INS-18 channels, INS-P-08 (1)", None),
+    "AOL-CX-02": ("ADOPTED", "INS-18 start log, INS-P-08 (2)", None),
+    "AOL-CX-03": ("ADOPTED_PARTIAL", "sampling point and log adopted (INS-22 into INS-11)",
+                  "H2O calibration method at the sampling point not identified; RGA and facility not chosen"),
+    "AOL-CX-04": ("ADOPTED", "INS-23 (cathode-tube thermocouple baseline, emitter pyrometer if the C-1 design gives a "
+                  "view)", None),
+    "AOL-CX-05": ("ADOPTED", "INS-18 interval log with Xe flow and interlock states, INS-P-08 (3)", None),
+    "AOL-CX-06": ("ADOPTED", "INS-10 detection + INS-P-09 record fields", None),
+    "AOL-CX-07": ("ADOPTED", "INS-23 at the W3 HW-H1-12 positions (INS-17 unchanged)", None),
+    "AOL-PM-01": ("ADOPTED", "INS-P-02 with INS-19 / INS-20 / INS-21", None),
+    "AOL-PM-02": ("ADOPTED", "INS-P-03 with INS-19; parameters TBD (no value assumed)", None),
+    "AOL-PM-04": ("ADOPTED", "INS-P-04 with INS-20", None),
+    "AOL-PM-05": ("ADOPTED", "INS-P-05 with INS-20 (W3 HW-C1-08 makes C-1 inspectable)", None),
+    "AOL-PM-06": ("ADOPTED", "INS-P-06 with INS-21", None),
+    "AOL-PM-08": ("ADOPTED", "INS-09 per HW-MC-03 / HW-MC-04 plus pole-face inspection (INS-20), INS-P-07", None),
+    "AOL-DC-01": ("ADOPTED", "INS-P-01 register, exposure accounting from INS-18", None),
+    "AOL-DC-02": ("ADOPTED", "INS-P-10 record format from the pinned thermal_life schema", None),
+    "AOL-LF-01": ("ADOPTED", "INS-P-11 compliance; validate() refuses screening-candidate ids and any quantity in hours", None),
+    "MCQ-W4-01": ("ADOPTED", "INS-24 (4-wire coil resistance + hot-spot thermocouples)", None),
+    "MCQ-W4-02": ("ADOPTED", "INS-02 hall_magnet / ecr_magnet channels record coil V and I simultaneously; INS-04 "
+                  "records coil currents; INS-24 uses the same record for R(T)", None),
+    "MCQ-W4-03": ("ADOPTED", "INS-P-07 map-record fields (coil currents, coil average and hot-spot temperatures, "
+                  "magnet temperatures)", None),
+}
+
+
+def _walk_ids(obj, out: set):
+    if isinstance(obj, dict):
+        if isinstance(obj.get("id"), str):
+            out.add(obj["id"])
+        for v in obj.values():
+            _walk_ids(v, out)
+    elif isinstance(obj, list):
+        for v in obj:
+            _walk_ids(v, out)
+    return out
+
+
+def c5_required_provisions() -> dict:
+    """provision id -> source record, read from the pinned AO register v2 (W4 interface rows) and MCQ (MCQ-W4-*)."""
+    aol = _load_json(AOL)
+    req = {r["id"]: r for r in aol["requirements"]}
+    out = {}
+    for row in aol["interface_table"]["rows"]:
+        if row["adopter"] == "W4":
+            pid = row["requirement"]
+            if pid in out:
+                raise ValueError(f"duplicate W4 row {pid}")
+            out[pid] = {"source_file": AOL, "w4_target": row["target"], "title": req[pid]["title"],
+                        "requirement": req[pid]["requirement"], "register_status_before": row["adoption_status"]}
+    for r in _load_json(MCQ)["requirements"]:
+        if r["id"].startswith("MCQ-W4-"):
+            out[r["id"]] = {"source_file": MCQ, "w4_target": r["verification"], "title": r["id"],
+                            "requirement": r["statement"], "register_status_before": "not tracked"}
+    return out
+
+
+def c5_adoption(ins: list) -> dict:
+    required = c5_required_provisions()
+    if set(required) != set(C5_DISPOSITION):
+        raise ValueError(f"C5 provisions differ: register/MCQ {sorted(required)} vs disposition {sorted(C5_DISPOSITION)}")
+    ins_ids = {i["id"] for i in ins}
+    for iid in INSTRUMENT_PROVISIONS:
+        if iid not in ins_ids:
+            raise ValueError(f"INSTRUMENT_PROVISIONS names unknown instrument {iid}")
+    hw_ids = _walk_ids(_load_json(HWR), set())
+    cited_hw = sorted({t for p in PROCEDURES for t in _hw_tokens(p["statement"])} |
+                      {t for i in ins for t in _hw_tokens(json.dumps(i))})
+    missing_hw = [t for t in cited_hw if t not in hw_ids]
+    if missing_hw:
+        raise ValueError(f"cited W3 ids not in {HWR}: {missing_hw}")
+    schema = _load_json(TL_SCHEMA)
+    mh = _find_key(schema, "measured_hardware")
+    if not mh or "evidence_record_fields" not in mh:
+        raise InputChanged(f"{TL_SCHEMA} has no measured_hardware.evidence_record_fields")
+    rows = []
+    for pid in sorted(required, key=lambda s: (s.startswith("MCQ"), s)):
+        status, how, needs = C5_DISPOSITION[pid]
+        ids = sorted([i for i, ps in INSTRUMENT_PROVISIONS.items() if pid in ps] +
+                     [p["id"] for p in PROCEDURES if pid in p["provisions"]])
+        rows.append({"provision": pid, "title": required[pid]["title"], "source_file": required[pid]["source_file"],
+                     "w4_target": required[pid]["w4_target"],
+                     "register_status_before": required[pid]["register_status_before"],
+                     "status": status, "adopted_ids": ids, "how": how, "needs": needs})
+    a2 = _load_json(A2)
+    return {"control": "C5_AO_early",
+            "control_text": a2["execution_directive_2026_09_27"]["controls_added"]["C5_AO_early"],
+            "sources": [AOL, MCQ], "w3_ids_cited_verified_in": HWR, "w3_ids_cited": cited_hw,
+            "measured_hardware_fields": mh["evidence_record_fields"],
+            "counts": {s: q(sum(r["status"] == s for r in rows), "provisions", "model-derived", _src("c5_adoption"))
+                       for s in ("ADOPTED", "ADOPTED_PARTIAL", "NOT_ADOPTED")},
+            "rows": rows,
+            "milestones": "supports A (S1-readiness condition 'instrumentation capability demonstrated' now covers the "
+                          "C5 provisions) and prepares C (measured life evidence records); B not affected. Next: the "
+                          "metrology lab, facility and C-1 view choices, and S1 scatter data for the TBD detection "
+                          "limits and triggers (AOL-PT-02, AOL-PT-03)."}
+
+
+def _hw_tokens(text: str) -> list:
+    import re
+    return re.findall(r"HW-[A-Z0-9]+-\d+", text)
+
+
+def _find_key(obj, key):
+    if isinstance(obj, dict):
+        if key in obj:
+            return obj[key]
+        for v in obj.values():
+            r = _find_key(v, key)
+            if r is not None:
+                return r
+    elif isinstance(obj, list):
+        for v in obj:
+            r = _find_key(v, key)
+            if r is not None:
+                return r
+    return None
+
+
+CHANGE_LOG = [
+    {"revision": "v1-r1", "date": "2026-09-27", "base_commit": "510e464fb8e128e4cf3325572a4d36ad33a4899d",
+     "change": "initial W4 instrumentation definition (INS-01..INS-18)"},
+    {"revision": "v1-r2", "date": "2026-09-27", "base_commit": REPAIR_BASE_COMMIT,
+     "change": "control C5 (A2 addendum): adopts the 19 W4 provisions of the AO/lifetime register v2 and MCQ-W4-01..03: "
+               "new INS-19..INS-24 and procedures INS-P-01..INS-P-12, c5_adoption table, five new pinned inputs, four "
+               "references cited via those lanes; existing ids, values, thresholds and decision quantities unchanged "
+               "(only a traces_to_provisions key added to every instrument)",
+     "material": False,
+     "why_v1": "additive: no existing requirement, threshold, derived number or decision-quantity role changed, so the "
+               "file stays instrumentation_definition_v1.json (downstream lanes reference this path)"},
+]
+
+
 def build() -> dict:
     pins = verify_inputs()
     draft = _load_json(L25)
@@ -832,7 +1224,10 @@ def build() -> dict:
     rfp = _load_rfp()
     basis = requirement_basis(draft, rfp)
     der = derived(draft, rfp)
-    ins = instruments(basis, der)
+    ins = instruments(basis, der) + c5_instruments(der)
+    for i in ins:
+        i["traces_to_provisions"] = INSTRUMENT_PROVISIONS.get(i["id"], [])
+    c5 = c5_adoption(ins)
     lane25_ids = [m["id"] for m in draft["measurements"]]
     covered = sorted({m for i in ins for m in i["lane25_measurements"]}, key=lambda s: int(s[1:]))
     if covered != sorted(lane25_ids, key=lambda s: int(s[1:])):
@@ -848,6 +1243,10 @@ def build() -> dict:
                               "statement": od["workstreams"]["W4_instrumentation"]},
         "status": "DRAFT_PENDING_OWNER",
         "base_commit": BASE_COMMIT,
+        "version": "v1",
+        "revision": CHANGE_LOG[-1]["revision"],
+        "repair_base_commit": REPAIR_BASE_COMMIT,
+        "change_log": CHANGE_LOG,
         "generated_by": SCRIPT_REL,
         "companion_document": "docs/experiments/instrumentation/INSTRUMENTATION_DEFINITION.md",
         "not_locked": "Nothing here is pre-registered, locked or decided. Thresholds not in the RFP are PROPOSED. No "
@@ -905,10 +1304,12 @@ def build() -> dict:
                                    for i, n in VALIDATION_OBSERVABLES],
         "roles": ROLE,
         "instruments": ins,
+        "procedures": PROCEDURES,
+        "c5_adoption": c5,
         "bus_power_channels": bus_power_channels(),
         "lane06_component_ids": prot_components,
         "experiment_package_traceability_ids": [r["id"] for r in pkg["traceability"]["rows"]],
-        "references": REFERENCES,
+        "references": REFERENCES + C5_REFERENCES,
         "open_owner_decisions": [
             "approve, change or reject I-ALPHA-ABS, I-U-ABS-T, I-U-ABS-P, I-U-ID-FLOOR, I-FLOW-CONSERVATIVE",
             "thrust-stand principle (torsional vs inverted pendulum, null vs displacement) given the per-arm mass change",
@@ -918,6 +1319,11 @@ def build() -> dict:
             "whether OES, RGA and Langmuir probes are in the minimum instrument set",
             "absolute-gate facility rule: report T_measured with the S5 p_b slope and the ingestion scale (proposed) "
             "or require a p_b ceiling for Phase 3",
+            "C5: metrology lab for INS-19 / INS-20 (mass, profile, SEM/EDS, XPS) and its reference-standard classes",
+            "C5: C-1 temperature sensing - cathode-tube thermocouple (proposed baseline) and/or emitter pyrometer "
+            "(needs a view in the W3 C-1 design)",
+            "C5: coverage factor for the witness-holder non-interference test (INS-P-12)",
+            "C5: whether the near-cathode RGA proxy (INS-22) is quantitative (needs an H2O calibration method)",
         ],
         "tbd_register": [
             {"what": "thrust range and mass on stand per configuration", "requires": "H-1 and module design",
@@ -932,6 +1338,13 @@ def build() -> dict:
             {"what": "compressor bus draw on v1", "requires": "upstream ICD", "blocked_by": "lane_33_upstream_icd"},
             {"what": "CEX attenuation bound for Faraday collectors", "requires": "cited N2+ on N2 CEX cross section",
              "blocked_by": "literature"},
+            {"what": "C5 detection limits (coupon mass, profile, anode resistance) and triggers AOL-PT-02 / AOL-PT-03",
+             "requires": "metrology lab records and S1 baseline scatter", "blocked_by": "S1"},
+            {"what": "positions of the facility-background and beam-dump-facing control coupons",
+             "requires": "facility choice", "blocked_by": "owner"},
+            {"what": "coil hot-spot margin and C-1 emitter-temperature resolution",
+             "requires": "magnet wire / insulation selection and the W3 C-1 / coil design",
+             "blocked_by": "fo_magnet_coil_qualification + fo_hardware_definition"},
         ],
     }
     validate(doc)
@@ -963,6 +1376,19 @@ def numeric_leaf_errors(obj, path="$", parent=None) -> list:
         if not ok:
             errs.append(path)
     return errs
+
+
+def _quantities_with_unit(obj, unit, path="$") -> list:
+    out = []
+    if isinstance(obj, dict):
+        if obj.get("unit") == unit and isinstance(obj.get("value"), (int, float)):
+            out.append(path)
+        for k, v in obj.items():
+            out += _quantities_with_unit(v, unit, f"{path}.{k}")
+    elif isinstance(obj, list):
+        for n, v in enumerate(obj):
+            out += _quantities_with_unit(v, unit, f"{path}[{n}]")
+    return out
 
 
 def validate(doc: dict) -> None:
@@ -998,6 +1424,28 @@ def validate(doc: dict) -> None:
     for v in vo:
         if not any(v in i["validation_observables"] for i in doc["instruments"]):
             raise ValueError(f"validation observable {v} has no instrument")
+    ids = [i["id"] for i in doc["instruments"]] + [p["id"] for p in doc["procedures"]]
+    if len(ids) != len(set(ids)):
+        raise ValueError("duplicate instrument / procedure id")
+    c5 = doc["c5_adoption"]
+    for r in c5["rows"]:
+        if r["status"] not in ("ADOPTED", "ADOPTED_PARTIAL", "NOT_ADOPTED"):
+            raise ValueError(f"C5 {r['provision']}: unknown status")
+        if (r["status"] == "NOT_ADOPTED") != (not r["adopted_ids"]):
+            raise ValueError(f"C5 {r['provision']}: status / adopted ids inconsistent")
+        if r["status"] != "ADOPTED" and not r["needs"]:
+            raise ValueError(f"C5 {r['provision']}: a partial or missing adoption must state what is needed")
+        if not set(r["adopted_ids"]) <= set(ids):
+            raise ValueError(f"C5 {r['provision']}: unknown adopted id")
+    for i in doc["instruments"]:
+        for pid in i["traces_to_provisions"]:
+            if pid not in {r["provision"] for r in c5["rows"]}:
+                raise ValueError(f"{i['id']} traces to unknown provision {pid}")
+    for p in doc["procedures"]:
+        if not set(p["instruments"]) <= {i["id"] for i in doc["instruments"]}:
+            raise ValueError(f"{p['id']} names an unknown instrument")
+    for path in _quantities_with_unit(doc, "h"):
+        raise ValueError(f"life-type quantity in hours at {path} (control C6 / AOL-LF-01)")
     text = json.dumps(doc)
     for f in FORBIDDEN:
         if f in text:
@@ -1039,7 +1487,9 @@ def render_md(doc: dict) -> str:
     a("# W4 instrumentation definition: common-hardware Hall-only / RF+Hall / ECR+Hall experiment")
     a("")
     a(f"**Status: {doc['status']}.** Follow-on `{doc['follow_on']}` (trigger `{doc['trigger']}`, owner disposition "
-      f"`od_hardware_pivot`, workstream W4), base commit `{doc['base_commit'][:10]}`. {doc['not_locked']}")
+      f"`od_hardware_pivot`, workstream W4), base commit `{doc['base_commit'][:10]}`, version {doc['version']} "
+      f"revision {doc['revision']} (repair base `{doc['repair_base_commit'][:10]}`, change log section 14). "
+      f"{doc['not_locked']}")
     a("")
     a(f"Generated by `{doc['generated_by']}` from `instrumentation_definition_v1.json` content built in that script; "
       "`--check` reproduces both files byte for byte and `tests/test_instrumentation_definition.py` checks them. The JSON "
@@ -1202,6 +1652,14 @@ def render_md(doc: dict) -> str:
         for n in i["notes"]:
             a(f"- **Note:** {n}")
         a("")
+    a("## 5a. Procedures (control C5, revision v1-r2)")
+    a("")
+    a("| id | procedure | adopts | instruments | statement | required uncertainty | calibration | open |")
+    a("|---|---|---|---|---|---|---|---|")
+    for p in doc["procedures"]:
+        a(f"| {p['id']} | {p['name']} | {', '.join(p['provisions'])} | {', '.join(p['instruments']) or '-'} | "
+          f"{p['statement']} | {p['required_uncertainty']} | {p['calibration']} | {p['open']} |")
+    a("")
     a("## 6. Bus-power metering per `bus_power_boundary_v1` component (lab subset vs v1)")
     a("")
     a("| component | architectures | lab status | lab measurement | v1 basis |")
@@ -1228,6 +1686,29 @@ def render_md(doc: dict) -> str:
     a("Experiment-package traceability rows this refines (measurement -> Bundle-1 conditions, hard-gate criteria, "
       "failure-tree nodes): " + ", ".join(doc["experiment_package_traceability_ids"]) + " "
       "(docs/architecture_comparison/experiment_package/).")
+    a("")
+    c5 = doc["c5_adoption"]
+    a("## 7a. Control C5: AO/lifetime register v2 and magnet/coil W4 provisions (adopted / not adopted)")
+    a("")
+    a(f"Control text (A2 addendum): {c5['control_text']}")
+    a("")
+    a("Provisions are read from the pinned " + " and ".join(f"`{x}`" for x in c5["sources"]) + " (every W4 row of the "
+      "register's interface table and every MCQ-W4-* requirement); adopted ids are derived from the instrument and "
+      "procedure trace fields. Cited W3 ids verified in `" + c5["w3_ids_cited_verified_in"] + "`: " +
+      ", ".join(c5["w3_ids_cited"]) + ".")
+    a("")
+    a("Counts: " + ", ".join(f"{k} {v['value']}" for k, v in c5["counts"].items()) + ".")
+    a("")
+    a("| provision | title | register status before | status now | adopted by | how | still needed |")
+    a("|---|---|---|---|---|---|---|")
+    for r in c5["rows"]:
+        a(f"| {r['provision']} | {r['title']} | {r['register_status_before']} | {r['status']} | "
+          f"{', '.join(r['adopted_ids'])} | {r['how']} | {r['needs'] or '-'} |")
+    a("")
+    a("Instrument -> provision trace: " + "; ".join(f"{i['id']}: {', '.join(i['traces_to_provisions'])}"
+                                                   for i in doc["instruments"] if i["traces_to_provisions"]) + ".")
+    a("")
+    a(f"Milestones: {c5['milestones']}")
     a("")
     a("## 8. Feasibility flags (honest)")
     a("")
@@ -1267,6 +1748,14 @@ def render_md(doc: dict) -> str:
     a("|---|---|---|")
     for p in doc["inputs"]:
         a(f"| `{p['path']}` | {p['lane']} | `{p['sha256'][:16]}` |")
+    a("")
+    a("## 14. Change log")
+    a("")
+    a("| revision | date | base commit | change |")
+    a("|---|---|---|---|")
+    for c in doc["change_log"]:
+        extra = f" Why still v1: {c['why_v1']}" if "why_v1" in c else ""
+        a(f"| {c['revision']} | {c['date']} | `{c['base_commit'][:10]}` | {c['change']}.{extra} |")
     a("")
     return "\n".join(L)
 

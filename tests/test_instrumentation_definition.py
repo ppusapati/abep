@@ -244,3 +244,81 @@ def test_missing_or_changed_input_raises(tmp_path):
     (root3 / "docs/experiments/instrumentation/pinned_inputs.json").unlink()
     with pytest.raises(FileNotFoundError):
         _load(root3).verify_inputs()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# control C5 (A2 addendum): AO/lifetime register v2 W4 provisions and MCQ-W4-* adopted (revision v1-r2)
+# ----------------------------------------------------------------------------------------------------------------------
+def test_c5_covers_every_w4_provision_of_register_and_mcq():
+    doc = _stored()
+    aol = json.loads((ROOT / B.AOL).read_text(encoding="utf-8"))
+    mcq = json.loads((ROOT / B.MCQ).read_text(encoding="utf-8"))
+    w4 = {r["requirement"] for r in aol["interface_table"]["rows"] if r["adopter"] == "W4"}
+    assert len(w4) == 19
+    mcqw4 = {r["id"] for r in mcq["requirements"] if r["id"].startswith("MCQ-W4-")}
+    assert mcqw4 == {"MCQ-W4-01", "MCQ-W4-02", "MCQ-W4-03"}
+    rows = {r["provision"]: r for r in doc["c5_adoption"]["rows"]}
+    assert set(rows) == w4 | mcqw4 and len(rows) == len(doc["c5_adoption"]["rows"])
+    ids = {i["id"] for i in doc["instruments"]} | {p["id"] for p in doc["procedures"]}
+    for pid, r in rows.items():
+        assert r["status"] in ("ADOPTED", "ADOPTED_PARTIAL", "NOT_ADOPTED")
+        assert set(r["adopted_ids"]) <= ids
+        derived = sorted([i["id"] for i in doc["instruments"] if pid in i["traces_to_provisions"]] +
+                         [p["id"] for p in doc["procedures"] if pid in p["provisions"]])
+        assert r["adopted_ids"] == derived, pid
+        if r["status"] != "ADOPTED":
+            assert r["needs"], pid
+    counts = {k: v["value"] for k, v in doc["c5_adoption"]["counts"].items()}
+    assert sum(counts.values()) == len(rows)
+
+
+def test_c5_review_findings_closed():
+    doc = _stored()
+    ins = {i["id"]: i for i in doc["instruments"]}
+    assert [i["id"] for i in doc["instruments"]] == [f"INS-{n:02d}" for n in range(1, 25)]
+    assert "AOL-RC-02" in ins["INS-21"]["traces_to_provisions"]                    # anode resistance
+    assert "AOL-CX-03" in ins["INS-22"]["traces_to_provisions"]                    # near-C-1 RGA sampling
+    assert "AOL-CX-04" in ins["INS-23"]["traces_to_provisions"]                    # temperature near the cathode
+    assert {"INS-19", "INS-20"} <= set(next(r for r in doc["c5_adoption"]["rows"]
+                                            if r["provision"] == "AOL-WC-01")["adopted_ids"])   # witness metrology
+    assert ins["INS-24"]["traces_to_provisions"] == ["MCQ-W4-01", "MCQ-W4-02", "MCQ-W4-03"]
+    # every new requirement is TBD (no invented instrument accuracy)
+    for n in range(19, 25):
+        assert ins[f"INS-{n}"]["required_uncertainty"]["value"]["value"] == "TBD"
+    # measured_hardware record fields come from the pinned schema
+    schema = json.loads((ROOT / B.TL_SCHEMA).read_text(encoding="utf-8"))
+    assert doc["c5_adoption"]["measured_hardware_fields"] == B._find_key(schema, "measured_hardware")[
+        "evidence_record_fields"]
+    # versioning: stays v1 with a change log, the original base commit is kept
+    assert doc["version"] == "v1" and doc["revision"] == "v1-r2"
+    assert doc["base_commit"] == "510e464fb8e128e4cf3325572a4d36ad33a4899d"
+    assert [c["revision"] for c in doc["change_log"]] == ["v1-r1", "v1-r2"]
+
+
+def test_c5_validation_rejects_inconsistencies():
+    doc = _stored()
+    bad = json.loads(json.dumps(doc))
+    bad["c5_adoption"]["rows"][0]["status"] = "NOT_ADOPTED"
+    with pytest.raises(ValueError):
+        B.validate(bad)
+    bad = json.loads(json.dumps(doc))
+    r = next(r for r in bad["c5_adoption"]["rows"] if r["status"] == "ADOPTED_PARTIAL")
+    r["needs"] = None
+    with pytest.raises(ValueError):
+        B.validate(bad)
+    bad = json.loads(json.dumps(doc))
+    bad["derived"]["life_h"] = {"value": 15000.0, "unit": "h", "evidence_class": "model-derived", "source": "x"}
+    with pytest.raises(ValueError):
+        B.validate(bad)
+    bad = json.loads(json.dumps(doc))
+    bad["instruments"][20]["traces_to_provisions"] = ["AOL-XX-99"]
+    with pytest.raises(ValueError):
+        B.validate(bad)
+
+
+def test_c5_missing_disposition_raises(monkeypatch):
+    disp = dict(B.C5_DISPOSITION)
+    disp.pop("AOL-CX-03")
+    monkeypatch.setattr(B, "C5_DISPOSITION", disp)
+    with pytest.raises(ValueError):
+        B.build()
