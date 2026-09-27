@@ -1,0 +1,322 @@
+{
+ "schema": "abep_metrology_measurement_spec_v1",
+ "id": "metrology_measurement_spec_v1",
+ "status": "DRAFT_PENDING_OWNER",
+ "follow_on": "fo_capability_demo_prep",
+ "trigger": "T_PIVOT_CAPABILITY_DEMO_PREP",
+ "authority": {
+  "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+  "sha256": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e",
+  "decision": "metrology_lab",
+  "owner_text": "ISO/IEC 17025-accredited laboratory with the relevant measurement explicitly inside its accredited scope (in India normally an appropriate NABL-accredited scope). Witness mass: SI-traceable microbalance calibration with OIML E2 or better certified reference masses where appropriate (OIML R111 certificates and traceability). Profilometry: calibration/verification with traceable surface standards consistent with ISO 25178-700. Quantitative SEM/EDS: documented quantitative method consistent with ASTM E1508. XPS energy-scale calibration per ISO 15472 or equivalent traceable procedure. No commercial lab is named yet: W4 issues the measurement specification first, then a lab satisfying it is procured."
+ },
+ "generated_by": "docs/experiments/capability_demo/build_capability_demo_prep.py",
+ "companion_document": "docs/experiments/instrumentation/metrology_spec/METROLOGY_MEASUREMENT_SPEC.md",
+ "not_a_procurement": "No laboratory is named, searched or contacted. This specification is issued first; a lab satisfying it is procured afterwards (A3). Nothing here is a measurement.",
+ "serves": {
+  "instruments": [
+   "INS-19",
+   "INS-20"
+  ],
+  "procedures": [
+   "INS-P-01",
+   "INS-P-02",
+   "INS-P-03",
+   "INS-P-04",
+   "INS-P-05"
+  ],
+  "instrumentation_definition": "docs/experiments/instrumentation/instrumentation_definition_v1.json"
+ },
+ "milestones": {
+  "supports": [
+   "C"
+  ],
+  "C": {
+   "delivers": "the measurement requirements that make witness-coupon and part metrology usable as exposure / erosion / life evidence (thermal_life measured_hardware records, INS-P-10)",
+   "needs_next": [
+    "owner approval of this specification",
+    "procurement of a lab whose accredited scope covers every measurand here",
+    "the pre-S1 control-coupon repeatability trial (INS-19, AOL-PM-02) that sets the detection limits"
+   ]
+  },
+  "A": "not required for conditional selection; S1a engineering checkout does not depend on it",
+  "B": "not affected (no Hall-transport observable)"
+ },
+ "general_requirements": [
+  {
+   "id": "MS-G-01",
+   "requirement": "ISO/IEC 17025 accreditation with the SPECIFIC measurement (measurand, method, range and calibration and measurement capability) explicitly inside the accredited scope; in India normally an appropriate NABL-accredited scope (A3; REF-ISO17025, REF-NABL)",
+   "verification": "copy of the current scope document and accreditation certificate; the scope lines that cover each MS-M item are cited in the offer"
+  },
+  {
+   "id": "MS-G-02",
+   "requirement": "SI traceability of every result through an unbroken calibration chain; certificates of the reference standards used (masses, surface standards, reference foils, length standards) supplied with the report",
+   "verification": "certificate numbers and validity dates in every report"
+  },
+  {
+   "id": "MS-G-03",
+   "requirement": "uncertainty evaluated per the GUM (REF-GUM2008): Type A and Type B components listed; expanded uncertainty with its coverage factor k and coverage probability; planning k = 2 (A3); where effective degrees of freedom are low, the evaluated k and nu_eff are stated (REF-GUM2008 G.4.1; for masses also REF-OIML-R111-1 C.6.5.1)",
+   "verification": "uncertainty budget attached to each report"
+  },
+  {
+   "id": "MS-G-04",
+   "requirement": "raw data (every individual reading, instrument settings, environment log) delivered in machine-readable form with the report; Vyovrinda may publish them",
+   "verification": "data files and their checksums listed in the report"
+  },
+  {
+   "id": "MS-G-05",
+   "requirement": "blind coded sample ids only (INS-P-01); the lab never receives configuration, arm or exposure information",
+   "verification": "custody record"
+  },
+  {
+   "id": "MS-G-06",
+   "requirement": "the same instrument, method and (coded) operator for baseline and post-test measurements of an item (INS-P-02, INS-20)",
+   "verification": "instrument serial and operator code in each report"
+  },
+  {
+   "id": "MS-G-07",
+   "requirement": "no subcontracting of a measurement outside the lab's own accredited scope without written agreement; a subcontracted measurement must itself satisfy MS-G-01",
+   "verification": "declaration in the offer"
+  },
+  {
+   "id": "MS-G-08",
+   "requirement": "proficiency-testing or interlaboratory-comparison evidence for each measurand where the accreditation body requires it",
+   "verification": "latest results for the relevant scope lines (verify the accreditation body's policy)"
+  }
+ ],
+ "measurands": [
+  {
+   "id": "MS-M-01",
+   "measurand": "mass of witness coupons, controls and parts (anode, wall rings, C-1 keeper) at baseline and after each removal (INS-19)",
+   "method": "analytical / micro-balance weighing under the dehydrated protocol INS-P-03 (vacuum desiccation for a fixed time, repeated readings averaged, room temperature and humidity logged, identical pre and post); lab-stored control coupon weighed every session",
+   "reference_standards": "SI-traceable balance calibration with OIML class E2 or better certified reference masses where appropriate, OIML R 111 certificates and traceability (A3; REF-OIML-R111-1)",
+   "planning_values": {
+    "e2_table_subset": {
+     "1 mg": {
+      "mpe": {
+       "value": 0.006,
+       "unit": "mg",
+       "evidence_class": "assumed",
+       "source": "OIML R 111-1:2004 Table 1 (class E2, +/- delta_m) - REF-OIML-R111-1; normative requirement quoted, not a measurement"
+      },
+      "U_max_k2": {
+       "value": 0.002,
+       "unit": "mg (k = 2)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: metrology_spec(): OIML R 111-1 5.2 U <= delta_m / 3 applied to Table 1"
+      }
+     },
+     "10 mg": {
+      "mpe": {
+       "value": 0.008,
+       "unit": "mg",
+       "evidence_class": "assumed",
+       "source": "OIML R 111-1:2004 Table 1 (class E2, +/- delta_m) - REF-OIML-R111-1; normative requirement quoted, not a measurement"
+      },
+      "U_max_k2": {
+       "value": 0.00266667,
+       "unit": "mg (k = 2)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: metrology_spec(): OIML R 111-1 5.2 U <= delta_m / 3 applied to Table 1"
+      }
+     },
+     "100 mg": {
+      "mpe": {
+       "value": 0.016,
+       "unit": "mg",
+       "evidence_class": "assumed",
+       "source": "OIML R 111-1:2004 Table 1 (class E2, +/- delta_m) - REF-OIML-R111-1; normative requirement quoted, not a measurement"
+      },
+      "U_max_k2": {
+       "value": 0.00533333,
+       "unit": "mg (k = 2)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: metrology_spec(): OIML R 111-1 5.2 U <= delta_m / 3 applied to Table 1"
+      }
+     },
+     "1 g": {
+      "mpe": {
+       "value": 0.03,
+       "unit": "mg",
+       "evidence_class": "assumed",
+       "source": "OIML R 111-1:2004 Table 1 (class E2, +/- delta_m) - REF-OIML-R111-1; normative requirement quoted, not a measurement"
+      },
+      "U_max_k2": {
+       "value": 0.01,
+       "unit": "mg (k = 2)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: metrology_spec(): OIML R 111-1 5.2 U <= delta_m / 3 applied to Table 1"
+      }
+     },
+     "10 g": {
+      "mpe": {
+       "value": 0.06,
+       "unit": "mg",
+       "evidence_class": "assumed",
+       "source": "OIML R 111-1:2004 Table 1 (class E2, +/- delta_m) - REF-OIML-R111-1; normative requirement quoted, not a measurement"
+      },
+      "U_max_k2": {
+       "value": 0.02,
+       "unit": "mg (k = 2)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: metrology_spec(): OIML R 111-1 5.2 U <= delta_m / 3 applied to Table 1"
+      }
+     },
+     "100 g": {
+      "mpe": {
+       "value": 0.16,
+       "unit": "mg",
+       "evidence_class": "assumed",
+       "source": "OIML R 111-1:2004 Table 1 (class E2, +/- delta_m) - REF-OIML-R111-1; normative requirement quoted, not a measurement"
+      },
+      "U_max_k2": {
+       "value": 0.0533333,
+       "unit": "mg (k = 2)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: metrology_spec(): OIML R 111-1 5.2 U <= delta_m / 3 applied to Table 1"
+      }
+     }
+    },
+    "note": "which nominal values apply depends on the coupon and part masses (TBD - W3 coupon and part design); the reference-mass U is a small part of the weighing uncertainty, the detection limit comes from the control-coupon repeatability"
+   },
+   "required_uncertainty": {
+    "value": "TBD",
+    "tbd_requires": "detection limit set from the demonstrated control-coupon repeatability before S1 (INS-19; AOL-PM-02); no admitted source gives the expected N/O mass change of the H-1 grades",
+    "blocked_by": "metrology lab + S1"
+   },
+   "range": {
+    "value": "TBD",
+    "tbd_requires": "coupon and part masses (W3)",
+    "blocked_by": "fo_hardware_definition"
+   },
+   "report": "mean, SD and N of readings per session, desiccation parameters, environment, reference-mass certificate ids, buoyancy treatment, U with k"
+  },
+  {
+   "id": "MS-M-02",
+   "measurand": "surface profile / areal topography against the W3 fiducials (HW-H1-11); C-1 keeper-face profile (INS-20)",
+   "method": "stylus or optical profilometry, same instrument pre and post",
+   "reference_standards": "calibration / verification with traceable surface standards consistent with ISO 25178-700 (A3; REF-ISO25178-700: noise, flatness deviation, amplification, linearity deviation, x-y mapping deviations)",
+   "required_uncertainty": {
+    "value": "TBD",
+    "tbd_requires": "erosion depth to be resolved - no admitted source gives it for the H-1 wall grade in N/O (AO register v2); report as detection limits",
+    "blocked_by": "metrology lab"
+   },
+   "range": {
+    "value": "TBD",
+    "tbd_requires": "feature sizes and profile lengths (W3)",
+    "blocked_by": "fo_hardware_definition"
+   },
+   "report": "verification results of the metrological characteristics at the time of measurement, filter settings, fiducial registration method and its uncertainty"
+  },
+  {
+   "id": "MS-M-03",
+   "measurand": "morphology and elemental composition of deposits / surfaces by SEM/EDS (INS-20, INS-P-04)",
+   "method": "quantitative EDS by a documented method consistent with ASTM E1508 (A3; REF-ASTM-E1508), standards-based or standardless stated; SEM magnification calibration recorded",
+   "limitation": "ASTM E1508's routine applicability (as summarised in the search result, verify) is elements >= Na at >= tenths of a weight percent: N, O, B and C quantification (BN, oxides, nitrides) needs the lab to state its light-element method and uncertainty, or it is reported semi-quantitatively",
+   "required_uncertainty": {
+    "value": "TBD",
+    "tbd_requires": "per element: lab's documented method uncertainty",
+    "blocked_by": "metrology lab"
+   },
+   "report": "beam energy, detector, standards used, matrix-correction method, per-element result with uncertainty or a 'semi-quantitative' label"
+  },
+  {
+   "id": "MS-M-04",
+   "measurand": "surface chemical state and depth profile by XPS (INS-20)",
+   "method": "XPS with sealed dry transfer (INS-P-04); energy-scale calibration per ISO 15472 or an equivalent traceable procedure (A3; REF-ISO15472: Cu 2p3/2 and Au 4f7/2 reference peaks, linearity check, expanded uncertainty at 95 %)",
+   "limitation": "ISO 15472 is not applicable to instruments without a sputter-cleaning ion gun, with resolution worse than 1.5 eV or requiring tolerance limits of +/-0.03 eV or less (REF-ISO15472 scope) - the lab states which case applies",
+   "required_uncertainty": {
+    "value": "TBD",
+    "tbd_requires": "binding-energy scale U from the lab's ISO 15472 calibration; quantification method uncertainty",
+    "blocked_by": "metrology lab"
+   },
+   "report": "date of the last energy-scale calibration and its U, charge-referencing method, sputter conditions for depth profiles, custody record"
+  },
+  {
+   "id": "MS-M-05",
+   "measurand": "C-1 orifice diameter and pole-face inspection photographs (INS-20, INS-P-05, AOL-PM-08)",
+   "method": "calibrated optical dimensional measurement; photographs under fixed lighting",
+   "reference_standards": "traceable length standard (stage micrometer or equivalent) - standard TBD (A3 names none for this measurand; verify with the lab's accredited scope)",
+   "required_uncertainty": {
+    "value": "TBD",
+    "tbd_requires": "orifice-diameter resolution needed by the C-1 life assessment (W3 / lane 15)",
+    "blocked_by": "fo_hardware_definition"
+   },
+   "report": "method, magnification calibration, U with k"
+  }
+ ],
+ "sample_handling": [
+  "coded ids and register (INS-P-01); baseline before first ignition for every serialized item (INS-P-02)",
+  "dehydrated mass protocol parameters (desiccation time, pressure, number of readings): TBD - set with the lab in a pre-S1 repeatability trial (INS-P-03); no value is assumed here",
+  "sealed dry transfer containers and custody record for XPS / SEM samples (INS-P-04); container specification TBD with the lab"
+ ],
+ "lab_selection_checklist": [
+  "every MS-M measurand covered by the accredited scope (MS-G-01), including the range and CMC once the TBD ranges are fixed",
+  "reference-standard classes as specified (E2 or better masses; ISO 25178-700 surface standards; ISO 15472 reference foils or equivalent traceable procedure)",
+  "uncertainty budgets with k and nu_eff (MS-G-03); raw data release (MS-G-04)",
+  "blind handling, same instrument/operator pre and post (MS-G-05, MS-G-06)",
+  "light-element EDS method stated (MS-M-03 limitation)"
+ ],
+ "references": [
+  {
+   "id": "REF-GUM2008",
+   "citation": "JCGM 100:2008, 'Evaluation of measurement data - Guide to the expression of uncertainty in measurement'",
+   "url": "https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf",
+   "access": "full text read 2026-09-27 (PDF text extraction): 4.2 (Type A), 6.3.1 ('In general, k will be in the range 2 to 3'), G.4.1 (Welch-Satterthwaite, Eq. G.2b)"
+  },
+  {
+   "id": "REF-OIML-R111-1",
+   "citation": "OIML R 111-1:2004 (E), 'Weights of classes E1, E2, F1, F2, M1, M1-2, M2, M2-3 and M3 - Part 1: Metrological and technical requirements'",
+   "url": "https://www.oiml.org/en/files/pdf_r/r111-1-e04.pdf",
+   "access": "full text read 2026-09-27 (PDF text extraction): 5.2 (U for k = 2 of the conventional mass <= 1/3 of the MPE, Eq. 5.2-1), Table 1 (MPE, +/- delta_m in mg), C.6.5.1 (k = 2 usually; t-distribution at 95.5 % with Welch-Satterthwaite nu_eff when fewer than 10 measurements and the weighing term dominates). An 'Amendment 2025' to R 111-1:2004 exists (https://www.oiml.org/en/files/pdf_r/r111-1-e04_amend25.pdf) and was NOT read: verify whether it changes the values quoted here"
+  },
+  {
+   "id": "REF-ISO17025",
+   "citation": "ISO/IEC 17025:2017, 'General requirements for the competence of testing and calibration laboratories'",
+   "url": "https://www.iso.org/standard/66912.html",
+   "access": "metadata only (search result 2026-09-27; the iso.org page returned HTTP 403 to the fetch tool and was not bypassed): title, third edition 2017; content not read (verify)"
+  },
+  {
+   "id": "REF-NABL",
+   "citation": "National Accreditation Board for Testing and Calibration Laboratories (NABL), India",
+   "url": "https://nabl-india.org/",
+   "access": "home page read 2026-09-27: accredits testing and calibration laboratories against ISO/IEC 17025; maintains an accredited-laboratory search with scopes. No laboratory was searched or contacted"
+  },
+  {
+   "id": "REF-ISO25178-700",
+   "citation": "ISO 25178-700:2022, 'Geometrical product specifications (GPS) - Surface texture: Areal - Part 700: Calibration, adjustment and verification of areal topography measuring instruments'",
+   "url": "https://www.iso.org/standard/78204.html",
+   "access": "metadata / scope summary only (search result 2026-09-27): generic procedures for the metrological characteristics of ISO 25178-600 (noise, flatness deviation, amplification, linearity deviation, x-y mapping deviations); methods adaptable to profiling instruments; content not read (verify)"
+  },
+  {
+   "id": "REF-ASTM-E1508",
+   "citation": "ASTM E1508-12a(2019), 'Standard Guide for Quantitative Analysis by Energy-Dispersive Spectroscopy'",
+   "url": "https://store.astm.org/e1508-12ar19.html",
+   "access": "metadata / scope summary only (search result 2026-09-27): EDS quantification on SEM/EPMA with and without standards; routine quantification for elements >= Na at >= tenths of a weight percent; not TEM; content not read (verify). Note: that applicability statement means light elements (N, O, B, C) are outside its routine range - relevant to BN and oxide layers"
+  },
+  {
+   "id": "REF-ISO15472",
+   "citation": "ISO 15472:2010, 'Surface chemical analysis - X-ray photoelectron spectrometers - Calibration of energy scales'",
+   "url": "https://www.iso.org/standard/55796.html",
+   "access": "scope clause read 2026-09-27 from the publisher's preview (https://cdn.standards.iteh.ai/samples/55796/72dc0295fe1447ec93e6a6c190572c1b/ISO-15472-2010.pdf): Al/Mg (unmonochromated) or monochromated Al X-rays; instruments with an ion gun for sputter cleaning; Cu 2p3/2 and Au 4f7/2 reference peaks, linearity at one intermediate energy; expanded uncertainty of the scale calibration at 95 % confidence; not applicable below +/-0.03 eV tolerance or resolution worse than 1.5 eV"
+  }
+ ],
+ "ins_calibration_text": {
+  "INS-19": [
+   "balance calibration at each session (owner addendum A3): SI-traceable microbalance calibration with OIML E2 or better certified reference masses where appropriate (OIML R111 certificates and traceability), performed by an ISO/IEC 17025-accredited laboratory with this measurement inside its accredited scope; lab not yet named (W4 measurement specification first, then procurement)",
+   "control-coupon repeatability demonstration before S1 (AOL-PM-02 verification)",
+   "lab-stored control coupon weighed in every session (AOL-WC-06 control (d))"
+  ],
+  "INS-20": [
+   "profilometer calibration / verification with traceable surface standards consistent with ISO 25178-700 (owner addendum A3)",
+   "quantitative SEM/EDS by a documented method consistent with ASTM E1508; XPS energy-scale calibration per ISO 15472 or an equivalent traceable procedure (owner addendum A3); each recorded with the report",
+   "performed by an ISO/IEC 17025-accredited laboratory with the measurement inside its accredited scope (A3); lab not yet named (W4 measurement specification first, then procurement)",
+   "baseline before first ignition for every serialized item (INS-P-02)"
+  ]
+ },
+ "compliance": [
+  "no laboratory named, searched or contacted; no supplier contact",
+  "standard values quoted only from documents actually read (OIML R 111-1:2004); others cited by scope / metadata with access stated and 'verify' where content was not read",
+  "no measured value is claimed; every requirement without a source is TBD with what it requires"
+ ]
+}

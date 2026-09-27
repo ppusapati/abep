@@ -1,0 +1,1950 @@
+{
+ "schema": "abep_capability_demo_prep_v1",
+ "id": "capability_demo_prep_v1",
+ "follow_on": "fo_capability_demo_prep",
+ "trigger": "T_PIVOT_CAPABILITY_DEMO_PREP",
+ "status": "DRAFT_PENDING_OWNER",
+ "what": "preparation of the actual-hardware capability demonstration (owner addendum A3 W4_capability_demonstration_prep): procedures, planning values, pass/fail analysis and the record format for the S1-C4 measured-capability artifact and the S1a engineering path",
+ "not_a_demonstration": "No calibration has been performed. Nothing here demonstrates a capability or satisfies S1-C4; a design analysis is never a demonstration (S1-C4 'why'). Planning values are PROPOSED; acceptance targets are copied from the instrumentation definition (lane 25 model-derived targets, W4 PROPOSED thresholds).",
+ "owner_decisions": [
+  {
+   "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+   "sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac"
+  },
+  {
+   "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json",
+   "sha256": "04c5a6f46ed2cb3e3fb174bcc7305d129e15ef53af2349d2a8abc4f6d8975992"
+  },
+  {
+   "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
+   "sha256": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6"
+  },
+  {
+   "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+   "sha256": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e"
+  }
+ ],
+ "a3_rules_carried": {
+  "cathode_temperature": "Both where mechanically possible: a cathode-tube thermocouple is mandatory (robust, continuous); add an emitter pyrometer if there is a defensible line of sight and emissivity treatment. The tube thermocouple is never labelled emitter temperature; if pyrometry is impossible, emitter temperature is reported as unmeasured.",
+  "ins_p12_coverage_factor": "Planning coverage factor k = 2 for the witness-holder non-interference demonstration (the ~95 % expanded-uncertainty convention, not a substitute for the measured uncertainty model); with low effective degrees of freedom use the evaluated coverage factor and document it.",
+  "near_cathode_rga": "Quantitative for the AO/lifetime programme (at least O2/N2/H2O partial pressures or calibrated response). For S1a engineering checkout an uncalibrated RGA may be used qualitatively, but such data cannot support an exposure-dose or lifetime claim. Before score-bearing or life use, calibrate the relevant species or establish traceable sensitivity factors. (not one of the seven demonstrations here; the uncalibrated RGA is qualitative S1a engineering data only)",
+  "instrumentation_version": "the instrumentation definition stays v1-r2; this lane adds files beside it and changes none of its ids, semantics or acceptance rules",
+  "metrology_lab": "docs/experiments/instrumentation/metrology_spec/metrology_measurement_spec_v1.json"
+ },
+ "generated_by": "docs/experiments/capability_demo/build_capability_demo_prep.py",
+ "analysis_module": "docs/experiments/capability_demo/capability_analysis.py",
+ "record_schema": "docs/experiments/capability_demo/capability_record_item_v1.schema.json",
+ "companion_document": "docs/experiments/capability_demo/CAPABILITY_DEMO_PREP.md",
+ "inputs": [
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+   "sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json",
+   "sha256": "04c5a6f46ed2cb3e3fb174bcc7305d129e15ef53af2349d2a8abc4f6d8975992"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
+   "sha256": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+   "sha256": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e"
+  },
+  {
+   "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96"
+  },
+  {
+   "path": "docs/experiments/s1_readiness/s1_readiness_conditions_v1.json",
+   "sha256": "2cb6256d3671604011117e219d5b95c39d9e1ecc71bfad2e043750df1123bbec"
+  },
+  {
+   "path": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json",
+   "sha256": "54b7b00a60134f2d92f2eb5c9fb49f18d23623a566e04a4b7d70325a0e332509"
+  },
+  {
+   "path": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
+   "sha256": "ff6e15db449151b5cf790088b4641504bd435a48de2d4c6235bf83625d508ef9"
+  },
+  {
+   "path": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json",
+   "sha256": "53e92f4536f7b30054d3521adbd504eca725c4c6d79a6cb3b51c2fc4ce220b32"
+  }
+ ],
+ "architectures": [
+  "hall_only",
+  "rf_hall",
+  "ecr_hall"
+ ],
+ "compliance": [
+  "no Hall transport closure, screening candidate or withdrawn number is used; nothing here predicts thruster performance",
+  "no architecture is preferred or eliminated; the demonstrations are identical for hall_only, rf_hall and ecr_hall except the source channels that exist only in rf_hall / ecr_hall",
+  "P5 calibration nuisance is never an axis or design variable here",
+  "no supplier, laboratory or person contacted; equipment is generic with standards cited",
+  "every number carries unit, evidence class and source; non-RFP thresholds are PROPOSED; missing inputs raise",
+  "no file of another lane is modified; the instrumentation definition stays v1-r2"
+ ],
+ "milestones": {
+  "supports": [
+   "A"
+  ],
+  "A": {
+   "delivers": "the ready-to-run procedures and the frozen-analysis candidate that turn delivered instruments into the S1-C4 measured-capability record (and the calibration-plan candidates for S1-C5), on the path LOCK-1 -> S1 -> LOCK-2 that conditional selection rests on",
+   "needs_next": [
+    "owner decisions on the CD-P-* thresholds and the calibration-plan freeze (S1-C5)",
+    "delivered instruments, facility (S1-C7) and H-1/C-1 configuration (S1-C2)",
+    "W1 registered test points and W3 ranges for every TBD",
+    "execution of CD-01..CD-07 and the owner's acceptance of the record (S1-C4)",
+    "pressure and species/divergence demonstrations (uncovered categories) or an owner reduction of the S1-C4 category set"
+   ]
+  },
+  "B": {
+   "delivers": "only instrument capability for held-out observables (B(z), I_d(t) time base)",
+   "needs_next": [
+    "W5 pre-registration of the VO-* tolerances",
+    "an admitted Hall closure (credible set empty; gate 3 FAIL)"
+   ]
+  },
+  "C": {
+   "delivers": "the metrology measurement specification (A3) that life / erosion evidence needs",
+   "needs_next": [
+    "lab procurement against the specification; flight-representative power chains; integrated mass/thermal/life closure"
+   ]
+  }
+ },
+ "proposed_thresholds": [
+  {
+   "value": 0.95,
+   "unit": "one-sided confidence",
+   "evidence_class": "assumed",
+   "source": "this lane's proposal CD-P-CONF (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+   "status": "PROPOSED",
+   "id": "CD-P-CONF",
+   "rationale": "every repeatability verdict reports the chi-square upper bound of sigma at this confidence; the point estimate decides MEETS_N<n>, the bound says whether that is 'confident' (capability_analysis.repeatability_verdict); lane 25 readiness_n at LOCK-2 remains the decisive rule"
+  },
+  {
+   "value": 0.05,
+   "unit": "absolute difference in k",
+   "evidence_class": "assumed",
+   "source": "this lane's proposal CD-P-LOWDOF (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+   "status": "PROPOSED",
+   "id": "CD-P-LOWDOF",
+   "rationale": "owner addendum A3 says 'with low effective degrees of freedom use the evaluated coverage factor'; this operationalises 'low': the Student-t factor at the k = 2 coverage probability exceeds 2 by more than this tolerance (capability_analysis.coverage_factor)"
+  },
+  {
+   "value": 0.2,
+   "unit": "fraction of MFC full scale",
+   "evidence_class": "assumed",
+   "source": "this lane's proposal CD-P-MFC-MINFRAC (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+   "status": "PROPOSED",
+   "id": "CD-P-MFC-MINFRAC",
+   "rationale": "keeps every registered flow high in its MFC range (INS-05: 'choose FS so every registered point sits high in the range'); at a 1 % FS device this caps the FS-referred term at 5 % of reading (instrumentation derived.mfc_relative_u_by_setpoint_fraction.0.2)"
+  },
+  {
+   "value": 10,
+   "unit": "calibration sequences",
+   "evidence_class": "assumed",
+   "source": "this lane's proposal CD-P-FORCE-SEQ (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+   "status": "PROPOSED",
+   "id": "CD-P-FORCE-SEQ",
+   "rationale": "same count as the INS-01 '>= 10 in-situ calibrations before and after' (REF-POLK2017 as cited by W4; lane 06 PROPOSED) so the demonstration exercises the campaign procedure itself"
+  },
+  {
+   "value": 5,
+   "unit": "force levels (incl. zero)",
+   "evidence_class": "assumed",
+   "source": "this lane's proposal CD-P-FORCE-LEVELS (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+   "status": "PROPOSED",
+   "id": "CD-P-FORCE-LEVELS",
+   "rationale": "a linearity check needs points inside the span, not only its ends; five levels give three interior points and nu = 3 for the residual SD of a straight-line fit"
+  },
+  {
+   "value": 3,
+   "unit": "alternation cycles",
+   "evidence_class": "assumed",
+   "source": "this lane's proposal CD-P-CONFIG-CYCLES (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+   "status": "PROPOSED",
+   "id": "CD-P-CONFIG-CYCLES",
+   "rationale": "HW-0 / HW-X / HW-0 alternation repeated three times per module separates a configuration (mass) effect from stand drift"
+  },
+  {
+   "value": 5,
+   "unit": "readings per flow point",
+   "evidence_class": "assumed",
+   "source": "this lane's proposal CD-P-MFC-REPEATS (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+   "status": "PROPOSED",
+   "id": "CD-P-MFC-REPEATS",
+   "rationale": "Type A at each MFC calibration point (nu = 4) in ascending and descending order (hysteresis)"
+  },
+  {
+   "value": 3,
+   "unit": "complete maps per configuration",
+   "evidence_class": "assumed",
+   "source": "this lane's proposal CD-P-BZ-MAPS (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+   "status": "PROPOSED",
+   "id": "CD-P-BZ-MAPS",
+   "rationale": "probe removed and re-seated between maps; nu = 2 per point is the minimum that yields a repeatability estimate; the owner may raise it after the first map shows the scatter"
+  },
+  {
+   "value": 3,
+   "unit": "current cycles",
+   "evidence_class": "assumed",
+   "source": "this lane's proposal CD-P-BZ-CYCLES (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+   "status": "PROPOSED",
+   "id": "CD-P-BZ-CYCLES",
+   "rationale": "coil current cycled zero -> operating value three times with the pre-registered approach protocol to expose magnetic-circuit hysteresis at the peak-field location"
+  },
+  {
+   "value": 100,
+   "unit": "injected reference edges",
+   "evidence_class": "assumed",
+   "source": "this lane's proposal CD-P-DAQ-EDGES (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+   "status": "PROPOSED",
+   "id": "CD-P-DAQ-EDGES",
+   "rationale": "enough edges to estimate per-channel offset scatter and its drift over the record"
+  },
+  {
+   "value": 3,
+   "unit": "comparison temperatures per channel",
+   "evidence_class": "assumed",
+   "source": "this lane's proposal CD-P-TC-POINTS (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+   "status": "PROPOSED",
+   "id": "CD-P-TC-POINTS",
+   "rationale": "the minimum that detects curvature of a thermocouple's deviation over its range"
+  },
+  {
+   "value": 10,
+   "unit": "readings per power calibration point",
+   "evidence_class": "assumed",
+   "source": "this lane's proposal CD-P-PWR-REPEATS (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+   "status": "PROPOSED",
+   "id": "CD-P-PWR-REPEATS",
+   "rationale": "Type A per calibration point (nu = 9)"
+  },
+  {
+   "value": 5,
+   "unit": "calibration points per power channel",
+   "evidence_class": "assumed",
+   "source": "this lane's proposal CD-P-PWR-POINTS (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+   "status": "PROPOSED",
+   "id": "CD-P-PWR-POINTS",
+   "rationale": "gain, offset and nonlinearity over the channel range (range TBD from the LOCK-1 allocation)"
+  }
+ ],
+ "decided_inputs": {
+  "k_planning": {
+   "value": 2.0,
+   "unit": "-",
+   "evidence_class": "assumed",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json: decisions.ins_p12_coverage_factor (owner, DECIDED: planning k = 2)"
+  },
+  "coverage_probability_of_k2": {
+   "value": 0.9545,
+   "unit": "-",
+   "evidence_class": "model-derived",
+   "source": "docs/experiments/capability_demo/capability_analysis.py: P_K2 = 2 Phi(2) - 1 (normal distribution)"
+  }
+ },
+ "lane25_and_w4_targets": {
+  "u_T_max": {
+   "n=4": {
+    "value": 0.0049836144,
+    "unit": "relative (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_T_max (lane 25, minexp_numbers.py)"
+   },
+   "n=6": {
+    "value": 0.0062695641,
+    "unit": "relative (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.u_T_max (lane 25, minexp_numbers.py)"
+   },
+   "n=8": {
+    "value": 0.0073219142,
+    "unit": "relative (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.u_T_max (lane 25, minexp_numbers.py)"
+   }
+  },
+  "u_P_max": {
+   "n=4": {
+    "value": 0.0049836144,
+    "unit": "relative (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_P_max (lane 25, minexp_numbers.py)"
+   },
+   "n=6": {
+    "value": 0.0062695641,
+    "unit": "relative (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.u_P_max (lane 25, minexp_numbers.py)"
+   },
+   "n=8": {
+    "value": 0.0073219142,
+    "unit": "relative (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.u_P_max (lane 25, minexp_numbers.py)"
+   }
+  },
+  "u_inst_max": {
+   "n=4": {
+    "value": 0.0024918072,
+    "unit": "ln-ratio (1 sigma, per installation)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_inst_max (lane 25, minexp_numbers.py)"
+   },
+   "n=6": {
+    "value": 0.0025595388,
+    "unit": "ln-ratio (1 sigma, per installation)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.u_inst_max (lane 25, minexp_numbers.py)"
+   },
+   "n=8": {
+    "value": 0.0025886876,
+    "unit": "ln-ratio (1 sigma, per installation)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.u_inst_max (lane 25, minexp_numbers.py)"
+   }
+  },
+  "sigma_T_at_12mN": {
+   "n=4": {
+    "value": 59.8034,
+    "unit": "uN (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: derived.repeatability_absolute_by_n.4"
+   },
+   "n=6": {
+    "value": 75.2348,
+    "unit": "uN (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: derived.repeatability_absolute_by_n.6"
+   },
+   "n=8": {
+    "value": 87.863,
+    "unit": "uN (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: derived.repeatability_absolute_by_n.8"
+   }
+  },
+  "sigma_Pbus_at_1500W": {
+   "n=4": {
+    "value": 7.47542,
+    "unit": "W (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: derived.repeatability_absolute_by_n.4"
+   },
+   "n=6": {
+    "value": 9.40435,
+    "unit": "W (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: derived.repeatability_absolute_by_n.6"
+   },
+   "n=8": {
+    "value": 10.9829,
+    "unit": "W (1 sigma, per reading)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: derived.repeatability_absolute_by_n.8"
+   }
+  },
+  "u_src_max_by_f_src": {
+   "f_src=0.1": {
+    "value": 0.035239475,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_u_src_max_by_f_src.0.1"
+   },
+   "f_src=0.2": {
+    "value": 0.017619738,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_u_src_max_by_f_src.0.2"
+   },
+   "f_src=0.3": {
+    "value": 0.011746492,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_u_src_max_by_f_src.0.3"
+   },
+   "f_src=0.4": {
+    "value": 0.0088098688,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_u_src_max_by_f_src.0.4"
+   }
+  },
+  "I-U-ABS-T": {
+   "value": 0.01,
+   "unit": "relative (1 sigma)",
+   "evidence_class": "assumed",
+   "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: proposed_thresholds I-U-ABS-T",
+   "status": "PROPOSED"
+  },
+  "I-U-ABS-P": {
+   "value": 0.01,
+   "unit": "relative (1 sigma)",
+   "evidence_class": "assumed",
+   "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: proposed_thresholds I-U-ABS-P",
+   "status": "PROPOSED"
+  },
+  "I-U-ID-FLOOR": {
+   "value": 0.01,
+   "unit": "fraction of I_d,ref",
+   "evidence_class": "assumed",
+   "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: proposed_thresholds I-U-ID-FLOOR",
+   "status": "PROPOSED"
+  }
+ },
+ "lane25_s1_counts": {
+  "T-S1-REMOUNT-CYCLES": {
+   "value": 6,
+   "unit": "cycles (K)",
+   "evidence_class": "assumed",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: thresholds T-S1-REMOUNT-CYCLES (lane 25)",
+   "status": "PROPOSED"
+  },
+  "T-S1-READINGS-PER-CYCLE": {
+   "value": 3,
+   "unit": "readings (r)",
+   "evidence_class": "assumed",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: thresholds T-S1-READINGS-PER-CYCLE (lane 25)",
+   "status": "PROPOSED"
+  },
+  "T-N-MIN": {
+   "value": 4,
+   "unit": "blocks",
+   "evidence_class": "assumed",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: thresholds T-N-MIN (lane 25)",
+   "status": "PROPOSED"
+  },
+  "T-N-MAX": {
+   "value": 8,
+   "unit": "blocks",
+   "evidence_class": "assumed",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: thresholds T-N-MAX (lane 25)",
+   "status": "PROPOSED"
+  }
+ },
+ "planning_tables": {
+  "sigma_upper_bound_factor": {
+   "nu=2": {
+    "value": 4.4154,
+    "unit": "sigma_upper / s",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.sigma_upper_bound(s=1, nu=2, confidence=CD-P-CONF)"
+   },
+   "nu=3": {
+    "value": 2.92001,
+    "unit": "sigma_upper / s",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.sigma_upper_bound(s=1, nu=3, confidence=CD-P-CONF)"
+   },
+   "nu=4": {
+    "value": 2.37236,
+    "unit": "sigma_upper / s",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.sigma_upper_bound(s=1, nu=4, confidence=CD-P-CONF)"
+   },
+   "nu=5": {
+    "value": 2.08926,
+    "unit": "sigma_upper / s",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.sigma_upper_bound(s=1, nu=5, confidence=CD-P-CONF)"
+   },
+   "nu=9": {
+    "value": 1.6452,
+    "unit": "sigma_upper / s",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.sigma_upper_bound(s=1, nu=9, confidence=CD-P-CONF)"
+   },
+   "nu=12": {
+    "value": 1.51532,
+    "unit": "sigma_upper / s",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.sigma_upper_bound(s=1, nu=12, confidence=CD-P-CONF)"
+   },
+   "nu=19": {
+    "value": 1.37041,
+    "unit": "sigma_upper / s",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.sigma_upper_bound(s=1, nu=19, confidence=CD-P-CONF)"
+   },
+   "nu=29": {
+    "value": 1.2797,
+    "unit": "sigma_upper / s",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.sigma_upper_bound(s=1, nu=29, confidence=CD-P-CONF)"
+   }
+  },
+  "coverage_factor_by_nu_eff": {
+   "nu_eff=2": {
+    "value": 4.52654,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.coverage_factor(nu=2) Student-t at P_K2",
+    "replaces_k2": true
+   },
+   "nu_eff=3": {
+    "value": 3.30682,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.coverage_factor(nu=3) Student-t at P_K2",
+    "replaces_k2": true
+   },
+   "nu_eff=4": {
+    "value": 2.86931,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.coverage_factor(nu=4) Student-t at P_K2",
+    "replaces_k2": true
+   },
+   "nu_eff=5": {
+    "value": 2.64865,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.coverage_factor(nu=5) Student-t at P_K2",
+    "replaces_k2": true
+   },
+   "nu_eff=6": {
+    "value": 2.51652,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.coverage_factor(nu=6) Student-t at P_K2",
+    "replaces_k2": true
+   },
+   "nu_eff=8": {
+    "value": 2.36642,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.coverage_factor(nu=8) Student-t at P_K2",
+    "replaces_k2": true
+   },
+   "nu_eff=10": {
+    "value": 2.28368,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.coverage_factor(nu=10) Student-t at P_K2",
+    "replaces_k2": true
+   },
+   "nu_eff=15": {
+    "value": 2.18116,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.coverage_factor(nu=15) Student-t at P_K2",
+    "replaces_k2": true
+   },
+   "nu_eff=20": {
+    "value": 2.13303,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.coverage_factor(nu=20) Student-t at P_K2",
+    "replaces_k2": true
+   },
+   "nu_eff=30": {
+    "value": 2.08684,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.coverage_factor(nu=30) Student-t at P_K2",
+    "replaces_k2": true
+   },
+   "nu_eff=50": {
+    "value": 2.05125,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.coverage_factor(nu=50) Student-t at P_K2",
+    "replaces_k2": true
+   },
+   "nu_eff=100": {
+    "value": 2.02531,
+    "unit": "-",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: capability_analysis.coverage_factor(nu=100) Student-t at P_K2",
+    "replaces_k2": false
+   }
+  },
+  "low_dof_threshold": {
+   "value": 52,
+   "unit": "effective degrees of freedom",
+   "evidence_class": "model-derived",
+   "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: low_dof_threshold(): smallest integer nu_eff at which k = 2 is used (CD-P-LOWDOF)"
+  },
+  "phase_error": {
+   "note": "hypothetical planning grid (not a claim about H-1): the skew allowance itself is TBD from the S1 I_d spectrum (INS-18); REF-CHOUEIRI2001 (abstract only, as cited by W4) reviews Hall oscillations over 1 kHz - 60 MHz",
+   "f=1000Hz": {
+    "value": 2.77778e-06,
+    "unit": "s skew for 1 degree phase error",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: phase_error_table(): 1 / (360 f), f = 1000 Hz (capability_analysis.phase_error_deg inverted)"
+   },
+   "f=10000Hz": {
+    "value": 2.77778e-07,
+    "unit": "s skew for 1 degree phase error",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: phase_error_table(): 1 / (360 f), f = 10000 Hz (capability_analysis.phase_error_deg inverted)"
+   },
+   "f=100000Hz": {
+    "value": 2.77778e-08,
+    "unit": "s skew for 1 degree phase error",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: phase_error_table(): 1 / (360 f), f = 100000 Hz (capability_analysis.phase_error_deg inverted)"
+   },
+   "f=1000000Hz": {
+    "value": 2.77778e-09,
+    "unit": "s skew for 1 degree phase error",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: phase_error_table(): 1 / (360 f), f = 1000000 Hz (capability_analysis.phase_error_deg inverted)"
+   }
+  }
+ },
+ "demonstrations": [
+  {
+   "id": "CD-01",
+   "title": "thrust-stand force calibration, repeatability and mass-change behaviour between configurations",
+   "instruments": [
+    "INS-01",
+    "INS-17",
+    "INS-18"
+   ],
+   "s1c4_categories": [
+    "thrust_stand"
+   ],
+   "stage": "pre-S1 on the delivered stand in the S1 vacuum facility (S1a, no plasma); part of the S1-C4 record",
+   "purpose": "show from actual calibrations that the delivered stand resolves the lane-25 per-reading target and that its response is either independent of the mass change between HW-0 / HW-RF / HW-ECR or is re-calibrated per configuration (INS-01 principle)",
+   "equipment": [
+    "the delivered thrust stand with its in-situ calibration system (known forces applied under vacuum; REF-POLK2017 as cited by INS-01); force-standard traceability class TBD - requires owner (INS-01 open)",
+    "stand thermocouples and inclinometer (inverted pendulum) logged on the common time base (INS-17, INS-18)",
+    "the actual RF and ECR modules unpowered on the stand, or mass-and-inertia dummies of them (dummy masses TBD - requires W3 module masses)",
+    "propellant lines, power cables, RF coax / waveguide in their final routing (tares)"
+   ],
+   "procedure": [
+    "pump down; thermal settling with stand cooling on (settling time TBD - requires S1 thermal time constants)",
+    "zero with power and flow off; record inclination and stand temperatures",
+    "apply the calibration forces at CD-P-FORCE-LEVELS levels spanning zero to the top of the range (range TBD: from the knee-scan extinction end to >= 25 mN capability, INS-01) in ascending then descending order",
+    "repeat the sequence CD-P-FORCE-SEQ times within the same mount; zero before and after each",
+    "magnetic tare: Hall coil and ECR coil currents at the operating settings (TBD - W3/LOCK-1) with the discharge off, forces re-applied; cable / feed-line tare per configuration (INS-01 tares)",
+    "mass-change behaviour: install HW-0, HW-RF (modules or dummies), HW-0, HW-ECR, HW-0 and repeat the alternation CD-P-CONFIG-CYCLES times, a full calibration in every configuration",
+    "archive every raw reading (stand output, applied force id, temperatures, inclination, timestamps)"
+   ],
+   "repeats": {
+    "force_levels": {
+     "value": 5,
+     "unit": "force levels (incl. zero)",
+     "evidence_class": "assumed",
+     "source": "this lane's proposal CD-P-FORCE-LEVELS (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+     "status": "PROPOSED",
+     "id": "CD-P-FORCE-LEVELS"
+    },
+    "sequences": {
+     "value": 10,
+     "unit": "calibration sequences",
+     "evidence_class": "assumed",
+     "source": "this lane's proposal CD-P-FORCE-SEQ (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+     "status": "PROPOSED",
+     "id": "CD-P-FORCE-SEQ"
+    },
+    "configuration_cycles": {
+     "value": 3,
+     "unit": "alternation cycles",
+     "evidence_class": "assumed",
+     "source": "this lane's proposal CD-P-CONFIG-CYCLES (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+     "status": "PROPOSED",
+     "id": "CD-P-CONFIG-CYCLES"
+    }
+   },
+   "analysis": {
+    "type_a": "per force level: sample SD of the stand response over the sequences (capability_analysis.type_a); per sequence: straight-line fit (linear_calibration) -> slope, intercept, residual SD, nonlinearity; zero drift across each sequence (drift_rate)",
+    "type_b": "applied-force standard (certificate), stand temperature coefficient if a correction is applied, tare uncertainty",
+    "repeatability_in_force": "s at the 12 mN-equivalent level converted to relative (s / 12 mN) and at 25 mN",
+    "mass_change": "configuration_slope_shift(HW-0 slope, HW-X slope) with k per A3 (coverage_factor); DETECTED -> per-configuration calibration mandatory and its uncertainty enters every reading of that configuration; NOT_DETECTED never waives the INS-01 re-calibration rule",
+    "coverage": "planning k = 2; evaluated Student-t k when nu_eff is low (A3; CD-P-LOWDOF), documented"
+   },
+   "acceptance": {
+    "rule": "repeatability_verdict(s_rel, nu, lane-25 u_T_max by n, CD-P-CONF): MEETS_N4/N6/N8 or EXCEEDS_ALL_TARGETS. This is the no-plasma component only; the firing-condition u_T is S1b (lane 25), so MEETS is necessary, not sufficient",
+    "targets": {
+     "u_T_max": {
+      "n=4": {
+       "value": 0.0049836144,
+       "unit": "relative (1 sigma, per reading)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_T_max (lane 25, minexp_numbers.py)"
+      },
+      "n=6": {
+       "value": 0.0062695641,
+       "unit": "relative (1 sigma, per reading)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.u_T_max (lane 25, minexp_numbers.py)"
+      },
+      "n=8": {
+       "value": 0.0073219142,
+       "unit": "relative (1 sigma, per reading)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.u_T_max (lane 25, minexp_numbers.py)"
+      }
+     },
+     "sigma_T_at_12mN": {
+      "n=4": {
+       "value": 59.8034,
+       "unit": "uN (1 sigma, per reading)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: derived.repeatability_absolute_by_n.4"
+      },
+      "n=6": {
+       "value": 75.2348,
+       "unit": "uN (1 sigma, per reading)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: derived.repeatability_absolute_by_n.6"
+      },
+      "n=8": {
+       "value": 87.863,
+       "unit": "uN (1 sigma, per reading)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: derived.repeatability_absolute_by_n.8"
+      }
+     }
+    },
+    "absolute_gate_context": {
+     "value": 0.01,
+     "unit": "relative (1 sigma)",
+     "evidence_class": "assumed",
+     "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: proposed_thresholds I-U-ABS-T",
+     "status": "PROPOSED"
+    }
+   },
+   "record": {
+    "category": "thrust_stand",
+    "instrument_id": "INS-01",
+    "evidence_class": "measured",
+    "demonstrated_uncertainty": {
+     "value": "<number from the analysis>",
+     "unit": "<unit>",
+     "source": "<analysis script path + sha256 + raw-data path>",
+     "evidence_class": "measured",
+     "meaning": "no-plasma per-reading repeatability of the stand in force units, relative at 12 mN (1 sigma), and per-configuration slope shift"
+    },
+    "extra_fields": [
+     "demonstration_id",
+     "calibration_date",
+     "raw_data {path, sha256}",
+     "analysis_script_sha256",
+     "calibration_plan_sha256",
+     "coverage {k, nu_eff, low_effective_dof}",
+     "type_a",
+     "type_b",
+     "verdict",
+     "traceability (certificate ids)",
+     "environment",
+     "operator (coded id)",
+     "per-configuration slopes and ln shifts",
+     "tares (magnetic, cable, feed line)",
+     "inclination / temperature logs"
+    ]
+   },
+   "failure_meaning": [
+    "EXCEEDS_ALL_TARGETS: D0 is already at risk before any plasma; the owner decides (widen delta, raise n, improve the stand / mount, OPTION-DIVERTER or another facility; lane 25) before S1b",
+    "mass effect DETECTED and per-configuration calibration not repeatable: the paired R_arch reading is not admissible with this stand; a mass-independent (torsional) stand is the INS-01 alternative",
+    "magnetic tare not repeatable: coil-current changes between arms cannot be separated from thrust"
+   ]
+  },
+  {
+   "id": "CD-02",
+   "title": "installation / reinstallation reproducibility (u_inst)",
+   "instruments": [
+    "INS-01",
+    "INS-02",
+    "INS-18"
+   ],
+   "s1c4_categories": [
+    "thrust_stand",
+    "bus_power_metering"
+   ],
+   "stage": "CD-02a pre-S1, no plasma (S1-C4 record); CD-02b is lane 25's S1b Hall-on re-mount series (after S1 starts; its u_inst fixes n at LOCK-2 and is not part of S1-C4)",
+   "purpose": "measure how much a configuration change (vent, remove and re-install the HW-0 feed spacer and the thruster mount, re-connect power leads, pump down) moves the stand calibration and the power channel gains - the no-plasma part of the lane-25 installation term G5",
+   "equipment": [
+    "as CD-01",
+    "a stable DC reference source for a gain check of each re-connected power channel (class TBD - requires owner, INS-02)"
+   ],
+   "procedure": [
+    "cycle k = 1..K: vent; remove and re-install the HW-0 feed spacer and the thruster mount exactly as a configuration change does (lane 25 S1b cycle definition); disconnect and re-connect the power leads at their break points; pump down; settle",
+    "per cycle: in-situ force calibration (CD-01 levels) r times; power-channel gain check against the reference source r times",
+    "K and r are lane 25's T-S1-REMOUNT-CYCLES and T-S1-READINGS-PER-CYCLE (PROPOSED there) so that CD-02a and S1b share one definition"
+   ],
+   "repeats": {
+    "K": {
+     "value": 6,
+     "unit": "cycles (K)",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: thresholds T-S1-REMOUNT-CYCLES (lane 25)",
+     "status": "PROPOSED"
+    },
+    "r": {
+     "value": 3,
+     "unit": "readings (r)",
+     "evidence_class": "assumed",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: thresholds T-S1-READINGS-PER-CYCLE (lane 25)",
+     "status": "PROPOSED"
+    }
+   },
+   "analysis": {
+    "type_a": "ln_reproducibility(cycle-mean stand slopes) -> s_inst,stand with nu = K - 1; the same for each power channel gain -> s_inst,P; combined no-plasma installation term sqrt(s_inst,stand^2 + s_inst,P^2) in ln units (T and P_bus enter ln(T/P_bus) with opposite sign and independent re-connection)",
+    "coverage": "nu = K - 1 is low; A3 evaluated k documented (coverage_factor)"
+   },
+   "acceptance": {
+    "rule": "repeatability_verdict(no-plasma installation term, K - 1, lane-25 u_inst_max by n, CD-P-CONF). Necessary, not sufficient: the Hall-on S1b series adds thermal and plasma re-seating effects",
+    "targets": {
+     "u_inst_max": {
+      "n=4": {
+       "value": 0.0024918072,
+       "unit": "ln-ratio (1 sigma, per installation)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_inst_max (lane 25, minexp_numbers.py)"
+      },
+      "n=6": {
+       "value": 0.0025595388,
+       "unit": "ln-ratio (1 sigma, per installation)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.u_inst_max (lane 25, minexp_numbers.py)"
+      },
+      "n=8": {
+       "value": 0.0025886876,
+       "unit": "ln-ratio (1 sigma, per installation)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.u_inst_max (lane 25, minexp_numbers.py)"
+      }
+     }
+    }
+   },
+   "record": {
+    "category": "thrust_stand",
+    "instrument_id": "INS-01+INS-02",
+    "evidence_class": "measured",
+    "demonstrated_uncertainty": {
+     "value": "<number from the analysis>",
+     "unit": "<unit>",
+     "source": "<analysis script path + sha256 + raw-data path>",
+     "evidence_class": "measured",
+     "meaning": "no-plasma installation reproducibility of ln(T/P_bus) (1 sigma, ln units, nu = K - 1)"
+    },
+    "extra_fields": [
+     "demonstration_id",
+     "calibration_date",
+     "raw_data {path, sha256}",
+     "analysis_script_sha256",
+     "calibration_plan_sha256",
+     "coverage {k, nu_eff, low_effective_dof}",
+     "type_a",
+     "type_b",
+     "verdict",
+     "traceability (certificate ids)",
+     "environment",
+     "operator (coded id)",
+     "per-cycle slopes and gains",
+     "cycle log (vent/pump times, torque values if specified by W3)"
+    ]
+   },
+   "failure_meaning": [
+    "exceeds u_inst_max at n = 8 without plasma: the mount or lead re-connection alone consumes the G5 budget; fix the mount (fiducials, torque procedure) or re-connection before S1b; otherwise the owner decides (D0)",
+    "a single cycle outlier: investigate and record; never dropped silently (it is a raw reading)"
+   ]
+  },
+  {
+   "id": "CD-03",
+   "title": "power-channel calibration per bus_power_boundary_v1 component (incl. discharge current)",
+   "instruments": [
+    "INS-02",
+    "INS-03",
+    "INS-04",
+    "INS-18"
+   ],
+   "s1c4_categories": [
+    "bus_power_metering",
+    "discharge_current"
+   ],
+   "stage": "pre-S1 bench / facility, no plasma (S1a); S1-C4 record",
+   "purpose": "demonstrate each lab power channel against a traceable DC standard, and the RF / microwave load-plane power, at the repeatability lane 25 needs, with pickup bounded",
+   "boundary": "abep_sim/arch_boundary.py BOUNDARY_VERSION 'bus_power_boundary_v1' (component ids as listed in the instrumentation definition bus_power_channels; resolved read-only, never imported here)",
+   "channels": [
+    {
+     "component": "hall_discharge",
+     "architectures": [
+      "hall_only",
+      "rf_hall",
+      "ecr_hall"
+     ],
+     "lab_status": "MEASURED",
+     "lab_measurement": "INS-02 at the anode-cathode terminals (V_d x I_d); lab supply DC input as efficiency evidence",
+     "demonstration": "calibrate the load-plane V and I (or net RF / microwave power, INS-03) against the traceable standard at CD-P-PWR-POINTS points over the channel range with CD-P-PWR-REPEATS readings each"
+    },
+    {
+     "component": "hall_magnet",
+     "architectures": [
+      "hall_only",
+      "rf_hall",
+      "ecr_hall"
+     ],
+     "lab_status": "MEASURED",
+     "lab_measurement": "INS-02 at the coil terminals; 0 W explicit for a permanent-magnet circuit",
+     "demonstration": "calibrate the load-plane V and I (or net RF / microwave power, INS-03) against the traceable standard at CD-P-PWR-POINTS points over the channel range with CD-P-PWR-REPEATS readings each"
+    },
+    {
+     "component": "cathode_keeper",
+     "architectures": [
+      "hall_only",
+      "rf_hall",
+      "ecr_hall"
+     ],
+     "lab_status": "MEASURED",
+     "lab_measurement": "INS-02 at the keeper terminals",
+     "demonstration": "calibrate the load-plane V and I (or net RF / microwave power, INS-03) against the traceable standard at CD-P-PWR-POINTS points over the channel range with CD-P-PWR-REPEATS readings each"
+    },
+    {
+     "component": "cathode_heater",
+     "architectures": [
+      "hall_only",
+      "rf_hall",
+      "ecr_hall"
+     ],
+     "lab_status": "MEASURED",
+     "lab_measurement": "INS-02 at the heater terminals in the evaluated mode; 0 W explicit when off",
+     "demonstration": "calibrate the load-plane V and I (or net RF / microwave power, INS-03) against the traceable standard at CD-P-PWR-POINTS points over the channel range with CD-P-PWR-REPEATS readings each"
+    },
+    {
+     "component": "flow_control",
+     "architectures": [
+      "hall_only",
+      "rf_hall",
+      "ecr_hall"
+     ],
+     "lab_status": "LEDGER_INPUT",
+     "lab_measurement": "lab MFC electronics are not flight actuators: metered as evidence, booked as a LOCK-1 ledger input with evidence class (lane 25 Sec. 5)",
+     "demonstration": "lab electronics are metered as evidence where present (same calibration method) but the component enters P_bus as a LOCK-1 ledger input; no capability claim is made for it"
+    },
+    {
+     "component": "compressor",
+     "architectures": [
+      "hall_only",
+      "rf_hall",
+      "ecr_hall"
+     ],
+     "lab_status": "ABSENT_IN_LAB",
+     "lab_measurement": "no compressor in the lab feed (lane 06 laboratory_subset); never zero, never a placeholder",
+     "demonstration": "no lab channel exists; the value is RECONSTRUCTED from the upstream ICD or UNAVAILABLE - never zero, never a placeholder; nothing to demonstrate"
+    },
+    {
+     "component": "thermal_control",
+     "architectures": [
+      "hall_only",
+      "rf_hall",
+      "ecr_hall"
+     ],
+     "lab_status": "MEASURED_OR_LEDGER",
+     "lab_measurement": "INS-02 on any propulsion heater present in the lab; otherwise a ledger input per arm with evidence class",
+     "demonstration": "calibrate as MEASURED if a propulsion heater is present in the lab; otherwise no channel and the ledger input carries its own evidence class"
+    },
+    {
+     "component": "housekeeping",
+     "architectures": [
+      "hall_only",
+      "rf_hall",
+      "ecr_hall"
+     ],
+     "lab_status": "LEDGER_INPUT",
+     "lab_measurement": "lab controller is not the flight controller",
+     "demonstration": "lab electronics are metered as evidence where present (same calibration method) but the component enters P_bus as a LOCK-1 ledger input; no capability claim is made for it"
+    },
+    {
+     "component": "rf_source",
+     "architectures": [
+      "rf_hall"
+     ],
+     "lab_status": "MEASURED",
+     "lab_measurement": "INS-03 net RF power at the load plane; generator DC input on INS-02 as efficiency evidence (R_lab only)",
+     "demonstration": "calibrate the load-plane V and I (or net RF / microwave power, INS-03) against the traceable standard at CD-P-PWR-POINTS points over the channel range with CD-P-PWR-REPEATS readings each"
+    },
+    {
+     "component": "ecr_source",
+     "architectures": [
+      "ecr_hall"
+     ],
+     "lab_status": "MEASURED",
+     "lab_measurement": "INS-03 net microwave power at the coupling input; generator DC input on INS-02 as efficiency evidence",
+     "demonstration": "calibrate the load-plane V and I (or net RF / microwave power, INS-03) against the traceable standard at CD-P-PWR-POINTS points over the channel range with CD-P-PWR-REPEATS readings each"
+    },
+    {
+     "component": "ecr_magnet",
+     "architectures": [
+      "ecr_hall"
+     ],
+     "lab_status": "MEASURED",
+     "lab_measurement": "INS-02 at the resonance-coil terminals; 0 W explicit for a permanent magnet",
+     "demonstration": "calibrate the load-plane V and I (or net RF / microwave power, INS-03) against the traceable standard at CD-P-PWR-POINTS points over the channel range with CD-P-PWR-REPEATS readings each"
+    }
+   ],
+   "equipment": [
+    "traceable DC voltage / current calibrator or reference meter with reference shunt (class TBD - requires owner, INS-02 open decision 'traceable calibration class')",
+    "the delivered 4-wire sense leads, shunts or zero-flux transducers and the DAQ in their final wiring",
+    "matched dummy loads for the RF and microwave generators (DUMMY_LOAD_PICKUP control, lane 06, adopted by the package reconciliation, as cited by INS-02)",
+    "directional couplers and power sensors with certificates (INS-03)",
+    "wide-band current probe on the discharge line (INS-04)"
+   ],
+   "procedure": [
+    "per MEASURED channel: apply CD-P-PWR-POINTS reference levels spanning the channel range (range TBD - requires the LOCK-1 allocation), CD-P-PWR-REPEATS simultaneous V/I readings each, ascending and descending",
+    "repeat at two shunt / transducer temperatures within the S1 thermal range (range TBD - S1) to characterise the temperature coefficient (INS-02 calibration)",
+    "DUMMY_LOAD_PICKUP: RF and microwave generators into matched dummy loads at each planned power level with the Hall off; record every DC channel (pickup bound)",
+    "INS-03: coupler/sensor certificates; load-plane loss characterisation into matched dummy loads at each P_lo / P_hi and frequency (method TBD - requires the RF / microwave design, W3)",
+    "INS-04: probe gain and offset against the calibrated hall_discharge DC current channel at several DC levels; noise floor with the discharge supply connected and off"
+   ],
+   "repeats": {
+    "points": {
+     "value": 5,
+     "unit": "calibration points per power channel",
+     "evidence_class": "assumed",
+     "source": "this lane's proposal CD-P-PWR-POINTS (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+     "status": "PROPOSED",
+     "id": "CD-P-PWR-POINTS"
+    },
+    "readings": {
+     "value": 10,
+     "unit": "readings per power calibration point",
+     "evidence_class": "assumed",
+     "source": "this lane's proposal CD-P-PWR-REPEATS (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+     "status": "PROPOSED",
+     "id": "CD-P-PWR-REPEATS"
+    }
+   },
+   "analysis": {
+    "type_a": "per channel and point: relative SD of the power reading (type_a); fit residuals and nonlinearity (linear_calibration)",
+    "type_b": "calibrator certificate, temperature coefficient over the S1 range, pickup bound (as a rectangular bound / sqrt(3) unless the pickup is corrected), RF mismatch uncertainty (INS-03)",
+    "sum": "if every channel meets u_P_max the sum does (instrumentation derived.channel_sum_check)",
+    "source_scale": "u_src from the INS-03 Type B chain compared with u_src_max(f_src) - f_src needs the LOCK-1 source allocation",
+    "coverage": "A3 k rule (coverage_factor)"
+   },
+   "acceptance": {
+    "rule": "per MEASURED channel: repeatability_verdict(relative s, nu, lane-25 u_P_max by n, CD-P-CONF); I_d floor: offset + noise (1 sigma) <= I-U-ID-FLOOR x I_d,ref (I_d,ref TBD - LOCK-1); source chain: u_src <= u_src_max(f_src) at the pre-registered f_src; pickup: reported, and a channel whose pickup exceeds its own u_P_max share is not usable source-on until fixed",
+    "targets": {
+     "u_P_max": {
+      "n=4": {
+       "value": 0.0049836144,
+       "unit": "relative (1 sigma, per reading)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_P_max (lane 25, minexp_numbers.py)"
+      },
+      "n=6": {
+       "value": 0.0062695641,
+       "unit": "relative (1 sigma, per reading)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.u_P_max (lane 25, minexp_numbers.py)"
+      },
+      "n=8": {
+       "value": 0.0073219142,
+       "unit": "relative (1 sigma, per reading)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_by_n (copied exact); original: docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.u_P_max (lane 25, minexp_numbers.py)"
+      }
+     },
+     "sigma_Pbus_at_1500W": {
+      "n=4": {
+       "value": 7.47542,
+       "unit": "W (1 sigma, per reading)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: derived.repeatability_absolute_by_n.4"
+      },
+      "n=6": {
+       "value": 9.40435,
+       "unit": "W (1 sigma, per reading)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: derived.repeatability_absolute_by_n.6"
+      },
+      "n=8": {
+       "value": 10.9829,
+       "unit": "W (1 sigma, per reading)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: derived.repeatability_absolute_by_n.8"
+      }
+     },
+     "u_src_max_by_f_src": {
+      "f_src=0.1": {
+       "value": 0.035239475,
+       "unit": "relative (1 sigma)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_u_src_max_by_f_src.0.1"
+      },
+      "f_src=0.2": {
+       "value": 0.017619738,
+       "unit": "relative (1 sigma)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_u_src_max_by_f_src.0.2"
+      },
+      "f_src=0.3": {
+       "value": 0.011746492,
+       "unit": "relative (1 sigma)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_u_src_max_by_f_src.0.3"
+      },
+      "f_src=0.4": {
+       "value": 0.0088098688,
+       "unit": "relative (1 sigma)",
+       "evidence_class": "model-derived",
+       "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: requirement_basis.lane25_u_src_max_by_f_src.0.4"
+      }
+     },
+     "I-U-ID-FLOOR": {
+      "value": 0.01,
+      "unit": "fraction of I_d,ref",
+      "evidence_class": "assumed",
+      "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: proposed_thresholds I-U-ID-FLOOR",
+      "status": "PROPOSED"
+     },
+     "absolute_gate_context": {
+      "value": 0.01,
+      "unit": "relative (1 sigma)",
+      "evidence_class": "assumed",
+      "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json: proposed_thresholds I-U-ABS-P",
+      "status": "PROPOSED"
+     }
+    }
+   },
+   "record": {
+    "category": "bus_power_metering",
+    "instrument_id": "INS-02",
+    "evidence_class": "measured",
+    "demonstrated_uncertainty": {
+     "value": "<number from the analysis>",
+     "unit": "<unit>",
+     "source": "<analysis script path + sha256 + raw-data path>",
+     "evidence_class": "measured",
+     "meaning": "per-channel relative per-reading repeatability and calibration uncertainty (1 sigma), per bus_power_boundary_v1 component"
+    },
+    "extra_fields": [
+     "demonstration_id",
+     "calibration_date",
+     "raw_data {path, sha256}",
+     "analysis_script_sha256",
+     "calibration_plan_sha256",
+     "coverage {k, nu_eff, low_effective_dof}",
+     "type_a",
+     "type_b",
+     "verdict",
+     "traceability (certificate ids)",
+     "environment",
+     "operator (coded id)",
+     "component id",
+     "lab_status",
+     "pickup bound per channel",
+     "temperature coefficient"
+    ]
+   },
+   "record_discharge_current": {
+    "category": "discharge_current",
+    "instrument_id": "INS-04",
+    "evidence_class": "measured",
+    "demonstrated_uncertainty": {
+     "value": "<number from the analysis>",
+     "unit": "<unit>",
+     "source": "<analysis script path + sha256 + raw-data path>",
+     "evidence_class": "measured",
+     "meaning": "I_d probe gain uncertainty and offset + noise floor relative to the DC channel"
+    },
+    "extra_fields": [
+     "demonstration_id",
+     "calibration_date",
+     "raw_data {path, sha256}",
+     "analysis_script_sha256",
+     "calibration_plan_sha256",
+     "coverage {k, nu_eff, low_effective_dof}",
+     "type_a",
+     "type_b",
+     "verdict",
+     "traceability (certificate ids)",
+     "environment",
+     "operator (coded id)"
+    ]
+   },
+   "failure_meaning": [
+    "a MEASURED channel EXCEEDS_ALL_TARGETS: P_bus of that consumer cannot support R_arch at any n <= T-N-MAX; better shunt / transducer or range before S1",
+    "RF / microwave pickup on DC channels above budget: source-on readings of the affected channels are invalid until shielding / filtering is fixed and CD-03 repeated",
+    "u_src above u_src_max(f_src): the source-power scale term alone breaks the G3 budget; the owner may change the allocation or the load-plane method (INS-03 AT_RISK)",
+    "compressor / ledger components are never 'failed' here: they are not measured and never zero"
+   ]
+  },
+  {
+   "id": "CD-04",
+   "title": "MFC behaviour across the required low-flow range (gas correction, zero drift)",
+   "instruments": [
+    "INS-05",
+    "INS-06",
+    "INS-07",
+    "INS-18"
+   ],
+   "s1c4_categories": [
+    "flow"
+   ],
+   "stage": "pre-S1 (S1a) with the MFCs installed in their final configuration and orientation; S1-C4 record",
+   "purpose": "show each MFC range meets the flow uncertainty that the knee scan and the I-FLOW-CONSERVATIVE absolute-gate rule need, down to the lower end of the candidate range",
+   "range": {
+    "basis": "W1 feed-state closure MFC range requirement (DRAFT for owner review; A3 DI_1_4: 'the 0.030-3.14 mg/s envelope remains a candidate range, not a flight truth'). An instrumentation range input, not a test point; registered test points remain TBD from W1/LOCK-1.",
+    "mdot_min": {
+     "value": 0.029548,
+     "unit": "mg/s",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json: mfc_range_requirement.mdot_min_kgps (x 1e6)"
+    },
+    "mdot_max": {
+     "value": 3.14236,
+     "unit": "mg/s",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json: mfc_range_requirement.mdot_max_kgps (x 1e6)"
+    },
+    "sccm_N2_min": {
+     "value": 1.41919073162,
+     "unit": "sccm N2",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json: mfc_range_requirement.sccm_N2_min"
+    },
+    "sccm_N2_max": {
+     "value": 150.927531762,
+     "unit": "sccm N2",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json: mfc_range_requirement.sccm_N2_max"
+    },
+    "sccm_O2_max": {
+     "value": 58.6340597611,
+     "unit": "sccm O2",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json: mfc_range_requirement.sccm_O2_max"
+    },
+    "turndown_ratio": {
+     "value": 106.348,
+     "unit": "max / min",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: mfc_range(): mdot_max / mdot_min"
+    },
+    "single_device_u_at_min": {
+     "value": 1.06348,
+     "unit": "relative (FS-referred term, 1 sigma treated)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: mfc_range(): 1 % FS (instrumentation derived.mfc_relative_u_by_setpoint_fraction.1.0, REF-SNYDER2017 'typically 1% full scale' as cited by W4) x max/min, one device with FS = mdot_max"
+    },
+    "single_device_zero_shift_at_min": {
+     "value": 0.42539,
+     "unit": "relative (bound)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: mfc_range(): 0.4 % FS orientation zero shift (instrumentation derived.mfc_orientation_zero_shift_relative.1.0, REF-SNYDER2017 as cited by W4) x max/min"
+    },
+    "ranges_needed": {
+     "min_setpoint_fraction=0.1": {
+      "value": 3,
+      "unit": "MFC ranges per gas path",
+      "evidence_class": "model-derived",
+      "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: mfc_range(): ceil(ln(max/min) / ln(1/0.1))"
+     },
+     "min_setpoint_fraction=0.2": {
+      "value": 3,
+      "unit": "MFC ranges per gas path",
+      "evidence_class": "model-derived",
+      "source": "docs/experiments/capability_demo/build_capability_demo_prep.py: mfc_range(): ceil(ln(max/min) / ln(1/0.2))"
+     }
+    },
+    "reading": "a single device spanning the candidate range cannot resolve its low end: the FS-referred term alone exceeds the reading. The demonstration therefore covers a set of overlapping ranges per gas path, each calibrated on its own gas; the actual range set follows the registered W1 points.",
+    "xe_cathode_flow": {
+     "value": "TBD",
+     "tbd_requires": "C-1 cathode Xe flow range (C-1 design, W3) and the LOCK-1 cathode operating point",
+     "blocked_by": "fo_hardware_definition"
+    }
+   },
+   "equipment": [
+    "one thermal MFC per pure gas and range (N2, O2 anode; Xe cathode), INS-05; the range set follows range.ranges_needed and the registered W1 points (TBD)",
+    "a primary flow calibrator: constant-volume (rate-of-rise) or constant-pressure (REF-SNYDER2017 as cited by INS-05), traceable, able to reach the lower end of the smallest range (capability TBD - requires the calibrator choice)",
+    "inlet pressure and temperature sensors at the MFC (expected inlet conditions), INS-06 / INS-07 at the valve outlet"
+   ],
+   "procedure": [
+    "calibrate every MFC on its own working gas, installed in the final orientation, at the expected inlet pressure and temperature (REF-SNYDER2017 as cited by INS-05)",
+    "points per range: 10, 20, 50 and 100 % of FS (the points of the instrumentation MFC table) plus every registered W1 flow in that range (TBD - W1/LOCK-1); CD-P-MFC-REPEATS readings each, ascending and descending",
+    "gas correction: no gas correction factor is used where the MFC is calibrated on its own gas; where one is unavoidable (e.g. a range only available on N2 used for O2) measure the actual ratio against the primary calibrator on the working gas and adjust it to the sensor operating temperature (REF-SNYDER2017 as cited by INS-05); record the factor with its uncertainty",
+    "zero drift: valve closed, zero flow, MFC at operating temperature; log the output over the planned dwell (hold time TBD - requires owner, INS-01 note) and repeat after a power cycle",
+    "air-surrogate check: set an N2/O2 pair and verify the composition by the two primary-calibrated flows (instrumentation derived.mixture_mass_fraction_u)"
+   ],
+   "repeats": {
+    "readings_per_point": {
+     "value": 5,
+     "unit": "readings per flow point",
+     "evidence_class": "assumed",
+     "source": "this lane's proposal CD-P-MFC-REPEATS (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+     "status": "PROPOSED",
+     "id": "CD-P-MFC-REPEATS"
+    },
+    "min_setpoint_fraction": {
+     "value": 0.2,
+     "unit": "fraction of MFC full scale",
+     "evidence_class": "assumed",
+     "source": "this lane's proposal CD-P-MFC-MINFRAC (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+     "status": "PROPOSED",
+     "id": "CD-P-MFC-MINFRAC"
+    }
+   },
+   "analysis": {
+    "type_a": "per point: relative_point_errors against the calibrator and their SD (repeatability, used for R_arch: same MFC, same setpoint in every arm); hysteresis = ascending - descending mean",
+    "type_b": "calibrator certificate (volume, pressure, temperature, time), gas-correction factor if used, zero drift over the dwell (drift_rate x dwell), orientation zero shift if the installed orientation differs from the calibration orientation",
+    "coverage": "A3 k rule"
+   },
+   "acceptance": {
+    "rule": "for R_arch: repeatability at every registered point reported (target TBD - requires the W1 tolerance and the knee-scan resolution, INS-05); for the absolute gate: the expanded relative uncertainty at each registered point sets the I-FLOW-CONSERVATIVE margin (the delivered flow may not exceed the registered flow at one-sided alpha); every registered point must sit at or above CD-P-MFC-MINFRAC of its MFC FS; zero drift over the dwell reported against the smallest registered flow of that range",
+    "targets": {
+     "knee_scan_resolution": {
+      "value": "TBD",
+      "tbd_requires": "W1 test-point flows and the lane-25 knee levels",
+      "blocked_by": "fo_feed_state_closure"
+     },
+     "I-FLOW-CONSERVATIVE": {
+      "see": "docs/experiments/instrumentation/instrumentation_definition_v1.json: proposed_thresholds I-FLOW-CONSERVATIVE"
+     }
+    }
+   },
+   "record": {
+    "category": "flow",
+    "instrument_id": "INS-05",
+    "evidence_class": "measured",
+    "demonstrated_uncertainty": {
+     "value": "<number from the analysis>",
+     "unit": "<unit>",
+     "source": "<analysis script path + sha256 + raw-data path>",
+     "evidence_class": "measured",
+     "meaning": "per MFC range and gas: relative repeatability and expanded calibration uncertainty at each calibrated point, zero drift per hour"
+    },
+    "extra_fields": [
+     "demonstration_id",
+     "calibration_date",
+     "raw_data {path, sha256}",
+     "analysis_script_sha256",
+     "calibration_plan_sha256",
+     "coverage {k, nu_eff, low_effective_dof}",
+     "type_a",
+     "type_b",
+     "verdict",
+     "traceability (certificate ids)",
+     "environment",
+     "operator (coded id)",
+     "gas",
+     "range FS",
+     "gas-correction factor (if any) with uncertainty",
+     "orientation",
+     "inlet P/T during calibration"
+    ]
+   },
+   "failure_meaning": [
+    "the lower end is not resolved by any available range: registered low-flow points (and the knee scan's low end) cannot be set with a known flow; a smaller range or an in-line primary calibrator is needed",
+    "gas-correction factor uncertainty dominates: buy / calibrate an own-gas range instead",
+    "zero drift over the dwell comparable to the smallest registered flow: the dwell or the range must change (owner, hold time)"
+   ]
+  },
+  {
+   "id": "CD-05",
+   "title": "B(z) measurement repeatability at actual coil currents",
+   "instruments": [
+    "INS-09",
+    "INS-02",
+    "INS-24",
+    "INS-18"
+   ],
+   "s1c4_categories": [
+    "magnetic_field_Bz"
+   ],
+   "stage": "pre-S1 (S1a, magnetostatic, room temperature; hot-state effects TBD, lane 25 Sec. 12); S1-C4 record",
+   "purpose": "show that a B(z) map at the operating coil currents reproduces within a stated uncertainty, so it can serve as a condition record (INS-09) and, if W5 pre-registers it, as held-out evidence (VO-BZ) - closing the P5 gap of unpublished coil currents / measured B(z)",
+   "equipment": [
+    "Hall-probe gaussmeter with a calibration certificate; a reference field for in-situ checks (reference magnet or calibrated coil; class TBD) and a zero-field chamber for the offset",
+    "positioning stage with a calibrated position scale; fixture keyed to the H-1 fiducials (W3 B(z) access)",
+    "coil supplies metered on INS-02 (hall_magnet, ecr_magnet); coil 4-wire resistance and hot-spot thermocouples (INS-24); magnet temperatures (MCQ-W4-03)"
+   ],
+   "procedure": [
+    "probe offset in the zero-field chamber and gain in the reference field before and after each session",
+    "approach protocol (PROPOSED, to be frozen): bring every coil from zero to the operating current monotonically after a defined cycling sequence; the same protocol in every configuration",
+    "per configuration (HW-0, HW-RF, HW-ECR with the ECR magnet on and off): CD-P-BZ-MAPS complete centreline (and exit-region radial) maps with the probe removed and re-seated between maps",
+    "hysteresis: CD-P-BZ-CYCLES current cycles, B at the peak-field location recorded ascending and descending",
+    "every map carries coil currents, coil average and hot-spot temperatures and magnet temperatures (MCQ-W4-03), position-scale readings and timestamps"
+   ],
+   "repeats": {
+    "maps": {
+     "value": 3,
+     "unit": "complete maps per configuration",
+     "evidence_class": "assumed",
+     "source": "this lane's proposal CD-P-BZ-MAPS (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+     "status": "PROPOSED",
+     "id": "CD-P-BZ-MAPS"
+    },
+    "current_cycles": {
+     "value": 3,
+     "unit": "current cycles",
+     "evidence_class": "assumed",
+     "source": "this lane's proposal CD-P-BZ-CYCLES (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+     "status": "PROPOSED",
+     "id": "CD-P-BZ-CYCLES"
+    }
+   },
+   "analysis": {
+    "type_a": "pointwise SD across maps; repeatability of B_peak and of its axial location z_peak; hysteresis offset (ascending - descending) at the peak",
+    "type_b": "probe calibration certificate, reference-field uncertainty, position-scale uncertainty propagated through dB/dz, probe angular alignment, coil-current meter (INS-02)",
+    "coverage": "A3 k rule; nu = maps - 1 is low, so the evaluated k is expected and documented"
+   },
+   "acceptance": {
+    "rule": "reported against the W5 pre-registered B(z) comparison tolerance when it exists (TBD); until then no pass/fail is claimed, only the demonstrated repeatability; hysteresis offset larger than the map repeatability makes the approach protocol mandatory in every configuration",
+    "targets": {
+     "Bz_tolerance": {
+      "value": "TBD",
+      "tbd_requires": "the W5 pre-registered B(z) comparison tolerance and the H-1 design range (W3)",
+      "blocked_by": "fo_hall_validation_prereg_draft"
+     }
+    }
+   },
+   "record": {
+    "category": "magnetic_field_Bz",
+    "instrument_id": "INS-09",
+    "evidence_class": "measured",
+    "demonstrated_uncertainty": {
+     "value": "<number from the analysis>",
+     "unit": "<unit>",
+     "source": "<analysis script path + sha256 + raw-data path>",
+     "evidence_class": "measured",
+     "meaning": "B(z) map repeatability (1 sigma) at the operating coil currents, B_peak and z_peak repeatability, hysteresis offset"
+    },
+    "extra_fields": [
+     "demonstration_id",
+     "calibration_date",
+     "raw_data {path, sha256}",
+     "analysis_script_sha256",
+     "calibration_plan_sha256",
+     "coverage {k, nu_eff, low_effective_dof}",
+     "type_a",
+     "type_b",
+     "verdict",
+     "traceability (certificate ids)",
+     "environment",
+     "operator (coded id)",
+     "configuration",
+     "coil currents",
+     "coil/magnet temperatures (MCQ-W4-03)",
+     "approach protocol id"
+    ]
+   },
+   "failure_meaning": [
+    "maps not reproducible at fixed current: B(z) cannot be a held-out observable and every configuration needs its own map on its own day; find the cause (fixture, probe alignment, remanence) first",
+    "strong hysteresis: the coil-current history becomes a controlled variable of every run (recorded, pre-registered approach)",
+    "ECR magnet on/off changes the Hall B(z) beyond repeatability: that is a real configuration difference and is reported as such, not a capability failure"
+   ]
+  },
+  {
+   "id": "CD-06",
+   "title": "DAQ synchronization / common time base",
+   "instruments": [
+    "INS-18",
+    "INS-04",
+    "INS-02",
+    "INS-01",
+    "INS-05",
+    "INS-08",
+    "INS-17"
+   ],
+   "s1c4_categories": [
+    "stability_oscillations"
+   ],
+   "stage": "pre-S1 (S1a) with the final DAQ, cabling and channel set; S1-C4 record (partial for stability_oscillations: the oscillation band itself needs the S1 I_d spectrum)",
+   "purpose": "show that every channel shares one time base with a measured skew and drift, so V x I products, I_d(t) and the slow channels can be aligned (INS-18)",
+   "equipment": [
+    "a reference pulse / step generator fanned out to every channel type with cable delays measured",
+    "the final DAQ chain(s); where DAQs are distributed, a shared hardware clock/trigger or a network time protocol (IEEE 1588 named as one generic option, REF-IEEE1588 metadata only)",
+    "a swept-sine source for the amplitude/phase response of the fast channels"
+   ],
+   "procedure": [
+    "inject CD-P-DAQ-EDGES common edges over at least the longest planned dwell (TBD - owner hold time); slow channels (temperature, flow, pressure) receive a step through a test input where the sensor cannot see the edge",
+    "record every channel; subtract the measured cable delays",
+    "swept sine through the V, I and I_d(t) chains up to the band edge (TBD - S1 spectrum): gain and phase",
+    "verify that V and I of each power channel are sampled simultaneously (same edge within the skew budget)"
+   ],
+   "repeats": {
+    "edges": {
+     "value": 100,
+     "unit": "injected reference edges",
+     "evidence_class": "assumed",
+     "source": "this lane's proposal CD-P-DAQ-EDGES (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+     "status": "PROPOSED",
+     "id": "CD-P-DAQ-EDGES"
+    }
+   },
+   "analysis": {
+    "type_a": "channel_skew: worst skew, per-channel offset SD and offset drift (clock drift)",
+    "type_b": "cable-delay measurement uncertainty, generator edge jitter (certificate)",
+    "planning": "phase_error_deg(f, skew) - see planning_tables.phase_error"
+   },
+   "acceptance": {
+    "rule": "worst skew and offset drift reported; pass/fail against the skew allowance derived from the S1 oscillation band (INS-18 TBD) - until then no pass/fail is claimed. Hard rule: V and I of one power channel must be simultaneous (mean of the product, not product of the means, when I_d oscillates)",
+    "targets": {
+     "skew_allowance": {
+      "value": "TBD",
+      "tbd_requires": "skew allowance from the S1 oscillation band (INS-18)",
+      "blocked_by": "S1"
+     }
+    }
+   },
+   "record": {
+    "category": "stability_oscillations",
+    "instrument_id": "INS-18",
+    "evidence_class": "measured",
+    "demonstrated_uncertainty": {
+     "value": "<number from the analysis>",
+     "unit": "<unit>",
+     "source": "<analysis script path + sha256 + raw-data path>",
+     "evidence_class": "measured",
+     "meaning": "worst inter-channel skew and clock drift of the common time base"
+    },
+    "extra_fields": [
+     "demonstration_id",
+     "calibration_date",
+     "raw_data {path, sha256}",
+     "analysis_script_sha256",
+     "calibration_plan_sha256",
+     "coverage {k, nu_eff, low_effective_dof}",
+     "type_a",
+     "type_b",
+     "verdict",
+     "traceability (certificate ids)",
+     "environment",
+     "operator (coded id)",
+     "channel list",
+     "cable delays",
+     "swept-sine response"
+    ]
+   },
+   "failure_meaning": [
+    "skew or drift not bounded: time-resolved quantities (I_d(t), oscillation-power correlations, extinction timing) cannot be aligned across channels; V x I products are biased when I_d oscillates"
+   ]
+  },
+  {
+   "id": "CD-07",
+   "title": "temperature-channel performance (incl. the A3 cathode-temperature rule)",
+   "instruments": [
+    "INS-17",
+    "INS-23",
+    "INS-24",
+    "INS-07",
+    "INS-18"
+   ],
+   "s1c4_categories": [
+    "temperature"
+   ],
+   "stage": "pre-S1: sensor calibration on the bench (before installation) and in-situ checks in the facility (S1a); S1-C4 record",
+   "purpose": "show each temperature channel's calibration, cold-junction performance and immunity to pickup, and enforce the owner's cathode-temperature labelling rule (A3)",
+   "equipment": [
+    "reference thermometer and comparison medium (bath / dry block / furnace per range) for calibration by comparison (ASTM E220, metadata only - verify; it applies to unused thermocouples)",
+    "cold-junction reference (ice point or calibrated reference junction)",
+    "the final DAQ inputs and cabling; coil supplies, RF / microwave generators into dummy loads and HV supplies for the pickup check (DUMMY_LOAD_PICKUP control)",
+    "C-1: cathode-tube thermocouple (mandatory, A3); emitter pyrometer only if HW-C1-09 (b) records a defensible line of sight and an emissivity treatment (A3)"
+   ],
+   "procedure": [
+    "calibrate each thermocouple type/lot by comparison at CD-P-TC-POINTS temperatures spanning its range (ranges TBD - W3 positions and life-mechanism limits); unused thermocouples only (ASTM E220 scope)",
+    "cold-junction check at the reference point for every DAQ input",
+    "in-situ isothermal cross-check: after a long soak with every heater and supply off, all channels on the same body agree within their calibration uncertainty (PROPOSED check)",
+    "pickup: energise coils, RF / microwave into dummy loads and HV supplies one at a time; record every temperature channel",
+    "C-1 (A3): the cathode-tube thermocouple is logged continuously on INS-18 under the label 'cathode_tube_temperature'; no channel is labelled 'emitter_temperature' unless a pyrometer is installed; without a pyrometer the emitter temperature is recorded as 'unmeasured' (no value inferred from the tube)",
+    "pyrometer (only if installed): calibrated against a thermocouple on a reference body over the emitter temperature range; emissivity treatment recorded from the HW-C1-09 (b) design record (INS-23)",
+    "coil winding: R0 and T0 of each coil isothermally before S1 (INS-24)"
+   ],
+   "repeats": {
+    "points": {
+     "value": 3,
+     "unit": "comparison temperatures per channel",
+     "evidence_class": "assumed",
+     "source": "this lane's proposal CD-P-TC-POINTS (not in the RFP; owner decides at the calibration-plan freeze S1-C5)",
+     "status": "PROPOSED",
+     "id": "CD-P-TC-POINTS"
+    }
+   },
+   "analysis": {
+    "type_a": "deviation from the reference at each point, repeated readings (type_a); isothermal spread",
+    "type_b": "reference thermometer certificate, comparison-medium uniformity, cold-junction uncertainty, pickup bound",
+    "coverage": "A3 k rule",
+    "labelling": "capability_analysis.record_item_errors enforces the A3 labels on every temperature record"
+   },
+   "acceptance": {
+    "rule": "demonstrated uncertainty per channel reported against the INS-17 / INS-23 / INS-24 requirement when it exists (TBD: T-SETTLE, life-mechanism resolution, coil hot-spot margin); A3 labelling is a hard pass/fail: a record that labels a thermocouple as emitter temperature, or gives an emitter value without a calibrated pyrometer, fails",
+    "targets": {
+     "INS-17": {
+      "value": "TBD",
+      "tbd_requires": "T-SETTLE from S1 thermal time constants (lane 25)"
+     },
+     "INS-23": {
+      "value": "TBD",
+      "tbd_requires": "oxidation / sputter-yield resolution and LaB6 bands (W3 HW-C1-03)",
+      "blocked_by": "fo_hardware_definition"
+     },
+     "INS-24": {
+      "value": "TBD",
+      "tbd_requires": "coil hot-spot margin to the magnet-wire insulation class (MCQ-QT-06)",
+      "blocked_by": "fo_magnet_coil_qualification + fo_hardware_definition"
+     }
+    }
+   },
+   "record": {
+    "category": "temperature",
+    "instrument_id": "INS-17+INS-23+INS-24",
+    "evidence_class": "measured",
+    "demonstrated_uncertainty": {
+     "value": "<number from the analysis>",
+     "unit": "<unit>",
+     "source": "<analysis script path + sha256 + raw-data path>",
+     "evidence_class": "measured",
+     "meaning": "per-channel calibration uncertainty (1 sigma) and pickup bound"
+    },
+    "extra_fields": [
+     "demonstration_id",
+     "calibration_date",
+     "raw_data {path, sha256}",
+     "analysis_script_sha256",
+     "calibration_plan_sha256",
+     "coverage {k, nu_eff, low_effective_dof}",
+     "type_a",
+     "type_b",
+     "verdict",
+     "traceability (certificate ids)",
+     "environment",
+     "operator (coded id)",
+     "channel labels",
+     "sensor_type",
+     "emissivity_treatment (pyrometer)",
+     "emitter_temperature_status"
+    ],
+    "scope": "cathode_c1 for the C-1 item"
+   },
+   "failure_meaning": [
+    "pickup under RF / microwave / coil operation: the affected channel is invalid source-on (for example the stand thermocouples feeding the INS-01 drift model) until fixed",
+    "no cathode-tube thermocouple installed: the A3 mandatory C-1 provision is missing; S1a cathode operation should not proceed (owner / S1a gate)",
+    "no defensible pyrometer view: not a failure - the emitter temperature is 'unmeasured' by rule"
+   ]
+  }
+ ],
+ "s1_contract": {
+  "condition": "S1-C4 instrumentation capability demonstrated",
+  "gate_file": "docs/experiments/s1_readiness/s1_readiness_conditions_v1.json",
+  "artifact_path": "docs/experiments/instrumentation/capability_demonstration_v1.json",
+  "raw_data_prefix": "docs/experiments/instrumentation/raw/",
+  "gate_rules_copied": [
+   {
+    "type": "equals",
+    "field": "status",
+    "value": "DEMONSTRATED"
+   },
+   {
+    "type": "equals",
+    "field": "evidence_basis",
+    "value": "calibration_measurement"
+   },
+   {
+    "type": "equals",
+    "field": "accepted_by",
+    "value": "owner"
+   },
+   {
+    "type": "iso_date",
+    "field": "accepted_utc"
+   },
+   {
+    "type": "sha256_ref",
+    "field": "calibration_plan",
+    "artifact_of": "S1-C5",
+    "what": "the frozen calibration plan the measurements executed"
+   },
+   {
+    "type": "covers",
+    "field": "instruments",
+    "key": "category",
+    "required": [
+     "thrust_stand",
+     "bus_power_metering",
+     "discharge_current",
+     "flow",
+     "pressure",
+     "temperature",
+     "magnetic_field_Bz",
+     "stability_oscillations",
+     "species_divergence"
+    ]
+   },
+   {
+    "type": "each_item",
+    "field": "instruments",
+    "rules": [
+     {
+      "type": "nonempty_string",
+      "field": "category"
+     },
+     {
+      "type": "equals",
+      "field": "evidence_class",
+      "value": "measured"
+     },
+     {
+      "type": "iso_date",
+      "field": "calibration_date"
+     },
+     {
+      "type": "sha256_ref",
+      "field": "raw_data",
+      "what": "raw calibration data file committed under the PROPOSED raw-data directory docs/experiments/instrumentation/raw/ (never the calibration plan, the capability record or any other document)",
+      "path_prefix": "docs/experiments/instrumentation/raw/"
+     },
+     {
+      "type": "quantity",
+      "field": "demonstrated_uncertainty"
+     },
+     {
+      "type": "equals",
+      "field": "demonstrated_uncertainty.evidence_class",
+      "value": "measured",
+      "what": "the demonstrated uncertainty itself comes from the calibration measurements, not from a design analysis, model or assumption"
+     }
+    ]
+   }
+  ],
+  "required_categories": [
+   "thrust_stand",
+   "bus_power_metering",
+   "discharge_current",
+   "flow",
+   "pressure",
+   "temperature",
+   "magnetic_field_Bz",
+   "stability_oscillations",
+   "species_divergence"
+  ],
+  "coverage_by_this_preparation": {
+   "thrust_stand": [
+    "CD-01",
+    "CD-02"
+   ],
+   "bus_power_metering": [
+    "CD-02",
+    "CD-03"
+   ],
+   "discharge_current": [
+    "CD-03"
+   ],
+   "flow": [
+    "CD-04"
+   ],
+   "pressure": [],
+   "temperature": [
+    "CD-07"
+   ],
+   "magnetic_field_Bz": [
+    "CD-05"
+   ],
+   "stability_oscillations": [
+    "CD-06"
+   ],
+   "species_divergence": []
+  },
+  "uncovered_categories": {
+   "pressure": "INS-06 feed pressure and INS-08 background gauges (capacitance manometer zero/span, gauge calibration on each gas and mixture) - not in this lane's owner list (A3 W4_capability_demonstration_prep); W4 must add it before S1-C4 can be satisfied",
+   "species_divergence": "INS-13 ExB probe and INS-15 Faraday probes - not in this lane's owner list; W4 must add it or the owner reduces the S1-C4 category set (README open item 3, lane 25 s1_plan names M1, M2, M3, M9, M10, M11 only)"
+  },
+  "partial_categories": {
+   "stability_oscillations": "CD-06 demonstrates the time base only; oscillation detection needs the S1 I_d spectrum"
+  },
+  "produced_by": "W4 after the measurements: one item per demonstrated instrument, raw data committed under the raw prefix, analysis by capability_analysis.py at a pinned sha256, the calibration plan frozen by the owner (S1-C5), accepted by the owner",
+  "this_lane_writes": "neither the artifact nor raw data; only the procedures, the analysis and the record schema (capability_record_item_v1.schema.json)",
+  "calibration_plan_link": "the procedures here are candidate entries for the owner-frozen S1-C5 plan (docs/experiments/instrumentation/calibration_plan_frozen.json: procedures[] with category, procedure, traceability, acceptance_rule); see calibration_plan_candidates"
+ },
+ "calibration_plan_candidates": [
+  {
+   "category": "thrust_stand",
+   "demonstration_id": "CD-01",
+   "procedure": "pump down; thermal settling with stand cooling on (settling time TBD - requires S1 thermal time constants); zero with power and flow off; record inclination and stand temperatures; apply the calibration forces at CD-P-FORCE-LEVELS levels spanning zero to the top of the range (range TBD: from the knee-scan extinction end to >= 25 mN capability, INS-01) in ascending then descending order; repeat the sequence CD-P-FORCE-SEQ times within the same mount; zero before and after each; magnetic tare: Hall coil and ECR coil currents at the operating settings (TBD - W3/LOCK-1) with the discharge off, forces re-applied; cable / feed-line tare per configuration (INS-01 tares); mass-change behaviour: install HW-0, HW-RF (modules or dummies), HW-0, HW-ECR, HW-0 and repeat the alternation CD-P-CONFIG-CYCLES times, a full calibration in every configuration; archive every raw reading (stand output, applied force id, temperatures, inclination, timestamps)",
+   "traceability": "the delivered thrust stand with its in-situ calibration system (known forces applied under vacuum; REF-POLK2017 as cited by INS-01); force-standard traceability class TBD - requires owner (INS-01 open)",
+   "acceptance_rule": "repeatability_verdict(s_rel, nu, lane-25 u_T_max by n, CD-P-CONF): MEETS_N4/N6/N8 or EXCEEDS_ALL_TARGETS. This is the no-plasma component only; the firing-condition u_T is S1b (lane 25), so MEETS is necessary, not sufficient",
+   "status": "PROPOSED"
+  },
+  {
+   "category": "thrust_stand",
+   "demonstration_id": "CD-02",
+   "procedure": "cycle k = 1..K: vent; remove and re-install the HW-0 feed spacer and the thruster mount exactly as a configuration change does (lane 25 S1b cycle definition); disconnect and re-connect the power leads at their break points; pump down; settle; per cycle: in-situ force calibration (CD-01 levels) r times; power-channel gain check against the reference source r times; K and r are lane 25's T-S1-REMOUNT-CYCLES and T-S1-READINGS-PER-CYCLE (PROPOSED there) so that CD-02a and S1b share one definition",
+   "traceability": "a stable DC reference source for a gain check of each re-connected power channel (class TBD - requires owner, INS-02)",
+   "acceptance_rule": "repeatability_verdict(no-plasma installation term, K - 1, lane-25 u_inst_max by n, CD-P-CONF). Necessary, not sufficient: the Hall-on S1b series adds thermal and plasma re-seating effects",
+   "status": "PROPOSED"
+  },
+  {
+   "category": "bus_power_metering",
+   "demonstration_id": "CD-02",
+   "procedure": "cycle k = 1..K: vent; remove and re-install the HW-0 feed spacer and the thruster mount exactly as a configuration change does (lane 25 S1b cycle definition); disconnect and re-connect the power leads at their break points; pump down; settle; per cycle: in-situ force calibration (CD-01 levels) r times; power-channel gain check against the reference source r times; K and r are lane 25's T-S1-REMOUNT-CYCLES and T-S1-READINGS-PER-CYCLE (PROPOSED there) so that CD-02a and S1b share one definition",
+   "traceability": "a stable DC reference source for a gain check of each re-connected power channel (class TBD - requires owner, INS-02)",
+   "acceptance_rule": "repeatability_verdict(no-plasma installation term, K - 1, lane-25 u_inst_max by n, CD-P-CONF). Necessary, not sufficient: the Hall-on S1b series adds thermal and plasma re-seating effects",
+   "status": "PROPOSED"
+  },
+  {
+   "category": "bus_power_metering",
+   "demonstration_id": "CD-03",
+   "procedure": "per MEASURED channel: apply CD-P-PWR-POINTS reference levels spanning the channel range (range TBD - requires the LOCK-1 allocation), CD-P-PWR-REPEATS simultaneous V/I readings each, ascending and descending; repeat at two shunt / transducer temperatures within the S1 thermal range (range TBD - S1) to characterise the temperature coefficient (INS-02 calibration); DUMMY_LOAD_PICKUP: RF and microwave generators into matched dummy loads at each planned power level with the Hall off; record every DC channel (pickup bound); INS-03: coupler/sensor certificates; load-plane loss characterisation into matched dummy loads at each P_lo / P_hi and frequency (method TBD - requires the RF / microwave design, W3); INS-04: probe gain and offset against the calibrated hall_discharge DC current channel at several DC levels; noise floor with the discharge supply connected and off",
+   "traceability": "traceable DC voltage / current calibrator or reference meter with reference shunt (class TBD - requires owner, INS-02 open decision 'traceable calibration class'); directional couplers and power sensors with certificates (INS-03)",
+   "acceptance_rule": "per MEASURED channel: repeatability_verdict(relative s, nu, lane-25 u_P_max by n, CD-P-CONF); I_d floor: offset + noise (1 sigma) <= I-U-ID-FLOOR x I_d,ref (I_d,ref TBD - LOCK-1); source chain: u_src <= u_src_max(f_src) at the pre-registered f_src; pickup: reported, and a channel whose pickup exceeds its own u_P_max share is not usable source-on until fixed",
+   "status": "PROPOSED"
+  },
+  {
+   "category": "discharge_current",
+   "demonstration_id": "CD-03",
+   "procedure": "per MEASURED channel: apply CD-P-PWR-POINTS reference levels spanning the channel range (range TBD - requires the LOCK-1 allocation), CD-P-PWR-REPEATS simultaneous V/I readings each, ascending and descending; repeat at two shunt / transducer temperatures within the S1 thermal range (range TBD - S1) to characterise the temperature coefficient (INS-02 calibration); DUMMY_LOAD_PICKUP: RF and microwave generators into matched dummy loads at each planned power level with the Hall off; record every DC channel (pickup bound); INS-03: coupler/sensor certificates; load-plane loss characterisation into matched dummy loads at each P_lo / P_hi and frequency (method TBD - requires the RF / microwave design, W3); INS-04: probe gain and offset against the calibrated hall_discharge DC current channel at several DC levels; noise floor with the discharge supply connected and off",
+   "traceability": "traceable DC voltage / current calibrator or reference meter with reference shunt (class TBD - requires owner, INS-02 open decision 'traceable calibration class'); directional couplers and power sensors with certificates (INS-03)",
+   "acceptance_rule": "per MEASURED channel: repeatability_verdict(relative s, nu, lane-25 u_P_max by n, CD-P-CONF); I_d floor: offset + noise (1 sigma) <= I-U-ID-FLOOR x I_d,ref (I_d,ref TBD - LOCK-1); source chain: u_src <= u_src_max(f_src) at the pre-registered f_src; pickup: reported, and a channel whose pickup exceeds its own u_P_max share is not usable source-on until fixed",
+   "status": "PROPOSED"
+  },
+  {
+   "category": "flow",
+   "demonstration_id": "CD-04",
+   "procedure": "calibrate every MFC on its own working gas, installed in the final orientation, at the expected inlet pressure and temperature (REF-SNYDER2017 as cited by INS-05); points per range: 10, 20, 50 and 100 % of FS (the points of the instrumentation MFC table) plus every registered W1 flow in that range (TBD - W1/LOCK-1); CD-P-MFC-REPEATS readings each, ascending and descending; gas correction: no gas correction factor is used where the MFC is calibrated on its own gas; where one is unavoidable (e.g. a range only available on N2 used for O2) measure the actual ratio against the primary calibrator on the working gas and adjust it to the sensor operating temperature (REF-SNYDER2017 as cited by INS-05); record the factor with its uncertainty; zero drift: valve closed, zero flow, MFC at operating temperature; log the output over the planned dwell (hold time TBD - requires owner, INS-01 note) and repeat after a power cycle; air-surrogate check: set an N2/O2 pair and verify the composition by the two primary-calibrated flows (instrumentation derived.mixture_mass_fraction_u)",
+   "traceability": "a primary flow calibrator: constant-volume (rate-of-rise) or constant-pressure (REF-SNYDER2017 as cited by INS-05), traceable, able to reach the lower end of the smallest range (capability TBD - requires the calibrator choice)",
+   "acceptance_rule": "for R_arch: repeatability at every registered point reported (target TBD - requires the W1 tolerance and the knee-scan resolution, INS-05); for the absolute gate: the expanded relative uncertainty at each registered point sets the I-FLOW-CONSERVATIVE margin (the delivered flow may not exceed the registered flow at one-sided alpha); every registered point must sit at or above CD-P-MFC-MINFRAC of its MFC FS; zero drift over the dwell reported against the smallest registered flow of that range",
+   "status": "PROPOSED"
+  },
+  {
+   "category": "magnetic_field_Bz",
+   "demonstration_id": "CD-05",
+   "procedure": "probe offset in the zero-field chamber and gain in the reference field before and after each session; approach protocol (PROPOSED, to be frozen): bring every coil from zero to the operating current monotonically after a defined cycling sequence; the same protocol in every configuration; per configuration (HW-0, HW-RF, HW-ECR with the ECR magnet on and off): CD-P-BZ-MAPS complete centreline (and exit-region radial) maps with the probe removed and re-seated between maps; hysteresis: CD-P-BZ-CYCLES current cycles, B at the peak-field location recorded ascending and descending; every map carries coil currents, coil average and hot-spot temperatures and magnet temperatures (MCQ-W4-03), position-scale readings and timestamps",
+   "traceability": "Hall-probe gaussmeter with a calibration certificate; a reference field for in-situ checks (reference magnet or calibrated coil; class TBD) and a zero-field chamber for the offset",
+   "acceptance_rule": "reported against the W5 pre-registered B(z) comparison tolerance when it exists (TBD); until then no pass/fail is claimed, only the demonstrated repeatability; hysteresis offset larger than the map repeatability makes the approach protocol mandatory in every configuration",
+   "status": "PROPOSED"
+  },
+  {
+   "category": "stability_oscillations",
+   "demonstration_id": "CD-06",
+   "procedure": "inject CD-P-DAQ-EDGES common edges over at least the longest planned dwell (TBD - owner hold time); slow channels (temperature, flow, pressure) receive a step through a test input where the sensor cannot see the edge; record every channel; subtract the measured cable delays; swept sine through the V, I and I_d(t) chains up to the band edge (TBD - S1 spectrum): gain and phase; verify that V and I of each power channel are sampled simultaneously (same edge within the skew budget)",
+   "traceability": "a reference pulse / step generator fanned out to every channel type with cable delays measured",
+   "acceptance_rule": "worst skew and offset drift reported; pass/fail against the skew allowance derived from the S1 oscillation band (INS-18 TBD) - until then no pass/fail is claimed. Hard rule: V and I of one power channel must be simultaneous (mean of the product, not product of the means, when I_d oscillates)",
+   "status": "PROPOSED"
+  },
+  {
+   "category": "temperature",
+   "demonstration_id": "CD-07",
+   "procedure": "calibrate each thermocouple type/lot by comparison at CD-P-TC-POINTS temperatures spanning its range (ranges TBD - W3 positions and life-mechanism limits); unused thermocouples only (ASTM E220 scope); cold-junction check at the reference point for every DAQ input; in-situ isothermal cross-check: after a long soak with every heater and supply off, all channels on the same body agree within their calibration uncertainty (PROPOSED check); pickup: energise coils, RF / microwave into dummy loads and HV supplies one at a time; record every temperature channel; C-1 (A3): the cathode-tube thermocouple is logged continuously on INS-18 under the label 'cathode_tube_temperature'; no channel is labelled 'emitter_temperature' unless a pyrometer is installed; without a pyrometer the emitter temperature is recorded as 'unmeasured' (no value inferred from the tube); pyrometer (only if installed): calibrated against a thermocouple on a reference body over the emitter temperature range; emissivity treatment recorded from the HW-C1-09 (b) design record (INS-23); coil winding: R0 and T0 of each coil isothermally before S1 (INS-24)",
+   "traceability": "reference thermometer and comparison medium (bath / dry block / furnace per range) for calibration by comparison (ASTM E220, metadata only - verify; it applies to unused thermocouples); cold-junction reference (ice point or calibrated reference junction)",
+   "acceptance_rule": "demonstrated uncertainty per channel reported against the INS-17 / INS-23 / INS-24 requirement when it exists (TBD: T-SETTLE, life-mechanism resolution, coil hot-spot margin); A3 labelling is a hard pass/fail: a record that labels a thermocouple as emitter temperature, or gives an emitter value without a calibrated pyrometer, fails",
+   "status": "PROPOSED"
+  }
+ ],
+ "s1a_path": {
+  "gate": "fo_s1a_engineering_gate (separate lane; A3 S1a_engineering_gate): 'can we safely and usefully begin non-score-bearing engineering qualification?'",
+  "what_this_gives_it": "frozen-candidate calibration procedures (CD-01..CD-07) and a record format; S1a may run these demonstrations as non-score-bearing engineering qualification",
+  "leak_rule": "no held-out H-1 physics output may leak into W5 (A3): CD records contain calibration data only; B(z) maps (CD-05) are condition records and, if W5 pre-registers VO-BZ, are handled under W5's blinding / custody rules (S1-C6), never used to tune a Hall closure"
+ },
+ "references": [
+  {
+   "id": "REF-POLK2017",
+   "citation": "J. E. Polk et al., 'Recommended Practice for Thrust Measurement in Electric Propulsion Testing', J. Propulsion and Power 33(3):539-555 (2017)",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7839308/",
+   "access": "as accessed and cited by W4 (docs/experiments/instrumentation/instrumentation_definition_v1.json references); not re-accessed by this lane"
+  },
+  {
+   "id": "REF-SNYDER2017",
+   "citation": "J. S. Snyder et al., 'Recommended Practice for Flow Control and Measurement in Electric Propulsion Testing', J. Propulsion and Power 33(3) (2017)",
+   "url": "https://hpepl.ae.gatech.edu/sites/default/files/Journal_Articles/JPP%20V33%20No3%20MayJune2017_MassFlowMeasurement.pdf",
+   "access": "as accessed and cited by W4 (1-5 % FS typical, 1 % FS, 0.4 % FS orientation zero shift, own-gas calibration, GCF at sensor temperature); not re-accessed by this lane"
+  },
+  {
+   "id": "REF-CHOUEIRI2001",
+   "citation": "E. Y. Choueiri, 'Plasma oscillations in Hall thrusters', Phys. Plasmas 8(4):1411-1426 (2001)",
+   "url": null,
+   "access": "abstract only, as cited by W4; not re-accessed"
+  },
+  {
+   "id": "REF-GUM2008",
+   "citation": "JCGM 100:2008, 'Evaluation of measurement data - Guide to the expression of uncertainty in measurement'",
+   "url": "https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf",
+   "access": "full text read 2026-09-27 (PDF text extraction): 4.2 (Type A), 6.3.1 ('In general, k will be in the range 2 to 3'), G.4.1 (Welch-Satterthwaite, Eq. G.2b)"
+  },
+  {
+   "id": "REF-OIML-R111-1",
+   "citation": "OIML R 111-1:2004 (E), 'Weights of classes E1, E2, F1, F2, M1, M1-2, M2, M2-3 and M3 - Part 1: Metrological and technical requirements'",
+   "url": "https://www.oiml.org/en/files/pdf_r/r111-1-e04.pdf",
+   "access": "full text read 2026-09-27 (PDF text extraction): 5.2 (U for k = 2 of the conventional mass <= 1/3 of the MPE, Eq. 5.2-1), Table 1 (MPE, +/- delta_m in mg), C.6.5.1 (k = 2 usually; t-distribution at 95.5 % with Welch-Satterthwaite nu_eff when fewer than 10 measurements and the weighing term dominates). An 'Amendment 2025' to R 111-1:2004 exists (https://www.oiml.org/en/files/pdf_r/r111-1-e04_amend25.pdf) and was NOT read: verify whether it changes the values quoted here"
+  },
+  {
+   "id": "REF-ISO17025",
+   "citation": "ISO/IEC 17025:2017, 'General requirements for the competence of testing and calibration laboratories'",
+   "url": "https://www.iso.org/standard/66912.html",
+   "access": "metadata only (search result 2026-09-27; the iso.org page returned HTTP 403 to the fetch tool and was not bypassed): title, third edition 2017; content not read (verify)"
+  },
+  {
+   "id": "REF-NABL",
+   "citation": "National Accreditation Board for Testing and Calibration Laboratories (NABL), India",
+   "url": "https://nabl-india.org/",
+   "access": "home page read 2026-09-27: accredits testing and calibration laboratories against ISO/IEC 17025; maintains an accredited-laboratory search with scopes. No laboratory was searched or contacted"
+  },
+  {
+   "id": "REF-ISO25178-700",
+   "citation": "ISO 25178-700:2022, 'Geometrical product specifications (GPS) - Surface texture: Areal - Part 700: Calibration, adjustment and verification of areal topography measuring instruments'",
+   "url": "https://www.iso.org/standard/78204.html",
+   "access": "metadata / scope summary only (search result 2026-09-27): generic procedures for the metrological characteristics of ISO 25178-600 (noise, flatness deviation, amplification, linearity deviation, x-y mapping deviations); methods adaptable to profiling instruments; content not read (verify)"
+  },
+  {
+   "id": "REF-ASTM-E1508",
+   "citation": "ASTM E1508-12a(2019), 'Standard Guide for Quantitative Analysis by Energy-Dispersive Spectroscopy'",
+   "url": "https://store.astm.org/e1508-12ar19.html",
+   "access": "metadata / scope summary only (search result 2026-09-27): EDS quantification on SEM/EPMA with and without standards; routine quantification for elements >= Na at >= tenths of a weight percent; not TEM; content not read (verify). Note: that applicability statement means light elements (N, O, B, C) are outside its routine range - relevant to BN and oxide layers"
+  },
+  {
+   "id": "REF-ISO15472",
+   "citation": "ISO 15472:2010, 'Surface chemical analysis - X-ray photoelectron spectrometers - Calibration of energy scales'",
+   "url": "https://www.iso.org/standard/55796.html",
+   "access": "scope clause read 2026-09-27 from the publisher's preview (https://cdn.standards.iteh.ai/samples/55796/72dc0295fe1447ec93e6a6c190572c1b/ISO-15472-2010.pdf): Al/Mg (unmonochromated) or monochromated Al X-rays; instruments with an ion gun for sputter cleaning; Cu 2p3/2 and Au 4f7/2 reference peaks, linearity at one intermediate energy; expanded uncertainty of the scale calibration at 95 % confidence; not applicable below +/-0.03 eV tolerance or resolution worse than 1.5 eV"
+  },
+  {
+   "id": "REF-ASTM-E220",
+   "citation": "ASTM E220, 'Standard Test Method for Calibration of Thermocouples by Comparison Techniques' (E220-19; E220-25 listed)",
+   "url": "https://store.astm.org/e0220-19.html",
+   "access": "metadata / scope summary only (search result 2026-09-27): comparison with a reference thermometer, about -195 C to 1700 C; applicable to unused thermocouples, not to used ones (inhomogeneity); content not read (verify the edition)"
+  },
+  {
+   "id": "REF-IEEE1588",
+   "citation": "IEEE Std 1588-2019, 'IEEE Standard for a Precision Clock Synchronization Protocol for Networked Measurement and Control Systems'",
+   "url": "https://standards.ieee.org/standard/1588-2019.html",
+   "access": "metadata only (search result 2026-09-27); content not read (verify). Named only as one generic option for a distributed time base"
+  }
+ ],
+ "tbd_register": [
+  {
+   "what": "force-standard, DC-standard and RF/microwave-standard traceability classes",
+   "requires": "owner (INS-01 / INS-02 open decision)"
+  },
+  {
+   "what": "thrust range, module masses on the stand, coil operating currents",
+   "requires": "W3 / LOCK-1"
+  },
+  {
+   "what": "registered flows per MFC range, knee-scan resolution, T_feed / P_feed tolerances",
+   "requires": "W1 feed-state closure / LOCK-1"
+  },
+  {
+   "what": "dwell (hold time) for sustained >= 12 mN and zero-drift allowance",
+   "requires": "owner"
+  },
+  {
+   "what": "B(z) tolerance",
+   "requires": "W5 pre-registration"
+  },
+  {
+   "what": "skew allowance and I_d band",
+   "requires": "S1 I_d spectrum"
+  },
+  {
+   "what": "temperature requirements (T-SETTLE, life resolution, coil margin)",
+   "requires": "S1, W3, magnet/coil lane"
+  },
+  {
+   "what": "pressure and species/divergence demonstrations",
+   "requires": "W4 scope extension or owner reduction of S1-C4 categories"
+  }
+ ],
+ "open_owner_decisions": [
+  "approve, change or reject CD-P-* planning thresholds",
+  "freeze the calibration plan (S1-C5) from the calibration_plan_candidates",
+  "S1-C4 category set: add pressure and species/divergence demonstrations, or reduce the set",
+  "B(z) approach protocol and the isothermal thermocouple cross-check (both PROPOSED)",
+  "approve the metrology specification before procurement"
+ ]
+}
