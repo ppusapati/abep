@@ -16,8 +16,10 @@ lane and makes NO performance prediction: no Hall transport closure (none is adm
 0-D Hall model (abep_sim/plasma_devices.py, superseded) and no withdrawn v1.2-v1.6 number enters any value. Channel
 sizing uses requirements, A5 allocations, published xenon-derived scaling relations (hypotheses for N2/O/O2, labelled)
 and published analog hardware (labelled analog, never a Vyovrinda design value). The coil calculation uses the pure
-magnetostatic module abep_sim/magnet_power.py (lumped reluctance + integer-turn coil, NBS copper R(T); it is NOT the
-superseded 0-D Hall physics: it contains no plasma model). Every assumed number is an explicit input below with its
+magnetostatic module abep_sim/magnet_power.py (lumped reluctance + integer-turn coil, NBS copper R(T); the preferred
+Kulgrid conductor is evaluated with a ConductorMaterial built here from the two sourced MCQ-EM-03 resistance points; it
+is NOT the superseded 0-D Hall physics: it contains no plasma model). Sourced constants (C_P*, j_d, n_crit, A5
+allocations, the delivered-flow bound, Kulgrid resistances) are read from the pinned repository files, never retyped. Every assumed number is an explicit input below with its
 evidence class; missing inputs raise (no silent fallback). Thresholds not in the RFP are PROPOSED for the owner.
 
 Nothing here reads a sibling worktree: parallel-lane values are carried as 'PENDING <lane path>' with the range that
@@ -28,6 +30,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -231,8 +234,29 @@ ASSUMED = {
     "coil_temperatures_C": {
         "value": [20.0, 200.0], "unit": "degC", "basis": "assumed", "evidence_class": "assumed",
         "status": "PRELIMINARY",
-        "why": "cold and the upper end of the NBS copper linear R(T) domain [0, 200] C (magnet_power "
-               "ANNEALED_COPPER_IACS); a hotter coil is outside the model and its I^2R is TBD (MCQ-TL-04)"},
+        "why": "annealed-copper (polyimide MW 16-C option) evaluation points: cold and the upper end of the NBS "
+               "copper linear R(T) domain [0, 200] C (magnet_power ANNEALED_COPPER_IACS). The 20 C copper "
+               "resistance is also used as the LOWER bound of the coil resistance of either conductor (supply "
+               "minimum-voltage check); a coil started colder than 20 C has a lower voltage still"},
+    "kulgrid_temperatures_C": {
+        "value": [260.0, 537.7778], "unit": "degC", "basis": "requirement", "evidence_class": "assumed",
+        "status": "PRELIMINARY",
+        "why": "preferred ceramic-insulated Kulgrid (27 % Ni-clad Cu) conductor MCQ-EM-03: evaluation points = the "
+               "two sourced resistance points 500 F and 1000 F (magnet_coil_qualification_v1.json MCQ-EM-03 "
+               "resistance_500F / resistance_1000F); 1000 F is also the continuous rating (continuous_T_range_F). "
+               "Linear inside [500, 1000] F only (MCQ-TL-04: no extrapolation), so the Kulgrid I^2R below 260 C is "
+               "not evaluated. The coil temperature itself is PENDING docs/hardware/h2/h2_5_thermal_network/; the "
+               "class upper end is used as the conservative hot bound"},
+    "inner_core_wall_mm_min": {
+        "value": 2.0, "unit": "mm", "basis": "assumed", "evidence_class": "assumed", "status": "PROPOSED",
+        "why": "minimum radial wall of the Hiperco 50 inner-core tube around a central-cathode bore (mechanical; "
+               "flux sizing alone gives sub-millimetre walls); the outer core uses outer_core_mm_min"},
+    "cathode_heat_shield_radial_mm": {
+        "value": 2.0, "unit": "mm", "basis": "pending", "evidence_class": "assumed",
+        "status": "PENDING docs/hardware/h2/h2_2_cathode_integration/",
+        "why": "radial allowance between the C-1 bore (cathode OD + 1 mm gap) and the inner-core tube for a "
+               "radiation shield / insulating sleeve limiting cathode heat into the Hiperco core and inner coil; "
+               "the real allowance depends on the C-1 heat load (H2-2) and the thermal network (H2-5)"},
     "rp1_geometry": {
         "value": {"d_mean_mm": 70.0, "h_mm": 12.0, "L_over_h": 8.6}, "unit": "mm / -", "basis": "assumed",
         "evidence_class": "assumed", "status": "PROPOSED",
@@ -352,6 +376,14 @@ def a(key):
     return need(ASSUMED, key, "value")
 
 
+def parse_range(text, unit):
+    """'15-22 mN' / '<= 1.30-1.35 kW' -> [lo, hi]; anything else raises (the decision is re-read, not guessed)."""
+    m = re.fullmatch(r"(?:<=\s*)?([0-9.,]+)\s*-\s*([0-9.,]+)\s*" + re.escape(unit), text.strip())
+    if m is None:
+        raise RuntimeError(f"cannot parse {text!r} as a '{unit}' range; re-read the decision")
+    return [float(m.group(1).replace(",", "")), float(m.group(2).replace(",", ""))]
+
+
 def check_decision_pins():
     out = {}
     for k, (rel, pin) in DECISIONS.items():
@@ -376,8 +408,29 @@ def read_inputs():
     vd_hi = need(reqs, "HW-ENV-01", "values", "V_d_rating_upper_V", "value")
 
     alloc = {x["quantity"]: x["value"] for x in need(a5, "allocations_and_requirements")}
-    if alloc.get("thrust operating target") != "15-22 mN" or alloc.get("bus-power design allocation") != "<= 1.30-1.35 kW":
-        raise RuntimeError("A5 allocation strings not as expected; re-read the decision")
+    thrust_alloc = parse_range(need(alloc, "thrust operating target"), "mN")
+    thrust_rfp = parse_range(need(alloc, "absolute RFP thrust envelope"), "mN")
+    P_alloc = [1e3 * x for x in parse_range(need(alloc, "bus-power design allocation"), "kW")]
+    m32 = re.search(r"<=\s*~?\s*([0-9.]+)\s*mg/s", need(a5, "phase1_branch_decision", "test_matrix"))
+    if m32 is None:
+        raise RuntimeError("A5 phase1_branch_decision.test_matrix: delivered-flow bound '<= ~x mg/s' not found")
+    if thrust_rfp != [C.RFP.thrust_min_mN, C.RFP.thrust_max_mN]:
+        raise RuntimeError("A5 RFP thrust envelope differs from abep_sim/constants.py RFP; re-read the decision")
+
+    href = load(REPO_INPUTS["HALLREF"])
+    rel = {r["id"]: r for r in need(href, "geometry_interface", "sizing_relations")}
+    n_crit = need(rel, "EV-G5", "stated_values", "critical_atom_density_xenon", "value")
+    C_P = need(rel, "EV-G6", "stated_values", "C_P_empirical_xenon", "value")
+    j_cm2 = need(rel, "EV-G7", "stated_values", "discharge_current_density_xenon", "value")
+    if need(rel, "EV-G7", "stated_values", "discharge_current_density_xenon", "unit") != "A cm^-2":
+        raise RuntimeError("EV-G7 current-density unit changed; re-read hall_reference_v1.json")
+
+    mcq = load(REPO_INPUTS["MCQ"])
+    em03 = {c["id"]: c for c in need(mcq, "candidates")}
+    kg = need(em03, "MCQ-EM-03", "values")
+    for k in ("resistance_500F", "resistance_1000F"):
+        if need(kg, k, "unit") != "ohm/circ-mil-ft":
+            raise RuntimeError(f"MCQ-EM-03 {k} unit changed; re-read magnet_coil_qualification_v1.json")
 
     # delivered flow: nominal valve-outlet states of every closed candidate x case, plus the MFC upper bound
     vo = need(feed, "valve_outlet")
@@ -409,13 +462,15 @@ def read_inputs():
         else None
     return {
         "V_d_set_V": vd_set, "V_d_rating_upper_V": vd_hi,
-        "thrust_rfp_mN": [C.RFP.thrust_min_mN, C.RFP.thrust_max_mN], "thrust_alloc_mN": [15.0, 22.0],
-        "P_rfp_W": C.RFP.power_max_W, "P_alloc_W": [1300.0, 1350.0],
+        "thrust_rfp_mN": thrust_rfp, "thrust_alloc_mN": thrust_alloc,
+        "P_rfp_W": C.RFP.power_max_W, "P_alloc_W": P_alloc,
         "mdot_nominal_kgps": [min(noms), max(noms)], "mdot_design_case_kgps": [min(design_case), max(design_case)],
-        "mdot_mfc_max_kgps": mfc_max, "mdot_A5_quote_kgps": 3.2e-6,
+        "mdot_mfc_max_kgps": mfc_max, "mdot_A5_quote_kgps": float(m32.group(1)) * 1e-6,
         "molar_mass_flight_gmol": [min(mmol), max(mmol)], "w_O_element": [min(w_oel), max(w_oel)],
         "n_n_ECHT_m3": need(ech, "n_n"), "lambda_ratio_N2_Xe": [min(lam), max(lam)],
-        "n_crit_Xe_m3": 1.2e19, "C_P_star_W_m2": 1.2e6, "j_d_A_m2": [1000.0, 1500.0],
+        "n_crit_Xe_m3": n_crit, "C_P_star_W_m2": C_P, "j_d_A_m2": [1e4 * j_cm2[0], 1e4 * j_cm2[1]],
+        "kulgrid_ohm_cmil_ft": {"500F": need(kg, "resistance_500F", "value"),
+                                "1000F": need(kg, "resistance_1000F", "value")},
         "_scaling_inputs_present": bool(rel_inputs),
         "_hm": hm is not None,
     }
@@ -547,6 +602,23 @@ def channel_window(I):
                                            "lambda_ratio_range": lam, "conventional_L_over_h": lh_conv},
         },
         "L_over_h_window": LH_win, "L_mm": L_rng, "residence_time_s": tau,
+        "thrust_bound": {
+            "thrust_rfp_mN": I["thrust_rfp_mN"], "thrust_alloc_mN": I["thrust_alloc_mN"],
+            "applied_as_area_bound": False,
+            "why_not": "every thrust-to-area relation in the repository evidence needs a thrust density or a "
+                       "thrust-per-power of the propellant: EV-G7 (GK2008 pp. 336-337) scales thrust with R^2 from a "
+                       "xenon reference device, EV-G8 (GK2008 Table 9-8) gives SPT-50 xenon thrust at a few hundred "
+                       "watts. For N2/O/O2 that quantity is a performance prediction, and no Hall closure is admitted "
+                       "(credible set empty); EV-G8's own transfer note says air species give less thrust per jet "
+                       "power and published light-propellant efficiencies are lower. Applying a xenon thrust density "
+                       "would therefore predict air performance, which this lane must not do. EV-G8 also gives no "
+                       "channel width, so even the xenon analog area cannot be formed",
+            "how_thrust_enters": "indirectly and qualitatively only: the power window is the A5 bus allocation "
+                                 "(<= 1.30-1.35 kW) that A5 sized for the 15-22 mN target; whether H-1 reaches the "
+                                 "thrust target inside this window is exactly the Phase-1 / Phase-3 measurement "
+                                 "(T_measured gate), not a sizing input",
+            "narrows_or_conflicts": "neither (not applied)",
+        },
     }
 
 
@@ -559,7 +631,9 @@ def b_target(ch, I):
     Te = a("T_e_criterion_eV")
     h_lo, h_hi = ch["h_mm"][0] * 1e-3, ch["h_mm"][1] * 1e-3
     tab = {str(int(t)): {"h_min_G": B_rLe(h_lo, t, f) * 1e4, "h_max_G": B_rLe(h_hi, t, f) * 1e4} for t in Te}
-    target = [B_rLe(h_hi, 20.0, f) * 1e4, B_rLe(h_lo, 30.0, f) * 1e4]
+    # full declared criterion bracket: lower end = lowest T_e at the widest channel, upper = highest T_e at the
+    # narrowest channel (the envelope is not narrowed to the 20 eV source value without a sourced reason)
+    target = [B_rLe(h_hi, min(Te), f) * 1e4, B_rLe(h_lo, max(Te), f) * 1e4]
     cap = a("B_headroom_factor") * target[1]
     # MaSMi reproduction check (p. 5: 213 G for h = 8 mm, T_e = 20 eV)
     masmi = B_rLe(8e-3, 20.0, f) * 1e4
@@ -576,8 +650,41 @@ def b_target(ch, I):
 
 
 # ------------------------------------------------------------------------------------------------ coil design
-def coil_case(name, d_mm, h_mm, L_mm, B_cap_G, bore_d_mm, t_w_mm, w_p_mm, k_leak, f_NI):
-    """Lumped magnetic circuit + integer-turn coils for one geometry (every argument explicit)."""
+# 1 ohm circular-mil per foot in ohm m: circular mil = (pi/4) (0.001 in)^2, foot = 0.3048 m (exact definitions)
+OHM_CMIL_PER_FT_IN_OHM_M = (math.pi / 4.0) * (0.001 * 0.0254) ** 2 / 0.3048
+
+
+def f_to_c(T_F):
+    return (T_F - 32.0) * 5.0 / 9.0
+
+
+def kulgrid_material(I):
+    """Two-point linear R(T) of the preferred Kulgrid conductor inside its sourced [500, 1000] F span (MCQ-TL-04).
+
+    The source quotes resistivity per circular-mil-foot; thermal expansion of the wire is not included (the module's
+    alpha convention is wire resistance) - a small effect relative to the 1.57x rise between the two points. The
+    density entry is the IACS copper value and is used for NOTHING reported (Kulgrid density not in the accessed
+    source; the reported conductor mass is the annealed-copper one)."""
+    r5, r10 = I["kulgrid_ohm_cmil_ft"]["500F"], I["kulgrid_ohm_cmil_ft"]["1000F"]
+    T5, T10 = f_to_c(500.0), f_to_c(1000.0)
+    return MP.ConductorMaterial(
+        name="Kulgrid 28 (27 % Ni-clad Cu), two-point linear model 500-1000 F",
+        rho_ref_ohm_m=r5 * OHM_CMIL_PER_FT_IN_OHM_M, T_ref_C=T5, alpha_ref_per_K=(r10 / r5 - 1.0) / (T10 - T5),
+        T_min_C=T5, T_max_C=T10, density_kg_m3=MP.ANNEALED_COPPER_IACS.density_kg_m3,
+        source="magnet_coil_qualification_v1.json MCQ-EM-03 resistance_500F / resistance_1000F (ceramawire_ht p. 2)")
+
+
+def window_violation(o, win):
+    """0 inside the analog supply window; otherwise the largest log-ratio excursion of I or V (both ends)."""
+    lo_I, hi_I = win["I_A"]
+    lo_V, hi_V = win["V_V"]
+    return max(0.0, math.log(lo_I / o["I_A"]), math.log(o["I_A"] / hi_I), math.log(lo_V / o["V_min_V"]),
+               math.log(o["V_max_V"] / hi_V))
+
+
+def coil_case(name, d_mm, h_mm, L_mm, B_cap_G, bore_d_mm, t_w_mm, w_p_mm, k_leak, f_NI, kul):
+    """Lumped magnetic circuit + integer-turn coils for one geometry (every argument explicit; kul = the preferred
+    Kulgrid conductor model)."""
     mu_r = a("mu_r_core")
     fw = a("B_work_fraction_of_Bsat")
     B_ic = fw * MATERIALS["Hiperco_50"]["B_sat_T"][0]      # inner core / inner pole: Hiperco 50 (PRELIMINARY)
@@ -589,40 +696,43 @@ def coil_case(name, d_mm, h_mm, L_mm, B_cap_G, bore_d_mm, t_w_mm, w_p_mm, k_leak
     B_g = B_cap_G * 1e-4
     A_g = 2.0 * math.pi * R * 1e-3 * w_p_mm * 1e-3
     phi_core = k_leak * B_g * A_g
-    # inner core (Hiperco) with the central-cathode bore
-    r_b = bore_d_mm / 2.0
-    A_ic = phi_core / B_ic
-    r_c = math.sqrt((r_b * 1e-3) ** 2 + A_ic / math.pi) * 1e3
+    # inner core (Hiperco tube) around the central-cathode bore + heat-shield allowance; wall = max(flux, mechanical)
+    r_ci = bore_d_mm / 2.0 + a("cathode_heat_shield_radial_mm")
+    r_c_flux = math.sqrt(r_ci ** 2 + phi_core / B_ic / math.pi * 1e6)
+    r_c = max(r_c_flux, r_ci + a("inner_core_wall_mm_min"))
+    A_ic = math.pi * (r_c ** 2 - r_ci ** 2) * 1e-6
     inner_build = (r_in - t_w_mm - a("screen_mm")) - (r_c + a("bobbin_mm"))
     feasible_LC = inner_build >= a("inner_coil_min_build_mm")
     out = {"name": name, "d_mean_mm": d_mm, "h_mm": h_mm, "L_mm": L_mm, "B_gap_G": B_cap_G,
            "cathode_bore_d_mm": bore_d_mm, "t_wall_mm": t_w_mm, "pole_tip_w_mm": w_p_mm, "leakage_factor": k_leak,
            "NI_margin_factor": f_NI, "gap_mm": g, "gap_area_m2": A_g, "core_flux_Wb": phi_core,
-           "inner_core_r_mm": r_c, "inner_coil_build_mm": inner_build, "central_cathode_feasible": feasible_LC,
+           "inner_core_bore_r_mm": r_ci, "inner_core_r_mm": r_c,
+           "inner_core_wall_mm": r_c - r_ci, "inner_core_wall_set_by": "flux" if r_c_flux >= r_c else "mechanical minimum",
+           "inner_coil_build_mm": inner_build, "central_cathode_feasible": feasible_LC,
            "B_work_inner_T": B_ic, "B_work_iron_T": B_fe}
     if not feasible_LC:
         out["status"] = ("INFEASIBLE for the central cathode location L-C at this geometry: inner-coil build "
                          f"{inner_build:.3g} mm < {a('inner_coil_min_build_mm')} mm")
         return out
-    # return-path segments sized at the working flux density
+    # return-path segments: flux-sized at the working flux density, with mechanical minima
     L_c = a("coil_axial_fraction_of_L") * L_mm
     r_oc_in = r_out + t_w_mm + 2.0 + a("outer_coil_build_mm") + 1.0
-    A_oc = phi_core / B_fe
-    t_oc = max(a("outer_core_mm_min"), A_oc / (2.0 * math.pi * r_oc_in * 1e-3) * 1e3)
+    t_oc = max(a("outer_core_mm_min"), phi_core / B_fe / (2.0 * math.pi * r_oc_in * 1e-3) * 1e3)
     A_oc = 2.0 * math.pi * (r_oc_in + t_oc / 2.0) * 1e-3 * t_oc * 1e-3
     R_body = r_oc_in + t_oc
     r_bp_mid = 0.5 * (r_c + R_body)
     t_bp = max(a("back_plate_mm_min"), phi_core / B_fe / (2.0 * math.pi * r_bp_mid * 1e-3) * 1e3)
     t_pole = w_p_mm
+    r_po_in = r_out + t_w_mm + c          # outer-pole tip radius
+    r_pi_out = r_in - t_w_mm - c          # inner-pole tip radius
     segs = [
         MP.CoreSegment("inner core (Hiperco 50)", (L_mm + t_bp) * 1e-3, A_ic, mu_r, B_ic * 1.0000001),
         MP.CoreSegment("back plate (pure iron)", (R_body - r_c) * 1e-3,
                        2.0 * math.pi * r_bp_mid * 1e-3 * t_bp * 1e-3, mu_r, B_fe * 1.0000001),
         MP.CoreSegment("outer core (pure iron)", (L_mm + t_bp) * 1e-3, A_oc, mu_r, B_fe * 1.0000001),
-        MP.CoreSegment("outer pole (pure iron)", (R_body - (r_out + t_w_mm + c)) * 1e-3,
-                       max(A_oc, 2.0 * math.pi * (r_out + t_w_mm + c) * 1e-3 * t_pole * 1e-3), mu_r,
-                       B_fe * 1.0000001),
-        MP.CoreSegment("inner pole (Hiperco 50)", ((r_in - t_w_mm - c) - r_c) * 1e-3,
+        MP.CoreSegment("outer pole (pure iron)", (R_body - r_po_in) * 1e-3,
+                       max(A_oc, 2.0 * math.pi * r_po_in * 1e-3 * t_pole * 1e-3), mu_r, B_fe * 1.0000001),
+        MP.CoreSegment("inner pole (Hiperco 50)", (r_pi_out - r_c) * 1e-3,
                        max(A_ic, 2.0 * math.pi * r_c * 1e-3 * t_pole * 1e-3), mu_r, B_ic * 1.0000001),
     ]
     circ = MP.ampere_turns(B_g, g * 1e-3, A_g, segs, k_leak)
@@ -630,6 +740,11 @@ def coil_case(name, d_mm, h_mm, L_mm, B_cap_G, bore_d_mm, t_w_mm, w_p_mm, k_leak
     split = a("NI_split_inner")
     coils = {}
     win = a("coil_supply_window")
+    Tc = a("coil_temperatures_C")
+    Tk = [kul.T_min_C, kul.T_max_C]  # the sourced 500 F / 1000 F points (declared in ASSUMED, checked there)
+    if max(abs(x - y) for x, y in zip(Tk, a("kulgrid_temperatures_C"))) > 1e-3:
+        raise RuntimeError("kulgrid_temperatures_C does not match the sourced 500 F / 1000 F points")
+    ff = a("fill_factor")
     for cname, NI, r_i, build in (("inner", split * NI_total, r_c + a("bobbin_mm"), inner_build),
                                   ("outer", (1 - split) * NI_total, r_out + t_w_mm + 2.0, a("outer_coil_build_mm"))):
         A_w = build * 1e-3 * L_c * 1e-3
@@ -638,65 +753,96 @@ def coil_case(name, d_mm, h_mm, L_mm, B_cap_G, bore_d_mm, t_w_mm, w_p_mm, k_leak
         for g_awg in a("awg_candidates"):
             dw = MP.awg_diameter_m(g_awg)
             try:
-                cold = MP.coil_design(NI, A_w, a("fill_factor"), l_mt, dw, MP.ANNEALED_COPPER_IACS,
-                                      a("coil_temperatures_C")[0])
-                hot = MP.coil_design(NI, A_w, a("fill_factor"), l_mt, dw, MP.ANNEALED_COPPER_IACS,
-                                     a("coil_temperatures_C")[1])
+                cold = MP.coil_design(NI, A_w, ff, l_mt, dw, MP.ANNEALED_COPPER_IACS, Tc[0])
             except ValueError:
                 continue
-            ok = (win["I_A"][0] <= hot["I_A"] <= win["I_A"][1]) and (hot["V_V"] <= win["V_V"][1])
-            opts.append({"awg": g_awg, "N": cold["N_turns"], "I_A": cold["I_A"], "R20_ohm": cold["R_ohm"],
-                         "R200_ohm": hot["R_ohm"], "V200_V": hot["V_V"], "P20_W": cold["P_W"],
-                         "P200_W": hot["P_W"], "J_A_mm2": cold["J_A_per_m2"] * 1e-6,
-                         "Cu_mass_kg": cold["copper_mass_kg"], "in_supply_window": ok})
+            hot = MP.coil_design(NI, A_w, ff, l_mt, dw, MP.ANNEALED_COPPER_IACS, Tc[1])
+            k_lo = MP.coil_design(NI, A_w, ff, l_mt, dw, kul, Tk[0])
+            k_hi = MP.coil_design(NI, A_w, ff, l_mt, dw, kul, Tk[1])
+            o = {"awg": g_awg, "N": cold["N_turns"], "I_A": cold["I_A"],
+                 "R20_ohm": cold["R_ohm"], "R200_ohm": hot["R_ohm"],
+                 "R_kulgrid_260C_ohm": k_lo["R_ohm"], "R_kulgrid_538C_ohm": k_hi["R_ohm"],
+                 "V20_V": cold["V_V"], "V200_V": hot["V_V"], "V_kulgrid_538C_V": k_hi["V_V"],
+                 "P20_W": cold["P_W"], "P200_W": hot["P_W"],
+                 "P_kulgrid_260C_W": k_lo["P_W"], "P_kulgrid_538C_W": k_hi["P_W"],
+                 "J_A_mm2": cold["J_A_per_m2"] * 1e-6, "Cu_mass_kg": cold["copper_mass_kg"],
+                 # lowest voltage: copper at 20 C (lower bound for either conductor); highest: Kulgrid at 1000 F
+                 "V_min_V": cold["V_V"], "V_max_V": max(k_hi["V_V"], hot["V_V"])}
+            o["window_violation"] = window_violation(o, win)
+            o["in_supply_window"] = o["window_violation"] == 0.0
+            opts.append(o)
         if not opts:
             raise RuntimeError(f"{name} {cname} coil: no AWG candidate fits the winding window")
         inwin = [o for o in opts if o["in_supply_window"]]
-        # inside the analog supply window: current closest to the window centre (3 A); otherwise (flagged, not
-        # silent) the gauge whose 200 C current is closest to the window - the supply window is an analog rating
+        # inside the analog supply window at BOTH ends (V >= V_lo cold, V <= V_hi at the Kulgrid class temperature):
+        # current closest to the window centre (3 A); otherwise (flagged, not silent) the least-violating gauge
         if inwin:
             chosen = dict(min(inwin, key=lambda o: abs(o["I_A"] - 3.0)))
         else:
-            lo, hi = win["I_A"]
-            chosen = dict(min(opts, key=lambda o: max(lo - o["I_A"], o["I_A"] - hi, 0.0)))
-            chosen["flag"] = "OUTSIDE the analog supply window (no candidate gauge inside); supply rating PENDING h2_4"
-        P_cont20 = MP.coil_power_continuous_W(NI, A_w, a("fill_factor"), l_mt, MP.ANNEALED_COPPER_IACS, 20.0)
-        P_cont200 = MP.coil_power_continuous_W(NI, A_w, a("fill_factor"), l_mt, MP.ANNEALED_COPPER_IACS, 200.0)
+            chosen = dict(min(opts, key=lambda o: o["window_violation"]))
+            viol = []
+            if chosen["I_A"] < win["I_A"][0] or chosen["I_A"] > win["I_A"][1]:
+                viol.append(f"I {chosen['I_A']:.3g} A outside {win['I_A']} A")
+            if chosen["V_min_V"] < win["V_V"][0]:
+                viol.append(f"cold V {chosen['V_min_V']:.3g} V below the {win['V_V'][0]} V floor")
+            if chosen["V_max_V"] > win["V_V"][1]:
+                viol.append(f"hot V {chosen['V_max_V']:.3g} V above the {win['V_V'][1]} V ceiling")
+            chosen["flag"] = ("OUTSIDE the analog supply window at every candidate gauge (" + "; ".join(viol) +
+                              "); supply rating PENDING docs/hardware/h2/h2_4_ppu_bus/")
+        P_cont20 = MP.coil_power_continuous_W(NI, A_w, ff, l_mt, MP.ANNEALED_COPPER_IACS, Tc[0])
+        P_cont200 = MP.coil_power_continuous_W(NI, A_w, ff, l_mt, MP.ANNEALED_COPPER_IACS, Tc[1])
+        P_contK = MP.coil_power_continuous_W(NI, A_w, ff, l_mt, kul, Tk[1])
         coils[cname] = {"NI_A": NI, "window_radial_mm": build, "window_axial_mm": L_c, "window_area_m2": A_w,
                         "mean_turn_m": l_mt, "P_continuous_20C_W": P_cont20, "P_continuous_200C_W": P_cont200,
-                        "chosen": chosen, "options": opts}
+                        "P_continuous_kulgrid_538C_W": P_contK, "chosen": chosen, "options": opts}
     rho_h = MATERIALS["Hiperco_50"]["density_kg_m3"][0]
     rho_fe = MATERIALS["ARMCO_pure_iron"]["density_kg_m3"][0]
-    m_iron = 0.0
-    for s in segs:
-        m_iron += s.length_m * s.area_m2 * (rho_h if "Hiperco" in s.name else rho_fe)
+    # iron mass from the actual solid volumes (annular tubes and disks), not the reluctance-segment areas
+    vol = {
+        "inner core": (math.pi * (r_c ** 2 - r_ci ** 2) * (L_mm + t_bp), rho_h),
+        "back plate": (math.pi * (R_body ** 2 - r_c ** 2) * t_bp, rho_fe),
+        "outer core": (math.pi * (R_body ** 2 - r_oc_in ** 2) * (L_mm + t_bp), rho_fe),
+        "outer pole": (math.pi * (R_body ** 2 - r_po_in ** 2) * t_pole, rho_fe),
+        "inner pole": (math.pi * (r_pi_out ** 2 - r_c ** 2) * t_pole, rho_h),
+    }
+    m_iron = sum(v * 1e-9 * rho for v, rho in vol.values())
     m_cu = sum(coils[k]["chosen"]["Cu_mass_kg"] for k in coils)
-    P20 = sum(coils[k]["chosen"]["P20_W"] for k in coils)
-    P200 = sum(coils[k]["chosen"]["P200_W"] for k in coils)
+    tot = {k: sum(coils[c_]["chosen"][k] for c_ in coils) for k in ("P20_W", "P200_W", "P_kulgrid_260C_W",
+                                                                      "P_kulgrid_538C_W")}
     out.update({
         "status": "SIZED (lumped model)",
-        "segments": [{"name": s["name"], "B_T": s["B_T"], "mmf_A": s["mmf_A"]} for s in circ["segments"]],
+        "segments": [{"name": s_["name"], "B_T": s_["B_T"], "mmf_A": s_["mmf_A"]} for s_ in circ["segments"]],
         "NI_gap_A": circ["mmf_gap_A"], "NI_core_A": circ["mmf_core_A"], "NI_total_A": NI_total,
         "outer_core_t_mm": t_oc, "back_plate_t_mm": t_bp, "body_OD_mm": 2.0 * R_body,
-        "coils": coils, "P_coils_20C_W": P20, "P_coils_200C_W": P200,
+        "coils": coils, "P_coils_20C_W": tot["P20_W"], "P_coils_200C_W": tot["P200_W"],
+        "P_coils_kulgrid_260C_W": tot["P_kulgrid_260C_W"], "P_coils_kulgrid_538C_W": tot["P_kulgrid_538C_W"],
         "iron_mass_kg": m_iron, "copper_mass_kg": m_cu,
-        "flux_margin": {"inner_core_B_over_Bsat": B_ic / MATERIALS["Hiperco_50"]["B_sat_T"][0],
-                        "iron_B_over_Bsat": B_fe / MATERIALS["ARMCO_pure_iron"]["B_sat_T"][0]},
+        "flux_density_check": {
+            "note": "sizing input B_work = fraction x B_sat applies to flux-sized segments BY CONSTRUCTION (not a "
+                    "check); segments set by a mechanical minimum run lower. Uniform-flux lumped values: local "
+                    "saturation at pole roots / the inner-pole tip (reported for MaSMi's shielded circuit, SRC-MASMI "
+                    "pp. 1, 13) is NOT captured - FEMM with the real B-H curve closes it",
+            "sizing_fraction_of_Bsat": fw,
+            "segment_B_over_Bsat": {s_["name"]: s_["B_T"] / (MATERIALS["Hiperco_50"]["B_sat_T"][0] if "Hiperco"
+                                                               in s_["name"] else
+                                                               MATERIALS["ARMCO_pure_iron"]["B_sat_T"][0])
+                                    for s_ in circ["segments"]}},
     })
     return out
 
 
-def min_d_for_central_cathode(h_mm, B_cap_G, bore_d_mm, t_w_mm, w_p_mm, k_leak):
+def min_d_for_central_cathode(h_mm, B_cap_G, bore_d_mm, t_w_mm, w_p_mm, k_leak, kul):
     """Smallest mean diameter (0.5 mm grid, 20-200 mm) at which the inner coil build reaches the minimum."""
     for i in range(40, 401):
         d = i * 0.5
-        c = coil_case("scan", d, h_mm, 8.6 * h_mm, B_cap_G, bore_d_mm, t_w_mm, w_p_mm, k_leak, 1.0)
+        c = coil_case("scan", d, h_mm, 8.6 * h_mm, B_cap_G, bore_d_mm, t_w_mm, w_p_mm, k_leak, 1.0, kul)
         if c["central_cathode_feasible"]:
             return d
     return None
 
 
-def coil_design_all(ch, bt):
+def coil_design_all(ch, bt, I):
+    kul = kulgrid_material(I)
     rp = a("rp1_geometry")
     t_w = a("t_wall_mm")
     w_p = a("pole_tip_width_mm")
@@ -711,25 +857,27 @@ def coil_design_all(ch, bt):
     L_rp = rp["L_over_h"] * rp["h_mm"]
     for fn in fni:
         cases.append(coil_case(f"RP-1 f_NI={fn:g}", rp["d_mean_mm"], rp["h_mm"], L_rp, B_rp, bore[1], t_w[1],
-                               w_p[1], kl[1], fn))
+                               w_p[1], kl[1], fn, kul))
     # RP-1 worst corner of the assumptions (thick wall, wide pole, high leakage, f_NI max, window-wide capability)
     cases.append(coil_case("RP-1 worst-case assumptions", rp["d_mean_mm"], rp["h_mm"], L_rp, bt["capability_G"],
-                           bore[1], t_w[2], w_p[2], kl[2], fni[1]))
+                           bore[1], t_w[2], w_p[2], kl[2], fni[1], kul))
     # window corners (nominal assumptions, f_NI max, own-width capability)
     for tag in ("A_min_dh_min", "A_max_dh_max", "A_max_dh_min", "A_min_dh_max"):
         cc = ch["corners"][tag]
         Bc = head * B_rLe(cc["h_mm"] * 1e-3, 30.0, f) * 1e4
         cases.append(coil_case(f"corner {tag}", cc["d_mean_mm"], cc["h_mm"], ch["L_over_h_window"][0] * cc["h_mm"],
-                               Bc, bore[1], t_w[1], w_p[1], kl[1], fni[1]))
+                               Bc, bore[1], t_w[1], w_p[1], kl[1], fni[1], kul))
     # minimum mean diameter for a central cathode, over the h window, at the larger bore and nominal assumptions
     dmin = {}
     for hh in (ch["h_mm"][0], rp["h_mm"], ch["h_mm"][1]):
         Bc = head * B_rLe(hh * 1e-3, 30.0, f) * 1e4
-        dmin[f"{hh:.4g}"] = {"bore_12mm": min_d_for_central_cathode(hh, Bc, bore[0], t_w[1], w_p[1], kl[1]),
-                             "bore_18mm": min_d_for_central_cathode(hh, Bc, bore[1], t_w[1], w_p[1], kl[1])}
+        dmin[f"{hh:.4g}"] = {"bore_12mm": min_d_for_central_cathode(hh, Bc, bore[0], t_w[1], w_p[1], kl[1], kul),
+                             "bore_18mm": min_d_for_central_cathode(hh, Bc, bore[1], t_w[1], w_p[1], kl[1], kul)}
     return {"method": "abep_sim/magnet_power.py ampere_turns (lumped reluctance, uniform-gap field, explicit leakage "
-                      "factor) + coil_design (integer turns, NBS copper R(T) 0-200 C); NI multiplied by the "
-                      "explicit NI_margin_factor",
+                      "factor) + coil_design (integer turns; NBS copper R(T) 0-200 C and the sourced two-point "
+                      "Kulgrid R(T) 260-537.8 C); NI multiplied by the explicit NI_margin_factor; gauge chosen "
+                      "inside the analog supply window at both ends (I 1-5 A; V >= 1 V cold, V <= 12 V at the "
+                      "Kulgrid class temperature)",
             "accuracy_limits": [
                 "a Hall-thruster pole geometry is not a uniform gap: the centreline field, fringing, leakage and the "
                 "shielding topology are 2-D/3-D effects; the lumped estimate can be off by a factor of order the "
@@ -737,9 +885,17 @@ def coil_design_all(ch, bt):
                 "supplier B-H curves is the H4 / H2-follow-up that closes it",
                 "linear core permeability (mu_r = 1000 assumed) and a working-flux-density cap; saturation onset, "
                 "temperature dependence of B-H and permanent-magnet options are outside the model",
-                "copper R(T) valid only 0-200 C; coils hotter than 200 C (analog pole pieces reach ~475 C, "
-                "SRC-MASMI p. 11) need a sourced conductor R(T) table (MCQ-TL-04): P(200 C) is then a LOWER "
-                "bound of the hot I^2R",
+                "conductor R(T): annealed copper (NBS) only 0-200 C (polyimide option); the preferred ceramic-"
+                "insulated Kulgrid conductor (27 % Ni-clad Cu, MCQ-EM-03) only between its two sourced points "
+                "500 F / 1000 F (260-537.8 C, linear, MCQ-TL-04). The Ni cladding raises the resistance well above "
+                "copper (Kulgrid at 1000 F = 42.3 ohm-cmil/ft, about 4.1x IACS copper at 20 C = 10.37); the hot "
+                "coil power and voltage bounds are therefore taken at the Kulgrid class temperature, not at 200 C "
+                "copper. Kulgrid below 260 C is not evaluated; for the minimum-voltage check the 20 C copper "
+                "resistance is used as a lower bound of either conductor (inferred: a Ni-clad Cu conductor of equal "
+                "section cannot conduct better than all-copper). The actual coil temperature is PENDING "
+                "docs/hardware/h2/h2_5_thermal_network/",
+                "the trim coil (T3) is a provision only: its NI is not sized (TBD - requires FEMM), so its power is "
+                "NOT inside any coil power figure here",
                 "coil windows use assumed builds and a 0.5 fill factor; high-temperature insulation lowers the fill"],
             "cases": cases, "min_d_mean_for_central_cathode_mm": dmin}
 
@@ -762,15 +918,21 @@ def build():
     I = read_inputs()
     ch = channel_window(I)
     bt = b_target(ch, I)
-    cd = coil_design_all(ch, bt)
+    cd = coil_design_all(ch, bt, I)
     rp_nom = cd["cases"][0]
     rp_max = cd["cases"][1]
     rp_worst = cd["cases"][2]
     for c in (rp_nom, rp_max, rp_worst):
         if not c["central_cathode_feasible"]:
             raise RuntimeError(f"reference case {c['name']} infeasible: {c['status']}")
-    Pmag = [rp_nom["P_coils_20C_W"], max(rp_max["P_coils_200C_W"], rp_worst["P_coils_200C_W"])]
-    corner_P200 = [c["P_coils_200C_W"] for c in cd["cases"][3:] if c.get("P_coils_200C_W") is not None]
+    # hall_magnet bound (inner + outer coils): lower = copper at 20 C, RP-1 f_NI 1 (lower bound of either
+    # conductor); upper = preferred Kulgrid conductor at its 1000 F class temperature, worst RP-1 case
+    Pmag = [rp_nom["P_coils_20C_W"], max(rp_max["P_coils_kulgrid_538C_W"], rp_worst["P_coils_kulgrid_538C_W"])]
+    Pmag_cu200 = max(rp_max["P_coils_200C_W"], rp_worst["P_coils_200C_W"])
+    Pmag_rp_nominal = [rp_max["P_coils_20C_W"], rp_max["P_coils_kulgrid_538C_W"]]
+    Vmax_all = max(c_["coils"][k]["chosen"]["V_max_V"] for c_ in (rp_nom, rp_max, rp_worst) for k in ("inner", "outer"))
+    outside = [f"{c_['name']} {k}" for c_ in cd["cases"] if "coils" in c_ for k in ("inner", "outer")
+               if "flag" in c_["coils"][k]["chosen"]]
 
     inputs_hashes = {k: {"path": v, "sha256": sha256_file(v)} for k, v in REPO_INPUTS.items()}
 
@@ -815,9 +977,11 @@ def build():
         P("H21-13", "replaceable pole-piece set (shielded / unshielded)", "one alternate set, same coils", "-",
           "assumed", "this lane", "assumed", "PROPOSED (owner)", TA, "switching sets creates H-1' (HW-H1-02)"),
         P("H21-14", "peak centreline B_r target envelope (at/near exit)", sig(bt["target_peak_Br_G"]), "G",
-          "derived/analog", f"{TH}: r_Le <= 0.1 h at T_e 20 eV (h max) .. 30 eV (h min); analog span 85-218 G "
-          "(ANALOGS)", "model-derived (criterion) / measured+digitized (analogs)", "PRELIMINARY", FR,
-          "a design target envelope, not a transport optimization"),
+          "derived/analog", f"{TH}: r_Le <= 0.1 h over the full declared T_e criterion bracket 10 eV (h max) .. "
+          "30 eV (h min); analog span 85-218 G (ANALOGS)", "model-derived (criterion) / measured+digitized (analogs)",
+          "PRELIMINARY", FR, "a design target envelope, not a transport optimization; the 10 eV lower end lies "
+          "below the lowest analog magnitude (ECHT 85.3 G, digitized) - the coil turns down, the capability is set "
+          "by the upper end"),
         P("H21-15", "MC-1 field capability", sig(bt["capability_G"]), "G", "assumed/derived",
           "B_headroom_factor x H21-14 upper", "model-derived", "PRELIMINARY", FR),
         P("H21-16", "B_r(z) shape: gradient and anode region", "monotonic rise toward the exit, peak at or just "
@@ -827,27 +991,36 @@ def build():
           "TBD - requires FEMM B(z) of the preliminary circuit and an owner tolerance", FR),
         P("H21-17", "total ampere-turns (RP-1, f_NI 1..2)", sig([rp_nom["NI_total_A"], rp_max["NI_total_A"]]), "A",
           "derived", f"{TH}: coil_design_all cases RP-1", "model-derived", "PRELIMINARY", FR),
-        P("H21-18", "coil power at the terminals (sum inner + outer) RP-1: 20 C nominal .. 200 C upper-assumption "
-          "case", sig(Pmag), "W", "derived", f"{TH}: magnet_power.coil_design", "model-derived",
-          "PRELIMINARY (hot > 200 C TBD)", FR, "hot-coil I^2R above 200 C requires a sourced conductor R(T) "
-          "(MCQ-TL-04)"),
+        P("H21-18", "coil power at the terminals (sum inner + outer; trim excluded) RP-1: copper 20 C at f_NI 1 .. "
+          "preferred Kulgrid conductor at its 1000 F class temperature, worst-case assumptions", sig(Pmag), "W",
+          "derived", f"{TH}: magnet_power.coil_design with ANNEALED_COPPER_IACS and the two-point Kulgrid model "
+          "(MCQ-EM-03 resistance_500F/1000F)", "model-derived", "PRELIMINARY", FR,
+          f"RP-1 f_NI 2 nominal assumptions: {sig(Pmag_rp_nominal)} W (copper 20 C .. Kulgrid 537.8 C); the "
+          f"polyimide/copper option at 200 C would be <= {sig(Pmag_cu200)} W; the Ni cladding, not only the "
+          "temperature, drives the hot value"),
         P("H21-19", "coil temperature class", "high-temperature class: ceramic/glass-insulated (Ni-clad) Cu "
           "candidate MCQ-EM-03 (-267.8..537.8 C continuous) preferred over polyimide MW 16-C (240 C material "
           "class)", "-", "analog", "magnet_coil_qualification_v1.json MCQ-EM-01/03; SRC-MASMI p. 5 (Ni-plated "
           "fiberglass Cu 'rated to over 400 C'), p. 11 (front pole ~475 C)", "assumed (supplier ratings) / "
           "measured (analog temperatures)", "PRELIMINARY (owner MCQ-OQ-02)", FR,
-          "a Ni cladding is ferromagnetic: HW-MC-12 map check"),
+          "a Ni cladding is ferromagnetic: HW-MC-12 map check; its resistance (42.3 ohm-cmil/ft at 1000 F, "
+          "MCQ-EM-03) sets the hot coil power and voltage bounds H21-18 / H2-4 demands"),
         P("H21-20", "inner core / inner pole material", "Hiperco 50 (Fe-49Co-2V)", "-", "analog",
           "SRC-HIPERCO50 pp. 1-3; SRC-MASMI p. 5 (iron saturates at small scale; Hiperco chosen)",
           "measured (supplier-typical)", "PRELIMINARY (owner HWQ-18 / MCQ-OQ-05)", FR),
         P("H21-21", "outer core, back plate, outer pole material", "high-purity iron (ARMCO class)", "-", "analog",
           "SRC-ARMCO PDF p. 9", "measured (supplier-typical)", "PRELIMINARY (owner HWQ-18 / MCQ-OQ-05)", FR),
         P("H21-22", "minimum mean diameter for a central cathode (bore 12-18 mm)",
-          cd["min_d_mean_for_central_cathode_mm"], "mm", "derived", f"{TH}: min_d_for_central_cathode",
-          "model-derived", "PENDING docs/hardware/h2/h2_2_cathode_integration/ (bore)", FR),
-        P("H21-23", "working flux density / saturation", {"Hiperco_50": a("B_work_fraction_of_Bsat"),
-          "iron": a("B_work_fraction_of_Bsat")}, "-", "assumed", "ASSUMED B_work_fraction_of_Bsat", "assumed",
-          "PROPOSED", FR),
+          cd["min_d_mean_for_central_cathode_mm"], "mm", "derived", f"{TH}: min_d_for_central_cathode (inner "
+          "core = bore + PROPOSED 2 mm heat-shield allowance + max(flux wall, 2 mm mechanical wall))",
+          "model-derived", "PENDING docs/hardware/h2/h2_2_cathode_integration/ (bore, heat-shield allowance)", FR,
+          "lower bound only while the C-1 heat load into the inner core (H2-2) and the resulting core/inner-coil "
+          "temperatures (H2-5) are open; a larger shield gap raises it"),
+        P("H21-23", "working flux density / saturation (sizing INPUT, not a verified margin)",
+          {"Hiperco_50": a("B_work_fraction_of_Bsat"), "iron": a("B_work_fraction_of_Bsat")}, "-", "assumed",
+          "ASSUMED B_work_fraction_of_Bsat", "assumed", "PROPOSED", FR,
+          "flux-sized segments sit at this value by construction; local saturation at pole roots is not captured "
+          "by the lumped model (TBD - requires FEMM with the real B-H curve)"),
         P("H21-24", "iron + copper mass of MC-1 (RP-1, f_NI 2)", {"iron_kg": sig(rp_max["iron_mass_kg"]),
           "copper_kg": sig(rp_max["copper_mass_kg"])}, "kg", "derived", f"{TH}", "model-derived",
           "PRELIMINARY (excludes channel ceramics, anode, structure; PENDING docs/hardware/h2/h2_7_mechanical_bom/)",
@@ -940,7 +1113,7 @@ def build():
         },
         "preliminary_choice": {"inner core + inner pole": "Hiperco_50", "back plate, outer core, outer pole":
                                "ARMCO_pure_iron"},
-        "flux_margin_RP1": sig(rp_max["flux_margin"]),
+        "flux_density_check_RP1": sig(rp_max["flux_density_check"]),
         "max_use_temperature": "no supplier maximum-use temperature for magnetic service was found in either sheet; "
                                "Curie 770 C (iron, secondary, verify) / 938 C (Hiperco 50) are upper physical bounds, "
                                "the working limit is the B-H at the pole temperature (HW-MC-13, TBD - requires "
@@ -957,8 +1130,14 @@ def build():
 
     interface_demands = [
         {"from": "H2-1", "to": "docs/hardware/h2/h2_4_ppu_bus/ (hall_magnet, PS-C)",
-         "quantity": "hall_magnet load at the coil terminals (sum of coils)", "value": sig(Pmag), "units": "W",
-         "status": "PRELIMINARY (20 C nominal .. 200 C upper-assumption case; > 200 C TBD)"},
+         "quantity": "hall_magnet load at the coil terminals (sum of inner + outer coils)", "value": sig(Pmag),
+         "units": "W",
+         "status": "PRELIMINARY (lower: copper 20 C, RP-1 f_NI 1; upper: preferred Kulgrid conductor at its 1000 F "
+                   "class temperature, RP-1 worst-case assumptions; bounded for the preferred conductor inside its "
+                   "rating; trim coil T3 EXCLUDED - its NI is TBD, requires FEMM)"},
+        {"from": "H2-1", "to": "docs/hardware/h2/h2_4_ppu_bus/ (hall_magnet, PS-C)", "quantity": "trim coil (T3) "
+         "power allocation", "value": None, "units": "W",
+         "status": "TBD - requires FEMM of the preliminary circuit (trim NI); a supply channel is reserved"},
         {"from": "H2-1", "to": "docs/hardware/h2/h2_4_ppu_bus/ (PS-C)", "quantity": "coil supply channels",
          "value": "3 (inner, outer, trim), current control, per-channel I and V telemetry", "units": "-",
          "status": "PRELIMINARY"},
@@ -966,9 +1145,30 @@ def build():
          "200 C (RP-1, chosen gauge)",
          "value": {k: {"I_A": sig(v["chosen"]["I_A"]), "V200_V": sig(v["chosen"]["V200_V"])}
                    for k, v in rp_max["coils"].items()}, "units": "A, V",
-         "status": "PRELIMINARY (inside the analog 1-5 A / 1-12 V window)"},
-        {"from": "H2-1", "to": "docs/hardware/h2/h2_5_thermal_network/", "quantity": "coil heat (= I^2R) into MC-1",
-         "value": sig(Pmag), "units": "W", "status": "PRELIMINARY"},
+         "status": "PRELIMINARY (window check at both ends: I 1-5 A; V_min at 20 C copper >= 1 V; V_max at the "
+                   "Kulgrid 1000 F class temperature <= 12 V)"},
+        {"from": "H2-1", "to": "docs/hardware/h2/h2_4_ppu_bus/ (PS-C)", "quantity": "coils OUTSIDE the analog "
+         "1-5 A / 1-12 V supply window at every candidate gauge (supply-regulation mismatch)",
+         "value": outside, "units": "-",
+         "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/ (a supply rated from a lower voltage/current, a "
+                   "smaller winding window, or series operation; not silently accepted)"},
+        {"from": "H2-1", "to": "docs/hardware/h2/h2_4_ppu_bus/ (PS-C)", "quantity": "highest coil terminal "
+         "voltage over the RP-1 cases (Kulgrid at 1000 F)", "value": sig(Vmax_all), "units": "V",
+         "status": "PRELIMINARY"},
+        {"from": "H2-1", "to": "docs/hardware/h2/h2_5_thermal_network/", "quantity": "coil heat (= I^2R) into MC-1 "
+         "(inner + outer; trim TBD)", "value": sig(Pmag), "units": "W",
+         "status": "PRELIMINARY (upper at the Kulgrid class temperature; the real coil temperature closes it)"},
+        {"from": "docs/hardware/h2/h2_2_cathode_integration/", "to": "H2-1", "quantity": "C-1 heat load into the "
+         "inner core / inner coil (central location L-C) and required heat-shield radial allowance", "value": None,
+         "units": "W, mm", "status": "PENDING docs/hardware/h2/h2_2_cathode_integration/ (H2-1 carries a PROPOSED "
+                                     "2 mm allowance)"},
+        {"from": "H2-1", "to": "docs/hardware/h2/h2_5_thermal_network/", "quantity": "node: Hiperco inner core + "
+         "inner coil adjacent to the C-1 bore (cathode heat path through the shield allowance)",
+         "value": {"bore_d_mm": a("cathode_bore_diameter_mm"), "heat_shield_radial_mm": a("cathode_heat_shield_radial_mm"),
+                   "inner_core_wall_mm_RP1": sig(rp_max["inner_core_wall_mm"]),
+                   "inner_core_length_mm_RP1": sig(rp_max["L_mm"] + rp_max["back_plate_t_mm"])},
+         "units": "mm", "status": "PENDING docs/hardware/h2/h2_5_thermal_network/ (core must stay below the "
+                                  "Hiperco working B-H temperature and the coil below its class)"},
         {"from": "H2-1", "to": "docs/hardware/h2/h2_5_thermal_network/", "quantity": "temperature limits",
          "value": {"coil_EIS": "MW 16-C 240 C material class or ceramic wire 537.8 C continuous (MCQ-EM-01/03; "
                                "class vs hot spot, MCQ-QT-06)",
@@ -998,7 +1198,8 @@ def build():
          "units": "mm", "status": "PRELIMINARY (distributor belongs to H-1, HW-H1-06)"},
         {"from": "H2-1", "to": "docs/interfaces/preionizer_module/ (PMI-09)", "quantity": "permitted module-induced "
          "field change in the channel epsilon_B", "value": None, "units": "-",
-         "status": "PENDING docs/interfaces/preionizer_module/ (PMI-09; owner INV-B3)"},
+         "status": "PENDING docs/interfaces/preionizer_module/ (PMI-09; owner INV-B3; the ICD is NOT in base "
+                   "8ea7e4b - reference resolves after the pre-ionizer ICD lane merges)"},
         {"from": "H2-1", "to": "docs/interfaces/preionizer_module/ (PMI-09)", "quantity": "MC-1 leakage field at IP-DN "
          "and inside the module slot (upstream of the back plate)", "value": None, "units": "G",
          "status": "TBD - requires FEMM of the preliminary circuit"},
@@ -1022,10 +1223,15 @@ def build():
         "checked": [
             {"item": "channel window exists inside the A5 power allocation", "result": "yes: area rules overlap "
              f"({sig(ch['area_window_cm2'])} cm^2)", "evidence_class": "model-derived"},
-            {"item": "magnet power vs bus allocation", "result": f"hall_magnet {sig(Pmag)} W at <= 200 C vs 1.30-1.35 "
-             "kW; small, but hot > 200 C unbounded until MCQ-TL-04 - not a veto", "evidence_class": "model-derived"},
-            {"item": "iron saturation at the reference geometry", "result": "inner core sized at 0.7 Bsat Hiperco "
-             "50; central cathode feasible above the H21-22 diameter; below it the choice is L-E external cathode or "
+            {"item": "magnet power vs bus allocation", "result": f"hall_magnet {sig(Pmag)} W (upper at the Kulgrid "
+             "1000 F class temperature, worst-case assumptions, trim excluded) vs 1.30-1.35 kW - not a veto",
+             "evidence_class": "model-derived"},
+            {"item": "coil supply window", "result": f"{len(outside)} coil(s) across the cases fall outside the analog "
+             "1-5 A / 1-12 V window at every gauge (mostly below the 1 V floor at low NI) - a PS-C rating item for "
+             "H2-4, not an architecture incompatibility", "evidence_class": "model-derived"},
+            {"item": "iron saturation at the reference geometry", "result": "Hiperco 50 inner core sized at <= 0.7 Bsat "
+             "(mechanical 2 mm wall governs at RP-1; local pole-root saturation TBD - FEMM); central cathode "
+             "feasible above the H21-22 diameter (lower bound while the C-1 heat-shield allowance is open); below it the choice is L-E external cathode or "
              "a larger d - a design constraint, not an architecture veto", "evidence_class": "model-derived"},
             {"item": "Curie / temperature limits", "result": "analog pole temperatures ~475 C (SRC-MASMI) are below "
              "the Curie points 770/938 C; B-H at temperature TBD", "evidence_class": "measured (analog) / supplier"},
@@ -1135,7 +1341,8 @@ def build():
             "P5 calibration nuisance is never a design variable; P5 geometry/B(z) files are not design sources",
             "the valve-outlet feed state is read from feed_state_closure_v1.json, never from 0-D assumptions",
             "Bundle 1 stays NO_BASELINE_YET",
-            "reuse check: abep_sim/magnet_power.py is used (pure magnetostatics + NBS copper R(T), no plasma model, "
+            "reuse check: abep_sim/magnet_power.py is used (pure magnetostatics + NBS copper R(T) + a Kulgrid "
+            "ConductorMaterial from the sourced MCQ-EM-03 points, no plasma model, "
             "not superseded); abep_sim/sizing.py is NOT used: it evaluates abep_sim.system/thruster CARDS "
             "(T_air_mN from the superseded 0-D Hall chain)",
         ],
@@ -1230,6 +1437,10 @@ def render_md(doc):
         w(f"| A_ncXe @ {fk} ({fmt(ch['flows_kgps'][fk]*1e6)} mg/s) | {ch['area_rules_cm2']['A_ncXe_by_flow']['rule']} "
           f"| {fmt(v)} | {ch['area_rules_cm2']['A_ncXe_by_flow']['applicability']} |")
     w("")
+    tb = ch["thrust_bound"]
+    w(f"**Thrust targets ({fmt(tb['thrust_rfp_mN'])} mN RFP, {fmt(tb['thrust_alloc_mN'])} mN A5 allocation) are "
+      f"not applied as an area bound.** {tb['why_not']}. How thrust enters: {tb['how_thrust_enters']}.")
+    w("")
     w(f"**Preliminary area window** {fmt(ch['area_window_cm2'])} cm² ({ch['area_window_rule']}). With the analog "
       f"d/h window {fmt(ch['d_over_h_window'])} ({fmt(ch['d_over_h_sources'])}):")
     w("")
@@ -1296,8 +1507,8 @@ def render_md(doc):
     for x in cd["accuracy_limits"]:
         w(f"- {x}")
     w("")
-    w("| case | d/h/L [mm] | B_gap [G] | gap [mm] | NI total [A] | inner build [mm] | coils (AWG, N, I [A], V@200 C) "
-      "| P 20 C / 200 C [W] | body OD [mm] | iron / Cu [kg] |")
+    w("| case | d/h/L [mm] | B_gap [G] | gap [mm] | NI total [A] | inner build [mm] | coils (AWG, N, I [A], V cold "
+      "Cu 20 C .. V hot Kulgrid 537.8 C) | P Cu 20 C / Cu 200 C / Kulgrid 537.8 C [W] | body OD [mm] | iron / Cu [kg] |")
     w("|---|---|---|---|---|---|---|---|---|---|")
     for c in cd["cases"]:
         if c["status"].startswith("INFEASIBLE"):
@@ -1307,19 +1518,24 @@ def render_md(doc):
         cs = []
         for k in ("inner", "outer"):
             ch_ = c["coils"][k]["chosen"]
-            cs.append(f"{k}: AWG {ch_['awg']}, {ch_['N']}, {fmt(ch_['I_A'])}, {fmt(ch_['V200_V'])} V"
-                      + (" (outside analog supply window)" if "flag" in ch_ else ""))
+            cs.append(f"{k}: AWG {ch_['awg']}, {ch_['N']}, {fmt(ch_['I_A'])}, {fmt(ch_['V_min_V'])}..{fmt(ch_['V_max_V'])} V"
+                      + (" (OUTSIDE analog supply window)" if "flag" in ch_ else ""))
         w(f"| {c['name']} | {fmt(c['d_mean_mm'])}/{fmt(c['h_mm'])}/{fmt(c['L_mm'])} | {fmt(c['B_gap_G'])} | "
           f"{fmt(c['gap_mm'])} | {fmt(c['NI_total_A'])} | {fmt(c['inner_coil_build_mm'])} | {'; '.join(cs)} | "
-          f"{fmt(c['P_coils_20C_W'])} / {fmt(c['P_coils_200C_W'])} | {fmt(c['body_OD_mm'])} | "
+          f"{fmt(c['P_coils_20C_W'])} / {fmt(c['P_coils_200C_W'])} / {fmt(c['P_coils_kulgrid_538C_W'])} | "
+          f"{fmt(c['body_OD_mm'])} | "
           f"{fmt(c['iron_mass_kg'])} / {fmt(c['copper_mass_kg'])} |")
     w("")
     w(f"Minimum mean diameter for a central cathode (bore 12 / 18 mm) by width h: "
       f"{fmt(cd['min_d_mean_for_central_cathode_mm'])} mm.")
     w("")
-    w("Coil temperature class: high-temperature ceramic-insulated wire (MCQ-EM-03, 537.8 °C continuous) preferred; "
-      "above 200 °C the copper model is not extrapolated and the hot I²R is TBD (MCQ-TL-04). FEMM/3-D "
-      "magnetostatics is the H4 / H2-follow-up.")
+    w("Coil temperature class: high-temperature ceramic-insulated Kulgrid wire (27 % Ni-clad Cu, MCQ-EM-03, 537.8 °C "
+      "continuous) preferred. Its hot resistance comes from the two sourced MCQ-EM-03 points (26.9 / 42.3 ohm-cmil/ft "
+      "at 500 / 1000 °F, linear only between them, MCQ-TL-04); at 1000 °F it is about 4.1× IACS copper at 20 °C, so "
+      "the hot coil power and voltage are bounded at the Kulgrid class temperature, not with 200 °C copper. The "
+      "gauge is checked against both ends of the analog supply window (1 V floor with 20 °C copper as the lowest "
+      "possible resistance; 12 V ceiling at the Kulgrid class temperature). The trim coil is a provision only (power "
+      "TBD). FEMM/3-D magnetostatics is the H4 / H2-follow-up.")
     w("")
     w("## 5. Magnetic materials")
     w("")
@@ -1329,8 +1545,10 @@ def render_md(doc):
         w(f"| {k} | {fmt(v['B_sat_T'][0])} T | {fmt(v['curie_C'][0])} °C | {fmt(v['density_kg_m3'][0])} kg/m³ | "
           f"{v['B_sat_T'][1]}; {v['curie_C'][1]} |")
     w("")
-    w(f"Preliminary: {fmt(doc['materials']['preliminary_choice'])}. Flux margin (B_work/B_sat): "
-      f"{fmt(doc['materials']['flux_margin_RP1'])}. {doc['materials']['max_use_temperature']}.")
+    fc = doc["materials"]["flux_density_check_RP1"]
+    w(f"Preliminary: {fmt(doc['materials']['preliminary_choice'])}. Flux density (RP-1, f_NI 2), B/B_sat per segment: "
+      f"{fmt(fc['segment_B_over_Bsat'])}; sizing fraction {fmt(fc['sizing_fraction_of_Bsat'])}. {fc['note']}. "
+      f"{doc['materials']['max_use_temperature']}.")
     w("")
     w("O/O₂ exposure:")
     for x in doc["materials"]["O_O2_exposure"]:
@@ -1353,7 +1571,9 @@ def render_md(doc):
     w("")
     w("Mounting datums: axis = datum A; z = 0 at the anode face (HALL_INLET_Z0, lane-17 convention); exit plane "
       "z = L; the rear flange of H-1 is IP-DN, upstream of the back plate. The pre-ionizer module slot is upstream "
-      "of IP-DN; MC-1 leakage into the slot and the module field change in the channel are PMI-09 items.")
+      "of IP-DN; MC-1 leakage into the slot and the module field change in the channel are PMI-09 items (the pre-ionizer "
+      "ICD `docs/interfaces/preionizer_module/` is not in base commit 8ea7e4b; the reference resolves after that lane "
+      "merges).")
     w("")
     w("## 8. Hard-incompatibility check")
     w("")

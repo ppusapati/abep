@@ -167,7 +167,8 @@ def test_recompute_field_criterion(doc):
     assert doc["bz_target_envelope"]["masmi_reproduction_G"] == pytest.approx(213.0, rel=0.01)
     h = doc["channel"]["h_mm"]
     tgt = doc["bz_target_envelope"]["target_peak_Br_G"]
-    assert tgt == pytest.approx([B(h[1] * 1e-3, 20.0), B(h[0] * 1e-3, 30.0)], rel=2e-3)
+    # full declared criterion bracket 10-30 eV (lower end at the widest channel, upper at the narrowest)
+    assert tgt == pytest.approx([B(h[1] * 1e-3, 10.0), B(h[0] * 1e-3, 30.0)], rel=2e-3)
     assert doc["bz_target_envelope"]["capability_G"] == pytest.approx(1.5 * tgt[1], rel=2e-3)
 
 
@@ -222,3 +223,79 @@ def test_copper_model_not_extrapolated(builder):
     with pytest.raises(ValueError):
         MP.resistance_factor(MP.ANNEALED_COPPER_IACS, 250.0)
     assert builder.ASSUMED["coil_temperatures_C"]["value"][1] <= 200.0
+
+
+def test_sourced_constants_read_from_repository(builder):
+    I = builder.read_inputs()
+    href = json.loads((ROOT / "docs/architecture_comparison/hall_reference/hall_reference_v1.json").read_text())
+    rel = {r["id"]: r for r in href["geometry_interface"]["sizing_relations"]}
+    assert I["C_P_star_W_m2"] == rel["EV-G6"]["stated_values"]["C_P_empirical_xenon"]["value"]
+    assert I["n_crit_Xe_m3"] == rel["EV-G5"]["stated_values"]["critical_atom_density_xenon"]["value"]
+    j = rel["EV-G7"]["stated_values"]["discharge_current_density_xenon"]["value"]
+    assert I["j_d_A_m2"] == pytest.approx([1e4 * j[0], 1e4 * j[1]])
+    assert I["P_alloc_W"] == [1300.0, 1350.0] and I["thrust_alloc_mN"] == [15.0, 22.0]
+    assert I["mdot_A5_quote_kgps"] == pytest.approx(3.2e-6)
+    with pytest.raises(RuntimeError):
+        builder.parse_range("about 15 mN", "mN")
+
+
+def test_kulgrid_hot_resistance_from_mcq(builder, doc):
+    mcq = json.loads((ROOT / "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json").read_text())
+    em03 = {c["id"]: c for c in mcq["candidates"]}["MCQ-EM-03"]["values"]
+    r5, r10 = em03["resistance_500F"]["value"], em03["resistance_1000F"]["value"]
+    iacs20 = 1.7241e-8 / ((math.pi / 4) * (0.001 * 0.0254) ** 2 / 0.3048)  # ohm-cmil/ft
+    assert iacs20 == pytest.approx(10.371, rel=1e-3)
+    for c in doc["coil_design"]["cases"][:3]:
+        for k in ("inner", "outer"):
+            ch = c["coils"][k]["chosen"]
+            # R(1000 F) / R_IACS(20 C) = 42.3 / 10.371 (same wire, same turns)
+            assert ch["R_kulgrid_538C_ohm"] / ch["R20_ohm"] == pytest.approx(r10 / iacs20, rel=2e-3)
+            assert ch["R_kulgrid_260C_ohm"] / ch["R20_ohm"] == pytest.approx(r5 / iacs20, rel=2e-3)
+            assert ch["P_kulgrid_538C_W"] == pytest.approx(ch["I_A"] ** 2 * ch["R_kulgrid_538C_ohm"], rel=5e-3)
+    # the hall_magnet demand upper bound is the Kulgrid class-temperature value (not 200 C copper)
+    dem = [d for d in doc["interface_demands"] if d["quantity"].startswith("hall_magnet load")][0]
+    cases = doc["coil_design"]["cases"]
+    assert dem["value"][1] == pytest.approx(max(cases[1]["P_coils_kulgrid_538C_W"], cases[2]["P_coils_kulgrid_538C_W"]),
+                                            rel=1e-3)
+    assert dem["value"][1] > max(cases[1]["P_coils_200C_W"], cases[2]["P_coils_200C_W"])
+    from abep_sim import magnet_power as MP
+    kul = builder.kulgrid_material(builder.read_inputs())
+    with pytest.raises(ValueError):
+        MP.resistance_factor(kul, 250.0)  # below 500 F: not extrapolated (MCQ-TL-04)
+
+
+def test_supply_window_checked_at_both_ends(doc):
+    flagged = []
+    for c in doc["coil_design"]["cases"]:
+        if "coils" not in c:
+            continue
+        for k in ("inner", "outer"):
+            ch = c["coils"][k]["chosen"]
+            ok = 1.0 <= ch["I_A"] <= 5.0 and ch["V20_V"] >= 1.0 and ch["V_max_V"] <= 12.0
+            assert ch["in_supply_window"] == ok, (c["name"], k)
+            assert ch["V_min_V"] == ch["V20_V"]
+            assert ch["V_max_V"] >= ch["V_kulgrid_538C_V"] - 1e-12
+            if not ok:
+                assert "OUTSIDE" in ch["flag"]
+                flagged.append(f"{c['name']} {k}")
+    dem = [d for d in doc["interface_demands"] if d["quantity"].startswith("coils OUTSIDE")][0]
+    assert dem["value"] == flagged
+
+
+def test_inner_core_mechanical_minimum_and_cathode_heat(doc):
+    for c in doc["coil_design"]["cases"]:
+        assert c["inner_core_wall_mm"] >= 2.0 - 1e-9
+        assert c["inner_core_bore_r_mm"] == pytest.approx(c["cathode_bore_d_mm"] / 2 + 2.0)
+    qs = " ".join(d["quantity"] for d in doc["interface_demands"])
+    assert "C-1 heat load into the inner core" in qs
+    assert any(d["to"].startswith("docs/hardware/h2/h2_5_thermal_network/") and "C-1 bore" in d["quantity"]
+               for d in doc["interface_demands"])
+    assert any("trim coil" in d["quantity"] for d in doc["interface_demands"])
+
+
+def test_thrust_targets_explicitly_not_an_area_bound(doc):
+    tb = doc["channel"]["thrust_bound"]
+    assert tb["applied_as_area_bound"] is False
+    assert tb["thrust_rfp_mN"] == [12.0, 25.0] and tb["thrust_alloc_mN"] == [15.0, 22.0]
+    assert "performance prediction" in tb["why_not"]
+    assert "not applied as an area bound" in MD.read_text(encoding="utf-8")
