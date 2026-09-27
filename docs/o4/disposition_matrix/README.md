@@ -100,6 +100,25 @@ builder refuses a preview filename that contains "disposition", and it refuses t
 `hallthruster_bridge/validation/interrupted/**`, including through symlinks. The builder never lists a directory; each path
 is constructed from the registry. Facility results are not read (O4: facility-only differences never trigger escalation).
 
+**Identity binds immutable evidence only (repair 2026-09-27).** The first official build hashed the whole
+`docs/orchestration/lane_registry_v1.json` and `trigger_registry_v1.json` in `provenance.inputs_sha256`. Those are mutable
+governance files (the orchestrator records repairs, `followon_dir`, `attempt_history` there), so the matrix stopped
+reproducing although no evidence had changed. The builder now:
+- binds in `inputs_sha256` only immutable inputs: the pre-registration criteria and lock, the dispositions schema, the frozen
+  scorer and the verified Johnson-low assessment (each dataset's raw / scores / provenance hashes are bound per row in
+  `provenance.datasets`);
+- uses the registries only to enumerate the dataset ids, and binds their identity as canonical projections in
+  `provenance.registry_identity` (O4 datasets `{id, manifest, role, escalations}`; the `T_O4_DISPOSITION_MATRIX`
+  `{id, prerequisites, plus}`);
+- takes the Johnson-low `ledger_verified_commit` from the FIRST VERIFIED ledger record (the ledger is append-only);
+- never reads an owner `hallthruster_bridge/ensemble/o4_dispositions*.json` record (the guard refuses it; only the schema
+  is read), so the feed stays an unbound skeleton.
+
+The regenerated `o4_disposition_matrix_v1.json` differs from the first build only in `provenance.inputs_sha256` (two
+registry hashes replaced by the lock and Johnson-low assessment hashes) and the new `provenance.registry_identity`; every
+row, family, check and the feed are unchanged. A test edits a copy of the registries' non-dataset fields (and appends a
+ledger record) and confirms the matrix still reproduces byte for byte.
+
 ## Scope
 
 This is evidence for the O4 gate on admission of the ionization/discharge → acceleration/thrust block. It does not:

@@ -13,7 +13,7 @@ feed stays EMPTY (null) until the owner dispositions are actually made (owner de
 enforced by assert_feed_unbound before the feed is returned).
 MILESTONE. Supports Milestone B (physics-backed selection): admission of any Hall transport closure, and hence design Hall
 maps, is gated on the O4 dispositions (hall_ensemble._check_o4). Not needed for Milestone A (conditional selection).
-To reach B it still needs: the 7 attempt-2 escalations scored, the official matrix built, the owner's dispositions recorded,
+All required O4 datasets are scored and the official matrix is built; to reach B it still needs the owner's dispositions recorded,
 and (separately) a closure that passes new predictive evidence; the credible set is empty today.
 
 REFUSAL. The official matrix (o4_disposition_matrix_v1.json next to this file) is emitted ONLY when every required O4 dataset
@@ -28,9 +28,11 @@ interrupted/**; no directory is ever listed, every path is constructed from the 
   hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json   (O4 rule, staged_sensitivities, mandatory chemistry)
   hallthruster_bridge/prereg/p5_n2_prereg_lock_v1.json           (lock hash)
   hallthruster_bridge/ensemble/o4_dispositions_schema_v1.json    (the dispositions record this matrix feeds)
-  docs/orchestration/lane_registry_v1.json                        (datasets: 5 O4 first stages + 13 escalations)
-  docs/orchestration/trigger_registry_v1.json                     (T_O4_DISPOSITION_MATRIX prerequisites)
-  docs/orchestration/trigger_ledger_v2.jsonl                      (VERIFIED record of fo_johnsonlow_escalation_assessment)
+  docs/orchestration/lane_registry_v1.json                        (datasets: 5 O4 first stages + 13 escalations; ENUMERATION
+                                                                   ONLY, see IDENTITY BINDING below)
+  docs/orchestration/trigger_registry_v1.json                     (T_O4_DISPOSITION_MATRIX prerequisites; enumeration only)
+  docs/orchestration/trigger_ledger_v2.jsonl                      (FIRST VERIFIED record of fo_johnsonlow_escalation_assessment;
+                                                                   append-only, so the first record is stable)
   docs/o4/johnsonlow_assessment/johnsonlow_assessment_v1.json     (verified Johnson-low assessment; hash-bound to the datasets)
   hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_*       (mandatory v1 chain)
   hallthruster_bridge/validation/p5_n2_campaign_v1_<manifest>_{raw.jsonl.gz,raw_manifest.json,scores.json,
@@ -38,6 +40,15 @@ interrupted/**; no directory is ever listed, every path is constructed from the 
   hallthruster_bridge/propellants/<config>.toml                   (sha256 of the chemistry configs, compared only)
   scripts/score_p5_n2_campaign.py (frozen scorer; imported only after its sha256 equals the provenance value, and used to
                                    recompute every scored staged_escalation block; any difference raises)
+
+IDENTITY BINDING (repair 2026-09-27). provenance.inputs_sha256 binds only IMMUTABLE evidence inputs: the prereg criteria and
+lock, the dispositions schema, the frozen scorer and the verified Johnson-low assessment (each scored dataset's raw / scores /
+provenance hashes are bound per row in provenance.datasets). The lane and trigger registries are MUTABLE governance files (the
+orchestrator records repairs, followon_dir, attempt_history there), so they are never hashed whole: they enumerate the dataset
+ids only, and their identity is bound as a canonical projection (O4 dataset {id, manifest, role, escalations}; the
+T_O4_DISPOSITION_MATRIX {id, prerequisites, plus}). Editing any other registry field leaves the matrix byte-identical.
+The builder NEVER reads an owner o4_dispositions record (hallthruster_bridge/ensemble/o4_dispositions*.json other than the
+schema); guard() refuses it, and the feed stays an unbound skeleton.
 
 Usage:
   python docs/o4/disposition_matrix/build_o4_disposition_matrix.py              # official matrix, or refusal (exit 2)
@@ -63,6 +74,7 @@ TRIGGER = "T_O4_DISPOSITION_MATRIX"
 FOLLOW_ON = "fo_o4_disposition_matrix"
 JLA_FOLLOW_ON = "fo_johnsonlow_escalation_assessment"
 JLA_SENS = "n2_n_exc_johnsonlow.toml"
+DISPOSITIONS_SCHEMA_NAME = "o4_dispositions_schema_v1.json"
 POINTS = ["N1", "N2", "N3", "N4", "N5"]
 READINGS = ("A", "B")
 KINDS = ("status", "dI_d", "dT")
@@ -94,6 +106,7 @@ class Paths:
         self.val = os.path.join(self.br, "validation")
         self.interrupted = os.path.join(self.val, "interrupted")
         self.orch = os.path.join(self.root, "docs", "orchestration")
+        self.ensemble = os.path.join(self.br, "ensemble")
         self.jla = os.path.join(self.root, "docs", "o4", "johnsonlow_assessment", "johnsonlow_assessment_v1.json")
         self.scorer = os.path.join(self.root, "scripts", "score_p5_n2_campaign.py")
         self.official = os.path.join(self.root, "docs", "o4", "disposition_matrix", OFFICIAL_NAME)
@@ -113,6 +126,10 @@ def guard(paths, p):
     if a == paths.interrupted or a.startswith(paths.interrupted + os.sep) or \
             os.path.realpath(a).startswith(os.path.realpath(paths.interrupted) + os.sep):
         raise ProvenanceError(f"refused to read interrupted output {paths.rel(a)}")
+    b = os.path.basename(a)
+    if os.path.dirname(os.path.realpath(a)) == os.path.realpath(paths.ensemble) and b.startswith("o4_dispositions") \
+            and b != DISPOSITIONS_SCHEMA_NAME:
+        raise ProvenanceError(f"refused to read owner dispositions record {paths.rel(a)}; the feed stays unbound")
     return a
 
 
@@ -136,9 +153,25 @@ def _sha(paths, p):
 
 
 # --------------------------------------------------------------------------------------------------------------------- registry
+def _canonical_sha(obj):
+    return _sha_bytes(json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode())
+
+
+REGISTRY_PROJECTION_KEYS = ("id", "manifest", "role", "escalations")
+
+
+def registry_projection(paths):
+    """Canonical projection of the lane registry used as its identity: the O4 datasets' {id, manifest, role, escalations}
+    only (never followon_dir, attempt_history, repairs or any lane/follow-on field)."""
+    reg = _json(paths, os.path.join(paths.orch, "lane_registry_v1.json"))
+    ds = [{k: d.get(k) for k in REGISTRY_PROJECTION_KEYS}
+          for d in reg["datasets"] if str(d.get("role", "")).startswith("O4 ")]
+    return reg, sorted(ds, key=lambda d: d["id"])
+
+
 def registry(paths, crit):
     """The 18 registered O4 datasets, cross-checked against the pre-registered staged_sensitivities."""
-    reg = _json(paths, os.path.join(paths.orch, "lane_registry_v1.json"))
+    reg, _ = registry_projection(paths)
     ds = {d["id"]: d for d in reg["datasets"] if str(d.get("role", "")).startswith("O4 ")}
     staged = crit["staged_sensitivities"]
     fams = []
@@ -294,6 +327,7 @@ def verify_johnsonlow(paths, verified_rows, checks):
     ledger = [json.loads(line) for line in _read(paths, os.path.join(paths.orch, "trigger_ledger_v2.jsonl")).decode().splitlines()
               if line.strip()]
     ver = [e for e in ledger if e.get("event") == "VERIFIED" and (e.get("evidence") or {}).get("follow_on") == JLA_FOLLOW_ON]
+    # the ledger is append-only: bind the FIRST VERIFIED record so later appends never change the matrix
 
     def chk(name, ok):
         checks.append({"check": f"johnsonlow assessment: {name}", "ok": bool(ok)})
@@ -313,7 +347,7 @@ def verify_johnsonlow(paths, verified_rows, checks):
             (d["scores_sha256"], d["provenance_sha256"], d["raw_sha256_canonical"]) ==
             (v["scores_sha256"], v["provenance_sha256"], v["raw_sha256_canonical"]))
     return {"file": paths.rel(paths.jla), "sha256": _sha(paths, paths.jla),
-            "ledger_verified_commit": (ver[-1].get("evidence") or {}).get("commit"), "answer": jla["answer"]}
+            "ledger_verified_commit": (ver[0].get("evidence") or {}).get("commit"), "answer": jla["answer"]}
 
 
 # ------------------------------------------------------------------------------------------------------------------ tabulation
@@ -418,7 +452,8 @@ def build(root=DEFAULT_ROOT, preview=False):
     paths = Paths(root)
     checks = []
     crit_p = os.path.join(paths.br, "prereg", "p5_n2_validation_criteria_v1.json")
-    schema_p = os.path.join(paths.br, "ensemble", "o4_dispositions_schema_v1.json")
+    schema_p = os.path.join(paths.ensemble, DISPOSITIONS_SCHEMA_NAME)
+    lock_p = os.path.join(paths.br, "prereg", "p5_n2_prereg_lock_v1.json")
     crit = _json(paths, crit_p)
     disp_schema = _json(paths, schema_p)
     if disp_schema.get("schema") != "o4_dispositions_v1":
@@ -509,10 +544,16 @@ def build(root=DEFAULT_ROOT, preview=False):
                        "datasets": [mand["row"]] + [verified[e["id"]]["row"] for e in entries if e["id"] in verified],
                        "inputs_sha256": {paths.rel(crit_p): _sha(paths, crit_p), paths.rel(schema_p): _sha(paths, schema_p),
                                          paths.rel(paths.scorer): _sha(paths, paths.scorer),
-                                         "docs/orchestration/lane_registry_v1.json":
-                                             _sha(paths, os.path.join(paths.orch, "lane_registry_v1.json")),
-                                         "docs/orchestration/trigger_registry_v1.json":
-                                             _sha(paths, os.path.join(paths.orch, "trigger_registry_v1.json"))}},
+                                         paths.rel(lock_p): _sha(paths, lock_p),
+                                         **({} if jla is None else {jla["file"]: jla["sha256"]})},
+                       "registry_identity": {
+                           "note": ("mutable governance files are never hashed whole; only these canonical projections "
+                                    "(sorted keys, compact JSON) bind their identity"),
+                           "lane_registry_o4_datasets_projection_keys": list(REGISTRY_PROJECTION_KEYS),
+                           "lane_registry_o4_datasets_projection_sha256": _canonical_sha(registry_projection(paths)[1]),
+                           "trigger_projection_keys": ["id", "prerequisites", "plus"],
+                           "trigger_projection_sha256": _canonical_sha(
+                               {k: trig.get(k) for k in ("id", "prerequisites", "plus")})}},
     }
     if preview:
         out["PREVIEW"] = True

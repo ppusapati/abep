@@ -214,6 +214,79 @@ def test_cli_check_passes_and_writes_nothing(capsys):
     assert {f: _sha(os.path.join(HERE, f)) for f in os.listdir(HERE) if os.path.isfile(os.path.join(HERE, f))} == before
 
 
+# ------------------------------------------------------------------------------- identity binds immutable inputs only
+def test_official_inputs_bind_no_mutable_governance_file(committed):
+    ins = committed["provenance"]["inputs_sha256"]
+    assert not [k for k in ins if k.startswith("docs/orchestration/")]
+    for k, v in ins.items():
+        assert _sha(os.path.join(ROOT, k)) == v
+    rid = committed["provenance"]["registry_identity"]
+    assert rid["lane_registry_o4_datasets_projection_keys"] == ["id", "manifest", "role", "escalations"]
+    assert rid["trigger_projection_keys"] == ["id", "prerequisites", "plus"]
+
+
+def test_matrix_reproduces_after_editing_non_dataset_registry_fields(tmp_path):
+    """The orchestrator edits the lane/trigger registries (repairs, followon_dir, lanes, follow-ons) and appends ledger
+    records; none of that is evidence, so the official matrix must stay byte-identical."""
+    r = _synthetic_root(tmp_path, SCORED_18, copy_dirs=("docs/orchestration",))
+    o = os.path.join(r, "docs", "orchestration")
+    lp = os.path.join(o, "lane_registry_v1.json")
+    reg = json.load(open(lp))
+    reg["repairs"] = [{"lane": "fo_o4_disposition_matrix", "note": "synthetic repair record"}]
+    reg["decided"] = {"synthetic": "edited"}
+    reg["follow_ons"] = {"synthetic_follow_on": {"state": "EDITED"}} if isinstance(reg.get("follow_ons"), dict) \
+        else list(reg.get("follow_ons") or []) + [{"id": "synthetic_follow_on"}]
+    for d in reg["datasets"]:
+        d["followon_dir"] = "/synthetic/elsewhere/" + d["id"]
+    reg["lanes"] = reg["lanes"] if not isinstance(reg.get("lanes"), list) else reg["lanes"] + [{"id": "lane_99_synthetic"}]
+    json.dump(reg, open(lp, "w"), indent=2)
+    tp = os.path.join(o, "trigger_registry_v1.json")
+    tr = json.load(open(tp))
+    tr["synthetic_note"] = "edited by the orchestrator"
+    json.dump(tr, open(tp, "w"), indent=2)
+    with open(os.path.join(o, "trigger_ledger_v2.jsonl"), "a") as f:
+        f.write(json.dumps({"event": "VERIFIED", "evidence": {"follow_on": M.JLA_FOLLOW_ON, "commit": "0" * 40}}) + "\n")
+    assert _sha(lp) != _sha(os.path.join(ROOT, "docs", "orchestration", "lane_registry_v1.json"))
+    assert M.dumps(M.build(r)) == open(OFFICIAL).read()
+
+
+def test_projected_registry_fields_still_bind(tmp_path):
+    """The canonical projection is the identity: changing a dataset manifest is refused, and changing the trigger's
+    pre-registered 'plus' rule changes the bound projection hash."""
+    r = _synthetic_root(tmp_path, SCORED_18, copy_dirs=("docs/orchestration",))
+    tp = os.path.join(r, "docs", "orchestration", "trigger_registry_v1.json")
+    tr = json.load(open(tp))
+    items = tr["triggers"] if isinstance(tr, dict) and "triggers" in tr else tr
+    for t in (items if isinstance(items, list) else items.values()):
+        if isinstance(t, dict) and t.get("id") == M.TRIGGER:
+            t["plus"] = t["plus"] + " (edited)"
+    json.dump(tr, open(tp, "w"), indent=2)
+    assert M.build(r)["provenance"]["registry_identity"]["trigger_projection_sha256"] != \
+        json.load(open(OFFICIAL))["provenance"]["registry_identity"]["trigger_projection_sha256"]
+    lp = os.path.join(r, "docs", "orchestration", "lane_registry_v1.json")
+    reg = json.load(open(lp))
+    next(d for d in reg["datasets"] if d["id"] == "ds_staged_n2_n_rot_off")["manifest"] = "staged_elsewhere"
+    json.dump(reg, open(lp, "w"), indent=2)
+    with pytest.raises(M.ProvenanceError):
+        M.build(r)
+
+
+def test_owner_dispositions_record_is_never_read(tmp_path):
+    """An owner o4_dispositions file under hallthruster_bridge/ensemble/ is neither read nor bound: the matrix and its feed
+    are byte-identical with it present, and guard() refuses it."""
+    r = _synthetic_root(tmp_path, SCORED_18, copy_dirs=("hallthruster_bridge/ensemble",))
+    bait = os.path.join(r, "hallthruster_bridge", "ensemble", "o4_dispositions_v1.json")
+    json.dump({"schema": "o4_dispositions_v1", "decided_by": "synthetic owner", "mandatory_decision_sha256": "f" * 64},
+              open(bait, "w"))
+    M.ACCESS_LOG.clear()
+    assert M.dumps(M.build(r)) == open(OFFICIAL).read()
+    assert not [x for x in M.ACCESS_LOG if os.path.basename(x).startswith("o4_dispositions")
+                and os.path.basename(x) != M.DISPOSITIONS_SCHEMA_NAME]
+    with pytest.raises(M.ProvenanceError, match="owner dispositions"):
+        M.guard(M.Paths(r), bait)
+    M.guard(M.Paths(r), os.path.join(r, "hallthruster_bridge", "ensemble", M.DISPOSITIONS_SCHEMA_NAME))
+
+
 # --------------------------------------------------------------------------------------------------------------- hashes
 def test_all_checks_passed_and_hash_rows_match_files(preview):
     prov = preview["provenance"]
