@@ -1,0 +1,195 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.schema.json",
+ "title": "H-1 magnet/coil qualification basis v1 (fo_magnet_coil_qualification)",
+ "description": "Candidate matrix, qualification tests and adoptable requirements for the H-1 magnetic circuit. DRAFT for owner review. Every numeric value is a sourced record or an explicit TBD; no candidate carries a lifetime verdict.",
+ "type": "object",
+ "required": ["schema", "schema_file", "id", "title", "status", "date", "lane", "builder", "milestones",
+              "hard_statements", "vocabulary", "sources", "access_failures", "repository_references",
+              "planned_paths_referenced_only", "h1_requirement_basis", "candidates", "reference_only_evidence",
+              "qualification_tests", "requirements", "proposed_thresholds", "lane15_answers", "s1_gate_items",
+              "open_owner_questions", "derived"],
+ "additionalProperties": false,
+ "properties": {
+  "schema": {"const": "magnet_coil_qualification_v1"},
+  "schema_file": {"const": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.schema.json"},
+  "id": {"const": "fo_magnet_coil_qualification"},
+  "title": {"type": "string"},
+  "status": {"const": "DRAFT_FOR_OWNER_REVIEW"},
+  "date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+  "lane": {
+   "type": "object",
+   "required": ["id", "trigger", "owner_disposition", "decision_file"],
+   "properties": {
+    "id": {"const": "fo_magnet_coil_qualification"},
+    "trigger": {"const": "T_PIVOT_MAGNET_COIL_QUALIFICATION"},
+    "owner_disposition": {"const": "od_hardware_pivot"},
+    "decision_file": {"type": "string"}
+   }
+  },
+  "builder": {"type": "string"},
+  "milestones": {
+   "type": "object",
+   "required": ["supports", "A", "B", "C", "to_reach_next"],
+   "properties": {
+    "supports": {"type": "array", "items": {"enum": ["A", "B", "C"]}, "minItems": 1},
+    "A": {"type": "string"}, "B": {"type": "string"}, "C": {"type": "string"},
+    "to_reach_next": {"type": "array", "items": {"type": "string"}, "minItems": 1}
+   }
+  },
+  "hard_statements": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+  "vocabulary": {"type": "object"},
+  "sources": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "required": ["citation", "url", "access", "sha256_accessed", "locator_convention"],
+    "properties": {
+     "citation": {"type": "string", "minLength": 10},
+     "url": {"type": "string", "pattern": "^https://"},
+     "access": {"type": "string", "minLength": 5},
+     "sha256_accessed": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+     "locator_convention": {"type": "string"}
+    }
+   }
+  },
+  "access_failures": {
+   "type": "array",
+   "items": {"type": "object", "required": ["what", "url", "result"]}
+  },
+  "repository_references": {
+   "type": "array",
+   "items": {"type": "object", "required": ["path", "role", "present_in_base"],
+             "properties": {"present_in_base": {"type": "boolean"}}}
+  },
+  "planned_paths_referenced_only": {
+   "type": "array",
+   "items": {"type": "object", "required": ["path", "workstream", "use_here"]}
+  },
+  "h1_requirement_basis": {
+   "type": "object",
+   "required": ["B_magnitude_class", "operating_temperatures", "ecr_hall_interaction"],
+   "properties": {
+    "B_magnitude_class": {
+     "type": "object",
+     "required": ["statement", "evidence", "forbidden_sources", "consequence_for_candidates"],
+     "properties": {"evidence": {"type": "array", "items": {"$ref": "#/$defs/value_record"}, "minItems": 1}}
+    },
+    "operating_temperatures": {"type": "object"},
+    "ecr_hall_interaction": {"type": "object", "required": ["statements"]}
+   }
+  },
+  "candidates": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": ["id", "kind", "product", "supplier", "possible_roles", "values", "qualification_tests", "status",
+                 "lifetime_verdict"],
+    "properties": {
+     "id": {"type": "string", "pattern": "^MCQ-(PM|EM|EIS)-\\d{2}$"},
+     "kind": {"enum": ["permanent_magnet", "magnet_wire", "coil_construction_concept", "winding_potting_practice"]},
+     "values": {"type": "object", "additionalProperties": {"$ref": "#/$defs/value_or_tbd"}},
+     "qualification_tests": {"type": "array", "items": {"type": "string", "pattern": "^MCQ-QT-\\d{2}$"},
+                             "minItems": 1},
+     "status": {"enum": ["CANDIDATE", "CANDIDATE_INCOMPLETE_DATA", "NOT_SOURCED_FOR_SELECTION"]},
+     "lifetime_verdict": {"type": "null"}
+    }
+   }
+  },
+  "reference_only_evidence": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["id", "what", "where", "source_ids", "may_be_used_for", "never_produces_lifetime_verdict", "reason"],
+    "properties": {"id": {"type": "string", "pattern": "^MCQ-REF-\\d{2}$"},
+                   "source_ids": {"type": "array", "items": {"type": "string"}},
+                   "never_produces_lifetime_verdict": {"const": true}}
+   }
+  },
+  "qualification_tests": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["id", "source_ids", "name", "applies_to", "purpose", "method", "end_point", "phase",
+                 "owner_threshold"],
+    "properties": {"id": {"type": "string", "pattern": "^MCQ-QT-\\d{2}$"}}
+   }
+  },
+  "requirements": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["id", "adopter", "status", "statement", "rationale", "verification"],
+    "properties": {
+     "id": {"type": "string", "pattern": "^MCQ-(W3|W4|TL|AO)-\\d{2}$"},
+     "adopter": {"enum": ["W3", "W4", "lane_15_thermal_life", "fo_ao_lifetime_register"]},
+     "status": {"const": "PROPOSED"}
+    }
+   }
+  },
+  "proposed_thresholds": {
+   "type": "array",
+   "items": {"type": "object", "required": ["id", "quantity", "value", "status", "note"],
+             "properties": {"id": {"type": "string", "pattern": "^MCQ-PT-\\d{2}$"}, "status": {"const": "PROPOSED"}}}
+  },
+  "lane15_answers": {
+   "type": "array",
+   "items": {"type": "object", "required": ["id", "question", "status", "answer"],
+             "properties": {"id": {"type": "string", "pattern": "^MCQ-L15-\\d{2}$"},
+                            "status": {"enum": ["ANSWERED", "PARTIAL", "REMAINS_TBD", "UNCHANGED_REFERENCE_ONLY",
+                                                "GAP_REPORTED"]}}}
+  },
+  "s1_gate_items": {
+   "type": "array",
+   "items": {"type": "object", "required": ["id", "item", "requirements", "state"],
+             "properties": {"id": {"type": "string", "pattern": "^MCQ-S1-\\d{2}$"},
+                            "state": {"enum": ["MISSING", "PRESENT"]}}}
+  },
+  "open_owner_questions": {
+   "type": "array",
+   "items": {"type": "object", "required": ["id", "question"],
+             "properties": {"id": {"type": "string", "pattern": "^MCQ-OQ-\\d{2}$"}}}
+  },
+  "derived": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": ["id", "quantity", "value", "unit", "inputs", "formula", "source_id", "quantity_type",
+                 "evidence_level", "note"],
+    "properties": {
+     "id": {"type": "string", "pattern": "^MCQ-D-\\d{2}"},
+     "quantity_type": {"enum": ["inferred", "model-derived"]},
+     "evidence_level": {"type": "integer", "minimum": 1, "maximum": 7}
+    }
+   }
+  }
+ },
+ "$defs": {
+  "value_record": {
+   "type": "object",
+   "required": ["value", "unit", "as_published", "source_id", "locator", "evidence_level", "quantity_type",
+                "uncertainty", "applicability_domain", "validation_status"],
+   "additionalProperties": false,
+   "properties": {
+    "value": {"type": ["number", "string", "array", "object", "boolean"]},
+    "unit": {"type": "string"},
+    "as_published": {"type": "string", "minLength": 3},
+    "source_id": {"type": "string"},
+    "locator": {"type": "string", "minLength": 2},
+    "evidence_level": {"type": "integer", "minimum": 1, "maximum": 7},
+    "quantity_type": {"enum": ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]},
+    "uncertainty": {"type": "string", "minLength": 3},
+    "applicability_domain": {"type": "string", "minLength": 3},
+    "validation_status": {"type": "string", "minLength": 3}
+   }
+  },
+  "tbd_record": {
+   "type": "object",
+   "required": ["value", "TBD"],
+   "additionalProperties": false,
+   "properties": {"value": {"type": "null"}, "TBD": {"type": "string", "pattern": "^TBD - requires "}}
+  },
+  "value_or_tbd": {"anyOf": [{"$ref": "#/$defs/value_record"}, {"$ref": "#/$defs/tbd_record"}]}
+ }
+}
