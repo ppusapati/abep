@@ -253,7 +253,10 @@ def status(journals_dir, followon_dir):
             st[O["id"]] = "pending"
         else:
             dec = json.load(open(f)).get("decision")
-            st[O["id"]] = "domain_path_closed" if dec == "A-NO" else "domain_path_open" if dec in ("A-PARTIAL", "A-YES-WITH-CONDITIONS") else f"error: unknown decision {dec!r}"
+            if O.get("decision_states"):                            # explicit decision -> state map (registry)
+                st[O["id"]] = O["decision_states"].get(dec, f"error: unknown decision {dec!r}")
+            else:                                                   # od_v2_question_a (original mapping)
+                st[O["id"]] = "domain_path_closed" if dec == "A-NO" else "domain_path_open" if dec in ("A-PARTIAL", "A-YES-WITH-CONDITIONS") else f"error: unknown decision {dec!r}"
     if st.get("od_v2_question_a") == "domain_path_closed" and st.get("fo_v2_excitation_question_b") == "not_started":
         st["fo_v2_excitation_question_b"] = "BLOCKED_BY_QUESTION_A_DISPOSITION"
     deps = {L["id"]: L.get("deps", []) for L in reg["lanes"]}

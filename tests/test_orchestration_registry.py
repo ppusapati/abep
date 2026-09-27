@@ -25,7 +25,7 @@ def test_registries_are_closed_and_machine_addressable():
     for T in trig["triggers"]:
         for p in T.get("prerequisites", []):
             assert p["id"] in known, (T["id"], p["id"])
-            assert p["state"] in ("verified", "scored", "structural_pass", "non_empty", "domain_path_open", "domain_path_closed")
+            assert p["state"] in ("verified", "scored", "structural_pass", "non_empty", "domain_path_open", "domain_path_closed", "approved")
         assert set(T.get("family", [])) <= known
         if T.get("produces"):
             assert T["produces"] in known
