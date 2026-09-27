@@ -115,6 +115,9 @@ INPUTS = {
     "INS": ("docs/experiments/instrumentation/instrumentation_definition_v1.json",
             "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
             "verified deliverable (W4 instrumentation): INS-02 bus-power metering principle"),
+    "PB": ("docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md",
+           "2432edb7e9095fd630585768a62a811140b5230ba035afa3f0fc168636d11ca9",
+           "verified deliverable (bus_power_boundary_v1 lane): Sec. 2 two-bus PPU analog (E2), Sec. 6 ppu.py finding 8"),
     "BND": ("abep_sim/arch_boundary.py",
             "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
             "bus_power_boundary_v1 module (read-only; component set checked textually, never imported by this builder)"),
@@ -146,7 +149,12 @@ EXTERNAL = {
         "note": "same file (same sha256) as S-NIKRANT22 in electrical_closure_data_v1.json; re-read on this date"},
 }
 
-# Values transcribed from the external sources above (evidence carried per value; nothing here is a default).
+# Values transcribed by hand from the external sources above (evidence carried per value; nothing here is a default).
+# They are NOT repository data and cannot be recomputed from the repository: re-verification means re-reading the
+# accessed file (sha256_accessed) at the locator given. Evidence-class convention used for Osuga 2005: a value from
+# Table 1 'minimum efficiency' is a developer REQUIREMENT/specification -> 'assumed' (H24-06, H24-08..H24-11); the
+# keeper conditioner statement of Sec. III.B ('Efficiency of keeper conditioner is more than 80%') is a reported test
+# result -> 'measured' (H24-07, a lower bound only). Same document, different kinds of statement.
 OSUGA05_TABLE1 = {  # IEPC-2005-114 Sec. II.B 'Requirements of the PPU', Table 1 (DM PPU output power requirements)
     "locator": "Sec. II.B, Table 1 'DM PPU output power requirements' (column 'minimum efficiency (%) at maximum "
                "power'); regulated 100 V +/- 3 V bus (requirement 1)",
@@ -182,6 +190,11 @@ NIKRANT22 = {"locator": "Sec. II, p. 4",
                          "microcontroller; and AUX supply",
              "discharge_topology": "zero-volt-switching full-bridge converter",
              "pfcv_control": "closed-loop control of the discharge current via the PFCV (p. 4-5)"}
+
+
+KEEPER_V_HI = 35.0  # CK-PEDRINI17-HC3 locator text '14 - 35 V' (checked in build())
+RHODES_SERIES = ("HD-RH24-250V-25Vin", "HD-RH24-250V-28Vin", "HD-RH24-250V-34Vin",
+                 "HD-RH24-400V-25Vin", "HD-RH24-400V-28Vin", "HD-RH24-400V-34Vin")
 
 
 def _sha(path: str) -> str:
@@ -259,15 +272,18 @@ def extract(inp: dict) -> dict:
     for c in COMMON + ("rf_source", "ecr_source", "ecr_magnet"):
         need(f'"{c}"' in bnd, f"boundary component {c} missing from arch_boundary.py")
 
-    # discharge-supply efficiency (Rhodes 2024 slide 11, 28 V input)
+    # discharge-supply efficiency (Rhodes 2024 slide 11, all digitized input voltages 25 / 28 / 34 V, 250 / 400 V out):
+    # the bus voltage is a 24-34 V PARAMETER (H24-04), so the efficiency range spans every measured input voltage
     series = {}
-    for eid in ("HD-RH24-250V-28Vin", "HD-RH24-400V-28Vin"):
+    for eid in RHODES_SERIES:
         e = ec_entry(inp, "hall_discharge", eid)
         need(e["evidence_class"] == "digitized", f"{eid} class")
         series[eid] = e["value"]
     pts = [p for s in series.values() for p in s]
     eta_all = [min(p["efficiency"] for p in pts), max(p["efficiency"] for p in pts)]
-    pts500 = [p for p in pts if p["P_out_W"] >= 500.0]
+    # nominal 500 W step and above: the digitized 500 W points sit at 499.8-500.1 W (digitization jitter), so the
+    # cut is at 499.5 W to keep the 500 W step of every input voltage (incl. 34 V / 400 V, 0.8583)
+    pts500 = [p for p in pts if p["P_out_W"] >= 499.5]
     eta_500 = [min(p["efficiency"] for p in pts500), max(p["efficiency"] for p in pts500)]
 
     fc = ec_entry(inp, "flow_control", "FC-MOOG-I2R")
@@ -312,11 +328,17 @@ def extract(inp: dict) -> dict:
     eps_xe = aux["rf_source"]["modes"]["steady"]["load"]["lower_bound"]["floors"]["Xe_feed"]["W_per_A"]
     rf_bpw = aux["rf_source"]["modes"]["steady"]["bus_draw"]["bus_W_per_W_load"]
     ecr_bpw = aux["ecr_source"]["modes"]["steady"]["bus_draw"]["bus_W_per_W_load_reference_chain"]
+    ecr_stage = aux["ecr_source"]["modes"]["steady"]["bus_draw"]["bus_W_per_W_load_at_least_for_stage_technology"]
+    need(isinstance(ecr_stage, dict) and ecr_stage, "AUX ecr_source stage-technology factors missing")
 
     d11 = [d for d in inp["L1"]["decisions"] if isinstance(d, dict) and d.get("id") == "D-11"]
     ins02 = json.dumps(inp["INS"]).find("INS-02")
     need(ins02 >= 0, "INS-02 missing from instrumentation definition")
 
+    pb = inp["PB"]
+    need("## 6. DISCREPANCY AUDIT" in pb and "8. **Converter efficiencies are model parameters.**" in pb
+         and "| E2 |" in pb and "keeper and heater from 28 V, discharge from 120 V" in pb,
+         "BUS_POWER_BOUNDARY anchors (Sec. 6 finding 8, E2 two-bus PPU)")
     ppu_src = inp["PPU"]
     need("P_fixed_W: float = 3.0" in ppu_src and "controller_W: float = 8.0" in ppu_src, "ppu.py provenance anchors")
 
@@ -329,6 +351,8 @@ def extract(inp: dict) -> dict:
         "jpl_kI": jpl_kI, "jpl_kV": jpl_kV, "jpl_imin": jpl_imin, "gk_kign": gk_kign, "hc1_kign": hc1_kign,
         "vd_set": vd_set["value"], "vd_relax": vd_relax["value"], "id_bound": id_bound["value"],
         "comp_frac": comp_frac, "pneu_W": pneu, "eps_n2": eps_n2, "eps_xe": eps_xe, "rf_bpw": rf_bpw, "ecr_bpw": ecr_bpw,
+        "ecr_stage": ecr_stage, "ecr_stage_min": min(ecr_stage.values()),
+        "ecr_stage_min_id": min(ecr_stage, key=lambda k: ecr_stage[k]),
         "d11_present": bool(d11),
     }
 
@@ -374,6 +398,7 @@ def build(inp: dict) -> dict:
     need("60 W max" in x["hm_eff"]["applicability"]["notes"], "HM-SUPPLY-EFF rating text")
     eta_mag_lo = o["inner_magnet"]["eta_min"]
     keep_load_hi = max(x["ck_hc3"]["value"]["max"], x["ck_hc1"]["value"]["max"])
+    need("14 - 35 V" in x["ck_hc3"]["locator"], "CK-PEDRINI17-HC3 keeper-voltage text")
     eta_keep_lo = o["keeper"]["eta_min"]
     pfcv = [x["fc"]["value"]["min"], x["fc"]["value"]["max"]]
     eta_fc_lo = o["mass_flow"]["eta_min"]
@@ -434,11 +459,15 @@ def build(inp: dict) -> dict:
     id_table = [{"V_d_V": v, "I_d_A_at_P_d_alloc_max": [sig(pd_lo / v), sig(pd_hi / v)]} for v in vd_all]
 
     # jet-power necessary bound: P_d >= T^2 / (2 mdot) at efficiency 1 -> mdot_min = T^2 / (2 P_d)
+    # Cases: 'envelope' = P_d at the H24-24 allocation (CONDITIONAL on the A_common screening envelope);
+    # 'known_lower_aux' = the largest discharge load compatible with the allocation when only the known lower auxiliary
+    # term (one Xe PFCV coil, H24-23 known_lower_W) is booked: the weakest (unconditional within B_alloc) flow floor.
+    pd_abs = sig((B[1] - known_lo) * eta_d[1])
     jet = []
     for T in sorted(set(x["T_alloc_mN"] + x["T_rfp_mN"])):
-        for Pd in (pd_lo, pd_hi):
+        for case, Pd in (("envelope", pd_lo), ("envelope", pd_hi), ("known_lower_aux", pd_abs)):
             m = (T * 1e-3) ** 2 / (2.0 * Pd)
-            jet.append({"T_mN": T, "P_d_alloc_W": Pd, "mdot_min_mg_s": sig(m * 1e6)})
+            jet.append({"T_mN": T, "case": case, "P_d_alloc_W": Pd, "mdot_min_mg_s": sig(m * 1e6)})
     tp_floor = [{"T_mN": T, "B_W": b, "T_over_Pbus_min_mN_per_kW": sig(T / (b / 1000.0))}
                 for T in x["T_alloc_mN"] for b in B]
 
@@ -479,7 +508,11 @@ def build(inp: dict) -> dict:
     s2 = sig(s1 + k_ign_bus[1] + pfcv_bus_hi)
     s3 = sig(s2 + mag_bus_hi)
     s4 = sig(s3 + pfcv_bus_hi)
-    s5_aux = sig(k_ign_bus[1] + mag_bus_hi + 2 * pfcv_bus_hi + comp_bus + hk_bus_hi)
+    # transition keeper term: the keeper is still on (A5 transition; C-1 policy PENDING H2-2). It is booked at the
+    # larger of the ignition bracket and the steady keeper envelope, i.e. the same term PK-2 uses (consistency).
+    keep_trans_bus = max(k_ign_bus[1], env["cathode_keeper"]["bus_W"][1])
+    s5_aux = sig(keep_trans_bus + mag_bus_hi + 2 * pfcv_bus_hi + comp_bus + hk_bus_hi)
+    need(abs(s5_aux - sig(known_hi + pfcv_bus_hi)) < 1e-3, "SU-5 and PK-2 must book the same transition state")
     phases = [
         {"id": "SU-0", "a5_mode": "OFF", "name": "off / standby", "on": ["housekeeping"],
          "duration": "unbounded (standby)", "known_bus_W_upper": sig(hk_bus_hi),
@@ -519,6 +552,9 @@ def build(inp: dict) -> dict:
                 "thermal_control"],
          "duration": pend("XE", "t_transition, symbolic until H-1/C-1 measure it (A6 fo_xe_system_ledger)"),
          "known_aux_bus_W_upper": s5_aux,
+         "keeper_term_note": f"keeper booked at max(ignition bracket {k_ign_bus[1]} W bus, steady keeper envelope "
+                             f"{env['cathode_keeper']['bus_W'][1]} W bus) = {sig(keep_trans_bus)} W bus; equals PK-2 "
+                             "(A_common envelope incl. keeper on + one extra PFCV)",
          "open_terms": ["P_d/eta_d at the transition point (allocation, not a prediction)",
                         "atmospheric metering valve (H2-3)", "thermal_control (H2-5)"],
          "rule": "A5: mixed/transition operation never silently becomes a long-duration mode; its maximum duration "
@@ -548,7 +584,9 @@ def build(inp: dict) -> dict:
                         "housekeeping", "thermal_control"],
          "expression": "P_peak,2 = P_d/eta_d + A_common(envelope incl. keeper on) + 1 extra PFCV",
          "extra_over_steady_envelope_W": sig(pfcv_bus_hi),
-         "note": "at the envelope the transition peak exceeds the steady allocation only by the second Xe PFCV"},
+         "known_aux_bus_W_upper": s5_aux,
+         "note": "at the envelope the transition peak exceeds the steady allocation only by the second Xe PFCV; the "
+                 "known auxiliary term equals STARTUP SU-5 (same keeper term)"},
         {"id": "PK-3", "name": "reserved-slot seed variant V2 (pre-ionizer on before discharge ignition; NOT baseline)",
          "components": ["PK-1 components", "rf_source or ecr_source + ecr_magnet"],
          "expression": f"P_peak,3 = {s4} W + D_ign + P_bus[source] (+ P_bus[ecr_magnet]) + A_th",
@@ -593,10 +631,13 @@ def build(inp: dict) -> dict:
           "[24, 34]") + "; alternative regulated 100 V (" + src("S-OSUGA05", "Sec. II.B requirement 1") + ")",
           "measured", "TBD - requires the spacecraft EPS definition (owner)", "FLIGHT-REPRESENTATIVE", ["PS-C"], None,
           "the only sub-kW discharge-supply efficiency data accessed are at 24-34 V (EC HD-RH24-*)"),
-        P("H24-05", "discharge-supply efficiency eta_d (bus -> supply output), P_out >= 500 W, 28 V in", eta_d, "-",
-          "analog", src("EC", "HD-RH24-250V-28Vin, HD-RH24-400V-28Vin (Rhodes 2024 slide 11, points P_out >= 500 W)"),
+        P("H24-05", "discharge-supply efficiency eta_d (bus -> supply output), nominal P_out >= 500 W, 25-34 V in", eta_d, "-",
+          "analog", src("EC", ", ".join(RHODES_SERIES) + " (Rhodes 2024 slide 11, points at the nominal 500 W step and above, all "
+                        "digitized input voltages 25 / 28 / 34 V, outputs 250 / 400 V)"),
           "digitized", "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["PS-C"], "hall_discharge",
-          "breadboard LCC supply; harness/filters to the thruster excluded; above 1 kW output not measured; full "
+          "breadboard LCC supply; harness/filters to the thruster excluded; above 1 kW output not measured; 24 V input "
+          "not digitized (lowest measured input 25 V; H24-04 lists 24-34 V); the range spans the input-voltage "
+          "parameter, so it propagates to every allocation derived from it (H24-24/26, MG-5..7); full "
           f"measured span 200-1000 W is {x['eta_d_all'][0]}-{x['eta_d_all'][1]}"),
         P("H24-06", "discharge-supply efficiency, 3 kW class, 100 V bus (analog, not transferable)", o["anode"]["eta_min"],
           "-", "analog", src("S-OSUGA05", OSUGA05_TABLE1["locator"] + " PC1 anode"), "assumed", "PRELIMINARY",
@@ -606,8 +647,9 @@ def build(inp: dict) -> dict:
           src("S-OSUGA05", OSUGA05_TABLE1["keeper_measured"]["locator"]) + "; spec " +
           src("S-OSUGA05", OSUGA05_TABLE1["locator"] + " PC2 keeper 80 %"),
           "measured", "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["PS-C", "C-1"], "cathode_keeper",
-          "100 V-bus 25 W keeper conditioner; lower bound only ('more than 80%'); EC CK-SUPPLY-EFF stays TBD for a "
-          "28 V-class keeper supply"),
+          "100 V-bus 25 W keeper conditioner; lower bound only ('more than 80%'); class 'measured' because Sec. III.B "
+          "reports a test result, whereas H24-06/08-11 are Table 1 minimum-efficiency SPECIFICATIONS (class 'assumed'); "
+          "transcribed external constant, not repository data; EC CK-SUPPLY-EFF stays TBD for a 28 V-class keeper supply"),
         P("H24-08", "heater-supply efficiency (analog minimum-efficiency specification)", eta_heat_lo, "-", "analog",
           src("S-OSUGA05", OSUGA05_TABLE1["locator"] + " PC3 heater 85 % at 160 W"), "assumed", "PRELIMINARY",
           "FLIGHT-REPRESENTATIVE", ["PS-C", "C-1"], "cathode_heater", "specification, not a measurement"),
@@ -631,10 +673,15 @@ def build(inp: dict) -> dict:
           [x["rf_vk"]["value"]["min"], x["rf_nw"]["value"]], "-", "analog",
           src("EC", "RF-VOLKMAR18 (inferred, 0.60-0.70), RF-NEWORBIT25 (measured nominal 0.92)"), "inferred",
           "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["PIM-RF"], "rf_source",
-          "bus per W delivered 1.08696-1.66667 (AUX components.rf_source.bus_draw)"),
+          "bus per W delivered 1.08696-1.66667: ANALOG RANGE from these efficiencies, not a bound "
+          "(AUX components.rf_source.bus_draw)"),
         P("H24-15", "ecr_source chain efficiency (alternate slot; not baseline flight hardware)", x["ec_tw"]["value"], "-",
           "analog", src("EC", "EC-HAYABUSA-TWTA (only system-level chain value; 4.2 GHz TWT)"), "inferred", "PRELIMINARY",
-          "FLIGHT-REPRESENTATIVE", ["PIM-ECR"], "ecr_source", f"bus per W delivered {x['ecr_bpw']}"),
+          "FLIGHT-REPRESENTATIVE", ["PIM-ECR"], "ecr_source",
+          f"bus per W delivered {x['ecr_bpw']} for this REFERENCE chain only (Hayabusa TWTA; the ABEP chain may be "
+          f"higher or lower, AUX ecr_source.bus_draw); necessary stage-only lower bound >= {x['ecr_stage_min']} "
+          f"({x['ecr_stage_min_id']}), {sig(min(x['ecr_stage'].values()))}-{sig(max(x['ecr_stage'].values()))} by "
+          "stage technology"),
         P("H24-16", "hall_magnet load envelope (steady)", env["hall_magnet"]["load_W"], "W", "analog",
           env["hall_magnet"]["basis"] + "; " + rh + " :: HM-SUPPLY-EFF applicability.notes",
           "assumed", env["hall_magnet"]["status"], "FLIGHT-REPRESENTATIVE", ["MC-1", "PS-C"], "hall_magnet",
@@ -733,6 +780,15 @@ def build(inp: dict) -> dict:
           "metering; their own conversion losses never enter P_bus", "-", "requirement",
           src("HW", "configuration_items[PS-C]; requirements HW-ENV-05"), "assumed", "PRELIMINARY",
           "GROUND/FACILITY-ONLY", ["PS-C"]),
+        P("H24-41", "keeper supply steady output capability (sized to the H24-17 envelope)",
+          {"P_out_W_min": keep_load_hi, "V_compliance_V_min": KEEPER_V_HI, "I_A_max": x["jpl_kI"]["value"],
+           "capability_at_V_and_I_max_W": sig(KEEPER_V_HI * x["jpl_kI"]["value"])}, "W / V / A", "derived",
+          rh + " :: CK-PEDRINI17-HC3 locator ('discharge power ranges from about 25 to 60 W ... discharge voltage "
+          "settling in the range 14 - 35 V'); " + src("CI", "parameters.jpl_ignition_keeper_current_A (2 A)"),
+          "inferred", pend("H2-2", "C-1 steady keeper policy and keeper V-I"), "FLIGHT-REPRESENTATIVE", ["C-1", "PS-C"],
+          "cathode_keeper", "PROPOSED supply rating so that the keeper supply can deliver the steady keeper envelope it "
+          "is budgeted for (60 W needs >= 30 V at 2 A); 5-15 V x 2 A (JPL) alone gives only 30 W; if H2-2 fixes a "
+          "smaller steady keeper envelope the rating (and H24-17) shrink together"),
         P("H24-40", "discharge / keeper / heater / magnet outputs floating from the primary bus", "isolated outputs",
           "-", "analog", src("S-OSUGA05", OSUGA05_TABLE1["floating"]["locator"]) + "; " +
           src("S-OSUGA09", OSUGA09["floating_locator"]), "assumed", pend("H2-2", "cathode-common return path"),
@@ -753,9 +809,11 @@ def build(inp: dict) -> dict:
          "efficiency_parameter": "H24-09", "params": ["H24-16", "H24-32"], "status": env["hall_magnet"]["status"]},
         {"component": "cathode_keeper", "kind": "PARAMETER", "modes": ["startup (SU-2..SU-5)", "steady (policy)"],
          "load_W": {"steady": env["cathode_keeper"]["load_W"], "startup": k_ign},
-         "V_range_V": "ignition >= 150 V open circuit (analog); 5-15 V after ignition (JPL)",
+         "V_range_V": "ignition >= 150 V open circuit (analog); 5-15 V after ignition (JPL 1.5-cm); 14-35 V keeper-only "
+                      "discharge (CK-PEDRINI17-HC3, the source of the 60 W steady envelope); supply compliance >= 35 V "
+                      "(H24-41)",
          "I_range_A": [o["keeper"]["I_A"][0], x["jpl_kI"]["value"]], "efficiency_parameter": "H24-07",
-         "params": ["H24-17", "H24-19", "H24-28", "H24-29"], "status": env["cathode_keeper"]["status"]},
+         "params": ["H24-17", "H24-19", "H24-28", "H24-29", "H24-41"], "status": env["cathode_keeper"]["status"]},
         {"component": "cathode_heater", "kind": "PARAMETER", "modes": ["startup (SU-1..SU-4)", "steady 0 W (conditional)"],
          "load_W": {"startup": heat_bracket, "steady": [0.0, 0.0]}, "V_range_V": "analog 1-40 V",
          "I_range_A": "analog 1-13 A", "efficiency_parameter": "H24-08", "params": ["H24-18", "H24-30", "H24-31"],
@@ -830,17 +888,31 @@ def build(inp: dict) -> dict:
             "which_reading": "owner decision (OQ-H24-02); this lane does not choose",
         },
         "module_fit_conditions_necessary": [
-            f"P_bus[rf_source] = P_delivered x (1.08696 .. 1.66667) <= H  (AUX rf_source bus_W_per_W_load)",
-            f"P_bus[ecr_source] + P_bus[ecr_magnet] >= P_delivered x {x['ecr_bpw']} (only system-level chain)",
+            "P_bus[rf_source] (+ its share of any other booked term) <= H",
+            f"P_bus[ecr_source] + P_bus[ecr_magnet] <= H, where P_bus[ecr_source] >= P_delivered x "
+            f"{x['ecr_stage_min']} (stage-only lower bound, {x['ecr_stage_min_id']}; AUX ecr_source.bus_draw."
+            "bus_W_per_W_load_at_least_for_stage_technology)",
             f"P_bus[source] >= eps_floor x I_src with eps_floor = {x['eps_n2']} W/A (N2 feed), {x['eps_xe']} W/A (Xe feed) "
             "(AUX lower bound; air mixture TBD)",
             "the module's own housekeeping/standby draw is booked under housekeeping (v1 limitation) and must also fit",
         ],
+        "chain_factor_context_not_bounds": {
+            "rf_source_analog_range": f"P_bus[rf_source] / P_delivered in {x['rf_bpw']} from analog chain efficiencies "
+                                      "(RF-NEWORBIT25 nominal 0.92, RF-VOLKMAR18 0.60-0.70; AUX rf_source.bus_draw."
+                                      "bus_W_per_W_load): an ANALOG RANGE, not a bound",
+            "ecr_source_reference_chain": f"{x['ecr_bpw']} bus W per delivered W for the Hayabusa TWTA reference chain "
+                                          "(EC-HAYABUSA-TWTA): a REFERENCE value, neither an upper nor a lower bound "
+                                          "(AUX: 'the ABEP chain may be higher or lower')",
+            "ecr_source_stage_technology": {k: sig(v) for k, v in sorted(x["ecr_stage"].items())},
+        },
         "no_conclusion": "whether an RF or ECR module fits is NOT concluded: the required source power and the "
                          "discharge share f are unknown until H-1 Phase 1; no architecture is selected or eliminated",
         "zero_headroom_share": f_zero,
         "grid_axes": {"f": fgrid, "A_common_W": [sig(a) for a in agrid],
                       "note": "sweep axes (parameters), not predictions; A_common = H24-23 envelope marked"},
+        "tabulated_values_are_upper_bounds": "compact_at_envelope, full_grid and zero_headroom_share are evaluated "
+                                             "with A_th = P_air_valve = 0 (PENDING H2-5 / H2-3); every tabulated "
+                                             "headroom and zero-headroom share is therefore an UPPER BOUND",
         "compact_at_envelope": compact,
         "full_grid": head,
     }
@@ -964,6 +1036,7 @@ def build(inp: dict) -> dict:
         {"from": "H2-4", "to": "H2-2", "quantity": "heater / keeper supply capability offered",
          "value": {"heater_W": [heat_bracket[0], heat_bracket[1]], "keeper_ignition_V": ">= 150 V DC (300 V ramp "
                    "option; pulse 300-600 V option)", "keeper_I_A": [o["keeper"]["I_A"][0], x["jpl_kI"]["value"]],
+                   "keeper_steady_V_compliance_V_min": KEEPER_V_HI, "keeper_P_out_W_min": keep_load_hi,
                    "steady_keeper_bus_W_envelope": env["cathode_keeper"]["bus_W"]}, "units": "W / V / A",
          "status": "PRELIMINARY"},
         {"from": "H2-3", "to": "H2-4", "quantity": "valve count and coil power (PFCVs, atmospheric metering valve); "
@@ -971,11 +1044,17 @@ def build(inp: dict) -> dict:
          "status": pend("H2-3")},
         {"from": "H2-4", "to": "H2-3", "quantity": "compressor bus-draw screening ceiling (PROPOSED, OD-C2 open)",
          "value": sig(comp_bus), "units": "W", "status": "PRELIMINARY"},
-        {"from": "H2-4", "to": "H2-3", "quantity": "necessary minimum delivered anode flow for the thrust allocation "
-         "at the discharge allocation (jet-power bound, efficiency 1)",
-         "value": {"15_mN": sorted(j["mdot_min_mg_s"] for j in jet if j["T_mN"] == 15.0),
-                   "22_mN": sorted(j["mdot_min_mg_s"] for j in jet if j["T_mN"] == 22.0)}, "units": "mg/s",
-         "status": "PRELIMINARY"},
+        {"from": "H2-4", "to": "H2-3", "quantity": "minimum delivered anode flow for the thrust allocation from the "
+         "jet-power bound (efficiency 1): CONDITIONAL on the auxiliary envelope at the H24-24 allocation; the weakest "
+         "floor (only the known lower auxiliary term booked) is given separately",
+         "value": {"conditional_on_A_common_envelope": {
+                       "15_mN": sorted(j["mdot_min_mg_s"] for j in jet if j["T_mN"] == 15.0 and j["case"] == "envelope"),
+                       "22_mN": sorted(j["mdot_min_mg_s"] for j in jet if j["T_mN"] == 22.0 and j["case"] == "envelope")},
+                   "floor_at_known_lower_aux": {
+                       "P_d_W": pd_abs,
+                       "15_mN": [j["mdot_min_mg_s"] for j in jet if j["T_mN"] == 15.0 and j["case"] == "known_lower_aux"],
+                       "22_mN": [j["mdot_min_mg_s"] for j in jet if j["T_mN"] == 22.0 and j["case"] == "known_lower_aux"]}},
+         "units": "mg/s", "status": "PRELIMINARY"},
         {"from": "H2-4", "to": "H2-5", "quantity": "PPU steady dissipation = sum P_loss + housekeeping load",
          "value": {"discharge_supply_loss_W": [min(d["discharge_supply_loss_W"][0] for v in dalloc.values() for d in v),
                                                max(d["discharge_supply_loss_W"][1] for v in dalloc.values() for d in v)],
@@ -1023,8 +1102,10 @@ def build(inp: dict) -> dict:
              "model-derived from analog envelopes", "finding": "none"},
             {"id": "HI-03", "check": "discharge allocation vs jet-power necessary bound P_d >= T^2/(2 mdot)",
              "result": "delivered flow must exceed " + ", ".join(f"{j['mdot_min_mg_s']} mg/s ({j['T_mN']:g} mN at "
-                                                                 f"{j['P_d_alloc_W']} W)" for j in jet
+                                                                 f"{j['P_d_alloc_W']} W, {j['case']})" for j in jet
                                                                  if j["T_mN"] in x["T_alloc_mN"]) +
+                       "; the 'envelope' values are conditional on the A_common screening envelope, the "
+                       "'known_lower_aux' values are the weakest floor inside B_alloc" +
                        "; the candidate valve-flow bracket 0.030-3.14 mg/s (compressor_downselect, A3 candidate "
                        "range) straddles these values", "evidence_class": "model-derived (energy conservation)",
              "finding": "none at the architecture level: a constraint on the delivered flow handed to H2-3 / feed-state "
@@ -1085,7 +1166,8 @@ def build(inp: dict) -> dict:
         {"id": "H3-PPU-02", "item": "H-1 magnet supplies (one per coil, current control, remote sense)",
          "representativeness": "GROUND/FACILITY-ONLY", "spec_level_to_order": pend("H2-1", "coil V/I"),
          "long_lead": False},
-        {"id": "H3-PPU-03", "item": "H-1 keeper supply (>= 150 V open circuit ignition; current-regulated 0.5-2 A class) "
+        {"id": "H3-PPU-03", "item": "H-1 keeper supply (>= 150 V open circuit ignition; current-regulated 0.5-2 A class; "
+         "steady compliance >= 35 V, >= 60 W output per H24-41) "
          "and heater supply (current-regulated; up to ~305 W, current per C-1)", "representativeness":
          "GROUND/FACILITY-ONLY", "spec_level_to_order": pend("H2-2", "C-1 selection"), "long_lead": False},
         {"id": "H3-PPU-04", "item": "INS-02 bus-power metering (4-wire V, calibrated shunts / zero-flux CTs, "
@@ -1336,7 +1418,9 @@ def render_md(d: dict) -> str:
     a("")
     a(f"**{h['no_conclusion']}.**")
     a("")
-    a("Headroom at the screening envelope A_common (W), as a function of the discharge bus share f:")
+    a("Headroom at the screening envelope A_common (W), as a function of the discharge bus share f. The table is "
+      "evaluated with A_th = P_air_valve = 0 (both PENDING H2-5 / H2-3, carried symbolically in the formulas), so "
+      "every tabulated value, and every zero-headroom share below, is an UPPER BOUND on the slot headroom:")
     a("")
     a("| f | " + " | ".join(f"H_a (B={b:g})" for b in (1300.0, 1350.0)) + " | " +
       " | ".join(f"H_b (B={b:g})" for b in (1300.0, 1350.0)) + " |")
@@ -1348,7 +1432,7 @@ def render_md(d: dict) -> str:
           f"{rows[1300.0]['H_inside_requirement_W']:g} | {rows[1350.0]['H_inside_requirement_W']:g} |")
     a("")
     a("Negative headroom means no slot budget at that share. The full grid over A_common is in the JSON "
-      "(`margin_table.headroom.full_grid`). Share at zero headroom: " + "; ".join(
+      "(`margin_table.headroom.full_grid`). Share at zero headroom (upper bounds, A_th = P_air_valve = 0): " + "; ".join(
           f"B={z['B_alloc_W']:g} W: f = {z['f_at_zero_headroom_inside_allocation']} (R-a), "
           f"{z['f_at_zero_headroom_inside_requirement']} (R-b)" for z in h["zero_headroom_share"]))
     a("")
@@ -1357,7 +1441,10 @@ def render_md(d: dict) -> str:
         for t in d["margin_table"]["T_over_Pbus_floor_implied_by_allocation"]))
     a("")
     a("Jet-power necessary bound (efficiency 1): minimum delivered anode flow " + "; ".join(
-        f"{j['T_mN']:g} mN @ {j['P_d_alloc_W']:g} W → {j['mdot_min_mg_s']} mg/s" for j in d["margin_table"]["jet_power_bound"]))
+        f"{j['T_mN']:g} mN @ {j['P_d_alloc_W']:g} W ({j['case']}) → {j['mdot_min_mg_s']} mg/s"
+        for j in d["margin_table"]["jet_power_bound"]) + ". 'envelope' values are CONDITIONAL on the A_common "
+      "screening envelope; 'known_lower_aux' is the weakest floor (largest P_d compatible with B_alloc when only the "
+      "known lower auxiliary term is booked); none is a strict physical floor beyond that.")
     a("")
     a("## 5. PPU architecture options, grounding, H-1 ground supplies vs flight PPU")
     a("")

@@ -135,13 +135,13 @@ def test_allocation_arithmetic(data):
     assert p["H24-02"]["value"] == [1300.0, 1350.0]
     assert p["H24-03"]["value"] == [150.0, 200.0]
     eta = p["H24-05"]["value"]
-    assert eta == [0.8609, 0.9072]
+    assert eta == [0.8583, 0.915]  # all digitized input voltages (25/28/34 V), nominal 500 W step and above
     env = p["H24-23"]["value"]
     assert math.isclose(env["envelope_high_W"], 60 / 0.6 + 60 / 0.8 + 1.46 / 0.8 + 300.0 + 30 / 0.7, rel_tol=1e-5)
     assert math.isclose(env["permanent_magnet_keeper_off_W"], 1.46 / 0.8 + 300.0 + 30 / 0.7, rel_tol=1e-5)
     lo, hi = p["H24-24"]["value"]
-    assert math.isclose(lo, 0.8609 * (1300 - env["envelope_high_W"]), rel_tol=1e-5)
-    assert math.isclose(hi, 0.9072 * (1350 - env["permanent_magnet_keeper_off_W"]), rel_tol=1e-5)
+    assert math.isclose(lo, 0.8583 * (1300 - env["envelope_high_W"]), rel_tol=1e-5)
+    assert math.isclose(hi, 0.915 * (1350 - env["permanent_magnet_keeper_off_W"]), rel_tol=1e-5)
     # the discharge allocation stays inside the measured analog supply span (<= 1 kW)
     assert hi <= 1000.0
 
@@ -238,3 +238,62 @@ def test_p_bus_reconstruction_rule(data):
     assert any("wall-plug" in n for n in pr["never"])
     assert any("discharge-only" in n for n in pr["never"])
     assert "PARTIAL_BOUNDARY" in pr["labels"]
+
+
+# ---------------------------------------------------------------- repair round 1 (adversarial review findings)
+def test_ecr_fit_condition_uses_stage_minimum_not_reference_chain(data):
+    h = data["margin_table"]["headroom"]
+    conds = " ".join(h["module_fit_conditions_necessary"])
+    assert "2.75028" not in conds
+    assert ">= P_delivered x 1.27389" in conds and "ECR-E045" in conds
+    ctx = h["chain_factor_context_not_bounds"]
+    assert "neither an upper nor a lower bound" in ctx["ecr_source_reference_chain"]
+    assert min(ctx["ecr_source_stage_technology"].values()) == 1.27389
+    assert "ANALOG RANGE" in ctx["rf_source_analog_range"]
+    assert not any("P_bus[rf_source] = " in c for c in h["module_fit_conditions_necessary"])
+
+
+def test_transition_startup_and_peak_consistent(data):
+    su5 = [p for p in data["bus_profiles"]["STARTUP"]["phases"] if p["id"] == "SU-5"][0]
+    pk2 = [p for p in data["bus_profiles"]["PEAK"]["overlaps"] if p["id"] == "PK-2"][0]
+    env = {x["id"]: x for x in data["design_parameters"]}["H24-23"]["value"]["envelope_high_W"]
+    assert math.isclose(su5["known_aux_bus_W_upper"], env + pk2["extra_over_steady_envelope_W"], rel_tol=1e-5)
+    assert su5["known_aux_bus_W_upper"] == pk2["known_aux_bus_W_upper"]
+    assert math.isclose(su5["known_aux_bus_W_upper"], 521.507, rel_tol=1e-5)
+
+
+def test_keeper_supply_covers_keeper_envelope(data):
+    p = {x["id"]: x for x in data["design_parameters"]}
+    env_hi = p["H24-17"]["value"][1]
+    cap = p["H24-41"]["value"]
+    assert cap["P_out_W_min"] >= env_hi
+    assert cap["V_compliance_V_min"] * cap["I_A_max"] >= env_hi
+
+
+def test_eta_d_spans_all_bus_input_voltages(data):
+    p = {x["id"]: x for x in data["design_parameters"]}
+    assert "25-34 V" in p["H24-05"]["name"]
+    assert "HD-RH24-400V-34Vin" in p["H24-05"]["source"]
+
+
+def test_headroom_tables_marked_upper_bounds(data):
+    h = data["margin_table"]["headroom"]
+    assert "UPPER BOUND" in h["tabulated_values_are_upper_bounds"]
+    md = open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                           "docs/hardware/h2/h2_4_ppu_bus/H2_4_PPU_BUS.md"), encoding="utf-8").read()
+    assert "UPPER BOUND on the slot headroom" in md
+
+
+def test_jet_bound_flow_is_labelled_conditional(data):
+    jets = data["margin_table"]["jet_power_bound"]
+    assert {j["case"] for j in jets} == {"envelope", "known_lower_aux"}
+    dem = [d for d in data["interface_demands"] if d["to"] == "H2-3" and "jet-power" in d["quantity"]][0]
+    assert "CONDITIONAL" in dem["quantity"]
+    assert set(dem["value"]) == {"conditional_on_A_common_envelope", "floor_at_known_lower_aux"}
+    floor = dem["value"]["floor_at_known_lower_aux"]
+    assert floor["P_d_W"] > max(j["P_d_alloc_W"] for j in jets if j["case"] == "envelope")
+
+
+def test_power_boundary_doc_is_pinned(data):
+    paths = json.dumps(data)
+    assert "docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md" in paths
