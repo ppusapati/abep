@@ -289,9 +289,65 @@ def test_jet_bound_flow_is_labelled_conditional(data):
     assert {j["case"] for j in jets} == {"envelope", "known_lower_aux"}
     dem = [d for d in data["interface_demands"] if d["to"] == "H2-3" and "jet-power" in d["quantity"]][0]
     assert "CONDITIONAL" in dem["quantity"]
-    assert set(dem["value"]) == {"conditional_on_A_common_envelope", "floor_at_known_lower_aux"}
+    assert set(dem["value"]) == {"quantity_bounded", "anode_floor", "conditional_on_A_common_envelope",
+                                 "floor_at_known_lower_aux"}
     floor = dem["value"]["floor_at_known_lower_aux"]
     assert floor["P_d_W"] > max(j["P_d_alloc_W"] for j in jets if j["case"] == "envelope")
+
+
+# ---------------------------------------------------------------- repair round 2 (adversarial review findings)
+def test_jet_bound_is_on_total_exhaust_flow_with_symbolic_cathode(data):
+    jets = data["margin_table"]["jet_power_bound"]
+    for j in jets:
+        assert "mdot_min_mg_s" not in j
+        assert math.isclose(j["mdot_total_exhaust_min_mg_s"], (j["T_mN"] * 1e-3) ** 2 / (2 * j["P_d_alloc_W"]) * 1e6,
+                            rel_tol=1e-5)
+        assert "mdot_cathode (PENDING docs/hardware/h2/h2_2_cathode_integration/" in j["mdot_anode_min"]
+    dem = [d for d in data["interface_demands"] if d["to"] == "H2-3" and "jet-power" in d["quantity"]][0]
+    assert "TOTAL" in dem["quantity"] and "anode + cathode" in dem["quantity"]
+    assert "mdot_total_min - mdot_cathode" in dem["value"]["anode_floor"]
+    floor = dem["value"]["floor_at_known_lower_aux"]
+    # lossless discharge supply: no analog efficiency extrapolated past the measured <= 1 kW span
+    assert floor["eta_d"] == 1.0 and math.isclose(floor["P_d_W"], 1350.0 - 0.4191, rel_tol=1e-6)
+    assert math.isclose(floor["15_mN"][0], 0.0833593, rel_tol=1e-5)
+    assert math.isclose(floor["22_mN"][0], 0.179315, rel_tol=1e-5)
+
+
+def test_startup_keeper_uses_keeper_only_bracket(data):
+    ph = {p["id"]: p for p in data["bus_profiles"]["STARTUP"]["phases"]}
+    exp = {"SU-2": 305 / 0.85 + 30 / 0.7 + 60 / 0.8 + 1.46 / 0.8,
+           "SU-3": 305 / 0.85 + 30 / 0.7 + 60 / 0.8 + 60 / 0.6 + 1.46 / 0.8,
+           "SU-4": 305 / 0.85 + 30 / 0.7 + 60 / 0.8 + 60 / 0.6 + 2 * 1.46 / 0.8}
+    for k, v in exp.items():
+        assert math.isclose(ph[k]["known_bus_W_upper"], v, rel_tol=1e-5), k
+    pk = {p["id"]: p for p in data["bus_profiles"]["PEAK"]["overlaps"]}
+    assert math.isclose(pk["PK-1"]["known_bus_W_upper"], 580.331, rel_tol=1e-5)
+    assert math.isclose(pk["PK-1"]["headroom_to_1500_W_for_D_ign"], 919.669, rel_tol=1e-5)
+    assert math.isclose(pk["PK-3"]["headroom_to_1500_W_for_D_ign_plus_source"], 919.669, rel_tol=1e-5)
+    hi4 = [c for c in data["hard_incompatibility_check"]["checks"] if c["id"] == "HI-04"][0]
+    assert "580.331" in hi4["result"]
+    kl = [r for r in data["load_list"] if r["component"] == "cathode_keeper"][0]
+    assert kl["load_W"]["startup"]["booked_upper_W"] == 60.0
+    assert ph["SU-2"]["loads"]["cathode_keeper_W"]["keeper_only_bracket_HC3"] == [25.0, 60.0]
+
+
+def test_steady_keeper_labelled_surrogate_and_su6_policy_open(data):
+    p = {x["id"]: x for x in data["design_parameters"]}
+    assert "CONSERVATIVE SIZING SURROGATE" in p["H24-17"]["source"]
+    assert p["H24-17"]["evidence_class"] == "assumed"
+    su6 = [x for x in data["bus_profiles"]["STARTUP"]["phases"] if x["id"] == "SU-6"][0]
+    assert "keeper off" not in su6["name"]
+    assert any(c.startswith("cathode_keeper") for c in su6["on"])
+
+
+def test_extrapolations_flagged(data):
+    p = {x["id"]: x for x in data["design_parameters"]}
+    assert "200-500 V" in p["H24-05"]["note"] and "180 V" in p["H24-05"]["note"]
+    assert "12x outside" in p["H24-09"]["note"]
+    assert "Bounding combination" in p["H24-24"]["note"]
+    assert "supply loss lower bound 0 W" in p["H24-23"]["note"]
+    hi7 = [c for c in data["hard_incompatibility_check"]["checks"] if c["id"] == "HI-07"][0]
+    assert "EXTRAPOLATION" in hi7["result"] and "eta_d = 1" in hi7["result"]
 
 
 def test_power_boundary_doc_is_pinned(data):

@@ -416,8 +416,15 @@ def build(inp: dict) -> dict:
         "cathode_keeper": {"load_W": [0.0, keep_load_hi], "eta_lower": eta_keep_lo,
                            "bus_W": [0.0, sig(keep_load_hi / eta_keep_lo)],
                            "basis": "0 W = keeper off after ignition (Goebel & Katz p. 337, CK-G&K-OFF); upper = "
-                                    "keeper-only bracket maximum (CK-PEDRINI17-HC3) at the analog keeper-supply "
-                                    "efficiency lower bound 0.80 (Osuga 2005)", "status": pend("H2-2", "steady keeper policy")},
+                                    "keeper-only bracket maximum 60 W (CK-PEDRINI17-HC3) at the analog keeper-supply "
+                                    "efficiency lower bound 0.80 (Osuga 2005). CK-PEDRINI17-HC3 is a stand-alone "
+                                    "measurement with the keeper as the ONLY (sustaining) anode, i.e. the start-up / "
+                                    "dark-channel state; its validation_status says it is NOT keeper power with a "
+                                    "thruster running. No accessed source gives a keeper power with the thruster "
+                                    "running, so in STEADY the 60 W is used only as a CONSERVATIVE SIZING SURROGATE "
+                                    "(assumed) for a keeper-on policy, never as a thruster-running keeper value; the "
+                                    "same bracket is booked in the keeper-only start-up phases SU-2..SU-4 / PK-1 where "
+                                    "it applies", "status": pend("H2-2", "steady keeper policy")},
         "cathode_heater": {"load_W": [0.0, 0.0], "eta_lower": 1.0, "bus_W": [0.0, 0.0],
                            "basis": "0 W with efficiency 1 (boundary convention) CONDITIONAL on cathode self-heating at "
                                     "the steady discharge current (CH-G&K-STEADY-OFF); see HI-06",
@@ -443,6 +450,9 @@ def build(inp: dict) -> dict:
     known_hi = sig(sum(env[c]["bus_W"][1] for c in ("hall_magnet", "cathode_keeper", "flow_control", "compressor",
                                                      "housekeeping")))
     known_hi_pm_off = sig(env["flow_control"]["bus_W"][1] + comp_bus + env["housekeeping"]["bus_W"][1])
+    # lower end of the bus draw: load / eta_upper with eta_upper = 1 (a converter efficiency cannot exceed 1, so the
+    # supply loss has lower bound 0). This is the bus_W convention for a LOWER bound (PPU losses are inside P_bus but
+    # their lower bound is 0 W); the upper end divides by the analog efficiency lower bound (H24-10).
     known_lo = sig(env["flow_control"]["bus_W"][0])
 
     # ---------------------------------------------------------------- discharge allocation (derived upper bounds)
@@ -458,16 +468,22 @@ def build(inp: dict) -> dict:
     vd_all = sorted(set(x["vd_set"] + [x["vd_relax"]]))
     id_table = [{"V_d_V": v, "I_d_A_at_P_d_alloc_max": [sig(pd_lo / v), sig(pd_hi / v)]} for v in vd_all]
 
-    # jet-power necessary bound: P_d >= T^2 / (2 mdot) at efficiency 1 -> mdot_min = T^2 / (2 P_d)
+    # jet-power necessary bound: P_d >= P_jet >= T^2 / (2 mdot_total) holds only for the TOTAL exhaust mass flow
+    # mdot_total = mdot_anode + mdot_cathode (the Xe cathode flow is present in the A5 nominal mode) ->
+    # mdot_total_min = T^2 / (2 P_d); the necessary anode (delivered atmospheric) floor is
+    # mdot_anode_min = mdot_total_min - mdot_cathode, with mdot_cathode carried symbolically (PENDING H2-2).
     # Cases: 'envelope' = P_d at the H24-24 allocation (CONDITIONAL on the A_common screening envelope);
     # 'known_lower_aux' = the largest discharge load compatible with the allocation when only the known lower auxiliary
-    # term (one Xe PFCV coil, H24-23 known_lower_W) is booked: the weakest (unconditional within B_alloc) flow floor.
-    pd_abs = sig((B[1] - known_lo) * eta_d[1])
+    # bus term (one Xe PFCV coil, H24-23 known_lower_W) is booked AND the discharge supply is lossless (eta = 1, the
+    # strict upper bound; no analog efficiency is extrapolated past the Rhodes <= 1 kW measured span): the weakest
+    # floor inside B_alloc.
+    pd_abs = sig(B[1] - known_lo)
     jet = []
     for T in sorted(set(x["T_alloc_mN"] + x["T_rfp_mN"])):
         for case, Pd in (("envelope", pd_lo), ("envelope", pd_hi), ("known_lower_aux", pd_abs)):
             m = (T * 1e-3) ** 2 / (2.0 * Pd)
-            jet.append({"T_mN": T, "case": case, "P_d_alloc_W": Pd, "mdot_min_mg_s": sig(m * 1e6)})
+            jet.append({"T_mN": T, "case": case, "P_d_alloc_W": Pd, "mdot_total_exhaust_min_mg_s": sig(m * 1e6),
+                        "mdot_anode_min": f"{sig(m * 1e6)} mg/s - mdot_cathode (PENDING {LANES['H2-2']})"})
     tp_floor = [{"T_mN": T, "B_W": b, "T_over_Pbus_min_mN_per_kW": sig(T / (b / 1000.0))}
                 for T in x["T_alloc_mN"] for b in B]
 
@@ -501,16 +517,26 @@ def build(inp: dict) -> dict:
     heat_bus = [heat_bracket[0], sig(heat_bracket[1] / eta_heat_lo)]
     k_ign = [sig(x["jpl_kI"]["value"] * x["jpl_kV"]["value"][0]), sig(x["jpl_kI"]["value"] * x["jpl_kV"]["value"][1])]
     k_ign_bus = [k_ign[0], sig(k_ign[1] / eta_keep_lo)]
+    # keeper-only phases SU-2..SU-4 / PK-1: the keeper is the sustaining anode (no Hall discharge yet, or only its
+    # ignition), which is exactly the state CK-PEDRINI17-HC3 measured (25-60 W). The keeper term is booked at the
+    # larger of the JPL ignition product and the HC3 keeper-only bracket (bus side).
+    k_only = [x["ck_hc3"]["value"]["min"], x["ck_hc3"]["value"]["max"]]
+    k_only_bus = sig(k_only[1] / eta_keep_lo)
+    keep_su_bus = max(k_ign_bus[1], k_only_bus)
+    keep_su_load = max(k_ign[1], k_only[1])
+    keep_su_note = (f"keeper booked at max(JPL ignition bracket {k_ign[0]:g}-{k_ign[1]:g} W load = {k_ign_bus[1]} W bus, "
+                    f"CK-PEDRINI17-HC3 keeper-only bracket {k_only[0]:g}-{k_only[1]:g} W load = {k_only_bus} W bus) = "
+                    f"{keep_su_bus} W bus: the keeper is the only anode in this phase, the state HC3 measured")
     pfcv_bus_hi = env["flow_control"]["bus_W"][1]
     hk_bus_hi = env["housekeeping"]["bus_W"][1]
     mag_bus_hi = env["hall_magnet"]["bus_W"][1]
     s1 = sig(heat_bus[1] + hk_bus_hi)
-    s2 = sig(s1 + k_ign_bus[1] + pfcv_bus_hi)
+    s2 = sig(s1 + keep_su_bus + pfcv_bus_hi)
     s3 = sig(s2 + mag_bus_hi)
     s4 = sig(s3 + pfcv_bus_hi)
     # transition keeper term: the keeper is still on (A5 transition; C-1 policy PENDING H2-2). It is booked at the
     # larger of the ignition bracket and the steady keeper envelope, i.e. the same term PK-2 uses (consistency).
-    keep_trans_bus = max(k_ign_bus[1], env["cathode_keeper"]["bus_W"][1])
+    keep_trans_bus = max(keep_su_bus, env["cathode_keeper"]["bus_W"][1])
     s5_aux = sig(keep_trans_bus + mag_bus_hi + 2 * pfcv_bus_hi + comp_bus + hk_bus_hi)
     need(abs(s5_aux - sig(known_hi + pfcv_bus_hi)) < 1e-3, "SU-5 and PK-2 must book the same transition state")
     phases = [
@@ -527,13 +553,15 @@ def build(inp: dict) -> dict:
         {"id": "SU-2", "a5_mode": "Xe ignition/startup", "name": "keeper ignition (cathode Xe flow on)",
          "on": ["cathode_heater", "cathode_keeper", "flow_control", "housekeeping"],
          "duration": "TBD - requires C-1 ignition test (S1a/S1)",
-         "loads": {"cathode_keeper_W": k_ign, "keeper_open_circuit_V": "150 V DC (JPL) / 50-150 V DC + 300-600 V pulse "
+         "loads": {"cathode_keeper_W": {"ignition_bracket_JPL": k_ign, "keeper_only_bracket_HC3": k_only,
+                                        "booked_load_W_upper": keep_su_load},
+                   "keeper_open_circuit_V": "150 V DC (JPL) / 50-150 V DC + 300-600 V pulse "
                    "(Goebel & Katz) / 45-50 V with heater, up to 800 V heaterless (SITAEL HC1)",
                    "flow_control": "cathode Xe PFCV energized"},
-         "known_bus_W_upper": s2, "open_terms": ["thermal_control (H2-5)"]},
+         "known_bus_W_upper": s2, "keeper_term_note": keep_su_note, "open_terms": ["thermal_control (H2-5)"]},
         {"id": "SU-3", "a5_mode": "Xe ignition/startup", "name": "magnet ramp to setpoint (current control)",
          "on": ["cathode_heater", "cathode_keeper", "hall_magnet", "flow_control", "housekeeping"],
-         "duration": pend("H2-1", "coil L/R and ramp rate"), "known_bus_W_upper": s3,
+         "duration": pend("H2-1", "coil L/R and ramp rate"), "known_bus_W_upper": s3, "keeper_term_note": keep_su_note,
          "open_terms": ["thermal_control (H2-5)"],
          "order_note": "the magnet-vs-discharge order is not fixed by the accessed sources (cathode_integration "
                        "startup_reference.hall_only.open); the order heater -> keeper -> magnet -> Xe ignition is the "
@@ -542,7 +570,7 @@ def build(inp: dict) -> dict:
          "on": ["hall_discharge", "hall_magnet", "cathode_keeper", "cathode_heater (until discharge start)",
                 "flow_control", "housekeeping"],
          "duration": "TBD - requires S1 ignition transients (HW-ENV-02 transient margin)",
-         "known_bus_W_upper": s4,
+         "known_bus_W_upper": s4, "keeper_term_note": keep_su_note,
          "open_terms": ["D_ign: discharge ignition transient bus draw (TBD, S1; bounded by the discharge-supply current "
                         "limit x V_d / eta_d)", "thermal_control (H2-5)"],
          "note": "Goebel & Katz sequence: heater off once the discharge starts; the heater term is present only up to "
@@ -552,16 +580,20 @@ def build(inp: dict) -> dict:
                 "thermal_control"],
          "duration": pend("XE", "t_transition, symbolic until H-1/C-1 measure it (A6 fo_xe_system_ledger)"),
          "known_aux_bus_W_upper": s5_aux,
-         "keeper_term_note": f"keeper booked at max(ignition bracket {k_ign_bus[1]} W bus, steady keeper envelope "
+         "keeper_term_note": f"keeper booked at max(start-up keeper term {keep_su_bus} W bus, steady keeper envelope "
                              f"{env['cathode_keeper']['bus_W'][1]} W bus) = {sig(keep_trans_bus)} W bus; equals PK-2 "
                              "(A_common envelope incl. keeper on + one extra PFCV)",
          "open_terms": ["P_d/eta_d at the transition point (allocation, not a prediction)",
                         "atmospheric metering valve (H2-3)", "thermal_control (H2-5)"],
          "rule": "A5: mixed/transition operation never silently becomes a long-duration mode; its maximum duration "
                  "draws on the fixed Xe allocation"},
-        {"id": "SU-6", "a5_mode": "atmospheric Hall + Xe cathode (nominal)", "name": "keeper off / nominal steady",
-         "on": ["hall_discharge", "hall_magnet", "flow_control", "compressor", "thermal_control", "housekeeping"],
-         "duration": "continuous", "profile": "STEADY"},
+        {"id": "SU-6", "a5_mode": "atmospheric Hall + Xe cathode (nominal)",
+         "name": "nominal steady (keeper policy " + pend("H2-2") + ")",
+         "on": ["hall_discharge", "hall_magnet", "cathode_keeper (0 W if the C-1 policy turns it off; policy "
+                + pend("H2-2") + ")", "flow_control", "compressor", "thermal_control", "housekeeping"],
+         "duration": "continuous", "profile": "STEADY",
+         "note": "keeper on/off in steady state is not decided; the STEADY profile carries the keeper envelope "
+                 "0-" + f"{env['cathode_keeper']['bus_W'][1]:g}" + " W bus (H24-17) until H2-2 fixes the policy"},
     ]
     other_modes = [
         {"a5_mode": "degraded", "profile": "STEADY component set at reduced allocation; no additional component",
@@ -578,7 +610,7 @@ def build(inp: dict) -> dict:
          "components": ["cathode_heater", "cathode_keeper", "hall_magnet", "flow_control (2 PFCV)", "housekeeping",
                         "hall_discharge (ignition transient D_ign)"],
          "known_bus_W_upper": s4, "expression": f"P_peak,1 = {s4} W + D_ign + A_th",
-         "headroom_to_1500_W_for_D_ign": sig(R - s4)},
+         "headroom_to_1500_W_for_D_ign": sig(R - s4), "note": keep_su_note},
         {"id": "PK-2", "name": "transition (discharge at its allocation + keeper + both Xe PFCVs + compressor)",
          "components": ["hall_discharge", "hall_magnet", "cathode_keeper", "flow_control (2 PFCV)", "compressor",
                         "housekeeping", "thermal_control"],
@@ -637,7 +669,10 @@ def build(inp: dict) -> dict:
           "digitized", "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["PS-C"], "hall_discharge",
           "breadboard LCC supply; harness/filters to the thruster excluded; above 1 kW output not measured; 24 V input "
           "not digitized (lowest measured input 25 V; H24-04 lists 24-34 V); the range spans the input-voltage "
-          "parameter, so it propagates to every allocation derived from it (H24-24/26, MG-5..7); full "
+          "parameter, so it propagates to every allocation derived from it (H24-24/26, MG-5..7); output-voltage "
+          "applicability 200-500 V (EC applicability.output_V) with digitized points only at 250 / 400 V, so eta_d at "
+          "the H24-25 lower end 180 V (and at 350 V between the digitized outputs) is an EXTRAPOLATION / interpolation, "
+          "not measured (flagged in HI-07); full "
           f"measured span 200-1000 W is {x['eta_d_all'][0]}-{x['eta_d_all'][1]}"),
         P("H24-06", "discharge-supply efficiency, 3 kW class, 100 V bus (analog, not transferable)", o["anode"]["eta_min"],
           "-", "analog", src("S-OSUGA05", OSUGA05_TABLE1["locator"] + " PC1 anode"), "assumed", "PRELIMINARY",
@@ -656,7 +691,10 @@ def build(inp: dict) -> dict:
         P("H24-09", "magnet-supply efficiency (analog minimum-efficiency specification)", eta_mag_lo, "-", "analog",
           src("S-OSUGA05", OSUGA05_TABLE1["locator"] + " PC4/PC5 magnet 60 % at 5 W"), "assumed", "PRELIMINARY",
           "FLIGHT-REPRESENTATIVE", ["PS-C", "MC-1"], "hall_magnet",
-          "a 5 W-class output: efficiency at the Vyovrinda coil power is TBD (EC HM-SUPPLY-EFF)"),
+          "a 5 W-class output: the 60 % specification is stated at a 5 W maximum output and is applied here to the "
+          "60 W analog magnet-supply RATING (H24-16), i.e. ~12x outside its stated output power; used as a "
+          "conservative-by-assumption floor (not verified at 60 W); efficiency at the Vyovrinda coil power is TBD "
+          "(EC HM-SUPPLY-EFF)"),
         P("H24-10", "valve-driver (mass-flow PC) efficiency (analog minimum-efficiency specification)", eta_fc_lo, "-",
           "analog", src("S-OSUGA05", OSUGA05_TABLE1["locator"] + " PC6 mass flow 80 %"), "assumed", "PRELIMINARY",
           "FLIGHT-REPRESENTATIVE", ["PS-C", "FS-C"], "flow_control"),
@@ -687,8 +725,10 @@ def build(inp: dict) -> dict:
           "assumed", env["hall_magnet"]["status"], "FLIGHT-REPRESENTATIVE", ["MC-1", "PS-C"], "hall_magnet",
           "PARAMETER envelope from a supply rating, not a coil load"),
         P("H24-17", "cathode_keeper load envelope (steady)", env["cathode_keeper"]["load_W"], "W", "analog",
-          env["cathode_keeper"]["basis"] + "; " + rh + " :: CK-PEDRINI17-HC3", "measured", env["cathode_keeper"]["status"],
-          "FLIGHT-REPRESENTATIVE", ["C-1", "PS-C"], "cathode_keeper"),
+          env["cathode_keeper"]["basis"] + "; " + rh + " :: CK-PEDRINI17-HC3", "assumed", env["cathode_keeper"]["status"],
+          "FLIGHT-REPRESENTATIVE", ["C-1", "PS-C"], "cathode_keeper",
+          "the 60 W bracket itself is measured (keeper-only mode); applying it to a thruster-running keeper is an "
+          "ASSUMPTION (conservative sizing surrogate), hence evidence class 'assumed' for this steady row"),
         P("H24-18", "cathode_heater load bracket (start-up)", heat_bracket, "W", "analog",
           src("CI", "parameters.hc1_heater_power_W (45 W)") + "; " + rh + " :: CH-MONTERO24 (max 305 W)", "measured",
           pend("H2-2", "C-1 heater selection"), "FLIGHT-REPRESENTATIVE", ["C-1", "PS-C"], "cathode_heater",
@@ -696,7 +736,10 @@ def build(inp: dict) -> dict:
         P("H24-19", "cathode_keeper ignition load bracket (start-up)", k_ign, "W", "derived",
           src("CI", "parameters.jpl_ignition_keeper_current_A (2 A) x jpl_keeper_voltage_after_ignition_V (5-15 V)"),
           "inferred", pend("H2-2", "C-1 keeper ignition current"), "FLIGHT-REPRESENTATIVE", ["C-1", "PS-C"],
-          "cathode_keeper", "same product as aux_bus startup keeper bracket; JPL 1.5-cm cathode, different class"),
+          "cathode_keeper", "same product as aux_bus startup keeper bracket; JPL 1.5-cm cathode, different class. "
+          "The start-up profile books the keeper at max(this bracket, CK-PEDRINI17-HC3 keeper-only 25-60 W) because in "
+          "SU-2..SU-4 / PK-1 the keeper is the only anode (the HC3 state): booked start-up keeper load <= 60 W, "
+          "75 W bus"),
         P("H24-20", "flow_control per energized Xe PFCV (coil I^2R)", pfcv, "W", "analog",
           rh + " :: FC-MOOG-I2R (74.5 ohm, 75-140 mA at 21 C)", "inferred", pend("H2-3", "valve count and types"),
           "FLIGHT-REPRESENTATIVE", ["FS-C", "PS-C"], "flow_control", "valve driver loss excluded"),
@@ -711,13 +754,19 @@ def build(inp: dict) -> dict:
           "atmospheric metering valve)", {"envelope_high_W": known_hi, "permanent_magnet_keeper_off_W": known_hi_pm_off,
                                           "known_lower_W": known_lo}, "W", "derived",
           src("THIS", "build(): sum of H24-16/17/20/21/22 bus terms"), "model-derived", "PRELIMINARY",
-          "FLIGHT-REPRESENTATIVE", ["PS-C"], None, "an envelope for allocation, not a predicted load"),
+          "FLIGHT-REPRESENTATIVE", ["PS-C"], None, "an envelope for allocation, not a predicted load; known_lower_W is "
+          "a LOWER bound on the bus draw: coil load / eta with eta <= 1 (supply loss lower bound 0 W), consistent with "
+          "PPU losses inside P_bus; the upper ends divide by the analog efficiency lower bounds"),
         P("H24-24", "hall_discharge ALLOCATION (load side), hall_only baseline, reserved slot empty",
           [pd_lo, pd_hi], "W", "allocation",
           src("THIS", "P_d,alloc <= eta_d x (B_alloc - A_common); eta_d H24-05; A_common H24-23"), "model-derived",
           "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["H-1", "PS-C"], "hall_discharge",
           "an upper-bound ALLOCATION derived from the A5 P_bus allocation; thermal_control and the atmospheric valve "
-          "reduce it further; never a Hall performance prediction"),
+          "reduce it further; never a Hall performance prediction. Bounding combination: the range crosses the eta_d "
+          "extremes of H24-05 (0.8583 = 34 V in / 400 V out at the ~500 W step; 0.915 = best digitized point at higher "
+          "output) with the B_alloc - A_common extremes, so the upper end pairs the best efficiency with the largest "
+          "discharge bus draw; the extremes come from different Rhodes operating points and are not one consistent "
+          "operating point"),
         P("H24-25", "flight discharge-supply output voltage range", [min(vd_all), max(vd_all)], "V", "requirement",
           src("HW", "derived_numbers.inputs.V_d_proposed_set_V + V_d_relaxed_upper_V (PROPOSED set, HWQ-03)"),
           "assumed", "PRELIMINARY", "FLIGHT-REPRESENTATIVE", ["PS-C", "H-1"], "hall_discharge"),
@@ -808,7 +857,9 @@ def build(inp: dict) -> dict:
          "load_W": env["hall_magnet"]["load_W"], "V_range_V": "analog 1-12 V", "I_range_A": "analog 0.2-5 A",
          "efficiency_parameter": "H24-09", "params": ["H24-16", "H24-32"], "status": env["hall_magnet"]["status"]},
         {"component": "cathode_keeper", "kind": "PARAMETER", "modes": ["startup (SU-2..SU-5)", "steady (policy)"],
-         "load_W": {"steady": env["cathode_keeper"]["load_W"], "startup": k_ign},
+         "load_W": {"steady_sizing_surrogate": env["cathode_keeper"]["load_W"],
+                    "startup": {"ignition_bracket_JPL": k_ign, "keeper_only_bracket_HC3": k_only,
+                                "booked_upper_W": keep_su_load}},
          "V_range_V": "ignition >= 150 V open circuit (analog); 5-15 V after ignition (JPL 1.5-cm); 14-35 V keeper-only "
                       "discharge (CK-PEDRINI17-HC3, the source of the 60 W steady envelope); supply compliance >= 35 V "
                       "(H24-41)",
@@ -871,7 +922,8 @@ def build(inp: dict) -> dict:
          "basis": "derived from analog envelopes"},
         {"id": "MG-5", "item": "discharge bus draw available with the reserved slot empty (B - A_common)",
          "value_W": {k: [d["discharge_bus_W_max"] for d in v] for k, v in dalloc.items()}, "basis": "derived"},
-        {"id": "MG-6", "item": "hall_discharge load ALLOCATION (upper bound) = eta_d x MG-5",
+        {"id": "MG-6", "item": "hall_discharge load ALLOCATION (upper bound) = eta_d x MG-5 (bounding cross of the "
+         "eta_d extremes, from different Rhodes operating points, with the MG-5 extremes; see H24-24)",
          "value_W": {k: [d["P_d_load_W_max"] for d in v] for k, v in dalloc.items()}, "basis": "allocation"},
         {"id": "MG-7", "item": "discharge-supply conversion loss at MG-5 (inside P_bus)",
          "value_W": {k: [d["discharge_supply_loss_W"] for d in v] for k, v in dalloc.items()}, "basis": "derived"},
@@ -922,7 +974,8 @@ def build(inp: dict) -> dict:
         "discharge_supply": [
             {"id": "DS-A", "topology": "LCC resonant converter, 28 V-class input, 200-500 V out, <= 1 kW",
              "analog": "NASA SSEP sub-kW PPU breadboard (Rhodes 2024)", "evidence": "measured efficiency (EC HD-RH24-*)",
-             "gap": "the allocation needs up to ~" + str(round(pd_hi)) + " W output: inside the measured <= 1 kW span",
+             "gap": "the allocation needs up to ~" + str(round(pd_hi)) + " W output: inside the measured <= 1 kW span; "
+                    "the 180 V lower end of H24-25 is below the 200-500 V output applicability (extrapolation)",
              "representativeness": "FLIGHT-REPRESENTATIVE"},
             {"id": "DS-B", "topology": NIKRANT22["discharge_topology"] + ", 24-34 V input, up to 1000 W at 200-400 V",
              "analog": "Northrop Grumman 1 kW string PPU (Nikrant 2022 p. 4)", "evidence": "topology and rating only",
@@ -1044,17 +1097,26 @@ def build(inp: dict) -> dict:
          "status": pend("H2-3")},
         {"from": "H2-4", "to": "H2-3", "quantity": "compressor bus-draw screening ceiling (PROPOSED, OD-C2 open)",
          "value": sig(comp_bus), "units": "W", "status": "PRELIMINARY"},
-        {"from": "H2-4", "to": "H2-3", "quantity": "minimum delivered anode flow for the thrust allocation from the "
-         "jet-power bound (efficiency 1): CONDITIONAL on the auxiliary envelope at the H24-24 allocation; the weakest "
-         "floor (only the known lower auxiliary term booked) is given separately",
-         "value": {"conditional_on_A_common_envelope": {
-                       "15_mN": sorted(j["mdot_min_mg_s"] for j in jet if j["T_mN"] == 15.0 and j["case"] == "envelope"),
-                       "22_mN": sorted(j["mdot_min_mg_s"] for j in jet if j["T_mN"] == 22.0 and j["case"] == "envelope")},
+        {"from": "H2-4", "to": "H2-3", "quantity": "necessary floor on the TOTAL thruster exhaust flow (anode + "
+         "cathode) for the thrust allocation from the jet-power bound (efficiency 1), and the resulting delivered "
+         "anode-flow floor mdot_anode >= mdot_total_min - mdot_cathode with mdot_cathode symbolic (PENDING H2-2): "
+         "CONDITIONAL on the auxiliary envelope at the H24-24 allocation; the weakest floor (only the known lower "
+         "auxiliary term booked, lossless discharge supply) is given separately",
+         "value": {"quantity_bounded": "mdot_total = mdot_anode + mdot_cathode (total exhaust mass flow)",
+                   "anode_floor": "mdot_anode_min = mdot_total_min - mdot_cathode; mdot_cathode " + pend("H2-2",
+                                  "C-1 cathode Xe flow in the nominal mode"),
+                   "conditional_on_A_common_envelope": {
+                       "15_mN": sorted(j["mdot_total_exhaust_min_mg_s"] for j in jet
+                                       if j["T_mN"] == 15.0 and j["case"] == "envelope"),
+                       "22_mN": sorted(j["mdot_total_exhaust_min_mg_s"] for j in jet
+                                       if j["T_mN"] == 22.0 and j["case"] == "envelope")},
                    "floor_at_known_lower_aux": {
-                       "P_d_W": pd_abs,
-                       "15_mN": [j["mdot_min_mg_s"] for j in jet if j["T_mN"] == 15.0 and j["case"] == "known_lower_aux"],
-                       "22_mN": [j["mdot_min_mg_s"] for j in jet if j["T_mN"] == 22.0 and j["case"] == "known_lower_aux"]}},
-         "units": "mg/s", "status": "PRELIMINARY"},
+                       "P_d_W": pd_abs, "eta_d": 1.0,
+                       "15_mN": [j["mdot_total_exhaust_min_mg_s"] for j in jet
+                                 if j["T_mN"] == 15.0 and j["case"] == "known_lower_aux"],
+                       "22_mN": [j["mdot_total_exhaust_min_mg_s"] for j in jet
+                                 if j["T_mN"] == 22.0 and j["case"] == "known_lower_aux"]}},
+         "units": "mg/s (total exhaust flow)", "status": "PRELIMINARY"},
         {"from": "H2-4", "to": "H2-5", "quantity": "PPU steady dissipation = sum P_loss + housekeeping load",
          "value": {"discharge_supply_loss_W": [min(d["discharge_supply_loss_W"][0] for v in dalloc.values() for d in v),
                                                max(d["discharge_supply_loss_W"][1] for v in dalloc.values() for d in v)],
@@ -1101,14 +1163,17 @@ def build(inp: dict) -> dict:
              f"A_common envelope {known_hi} W (excl. thermal_control, atmospheric valve) < {B[0]:g} W", "evidence_class":
              "model-derived from analog envelopes", "finding": "none"},
             {"id": "HI-03", "check": "discharge allocation vs jet-power necessary bound P_d >= T^2/(2 mdot)",
-             "result": "delivered flow must exceed " + ", ".join(f"{j['mdot_min_mg_s']} mg/s ({j['T_mN']:g} mN at "
-                                                                 f"{j['P_d_alloc_W']} W, {j['case']})" for j in jet
-                                                                 if j["T_mN"] in x["T_alloc_mN"]) +
-                       "; the 'envelope' values are conditional on the A_common screening envelope, the "
-                       "'known_lower_aux' values are the weakest floor inside B_alloc" +
+             "result": "TOTAL exhaust flow (anode + cathode) must exceed " + ", ".join(
+                           f"{j['mdot_total_exhaust_min_mg_s']} mg/s ({j['T_mN']:g} mN at {j['P_d_alloc_W']} W, "
+                           f"{j['case']})" for j in jet if j["T_mN"] in x["T_alloc_mN"]) +
+                       "; the delivered anode (atmospheric) floor is that value minus mdot_cathode (PENDING H2-2); "
+                       "the 'envelope' values are conditional on the A_common screening envelope, the "
+                       "'known_lower_aux' values (eta_d = 1, no analog efficiency extrapolated) are the weakest floor "
+                       "inside B_alloc" +
                        "; the candidate valve-flow bracket 0.030-3.14 mg/s (compressor_downselect, A3 candidate "
                        "range) straddles these values", "evidence_class": "model-derived (energy conservation)",
-             "finding": "none at the architecture level: a constraint on the delivered flow handed to H2-3 / feed-state "
+             "finding": "none at the architecture level: a constraint on the total exhaust flow (anode floor = total - "
+                        "cathode flow) handed to H2-3 / feed-state "
                         "closure (it applies identically to hall_only, rf_hall and ecr_hall)"},
             {"id": "HI-04", "check": "start-up overlap known terms below 1500 W", "result": f"PK-1 known upper {s4} W; "
              f"{sig(R - s4)} W left for the discharge ignition transient", "evidence_class": "model-derived from analog "
@@ -1123,8 +1188,12 @@ def build(inp: dict) -> dict:
              "(H24-17); a steady heater would be a new term -> condition handed to H2-2 (C-1 sized for self-heating at "
              "the allocation current)"},
             {"id": "HI-07", "check": "discharge-supply output power inside the analog measured span", "result":
-             f"P_d allocation <= {pd_hi} W vs measured 200-1000 W (Rhodes)", "evidence_class": "digitized",
-             "finding": "none"},
+             f"P_d allocation <= {pd_hi} W vs measured 200-1000 W output (Rhodes); the 'known_lower_aux' jet-power "
+             f"case ({pd_abs} W) uses eta_d = 1 and takes no analog efficiency outside the span; output voltage: "
+             f"H24-25 spans {min(vd_all):g}-{max(vd_all):g} V vs the 200-500 V output applicability (digitized at "
+             "250 / 400 V only), so eta_d at 180 V is an EXTRAPOLATION", "evidence_class": "digitized",
+             "finding": "none (architecture); flagged: eta_d below 200 V output not measured -> H4 breadboard / "
+                        "supply measurement at the Phase-1 V_d set (H3-PPU-05)"},
         ],
         "not_checked": ["compressor input power (H2-3)", "thermal_control (H2-5)", "flight PPU mass and thermal "
                         "rejection closure (H2-7, H2-5)", "the reserved-slot source power (unknown until H-1 Phase 1)"],
@@ -1440,11 +1509,15 @@ def render_md(d: dict) -> str:
         f"{t['T_mN']:g} mN at {t['B_W']:g} W → {t['T_over_Pbus_min_mN_per_kW']} mN/kW"
         for t in d["margin_table"]["T_over_Pbus_floor_implied_by_allocation"]))
     a("")
-    a("Jet-power necessary bound (efficiency 1): minimum delivered anode flow " + "; ".join(
-        f"{j['T_mN']:g} mN @ {j['P_d_alloc_W']:g} W ({j['case']}) → {j['mdot_min_mg_s']} mg/s"
-        for j in d["margin_table"]["jet_power_bound"]) + ". 'envelope' values are CONDITIONAL on the A_common "
-      "screening envelope; 'known_lower_aux' is the weakest floor (largest P_d compatible with B_alloc when only the "
-      "known lower auxiliary term is booked); none is a strict physical floor beyond that.")
+    a("Jet-power necessary bound (efficiency 1), on the TOTAL thruster exhaust flow (anode + cathode; the Xe "
+      "cathode flow is present in the A5 nominal mode): minimum total exhaust flow " + "; ".join(
+        f"{j['T_mN']:g} mN @ {j['P_d_alloc_W']:g} W ({j['case']}) → {j['mdot_total_exhaust_min_mg_s']} mg/s"
+        for j in d["margin_table"]["jet_power_bound"]) + ". The delivered anode (atmospheric) floor is "
+      "mdot_anode_min = mdot_total_min − mdot_cathode, with mdot_cathode PENDING H2-2. 'envelope' values are "
+      "CONDITIONAL on the A_common screening envelope; 'known_lower_aux' is the weakest floor (largest P_d compatible "
+      "with B_alloc when only the known lower auxiliary bus term is booked and the discharge supply is lossless, "
+      "eta_d = 1, so no analog efficiency is extrapolated past its measured span); none is a strict physical floor "
+      "beyond that.")
     a("")
     a("## 5. PPU architecture options, grounding, H-1 ground supplies vs flight PPU")
     a("")

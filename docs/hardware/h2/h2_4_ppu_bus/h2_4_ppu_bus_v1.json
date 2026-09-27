@@ -338,7 +338,7 @@
     "PS-C"
    ],
    "bus_component": "hall_discharge",
-   "note": "breadboard LCC supply; harness/filters to the thruster excluded; above 1 kW output not measured; 24 V input not digitized (lowest measured input 25 V; H24-04 lists 24-34 V); the range spans the input-voltage parameter, so it propagates to every allocation derived from it (H24-24/26, MG-5..7); full measured span 200-1000 W is 0.7705-0.915"
+   "note": "breadboard LCC supply; harness/filters to the thruster excluded; above 1 kW output not measured; 24 V input not digitized (lowest measured input 25 V; H24-04 lists 24-34 V); the range spans the input-voltage parameter, so it propagates to every allocation derived from it (H24-24/26, MG-5..7); output-voltage applicability 200-500 V (EC applicability.output_V) with digitized points only at 250 / 400 V, so eta_d at the H24-25 lower end 180 V (and at 350 V between the digitized outputs) is an EXTRAPOLATION / interpolation, not measured (flagged in HI-07); full measured span 200-1000 W is 0.7705-0.915"
   },
   {
    "id": "H24-06",
@@ -405,7 +405,7 @@
     "MC-1"
    ],
    "bus_component": "hall_magnet",
-   "note": "a 5 W-class output: efficiency at the Vyovrinda coil power is TBD (EC HM-SUPPLY-EFF)"
+   "note": "a 5 W-class output: the 60 % specification is stated at a 5 W maximum output and is applied here to the 60 W analog magnet-supply RATING (H24-16), i.e. ~12x outside its stated output power; used as a conservative-by-assumption floor (not verified at 60 W); efficiency at the Vyovrinda coil power is TBD (EC HM-SUPPLY-EFF)"
   },
   {
    "id": "H24-10",
@@ -534,15 +534,16 @@
    ],
    "units": "W",
    "basis": "analog",
-   "source": "0 W = keeper off after ignition (Goebel & Katz p. 337, CK-G&K-OFF); upper = keeper-only bracket maximum (CK-PEDRINI17-HC3) at the analog keeper-supply efficiency lower bound 0.80 (Osuga 2005); docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json :: CK-PEDRINI17-HC3",
-   "evidence_class": "measured",
+   "source": "0 W = keeper off after ignition (Goebel & Katz p. 337, CK-G&K-OFF); upper = keeper-only bracket maximum 60 W (CK-PEDRINI17-HC3) at the analog keeper-supply efficiency lower bound 0.80 (Osuga 2005). CK-PEDRINI17-HC3 is a stand-alone measurement with the keeper as the ONLY (sustaining) anode, i.e. the start-up / dark-channel state; its validation_status says it is NOT keeper power with a thruster running. No accessed source gives a keeper power with the thruster running, so in STEADY the 60 W is used only as a CONSERVATIVE SIZING SURROGATE (assumed) for a keeper-on policy, never as a thruster-running keeper value; the same bracket is booked in the keeper-only start-up phases SU-2..SU-4 / PK-1 where it applies; docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json :: CK-PEDRINI17-HC3",
+   "evidence_class": "assumed",
    "status": "PENDING docs/hardware/h2/h2_2_cathode_integration/ (steady keeper policy)",
    "representativeness": "FLIGHT-REPRESENTATIVE",
    "configuration_items": [
     "C-1",
     "PS-C"
    ],
-   "bus_component": "cathode_keeper"
+   "bus_component": "cathode_keeper",
+   "note": "the 60 W bracket itself is measured (keeper-only mode); applying it to a thruster-running keeper is an ASSUMPTION (conservative sizing surrogate), hence evidence class 'assumed' for this steady row"
   },
   {
    "id": "H24-18",
@@ -582,7 +583,7 @@
     "PS-C"
    ],
    "bus_component": "cathode_keeper",
-   "note": "same product as aux_bus startup keeper bracket; JPL 1.5-cm cathode, different class"
+   "note": "same product as aux_bus startup keeper bracket; JPL 1.5-cm cathode, different class. The start-up profile books the keeper at max(this bracket, CK-PEDRINI17-HC3 keeper-only 25-60 W) because in SU-2..SU-4 / PK-1 the keeper is the only anode (the HC3 state): booked start-up keeper load <= 60 W, 75 W bus"
   },
   {
    "id": "H24-20",
@@ -652,7 +653,7 @@
    "configuration_items": [
     "PS-C"
    ],
-   "note": "an envelope for allocation, not a predicted load"
+   "note": "an envelope for allocation, not a predicted load; known_lower_W is a LOWER bound on the bus draw: coil load / eta with eta <= 1 (supply loss lower bound 0 W), consistent with PPU losses inside P_bus; the upper ends divide by the analog efficiency lower bounds"
   },
   {
    "id": "H24-24",
@@ -672,7 +673,7 @@
     "PS-C"
    ],
    "bus_component": "hall_discharge",
-   "note": "an upper-bound ALLOCATION derived from the A5 P_bus allocation; thermal_control and the atmospheric valve reduce it further; never a Hall performance prediction"
+   "note": "an upper-bound ALLOCATION derived from the A5 P_bus allocation; thermal_control and the atmospheric valve reduce it further; never a Hall performance prediction. Bounding combination: the range crosses the eta_d extremes of H24-05 (0.8583 = 34 V in / 400 V out at the ~500 W step; 0.915 = best digitized point at higher output) with the B_alloc - A_common extremes, so the upper end pairs the best efficiency with the largest discharge bus draw; the extremes come from different Rhodes operating points and are not one consistent operating point"
   },
   {
    "id": "H24-25",
@@ -1033,14 +1034,21 @@
     "steady (policy)"
    ],
    "load_W": {
-    "steady": [
+    "steady_sizing_surrogate": [
      0.0,
      60.0
     ],
-    "startup": [
-     10.0,
-     30.0
-    ]
+    "startup": {
+     "ignition_bracket_JPL": [
+      10.0,
+      30.0
+     ],
+     "keeper_only_bracket_HC3": [
+      25.0,
+      60.0
+     ],
+     "booked_upper_W": 60.0
+    }
    },
    "V_range_V": "ignition >= 150 V open circuit (analog); 5-15 V after ignition (JPL 1.5-cm); 14-35 V keeper-only discharge (CK-PEDRINI17-HC3, the source of the 60 W steady envelope); supply compliance >= 35 V (H24-41)",
    "I_range_A": [
@@ -1226,7 +1234,7 @@
     "PS-C"
    ],
    "bus_component": "hall_discharge",
-   "note": "breadboard LCC supply; harness/filters to the thruster excluded; above 1 kW output not measured; 24 V input not digitized (lowest measured input 25 V; H24-04 lists 24-34 V); the range spans the input-voltage parameter, so it propagates to every allocation derived from it (H24-24/26, MG-5..7); full measured span 200-1000 W is 0.7705-0.915"
+   "note": "breadboard LCC supply; harness/filters to the thruster excluded; above 1 kW output not measured; 24 V input not digitized (lowest measured input 25 V; H24-04 lists 24-34 V); the range spans the input-voltage parameter, so it propagates to every allocation derived from it (H24-24/26, MG-5..7); output-voltage applicability 200-500 V (EC applicability.output_V) with digitized points only at 250 / 400 V, so eta_d at the H24-25 lower end 180 V (and at 350 V between the digitized outputs) is an EXTRAPOLATION / interpolation, not measured (flagged in HI-07); full measured span 200-1000 W is 0.7705-0.915"
   },
   {
    "id": "H24-06",
@@ -1293,7 +1301,7 @@
     "MC-1"
    ],
    "bus_component": "hall_magnet",
-   "note": "a 5 W-class output: efficiency at the Vyovrinda coil power is TBD (EC HM-SUPPLY-EFF)"
+   "note": "a 5 W-class output: the 60 % specification is stated at a 5 W maximum output and is applied here to the 60 W analog magnet-supply RATING (H24-16), i.e. ~12x outside its stated output power; used as a conservative-by-assumption floor (not verified at 60 W); efficiency at the Vyovrinda coil power is TBD (EC HM-SUPPLY-EFF)"
   },
   {
    "id": "H24-10",
@@ -1439,7 +1447,7 @@
       0.0,
       75.0
      ],
-     "basis": "0 W = keeper off after ignition (Goebel & Katz p. 337, CK-G&K-OFF); upper = keeper-only bracket maximum (CK-PEDRINI17-HC3) at the analog keeper-supply efficiency lower bound 0.80 (Osuga 2005)",
+     "basis": "0 W = keeper off after ignition (Goebel & Katz p. 337, CK-G&K-OFF); upper = keeper-only bracket maximum 60 W (CK-PEDRINI17-HC3) at the analog keeper-supply efficiency lower bound 0.80 (Osuga 2005). CK-PEDRINI17-HC3 is a stand-alone measurement with the keeper as the ONLY (sustaining) anode, i.e. the start-up / dark-channel state; its validation_status says it is NOT keeper power with a thruster running. No accessed source gives a keeper power with the thruster running, so in STEADY the 60 W is used only as a CONSERVATIVE SIZING SURROGATE (assumed) for a keeper-on policy, never as a thruster-running keeper value; the same bracket is booked in the keeper-only start-up phases SU-2..SU-4 / PK-1 where it applies",
      "status": "PENDING docs/hardware/h2/h2_2_cathode_integration/ (steady keeper policy)"
     },
     {
@@ -1690,14 +1698,22 @@
      ],
      "duration": "TBD - requires C-1 ignition test (S1a/S1)",
      "loads": {
-      "cathode_keeper_W": [
-       10.0,
-       30.0
-      ],
+      "cathode_keeper_W": {
+       "ignition_bracket_JPL": [
+        10.0,
+        30.0
+       ],
+       "keeper_only_bracket_HC3": [
+        25.0,
+        60.0
+       ],
+       "booked_load_W_upper": 60.0
+      },
       "keeper_open_circuit_V": "150 V DC (JPL) / 50-150 V DC + 300-600 V pulse (Goebel & Katz) / 45-50 V with heater, up to 800 V heaterless (SITAEL HC1)",
       "flow_control": "cathode Xe PFCV energized"
      },
-     "known_bus_W_upper": 441.006,
+     "known_bus_W_upper": 478.506,
+     "keeper_term_note": "keeper booked at max(JPL ignition bracket 10-30 W load = 37.5 W bus, CK-PEDRINI17-HC3 keeper-only bracket 25-60 W load = 75.0 W bus) = 75.0 W bus: the keeper is the only anode in this phase, the state HC3 measured",
      "open_terms": [
       "thermal_control (H2-5)"
      ]
@@ -1714,7 +1730,8 @@
       "housekeeping"
      ],
      "duration": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (coil L/R and ramp rate)",
-     "known_bus_W_upper": 541.006,
+     "known_bus_W_upper": 578.506,
+     "keeper_term_note": "keeper booked at max(JPL ignition bracket 10-30 W load = 37.5 W bus, CK-PEDRINI17-HC3 keeper-only bracket 25-60 W load = 75.0 W bus) = 75.0 W bus: the keeper is the only anode in this phase, the state HC3 measured",
      "open_terms": [
       "thermal_control (H2-5)"
      ],
@@ -1733,7 +1750,8 @@
       "housekeeping"
      ],
      "duration": "TBD - requires S1 ignition transients (HW-ENV-02 transient margin)",
-     "known_bus_W_upper": 542.831,
+     "known_bus_W_upper": 580.331,
+     "keeper_term_note": "keeper booked at max(JPL ignition bracket 10-30 W load = 37.5 W bus, CK-PEDRINI17-HC3 keeper-only bracket 25-60 W load = 75.0 W bus) = 75.0 W bus: the keeper is the only anode in this phase, the state HC3 measured",
      "open_terms": [
       "D_ign: discharge ignition transient bus draw (TBD, S1; bounded by the discharge-supply current limit x V_d / eta_d)",
       "thermal_control (H2-5)"
@@ -1755,7 +1773,7 @@
      ],
      "duration": "PENDING docs/budgets/xe_ledger/ (t_transition, symbolic until H-1/C-1 measure it (A6 fo_xe_system_ledger))",
      "known_aux_bus_W_upper": 521.507,
-     "keeper_term_note": "keeper booked at max(ignition bracket 37.5 W bus, steady keeper envelope 75.0 W bus) = 75.0 W bus; equals PK-2 (A_common envelope incl. keeper on + one extra PFCV)",
+     "keeper_term_note": "keeper booked at max(start-up keeper term 75.0 W bus, steady keeper envelope 75.0 W bus) = 75.0 W bus; equals PK-2 (A_common envelope incl. keeper on + one extra PFCV)",
      "open_terms": [
       "P_d/eta_d at the transition point (allocation, not a prediction)",
       "atmospheric metering valve (H2-3)",
@@ -1766,17 +1784,19 @@
     {
      "id": "SU-6",
      "a5_mode": "atmospheric Hall + Xe cathode (nominal)",
-     "name": "keeper off / nominal steady",
+     "name": "nominal steady (keeper policy PENDING docs/hardware/h2/h2_2_cathode_integration/)",
      "on": [
       "hall_discharge",
       "hall_magnet",
+      "cathode_keeper (0 W if the C-1 policy turns it off; policy PENDING docs/hardware/h2/h2_2_cathode_integration/)",
       "flow_control",
       "compressor",
       "thermal_control",
       "housekeeping"
      ],
      "duration": "continuous",
-     "profile": "STEADY"
+     "profile": "STEADY",
+     "note": "keeper on/off in steady state is not decided; the STEADY profile carries the keeper envelope 0-75 W bus (H24-17) until H2-2 fixes the policy"
     }
    ],
    "other_modes": [
@@ -1810,9 +1830,10 @@
       "housekeeping",
       "hall_discharge (ignition transient D_ign)"
      ],
-     "known_bus_W_upper": 542.831,
-     "expression": "P_peak,1 = 542.831 W + D_ign + A_th",
-     "headroom_to_1500_W_for_D_ign": 957.169
+     "known_bus_W_upper": 580.331,
+     "expression": "P_peak,1 = 580.331 W + D_ign + A_th",
+     "headroom_to_1500_W_for_D_ign": 919.669,
+     "note": "keeper booked at max(JPL ignition bracket 10-30 W load = 37.5 W bus, CK-PEDRINI17-HC3 keeper-only bracket 25-60 W load = 75.0 W bus) = 75.0 W bus: the keeper is the only anode in this phase, the state HC3 measured"
     },
     {
      "id": "PK-2",
@@ -1838,8 +1859,8 @@
       "PK-1 components",
       "rf_source or ecr_source + ecr_magnet"
      ],
-     "expression": "P_peak,3 = 542.831 W + D_ign + P_bus[source] (+ P_bus[ecr_magnet]) + A_th",
-     "headroom_to_1500_W_for_D_ign_plus_source": 957.169,
+     "expression": "P_peak,3 = 580.331 W + D_ign + P_bus[source] (+ P_bus[ecr_magnet]) + A_th",
+     "headroom_to_1500_W_for_D_ign_plus_source": 919.669,
      "note": "cathode_integration startup_reference rf_hall/ecr_hall V2; PROPOSED sequencing constraint SEQ-1 removes the heater term from this overlap"
     },
     {
@@ -1938,7 +1959,7 @@
    },
    {
     "id": "MG-6",
-    "item": "hall_discharge load ALLOCATION (upper bound) = eta_d x MG-5",
+    "item": "hall_discharge load ALLOCATION (upper bound) = eta_d x MG-5 (bounding cross of the eta_d extremes, from different Rhodes operating points, with the MG-5 extremes; see H24-24)",
     "value_W": {
      "envelope_high": [
       [
@@ -3817,73 +3838,85 @@
     "T_mN": 12.0,
     "case": "envelope",
     "P_d_alloc_W": 669.747,
-    "mdot_min_mg_s": 0.107503
+    "mdot_total_exhaust_min_mg_s": 0.107503,
+    "mdot_anode_min": "0.107503 mg/s - mdot_cathode (PENDING docs/hardware/h2/h2_2_cathode_integration/)"
    },
    {
     "T_mN": 12.0,
     "case": "envelope",
     "P_d_alloc_W": 919.866,
-    "mdot_min_mg_s": 0.0782723
+    "mdot_total_exhaust_min_mg_s": 0.0782723,
+    "mdot_anode_min": "0.0782723 mg/s - mdot_cathode (PENDING docs/hardware/h2/h2_2_cathode_integration/)"
    },
    {
     "T_mN": 12.0,
     "case": "known_lower_aux",
-    "P_d_alloc_W": 1234.87,
-    "mdot_min_mg_s": 0.0583057
+    "P_d_alloc_W": 1349.58,
+    "mdot_total_exhaust_min_mg_s": 0.0533499,
+    "mdot_anode_min": "0.0533499 mg/s - mdot_cathode (PENDING docs/hardware/h2/h2_2_cathode_integration/)"
    },
    {
     "T_mN": 15.0,
     "case": "envelope",
     "P_d_alloc_W": 669.747,
-    "mdot_min_mg_s": 0.167974
+    "mdot_total_exhaust_min_mg_s": 0.167974,
+    "mdot_anode_min": "0.167974 mg/s - mdot_cathode (PENDING docs/hardware/h2/h2_2_cathode_integration/)"
    },
    {
     "T_mN": 15.0,
     "case": "envelope",
     "P_d_alloc_W": 919.866,
-    "mdot_min_mg_s": 0.1223
+    "mdot_total_exhaust_min_mg_s": 0.1223,
+    "mdot_anode_min": "0.1223 mg/s - mdot_cathode (PENDING docs/hardware/h2/h2_2_cathode_integration/)"
    },
    {
     "T_mN": 15.0,
     "case": "known_lower_aux",
-    "P_d_alloc_W": 1234.87,
-    "mdot_min_mg_s": 0.0911027
+    "P_d_alloc_W": 1349.58,
+    "mdot_total_exhaust_min_mg_s": 0.0833593,
+    "mdot_anode_min": "0.0833593 mg/s - mdot_cathode (PENDING docs/hardware/h2/h2_2_cathode_integration/)"
    },
    {
     "T_mN": 22.0,
     "case": "envelope",
     "P_d_alloc_W": 669.747,
-    "mdot_min_mg_s": 0.36133
+    "mdot_total_exhaust_min_mg_s": 0.36133,
+    "mdot_anode_min": "0.36133 mg/s - mdot_cathode (PENDING docs/hardware/h2/h2_2_cathode_integration/)"
    },
    {
     "T_mN": 22.0,
     "case": "envelope",
     "P_d_alloc_W": 919.866,
-    "mdot_min_mg_s": 0.263082
+    "mdot_total_exhaust_min_mg_s": 0.263082,
+    "mdot_anode_min": "0.263082 mg/s - mdot_cathode (PENDING docs/hardware/h2/h2_2_cathode_integration/)"
    },
    {
     "T_mN": 22.0,
     "case": "known_lower_aux",
-    "P_d_alloc_W": 1234.87,
-    "mdot_min_mg_s": 0.195972
+    "P_d_alloc_W": 1349.58,
+    "mdot_total_exhaust_min_mg_s": 0.179315,
+    "mdot_anode_min": "0.179315 mg/s - mdot_cathode (PENDING docs/hardware/h2/h2_2_cathode_integration/)"
    },
    {
     "T_mN": 25.0,
     "case": "envelope",
     "P_d_alloc_W": 669.747,
-    "mdot_min_mg_s": 0.466594
+    "mdot_total_exhaust_min_mg_s": 0.466594,
+    "mdot_anode_min": "0.466594 mg/s - mdot_cathode (PENDING docs/hardware/h2/h2_2_cathode_integration/)"
    },
    {
     "T_mN": 25.0,
     "case": "envelope",
     "P_d_alloc_W": 919.866,
-    "mdot_min_mg_s": 0.339723
+    "mdot_total_exhaust_min_mg_s": 0.339723,
+    "mdot_anode_min": "0.339723 mg/s - mdot_cathode (PENDING docs/hardware/h2/h2_2_cathode_integration/)"
    },
    {
     "T_mN": 25.0,
     "case": "known_lower_aux",
-    "P_d_alloc_W": 1234.87,
-    "mdot_min_mg_s": 0.253063
+    "P_d_alloc_W": 1349.58,
+    "mdot_total_exhaust_min_mg_s": 0.231554,
+    "mdot_anode_min": "0.231554 mg/s - mdot_cathode (PENDING docs/hardware/h2/h2_2_cathode_integration/)"
    }
   ],
   "bus_current": [
@@ -3941,7 +3974,7 @@
     "topology": "LCC resonant converter, 28 V-class input, 200-500 V out, <= 1 kW",
     "analog": "NASA SSEP sub-kW PPU breadboard (Rhodes 2024)",
     "evidence": "measured efficiency (EC HD-RH24-*)",
-    "gap": "the allocation needs up to ~920 W output: inside the measured <= 1 kW span",
+    "gap": "the allocation needs up to ~920 W output: inside the measured <= 1 kW span; the 180 V lower end of H24-25 is below the 200-500 V output applicability (extrapolation)",
     "representativeness": "FLIGHT-REPRESENTATIVE"
    },
    {
@@ -4155,8 +4188,10 @@
   {
    "from": "H2-4",
    "to": "H2-3",
-   "quantity": "minimum delivered anode flow for the thrust allocation from the jet-power bound (efficiency 1): CONDITIONAL on the auxiliary envelope at the H24-24 allocation; the weakest floor (only the known lower auxiliary term booked) is given separately",
+   "quantity": "necessary floor on the TOTAL thruster exhaust flow (anode + cathode) for the thrust allocation from the jet-power bound (efficiency 1), and the resulting delivered anode-flow floor mdot_anode >= mdot_total_min - mdot_cathode with mdot_cathode symbolic (PENDING H2-2): CONDITIONAL on the auxiliary envelope at the H24-24 allocation; the weakest floor (only the known lower auxiliary term booked, lossless discharge supply) is given separately",
    "value": {
+    "quantity_bounded": "mdot_total = mdot_anode + mdot_cathode (total exhaust mass flow)",
+    "anode_floor": "mdot_anode_min = mdot_total_min - mdot_cathode; mdot_cathode PENDING docs/hardware/h2/h2_2_cathode_integration/ (C-1 cathode Xe flow in the nominal mode)",
     "conditional_on_A_common_envelope": {
      "15_mN": [
       0.1223,
@@ -4168,16 +4203,17 @@
      ]
     },
     "floor_at_known_lower_aux": {
-     "P_d_W": 1234.87,
+     "P_d_W": 1349.58,
+     "eta_d": 1.0,
      "15_mN": [
-      0.0911027
+      0.0833593
      ],
      "22_mN": [
-      0.195972
+      0.179315
      ]
     }
    },
-   "units": "mg/s",
+   "units": "mg/s (total exhaust flow)",
    "status": "PRELIMINARY"
   },
   {
@@ -4373,14 +4409,14 @@
    {
     "id": "HI-03",
     "check": "discharge allocation vs jet-power necessary bound P_d >= T^2/(2 mdot)",
-    "result": "delivered flow must exceed 0.167974 mg/s (15 mN at 669.747 W, envelope), 0.1223 mg/s (15 mN at 919.866 W, envelope), 0.0911027 mg/s (15 mN at 1234.87 W, known_lower_aux), 0.36133 mg/s (22 mN at 669.747 W, envelope), 0.263082 mg/s (22 mN at 919.866 W, envelope), 0.195972 mg/s (22 mN at 1234.87 W, known_lower_aux); the 'envelope' values are conditional on the A_common screening envelope, the 'known_lower_aux' values are the weakest floor inside B_alloc; the candidate valve-flow bracket 0.030-3.14 mg/s (compressor_downselect, A3 candidate range) straddles these values",
+    "result": "TOTAL exhaust flow (anode + cathode) must exceed 0.167974 mg/s (15 mN at 669.747 W, envelope), 0.1223 mg/s (15 mN at 919.866 W, envelope), 0.0833593 mg/s (15 mN at 1349.58 W, known_lower_aux), 0.36133 mg/s (22 mN at 669.747 W, envelope), 0.263082 mg/s (22 mN at 919.866 W, envelope), 0.179315 mg/s (22 mN at 1349.58 W, known_lower_aux); the delivered anode (atmospheric) floor is that value minus mdot_cathode (PENDING H2-2); the 'envelope' values are conditional on the A_common screening envelope, the 'known_lower_aux' values (eta_d = 1, no analog efficiency extrapolated) are the weakest floor inside B_alloc; the candidate valve-flow bracket 0.030-3.14 mg/s (compressor_downselect, A3 candidate range) straddles these values",
     "evidence_class": "model-derived (energy conservation)",
-    "finding": "none at the architecture level: a constraint on the delivered flow handed to H2-3 / feed-state closure (it applies identically to hall_only, rf_hall and ecr_hall)"
+    "finding": "none at the architecture level: a constraint on the total exhaust flow (anode floor = total - cathode flow) handed to H2-3 / feed-state closure (it applies identically to hall_only, rf_hall and ecr_hall)"
    },
    {
     "id": "HI-04",
     "check": "start-up overlap known terms below 1500 W",
-    "result": "PK-1 known upper 542.831 W; 957.169 W left for the discharge ignition transient",
+    "result": "PK-1 known upper 580.331 W; 919.669 W left for the discharge ignition transient",
     "evidence_class": "model-derived from analog brackets",
     "finding": "none; D_ign TBD (S1)"
    },
@@ -4401,9 +4437,9 @@
    {
     "id": "HI-07",
     "check": "discharge-supply output power inside the analog measured span",
-    "result": "P_d allocation <= 919.866 W vs measured 200-1000 W (Rhodes)",
+    "result": "P_d allocation <= 919.866 W vs measured 200-1000 W output (Rhodes); the 'known_lower_aux' jet-power case (1349.58 W) uses eta_d = 1 and takes no analog efficiency outside the span; output voltage: H24-25 spans 180-350 V vs the 200-500 V output applicability (digitized at 250 / 400 V only), so eta_d at 180 V is an EXTRAPOLATION",
     "evidence_class": "digitized",
-    "finding": "none"
+    "finding": "none (architecture); flagged: eta_d below 200 V output not measured -> H4 breadboard / supply measurement at the Phase-1 V_d set (H3-PPU-05)"
    }
   ],
   "not_checked": [
