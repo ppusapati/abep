@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Bundle 1 (Milestone A, conditional selection) builder: fo_bundle1_conditional_selection, bundle version v3.
+"""Bundle 1 (Milestone A, conditional selection) builder: fo_bundle1_conditional_selection, bundle version v4.
 
 Synthesis only. It reads the verified deliverables of the twelve registered T_BUNDLE1 prerequisites (plus context lanes),
 pins every input file by sha256 + lane id + lane commit, and writes
 
-    docs/milestones/bundle1/bundle1_v3.json   (validated against bundle1_v3.schema.json)
-    docs/milestones/bundle1/BUNDLE1_v3.md     (generated tables + short prose)
+    docs/milestones/bundle1/bundle1_v4.json   (validated against bundle1_v4.schema.json)
+    docs/milestones/bundle1/BUNDLE1_v4.md     (generated tables + short prose)
 
 It introduces no physics, no sources and no numbers of its own: every value in the output is read from a pinned input,
 or is a count/identity of pinned records. Missing or changed inputs raise; nothing falls back to a default.
@@ -18,14 +18,18 @@ Versions
       bundle1_v2 repair (commit 8f288f9; registry follow_ons[fo_bundle1_conditional_selection].repairs, run
       wf_e16cec30-7b2; merged in 8ba7dea). Never rebuilt: its context pin on fo_veto_layer (3e7805c) was superseded by the
       verified veto-layer repair 7a7eb68. Verified by its recorded sha256 (V2_RECORD).
-  v3  this builder. fo_veto_layer context pin updated to 7a7eb68 (veto_layer_v1.json 01a3dc8e... -> 1f4c2d8d...);
-      governance content read ONLY from the pinned snapshot governance_snapshot_v3.json (sha256 in GOV_SNAPSHOT_SHA256).
-      The v2 -> v3 change log is computed against the hash-verified v2 JSON. Decision rule B1-DR-1 and the outcome logic
-      are unchanged.
+  v3  bundle1_v3.json / BUNDLE1_v3.md / bundle1_v3.schema.json / governance_snapshot_v3.json: the verified record of the
+      bundle1_v3 repair (commit b5559e4; registry follow_ons[fo_bundle1_conditional_selection].repairs, run
+      wf_16b7de5d-7b9; merged in 6f69d55). Never rebuilt: its context pin on fo_experiment_package (c09fac4) was
+      superseded by the verified experiment-package repair 83fe4c4. Verified by its recorded sha256 (V3_RECORD).
+  v4  this builder. fo_experiment_package context pin updated to 83fe4c4 (experiment_package_v1.json 4c2d107d... ->
+      9278dfff...); governance content read ONLY from the pinned snapshot governance_snapshot_v4.json (sha256 in
+      GOV_SNAPSHOT_SHA256). The v3 -> v4 change log is computed against the hash-verified v3 JSON. Decision rule B1-DR-1
+      and the outcome logic are unchanged.
 
-    python docs/milestones/bundle1/build_bundle1.py                        # write bundle1_v3.json and BUNDLE1_v3.md
+    python docs/milestones/bundle1/build_bundle1.py                        # write bundle1_v4.json and BUNDLE1_v4.md
     python docs/milestones/bundle1/build_bundle1.py --check                # exit 1 unless both are reproduced byte for
-                                                                           # byte and the v1 / v2 records match their sha256
+                                                                           # byte and the v1 / v2 / v3 records match their sha256
     python docs/milestones/bundle1/build_bundle1.py --snapshot-governance  # (maintainer) re-capture the governance
                                                                            # snapshot from the live files; changes its
                                                                            # sha256, so it needs a new bundle version
@@ -47,24 +51,24 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[3]
 BUNDLE_DIR_REL = "docs/milestones/bundle1"
-OUT_JSON_REL = "docs/milestones/bundle1/bundle1_v3.json"
-OUT_MD_REL = "docs/milestones/bundle1/BUNDLE1_v3.md"
-SCHEMA_REL = "docs/milestones/bundle1/bundle1_v3.schema.json"
+OUT_JSON_REL = "docs/milestones/bundle1/bundle1_v4.json"
+OUT_MD_REL = "docs/milestones/bundle1/BUNDLE1_v4.md"
+SCHEMA_REL = "docs/milestones/bundle1/bundle1_v4.schema.json"
 SCRIPT_REL = "docs/milestones/bundle1/build_bundle1.py"
-GOV_SNAPSHOT_REL = "docs/milestones/bundle1/governance_snapshot_v3.json"
-GOV_SNAPSHOT_SHA256 = "9832ebc93534308e048ff27ac31990a29d0d2dacdcb79f0373b6f0e1a4ec5b98"
+GOV_SNAPSHOT_REL = "docs/milestones/bundle1/governance_snapshot_v4.json"
+GOV_SNAPSHOT_SHA256 = "39c837aae3c969bd772e9002e58d00a0ea1cdd8404c5fc64237500dd43b6c9d2"
 
-BUNDLE_ID = "bundle1_v3"
-BUNDLE_VERSION = "v3"
+BUNDLE_ID = "bundle1_v4"
+BUNDLE_VERSION = "v4"
 FOLLOW_ON = "fo_bundle1_conditional_selection"
 TRIGGER = "T_BUNDLE1"
 ATTEMPT = 2
 EXECUTION_KEY = "d45eda8e144c71eae9f5ebf0d1c1a560af20903571c60bbcdb605e361b68a148"
-# v3 base: integrated execution branch f44087a (verified bundle1_v2, HSENV repair da9b71b and veto-layer repair 7a7eb68
-# merged; fast-forward of this worktree); governance snapshot captured at this commit.
-BASE_COMMIT = "f44087adc29ff96a5ddadf64b26c606a79c265ae"
-INTEGRATION_COMMIT = "f44087adc29ff96a5ddadf64b26c606a79c265ae"
-PREPARED = "2026-09-26"
+# v4 base: integrated execution branch d07249b (verified bundle1_v3 b5559e4 and experiment-package repair 83fe4c4 merged;
+# fast-forward of this worktree); governance snapshot captured at this commit.
+BASE_COMMIT = "d07249bef0f9d415cad1a33c5a427cfc105f7835"
+INTEGRATION_COMMIT = "d07249bef0f9d415cad1a33c5a427cfc105f7835"
+PREPARED = "2026-09-27"
 ARCHS = ("hall_only", "rf_hall", "ecr_hall")
 BOUNDARY_VERSION = "bus_power_boundary_v1"
 OUTCOME_FORMS = ("CONDITIONAL_BASELINE", "NO_BASELINE_YET")
@@ -107,7 +111,29 @@ V2_RECORD = {
                         "verified veto-layer repair 7a7eb68 (sha256 1f4c2d8d...), merged in parallel, so a rebuild cannot reproduce it; "
                         "the v2 builder is recoverable as git blob 8f288f9:docs/milestones/bundle1/build_bundle1.py"),
 }
-HISTORICAL_RECORDS = (V1_RECORD, V2_RECORD)
+# Historical v3 record (bundle1_v3 repair, verified at b5559e4): verified by sha256, never rebuilt.
+V3_RECORD = {
+    "id": "bundle1_v3",
+    "commit": "b5559e40507e8200a9db91116531de99b921e012",
+    "builder_sha256_at_commit": "41adcbc340a93f1669920fa64d4f4a510452aaad6e40933e1b40b1e6be114520",
+    "json": "docs/milestones/bundle1/bundle1_v3.json",
+    "files": {
+        "docs/milestones/bundle1/bundle1_v3.json": "d161fe2900668dbeb5d2f4919d2cba6cf3aa88121654d2f14bcfbd4b20c96a08",
+        "docs/milestones/bundle1/BUNDLE1_v3.md": "68ded897b2be56475d1244fb794347121b9e72e956d92eb193cdfddc2634fa3d",
+        "docs/milestones/bundle1/bundle1_v3.schema.json": "1ca16267c3c95c5fe52bfc5dcca51004624b2deb58898e7f5437325c1ac2f975",
+        "docs/milestones/bundle1/governance_snapshot_v3.json": "9832ebc93534308e048ff27ac31990a29d0d2dacdcb79f0373b6f0e1a4ec5b98",
+    },
+    "verification_record": ("lane registry follow_ons[fo_bundle1_conditional_selection].repairs: workflow run wf_16b7de5d-7b9 "
+                            "(workflow_key BUNDLE1); merged as 'Merge verified fo_bundle1_conditional_selection (b5559e4...)' "
+                            "in 6f69d555ff"),
+    "merge_commit": "6f69d555ff6103ffe2ac5af8801b5c3aa6464131",
+    "repair_workflow_run": "wf_16b7de5d-7b9",
+    "why_not_rebuilt": ("its context pin on fo_experiment_package (c09fac4, experiment_package_v1.json sha256 4c2d107d...) was "
+                        "superseded by the verified experiment-package repair 83fe4c4 (sha256 9278dfff...), merged in the same parallel "
+                        "run, so a rebuild cannot reproduce it; the v3 builder is recoverable as git blob "
+                        "b5559e4:docs/milestones/bundle1/build_bundle1.py"),
+}
+HISTORICAL_RECORDS = (V1_RECORD, V2_RECORD, V3_RECORD)
 
 # --------------------------------------------------------------------------------------------------------------------
 # Input pins: (lane id, role, lane commit) -> files with sha256. Identity = the lane's verified commit.
@@ -155,7 +181,7 @@ CONTEXT = {
     "lane_11_bus_boundary": "a2a139686dd25ea0f5f4fa908f9d57c25d3746dd",
     "fo_aux_bus_comparison": "2f83aa41bbdefa7a6f0aa800e185ecd820dacae3",
     "fo_veto_layer": "7a7eb68bb38ce948211fcd2601104569b24f79ef",
-    "fo_experiment_package": "c09fac4cda6da476a355d41c9f46e38b1ef3b816",
+    "fo_experiment_package": "83fe4c4ee47d2b97131e142598a516851ddda692",
     "fo_dx5_cross_section_evidence": "768bb894636e0de73336221a6003d98dede5aff0",
 }
 # Context lanes whose pinned commit is a verified repair of the commit their trigger-ledger VERIFIED event names.
@@ -172,6 +198,19 @@ CONTEXT_REPINS = {
                                 "merged as 'Merge verified fo_veto_layer repair (7a7eb68...)' in 2d254d1423. Both lenses pass with 0 fix "
                                 "rounds per the orchestrator's bundle1_v3 repair brief; the registry entry itself records the run and "
                                 "reason, not the round count"),
+    },
+    "fo_experiment_package": {
+        "ledger_verified_identity": "c09fac4cda6da476a355d41c9f46e38b1ef3b816",
+        "repair_workflow_run": "wf_16b7de5d-7b9",
+        "merge_commit": "70aafcfd71591c12fce09e0fb0b7257277a8b663",
+        "reason": ("experiment-package repair 83fe4c4 (re-pin after the HSENV repair da9b71b): Hall-sustainment envelope pin "
+                   "c7d05fd0... -> 3381c88b...; a new input_repin_log section records that the package reads only the envelope's "
+                   "milestone_A_conditions (HS-A1..HS-A7), identical before and after, and cites no ECHT item; per its "
+                   "input_repin_log no other pinned input changed"),
+        "verification_record": ("lane registry follow_ons[fo_experiment_package].repairs: workflow run wf_16b7de5d-7b9 (workflow_key "
+                                "EXPPKG; two-lens re-verification per docs/orchestration/workflow_scripts/repin-exppkg-bundle1-v3.js); "
+                                "merged as 'Merge verified fo_experiment_package (83fe4c4...)' in 70aafcfd71. The registry entry "
+                                "records the run and reason, not the round count"),
     },
 }
 CONTEXT_TRIGGERS = {"fo_aux_bus_comparison": "T_AUX_BUS", "fo_veto_layer": "T_VETO_LAYER",
@@ -214,7 +253,7 @@ PINS = [
     ("lane_11_bus_boundary", "schemas/architecture_comparison/bus_power_boundary_v1.json", "a78068a31ad097d94d83f36b9860c6992d0e560cfdc51335b4c222a3feaed3e9"),
     ("fo_aux_bus_comparison", "docs/architecture_comparison/aux_bus/aux_bus_comparison_v1.json", "db4792bf65e041895e26206e122e54e944a742dc0aba467d7b0241706584bd57"),
     ("fo_veto_layer", "docs/architecture_comparison/veto_layer/veto_layer_v1.json", "1f4c2d8d2674085d61f8b4effbcd02224079e950174821fa9d0e0be976335c90"),
-    ("fo_experiment_package", "docs/architecture_comparison/experiment_package/experiment_package_v1.json", "4c2d107dcf8c80da42972811a77616c4d4b18750b35a74d8d885bdeeeaf5a362"),
+    ("fo_experiment_package", "docs/architecture_comparison/experiment_package/experiment_package_v1.json", "9278dfffe43a37a2ea71c3215ce4a7eba022fa72e007ffa24f229371e1407e84"),
     ("fo_dx5_cross_section_evidence", "docs/chemistry/n2_domain_extension/dx5/dx5_evidence_v1.json", "d6240659bb9e81dac0d9fa20ca7f608ddf2b6bd60147689b64d0d01d304cbcea"),
 ]
 # Governance files: read ONLY when (re)capturing the pinned snapshot (--snapshot-governance); the build reads the snapshot.
@@ -236,7 +275,8 @@ FOLLOW_ON_WORKFLOW_SCRIPTS = {
     "fo_aux_bus_comparison": ["docs/orchestration/workflow_scripts/followon-aux-veto-exppkg.js"],
     "fo_veto_layer": ["docs/orchestration/workflow_scripts/followon-aux-veto-exppkg.js",
                       "docs/orchestration/workflow_scripts/repin-lane09-consumers-bundle1-v2.js"],
-    "fo_experiment_package": ["docs/orchestration/workflow_scripts/followon-aux-veto-exppkg.js"],
+    "fo_experiment_package": ["docs/orchestration/workflow_scripts/followon-aux-veto-exppkg.js",
+                              "docs/orchestration/workflow_scripts/repin-exppkg-bundle1-v3.js"],
     "fo_dx5_cross_section_evidence": ["docs/orchestration/workflow_scripts/dx5-cross-section-evidence-wf_7a9892b9-5b6.js"],
 }
 
@@ -365,7 +405,8 @@ def snapshot_governance() -> dict:
         runs = [r for r in entry.get("repairs", []) if r["workflow_run"] == run]
         _need(len(runs) == 1, f"lane registry has no repairs entry {run} for {lane}")
         subj = _commit_subject(merge_commit)
-        _need(subj.startswith(f"Merge verified {lane} repair ({pinned})"),
+        # two merge-subject forms are on record: 'Merge verified <lane> repair (<sha>)' and 'Merge verified <lane> (<sha>)'
+        _need(subj.startswith(f"Merge verified {lane} repair ({pinned})") or subj.startswith(f"Merge verified {lane} ({pinned})"),
               f"merge commit {merge_commit[:10]} does not record the verified {lane} repair {pinned[:10]}: {subj!r}")
         return {"lane": lane, "pinned_identity": pinned, "registry_repair": runs[0], "merge_commit": merge_commit,
                 "merge_commit_subject": subj}
@@ -373,7 +414,8 @@ def snapshot_governance() -> dict:
     repair_checks = [_repair_check(l, r["repair_workflow_run"], r["merge_commit"], CONTEXT[l]) for l, r in CONTEXT_REPINS.items()]
     repair_checks += [_repair_check(l, r["repair_workflow_run"], r["merge_commit"], PREREQUISITES[l])
                       for l, r in REPINS.items() if "repair_workflow_run" in r]
-    repair_checks.append(_repair_check(FOLLOW_ON, V2_RECORD["repair_workflow_run"], V2_RECORD["merge_commit"], V2_RECORD["commit"]))
+    for rec in (V2_RECORD, V3_RECORD):
+        repair_checks.append(_repair_check(FOLLOW_ON, rec["repair_workflow_run"], rec["merge_commit"], rec["commit"]))
 
     protocols = {}
     for lane in list(PREREQUISITES) + list(CONTEXT):
@@ -410,9 +452,9 @@ def snapshot_governance() -> dict:
         raise InputError(f"cannot determine the commit the governance snapshot is captured from: {exc}")
     src_files = sorted(set(GOV.values()) | {sc for v in FOLLOW_ON_WORKFLOW_SCRIPTS.values() for sc in v})
     return {
-        "id": "bundle1_governance_snapshot_v3",
+        "id": "bundle1_governance_snapshot_v4",
         "captured_from_commit": head,
-        "note": ("Exactly the governance content bundle1_v3 relies on, captured from the live files at captured_from_commit. The "
+        "note": ("Exactly the governance content bundle1_v4 relies on, captured from the live files at captured_from_commit. The "
                  "builder reads only this file (pinned by sha256), never the live registry / ledger, which keep growing."),
         "source_files_sha256": {rel: sha256_file(REPO / rel) for rel in src_files},
         "operating_model_checked": {"field_set": OPERATING_MODEL_FIELD_SET, "phrases": om_phrases},
@@ -461,7 +503,8 @@ def load_governance(path: Path | None = None, expected_sha256: str | None = None
         _need((lane, CONTEXT[lane]) in rr, f"snapshot has no repair record for context re-pin {lane} @ {CONTEXT[lane][:10]}")
         _need(snap["context_verified_events"][lane]["evidence"]["commit"] == r["ledger_verified_identity"],
               f"snapshot ledger VERIFIED event for {lane} is not at {r['ledger_verified_identity'][:10]}")
-    _need((FOLLOW_ON, V2_RECORD["commit"]) in rr, "snapshot has no repair record for the historical bundle1_v2")
+    for rec in (V2_RECORD, V3_RECORD):
+        _need((FOLLOW_ON, rec["commit"]) in rr, f"snapshot has no repair record for the historical {rec['id']}")
     context_repin_log = [{"lane": lane, "ledger_verified_identity": r["ledger_verified_identity"], "pinned_identity": CONTEXT[lane],
                           "reason": r["reason"], "verification_record": r["verification_record"]} for lane, r in CONTEXT_REPINS.items()]
     return {"lane_ids": set(snap["lane_ids"]), "fo_ids": set(snap["fo_ids"]), "trigger_ids": set(snap["trigger_ids"]),
@@ -493,6 +536,11 @@ def verify_v1_record(repo: Path = REPO) -> dict:
 def verify_v2_record(repo: Path = REPO) -> dict:
     """The v2 files are a historical record: verify them by their recorded sha256 (never rebuilt)."""
     return _verify_record(V2_RECORD, V2_RECORD["json"], repo)
+
+
+def verify_v3_record(repo: Path = REPO) -> dict:
+    """The v3 files are a historical record: verify them by their recorded sha256 (never rebuilt)."""
+    return _verify_record(V3_RECORD, V3_RECORD["json"], repo)
 
 
 def boundary_components() -> dict:
@@ -792,6 +840,7 @@ def context_extract(gov: dict) -> dict:
 def annotate_context(cells: dict, ctx: dict, echt: dict) -> None:
     """Add context-lane readings to cell notes / evidence and annotate blockers whose trigger is now VERIFIED (metadata only)."""
     trig_lane = {v: k for k, v in CONTEXT_TRIGGERS.items()}
+    annotated = set()  # blocker dicts can be shared between cells (e.g. T / eta_u): annotate each object once (v4 fix)
     for a in ARCHS:
         aux = ctx["fo_aux_bus_comparison"]
         c = cells[a]["P_bus"]
@@ -808,7 +857,8 @@ def annotate_context(cells: dict, ctx: dict, echt: dict) -> None:
                 + ", ".join(f"{d} {vl['cells'][a][d]}" for d in dims) + f" for {a}; the field stays unavailable.")
         for f in cells[a]:
             for b in cells[a][f]["blocking"]:
-                if b["kind"] == "trigger" and b["id"] in trig_lane:
+                if b["kind"] == "trigger" and b["id"] in trig_lane and id(b) not in annotated:
+                    annotated.add(id(b))
                     lane = trig_lane[b["id"]]
                     b["what"] += (f" [{b['id']} VERIFIED at {ctx[lane]['verified']['commit'][:10]} (context input {lane}, status "
                                   f"{ctx[lane]['status']}); the field stays unavailable]")
@@ -1276,7 +1326,8 @@ def build(gov=None) -> dict:
     pins = verify_pins()
     gov = gov or load_governance()
     verify_v1_record()
-    prev = verify_v2_record()
+    verify_v2_record()
+    prev = verify_v3_record()
     comps = boundary_components()
     feed = feed_extract()
     vd = vd_extract()
@@ -1500,9 +1551,9 @@ def build(gov=None) -> dict:
                            "every TBD threshold and open lane-24 reading resolved (OD1-OD14)", "integrated mission closure"],
         },
         "inputs": inputs,
-        "supersedes": {"id": V2_RECORD["id"], "commit": V2_RECORD["commit"], "files_sha256": V2_RECORD["files"],
-                       "status": "historical record of the bundle1_v2 repair (verified at " + V2_RECORD["commit"][:10] + "); kept byte-identical",
-                       "verification_record": V2_RECORD["verification_record"], "why_not_rebuilt": V2_RECORD["why_not_rebuilt"]},
+        "supersedes": {"id": V3_RECORD["id"], "commit": V3_RECORD["commit"], "files_sha256": V3_RECORD["files"],
+                       "status": "historical record of the bundle1_v3 repair (verified at " + V3_RECORD["commit"][:10] + "); kept byte-identical",
+                       "verification_record": V3_RECORD["verification_record"], "why_not_rebuilt": V3_RECORD["why_not_rebuilt"]},
         "historical_records": [
             {"id": V1_RECORD["id"], "commit": V1_RECORD["commit"], "files_sha256": V1_RECORD["files"],
              "status": "historical record of T_BUNDLE1 attempt 2 (VERIFIED at " + V1_RECORD["commit"][:10] + "); kept byte-identical",
@@ -1511,6 +1562,9 @@ def build(gov=None) -> dict:
             {"id": V2_RECORD["id"], "commit": V2_RECORD["commit"], "files_sha256": V2_RECORD["files"],
              "status": "historical record of the bundle1_v2 repair (verified at " + V2_RECORD["commit"][:10] + "); kept byte-identical",
              "verification_record": V2_RECORD["verification_record"], "why_not_rebuilt": V2_RECORD["why_not_rebuilt"]},
+            {"id": V3_RECORD["id"], "commit": V3_RECORD["commit"], "files_sha256": V3_RECORD["files"],
+             "status": "historical record of the bundle1_v3 repair (verified at " + V3_RECORD["commit"][:10] + "); kept byte-identical",
+             "verification_record": V3_RECORD["verification_record"], "why_not_rebuilt": V3_RECORD["why_not_rebuilt"]},
         ],
         "change_log": None,
         "carried_statuses": {"echt_n2": echt},
@@ -1566,7 +1620,7 @@ def build(gov=None) -> dict:
 
 
 # --------------------------------------------------------------------------------------------------------------------
-# Minimal JSON-Schema validator (draft 2020-12 keyword subset used by bundle1_v1/v2/v3.schema.json)
+# Minimal JSON-Schema validator (draft 2020-12 keyword subset used by bundle1_v1/v2/v3/v4.schema.json)
 # --------------------------------------------------------------------------------------------------------------------
 def validate(inst, schema, root=None, path="$") -> list[str]:
     root = root or schema
@@ -1638,14 +1692,15 @@ def render_md(doc: dict) -> str:
     w("")
     w("> Generated by `docs/milestones/bundle1/build_bundle1.py` from pinned inputs. Do not edit by hand; rerun the script "
       f"(`--check` reproduces this file and `{Path(OUT_JSON_REL).name}` byte for byte). The historical records v1 "
-      "(`bundle1_v1.json`, `BUNDLE1.md`) and v2 (`bundle1_v2.json`, `BUNDLE1_v2.md`) are kept byte-identical and verified by their "
+      "(`bundle1_v1.json`, `BUNDLE1.md`), v2 (`bundle1_v2.json`, `BUNDLE1_v2.md`) and v3 (`bundle1_v3.json`, `BUNDLE1_v3.md`) are "
+      "kept byte-identical and verified by their "
       "recorded sha256.")
     w("")
     w("| | |")
     w("|---|---|")
     w(f"| status | **{doc['status']}**: a proposal for the owner, not a decision |")
     w(f"| follow-on / trigger | `{doc['follow_on']}` / `{doc['trigger']}` attempt {doc['attempt']} (execution key `{doc['execution_key'][:16]}…`) |")
-    w(f"| base commit | `{doc['base_commit']}` (integrated execution branch; verified bundle1_v2, HSENV and veto-layer repairs merged) |")
+    w(f"| base commit | `{doc['base_commit']}` (integrated execution branch; verified bundle1_v3 and experiment-package repair 83fe4c4 merged) |")
     w(f"| supersedes | `{doc['supersedes']['id']}` @ `{doc['supersedes']['commit'][:10]}` ({_esc(doc['supersedes']['status'])}) |")
     w(f"| governance | read only from the pinned snapshot `{Path(GOV_SNAPSHOT_REL).name}` (captured at "
       f"`{doc['provenance']['governance_snapshot']['captured_from_commit'][:10]}`) |")
@@ -1898,7 +1953,7 @@ def render_md(doc: dict) -> str:
     w("")
     w("```")
     w(f"python {SCRIPT_REL}            # rewrite {Path(OUT_JSON_REL).name} and {Path(OUT_MD_REL).name}")
-    w(f"python {SCRIPT_REL} --check    # exit 1 unless both are reproduced byte for byte and the v1 / v2 records match their sha256")
+    w(f"python {SCRIPT_REL} --check    # exit 1 unless both are reproduced byte for byte and the v1 / v2 / v3 records match their sha256")
     w("python -m pytest -q tests/test_bundle1.py")
     w("```")
     w("")
@@ -1942,7 +1997,7 @@ def main(argv=None) -> int:
         if bad:
             print("NOT REPRODUCED: " + ", ".join(bad))
             return 1
-        print(f"OK: {Path(OUT_JSON_REL).name} and {Path(OUT_MD_REL).name} reproduced; v1 and v2 records verified by sha256")
+        print(f"OK: {Path(OUT_JSON_REL).name} and {Path(OUT_MD_REL).name} reproduced; v1, v2 and v3 records verified by sha256")
         return 0
     for p, t in targets:
         p.write_text(t, encoding="utf-8")
