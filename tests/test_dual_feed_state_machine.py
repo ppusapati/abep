@@ -4,6 +4,11 @@ schemas/controls/dual_feed_state_machine_v1.json (rationale: docs/controls/DUAL_
 These tests check the control-logic graph and its bookkeeping only: reachability, safing, required transition fields,
 symbolic guards and the absence of unsourced numbers. They assert nothing about discharge physics, and they import no
 simulator module (simulator references are resolved by parsing the source with `ast`).
+
+The machine is parameterised over the three thrust architectures (hall_only, rf_hall, ecr_hall) and the pre-ionizer
+start variants (V1 after discharge, V2 seed before discharge); every graph property is checked per configuration.
+Modules owned by other lanes (abep_sim.arch_boundary, abep_sim.cathode_integration) are resolved lazily: when the file is
+absent from the checkout the reference is skipped, when present it must resolve and agree with this specification.
 """
 from __future__ import annotations
 
@@ -32,7 +37,17 @@ FAULT_BEHAVIOUR_FIELDS = ("on_fault", "fault_transition", "on_guard_not_met", "d
 KINDS = {"nominal", "retry", "command", "degradation", "recovery", "protective", "fault"}
 LOGICS = {"ALL", "ANY_PERSISTING"}
 EVIDENCE_CLASSES = {"measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"}
-SUPPLIER_STATUSES = {"available", "input_only", "gated", "withdrawn_absolute", "superseded_do_not_use"}
+SUPPLIER_STATUSES = {"available", "input_only", "component_only", "proxy_not_equivalent", "gated", "withdrawn_absolute",
+                     "superseded_do_not_use"}
+ARCHITECTURES = ("hall_only", "rf_hall", "ecr_hall")
+# bus_power_boundary_v1 pre-ionizer components (the contract of abep_sim/arch_boundary.py, lane_11_bus_boundary)
+PREIONIZER_COMPONENTS = {"hall_only": [], "rf_hall": ["rf_source"], "ecr_hall": ["ecr_source", "ecr_magnet"]}
+CONFIG_IDS = {"hall_only", "rf_hall/V1", "rf_hall/V2", "ecr_hall/V1", "ecr_hall/V2"}
+PREIONIZER_STATES = {"PREIONIZER_SEED", "PREIONIZER_IGNITION"}
+OUTPUT_KEYS = {"anode_hv", "keeper", "heater", "magnet", "preionizer"}
+# power symbols allowed in guards: P_bus family of bus_power_boundary_v1, plus the cathode heater component guard
+POWER_SYMBOLS = {"P_bus", "P_bus_demand", "P_bus_avail", "P_bus_alloc", "P_bus_min_sustain", "P_bus_idle_max",
+                 "P_startup_peak", "P_heater", "P_heater_max"}
 TBD = "TBD — requires "
 KEYWORDS = {"AND", "OR", "NOT", "abs", "integral"}
 OPERATORS = {"<", "<=", ">", ">=", "==", "!=", "+", "-", "*", "/", "(", ")", ","}
@@ -52,11 +67,21 @@ def _states(sm):
     return {s["id"]: s for s in sm["states"]}
 
 
-def _graph(sm):
-    g = {s: set() for s in _states(sm)}
+def _graph(sm, cfg=None):
+    """Transition graph, projected onto configuration ``cfg`` when given."""
+    g = {sid: set() for sid, s in _states(sm).items() if cfg is None or cfg in s["applies_to"]}
     for t in sm["transitions"]:
-        g[t["from"]].add(t["to"])
+        if cfg is None or cfg in t["applies_to"]:
+            g[t["from"]].add(t["to"])
     return g
+
+
+def _configs(sm):
+    return [c["id"] for c in sm["configurations"]]
+
+
+def _variant(sm, cfg):
+    return next(c["start_variant"] for c in sm["configurations"] if c["id"] == cfg)
 
 
 def _reach(g, start):
@@ -108,6 +133,16 @@ def _resolve(ref: str) -> bool:
     path = os.path.join(ROOT, *mod.split(".")) + ".py"
     if not qual or not os.path.isfile(path):
         return False
+    return _resolve_in(path, qual)
+
+
+def _other_lane_absent(sm, ref: str) -> bool:
+    mod = ref.partition(":")[0]
+    info = sm["other_lane_modules"].get(mod)
+    return info is not None and not os.path.isfile(os.path.join(ROOT, info["path"]))
+
+
+def _resolve_in(path: str, qual: str) -> bool:
     with open(path, encoding="utf-8") as f:
         body = ast.parse(f.read()).body
     for name in qual.split("."):
@@ -153,7 +188,11 @@ def test_state_fields(sm):
             assert k in s, f"state {s['id']} missing {k}"
         assert s["safe"] == (s["id"] in sm["safe_states"]), s["id"]
         assert set(s["valves"]) == {"xe_cathode", "xe_anode", "atm_anode"}, s["id"]
-        assert set(s["outputs"]) == {"anode_hv", "keeper", "heater", "magnet"}, s["id"]
+        assert set(s["outputs"]) == OUTPUT_KEYS, s["id"]
+        pre = s["outputs"]["preionizer"]
+        assert isinstance(pre, dict) and set(pre) == {"none", "V1", "V2"}, f"{s['id']}: preionizer output per start variant"
+        assert pre["none"].startswith("absent"), f"{s['id']}: hall_only has no pre-ionizer"
+        assert s["applies_to"] and set(s["applies_to"]) <= CONFIG_IDS, s["id"]
 
 
 def test_every_transition_has_required_fields(sm):
@@ -165,6 +204,9 @@ def test_every_transition_has_required_fields(sm):
         for k in TRANSITION_FIELDS:
             assert k in t, f"{t.get('id')} missing {k}"
         assert t["from"] in states and t["to"] in states, t["id"]
+        assert t["applies_to"] and set(t["applies_to"]) <= CONFIG_IDS, t["id"]
+        assert set(t["applies_to"]) <= set(states[t["from"]]["applies_to"]) & set(states[t["to"]]["applies_to"]), \
+            f"{t['id']} applies to a configuration in which its source or target state does not exist"
         assert t["kind"] in KINDS, t["id"]
         assert t["guard_logic"] in LOGICS, t["id"]
         assert isinstance(t["rationale"], str) and t["rationale"].strip(), t["id"]
@@ -198,26 +240,118 @@ def test_nominal_and_recovery_transitions_are_time_qualified(sm):
 
 # ------------------------------------------------------------------------------------------------ graph properties
 
+def test_configurations_cover_the_three_architectures(sm):
+    cfgs = sm["configurations"]
+    assert {c["id"] for c in cfgs} == CONFIG_IDS
+    assert {c["architecture"] for c in cfgs} == set(ARCHITECTURES) == set(sm["architecture_context"]["architectures"])
+    for c in cfgs:
+        assert c["preionizer_boundary_components"] == PREIONIZER_COMPONENTS[c["architecture"]], c["id"]
+        assert c["start_variant"] == ("none" if c["architecture"] == "hall_only" else c["id"].split("/")[1]), c["id"]
+        assert c["start_variant"] in sm["preionizer_start_variants"], c["id"]
+    assert sm["preionizer_start_variants"]["status"].startswith("OPEN")
+
+
 def test_every_state_reachable_from_off(sm):
-    reach = _reach(_graph(sm), sm["initial_state"])
-    assert set(_states(sm)) <= reach, f"unreachable from OFF: {sorted(set(_states(sm)) - reach)}"
+    for cfg in _configs(sm):
+        g = _graph(sm, cfg)
+        assert REQUIRED_STATES <= set(g), f"{cfg}: missing required states {sorted(REQUIRED_STATES - set(g))}"
+        reach = _reach(g, sm["initial_state"])
+        assert set(g) <= reach, f"{cfg}: unreachable from OFF: {sorted(set(g) - reach)}"
 
 
 def test_every_non_terminal_state_has_path_to_safe_state(sm):
-    g, safe = _graph(sm), set(sm["safe_states"])
-    for sid, s in _states(sm).items():
-        if s["safe"]:
-            continue
-        assert _reach(g, sid) & safe, f"{sid} has no path to a safe state"
+    safe = set(sm["safe_states"])
+    for cfg in _configs(sm):
+        g = _graph(sm, cfg)
+        for sid in g:
+            if _states(sm)[sid]["safe"]:
+                continue
+            assert _reach(g, sid) & safe, f"{cfg}: {sid} has no path to a safe state"
 
 
 def test_every_non_safe_state_has_direct_fault_exit_to_safe_mode(sm):
-    for sid, s in _states(sm).items():
-        if sid == "SAFE_MODE":
+    for cfg in _configs(sm):
+        for sid in _graph(sm, cfg):
+            if sid == "SAFE_MODE":
+                continue
+            faults = [t for t in sm["transitions"] if t["from"] == sid and t["kind"] == "fault" and cfg in t["applies_to"]]
+            assert faults, f"{cfg}: {sid} has no fault transition"
+            assert any(t["to"] == "SAFE_MODE" for t in faults), f"{cfg}: {sid}: no fault transition to SAFE_MODE"
+
+
+def test_preionizer_states_gate_atmosphere_admission(sm):
+    """hall_only never enters a pre-ionizer state; rf_hall/ecr_hall reach atmosphere admission only through
+    PREIONIZER_IGNITION, and V2 reaches anode ignition only through PREIONIZER_SEED."""
+    for cfg in _configs(sm):
+        g = _graph(sm, cfg)
+        v = _variant(sm, cfg)
+        if v == "none":
+            assert not PREIONIZER_STATES & set(g), cfg
             continue
-        faults = [t for t in sm["transitions"] if t["from"] == sid and t["kind"] == "fault"]
-        assert faults, f"{sid} has no fault transition"
-        assert any(t["to"] == "SAFE_MODE" for t in faults), f"{sid}: no fault transition to SAFE_MODE"
+        assert "PREIONIZER_IGNITION" in g, cfg
+        assert ("PREIONIZER_SEED" in g) == (v == "V2"), cfg
+        cut = {k: {x for x in nxt if x != "PREIONIZER_IGNITION"} for k, nxt in g.items() if k != "PREIONIZER_IGNITION"}
+        assert "ATMOSPHERE_ADMISSION" not in _reach(cut, sm["initial_state"]), f"{cfg}: admission bypasses PREIONIZER_IGNITION"
+        if v == "V2":
+            cut = {k: {x for x in nxt if x != "PREIONIZER_SEED"} for k, nxt in g.items() if k != "PREIONIZER_SEED"}
+            assert "XE_DISCHARGE_IGNITION" not in _reach(cut, sm["initial_state"]), f"{cfg}: V2 ignition bypasses the seed"
+
+
+def test_preionizer_loss_and_faults_are_handled(sm):
+    """Where a configuration's pre-ionizer is energised, a hard pre-ionizer fault leads to SAFE_MODE; in the
+    atmospheric/mixed operating states a pre-ionizer loss leads to XE_FALLBACK."""
+    states = _states(sm)
+    for cfg in _configs(sm):
+        v = _variant(sm, cfg)
+        if v == "none":
+            continue
+        for sid in _graph(sm, cfg):
+            out = states[sid]["outputs"]["preionizer"][v]
+            if out == "off":
+                continue
+            outs = [t for t in sm["transitions"] if t["from"] == sid and cfg in t["applies_to"]]
+            assert any(t["kind"] == "fault" and t["to"] == "SAFE_MODE" and "preionizer_fault" in " ".join(t["guards"].get("health", []))
+                       for t in outs), f"{cfg}: {sid} energises the pre-ionizer without a pre-ionizer fault exit"
+            if states[sid]["category"] in ("operating", "degraded") and sid != "XE_FALLBACK":
+                assert any(t["to"] == "XE_FALLBACK" and "NOT preionizer_lit" in t["guards"].get("health", []) for t in outs), \
+                    f"{cfg}: {sid} has no pre-ionizer loss handling"
+
+
+def test_power_guards_use_the_bus_power_boundary(sm):
+    """Power guards use P_bus of bus_power_boundary_v1 (OPERATING_MODEL section 3), never a narrower definition."""
+    pb = sm["power_boundary"]
+    assert pb["boundary_version"] == "bus_power_boundary_v1" and pb["quantity"] == "P_bus"
+    assert pb["contract"]["module"] == "abep_sim.arch_boundary" and pb["contract"]["function"] == "bus_power_ledger"
+    for name in ("P_bus", "P_bus_demand"):
+        q = sm["quantities"][name]
+        assert q["boundary_version"] == "bus_power_boundary_v1", name
+        assert any(s["ref"] == "abep_sim.arch_boundary:bus_power_ledger" and s["status"] == "available"
+                   for s in q["simulator_suppliers"]), f"{name}: the boundary ledger must be its supplier"
+        for s in q["simulator_suppliers"]:
+            if s["ref"] != "abep_sim.arch_boundary:bus_power_ledger":
+                assert s["status"] in ("component_only", "input_only"), f"{name}: {s['ref']} would substitute for P_bus"
+    assert "P_bus <= P_bus_alloc" in sm["global_invariants"]
+    assert "P_bus_alloc <= RFP_power_max" in sm["parameter_constraints"]
+    for where, e in _expressions(sm):
+        if _is_special(e):
+            continue
+        for tok in _identifiers(e):
+            assert "P_prop" not in tok and "P_avail" not in tok, f"legacy power symbol {tok!r} in {where}"
+            if tok.startswith("P_") and tok in set(sm["quantities"]) | set(sm["parameters"]):
+                assert tok in POWER_SYMBOLS, f"power symbol {tok!r} outside the bus_power_boundary_v1 family in {where}"
+    if os.path.isfile(os.path.join(ROOT, "abep_sim", "arch_boundary.py")):
+        with open(os.path.join(ROOT, "abep_sim", "arch_boundary.py"), encoding="utf-8") as f:
+            tree = ast.parse(f.read())
+        consts = {}
+        for node in tree.body:
+            if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
+                try:
+                    consts[node.targets[0].id] = ast.literal_eval(node.value)
+                except ValueError:
+                    pass
+        assert consts["BOUNDARY_VERSION"] == pb["boundary_version"]
+        assert tuple(consts["ARCHITECTURES"]) == ARCHITECTURES
+        assert {k: list(v) for k, v in consts["PREIONIZER_COMPONENTS"].items()} == PREIONIZER_COMPONENTS
 
 
 def test_safing_states_only_exit_to_safe_states(sm):
@@ -266,7 +400,9 @@ def test_fault_behaviour_is_consistent(sm):
 def test_safe_states_are_de_energised(sm):
     for sid in sm["safe_states"]:
         s = _states(sm)[sid]
-        assert set(s["outputs"].values()) == {"off"}, sid
+        assert {v for k, v in s["outputs"].items() if k != "preionizer"} == {"off"}, sid
+        pre = s["outputs"]["preionizer"]
+        assert pre["V1"] == pre["V2"] == "off" and pre["none"].startswith("absent"), sid
         assert set(s["valves"].values()) == {"closed"}, sid
         assert s["compressor"] == "off", sid
         assert s["xe_rate"].startswith("none:"), sid
@@ -391,8 +527,12 @@ def test_simulator_references_exist(sm):
     for name, p in sm["parameters"].items():
         refs += [(f"parameter {name}", r) for r in p.get("determined_by", [])]
     refs += [(f"external_ref {k}", v["ref"]) for k, v in sm["external_refs"].items()]
-    missing = [(w, r) for w, r in refs if not _resolve(r)]
+    missing = [(w, r) for w, r in refs if not _other_lane_absent(sm, r) and not _resolve(r)]
     assert not missing, f"references to non-existent simulator code: {missing}"
+    for name, q in sm["quantities"].items():
+        for s in q["simulator_suppliers"]:
+            if s["ref"].partition(":")[0] in sm["other_lane_modules"]:
+                assert s.get("lazy") is True, f"{name}: other-lane supplier {s['ref']} must be marked lazy"
 
 
 def test_quantities_without_an_available_supplier_state_the_gap(sm):
@@ -424,6 +564,20 @@ def test_no_calibration_nuisance_leak(sm):
     assert not nuisance & names
     for where, e in _expressions(sm):
         assert not nuisance & set(_identifiers(e)), f"calibration nuisance in {where}"
+
+
+def test_scope_milestones_and_exclusions_are_declared(sm):
+    ms = sm["milestone_support"]
+    assert ms["operating_model_question"] == "iii" and ms["supports"] == ["A"]
+    for k in ("milestone_A", "to_reach_B", "to_reach_C", "what_could_overturn"):
+        assert ms[k], k
+    assert sm["verification"]["protocol"] == "single-lens-v1"
+    air = [b for b in sm["excluded_branches"] if b["id"] == "air_fed_cathode"]
+    assert air and air[0]["status"].startswith("EXCLUDED BY DESIGN CHOICE") and "not a physics result" in air[0]["status"]
+    assert air[0]["reopen_when"].startswith(TBD)
+    assert "AIR_ONLY_ANODE_XE_CATHODE" in _states(sm)
+    for item in sm["literature_basis"]["items"]:
+        assert item["pointers"] and item["caveat"], item["claim"]
 
 
 def test_documentation_covers_states_and_quantities(sm):
