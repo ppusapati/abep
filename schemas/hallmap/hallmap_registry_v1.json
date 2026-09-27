@@ -1,0 +1,145 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "schemas/hallmap/hallmap_registry_v1.json",
+ "title": "Immutable Hall-map registry record (hallmap_registry_record_v1)",
+ "description": "One record = one file <registry_dir>/records/<seq:06d>_<first 16 hex of the record's own sha256>.json, written once by abep_sim/hallmap_registry.py with an exclusive atomic create (os.link of a fully written, read-only temporary file) and never edited or deleted. Records form a hash chain: prev_record_sha256 is the sha256 of the previous record FILE's bytes (null for seq 1). A REGISTRATION binds a design Hall map and everything it depends on by sha256; a WITHDRAWAL retires an earlier REGISTRATION (e.g. its member eliminated by new evidence) without touching it. All file paths are repository-relative POSIX paths. DRAFT for owner review.",
+ "x-status": "DRAFT_FOR_OWNER_REVIEW",
+ "x-lane": "fo_hallmap_schema_v2_registry (T_PIVOT_HALLMAP_SCHEMA_V2_REGISTRY, od_hardware_pivot)",
+ "x-milestones": "A: not needed. B/C: precondition for using any admitted-member design map as evidence (offline provenance re-verification, lane 15 open question). No admitted member exists (credible set empty, 2026-09-26), so no record can be created today.",
+ "x-verify_rules": [
+  "every file in records/ matches ^\\d{6}_[0-9a-f]{16}\\.json$, seq runs 1..N without gaps, the name's hex prefix equals the sha256 of the file bytes, and prev_record_sha256 equals the previous record's sha256",
+  "REGISTRATION blocks map, raw_records, chemistry (unless built-in), geometry, magnetic_field, convergence_prereg, o4_dispositions, admission_decision: the named file exists and re-hashes to the recorded sha256 (raw_records also to sha256_canonical_jsonl, decompressed for .gz)",
+  "map: canonical sha256 of meta (json.dumps(sort_keys=True, separators=(',', ':')), the form of abep_sim.thermal_life._canonical_sha256) == map_meta_sha256; meta.schema == schema_version; meta.ensemble_member_id and meta.hallthruster_commit equal the record; meta.facility_ingestion is false; meta.provenance present with map_set.status FROZEN and numerics.convergence.verdict PASS; abep_sim.hallmap_registry.PROVENANCE_EQUALITIES hold (lane 35 schemas/hallmap/hallmap_provenance_v1.json)",
+  "geometry.file and magnetic_field.file never match the P5/ECHT evidence-file pattern of hallmap_provenance_v1.json; convergence_prereg is never a DRAFT",
+  "currency: hallthruster.commit == current hallthruster_bridge/PINNED.toml commit; the member passes abep_sim.hall_ensemble.require_admitted on the current ensemble (screening candidates and unknown ids refused), and its admission record's decision_file/decision_sha256 and o4_dispositions_file/o4_dispositions_sha256 (bridge-relative, prefixed with hallthruster_bridge/) equal admission_decision and o4_dispositions",
+  "ensemble_sha256_at_registration and pinned_toml_sha256_at_registration are provenance of the registration moment only (both files legitimately change: new members, reaction-set bumps); they are not re-hashed",
+  "a WITHDRAWAL names an earlier REGISTRATION not already withdrawn; its decision file re-hashes to its sha256"
+ ],
+ "type": "object",
+ "required": ["schema", "kind"],
+ "properties": {
+  "schema": {"const": "hallmap_registry_record_v1"},
+  "kind": {"enum": ["REGISTRATION", "WITHDRAWAL"]}
+ },
+ "allOf": [
+  {
+   "if": {"properties": {"kind": {"const": "REGISTRATION"}}},
+   "then": {"$ref": "#/$defs/registration"}
+  },
+  {
+   "if": {"properties": {"kind": {"const": "WITHDRAWAL"}}},
+   "then": {"$ref": "#/$defs/withdrawal"}
+  }
+ ],
+ "$defs": {
+  "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+  "git_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+  "relpath": {"type": "string", "minLength": 1, "not": {"pattern": "^/|\\\\|(^|/)\\.\\.(/|$)"}},
+  "utc": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+  "prev": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/sha256"}]},
+  "file_block": {
+   "type": "object", "additionalProperties": false, "required": ["file", "sha256"],
+   "properties": {"file": {"$ref": "#/$defs/relpath"}, "sha256": {"$ref": "#/$defs/sha256"}}
+  },
+  "id_file_block": {
+   "type": "object", "additionalProperties": false, "required": ["id", "file", "sha256"],
+   "properties": {"id": {"type": "string", "minLength": 1}, "file": {"$ref": "#/$defs/relpath"},
+                  "sha256": {"$ref": "#/$defs/sha256"}}
+  },
+  "design_file_block": {
+   "type": "object", "additionalProperties": false, "required": ["id", "file", "sha256"],
+   "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "file": {"$ref": "#/$defs/relpath", "not": {"pattern": "(^|[^A-Za-z0-9])[Pp]5([^0-9]|$)|[Ee][Cc][Hh][Tt]|[Bb]rabston|[Pp]eterson"},
+             "x-note": "Vyovrinda's own design file; P5/ECHT evidence files are never design geometry or B(z) (same rule as hallmap_provenance_v1.json)"},
+    "sha256": {"$ref": "#/$defs/sha256"}
+   }
+  },
+  "registration": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["schema", "kind", "seq", "prev_record_sha256", "registered_utc", "registered_by", "map", "raw_records",
+                "ensemble_member", "chemistry", "hallthruster", "geometry", "magnetic_field", "convergence_prereg",
+                "o4_dispositions", "admission_decision"],
+   "properties": {
+    "schema": {"const": "hallmap_registry_record_v1"},
+    "kind": {"const": "REGISTRATION"},
+    "seq": {"type": "integer", "minimum": 1},
+    "prev_record_sha256": {"$ref": "#/$defs/prev"},
+    "registered_utc": {"$ref": "#/$defs/utc"},
+    "registered_by": {"type": "string", "minLength": 1},
+    "map": {
+     "type": "object", "additionalProperties": false,
+     "required": ["file", "sha256", "schema_version", "map_meta_sha256"],
+     "properties": {
+      "file": {"$ref": "#/$defs/relpath"},
+      "sha256": {"$ref": "#/$defs/sha256"},
+      "schema_version": {"enum": ["hall_map_schema_v1", "hall_map_schema_v2"]},
+      "map_meta_sha256": {"$ref": "#/$defs/sha256", "description": "canonical sha256 of the map's meta object; the key lane 15 (abep_sim/thermal_life.py admitted_hallmap provenance) looks records up by"}
+     }
+    },
+    "raw_records": {
+     "type": "object", "additionalProperties": false, "required": ["file", "sha256", "sha256_canonical_jsonl"],
+     "properties": {
+      "file": {"$ref": "#/$defs/relpath"},
+      "sha256": {"$ref": "#/$defs/sha256", "description": "sha256 of the file bytes"},
+      "sha256_canonical_jsonl": {"$ref": "#/$defs/sha256", "description": "sha256 of the dataset content (decompressed for .gz); must equal meta.provenance.raw_records.sha256_canonical_jsonl"}
+     }
+    },
+    "ensemble_member": {
+     "type": "object", "additionalProperties": false,
+     "required": ["ensemble_member_id", "ensemble_file", "ensemble_sha256_at_registration"],
+     "properties": {
+      "ensemble_member_id": {"type": "string", "minLength": 1, "description": "an ADMITTED member (abep_sim.hall_ensemble.require_admitted); screening candidates sgb-screen-* are refused by that call, not by an id pattern (an admitted member keeps its screening id)"},
+      "ensemble_file": {"$ref": "#/$defs/relpath"},
+      "ensemble_sha256_at_registration": {"$ref": "#/$defs/sha256"}
+     }
+    },
+    "chemistry": {
+     "oneOf": [
+      {"type": "object", "additionalProperties": false, "required": ["config_id", "file", "sha256"],
+       "properties": {"config_id": {"type": "string", "minLength": 1}, "file": {"$ref": "#/$defs/relpath"},
+                      "sha256": {"$ref": "#/$defs/sha256"}},
+       "description": "project propellant config (e.g. an immutable snapshot of a hallthruster_bridge/propellants/*.toml); a mutable production TOML that is edited later makes the record fail integrity (intended)"},
+      {"type": "object", "additionalProperties": false, "required": ["config_id", "file", "sha256"],
+       "properties": {"config_id": {"type": "string", "pattern": "^builtin-"}, "file": {"type": "null"},
+                      "sha256": {"type": "null"}},
+       "description": "built-in solver chemistry (e.g. 'builtin-Xe'), identified by the pinned solver commit"}
+     ]
+    },
+    "hallthruster": {
+     "type": "object", "additionalProperties": false, "required": ["commit", "pinned_toml_sha256_at_registration"],
+     "properties": {"commit": {"$ref": "#/$defs/git_commit"},
+                    "pinned_toml_sha256_at_registration": {"$ref": "#/$defs/sha256"}}
+    },
+    "geometry": {"$ref": "#/$defs/design_file_block"},
+    "magnetic_field": {"$ref": "#/$defs/design_file_block"},
+    "convergence_prereg": {
+     "type": "object", "additionalProperties": false, "required": ["id", "file", "sha256"],
+     "properties": {"id": {"type": "string", "minLength": 1, "not": {"pattern": "[Dd][Rr][Aa][Ff][Tt]"}},
+                    "file": {"$ref": "#/$defs/relpath", "not": {"pattern": "[Dd][Rr][Aa][Ff][Tt]"}},
+                    "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "o4_dispositions": {"$ref": "#/$defs/file_block"},
+    "admission_decision": {"$ref": "#/$defs/file_block"}
+   }
+  },
+  "withdrawal": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["schema", "kind", "seq", "prev_record_sha256", "registered_utc", "registered_by",
+                "withdraws_record_sha256", "reason", "decision"],
+   "properties": {
+    "schema": {"const": "hallmap_registry_record_v1"},
+    "kind": {"const": "WITHDRAWAL"},
+    "seq": {"type": "integer", "minimum": 2},
+    "prev_record_sha256": {"$ref": "#/$defs/sha256"},
+    "registered_utc": {"$ref": "#/$defs/utc"},
+    "registered_by": {"type": "string", "minLength": 1},
+    "withdraws_record_sha256": {"$ref": "#/$defs/sha256"},
+    "reason": {"type": "string", "minLength": 1},
+    "decision": {"$ref": "#/$defs/file_block"}
+   }
+  }
+ }
+}

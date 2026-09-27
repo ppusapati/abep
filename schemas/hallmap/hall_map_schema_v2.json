@@ -1,0 +1,275 @@
+{
+ "schema": "hall_map_schema_v2",
+ "status": "DRAFT_FOR_OWNER_REVIEW",
+ "lane": "fo_hallmap_schema_v2_registry (trigger T_PIVOT_HALLMAP_SCHEMA_V2_REGISTRY, owner disposition od_hardware_pivot, docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json execution_directive_2026_09_27.new_workstreams)",
+ "description": "Hall-map interchange schema v2 = hall_map_schema_v1 (inherited unchanged, sha256-bound below) plus wall-adjacent quantities that HallThruster.jl v0.23.1 at the pinned commit GENUINELY computes. Every added field names the exact solver variable/function it comes from, its units, whether it is per cell or aggregated, and whether it is a solver-computed state or a configuration input. Quantities the solver does not compute are listed under not_supplied and are NOT fields. No added field has a producer yet (status 'not_computed'): emitting them needs a bridge/driver change, which is a controlled model-pipeline change needing owner approval (see migration). A point missing a not_computed field is not v2-map-ready and a field must never be filled with a placeholder (same rule as v1).",
+ "milestones": {
+  "A": "not needed for conditional selection (no absolute Hall number is required); this file states which wall quantities a future admitted-member map can and cannot deliver",
+  "B": "not on the Milestone B critical path (B needs thrust / eta_u / P_d / I_d from admitted-member maps, which v1 already defines)",
+  "C": "supports the PDR wall-life and thermal closure: wall-adjacent T_e, effective SEE yield, sheath potential and species-resolved wall ion flux are the model-side counterparts of docs/evidence/wall_life/ H7 (near-wall diagnostics) and H9 (SEE yield). To reach C: an admitted member (credible set empty today), the owner-approved producer change, ion_wall_losses decision (docs/hallmap/HALLMAP_PRODUCTION_SPEC.md open decision 3), a cited sputter-yield model with incidence-angle treatment from a source other than this solver"
+ },
+ "inherits": {
+  "schema": "hall_map_schema_v1",
+  "file": "hallthruster_bridge/hall_map_schema_v1.json",
+  "sha256": "f371b43bced1020d55e2b28303c877220f41395767cdf6ebab6019475e9bdde9",
+  "rule": "Every v1 meta key, convention and field is carried into v2 with the identical definition. hall_map_schema_v1.json stays unchanged and historically valid; v1 maps remain v1 maps (they are never relabelled v2). A v2 map's meta.schema is 'hall_map_schema_v2'. abep_sim/hall_map.py is NOT modified by this lane and therefore loads v1 maps only; a v2 consumer is a separate, later change."
+ },
+ "solver_basis": {
+  "package": "HallThruster.jl",
+  "version": "0.23.1",
+  "pinned_commit": "bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5",
+  "installed_copy": "/root/.julia/packages/HallThruster/zHCae (read only, not executed)",
+  "identity_check": "git tree hash of the installed copy recomputed in this lane = 7505b3a2a6cfeb6854801de53c6985443aeb8363 = hallthruster_bridge/Manifest.toml [[deps.HallThruster]] git-tree-sha1, recorded by Pkg with repo-rev bfb3019fc74ceaa2c70c9d3b19236a83a44ee3b5 and version 0.23.1",
+  "files_read_sha256": {
+   "src/physics/wall_losses.jl": "b928ddeccd013d0ecf5630594d8a6d32f0509c9190a816a6e6473e12073b15a7",
+   "src/simulation/heavy_species_update.jl": "424ce99c680c1e79fdca6f40bd61bd87ed536d8872c772f83e449c17b13f0960",
+   "src/simulation/solution.jl": "cd997fca258c7b484a722911eed3bc027ec67cf4c03dbca01f61a35bce337876",
+   "src/simulation/plume.jl": "42c3341abba7160e362ae2ee99807299154db7ce9326effffd8e9175c7087aed",
+   "src/simulation/electron_update.jl": "9f4c00153e39ad980a92e4417621375efcef61aea80567bbb81c33fdb1932f30",
+   "src/simulation/electron_energy.jl": "36caa2d5453ffb2a7ea12ef410ba38dff684705acdc05a95319486d0248b67bf",
+   "src/utilities/smoothing.jl": "d6ffe6f18585764d02b82d7825e4ea40ec6273dc3c9ff882eece321ee9bd9562",
+   "src/simulation/allocation.jl": "7579ec6a519a519c067e8b8cdf1f6785fb0ef0c7a75bf12b0fce10a90495a6a5",
+   "src/simulation/configuration.jl": "99993adce3c4196098beb389177a72a705595b1f70ef0f853079330fd43486f9",
+   "src/thruster/thruster.jl": "c0dcc533cb1366bd17eab11a118999b06e8c52c8e8c88a177580608f6a37403b",
+   "Project.toml": "744740ff432ea947be43773520664636ed46dbb7727d1ddcb78598258d9d26e4"
+  },
+  "bridge_read": {
+   "file": "hallthruster_bridge/bridge_lib.jl",
+   "sha256": "cf26aab8607b640ebb78be9715f2c7c5d957f145ac17f52c1b23db2e980e21ab",
+   "function": "wall_ion_metrics(sol, config, i0) (v1 producer of wall_ion_flux_m2s / wall_ion_energy_eV); read only"
+  },
+  "saved_frame_fact": "HallThruster.Frame (src/simulation/solution.jl) saves per frame: per-species ion and neutral n, nu, u, m, Z (SpeciesState), Tev, ne, nu_wall (= cache.νew_momentum), B, potential, channel_area, tan_div_angle and other profiles. It does NOT save cache.γ_SEE, cache.m_eff, cache.wall_transition, cache.radial_loss_frequency or cache.wall_losses. The Solution keeps config (hence wall_loss_model, thruster.shielded, transition_length, ion_wall_losses) but not the run cache."
+ },
+ "evaluation_rule": "Every added quantity is re-evaluated by the producer in EVERY saved frame of the averaging window (never on the time-averaged state; breathing makes the two differ), with the solver's OWN functions (HallThruster.SEE_yield, HallThruster.sheath_potential, HallThruster.edge_to_center_density_ratio, HallThruster.linear_transition) applied to the solver's own saved per-frame state and the run's own Config. This is the same method, and the same limitation, as the v1 wall fields: the values are what the solver's model computes, re-evaluated from saved state, not copied from a solver output array (the solver does not save them). Nothing is derived from unrelated global diagnostics (thrust, efficiencies, divergence angle, discharge current).",
+ "channel_cells_rule": "Aggregated channel quantities use the SAME cell set as v1 wall_ion_flux_m2s (grid cells with z <= channel_length; unweighted mean over cells, then mean over frames) so that v1 and v2 aggregates are directly comparable. The profile fields additionally carry profile_wall_transition so a consumer can reproduce the solver's own footprint (see finding F2 in docs/hallmap/schema_v2/HALLMAP_SCHEMA_V2.md).",
+ "meta_added": {
+  "wall_loss_model": {
+   "definition": "Config.wall_loss_model as run: model type name (WallSheath required for every added wall field), material name, material epsilon_star_eV and sigma0, and loss_scale (WallSheath.loss_scale). String or object as the producer writes it; must be copied from the run's Config, never retyped",
+   "solver_source": "src/physics/wall_losses.jl: struct WallMaterial(name, ϵ_star, σ₀); struct WallSheath(material, loss_scale); Config keyword default WallSheath(BNSiO2, 1.0) (src/simulation/configuration.jl)",
+   "kind": "input"
+  },
+  "shielded": {
+   "definition": "Config.thruster.shielded (bool). Every added wall field is produced only for shielded = false (see not_supplied NS-7)",
+   "solver_source": "src/thruster/thruster.jl field shielded::Bool = false; used by wall_electron_temperature (src/physics/wall_losses.jl)",
+   "kind": "input"
+  },
+  "transition_length_m": {
+   "unit": "m",
+   "definition": "Config.transition_length as run; sets wall_transition(z) = linear_transition(z, channel_length, transition_length, 1, 0) (src/simulation/plume.jl initialize_plume_geometry)",
+   "solver_source": "src/simulation/configuration.jl field transition_length; default 0.1 * thruster.geometry.channel_length",
+   "kind": "input"
+  },
+  "electron_plume_loss_scale": {
+   "definition": "Config.electron_plume_loss_scale as run (scales electron wall power loss outside the channel; src/physics/wall_losses.jl wall_power_loss!)",
+   "solver_source": "src/simulation/configuration.jl field electron_plume_loss_scale; default 1.0",
+   "kind": "input"
+  },
+  "wall_fields_basis": {
+   "definition": "producer statement, like v1 wall_ion_basis: 'WallSheath, unshielded, re-evaluated per saved frame with the solver's own functions' or the reason the wall fields are absent",
+   "kind": "producer statement"
+  }
+ },
+ "fields_added": {
+  "wall_Te_eV": {
+   "unit": "eV",
+   "type": "float",
+   "level": "map field (scalar per node)",
+   "aggregation": "Bohm-ion-flux-weighted mean over channel cells (channel_cells_rule) and over the saved frames of the averaging window, weights = the per-cell total Bohm ion flux of wall_ion_flux_m2s",
+   "status": "not_computed",
+   "kind": "solver-computed state",
+   "solver_variable": "HallThruster.wall_electron_temperature(params, i) (src/physics/wall_losses.jl), which returns cache.Tev[i] when thruster.shielded = false; saved per frame as Frame.Tev (= copy_and_remove_ghosts(cache.Tev))",
+   "definition": "electron temperature the WallSheath model uses at the wall of cell i (for the SEE yield, the sheath potential and the Bohm flux). In the 1-D model this is the local channel-centre T_e, not a separately resolved near-wall T_e; the solver has no radial resolution (see not_supplied NS-6)",
+   "availability": "unshielded WallSheath only"
+  },
+  "wall_see_yield_eff": {
+   "unit": "-",
+   "type": "float",
+   "level": "map field (scalar per node)",
+   "aggregation": "Bohm-ion-flux-weighted mean over channel cells and frames (as wall_Te_eV)",
+   "status": "not_computed",
+   "kind": "solver-computed state (re-evaluated; not saved by the solver)",
+   "solver_variable": "cache.γ_SEE[i], set in freq_electron_wall!(νew, ::WallSheath, params) as SEE_yield(model.material, Tev_wall, γ_SEE_max) with γ_SEE_max = 1 - 8.3 * sqrt(me / cache.m_eff[i]) (src/physics/wall_losses.jl). Re-evaluated per frame as HallThruster.SEE_yield(config.wall_loss_model.material, Frame.Tev[i], 1 - 8.3*sqrt(HallThruster.me/m_eff_i)), m_eff_i = sum_s n_s m_s / sum_s n_s over Frame.ions (the solver's number-averaged ion mass, src/simulation/heavy_species_update.jl update_heavy_species_cache!)",
+   "definition": "effective (space-charge-limited) secondary-electron-emission yield of the WallSheath model: min(γ_max, σ₀ + 1.5 T_e/ϵ* (1 - σ₀)). Electron-induced SEE as a function of T_e only; material constants are the model inputs in meta.wall_loss_model",
+   "availability": "unshielded WallSheath only"
+  },
+  "wall_see_space_charge_limited_fraction": {
+   "unit": "-",
+   "type": "float",
+   "level": "map field (scalar per node)",
+   "aggregation": "Bohm-ion-flux-weighted fraction of channel cell-frames in which SEE_yield returned the cap γ_SEE_max",
+   "status": "not_computed",
+   "kind": "solver-computed state (re-evaluated)",
+   "solver_variable": "the min(γ_max, ...) branch of HallThruster.SEE_yield (src/physics/wall_losses.jl)",
+   "definition": "tells whether the effective yield is set by the material fit or by the space-charge cap; needed to interpret wall_see_yield_eff against measured SEE yields (docs/evidence/wall_life/ H9)",
+   "availability": "unshielded WallSheath only"
+  },
+  "wall_sheath_potential_V": {
+   "unit": "V",
+   "type": "float",
+   "level": "map field (scalar per node)",
+   "aggregation": "Bohm-ion-flux-weighted mean over channel cells and frames",
+   "status": "not_computed",
+   "kind": "solver-computed state (re-evaluated)",
+   "solver_variable": "HallThruster.sheath_potential(Tev, γ, m_eff) = Tev * log((1 - γ) * sqrt(m_eff / π / me / 2)) (src/physics/wall_losses.jl; positive by convention), as used in wall_power_loss!(Q, ::WallSheath, params) and in the v1 wall_ion_energy_eV",
+   "definition": "space-charge-limited sheath potential of the WallSheath model (one sheath per cell for the ion mixture, number-averaged ion mass)",
+   "availability": "unshielded WallSheath only"
+  },
+  "wall_ion_flux_fraction_atomic": {
+   "unit": "-",
+   "type": "float",
+   "level": "map field (scalar per node)",
+   "aggregation": "share of the channel-mean total Bohm ion number flux (v1 wall_ion_flux_m2s) carried by ion species whose parent formula is a single atom (same natoms rule as v1 ion_species_fraction_atomic)",
+   "status": "not_computed",
+   "kind": "solver-computed state (re-evaluated)",
+   "solver_variable": "per species s: loss_scale * edge_to_center_density_ratio() * n_s * sqrt(Z_s e T_e / m_s) with n_s, Z_s, m_s from Frame.ions (the Bohm flux of freq_electron_wall! / apply_ion_wall_losses!, src/physics/wall_losses.jl, src/simulation/heavy_species_update.jl)",
+   "definition": "species split of the wall ion flux; for Xe = 1 by definition",
+   "availability": "unshielded WallSheath only"
+  },
+  "wall_ion_flux_fraction_multiply_charged": {
+   "unit": "-",
+   "type": "float",
+   "level": "map field (scalar per node)",
+   "aggregation": "share of the channel-mean total Bohm ion number flux carried by species with Z >= 2",
+   "status": "not_computed",
+   "kind": "solver-computed state (re-evaluated)",
+   "solver_variable": "as wall_ion_flux_fraction_atomic, split by SpeciesState.Z",
+   "definition": "multiply charged ions hit the wall with Z * phi_s + T_e/2 (sheath energy scales with Z)",
+   "availability": "unshielded WallSheath only"
+  },
+  "wall_ion_species": {
+   "unit": "structured",
+   "type": "list of objects",
+   "level": "raw record (per node; not interpolated by a map consumer)",
+   "aggregation": "one entry per ion species in Frame.ions (propellant key, charge Z, mass m_kg): channel-mean Bohm number flux flux_m2s [m^-2 s^-1] (v1 definition restricted to the species), flux_fraction [-], flux-weighted mean impact energy impact_energy_eV = Z phi_s + T_e/2 [eV] (sheath + Bohm presheath; excludes axial ion kinetic energy, as v1)",
+   "status": "not_computed",
+   "kind": "solver-computed state (re-evaluated)",
+   "solver_variable": "Frame.ions[propellant][k]::SpeciesState (n, m, Z), Frame.Tev, HallThruster.sheath_potential, HallThruster.edge_to_center_density_ratio, WallSheath.loss_scale",
+   "definition": "wall-impact ION species information. Only ions reach the wall in the solver (negative ions are skipped, src/simulation/heavy_species_update.jl apply_ion_wall_losses!); neutrals, excited states and fast neutrals have no wall-impact model (not_supplied NS-3)",
+   "availability": "unshielded WallSheath only"
+  },
+  "profile_wall_transition": {
+   "unit": "-",
+   "type": "float array over the saved grid",
+   "level": "raw record",
+   "aggregation": "per cell, time-independent",
+   "status": "not_computed",
+   "kind": "input-derived (geometry and Config only)",
+   "solver_variable": "cache.wall_transition[i] = linear_transition(cell_centers[i], channel_length, transition_length, 1.0, 0.0) (src/simulation/plume.jl initialize_plume_geometry; src/utilities/smoothing.jl). Not saved in Frame; reproduced with HallThruster.linear_transition on Solution.grid",
+   "definition": "the solver's inside-channel indicator (1 inside, linear ramp over transition_length centred on the exit, 0 outside); it weights the electron wall momentum collisions and, with ion_wall_losses = true, the ion wall removal",
+   "availability": "always (any wall model)"
+  },
+  "profile_wall_Te_eV": {
+   "unit": "eV",
+   "type": "float array over the saved grid",
+   "level": "raw record",
+   "aggregation": "per cell, mean over the saved frames of the averaging window",
+   "status": "not_computed",
+   "kind": "solver-computed state",
+   "solver_variable": "as wall_Te_eV",
+   "definition": "per-cell wall-adjacent T_e profile",
+   "availability": "unshielded WallSheath only"
+  },
+  "profile_wall_see_yield": {
+   "unit": "-",
+   "type": "float array over the saved grid",
+   "level": "raw record",
+   "aggregation": "per cell, mean over frames of the per-frame re-evaluated yield",
+   "status": "not_computed",
+   "kind": "solver-computed state (re-evaluated)",
+   "solver_variable": "as wall_see_yield_eff",
+   "definition": "per-cell effective SEE yield",
+   "availability": "unshielded WallSheath only"
+  },
+  "profile_wall_sheath_potential_V": {
+   "unit": "V",
+   "type": "float array over the saved grid",
+   "level": "raw record",
+   "aggregation": "per cell, mean over frames",
+   "status": "not_computed",
+   "kind": "solver-computed state (re-evaluated)",
+   "solver_variable": "as wall_sheath_potential_V",
+   "definition": "per-cell sheath potential",
+   "availability": "unshielded WallSheath only"
+  },
+  "profile_wall_ion_flux_m2s_by_species": {
+   "unit": "m^-2 s^-1",
+   "type": "object: species label -> float array over the saved grid",
+   "level": "raw record",
+   "aggregation": "per cell, mean over frames",
+   "status": "not_computed",
+   "kind": "solver-computed state (re-evaluated)",
+   "solver_variable": "as wall_ion_species",
+   "definition": "per-cell, per-species Bohm wall ion flux (not weighted by wall_transition; multiply by profile_wall_transition to obtain the solver's ion-removal footprint)",
+   "availability": "unshielded WallSheath only"
+  },
+  "profile_ion_wall_removal_m3s_by_species": {
+   "unit": "m^-3 s^-1",
+   "type": "object: species label -> float array over the saved grid",
+   "level": "raw record",
+   "aggregation": "per cell, mean over frames",
+   "status": "not_computed",
+   "kind": "solver-computed state (re-evaluated)",
+   "solver_variable": "density_loss / m_s in apply_ion_wall_losses!(fluid_containers, wall_loss_base, wall_cells): n_s * νiw with νiw = wall_transition[i] * sqrt(e Tev[i]) * h * wall_loss_scale / (outer_radius - inner_radius) * sqrt(Z_s / m_s), cells 2:last_wall_cell (src/simulation/heavy_species_update.jl prepare_ion_wall_losses!, apply_ion_wall_losses!)",
+   "definition": "volumetric ion removal rate the solver applies to the ion fluid (and returns to the ground-state neutral of the same fluid container). Physically applied only when Config.ion_wall_losses = true; with false the producer must write it as absent (not zero) and state that in wall_fields_basis",
+   "availability": "unshielded WallSheath AND ion_wall_losses = true"
+  }
+ },
+ "not_supplied": {
+  "NS-1_incidence_angle": {
+   "quantity": "ion (or neutral) incidence angle at the wall, mean or distribution",
+   "why_not": "The solver is 1-D axial (z). The wall ion flux is a radial Bohm-flux closure with no radial velocity, no r-z geometry of the channel wall and no angular information. Frame.tan_div_angle (cache.tanδ, src/simulation/plume.jl) is the PLUME divergence used for the plume area expansion, not a wall incidence angle, and must not be used as one (it would be a derivation from an unrelated diagnostic)",
+   "would_need": "an r-z (2-D) or kinetic sheath/erosion model, or measured near-wall ion angle distributions (docs/evidence/wall_life/ H7) or a published, cited angle treatment for the wall grade (docs/evidence/wall_life/ flag ANGLE_OUTSIDE_MEASURED)"
+  },
+  "NS-2_ion_energy_distribution": {
+   "quantity": "ion impact energy distribution at the wall (beyond the mean Z phi_s + T_e/2), and the axial kinetic-energy contribution",
+   "why_not": "fluid model with one isothermal ion velocity per species; no wall IEDF, no oblique-impact kinetic energy",
+   "would_need": "kinetic/PIC or 2-D model, or RPA/flush-probe measurements (wall_life H7)"
+  },
+  "NS-3_neutral_and_excited_wall_impact": {
+   "quantity": "neutral, fast charge-exchange neutral and excited-state fluxes/energies to the wall; wall quenching of excited states",
+   "why_not": "the solver has no neutral or excited-state wall flux; neutrals only gain density from ion recombination at the wall (apply_ion_wall_losses!, neutral_fluid = ground_neutral(fluid_containers)); no wall term in src/simulation/deexcitation.jl",
+   "would_need": "a neutral wall-flux model (e.g. free-molecular wall flux with a CEX source) added to the solver, i.e. a model change"
+  },
+  "NS-4_wall_recombination_products": {
+   "quantity": "species returned by the wall (e.g. N + N -> N2 recombination, dissociative neutralisation of N2+)",
+   "why_not": "fixed rule only: each recombined ion is returned as the ground-state neutral (first continuity fluid) of the same fluid container; no wall chemistry. The grouping of N/N2 species into containers for the project N2 reaction set is not re-verified here: verify",
+   "would_need": "a cited wall-chemistry model and a solver change"
+  },
+  "NS-5_inner_outer_wall_split": {
+   "quantity": "separate inner- and outer-wall fluxes, T_e, SEE, sheath potential",
+   "why_not": "single channel width Δr = outer_radius - inner_radius; the model has no inner/outer distinction",
+   "would_need": "r-z model or measurements"
+  },
+  "NS-6_resolved_near_wall_Te": {
+   "quantity": "a near-wall electron temperature distinct from the channel-centre T_e (radial T_e profile, anisotropy, depleted-tail EEDF)",
+   "why_not": "wall_electron_temperature returns the 1-D cell T_e for unshielded thrusters; no radial profile or EEDF",
+   "would_need": "r-z or kinetic model, or near-wall probe data (wall_life H7)"
+  },
+  "NS-7_shielded_wall_fields": {
+   "quantity": "all added wall fields for a magnetically shielded thruster",
+   "why_not": "for shielded = true, wall_electron_temperature uses cache.Tev[1] (ghost cell) blended with the local T_e by cache.wall_transition; Frame.Tev[1] is the ghost-averaged edge value 0.5*(Tev[1]+Tev[2]) (copy_and_remove_ghosts), so the solver's wall T_e is not reproducible from saved frames (same reason as bridge_lib.jl wall_ion_metrics: 'wall T_e needs solver cache not saved in frames')",
+   "would_need": "the solver to save cache.γ_SEE and the wall T_e (upstream/pin change) or an owner-approved bridge hook reading the cache during the run; and a schema change for shielded designs (HALLMAP_PRODUCTION_SPEC open decision 4)"
+  },
+  "NS-8_ion_induced_SEE_and_SEE_spectrum": {
+   "quantity": "ion-induced SEE, SEE energy spectrum, electron backscatter, SEE change with N/O exposure",
+   "why_not": "SEE_yield is an electron-induced fit in T_e with two material constants; no other emission channel",
+   "would_need": "a cited SEE model and wall_life H9 measurements"
+  },
+  "NS-9_wall_temperature_sputtering_erosion": {
+   "quantity": "wall surface temperature, sputter yield, erosion rate, wall-profile evolution",
+   "why_not": "not modelled by the solver",
+   "would_need": "abep_sim/thermal_life.py wall heat + erosion chain with a cited sputter-yield model (docs/evidence/wall_life/)"
+  },
+  "NS-10_frame_resolved_solver_arrays": {
+   "quantity": "the solver's own cache.γ_SEE / cache.m_eff / cache.wall_losses arrays as saved outputs",
+   "why_not": "not in HallThruster.Frame; the added fields are therefore re-evaluations (evaluation_rule), not copies",
+   "would_need": "an upstream Frame extension and a pin move (never automatic; PINNED.toml upgrade_policy)"
+  }
+ },
+ "migration": {
+  "statement": "Emitting any v2 field requires changes to hallthruster_bridge/bridge_lib.jl (wall_ion_metrics or a new wall_v2_metrics), the driver that writes records/maps, a v2-aware consumer (hall_map.py or a successor) and a consistency check like hallthruster_bridge/checks/wall_flux_consistency.jl. That is a controlled model-pipeline change and needs owner approval. It is NOT done in this lane: no bridge, driver, campaign, prereg, pinned-pipeline file or running job is touched, and hall_map.py still loads v1 only.",
+  "compatibility": "v1 maps stay valid v1 maps. A v2 map carries every v1 field unchanged, so a v2 record can be checked against v1 by dropping the added keys. v1 and v2 maps are never mixed inside one map set.",
+  "consistency_check_proposed": "PROPOSED for the owner: the producer change ships a check that, per channel cell-frame where wall_transition = 1, the re-evaluated sum_s Z_s Gamma_s / (Δr (1 - γ) ne) reproduces the solver-saved Frame.nu_wall (the same identity checks/wall_flux_consistency.jl uses for Z = 1 xenon, extended to mixtures and to the re-evaluated γ). The acceptance tolerance is an owner decision; the existing check uses a 1 % median (that value is the existing check's, not a new proposal).",
+  "not_a_validation": "All v2 fields are model-derived outputs of an unadmitted-or-admitted closure; they are not validated against wall measurements (none exist). They inherit every v1 trust rule: wall fields are erosion-grade only when wall_life_trustworthy."
+ }
+}
