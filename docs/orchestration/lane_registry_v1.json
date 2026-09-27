@@ -162,14 +162,20 @@
    "workflow_run": "wf_020ac47f-09d",
    "workflow_key": "H",
    "deps": [],
-   "verification_protocol": "single-lens-v1",
+   "verification_protocol": "two-lens-v2",
    "answers": "iii",
    "second_lens": {
     "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "H",
-    "status": "running",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "status": "passed",
+    "note": "two-lens pass after 1 repair round(s) in wf_e806cb61-ce4",
     "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
+   },
+   "verified_pin": {
+    "workflow_run": "wf_e806cb61-ce4",
+    "workflow_key": "H",
+    "commit": "7e1b0ec52ed0ef1d01925a153e84ac5b81b64aec",
+    "reason": "second-lens (two-lens-v2) verification passed on this commit (continuation of the interrupted wf_96f8f0bb-ae2); the pin is the lane identity"
    }
   },
   {
@@ -387,14 +393,20 @@
    "workflow_run": "wf_020ac47f-09d",
    "workflow_key": "B",
    "deps": [],
-   "verification_protocol": "single-lens-v1",
+   "verification_protocol": "two-lens-v2",
    "answers": null,
    "second_lens": {
     "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "B",
-    "status": "running",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "status": "passed",
+    "note": "two-lens pass after 0 repair round(s) in wf_e806cb61-ce4",
     "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
+   },
+   "verified_pin": {
+    "workflow_run": "wf_e806cb61-ce4",
+    "workflow_key": "B",
+    "commit": "c5945ee1b22c80b317ff4dad0ee2e236870ec42b",
+    "reason": "second-lens (two-lens-v2) verification passed on this commit (continuation of the interrupted wf_96f8f0bb-ae2); the pin is the lane identity"
    }
   },
   {
@@ -422,14 +434,20 @@
    "workflow_run": "wf_020ac47f-09d",
    "workflow_key": "F",
    "deps": [],
-   "verification_protocol": "single-lens-v1",
+   "verification_protocol": "two-lens-v2",
    "answers": "iii",
    "second_lens": {
     "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "F",
-    "status": "running",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "status": "passed",
+    "note": "two-lens pass after 1 repair round(s) in wf_e806cb61-ce4",
     "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
+   },
+   "verified_pin": {
+    "workflow_run": "wf_e806cb61-ce4",
+    "workflow_key": "F",
+    "commit": "f3c924a791a01f69e1a9165a74b88c1446e203d3",
+    "reason": "second-lens (two-lens-v2) verification passed on this commit (continuation of the interrupted wf_96f8f0bb-ae2); the pin is the lane identity"
    }
   },
   {
@@ -457,14 +475,20 @@
    "workflow_run": "wf_020ac47f-09d",
    "workflow_key": "I",
    "deps": [],
-   "verification_protocol": "single-lens-v1",
+   "verification_protocol": "two-lens-v2",
    "answers": "iii",
    "second_lens": {
     "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "I",
-    "status": "running",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "status": "passed",
+    "note": "two-lens pass after 0 repair round(s) in wf_e806cb61-ce4",
     "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
+   },
+   "verified_pin": {
+    "workflow_run": "wf_e806cb61-ce4",
+    "workflow_key": "I",
+    "commit": "9fe60685f9b2a1c0058e9c8a58158243cf57dc73",
+    "reason": "second-lens (two-lens-v2) verification passed on this commit (continuation of the interrupted wf_96f8f0bb-ae2); the pin is the lane identity"
    }
   },
   {
@@ -475,14 +499,20 @@
    "workflow_run": "wf_020ac47f-09d",
    "workflow_key": "J",
    "deps": [],
-   "verification_protocol": "single-lens-v1",
+   "verification_protocol": "two-lens-v2",
    "answers": "ii",
    "second_lens": {
     "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "J",
-    "status": "running",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "status": "passed",
+    "note": "two-lens pass after 0 repair round(s) in wf_e806cb61-ce4",
     "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
+   },
+   "verified_pin": {
+    "workflow_run": "wf_e806cb61-ce4",
+    "workflow_key": "J",
+    "commit": "48716bea7b697557e99ae4e845182873aa2fdfaa",
+    "reason": "second-lens (two-lens-v2) verification passed on this commit (continuation of the interrupted wf_96f8f0bb-ae2); the pin is the lane identity"
    }
   },
   {
@@ -493,14 +523,20 @@
    "workflow_run": "wf_020ac47f-09d",
    "workflow_key": "K",
    "deps": [],
-   "verification_protocol": "single-lens-v1",
+   "verification_protocol": "two-lens-v2",
    "answers": null,
    "second_lens": {
     "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "K",
-    "status": "running",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "status": "passed",
+    "note": "two-lens pass after 1 repair round(s) in wf_e806cb61-ce4",
     "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
+   },
+   "verified_pin": {
+    "workflow_run": "wf_e806cb61-ce4",
+    "workflow_key": "K",
+    "commit": "af0e783623233335f6357f1ee4975a94462ed114",
+    "reason": "second-lens (two-lens-v2) verification passed on this commit (continuation of the interrupted wf_96f8f0bb-ae2); the pin is the lane identity"
    }
   },
   {
@@ -511,14 +547,20 @@
    "workflow_run": "wf_020ac47f-09d",
    "workflow_key": "L",
    "deps": [],
-   "verification_protocol": "single-lens-v1",
+   "verification_protocol": "two-lens-v2",
    "answers": "i",
    "second_lens": {
     "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "L",
-    "status": "running",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "status": "passed",
+    "note": "two-lens pass after 1 repair round(s) in wf_e806cb61-ce4",
     "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
+   },
+   "verified_pin": {
+    "workflow_run": "wf_e806cb61-ce4",
+    "workflow_key": "L",
+    "commit": "602a154459573a7bf6cdc3eb1dc55b9bf64db591",
+    "reason": "second-lens (two-lens-v2) verification passed on this commit (continuation of the interrupted wf_96f8f0bb-ae2); the pin is the lane identity"
    }
   }
  ],
