@@ -1,0 +1,48 @@
+{
+ "status": "INCOMPLETE_INFRASTRUCTURE_INTERRUPTION",
+ "dataset": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang (launch manifest hallthruster_bridge/campaign/manifests/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang.json)",
+ "attempt": 2,
+ "started_utc": "2026-09-27T05:24:14+00:00",
+ "interrupted": "container stop/restart 2026-09-27 (daemon heartbeat lost ~05:46Z; container up again 06:36Z); all julia runners lost",
+ "records": 93,
+ "expected": 270,
+ "files": {
+  "execution_provenance.json": {
+   "sha256": "95d0a8b67727ec85b633ba86a305e171d6d12fffedda804ec41e76e4d9d7a366"
+  },
+  "s0.jsonl": {
+   "sha256": "2206aa70b3302b79b00afbdb084087cce55bd6588ac496a24761852f23a0a25b",
+   "n_records": 23
+  },
+  "s0.log": {
+   "sha256": "f2cff5ca5f3c9361dcf4c51bae2c4d02217435f79e8c2a1e1ce643e06857f0a5"
+  },
+  "s1.jsonl": {
+   "sha256": "7a528a3cb754521e89d4843e116fc0de64f4294eec46e788bb86a365d52434c9",
+   "n_records": 24
+  },
+  "s1.log": {
+   "sha256": "a729de7baa9bd140002a24deb8d9109064732177d66e2be5e64694814799bc52"
+  },
+  "s2.jsonl": {
+   "sha256": "bce14f264c6e6b53ee80f1e46e18667922bdd487701a03e84e5f003bf5743454",
+   "n_records": 23
+  },
+  "s2.log": {
+   "sha256": "cecef7163a09b7ed8a59b560daff59c7794b21b8684078255fee1a4a12e0c514"
+  },
+  "s3.jsonl": {
+   "sha256": "7e968ecfc218de56099eb535417fe3fe416ead59993d8bec80483d5a0d197457",
+   "n_records": 23
+  },
+  "s3.log": {
+   "sha256": "c05e8eb709542ee6315854707cea523e2b91542411f4b152f565ec41873efacd"
+  }
+ },
+ "not": "not a NUMERICAL_FAILURE and not a physics result",
+ "rules": [
+  "preserved unchanged; never concatenated into, or overwritten by, a replacement dataset",
+  "never frozen or scored"
+ ],
+ "attempt_1": "hallthruster_bridge/validation/interrupted/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang_attempt1 does not exist: attempt 1 never started before the 2026-09-26 interruption"
+}
