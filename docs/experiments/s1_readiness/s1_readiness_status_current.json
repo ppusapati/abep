@@ -5,7 +5,7 @@
   "generated_by": "scripts/experiments/s1_readiness.py",
   "spec": {
     "path": "docs/experiments/s1_readiness/s1_readiness_conditions_v1.json",
-    "sha256": "2cb6256d3671604011117e219d5b95c39d9e1ecc71bfad2e043750df1123bbec",
+    "sha256": "1d3388693191295f4c54ea9d1d38b36ca977193e0d9066aa40aac61776b27fd1",
     "status": "DRAFT_PENDING_OWNER"
   },
   "note": "Generated from the repository state; deterministic (no clock, no absolute paths). S1 is qualification, not architecture selection. A DRAFT / PROPOSED artifact never satisfies a condition; nothing is inferred.",
@@ -37,6 +37,14 @@
         "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
         "expected_sha256": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6",
         "sha256": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6",
+        "ok": true,
+        "failures": []
+      },
+      {
+        "role": "s1a_and_instrumentation_A3",
+        "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+        "expected_sha256": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e",
+        "sha256": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e",
         "ok": true,
         "failures": []
       }
@@ -388,7 +396,7 @@
         {
           "path": "docs/experiments/hardware/hardware_requirements_v1.json",
           "what": "W3 hardware requirements register (planned; DRAFT_PENDING_OWNER)",
-          "sha256": "552f4ca0e3c84f8f10f03d103d10b169e360e9c28f2a7a4d44e65c1d1b915d04"
+          "sha256": "4752aafd4a42326f2cdf8387c3d9280d274ea96108be0450568d72e785f7ca61"
         },
         {
           "path": "docs/architecture_comparison/hall_reference/hall_reference_v1.json",
@@ -515,7 +523,7 @@
         {
           "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
           "what": "W4 instrumentation definition and uncertainty budget (planned; design analysis, DRAFT_PENDING_OWNER; never a demonstration)",
-          "sha256": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f"
+          "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96"
         }
       ],
       "precursors_absent": []
@@ -557,7 +565,7 @@
         {
           "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
           "what": "W4 calibration procedures (planned; DRAFT_PENDING_OWNER)",
-          "sha256": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f"
+          "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96"
         }
       ],
       "precursors_absent": []
@@ -688,7 +696,7 @@
         {
           "path": "docs/experiments/hardware/hardware_requirements_v1.json",
           "what": "W3 hardware requirements (planned; DRAFT_PENDING_OWNER)",
-          "sha256": "552f4ca0e3c84f8f10f03d103d10b169e360e9c28f2a7a4d44e65c1d1b915d04"
+          "sha256": "4752aafd4a42326f2cdf8387c3d9280d274ea96108be0450568d72e785f7ca61"
         },
         {
           "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
