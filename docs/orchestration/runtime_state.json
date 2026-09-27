@@ -55,7 +55,8 @@
   "wf_3da51c0c-3b4": "lanes 16, 17 -> 23",
   "wf_15f0f2f8-8d4": "lanes 28, 18, 20",
   "wf_e3c01fb8-eed": "lanes 24, 26 -> 27",
-  "wf_22d6b4cf-10a": "lanes 25, 19, 21, 22"
+  "wf_22d6b4cf-10a": "lanes 25, 19, 21, 22",
+  "wf_50b19699-d86": "hardening wave (owner 2026-09-27): H1 branch-protection spec, H2 packaging (>=3.11, explicit discovery, editable+wheel acceptance), H3 golden CLI exit status, S12PREP disposition-matrix builder (refuses the official matrix until all O4 datasets are scored). Independent of the physics critical path; own worktrees."
  },
  "survival": {
   "daemon + runners": "survive tool-task deaths and session idle (detached); do NOT survive container reclamation",
