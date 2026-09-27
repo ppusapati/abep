@@ -1,0 +1,415 @@
+{
+ "schema": "abep_lock1_draft_v1",
+ "id": "LOCK-1",
+ "status": "DRAFT_PENDING_OWNER_SIGNATURE",
+ "locked": false,
+ "note": "DRAFT for owner review. Not a lock: it becomes LOCK-1 only when the owner records every choice below, signs, and files it at the D-05 location. LOCK-2 is written only after S1 and D0.",
+ "decision_source": {
+  "path": "docs/architecture_comparison/lock1/lock1_decision_brief_v1.json",
+  "sha256": "7ce17e1f9101d0832a164e453fd757a813f5e1e77f689cfb661bdc920f453920"
+ },
+ "signature": {
+  "owner": null,
+  "date": null,
+  "lock_location": null,
+  "sha256_of_signed_file": null
+ },
+ "decisions": [
+  {
+   "id": "D-01",
+   "title": "T-BUDGET-SHARES: allocation of the ln R uncertainty budget over the variance groups G1-G5",
+   "options": [
+    "D-01-A",
+    "D-01-B",
+    "D-01-C"
+   ],
+   "proposed": "D-01-A",
+   "owner_choice": null
+  },
+  {
+   "id": "D-02",
+   "title": "Stop rule D3: sign form (upper bound of ln R_arch < 0) or STOP-MARGIN (upper bound < -delta)",
+   "options": [
+    "D-02-A",
+    "D-02-B"
+   ],
+   "proposed": "D-02-A",
+   "owner_choice": null
+  },
+  {
+   "id": "D-03",
+   "title": "Does a stop from the confirmation subset require Hall-on data at P_lo?",
+   "options": [
+    "D-03-A",
+    "D-03-B"
+   ],
+   "proposed": "D-03-B",
+   "owner_choice": null
+  },
+  {
+   "id": "D-04",
+   "title": "T-ISO-INTERP: chord model error u_interp of the iso-power reference",
+   "options": [
+    "D-04-A",
+    "D-04-B"
+   ],
+   "proposed": "D-04-B",
+   "owner_choice": null
+  },
+  {
+   "id": "D-05",
+   "title": "Location of the LOCK-1 / LOCK-2 pre-registration files",
+   "options": [
+    "D-05-A",
+    "D-05-B",
+    "D-05-C",
+    "D-05-D"
+   ],
+   "proposed": "D-05-A",
+   "owner_choice": null
+  },
+  {
+   "id": "D-06",
+   "title": "Hardware configuration: HW-0 spacer + S1b re-mounts, OPTION-DIVERTER, or lane-06 CFG-A/CFG-B",
+   "options": [
+    "D-06-A",
+    "D-06-B",
+    "D-06-C",
+    "D-06-D"
+   ],
+   "proposed": "D-06-A",
+   "owner_choice": null
+  },
+  {
+   "id": "D-07",
+   "title": "T-DELTA: equivalence / decision margin on ln R",
+   "options": [
+    "D-07-A",
+    "D-07-B"
+   ],
+   "proposed": "D-07-A",
+   "owner_choice": null
+  },
+  {
+   "id": "D-08",
+   "title": "T-N-MIN / T-N-MAX: admissible block counts (n fixed at LOCK-2 by readiness_n)",
+   "options": [
+    "D-08-A",
+    "D-08-B"
+   ],
+   "proposed": "D-08-A",
+   "owner_choice": null
+  },
+  {
+   "id": "D-09",
+   "title": "Tested Hall unit H-1: Vyovrinda design or a surrogate",
+   "options": [
+    "D-09-A",
+    "D-09-B",
+    "D-09-C"
+   ],
+   "proposed": "D-09-A",
+   "owner_choice": null
+  },
+  {
+   "id": "D-10",
+   "title": "Single protocol basis: adopt the reconciliation (boundary, classes, multiplicity, extinction, ordering, controls)",
+   "options": [
+    "D-10-A",
+    "D-10-B"
+   ],
+   "proposed": "D-10-A",
+   "owner_choice": null
+  },
+  {
+   "id": "D-11",
+   "title": "Unmeasured common loads: compressor bus draw and valve-outlet feed state",
+   "options": [
+    "D-11-A",
+    "D-11-B"
+   ],
+   "proposed": "D-11-A",
+   "owner_choice": null
+  },
+  {
+   "id": "D-12",
+   "title": "Facility per stage and T-PB-MAX; number of elevated background-pressure levels",
+   "options": [
+    "D-12-A",
+    "D-12-B"
+   ],
+   "proposed": "D-12-A",
+   "owner_choice": null
+  },
+  {
+   "id": "D-13",
+   "title": "Ignition / start attempts (not in the lane-25 minimum; lane-06 M5; G6.ignition, HS-A6)",
+   "options": [
+    "D-13-A",
+    "D-13-B"
+   ],
+   "proposed": "D-13-B",
+   "owner_choice": null
+  },
+  {
+   "id": "D-14",
+   "title": "Whether the physics track pre-registers any result as Hall-closure evidence",
+   "options": [
+    "D-14-A",
+    "D-14-B"
+   ],
+   "proposed": "D-14-B",
+   "owner_choice": null
+  },
+  {
+   "id": "D-15",
+   "title": "Scope extensions outside the minimum: Xe anode operation, second V_d on source arms, Xe health check",
+   "options": [
+    "D-15-A",
+    "D-15-B",
+    "D-15-C"
+   ],
+   "proposed": "D-15-C",
+   "owner_choice": null
+  }
+ ],
+ "pivot_items": [
+  {
+   "id": "P-01",
+   "title": "Phase-1 knee location: coarse scan only, or coarse scan plus bracket refinement; meaning of 'sustained in both directions'",
+   "options": [
+    "P-01-A",
+    "P-01-B"
+   ],
+   "proposed": "P-01-B",
+   "owner_choice": null
+  },
+  {
+   "id": "P-02",
+   "title": "Absolute thrust gate: confidence level, uncertainty requirement, facility treatment",
+   "options": [
+    "P-02-A",
+    "P-02-B",
+    "P-02-C"
+   ],
+   "proposed": "P-02-A",
+   "owner_choice": null
+  },
+  {
+   "id": "P-03",
+   "title": "Phase-3 scope: arms and feed-state test points",
+   "options": [
+    "P-03-A",
+    "P-03-B",
+    "P-03-C"
+   ],
+   "proposed": "P-03-A",
+   "owner_choice": null
+  },
+  {
+   "id": "P-04",
+   "title": "Which '25 mN' condition Phase 3 demonstrates (lane-24 OD1 reading of '12-25 mN')",
+   "options": [
+    "P-04-i",
+    "P-04-ii"
+   ],
+   "proposed": null,
+   "owner_choice": null
+  }
+ ],
+ "lock1_contents": [
+  {
+   "item": "L1-1",
+   "what": "decision on every PROPOSED threshold and rule (lane 25 Sec. 10 item 1)",
+   "thresholds": [
+    {
+     "id": "T-DELTA",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/0",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-ALPHA-FW",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/1",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-ALPHA-SCREEN",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/2",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-N-MIN",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/3",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-N-MAX",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/4",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-BUDGET-SHARES",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/5",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-PB-ELEV-FACTOR",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/6",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-PB-MAX",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/7",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-KNEE-LEVELS",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/8",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-OP2-FALLBACK",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/9",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-PLO-FRACTION",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/10",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-SUSTAIN",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/11",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-SETTLE",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/12",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-SCREEN-RULE",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/13",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-STOP-RULE",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/14",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-FACILITY-ROBUST",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/15",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-READINESS",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/16",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-S1-REMOUNT-CYCLES",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/17",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-S1-READINGS-PER-CYCLE",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/18",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-REMOUNT-CHECK",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/19",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-LEDGER-SENSITIVITY",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/20",
+     "status": "PROPOSED",
+     "owner_choice": null
+    },
+    {
+     "id": "T-ISO-INTERP",
+     "lane25_source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/thresholds/21",
+     "status": "PROPOSED",
+     "owner_choice": null
+    }
+   ]
+  },
+  {
+   "item": "L1-2",
+   "what": "mdot_min, mdot_nom, composition, V_nom, V_hi, P_hi",
+   "value": "TBD - requires W1 valve-outlet test points (fo_feed_state_closure), the Vyovrinda Hall design point (lane-17 DI-2) and the source allocation in bus_power_boundary_v1"
+  },
+  {
+   "item": "L1-3",
+   "what": "ledger inputs with evidence classes and T-LEDGER-SENSITIVITY bounds; f_src and w_c allocations",
+   "value": "TBD - requires owner and lane_11_bus_boundary; compressor draw per D-11"
+  },
+  {
+   "item": "L1-4",
+   "what": "T-PB-MAX and T-ISO-INTERP",
+   "value": "TBD - requires the facility specification (owner's channel) and D-04"
+  },
+  {
+   "item": "L1-5",
+   "what": "S1 plan (K, r, S1b point) and instrument list",
+   "value": "K, r per lane-25 T-S1-REMOUNT-CYCLES / T-S1-READINGS-PER-CYCLE (PROPOSED); instrument list TBD - requires W4 (fo_instrumentation_definition)"
+  },
+  {
+   "item": "L1-6",
+   "what": "seed and configuration-order draw",
+   "value": "TBD - drawn and published at signature"
+  },
+  {
+   "item": "L1-7",
+   "what": "frozen analysis script (sha256) implementing lane-25 Sec. 6 and 9 and the absolute gate",
+   "value": "TBD - requires the frozen analysis script"
+  },
+  {
+   "item": "L1-8",
+   "what": "score-bearing rows",
+   "value": "lane-25 run matrix R01-R40 (docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/run_matrix) plus Phase-3 rows TBD - requires W1 test points"
+  },
+  {
+   "item": "L1-9",
+   "what": "physics-track pre-registration (D-14)",
+   "value": "TBD - requires W5 (fo_hall_validation_prereg_draft), filed before S1"
+  },
+  {
+   "item": "L1-10",
+   "what": "phase sequence and stop rules",
+   "value": "docs/architecture_comparison/lock1/lock1_decision_brief_v1.json#/phases"
+  },
+  {
+   "item": "L1-11",
+   "what": "absolute thrust gate parameters (P-02, P-04)",
+   "value": "docs/architecture_comparison/lock1/lock1_decision_brief_v1.json#/absolute_thrust_gate"
+  },
+  {
+   "item": "L1-12",
+   "what": "S1 -> LOCK-2 procedure",
+   "value": "docs/architecture_comparison/lock1/lock1_decision_brief_v1.json#/s1_to_lock2"
+  }
+ ]
+}
