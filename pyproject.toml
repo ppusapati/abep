@@ -2,7 +2,11 @@
 name = "abep-sim"
 version = "0.1.0"
 description = "System-closure simulator for air-breathing electric propulsion (DRDO TDF DTDF/06/13516)"
-requires-python = ">=3.10"
+# >= 3.11: the code uses tomllib and the locked environment (requirements-lock.txt: numpy 2.4.4, scipy 1.17.1,
+# pandas 3.0.2) needs 3.11; CI runs 3.11 (docs/ci/PACKAGING.md).
+requires-python = ">=3.11"
+# pymsis is listed here as a hard dependency although gate 1 requires running without it (frozen NRLMSIS dataset);
+# moving it to the [msis] extra is an open owner question (docs/ci/PACKAGING.md). Dependencies are unchanged.
 dependencies = ["numpy", "pandas", "pyyaml", "matplotlib", "scipy", "pymsis>=0.13"]
 [project.optional-dependencies]
 msis = ["pymsis"]
@@ -11,3 +15,17 @@ abep-sim = "abep_sim.sweep:main"
 [build-system]
 requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
+
+# Explicit package discovery (docs/ci/PACKAGING.md). Flat-layout auto-discovery refuses this repository
+# ("Multiple top-level packages discovered in a flat-layout: ['abep_sim', 'hallthruster_bridge']").
+# Only abep_sim (and any future abep_sim.* subpackage) is distributed. hallthruster_bridge/, docs/ and schemas/ are
+# repository resources, not packages: the modules that read them locate them relative to the source tree
+# (os.path.dirname(os.path.dirname(__file__))), which an editable install preserves.
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["abep_sim", "abep_sim.*"]
+namespaces = false
+
+# Frozen reference data shipped with the package (CLAUDE.md rule 1): atmosphere, intake surface, goldens, rate tables.
+[tool.setuptools.package-data]
+abep_sim = ["data/*.json", "data/*.csv", "data/rates/*.dat", "data/rates/*.md"]

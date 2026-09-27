@@ -25,9 +25,9 @@ env:
   # although pyproject.toml says >= 3.10 (see docs/ci/CI.md, open points).
   PYTHON_VERSION: "3.11"
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
-  # The repository is used from its root, as scripts/install_and_test.sh does after installation. `pip install -e .` is
-  # not used: with the current pyproject.toml setuptools refuses the flat layout (abep_sim + hallthruster_bridge), see CI.md.
-  PYTHONPATH: ${{ github.workspace }}
+  # abep_sim is installed editable (`pip install --no-deps -e .`, explicit package discovery, docs/ci/PACKAGING.md) after
+  # the lock-file install, so no PYTHONPATH workaround is needed. --no-deps: the lock file is the dependency source of
+  # truth, and pyproject.toml still lists pymsis as a hard dependency, which would otherwise re-install it in the absent leg.
 
 jobs:
   integrity:
@@ -51,6 +51,7 @@ jobs:
         run: |
           grep -v '^pymsis' requirements-lock.txt > "$RUNNER_TEMP/requirements-no-pymsis.txt"
           python -m pip install -r "$RUNNER_TEMP/requirements-no-pymsis.txt"
+          python -m pip install --no-deps -e .
 
       - name: Static integrity checks
         run: python scripts/ci_checks.py
@@ -89,6 +90,7 @@ jobs:
             grep -v '^pymsis' requirements-lock.txt > "$RUNNER_TEMP/requirements-no-pymsis.txt"
             python -m pip install -r "$RUNNER_TEMP/requirements-no-pymsis.txt"
           fi
+          python -m pip install --no-deps -e .
           python -m pip freeze
 
       - name: Confirm the pymsis state of this leg
