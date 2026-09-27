@@ -1,0 +1,4796 @@
+{
+ "schema": "compressor_downselect_v1",
+ "version": "1.0.0",
+ "status": "DRAFT for owner review; every value not in the RFP or a cited source is PROPOSED or TBD",
+ "follow_on": "fo_compressor_downselect",
+ "trigger": "T_PIVOT_COMPRESSOR_DOWNSELECT",
+ "owner_disposition": "od_hardware_pivot (addendum A3 DI_1_4_compressor_downselect)",
+ "base_commit": "7d373374dcd47eb6c2464423eb5f45a1fa14ef78",
+ "generated_by": "docs/architecture_comparison/compressor_downselect/build_compressor_downselect.py",
+ "decision_pins": {
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json": "04c5a6f46ed2cb3e3fb174bcc7305d129e15ef53af2349d2a8abc4f6d8975992",
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6",
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e"
+ },
+ "input_pins": {
+  "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json": "ff6e15db449151b5cf790088b4641504bd435a48de2d4c6235bf83625d508ef9",
+  "scripts/architecture/build_feed_envelope.py": "7a492c3f0e4aef084b79cc506e1cadf93dd245e8cc05dd319acff56531cb6131",
+  "abep_sim/compressor.py": "44d9dac86cac2ca889d051b7a0090fed81781b33f00293dedaf836f8ebb8da92",
+  "abep_sim/intake.py": "602df2bffde25d56c089b191e2559578890bfedbe43bc928630e3bbe8fc94cad",
+  "abep_sim/intake_tpmc.py": "ea0100b96f9066b20a5ca13832e27250773962c8ddda16dcf9ccaecef621288c",
+  "abep_sim/constants.py": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7",
+  "abep_sim/materials.py": "08e2ddddfc9380780e71bc15957fa82a9e879fc36046c266c669b037c2194feb",
+  "abep_sim/atmosphere.py": "690d6931bb595c14736db9d9c284fb4e2f98727a8749262edebe3d8621e87e8b",
+  "abep_sim/data/atmosphere_msis21_v1.csv": "5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7",
+  "abep_sim/data/atmosphere_msis21_v1.json": "38a6f662521a8795b28186ccab5fbb007da59a861f59fde50400e7092e181160",
+  "abep_sim/data/intake_surface_v1.csv": "62b804924d801f913420a05142d4fe62137a7619eca17ae7786da5bef005c09a",
+  "abep_sim/data/intake_surface_v1.json": "5b26b7fd60272537dd0e719a122cb874233c6dd777202ab164b159cc7215d425"
+ },
+ "architectures": [
+  "hall_only",
+  "rf_hall",
+  "ecr_hall"
+ ],
+ "architecture_neutrality": "the compressor is upstream of the valve and COMMON_MODE for hall_only / rf_hall / ecr_hall; no result here ranks or eliminates an architecture",
+ "closure_independence": "no Hall transport closure, ensemble member, screening candidate or P5 calibration nuisance variable is used; Hall-block uncertainty never enters the compressor",
+ "flow_range_status": "the 0.030-3.14 mg/s valve flow bracket remains a candidate range, not a flight truth (owner addendum A3)",
+ "milestones": {
+  "supports": [
+   "A"
+  ],
+  "A": "conditional: 'the feed boundary is served by a C1-type compressor provided T-1..T-5 demonstrate HG-1..HG-5'; the compressor is COMMON_MODE, so milestone A for any architecture does not depend on it",
+  "to_B": "measured compressor characteristics (T-1..T-5, T-8) replacing the code defaults through a controlled model change (HISTORY entry; goldens may move), W1 re-run on the measured machine, and resolution of FC-01 (DI-1.12)",
+  "to_C": "mass (T-7), life and AOCS interface (T-9), AO compatibility (T-6) and the power allocation (OD-C2) integrated into the PDR budgets"
+ },
+ "proposed_levels": {
+  "backflow_targets_b": {
+   "value": [
+    0.5,
+    0.25,
+    0.1
+   ],
+   "unit": "-",
+   "meaning": "plenum backflow fraction b = p_plenum / p_passive (W1 finding FC-01 model); delivered flow ~ (1 - b) x forward flow. 0.5 ~ the W1 SC-BACKFLOW level, 0.25 and 0.1 = PROPOSED design targets"
+  },
+  "u_ref_mps": {
+   "value": 500.0,
+   "unit": "m/s",
+   "meaning": "reference rotor circumferential speed for the pumping-speed area bound; the published order of commercial TMP rotors (EV-04), not a Vyovrinda design value"
+  },
+  "compressor_power_allocation_frac": {
+   "value": 0.2,
+   "unit": "- (of RFP P_bus 1.5 kW)",
+   "meaning": "PROPOSED screening allocation for the compressor load (300 W); the owner sets the real allocation (OD-C2); the RFP-derived necessary condition HG-1 does not depend on it"
+  },
+  "rotor_erosion_allowance_m": {
+   "value": 0.0001,
+   "unit": "m",
+   "meaning": "PROPOSED allowable AO recession of an unprotected wetted rotor surface over the mission (0.1 mm); used only to express the ram-yield bound as a required yield reduction factor"
+  },
+  "sccm_reference": {
+   "value": [
+    273.15,
+    101325.0
+   ],
+   "unit": "K, Pa",
+   "meaning": "standard conditions for the sccm conversion (same as W1)"
+  }
+ },
+ "references": {
+  "REF-CHIGGIATO2013": {
+   "citation": "P. Chiggiato, 'Vacuum Technology for Ion Sources', CERN Accelerator School: Ion Sources, CERN-2013-007 (2013); arXiv:1404.0960",
+   "doi_or_url": "https://arxiv.org/pdf/1404.0960",
+   "access_level": "full_text",
+   "accessed": "2026-09-27",
+   "note": "tutorial review; figures of commercial pumps are courtesy of a supplier (supplier data not accessed)"
+  },
+  "REF-SINGH2014": {
+   "citation": "L. A. Singh, 'Very Low Earth Orbit Propellant Collection Feasibility Assessment', PhD thesis, Georgia Institute of Technology (2014)",
+   "doi_or_url": "https://hpepl.ae.gatech.edu/papers/Singh.pdf",
+   "access_level": "full_text",
+   "accessed": "2026-09-27",
+   "note": "page numbers are PDF page indices"
+  },
+  "REF-SINGH2015": {
+   "citation": "L. A. Singh, M. L. R. Walker, 'A review of research in low earth orbit propellant collection', Progress in Aerospace Sciences 75 (2015) 15-25",
+   "doi_or_url": "doi:10.1016/j.paerosci.2015.03.001 (author copy https://hpepl.ae.gatech.edu/papers/ProgAerospace_Singh_V75_2015_pp15-25.pdf)",
+   "access_level": "full_text",
+   "accessed": "2026-09-27",
+   "note": "page numbers are PDF page indices"
+  },
+  "REF-MOON2025": {
+   "citation": "G. Moon, Y. Ko, M. Yi, E. Jun, 'Operational Feasibility Analysis of a Cryogenic Active Intake Device for Atmosphere-Breathing Electric Propulsion', arXiv:2503.02021v1 (2025)",
+   "doi_or_url": "https://arxiv.org/html/2503.02021v1",
+   "access_level": "full_text",
+   "accessed": "2026-09-27",
+   "note": "preprint; the CRAID design paper it builds on is G. Moon, M. Yi, E. Jun, Aerosp. Sci. Technol. 151 (2024) 109300, doi:10.1016/j.ast.2024.109300 (publisher page not accessed; closed access)"
+  },
+  "REF-LI2015": {
+   "citation": "Y. Li, X. Chen, D. Li, Y. Xiao, P. Dai, C. Gong, 'Design and analysis of vacuum air-intake device used in air-breathing electric propulsion', Vacuum 120 (2015) 89-95",
+   "doi_or_url": "doi:10.1016/j.vacuum.2015.06.011 (DOI from Crossref metadata)",
+   "access_level": "secondary_citation",
+   "accessed": "2026-09-27",
+   "note": "not read: publisher page returned HTTP 403 (not bypassed); values only as cited by REF-MOON2025 Sec. 1 [26]; verify"
+  },
+  "REF-ZHENG2021": {
+   "citation": "P. Zheng, J. Wu, Y. Zhang, Y. Zhao, 'Design and Optimization of vacuum Intake for Atmosphere-Breathing electric propulsion (ABEP) system', Vacuum 195 (2021) 110652",
+   "doi_or_url": "doi:10.1016/j.vacuum.2021.110652 (DOI from Crossref metadata)",
+   "access_level": "search_engine_excerpt",
+   "accessed": "2026-09-27",
+   "note": "not read: publisher page returned HTTP 403 (not bypassed); values from a web-search excerpt of the abstract only; verify before any use"
+  },
+  "REF-FERRATO2022": {
+   "citation": "E. Ferrato, V. Giannetti, M. Tisaev, A. Lucca Fabris, F. Califano, T. Andreussi, 'Rarefied Flow Simulation of Conical Intake and Plasma Thruster for Very Low Earth Orbit Spaceflight', Frontiers in Physics 10 (2022) 823098",
+   "doi_or_url": "doi:10.3389/fphy.2022.823098",
+   "access_level": "full_text",
+   "accessed": "2026-09-27",
+   "note": "open access; page numbers are PDF page indices"
+  },
+  "REF-GAIER1996": {
+   "citation": "J. R. Gaier, M. L. Davidson, R. Shively, 'Durability of Intercalated Graphite Epoxy Composites in Low Earth Orbit', NASA TM-107157 (1996)",
+   "doi_or_url": "https://ntrs.nasa.gov/api/citations/19960020439/downloads/19960020439.pdf",
+   "access_level": "full_text",
+   "accessed": "2026-09-27",
+   "note": "page numbers are PDF page indices"
+  },
+  "REF-NASA-HDBK-6024": {
+   "citation": "NASA-HDBK-6024 w/Change 2, 'Spacecraft Polymers Atomic Oxygen Durability Handbook' (revalidated 2022-12-16)",
+   "doi_or_url": "https://standards.nasa.gov/sites/default/files/standards/NASA/Baseline-w/CHANGE-2/2/2022-12-16-NASA-HDBK-6024_w-Chg-2_Reval-Final.pdf",
+   "access_level": "full_text",
+   "accessed": "2026-09-27",
+   "note": "page numbers as printed ('N of 207')"
+  },
+  "REF-CUSHEN2024": {
+   "citation": "A. T. Cushen et al., 'Performance Test Methodology for Atmosphere-Breathing Electric Propulsion Intakes in an Atomic Oxygen Facility', arXiv:2406.06299 (2024)",
+   "doi_or_url": "https://arxiv.org/abs/2406.06299",
+   "access_level": "abstract_only",
+   "accessed": "2026-09-27",
+   "note": "abstract only"
+  }
+ },
+ "evidence": [
+  {
+   "id": "EV-01",
+   "ref": "REF-CHIGGIATO2013",
+   "where": "Sec. 4.1.1, Eq. (46), PDF p. 21",
+   "statement": "molecular (drag) pump pumping speed S = Q_p / P = (1/2) u b h: proportional to the moving-wall speed u and the channel cross-section b h, independent of the gas species",
+   "value": {
+    "form": "S = u*b*h/2"
+   },
+   "evidence_class": "model-derived",
+   "verify": false,
+   "used_for": "pumping-speed area bound (HG-5) and the DragCompressor S0 form (same form with xi)"
+  },
+  {
+   "id": "EV-02",
+   "ref": "REF-CHIGGIATO2013",
+   "where": "Sec. 4.1.1, Eq. (47), PDF p. 21",
+   "statement": "zero-flow compression ratio K0 = exp(u b h L / c) ~ exp(u L / (<v> h)) ~ exp(u sqrt(m) L / h): high K0 needs u of the order of the mean molecular speed and long narrow ducts; K0 depends strongly on molecular mass",
+   "value": {
+    "form": "ln K0 proportional to sqrt(m)"
+   },
+   "evidence_class": "model-derived",
+   "verify": false,
+   "used_for": "species scaling of a published compression ratio to atomic O (HG-4); DragCompressor ln K0 form"
+  },
+  {
+   "id": "EV-03",
+   "ref": "REF-CHIGGIATO2013",
+   "where": "Sec. 4.1.2, PDF p. 23",
+   "statement": "a TMP works at full pumping speed only in the molecular regime (P < 1e-3 mbar); its pumping speed is 10-3000 l/s depending on inlet diameter and design; maximum compression ratio lowest for H2, about 1e3 in classical designs; up to 1e6 by adding a Gaede/Holweck drag stage behind the blades",
+   "value": {
+    "molecular_regime_limit_mbar": 0.001,
+    "pumping_speed_l_s": [
+     10,
+     3000
+    ],
+    "K0_H2_classical": 1000.0,
+    "K0_H2_with_drag_stage": 1000000.0
+   },
+   "evidence_class": "inferred",
+   "verify": false,
+   "used_for": "published pumping-speed range (HG-5); applicability of the free-molecular DragCompressor at the compressor outlet (setpoints 0.05-1 Pa vs the 0.1 Pa molecular-regime limit)"
+  },
+  {
+   "id": "EV-04",
+   "ref": "REF-CHIGGIATO2013",
+   "where": "Sec. 4.1.2, PDF p. 24",
+   "statement": "rotor blade sets machined from high-strength aluminium alloys; DN100 pumps rotate at ~1 kHz with circumferential speeds up to 500 m/s; lubricated bearings removed by magnetic suspension; on unwanted rotor deceleration the system must be protected by valves against back-streaming",
+   "value": {
+    "u_circumferential_max_mps": 500.0,
+    "rotation_Hz": 1000.0
+   },
+   "evidence_class": "inferred",
+   "verify": false,
+   "used_for": "reference rotor speed u_ref (area bound), rotor material class, stopped-rotor backflow (HG-5b)"
+  },
+  {
+   "id": "EV-05",
+   "ref": "REF-SINGH2014",
+   "where": "Sec. 3.2.4, PDF p. 98 (printed pp. 78-79)",
+   "statement": "the most likely analog for a propellant-collection compressor is the turbomolecular pump; Hablanian (J. Vac. Sci. Technol. A 11, 1993) estimates TMP thermodynamic efficiency to be 'only a few percent'; compressor efficiency is taken to vary between one and ten percent",
+   "value": {
+    "eta_thermodynamic_range": [
+     0.01,
+     0.1
+    ]
+   },
+   "evidence_class": "assumed",
+   "verify": true,
+   "used_for": "pneumatic power band P = Q ln(CR) / eta (HG-1); the primary Hablanian 1993 source was not accessed (verify)"
+  },
+  {
+   "id": "EV-06",
+   "ref": "REF-SINGH2014",
+   "where": "Sec. 2 (Reichel analysis), PDF p. 49 (printed p. 30)",
+   "statement": "collected air must be compressed above the triple point of nitrogen for liquefaction, approximately 94 Torr",
+   "value": {
+    "p_triple_N2_Torr": 94.0
+   },
+   "evidence_class": "inferred",
+   "verify": false,
+   "used_for": "compression ratio a liquefaction/storage concept needs (C5)"
+  },
+  {
+   "id": "EV-07",
+   "ref": "REF-SINGH2015",
+   "where": "Sec. 5, PDF p. 10",
+   "statement": "compression and storage is the least addressed subsystem in the literature; an integrated compression and liquefaction system that operates in space, survives launch and provides the necessary compression remains to be demonstrated",
+   "value": {},
+   "evidence_class": "inferred",
+   "verify": false,
+   "used_for": "demonstration status of storage-based concepts (C4, C5); maturity of all active concepts"
+  },
+  {
+   "id": "EV-08",
+   "ref": "REF-LI2015",
+   "where": "as cited in REF-MOON2025 Sec. 1 (ref. [26])",
+   "statement": "active intake with a multi-hole plate and a turbomolecular pump; numerical simulations and subsystem experiments estimated a capture efficiency of approximately 60 % and a compression ratio of 3500 or higher",
+   "value": {
+    "capture_efficiency": 0.6,
+    "compression_ratio_min": 3500.0
+   },
+   "evidence_class": "inferred",
+   "verify": true,
+   "used_for": "published compression-ratio capability of a throat-spanning TMP concept (C1, HG-4); species, inlet pressure, throughput, power and mass not stated in the accessed text"
+  },
+  {
+   "id": "EV-09",
+   "ref": "REF-ZHENG2021",
+   "where": "abstract (web-search excerpt only)",
+   "statement": "active intake of a multi-hole plate, cylinder chamber and turbomolecular pump analysed experimentally; an optimized scheme reaches a compression ratio of 210.2 and a capture efficiency of 65.79 %",
+   "value": {
+    "compression_ratio": 210.2,
+    "capture_efficiency": 0.6579
+   },
+   "evidence_class": "inferred",
+   "verify": true,
+   "used_for": "second published compression-ratio point of a TMP concept (C1, HG-4); species and conditions not available in the accessed excerpt"
+  },
+  {
+   "id": "EV-10",
+   "ref": "REF-MOON2025",
+   "where": "Sec. 4.3.2",
+   "statement": "an RTB cryocooler with a power consumption of 1.2 kW would be required to provide 14 W of cooling during the condensation sequence",
+   "value": {
+    "P_cryocooler_W": 1200.0,
+    "Q_cool_W": 14.0
+   },
+   "evidence_class": "model-derived",
+   "verify": false,
+   "used_for": "power gate of the cryocondensation concept (C4, HG-1b)"
+  },
+  {
+   "id": "EV-11",
+   "ref": "REF-MOON2025",
+   "where": "Sec. 4.6.1",
+   "statement": "effective capture efficiency 26.1 % and effective compression ratio 3.0e7 for the conceptual prototype model",
+   "value": {
+    "capture_efficiency_eff": 0.261,
+    "compression_ratio_eff": 30000000.0
+   },
+   "evidence_class": "model-derived",
+   "verify": false,
+   "used_for": "C4 compression capability (HG-4)"
+  },
+  {
+   "id": "EV-12",
+   "ref": "REF-MOON2025",
+   "where": "Sec. 4.3.1",
+   "statement": "free-stream conditions simplified by assuming complete recombination of AO atoms",
+   "value": {},
+   "evidence_class": "assumed",
+   "verify": false,
+   "used_for": "C4 atomic-O treatment is an assumption of the source, not a demonstrated behaviour (HG-3)"
+  },
+  {
+   "id": "EV-13",
+   "ref": "REF-MOON2025",
+   "where": "Sec. 2 and Sec. 4.4.2",
+   "statement": "cryopanel raised to 54.5 K for regeneration (below the N2 and O2 triple points); practical regeneration time 31.7 min assuming 20 sccm for two RITs",
+   "value": {
+    "T_regeneration_K": 54.5,
+    "t_regen_min": 31.7,
+    "flow_sccm_two_thrusters": 20.0
+   },
+   "evidence_class": "model-derived",
+   "verify": false,
+   "used_for": "C4 is a batch (condense/regenerate) process: T_feed and duty cycle need a storage model"
+  },
+  {
+   "id": "EV-14",
+   "ref": "REF-FERRATO2022",
+   "where": "Sec. 4.1 / Fig. 9F, PDF p. 12; Sec. 3, PDF p. 10",
+   "statement": "optimal passive intake designs give transmission about 0.4 to 0.1 and compression 180 to 240; compression ratios in the 100 to 300 range seem attainable",
+   "value": {
+    "transmission_range": [
+     0.1,
+     0.4
+    ],
+    "compression_range": [
+     180.0,
+     240.0
+    ]
+   },
+   "evidence_class": "model-derived",
+   "verify": false,
+   "used_for": "order-of-magnitude cross-check of the frozen TPMC CR_passive (C3); compression-ratio definitions may differ (verify)"
+  },
+  {
+   "id": "EV-15",
+   "ref": "REF-FERRATO2022",
+   "where": "Sec. 2, PDF p. 5",
+   "statement": "in the double-staged concept the ionization stage increases flow compression by pumping and channeling the ionized particles into the acceleration stage",
+   "value": {},
+   "evidence_class": "inferred",
+   "verify": false,
+   "used_for": "plasma/electrostatic pumping concept (C7): compression inside the ionization stage"
+  },
+  {
+   "id": "EV-16",
+   "ref": "REF-GAIER1996",
+   "where": "Results, PDF p. 7; summary, PDF p. 8",
+   "statement": "graphite-epoxy composites flown on EOIM-3 (STS-46, 230 km, ram fluence ~2.6e20 atoms/cm2): matrix erosion yield ~3.5e-24 cm3/atom, fiber ~0.85e-24 cm3/atom; SiO2-protected faces showed no noticeable erosion",
+   "value": {
+    "Ey_matrix_cm3_per_atom": 3.5e-24,
+    "Ey_fiber_cm3_per_atom": 8.5e-25,
+    "fluence_atoms_cm2": 2.6e+20
+   },
+   "evidence_class": "measured",
+   "verify": false,
+   "used_for": "ram-energy AO erosion reference for CFRP wetted surfaces (HG-3)"
+  },
+  {
+   "id": "EV-17",
+   "ref": "REF-NASA-HDBK-6024",
+   "where": "Sec. 6.x, pp. 40-41 of 207",
+   "statement": "thermal-energy atoms (~0.04 eV) require orders of magnitude more atoms to erode as much material as LEO atoms arriving at ~4.5 eV",
+   "value": {
+    "E_thermal_eV": 0.04,
+    "E_LEO_eV": 4.5
+   },
+   "evidence_class": "inferred",
+   "verify": false,
+   "used_for": "the ram-yield erosion estimate for thermalised compressor gas is an upper bound (HG-3)"
+  },
+  {
+   "id": "EV-18",
+   "ref": "REF-NASA-HDBK-6024",
+   "where": "Sec. 6.3, p. 37 of 207",
+   "statement": "the most common protection of AO-susceptible materials is a thin protective film (SiO2, Al2O3, ITO, Ge, Si, Al, Au; a few hundred angstroms to >100 nm)",
+   "value": {},
+   "evidence_class": "inferred",
+   "verify": false,
+   "used_for": "coating mitigation path for non-metallic wetted parts (HG-3)"
+  },
+  {
+   "id": "EV-19",
+   "ref": "REF-CUSHEN2024",
+   "where": "abstract",
+   "statement": "ground test methods for sub-scaled ABEP intakes in an atomic-oxygen facility: pressure difference between the intake extremities, and a gas sensor for collection efficiency, both checked by DSMC",
+   "value": {},
+   "evidence_class": "inferred",
+   "verify": true,
+   "used_for": "precedent for an AO-flow ground test of the intake + compressor inlet (minimum test T-3)"
+  }
+ ],
+ "gates": [
+  {
+   "id": "HG-1",
+   "name": "compressor power within the 1.5 kW bus (necessary condition)",
+   "rule": "P_compressor + P_jet_min(12 mN, delivered flow) < 1.5 kW, with P_jet_min = T^2 / (2 mdot) the thrust power of 12 mN at thruster efficiency 1 (a lower bound on the Hall-block load, Hall-closure-free)",
+   "origin": "RFP (power_max_W 1500, thrust_min_mN 12; abep_sim/constants.py RFP); jet-power bound model-derived",
+   "status": "RFP-derived"
+  },
+  {
+   "id": "HG-1b",
+   "name": "compressor power within the PROPOSED allocation",
+   "rule": "P_compressor <= allocation (PROPOSED 20 % of 1.5 kW = 300 W; owner decision OD-C2)",
+   "origin": "PROPOSED",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "HG-2",
+   "name": "mass within 40 kg",
+   "rule": "compressor mass (incl. motor, drive, bearings, housing) inside the propulsion-subsystem 40 kg with the mass BOM allocation (docs/architecture_comparison/mass_bom, compressor line TBD)",
+   "origin": "RFP (mass_max_kg 40); allocation TBD",
+   "status": "RFP-derived, allocation TBD"
+  },
+  {
+   "id": "HG-3",
+   "name": "atomic-oxygen compatibility",
+   "rule": "wetted rotor/stator/channel materials must not recede beyond the PROPOSED 0.1 mm allowance over 26,000 h at the per-case AO number flow; ram-energy yields (EV-16) bound the thermal-gas case from above (EV-17)",
+   "origin": "RFP mission duration; allowance PROPOSED",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "HG-4",
+   "name": "compression ratio 2.4-142 incl. atomic O",
+   "rule": "the concept's compression ratio for the least-compressed species (atomic O, EV-02) covers the W1 self-consistent requirement at each of the 36 candidate-cases",
+   "origin": "W1 feed-state closure (FC-01: required active CR 2.37-142; PROPOSED setpoint ladder)",
+   "status": "derived from PROPOSED W1 inputs"
+  },
+  {
+   "id": "HG-5",
+   "name": "backflow",
+   "rule": "(a) inlet pumping speed S >= S_required(b) so that the plenum backflow fraction b stays at the target (W1 FC-01 model; b targets PROPOSED); (b) no uncontrolled back-streaming on rotor stop (isolation valve)",
+   "origin": "W1 FC-01; EV-01, EV-04",
+   "status": "PROPOSED targets"
+  },
+  {
+   "id": "HG-6",
+   "name": "common feed boundary",
+   "rule": "the compressor sits upstream of the valve and is identical for hall_only / rf_hall / ecr_hall; a concept whose compression depends on the pre-ionizer is out of DI-1.4 scope",
+   "origin": "owner operating model (RF/ECR change only the pre-ionization method; CLAUDE.md scope rule)",
+   "status": "binding scope rule"
+  }
+ ],
+ "requirement_envelope": {
+  "DC-S12-G10": {
+   "status": "PROPOSED (candidate-conditional)",
+   "evidence_class": "model-derived (from assumed design inputs and cited model forms)",
+   "cases": {
+    "alt180_low": {
+     "altitude_km": 180.0,
+     "solar_level": "low",
+     "forward_flow_to_compressor_kgps": 8.690219761e-07,
+     "p_passive_Pa": 0.01302593981,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.3450199549,
+      "N2": 0.5835337988,
+      "O2": 0.07144624637
+     },
+     "m_mean_amu": 22.40297179,
+     "Q_Pa_m3_s": 0.1128826917,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 7.67698926,
+      "self_consistent_backflow": 13.31012326
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 8.690165554e-07,
+      "self_consistent_backflow": 3.677836029e-07,
+      "bracket_lower": 3.677836029e-07,
+      "bracket_upper": 1.244404168e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 8.665992118,
+      "0.25": 25.99797636,
+      "0.1": 77.99392907
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 2.888664039,
+      "0.25": 8.665992118,
+      "0.1": 25.99797636
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.03466396847,
+      "0.25": 0.1039919054,
+      "0.1": 0.3119757163
+     },
+     "intake_area_m2": 0.6330188218,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.2300791653,
+       "eta_0p10_W": 2.300791653,
+       "eta_0p01_W": 23.00791653
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.1236634351,
+       "eta_0p10_W": 1.236634351,
+       "eta_0p01_W": 12.36634351
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 82.85227658,
+      "self_consistent_backflow": 195.7672921
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1417.147723,
+      "self_consistent_backflow": 1304.232708
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 3,
+      "n_stages": 0,
+      "rpm": 9211.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 7.903843632,
+       "N2": 16.31431973,
+       "O2": 20.05875916
+      },
+      "lnCR_O_over_lnCR_N2": 0.7404431107,
+      "P_el_W_nominal": 35.26788196,
+      "P_el_W_sc": 24.81640569,
+      "T_comp_K": 380.8079898,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.4478245137,
+       "N2": 0.4777439552,
+       "O2": 0.07443153112
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.128511251e+19,
+      "A_wet_blades_m2": 0.945,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.002257022501,
+       "mission_26000h": 0.003912172335
+      },
+      "required_yield_reduction_for_allowance": 39.12172335
+     }
+    },
+    "alt180_mean": {
+     "altitude_km": 180.0,
+     "solar_level": "mean",
+     "forward_flow_to_compressor_kgps": 1.173866802e-06,
+     "p_passive_Pa": 0.01786101843,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.388265851,
+      "N2": 0.570902202,
+      "O2": 0.040831947
+     },
+     "m_mean_amu": 21.77132436,
+     "Q_Pa_m3_s": 0.15690479,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 5.598784885,
+      "self_consistent_backflow": 8.055727302
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 1.173861247e-06,
+      "self_consistent_backflow": 3.580158907e-07,
+      "bracket_lower": 3.580158907e-07,
+      "bracket_upper": 1.688859418e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 8.784761667,
+      "0.25": 26.354285,
+      "0.1": 79.062855
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 2.928253889,
+      "0.25": 8.784761667,
+      "0.1": 26.354285
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.03513904667,
+      "0.25": 0.10541714,
+      "0.1": 0.31625142
+     },
+     "intake_area_m2": 0.6330188218,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.2702750025,
+       "eta_0p10_W": 2.702750025,
+       "eta_0p01_W": 27.02750025
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.0998421176,
+       "eta_0p10_W": 0.998421176,
+       "eta_0p01_W": 9.98421176
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 61.33603967,
+      "self_consistent_backflow": 201.1083918
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1438.66396,
+      "self_consistent_backflow": 1298.891608
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 3,
+      "n_stages": 0,
+      "rpm": 7500.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 4.944955905,
+       "N2": 8.800910838,
+       "O2": 10.38388504
+      },
+      "lnCR_O_over_lnCR_N2": 0.734930782,
+      "P_el_W_nominal": 23.86944014,
+      "P_el_W_sc": 20.69535992,
+      "T_comp_K": 352.3790761,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.4946686567,
+       "N2": 0.4540526113,
+       "O2": 0.05127873206
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.715453441e+19,
+      "A_wet_blades_m2": 0.945,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.003430906882,
+       "mission_26000h": 0.005946905262
+      },
+      "required_yield_reduction_for_allowance": 59.46905262
+     }
+    },
+    "alt180_high": {
+     "altitude_km": 180.0,
+     "solar_level": "high",
+     "forward_flow_to_compressor_kgps": 1.497016083e-06,
+     "p_passive_Pa": 0.02305666248,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4261407297,
+      "N2": 0.5526515086,
+      "O2": 0.02120776178
+     },
+     "m_mean_amu": 21.26117369,
+     "Q_Pa_m3_s": 0.204899765,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 4.337141166,
+      "self_consistent_backflow": 5.574212758
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 1.497010626e-06,
+      "self_consistent_backflow": 3.322237115e-07,
+      "bracket_lower": 3.322237115e-07,
+      "bracket_upper": 1.73747039e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 8.886792057,
+      "0.25": 26.66037617,
+      "0.1": 79.98112852
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 2.962264019,
+      "0.25": 8.886792057,
+      "0.1": 26.66037617
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.03554716823,
+      "0.25": 0.1066415047,
+      "0.1": 0.3199245141
+     },
+     "intake_area_m2": 0.6330188218,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.3006309976,
+       "eta_0p10_W": 3.006309976,
+       "eta_0p01_W": 30.06309976
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.07812804804,
+       "eta_0p10_W": 0.7812804804,
+       "eta_0p01_W": 7.812804804
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 48.09585099,
+      "self_consistent_backflow": 216.7214365
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1451.904149,
+      "self_consistent_backflow": 1283.278564
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 2,
+      "n_stages": 0,
+      "rpm": 9211.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 3.782078338,
+       "N2": 6.046818408,
+       "O2": 6.917655223
+      },
+      "lnCR_O_over_lnCR_N2": 0.7392330328,
+      "P_el_W_nominal": 24.75408965,
+      "P_el_W_sc": 22.75136093,
+      "T_comp_K": 354.523509,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.541592509,
+       "N2": 0.4268652402,
+       "O2": 0.03154225088
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 2.401101014e+19,
+      "A_wet_blades_m2": 0.63,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.007203303042,
+       "mission_26000h": 0.01248572527
+      },
+      "required_yield_reduction_for_allowance": 124.8572527
+     }
+    },
+    "alt200_low": {
+     "altitude_km": 200.0,
+     "solar_level": "low",
+     "forward_flow_to_compressor_kgps": 3.960505431e-07,
+     "p_passive_Pa": 0.006127416093,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4350828204,
+      "N2": 0.5099831735,
+      "O2": 0.05493400615
+     },
+     "m_mean_amu": 21.22103783,
+     "Q_Pa_m3_s": 0.05431080288,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 16.32009292,
+      "self_consistent_backflow": 30.05303795
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 3.960452636e-07,
+      "self_consistent_backflow": 1.809727749e-07,
+      "bracket_lower": 1.809727749e-07,
+      "bracket_upper": 5.718117705e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 8.863573496,
+      "0.25": 26.59072049,
+      "0.1": 79.77216147
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 2.954524499,
+      "0.25": 8.863573496,
+      "0.1": 26.59072049
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.03545429398,
+      "0.25": 0.106362882,
+      "0.1": 0.3190886459
+     },
+     "intake_area_m2": 0.6330188218,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.1516553038,
+       "eta_0p10_W": 1.516553038,
+       "eta_0p01_W": 15.16553038
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.08445126878,
+       "eta_0p10_W": 0.8445126878,
+       "eta_0p01_W": 8.445126878
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 181.797402,
+      "self_consistent_backflow": 397.8498977
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1318.202598,
+      "self_consistent_backflow": 1102.150102
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 4,
+      "n_stages": 0,
+      "rpm": 9211.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 16.60034402,
+       "N2": 44.11533022,
+       "O2": 58.23484043
+      },
+      "lnCR_O_over_lnCR_N2": 0.7418976363,
+      "P_el_W_nominal": 38.39429101,
+      "P_el_W_sc": 25.3459193,
+      "T_comp_K": 388.6240124,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5144156803,
+       "N2": 0.4035284705,
+       "O2": 0.08205584926
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 6.485649403e+18,
+      "A_wet_blades_m2": 1.26,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.0009728474105,
+       "mission_26000h": 0.001686268845
+      },
+      "required_yield_reduction_for_allowance": 16.86268845
+     }
+    },
+    "alt200_mean": {
+     "altitude_km": 200.0,
+     "solar_level": "mean",
+     "forward_flow_to_compressor_kgps": 6.179389165e-07,
+     "p_passive_Pa": 0.009634113971,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4608694981,
+      "N2": 0.5075741581,
+      "O2": 0.03155634381
+     },
+     "m_mean_amu": 20.86892882,
+     "Q_Pa_m3_s": 0.08616831863,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 10.37978171,
+      "self_consistent_backflow": 13.40450098
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 6.179334953e-07,
+      "self_consistent_backflow": 1.394322012e-07,
+      "bracket_lower": 1.394322012e-07,
+      "bracket_upper": 8.948890356e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 8.944083379,
+      "0.25": 26.83225014,
+      "0.1": 80.49675041
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 2.981361126,
+      "0.25": 8.944083379,
+      "0.1": 26.83225014
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.03577633351,
+      "0.25": 0.1073290005,
+      "0.1": 0.3219870016
+     },
+     "intake_area_m2": 0.6330188218,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.2016200201,
+       "eta_0p10_W": 2.016200201,
+       "eta_0p01_W": 20.16200201
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.05046628533,
+       "eta_0p10_W": 0.5046628533,
+       "eta_0p01_W": 5.046628533
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 116.5173931,
+      "self_consistent_backflow": 516.3799995
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1383.482607,
+      "self_consistent_backflow": 983.6200005
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 3,
+      "n_stages": 0,
+      "rpm": 9211.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 7.840529008,
+       "N2": 16.17387327,
+       "O2": 19.88397274
+      },
+      "lnCR_O_over_lnCR_N2": 0.7398535584,
+      "P_el_W_nominal": 26.20096833,
+      "P_el_W_sc": 24.43964277,
+      "T_comp_K": 358.1407057,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.556268865,
+       "N2": 0.3904327017,
+       "O2": 0.05329843336
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.0719004e+19,
+      "A_wet_blades_m2": 0.945,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.0021438008,
+       "mission_26000h": 0.003715921386
+      },
+      "required_yield_reduction_for_allowance": 37.15921386
+     }
+    },
+    "alt200_high": {
+     "altitude_km": 200.0,
+     "solar_level": "high",
+     "forward_flow_to_compressor_kgps": 8.550080916e-07,
+     "p_passive_Pa": 0.01343885217,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4894388961,
+      "N2": 0.4945157601,
+      "O2": 0.0160453438
+     },
+     "m_mean_amu": 20.51171597,
+     "Q_Pa_m3_s": 0.1213026979,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 7.441111691,
+      "self_consistent_backflow": 12.08487293
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 8.550028383e-07,
+      "self_consistent_backflow": 3.285421347e-07,
+      "bracket_lower": 3.285421347e-07,
+      "bracket_upper": 1.241968926e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 9.026269236,
+      "0.25": 27.07880771,
+      "0.1": 81.23642312
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 3.008756412,
+      "0.25": 9.026269236,
+      "0.1": 27.07880771
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.03610507694,
+      "0.25": 0.1083152308,
+      "0.1": 0.3249456925
+     },
+     "intake_area_m2": 0.6330188218,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.2434554763,
+       "eta_0p10_W": 2.434554763,
+       "eta_0p01_W": 24.34554763
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.116153264,
+       "eta_0p10_W": 1.16153264,
+       "eta_0p01_W": 11.6153264
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 84.21024677,
+      "self_consistent_backflow": 219.1499732
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1415.789753,
+      "self_consistent_backflow": 1280.850027
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 3,
+      "n_stages": 0,
+      "rpm": 9211.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 7.821814534,
+       "N2": 16.13236025,
+       "O2": 19.83230954
+      },
+      "lnCR_O_over_lnCR_N2": 0.7396779488,
+      "P_el_W_nominal": 32.56395112,
+      "P_el_W_sc": 24.56713177,
+      "T_comp_K": 374.0481627,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5862166644,
+       "N2": 0.3731465318,
+       "O2": 0.04063680381
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.575069148e+19,
+      "A_wet_blades_m2": 0.945,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.003150138296,
+       "mission_26000h": 0.005460239714
+      },
+      "required_yield_reduction_for_allowance": 54.60239714
+     }
+    },
+    "alt230_low": {
+     "altitude_km": 230.0,
+     "solar_level": "low",
+     "forward_flow_to_compressor_kgps": 1.408749857e-07,
+     "p_passive_Pa": 0.002267056236,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.5683700029,
+      "N2": 0.3957900339,
+      "O2": 0.03583996319
+     },
+     "m_mean_amu": 19.693381,
+     "Q_Pa_m3_s": 0.02081688924,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 44.11006592,
+      "self_consistent_backflow": 69.45924391
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 1.408696631e-07,
+      "self_consistent_backflow": 5.140705806e-08,
+      "bracket_lower": 5.140705806e-08,
+      "bracket_upper": 2.059146584e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 9.182343566,
+      "0.25": 27.5470307,
+      "0.1": 82.64109209
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 3.060781189,
+      "0.25": 9.182343566,
+      "0.1": 27.5470307
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.03672937426,
+      "0.25": 0.1101881228,
+      "0.1": 0.3305643684
+     },
+     "intake_area_m2": 0.6330188218,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.0788240866,
+       "eta_0p10_W": 0.788240866,
+       "eta_0p01_W": 7.88240866
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.03221412655,
+       "eta_0p10_W": 0.3221412655,
+       "eta_0p01_W": 3.221412655
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 511.1107559,
+      "self_consistent_backflow": 1400.585887
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 988.8892441,
+      "self_consistent_backflow": 99.41411333
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 5,
+      "n_stages": 0,
+      "rpm": 9211.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 34.98703276,
+       "N2": 119.4274424,
+       "O2": 169.1512898
+      },
+      "lnCR_O_over_lnCR_N2": 0.7432978867,
+      "P_el_W_nominal": 32.25200788,
+      "P_el_W_sc": 25.40567198,
+      "T_comp_K": 373.2683046,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5737619933,
+       "N2": 0.305303848,
+       "O2": 0.1209341587
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 3.013671796e+18,
+      "A_wet_blades_m2": 1.575,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.0003616406155,
+       "mission_26000h": 0.0006268437335
+      },
+      "required_yield_reduction_for_allowance": 6.268437335
+     }
+    },
+    "alt230_mean": {
+     "altitude_km": 230.0,
+     "solar_level": "mean",
+     "forward_flow_to_compressor_kgps": 2.72829882e-07,
+     "p_passive_Pa": 0.004383178993,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.5627449613,
+      "N2": 0.4151678422,
+      "O2": 0.02208719641
+     },
+     "m_mean_amu": 19.72806523,
+     "Q_Pa_m3_s": 0.04024479037,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 22.81449153,
+      "self_consistent_backflow": 30.02760562
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 2.728245473e-07,
+      "self_consistent_backflow": 6.553279356e-08,
+      "bracket_lower": 6.553279356e-08,
+      "bracket_upper": 3.987909883e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 9.181644289,
+      "0.25": 27.54493287,
+      "0.1": 82.6347986
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 3.060548096,
+      "0.25": 9.181644289,
+      "0.1": 27.54493287
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.03672657716,
+      "0.25": 0.1101797315,
+      "0.1": 0.3305391944
+     },
+     "intake_area_m2": 0.6330188218,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.1258589325,
+       "eta_0p10_W": 1.258589325,
+       "eta_0p01_W": 12.58589325
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.03288710764,
+       "eta_0p10_W": 0.3288710764,
+       "eta_0p01_W": 3.288710764
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 263.9058718,
+      "self_consistent_backflow": 1098.686567
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1236.094128,
+      "self_consistent_backflow": 401.3134327
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 4,
+      "n_stages": 0,
+      "rpm": 9211.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 16.43585891,
+       "N2": 43.66073578,
+       "O2": 57.63137433
+      },
+      "lnCR_O_over_lnCR_N2": 0.7412956765,
+      "P_el_W_nominal": 26.90393743,
+      "P_el_W_sc": 25.0486272,
+      "T_comp_K": 359.8981285,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.6134493348,
+       "N2": 0.3105263482,
+       "O2": 0.07602431703
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 5.778757501e+18,
+      "A_wet_blades_m2": 1.26,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.0008668136252,
+       "mission_26000h": 0.00150247695
+      },
+      "required_yield_reduction_for_allowance": 15.0247695
+     }
+    },
+    "alt230_high": {
+     "altitude_km": 230.0,
+     "solar_level": "high",
+     "forward_flow_to_compressor_kgps": 4.222357464e-07,
+     "p_passive_Pa": 0.006804003692,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.5759313199,
+      "N2": 0.4126495709,
+      "O2": 0.0114191092
+     },
+     "m_mean_amu": 19.57328695,
+     "Q_Pa_m3_s": 0.06277597468,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 14.69722894,
+      "self_consistent_backflow": 26.15567769
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 4.222306289e-07,
+      "self_consistent_backflow": 1.849706539e-07,
+      "bracket_lower": 1.849706539e-07,
+      "bracket_upper": 6.181391405e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 9.226328721,
+      "0.25": 27.67898616,
+      "0.1": 83.03695849
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 3.075442907,
+      "0.25": 9.226328721,
+      "0.1": 27.67898616
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.03690531488,
+      "0.25": 0.1107159447,
+      "0.1": 0.332147834
+     },
+     "intake_area_m2": 0.6330188218,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.1687183665,
+       "eta_0p10_W": 1.687183665,
+       "eta_0p01_W": 16.87183665
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.08976360132,
+       "eta_0p10_W": 0.8976360132,
+       "eta_0p01_W": 8.976360132
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 170.5229206,
+      "self_consistent_backflow": 389.2509352
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1329.477079,
+      "self_consistent_backflow": 1110.749065
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 4,
+      "n_stages": 0,
+      "rpm": 9211.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 16.41274004,
+       "N2": 43.59684118,
+       "O2": 57.54655537
+      },
+      "lnCR_O_over_lnCR_N2": 0.7412103861,
+      "P_el_W_nominal": 36.63983842,
+      "P_el_W_sc": 25.19847275,
+      "T_comp_K": 384.2378809,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.6371959303,
+       "N2": 0.3034599217,
+       "O2": 0.05934414799
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 9.152855676e+18,
+      "A_wet_blades_m2": 1.26,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.001372928351,
+       "mission_26000h": 0.002379742476
+      },
+      "required_yield_reduction_for_allowance": 23.79742476
+     }
+    }
+   }
+  },
+  "DC-S12-G20": {
+   "status": "PROPOSED (candidate-conditional)",
+   "evidence_class": "model-derived (from assumed design inputs and cited model forms)",
+   "cases": {
+    "alt180_low": {
+     "altitude_km": 180.0,
+     "solar_level": "low",
+     "forward_flow_to_compressor_kgps": 5.32566629e-07,
+     "p_passive_Pa": 0.01460793254,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.3450199549,
+      "N2": 0.5835337988,
+      "O2": 0.07144624637
+     },
+     "m_mean_amu": 22.40297179,
+     "Q_Pa_m3_s": 0.06917840543,
+     "setpoint_Pa": 0.05,
+     "CR_required": {
+      "upper_bound_flow_basis": 3.422797845,
+      "self_consistent_backflow": 4.228519987
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 5.325637209e-07,
+      "self_consistent_backflow": 1.014748492e-07,
+      "bracket_lower": 1.014748492e-07,
+      "bracket_upper": 9.596727142e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 4.73567394,
+      "0.25": 14.20702182,
+      "0.1": 42.62106546
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 1.57855798,
+      "0.25": 4.73567394,
+      "0.1": 14.20702182
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.01894269576,
+      "0.25": 0.05682808728,
+      "0.1": 0.1704842618
+     },
+     "intake_area_m2": 0.6259376,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.08512067833,
+       "eta_0p10_W": 0.8512067833,
+       "eta_0p01_W": 8.512067833
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.01900534293,
+       "eta_0p10_W": 0.1900534293,
+       "eta_0p01_W": 1.900534293
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 135.1950897,
+      "self_consistent_backflow": 709.5354225
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1364.80491,
+      "self_consistent_backflow": 790.4645775
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 2,
+      "n_stages": 0,
+      "rpm": 7500.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 3.076231233,
+       "N2": 4.511784258,
+       "O2": 5.03320374
+      },
+      "lnCR_O_over_lnCR_N2": 0.7458091646,
+      "P_el_W_nominal": 14.35555242,
+      "P_el_W_sc": 13.56312211,
+      "T_comp_K": 328.5943568,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.4581927345,
+       "N2": 0.4745527214,
+       "O2": 0.06725454405
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 6.91590603e+18,
+      "A_wet_blades_m2": 0.63,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.002074771809,
+       "mission_26000h": 0.003596271136
+      },
+      "required_yield_reduction_for_allowance": 35.96271136
+     }
+    },
+    "alt180_mean": {
+     "altitude_km": 180.0,
+     "solar_level": "mean",
+     "forward_flow_to_compressor_kgps": 7.180398793e-07,
+     "p_passive_Pa": 0.01999727541,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.388265851,
+      "N2": 0.570902202,
+      "O2": 0.040831947
+     },
+     "m_mean_amu": 21.77132436,
+     "Q_Pa_m3_s": 0.09597672945,
+     "setpoint_Pa": 0.05,
+     "CR_required": {
+      "upper_bound_flow_basis": 2.50034062,
+      "self_consistent_backflow": 3.966227857
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 7.180370339e-07,
+      "self_consistent_backflow": 2.65379158e-07,
+      "bracket_lower": 2.65379158e-07,
+      "bracket_upper": 9.02966346e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 4.799490304,
+      "0.25": 14.39847091,
+      "0.1": 43.19541273
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 1.599830101,
+      "0.25": 4.799490304,
+      "0.1": 14.39847091
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.01919796122,
+      "0.25": 0.05759388365,
+      "0.1": 0.1727816509
+     },
+     "intake_area_m2": 0.6259376,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.08795531486,
+       "eta_0p10_W": 0.8795531486,
+       "eta_0p01_W": 8.795531486
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.0488737039,
+       "eta_0p10_W": 0.488737039,
+       "eta_0p01_W": 4.88737039
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 100.2733795,
+      "self_consistent_backflow": 271.3099271
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1399.72662,
+      "self_consistent_backflow": 1228.690073
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 2,
+      "n_stages": 0,
+      "rpm": 7500.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 3.071290844,
+       "N2": 4.503427972,
+       "O2": 5.023606737
+      },
+      "lnCR_O_over_lnCR_N2": 0.7456598576,
+      "P_el_W_nominal": 16.35617021,
+      "P_el_W_sc": 13.58048292,
+      "T_comp_K": 333.5959012,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5045435924,
+       "N2": 0.4510740376,
+       "O2": 0.04438237002
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.049321762e+19,
+      "A_wet_blades_m2": 0.63,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.003147965287,
+       "mission_26000h": 0.005456473164
+      },
+      "required_yield_reduction_for_allowance": 54.56473164
+     }
+    },
+    "alt180_high": {
+     "altitude_km": 180.0,
+     "solar_level": "high",
+     "forward_flow_to_compressor_kgps": 9.142559631e-07,
+     "p_passive_Pa": 0.02578100056,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4261407297,
+      "N2": 0.5526515086,
+      "O2": 0.02120776178
+     },
+     "m_mean_amu": 21.26117369,
+     "Q_Pa_m3_s": 0.1251361519,
+     "setpoint_Pa": 0.05,
+     "CR_required": {
+      "upper_bound_flow_basis": 1.939412704,
+      "self_consistent_backflow": 2.369735866
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 9.142531377e-07,
+      "self_consistent_backflow": 1.660180054e-07,
+      "bracket_lower": 1.660180054e-07,
+      "bracket_upper": 9.142531572e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 4.853812855,
+      "0.25": 14.56143856,
+      "0.1": 43.68431569
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 1.617937618,
+      "0.25": 4.853812855,
+      "0.1": 14.56143856
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.01941525142,
+      "0.25": 0.05824575426,
+      "0.1": 0.1747372628
+     },
+     "intake_area_m2": 0.6259376,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.08288807851,
+       "eta_0p10_W": 0.8288807851,
+       "eta_0p01_W": 8.288807851
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.01960511979,
+       "eta_0p10_W": 0.1960511979,
+       "eta_0p01_W": 1.960511979
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 78.75280602,
+      "self_consistent_backflow": 433.6878991
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1421.247194,
+      "self_consistent_backflow": 1066.312101
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 1,
+      "n_stages": 0,
+      "rpm": 9263.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 2.002998912,
+       "N2": 2.528109608,
+       "O2": 2.701700121
+      },
+      "lnCR_O_over_lnCR_N2": 0.7489666952,
+      "P_el_W_nominal": 14.25308209,
+      "P_el_W_sc": 13.39097148,
+      "T_comp_K": 328.2689481,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5515772427,
+       "N2": 0.4239427814,
+       "O2": 0.02447997594
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.466397686e+19,
+      "A_wet_blades_m2": 0.315,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.008798386117,
+       "mission_26000h": 0.01525053594
+      },
+      "required_yield_reduction_for_allowance": 152.5053594
+     }
+    },
+    "alt200_low": {
+     "altitude_km": 200.0,
+     "solar_level": "low",
+     "forward_flow_to_compressor_kgps": 2.41893343e-07,
+     "p_passive_Pa": 0.00685708106,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4350828204,
+      "N2": 0.5099831735,
+      "O2": 0.05493400615
+     },
+     "m_mean_amu": 21.22103783,
+     "Q_Pa_m3_s": 0.03317107349,
+     "setpoint_Pa": 0.05,
+     "CR_required": {
+      "upper_bound_flow_basis": 7.29173238,
+      "self_consistent_backflow": 8.489623717
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 2.418904893e-07,
+      "self_consistent_backflow": 3.412845173e-08,
+      "bracket_lower": 3.412845173e-08,
+      "bracket_upper": 4.39062996e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 4.837491812,
+      "0.25": 14.51247544,
+      "0.1": 43.53742631
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 1.612497271,
+      "0.25": 4.837491812,
+      "0.1": 14.51247544
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.01934996725,
+      "0.25": 0.05804990175,
+      "0.1": 0.1741497052
+     },
+     "intake_area_m2": 0.6259376,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.0659015594,
+       "eta_0p10_W": 0.659015594,
+       "eta_0p01_W": 6.59015594
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.0100099393,
+       "eta_0p10_W": 0.100099393,
+       "eta_0p01_W": 1.00099393
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 297.6553573,
+      "self_consistent_backflow": 2109.676717
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1202.344643,
+      "self_consistent_backflow": -609.676717
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 3,
+      "n_stages": 0,
+      "rpm": 7500.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 5.562029752,
+       "N2": 9.996448026,
+       "O2": 11.81323819
+      },
+      "lnCR_O_over_lnCR_N2": 0.7453483057,
+      "P_el_W_nominal": 14.63864557,
+      "P_el_W_sc": 14.32474847,
+      "T_comp_K": 329.3020896,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5287185742,
+       "N2": 0.3996433831,
+       "O2": 0.07163804274
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 3.961200011e+18,
+      "A_wet_blades_m2": 0.945,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.0007922400021,
+       "mission_26000h": 0.001373216004
+      },
+      "required_yield_reduction_for_allowance": 13.73216004
+     }
+    },
+    "alt200_mean": {
+     "altitude_km": 200.0,
+     "solar_level": "mean",
+     "forward_flow_to_compressor_kgps": 3.769575771e-07,
+     "p_passive_Pa": 0.01076845719,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4608694981,
+      "N2": 0.5075741581,
+      "O2": 0.03155634381
+     },
+     "m_mean_amu": 20.86892882,
+     "Q_Pa_m3_s": 0.05256474345,
+     "setpoint_Pa": 0.05,
+     "CR_required": {
+      "upper_bound_flow_basis": 4.643190672,
+      "self_consistent_backflow": 5.665479806
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 3.769547816e-07,
+      "self_consistent_backflow": 6.801609221e-08,
+      "bracket_lower": 6.801609221e-08,
+      "bracket_upper": 6.861506854e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 4.881362529,
+      "0.25": 14.64408759,
+      "0.1": 43.93226276
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 1.627120843,
+      "0.25": 4.881362529,
+      "0.1": 14.64408759
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.01952545012,
+      "0.25": 0.05857635035,
+      "0.1": 0.1757290511
+     },
+     "intake_area_m2": 0.6259376,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.08070740185,
+       "eta_0p10_W": 0.8070740185,
+       "eta_0p01_W": 8.070740185
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.01644981077,
+       "eta_0p10_W": 0.1644981077,
+       "eta_0p01_W": 1.644981077
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 191.0043419,
+      "self_consistent_backflow": 1058.573018
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1308.995658,
+      "self_consistent_backflow": 441.4269821
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 2,
+      "n_stages": 0,
+      "rpm": 9263.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 4.152532491,
+       "N2": 6.71884974,
+       "O2": 7.705650288
+      },
+      "lnCR_O_over_lnCR_N2": 0.7473913085,
+      "P_el_W_nominal": 16.47400357,
+      "P_el_W_sc": 15.48053563,
+      "T_comp_K": 333.8212518,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5684064983,
+       "N2": 0.3871502837,
+       "O2": 0.04444321799
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 6.538849825e+18,
+      "A_wet_blades_m2": 0.63,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.001961654948,
+       "mission_26000h": 0.003400201909
+      },
+      "required_yield_reduction_for_allowance": 34.00201909
+     }
+    },
+    "alt200_high": {
+     "altitude_km": 200.0,
+     "solar_level": "high",
+     "forward_flow_to_compressor_kgps": 5.209317928e-07,
+     "p_passive_Pa": 0.01500541251,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4894388961,
+      "N2": 0.4945157601,
+      "O2": 0.0160453438
+     },
+     "m_mean_amu": 20.51171597,
+     "Q_Pa_m3_s": 0.07390623844,
+     "setpoint_Pa": 0.05,
+     "CR_required": {
+      "upper_bound_flow_basis": 3.332130987,
+      "self_consistent_backflow": 3.984480992
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 5.209289989e-07,
+      "self_consistent_backflow": 8.528556822e-08,
+      "bracket_lower": 8.528556822e-08,
+      "bracket_upper": 9.508422305e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 4.925305345,
+      "0.25": 14.77591603,
+      "0.1": 44.3277481
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 1.641768448,
+      "0.25": 4.925305345,
+      "0.1": 14.77591603
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.01970122138,
+      "0.25": 0.05910366414,
+      "0.1": 0.1773109924
+     },
+     "intake_area_m2": 0.6259376,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.08895396099,
+       "eta_0p10_W": 0.8895396099,
+       "eta_0p01_W": 8.895396099
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.0167267562,
+       "eta_0p10_W": 0.167267562,
+       "eta_0p01_W": 1.67267562
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 138.214613,
+      "self_consistent_backflow": 844.2225514
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1361.785387,
+      "self_consistent_backflow": 655.7774486
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 2,
+      "n_stages": 0,
+      "rpm": 7500.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 3.06155078,
+       "N2": 4.486953408,
+       "O2": 5.004686078
+      },
+      "lnCR_O_over_lnCR_N2": 0.7453643753,
+      "P_el_W_nominal": 13.99634498,
+      "P_el_W_sc": 13.4364689,
+      "T_comp_K": 327.6963381,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5982665702,
+       "N2": 0.3699661431,
+       "O2": 0.0317672867
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 9.596442457e+18,
+      "A_wet_blades_m2": 0.63,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.002878932737,
+       "mission_26000h": 0.004990150078
+      },
+      "required_yield_reduction_for_allowance": 49.90150078
+     }
+    },
+    "alt230_low": {
+     "altitude_km": 230.0,
+     "solar_level": "low",
+     "forward_flow_to_compressor_kgps": 8.559829365e-08,
+     "p_passive_Pa": 0.002528668049,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.5683700029,
+      "N2": 0.3957900339,
+      "O2": 0.03583996319
+     },
+     "m_mean_amu": 19.693381,
+     "Q_Pa_m3_s": 0.01264873384,
+     "setpoint_Pa": 0.05,
+     "CR_required": {
+      "upper_bound_flow_basis": 19.77325573,
+      "self_consistent_backflow": 30.19861879
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 8.55955417e-08,
+      "self_consistent_backflow": 2.954804621e-08,
+      "bracket_lower": 2.954804621e-08,
+      "bracket_upper": 1.570814387e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 5.002132977,
+      "0.25": 15.00639893,
+      "0.1": 45.01919679
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 1.667377659,
+      "0.25": 5.002132977,
+      "0.1": 15.00639893
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.02000853191,
+      "0.25": 0.06002559572,
+      "0.1": 0.1800767872
+     },
+     "intake_area_m2": 0.6259376,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.03774678611,
+       "eta_0p10_W": 0.3774678611,
+       "eta_0p01_W": 3.774678611
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.01487936265,
+       "eta_0p10_W": 0.1487936265,
+       "eta_0p01_W": 1.487936265
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 841.1653057,
+      "self_consistent_backflow": 2436.709334
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 658.8346943,
+      "self_consistent_backflow": -936.709334
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 4,
+      "n_stages": 0,
+      "rpm": 9263.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 18.60194023,
+       "N2": 49.64743869,
+       "O2": 65.57869917
+      },
+      "lnCR_O_over_lnCR_N2": 0.7486058164,
+      "P_el_W_nominal": 20.35530787,
+      "P_el_W_sc": 16.70300003,
+      "T_comp_K": 343.5245125,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5959277205,
+       "N2": 0.3005590005,
+       "O2": 0.103513279
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.831163724e+18,
+      "A_wet_blades_m2": 1.26,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.0002746745586,
+       "mission_26000h": 0.0004761025682
+      },
+      "required_yield_reduction_for_allowance": 4.761025682
+     }
+    },
+    "alt230_mean": {
+     "altitude_km": 230.0,
+     "solar_level": "mean",
+     "forward_flow_to_compressor_kgps": 1.657838523e-07,
+     "p_passive_Pa": 0.004887435882,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.5627449613,
+      "N2": 0.4151678422,
+      "O2": 0.02208719641
+     },
+     "m_mean_amu": 19.72806523,
+     "Q_Pa_m3_s": 0.02445456609,
+     "setpoint_Pa": 0.05,
+     "CR_required": {
+      "upper_bound_flow_basis": 10.23031324,
+      "self_consistent_backflow": 12.85510804
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 1.65781111e-07,
+      "self_consistent_backflow": 3.384750664e-08,
+      "bracket_lower": 3.384750664e-08,
+      "bracket_upper": 3.042580919e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 5.003557424,
+      "0.25": 15.01067227,
+      "0.1": 45.03201682
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 1.667852475,
+      "0.25": 5.003557424,
+      "0.1": 15.01067227
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.0200142297,
+      "0.25": 0.06004268909,
+      "0.1": 0.1801280673
+     },
+     "intake_area_m2": 0.6259376,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.05686461211,
+       "eta_0p10_W": 0.5686461211,
+       "eta_0p01_W": 5.686461211
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.01275032654,
+       "eta_0p10_W": 0.1275032654,
+       "eta_0p01_W": 1.275032654
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 434.3076215,
+      "self_consistent_backflow": 2127.187706
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1065.692378,
+      "self_consistent_backflow": -627.1877061
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 3,
+      "n_stages": 0,
+      "rpm": 9263.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 8.738420164,
+       "N2": 18.16565574,
+       "O2": 22.36277677
+      },
+      "lnCR_O_over_lnCR_N2": 0.7476133538,
+      "P_el_W_nominal": 17.54012931,
+      "P_el_W_sc": 16.29620375,
+      "T_comp_K": 336.4865661,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.6301292005,
+       "N2": 0.3067907921,
+       "O2": 0.06308000736
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 3.511436038e+18,
+      "A_wet_blades_m2": 0.945,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.0007022872076,
+       "mission_26000h": 0.001217297827
+      },
+      "required_yield_reduction_for_allowance": 12.17297827
+     }
+    },
+    "alt230_high": {
+     "altitude_km": 230.0,
+     "solar_level": "high",
+     "forward_flow_to_compressor_kgps": 2.564070762e-07,
+     "p_passive_Pa": 0.007581944103,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.5759313199,
+      "N2": 0.4126495709,
+      "O2": 0.0114191092
+     },
+     "m_mean_amu": 19.57328695,
+     "Q_Pa_m3_s": 0.03812136765,
+     "setpoint_Pa": 0.05,
+     "CR_required": {
+      "upper_bound_flow_basis": 6.594614695,
+      "self_consistent_backflow": 7.756551774
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 2.564043284e-07,
+      "self_consistent_backflow": 3.840721808e-08,
+      "bracket_lower": 3.840721808e-08,
+      "bracket_upper": 4.712600798e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 5.027914626,
+      "0.25": 15.08374388,
+      "0.1": 45.25123163
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 1.675971542,
+      "0.25": 5.027914626,
+      "0.1": 15.08374388
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.0201116585,
+      "0.25": 0.06033497551,
+      "0.1": 0.1810049265
+     },
+     "intake_area_m2": 0.6259376,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.07190578725,
+       "eta_0p10_W": 0.7190578725,
+       "eta_0p01_W": 7.190578725
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.01169756094,
+       "eta_0p10_W": 0.1169756094,
+       "eta_0p01_W": 1.169756094
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 280.806492,
+      "self_consistent_backflow": 1874.647621
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1219.193508,
+      "self_consistent_backflow": -374.6476207
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 3,
+      "n_stages": 0,
+      "rpm": 7500.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 5.529529315,
+       "N2": 9.932356271,
+       "O2": 11.73620341
+      },
+      "lnCR_O_over_lnCR_N2": 0.7448838671,
+      "P_el_W_nominal": 14.60752003,
+      "P_el_W_sc": 14.23534397,
+      "T_comp_K": 329.2242758,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.6526840642,
+       "N2": 0.3000111296,
+       "O2": 0.04730480619
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 5.558167405e+18,
+      "A_wet_blades_m2": 0.945,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.001111633481,
+       "mission_26000h": 0.001926831367
+      },
+      "required_yield_reduction_for_allowance": 19.26831367
+     }
+    }
+   }
+  },
+  "DC-S25-G10": {
+   "status": "PROPOSED (candidate-conditional)",
+   "evidence_class": "model-derived (from assumed design inputs and cited model forms)",
+   "cases": {
+    "alt180_low": {
+     "altitude_km": 180.0,
+     "solar_level": "low",
+     "forward_flow_to_compressor_kgps": 1.81046245e-06,
+     "p_passive_Pa": 0.01302593981,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.3450199549,
+      "N2": 0.5835337988,
+      "O2": 0.07144624637
+     },
+     "m_mean_amu": 22.40297179,
+     "Q_Pa_m3_s": 0.2351722744,
+     "setpoint_Pa": 0.2,
+     "CR_required": {
+      "upper_bound_flow_basis": 15.35397852,
+      "self_consistent_backflow": 26.83159442
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 1.810452348e-06,
+      "self_consistent_backflow": 7.744422949e-07,
+      "bracket_lower": 7.744422949e-07,
+      "bracket_upper": 2.093502929e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 18.05415025,
+      "0.25": 54.16245074,
+      "0.1": 162.4873522
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 6.018050082,
+      "0.25": 18.05415025,
+      "0.1": 54.16245074
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.07221660099,
+      "0.25": 0.216649803,
+      "0.1": 0.6499494089
+     },
+     "intake_area_m2": 1.318789212,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.6423399992,
+       "eta_0p10_W": 6.423399992,
+       "eta_0p01_W": 64.23399992
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.3309223693,
+       "eta_0p10_W": 3.309223693,
+       "eta_0p01_W": 33.09223693
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 39.76906659,
+      "self_consistent_backflow": 92.97012892
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1460.230933,
+      "self_consistent_backflow": 1407.029871
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 4,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 11.83703612,
+       "N2": 30.95035833,
+       "O2": 40.75841103
+      },
+      "lnCR_O_over_lnCR_N2": 0.7199756365,
+      "P_el_W_nominal": 59.47221844,
+      "P_el_W_sc": 43.05239149,
+      "T_comp_K": 441.3197342,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.4380694868,
+       "N2": 0.4807464541,
+       "O2": 0.08118405913
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 2.351065105e+19,
+      "A_wet_blades_m2": 1.26,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.003526597658,
+       "mission_26000h": 0.006112769274
+      },
+      "required_yield_reduction_for_allowance": 61.12769274
+     }
+    },
+    "alt180_mean": {
+     "altitude_km": 180.0,
+     "solar_level": "mean",
+     "forward_flow_to_compressor_kgps": 2.445555838e-06,
+     "p_passive_Pa": 0.01786101843,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.388265851,
+      "N2": 0.570902202,
+      "O2": 0.040831947
+     },
+     "m_mean_amu": 21.77132436,
+     "Q_Pa_m3_s": 0.3268849792,
+     "setpoint_Pa": 0.2,
+     "CR_required": {
+      "upper_bound_flow_basis": 11.19756977,
+      "self_consistent_backflow": 21.80937932
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 2.445546259e-06,
+      "self_consistent_backflow": 1.189926751e-06,
+      "bracket_lower": 1.189926751e-06,
+      "bracket_upper": 2.833520264e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 18.30158681,
+      "0.25": 54.90476042,
+      "0.1": 164.7142813
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 6.100528936,
+      "0.25": 18.30158681,
+      "0.1": 54.90476042
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.07320634723,
+      "0.25": 0.2196190417,
+      "0.1": 0.658857125
+     },
+     "intake_area_m2": 1.318789212,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.7896518954,
+       "eta_0p10_W": 7.896518954,
+       "eta_0p01_W": 78.96518954
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.4902506395,
+       "eta_0p10_W": 4.902506395,
+       "eta_0p01_W": 49.02506395
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 29.44127503,
+      "self_consistent_backflow": 60.50792616
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1470.558725,
+      "self_consistent_backflow": 1439.492074
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 4,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 11.70891576,
+       "N2": 30.59627159,
+       "O2": 40.28836903
+      },
+      "lnCR_O_over_lnCR_N2": 0.7192160809,
+      "P_el_W_nominal": 74.27074032,
+      "P_el_W_sc": 43.52855438,
+      "T_comp_K": 478.3160389,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.4813153925,
+       "N2": 0.4580803521,
+       "O2": 0.06060425539
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 3.573861335e+19,
+      "A_wet_blades_m2": 1.26,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.005360792003,
+       "mission_26000h": 0.009292039471
+      },
+      "required_yield_reduction_for_allowance": 92.92039471
+     }
+    },
+    "alt180_high": {
+     "altitude_km": 180.0,
+     "solar_level": "high",
+     "forward_flow_to_compressor_kgps": 3.118783506e-06,
+     "p_passive_Pa": 0.02305666248,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4261407297,
+      "N2": 0.5526515086,
+      "O2": 0.02120776178
+     },
+     "m_mean_amu": 21.26117369,
+     "Q_Pa_m3_s": 0.4268745105,
+     "setpoint_Pa": 0.2,
+     "CR_required": {
+      "upper_bound_flow_basis": 8.674282332,
+      "self_consistent_backflow": 18.18946832
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 3.11877424e-06,
+      "self_consistent_backflow": 1.631473557e-06,
+      "bracket_lower": 1.559381692e-06,
+      "bracket_upper": 3.142363872e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 18.51415012,
+      "0.25": 55.54245036,
+      "0.1": 166.6273511
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 6.171383373,
+      "0.25": 18.51415012,
+      "0.1": 55.54245036
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.07405660048,
+      "0.25": 0.2221698014,
+      "0.1": 0.6665094043
+     },
+     "intake_area_m2": 1.318789212,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.9222009849,
+       "eta_0p10_W": 9.222009849,
+       "eta_0p01_W": 92.22009849
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.647767601,
+       "eta_0p10_W": 6.47767601,
+       "eta_0p01_W": 64.7767601
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 23.08599291,
+      "self_consistent_backflow": 44.13188292
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1476.914007,
+      "self_consistent_backflow": 1455.868117
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 4,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 11.59884435,
+       "N2": 30.29206681,
+       "O2": 39.88454419
+      },
+      "lnCR_O_over_lnCR_N2": 0.718553939,
+      "P_el_W_nominal": 89.18725181,
+      "P_el_W_sc": 44.06273601,
+      "T_comp_K": 515.6073176,
+      "T_clamp_active": true,
+      "x_s_valve": {
+       "O": 0.5176037596,
+       "N2": 0.4338865722,
+       "O2": 0.0485096682
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 5.002293779e+19,
+      "A_wet_blades_m2": 1.26,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.007503440669,
+       "mission_26000h": 0.01300596383
+      },
+      "required_yield_reduction_for_allowance": 130.0596383
+     }
+    },
+    "alt200_low": {
+     "altitude_km": 200.0,
+     "solar_level": "low",
+     "forward_flow_to_compressor_kgps": 8.251052981e-07,
+     "p_passive_Pa": 0.006127416093,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4350828204,
+      "N2": 0.5099831735,
+      "O2": 0.05493400615
+     },
+     "m_mean_amu": 21.22103783,
+     "Q_Pa_m3_s": 0.113147506,
+     "setpoint_Pa": 0.2,
+     "CR_required": {
+      "upper_bound_flow_basis": 32.64018584,
+      "self_consistent_backflow": 58.899337
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 8.250954322e-07,
+      "self_consistent_backflow": 3.678476661e-07,
+      "bracket_lower": 3.678476661e-07,
+      "bracket_upper": 9.57716607e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 18.46577812,
+      "0.25": 55.39733435,
+      "0.1": 166.1920031
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 6.155259372,
+      "0.25": 18.46577812,
+      "0.1": 55.39733435
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.07386311247,
+      "0.25": 0.2215893374,
+      "0.1": 0.6647680122
+     },
+     "intake_area_m2": 1.318789212,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.3943759204,
+       "eta_0p10_W": 3.943759204,
+       "eta_0p01_W": 39.43759204
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.205598366,
+       "eta_0p10_W": 2.05598366,
+       "eta_0p01_W": 20.5598366
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 87.26263313,
+      "self_consistent_backflow": 195.7331978
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1412.737367,
+      "self_consistent_backflow": 1304.266802
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 5,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 24.39133407,
+       "N2": 82.50537333,
+       "O2": 116.7262355
+      },
+      "lnCR_O_over_lnCR_N2": 0.7238447245,
+      "P_el_W_nominal": 62.36154164,
+      "P_el_W_sc": 43.14156789,
+      "T_comp_K": 448.5430422,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5031371236,
+       "N2": 0.4065920588,
+       "O2": 0.09027081765
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.351176959e+19,
+      "A_wet_blades_m2": 1.575,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.001621412351,
+       "mission_26000h": 0.002810448075
+      },
+      "required_yield_reduction_for_allowance": 28.10448075
+     }
+    },
+    "alt200_mean": {
+     "altitude_km": 200.0,
+     "solar_level": "mean",
+     "forward_flow_to_compressor_kgps": 1.287372743e-06,
+     "p_passive_Pa": 0.009634113971,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4608694981,
+      "N2": 0.5075741581,
+      "O2": 0.03155634381
+     },
+     "m_mean_amu": 20.86892882,
+     "Q_Pa_m3_s": 0.1795173305,
+     "setpoint_Pa": 0.2,
+     "CR_required": {
+      "upper_bound_flow_basis": 20.75956342,
+      "self_consistent_backflow": 43.59671779
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 1.287363482e-06,
+      "self_consistent_backflow": 6.743518279e-07,
+      "bracket_lower": 6.436763389e-07,
+      "bracket_upper": 1.496166809e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 18.63350704,
+      "0.25": 55.90052112,
+      "0.1": 167.7015633
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 6.211169013,
+      "0.25": 18.63350704,
+      "0.1": 55.90052112
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.07453402815,
+      "0.25": 0.2236020845,
+      "0.1": 0.6708062534
+     },
+     "intake_area_m2": 1.318789212,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.5444734085,
+       "eta_0p10_W": 5.444734085,
+       "eta_0p01_W": 54.44734085
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.3549796695,
+       "eta_0p10_W": 3.549796695,
+       "eta_0p01_W": 35.49796695
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 55.92826034,
+      "self_consistent_backflow": 106.7691923
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1444.07174,
+      "self_consistent_backflow": 1393.230808
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 5,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 24.20037833,
+       "N2": 81.84000218,
+       "O2": 115.7815015
+      },
+      "lnCR_O_over_lnCR_N2": 0.7233910177,
+      "P_el_W_nominal": 89.31568282,
+      "P_el_W_sc": 43.66405304,
+      "T_comp_K": 515.9283951,
+      "T_clamp_active": true,
+      "x_s_valve": {
+       "O": 0.530156643,
+       "N2": 0.3974943111,
+       "O2": 0.07234904589
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 2.233125833e+19,
+      "A_wet_blades_m2": 1.575,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.002679751,
+       "mission_26000h": 0.004644901733
+      },
+      "required_yield_reduction_for_allowance": 46.44901733
+     }
+    },
+    "alt200_high": {
+     "altitude_km": 200.0,
+     "solar_level": "high",
+     "forward_flow_to_compressor_kgps": 1.781266857e-06,
+     "p_passive_Pa": 0.01343885217,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4894388961,
+      "N2": 0.4945157601,
+      "O2": 0.0160453438
+     },
+     "m_mean_amu": 20.51171597,
+     "Q_Pa_m3_s": 0.252713954,
+     "setpoint_Pa": 0.2,
+     "CR_required": {
+      "upper_bound_flow_basis": 14.88222338,
+      "self_consistent_backflow": 24.33598025
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 1.781256937e-06,
+      "self_consistent_backflow": 6.919557867e-07,
+      "bracket_lower": 6.919557867e-07,
+      "bracket_upper": 2.072905218e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 18.80472757,
+      "0.25": 56.41418272,
+      "0.1": 169.2425482
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 6.268242525,
+      "0.25": 18.80472757,
+      "0.1": 56.41418272
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.0752189103,
+      "0.25": 0.2256567309,
+      "0.1": 0.6769701927
+     },
+     "intake_area_m2": 1.318789212,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.6823661895,
+       "eta_0p10_W": 6.823661895,
+       "eta_0p01_W": 68.23661895
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.3133541615,
+       "eta_0p10_W": 3.133541615,
+       "eta_0p01_W": 31.33541615
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 40.42089522,
+      "self_consistent_backflow": 104.0528909
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1459.579105,
+      "self_consistent_backflow": 1395.947109
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 4,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 11.44837517,
+       "N2": 29.87621457,
+       "O2": 39.33250992
+      },
+      "lnCR_O_over_lnCR_N2": 0.7176340428,
+      "P_el_W_nominal": 52.07652797,
+      "P_el_W_sc": 42.65582411,
+      "T_comp_K": 422.830508,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5754252543,
+       "N2": 0.3759947598,
+       "O2": 0.04857998594
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 3.281394059e+19,
+      "A_wet_blades_m2": 1.26,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.004922091088,
+       "mission_26000h": 0.008531624553
+      },
+      "required_yield_reduction_for_allowance": 85.31624553
+     }
+    },
+    "alt230_low": {
+     "altitude_km": 230.0,
+     "solar_level": "low",
+     "forward_flow_to_compressor_kgps": 2.934895535e-07,
+     "p_passive_Pa": 0.002267056236,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.5683700029,
+      "N2": 0.3957900339,
+      "O2": 0.03583996319
+     },
+     "m_mean_amu": 19.693381,
+     "Q_Pa_m3_s": 0.04336851925,
+     "setpoint_Pa": 0.2,
+     "CR_required": {
+      "upper_bound_flow_basis": 88.22013184,
+      "self_consistent_backflow": 141.9092838
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 2.934794299e-07,
+      "self_consistent_backflow": 1.110270462e-07,
+      "bracket_lower": 1.110270462e-07,
+      "bracket_upper": 2.954877256e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 19.12988243,
+      "0.25": 57.38964729,
+      "0.1": 172.1689419
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 6.376627476,
+      "0.25": 19.12988243,
+      "0.1": 57.38964729
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.07651952972,
+      "0.25": 0.2295585891,
+      "0.1": 0.6886757674
+     },
+     "intake_area_m2": 1.318789212,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.194277117,
+       "eta_0p10_W": 1.94277117,
+       "eta_0p01_W": 19.4277117
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.08129631666,
+       "eta_0p10_W": 0.8129631666,
+       "eta_0p01_W": 8.129631666
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 245.3323561,
+      "self_consistent_backflow": 648.4906379
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1254.667644,
+      "self_consistent_backflow": 851.5093621
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 50.11959745,
+       "N2": 218.2877751,
+       "O2": 331.4368611
+      },
+      "lnCR_O_over_lnCR_N2": 0.7268004257,
+      "P_el_W_nominal": 49.09854253,
+      "P_el_W_sc": 42.84617616,
+      "T_comp_K": 415.3855444,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5647152186,
+       "N2": 0.3072404218,
+       "O2": 0.1280443596
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 6.278482908e+18,
+      "A_wet_blades_m2": 1.89,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.0006278482908,
+       "mission_26000h": 0.001088270371
+      },
+      "required_yield_reduction_for_allowance": 10.88270371
+     }
+    },
+    "alt230_mean": {
+     "altitude_km": 230.0,
+     "solar_level": "mean",
+     "forward_flow_to_compressor_kgps": 5.683955875e-07,
+     "p_passive_Pa": 0.004383178993,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.5627449613,
+      "N2": 0.4151678422,
+      "O2": 0.02208719641
+     },
+     "m_mean_amu": 19.72806523,
+     "Q_Pa_m3_s": 0.08384331327,
+     "setpoint_Pa": 0.2,
+     "CR_required": {
+      "upper_bound_flow_basis": 45.62898305,
+      "self_consistent_backflow": 95.03985392
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 5.683864367e-07,
+      "self_consistent_backflow": 2.954976267e-07,
+      "bracket_lower": 2.841878365e-07,
+      "bracket_upper": 6.634719716e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 19.1284256,
+      "0.25": 57.38527681,
+      "0.1": 172.1558304
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 6.376141868,
+      "0.25": 19.1284256,
+      "0.1": 57.38527681
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.07651370241,
+      "0.25": 0.2295411072,
+      "0.1": 0.6886233217
+     },
+     "intake_area_m2": 1.318789212,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.3203218356,
+       "eta_0p10_W": 3.203218356,
+       "eta_0p01_W": 32.03218356
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.1985148571,
+       "eta_0p10_W": 1.985148571,
+       "eta_0p01_W": 19.85148571
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 126.6743809,
+      "self_consistent_backflow": 243.6567792
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1373.325619,
+      "self_consistent_backflow": 1256.343221
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 6,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 50.12320382,
+       "N2": 218.3037284,
+       "O2": 331.4611218
+      },
+      "lnCR_O_over_lnCR_N2": 0.7268039233,
+      "P_el_W_nominal": 87.11636776,
+      "P_el_W_sc": 43.28267118,
+      "T_comp_K": 510.4301075,
+      "T_clamp_active": true,
+      "x_s_valve": {
+       "O": 0.5838994266,
+       "N2": 0.3171442276,
+       "O2": 0.09895634581
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.203907813e+19,
+      "A_wet_blades_m2": 1.89,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.001203907813,
+       "mission_26000h": 0.002086773542
+      },
+      "required_yield_reduction_for_allowance": 20.86773542
+     }
+    },
+    "alt230_high": {
+     "altitude_km": 230.0,
+     "solar_level": "high",
+     "forward_flow_to_compressor_kgps": 8.796578051e-07,
+     "p_passive_Pa": 0.006804003692,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.5759313199,
+      "N2": 0.4126495709,
+      "O2": 0.0114191092
+     },
+     "m_mean_amu": 19.57328695,
+     "Q_Pa_m3_s": 0.1307832806,
+     "setpoint_Pa": 0.2,
+     "CR_required": {
+      "upper_bound_flow_basis": 29.39445789,
+      "self_consistent_backflow": 50.76107403
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 8.796481287e-07,
+      "self_consistent_backflow": 3.702604767e-07,
+      "bracket_lower": 3.702604767e-07,
+      "bracket_upper": 1.027481273e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 19.22151817,
+      "0.25": 57.66455451,
+      "0.1": 172.9936635
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 6.407172723,
+      "0.25": 19.22151817,
+      "0.1": 57.66455451
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.07688607268,
+      "0.25": 0.230658218,
+      "0.1": 0.6919746541
+     },
+     "intake_area_m2": 1.318789212,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.4421480555,
+       "eta_0p10_W": 4.421480555,
+       "eta_0p01_W": 44.21480555
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.2161827707,
+       "eta_0p10_W": 2.161827707,
+       "eta_0p01_W": 21.61827707
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 81.85091021,
+      "self_consistent_backflow": 194.4576981
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1418.14909,
+      "self_consistent_backflow": 1305.542302
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 5,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 23.53081935,
+       "N2": 79.50697342,
+       "O2": 112.4689268
+      },
+      "lnCR_O_over_lnCR_N2": 0.7217603036,
+      "P_el_W_nominal": 56.46425807,
+      "P_el_W_sc": 42.92342659,
+      "T_comp_K": 433.7998333,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.6253018679,
+       "N2": 0.3061084105,
+       "O2": 0.06858972167
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.906844933e+19,
+      "A_wet_blades_m2": 1.575,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.002288213919,
+       "mission_26000h": 0.00396623746
+      },
+      "required_yield_reduction_for_allowance": 39.6623746
+     }
+    }
+   }
+  },
+  "DC-S25-G20": {
+   "status": "PROPOSED (candidate-conditional)",
+   "evidence_class": "model-derived (from assumed design inputs and cited model forms)",
+   "cases": {
+    "alt180_low": {
+     "altitude_km": 180.0,
+     "solar_level": "low",
+     "forward_flow_to_compressor_kgps": 1.10951381e-06,
+     "p_passive_Pa": 0.01460793254,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.3450199549,
+      "N2": 0.5835337988,
+      "O2": 0.07144624637
+     },
+     "m_mean_amu": 22.40297179,
+     "Q_Pa_m3_s": 0.144121678,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 6.84559569,
+      "self_consistent_backflow": 12.58646054
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 1.109508434e-06,
+      "self_consistent_backflow": 5.060597577e-07,
+      "bracket_lower": 5.060597577e-07,
+      "bracket_upper": 1.39328471e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 9.865987375,
+      "0.25": 29.59796213,
+      "0.1": 88.79388638
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 3.288662458,
+      "0.25": 9.865987375,
+      "0.1": 29.59796213
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.0394639495,
+      "0.25": 0.1183918485,
+      "0.1": 0.3551755455
+     },
+     "intake_area_m2": 1.304036667,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.2772319063,
+       "eta_0p10_W": 2.772319063,
+       "eta_0p01_W": 27.72319063
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.1664825504,
+       "eta_0p10_W": 1.664825504,
+       "eta_0p01_W": 16.64825504
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 64.89360312,
+      "self_consistent_backflow": 142.2756876
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1435.106397,
+      "self_consistent_backflow": 1357.724312
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 3,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 7.630214973,
+       "N2": 15.70720492,
+       "O2": 19.30314868
+      },
+      "lnCR_O_over_lnCR_N2": 0.7378459814,
+      "P_el_W_nominal": 37.58663933,
+      "P_el_W_sc": 24.93907579,
+      "T_comp_K": 386.6057864,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.450107573,
+       "N2": 0.4770412526,
+       "O2": 0.07285117439
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.440813756e+19,
+      "A_wet_blades_m2": 0.945,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.002881627512,
+       "mission_26000h": 0.004994821022
+      },
+      "required_yield_reduction_for_allowance": 49.94821022
+     }
+    },
+    "alt180_mean": {
+     "altitude_km": 180.0,
+     "solar_level": "mean",
+     "forward_flow_to_compressor_kgps": 1.495916415e-06,
+     "p_passive_Pa": 0.01999727541,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.388265851,
+      "N2": 0.570902202,
+      "O2": 0.040831947
+     },
+     "m_mean_amu": 21.77132436,
+     "Q_Pa_m3_s": 0.1999515197,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 5.00068124,
+      "self_consistent_backflow": 7.707090737
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 1.49591089e-06,
+      "self_consistent_backflow": 5.252980601e-07,
+      "bracket_lower": 5.252980601e-07,
+      "bracket_upper": 1.881180245e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 9.998938133,
+      "0.25": 29.9968144,
+      "0.1": 89.9904432
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 3.332979378,
+      "0.25": 9.998938133,
+      "0.1": 29.9968144
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.03999575253,
+      "0.25": 0.1199872576,
+      "0.1": 0.3599617728
+     },
+     "intake_area_m2": 1.304036667,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.3218356089,
+       "eta_0p10_W": 3.218356089,
+       "eta_0p01_W": 32.18356089
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.1433866956,
+       "eta_0p10_W": 1.433866956,
+       "eta_0p01_W": 14.33866956
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 48.13120919,
+      "self_consistent_backflow": 137.0650407
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1451.868791,
+      "self_consistent_backflow": 1362.934959
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 3,
+      "n_stages": 0,
+      "rpm": 7500.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 4.761098142,
+       "N2": 8.446399868,
+       "O2": 9.960666622
+      },
+      "lnCR_O_over_lnCR_N2": 0.7313347103,
+      "P_el_W_nominal": 25.26477941,
+      "P_el_W_sc": 20.85058358,
+      "T_comp_K": 355.8674242,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.4965167154,
+       "N2": 0.4534951819,
+       "O2": 0.04998810266
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 2.186087005e+19,
+      "A_wet_blades_m2": 0.945,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.00437217401,
+       "mission_26000h": 0.007578434951
+      },
+      "required_yield_reduction_for_allowance": 75.78434951
+     }
+    },
+    "alt180_high": {
+     "altitude_km": 180.0,
+     "solar_level": "high",
+     "forward_flow_to_compressor_kgps": 1.904699923e-06,
+     "p_passive_Pa": 0.02578100056,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4261407297,
+      "N2": 0.5526515086,
+      "O2": 0.02120776178
+     },
+     "m_mean_amu": 21.26117369,
+     "Q_Pa_m3_s": 0.2607003165,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 3.878825407,
+      "self_consistent_backflow": 5.395748946
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 1.904694498e-06,
+      "self_consistent_backflow": 5.35468737e-07,
+      "bracket_lower": 5.35468737e-07,
+      "bracket_upper": 1.904694498e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 10.11211011,
+      "0.25": 30.33633034,
+      "0.1": 91.00899103
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 3.370703371,
+      "0.25": 10.11211011,
+      "0.1": 30.33633034
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.04044844046,
+      "0.25": 0.1213453214,
+      "0.1": 0.3640359641
+     },
+     "intake_area_m2": 1.304036667,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.3533867133,
+       "eta_0p10_W": 3.533867133,
+       "eta_0p01_W": 35.33867133
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.1235397098,
+       "eta_0p10_W": 1.235397098,
+       "eta_0p01_W": 12.35397098
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 37.80133774,
+      "self_consistent_backflow": 134.4616315
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1462.198662,
+      "self_consistent_backflow": 1365.538368
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 2,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 3.668661011,
+       "N2": 5.841046075,
+       "O2": 6.676366773
+      },
+      "lnCR_O_over_lnCR_N2": 0.7364833446,
+      "P_el_W_nominal": 26.23592381,
+      "P_el_W_sc": 22.84793368,
+      "T_comp_K": 358.2289976,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5431076449,
+       "N2": 0.4264217709,
+       "O2": 0.03047058417
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 3.05499518e+19,
+      "A_wet_blades_m2": 0.63,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.009164985539,
+       "mission_26000h": 0.01588597493
+      },
+      "required_yield_reduction_for_allowance": 158.8597493
+     }
+    },
+    "alt200_low": {
+     "altitude_km": 200.0,
+     "solar_level": "low",
+     "forward_flow_to_compressor_kgps": 5.039444645e-07,
+     "p_passive_Pa": 0.00685708106,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4350828204,
+      "N2": 0.5099831735,
+      "O2": 0.05493400615
+     },
+     "m_mean_amu": 21.22103783,
+     "Q_Pa_m3_s": 0.0691064031,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 14.58346476,
+      "self_consistent_backflow": 28.23091601
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 5.039392342e-07,
+      "self_consistent_backflow": 2.436127065e-07,
+      "bracket_lower": 2.436127065e-07,
+      "bracket_upper": 9.147152222e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 10.07810794,
+      "0.25": 30.23432383,
+      "0.1": 90.70297148
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 3.359369314,
+      "0.25": 10.07810794,
+      "0.1": 30.23432383
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.04031243177,
+      "0.25": 0.1209372953,
+      "0.1": 0.3628118859
+     },
+     "intake_area_m2": 1.304036667,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.1851955215,
+       "eta_0p10_W": 1.851955215,
+       "eta_0p01_W": 18.51955215
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.1115928377,
+       "eta_0p10_W": 1.115928377,
+       "eta_0p01_W": 11.15928377
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 142.8743688,
+      "self_consistent_backflow": 295.5510862
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1357.125631,
+      "self_consistent_backflow": 1204.448914
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 4,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 15.97015353,
+       "N2": 42.37307079,
+       "O2": 55.9217988
+      },
+      "lnCR_O_over_lnCR_N2": 0.7395467594,
+      "P_el_W_nominal": 40.76481704,
+      "P_el_W_sc": 25.43075022,
+      "T_comp_K": 394.5512307,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5197175116,
+       "N2": 0.4020883369,
+       "O2": 0.07819415149
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 8.252500022e+18,
+      "A_wet_blades_m2": 1.26,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.001237875003,
+       "mission_26000h": 0.002145650006
+      },
+      "required_yield_reduction_for_allowance": 21.45650006
+     }
+    },
+    "alt200_mean": {
+     "altitude_km": 200.0,
+     "solar_level": "mean",
+     "forward_flow_to_compressor_kgps": 7.853282857e-07,
+     "p_passive_Pa": 0.01076845719,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4608694981,
+      "N2": 0.5075741581,
+      "O2": 0.03155634381
+     },
+     "m_mean_amu": 20.86892882,
+     "Q_Pa_m3_s": 0.1095098822,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 9.286381344,
+      "self_consistent_backflow": 12.93085983
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 7.85322899e-07,
+      "self_consistent_backflow": 2.213342672e-07,
+      "bracket_lower": 2.213342672e-07,
+      "bracket_upper": 1.429480934e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 10.16950527,
+      "0.25": 30.50851581,
+      "0.1": 91.52554742
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 3.38983509,
+      "0.25": 10.16950527,
+      "0.1": 30.50851581
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.04067802108,
+      "0.25": 0.1220340632,
+      "0.1": 0.3661021897
+     },
+     "intake_area_m2": 1.304036667,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.2440464596,
+       "eta_0p10_W": 2.440464596,
+       "eta_0p01_W": 24.40464596
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.07899974,
+       "eta_0p10_W": 0.7899974,
+       "eta_0p01_W": 7.899974
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 91.68203308,
+      "self_consistent_backflow": 325.2998323
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1408.317967,
+      "self_consistent_backflow": 1174.700168
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 3,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 7.561100575,
+       "N2": 15.55389472,
+       "O2": 19.11235379
+      },
+      "lnCR_O_over_lnCR_N2": 0.7371674368,
+      "P_el_W_nominal": 27.66783695,
+      "P_el_W_sc": 24.51322212,
+      "T_comp_K": 361.8087804,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5599522863,
+       "N2": 0.3894365826,
+       "O2": 0.05061113115
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.36226038e+19,
+      "A_wet_blades_m2": 0.945,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.002724520761,
+       "mission_26000h": 0.004722502652
+      },
+      "required_yield_reduction_for_allowance": 47.22502652
+     }
+    },
+    "alt200_high": {
+     "altitude_km": 200.0,
+     "solar_level": "high",
+     "forward_flow_to_compressor_kgps": 1.085274568e-06,
+     "p_passive_Pa": 0.01500541251,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.4894388961,
+      "N2": 0.4945157601,
+      "O2": 0.0160453438
+     },
+     "m_mean_amu": 20.51171597,
+     "Q_Pa_m3_s": 0.1539713301,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 6.664261974,
+      "self_consistent_backflow": 11.48772666
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 1.085269354e-06,
+      "self_consistent_backflow": 4.556796843e-07,
+      "bracket_lower": 4.556796843e-07,
+      "bracket_upper": 1.370035032e-06
+     },
+     "S_required_m3_s": {
+      "0.5": 10.2610528,
+      "0.25": 30.7831584,
+      "0.1": 92.34947521
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 3.420350934,
+      "0.25": 10.2610528,
+      "0.1": 30.7831584
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.04104421121,
+      "0.25": 0.1231326336,
+      "0.1": 0.3693979009
+     },
+     "intake_area_m2": 1.304036667,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.2920451362,
+       "eta_0p10_W": 2.920451362,
+       "eta_0p01_W": 29.20451362
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.1578255663,
+       "eta_0p10_W": 1.578255663,
+       "eta_0p01_W": 15.78255663
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 66.34297719,
+      "self_consistent_backflow": 158.0057275
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1433.657023,
+      "self_consistent_backflow": 1341.994273
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 3,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 7.540251686,
+       "N2": 15.50764752,
+       "O2": 19.05479905
+      },
+      "lnCR_O_over_lnCR_N2": 0.7369609411,
+      "P_el_W_nominal": 34.52287359,
+      "P_el_W_sc": 24.68281069,
+      "T_comp_K": 378.9463721,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5888546707,
+       "N2": 0.3724502703,
+       "O2": 0.03869505899
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.999258845e+19,
+      "A_wet_blades_m2": 0.945,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.00399851769,
+       "mission_26000h": 0.006930763997
+      },
+      "required_yield_reduction_for_allowance": 69.30763997
+     }
+    },
+    "alt230_low": {
+     "altitude_km": 230.0,
+     "solar_level": "low",
+     "forward_flow_to_compressor_kgps": 1.783297784e-07,
+     "p_passive_Pa": 0.002528668049,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.5683700029,
+      "N2": 0.3957900339,
+      "O2": 0.03583996319
+     },
+     "m_mean_amu": 19.693381,
+     "Q_Pa_m3_s": 0.02635152882,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 39.54651147,
+      "self_consistent_backflow": 65.99377026
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 1.783245142e-07,
+      "self_consistent_backflow": 7.146108452e-08,
+      "bracket_lower": 7.146108452e-08,
+      "bracket_upper": 3.272533088e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 10.42111037,
+      "0.25": 31.2633311,
+      "0.1": 93.78999331
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 3.473703456,
+      "0.25": 10.42111037,
+      "0.1": 31.2633311
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.04168444147,
+      "0.25": 0.1250533244,
+      "0.1": 0.3751599732
+     },
+     "intake_area_m2": 1.304036667,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.09690429327,
+       "eta_0p10_W": 0.9690429327,
+       "eta_0p01_W": 9.690429327
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.04424049728,
+       "eta_0p10_W": 0.4424049728,
+       "eta_0p01_W": 4.424049728
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 403.7582849,
+      "self_consistent_backflow": 1007.541384
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1096.241715,
+      "self_consistent_backflow": 492.4586159
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 5,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 33.57162441,
+       "N2": 114.493416,
+       "O2": 162.144784
+      },
+      "lnCR_O_over_lnCR_N2": 0.7412020593,
+      "P_el_W_nominal": 33.96564584,
+      "P_el_W_sc": 25.44248196,
+      "T_comp_K": 377.5533027,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.5884975929,
+       "N2": 0.302149511,
+       "O2": 0.109352896
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 3.814924424e+18,
+      "A_wet_blades_m2": 1.575,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.0004577909309,
+       "mission_26000h": 0.0007935042803
+      },
+      "required_yield_reduction_for_allowance": 7.935042803
+     }
+    },
+    "alt230_mean": {
+     "altitude_km": 230.0,
+     "solar_level": "mean",
+     "forward_flow_to_compressor_kgps": 3.453830256e-07,
+     "p_passive_Pa": 0.004887435882,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.5627449613,
+      "N2": 0.4151678422,
+      "O2": 0.02208719641
+     },
+     "m_mean_amu": 19.72806523,
+     "Q_Pa_m3_s": 0.0509470127,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 20.46062647,
+      "self_consistent_backflow": 28.89723485
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 3.453777328e-07,
+      "self_consistent_backflow": 1.008300065e-07,
+      "bracket_lower": 1.008300065e-07,
+      "bracket_upper": 6.338713229e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 10.42407797,
+      "0.25": 31.2722339,
+      "0.1": 93.8167017
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 3.474692656,
+      "0.25": 10.42407797,
+      "0.1": 31.2722339
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.04169631187,
+      "0.25": 0.1250889356,
+      "0.1": 0.3752668068
+     },
+     "intake_area_m2": 1.304036667,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.1537813224,
+       "eta_0p10_W": 1.537813224,
+       "eta_0p01_W": 15.37813224
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.05003002415,
+       "eta_0p10_W": 0.5003002415,
+       "eta_0p01_W": 5.003002415
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 208.4674059,
+      "self_consistent_backflow": 714.0731461
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1291.532594,
+      "self_consistent_backflow": 785.9268539
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 4,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 15.7912028,
+       "N2": 41.87850395,
+       "O2": 55.2652727
+      },
+      "lnCR_O_over_lnCR_N2": 0.7388543424,
+      "P_el_W_nominal": 28.28160946,
+      "P_el_W_sc": 25.09696393,
+      "T_comp_K": 363.3432117,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.6217913747,
+       "N2": 0.3086580983,
+       "O2": 0.06955052704
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 7.315491746e+18,
+      "A_wet_blades_m2": 1.26,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.001097323762,
+       "mission_26000h": 0.001902027854
+      },
+      "required_yield_reduction_for_allowance": 19.02027854
+     }
+    },
+    "alt230_high": {
+     "altitude_km": 230.0,
+     "solar_level": "high",
+     "forward_flow_to_compressor_kgps": 5.341814088e-07,
+     "p_passive_Pa": 0.007581944103,
+     "T_plenum_K": 350.0,
+     "w_s_inlet": {
+      "O": 0.5759313199,
+      "N2": 0.4126495709,
+      "O2": 0.0114191092
+     },
+     "m_mean_amu": 19.57328695,
+     "Q_Pa_m3_s": 0.07941951594,
+     "setpoint_Pa": 0.1,
+     "CR_required": {
+      "upper_bound_flow_basis": 13.18922939,
+      "self_consistent_backflow": 24.64496006
+     },
+     "mdot_valve_kgps": {
+      "upper_bound": 5.34176336e-07,
+      "self_consistent_backflow": 2.482987724e-07,
+      "bracket_lower": 2.482987724e-07,
+      "bracket_upper": 9.817923849e-07
+     },
+     "S_required_m3_s": {
+      "0.5": 10.47482214,
+      "0.25": 31.42446641,
+      "0.1": 94.27339924
+     },
+     "S_required_over_published_TMP_max": {
+      "0.5": 3.491607379,
+      "0.25": 10.47482214,
+      "0.1": 31.42446641
+     },
+     "A_rotor_min_m2_at_u_ref": {
+      "0.5": 0.04189928855,
+      "0.25": 0.1256978657,
+      "0.1": 0.377093597
+     },
+     "intake_area_m2": 1.304036667,
+     "P_pneumatic_W": {
+      "upper_bound_flow": {
+       "ideal_W": 0.204852797,
+       "eta_0p10_W": 2.04852797,
+       "eta_0p01_W": 20.4852797
+      },
+      "self_consistent_backflow": {
+       "ideal_W": 0.11829956,
+       "eta_0p10_W": 1.1829956,
+       "eta_0p01_W": 11.829956
+      }
+     },
+     "P_jet_min_W_at_12mN": {
+      "upper_bound_flow": 134.7869517,
+      "self_consistent_backflow": 289.973242
+     },
+     "P_headroom_W_for_compressor_and_losses": {
+      "upper_bound_flow": 1365.213048,
+      "self_consistent_backflow": 1210.026758
+     },
+     "chain_sized_machine": {
+      "turbo_rows": 4,
+      "n_stages": 0,
+      "rpm": 9188.0,
+      "CR_by_species_at_forward_flow": {
+       "O": 15.764943,
+       "N2": 41.80592966,
+       "O2": 55.168932
+      },
+      "lnCR_O_over_lnCR_N2": 0.7387517992,
+      "P_el_W_nominal": 38.71714751,
+      "P_el_W_sc": 25.28677772,
+      "T_comp_K": 389.4320569,
+      "T_clamp_active": false,
+      "x_s_valve": {
+       "O": 0.6425761429,
+       "N2": 0.3022618926,
+       "O2": 0.05516196448
+      },
+      "evidence_class": "model-derived (from assumed code-default inputs)"
+     },
+     "AO": {
+      "ndot_O_per_s": 1.157951543e+19,
+      "A_wet_blades_m2": 1.26,
+      "ram_yield_recession_bound_m": {
+       "firing_15000h": 0.001736927314,
+       "mission_26000h": 0.003010674011
+      },
+      "required_yield_reduction_for_allowance": 30.10674011
+     }
+    }
+   }
+  }
+ },
+ "requirement_summary": {
+  "candidate_cases": 36,
+  "CR_required_self_consistent": {
+   "min": 2.369735866,
+   "max": 141.9092838
+  },
+  "CR_required_upper_bound_flow": {
+   "min": 1.939412704,
+   "max": 88.22013184
+  },
+  "p_passive_Pa": {
+   "min": 0.002267056236,
+   "max": 0.02578100056
+  },
+  "setpoint_Pa": {
+   "min": 0.05,
+   "max": 0.2
+  },
+  "mdot_valve_bracket_kgps": {
+   "min": 2.954804621e-08,
+   "max": 3.142363872e-06
+  },
+  "S_required_m3_s": {
+   "0.5": {
+    "min": 4.73567394,
+    "max": 19.22151817
+   },
+   "0.25": {
+    "min": 14.20702182,
+    "max": 57.66455451
+   },
+   "0.1": {
+    "min": 42.62106546,
+    "max": 172.9936635
+   }
+  },
+  "S_required_over_published_TMP_max": {
+   "0.5": {
+    "min": 1.57855798,
+    "max": 6.407172723
+   },
+   "0.25": {
+    "min": 4.73567394,
+    "max": 19.22151817
+   },
+   "0.1": {
+    "min": 14.20702182,
+    "max": 57.66455451
+   }
+  },
+  "A_rotor_min_m2_at_u_ref": {
+   "0.5": {
+    "min": 0.01894269576,
+    "max": 0.07688607268
+   },
+   "0.25": {
+    "min": 0.05682808728,
+    "max": 0.230658218
+   },
+   "0.1": {
+    "min": 0.1704842618,
+    "max": 0.6919746541
+   }
+  },
+  "P_pneumatic_eta_0p01_W": {
+   "min": 3.774678611,
+   "max": 92.22009849
+  },
+  "P_pneumatic_eta_0p10_W": {
+   "min": 0.3774678611,
+   "max": 9.222009849
+  },
+  "P_jet_min_W_at_12mN": {
+   "min": 23.08599291,
+   "max": 2436.709334
+  },
+  "cases_headroom_negative_self_consistent": [
+   "DC-S12-G20/alt200_low",
+   "DC-S12-G20/alt230_high",
+   "DC-S12-G20/alt230_low",
+   "DC-S12-G20/alt230_mean"
+  ],
+  "cases_headroom_negative_upper_bound": [],
+  "chain_machine_P_el_W": {
+   "min": 13.99634498,
+   "max": 89.31568282
+  },
+  "chain_machine_lnCR_O_over_lnCR_N2": {
+   "min": 0.7176340428,
+   "max": 0.7489666952
+  },
+  "AO_ram_yield_recession_bound_mission_m": {
+   "min": 0.0004761025682,
+   "max": 0.01588597493
+  },
+  "AO_required_yield_reduction": {
+   "min": 4.761025682,
+   "max": 158.8597493
+  }
+ },
+ "drag_only_probe": {
+  "evidence_class": "model-derived (from assumed code-default inputs)",
+  "per_candidate": {
+   "DC-S12-G10": {
+    "rpm": 68916.11193,
+    "u_mps": 433.0127019,
+    "worst_case": {
+     "case": "alt230_high",
+     "S0_m3_s": 0.00467653718,
+     "S_required_b0p5_over_S0": 1972.897545,
+     "CR_active": 1.0,
+     "CR_required_sc": 26.15567769
+    }
+   },
+   "DC-S12-G20": {
+    "rpm": 68916.11193,
+    "u_mps": 433.0127019,
+    "worst_case": {
+     "case": "alt230_high",
+     "S0_m3_s": 0.00467653718,
+     "S_required_b0p5_over_S0": 1075.136245,
+     "CR_active": 1.0,
+     "CR_required_sc": 7.756551774
+    }
+   },
+   "DC-S25-G10": {
+    "rpm": 68916.11193,
+    "u_mps": 433.0127019,
+    "worst_case": {
+     "case": "alt230_high",
+     "S0_m3_s": 0.00467653718,
+     "S_required_b0p5_over_S0": 4110.203218,
+     "CR_active": 1.0,
+     "CR_required_sc": 50.76107403
+    }
+   },
+   "DC-S25-G20": {
+    "rpm": 68916.11193,
+    "u_mps": 433.0127019,
+    "worst_case": {
+     "case": "alt230_high",
+     "S0_m3_s": 0.00467653718,
+     "S_required_b0p5_over_S0": 2239.867178,
+     "CR_active": 1.0,
+     "CR_required_sc": 24.64496006
+    }
+   }
+  }
+ },
+ "concepts": [
+  {
+   "id": "C1",
+   "name": "throat-spanning bladed turbomolecular rotor (+ optional downstream drag / second TMP stage)",
+   "family": "molecular-drag / turbomolecular-type (active mechanical)",
+   "published_basis": [
+    "EV-08",
+    "EV-09",
+    "EV-03",
+    "EV-04",
+    "EV-05",
+    "EV-01",
+    "EV-02"
+   ],
+   "published_performance": {
+    "compression_ratio": "LI2015: >= 3500 (secondary citation, species/inlet pressure not stated; verify); ZHENG2021: 210.2 (search excerpt; verify)",
+    "capture_efficiency": "LI2015 ~0.60; ZHENG2021 0.6579 (as above; not transferable to the W1 TPMC geometry)",
+    "throughput_pumping_speed": "commercial TMPs 10-3000 l/s (EV-03); no ABEP-scale published value accessed",
+    "power": "TBD - requires measured motor/drive/bearing input power of an ABEP-scale unit (none accessed); pneumatic band only (EV-05 eta 1-10 %, assumed by source)",
+    "mass": "TBD - no published mass accessed",
+    "T_feed": "TBD - no published gas temperature rise accessed",
+    "rotor_material_O": "commercial rotors are high-strength Al alloys (EV-04); AO behaviour at thermal energy TBD (no source accessed)",
+    "TRL": "TBD - not stated in accessed sources; LI2015 reported as 'numerical simulations and subsystem experiments' (secondary)",
+    "life": "TBD - requires > 15,000 h (RFP firing) bearing/rotor life evidence; magnetic suspension exists (EV-04, qualitative)"
+   },
+   "dragcompressor_mapping": {
+    "parameters_required": [
+     "turbo_rows",
+     "turbo_area_m2 (>= A_rotor_min at u)",
+     "turbo_radius_m",
+     "rpm",
+     "turbo_kS (measured S per area)",
+     "turbo_kK (measured ln K0 per row vs species)",
+     "turbo_blade_area_frac",
+     "rotor_material",
+     "stress_safety",
+     "eta_motor",
+     "k_bear_W_per_rads",
+     "P_ctrl_W",
+     "motor_kg_per_Nm",
+     "bearing_kg",
+     "stator_mass_factor",
+     "conductance_to_sink_W_K",
+     "leak_conductance_m3_s",
+     "and for a drag back stage: n_stages, h_mm, w_mm, L_per_stage_m, xi"
+    ],
+    "parameters_sourced_today": [],
+    "model_changes_needed": [
+     "species-resolved K per row fitted to measured N2/O2 (and O or a declared surrogate) data instead of the uncited turbo_kK; atomic O is the least compressed species (EV-02 sqrt(m) scaling)",
+     "outlet pressures 0.05-1 Pa reach/exceed the 0.1 Pa (1e-3 mbar) molecular-regime limit (EV-03): the free-molecular Gaede characteristic in DragCompressor is outside its domain at the outlet; needs a transitional-regime stage characteristic from data",
+     "plenum backflow coupling (W1 FC-01 / DI-1.12): compressor sized for the self-consistent plenum, not the passive plenum",
+     "wiring measured parameters into the chain is a model change (goldens may move; HISTORY entry)"
+    ]
+   },
+   "implied_states": {
+    "availability": "PARTIAL - requirement-derived only; no published parameter set exists to run DragCompressor for this concept",
+    "mdot": "between the W1 SC-BACKFLOW flow and the upper bound, depending on the achieved inlet pumping speed (per-case S_required for b = 0.5 / 0.25 / 0.1 in requirement_envelope)",
+    "P_feed": "valve setpoint (W1 ladder, PROPOSED); requires the concept to reach CR_required",
+    "T_feed": "TBD - requires measured gas temperature rise; W1 value is the DragCompressor lumped model with the 300-500 K clamp convention (FC-04)",
+    "x_s": "model-derived from the chain-sized code-default machine (heavy species compressed more; W1 valve x_s); a measured species-resolved K replaces it",
+    "P_compressor": "pneumatic band <= 92.2 W at eta 1 % (all 36 candidate-cases); fixed motor/bearing/control loads TBD"
+   },
+   "gates": {
+    "HG-1": {
+     "result": "CONDITIONAL",
+     "basis": "pneumatic band <= 92.2 W at eta = 1 % (fixed loads TBD; the chain-sized code-default machine gives 14-89.3 W); with the 12 mN jet-power bound the bus closes at 36/36 candidate-cases on the upper-bound flow and 32/36 on the self-consistent flow; the misses (DC-S12-G20/alt200_low, DC-S12-G20/alt230_high, DC-S12-G20/alt230_low, DC-S12-G20/alt230_mean) fail for any compressor: the delivered flow is too low (raise it via HG-5)",
+     "evidence": [
+      "EV-05"
+     ],
+     "evidence_class": "model-derived"
+    },
+    "HG-1b": {
+     "result": "CONDITIONAL",
+     "basis": "within the PROPOSED 300 W allocation only if the fixed motor, bearing and control loads are; requires measured input power",
+     "evidence": [
+      "EV-05"
+     ],
+     "evidence_class": "model-derived"
+    },
+    "HG-2": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no published mass for an ABEP-scale unit; LI2015 excerpt calls the device complex and heavy (verify)",
+     "evidence": [
+      "EV-08"
+     ],
+     "evidence_class": "inferred"
+    },
+    "HG-3": {
+     "result": "CONDITIONAL",
+     "basis": "metallic (Al alloy / Ti) or coated wetted parts: thermal-AO data TBD; bare CFRP or polymer wetted parts fail the ram-yield bound unless the thermal yield is lower by >= 159x (EV-17 says 'orders of magnitude' lower: verify with a test)",
+     "evidence": [
+      "EV-16",
+      "EV-17",
+      "EV-18"
+     ],
+     "evidence_class": "inferred"
+    },
+    "HG-4": {
+     "result": "CONDITIONAL",
+     "basis": "published CR 210.2 and >= 3500 would cover the required 2.37-142 for heavy species; scaled to atomic O (EV-02, assuming the published CR is for N2): 57 (ZHENG2021) covers 31/36 self-consistent cases (35/36 upper-bound basis), 478 (LI2015) covers all; species and inlet pressure of the published values unverified",
+     "evidence": [
+      "EV-08",
+      "EV-09",
+      "EV-02"
+     ],
+     "evidence_class": "inferred"
+    },
+    "HG-5": {
+     "result": "CONDITIONAL",
+     "basis": "inlet pumping speed must be 4.74-19.2x the largest published commercial TMP speed for b = 0.25 -> a throat-spanning rotor (as in LI2015 / ZHENG2021), not a catalogue pump; stopped-rotor back-streaming needs an isolation valve (EV-04)",
+     "evidence": [
+      "EV-01",
+      "EV-03",
+      "EV-04"
+     ],
+     "evidence_class": "model-derived"
+    },
+    "HG-6": {
+     "result": "PASS",
+     "basis": "upstream of the valve; identical for hall_only / rf_hall / ecr_hall",
+     "evidence": [],
+     "evidence_class": "assumed"
+    }
+   }
+  },
+  {
+   "id": "C2",
+   "name": "molecular-drag (Holweck / Gaede) stages only, fed from the passive plenum",
+   "family": "molecular-drag (active mechanical)",
+   "published_basis": [
+    "EV-01",
+    "EV-02",
+    "EV-03"
+   ],
+   "published_performance": {
+    "compression_ratio": "high K0 for long narrow channels (EV-02); drag stages are used behind TMP blades to raise K0 (EV-03)",
+    "throughput_pumping_speed": "S = u b h / 2 (EV-01): small channel cross-section -> small speed",
+    "power": "TBD",
+    "mass": "TBD",
+    "T_feed": "TBD",
+    "rotor_material_O": "TBD",
+    "TRL": "TBD",
+    "life": "TBD"
+   },
+   "dragcompressor_mapping": {
+    "parameters_required": [
+     "n_stages",
+     "rotor_radius_m",
+     "rpm",
+     "h_mm",
+     "w_mm",
+     "L_per_stage_m",
+     "xi",
+     "rotor_material",
+     "leak_conductance_m3_s",
+     "motor/bearing/thermal fields"
+    ],
+    "parameters_sourced_today": [],
+    "model_changes_needed": [
+     "same transitional-regime and species issues as C1"
+    ]
+   },
+   "implied_states": {
+    "availability": "PROBE ONLY - DragCompressor run read-only with turbo_rows = 0 and code-default channel geometry (assumed)",
+    "mdot": "not closable: pumping speed deficit (below)",
+    "P_feed": "TBD",
+    "T_feed": "TBD",
+    "x_s": "TBD",
+    "P_compressor": "TBD"
+   },
+   "gates": {
+    "HG-1": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no sourced power data",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-1b": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no sourced power data",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-2": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no sourced mass data",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-3": {
+     "result": "CONDITIONAL",
+     "basis": "same material logic as C1",
+     "evidence": [
+      "EV-16",
+      "EV-17"
+     ],
+     "evidence_class": "inferred"
+    },
+    "HG-4": {
+     "result": "CONDITIONAL",
+     "basis": "K0 can be made large (EV-02); not the binding constraint",
+     "evidence": [
+      "EV-02"
+     ],
+     "evidence_class": "model-derived"
+    },
+    "HG-5": {
+     "result": "FAIL",
+     "basis": "as first stage: S_required(b = 0.5) / S0 = 1.08e+03-4.11e+03 with the code-default channel (worst case per candidate; DragCompressor then gives CR_active = 1, i.e. no compression at that throughput); raising b h to the needed area turns it into a throat-spanning rotor (C1). Retained only as a back stage of C1",
+     "evidence": [
+      "EV-01"
+     ],
+     "evidence_class": "model-derived"
+    },
+    "HG-6": {
+     "result": "PASS",
+     "basis": "upstream of the valve; architecture-neutral",
+     "evidence": [],
+     "evidence_class": "assumed"
+    }
+   }
+  },
+  {
+   "id": "C3",
+   "name": "passive collimated intake only (no active compressor)",
+   "family": "passive collimated-intake compression",
+   "published_basis": [
+    "EV-14"
+   ],
+   "published_performance": {
+    "compression_ratio": "passive intake compression ~100-300 (EV-14, model-derived; definitions may differ); the frozen W1 TPMC CR_passive 162-278 is of the same order",
+    "throughput_pumping_speed": "n/a",
+    "power": "0 W compressor",
+    "mass": "intake only",
+    "T_feed": "intake wall temperature (TBD)",
+    "rotor_material_O": "no rotor; intake walls see ram AO",
+    "TRL": "TBD",
+    "life": "TBD"
+   },
+   "dragcompressor_mapping": {
+    "parameters_required": [],
+    "parameters_sourced_today": [],
+    "model_changes_needed": [
+     "the chain has no 'no compressor' mode (lane-16 run_chain supports 'fixed' and 'size_for'); a bypass option is a chain change outside this lane"
+    ]
+   },
+   "implied_states": {
+    "availability": "REQUIREMENT CHECK - feed pressure = passive plenum pressure",
+    "mdot": "TBD - set by the downstream (thruster) conductance at p_passive, not by a setpoint",
+    "P_feed": "<= 0.0258 Pa (max over 36 candidate-cases) vs lowest ladder setpoint 0.05 Pa",
+    "T_feed": "TBD",
+    "x_s": "free-stream split with wall recombination (TBD)",
+    "P_compressor": "0 W"
+   },
+   "gates": {
+    "HG-1": {
+     "result": "PASS",
+     "basis": "no compressor load",
+     "evidence": [],
+     "evidence_class": "model-derived"
+    },
+    "HG-1b": {
+     "result": "PASS",
+     "basis": "no compressor load",
+     "evidence": [],
+     "evidence_class": "model-derived"
+    },
+    "HG-2": {
+     "result": "PASS",
+     "basis": "no compressor mass",
+     "evidence": [],
+     "evidence_class": "model-derived"
+    },
+    "HG-3": {
+     "result": "NOT_EVALUABLE",
+     "basis": "intake-wall AO is an intake-lane item",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-4": {
+     "result": "FAIL",
+     "basis": "CR_active = 1 < required 2.37-142: P_feed <= 0.0258 Pa is below every ladder setpoint (>= 0.05 Pa). The gate rests on the PROPOSED setpoint ladder, not on the RFP: C3 is eliminated only WITHIN the tested (W1 ladder) envelope and returns if the Phase-1 knee shows sustainment at the passive plenum pressure with a direct-feed channel",
+     "evidence": [],
+     "evidence_class": "model-derived"
+    },
+    "HG-5": {
+     "result": "NOT_EVALUABLE",
+     "basis": "backflow is the passive flux balance itself (FC-01)",
+     "evidence": [],
+     "evidence_class": "inferred"
+    },
+    "HG-6": {
+     "result": "PASS",
+     "basis": "architecture-neutral",
+     "evidence": [],
+     "evidence_class": "assumed"
+    }
+   }
+  },
+  {
+   "id": "C4",
+   "name": "cryocondensation-regeneration active intake (CRAID-type, storage-based)",
+   "family": "cryo / storage-based",
+   "published_basis": [
+    "EV-10",
+    "EV-11",
+    "EV-12",
+    "EV-13",
+    "EV-07"
+   ],
+   "published_performance": {
+    "compression_ratio": "effective 3.0e7 (EV-11, model-derived by source)",
+    "capture_efficiency": "effective 0.261 (EV-11)",
+    "throughput_pumping_speed": "batch: condense then regenerate; 31.7 min regeneration at 20 sccm for two RITs (EV-13)",
+    "power": "cryocooler 1200 W for 14 W of cryopanel cooling during condensation (EV-10)",
+    "mass": "TBD - not in the accessed text",
+    "T_feed": "regeneration at 54.5 K panel (EV-13); reservoir gas temperature TBD",
+    "rotor_material_O": "no rotor; AO assumed fully recombined by the source (EV-12, assumption)",
+    "TRL": "conceptual prototype model, numerical analysis (REF-MOON2025); integrated in-space system not demonstrated (EV-07)",
+    "life": "TBD - cryocooler life > 15,000 h not in accessed text"
+   },
+   "dragcompressor_mapping": {
+    "parameters_required": [],
+    "parameters_sourced_today": [],
+    "model_changes_needed": [
+     "DragCompressor does not apply: needs a condense/regenerate storage-cycle model (panel heat load, cryocooler COP, duty cycle vs firing time, W1 FC-08 accumulation)"
+    ]
+   },
+   "implied_states": {
+    "availability": "NOT EVALUABLE at the nine cases - no published scaling of cryocooler power with condensed flow; only the published point design",
+    "mdot": "TBD",
+    "P_feed": "TBD",
+    "T_feed": "TBD",
+    "x_s": "TBD (AO recombination assumed by source)",
+    "P_compressor": "1200 W at the published point (EV-10)"
+   },
+   "gates": {
+    "HG-1": {
+     "result": "CONDITIONAL",
+     "basis": "1200 W < 1.5 kW leaves 300 W for the Hall discharge and all other loads during condensation; if thruster and condensation run concurrently, the 12 mN jet-power bound fits at 32/36 (upper-bound flow) and 19/36 (self-consistent flow) W1 candidate-cases before any thruster loss (W1 flows used as a proxy; CRAID's own delivered flow differs)",
+     "evidence": [
+      "EV-10"
+     ],
+     "evidence_class": "model-derived"
+    },
+    "HG-1b": {
+     "result": "FAIL_AT_PUBLISHED_POINT",
+     "basis": "1200 W > PROPOSED allocation 300 W; a scaled variant is NOT_EVALUABLE (no published scaling)",
+     "evidence": [
+      "EV-10"
+     ],
+     "evidence_class": "model-derived"
+    },
+    "HG-2": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no mass in accessed text",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-3": {
+     "result": "NOT_EVALUABLE",
+     "basis": "AO handling is an assumption of the source (EV-12)",
+     "evidence": [
+      "EV-12"
+     ],
+     "evidence_class": "assumed"
+    },
+    "HG-4": {
+     "result": "PASS",
+     "basis": "effective CR 3.0e7 >> 142 (model-derived by source)",
+     "evidence": [
+      "EV-11"
+     ],
+     "evidence_class": "model-derived"
+    },
+    "HG-5": {
+     "result": "NOT_EVALUABLE",
+     "basis": "batch process; backflow during regeneration not in accessed text",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-6": {
+     "result": "PASS",
+     "basis": "upstream of the valve; architecture-neutral",
+     "evidence": [],
+     "evidence_class": "assumed"
+    }
+   }
+  },
+  {
+   "id": "C5",
+   "name": "compression + liquefaction storage (PROFAC-type)",
+   "family": "storage-based",
+   "published_basis": [
+    "EV-06",
+    "EV-07"
+   ],
+   "published_performance": {
+    "compression_ratio": "needs >= 4.86e+05 from the highest passive plenum pressure to the N2 triple point (EV-06; computed)",
+    "throughput_pumping_speed": "TBD",
+    "power": "TBD",
+    "mass": "TBD",
+    "T_feed": "TBD (cryogenic storage)",
+    "rotor_material_O": "TBD",
+    "TRL": "not demonstrated in space (EV-07)",
+    "life": "TBD"
+   },
+   "dragcompressor_mapping": {
+    "parameters_required": [],
+    "parameters_sourced_today": [],
+    "model_changes_needed": [
+     "compressor to ~12.5 kPa plus liquefier model; outside the free-molecular DragCompressor domain"
+    ]
+   },
+   "implied_states": {
+    "availability": "NOT EVALUABLE",
+    "mdot": "TBD",
+    "P_feed": "TBD",
+    "T_feed": "TBD",
+    "x_s": "TBD",
+    "P_compressor": "TBD"
+   },
+   "gates": {
+    "HG-1": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no sourced power",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-1b": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no sourced power",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-2": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no sourced mass",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-3": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no source",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-4": {
+     "result": "CONDITIONAL",
+     "basis": "requires CR >= 4.86e+05, more than three orders of magnitude above the feed need; not needed for a continuous feed",
+     "evidence": [
+      "EV-06"
+     ],
+     "evidence_class": "inferred"
+    },
+    "HG-5": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no source",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-6": {
+     "result": "PASS",
+     "basis": "architecture-neutral",
+     "evidence": [],
+     "evidence_class": "assumed"
+    }
+   }
+  },
+  {
+   "id": "C6",
+   "name": "sorption / getter storage",
+   "family": "storage-based",
+   "published_basis": [],
+   "published_performance": {
+    "compression_ratio": "TBD - no open ABEP source located or accessed in this survey",
+    "throughput_pumping_speed": "TBD - no open ABEP source located or accessed in this survey",
+    "power": "TBD - no open ABEP source located or accessed in this survey",
+    "mass": "TBD - no open ABEP source located or accessed in this survey",
+    "T_feed": "TBD - no open ABEP source located or accessed in this survey",
+    "rotor_material_O": "TBD - no open ABEP source located or accessed in this survey",
+    "TRL": "TBD - no open ABEP source located or accessed in this survey",
+    "life": "TBD - no open ABEP source located or accessed in this survey"
+   },
+   "dragcompressor_mapping": {
+    "parameters_required": [],
+    "parameters_sourced_today": [],
+    "model_changes_needed": [
+     "sorption-cycle model (TBD)"
+    ]
+   },
+   "implied_states": {
+    "availability": "NOT EVALUABLE",
+    "mdot": "TBD",
+    "P_feed": "TBD",
+    "T_feed": "TBD",
+    "x_s": "TBD",
+    "P_compressor": "TBD"
+   },
+   "gates": {
+    "HG-1": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no source accessed",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-1b": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no source accessed",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-2": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no source accessed",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-3": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no source accessed",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-4": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no source accessed",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-5": {
+     "result": "NOT_EVALUABLE",
+     "basis": "no source accessed",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-6": {
+     "result": "PASS",
+     "basis": "architecture-neutral",
+     "evidence": [],
+     "evidence_class": "assumed"
+    }
+   }
+  },
+  {
+   "id": "C7",
+   "name": "plasma / electrostatic pumping inside the ionization stage",
+   "family": "electrostatic / other",
+   "published_basis": [
+    "EV-15"
+   ],
+   "published_performance": {
+    "compression_ratio": "not quantified in the accessed text for the pumping effect alone",
+    "throughput_pumping_speed": "TBD",
+    "power": "part of the ionization-stage power",
+    "mass": "TBD",
+    "T_feed": "n/a (ions)",
+    "rotor_material_O": "n/a",
+    "TRL": "TBD",
+    "life": "TBD"
+   },
+   "dragcompressor_mapping": {
+    "parameters_required": [],
+    "parameters_sourced_today": [],
+    "model_changes_needed": [
+     "belongs to the pre-ionizer / Hall block, not the gas path"
+    ]
+   },
+   "implied_states": {
+    "availability": "OUT OF SCOPE for DI-1.4",
+    "mdot": "n/a",
+    "P_feed": "n/a",
+    "T_feed": "n/a",
+    "x_s": "n/a",
+    "P_compressor": "n/a"
+   },
+   "gates": {
+    "HG-1": {
+     "result": "NOT_EVALUABLE",
+     "basis": "out of the DI-1.4 gas-path scope",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-1b": {
+     "result": "NOT_EVALUABLE",
+     "basis": "out of the DI-1.4 gas-path scope",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-2": {
+     "result": "NOT_EVALUABLE",
+     "basis": "out of the DI-1.4 gas-path scope",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-3": {
+     "result": "NOT_EVALUABLE",
+     "basis": "out of the DI-1.4 gas-path scope",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-4": {
+     "result": "NOT_EVALUABLE",
+     "basis": "out of the DI-1.4 gas-path scope",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-5": {
+     "result": "NOT_EVALUABLE",
+     "basis": "out of the DI-1.4 gas-path scope",
+     "evidence": [],
+     "evidence_class": "assumed"
+    },
+    "HG-6": {
+     "result": "OUT_OF_SCOPE",
+     "basis": "compression by the ionization stage makes the feed state depend on the pre-ionizer, breaking the common feed boundary (RF/ECR change only the pre-ionization method); belongs to the rf_hall / ecr_hall source lanes, never to DI-1.4",
+     "evidence": [
+      "EV-15"
+     ],
+     "evidence_class": "inferred"
+    }
+   }
+  }
+ ],
+ "downselect_matrix": {
+  "C1": {
+   "HG-1": "CONDITIONAL",
+   "HG-1b": "CONDITIONAL",
+   "HG-2": "NOT_EVALUABLE",
+   "HG-3": "CONDITIONAL",
+   "HG-4": "CONDITIONAL",
+   "HG-5": "CONDITIONAL",
+   "HG-6": "PASS"
+  },
+  "C2": {
+   "HG-1": "NOT_EVALUABLE",
+   "HG-1b": "NOT_EVALUABLE",
+   "HG-2": "NOT_EVALUABLE",
+   "HG-3": "CONDITIONAL",
+   "HG-4": "CONDITIONAL",
+   "HG-5": "FAIL",
+   "HG-6": "PASS"
+  },
+  "C3": {
+   "HG-1": "PASS",
+   "HG-1b": "PASS",
+   "HG-2": "PASS",
+   "HG-3": "NOT_EVALUABLE",
+   "HG-4": "FAIL",
+   "HG-5": "NOT_EVALUABLE",
+   "HG-6": "PASS"
+  },
+  "C4": {
+   "HG-1": "CONDITIONAL",
+   "HG-1b": "FAIL_AT_PUBLISHED_POINT",
+   "HG-2": "NOT_EVALUABLE",
+   "HG-3": "NOT_EVALUABLE",
+   "HG-4": "PASS",
+   "HG-5": "NOT_EVALUABLE",
+   "HG-6": "PASS"
+  },
+  "C5": {
+   "HG-1": "NOT_EVALUABLE",
+   "HG-1b": "NOT_EVALUABLE",
+   "HG-2": "NOT_EVALUABLE",
+   "HG-3": "NOT_EVALUABLE",
+   "HG-4": "CONDITIONAL",
+   "HG-5": "NOT_EVALUABLE",
+   "HG-6": "PASS"
+  },
+  "C6": {
+   "HG-1": "NOT_EVALUABLE",
+   "HG-1b": "NOT_EVALUABLE",
+   "HG-2": "NOT_EVALUABLE",
+   "HG-3": "NOT_EVALUABLE",
+   "HG-4": "NOT_EVALUABLE",
+   "HG-5": "NOT_EVALUABLE",
+   "HG-6": "PASS"
+  },
+  "C7": {
+   "HG-1": "NOT_EVALUABLE",
+   "HG-1b": "NOT_EVALUABLE",
+   "HG-2": "NOT_EVALUABLE",
+   "HG-3": "NOT_EVALUABLE",
+   "HG-4": "NOT_EVALUABLE",
+   "HG-5": "NOT_EVALUABLE",
+   "HG-6": "OUT_OF_SCOPE"
+  }
+ },
+ "recommendation": {
+  "status": "PROPOSED for owner review (not a design freeze, not an architecture ranking)",
+  "primary": {
+   "concept": "C1",
+   "statement": "a throat-spanning bladed turbomolecular-type rotor as first stage (optionally followed by a drag or second TMP stage), metallic or coated AO-compatible wetted parts (no bare CFRP or polymer), with an isolation valve against stopped-rotor back-streaming",
+   "why": [
+    "only concept with published ABEP-specific compression data in the required range (EV-08, EV-09; both need verification)",
+    "the only surveyed mechanism that can supply the required inlet pumping speed continuously, at throat-scale rotor area (EV-01 / EV-03 bound; not demonstrated at ABEP scale)",
+    "pneumatic power is small (<= 92.2 W at eta 1 %); the fixed loads are the unknown"
+   ],
+   "conditions": [
+    "measured CR vs inlet pressure for N2, O2 and O (or an owner-accepted surrogate) covering 142 on O",
+    "measured inlet pumping speed at throat scale meeting S_required(b = 0.25)",
+    "measured electrical input power within the owner allocation",
+    "mass within the BOM allocation",
+    "thermal-AO compatibility of wetted materials",
+    "life evidence toward > 15,000 h firing"
+   ]
+  },
+  "retained_reference": {
+   "concept": "C3",
+   "statement": "passive intake without compressor is kept only as a reference branch: it fails HG-4 on the PROPOSED setpoint ladder and returns only if the Phase-1 Hall-only knee is sustainable at the passive plenum pressure (0.00227-0.0258 Pa)"
+  },
+  "watch": {
+   "concept": "C4",
+   "statement": "cryocondensation fails the PROPOSED power allocation at its published point (1.2 kW cryocooler); re-enters only with a published scaling of cryocooler power to the W1 flows"
+  },
+  "not_carried": {
+   "C2": "not viable as first stage (pumping speed); kept as a C1 back stage",
+   "C5": "compression far beyond need; storage not required by a continuous feed",
+   "C6": "no open source located",
+   "C7": "out of DI-1.4 scope (common feed boundary)"
+  },
+  "never": "the down-selection never ranks hall_only / rf_hall / ecr_hall: the compressor is COMMON_MODE (aux-bus lane: compressor cancels)"
+ },
+ "minimum_data_to_freeze_DI_1_4": [
+  {
+   "id": "T-1",
+   "what": "compression ratio vs inlet pressure (1e-3 - 1e-1 Pa) and throughput for N2 and O2 on a throat-scale bladed rotor stage (and the back stage), outlet 0.05 - 1 Pa",
+   "freezes": [
+    "turbo_kK / species K",
+    "transitional outlet characteristic"
+   ],
+   "gate": [
+    "HG-4"
+   ]
+  },
+  {
+   "id": "T-2",
+   "what": "inlet pumping speed vs rpm at throat scale against the per-case S_required(b)",
+   "freezes": [
+    "turbo_kS",
+    "turbo_area_m2",
+    "rpm"
+   ],
+   "gate": [
+    "HG-5"
+   ]
+  },
+  {
+   "id": "T-3",
+   "what": "atomic-O-bearing flow: species-resolved compression (O vs N2) and wall recombination in an AO facility (precedent EV-19), quantitative RGA per owner A3 near_cathode_rga rule for any dose claim",
+   "freezes": [
+    "x_s at the valve",
+    "O compression"
+   ],
+   "gate": [
+    "HG-4",
+    "HG-3"
+   ]
+  },
+  {
+   "id": "T-4",
+   "what": "electrical input power (motor + drive + bearings + control) at steady state and start-up, measured on the spacecraft-side DC bus (bus_power_boundary_v1 compressor term)",
+   "freezes": [
+    "eta_motor",
+    "k_bear_W_per_rads",
+    "P_ctrl_W"
+   ],
+   "gate": [
+    "HG-1",
+    "HG-1b"
+   ]
+  },
+  {
+   "id": "T-5",
+   "what": "gas temperature rise and outlet T_feed; heat rejection to the sink",
+   "freezes": [
+    "T_gas_K",
+    "conductance_to_sink_W_K",
+    "T_feed"
+   ],
+   "gate": [
+    "T_feed field"
+   ]
+  },
+  {
+   "id": "T-6",
+   "what": "thermal-energy AO exposure of the rotor/stator materials (witness mass per owner A3 metrology rule, profilometry)",
+   "freezes": [
+    "rotor_material"
+   ],
+   "gate": [
+    "HG-3"
+   ]
+  },
+  {
+   "id": "T-7",
+   "what": "flight-like unit mass incl. motor, drive, bearings, housing",
+   "freezes": [
+    "mass fields"
+   ],
+   "gate": [
+    "HG-2"
+   ]
+  },
+  {
+   "id": "T-8",
+   "what": "stopped-rotor conductance and isolation-valve leak (back-streaming)",
+   "freezes": [
+    "leak_conductance_m3_s"
+   ],
+   "gate": [
+    "HG-5"
+   ]
+  },
+  {
+   "id": "T-9",
+   "what": "life evidence toward > 15,000 h firing (bearings, rotor creep/fatigue) and the rotor angular momentum / vibration delivered to the AOCS",
+   "freezes": [
+    "life",
+    "AOCS interface (TBD)"
+   ],
+   "gate": [
+    "C-milestone"
+   ]
+  }
+ ],
+ "findings": [
+  {
+   "id": "CD-01",
+   "finding": "every DragCompressor parameter used by the W1 closure is an uncited code default; no accessed open source gives an ABEP compressor parameter set, so no concept can be run through the chain with sourced inputs today",
+   "evidence_class": "inferred"
+  },
+  {
+   "id": "CD-02",
+   "finding": "the required inlet pumping speed for b = 0.25 is 14.2-57.7 m^3/s, 4.74-19.2x the largest published commercial TMP speed (3000 l/s, EV-03); the minimum ideal rotor area at 500 m/s is 0.0568-0.231 m^2 (throat scale)",
+   "evidence_class": "model-derived"
+  },
+  {
+   "id": "CD-03",
+   "finding": "atomic O is the least-compressed species (ln K ~ sqrt(m), EV-02); the chain-sized code-default machine gives ln CR_O / ln CR_N2 = 0.718-0.749 (sqrt(16/28) = 0.756), so the valve is O-depleted relative to the inlet and HG-4 must be met on O",
+   "evidence_class": "model-derived"
+  },
+  {
+   "id": "CD-04",
+   "finding": "the compressor outlet (setpoints 0.05-1 Pa) reaches/exceeds the 0.1 Pa molecular-regime limit of TMPs (EV-03): DragCompressor's free-molecular Gaede characteristic is out of domain at the outlet; the stage characteristic there must come from data (T-1)",
+   "evidence_class": "inferred"
+  },
+  {
+   "id": "CD-05",
+   "finding": "pneumatic compression power is small (<= 92.2 W at eta = 1 %, EV-05); the compressor power is dominated by fixed motor/bearing/control loads that no accessed source quantifies (T-4)",
+   "evidence_class": "model-derived"
+  },
+  {
+   "id": "CD-06",
+   "finding": "RFP-derived power bound: 12 mN at the delivered flow needs jet power 23.1-2.44e+03 W (efficiency 1); at 4 candidate-case(s) on the self-consistent flow the 1.5 kW bus is exceeded before any compressor or loss (DC-S12-G20/alt200_low, DC-S12-G20/alt230_high, DC-S12-G20/alt230_low, DC-S12-G20/alt230_mean): those flows cannot give 12 mN within the RFP whatever the compressor, so DI-1.4 must raise the delivered flow (pumping speed, HG-5), not only compress",
+   "evidence_class": "model-derived"
+  },
+  {
+   "id": "CD-07",
+   "finding": "bare CFRP wetted blades (the repository rotor default) would recede 0.000476-0.0159 m over 26,000 h at the ram-energy yield (EV-16); thermal gas erodes far less (EV-17) but by an unmeasured factor (needed: >= 159x) -> metallic/coated parts or test T-6",
+   "evidence_class": "inferred"
+  },
+  {
+   "id": "CD-08",
+   "finding": "published ABEP compressor data are few, partly secondary and all need verification (EV-08, EV-09); none reports power, mass, T_feed or life; the down-selection therefore stays PROPOSED and the 0.030-3.14 mg/s flow range stays a candidate range (owner addendum A3)",
+   "evidence_class": "inferred"
+  }
+ ],
+ "owner_decisions": [
+  {
+   "id": "OD-C1",
+   "question": "Adopt C1 (throat-spanning bladed rotor + optional back stage) as the DI-1.4 working concept, C3 as reference branch, C4 as watch item?",
+   "proposed": "yes (PROPOSED)"
+  },
+  {
+   "id": "OD-C2",
+   "question": "Compressor power allocation inside the 1.5 kW bus",
+   "proposed": "screening level 300 W (20 %), PROPOSED; to be replaced by the owner value"
+  },
+  {
+   "id": "OD-C3",
+   "question": "Accept thermal-AO testing (T-6) or require metallic/coated wetted parts a priori?",
+   "proposed": "metallic/coated a priori; T-6 for the selected alloy/coating"
+  },
+  {
+   "id": "OD-C4",
+   "question": "Target plenum backflow fraction b (sets the rotor size)",
+   "proposed": "b = 0.25 screening target (PROPOSED)"
+  },
+  {
+   "id": "OD-C5",
+   "question": "Atomic-O surrogate policy for the compressor tests (T-1/T-3): real AO facility, or O2 plus a declared correction?",
+   "proposed": "AO facility for T-3; N2/O2 for T-1"
+  }
+ ]
+}
