@@ -11,7 +11,7 @@
   "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
   "workstream": "W3_hardware_definition"
  },
- "base_commit": "f61912ea3b66ef5c6d2fc2fa2b2cb826c2b2b239",
+ "base_commit": "7d373374dcd47eb6c2464423eb5f45a1fa14ef78",
  "date": "2026-09-27",
  "companion_document": "docs/experiments/hardware/HARDWARE_DEFINITION.md",
  "generator": "docs/experiments/hardware/build_hardware_definition.py",
@@ -812,7 +812,8 @@
     "AOL-M01",
     "AOL-M08",
     "HW-H1-05",
-    "HW-H1-06"
+    "HW-H1-06",
+    "AOL-OQ-03"
    ]
   },
   {
@@ -897,7 +898,8 @@
    "traces_to": [
     "AOL-CX-07",
     "HW-H1-07",
-    "lane 25 M12"
+    "lane 25 M12",
+    "AOL-WC-04"
    ]
   },
   {
@@ -947,7 +949,8 @@
     "MCQ-AO-01",
     "MCQ-QT-04",
     "AOL-WC-01",
-    "AOL-WC-04"
+    "AOL-WC-04",
+    "AOL-EX-01"
    ]
   },
   {
@@ -1569,7 +1572,8 @@
     "lane 19 section 6",
     "lane 10 G02",
     "AOL-CX-01",
-    "AOL-CX-05"
+    "AOL-CX-05",
+    "AOL-PT-03"
    ]
   },
   {
@@ -1645,7 +1649,8 @@
     "AOL-WC-03",
     "AOL-M04",
     "AOL-M05",
-    "HW-C1-01"
+    "HW-C1-01",
+    "AOL-OQ-04"
    ]
   },
   {
@@ -1653,7 +1658,7 @@
    "item": "C-1",
    "category": "cathode_exposure_monitoring",
    "status": "PROPOSED",
-   "text": "Cathode-exposure monitoring provisions (AOL-CX-02..05): (a) an emitter or cathode-tube temperature measurement point (thermocouple attachment or pyrometer line of sight; choice W4's); (b) a gas-sampling port near C-1 routed to the W4 residual gas analyser so O2 / H2O / N2 partial pressures near the cathode are logged during O-bearing operation; (c) heater and keeper supplies whose voltage and current are logged for every start (heater power, time to ignition, keeper ignition voltage; aligns HW-C1-05); (d) the hot-emitter O-exposure intervals of the HW-C1-03 interlock rule logged with the Xe cathode flow state. All provisions are identical in every arm; the instruments and DAQ are W4's.",
+   "text": "Cathode-exposure monitoring provisions (AOL-CX-02..05): (a) the cathode temperature provision of HW-C1-09 (owner addendum A3: cathode-tube thermocouple mandatory, emitter pyrometer line of sight where mechanically possible); (b) a gas-sampling port near C-1 routed to the W4 residual gas analyser so O2 / H2O / N2 partial pressures near the cathode are logged during O-bearing operation; (c) heater and keeper supplies whose voltage and current are logged for every start (heater power, time to ignition, keeper ignition voltage; aligns HW-C1-05); (d) the hot-emitter O-exposure intervals of the HW-C1-03 interlock rule logged with the Xe cathode flow state. All provisions are identical in every arm; the instruments and DAQ are W4's.",
    "values": {},
    "verification": {
     "method": "inspection + demonstration",
@@ -1671,7 +1676,8 @@
     "AOL-CX-04",
     "AOL-CX-05",
     "HW-C1-03",
-    "HW-C1-05"
+    "HW-C1-05",
+    "HW-C1-09"
    ]
   },
   {
@@ -1695,6 +1701,31 @@
     "AOL-PM-05",
     "AOL-M04",
     "AOL-M05"
+   ]
+  },
+  {
+   "id": "HW-C1-09",
+   "item": "C-1",
+   "category": "cathode_exposure_monitoring",
+   "status": "PROPOSED",
+   "text": "Cathode temperature provision (owner addendum A3 decisions.cathode_temperature; AOL-CX-04; W4 INS-23): (a) C-1 and its mount carry a thermocouple attachment point on the cathode tube, with its lead routed to a feedthrough; this tube thermocouple is MANDATORY, is installed before S1 and is logged continuously during firing; (b) the C-1 design and mount provide an unobstructed pyrometer line of sight to the emitter, with a viewport or window position recorded, wherever this is mechanically possible without changing the C-1 geometry, gas path or position (HW-C1-01); the C-1 design record states whether a defensible line of sight exists and how emissivity is to be treated, or why no view is possible; (c) labelling rule: the tube thermocouple reading is reported as cathode-tube temperature and never as emitter temperature; if pyrometry is not possible the emitter temperature is reported as unmeasured. Both provisions are identical in every arm and do not move when a module is exchanged. Sensor type, calibration, emissivity treatment and DAQ are W4's (INS-23); no temperature value or band is set here.",
+   "values": {},
+   "verification": {
+    "method": "inspection (tube thermocouple installed and read; pyrometer view demonstrated or its impossibility recorded in the C-1 design release)",
+    "stage": "C-1 design release and integration, before S1"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-CX-04",
+    "AOL-M04",
+    "HW-C1-07",
+    "HW-C1-01",
+    "HW-C1-03"
    ]
   },
   {
@@ -3380,6 +3411,24 @@
    "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
    "sha256": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6",
    "note": "owner execution directive, S1 readiness conditions, controls C5-C6 (immutable)"
+  },
+  "SRC-OD-A3": {
+   "kind": "repository",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+   "sha256": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e",
+   "note": "owner addendum A3: metrology, cathode temperature, quantitative RGA, k = 2, instrumentation stays v1-r2, S1a path, W3 integration review (immutable)"
+  },
+  "SRC-AOL-V3": {
+   "kind": "repository",
+   "path": "docs/experiments/lifetime_ao/ao_lifetime_register_v3.json",
+   "sha256": "4dea755df9252486f6e2234aacba17f9346c33fad722e6e562fd61cd404d6866",
+   "note": "fo_ao_lifetime_register v3 (N1; merged at a92a856); requirement set identical to v1 (SRC-AOL), wording of four W3/W4 references updated; read for the W3 integration review"
+  },
+  "SRC-INS-V1R2": {
+   "kind": "repository",
+   "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "sha256": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f",
+   "note": "W4 instrumentation definition v1-r2 (merged at a92a856); read for the W3 integration review"
   }
  },
  "compliance": {
@@ -3516,9 +3565,10 @@
     "source_id": "AOL-CX-04",
     "disposition": "ADOPTED_PARTIAL",
     "hw_requirements": [
-     "HW-C1-07"
+     "HW-C1-07",
+     "HW-C1-09"
     ],
-    "note": "measurement point adopted; sensor choice W4"
+    "note": "measurement provisions adopted (HW-C1-09 per owner addendum A3: cathode-tube thermocouple mandatory, emitter pyrometer view where mechanically possible); sensor, calibration and DAQ W4 (INS-23)"
    },
    {
     "source_id": "AOL-CX-05",
@@ -4135,6 +4185,195 @@
    "date": "2026-09-27",
    "base": "f61912ea3b66ef5c6d2fc2fa2b2cb826c2b2b239",
    "what": "control C5 integration: AO/lifetime register and magnet/coil qualification adopted (c5_integration); new requirements HW-H1-09..14, HW-MC-06..16, HW-C1-06..08, HW-PIM-14..15, HW-ELEC-04..05, HW-SVC-06; owner questions HWQ-16..21; existing ids and numeric values unchanged (trace entries added only)"
+  },
+  {
+   "date": "2026-09-27",
+   "base": "7d373374dcd47eb6c2464423eb5f45a1fa14ef78",
+   "what": "A3 bounded W3 integration review (w3_integration_review): 9 of 10 provisions PRESENT; cathode temperature ADDED as HW-C1-09 (tube thermocouple mandatory, emitter pyrometer view where possible); HW-C1-07 (a) now points to HW-C1-09; five traces_to back-traces added; AOL-CX-04 C5 row names HW-C1-09; references SRC-OD-A3, SRC-AOL-V3, SRC-INS-V1R2 added. No existing id or numeric value changed; SRC-AOL (v1) pin unchanged"
   }
- ]
+ ],
+ "w3_integration_review": {
+  "directive": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json next_execution.W3_integration_review (SRC-OD-A3)",
+  "scope": "bounded review of H-1 / C-1 / MC-1 provisions against N1 (AO/lifetime register v3, SRC-AOL-V3), N3 (magnet/coil qualification v1, SRC-MCQ) and W4 (instrumentation v1-r2, SRC-INS-V1R2); no H-1 redesign; existing requirement ids and numeric values unchanged",
+  "reviewed_against": {
+   "SRC-AOL-V3": "4dea755df9252486f6e2234aacba17f9346c33fad722e6e562fd61cd404d6866",
+   "SRC-MCQ": "53e92f4536f7b30054d3521adbd504eca725c4c6d79a6cb3b51c2fc4ce220b32",
+   "SRC-INS-V1R2": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f",
+   "SRC-OD-A3": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e"
+  },
+  "statuses": {
+   "PRESENT": "an existing HW requirement already provides it",
+   "ADDED": "a new HW requirement added by this review (id, rationale, verification in the requirement)"
+  },
+  "provisions": [
+   {
+    "provision": "replaceable serialized anode / gas distributor",
+    "status": "PRESENT",
+    "hw_requirement_ids": [
+     "HW-H1-10",
+     "HW-H1-13"
+    ],
+    "traces_to": [
+     "AOL-RC-01",
+     "AOL-PM-01",
+     "INS-19",
+     "INS-20",
+     "INS-21"
+    ],
+    "note": "removal creates H-1' (HW-H1-02)"
+   },
+   {
+    "provision": "4-wire anode-resistance leads",
+    "status": "PRESENT",
+    "hw_requirement_ids": [
+     "HW-ELEC-04"
+    ],
+    "traces_to": [
+     "AOL-RC-02",
+     "INS-21",
+     "INS-P-06"
+    ],
+    "note": "separate sense lead to a feedthrough; instrument W4"
+   },
+   {
+    "provision": "replaceable / fiducial exit wall rings",
+    "status": "PRESENT",
+    "hw_requirement_ids": [
+     "HW-H1-11"
+    ],
+    "traces_to": [
+     "AOL-RC-03",
+     "AOL-PM-03",
+     "INS-20"
+    ],
+    "note": "profilometry against fiducials at S1 end, phase boundaries, campaign end"
+   },
+   {
+    "provision": "witness-coupon locations",
+    "status": "PRESENT",
+    "hw_requirement_ids": [
+     "HW-H1-09",
+     "HW-MC-06",
+     "HW-C1-06",
+     "HW-PIM-14",
+     "HW-SVC-06"
+    ],
+    "traces_to": [
+     "AOL-WC-01",
+     "AOL-WC-02",
+     "AOL-WC-03",
+     "AOL-WC-04",
+     "AOL-WC-05",
+     "INS-19",
+     "INS-20",
+     "INS-P-12"
+    ],
+    "note": "HW-H1-09 is conditional on placement without altering flow path or anode area (fallback HW-H1-10); INS-P-12 non-interference check uses the A3 planning coverage factor k = 2 (W4 scope)"
+   },
+   {
+    "provision": "near-cathode RGA port",
+    "status": "PRESENT",
+    "hw_requirement_ids": [
+     "HW-C1-07"
+    ],
+    "traces_to": [
+     "AOL-CX-03",
+     "INS-11",
+     "INS-22"
+    ],
+    "note": "HW-C1-07 (b): sampling port at a fixed position near C-1, identical in every arm. A3 (quantitative RGA for the AO/lifetime programme; qualitative only for S1a checkout) is a calibration requirement on the W4 instrument (INS-11 / INS-22), not a change to the port"
+   },
+   {
+    "provision": "cathode temperature provision",
+    "status": "ADDED",
+    "hw_requirement_ids": [
+     "HW-C1-09",
+     "HW-C1-07"
+    ],
+    "traces_to": [
+     "AOL-CX-04",
+     "INS-23"
+    ],
+    "note": "HW-C1-07 (a) left the sensor choice open ('choice W4's'), which A3 closes",
+    "added": {
+     "id": "HW-C1-09",
+     "rationale": "owner addendum A3 decisions.cathode_temperature: cathode-tube thermocouple mandatory, emitter pyrometer where a defensible line of sight exists; tube reading never labelled emitter temperature. W4 INS-23 already assumes a tube thermocouple baseline and asks W3 for the view decision; the hardware provision was not explicit in H-1/C-1",
+     "verification": "inspection at C-1 design release and integration, before S1 (see HW-C1-09)"
+    }
+   },
+   {
+    "provision": "coil hot-spot thermocouples",
+    "status": "PRESENT",
+    "hw_requirement_ids": [
+     "HW-MC-14"
+    ],
+    "traces_to": [
+     "MCQ-W4-01",
+     "MCQ-QT-06",
+     "MCQ-S1-02",
+     "INS-24"
+    ],
+    "note": "thermocouples at the predicted hot spots; bench offset before S1"
+   },
+   {
+    "provision": "4-wire winding-temperature measurement",
+    "status": "PRESENT",
+    "hw_requirement_ids": [
+     "HW-MC-14"
+    ],
+    "traces_to": [
+     "MCQ-W4-01",
+     "MCQ-W4-02",
+     "INS-24"
+    ],
+    "note": "potential-probe leads per coil, resistance method"
+   },
+   {
+    "provision": "B(z) access",
+    "status": "PRESENT",
+    "hw_requirement_ids": [
+     "HW-H1-08",
+     "HW-MC-03",
+     "HW-MC-15"
+    ],
+    "traces_to": [
+     "AOL-PM-08",
+     "MCQ-W4-03",
+     "MCQ-QT-07",
+     "INS-09",
+     "INS-P-07"
+    ],
+    "note": "Hall-probe path anode face to beyond exit with any module installed; maps at actual coil currents"
+   },
+   {
+    "provision": "AO-facing magnetic-material coupons",
+    "status": "PRESENT",
+    "hw_requirement_ids": [
+     "HW-MC-06",
+     "HW-SVC-06",
+     "HW-H1-14"
+    ],
+    "traces_to": [
+     "AOL-WC-04",
+     "MCQ-AO-01",
+     "INS-19",
+     "INS-20"
+    ],
+    "note": "plume-exposed and shadowed pole-material (and PM + coating) coupons, B(z) with/without check"
+   }
+  ],
+  "other_a3_items": "ISO/IEC 17025 metrology scope, quantitative RGA calibration and the k = 2 planning coverage factor are W4 measurement-specification items; they need no H-1 / C-1 / MC-1 hardware change beyond the provisions above. Instrumentation stays v1-r2 (A3).",
+  "back_traces_added": [
+   "HW-H1-12 -> AOL-WC-04",
+   "HW-H1-14 -> AOL-EX-01",
+   "HW-H1-09 -> AOL-OQ-03",
+   "HW-C1-06 -> AOL-OQ-04",
+   "HW-C1-03 -> AOL-PT-03"
+  ],
+  "consumer_repin_needed": [
+   "docs/experiments/lifetime_ao/ao_lifetime_register_v3.json merged_inputs (W3 bytes)",
+   "docs/experiments/instrumentation/pinned_inputs.json (W3 bytes)",
+   "docs/experiments/s1_readiness (requirements_basis sha256 is read from disk)"
+  ]
+ }
 }

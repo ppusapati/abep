@@ -7,7 +7,7 @@
 | register (authoritative) | [`hardware_requirements_v1.json`](hardware_requirements_v1.json) |
 | derived numbers | [`build_hardware_definition.py`](build_hardware_definition.py) (`--check` recomputes, `--verify-pins` checks the inputs against their repository sources) |
 | test | `tests/test_hardware_definition.py` |
-| base commit | `f61912e` (C5 integration repair; first version at `510e464`) |
+| base commit | `7d37337` (A3 W3 integration review; C5 integration at `f61912e`; first version at `510e464`) |
 | milestone | supports **A** (as a precondition); what B and C need is in section 1 |
 
 **What this is.** It is the requirements specification for the hardware of the owner's controlled common-hardware
@@ -296,7 +296,8 @@ The machine-readable disposition of every source item is `c5_integration.rows` i
 | HW-MC-15 | MC-1 | PROPOSED | Cold and heated-soak B(z) maps at actual coil currents before S1; hot reference sensor in S1 | MCQ-QT-07, MCQ-S1-06, AOL-PM-08 |
 | HW-MC-16 | MC-1 | TBD | Sacrificial coil from the same lots, thermally cycled before S1 | MCQ-QT-05, MCQ-S1-03 |
 | HW-C1-06 | C-1 | PROPOSED | Keeper-material, unheated LaB6 and insulator coupons on the C-1 mount (unheated LaB6 is not a poisoning witness) | AOL-WC-03, AOL-M04, AOL-M05 |
-| HW-C1-07 | C-1 | PROPOSED | Emitter/tube temperature point, gas-sampling port to the RGA, logged heater/keeper supplies, hot-emitter O-exposure log | AOL-CX-02, AOL-CX-03, AOL-CX-04, AOL-CX-05 |
+| HW-C1-07 | C-1 | PROPOSED | Cathode temperature provision (now HW-C1-09), gas-sampling port to the RGA, logged heater/keeper supplies, hot-emitter O-exposure log | AOL-CX-02, AOL-CX-03, AOL-CX-04, AOL-CX-05 |
+| HW-C1-09 | C-1 | PROPOSED | Cathode-tube thermocouple (mandatory) + emitter pyrometer line of sight where mechanically possible; the tube reading is never called emitter temperature; if there is no view, emitter temperature is reported as unmeasured (owner addendum A3) | AOL-CX-04, INS-23 |
 | HW-C1-08 | C-1 | PROPOSED | C-1 disassemblable for insert, orifice and keeper inspection at campaign end | AOL-PM-05, AOL-M04, AOL-M05 |
 | HW-PIM-14 | PIM-0, PIM-RF, PIM-ECR | PROPOSED | Per-arm interstage witness set at an identical position in PIM-0/RF/ECR, on the module side of IP-DN; exchanged only at arm boundaries (HWQ-16) | AOL-WC-05, AOL-M01, AOL-M07, AOL-M10, AOL-OQ-01 |
 | HW-PIM-15 | PIM-ECR | TBD | ECR magnet: fringe field in the channel and demagnetization exposure at max Hall coil current analysed before HWQ-05; PM ECR magnets meet HW-MC-09/10 | MCQ-W3-08, MCQ-QT-09, MCQ-W3-03, MCQ-W3-04, MCQ-OQ-06 |
@@ -322,7 +323,7 @@ existing requirement, NA = not adopted):
 | AOL-CX-01 | AL | HW-C1-03 | daily Xe reference check already in HW-C1-03 |
 | AOL-CX-02 | AP | HW-C1-07, HW-C1-05 | metered heater/keeper supplies adopted; the start log is W4's DAQ |
 | AOL-CX-03 | AP | HW-C1-07 | sampling port adopted; RGA is W4's |
-| AOL-CX-04 | AP | HW-C1-07 | measurement point adopted; sensor choice W4 |
+| AOL-CX-04 | AP | HW-C1-07, HW-C1-09 | tube thermocouple mandatory + pyrometer view where possible (A3, HW-C1-09); sensor, calibration, DAQ W4 (INS-23) |
 | AOL-CX-05 | AL | HW-C1-03, HW-C1-07 | interlock rule in HW-C1-03; log W4 |
 | AOL-CX-06 | NA | — | data-logging requirement with no hardware provision beyond the existing I_d, feed and cathode metering (HW-C1-05, HW-FS-01) — needed: W4 DAQ (extinction records with feed composition and cathode state) |
 | AOL-CX-07 | A | HW-H1-12 | extends HW-H1-07 |
@@ -408,6 +409,49 @@ metering, and keeper erosion is AOL-PM-05 / HW-C1-08). See `c5_integration.ao_re
 
 **What changed in existing requirements.** Nothing in text or value: only `traces_to` entries were added (HW-C1-03, HW-C1-05,
 HW-H1-02, HW-H1-04, HW-H1-05, HW-H1-07, HW-MC-02..04, HW-PIM-03, HW-PIM-04, HW-ENV-08). No adopted item forced a numeric change.
+
+### 4.9 Owner addendum A3: bounded W3 integration review (no H-1 redesign)
+
+Owner addendum A3 (`docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json`,
+`next_execution.W3_integration_review`) asks for one bounded check. H-1 must carry ten named provisions, checked against
+N1 (AO/lifetime register v3), N3 (magnet/coil qualification v1) and W4 (instrumentation v1-r2). The sha256 pins are in
+`w3_integration_review.reviewed_against`.
+
+| provision | status | HW ids | traces (AOL / MCQ / INS) |
+|---|---|---|---|
+| replaceable serialized anode / gas distributor | PRESENT | HW-H1-10, HW-H1-13 | AOL-RC-01, AOL-PM-01, INS-19, INS-20, INS-21 |
+| 4-wire anode-resistance leads | PRESENT | HW-ELEC-04 | AOL-RC-02, INS-21, INS-P-06 |
+| replaceable / fiducial exit wall rings | PRESENT | HW-H1-11 | AOL-RC-03, AOL-PM-03, INS-20 |
+| witness-coupon locations | PRESENT | HW-H1-09, HW-MC-06, HW-C1-06, HW-PIM-14, HW-SVC-06 | AOL-WC-01..05, INS-19, INS-20, INS-P-12 |
+| near-cathode RGA port | PRESENT | HW-C1-07 (b) | AOL-CX-03, INS-11, INS-22 |
+| cathode temperature provision | **ADDED** | **HW-C1-09** (HW-C1-07 (a) now points to it) | AOL-CX-04, INS-23 |
+| coil hot-spot thermocouples | PRESENT | HW-MC-14 | MCQ-W4-01, MCQ-QT-06, MCQ-S1-02, INS-24 |
+| 4-wire winding-temperature measurement | PRESENT | HW-MC-14 | MCQ-W4-01, MCQ-W4-02, INS-24 |
+| B(z) access | PRESENT | HW-H1-08, HW-MC-03, HW-MC-15 | AOL-PM-08, MCQ-W4-03, MCQ-QT-07, INS-09, INS-P-07 |
+| AO-facing magnetic-material coupons | PRESENT | HW-MC-06, HW-SVC-06, HW-H1-14 | AOL-WC-04, MCQ-AO-01, INS-19, INS-20 |
+
+**Why HW-C1-09 was added.** HW-C1-07 (a) left the choice between a thermocouple and a pyrometer to W4. A3 closes that
+choice. A cathode-tube thermocouple is **mandatory**. An emitter pyrometer is added where there is a defensible line of
+sight and emissivity treatment. The tube reading is never labelled emitter temperature. Without pyrometry, emitter
+temperature is reported as unmeasured. W4 INS-23 already assumes this and asks W3 for the view decision. HW-C1-09 makes
+the hardware provision explicit and puts the view decision in the C-1 design record. It sets no temperature value.
+
+**Other A3 items.** A3 also sets:
+
+- the ISO/IEC 17025 metrology scope;
+- quantitative RGA calibration for the AO/lifetime programme (qualitative RGA only for S1a checkout);
+- the k = 2 planning coverage factor for the INS-P-12 witness-holder check.
+
+These are W4 measurement-specification items. They need no H-1, C-1 or MC-1 change beyond the provisions above.
+
+**Other changes.**
+
+- Five back-traces that the AO register v3 found missing or text-only were added as `traces_to` entries: HW-H1-12 to
+  AOL-WC-04, HW-H1-14 to AOL-EX-01, HW-H1-09 to AOL-OQ-03, HW-C1-06 to AOL-OQ-04 and HW-C1-03 to AOL-PT-03.
+- No existing id or numeric value changed. The C5 source pin SRC-AOL (v1) is unchanged; the requirement set of v3 is the
+  same.
+- Consumers that pin this register's bytes must re-pin: the AO register (`merged_inputs`), W4 (`pinned_inputs.json`)
+  and the S1 readiness gate (its `requirements_basis`).
 
 ## 5. Derived numbers (model-derived; `build_hardware_definition.py`)
 
