@@ -10,7 +10,10 @@ Checks docs/experiments/hardware/hardware_requirements_v1.json:
     its bus components and the inlet state may differ; the bus components match abep_sim.arch_boundary;
   - no screening candidate, no P5 calibration-nuisance key as a variable, no architecture winner;
   - the derived numbers equal a fresh recomputation by the committed generator, and fail loudly on missing inputs;
-  - the companion document names every requirement and owner-question id.
+  - the companion document names every requirement and owner-question id;
+  - control C5: every requirement of the merged AO/lifetime register (AOL-*) and magnet/coil qualification (MCQ-*) has a
+    disposition in c5_integration, adopted rows name existing HW requirements that trace back to the source id, and
+    the pinned sha256 of both registers and of the owner decision files match when those files are present.
 Pinned inputs are cross-checked against their repository sources only when those files exist (they are merged lanes);
 no other lane's in-progress path is required.
 """
@@ -172,7 +175,10 @@ def test_requirements_well_formed(reg):
     # the lane brief's coverage list
     for c in ("operating_envelope", "materials", "start_transfer", "gas_interface", "electrical_interface",
               "rf_microwave_interface", "magnetic_interaction", "bz_measurability", "installation_reproducibility",
-              "removability", "thermal", "cathode", "hall_accelerator", "magnetic_circuit"):
+              "removability", "thermal", "cathode", "hall_accelerator", "magnetic_circuit",
+              # control C5 (execution directive A2): AO/lifetime and magnet/coil provisions
+              "witness_coupons", "replaceable_components", "cathode_exposure_monitoring", "post_test_metrology",
+              "magnet_coil_qualification"):
         assert c in cats, c
 
 
@@ -292,3 +298,85 @@ def test_document_covers_register(reg):
         assert q["id"] in doc
     for k in ("DRAFT", "Milestones", "PROPOSED", "TBD", "hall_only", "rf_hall", "ecr_hall"):
         assert k in doc
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Control C5 (docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json): AO/lifetime + magnet/coil
+C5_SOURCES = {"SRC-AOL": "docs/experiments/lifetime_ao/ao_lifetime_register_v1.json",
+              "SRC-MCQ": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json"}
+DISPOSITIONS = {"ADOPTED", "ADOPTED_PARTIAL", "ALIGNED", "NOT_ADOPTED"}
+
+
+def _sha(path):
+    import hashlib
+    with open(path, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+def test_c5_rows_well_formed(reg):
+    c5 = reg["c5_integration"]
+    hw = {r["id"]: r for r in reg["requirements"]}
+    qtext = json.dumps(reg["owner_questions"], ensure_ascii=False)
+    seen = set()
+    for row in c5["rows"]:
+        sid = row["source_id"]
+        assert re.fullmatch(r"(AOL|MCQ)-[A-Z0-9]+-\d\d", sid), sid
+        assert sid not in seen, sid
+        seen.add(sid)
+        assert row["disposition"] in DISPOSITIONS, sid
+        for h in row["hw_requirements"]:
+            assert h in hw, (sid, h)
+        if row["disposition"] in {"ADOPTED", "ADOPTED_PARTIAL"}:
+            # adopted into a requirement that traces back, or recorded as an owner question naming the source id
+            assert any(sid in hw[h]["traces_to"] for h in row["hw_requirements"]) or sid in qtext, sid
+        if row["disposition"] == "ALIGNED":
+            assert row["hw_requirements"] or row["note"], sid
+        if row["disposition"] == "NOT_ADOPTED":
+            assert row["note"] and row.get("needed"), sid
+    # every new (C5) requirement traces to at least one AOL-/MCQ- id
+    for r in reg["requirements"]:
+        if r["category"] in {"witness_coupons", "replaceable_components", "cathode_exposure_monitoring",
+                             "post_test_metrology", "magnet_coil_qualification"}:
+            assert any(t.startswith(("AOL-", "MCQ-")) for t in r["traces_to"]), r["id"]
+
+
+def test_c5_core_items_adopted(reg):
+    """The directive's named C5 items are hardware requirements, not only cross-references."""
+    disp = {r["source_id"]: r["disposition"] for r in reg["c5_integration"]["rows"]}
+    for sid in ("AOL-WC-02", "AOL-WC-03", "AOL-WC-04", "AOL-WC-05", "AOL-RC-01", "AOL-RC-02", "AOL-RC-03",
+                "AOL-PM-05", "AOL-PM-06", "AOL-CX-07", "MCQ-W3-01", "MCQ-W3-03", "MCQ-W3-08", "MCQ-QT-02",
+                "MCQ-QT-06", "MCQ-QT-09", "MCQ-OQ-05"):
+        assert disp[sid] == "ADOPTED", sid
+    for sid in ("AOL-WC-01", "AOL-CX-03", "AOL-CX-04", "AOL-PM-01", "MCQ-W4-01"):
+        assert disp[sid] in {"ADOPTED", "ADOPTED_PARTIAL"}, sid
+    for i in range(1, 9):
+        assert disp[f"MCQ-S1-{i:02d}"] == "ADOPTED"
+    hrr = " ".join(reg["hardware_readiness_review"]["entry_criteria"])
+    assert "MCQ-S1-01..08" in hrr and "HW-H1-13" in hrr
+    assert "no_life_extrapolation" in reg["compliance"]
+
+
+@pytest.mark.parametrize("ref", sorted(C5_SOURCES))
+def test_c5_covers_every_source_requirement(reg, ref):
+    path = os.path.join(ROOT, C5_SOURCES[ref])
+    if not os.path.exists(path):
+        pytest.skip(f"{C5_SOURCES[ref]} not in this checkout")
+    assert _sha(path) == reg["references"][ref]["sha256"] == reg["c5_integration"]["sources"][ref], (
+        f"{C5_SOURCES[ref]} changed since the C5 integration; re-run the integration")
+    src = _load(path)
+    ids = {r["id"] for r in src["requirements"]}
+    if ref == "SRC-MCQ":
+        ids |= {x["id"] for x in src["s1_gate_items"]} | {x["id"] for x in src["qualification_tests"]}
+    covered = {r["source_id"] for r in reg["c5_integration"]["rows"]}
+    assert ids <= covered, sorted(ids - covered)
+    assert covered & ids
+
+
+def test_owner_decision_pins(reg):
+    for ref in ("SRC-OD-PIVOT", "SRC-OD-A1", "SRC-OD-A2"):
+        r = reg["references"][ref]
+        path = os.path.join(ROOT, r["path"])
+        if not os.path.exists(path):
+            pytest.skip(f"{r['path']} not in this checkout")
+        assert _sha(path) == r["sha256"], ref
+    assert reg["references"]["SRC-OD-PIVOT"]["sha256"].startswith("5a5adb81")
