@@ -11,7 +11,7 @@
   "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
   "workstream": "W3_hardware_definition"
  },
- "base_commit": "510e464fb8e128e4cf3325572a4d36ad33a4899d",
+ "base_commit": "f61912ea3b66ef5c6d2fc2fa2b2cb826c2b2b239",
  "date": "2026-09-27",
  "companion_document": "docs/experiments/hardware/HARDWARE_DEFINITION.md",
  "generator": "docs/experiments/hardware/build_hardware_definition.py",
@@ -69,12 +69,13 @@
    "support": "YES (as a precondition)",
    "what": "Defines the common hardware whose measurements produce the milestone-A statements: paired R_arch classes (Phase 2) and the absolute gate (Phase 3) for 'architecture X is baseline provided ...'. Makes the hardware identity across arms checkable (identity matrix, verification per configuration change).",
    "next_needed": [
-    "owner decisions HWQ-01..HWQ-15",
+    "owner decisions HWQ-01..HWQ-21",
     "LOCK-1 (W2, fo_lock1_decision_brief) with D-01..D-15 decided",
     "W1 feed test points (fo_feed_state_closure) for the flow and pressure ranges",
     "W4 instrumentation ranges and uncertainty (fo_instrumentation_definition)",
     "a Vyovrinda H-1 design release (geometry, magnetic circuit, B(z)) and module designs",
-    "hardware readiness review HRR before S1"
+    "hardware readiness review HRR before S1",
+    "C5 AO/lifetime and magnet/coil provisions designed in and baselined (c5_integration; HRR)"
    ]
   },
   "B": {
@@ -95,7 +96,8 @@
     "wall and anode life evidence against > 15,000 h firing (lane 32 H1-H9; this campaign gives only pre/post inspection)",
     "cathode life and O-exposure qualification (lane 10/19 gaps)",
     "flight PPU / generator efficiencies",
-    "mission closure"
+    "mission closure",
+    "coil EIS life basis at the measured hot spot and permanent-magnet irreversible-loss data (HW-MC-07, HW-MC-09); ground AO exposure results (AOL-EX-01..03)"
    ]
   }
  },
@@ -554,7 +556,10 @@
    "identical_across_arms": true,
    "traces_to": [
     "lane 25 run_counts",
-    "lane 32 H6"
+    "lane 32 H6",
+    "AOL-PM-01",
+    "AOL-PM-03",
+    "AOL-LF-02"
    ]
   },
   {
@@ -599,7 +604,10 @@
    "identical_across_arms": true,
    "traces_to": [
     "lane 25 section 2",
-    "lane 06 CFG-B replicate builds"
+    "lane 06 CFG-B replicate builds",
+    "AOL-RC-01",
+    "HW-H1-10",
+    "HW-H1-11"
    ]
   },
   {
@@ -658,7 +666,9 @@
    "traces_to": [
     "lane 17 INV-G2",
     "lane 32 H6",
-    "wall_life gaps G1-G10"
+    "wall_life gaps G1-G10",
+    "AOL-PM-03",
+    "HW-H1-11"
    ]
   },
   {
@@ -687,7 +697,10 @@
    "traces_to": [
     "LIT-CIFALI2011",
     "LIT-AFG2022",
-    "lane 17 EV-W2"
+    "lane 17 EV-W2",
+    "AOL-WC-02",
+    "AOL-OQ-03",
+    "HW-H1-10"
    ]
   },
   {
@@ -736,7 +749,9 @@
    ],
    "identical_across_arms": true,
    "traces_to": [
-    "lane 25 M12"
+    "lane 25 M12",
+    "AOL-CX-07",
+    "HW-H1-12"
    ]
   },
   {
@@ -766,6 +781,173 @@
    "traces_to": [
     "lane 17 B(z) interface",
     "lane 25 M11"
+   ]
+  },
+  {
+   "id": "HW-H1-09",
+   "item": "H-1",
+   "category": "witness_coupons",
+   "status": "TBD",
+   "text": "Anode-material witness at the gas-distributor region (AOL-WC-02): H-1 carries a witness coupon of the anode material (and owner-selected oxidation-resistant candidates, AOL-OQ-03) at the distributor region ONLY if the H-1 design can place it without altering the flow path or the anode area. The placement decision and its reasoning are recorded with the H-1 design release (HW-H1-03). If it cannot be placed, the replaceable serialized anode (HW-H1-10) is the anode witness. Its position is identical in every arm.",
+   "values": {
+    "distributor_witness_placement_feasible": {
+     "value": null,
+     "unit": "-",
+     "status": "TBD",
+     "requires": "TBD — requires the H-1 design release (distributor geometry and anode area, HW-H1-03)"
+    }
+   },
+   "verification": {
+    "method": "inspection + analysis",
+    "stage": "H-1 design release, before S1"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-WC-02",
+    "AOL-M01",
+    "AOL-M08",
+    "HW-H1-05",
+    "HW-H1-06"
+   ]
+  },
+  {
+   "id": "HW-H1-10",
+   "item": "H-1",
+   "category": "replaceable_components",
+   "status": "PROPOSED",
+   "text": "Replaceable, serialized anode (AOL-RC-01): the H-1 anode, and the gas distributor if it is integral with it, shall be removable and re-installable with a documented torque and alignment procedure, carry a serial number and receive baseline metrology before first ignition (HW-H1-13). Removal happens only at pre-registered phase boundaries; under HW-H1-02 every removal and re-installation creates H-1' with a new HW-0 reference and a new S1b series, and no paired comparison crosses it.",
+   "values": {
+    "anode_torque_alignment_procedure": {
+     "value": null,
+     "unit": "-",
+     "status": "TBD",
+     "requires": "TBD — requires the H-1 design release (anode fixation design)"
+    }
+   },
+   "verification": {
+    "method": "inspection + demonstration",
+    "stage": "H-1 integration (before S1); every removal"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-RC-01",
+    "AOL-M01",
+    "HW-H1-02"
+   ]
+  },
+  {
+   "id": "HW-H1-11",
+   "item": "H-1",
+   "category": "replaceable_components",
+   "status": "PROPOSED",
+   "text": "Replaceable exit-region wall rings with fiducials (AOL-RC-03): the exit-region channel wall shall be separate replaceable rings of the single wall grade (HW-H1-04), carrying fiducial reference marks for profilometry; the ring geometry and as-built dimensions are part of the released geometry (HW-H1-03). The ring profile is measured against the fiducials at S1 end, at each phase boundary and at campaign end (AOL-PM-03; aligns HW-H1-04 and HW-ENV-08). Ring replacement creates H-1' (HW-H1-02).",
+   "values": {
+    "wall_ring_axial_extent": {
+     "value": null,
+     "unit": "m",
+     "status": "TBD",
+     "requires": "TBD — requires the H-1 design release and the erosion-zone location (lane 32; no Vyovrinda value exists)"
+    }
+   },
+   "verification": {
+    "method": "inspection + test (profilometry)",
+    "stage": "before S1; S1 end; each phase boundary; campaign end"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-RC-03",
+    "AOL-PM-03",
+    "AOL-M02",
+    "AOL-M03",
+    "HW-H1-04"
+   ]
+  },
+  {
+   "id": "HW-H1-12",
+   "item": "H-1",
+   "category": "thermal",
+   "status": "PROPOSED",
+   "text": "Life-mechanism thermocouples (AOL-CX-07), extending HW-H1-07: thermocouples on the anode, on each exit-region wall ring (HW-H1-11) and next to each witness coupon (HW-H1-09, HW-MC-06, HW-C1-06, HW-PIM-14, HW-SVC-06), at fixed recorded positions identical in every arm. Channel count, sensor type and DAQ are W4's.",
+   "values": {},
+   "verification": {
+    "method": "inspection",
+    "stage": "H-1 integration, before S1"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-CX-07",
+    "HW-H1-07",
+    "lane 25 M12"
+   ]
+  },
+  {
+   "id": "HW-H1-13",
+   "item": "H-1, C-1, MC-1, PIM-*, SVC-1",
+   "category": "post_test_metrology",
+   "status": "PROPOSED",
+   "text": "Post-test metrology provisions (AOL-PM-01, AOL-PM-04, AOL-DC-01): every witness coupon and replaceable part (anode, wall rings, C-1 keeper, module interstage witness set) carries a serial number and a position/indexing mark so its installed position is recorded; it is removable without disturbing MC-1 or the anode alignment beyond what HW-H1-02 already classifies; it receives baseline metrology before first ignition; removal happens only at pre-registered boundaries (S1 end, phase boundaries, arm boundaries for HW-PIM-14, campaign end; AOL-PT-04); removed items travel in sealed dry containers with a custody record under the W5 data-custody plan. The metrology methods, instruments, uncertainties and the dehydrated-mass protocol are W4's (AOL-PM-02, AOL-PM-04), not specified here.",
+   "values": {},
+   "verification": {
+    "method": "inspection",
+    "stage": "before S1 first ignition; every removal"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-PM-01",
+    "AOL-PM-04",
+    "AOL-DC-01",
+    "AOL-PT-04",
+    "HW-ENV-08"
+   ]
+  },
+  {
+   "id": "HW-H1-14",
+   "item": "H-1, MC-1",
+   "category": "materials",
+   "status": "PROPOSED",
+   "text": "Material-lot traceability (AOL-EX-02, MCQ-AO-01, MCQ-QT-04): witness coupons (HW-H1-09, HW-MC-06, HW-C1-06, HW-PIM-14, HW-SVC-06) and ground-exposure coupons are cut from the same material lots as the installed parts: wall grade, anode material, pole/core material (HW-MC-13), permanent-magnet grade with its coating if any (HW-MC-09), and magnet-wire enamel. Lot ids are recorded in the H-1 configuration record. The ground exposures themselves are owner/facility items (AOL-EX-01..03).",
+   "values": {},
+   "verification": {
+    "method": "inspection (lot records)",
+    "stage": "H-1 procurement and integration, before S1"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-EX-02",
+    "MCQ-AO-01",
+    "MCQ-QT-04",
+    "AOL-WC-01",
+    "AOL-WC-04"
    ]
   },
   {
@@ -816,7 +998,8 @@
    "identical_across_arms": true,
    "traces_to": [
     "lane 25 M2, M11",
-    "CLAUDE.md next work 1"
+    "CLAUDE.md next work 1",
+    "MCQ-W4-02"
    ]
   },
   {
@@ -847,7 +1030,10 @@
     "lane 25 M11",
     "lane 37 H6",
     "docs/hallmap/ P6",
-    "W5 held-out candidate"
+    "W5 held-out candidate",
+    "AOL-PM-08",
+    "MCQ-W4-03",
+    "HW-MC-15"
    ]
   },
   {
@@ -876,7 +1062,10 @@
    "identical_across_arms": true,
    "traces_to": [
     "lane 25 section 12",
-    "HWQ-13"
+    "HWQ-13",
+    "AOL-PM-08",
+    "MCQ-QT-07",
+    "HW-MC-15"
    ]
   },
   {
@@ -910,6 +1099,359 @@
    "traces_to": [
     "lane 17 INV-B3",
     "lane 25 section 6 variance model"
+   ]
+  },
+  {
+   "id": "HW-MC-06",
+   "item": "MC-1",
+   "category": "witness_coupons",
+   "status": "PROPOSED",
+   "text": "Magnetic-circuit material witness pair (AOL-WC-04, MCQ-AO-01): MC-1 carries one pole-material coupon at a plume-exposed position near the outer pole face and one at a shadowed position, of the selected pole/core grade (HW-MC-13) and, if a permanent magnet is used, of that grade with its flight coating; each with a thermocouple (HW-H1-12). Because a pole-material coupon is ferromagnetic, its effect on B(z) is checked by an M0 map with and without the coupons against the INV-B3 tolerance (HW-MC-03, HW-PIM-06) before S1. The pole faces are accessible for a visual/XPS inspection at campaign end (AOL-PM-08).",
+   "values": {
+    "coupon_positions": {
+     "value": null,
+     "unit": "-",
+     "status": "TBD",
+     "requires": "TBD — requires the MC-1 design release and the plume back-flow geometry (AOL-M06)"
+    }
+   },
+   "verification": {
+    "method": "inspection + B(z) map with/without coupons",
+    "stage": "before S1; campaign end"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-WC-04",
+    "AOL-PM-08",
+    "AOL-M06",
+    "MCQ-AO-01"
+   ]
+  },
+  {
+   "id": "HW-MC-07",
+   "item": "MC-1",
+   "category": "magnet_coil_qualification",
+   "status": "PROPOSED",
+   "text": "Coil insulation system (MCQ-W3-01, MCQ-QT-01, MCQ-S1-01): the H-1 winding electrical insulation system (EIS) is selected from candidates with a supplier-stated thermal class AND a thermal-endurance basis; the class is compared with the MEASURED hot-spot temperature (HW-MC-14), never with the resistance-method average. The EIS life basis at the hot-spot temperature covers the RFP firing time plus an owner margin (MCQ-PT-04). The EIS family is an owner decision (HWQ-20).",
+   "values": {
+    "eis_life_basis_min_h": {
+     "value": 15000,
+     "unit": "h",
+     "status": "RFP",
+     "evidence_class": "assumed",
+     "source": [
+      "SRC-RFP-CONSTANTS",
+      "SRC-MCQ"
+     ],
+     "locator": "abep_sim/constants.py RFPConstraints.ignition_hours ('>15,000 h'); magnet_coil_qualification_v1.json MCQ-PT-04"
+    },
+    "eis_life_margin": {
+     "value": null,
+     "unit": "h",
+     "status": "TBD",
+     "requires": "TBD — requires an owner decision (MCQ-PT-04)"
+    }
+   },
+   "verification": {
+    "method": "analysis + test (MCQ-QT-01, MCQ-QT-06)",
+    "stage": "material data before S1; coil life test before Milestone C"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "MCQ-W3-01",
+    "MCQ-QT-01",
+    "MCQ-PT-04",
+    "MCQ-S1-01"
+   ]
+  },
+  {
+   "id": "HW-MC-08",
+   "item": "MC-1, PS-C",
+   "category": "magnet_coil_qualification",
+   "status": "TBD",
+   "text": "Coil and magnet operating limits (MCQ-W3-02, MCQ-S1-08): the coil hot-spot design limit is the EIS class minus an owner margin (MCQ-PT-01; EEE-INST-002 derating is reference evidence only, MCQ-OQ-03). The maximum coil current, maximum hot-spot and magnet temperatures and the abort rule are defined for the S1 run sheet (execution directive S1 readiness condition 'safety / operational limits defined').",
+   "values": {
+    "hot_spot_margin_below_eis_class": {
+     "value": null,
+     "unit": "K",
+     "status": "TBD",
+     "requires": "TBD — requires an owner decision (MCQ-PT-01, HWQ-20)"
+    },
+    "coil_current_max": {
+     "value": null,
+     "unit": "A",
+     "status": "TBD",
+     "requires": "TBD — requires the MC-1 design and the H-1 thermal model (MCQ h1_requirement_basis operating_temperatures)"
+    },
+    "magnet_temperature_max": {
+     "value": null,
+     "unit": "degC",
+     "status": "TBD",
+     "requires": "TBD — requires the selected magnet grade and HW-MC-09 working-point analysis"
+    }
+   },
+   "verification": {
+    "method": "analysis + test (MCQ-QT-06)",
+    "stage": "before S1 (run sheet)"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "MCQ-W3-02",
+    "MCQ-PT-01",
+    "MCQ-S1-08",
+    "MCQ-OQ-03"
+   ]
+  },
+  {
+   "id": "HW-MC-09",
+   "item": "MC-1",
+   "category": "magnet_coil_qualification",
+   "status": "PROPOSED",
+   "text": "Permanent magnets in MC-1, if any (HWQ-19; MCQ-W3-03, MCQ-QT-02, MCQ-S1-05): grade, coating, magnetization lot and design permeance coefficient are recorded. The maximum magnet temperature is below the supplier maximum use temperature AND the working point at that temperature, at the ACTUAL design permeance coefficient including the opposing field of the coils at the maximum coil current, lies above the knee of the supplier demagnetization curve quoted at or above that temperature (supplier maxima assume a low or unspecified load line). A per-lot irreversible-loss (demagnetization) test at the design temperature and permeance coefficient is done before S1; its acceptance (MCQ-PT-02) is an owner value tied to the INV-B3 tolerance. The same applies to a permanent ECR magnet (HW-PIM-15).",
+   "values": {
+    "design_permeance_coefficient": {
+     "value": null,
+     "unit": "-",
+     "status": "TBD",
+     "requires": "TBD — requires the MC-1 magnetostatic design (only if HWQ-19 selects permanent magnets)"
+    },
+    "irreversible_loss_acceptance": {
+     "value": null,
+     "unit": "-",
+     "status": "TBD",
+     "requires": "TBD — requires an owner decision tied to the INV-B3 tolerance (MCQ-PT-02)"
+    }
+   },
+   "verification": {
+    "method": "analysis + test (MCQ-QT-02)",
+    "stage": "before S1"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "MCQ-W3-03",
+    "MCQ-QT-02",
+    "MCQ-PT-02",
+    "MCQ-S1-05"
+   ]
+  },
+  {
+   "id": "HW-MC-10",
+   "item": "MC-1",
+   "category": "magnet_coil_qualification",
+   "status": "PROPOSED",
+   "text": "Vacuum and oxygen compatibility of coils and magnets (MCQ-W3-04, MCQ-W3-05, MCQ-QT-03, MCQ-S1-04): permanent magnets are coated or encapsulated for vacuum and oxygen exposure per the supplier recommendation; coil, potting, leads and magnet coatings are bake/outgassing screened before S1 against the owner's screen (MCQ-PT-03, PROPOSED there, not restated here); porous ceramic-insulated windings, if chosen (HWQ-20), are baked out per the supplier instruction recorded in MCQ-W3-05 and stored with desiccant, and the coil bake profile is part of the H-1 integration procedure. The same applies to PIM-ECR magnets (HW-PIM-15).",
+   "values": {},
+   "verification": {
+    "method": "inspection + test (MCQ-QT-03, MCQ-QT-04)",
+    "stage": "before S1 and at H-1 integration"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "MCQ-W3-04",
+    "MCQ-W3-05",
+    "MCQ-QT-03",
+    "MCQ-PT-03",
+    "MCQ-S1-04",
+    "AOL-M06"
+   ]
+  },
+  {
+   "id": "HW-MC-11",
+   "item": "MC-1",
+   "category": "magnet_coil_qualification",
+   "status": "TBD",
+   "text": "Coil electrical design (MCQ-W3-06): turn-to-turn and layer-to-layer voltages stay below the wire's dielectric rating with an owner margin, and the coil has ground insulation independent of the enamel. Verified by the insulation-resistance/withstand series (HW-ELEC-05, MCQ-QT-08).",
+   "values": {
+    "dielectric_margin": {
+     "value": null,
+     "unit": "V",
+     "status": "TBD",
+     "requires": "TBD — requires the selected conductor's rating (MCQ-EM-*) and an owner margin"
+    }
+   },
+   "verification": {
+    "method": "analysis + test (MCQ-QT-08)",
+    "stage": "coil design; baseline before S1"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "MCQ-W3-06",
+    "MCQ-QT-08"
+   ]
+  },
+  {
+   "id": "HW-MC-12",
+   "item": "MC-1",
+   "category": "magnetic_interaction",
+   "status": "PROPOSED",
+   "text": "No unqualified ferromagnetic parts near MC-1 (MCQ-W3-07; extends HW-PIM-03 to MC-1's own conductors, fasteners, witness holders and instrumentation): no ferromagnetic conductor (e.g. a nickel-clad conductor option), fastener or structure near MC-1 unless the magnetostatic model and an M0 vs M0b B(z) comparison show its effect within the INV-B3 tolerance (HW-PIM-06).",
+   "values": {},
+   "verification": {
+    "method": "analysis + B(z) map (MCQ-QT-07, MCQ-QT-09)",
+    "stage": "design; S1a"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "MCQ-W3-07",
+    "HW-PIM-03",
+    "lane 17 INV-B1, INV-B3"
+   ]
+  },
+  {
+   "id": "HW-MC-13",
+   "item": "MC-1",
+   "category": "materials",
+   "status": "TBD",
+   "text": "Soft-magnetic pole/core material (MCQ-OQ-05): the MC-1 pole pieces and core are of a soft-magnetic grade selected with sourced properties (B-H curve and saturation at the operating temperature, their temperature dependence up to the maximum pole temperature, vacuum outgassing and oxygen-exposure behaviour). The grade is not selected (HWQ-18); it is needed by the witness pair (HW-MC-06), lot traceability (HW-H1-14) and the B(z)-versus-temperature test (HW-MC-15).",
+   "values": {
+    "pole_core_grade": {
+     "value": null,
+     "unit": "-",
+     "status": "TBD",
+     "requires": "TBD — requires an owner decision (HWQ-18, MCQ-OQ-05) with sourced material data"
+    },
+    "pole_temperature_max": {
+     "value": null,
+     "unit": "degC",
+     "status": "TBD",
+     "requires": "TBD — requires the H-1 thermal model (MCQ h1_requirement_basis pole_piece_C)"
+    }
+   },
+   "verification": {
+    "method": "inspection (material certificate) + test (HW-MC-15)",
+    "stage": "before H-1 procurement"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "MCQ-OQ-05",
+    "MCQ-QT-07",
+    "AOL-WC-04"
+   ]
+  },
+  {
+   "id": "HW-MC-14",
+   "item": "MC-1, PS-C",
+   "category": "magnet_coil_qualification",
+   "status": "TBD",
+   "text": "Coil hot-spot measurement provisions (MCQ-W4-01..03, MCQ-QT-06, MCQ-S1-02): each coil has potential-probe (4-wire) leads for the resistance-method average temperature and thermocouples at the predicted hot spots; the hot-spot/average offset is measured on the bench with the energized coil in vacuum before S1 and confirmed hot in S1. Coil current and coil voltage are recorded per reading from current-controlled supplies (aligns HW-MC-02). Every B(z) map record carries the coil currents, the coil average and hot-spot temperatures and the magnet temperatures at mapping time. Channel map and DAQ are W4's.",
+   "values": {
+    "hot_spot_locations": {
+     "value": null,
+     "unit": "-",
+     "status": "TBD",
+     "requires": "TBD — requires the H-1 thermal model (lane 15 hall_magnet inputs; MCQ h1_requirement_basis)"
+    }
+   },
+   "verification": {
+    "method": "test (MCQ-QT-06)",
+    "stage": "bench before S1; S1 hot operation"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "MCQ-W4-01",
+    "MCQ-W4-02",
+    "MCQ-W4-03",
+    "MCQ-QT-06",
+    "MCQ-S1-02"
+   ]
+  },
+  {
+   "id": "HW-MC-15",
+   "item": "MC-1",
+   "category": "bz_measurability",
+   "status": "PROPOSED",
+   "text": "B(z) versus temperature and coil current (MCQ-QT-07, MCQ-S1-06; extends HW-MC-03/04): cold and heated-soak B(z) maps at the actual coil currents before S1, with coil and magnet temperatures recorded (HW-MC-14); the hot reference sensor of HW-MC-04 is logged during S1 firing; the maps are repeated after each block series (AOL-PM-08).",
+   "values": {},
+   "verification": {
+    "method": "test (MCQ-QT-07)",
+    "stage": "before S1; S1; after each block series"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "MCQ-QT-07",
+    "MCQ-S1-06",
+    "AOL-PM-08",
+    "HW-MC-03",
+    "HW-MC-04"
+   ]
+  },
+  {
+   "id": "HW-MC-16",
+   "item": "MC-1",
+   "category": "magnet_coil_qualification",
+   "status": "TBD",
+   "text": "Sacrificial coil (MCQ-QT-05, MCQ-S1-03): a sacrificial coil wound from the same conductor/insulation lots with the same procedure and potting as the H-1 coils is thermally cycled before S1.",
+   "values": {
+    "thermal_cycle_profile": {
+     "value": null,
+     "unit": "-",
+     "status": "TBD",
+     "requires": "TBD — requires the H-1 thermal model and an owner decision (MCQ-QT-05 end point)"
+    }
+   },
+   "verification": {
+    "method": "test (MCQ-QT-05)",
+    "stage": "before S1"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "MCQ-QT-05",
+    "MCQ-S1-03"
    ]
   },
   {
@@ -1025,7 +1567,9 @@
    "traces_to": [
     "lane 14 CATHODE_CONDITIONING",
     "lane 19 section 6",
-    "lane 10 G02"
+    "lane 10 G02",
+    "AOL-CX-01",
+    "AOL-CX-05"
    ]
   },
   {
@@ -1069,7 +1613,88 @@
    "identical_across_arms": true,
    "traces_to": [
     "lane 25 M2, M14",
-    "lane 37 section 4"
+    "lane 37 section 4",
+    "AOL-CX-02"
+   ]
+  },
+  {
+   "id": "HW-C1-06",
+   "item": "C-1",
+   "category": "witness_coupons",
+   "status": "PROPOSED",
+   "text": "Cathode-vicinity witness set (AOL-WC-03): the C-1 mount carries keeper-material, unheated LaB6 and cathode-insulator-ceramic witness coupons at fixed positions facing the keeper region, outside the cathode plume core, that do not move when a module is exchanged (HW-C1-01). The unheated LaB6 coupon records deposition/oxidation at ambient, NOT emitter poisoning; a heated emitter witness is an owner decision (HWQ-21).",
+   "values": {
+    "coupon_positions": {
+     "value": null,
+     "unit": "-",
+     "status": "TBD",
+     "requires": "TBD — requires the C-1 mount design"
+    }
+   },
+   "verification": {
+    "method": "inspection",
+    "stage": "C-1 integration, before S1"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-WC-03",
+    "AOL-M04",
+    "AOL-M05",
+    "HW-C1-01"
+   ]
+  },
+  {
+   "id": "HW-C1-07",
+   "item": "C-1",
+   "category": "cathode_exposure_monitoring",
+   "status": "PROPOSED",
+   "text": "Cathode-exposure monitoring provisions (AOL-CX-02..05): (a) an emitter or cathode-tube temperature measurement point (thermocouple attachment or pyrometer line of sight; choice W4's); (b) a gas-sampling port near C-1 routed to the W4 residual gas analyser so O2 / H2O / N2 partial pressures near the cathode are logged during O-bearing operation; (c) heater and keeper supplies whose voltage and current are logged for every start (heater power, time to ignition, keeper ignition voltage; aligns HW-C1-05); (d) the hot-emitter O-exposure intervals of the HW-C1-03 interlock rule logged with the Xe cathode flow state. All provisions are identical in every arm; the instruments and DAQ are W4's.",
+   "values": {},
+   "verification": {
+    "method": "inspection + demonstration",
+    "stage": "C-1 integration, before S1; every start"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-CX-02",
+    "AOL-CX-03",
+    "AOL-CX-04",
+    "AOL-CX-05",
+    "HW-C1-03",
+    "HW-C1-05"
+   ]
+  },
+  {
+   "id": "HW-C1-08",
+   "item": "C-1",
+   "category": "post_test_metrology",
+   "status": "PROPOSED",
+   "text": "C-1 post-test inspectability (AOL-PM-05): C-1 can be disassembled at campaign end or at retirement for inspection of insert, orifice and keeper (orifice diameter, keeper-face profile, SEM/EDS and XPS of the insert surface) without damaging the insert surface in handling. Disassembly retires the unit (HWQ-14).",
+   "values": {},
+   "verification": {
+    "method": "inspection",
+    "stage": "campaign end or C-1 retirement"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-PM-05",
+    "AOL-M04",
+    "AOL-M05"
    ]
   },
   {
@@ -1325,7 +1950,9 @@
    "identical_across_arms": false,
    "traces_to": [
     "lane 17 INV-B3",
-    "lane 37 H6"
+    "lane 37 H6",
+    "MCQ-W3-07",
+    "HW-MC-12"
    ]
   },
   {
@@ -1357,7 +1984,10 @@
    "identical_across_arms": false,
    "traces_to": [
     "lane 37 M0c, H6, D7",
-    "abep_sim/arch_boundary.py ecr_magnet"
+    "abep_sim/arch_boundary.py ecr_magnet",
+    "MCQ-W3-08",
+    "MCQ-OQ-06",
+    "HW-PIM-15"
    ]
   },
   {
@@ -1608,6 +2238,75 @@
    ]
   },
   {
+   "id": "HW-PIM-14",
+   "item": "PIM-0, PIM-RF, PIM-ECR",
+   "category": "witness_coupons",
+   "status": "PROPOSED",
+   "text": "Per-arm interstage witness set (AOL-WC-05): each module, including PIM-0, carries an interstage witness set (wall grade, anode material, insulator ceramic) at an identical position at the module outlet, mounted on the module side of IP-DN, so that its exchange is part of the module exchange and touches nothing downstream of IP-DN (consistent with HW-H1-02 and HW-PIM-01). One set per arm block series; exchanged only at arm boundaries under the HW-SVC-04 procedure. The holder is non-ferromagnetic (HW-PIM-03), and PIM-0 flow equivalence is checked with the holder installed (HW-FS-05). Whether a set exchange is a non-functional change is an owner classification (HWQ-16).",
+   "values": {
+    "witness_position": {
+     "value": null,
+     "unit": "-",
+     "status": "TBD",
+     "requires": "TBD — requires the module interface control drawing (HW-PIM-01)"
+    }
+   },
+   "verification": {
+    "method": "inspection + demonstration",
+    "stage": "module integration; every arm boundary"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-WC-05",
+    "AOL-M01",
+    "AOL-M07",
+    "AOL-M10",
+    "AOL-OQ-01"
+   ]
+  },
+  {
+   "id": "HW-PIM-15",
+   "item": "PIM-ECR",
+   "category": "magnetic_interaction",
+   "status": "TBD",
+   "text": "ECR magnet interaction and qualification (MCQ-W3-08, MCQ-QT-09, MCQ-W3-03, MCQ-W3-04): the ECR magnet type (HWQ-05) is decided with the MCQ-QT-09 analysis in hand: the ECR magnet fringe field in the Hall channel, and for a permanent magnet its demagnetization exposure to the combined opposing field (own circuit plus MC-1 at the maximum coil current) at the ECR magnet temperature. A permanent ECR magnet meets the HW-MC-09 working-point and per-lot irreversible-loss criteria and the HW-MC-10 coating/outgassing screen; the ECR magnet temperature is measured during operation. The M0 / M0b / M0c maps (HW-PIM-04) are taken before Phase 2 readiness.",
+   "values": {
+    "ecr_magnet_temperature": {
+     "value": null,
+     "unit": "degC",
+     "status": "TBD",
+     "requires": "TBD — requires the HW-ECR module thermal design (lane 15 ecr_magnet inputs; MCQ ecr_magnet_C)"
+    },
+    "ecr_fringe_field_in_channel": {
+     "value": null,
+     "unit": "T",
+     "status": "TBD",
+     "requires": "TBD — requires the MCQ-QT-09 magnetostatic analysis of the selected ECR magnet"
+    }
+   },
+   "verification": {
+    "method": "analysis + B(z) map (MCQ-QT-09)",
+    "stage": "before LOCK-1 input on HWQ-05; map before Phase 2"
+   },
+   "phases": [
+    "P2"
+   ],
+   "identical_across_arms": false,
+   "traces_to": [
+    "MCQ-W3-08",
+    "MCQ-QT-09",
+    "MCQ-W3-03",
+    "MCQ-W3-04",
+    "MCQ-OQ-06",
+    "HW-PIM-04"
+   ]
+  },
+  {
    "id": "HW-ELEC-01",
    "item": "H-1, C-1, PS-C",
    "category": "electrical_interface",
@@ -1674,6 +2373,60 @@
    "traces_to": [
     "lane 06 controls DUMMY_LOAD_PICKUP",
     "package reconciliation 'controls'"
+   ]
+  },
+  {
+   "id": "HW-ELEC-04",
+   "item": "H-1, PS-C",
+   "category": "electrical_interface",
+   "status": "PROPOSED",
+   "text": "In-situ anode resistance lead (AOL-RC-02): H-1 provides a separate sense lead from the anode to a feedthrough so the anode-to-terminal resistance can be measured 4-wire between blocks without disassembly; identical in every arm; its insulation covers the discharge-voltage rating (HW-ENV-01). The resistance instrument is W4's; the trigger threshold (AOL-PT-02) is TBD until the S1 baseline scatter exists.",
+   "values": {},
+   "verification": {
+    "method": "test",
+    "stage": "H-1 integration; between blocks"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-RC-02",
+    "AOL-PT-02",
+    "HW-ELEC-01"
+   ]
+  },
+  {
+   "id": "HW-ELEC-05",
+   "item": "H-1, MC-1, FS-C",
+   "category": "electrical_interface",
+   "status": "TBD",
+   "text": "Insulation-resistance and withstand test access (AOL-PM-06, MCQ-QT-08, MCQ-AO-02, MCQ-S1-07): the anode isolator, each coil, the harness and the gas isolator (HW-FS-06) have test points reachable without disassembly. One procedure and test voltage, shared by the AO register and coil qualification, is applied at baseline before S1, at every phase boundary and at campaign end.",
+   "values": {
+    "ir_test_voltage": {
+     "value": null,
+     "unit": "V",
+     "status": "TBD",
+     "requires": "TBD — requires the MCQ-QT-08 procedure and an owner decision"
+    }
+   },
+   "verification": {
+    "method": "test (MCQ-QT-08)",
+    "stage": "baseline before S1; every phase boundary; campaign end"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-PM-06",
+    "MCQ-QT-08",
+    "MCQ-AO-02",
+    "MCQ-S1-07"
    ]
   },
   {
@@ -1831,6 +2584,39 @@
    "traces_to": [
     "W4"
    ]
+  },
+  {
+   "id": "HW-SVC-06",
+   "item": "SVC-1",
+   "category": "witness_coupons",
+   "status": "PROPOSED",
+   "text": "Near-exit plume witness holder (AOL-WC-01, AOL-WC-06(c)): a fixed holder on the stand or chamber, outside the beam core, at pre-registered angles and distance from the H-1 exit, carrying wall-grade, anode-material, pole-material and owner-selected candidate coupons (coated/uncoated pairs) and the shadowed control coupon; installed from first ignition and never moved between arms. It shall not change B(z) (non-ferromagnetic holder; M0 map with and without it, HW-MC-03), the flow, or the thrust-stand tare (in-situ calibration, HW-SVC-02). If stand-mounted it is part of the S1b re-mount cycle and of the u_inst sub-allocation (HW-SVC-03). The other control coupons (chamber wall, beam-dump facing, lab-stored) are facility/W4 items.",
+   "values": {
+    "holder_positions": {
+     "value": null,
+     "unit": "-",
+     "status": "TBD",
+     "requires": "TBD — requires the facility and stand layout (facility choice; W4)"
+    }
+   },
+   "verification": {
+    "method": "inspection + B(z) map + in-situ calibration",
+    "stage": "before S1 first ignition"
+   },
+   "phases": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "identical_across_arms": true,
+   "traces_to": [
+    "AOL-WC-01",
+    "AOL-WC-06",
+    "AOL-M02",
+    "AOL-M03",
+    "AOL-M08",
+    "AOL-M11"
+   ]
   }
  ],
  "identity_matrix": {
@@ -1874,6 +2660,11 @@
     "element": "ledger efficiencies of every common bus component",
     "rule": "lane 25 section 2; lane 17 INV-P1",
     "check": "LOCK-1"
+   },
+   {
+    "element": "witness coupon and holder positions, coupon materials and lots, replaceable-part serials (anode, wall rings), life-mechanism thermocouples, cathode-exposure provisions",
+    "rule": "control C5; AOL-WC-01..05, AOL-RC-01..03, AOL-CX-03/04/07",
+    "check": "HW-H1-09..14, HW-MC-06, HW-C1-06/07, HW-PIM-14, HW-SVC-06"
    }
   ],
   "may_differ": [
@@ -1892,6 +2683,10 @@
    {
     "element": "consequences of the source that are recorded, never equalised: module waste heat, fringe field within the INV-B3 tolerance, module erosion products and extra atomic O reaching H-1 and C-1",
     "rule": "lane 17 INV-B3; lane 19 section 6 (plume back-flow); HW-PIM-06, HW-PIM-09, HW-PIM-10"
+   },
+   {
+    "element": "the instance of the per-arm interstage witness set (same position, material and lot in every arm; one set per arm block series)",
+    "rule": "AOL-WC-05 (attribution of arm-specific deposits); HWQ-16"
    }
   ],
   "never_a_hardware_variable": "P5 calibration nuisance (registration, coil shape, beam-efficiency reading, facility-ingestion interpretation) is never a design variable, setting or grid axis (lane 17 INV-U1; CLAUDE.md next work 1)."
@@ -1904,19 +2699,22 @@
   "in-situ thrust-stand calibration (HW-SVC-02)",
   "dummy-load pickup check for the source arms (HW-ELEC-03)",
   "anode and wall inspection after O-bearing operation (HW-H1-04, HW-H1-05)",
-  "XE_HEALTH_CHECK if the owner adopts D-15-B (package D-15)"
+  "XE_HEALTH_CHECK if the owner adopts D-15-B (package D-15)",
+  "interstage witness set exchange record at arm boundaries (HW-PIM-14) and coupon/part register entry (HW-H1-13)"
  ],
  "hardware_readiness_review": {
   "id": "HRR",
   "status": "PROPOSED",
   "position": "after LOCK-1 and hardware delivery, before S1 (owner disposition sequence: LOCK-1 -> hardware and instrumentation -> S1 -> LOCK-2)",
   "entry_criteria": [
-   "owner decisions HWQ-01..HWQ-15 recorded",
+   "owner decisions HWQ-01..HWQ-21 recorded",
    "H-1 design release with sha256 (HW-H1-01, HW-H1-03)",
    "module interface control drawing for IP-UP / IP-DN frozen (HW-PIM-01)",
    "every TBD in this register that is marked phase P1 resolved before Phase 1, and every P2 TBD before the first module is installed",
    "W4 instrument list and ranges",
-   "W5 held-out validation pre-registration filed before any data (fo_hall_validation_prereg_draft)"
+   "W5 held-out validation pre-registration filed before any data (fo_hall_validation_prereg_draft)",
+   "C5 provisions installed and baselined before first ignition: witness coupons and holders (HW-H1-09, HW-MC-06, HW-C1-06, HW-PIM-14 HW-0 position, HW-SVC-06), replaceable anode and wall rings (HW-H1-10, HW-H1-11), cathode-exposure provisions (HW-C1-07), metrology provisions (HW-H1-13), lot records (HW-H1-14)",
+   "magnet/coil S1 gate items MCQ-S1-01..08 closed (HW-MC-07..HW-MC-16, HW-ELEC-05, HW-PIM-15 where a permanent ECR magnet is installed before Phase 2)"
   ]
  },
  "derived_numbers": {
@@ -2376,6 +3174,30 @@
   {
    "id": "HWQ-15",
    "question": "Whether the module interfaces are frozen before Phase 1 even if the modules are delivered later (PROPOSED, phases.P1), so that the Phase-1 HW-0 installation is valid for Phase 2."
+  },
+  {
+   "id": "HWQ-16",
+   "question": "Classify witness coupons and their holders (HW-PIM-14, HW-SVC-06) as non-functional exchangeable items that do not create H-1' when exchanged at arm boundaries, provided B(z) and the HW-0 reference are unchanged within the LOCK-2 repeatability? (AOL-OQ-01)"
+  },
+  {
+   "id": "HWQ-17",
+   "question": "Approve alternative-grade wall sector inserts (AOL-RC-04)? They add comparative N/O wall data but change H-1 design-representativeness (HW-H1-01); not adopted until decided (AOL-OQ-02)."
+  },
+  {
+   "id": "HWQ-18",
+   "question": "Soft-magnetic pole/core material grade for MC-1 (HW-MC-13; MCQ-OQ-05); needed by HW-MC-06, HW-H1-14 and HW-MC-15."
+  },
+  {
+   "id": "HWQ-19",
+   "question": "MC-1: electromagnet only (traceable B(z) versus coil current, needed for held-out B(z) evidence and the S_B scan HW-MC-05) or permanent-magnet assisted (then HW-MC-09 applies)? (MCQ-OQ-01)"
+  },
+  {
+   "id": "HWQ-20",
+   "question": "Coil conductor/insulation family for S1 and the hot-spot margin policy (HW-MC-07, HW-MC-08, HW-MC-10; MCQ-OQ-02, MCQ-OQ-03), decided once the H-1 thermal model gives a hot-spot estimate."
+  },
+  {
+   "id": "HWQ-21",
+   "question": "Heated emitter witness near C-1 (adds a heater load that must be metered inside the bus boundary) or ground-only heated-emitter exposure (AOL-EX-03)? (AOL-OQ-04)"
   }
  ],
  "cross_references": {
@@ -2397,7 +3219,9 @@
    "lane_13_o_o2": "docs/chemistry/o_o2/",
    "dx5": "docs/chemistry/n2_domain_extension/dx5/",
    "bundle1": "docs/milestones/bundle1/ (NO_BASELINE_YET)",
-   "rf_ecr_hall_sustainment_evidence": "docs/evidence/rf_source/; docs/evidence/ecr_source/; docs/evidence/hall_sustainment/"
+   "rf_ecr_hall_sustainment_evidence": "docs/evidence/rf_source/; docs/evidence/ecr_source/; docs/evidence/hall_sustainment/",
+   "fo_ao_lifetime_register": "docs/experiments/lifetime_ao/ao_lifetime_register_v1.json (SRC-AOL)",
+   "fo_magnet_coil_qualification": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json (SRC-MCQ)"
   },
   "parallel_workstreams_planned": {
    "W1_fo_feed_state_closure": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json (planned path; seen read-only in a sibling worktree, not merged at this base; values are not copied)",
@@ -2411,7 +3235,8 @@
  "references": {
   "SRC-OD-PIVOT": {
    "kind": "repository",
-   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+   "sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac"
   },
   "SRC-RFP-CONSTANTS": {
    "kind": "repository",
@@ -2531,6 +3356,30 @@
    "citation": "J. Jarrige, P.-Q. Elias, F. Cannat, D. Packan, 'Performance Comparison of an ECR Plasma Thruster using Argon and Xenon as Propellant Gas', IEPC-2013-420 (2013)",
    "url": "https://electricrocket.org/IEPC/ck35023e.pdf",
    "access": "as recorded by the ECR evidence lane (ECR-E001); not re-read by this lane"
+  },
+  "SRC-AOL": {
+   "kind": "repository",
+   "path": "docs/experiments/lifetime_ao/ao_lifetime_register_v1.json",
+   "sha256": "237c99aa8ee582b520d17aecff262020d79f3776f47af69b9c46185a230a2e12",
+   "note": "fo_ao_lifetime_register (verified, merged at f61912e)"
+  },
+  "SRC-MCQ": {
+   "kind": "repository",
+   "path": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json",
+   "sha256": "53e92f4536f7b30054d3521adbd504eca725c4c6d79a6cb3b51c2fc4ce220b32",
+   "note": "fo_magnet_coil_qualification (verified, merged at f61912e)"
+  },
+  "SRC-OD-A1": {
+   "kind": "repository",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json",
+   "sha256": "04c5a6f46ed2cb3e3fb174bcc7305d129e15ef53af2349d2a8abc4f6d8975992",
+   "note": "owner controls C1-C4 (immutable)"
+  },
+  "SRC-OD-A2": {
+   "kind": "repository",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
+   "sha256": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6",
+   "note": "owner execution directive, S1 readiness conditions, controls C5-C6 (immutable)"
   }
  },
  "compliance": {
@@ -2539,6 +3388,753 @@
   "nuisance": "P5 calibration nuisance is never a hardware variable (identity_matrix.never_a_hardware_variable).",
   "upstream": "Hall-closure uncertainty does not enter the feed side: FS-C and the W1 test points are identical inputs across arms.",
   "pure": "Pure data plus one standard-library generator; nothing is wired into archengine; no frozen data, golden, prereg or campaign file is touched.",
-  "no_contact": "No supplier, facility or lab contact; published data are cited as references only."
- }
+  "no_contact": "No supplier, facility or lab contact; published data are cited as references only.",
+  "no_life_extrapolation": "Control C6 / AOL-LF-01: no H-1 or C-1 life number is computed from a Hall map, an unadmitted closure or a withdrawn 0-D result; this register records inspection and metrology provisions only."
+ },
+ "c5_integration": {
+  "control": "C5_AO_early (docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json) and C6_no_extrapolation",
+  "statement": "H-1, C-1, MC-1 and the modules carry the AO/lifetime provisions (witness coupons, replaceable channel/anode components, cathode-exposure monitoring, post-test metrology) and the magnet/coil qualification items from the start. Every requirement of the two merged registers has a disposition here: ADOPTED (new or existing HW requirement), ADOPTED_PARTIAL (hardware provision adopted, procedure or instrument belongs to another lane), ALIGNED (already covered; traces added) or NOT_ADOPTED (with the reason and what is needed). No existing requirement id or numeric value changed; existing requirements received trace entries only.",
+  "sources": {
+   "SRC-AOL": "237c99aa8ee582b520d17aecff262020d79f3776f47af69b9c46185a230a2e12",
+   "SRC-MCQ": "53e92f4536f7b30054d3521adbd504eca725c4c6d79a6cb3b51c2fc4ce220b32"
+  },
+  "dispositions": {
+   "ADOPTED": "a W3 requirement implements it",
+   "ADOPTED_PARTIAL": "the hardware provision is a W3 requirement; the rest belongs to the named lane",
+   "ALIGNED": "an existing W3 requirement already covers it; traces_to updated",
+   "NOT_ADOPTED": "not a W3 hardware requirement; 'needed' names who or what"
+  },
+  "rows": [
+   {
+    "source_id": "AOL-WC-01",
+    "disposition": "ADOPTED_PARTIAL",
+    "hw_requirements": [
+     "HW-SVC-06",
+     "HW-H1-14"
+    ],
+    "note": "holder, positions and non-interference adopted; coupon metrology is W4's (AOL-WC-01 adopter W4 part)"
+   },
+   {
+    "source_id": "AOL-WC-02",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-H1-09"
+    ],
+    "note": "conditional on placement without altering flow path or anode area; fallback HW-H1-10"
+   },
+   {
+    "source_id": "AOL-WC-03",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-C1-06"
+    ],
+    "note": "coupons and fixed positions adopted; metrology W4"
+   },
+   {
+    "source_id": "AOL-WC-04",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-06",
+     "HW-H1-12"
+    ],
+    "note": "with an added B(z) with/without-coupon check because the coupon is ferromagnetic"
+   },
+   {
+    "source_id": "AOL-WC-05",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-PIM-14"
+    ],
+    "note": "mounted on the module side of IP-DN so the exchange does not create H-1'; classification HWQ-16"
+   },
+   {
+    "source_id": "AOL-WC-06",
+    "disposition": "ADOPTED_PARTIAL",
+    "hw_requirements": [
+     "HW-SVC-06"
+    ],
+    "note": "shadowed control (c) is on the HW-SVC-06 holder",
+    "needed": "controls (a) chamber wall, (b) beam-dump facing and (d) lab-stored are facility/W4 items, outside W3 hardware"
+   },
+   {
+    "source_id": "AOL-RC-01",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-H1-10"
+    ],
+    "note": "removal creates H-1' (HW-H1-02)"
+   },
+   {
+    "source_id": "AOL-RC-02",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-ELEC-04"
+    ],
+    "note": "lead and feedthrough adopted; instrument W4"
+   },
+   {
+    "source_id": "AOL-RC-03",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-H1-11"
+    ],
+    "note": "ring geometry becomes part of the HW-H1-03 release"
+   },
+   {
+    "source_id": "AOL-RC-04",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "owner decision (AOL-OQ-02) recorded as HWQ-17",
+    "needed": "owner approval before LOCK-1; if approved, a new HW-H1 requirement with the inserts identical in all arms"
+   },
+   {
+    "source_id": "AOL-CX-01",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-C1-03"
+    ],
+    "note": "daily Xe reference check already in HW-C1-03"
+   },
+   {
+    "source_id": "AOL-CX-02",
+    "disposition": "ADOPTED_PARTIAL",
+    "hw_requirements": [
+     "HW-C1-07",
+     "HW-C1-05"
+    ],
+    "note": "metered heater/keeper supplies adopted; the start log is W4's DAQ"
+   },
+   {
+    "source_id": "AOL-CX-03",
+    "disposition": "ADOPTED_PARTIAL",
+    "hw_requirements": [
+     "HW-C1-07"
+    ],
+    "note": "sampling port adopted; RGA is W4's"
+   },
+   {
+    "source_id": "AOL-CX-04",
+    "disposition": "ADOPTED_PARTIAL",
+    "hw_requirements": [
+     "HW-C1-07"
+    ],
+    "note": "measurement point adopted; sensor choice W4"
+   },
+   {
+    "source_id": "AOL-CX-05",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-C1-03",
+     "HW-C1-07"
+    ],
+    "note": "interlock rule in HW-C1-03; log W4"
+   },
+   {
+    "source_id": "AOL-CX-06",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "data-logging requirement with no hardware provision beyond the existing I_d, feed and cathode metering (HW-C1-05, HW-FS-01)",
+    "needed": "W4 DAQ (extinction records with feed composition and cathode state)"
+   },
+   {
+    "source_id": "AOL-CX-07",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-H1-12"
+    ],
+    "note": "extends HW-H1-07"
+   },
+   {
+    "source_id": "AOL-PM-01",
+    "disposition": "ADOPTED_PARTIAL",
+    "hw_requirements": [
+     "HW-H1-13"
+    ],
+    "note": "serialization, position marks and baseline-before-first-ignition adopted; methods W4"
+   },
+   {
+    "source_id": "AOL-PM-02",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "metrology procedure",
+    "needed": "W4 / metrology lab"
+   },
+   {
+    "source_id": "AOL-PM-03",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-H1-04",
+     "HW-H1-11",
+     "HW-ENV-08"
+    ],
+    "note": "erosion profile already required by HW-H1-04; fiducial rings added by HW-H1-11"
+   },
+   {
+    "source_id": "AOL-PM-04",
+    "disposition": "ADOPTED_PARTIAL",
+    "hw_requirements": [
+     "HW-H1-13"
+    ],
+    "note": "sealed dry transfer and custody adopted; analyses W4"
+   },
+   {
+    "source_id": "AOL-PM-05",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-C1-08"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "AOL-PM-06",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-ELEC-05"
+    ],
+    "note": "shared procedure with MCQ-QT-08 (MCQ-AO-02)"
+   },
+   {
+    "source_id": "AOL-PM-07",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "facility-dependent SEE measurement; W3 only supplies same-lot coupons (HW-H1-14)",
+    "needed": "owner facility choice (lane 32 H9)"
+   },
+   {
+    "source_id": "AOL-PM-08",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-MC-03",
+     "HW-MC-04",
+     "HW-MC-15",
+     "HW-MC-06"
+    ],
+    "note": "B(z) re-map already required; pole-face inspection access added in HW-MC-06"
+   },
+   {
+    "source_id": "AOL-PM-09",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "optical-property measurement of exterior coupons",
+    "needed": "owner lab (with AOL-EX-01)"
+   },
+   {
+    "source_id": "AOL-EX-01",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [
+     "HW-H1-14"
+    ],
+    "note": "ground AO exposure is off the S1 critical path; W3 supplies lot-traceable coupons",
+    "needed": "owner facility and target fluence (AOL-OQ-05, control C4)"
+   },
+   {
+    "source_id": "AOL-EX-02",
+    "disposition": "ADOPTED_PARTIAL",
+    "hw_requirements": [
+     "HW-H1-14"
+    ],
+    "note": "lot traceability adopted; the exposure is an owner/facility item",
+    "needed": "owner facility"
+   },
+   {
+    "source_id": "AOL-EX-03",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "heated-emitter exposure is an owner/facility item; the in-thruster alternative is HWQ-21",
+    "needed": "owner decision HWQ-21 (AOL-OQ-04)"
+   },
+   {
+    "source_id": "AOL-DC-01",
+    "disposition": "ADOPTED_PARTIAL",
+    "hw_requirements": [
+     "HW-H1-13"
+    ],
+    "note": "serial numbers and position marks adopted; the register is W4 + W5"
+   },
+   {
+    "source_id": "AOL-DC-02",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "record format",
+    "needed": "W4 (schemas/thermal_life/inputs_v1.json measured_hardware fields)"
+   },
+   {
+    "source_id": "AOL-LF-01",
+    "disposition": "ALIGNED",
+    "hw_requirements": [],
+    "note": "compliance.no_life_extrapolation (control C6)"
+   },
+   {
+    "source_id": "AOL-LF-02",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "pre-registration of endurance segments",
+    "needed": "owner + W5 pre-registration; HW-ENV-08 gives the campaign-hours estimate"
+   },
+   {
+    "source_id": "MCQ-W3-01",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-07"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-W3-02",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-08"
+    ],
+    "note": "margin TBD (owner)"
+   },
+   {
+    "source_id": "MCQ-W3-03",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-09",
+     "HW-PIM-15"
+    ],
+    "note": "demagnetization at the actual permeance coefficient incl. the opposing coil field"
+   },
+   {
+    "source_id": "MCQ-W3-04",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-10",
+     "HW-PIM-15"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-W3-05",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-10"
+    ],
+    "note": "conditional on a ceramic-insulated winding (HWQ-20); supplier bake values are cited in the MCQ register, not restated"
+   },
+   {
+    "source_id": "MCQ-W3-06",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-11"
+    ],
+    "note": "margin TBD (owner)"
+   },
+   {
+    "source_id": "MCQ-W3-07",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-12"
+    ],
+    "note": "extends HW-PIM-03"
+   },
+   {
+    "source_id": "MCQ-W3-08",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-PIM-15"
+    ],
+    "note": "precondition for HWQ-05"
+   },
+   {
+    "source_id": "MCQ-W4-01",
+    "disposition": "ADOPTED_PARTIAL",
+    "hw_requirements": [
+     "HW-MC-14"
+    ],
+    "note": "leads and thermocouple points adopted; channel map W4"
+   },
+   {
+    "source_id": "MCQ-W4-02",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-MC-02",
+     "HW-MC-14"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-W4-03",
+    "disposition": "ADOPTED_PARTIAL",
+    "hw_requirements": [
+     "HW-MC-14"
+    ],
+    "note": "content of the map record adopted; record schema W4"
+   },
+   {
+    "source_id": "MCQ-TL-01",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "adopter lane_15_thermal_life",
+    "needed": "lane 15 limits_v1 update"
+   },
+   {
+    "source_id": "MCQ-TL-02",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "adopter lane_15_thermal_life",
+    "needed": "lane 15 EIS record semantics"
+   },
+   {
+    "source_id": "MCQ-TL-03",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [
+     "HW-MC-14"
+    ],
+    "note": "adopter lane_15_thermal_life; HW-MC-14 produces the measured offset it needs",
+    "needed": "lane 15"
+   },
+   {
+    "source_id": "MCQ-TL-04",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "adopter lane_15_thermal_life",
+    "needed": "lane 15, after HWQ-20 selects a conductor"
+   },
+   {
+    "source_id": "MCQ-TL-05",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "adopter lane_15_thermal_life; this register keeps both magnet types open (HWQ-05, HWQ-19), so the lane-15 node gap stays open",
+    "needed": "lane 15 permanent-magnet Hall node and ECR electromagnet node"
+   },
+   {
+    "source_id": "MCQ-AO-01",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-06",
+     "HW-H1-14"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-AO-02",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-ELEC-05"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-QT-01",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-07"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-QT-02",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-09",
+     "HW-PIM-15"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-QT-03",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-10"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-QT-04",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-H1-14",
+     "HW-MC-06"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-QT-05",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-16"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-QT-06",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-14"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-QT-07",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-15"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-QT-08",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-ELEC-05",
+     "HW-MC-11"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-QT-09",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-PIM-15"
+    ],
+    "note": ""
+   },
+   {
+    "source_id": "MCQ-S1-01",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-07"
+    ],
+    "note": "HRR entry criterion"
+   },
+   {
+    "source_id": "MCQ-S1-02",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-14"
+    ],
+    "note": "HRR entry criterion"
+   },
+   {
+    "source_id": "MCQ-S1-03",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-16"
+    ],
+    "note": "HRR entry criterion"
+   },
+   {
+    "source_id": "MCQ-S1-04",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-10"
+    ],
+    "note": "HRR entry criterion"
+   },
+   {
+    "source_id": "MCQ-S1-05",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-09",
+     "HW-PIM-15"
+    ],
+    "note": "HRR entry criterion (only if a permanent magnet is installed)"
+   },
+   {
+    "source_id": "MCQ-S1-06",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-15"
+    ],
+    "note": "HRR entry criterion"
+   },
+   {
+    "source_id": "MCQ-S1-07",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-ELEC-05"
+    ],
+    "note": "HRR entry criterion"
+   },
+   {
+    "source_id": "MCQ-S1-08",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-08"
+    ],
+    "note": "HRR entry criterion"
+   },
+   {
+    "source_id": "MCQ-OQ-01",
+    "disposition": "ADOPTED",
+    "hw_requirements": [],
+    "note": "recorded as HWQ-19"
+   },
+   {
+    "source_id": "MCQ-OQ-02",
+    "disposition": "ADOPTED",
+    "hw_requirements": [],
+    "note": "recorded as HWQ-20"
+   },
+   {
+    "source_id": "MCQ-OQ-03",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-08"
+    ],
+    "note": "recorded as HWQ-20"
+   },
+   {
+    "source_id": "MCQ-OQ-04",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "evidence-access route",
+    "needed": "owner, under control C4"
+   },
+   {
+    "source_id": "MCQ-OQ-05",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-MC-13"
+    ],
+    "note": "recorded as HWQ-18"
+   },
+   {
+    "source_id": "MCQ-OQ-06",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-PIM-04",
+     "HW-PIM-15"
+    ],
+    "note": "same decision as HWQ-05"
+   },
+   {
+    "source_id": "AOL-OQ-01",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-PIM-14"
+    ],
+    "note": "recorded as HWQ-16"
+   },
+   {
+    "source_id": "AOL-OQ-02",
+    "disposition": "ADOPTED",
+    "hw_requirements": [],
+    "note": "recorded as HWQ-17"
+   },
+   {
+    "source_id": "AOL-OQ-03",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-H1-05",
+     "HW-H1-09"
+    ],
+    "note": "anode material candidates remain an owner/design choice under HW-H1-05"
+   },
+   {
+    "source_id": "AOL-OQ-04",
+    "disposition": "ADOPTED",
+    "hw_requirements": [
+     "HW-C1-06"
+    ],
+    "note": "recorded as HWQ-21"
+   },
+   {
+    "source_id": "AOL-OQ-05",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "ground AO facility and fluence",
+    "needed": "owner, control C4"
+   },
+   {
+    "source_id": "AOL-OQ-06",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "closed-access acquisition",
+    "needed": "owner, control C4"
+   },
+   {
+    "source_id": "AOL-PT-01",
+    "disposition": "NOT_ADOPTED",
+    "hw_requirements": [],
+    "note": "run rule (stop and inspect after a flame-out); not a hardware requirement",
+    "needed": "owner + W5; borescope access, if wanted, would be a new H-1 requirement"
+   },
+   {
+    "source_id": "AOL-PT-02",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-ELEC-04"
+    ],
+    "note": "threshold TBD until S1 baseline (LOCK-2)"
+   },
+   {
+    "source_id": "AOL-PT-03",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-C1-03"
+    ],
+    "note": "threshold TBD until S1 day-to-day scatter (LOCK-2)"
+   },
+   {
+    "source_id": "AOL-PT-04",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-H1-13"
+    ],
+    "note": "removal cadence"
+   },
+   {
+    "source_id": "MCQ-PT-01",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-MC-08"
+    ],
+    "note": "TBD owner"
+   },
+   {
+    "source_id": "MCQ-PT-02",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-MC-09"
+    ],
+    "note": "TBD owner"
+   },
+   {
+    "source_id": "MCQ-PT-03",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-MC-10"
+    ],
+    "note": "PROPOSED screen referenced, not restated"
+   },
+   {
+    "source_id": "MCQ-PT-04",
+    "disposition": "ALIGNED",
+    "hw_requirements": [
+     "HW-MC-07"
+    ],
+    "note": "RFP firing time + owner margin"
+   }
+  ],
+  "ao_register_unmerged_id_reverification": {
+   "note": "The AO register marked these W3 ids UNVERIFIED_UNMERGED_DRAFT (its unmerged_draft_references). Checked against this register at the C5 integration; the AO register itself is not modified by this lane.",
+   "verdicts": {
+    "HW-C1-01": "CONFIRMED (fixed C-1 position unchanged by module exchange)",
+    "HW-C1-03": "CONFIRMED (poisoning-protection interlock and daily Xe reference)",
+    "HW-C1-05": "RELATED (keeper and heater metering, coupling voltage; keeper erosion itself is AOL-PM-05 / HW-C1-08)",
+    "HW-ELEC-01": "CONFIRMED (electrical-interface section; the sense lead is new HW-ELEC-04)",
+    "HW-H1-01": "CONFIRMED (design-representativeness definition)",
+    "HW-H1-02": "CONFIRMED (replacement or repair creates H-1')",
+    "HW-H1-03": "CONFIRMED (geometry release and as-built measurement)",
+    "HW-H1-04": "CONFIRMED (one wall grade; erosion profile before S1, per block series, after campaign)",
+    "HW-H1-05": "CONFIRMED (anode material; inspection after O-bearing operation)",
+    "HW-H1-06": "CONFIRMED (anode/distributor at HALL_INLET_Z0 belong to H-1)",
+    "HW-H1-07": "CONFIRMED (thermocouples; extended by HW-H1-12)",
+    "HW-MC-03": "CONFIRMED (B(z) at actual coil currents per configuration, before/after block series)",
+    "HW-MC-04": "CONFIRMED (hot-state reference sensor)",
+    "HW-PIM-10": "CONFIRMED (module plasma-facing materials, O2 compatibility)",
+    "W3 draft section 6": "CONFIRMED (HARDWARE_DEFINITION.md section 6 lists extra atomic O at H-1/C-1 from O2 dissociation in the source as a recorded consequence)"
+   }
+  }
+ },
+ "repair_log": [
+  {
+   "date": "2026-09-27",
+   "base": "f61912ea3b66ef5c6d2fc2fa2b2cb826c2b2b239",
+   "what": "control C5 integration: AO/lifetime register and magnet/coil qualification adopted (c5_integration); new requirements HW-H1-09..14, HW-MC-06..16, HW-C1-06..08, HW-PIM-14..15, HW-ELEC-04..05, HW-SVC-06; owner questions HWQ-16..21; existing ids and numeric values unchanged (trace entries added only)"
+  }
+ ]
 }
