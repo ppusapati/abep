@@ -22,15 +22,19 @@ What this script does (and nothing else):
   instrumentation v1-r2 (re-pinned), with the per-provision W4 adoption status taken from the W4 c5_adoption table and
   back-traced into the W4 instruments / procedures. v3 is a historical record since v4 (byte-identical, sha256-pinned
   by W3 as SRC-AOL-V3); it is regenerated from its pinned W3/W4 inputs read from git at V3_INPUTS_COMMIT;
-* builds v4 (ao_lifetime_register_v4.json, AO_LIFETIME_REGISTER_v4.md; current): W3 (after the owner addendum A3
+* builds v4 (ao_lifetime_register_v4.json, AO_LIFETIME_REGISTER_v4.md): W3 (after the owner addendum A3
   integration review) and W4 v1-r2 (A3 instrument semantics) re-pinned, the C5 adoption check re-run, and W3's
-  integration review of register v3 checked.
+  integration review of register v3 checked. v4 is a historical record since v5 (byte-identical); it is regenerated
+  from its pinned W3/W4 inputs read from git at V4_INPUTS_COMMIT;
+* builds v5 (ao_lifetime_register_v5.json, AO_LIFETIME_REGISTER_v5.md; current): pin-only re-issue of v4 after W3
+  re-pinned W4 through an immutable snapshot; W3 / W4 are read as immutable git blobs at V5_INPUTS_COMMIT (never the
+  live files). No requirement, value, verdict or finding changes.
 
 Pure: standard library only (git is called read-only for the v2 historical inputs); imports nothing from abep_sim or hallthruster_bridge; nothing is wired into archengine;
 no Hall closure, screening candidate or withdrawn 0-D number is read or used. No life number is derived (control C6).
 
 Usage:  python docs/experiments/lifetime_ao/build_ao_lifetime_register.py [--check]
-        --check regenerates in memory and exits 1 if any committed file (v1, v2, v3, v4) differs (deterministic build).
+        --check regenerates in memory and exits 1 if any committed file (v1 .. v5) differs (deterministic build).
 """
 from __future__ import annotations
 
@@ -2024,15 +2028,26 @@ def w3_integration_review_check(reg, w3):
     }
 
 
-def build_register_v4():
+# v4 is a historical record since v5 (pin-only integration round, 2026-09-27): its W3 / W4 inputs are the pinned bytes
+# at the integrated execution commit that carries it, read from git history (the working-tree W3 has since re-pinned
+# W4 through an immutable snapshot, which changes the W3 bytes but no requirement).
+V4_INPUTS_COMMIT = "0c4d26e63fe420277b4712bb3c107a7dd122c1bf"
+V4_JSON_REL = "docs/experiments/lifetime_ao/ao_lifetime_register_v4.json"
+V4_JSON_SHA256 = "1afc668fa82528b55f0e3cdb60cd718e3ca8dcbb4b2769afd124983aa03dd3e8"
+
+
+def build_register_v4(pins=None, commit=V4_INPUTS_COMMIT):
+    """v4 (historical since v5): pins/commit default to the v4 inputs at V4_INPUTS_COMMIT; v5 reuses the body with
+    its own pins and inputs commit."""
+    pins = MERGED_PINS_V4 if pins is None else pins
     reg3 = build_register_v3()
     if hashlib.sha256(render_json(reg3).encode("utf-8")).hexdigest() != V3_JSON_SHA256:
         raise RuntimeError("v3 register no longer reproduces its pinned sha256 (pinned by W3 SRC-AOL-V3); v3 is a "
                            "historical record and must not change.")
     if _sha256_bytes_at(OD_A3_REL) != OD_A3_SHA256:
         raise RuntimeError(f"{OD_A3_REL} is not the immutable owner addendum A3 (sha256 mismatch)")
-    reg = build_register_v3(MERGED_PINS_V4, None)
-    w3, w4, _ = _load_merged(MERGED_PINS_V4, None)
+    reg = build_register_v3(pins, commit)
+    w3, w4, _ = _load_merged(pins, commit)
     reg["schema"], reg["schema_file"], reg["version"] = "ao_lifetime_register_v4", SCHEMA_V4_REL, "v4"
     reg["hard_statements"] = reg["hard_statements"][:-1] + [V4_HARD_STATEMENT]
     mi = reg["merged_inputs"]
@@ -2066,6 +2081,75 @@ def build_register_v4():
     return reg
 
 
+# =====================================================================================================================
+# v5 (2026-09-27): PIN-ONLY integration round. W3 re-pinned W4 through an immutable snapshot
+# (docs/experiments/hardware/snapshots/w4_instrumentation_definition_v1_at_fe2c05e.json, SRC-INS-V1R2), which changes
+# the W3 JSON / Markdown bytes but no W3 requirement, value, verdict or trace. The register's versioning rule (the build
+# refuses unpinned bytes; a re-pin is a new version) makes this v5; v4 stays byte-identical (reproduced from its inputs
+# at V4_INPUTS_COMMIT). v5 pins its W3 / W4 inputs as IMMUTABLE git blobs at a named commit (V5_INPUTS_COMMIT), never
+# the live files, so later W3 / W4 edits cannot silently change it (pin rule, runtime_state 2026-09-27). No mechanism,
+# evidence value, derived number, requirement text, threshold, verdict or C5 finding changes between v4 and v5.
+# =====================================================================================================================
+OUT_JSON_V5 = os.path.join(HERE, "ao_lifetime_register_v5.json")
+OUT_MD_V5 = os.path.join(HERE, "AO_LIFETIME_REGISTER_v5.md")
+SCHEMA_V5_REL = "docs/experiments/lifetime_ao/ao_lifetime_register_v5.schema.json"
+V5_INPUTS_COMMIT = "609d1362a887a2734a400c9ff690a2aea794e824"
+MERGED_PINS_V5 = {
+    W3_JSON_REL: "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0",   # W3, W4 pinned via snapshot
+    W3_MD_REL: "1dfedf9743cde333684acceae5ba5ddbc42bf4bf4ad5be5edaf3fb9f8a7649d5",
+    W4_JSON_REL: MERGED_PINS_V4[W4_JSON_REL],   # W4 v1-r2 at fe2c05e (unchanged)
+    W4_MD_REL: MERGED_PINS_V4[W4_MD_REL],
+}
+MERGED_COMMITS_V5 = {"W3": "609d136 (W3 hardware definition: pin W4 via immutable snapshot at fe2c05e; pin-only)",
+                     "W4": "fe2c05e (W4 instrumentation v1-r2 A3 repair 2; bytes unchanged at 609d136)"}
+
+V5_HARD_STATEMENT = ("v5 is a pin-only re-issue of v4: every W3 / W4 id the v1 register used is re-verified against "
+                     "the W3 hardware definition after it re-pinned W4 through an immutable snapshot and the W4 "
+                     "instrumentation definition v1-r2 (A3 instrument semantics), both read as immutable git blobs at "
+                     "the commit named in merged_inputs.inputs_source (never the live files): see "
+                     "draft_reference_verification. The C5 adoption status of every provision, by W3 and by W4, is in "
+                     "c5_adoption_check; W3's A3 integration review of register v3 is checked in "
+                     "w3_integration_review_check. Provisions NOT adopted and partially adopted items are listed there "
+                     "and are open, not waived.")
+
+
+def build_register_v5():
+    reg4 = build_register_v4()
+    if hashlib.sha256(render_json(reg4).encode("utf-8")).hexdigest() != V4_JSON_SHA256:
+        raise RuntimeError("v4 register no longer reproduces its pinned sha256; v4 is a historical record and must "
+                           "not change.")
+    reg = build_register_v4(MERGED_PINS_V5, V5_INPUTS_COMMIT)
+    reg["schema"], reg["schema_file"], reg["version"] = "ao_lifetime_register_v5", SCHEMA_V5_REL, "v5"
+    reg["hard_statements"] = reg["hard_statements"][:-1] + [V5_HARD_STATEMENT]
+    mi = reg["merged_inputs"]
+    mi["statement"] = ("W3 (after it re-pinned W4 through an immutable snapshot) and W4 v1-r2 (A3 instrument "
+                       "semantics) are merged; v5 reads them read-only as immutable git blobs at inputs_source.commit "
+                       "and the build refuses other bytes.")
+    mi["commits"] = MERGED_COMMITS_V5
+    mi["inputs_source"] = {
+        "kind": "git_blob", "commit": V5_INPUTS_COMMIT,
+        "reproduce": f"git show {V5_INPUTS_COMMIT}:<path>",
+        "note": "immutable pin: the live W3 / W4 files are never read by v5, so later edits to them cannot change it"}
+    reg["supersedes"] = {"version": "v4", "path": V4_JSON_REL, "sha256": V4_JSON_SHA256,
+                         "md": "docs/experiments/lifetime_ao/AO_LIFETIME_REGISTER_v4.md",
+                         "status": "HISTORICAL_RECORD (kept byte-identical by the register's versioning rule; "
+                                   f"reproduced by this builder from its pinned inputs at {V4_INPUTS_COMMIT[:7]} in git "
+                                   "history)"}
+    reg["history"] = reg["history"] + [
+        {"version": "v4", "path": V4_JSON_REL, "sha256": V4_JSON_SHA256,
+         "pinned_by": "register versioning rule (no external pin at supersession)"}]
+    reg["change_log"] = reg4["change_log"] + [
+        {"version": "v5", "date": "2026-09-27",
+         "change": "Pin-only integration round: W3 hardware definition re-pinned (609d136: W3 now pins W4 v1-r2 "
+                   "through the immutable snapshot snapshots/w4_instrumentation_definition_v1_at_fe2c05e.json; no W3 "
+                   "requirement changed); W4 v1-r2 bytes unchanged. v5 reads W3 / W4 as immutable git blobs at "
+                   f"{V5_INPUTS_COMMIT[:7]} (merged_inputs.inputs_source), not the live files. v4 kept byte-identical. "
+                   "Mechanisms, evidence, requirements, thresholds, verdicts, C5 findings and derived numbers "
+                   "unchanged."},
+    ]
+    return reg
+
+
 # ---------------------------------------------------------------------------------------------------------------------
 # Markdown rendering
 # ---------------------------------------------------------------------------------------------------------------------
@@ -2083,8 +2167,8 @@ def render_md(reg):
     L = []
     a = L.append
     ver = reg.get("version")
-    v2 = ver in ("v2", "v3", "v4")     # merged-W3/W4 layout (v2, v3, v4)
-    v3 = ver in ("v3", "v4")          # v3 layout (v4 adds the W3 integration review check)
+    v2 = ver in ("v2", "v3", "v4", "v5")     # merged-W3/W4 layout (v2 .. v5)
+    v3 = ver in ("v3", "v4", "v5")          # v3 layout (v4 / v5 add the W3 integration review check)
     if not v2:
         a("# H-1 lifetime / atomic-oxygen degradation register (fo_ao_lifetime_register) — DRAFT")
         a("")
@@ -2200,7 +2284,7 @@ def render_md(reg):
     if v2:
         dv = reg["draft_reference_verification"]
         a("### 3.1 Re-verification of the v1 draft references against the merged W3 / W4"
-          + ((" v1-r2 (after owner addendum A3)" if ver == "v4" else " v1-r2") if v3 else ""))
+          + ((" v1-r2 (after owner addendum A3)" if ver in ("v4", "v5") else " v1-r2") if v3 else ""))
         a("")
         a(dv["statement"])
         a("")
@@ -2223,7 +2307,12 @@ def render_md(reg):
               f"(`{mi['w4_pins_this_register']['sha256']}`) in `{mi['w4_pins_this_register']['source_id']}`; W3 pins "
               f"v1 as {mi['w3_pins_this_register']['source_id']}.")
             a("")
-            if ver == "v4":
+            if ver == "v5":
+                src = mi["inputs_source"]
+                a(f"Input source: {src['kind']} at commit `{src['commit']}` ({src['note']}); reproduce each file with "
+                  f"`{src['reproduce']}`.")
+                a("")
+            if ver in ("v4", "v5"):
                 a(f"W3 pins register v3 (`{mi['w3_pins_register_v3']['sha256']}`) as "
                   f"{mi['w3_pins_register_v3']['source_id']}. Owner addendum A3: `{mi['owner_addendum_a3']['path']}` "
                   f"sha256 `{mi['owner_addendum_a3']['sha256']}` ({mi['owner_addendum_a3']['use']}).")
@@ -2261,7 +2350,7 @@ def render_md(reg):
             for n in c5["partial_open"]:
                 a(f"- {n['id']} — {n['by']}: {n['needed']} ({n['other_adopter_status']})")
             a("")
-            if ver == "v4":
+            if ver in ("v4", "v5"):
                 wr = reg["w3_integration_review_check"]
                 a("### 3.3 W3 integration review of register v3 (owner addendum A3)")
                 a("")
@@ -2437,8 +2526,13 @@ def main(argv):
                            "historical record and must not change. Put changes in a new version.")
     reg4 = build_register_v4()
     js4, md4 = render_json(reg4), render_md(reg4)
+    if hashlib.sha256(js4.encode("utf-8")).hexdigest() != V4_JSON_SHA256:
+        raise RuntimeError("v4 register no longer reproduces its pinned sha256; v4 is a historical record and must "
+                           "not change. Put changes in a new version.")
+    reg5 = build_register_v5()
+    js5, md5 = render_json(reg5), render_md(reg5)
     outputs = ((OUT_JSON, js), (OUT_MD, md), (OUT_JSON_V2, js2), (OUT_MD_V2, md2), (OUT_JSON_V3, js3),
-               (OUT_MD_V3, md3), (OUT_JSON_V4, js4), (OUT_MD_V4, md4))
+               (OUT_MD_V3, md3), (OUT_JSON_V4, js4), (OUT_MD_V4, md4), (OUT_JSON_V5, js5), (OUT_MD_V5, md5))
     if "--check" in argv:
         bad = []
         for path, text in outputs:
@@ -2451,7 +2545,7 @@ def main(argv):
         if bad:
             print("OUT OF DATE: " + ", ".join(os.path.relpath(p, ROOT) for p in bad))
             return 1
-        print("OK: v1, v2, v3 (historical) and v4 register JSON / Markdown are up to date")
+        print("OK: v1, v2, v3, v4 (historical) and v5 register JSON / Markdown are up to date")
         return 0
     for path, text in outputs:
         with open(path, "w", encoding="utf-8") as f:

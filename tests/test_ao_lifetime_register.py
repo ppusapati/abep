@@ -4,11 +4,12 @@ Covers: deterministic build (--check), schema conformance (small local validator
 discipline (every numeric value sourced and classed; life numbers only measured / other-device literature / TBD; no
 screening candidate or Hall-closure life), referential integrity (mechanisms <-> requirements <-> coupons <-> interface
 table), the derived AO environment against the frozen atmosphere, and the 314 h datum against the hall-sustainment
-matrix when that file is present. v4 (current): re-verification of every W3/W4 reference against the merged, sha256-pinned
-W3 (after the owner addendum A3 integration review) and W4 v1-r2 files, the control-C5 adoption check with the W4
-c5_adoption dispositions, and the check of W3's integration review of register v3. v1 (pinned by W3 SRC-AOL), v2 (pinned
-by W4 v1-r2) and v3 (pinned by W3 SRC-AOL-V3) are historical records: byte-identical and still reproduced by the builder
-(v2 and v3 from their pinned inputs in git history). Does not require any in-flight lane (W3/W4 are merged in the base).
+matrix when that file is present. v5 (current; pin-only re-issue of v4): re-verification of every W3/W4 reference
+against the merged W3 (which now pins W4 through an immutable snapshot) and W4 v1-r2 files, read as sha256-pinned
+immutable git blobs at a named commit (never the live files), the control-C5 adoption check with the W4 c5_adoption
+dispositions, and the check of W3's integration review of register v3. v1 (pinned by W3 SRC-AOL), v2 (pinned by W4
+v1-r2), v3 (pinned by W3 SRC-AOL-V3) and v4 are historical records: byte-identical and still reproduced by the builder
+(v2, v3 and v4 from their pinned inputs in git history). Does not require any in-flight lane (W3/W4 are merged in the base).
 """
 import csv
 import importlib.util
@@ -33,12 +34,16 @@ MD_V2_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v2.md")
 JSON_V3_PATH = os.path.join(DIR, "ao_lifetime_register_v3.json")
 SCHEMA_V3_PATH = os.path.join(DIR, "ao_lifetime_register_v3.schema.json")
 MD_V3_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v3.md")
-JSON_PATH = os.path.join(DIR, "ao_lifetime_register_v4.json")
-SCHEMA_PATH = os.path.join(DIR, "ao_lifetime_register_v4.schema.json")
-MD_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v4.md")
+JSON_V4_PATH = os.path.join(DIR, "ao_lifetime_register_v4.json")
+SCHEMA_V4_PATH = os.path.join(DIR, "ao_lifetime_register_v4.schema.json")
+MD_V4_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v4.md")
+JSON_PATH = os.path.join(DIR, "ao_lifetime_register_v5.json")
+SCHEMA_PATH = os.path.join(DIR, "ao_lifetime_register_v5.schema.json")
+MD_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v5.md")
 V1_SHA256 = "237c99aa8ee582b520d17aecff262020d79f3776f47af69b9c46185a230a2e12"
 V2_SHA256 = "e922aff24a49c4dbf4b192548c6fe26caf20a20249c2c7b4c6ee7212af9e095b"
 V3_SHA256 = "4dea755df9252486f6e2234aacba17f9346c33fad722e6e562fd61cd404d6866"
+V4_SHA256 = "1afc668fa82528b55f0e3cdb60cd718e3ca8dcbb4b2769afd124983aa03dd3e8"
 W4_PINS = os.path.join(ROOT, "docs", "experiments", "instrumentation", "pinned_inputs.json")
 W3_JSON = os.path.join(ROOT, "docs", "experiments", "hardware", "hardware_requirements_v1.json")
 W4_JSON = os.path.join(ROOT, "docs", "experiments", "instrumentation", "instrumentation_definition_v1.json")
@@ -55,6 +60,18 @@ def reg():
 @pytest.fixture(scope="module")
 def schema():
     with open(SCHEMA_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def reg_v4():
+    with open(JSON_V4_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def schema_v4():
+    with open(SCHEMA_V4_PATH, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -99,6 +116,25 @@ def _builder_module():
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
+
+
+_PINNED_CACHE = {}
+
+
+def _pinned_input(rel):
+    """A W3 / W4 input of the current register exactly as it pins it: the immutable git blob at the v5 inputs commit
+    (never the live file), checked against the v5 pin."""
+    if rel not in _PINNED_CACHE:
+        import hashlib
+        mod = _builder_module()
+        raw = mod._read_at_commit(rel, mod.V5_INPUTS_COMMIT)
+        assert hashlib.sha256(raw).hexdigest() == mod.MERGED_PINS_V5[rel], rel
+        _PINNED_CACHE[rel] = json.loads(raw.decode("utf-8"))
+    return _PINNED_CACHE[rel]
+
+
+W3_JSON_REL = "docs/experiments/hardware/hardware_requirements_v1.json"
+W4_JSON_REL = "docs/experiments/instrumentation/instrumentation_definition_v1.json"
 
 
 # ---- minimal JSON-schema validator (subset used by the schema) -------------------------------------------------------
@@ -188,8 +224,8 @@ def test_builder_is_pure_and_not_wired():
     assert "archengine" not in re.findall(r"^\s*(?:import|from)\s+(\S+)", src, re.M)
 
 
-def test_schema_uses_only_supported_keywords(schema, schema_v3, schema_v2, schema_v1):
-    for sch in (schema, schema_v3, schema_v2, schema_v1):
+def test_schema_uses_only_supported_keywords(schema, schema_v4, schema_v3, schema_v2, schema_v1):
+    for sch in (schema, schema_v4, schema_v3, schema_v2, schema_v1):
         used = _schema_keywords(sch, set())
         unknown = used - _SUPPORTED_KEYWORDS - _ANNOTATION_KEYWORDS
         assert not unknown, f"schema keywords not implemented by the local validator: {sorted(unknown)}"
@@ -206,8 +242,10 @@ def test_local_validator_rejects_bad_documents(reg, schema):
     assert "not in enum" in errs
 
 
-def test_schema_conformance(reg, schema, reg_v3, schema_v3, reg_v2, schema_v2, reg_v1, schema_v1):
+def test_schema_conformance(reg, schema, reg_v4, schema_v4, reg_v3, schema_v3, reg_v2, schema_v2, reg_v1, schema_v1):
     errs = _validate(reg, schema, schema)
+    assert not errs, "\n".join(errs[:30])
+    errs = _validate(reg_v4, schema_v4, schema_v4)
     assert not errs, "\n".join(errs[:30])
     errs = _validate(reg_v3, schema_v3, schema_v3)
     assert not errs, "\n".join(errs[:30])
@@ -382,11 +420,11 @@ def test_frozen_atmosphere_pin_enforced(tmp_path, monkeypatch):
 
 
 def test_markdown_mentions_c5_and_primary_output():
-    for path in (MD_PATH, MD_V3_PATH, MD_V2_PATH, MD_V1_PATH):
+    for path in (MD_PATH, MD_V4_PATH, MD_V3_PATH, MD_V2_PATH, MD_V1_PATH):
         md = open(path, encoding="utf-8").read()
         for s in ("control C5", "Witness coupons", "DRAFT", "AOL-WC-01", "AOL-RC-01", "AOL-CX-01", "AOL-PM-01"):
             assert s in md, (path, s)
-    for path in (MD_PATH, MD_V3_PATH, MD_V2_PATH):
+    for path in (MD_PATH, MD_V4_PATH, MD_V3_PATH, MD_V2_PATH):
         md = open(path, encoding="utf-8").read()
         for s in ("Re-verification of the v1 draft references", "C5 adoption check", "Not adopted", V1_SHA256):
             assert s in md, (path, s)
@@ -484,32 +522,37 @@ def test_v1_is_byte_identical_historical_record(reg, reg_v2):
 
 
 def test_v2_is_byte_identical_historical_record(reg, reg_v2):
-    """W4 v1-r2 pins v2; v3 and v4 supersede it and v2 stays byte-identical."""
+    """W4 v1-r2 pins v2; v3, v4 and v5 supersede it and v2 stays byte-identical."""
     assert _sha(JSON_V2_PATH) == V2_SHA256
     pins = json.load(open(W4_PINS, encoding="utf-8"))
     assert pins["docs/experiments/lifetime_ao/ao_lifetime_register_v2.json"] == V2_SHA256
-    assert reg["version"] == "v4" and reg["supersedes"]["version"] == "v3"
-    assert reg["supersedes"]["sha256"] == V3_SHA256
+    assert reg["version"] == "v5" and reg["supersedes"]["version"] == "v4"
+    assert reg["supersedes"]["sha256"] == V4_SHA256
     assert [(h["version"], h["sha256"]) for h in reg["history"]] == [("v1", V1_SHA256), ("v2", V2_SHA256),
-                                                                     ("v3", V3_SHA256)]
-    assert [c["version"] for c in reg["change_log"]] == ["v1", "v2", "v3", "v4"]
+                                                                     ("v3", V3_SHA256), ("v4", V4_SHA256)]
+    assert [c["version"] for c in reg["change_log"]] == ["v1", "v2", "v3", "v4", "v5"]
     assert reg["change_log"][:2] == reg_v2["change_log"]
     assert reg["merged_inputs"]["w4_pins_this_register"]["sha256"] == V2_SHA256
 
 
 def test_merged_inputs_pinned(reg):
+    """v5 pins W3 / W4 as immutable git blobs at a named commit; each pinned file reproduces from that blob."""
+    import hashlib
+    mod = _builder_module()
+    src = reg["merged_inputs"]["inputs_source"]
+    assert src["kind"] == "git_blob" and src["commit"] == mod.V5_INPUTS_COMMIT
     files = {f["path"]: f["sha256"] for f in reg["merged_inputs"]["files"]}
-    assert {"docs/experiments/hardware/hardware_requirements_v1.json",
-            "docs/experiments/instrumentation/instrumentation_definition_v1.json"} <= set(files)
+    assert files == mod.MERGED_PINS_V5
+    assert {W3_JSON_REL, W4_JSON_REL} <= set(files)
     for p, h in files.items():
-        assert _sha(os.path.join(ROOT, p)) == h, p
+        assert hashlib.sha256(mod._read_at_commit(p, src["commit"])).hexdigest() == h, p
 
 
 def test_merged_pin_enforced(monkeypatch):
     mod = _builder_module()
-    monkeypatch.setitem(mod.MERGED_PINS_V4, mod.W4_JSON_REL, "0" * 64)
+    monkeypatch.setitem(mod.MERGED_PINS_V5, mod.W4_JSON_REL, "0" * 64)
     with pytest.raises(RuntimeError, match="sha256"):
-        mod.build_register_v4()
+        mod.build_register_v5()
 
 
 def test_v2_v3_historical_inputs_are_not_the_working_tree():
@@ -519,11 +562,45 @@ def test_v2_v3_historical_inputs_are_not_the_working_tree():
     assert mod.MERGED_PINS[mod.W3_JSON_REL] == mod.MERGED_PINS_V3[mod.W3_JSON_REL]
     assert mod.MERGED_PINS_V3[mod.W3_JSON_REL] != mod.MERGED_PINS_V4[mod.W3_JSON_REL]
     assert mod.MERGED_PINS_V3[mod.W4_JSON_REL] != mod.MERGED_PINS_V4[mod.W4_JSON_REL]
-    assert _sha(W3_JSON) == mod.MERGED_PINS_V4[mod.W3_JSON_REL]
-    assert _sha(W4_JSON) == mod.MERGED_PINS_V4[mod.W4_JSON_REL]
     for pins in (mod.MERGED_PINS, mod.MERGED_PINS_V3):
         with pytest.raises(RuntimeError, match="sha256"):
             mod._load_merged(pins, None)
+
+
+def test_v4_historical_inputs_and_v5_pin_only_repin():
+    """W3 re-pinned W4 via an immutable snapshot (bytes moved, no requirement changed): v4 is rebuilt from its inputs
+    at V4_INPUTS_COMMIT; v5 re-pins only W3 (W4 bytes unchanged) and reads both as git blobs, never the live files."""
+    import hashlib
+    mod = _builder_module()
+    for pins, commit in ((mod.MERGED_PINS_V4, mod.V4_INPUTS_COMMIT), (mod.MERGED_PINS_V5, mod.V5_INPUTS_COMMIT)):
+        for rel, h in pins.items():
+            assert hashlib.sha256(mod._read_at_commit(rel, commit)).hexdigest() == h, (rel, commit)
+    assert mod.MERGED_PINS_V4[mod.W3_JSON_REL] != mod.MERGED_PINS_V5[mod.W3_JSON_REL]
+    assert mod.MERGED_PINS_V4[mod.W3_MD_REL] != mod.MERGED_PINS_V5[mod.W3_MD_REL]
+    assert mod.MERGED_PINS_V4[mod.W4_JSON_REL] == mod.MERGED_PINS_V5[mod.W4_JSON_REL]
+    assert mod.MERGED_PINS_V4[mod.W4_MD_REL] == mod.MERGED_PINS_V5[mod.W4_MD_REL]
+    # W3 at the v5 commit pins W4 through the immutable snapshot whose bytes equal the W4 file v5 pins
+    w3 = _pinned_input(W3_JSON_REL)
+    snap = w3["references"]["SRC-INS-V1R2"]
+    assert snap["kind"] == "repository_snapshot" and snap["sha256"] == mod.MERGED_PINS_V5[mod.W4_JSON_REL]
+    assert hashlib.sha256(mod._read_at_commit(snap["path"], mod.V5_INPUTS_COMMIT)).hexdigest() == snap["sha256"]
+    with open(os.path.join(ROOT, "docs", "experiments", "lifetime_ao", "build_ao_lifetime_register.py"),
+              encoding="utf-8") as f:
+        src = f.read()
+    body = src[src.index("def build_register_v5"):src.index("# Markdown rendering")]
+    assert "None)" not in body   # v5 never reads the working-tree W3 / W4
+
+
+def test_v5_is_pin_only_reissue_of_v4(reg, reg_v4):
+    assert _sha(JSON_V4_PATH) == V4_SHA256 and reg_v4["version"] == "v4"
+    pin_layer = {"schema", "schema_file", "version", "hard_statements", "merged_inputs", "supersedes", "history",
+                 "change_log"}
+    assert {k for k in set(reg) | set(reg_v4) if reg.get(k) != reg_v4.get(k)} <= pin_layer
+    assert reg["hard_statements"][:-1] == reg_v4["hard_statements"][:-1]
+    assert reg["change_log"][:-1] == reg_v4["change_log"]
+    a = {k: v for k, v in reg["merged_inputs"].items() if k not in ("statement", "files", "commits", "inputs_source")}
+    b = {k: v for k, v in reg_v4["merged_inputs"].items() if k not in ("statement", "files", "commits")}
+    assert a == b
 
 
 def test_v3_is_byte_identical_historical_record(reg, reg_v3):
@@ -543,7 +620,7 @@ def test_owner_addendum_a3_pinned(reg):
 
 
 def test_w3_integration_review_check(reg):
-    w3 = json.load(open(W3_JSON, encoding="utf-8"))
+    w3 = _pinned_input(W3_JSON_REL)
     hw = {r["id"]: r for r in w3["requirements"]}
     aol = {r["id"] for r in reg["requirements"]}
     chk = reg["w3_integration_review_check"]
@@ -562,8 +639,8 @@ def test_every_v1_draft_id_has_one_verdict(reg, reg_v1):
     dv = reg["draft_reference_verification"]
     ids = [v["id"] for v in dv["verdicts"]]
     assert sorted(ids) == sorted(reg_v1["unmerged_draft_references"]["ids"]) and len(ids) == len(set(ids))
-    w3 = json.load(open(W3_JSON, encoding="utf-8"))
-    w4 = json.load(open(W4_JSON, encoding="utf-8"))
+    w3 = _pinned_input(W3_JSON_REL)
+    w4 = _pinned_input(W4_JSON_REL)
     hw = {r["id"] for r in w3["requirements"]}
     ins = {i["id"] for i in w4["instruments"]}
     for v in dv["verdicts"]:
@@ -598,11 +675,12 @@ def test_v2_v3_have_no_unmerged_draft_wording(reg, reg_v3, reg_v2):
         assert "W3 draft" not in blob and "W4 draft" not in blob and "UNVERIFIED_UNMERGED_DRAFT" not in blob
 
 
-def test_v3_v4_content_equals_v2(reg, reg_v3, reg_v2):
-    """v3 and v4 change only the W3/W4 re-verification layer; register content is identical to v2."""
+def test_v3_v4_content_equals_v2(reg, reg_v4, reg_v3, reg_v2):
+    """v3, v4 and v5 change only the W3/W4 re-verification layer; register content is identical to v2."""
     for k in ("mechanisms", "witness_coupons", "requirements", "proposed_thresholds", "derived", "sources",
               "open_owner_questions", "vocabulary", "repository_references"):
         assert reg[k] == reg_v2[k], k
+        assert reg_v4[k] == reg_v2[k], k
         assert reg_v3[k] == reg_v2[k], k
 
 
@@ -620,7 +698,7 @@ def test_v2_content_unchanged_in_meaning(reg_v2, reg_v1):
 
 def test_c5_adoption_check(reg):
     c5 = reg["c5_adoption_check"]
-    w3 = json.load(open(W3_JSON, encoding="utf-8"))
+    w3 = _pinned_input(W3_JSON_REL)
     hw = {r["id"] for r in w3["requirements"]}
     w3rows = {r["source_id"]: r for r in w3["c5_integration"]["rows"]}
     provisions = ([r["id"] for r in reg["requirements"]] + [q["id"] for q in reg["open_owner_questions"]]
@@ -645,7 +723,7 @@ def test_c5_adoption_check(reg):
 
 def test_c5_w4_status_from_w4_v1r2(reg, reg_v2):
     """Per-provision W4 status equals the W4 v1-r2 c5_adoption disposition; adopting ids exist and trace back."""
-    w4 = json.load(open(W4_JSON, encoding="utf-8"))
+    w4 = _pinned_input(W4_JSON_REL)
     assert w4["revision"] == "v1-r2"
     ins = {i["id"]: i for i in w4["instruments"]}
     procs = {p["id"]: p for p in w4["procedures"]}
