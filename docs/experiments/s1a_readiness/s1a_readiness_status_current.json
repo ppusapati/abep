@@ -337,7 +337,7 @@
         {
           "path": "docs/experiments/capability_demo/capability_demo_prep_v1.json",
           "what": "W4 capability-demonstration preparation (fo_capability_demo_prep; DRAFT): instruments used by CD-01..CD-07",
-          "sha256": "d7e986ae8d32408d0c4c693c5683c56450e7a1ce1035e3a042ecb33a696f9e9c"
+          "sha256": "ba465206f3a9d7773e338e06dc9e98961c3a97d7f89357c2ed3a227f2a924e67"
         }
       ],
       "precursors_absent": []
@@ -500,7 +500,7 @@
         {
           "path": "docs/experiments/capability_demo/capability_demo_prep_v1.json",
           "what": "W4 capability-demonstration preparation (fo_capability_demo_prep; DRAFT): CD-01..CD-07 and calibration_plan_candidates",
-          "sha256": "d7e986ae8d32408d0c4c693c5683c56450e7a1ce1035e3a042ecb33a696f9e9c"
+          "sha256": "ba465206f3a9d7773e338e06dc9e98961c3a97d7f89357c2ed3a227f2a924e67"
         },
         {
           "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
@@ -637,7 +637,7 @@
         {
           "path": "docs/experiments/capability_demo/capability_demo_prep_v1.json",
           "what": "W4 capability-demonstration preparation (DRAFT): s1a_path.leak_rule (CD records contain calibration data only)",
-          "sha256": "d7e986ae8d32408d0c4c693c5683c56450e7a1ce1035e3a042ecb33a696f9e9c"
+          "sha256": "ba465206f3a9d7773e338e06dc9e98961c3a97d7f89357c2ed3a227f2a924e67"
         }
       ],
       "precursors_absent": []
