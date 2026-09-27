@@ -11,6 +11,25 @@
  },
  "status": "DRAFT_PENDING_OWNER",
  "base_commit": "510e464fb8e128e4cf3325572a4d36ad33a4899d",
+ "version": "v1",
+ "revision": "v1-r2",
+ "repair_base_commit": "af6e4948605081f6cab761ce3a74f67658738e44",
+ "change_log": [
+  {
+   "revision": "v1-r1",
+   "date": "2026-09-27",
+   "base_commit": "510e464fb8e128e4cf3325572a4d36ad33a4899d",
+   "change": "initial W4 instrumentation definition (INS-01..INS-18)"
+  },
+  {
+   "revision": "v1-r2",
+   "date": "2026-09-27",
+   "base_commit": "af6e4948605081f6cab761ce3a74f67658738e44",
+   "change": "control C5 (A2 addendum): adopts the 19 W4 provisions of the AO/lifetime register v2 and MCQ-W4-01..03: new INS-19..INS-24 and procedures INS-P-01..INS-P-12, c5_adoption table, five new pinned inputs, four references cited via those lanes; existing ids, values, thresholds and decision quantities unchanged (only a traces_to_provisions key added to every instrument)",
+   "material": false,
+   "why_v1": "additive: no existing requirement, threshold, derived number or decision-quantity role changed, so the file stays instrumentation_definition_v1.json (downstream lanes reference this path)"
+  }
+ ],
  "generated_by": "docs/experiments/instrumentation/build_instrumentation_definition.py",
  "companion_document": "docs/experiments/instrumentation/INSTRUMENTATION_DEFINITION.md",
  "not_locked": "Nothing here is pre-registered, locked or decided. Thresholds not in the RFP are PROPOSED. No score-bearing reading before LOCK-1 and LOCK-2 (lane 25 Sec. 10). Instrument choices are principles, not product selections; no instrument accuracy is claimed.",
@@ -52,6 +71,31 @@
    "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
    "lane": "od_hardware_pivot (owner)",
    "sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
+   "lane": "od_hardware_pivot A2 (owner; C5)",
+   "sha256": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6"
+  },
+  {
+   "path": "docs/experiments/hardware/hardware_requirements_v1.json",
+   "lane": "fo_hardware_definition (W3)",
+   "sha256": "552f4ca0e3c84f8f10f03d103d10b169e360e9c28f2a7a4d44e65c1d1b915d04"
+  },
+  {
+   "path": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+   "lane": "fo_ao_lifetime_register (v2)",
+   "sha256": "e922aff24a49c4dbf4b192548c6fe26caf20a20249c2c7b4c6ee7212af9e095b"
+  },
+  {
+   "path": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json",
+   "lane": "fo_magnet_coil_qualification",
+   "sha256": "53e92f4536f7b30054d3521adbd504eca725c4c6d79a6cb3b51c2fc4ce220b32"
+  },
+  {
+   "path": "schemas/thermal_life/inputs_v1.json",
+   "lane": "thermal_life input schema (measured_hardware record)",
+   "sha256": "937e5c643ef6d1b567319ad788915cd8e9f9b6ab78fc8df91454bdb300f0777f"
   }
  ],
  "cross_references_planned": [
@@ -1147,7 +1191,8 @@
    },
    "notes": [
     "sustained >= 12 mN (DQ-TABS) needs a long dwell: zero drift over the dwell is bounded only by the pre- and post-dwell zeros; the dwell length and its drift allowance are TBD - requires owner (hold time) and S1 thermal time constants"
-   ]
+   ],
+   "traces_to_provisions": []
   },
   {
    "id": "INS-02",
@@ -1213,7 +1258,10 @@
     "status": "TBD",
     "why": "achievability of 0.50 % per channel is TBD - requires calibration certificates and S1 data; the v1 P_bus sum needs the compressor draw reconstructed from the upstream ICD (ABSENT_IN_LAB; lane 06 laboratory_subset); until it exists the power gate is only a PARTIAL_BOUNDARY result (necessary, not sufficient)"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": [
+    "MCQ-W4-02"
+   ]
   },
   {
    "id": "INS-03",
@@ -1269,7 +1317,8 @@
     "status": "AT_RISK",
     "why": "the G3 target falls from 3.5 % to 0.9 % as f_src rises from 0.1 to 0.4 (lane 25); no open reference located by this lane for load-plane net RF / microwave power at that level; achievability TBD - requires sensor certificates and the S1a characterisation"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": []
   },
   {
    "id": "INS-04",
@@ -1316,7 +1365,11 @@
     "status": "FEASIBLE_IN_PRINCIPLE",
     "why": "standard electrical measurement; the band is TBD from S1"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": [
+    "AOL-CX-01",
+    "MCQ-W4-02"
+   ]
   },
   {
    "id": "INS-05",
@@ -1360,7 +1413,8 @@
     "status": "AT_RISK",
     "why": "REF-SNYDER2017: typical mass-flow uncertainty 1-5 % FS; a low-FS setpoint inflates the relative value; the absolute gate then carries a flow margin (I-FLOW-CONSERVATIVE)"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": []
   },
   {
    "id": "INS-06",
@@ -1395,7 +1449,8 @@
     "status": "TBD",
     "why": "with fixed hardware P_feed follows mdot and conductance (lane 25 Sec. 4); a mismatch with the registered W1 P_feed limits applicability rather than invalidating the reading"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": []
   },
   {
    "id": "INS-07",
@@ -1428,7 +1483,8 @@
     "status": "TBD",
     "why": "surface-to-gas relation is inferred; tolerance TBD from W1"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": []
   },
   {
    "id": "INS-08",
@@ -1467,7 +1523,8 @@
     "status": "TBD",
     "why": "gas-specific gauge response for O2/N2 mixtures needs calibration; for the absolute gate the p_b sensitivity (S5 slope) is reported with T_measured (PROPOSED rule in the MD)"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": []
   },
   {
    "id": "INS-09",
@@ -1502,7 +1559,11 @@
     "status": "FEASIBLE_IN_PRINCIPLE",
     "why": "magnetostatic; the P5 non-identifiability (CLAUDE.md) is the reason it is mandatory with coil currents"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": [
+    "AOL-PM-08",
+    "MCQ-W4-03"
+   ]
   },
   {
    "id": "INS-10",
@@ -1538,7 +1599,10 @@
     "status": "FEASIBLE_IN_PRINCIPLE",
     "why": "a logic on INS-04 data; thresholds PROPOSED"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": [
+    "AOL-CX-06"
+   ]
   },
   {
    "id": "INS-11",
@@ -1572,7 +1636,10 @@
     "status": "OPTIONAL",
     "why": "no reference located by this lane; qualitative O2 background check"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": [
+    "AOL-CX-03"
+   ]
   },
   {
    "id": "INS-12",
@@ -1606,7 +1673,8 @@
     "status": "OPTIONAL",
     "why": "qualitative (lane 25 M13); no quantitative species fraction without a model this project has not admitted"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": []
   },
   {
    "id": "INS-13",
@@ -1642,7 +1710,8 @@
     "status": "AT_RISK",
     "why": "at low energy the four air ions are not all resolved without an accelerating bias (REF-ROVEY2025 via lane 25)"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": []
   },
   {
    "id": "INS-14",
@@ -1678,7 +1747,8 @@
     "status": "FEASIBLE_IN_PRINCIPLE",
     "why": "recommended practice exists (REF-LEMMER2025); tolerance TBD"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": []
   },
   {
    "id": "INS-15",
@@ -1716,7 +1786,8 @@
     "status": "AT_RISK",
     "why": "CEX bound on the collector path needs a cited cross section not yet in the repository"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": []
   },
   {
    "id": "INS-16",
@@ -1750,7 +1821,8 @@
     "status": "AT_RISK",
     "why": "in-channel probing perturbs the discharge (from memory - verify); RF and microwave environments complicate interpretation; the owner lists T_e/n_e 'if feasible'"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": []
   },
   {
    "id": "INS-17",
@@ -1784,7 +1856,8 @@
     "status": "FEASIBLE_IN_PRINCIPLE",
     "why": "standard"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": []
   },
   {
    "id": "INS-18",
@@ -1819,9 +1892,813 @@
     "status": "FEASIBLE_IN_PRINCIPLE",
     "why": "standard"
    },
-   "notes": []
+   "notes": [],
+   "traces_to_provisions": [
+    "AOL-CX-01",
+    "AOL-CX-02",
+    "AOL-CX-05",
+    "AOL-CX-06",
+    "AOL-DC-01"
+   ]
+  },
+  {
+   "id": "INS-19",
+   "name": "witness-coupon and part mass metrology (dehydrated protocol)",
+   "lane25_measurements": [],
+   "quantity": "mass of every witness coupon (plume array, controls, cathode-vicinity, magnetic-circuit, interstage), anode, wall ring and C-1 keeper, at baseline and after each removal",
+   "principle": "analytical balance in the metrology lab under the dehydrated protocol INS-P-03 (vacuum desiccation for a fixed time, repeated readings averaged, room temperature and humidity logged, identical pre and post), coded sample ids (INS-P-01)",
+   "references": [
+    "REF-DEGROH2006"
+   ],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "a mass-change detection limit: no admitted source gives an expected N/O-environment mass change for the H-1 wall, anode or pole grades (AO register v2: no N/O yield on BN, BN-SiO2 or SiC), so the requirement is set from the demonstrated repeatability of a control coupon (AOL-PM-02) before S1 and reported as a detection limit, not a target",
+     "blocked_by": "metrology lab + S1"
+    }
+   },
+   "calibration": [
+    "balance calibration with traceable reference masses at each session (class TBD - requires owner / metrology lab)",
+    "control-coupon repeatability demonstration before S1 (AOL-PM-02 verification)",
+    "lab-stored control coupon weighed in every session (AOL-WC-06 control (d))"
+   ],
+   "serves": {
+    "DQ-RARCH": "-",
+    "DQ-TABS": "-",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "-",
+    "DQ-KNEE": "-"
+   },
+   "validation_observables": [],
+   "feasibility": {
+    "status": "TBD",
+    "why": "achievable resolution relative to the (unknown) plume-induced mass change is not known; hygroscopic items (polymers, BN) need the dehydrated protocol (AO register v2 AOL-PM-02)"
+   },
+   "notes": [
+    "adopts the W4 (metrology) part of AOL-WC-01; the holder is W3 HW-SVC-06"
+   ],
+   "traces_to_provisions": [
+    "AOL-WC-01",
+    "AOL-WC-06",
+    "AOL-PM-01",
+    "AOL-PM-02"
+   ]
+  },
+  {
+   "id": "INS-20",
+   "name": "surface, profile and post-test inspection metrology",
+   "lane25_measurements": [],
+   "quantity": "surface profile against fiducials, morphology and deposits (SEM/EDS), oxidation state and depth profile (XPS), photographs; C-1 orifice diameter and keeper-face profile; pole-face inspection",
+   "principle": "external metrology lab: stylus or optical profilometry against the W3 fiducials (HW-H1-11), SEM/EDS, XPS with sealed dry transfer and custody record, calibrated optical measurement of the orifice diameter, photographs under fixed lighting; the same instruments and operators (coded ids) pre and post",
+   "references": [],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "per-technique uncertainty from the metrology lab's calibration records; the profile resolution needed follows from the erosion depth to be resolved, which no admitted source gives for the H-1 wall grade in N/O (AO register v2); report as detection limits",
+     "blocked_by": "metrology lab"
+    }
+   },
+   "calibration": [
+    "profilometer calibration on a certified step-height standard (class TBD - requires metrology lab)",
+    "SEM magnification / EDS and XPS energy-scale calibration per the lab's procedure, recorded with each report",
+    "baseline before first ignition for every serialized item (INS-P-02)"
+   ],
+   "serves": {
+    "DQ-RARCH": "-",
+    "DQ-TABS": "-",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "-",
+    "DQ-KNEE": "-"
+   },
+   "validation_observables": [],
+   "feasibility": {
+    "status": "FEASIBLE_IN_PRINCIPLE",
+    "why": "standard laboratory techniques; needs a metrology lab (not chosen) and sealed-transfer custody (INS-P-04)"
+   },
+   "notes": [
+    "adopts the W4 parts of AOL-WC-01, AOL-PM-01, AOL-PM-04, AOL-PM-05 (with W3 HW-C1-08) and the pole-face inspection of AOL-PM-08 (with W3 HW-MC-06)"
+   ],
+   "traces_to_provisions": [
+    "AOL-WC-01",
+    "AOL-WC-06",
+    "AOL-PM-01",
+    "AOL-PM-04",
+    "AOL-PM-05",
+    "AOL-PM-08"
+   ]
+  },
+  {
+   "id": "INS-21",
+   "name": "anode resistance (4-wire) and insulation resistance",
+   "lane25_measurements": [],
+   "quantity": "anode-to-terminal resistance via the W3 sense lead (HW-ELEC-04); insulation resistance of the anode isolator, coils and harness",
+   "principle": "4-wire (Kelvin) resistance measurement through the HW-ELEC-04 sense lead between blocks, discharge off; insulation-resistance tester at a test voltage within the HW-ENV-01 rating (voltage TBD - W3)",
+   "references": [
+    "REF-CIFALI2011"
+   ],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "S1 baseline scatter of the anode resistance (sets the AOL-PT-02 trigger, LOCK-2) and the W3 isolator / coil insulation specification",
+     "blocked_by": "S1 + fo_hardware_definition"
+    }
+   },
+   "calibration": [
+    "meter calibration against traceable resistance standards (class TBD - requires owner)",
+    "lead-resistance and contact check with the sense lead shorted at the feedthrough at baseline",
+    "measured at baseline, every phase boundary and campaign end (INS-P-06)"
+   ],
+   "serves": {
+    "DQ-RARCH": "-",
+    "DQ-TABS": "-",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "S",
+    "DQ-KNEE": "-"
+   },
+   "validation_observables": [],
+   "feasibility": {
+    "status": "FEASIBLE_IN_PRINCIPLE",
+    "why": "standard electrical measurement once HW-ELEC-04 exists; the trigger threshold is TBD until the S1 scatter exists"
+   },
+   "notes": [
+    "closes the review finding 'INS-04 has no anode-resistance measurement' without changing INS-04"
+   ],
+   "traces_to_provisions": [
+    "AOL-RC-02",
+    "AOL-PM-01",
+    "AOL-PM-06"
+   ]
+  },
+  {
+   "id": "INS-22",
+   "name": "near-cathode gas sampling point to the RGA (extends INS-11)",
+   "lane25_measurements": [],
+   "quantity": "O2 / H2O / N2 partial pressures near C-1 during O-bearing operation (a proxy: the emitter-region O partial pressure is not measurable directly)",
+   "principle": "sampling tube with its inlet at a fixed recorded position near C-1 (outside the cathode plume core, identical in every arm) feeding the INS-11 RGA; switched against the chamber sample and logged on INS-18",
+   "references": [],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "W5 / owner decision on whether the near-cathode proxy is quantitative; calibration of O2 and H2O response at the sampling point (AOL-CX-03: 'calibration TBD')"
+    }
+   },
+   "calibration": [
+    "calibrate the sampled O2 and N2 response against known mixtures from the INS-05 flows; H2O response method TBD - requires the RGA and facility choice",
+    "record the sampling-line transit delay against INS-18 with a flow step"
+   ],
+   "serves": {
+    "DQ-RARCH": "-",
+    "DQ-TABS": "-",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "S",
+    "DQ-KNEE": "-"
+   },
+   "validation_observables": [
+    "VO-FEED"
+   ],
+   "feasibility": {
+    "status": "AT_RISK",
+    "why": "a sampled partial pressure near the cathode is a proxy for the emitter region (AO register v2 AOL-CX-03 rationale); H2O calibration method not identified by this lane"
+   },
+   "notes": [
+    "closes the review finding 'INS-11 has no near-C-1 sampling point' without changing INS-11"
+   ],
+   "traces_to_provisions": [
+    "AOL-CX-03"
+   ]
+  },
+  {
+   "id": "INS-23",
+   "name": "life-mechanism and C-1 emitter / cathode-tube temperatures (extends INS-17)",
+   "lane25_measurements": [],
+   "quantity": "temperatures of the anode, each exit-region wall ring, next to each witness coupon (HW-H1-12 positions), and the C-1 emitter or cathode tube during firing",
+   "principle": "thermocouples at the fixed W3 positions (HW-H1-12, identical in every arm); C-1: thermocouple on the cathode tube as the baseline, a pyrometer on the emitter only if the W3 C-1 design gives a view (proposed; choice W3 / owner)",
+   "references": [],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "the temperature resolution the oxidation / sputter-yield evidence needs (lane 32, lane 15 limits) and the LaB6 temperature bands cited in W3 HW-C1-03; pyrometer emissivity uncertainty TBD - requires the emitter material and view",
+     "blocked_by": "fo_hardware_definition"
+    }
+   },
+   "calibration": [
+    "thermocouple calibration and cold-junction check (as INS-17)",
+    "pyrometer (if used) calibrated against a thermocouple on a reference body at the emitter temperature range; emissivity recorded"
+   ],
+   "serves": {
+    "DQ-RARCH": "-",
+    "DQ-TABS": "-",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "S",
+    "DQ-KNEE": "-"
+   },
+   "validation_observables": [],
+   "feasibility": {
+    "status": "AT_RISK",
+    "why": "the emitter itself is usually not directly instrumentable; a cathode-tube thermocouple gives the tube, not the emitter (from memory - verify against the C-1 design)"
+   },
+   "notes": [
+    "closes the review finding that no temperature channel is placed near the cathode (INS-17 is unchanged; the finding named INS-14, which is the RPA)"
+   ],
+   "traces_to_provisions": [
+    "AOL-CX-04",
+    "AOL-CX-07"
+   ]
+  },
+  {
+   "id": "INS-24",
+   "name": "coil winding temperature and coil electrical record",
+   "lane25_measurements": [],
+   "quantity": "average winding temperature per coil (4-wire potential-probe resistance), hot-spot temperatures (thermocouples at the predicted hot spots), coil current and voltage per reading",
+   "principle": "4-wire coil resistance from the INS-02 hall_magnet / ecr_magnet V and I at the coil terminals (potential probes at the winding) converted by the coil's own R(T) (the magnet/coil lane records the method and the copper alpha source); embedded thermocouples at the predicted hot spots; the hot-spot minus average offset is measured, not assumed",
+   "references": [
+    "REF-JANKOVSKY1999",
+    "REF-KAMHAWI2013"
+   ],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "coil hot-spot margin to the insulation class of the selected magnet wire (magnet/coil qualification MCQ-QT-06) and the H-1 thermal model (lane 15 hall_magnet inputs)",
+     "blocked_by": "fo_magnet_coil_qualification + fo_hardware_definition"
+    }
+   },
+   "calibration": [
+    "R0 and T0 of each coil measured isothermally before S1 (reference resistance at a recorded temperature)",
+    "thermocouples calibrated as INS-17",
+    "coil V/I channels are INS-02 channels (same calibration)"
+   ],
+   "serves": {
+    "DQ-RARCH": "-",
+    "DQ-TABS": "-",
+    "DQ-PBUS": "S",
+    "DQ-SUST": "-",
+    "DQ-KNEE": "-"
+   },
+   "validation_observables": [
+    "VO-BZ"
+   ],
+   "feasibility": {
+    "status": "FEASIBLE_IN_PRINCIPLE",
+    "why": "the method was used on NASA Hall thrusters (as cited by the magnet/coil lane); hot-spot placement needs the W3 coil design"
+   },
+   "notes": [],
+   "traces_to_provisions": [
+    "MCQ-W4-01",
+    "MCQ-W4-02",
+    "MCQ-W4-03"
+   ]
   }
  ],
+ "procedures": [
+  {
+   "id": "INS-P-01",
+   "name": "witness lot, control coupons and coupon/part register",
+   "provisions": [
+    "AOL-WC-06",
+    "AOL-DC-01"
+   ],
+   "statement": "Every witness lot carries four controls: (a) facility-background (chamber wall), (b) beam-dump-facing, (c) shadowed (on the W3 HW-SVC-06 holder) and (d) lab-stored. A register records serial, lot (HW-H1-14), material, position, install/remove timestamps and cumulative exposure per feed composition, arm and block (from INS-18); metrology operators receive coded sample ids (PROPOSED). Kept under the W5 data-custody plan.",
+   "instruments": [
+    "INS-18",
+    "INS-19",
+    "INS-20"
+   ],
+   "required_uncertainty": "n/a (register); timestamps on the INS-18 time base",
+   "calibration": "register audit before LOCK-2 (AOL-DC-01 verification)",
+   "open": "positions of controls (a) and (b) are facility items: TBD - requires the facility choice (S1-readiness condition 'facility chosen')"
+  },
+  {
+   "id": "INS-P-02",
+   "name": "baseline metrology before first ignition",
+   "provisions": [
+    "AOL-PM-01"
+   ],
+   "statement": "Every witness coupon, replaceable part (anode HW-H1-10, wall rings HW-H1-11), and the C-1 keeper is measured before first ignition: mass (INS-19), profile, SEM/EDS, XPS as listed per item and photographs (INS-20), anode resistance (INS-21); instrument, uncertainty and operator recorded.",
+   "instruments": [
+    "INS-19",
+    "INS-20",
+    "INS-21"
+   ],
+   "required_uncertainty": "as INS-19 / INS-20 / INS-21 (TBD, detection limits)",
+   "calibration": "per instrument",
+   "open": "metrology lab not chosen"
+  },
+  {
+   "id": "INS-P-03",
+   "name": "dehydrated mass protocol",
+   "provisions": [
+    "AOL-PM-02"
+   ],
+   "statement": "Hygroscopic items (polymers, BN) are weighed after vacuum desiccation for a fixed time, repeated readings averaged, room temperature and humidity logged, identically pre and post.",
+   "instruments": [
+    "INS-19"
+   ],
+   "required_uncertainty": "TBD - the control-coupon repeatability demonstrated before S1 is the detection limit",
+   "calibration": "desiccation time, pressure and number of readings: TBD - requires the metrology lab and a pre-S1 repeatability trial (no value is assumed here)",
+   "open": "parameters TBD (AOL-PM-02 leaves them to W4 / metrology lab)"
+  },
+  {
+   "id": "INS-P-04",
+   "name": "post-test surface analysis and sample custody",
+   "provisions": [
+    "AOL-PM-04"
+   ],
+   "statement": "After each removal, SEM/EDS and XPS as listed per item; samples transferred in sealed dry containers with a custody record; each report references the item's baseline (INS-P-02).",
+   "instruments": [
+    "INS-20"
+   ],
+   "required_uncertainty": "as INS-20",
+   "calibration": "as INS-20",
+   "open": "container specification TBD - requires the metrology lab"
+  },
+  {
+   "id": "INS-P-05",
+   "name": "C-1 post-test inspection",
+   "provisions": [
+    "AOL-PM-05"
+   ],
+   "statement": "At campaign end or C-1 retirement (disassembly retires the unit, W3 HW-C1-08): orifice diameter, keeper-face profile, SEM/EDS and XPS of the insert surface.",
+   "instruments": [
+    "INS-20"
+   ],
+   "required_uncertainty": "as INS-20",
+   "calibration": "as INS-20",
+   "open": "none beyond INS-20"
+  },
+  {
+   "id": "INS-P-06",
+   "name": "electrical resistance and insulation schedule",
+   "provisions": [
+    "AOL-RC-02",
+    "AOL-PM-06"
+   ],
+   "statement": "Anode resistance (4-wire via HW-ELEC-04) and insulation resistance of the anode isolator, coils and harness at baseline, every phase boundary and campaign end; the anode resistance also between blocks without disassembly.",
+   "instruments": [
+    "INS-21"
+   ],
+   "required_uncertainty": "as INS-21 (TBD from the S1 baseline scatter)",
+   "calibration": "as INS-21",
+   "open": "AOL-PT-02 trigger value TBD (LOCK-2)"
+  },
+  {
+   "id": "INS-P-07",
+   "name": "B(z) map record and magnetic-circuit inspection",
+   "provisions": [
+    "AOL-PM-08",
+    "MCQ-W4-03"
+   ],
+   "statement": "INS-09 maps follow W3 HW-MC-03 (actual coil currents, before/after each configuration's block series) and HW-MC-04 (reference sensor during firing; cold re-map after soak); every map record carries the coil currents, coil average (INS-24) and hot-spot temperatures and the magnet temperatures at the time of mapping, probe calibration and sha256. Pole faces: visual / XPS inspection at campaign end (INS-20).",
+   "instruments": [
+    "INS-09",
+    "INS-20",
+    "INS-24"
+   ],
+   "required_uncertainty": "as INS-09 (TBD from the W5 B(z) tolerance)",
+   "calibration": "as INS-09",
+   "open": "HW-MC-04 reference-sensor feasibility TBD (W3)"
+  },
+  {
+   "id": "INS-P-08",
+   "name": "C-1 logs: daily Xe reference, start log, hot-emitter O-exposure log",
+   "provisions": [
+    "AOL-CX-01",
+    "AOL-CX-02",
+    "AOL-CX-05"
+   ],
+   "statement": "(1) daily keeper and coupling voltage at the fixed Xe reference condition (frozen in LOCK-1; aligns W3 HW-C1-03); (2) every C-1 start: heater power, heater time to ignition, keeper ignition voltage, outcome; (3) every interval with a hot emitter while O2 is in the chamber or feed, with the Xe cathode flow state and interlock states (HW-C1-03 rule). All on the INS-18 time base.",
+   "instruments": [
+    "INS-04",
+    "INS-18"
+   ],
+   "required_uncertainty": "keeper / coupling voltage as the INS-02 / INS-04 channels; AOL-PT-03 shift trigger TBD from the S1 day-to-day scatter (LOCK-2)",
+   "calibration": "as INS-02 / INS-04",
+   "open": "Xe reference condition: LOCK-1"
+  },
+  {
+   "id": "INS-P-09",
+   "name": "extinction and anomaly record",
+   "provisions": [
+    "AOL-CX-06"
+   ],
+   "statement": "Every spontaneous extinction, ignition failure and anomalous-discharge episode detected by INS-10 is time-stamped with feed composition (INS-05 flows, INS-11 / INS-22), the I_d trace (INS-04) and the cathode state (INS-P-08 fields). AOL-PT-01 (PROPOSED in the register): a flame-out during O-bearing operation stops the block at its end and triggers an anode inspection.",
+   "instruments": [
+    "INS-10",
+    "INS-04",
+    "INS-18"
+   ],
+   "required_uncertainty": "as INS-10",
+   "calibration": "as INS-10",
+   "open": "AOL-PT-01 is an owner confirmation in the register"
+  },
+  {
+   "id": "INS-P-10",
+   "name": "life evidence record format (thermal_life measured_hardware)",
+   "provisions": [
+    "AOL-DC-02"
+   ],
+   "statement": "Every life-relevant measurement (INS-19..INS-24, INS-P-02..INS-P-09) is recorded with the measured_hardware evidence_record fields of the pinned schema (listed in c5_adoption.measured_hardware_fields) so it can later enter abep_sim/thermal_life.py without an admitted closure; quantity_type 'measured'.",
+   "instruments": [
+    "INS-18"
+   ],
+   "required_uncertainty": "n/a (format); the 'uncertainty' field is mandatory",
+   "calibration": "schema check of records",
+   "open": "none"
+  },
+  {
+   "id": "INS-P-11",
+   "name": "no life extrapolation from an unadmitted closure (control C6)",
+   "provisions": [
+    "AOL-LF-01"
+   ],
+   "statement": "No H-1 life number is computed here or from these records with a Hall map, a transport screening candidate or a withdrawn 0-D result; life statements are measured on H-1, literature for another device (labelled), or TBD. This document contains no life number (validate() refuses any quantity with unit 'h').",
+   "instruments": [],
+   "required_uncertainty": "n/a",
+   "calibration": "n/a",
+   "open": "none"
+  },
+  {
+   "id": "INS-P-12",
+   "name": "witness-holder non-interference check",
+   "provisions": [
+    "AOL-WC-01"
+   ],
+   "statement": "AOL-WC-01 verification asks that a B(z) re-map and a thrust-stand tare with the HW-SVC-06 holder installed show no change beyond W4 instrument uncertainty. W4 answer: the detection limits are the INS-09 map repeatability and the INS-01 in-situ calibration repeatability, both measured in S1a; the planning value for the thrust side is the lane-25 per-reading target (INS-01 required_uncertainty, n = 4). A change is 'beyond' when it exceeds the pre-registered coverage factor times the combined standard uncertainty of the two maps / tares (k: owner, LOCK-1).",
+   "instruments": [
+    "INS-01",
+    "INS-09"
+   ],
+   "required_uncertainty": "INS-01 and INS-09 values (no new number)",
+   "calibration": "as INS-01 / INS-09",
+   "open": "coverage factor for the non-interference test: owner at LOCK-1"
+  }
+ ],
+ "c5_adoption": {
+  "control": "C5_AO_early",
+  "control_text": "W3, W4 and the AO/lifetime lane coordinate now: H-1 carries witness coupons, replaceable channel/anode components, cathode-exposure monitoring and post-test metrology provisions from the start (integration check before W3 is merged; targeted repair if absent)",
+  "sources": [
+   "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+   "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json"
+  ],
+  "w3_ids_cited_verified_in": "docs/experiments/hardware/hardware_requirements_v1.json",
+  "w3_ids_cited": [
+   "HW-C1-03",
+   "HW-C1-08",
+   "HW-ELEC-04",
+   "HW-ENV-01",
+   "HW-H1-10",
+   "HW-H1-11",
+   "HW-H1-12",
+   "HW-H1-14",
+   "HW-MC-03",
+   "HW-MC-04",
+   "HW-MC-06",
+   "HW-SVC-06"
+  ],
+  "measured_hardware_fields": [
+   "test_article",
+   "facility",
+   "document",
+   "measurement_method",
+   "uncertainty",
+   "operating_point",
+   "applicability_domain"
+  ],
+  "counts": {
+   "ADOPTED": {
+    "value": 20,
+    "unit": "provisions",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: c5_adoption"
+   },
+   "ADOPTED_PARTIAL": {
+    "value": 2,
+    "unit": "provisions",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: c5_adoption"
+   },
+   "NOT_ADOPTED": {
+    "value": 0,
+    "unit": "provisions",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: c5_adoption"
+   }
+  },
+  "rows": [
+   {
+    "provision": "AOL-CX-01",
+    "title": "Daily Xe reference check of C-1",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "INS-04 / INS-18 logging",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-04",
+     "INS-18",
+     "INS-P-08"
+    ],
+    "how": "INS-04 / INS-18 channels, INS-P-08 (1)",
+    "needs": null
+   },
+   {
+    "provision": "AOL-CX-02",
+    "title": "Start log",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "INS-18 DAQ",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-18",
+     "INS-P-08"
+    ],
+    "how": "INS-18 start log, INS-P-08 (2)",
+    "needs": null
+   },
+   {
+    "provision": "AOL-CX-03",
+    "title": "Cathode gas-composition sampling",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "INS-11 RGA",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED_PARTIAL",
+    "adopted_ids": [
+     "INS-11",
+     "INS-22"
+    ],
+    "how": "sampling point and log adopted (INS-22 into INS-11)",
+    "needs": "H2O calibration method at the sampling point not identified; RGA and facility not chosen"
+   },
+   {
+    "provision": "AOL-CX-04",
+    "title": "Emitter / cathode temperature",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "INS-17 temperatures",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-23"
+    ],
+    "how": "INS-23 (cathode-tube thermocouple baseline, emitter pyrometer if the C-1 design gives a view)",
+    "needs": null
+   },
+   {
+    "provision": "AOL-CX-05",
+    "title": "Hot-emitter O-exposure interlock log",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "INS-18 DAQ + W3 HW-C1-03 interlock",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-18",
+     "INS-P-08"
+    ],
+    "how": "INS-18 interval log with Xe flow and interlock states, INS-P-08 (3)",
+    "needs": null
+   },
+   {
+    "provision": "AOL-CX-06",
+    "title": "Flame-out and anomaly log",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "INS-10 stability / extinction",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-10",
+     "INS-18",
+     "INS-P-09"
+    ],
+    "how": "INS-10 detection + INS-P-09 record fields",
+    "needs": null
+   },
+   {
+    "provision": "AOL-CX-07",
+    "title": "Wall and anode thermocouples for life mechanisms",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "INS-17 temperatures",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-23"
+    ],
+    "how": "INS-23 at the W3 HW-H1-12 positions (INS-17 unchanged)",
+    "needs": null
+   },
+   {
+    "provision": "AOL-DC-01",
+    "title": "Exposure log and coupon register",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "INS-18 DAQ",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-18",
+     "INS-P-01"
+    ],
+    "how": "INS-P-01 register, exposure accounting from INS-18",
+    "needs": null
+   },
+   {
+    "provision": "AOL-DC-02",
+    "title": "Evidence records compatible with thermal_life measured_hardware",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "record format",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-P-10"
+    ],
+    "how": "INS-P-10 record format from the pinned thermal_life schema",
+    "needs": null
+   },
+   {
+    "provision": "AOL-LF-01",
+    "title": "No life extrapolation from an unadmitted closure (C6)",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "compliance",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-P-11"
+    ],
+    "how": "INS-P-11 compliance; validate() refuses screening-candidate ids and any quantity in hours",
+    "needs": null
+   },
+   {
+    "provision": "AOL-PM-01",
+    "title": "Baseline metrology before first ignition",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "new metrology section",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-19",
+     "INS-20",
+     "INS-21",
+     "INS-P-02"
+    ],
+    "how": "INS-P-02 with INS-19 / INS-20 / INS-21",
+    "needs": null
+   },
+   {
+    "provision": "AOL-PM-02",
+    "title": "Dehydrated mass protocol",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "new metrology section",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-19",
+     "INS-P-03"
+    ],
+    "how": "INS-P-03 with INS-19; parameters TBD (no value assumed)",
+    "needs": null
+   },
+   {
+    "provision": "AOL-PM-04",
+    "title": "Surface analysis",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "new metrology section",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-20",
+     "INS-P-04"
+    ],
+    "how": "INS-P-04 with INS-20",
+    "needs": null
+   },
+   {
+    "provision": "AOL-PM-05",
+    "title": "Cathode post-test inspection",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "new metrology section",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-20",
+     "INS-P-05"
+    ],
+    "how": "INS-P-05 with INS-20 (W3 HW-C1-08 makes C-1 inspectable)",
+    "needs": null
+   },
+   {
+    "provision": "AOL-PM-06",
+    "title": "Electrical resistance and insulation tests",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "new metrology section",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-21",
+     "INS-P-06"
+    ],
+    "how": "INS-P-06 with INS-21",
+    "needs": null
+   },
+   {
+    "provision": "AOL-PM-08",
+    "title": "B(z) re-map and magnetic-circuit inspection",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "INS-09 B(z)",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-09",
+     "INS-20",
+     "INS-P-07"
+    ],
+    "how": "INS-09 per HW-MC-03 / HW-MC-04 plus pole-face inspection (INS-20), INS-P-07",
+    "needs": null
+   },
+   {
+    "provision": "AOL-RC-02",
+    "title": "In-situ anode resistance lead",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "INS-04 neighbourhood (resistance measurement)",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-21",
+     "INS-P-06"
+    ],
+    "how": "new INS-21 through the W3 HW-ELEC-04 sense lead; schedule INS-P-06",
+    "needs": null
+   },
+   {
+    "provision": "AOL-WC-01",
+    "title": "Near-exit plume witness array",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "metrology section (new INS item: coupon metrology)",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-19",
+     "INS-20",
+     "INS-P-12"
+    ],
+    "how": "metrology (mass INS-19, surface/profile INS-20) and the non-interference detection limit (INS-P-12); holder is W3 HW-SVC-06",
+    "needs": null
+   },
+   {
+    "provision": "AOL-WC-06",
+    "title": "Control coupons",
+    "source_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
+    "w4_target": "facility / background section",
+    "register_status_before": "NOT_ADOPTED",
+    "status": "ADOPTED_PARTIAL",
+    "adopted_ids": [
+     "INS-19",
+     "INS-20",
+     "INS-P-01"
+    ],
+    "how": "register and metrology of all four controls adopted (INS-P-01, INS-19, INS-20)",
+    "needs": "positions of the facility-background and beam-dump-facing controls need the facility choice"
+   },
+   {
+    "provision": "MCQ-W4-01",
+    "title": "MCQ-W4-01",
+    "source_file": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json",
+    "w4_target": "channel map",
+    "register_status_before": "not tracked",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-24"
+    ],
+    "how": "INS-24 (4-wire coil resistance + hot-spot thermocouples)",
+    "needs": null
+   },
+   {
+    "provision": "MCQ-W4-02",
+    "title": "MCQ-W4-02",
+    "source_file": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json",
+    "w4_target": "channel map",
+    "register_status_before": "not tracked",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-02",
+     "INS-04",
+     "INS-24"
+    ],
+    "how": "INS-02 hall_magnet / ecr_magnet channels record coil V and I simultaneously; INS-04 records coil currents; INS-24 uses the same record for R(T)",
+    "needs": null
+   },
+   {
+    "provision": "MCQ-W4-03",
+    "title": "MCQ-W4-03",
+    "source_file": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json",
+    "w4_target": "map record schema",
+    "register_status_before": "not tracked",
+    "status": "ADOPTED",
+    "adopted_ids": [
+     "INS-09",
+     "INS-24",
+     "INS-P-07"
+    ],
+    "how": "INS-P-07 map-record fields (coil currents, coil average and hot-spot temperatures, magnet temperatures)",
+    "needs": null
+   }
+  ],
+  "milestones": "supports A (S1-readiness condition 'instrumentation capability demonstrated' now covers the C5 provisions) and prepares C (measured life evidence records); B not affected. Next: the metrology lab, facility and C-1 view choices, and S1 scatter data for the TBD detection limits and triggers (AOL-PT-02, AOL-PT-03)."
+ },
  "bus_power_channels": [
   {
    "component": "hall_discharge",
@@ -2024,6 +2901,30 @@
    "citation": "JCGM 100:2008, 'Evaluation of measurement data - Guide to the expression of uncertainty in measurement'",
    "url": "https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf",
    "access": "as accessed and cited by lane 25 (G.4.1 Welch-Satterthwaite, G.4.3 Type B as known); not re-accessed"
+  },
+  {
+   "id": "REF-CIFALI2011",
+   "citation": "G. Cifali, T. Misuri, P. Rossetti, M. Andrenucci, D. Valentian, D. Feili, B. Lotz, 'Experimental characterization of HET and RIT with atmospheric propellants', IEPC-2011-224 (2011)",
+   "url": "https://electricrocket.org/IEPC/IEPC-2011-224.pdf",
+   "access": "as accessed and cited by the AO/lifetime register v2 (source CIFALI2011; anode resistance increase from oxidation named as the main endurance concern, p. 5, per AOL-RC-02); not re-accessed by this lane"
+  },
+  {
+   "id": "REF-DEGROH2006",
+   "citation": "K. K. de Groh, B. A. Banks, C. E. McCarthy, R. N. Rucker, L. M. Roberts, L. A. Berger, 'MISSE PEACE Polymers Atomic Oxygen Erosion Results', NASA/TM-2006-214482 (2006)",
+   "url": "https://ntrs.nasa.gov/api/citations/20070002707/downloads/20070002707.pdf",
+   "access": "as accessed and cited by the AO/lifetime register v2 (source DEGROH2006; dehydrated-mass rationale, moisture uptake of Kapton, p. 3, per AOL-PM-02); not re-accessed by this lane"
+  },
+  {
+   "id": "REF-JANKOVSKY1999",
+   "citation": "R. S. Jankovsky, 'Preliminary Evaluation of a 10 kW Hall Thruster', NASA/TM-1999-209075, AIAA-99-0456",
+   "url": "https://ntrs.nasa.gov/api/citations/19990046494/downloads/19990046494.pdf",
+   "access": "as accessed and cited by the magnet/coil qualification lane (4-wire potential-probe coil resistance for average winding temperature, p. 4, per MCQ-W4-01); not re-accessed by this lane"
+  },
+  {
+   "id": "REF-KAMHAWI2013",
+   "citation": "H. Kamhawi et al., 'Performance and Thermal Characterization of the NASA-300MS 20 kW Hall Effect Thruster', IEPC-2013-444 (NTRS 20140017775)",
+   "url": "https://ntrs.nasa.gov/api/citations/20140017775/downloads/20140017775.pdf",
+   "access": "as accessed and cited by the magnet/coil qualification lane (thermocouples at coil positions, pp. 11, 21, per MCQ-W4-01); not re-accessed by this lane"
   }
  ],
  "open_owner_decisions": [
@@ -2033,7 +2934,11 @@
   "one MFC per pure gas (proposed) or a mixture-calibrated MFC for the air surrogate",
   "dwell (hold time) for 'sustained >= 12 mN' and its zero-drift allowance",
   "whether OES, RGA and Langmuir probes are in the minimum instrument set",
-  "absolute-gate facility rule: report T_measured with the S5 p_b slope and the ingestion scale (proposed) or require a p_b ceiling for Phase 3"
+  "absolute-gate facility rule: report T_measured with the S5 p_b slope and the ingestion scale (proposed) or require a p_b ceiling for Phase 3",
+  "C5: metrology lab for INS-19 / INS-20 (mass, profile, SEM/EDS, XPS) and its reference-standard classes",
+  "C5: C-1 temperature sensing - cathode-tube thermocouple (proposed baseline) and/or emitter pyrometer (needs a view in the W3 C-1 design)",
+  "C5: coverage factor for the witness-holder non-interference test (INS-P-12)",
+  "C5: whether the near-cathode RGA proxy (INS-22) is quantitative (needs an H2O calibration method)"
  ],
  "tbd_register": [
   {
@@ -2075,6 +2980,21 @@
    "what": "CEX attenuation bound for Faraday collectors",
    "requires": "cited N2+ on N2 CEX cross section",
    "blocked_by": "literature"
+  },
+  {
+   "what": "C5 detection limits (coupon mass, profile, anode resistance) and triggers AOL-PT-02 / AOL-PT-03",
+   "requires": "metrology lab records and S1 baseline scatter",
+   "blocked_by": "S1"
+  },
+  {
+   "what": "positions of the facility-background and beam-dump-facing control coupons",
+   "requires": "facility choice",
+   "blocked_by": "owner"
+  },
+  {
+   "what": "coil hot-spot margin and C-1 emitter-temperature resolution",
+   "requires": "magnet wire / insulation selection and the W3 C-1 / coil design",
+   "blocked_by": "fo_magnet_coil_qualification + fo_hardware_definition"
   }
  ]
 }
