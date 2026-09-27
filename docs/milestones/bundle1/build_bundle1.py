@@ -835,6 +835,10 @@ def overlays_extract() -> dict:
             "eta_t_statement": _pick(rfA["can_be_concluded_now"], "eta_t is the decisive unknown", "rf overlay"),
             "conditions": rfA["conditions_for_rf_hall_as_baseline"],
             "decisive_measurement": rf["decisive_measurement_common"],
+            "y_box_basis": {"V_d_V": rf["analysis_ranges"]["V_d_V"]["range"], "eta_b": rf["analysis_ranges"]["eta_b"]["range"],
+                            "eta_v": rf["analysis_ranges"]["eta_v"]["range"],
+                            "eta_ppu_discharge": rf["analysis_ranges"]["eta_ppu_discharge"]["range"],
+                            "Y_box": rf["tables"]["Y_box"]},
             "to_reach_B": rf["milestone_support"]["to_reach_B"],
             "open_questions": rf["open_questions_for_owner"],
         },
@@ -1062,7 +1066,7 @@ def build_cells(feed, vd, grid, gates, ovl, elec, comps) -> dict:
     feed_block = [blk("measurement", "DI-1", "documented feed design baseline with provenance evaluated by the feed-envelope builder "
                       "(fo_hall_sustainment_envelope decisive_measurements DI-1; feed envelope open question 1)"),
                   blk("lane", "lane_16_feed_envelope", "delivers the valve-outlet state once DI-1 exists (design_input_contract)"),
-                  blk("lane", "lane_33_upstream_icd", "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope; single-lens-v1")]
+                  blk("lane", "lane_33_upstream_icd", "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope")]
     cells = {a: {} for a in ARCHS}
     for a in ARCHS:
         common_ev = [ev(FE, "lane_16_feed_envelope", "cases[*].feed_state; xe_path.feed_state")]
@@ -1093,7 +1097,7 @@ def build_cells(feed, vd, grid, gates, ovl, elec, comps) -> dict:
 
         closure_block = [
             blk("trigger", "T_ABSOLUTE_COMPARISON", "needs ensemble_admitted_members: credible set is empty (gate 3 FAIL); produces fo_absolute_comparison"),
-            blk("lane", "lane_35_hallmap_spec", "design Hall maps per admitted member; single-lens-v1"),
+            blk("lane", "lane_35_hallmap_spec", "design Hall maps per admitted member"),
             blk("measurement", "lane24:measurement_vyovrinda|measurement_same_hardware",
                 "the only milestone-A route while no closure is admitted (lane-24 discharged_by.A)"),
             blk("lane", "lane_25_min_decisive_experiment", "minimum decisive experiment (hardware route)"),
@@ -1134,7 +1138,7 @@ def build_cells(feed, vd, grid, gates, ovl, elec, comps) -> dict:
             "(bus_power_boundary_v1). Never a discharge-only, absorbed-RF or ECR-source-only number. Component status (lane 20): " + comp_status,
             closure_block[:1] + [blk("trigger", "T_AUX_BUS", "full auxiliary / DC-bus power comparison (fo_aux_bus_comparison; needs lane_19_cathode_integration)"),
                                  blk("lane", "lane_12_arch_harness", "comparison harness abep_sim/arch_compare.py"),
-                                 blk("lane", "lane_34_ledgers", "engineering ledgers; single-lens-v1"),
+                                 blk("lane", "lane_34_ledgers", "engineering ledgers"),
                                  blk("measurement", "DI-1", "delivered feed sets the compressor and flow-control loads")] + preion_block,
             l24("P_bus"), True)
         cells[a]["m"] = cell(
@@ -1157,8 +1161,8 @@ def build_cells(feed, vd, grid, gates, ovl, elec, comps) -> dict:
             [ev(HGS, "lane_24_hard_gates", f"architectures.{a}.gates.G4_firing_life / G5_mission"), ev(BE, "lane_28_break_even", "life_breakeven")],
             "none", "unavailable:no wall_life_trustworthy Hall map, no cathode or source life evidence at the operating point",
             "not derived (breakeven_v1 section 8: life = min over mechanisms; all values TBD).",
-            [blk("lane", "lane_32_wall_life", "wall erosion / life evidence; single-lens-v1"),
-             blk("lane", "lane_10_cathode_dossier", "cathode / neutralizer evidence; single-lens-v1"),
+            [blk("lane", "lane_32_wall_life", "wall erosion / life evidence"),
+             blk("lane", "lane_10_cathode_dossier", "cathode / neutralizer evidence"),
              blk("lane", "lane_15_thermal_life", "thermal/life framework"), blk("trigger", "T_VETO_LAYER", "fo_veto_layer"),
              blk("measurement", "DM-6", "endurance on an O-containing feed (fo_hall_sustainment_envelope DM-6)")] + closure_block[:1],
             l24("life"), True)
@@ -1170,7 +1174,7 @@ def build_cells(feed, vd, grid, gates, ovl, elec, comps) -> dict:
             "not derived. Published starts on atmospheric gas used a Xe start/transition or a Xe/Ar cathode; no item ignites with no xenon on an RFP propellant (fo_hall_sustainment_envelope section 8).",
             [blk("measurement", "DM-3", "air-only ignition attempt (fo_hall_sustainment_envelope)"),
              blk("measurement", "DM-4", "xenon-assisted start and transition, Xe per start (fo_hall_sustainment_envelope)"),
-             blk("lane", "lane_19_cathode_integration", "cathode start policy"), blk("lane", "lane_14_dual_feed", "dual-feed state machine; single-lens-v1"),
+             blk("lane", "lane_19_cathode_integration", "cathode start policy"), blk("lane", "lane_14_dual_feed", "dual-feed state machine"),
              blk("owner_decision", "OD5", "ignition start sequence; restart count (lane-24)")],
             l24("startup"), False)
         eta_block = list(closure_block)
@@ -1549,6 +1553,10 @@ def build(gov=None) -> dict:
                     & {c["criterion"] for c in gates["per"]["ecr_hall"]["milestone_A"]["conditions"]})
 
     rf_dm = ovl["rf"]["decisive_measurement"]
+    rf_yb = ovl["rf"]["y_box_basis"]
+    _need(rf_dm["C_del_at_or_below_which_CLEARLY_BELOW_add_only_W_per_A"] == rf_yb["Y_box"]["add_only"][0]
+          and rf_dm["C_del_above_which_CLEARLY_ABOVE_W_per_A"] == rf_yb["Y_box"]["optimistic_bound"][1],
+          "rf overlay decisive-measurement thresholds no longer equal its Y_box extremes")
     questions = {
         "i_conditional_selection_now": (
             f"{outcome['label']}. No architecture is eliminated and none can be singled out: all three stay conditional candidates, each "
@@ -1582,7 +1590,13 @@ def build(gov=None) -> dict:
             "Examples named by the inputs: the DM-2 extinction scan for hall_only on the delivered composition (fo_hall_sustainment_envelope); "
             f"a measured RF delivered-ion bus cost C_del at or below {rf_dm['C_del_at_or_below_which_CLEARLY_BELOW_add_only_W_per_A']} W/A "
             f"(CLEARLY_BELOW, add_only) or above {rf_dm['C_del_above_which_CLEARLY_ABOVE_W_per_A']} W/A (CLEARLY_ABOVE) "
-            "(fo_rf_breakeven_overlay; a break-even placement, not a hard gate, until it enters P_bus or a lane-24 criterion); "
+            "(fo_rf_breakeven_overlay; a break-even placement, not a hard gate, until it enters P_bus or a lane-24 criterion; "
+            f"both thresholds are the extremes of the overlay's own declared box tables.Y_box (add_only minimum {rf_yb['Y_box']['add_only'][0]}, "
+            f"optimistic_bound maximum {rf_yb['Y_box']['optimistic_bound'][1]} W/A) over its PROPOSED analysis ranges V_d "
+            f"{rf_yb['V_d_V'][0]:g}-{rf_yb['V_d_V'][1]:g} V, eta_b {rf_yb['eta_b'][0]:g}-{rf_yb['eta_b'][1]:g}, eta_ppu,d "
+            f"{rf_yb['eta_ppu_discharge'][0]:g}-{rf_yb['eta_ppu_discharge'][1]:g} and eta_v {rf_yb['eta_v'][0]:g}-{rf_yb['eta_v'][1]:g} "
+            "(optimistic_bound), with no fixed overhead (omega_f = 0, the marginal limit); they are NOT evaluated on the lane-17 "
+            f"V_d set used by this bundle ({', '.join(f'{v:g}' for v in vd['set'])} {vd['unit']})); "
             "a measured end-to-end ECR C_del,bus with eta_t on an air-representative feed (fo_ecr_breakeven_overlay).",
             "An admitted Hall transport closure (T_ABSOLUTE_COMPARISON): design Hall maps per member would populate T, eta_u, P_bus "
             "(with the lane-20 chain evidence) and stability envelopes for all three arms at once (milestone B route).",

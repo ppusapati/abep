@@ -556,27 +556,58 @@
   "inputs_removed": [],
   "decision_relevant_changes": [],
   "metadata_changes": [
+   "admissibility.cells.hall_only.m_dot_s.blocking[2].what",
+   "admissibility.cells.hall_only.P_feed.blocking[2].what",
+   "admissibility.cells.hall_only.T_feed.blocking[2].what",
+   "admissibility.cells.hall_only.x_s.blocking[2].what",
+   "admissibility.cells.hall_only.T.blocking[1].what",
+   "admissibility.cells.hall_only.P_bus.blocking[3].what",
    "admissibility.cells.hall_only.m.blocking[1].what",
    "admissibility.cells.hall_only.m.notes[0]",
    "admissibility.cells.hall_only.Q_reject.blocking[1].what",
    "admissibility.cells.hall_only.Q_reject.notes[0]",
+   "admissibility.cells.hall_only.life.blocking[0].what",
+   "admissibility.cells.hall_only.life.blocking[1].what",
    "admissibility.cells.hall_only.life.blocking[3].what",
    "admissibility.cells.hall_only.life.notes[0]",
+   "admissibility.cells.hall_only.startup.blocking[3].what",
    "admissibility.cells.hall_only.startup.notes[0]",
+   "admissibility.cells.hall_only.eta_u.blocking[1].what",
+   "admissibility.cells.rf_hall.m_dot_s.blocking[2].what",
+   "admissibility.cells.rf_hall.P_feed.blocking[2].what",
+   "admissibility.cells.rf_hall.T_feed.blocking[2].what",
+   "admissibility.cells.rf_hall.x_s.blocking[2].what",
+   "admissibility.cells.rf_hall.T.blocking[1].what",
+   "admissibility.cells.rf_hall.P_bus.blocking[3].what",
    "admissibility.cells.rf_hall.m.blocking[1].what",
    "admissibility.cells.rf_hall.m.notes[0]",
    "admissibility.cells.rf_hall.Q_reject.blocking[1].what",
    "admissibility.cells.rf_hall.Q_reject.notes[0]",
+   "admissibility.cells.rf_hall.life.blocking[0].what",
+   "admissibility.cells.rf_hall.life.blocking[1].what",
    "admissibility.cells.rf_hall.life.blocking[3].what",
    "admissibility.cells.rf_hall.life.notes[0]",
+   "admissibility.cells.rf_hall.startup.blocking[3].what",
    "admissibility.cells.rf_hall.startup.notes[0]",
+   "admissibility.cells.rf_hall.eta_u.blocking[1].what",
+   "admissibility.cells.ecr_hall.m_dot_s.blocking[2].what",
+   "admissibility.cells.ecr_hall.P_feed.blocking[2].what",
+   "admissibility.cells.ecr_hall.T_feed.blocking[2].what",
+   "admissibility.cells.ecr_hall.x_s.blocking[2].what",
+   "admissibility.cells.ecr_hall.T.blocking[1].what",
+   "admissibility.cells.ecr_hall.P_bus.blocking[3].what",
    "admissibility.cells.ecr_hall.m.blocking[1].what",
    "admissibility.cells.ecr_hall.m.notes[0]",
    "admissibility.cells.ecr_hall.Q_reject.blocking[1].what",
    "admissibility.cells.ecr_hall.Q_reject.notes[0]",
+   "admissibility.cells.ecr_hall.life.blocking[0].what",
+   "admissibility.cells.ecr_hall.life.blocking[1].what",
    "admissibility.cells.ecr_hall.life.blocking[3].what",
    "admissibility.cells.ecr_hall.life.notes[0]",
+   "admissibility.cells.ecr_hall.startup.blocking[3].what",
    "admissibility.cells.ecr_hall.startup.notes[0]",
+   "admissibility.cells.ecr_hall.eta_u.blocking[1].what",
+   "three_questions.iii_what_could_overturn[1]",
    "evidence_weight.blocking_lanes_single_lens (length 4 -> 0)",
    "evidence_weight.note"
   ],
@@ -589,7 +620,7 @@
    "overlay_readings": true,
    "decision_rule": true
   },
-  "summary": "outcome NO_BASELINE_YET -> NO_BASELINE_YET; admissibility ADMISSIBLE -> ADMISSIBLE; 1 input lane(s) re-pinned (fo_veto_layer [context]), 0 lane(s) added, 0 removed; 0 decision-relevant path(s) changed, 23 metadata path(s) changed."
+  "summary": "outcome NO_BASELINE_YET -> NO_BASELINE_YET; admissibility ADMISSIBLE -> ADMISSIBLE; 1 input lane(s) re-pinned (fo_veto_layer [context]), 0 lane(s) added, 0 removed; 0 decision-relevant path(s) changed, 54 metadata path(s) changed."
  },
  "carried_statuses": {
   "echt_n2": {
@@ -1014,7 +1045,7 @@
       {
        "kind": "lane",
        "id": "lane_33_upstream_icd",
-       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope; single-lens-v1"
+       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope"
       }
      ],
      "lane24_criteria": [],
@@ -1059,7 +1090,7 @@
       {
        "kind": "lane",
        "id": "lane_33_upstream_icd",
-       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope; single-lens-v1"
+       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope"
       },
       {
        "kind": "owner_decision",
@@ -1109,7 +1140,7 @@
       {
        "kind": "lane",
        "id": "lane_33_upstream_icd",
-       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope; single-lens-v1"
+       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope"
       }
      ],
      "lane24_criteria": [],
@@ -1154,7 +1185,7 @@
       {
        "kind": "lane",
        "id": "lane_33_upstream_icd",
-       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope; single-lens-v1"
+       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope"
       },
       {
        "kind": "measurement",
@@ -1244,7 +1275,7 @@
       {
        "kind": "lane",
        "id": "lane_35_hallmap_spec",
-       "what": "design Hall maps per admitted member; single-lens-v1"
+       "what": "design Hall maps per admitted member"
       },
       {
        "kind": "measurement",
@@ -1349,7 +1380,7 @@
       {
        "kind": "lane",
        "id": "lane_34_ledgers",
-       "what": "engineering ledgers; single-lens-v1"
+       "what": "engineering ledgers"
       },
       {
        "kind": "measurement",
@@ -1527,12 +1558,12 @@
       {
        "kind": "lane",
        "id": "lane_32_wall_life",
-       "what": "wall erosion / life evidence; single-lens-v1"
+       "what": "wall erosion / life evidence"
       },
       {
        "kind": "lane",
        "id": "lane_10_cathode_dossier",
-       "what": "cathode / neutralizer evidence; single-lens-v1"
+       "what": "cathode / neutralizer evidence"
       },
       {
        "kind": "lane",
@@ -1634,7 +1665,7 @@
       {
        "kind": "lane",
        "id": "lane_14_dual_feed",
-       "what": "dual-feed state machine; single-lens-v1"
+       "what": "dual-feed state machine"
       },
       {
        "kind": "owner_decision",
@@ -1706,7 +1737,7 @@
       {
        "kind": "lane",
        "id": "lane_35_hallmap_spec",
-       "what": "design Hall maps per admitted member; single-lens-v1"
+       "what": "design Hall maps per admitted member"
       },
       {
        "kind": "measurement",
@@ -1868,7 +1899,7 @@
       {
        "kind": "lane",
        "id": "lane_33_upstream_icd",
-       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope; single-lens-v1"
+       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope"
       }
      ],
      "lane24_criteria": [],
@@ -1913,7 +1944,7 @@
       {
        "kind": "lane",
        "id": "lane_33_upstream_icd",
-       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope; single-lens-v1"
+       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope"
       },
       {
        "kind": "owner_decision",
@@ -1963,7 +1994,7 @@
       {
        "kind": "lane",
        "id": "lane_33_upstream_icd",
-       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope; single-lens-v1"
+       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope"
       }
      ],
      "lane24_criteria": [],
@@ -2008,7 +2039,7 @@
       {
        "kind": "lane",
        "id": "lane_33_upstream_icd",
-       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope; single-lens-v1"
+       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope"
       },
       {
        "kind": "measurement",
@@ -2098,7 +2129,7 @@
       {
        "kind": "lane",
        "id": "lane_35_hallmap_spec",
-       "what": "design Hall maps per admitted member; single-lens-v1"
+       "what": "design Hall maps per admitted member"
       },
       {
        "kind": "measurement",
@@ -2213,7 +2244,7 @@
       {
        "kind": "lane",
        "id": "lane_34_ledgers",
-       "what": "engineering ledgers; single-lens-v1"
+       "what": "engineering ledgers"
       },
       {
        "kind": "measurement",
@@ -2401,12 +2432,12 @@
       {
        "kind": "lane",
        "id": "lane_32_wall_life",
-       "what": "wall erosion / life evidence; single-lens-v1"
+       "what": "wall erosion / life evidence"
       },
       {
        "kind": "lane",
        "id": "lane_10_cathode_dossier",
-       "what": "cathode / neutralizer evidence; single-lens-v1"
+       "what": "cathode / neutralizer evidence"
       },
       {
        "kind": "lane",
@@ -2508,7 +2539,7 @@
       {
        "kind": "lane",
        "id": "lane_14_dual_feed",
-       "what": "dual-feed state machine; single-lens-v1"
+       "what": "dual-feed state machine"
       },
       {
        "kind": "owner_decision",
@@ -2580,7 +2611,7 @@
       {
        "kind": "lane",
        "id": "lane_35_hallmap_spec",
-       "what": "design Hall maps per admitted member; single-lens-v1"
+       "what": "design Hall maps per admitted member"
       },
       {
        "kind": "measurement",
@@ -2760,7 +2791,7 @@
       {
        "kind": "lane",
        "id": "lane_33_upstream_icd",
-       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope; single-lens-v1"
+       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope"
       }
      ],
      "lane24_criteria": [],
@@ -2805,7 +2836,7 @@
       {
        "kind": "lane",
        "id": "lane_33_upstream_icd",
-       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope; single-lens-v1"
+       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope"
       },
       {
        "kind": "owner_decision",
@@ -2855,7 +2886,7 @@
       {
        "kind": "lane",
        "id": "lane_33_upstream_icd",
-       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope; single-lens-v1"
+       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope"
       }
      ],
      "lane24_criteria": [],
@@ -2900,7 +2931,7 @@
       {
        "kind": "lane",
        "id": "lane_33_upstream_icd",
-       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope; single-lens-v1"
+       "what": "upstream ICD gaps (IF-A5/IF-X2) named by the feed envelope"
       },
       {
        "kind": "measurement",
@@ -2990,7 +3021,7 @@
       {
        "kind": "lane",
        "id": "lane_35_hallmap_spec",
-       "what": "design Hall maps per admitted member; single-lens-v1"
+       "what": "design Hall maps per admitted member"
       },
       {
        "kind": "measurement",
@@ -3105,7 +3136,7 @@
       {
        "kind": "lane",
        "id": "lane_34_ledgers",
-       "what": "engineering ledgers; single-lens-v1"
+       "what": "engineering ledgers"
       },
       {
        "kind": "measurement",
@@ -3293,12 +3324,12 @@
       {
        "kind": "lane",
        "id": "lane_32_wall_life",
-       "what": "wall erosion / life evidence; single-lens-v1"
+       "what": "wall erosion / life evidence"
       },
       {
        "kind": "lane",
        "id": "lane_10_cathode_dossier",
-       "what": "cathode / neutralizer evidence; single-lens-v1"
+       "what": "cathode / neutralizer evidence"
       },
       {
        "kind": "lane",
@@ -3400,7 +3431,7 @@
       {
        "kind": "lane",
        "id": "lane_14_dual_feed",
-       "what": "dual-feed state machine; single-lens-v1"
+       "what": "dual-feed state machine"
       },
       {
        "kind": "owner_decision",
@@ -3472,7 +3503,7 @@
       {
        "kind": "lane",
        "id": "lane_35_hallmap_spec",
-       "what": "design Hall maps per admitted member; single-lens-v1"
+       "what": "design Hall maps per admitted member"
       },
       {
        "kind": "measurement",
@@ -4835,7 +4866,7 @@
   ],
   "iii_what_could_overturn": [
    "A committed hard-bound script (lane-24 basis hard_physical_bound, milestone A) that shows a binding criterion FAIL at architecture scope for one architecture: lane 24 would record ELIMINATED_WITHIN_TESTED_ENVELOPE for it. Lane 24 states such a bound needs upper bounds on the total exhaust mass flow and the feed stagnation enthalpy, which are TBD.",
-   "A Vyovrinda or same-hardware measurement that discharges a lane-24 condition (PASS) for one architecture and not for the others. Examples named by the inputs: the DM-2 extinction scan for hall_only on the delivered composition (fo_hall_sustainment_envelope); a measured RF delivered-ion bus cost C_del at or below 182.149 W/A (CLEARLY_BELOW, add_only) or above 2208.19 W/A (CLEARLY_ABOVE) (fo_rf_breakeven_overlay; a break-even placement, not a hard gate, until it enters P_bus or a lane-24 criterion); a measured end-to-end ECR C_del,bus with eta_t on an air-representative feed (fo_ecr_breakeven_overlay).",
+   "A Vyovrinda or same-hardware measurement that discharges a lane-24 condition (PASS) for one architecture and not for the others. Examples named by the inputs: the DM-2 extinction scan for hall_only on the delivered composition (fo_hall_sustainment_envelope); a measured RF delivered-ion bus cost C_del at or below 182.149 W/A (CLEARLY_BELOW, add_only) or above 2208.19 W/A (CLEARLY_ABOVE) (fo_rf_breakeven_overlay; a break-even placement, not a hard gate, until it enters P_bus or a lane-24 criterion; both thresholds are the extremes of the overlay's own declared box tables.Y_box (add_only minimum 182.149, optimistic_bound maximum 2208.19 W/A) over its PROPOSED analysis ranges V_d 150-450 V, eta_b 0.5-0.9, eta_ppu,d 0.7705-0.915 and eta_v 0.7-1 (optimistic_bound), with no fixed overhead (omega_f = 0, the marginal limit); they are NOT evaluated on the lane-17 V_d set used by this bundle (180, 200, 250, 300, 305 V)); a measured end-to-end ECR C_del,bus with eta_t on an air-representative feed (fo_ecr_breakeven_overlay).",
    "An admitted Hall transport closure (T_ABSOLUTE_COMPARISON): design Hall maps per member would populate T, eta_u, P_bus (with the lane-20 chain evidence) and stability envelopes for all three arms at once (milestone B route).",
    "An owner decision to adopt a discriminating criterion that is not evidence-based (for example a preference for fewer bus components). That changes the decision rule, not the evidence, and needs a new rule version (B1-DR-2).",
    "Owner decisions OD1-OD14 on the lane-24 matrix change what counts toward PASS/FAIL but, while every verdict is UNDETERMINED and the register is empty, none of them creates a discriminator."

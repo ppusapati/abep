@@ -287,6 +287,36 @@ def test_evidence_weight_flags(doc, snap):
         assert i["decisive_for_B_or_C_allowed"] is (i["lane"] not in single)
 
 
+def _walk(o):
+    if isinstance(o, dict):
+        yield o
+        for v in o.values():
+            yield from _walk(v)
+    elif isinstance(o, list):
+        for v in o:
+            yield from _walk(v)
+
+
+def test_blocker_protocol_labels_match_snapshot(doc, snap):
+    """No blocking annotation may claim a verification protocol the pinned governance snapshot does not record."""
+    single = set(snap["single_lens_lanes"])
+    n = 0
+    for d in _walk(doc):
+        if d.get("kind") == "lane" and isinstance(d.get("what"), str):
+            n += 1
+            if "single-lens" in d["what"]:
+                assert d["id"] in single, (d["id"], d["what"])
+            if "two-lens" in d["what"]:
+                assert d["id"] not in single, (d["id"], d["what"])
+    assert n > 0
+
+
+def test_rf_thresholds_scoped_to_overlay_box(doc):
+    txt = " ".join(doc["three_questions"]["iii_what_could_overturn"])
+    assert "182.149" in txt and "2208.19" in txt
+    assert "declared box" in txt and "omega_f = 0" in txt and "NOT evaluated on the lane-17" in txt
+
+
 def test_three_questions_and_owner_questions(doc, snap):
     q = doc["three_questions"]
     assert q["i_conditional_selection_now"].startswith(doc["outcome"]["label"])
@@ -394,9 +424,10 @@ def test_change_log(doc):
     # the veto-layer context re-pin changes none of the veto-layer readings Bundle 1 carries
     for k in ("status", "status_counts", "cells", "eliminated_within_tested_envelope", "veto_candidates"):
         assert doc["context_followons"]["fo_veto_layer"][k] == v4["context_followons"]["fo_veto_layer"][k], k
-    # the only metadata changes: veto-layer commit annotations on cells, and the single-lens list (second lens recorded at base)
+    # the only metadata changes: veto-layer commit annotations and dropped stale protocol labels on cells, the single-lens list
+    # (second lens recorded at base), and the RF-threshold scope note in question (iii)
     for path in cl["metadata_changes"]:
-        assert path.startswith(("admissibility.cells.", "evidence_weight.")), path
+        assert path.startswith(("admissibility.cells.", "evidence_weight.")) or path == "three_questions.iii_what_could_overturn[1]", path
     assert doc["evidence_weight"]["blocking_lanes_single_lens"] == []
 
 

@@ -19,7 +19,7 @@ Not a decision, not a ranking, not a prediction. It adds no physics, source or n
 
 ## 0. Change log bundle1_v4 -> bundle1_v5
 
-outcome NO_BASELINE_YET -> NO_BASELINE_YET; admissibility ADMISSIBLE -> ADMISSIBLE; 1 input lane(s) re-pinned (fo_veto_layer [context]), 0 lane(s) added, 0 removed; 0 decision-relevant path(s) changed, 23 metadata path(s) changed.
+outcome NO_BASELINE_YET -> NO_BASELINE_YET; admissibility ADMISSIBLE -> ADMISSIBLE; 1 input lane(s) re-pinned (fo_veto_layer [context]), 0 lane(s) added, 0 removed; 0 decision-relevant path(s) changed, 54 metadata path(s) changed.
 
 Unchanged: outcome yes, admissibility_verdict yes, cell_statuses yes, eliminations yes, overlay_readings yes, decision_rule yes.
 
@@ -49,7 +49,7 @@ Lanes added: none. Lanes removed: none.
 
 Decision-relevant paths changed: none.
 
-Metadata paths changed: 23 (listed in the JSON `change_log.metadata_changes`: context notes on cells, verified-trigger annotations on blockers, re-pin notes). New sections: none.
+Metadata paths changed: 54 (listed in the JSON `change_log.metadata_changes`: context notes on cells, verified-trigger annotations on blockers, re-pin notes). New sections: none.
 
 ## 1. Decision rule (PROPOSED, stated before the tables)
 
@@ -262,7 +262,7 @@ context only (not T_BUNDLE1 prerequisites): they fill cell metadata (P_bus, m, Q
 **(iii) What could overturn the outcome.**
 
 - A committed hard-bound script (lane-24 basis hard_physical_bound, milestone A) that shows a binding criterion FAIL at architecture scope for one architecture: lane 24 would record ELIMINATED_WITHIN_TESTED_ENVELOPE for it. Lane 24 states such a bound needs upper bounds on the total exhaust mass flow and the feed stagnation enthalpy, which are TBD.
-- A Vyovrinda or same-hardware measurement that discharges a lane-24 condition (PASS) for one architecture and not for the others. Examples named by the inputs: the DM-2 extinction scan for hall_only on the delivered composition (fo_hall_sustainment_envelope); a measured RF delivered-ion bus cost C_del at or below 182.149 W/A (CLEARLY_BELOW, add_only) or above 2208.19 W/A (CLEARLY_ABOVE) (fo_rf_breakeven_overlay; a break-even placement, not a hard gate, until it enters P_bus or a lane-24 criterion); a measured end-to-end ECR C_del,bus with eta_t on an air-representative feed (fo_ecr_breakeven_overlay).
+- A Vyovrinda or same-hardware measurement that discharges a lane-24 condition (PASS) for one architecture and not for the others. Examples named by the inputs: the DM-2 extinction scan for hall_only on the delivered composition (fo_hall_sustainment_envelope); a measured RF delivered-ion bus cost C_del at or below 182.149 W/A (CLEARLY_BELOW, add_only) or above 2208.19 W/A (CLEARLY_ABOVE) (fo_rf_breakeven_overlay; a break-even placement, not a hard gate, until it enters P_bus or a lane-24 criterion; both thresholds are the extremes of the overlay's own declared box tables.Y_box (add_only minimum 182.149, optimistic_bound maximum 2208.19 W/A) over its PROPOSED analysis ranges V_d 150-450 V, eta_b 0.5-0.9, eta_ppu,d 0.7705-0.915 and eta_v 0.7-1 (optimistic_bound), with no fixed overhead (omega_f = 0, the marginal limit); they are NOT evaluated on the lane-17 V_d set used by this bundle (180, 200, 250, 300, 305 V)); a measured end-to-end ECR C_del,bus with eta_t on an air-representative feed (fo_ecr_breakeven_overlay).
 - An admitted Hall transport closure (T_ABSOLUTE_COMPARISON): design Hall maps per member would populate T, eta_u, P_bus (with the lane-20 chain evidence) and stability envelopes for all three arms at once (milestone B route).
 - An owner decision to adopt a discriminating criterion that is not evidence-based (for example a preference for fewer bus components). That changes the decision rule, not the evidence, and needs a new rule version (B1-DR-2).
 - Owner decisions OD1-OD14 on the lane-24 matrix change what counts toward PASS/FAIL but, while every verdict is UNDETERMINED and the register is empty, none of them creates a discriminator.
