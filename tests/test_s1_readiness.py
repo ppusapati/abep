@@ -1,0 +1,459 @@
+"""S1-readiness gate (fo_s1_readiness_gate; scripts/experiments/s1_readiness.py, docs/experiments/s1_readiness/).
+
+Checks: an empty repository gives S1_NOT_READY with all eight owner conditions missing; a synthetic complete fixture gives
+S1_READY; DRAFT / PROPOSED / PENDING artifacts never satisfy a condition; sha256 references, the LOCK-1 location rule,
+the demonstration-vs-design-analysis rule and the flight-status labels are enforced; output is deterministic and the gate
+writes nothing. Every fixture lives in tmp_path; the repository is only read. Fast (well under a second per test).
+"""
+from __future__ import annotations
+
+import copy
+import hashlib
+import importlib.util
+import json
+import os
+import shutil
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPT = ROOT / "scripts" / "experiments" / "s1_readiness.py"
+SPEC = ROOT / "docs" / "experiments" / "s1_readiness" / "s1_readiness_conditions_v1.json"
+REPORT = ROOT / "docs" / "experiments" / "s1_readiness" / "s1_readiness_status_current.json"
+
+
+def _load():
+    spec = importlib.util.spec_from_file_location("_test_s1_readiness", SCRIPT)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+G = _load()
+
+OWNER_CONDITIONS = [
+    "LOCK-1 signed by the owner",
+    "H-1/C-1 configuration frozen sufficiently for qualification",
+    "DI-1 or explicitly labelled ground-qualification feed points available",
+    "instrumentation capability demonstrated",
+    "calibration plan frozen",
+    "data custody / blinding plan frozen",
+    "facility chosen",
+    "safety / operational limits defined",
+]
+CATEGORIES = ["thrust_stand", "bus_power_metering", "discharge_current", "flow", "pressure", "temperature",
+              "magnetic_field_Bz", "stability_oscillations", "species_divergence"]
+LIMITS = ["discharge_voltage_max", "discharge_current_max", "magnet_current_max", "cathode_heater_current_max",
+          "cathode_keeper_current_max", "background_pressure_max", "component_temperature_max", "gas_handling_oxidizer"]
+
+P_OD = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"
+P_BRIEF = "docs/architecture_comparison/lock1/lock1_decision_brief_v1.json"
+P_LOCK1 = "docs/architecture_comparison/lock1/LOCK1.json"
+P_HWREQ = "docs/experiments/hardware/hardware_requirements_v1.json"
+P_FREEZE = "docs/experiments/hardware/configuration_freeze_H1_C1.json"
+P_CLOSURE = "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json"
+P_DI1 = "docs/architecture_comparison/feed_state_closure/DI1_FROZEN.json"
+P_POINTS = "docs/architecture_comparison/feed_state_closure/s1_feed_points.json"
+P_CAL = "docs/experiments/instrumentation/calibration_plan_frozen.json"
+P_CAP = "docs/experiments/instrumentation/capability_demonstration_v1.json"
+P_CUST = "docs/experiments/custody/custody_blinding_plan_frozen.json"
+P_FAC = "docs/decisions/OD_S1_FACILITY.json"
+P_SAFE = "docs/experiments/hardware/s1_safety_operational_limits.json"
+P_RAW = "docs/experiments/instrumentation/raw/{}.csv"
+
+
+# ------------------------------------------------------------------------------------------------------ fixtures
+def _write(root: Path, rel: str, obj) -> str:
+    p = root / rel
+    p.parent.mkdir(parents=True, exist_ok=True)
+    data = obj if isinstance(obj, (bytes, str)) else json.dumps(obj, indent=1, sort_keys=True)
+    p.write_bytes(data if isinstance(data, bytes) else data.encode())
+    return hashlib.sha256(p.read_bytes()).hexdigest()
+
+
+def _ref(root: Path, rel: str) -> dict:
+    return {"path": rel, "sha256": hashlib.sha256((root / rel).read_bytes()).hexdigest()}
+
+
+def _base(root: Path) -> Path:
+    """Spec + owner disposition only (the gate's authority); every condition artifact absent."""
+    (root / SPEC.relative_to(ROOT)).parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(SPEC, root / SPEC.relative_to(ROOT))
+    _write(root, P_OD, {"id": "od_hardware_pivot", "decided_by": "owner", "decision": "APPROVED"})
+    return root
+
+
+def _q(value, unit, ec="assumed"):
+    return {"value": value, "unit": unit, "source": "synthetic test fixture", "evidence_class": ec}
+
+
+def _complete(root: Path, feed_alt: str = "points", lock1_path: str = P_LOCK1, d05: str = "D-05-D",
+              mutate: dict | None = None) -> Path:
+    """Synthetic complete fixture (test data only; no value here is a project number). mutate: rel -> fn(obj)."""
+    mutate = mutate or {}
+    _base(root)
+
+    def put(rel, obj):
+        if rel in mutate:
+            obj = mutate[rel](copy.deepcopy(obj))
+        _write(root, rel, obj)
+
+    _write(root, P_BRIEF, {"schema": "synthetic brief"})
+    put(lock1_path, {
+        "id": "LOCK-1", "status": "SIGNED", "locked": True, "decided_by": "owner", "decided_utc": "2026-10-01",
+        "decision_source": _ref(root, P_BRIEF),
+        "decisions": [{"id": f"D-{i:02d}", "owner_choice": (d05 if i == 5 else f"D-{i:02d}-A")} for i in range(1, 16)],
+    })
+    lock1 = _ref(root, lock1_path)
+    _write(root, P_HWREQ, {"schema": "synthetic hw register"})
+    put(P_FREEZE, {
+        "status": "FROZEN_FOR_QUALIFICATION", "decided_by": "owner", "decided_utc": "2026-10-02", "lock1": lock1,
+        "requirements_basis": _ref(root, P_HWREQ),
+        "items": [{"id": i, "status": "FROZEN", "serial_or_part_id": f"SN-{i}", "configuration_record": f"rec-{i}"}
+                  for i in ("H-1", "C-1", "MC-1")],
+    })
+    if feed_alt == "points":
+        put(P_POINTS, {
+            "status": "RELEASED_FOR_S1", "decided_by": "owner", "decided_utc": "2026-10-02", "lock1": lock1,
+            "test_points": [
+                {"id": "TP-1", "label": "PROPOSED_FLIGHT_REPRESENTATIVE", "gas": "N2", "m_dot_s": _q(1.0, "mg/s"),
+                 "P_feed": _q(1.0, "Pa"), "T_feed": _q(1.0, "K"), "x_s": _q({"N2": 1.0}, "mole fraction")},
+                {"id": "TP-2", "label": "GROUND_QUALIFICATION_POINT", "gas": "N2/O2", "m_dot_s": _q(1.0, "mg/s"),
+                 "P_feed": _q(1.0, "Pa"), "T_feed": _q(1.0, "K"), "x_s": _q({"N2": 0.5, "O2": 0.5}, "mole fraction")},
+            ],
+        })
+    else:
+        _write(root, P_CLOSURE, {"schema": "synthetic closure"})
+        put(P_DI1, {"id": "DI-1", "status": "FROZEN", "decided_by": "owner", "decided_utc": "2026-10-02",
+                    "closure_basis": _ref(root, P_CLOSURE)})
+    put(P_CAL, {
+        "status": "FROZEN", "decided_by": "owner", "decided_utc": "2026-10-02", "lock1": lock1,
+        "procedures": [{"category": c, "procedure": f"proc-{c}", "traceability": "cert", "acceptance_rule": "rule"}
+                       for c in CATEGORIES],
+    })
+    for c in CATEGORIES:
+        _write(root, P_RAW.format(c), f"t,reading\n0,{len(c)}\n")
+    put(P_CAP, {
+        "status": "DEMONSTRATED", "evidence_basis": "calibration_measurement", "accepted_by": "owner",
+        "accepted_utc": "2026-10-05", "calibration_plan": _ref(root, P_CAL),
+        "instruments": [{"category": c, "evidence_class": "measured", "calibration_date": "2026-10-04",
+                         "raw_data": _ref(root, P_RAW.format(c)), "demonstrated_uncertainty": _q(0.01, "relative", "measured")}
+                        for c in CATEGORIES],
+    })
+    put(P_CUST, {
+        "status": "FROZEN", "decided_by": "owner", "decided_utc": "2026-10-02", "lock1": lock1,
+        "data_custodian": "owner-designated custodian role", "partition_frozen_before_h1_data": True,
+        "partition": {"calibration_registration": [{"id": "CAL-1"}], "held_out_prediction": [{"id": "HO-1"}]},
+        "raw_data_freeze_rule": "sha256 before analysis", "blinding_rule": "coded arm labels", "release_log": "log.jsonl",
+    })
+    put(P_FAC, {
+        "id": "od_s1_facility", "decided_by": "owner", "decided_utc": "2026-10-02", "decision": "APPROVED", "lock1": lock1,
+        "facility": {"name": "synthetic facility", "hall_on_vacuum_facility": "chamber X", "thrust_stand": "stand Y",
+                     "same_for_S1b_and_score_bearing_stages": True},
+    })
+    fac = _ref(root, P_FAC)
+    put(P_SAFE, {
+        "status": "APPROVED", "approved_by": "owner", "approved_utc": "2026-10-03", "lock1": lock1, "facility_choice": fac,
+        "limits": [{"quantity": q, "limit": "synthetic", "source": "synthetic", "action_on_exceedance": "trip"} for q in LIMITS],
+        "abort_conditions": [{"id": "AB-1"}],
+    })
+    return root
+
+
+def _cond(rep, cid):
+    return next(c for c in rep["conditions"] if c["id"] == cid)
+
+
+# ------------------------------------------------------------------------------------------------------ spec
+def test_spec_matches_owner_conditions_verbatim():
+    spec = G.load_spec(SPEC)
+    od = json.loads((ROOT / P_OD).read_text())
+    assert od["execution_directive_2026_09_27"]["S1_readiness_conditions"] == OWNER_CONDITIONS
+    assert [c["owner_condition"] for c in spec["conditions"]] == OWNER_CONDITIONS
+    assert spec["status"].startswith("DRAFT")
+    assert set(spec["milestones"]["supports"]) <= {"A", "B", "C"}
+
+
+def test_spec_carries_no_hall_performance_or_forbidden_paths():
+    text = SPEC.read_text()
+    for bad in ("sgb-screen", "hallthruster_bridge/ensemble", "abep_sim/"):
+        assert bad not in text
+    spec = G.load_spec(SPEC)
+    for c in spec["conditions"]:
+        for a in c["alternatives"]:
+            for p in a["paths"]:
+                assert not p.startswith("hallthruster_bridge/") and "DRAFT" not in p
+
+
+def test_bad_spec_is_a_spec_error(tmp_path):
+    spec = json.loads(SPEC.read_text())
+    spec["conditions"] = spec["conditions"][:7]
+    p = tmp_path / "s.json"
+    p.write_text(json.dumps(spec))
+    with pytest.raises(G.SpecError):
+        G.load_spec(p)
+    spec = json.loads(SPEC.read_text())
+    spec["conditions"][0]["alternatives"][0]["rules"].append({"type": "guess", "field": "x"})
+    p.write_text(json.dumps(spec))
+    with pytest.raises(G.SpecError):
+        G.load_spec(p)
+    spec = json.loads(SPEC.read_text())
+    spec["conditions"][0]["alternatives"][0]["paths"] = ["../outside.json"]
+    p.write_text(json.dumps(spec))
+    with pytest.raises(G.SpecError):
+        G.load_spec(p)
+
+
+# ------------------------------------------------------------------------------------------------------ verdicts
+def test_all_missing_is_not_ready_with_eight_items(tmp_path):
+    rep = G.evaluate(_base(tmp_path))
+    assert rep["authority"]["ok"] is True
+    assert rep["verdict"] == "S1_NOT_READY"
+    assert rep["n_missing_items"] == 8 and len(rep["missing"]) == 8
+    assert [m["owner_condition"] for m in rep["missing"]] == OWNER_CONDITIONS
+    assert all(m["state"] == "MISSING" and m["availability"] == "NONE" for m in rep["missing"])
+    for m in rep["missing"]:
+        assert m["needed"] and all(n["expected_paths"] and n["produced_by"] and n["required"] for n in m["needed"])
+
+
+def test_complete_fixture_is_ready(tmp_path):
+    rep = G.evaluate(_complete(tmp_path))
+    bad = {c["id"]: c["alternatives"] for c in rep["conditions"] if c["state"] != "SATISFIED"}
+    assert not bad, json.dumps(bad, indent=1)[:3000]
+    assert rep["verdict"] == "S1_READY" and rep["n_satisfied"] == 8 and rep["missing"] == []
+
+
+def test_di1_alternative_satisfies_feed_condition(tmp_path):
+    rep = G.evaluate(_complete(tmp_path, feed_alt="di1"))
+    c3 = _cond(rep, "S1-C3")
+    assert c3["state"] == "SATISFIED" and c3["satisfied_by"] == "S1-C3-DI1-frozen"
+    assert rep["verdict"] == "S1_READY"
+
+
+@pytest.mark.parametrize("d05,where", [("D-05-A", "docs/architecture_comparison/experiment_protocol/prereg/LOCK1.json"),
+                                       ("D-05-C", "docs/architecture_comparison/experiment_package/prereg/LOCK1.json")])
+def test_lock1_at_other_d05_locations(tmp_path, d05, where):
+    rep = G.evaluate(_complete(tmp_path, lock1_path=where, d05=d05))
+    assert rep["verdict"] == "S1_READY"
+
+
+def test_authority_required(tmp_path):
+    root = _complete(tmp_path)
+    (root / P_OD).unlink()
+    rep = G.evaluate(root)
+    assert rep["n_satisfied"] == 8 and rep["authority"]["ok"] is False
+    assert rep["verdict"] == "S1_NOT_READY"
+
+
+# ------------------------------------------------------------------------------------------------------ rejections
+DRAFTABLE = [(P_LOCK1, "S1-C1"), (P_FREEZE, "S1-C2"), (P_POINTS, "S1-C3"), (P_CAP, "S1-C4"), (P_CAL, "S1-C5"),
+             (P_CUST, "S1-C6"), (P_SAFE, "S1-C8")]
+
+
+@pytest.mark.parametrize("status", ["DRAFT", "DRAFT_PENDING_OWNER", "PROPOSED", "pending owner"])
+@pytest.mark.parametrize("rel,cid", DRAFTABLE)
+def test_draft_or_proposed_artifact_never_satisfies(tmp_path, rel, cid, status):
+    def m(o):
+        o["status"] = status
+        return o
+    rep = G.evaluate(_complete(tmp_path, mutate={rel: m}))
+    assert _cond(rep, cid)["state"] == "REJECTED_DRAFT"
+    assert rep["verdict"] == "S1_NOT_READY"
+    assert [x["condition"] for x in rep["missing"]] == [cid]
+
+
+def test_proposed_facility_decision_never_satisfies(tmp_path):
+    def m(o):
+        o["decision"] = "PROPOSED"
+        return o
+    rep = G.evaluate(_complete(tmp_path, mutate={P_FAC: m}))
+    assert _cond(rep, "S1-C7")["state"] == "REJECTED_DRAFT" and rep["verdict"] == "S1_NOT_READY"
+
+
+def test_lock1_draft_file_is_only_a_precursor(tmp_path):
+    root = _base(tmp_path)
+    _write(root, "docs/architecture_comparison/lock1/LOCK1_DRAFT.json", {"id": "LOCK-1", "status": "SIGNED"})
+    c1 = _cond(G.evaluate(root), "S1-C1")
+    assert c1["state"] == "MISSING" and c1["availability"] == "PARTIAL_PRECURSORS_ONLY"
+
+
+def test_lock1_must_be_signed_by_owner_with_all_decisions(tmp_path):
+    def m(o):
+        o["decided_by"] = "team"
+        o["decisions"] = o["decisions"][:14]
+        return o
+    c1 = _cond(G.evaluate(_complete(tmp_path, mutate={P_LOCK1: m})), "S1-C1")
+    fails = " ".join(c1["alternatives"][0]["failures"])
+    assert c1["state"] == "INVALID" and "decided_by" in fails and "D-15" in fails
+
+
+def test_lock1_brief_hash_mismatch_is_invalid(tmp_path):
+    root = _complete(tmp_path)
+    (root / P_BRIEF).write_text('{"schema": "brief edited after signing"}')
+    c1 = _cond(G.evaluate(root), "S1-C1")
+    assert c1["state"] == "INVALID" and "sha256 mismatch" in " ".join(c1["alternatives"][0]["failures"])
+
+
+def test_lock1_location_must_match_d05_choice(tmp_path):
+    c1 = _cond(G.evaluate(_complete(tmp_path, d05="D-05-A")), "S1-C1")
+    assert c1["state"] == "INVALID" and "D-05" in " ".join(c1["alternatives"][0]["failures"])
+
+
+def test_lock1_at_two_locations_is_ambiguous(tmp_path):
+    root = _complete(tmp_path)
+    _write(root, "docs/architecture_comparison/experiment_package/prereg/LOCK1.json", (root / P_LOCK1).read_bytes())
+    rep = G.evaluate(root)
+    assert _cond(rep, "S1-C1")["state"] == "AMBIGUOUS"
+    # chained records cannot be verified against an ambiguous LOCK-1
+    assert _cond(rep, "S1-C2")["state"] == "INVALID" and rep["verdict"] == "S1_NOT_READY"
+
+
+def test_chained_record_must_reference_the_signed_lock1(tmp_path):
+    root = _complete(tmp_path)
+    other = "docs/other/LOCK1_copy.json"
+    _write(root, other, (root / P_LOCK1).read_bytes())
+
+    def m(o):
+        o["lock1"] = _ref(root, other)
+        return o
+    rep = G.evaluate(_complete(root, mutate={P_CAL: m}))
+    assert _cond(rep, "S1-C5")["state"] == "INVALID"
+
+
+def test_design_analysis_is_not_a_demonstration(tmp_path):
+    def m(o):
+        o["evidence_basis"] = "design_analysis"
+        o["instruments"][0]["evidence_class"] = "model-derived"
+        return o
+    c4 = _cond(G.evaluate(_complete(tmp_path, mutate={P_CAP: m})), "S1-C4")
+    fails = " ".join(c4["alternatives"][0]["failures"])
+    assert c4["state"] == "INVALID" and "evidence_basis" in fails and "evidence_class" in fails
+
+
+def test_capability_needs_every_instrument_category_and_raw_data(tmp_path):
+    def m(o):
+        o["instruments"] = [i for i in o["instruments"] if i["category"] != "magnetic_field_Bz"]
+        return o
+    c4 = _cond(G.evaluate(_complete(tmp_path, mutate={P_CAP: m})), "S1-C4")
+    assert c4["state"] == "INVALID" and "magnetic_field_Bz" in " ".join(c4["alternatives"][0]["failures"])
+    root = _complete(tmp_path / "b")
+    (root / P_RAW.format("flow")).write_text("edited\n")
+    assert _cond(G.evaluate(root), "S1-C4")["state"] == "INVALID"
+
+
+def test_feed_points_need_explicit_labels_and_no_flight_assertion(tmp_path):
+    def m(o):
+        o["test_points"][1]["label"] = "FLIGHT_CONDITION"
+        return o
+    c3 = _cond(G.evaluate(_complete(tmp_path, mutate={P_POINTS: m})), "S1-C3")
+    assert c3["state"] == "INVALID" and "label" in " ".join(c3["alternatives"][1]["failures"])
+
+    def m2(o):
+        del o["test_points"][0]["label"]
+        return o
+    assert _cond(G.evaluate(_complete(tmp_path / "b", mutate={P_POINTS: m2})), "S1-C3")["state"] == "INVALID"
+
+
+def test_tbd_values_never_fill_a_condition(tmp_path):
+    def m(o):
+        o["data_custodian"] = "TBD - requires owner designation"
+        return o
+    assert _cond(G.evaluate(_complete(tmp_path, mutate={P_CUST: m})), "S1-C6")["state"] == "INVALID"
+
+    def m2(o):
+        o["test_points"][0]["P_feed"] = {"value": "TBD", "unit": "Pa", "source": "x", "evidence_class": "assumed"}
+        return o
+    assert _cond(G.evaluate(_complete(tmp_path / "b", mutate={P_POINTS: m2})), "S1-C3")["state"] == "INVALID"
+
+
+def test_custody_needs_frozen_partition(tmp_path):
+    def m(o):
+        o["partition_frozen_before_h1_data"] = False
+        o["partition"]["held_out_prediction"] = []
+        return o
+    c6 = _cond(G.evaluate(_complete(tmp_path, mutate={P_CUST: m})), "S1-C6")
+    fails = " ".join(c6["alternatives"][0]["failures"])
+    assert c6["state"] == "INVALID" and "partition_frozen_before_h1_data" in fails and "held_out_prediction" in fails
+
+
+def test_safety_limits_cover_required_set(tmp_path):
+    def m(o):
+        o["limits"] = o["limits"][1:]
+        o["abort_conditions"] = []
+        return o
+    c8 = _cond(G.evaluate(_complete(tmp_path, mutate={P_SAFE: m})), "S1-C8")
+    fails = " ".join(c8["alternatives"][0]["failures"])
+    assert c8["state"] == "INVALID" and "discharge_voltage_max" in fails and "abort_conditions" in fails
+
+
+def test_references_outside_the_repository_are_rejected(tmp_path):
+    root = _complete(tmp_path / "repo")
+    (tmp_path / "outside.json").write_text("{}")
+
+    def m(o):
+        o["requirements_basis"] = {"path": "../outside.json", "sha256": "0" * 64}
+        return o
+    c2 = _cond(G.evaluate(_complete(root, mutate={P_FREEZE: m})), "S1-C2")
+    assert c2["state"] == "INVALID" and "repository-relative" in " ".join(c2["alternatives"][0]["failures"])
+
+
+def test_non_json_artifact_is_invalid(tmp_path):
+    root = _complete(tmp_path)
+    (root / P_FAC).write_text("not json")
+    assert _cond(G.evaluate(root), "S1-C7")["state"] == "INVALID"
+
+
+# ------------------------------------------------------------------------------------------------------ determinism / purity
+def test_deterministic_and_location_independent(tmp_path):
+    a = G.render(G.evaluate(_complete(tmp_path / "a")))
+    b = G.render(G.evaluate(_complete(tmp_path / "b")))
+    assert a == b == G.render(G.evaluate(tmp_path / "a"))
+    assert str(tmp_path) not in a
+    e1, e2 = (G.render(G.evaluate(_base(tmp_path / x))) for x in ("c", "d"))
+    assert e1 == e2
+
+
+def test_gate_writes_nothing(tmp_path):
+    root = _complete(tmp_path)
+
+    def snap():
+        return {str(p): (p.stat().st_mtime_ns, p.stat().st_size) for p in root.rglob("*")}
+    before = snap()
+    G.evaluate(root)
+    assert snap() == before
+
+
+def test_cli_exit_codes_and_check(tmp_path, capsys):
+    root = _complete(tmp_path / "ready")
+    out = tmp_path / "rep.json"
+    assert G.main(["--repo-root", str(root), "--out", str(out)]) == 0
+    assert G.main(["--repo-root", str(root), "--check", str(out)]) == 0
+    empty = _base(tmp_path / "empty")
+    assert G.main(["--repo-root", str(empty), "--check", str(out)]) == 1
+    assert G.main(["--repo-root", str(empty)]) == 1
+    assert G.main(["--repo-root", str(empty), "--spec", str(tmp_path / "missing.json")]) == 2
+    capsys.readouterr()
+
+
+def test_module_is_standalone():
+    import ast
+    tree = ast.parse(SCRIPT.read_text())
+    mods = {a.name.split(".")[0] for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names}
+    mods |= {n.module.split(".")[0] for n in ast.walk(tree) if isinstance(n, ast.ImportFrom) and n.module}
+    assert mods <= {"__future__", "argparse", "hashlib", "json", "os", "re", "sys", "pathlib"}, mods
+    src = SCRIPT.read_text()
+    for bad in ("datetime.now", "time.time", "random"):
+        assert bad not in src
+
+
+# ------------------------------------------------------------------------------------------------------ committed report
+def test_committed_status_report_is_a_not_ready_snapshot_of_this_spec():
+    rep = json.loads(REPORT.read_text())
+    assert rep["schema"] == G.REPORT_SCHEMA and rep["generated_by"] == "scripts/experiments/s1_readiness.py"
+    assert rep["spec"]["path"] == "docs/experiments/s1_readiness/s1_readiness_conditions_v1.json"
+    assert rep["spec"]["sha256"] == hashlib.sha256(SPEC.read_bytes()).hexdigest()
+    assert rep["verdict"] == "S1_NOT_READY" and rep["n_conditions"] == 8
+    assert rep["n_missing_items"] == 8 and [m["owner_condition"] for m in rep["missing"]] == OWNER_CONDITIONS
+    assert all(c["state"] != "SATISFIED" for c in rep["conditions"])
+    assert os.sep + "home" + os.sep not in REPORT.read_text()

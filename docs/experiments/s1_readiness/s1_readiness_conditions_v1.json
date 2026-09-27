@@ -1,0 +1,894 @@
+{
+  "schema": "abep_s1_readiness_conditions_v1",
+  "id": "s1_readiness_conditions_v1",
+  "status": "DRAFT_PENDING_OWNER",
+  "status_note": "DRAFT for owner review. The eight conditions are the owner's (verbatim below). The artifact paths, file names, required fields, accepted status values and required coverage sets that make each condition machine-checkable are PROPOSED by this lane; the owner may change them. Nothing here is decided, pre-registered or locked. This file is read by scripts/experiments/s1_readiness.py; it is not a threshold register and contains no physical, efficiency or RFP number.",
+  "follow_on": "fo_s1_readiness_gate",
+  "trigger": "T_PIVOT_S1_READINESS_GATE",
+  "owner_disposition": {
+    "id": "od_hardware_pivot",
+    "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+    "locator": "execution_directive_2026_09_27.S1_readiness_conditions (the eight conditions); execution_directive_2026_09_27.chain; controls_addendum_2026_09_27.C1_W5_partition, C2_W1_flight_status, convergence_point"
+  },
+  "authority": {
+    "rule": "The gate evaluates only while the owner disposition that created it exists and is APPROVED; otherwise the verdict is S1_NOT_READY with an authority item.",
+    "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+    "rules": [
+      {
+        "type": "equals",
+        "field": "id",
+        "value": "od_hardware_pivot"
+      },
+      {
+        "type": "equals",
+        "field": "decided_by",
+        "value": "owner"
+      },
+      {
+        "type": "equals",
+        "field": "decision",
+        "value": "APPROVED"
+      }
+    ]
+  },
+  "gate_semantics": {
+    "verdicts": [
+      "S1_READY",
+      "S1_NOT_READY"
+    ],
+    "rule": "S1_READY only if the authority holds and every one of the eight conditions is SATISFIED. Otherwise S1_NOT_READY, listing every unsatisfied condition with its expected artifact(s), the failed checks and the producer.",
+    "condition_states": {
+      "SATISFIED": "an artifact exists at an expected path and passes every rule",
+      "MISSING": "no artifact exists at any expected path",
+      "REJECTED_DRAFT": "the artifact's top-level status marks it DRAFT, PROPOSED or PENDING; such an artifact never satisfies a condition, whatever else it contains",
+      "INVALID": "the artifact exists but fails one or more rules (the failures are listed)",
+      "AMBIGUOUS": "an artifact exists at more than one candidate location (the gate never chooses between them)"
+    },
+    "availability": {
+      "NONE": "no precursor draft exists either",
+      "PARTIAL_PRECURSORS_ONLY": "one or more precursor drafts exist in the repository; precursors are reported for orientation and NEVER satisfy a condition"
+    },
+    "never": [
+      "infer or fill a condition by assumption",
+      "accept a DRAFT, PROPOSED or PENDING artifact",
+      "accept a design analysis in place of a demonstration from actual calibration measurements (condition S1-C4)",
+      "read an artifact outside the repository or follow a reference outside it"
+    ],
+    "draft_status_tokens": [
+      "DRAFT",
+      "PROPOSED",
+      "PENDING"
+    ],
+    "draft_status_fields": [
+      "status",
+      "decision"
+    ],
+    "date_format": "decided/approved dates: ISO 8601 calendar date YYYY-MM-DD, optionally followed by THH:MM[:SS]Z (UTC)",
+    "sha256_ref_format": "an object {\"path\": <repository-relative path>, \"sha256\": <64 lowercase hex>}; the gate recomputes the sha256 of the file on disk and requires equality"
+  },
+  "rule_types": {
+    "equals": "field == value",
+    "in": "field is one of values",
+    "is_true": "field is the JSON boolean true",
+    "iso_date": "field is a date in the gate's date_format",
+    "nonempty_string": "field is a non-empty string that does not start with 'TBD' (case-insensitive)",
+    "sha256_ref": "field is a sha256 reference to a file inside the repository whose sha256 matches; optional path_equals pins the path; optional artifact_of pins it to the resolved artifact of another condition (the chain LOCK-1 -> S1 records)",
+    "decisions_decided": "field is a list of objects covering every id in ids, each with a non-null, non-empty choice_key",
+    "location_choice": "the directory of the resolved artifact equals map[choice] where choice is the choice_key of decision decision_id in decisions_field",
+    "covers": "field is a list of objects whose key values include every value in required",
+    "each_item": "field is a non-empty list and every item passes rules",
+    "any_item": "field is a non-empty list and at least one item passes rules",
+    "quantity": "field is an object {value, unit, source, evidence_class}: value a number or an object of numbers (e.g. species fractions), unit and source non-empty strings not starting with TBD, evidence_class one of measured / digitized / inferred / reconstructed / model-derived / assumed (docs/EVIDENCE.md)",
+    "field_paths": "a field may be a dotted path into nested objects (e.g. facility.name)"
+  },
+  "conditions": [
+    {
+      "id": "S1-C1",
+      "owner_condition": "LOCK-1 signed by the owner",
+      "why": "Directive chain: W1..W5 -> owner review -> LOCK-1 -> S1. LOCK-1 fixes, among others, the S1 plan (K, r, S1b point) and the instruments (lane 25 preregistration.locks[0]).",
+      "alternatives": [
+        {
+          "id": "S1-C1-signed-lock1",
+          "artifact": "owner-signed LOCK-1 record",
+          "paths": [
+            "docs/architecture_comparison/experiment_protocol/prereg/LOCK1.json",
+            "docs/architecture_comparison/minimum_decisive_experiment/prereg/LOCK1.json",
+            "docs/architecture_comparison/experiment_package/prereg/LOCK1.json",
+            "docs/architecture_comparison/lock1/LOCK1.json"
+          ],
+          "path_basis": "the four candidate LOCK-1 locations of owner decision D-05 (options D-05-A..C: docs/architecture_comparison/experiment_package/experiment_package_v1.json#/decisions/4; D-05-D: W2 lock1 brief, planned). The file name LOCK1.json is PROPOSED. The W2 draft LOCK1_DRAFT.json never satisfies this condition.",
+          "produced_by": "owner: decides D-01..D-15 from the W2 LOCK-1 decision brief (fo_lock1_decision_brief, docs/architecture_comparison/lock1/) and signs LOCK-1 at the D-05 location",
+          "rules": [
+            {
+              "type": "equals",
+              "field": "id",
+              "value": "LOCK-1"
+            },
+            {
+              "type": "equals",
+              "field": "status",
+              "value": "SIGNED"
+            },
+            {
+              "type": "is_true",
+              "field": "locked"
+            },
+            {
+              "type": "equals",
+              "field": "decided_by",
+              "value": "owner"
+            },
+            {
+              "type": "iso_date",
+              "field": "decided_utc"
+            },
+            {
+              "type": "sha256_ref",
+              "field": "decision_source",
+              "path_equals": "docs/architecture_comparison/lock1/lock1_decision_brief_v1.json",
+              "what": "sha256 of the W2 LOCK-1 decision brief the owner signs"
+            },
+            {
+              "type": "decisions_decided",
+              "field": "decisions",
+              "choice_key": "owner_choice",
+              "ids": [
+                "D-01",
+                "D-02",
+                "D-03",
+                "D-04",
+                "D-05",
+                "D-06",
+                "D-07",
+                "D-08",
+                "D-09",
+                "D-10",
+                "D-11",
+                "D-12",
+                "D-13",
+                "D-14",
+                "D-15"
+              ],
+              "ids_basis": "od_hardware_pivot statement: 'resolve D-01..D-15 -> LOCK-1'"
+            },
+            {
+              "type": "location_choice",
+              "decisions_field": "decisions",
+              "decision_id": "D-05",
+              "choice_key": "owner_choice",
+              "map": {
+                "D-05-A": "docs/architecture_comparison/experiment_protocol/prereg",
+                "D-05-B": "docs/architecture_comparison/minimum_decisive_experiment/prereg",
+                "D-05-C": "docs/architecture_comparison/experiment_package/prereg",
+                "D-05-D": "docs/architecture_comparison/lock1"
+              }
+            }
+          ]
+        }
+      ],
+      "precursors": [
+        {
+          "path": "docs/architecture_comparison/lock1/LOCK1_DRAFT.json",
+          "what": "W2 LOCK-1 draft (planned; DRAFT_PENDING_OWNER_SIGNATURE)"
+        },
+        {
+          "path": "docs/architecture_comparison/lock1/lock1_decision_brief_v1.json",
+          "what": "W2 LOCK-1 decision brief (planned)"
+        },
+        {
+          "path": "docs/architecture_comparison/experiment_package/experiment_package_v1.json",
+          "what": "experimental decision package: open owner decisions D-01..D-15 (DRAFT)"
+        }
+      ]
+    },
+    {
+      "id": "S1-C2",
+      "owner_condition": "H-1/C-1 configuration frozen sufficiently for qualification",
+      "why": "S1 qualifies the stand, feed system, H-1, cathode, power measurement, magnetic configuration and diagnostics for the paired test (directive S1_purpose); the units qualified must be the units later compared (one H-1, one C-1, same magnetic circuit).",
+      "alternatives": [
+        {
+          "id": "S1-C2-configuration-freeze",
+          "artifact": "W3 H-1/C-1 configuration-freeze record",
+          "paths": [
+            "docs/experiments/hardware/configuration_freeze_H1_C1.json"
+          ],
+          "path_basis": "PROPOSED file in the W3 directory (fo_hardware_definition, docs/experiments/hardware/)",
+          "produced_by": "W3 hardware definition (fo_hardware_definition) after hardware delivery; owner approves the freeze",
+          "rules": [
+            {
+              "type": "equals",
+              "field": "status",
+              "value": "FROZEN_FOR_QUALIFICATION"
+            },
+            {
+              "type": "equals",
+              "field": "decided_by",
+              "value": "owner"
+            },
+            {
+              "type": "iso_date",
+              "field": "decided_utc"
+            },
+            {
+              "type": "sha256_ref",
+              "field": "lock1",
+              "artifact_of": "S1-C1",
+              "what": "the signed LOCK-1 the freeze implements"
+            },
+            {
+              "type": "sha256_ref",
+              "field": "requirements_basis",
+              "path_equals": "docs/experiments/hardware/hardware_requirements_v1.json",
+              "what": "the W3 hardware requirements register the frozen units implement"
+            },
+            {
+              "type": "covers",
+              "field": "items",
+              "key": "id",
+              "required": [
+                "H-1",
+                "C-1",
+                "MC-1"
+              ],
+              "required_basis": "one H-1, one C-1 and the same magnetic circuit (od_hardware_pivot statement); MC-1 is the W3 draft id of the common magnetic circuit (planned; owner may rename)"
+            },
+            {
+              "type": "each_item",
+              "field": "items",
+              "rules": [
+                {
+                  "type": "nonempty_string",
+                  "field": "id"
+                },
+                {
+                  "type": "equals",
+                  "field": "status",
+                  "value": "FROZEN"
+                },
+                {
+                  "type": "nonempty_string",
+                  "field": "serial_or_part_id"
+                },
+                {
+                  "type": "nonempty_string",
+                  "field": "configuration_record"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "precursors": [
+        {
+          "path": "docs/experiments/hardware/hardware_requirements_v1.json",
+          "what": "W3 hardware requirements register (planned; DRAFT_PENDING_OWNER)"
+        },
+        {
+          "path": "docs/architecture_comparison/hall_reference/hall_reference_v1.json",
+          "what": "lane 17 Hall accelerator reference (verified input)"
+        },
+        {
+          "path": "docs/evidence/cathode/cathode_evidence_v1.json",
+          "what": "lane 10 cathode evidence (verified input)"
+        },
+        {
+          "path": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+          "what": "lane 19 cathode integration (verified input)"
+        }
+      ]
+    },
+    {
+      "id": "S1-C3",
+      "owner_condition": "DI-1 or explicitly labelled ground-qualification feed points available",
+      "why": "S1b runs HW-0 at OP3 (mdot_nom, V_nom, N2) (lane 25 s1_plan.S1b_hall_on); feed states from assumed intake/compressor candidates carry PROPOSED_FLIGHT_REPRESENTATIVE until DI-1 is frozen and are never asserted as flight conditions (controls_addendum C2).",
+      "alternatives": [
+        {
+          "id": "S1-C3-DI1-frozen",
+          "artifact": "owner-frozen DI-1 feed-state record",
+          "paths": [
+            "docs/architecture_comparison/feed_state_closure/DI1_FROZEN.json"
+          ],
+          "path_basis": "PROPOSED file in the W1 directory (fo_feed_state_closure, docs/architecture_comparison/feed_state_closure/)",
+          "produced_by": "owner: decides the W1 DI-1 questions (owner_decisions_DI1 of the W1 closure) and freezes DI-1",
+          "rules": [
+            {
+              "type": "equals",
+              "field": "id",
+              "value": "DI-1"
+            },
+            {
+              "type": "equals",
+              "field": "status",
+              "value": "FROZEN"
+            },
+            {
+              "type": "equals",
+              "field": "decided_by",
+              "value": "owner"
+            },
+            {
+              "type": "iso_date",
+              "field": "decided_utc"
+            },
+            {
+              "type": "sha256_ref",
+              "field": "closure_basis",
+              "path_equals": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
+              "what": "the W1 feed-state closure DI-1 freezes"
+            }
+          ]
+        },
+        {
+          "id": "S1-C3-ground-qualification-points",
+          "artifact": "owner-released, explicitly labelled S1 feed points",
+          "paths": [
+            "docs/architecture_comparison/feed_state_closure/s1_feed_points.json"
+          ],
+          "path_basis": "PROPOSED file in the W1 directory",
+          "produced_by": "W1 feed-state closure (fo_feed_state_closure) selects the points; owner releases them for S1",
+          "label_note": "The per-point label PROPOSED_FLIGHT_REPRESENTATIVE is the controls_addendum C2 flight-status label, not a document status; it is accepted as a label. The document itself must be owner-released (a DRAFT document never satisfies).",
+          "rules": [
+            {
+              "type": "equals",
+              "field": "status",
+              "value": "RELEASED_FOR_S1"
+            },
+            {
+              "type": "equals",
+              "field": "decided_by",
+              "value": "owner"
+            },
+            {
+              "type": "iso_date",
+              "field": "decided_utc"
+            },
+            {
+              "type": "sha256_ref",
+              "field": "lock1",
+              "artifact_of": "S1-C1",
+              "what": "the signed LOCK-1 (it fixes mdot_nom and composition, lane 25 preregistration.locks[0])"
+            },
+            {
+              "type": "each_item",
+              "field": "test_points",
+              "rules": [
+                {
+                  "type": "nonempty_string",
+                  "field": "id"
+                },
+                {
+                  "type": "in",
+                  "field": "label",
+                  "values": [
+                    "PROPOSED_FLIGHT_REPRESENTATIVE",
+                    "GROUND_QUALIFICATION_POINT"
+                  ]
+                },
+                {
+                  "type": "nonempty_string",
+                  "field": "gas"
+                },
+                {
+                  "type": "quantity",
+                  "field": "m_dot_s"
+                },
+                {
+                  "type": "quantity",
+                  "field": "P_feed"
+                },
+                {
+                  "type": "quantity",
+                  "field": "T_feed"
+                },
+                {
+                  "type": "quantity",
+                  "field": "x_s"
+                }
+              ]
+            },
+            {
+              "type": "any_item",
+              "field": "test_points",
+              "what": "at least one N2 point (S1b is at OP3 on N2, lane 25 s1_plan.S1b_hall_on)",
+              "rules": [
+                {
+                  "type": "equals",
+                  "field": "gas",
+                  "value": "N2"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "precursors": [
+        {
+          "path": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
+          "what": "W1 feed-state closure (planned; DRAFT for owner review)"
+        },
+        {
+          "path": "docs/architecture_comparison/feed_envelope/feed_envelope_v1.json",
+          "what": "lane 16 feed envelope"
+        },
+        {
+          "path": "schemas/interfaces/upstream_icd_v1.json",
+          "what": "lane 33 upstream ICD (IF-A5 valve outlet)"
+        },
+        {
+          "path": "schemas/controls/dual_feed_state_machine_v1.json",
+          "what": "lane 14 dual feed state machine"
+        }
+      ]
+    },
+    {
+      "id": "S1-C4",
+      "owner_condition": "instrumentation capability demonstrated",
+      "why": "Demonstrated = shown by actual calibration measurements on the delivered instruments; a design analysis or uncertainty budget is not a demonstration.",
+      "alternatives": [
+        {
+          "id": "S1-C4-capability-demonstration",
+          "artifact": "W4 instrumentation capability-demonstration record from actual calibration measurements",
+          "paths": [
+            "docs/experiments/instrumentation/capability_demonstration_v1.json"
+          ],
+          "path_basis": "PROPOSED file in the W4 directory (fo_instrumentation_definition, docs/experiments/instrumentation/)",
+          "produced_by": "W4 instrumentation (fo_instrumentation_definition): calibration measurements executed per the frozen calibration plan (S1-C5); owner accepts the record",
+          "required_categories_status": "PROPOSED: the owner's W4 instrument list (od_hardware_pivot workstreams.W4_instrumentation): thrust stand, bus-power metering, I_d, flow, pressure, temperature, B(z), stability, species/divergence. The owner may reduce the set required before S1.",
+          "rules": [
+            {
+              "type": "equals",
+              "field": "status",
+              "value": "DEMONSTRATED"
+            },
+            {
+              "type": "equals",
+              "field": "evidence_basis",
+              "value": "calibration_measurement"
+            },
+            {
+              "type": "equals",
+              "field": "accepted_by",
+              "value": "owner"
+            },
+            {
+              "type": "iso_date",
+              "field": "accepted_utc"
+            },
+            {
+              "type": "sha256_ref",
+              "field": "calibration_plan",
+              "artifact_of": "S1-C5",
+              "what": "the frozen calibration plan the measurements executed"
+            },
+            {
+              "type": "covers",
+              "field": "instruments",
+              "key": "category",
+              "required": [
+                "thrust_stand",
+                "bus_power_metering",
+                "discharge_current",
+                "flow",
+                "pressure",
+                "temperature",
+                "magnetic_field_Bz",
+                "stability_oscillations",
+                "species_divergence"
+              ]
+            },
+            {
+              "type": "each_item",
+              "field": "instruments",
+              "rules": [
+                {
+                  "type": "nonempty_string",
+                  "field": "category"
+                },
+                {
+                  "type": "equals",
+                  "field": "evidence_class",
+                  "value": "measured"
+                },
+                {
+                  "type": "iso_date",
+                  "field": "calibration_date"
+                },
+                {
+                  "type": "sha256_ref",
+                  "field": "raw_data",
+                  "what": "raw calibration data file committed to the repository"
+                },
+                {
+                  "type": "quantity",
+                  "field": "demonstrated_uncertainty"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "precursors": [
+        {
+          "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+          "what": "W4 instrumentation definition and uncertainty budget (planned; design analysis, DRAFT_PENDING_OWNER; never a demonstration)"
+        }
+      ]
+    },
+    {
+      "id": "S1-C5",
+      "owner_condition": "calibration plan frozen",
+      "why": "S1a is the no-plasma calibration stage (power-analyzer channels, thrust-stand in-situ calibration, MFC and gauges, B(z) maps, RF/microwave load plane) whose outputs LOCK-2 records (lane 25 s1_plan.S1a_no_plasma; preregistration.locks[1]).",
+      "alternatives": [
+        {
+          "id": "S1-C5-calibration-plan",
+          "artifact": "frozen S1 calibration plan",
+          "paths": [
+            "docs/experiments/instrumentation/calibration_plan_frozen.json"
+          ],
+          "path_basis": "PROPOSED file in the W4 directory",
+          "produced_by": "W4 instrumentation (fo_instrumentation_definition) drafts; owner freezes",
+          "rules": [
+            {
+              "type": "equals",
+              "field": "status",
+              "value": "FROZEN"
+            },
+            {
+              "type": "equals",
+              "field": "decided_by",
+              "value": "owner"
+            },
+            {
+              "type": "iso_date",
+              "field": "decided_utc"
+            },
+            {
+              "type": "sha256_ref",
+              "field": "lock1",
+              "artifact_of": "S1-C1",
+              "what": "the signed LOCK-1 (it fixes the S1 plan and the instruments)"
+            },
+            {
+              "type": "covers",
+              "field": "procedures",
+              "key": "category",
+              "required": [
+                "thrust_stand",
+                "bus_power_metering",
+                "discharge_current",
+                "flow",
+                "pressure",
+                "temperature",
+                "magnetic_field_Bz",
+                "stability_oscillations",
+                "species_divergence"
+              ]
+            },
+            {
+              "type": "each_item",
+              "field": "procedures",
+              "rules": [
+                {
+                  "type": "nonempty_string",
+                  "field": "category"
+                },
+                {
+                  "type": "nonempty_string",
+                  "field": "procedure"
+                },
+                {
+                  "type": "nonempty_string",
+                  "field": "traceability"
+                },
+                {
+                  "type": "nonempty_string",
+                  "field": "acceptance_rule"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "precursors": [
+        {
+          "path": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json",
+          "what": "lane 25 S1 plan (s1_plan.S1a_no_plasma; DRAFT)"
+        },
+        {
+          "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+          "what": "W4 calibration procedures (planned; DRAFT_PENDING_OWNER)"
+        }
+      ]
+    },
+    {
+      "id": "S1-C6",
+      "owner_condition": "data custody / blinding plan frozen",
+      "why": "S1 produces the first H-1 data. Controls addendum C1: before any H-1 data exist the experiment is partitioned into calibration/registration and held-out prediction data; data rule: no experimental data is used for model promotion until the W5 pre-registration is frozen.",
+      "alternatives": [
+        {
+          "id": "S1-C6-custody-plan",
+          "artifact": "frozen data custody / blinding plan",
+          "paths": [
+            "docs/experiments/custody/custody_blinding_plan_frozen.json"
+          ],
+          "path_basis": "PROPOSED location (no workstream owns it yet; the W5 draft carries a custody_and_blinding section, docs/validation/hall_transport_v2_prereg/, planned)",
+          "produced_by": "W5 validation pre-registration (fo_hall_validation_prereg_draft) with lane 06/25 custody rules; owner designates the custodian and freezes",
+          "rules": [
+            {
+              "type": "equals",
+              "field": "status",
+              "value": "FROZEN"
+            },
+            {
+              "type": "equals",
+              "field": "decided_by",
+              "value": "owner"
+            },
+            {
+              "type": "iso_date",
+              "field": "decided_utc"
+            },
+            {
+              "type": "sha256_ref",
+              "field": "lock1",
+              "artifact_of": "S1-C1",
+              "what": "the signed LOCK-1"
+            },
+            {
+              "type": "nonempty_string",
+              "field": "data_custodian",
+              "what": "owner-designated custodian (role or person; never a physics-track modeller per the W5 draft)"
+            },
+            {
+              "type": "is_true",
+              "field": "partition_frozen_before_h1_data",
+              "what": "controls_addendum C1"
+            },
+            {
+              "type": "any_item",
+              "field": "partition.calibration_registration",
+              "what": "calibration/registration portion (C1)",
+              "rules": [
+                {
+                  "type": "nonempty_string",
+                  "field": "id"
+                }
+              ]
+            },
+            {
+              "type": "any_item",
+              "field": "partition.held_out_prediction",
+              "what": "held-out prediction portion (C1)",
+              "rules": [
+                {
+                  "type": "nonempty_string",
+                  "field": "id"
+                }
+              ]
+            },
+            {
+              "type": "nonempty_string",
+              "field": "raw_data_freeze_rule",
+              "what": "raw data frozen with sha256 before analysis (lane 06 PR-6)"
+            },
+            {
+              "type": "nonempty_string",
+              "field": "blinding_rule"
+            },
+            {
+              "type": "nonempty_string",
+              "field": "release_log"
+            }
+          ]
+        }
+      ],
+      "precursors": [
+        {
+          "path": "docs/validation/hall_transport_v2_prereg/hall_transport_v2_prereg_DRAFT.json",
+          "what": "W5 held-out validation pre-registration draft incl. custody_and_blinding (planned; DRAFT)"
+        },
+        {
+          "path": "docs/architecture_comparison/experiment_protocol/protocol_draft.json",
+          "what": "lane 06 protocol draft (preregistration PR-6 raw-data freeze; DRAFT)"
+        }
+      ]
+    },
+    {
+      "id": "S1-C7",
+      "owner_condition": "facility chosen",
+      "why": "S1b must run in the Hall-on facility, thrust stand and mount procedure used for S2, S4 and S5 (lane 25 s1_plan.S1b_hall_on); facility / supplier contact is the owner's channel (od_hardware_pivot unchanged).",
+      "alternatives": [
+        {
+          "id": "S1-C7-facility-choice",
+          "artifact": "owner facility-choice record",
+          "paths": [
+            "docs/decisions/OD_S1_FACILITY.json"
+          ],
+          "path_basis": "PROPOSED owner-disposition file next to od_hardware_pivot",
+          "produced_by": "owner (facility contact is the owner's channel); options framed by LOCK-1 decision D-12 (facility per stage and T-PB-MAX)",
+          "rules": [
+            {
+              "type": "equals",
+              "field": "id",
+              "value": "od_s1_facility"
+            },
+            {
+              "type": "equals",
+              "field": "decided_by",
+              "value": "owner"
+            },
+            {
+              "type": "iso_date",
+              "field": "decided_utc"
+            },
+            {
+              "type": "equals",
+              "field": "decision",
+              "value": "APPROVED"
+            },
+            {
+              "type": "sha256_ref",
+              "field": "lock1",
+              "artifact_of": "S1-C1",
+              "what": "the signed LOCK-1 (D-12)"
+            },
+            {
+              "type": "nonempty_string",
+              "field": "facility.name"
+            },
+            {
+              "type": "nonempty_string",
+              "field": "facility.hall_on_vacuum_facility"
+            },
+            {
+              "type": "nonempty_string",
+              "field": "facility.thrust_stand"
+            },
+            {
+              "type": "is_true",
+              "field": "facility.same_for_S1b_and_score_bearing_stages",
+              "what": "lane 25 s1_plan.S1b_hall_on facility rule"
+            }
+          ]
+        }
+      ],
+      "precursors": [
+        {
+          "path": "docs/architecture_comparison/experiment_package/experiment_package_v1.json",
+          "what": "open owner decision D-12 (facility per stage; DRAFT)"
+        },
+        {
+          "path": "docs/architecture_comparison/experiment_protocol/protocol_draft.json",
+          "what": "lane 06 facility-effect controls (DRAFT)"
+        }
+      ]
+    },
+    {
+      "id": "S1-C8",
+      "owner_condition": "safety / operational limits defined",
+      "why": "S1 is the first powered operation of H-1/C-1; limits must exist and be owner-approved before first light. Management rule: non-gating analysis never delays the hardware path unless it changes a safety limit.",
+      "alternatives": [
+        {
+          "id": "S1-C8-limits",
+          "artifact": "owner-approved S1 safety / operational limits",
+          "paths": [
+            "docs/experiments/hardware/s1_safety_operational_limits.json"
+          ],
+          "path_basis": "PROPOSED file in the W3 directory",
+          "produced_by": "W3 hardware definition (fo_hardware_definition) with the chosen facility's limits (S1-C7) and the magnet/coil qualification basis (fo_magnet_coil_qualification); owner approves",
+          "required_quantities_status": "PROPOSED minimum set for first Hall-on operation; the owner may extend it (e.g. RF/microwave exposure before HW-RF/HW-ECR)",
+          "rules": [
+            {
+              "type": "equals",
+              "field": "status",
+              "value": "APPROVED"
+            },
+            {
+              "type": "equals",
+              "field": "approved_by",
+              "value": "owner"
+            },
+            {
+              "type": "iso_date",
+              "field": "approved_utc"
+            },
+            {
+              "type": "sha256_ref",
+              "field": "lock1",
+              "artifact_of": "S1-C1",
+              "what": "the signed LOCK-1"
+            },
+            {
+              "type": "sha256_ref",
+              "field": "facility_choice",
+              "artifact_of": "S1-C7",
+              "what": "the owner facility choice whose limits are included"
+            },
+            {
+              "type": "covers",
+              "field": "limits",
+              "key": "quantity",
+              "required": [
+                "discharge_voltage_max",
+                "discharge_current_max",
+                "magnet_current_max",
+                "cathode_heater_current_max",
+                "cathode_keeper_current_max",
+                "background_pressure_max",
+                "component_temperature_max",
+                "gas_handling_oxidizer"
+              ]
+            },
+            {
+              "type": "each_item",
+              "field": "limits",
+              "rules": [
+                {
+                  "type": "nonempty_string",
+                  "field": "quantity"
+                },
+                {
+                  "type": "nonempty_string",
+                  "field": "limit"
+                },
+                {
+                  "type": "nonempty_string",
+                  "field": "source"
+                },
+                {
+                  "type": "nonempty_string",
+                  "field": "action_on_exceedance"
+                }
+              ]
+            },
+            {
+              "type": "any_item",
+              "field": "abort_conditions",
+              "what": "at least one defined abort condition",
+              "rules": [
+                {
+                  "type": "nonempty_string",
+                  "field": "id"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "precursors": [
+        {
+          "path": "docs/experiments/hardware/hardware_requirements_v1.json",
+          "what": "W3 hardware requirements (planned; DRAFT_PENDING_OWNER)"
+        },
+        {
+          "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+          "what": "lane 20 electrical closure / magnet power (verified input)"
+        },
+        {
+          "path": "docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md",
+          "what": "lane 15 thermal / life framework (verified input)"
+        },
+        {
+          "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+          "what": "lane 24 hard gates (verified input)"
+        }
+      ]
+    }
+  ],
+  "milestones": {
+    "supports": [
+      "A",
+      "B"
+    ],
+    "A": "Scheduling precondition only: S1 -> LOCK-2 -> the controlled HW-0 / HW-RF / HW-ECR experiment is where the conditions of a conditional selection ('X is baseline provided ... are demonstrated') get demonstrated. The gate selects nothing.",
+    "B": "Physics-backed selection needs measured common-condition performance and genuinely new held-out validation evidence; S1 is the qualification that makes those readings admissible (LOCK-2 from measured S1 noise/calibration; C1 partition frozen before H-1 data).",
+    "to_next": "B additionally needs: S1 executed and LOCK-2 filed; Phase 1-3 data; the W5 pre-registration frozen and scored; an admitted Hall transport closure (credible set is empty today). C additionally needs mass, power, thermal, life, startup, cathode and mission closure integrated."
+  },
+  "compliance": [
+    "no Hall transport closure, screening candidate or withdrawn 0-D number is read or used",
+    "no architecture is ranked, preferred or eliminated; S1 is qualification, not architecture selection",
+    "no physical, efficiency or threshold value is carried; required coverage sets are PROPOSED",
+    "P5 calibration nuisance is never a design variable, map axis or gate item",
+    "reads only files inside the repository; writes only when --out is given"
+  ]
+}
