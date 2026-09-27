@@ -1,0 +1,921 @@
+{
+ "schema": "web_track_source_register_v1",
+ "repo_commit_basis": "782f900",
+ "access_date": "2026-09-27",
+ "rules": "published/open sources only; no contact; no paywall/captcha/bot-challenge bypass; TLS never changed; downloaded third-party PDFs are NOT committed (copyright), only citations, URLs and sha256 where recorded",
+ "thread_files": {
+  "R1_compressor": "d30c49cef7ecabe0e957b566cc1bb8b0e0e43552db627b1bc8eb7d6cdb510bca",
+  "R2_rfp": "b2796ff856f041b22c623b87e403b75748e2c25e818b9e8149e5c766f22c4b8c",
+  "R3_materials": "29633b98e060c98bfdc3cb7ea474fb3c7f190fd22e2a14bc0cf1e70c893bae7d",
+  "R4_instrumentation": "cecb59d25b34fbb48f709eb1211cd80161759e35a9c6107d03dc9726d37f010b",
+  "R5_facilities": "338132594ceb561992af03d93200e108924f54894f3ebbc3ca041472febc986a",
+  "R6_xe_inputs": "f8eda3db0419d56497a9e35b11e643d87549a1942e2d4677f53446a7c7c228cd"
+ },
+ "n_sources": 113,
+ "sources": [
+  {
+   "thread": "R1",
+   "id": "LI2015",
+   "citation": "Y. Li, X. Chen, D. Li, Y. Xiao, P. Dai, C. Gong, 'Design and analysis of vacuum air-intake device used in air-breathing electric propulsion', Vacuum 120 (2015) 89-95, doi:10.1016/j.vacuum.2015.06.011 (PII S0042207X15002730). Affiliation (OpenAlex raw string): National Key Laboratory of Science and Technology on Vacuum Technology and Physics, Lanzhou Institute of Space Technology and Physics, Lanzhou 730000, PR China.",
+   "url": "https://doi.org/10.1016/j.vacuum.2015.06.011",
+   "access": "not_accessible (full text); abstract content available only as search_engine_excerpt",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R1",
+   "id": "MOON2025",
+   "citation": "G. Moon, Y. Ko, M. Yi, E. Jun, 'Operational feasibility analysis of a cryogenic active intake device for atmosphere-breathing electric propulsion', arXiv:2503.02021v1 (2025); published Aerosp. Sci. Technol. (2026) doi:10.1016/j.ast.2026.112138 (per Semantic Scholar, verify)",
+   "url": "https://arxiv.org/pdf/2503.02021v1",
+   "access": "full_text",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R1",
+   "id": "ROMANO2021",
+   "citation": "F. Romano, J. Espinosa-Orozco, M. Pfeiffer, G. Herdrich, N.H. Crisp, P.C.E. Roberts, et al., 'Intake design for an Atmosphere-Breathing Electric Propulsion System (ABEP)', Acta Astronautica 187 (2021) 225-235 (volume/pages verify), doi:10.1016/j.actaastro.2021.06.033; arXiv:2106.15912v2 (CC-BY-NC-ND accepted manuscript)",
+   "url": "https://arxiv.org/pdf/2106.15912",
+   "access": "full_text",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R1",
+   "id": "ANDREUSSI2022",
+   "citation": "T. Andreussi et al., 'A review of air-breathing electric propulsion: from mission studies to technology verification', J. Electr. Propuls. 1 (2022), doi:10.1007/s44205-022-00024-9",
+   "url": "https://link.springer.com/article/10.1007/s44205-022-00024-9",
+   "access": "secondary_citation (citation contexts via Semantic Scholar API only; Springer returned a JS client challenge / idp cookie redirect, not bypassed)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R1",
+   "id": "TAES2023",
+   "citation": "'Maintenance Strategy for Elliptical Orbit Satellite With Air-Breathing Electric Propulsion', IEEE Trans. Aerosp. Electron. Syst. (2023), doi:10.1109/TAES.2023.3282611 (authors not retrieved, verify)",
+   "url": "https://doi.org/10.1109/TAES.2023.3282611",
+   "access": "secondary_citation (citation contexts via Semantic Scholar API only)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R1",
+   "id": "MOON2024",
+   "citation": "G. Moon, M. Yi, E. Jun, 'Design and operational concept of a cryogenic active intake device for atmosphere-breathing electric propulsion', Aerosp. Sci. Technol. 151 (2024) 109300, doi:10.1016/j.ast.2024.109300",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S1270963824004310",
+   "access": "secondary_citation (search_engine_excerpt of abstract/intro only; not read)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R1",
+   "id": "LI2013",
+   "citation": "Y. Li, X. Chen, L. Wang, L. Guo, Y. Li, 'Molecular flow transmission probabilities of any regular polygon tubes', Vacuum 92 (2013) 81-, doi:10.1016/j.vacuum.2012.11.013",
+   "url": "https://doi.org/10.1016/j.vacuum.2012.11.013",
+   "access": "not_accessible (metadata only; closed)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R1",
+   "id": "LI2014A",
+   "citation": "Y. Li, X. Chen, Y. Jia, M. Liu, Z. Wang, 'Numerical investigation of three turbomolecular pump models in the free molecular flow range', Vacuum 101 (2014) 337-, doi:10.1016/j.vacuum.2013.10.002",
+   "url": "https://doi.org/10.1016/j.vacuum.2013.10.002",
+   "access": "not_accessible (metadata only; closed)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R1",
+   "id": "LI2014B",
+   "citation": "Y. Li, X. Chen, W. Guo, D. Li, Q. Wang, K. Feng, 'Accurate simulation of turbomolecular pumps with modified algorithm by 3D direct simulation Monte Carlo method', Vacuum 109 (2014) 354-, doi:10.1016/j.vacuum.2014.03.023",
+   "url": "https://doi.org/10.1016/j.vacuum.2014.03.023",
+   "access": "not_accessible (metadata only; closed)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R1",
+   "id": "AIP2016",
+   "citation": "'Transmission probabilities of rarefied flows in the application of atmosphere-breathing electric propulsion', AIP Conf. Proc. (RGD30, 2016), doi:10.1063/1.4967689 (authors not retrieved; possibly same group, verify)",
+   "url": "https://doi.org/10.1063/1.4967689",
+   "access": "not_accessible (title/DOI only from Semantic Scholar citing list)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R1",
+   "id": "US12286943",
+   "citation": "US patent 12286943, 'Turbomolecular air-scoop for satellite air-breathing electric propulsion' (title from search result only; assignee/inventors/dates not retrieved, verify)",
+   "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12286943",
+   "access": "not_accessible (HTTP 403)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R2",
+   "id": "S1",
+   "citation": "secondary news article (Indian Defence News, 09 Sep 2026, credited 'Agencies')",
+   "url": "https://www.indiandefensenews.in/2026/09/drdo-issues-rfp-for-indigenous-air.html",
+   "access": "open; raw HTML read first-hand (r2_src/idn_article.html)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R2",
+   "id": "S2",
+   "citation": "secondary news article (idrw.org, 09 Sep 2026)",
+   "url": "https://idrw.org/drdo-seeks-air-breathing-propulsion-for-vleo-satellites/",
+   "access": "open; raw HTML read first-hand (r2_src/idrw_article.html)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R2",
+   "id": "S3",
+   "citation": "official DRDO announcement for a DIFFERENT TDF RFP (used only to establish the publication route)",
+   "url": "https://drdo.gov.in/drdo/en/announcement/rfp-project-development-close-formation-flying-multiple-drones-be-executed-under-tdf",
+   "access": "open; read first-hand",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R2",
+   "id": "S4",
+   "citation": "official DRDO TDF projects listing",
+   "url": "https://drdo.gov.in/drdo/en/offerings/projects",
+   "access": "open; read; shows 'No Content. Kindly Visit Archives'",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R2",
+   "id": "S5",
+   "citation": "official TDF project website",
+   "url": "https://tdf.drdo.gov.in/project",
+   "access": "NOT ACCESSED: HTTP 503 (WebFetch) / connection reset (curl) on every attempt",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R2",
+   "id": "S6",
+   "citation": "Defence eProcurement Portal (where TDF RFP documents are published per S3)",
+   "url": "https://defproc.gov.in/nicgep/app",
+   "access": "NOT ATTEMPTED: tender search/document download is captcha-gated; not bypassed per rules",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R2",
+   "id": "S7",
+   "citation": "official TDF X account",
+   "url": "https://x.com/DrdoTdf",
+   "access": "NOT ACCESSED: HTTP 402; content known only through web-search summaries (not verified)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "CARP-H50A",
+   "citation": "Carpenter Technology / Carpenter Electrification, Hiperco 50A data sheet (E199), v 05-20, (c) 2020",
+   "url": "https://f.hubspotusercontent20.net/hubfs/7407327/carpenter_electrification/Resources/Datasheets/Hiperco_50A_Alloy_(E199).pdf",
+   "access": "open manufacturer datasheet; 'typical or average values, not a guarantee'",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "VAC-VF50",
+   "citation": "VACUUMSCHMELZE GmbH & Co. KG, VACOFLUX 50 datasheet, July 2022",
+   "url": "https://vacuumschmelze.com/03_Documents/Brochures/Datasheet%20%20VACOFLUX%2050.pdf",
+   "access": "open manufacturer datasheet; 'typical values'",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "CLF-ARMCO",
+   "citation": "AK Steel International (Cleveland-Cliffs), ARMCO Pure Iron - High Purity Iron, Product Data Bulletin (Euro, 07/2022; PDF created 2022-10-13)",
+   "url": "https://www.aksteel.nl/files/downloads/clf_productdata__armco_pure_iron_pdb_euro_final_072022_92.pdf",
+   "access": "open manufacturer bulletin; mechanical values 'for information only'",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "CARP-430FSQ",
+   "citation": "Carpenter Electrification, 430F Solenoid Quality Stainless data sheet (file 20200717)",
+   "url": "https://www.carpenterelectrification.com/hubfs/Resources/Datasheets/20200717-CT-430F-Solenoid-Quality-Electrification-Datasheet_F.pdf",
+   "access": "open manufacturer datasheet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "PC-BN-MM26",
+   "citation": "Precision Ceramics (UK/USA/EU), Material Datasheet Boron Nitride (BN) Grades M & M26 (2018 upload)",
+   "url": "https://precision-ceramics.com/wp-content/uploads/2018/07/Boron-Nitride-Grade-M-M26-Technical-Data-Sheet-en.pdf",
+   "access": "open distributor/machinist datasheet (not the powder/billet manufacturer); 'mean and typical ... not guaranteed'",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "PC-BN-AX05",
+   "citation": "Precision Ceramics, Material Datasheet Boron Nitride (BN) Grade AX05 (2018 upload)",
+   "url": "https://precision-ceramics.com/wp-content/uploads/2018/07/Boron-Nitride-Grade-AX05-Technical-Data-Sheet-en.pdf",
+   "access": "open distributor datasheet; typical values",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "HENZE-HEBOSINT",
+   "citation": "Henze Boron Nitride Products AG, HeBoSint qualities datasheet 08.2021 (as recorded in repo schemas/thermal_life/limits_v1.json, accessed 2026-09-26 by lane 15)",
+   "url": "https://nitrid.eu/files/henze/en/HS_Qualities_en.pdf",
+   "access": "open manufacturer datasheet; NOT re-read by this lane (repo record reused)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "SCHUPP-KD500",
+   "citation": "Karl Schupp AG, 'KD500 high temperature winding wires with ceramic insulation (500 °C)' product web page",
+   "url": "https://schupp.ch/en/p/kd500-winding-wires-with-ceramic-insulation-500c/",
+   "access": "open manufacturer web page (values read via fetch summary; no PDF hash)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "CERAMAWIRE-HT",
+   "citation": "Ceramawire HT technical specification (repo MCQ source ceramawire_ht, distributor copy)",
+   "url": "https://www.motionsensors.com/wp-content/uploads/2022/07/ceramaTechspec.pdf",
+   "access": "as recorded in docs/experiments/magnet_coil/magnet_coil_qualification_v1.json; not re-read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "REMINGTON-MW16C",
+   "citation": "Remington Industries, polyimide MW 16-C data sheet (repo MCQ source remington_mw16c)",
+   "url": "https://www.remingtonindustries.com/content/Polyimide%20Magnet%20Wire%20Data%20Sheet.pdf",
+   "access": "as recorded in the MCQ register; not re-read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "NASA-TB-LAB6",
+   "citation": "NASA Tech Briefs, 'Improved Rare-Earth Emitter Hollow Cathode' (JPL; NTRS 20110012226)",
+   "url": "https://ntrs.nasa.gov/api/citations/20110012226/downloads/20110012226.pdf",
+   "access": "open NASA technical brief",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "GK2008-CH6",
+   "citation": "D. M. Goebel and I. Katz, Fundamentals of Electric Propulsion, JPL 2008, Chapter 6 Hollow Cathodes (separate chapter PDF)",
+   "url": "https://descanso.jpl.nasa.gov/SciTechBook/series1/Goebel_06_Chap6_cathodes.pdf",
+   "access": "open (JPL DESCANSO)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "ALLECTRA-311",
+   "citation": "allectra GmbH, 'Kapton and PEEK insulated wires for UHV use' overview (file 311-Kaptonwires-overview-2023-10)",
+   "url": "https://www.allectra.com/wp-content/uploads/2025/02/311-Kaptonwires-overview-2023-10.pdf",
+   "access": "open manufacturer catalogue sheet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "SWG-MS-01-24",
+   "citation": "Swagelok, VCR Metal Gasket Face Seal Fittings catalog MS-01-24",
+   "url": "https://www.swagelok.com/downloads/webcatalogs/en/ms-01-24.pdf",
+   "access": "open manufacturer catalogue",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "SWG-SC11",
+   "citation": "Swagelok, Special Cleaning and Packaging (SC-11), specification SCS-00011, MS-06-63",
+   "url": "https://www.swagelok.com/downloads/webcatalogs/en/ms-06-63.pdf",
+   "access": "open manufacturer specification",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "SST-13KV",
+   "citation": "Solid Sealing Technology, 13 kV Ceramic Vacuum Break, Electrical Isolator, 0.25 in ID, -200 to 450 °C, 1/4 VCR (product page 203)",
+   "url": "https://www.solidsealing.com/products/203/13kV-Ceramic-Vacuum-Break-Electrical-Isolator-0-25-Inch-Insulator-ID-Rated-from-200-C-to-450-C-1-4-VCR-Break/",
+   "access": "open manufacturer web page (fetch summary; no hash)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "CIFALI2011",
+   "citation": "G. Cifali et al., 'Experimental characterization of HET and RIT with atmospheric propellants', IEPC-2011-224 (as recorded and verified by the AO register v5, CIFALI2011, p. 2 and p. 5)",
+   "url": "https://electricrocket.org/IEPC/IEPC-2011-224.pdf",
+   "access": "open; repo record reused, not re-read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "ANDREUSSI2022",
+   "citation": "T. Andreussi, E. Ferrato, V. Giannetti, J. Electr. Propuls. 1:31 (2022), doi:10.1007/s44205-022-00024-9 (as recorded by AO register v5, Page 24 and 38 of 57)",
+   "url": "https://link.springer.com/content/pdf/10.1007/s44205-022-00024-9.pdf",
+   "access": "open CC BY; repo record reused, not re-read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R3",
+   "id": "DEGROH2006",
+   "citation": "de Groh et al., NASA/TM-2006-214482, MISSE PEACE polymers (as recorded by AO register v5; Kapton H erosion yield 3.00E-24 cm3/atom, Table 4 p.17)",
+   "url": "https://ntrs.nasa.gov/api/citations/20070002707/downloads/20070002707.pdf",
+   "access": "open; repo record reused",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-REPO-INS",
+   "citation": "docs/experiments/instrumentation/INSTRUMENTATION_DEFINITION.md + instrumentation_definition_v1.json (v1-r2)",
+   "url": null,
+   "access": "read 2026-09-27",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-REPO-MS",
+   "citation": "docs/experiments/instrumentation/metrology_spec/METROLOGY_MEASUREMENT_SPEC.md",
+   "url": null,
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-REPO-A3",
+   "citation": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+   "url": null,
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-REPO-A4",
+   "citation": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json (metrology_specification, force_DC_RF_traceability, MFC_ranges)",
+   "url": null,
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-REPO-A7",
+   "citation": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json (H3 procurement wave PLANNED_NOT_REGISTERED)",
+   "url": null,
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-REPO-CD",
+   "citation": "docs/experiments/capability_demo/CAPABILITY_DEMO_PREP.md (CD-01..CD-07) + s1a_calibration_procedures_candidate_v1.json",
+   "url": null,
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-REPO-S1A",
+   "citation": "docs/experiments/s1a_readiness/s1a_readiness_conditions_v1.json (S1A-C1 required INS items, S1A-C4 categories)",
+   "url": null,
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-REPO-P1",
+   "citation": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json (P1DQ measurement chains)",
+   "url": null,
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-REPO-PIM",
+   "citation": "docs/interfaces/preionizer_module/PREIONIZER_MODULE_ICD.md (PMR-01 RF freq not selected; PME-01 2.45/5.8 GHz candidates; P_hi TBD)",
+   "url": null,
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-REPO-RFEV",
+   "citation": "docs/evidence/rf_source/RF_SOURCE_EVIDENCE.md (0.5-7 MHz, 13.56, 27.12, 40.68 MHz in published sources)",
+   "url": null,
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-REPO-XE",
+   "citation": "docs/budgets/xe_ledger/XE_LEDGER.md (cathode 0.10 mg/s design, 0.15 test; diode-mode minima 0.6-0.8 mg/s of other cathodes)",
+   "url": null,
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-REPO-HW",
+   "citation": "docs/experiments/hardware/HARDWARE_DEFINITION.md (HW-ENV-01/02: 8.33 A at 180 V, rating to 350 V PROPOSED; HW-FS-01..07; B_res 2.45 GHz 87.5 mT, 5.8 GHz 207 mT)",
+   "url": null,
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-REPO-FSC",
+   "citation": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json mfc_range_requirement",
+   "url": null,
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-ALICAT-LOW",
+   "citation": "Alicat DOC-SPECS-MC-LOW Rev 5 Aug 2025, https://documents.alicat.com/specifications/DOC-SPECS-MC-LOW.pdf",
+   "url": null,
+   "access": "full text extracted (pdftotext) 2026-09-27",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-ALICAT-MID",
+   "citation": "Alicat DOC-SPECS-MC-MID, https://documents.alicat.com/specifications/DOC-SPECS-MC-MID.pdf",
+   "url": null,
+   "access": "full text extracted 2026-09-27",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-BH-ELFLOW",
+   "citation": "Bronkhorst EL-FLOW Select brochure, https://www.bronkhorst.com/getmedia/98668a82-8d1c-4b7f-af8e-995be25641b3/EL-FLOW-Select_en.pdf",
+   "url": null,
+   "access": "full text extracted 2026-09-27",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-BH-ML120",
+   "citation": "Bronkhorst mini CORI-FLOW ML120V21 datasheet (distributor copy), https://www.insatech.com/media/5vzhqbrc/gs_e_ml120v21-mini-cori-flow-specifications-reve.pdf",
+   "url": null,
+   "access": "full text extracted 2026-09-27",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-MKS-GCF",
+   "citation": "MKS 'Gas Correction Factors for Thermal-based Mass Flow Controllers' (university-hosted copy of mks.com page), https://nfc.arizona.edu/sites/default/files/2022-02/mfc_correction.pdf",
+   "url": null,
+   "access": "full text extracted 2026-09-27",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-SRS-IGGCF",
+   "citation": "SRS 'Gas Correction Factors for Bayard-Alpert Ionization Gauges', https://www.thinksrs.com/downloads/pdfs/applicationnotes/IG1BAgasapp.pdf",
+   "url": null,
+   "access": "full text extracted 2026-09-27",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-MKS-627F",
+   "citation": "MKS 627F datasheet https://www.mks.com/mam/celum/celum_assets/resources/627F-DS.pdf",
+   "url": null,
+   "access": "NOT read: site returned an embed/bot page; value from search-result snippet only (verify)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-YOKO-WT5000",
+   "citation": "Yokogawa Bulletin WT5000-02EN specifications, https://cdn.tmi.yokogawa.com/1/7113/files/Specifications%20WT5000%20Precision%20Power%20Analyzers%20Yokogawa%20Test%20Measurement%20BUWT5000%2002EN.pdf",
+   "url": null,
+   "access": "full text extracted 2026-09-27",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-LEM-IT60",
+   "citation": "LEM IT 60-S ULTRASTAB, https://www.lem.com/sites/default/files/products_datasheets/it_60-s_ultrastab.pdf",
+   "url": null,
+   "access": "NOT read: URL returned a product HTML page without numbers (verify)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-RS-NRTZ14",
+   "citation": "R&S NRT-Z14/44 directional power sensors (manual pages + distributor listings), https://www.rohde-schwarz.com/us/manual/r-s-nrt-z14-44-directional-power-sensors-user-manual-manuals_78701-1205888.html",
+   "url": null,
+   "access": "search-result snippets only (verify)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-BIRD-5010B",
+   "citation": "Bird 5010B directional power sensor, https://www.testequity.com/product/32113-1-5010B",
+   "url": null,
+   "access": "search-result snippet only (verify)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-LS-F71",
+   "citation": "Lake Shore F71/F41 teslameter specifications, https://www.lakeshore.com/products/categories/specification/magnetic-products/gaussmeters-teslameters/f71-and-f41-teslameters",
+   "url": null,
+   "access": "search-result snippet only (verify)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-SRS-RGA",
+   "citation": "SRS RGA catalog / manual, https://www.thinksrs.com/downloads/pdfs/catalog/RGAc.pdf",
+   "url": null,
+   "access": "search-result snippet only (verify)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-MACKEY2018",
+   "citation": "J. Mackey, T. Haag, H. Kamhawi et al., 'Uncertainty in Inverted Pendulum Thrust Measurements', NASA GRC, NTRS 20190000300, https://ntrs.nasa.gov/api/citations/20190000300/downloads/20190000300.pdf",
+   "url": null,
+   "access": "full text extracted 2026-09-27 (abstract and results lines)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-XU2009",
+   "citation": "K. G. Xu, M. L. R. Walker, 'High-power, null-type, inverted pendulum thrust stand', RSI 80, 055103 (2009), https://hpepl.ae.gatech.edu/papers/RSI_V80_No5_May_2009.pdf",
+   "url": null,
+   "access": "PDF not retrieved (HTML returned); values from search-result snippet (verify)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-KOKAL2017",
+   "citation": "U. Kokal, M. Celik, 'Development of BUSTLab Thrust Stand for mili-Newton Level Thrust Measurements', IEPC-2017-317, https://bogazicispacetechlab.github.io/files/conferences/39.pdf",
+   "url": null,
+   "access": "full text extracted 2026-09-27",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-POLK2017",
+   "citation": "Polk et al., Recommended Practice for Thrust Measurement in EP Testing, JPP 33(3) 2017 (as cited in SRC-REPO-INS)",
+   "url": null,
+   "access": "via repo",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-SNYDER2017",
+   "citation": "Snyder et al., Recommended Practice for Flow Control and Measurement in EP Testing, JPP 33(3) 2017 (as cited in SRC-REPO-INS)",
+   "url": null,
+   "access": "via repo",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-FCRI",
+   "citation": "Fluid Control Research Institute, Palakkad, https://www.fcriindia.com/calibration/",
+   "url": null,
+   "access": "search-result snippet: NABL-accredited flow labs (water, oil, air); low-flow sccm capability NOT found (verify)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-NABL",
+   "citation": "NABL India, https://nabl-india.org/ (as recorded in SRC-REPO-MS)",
+   "url": null,
+   "access": "via repo; no lab searched or contacted",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R4",
+   "id": "SRC-MEMORY",
+   "citation": "Items marked evidence_class 'memory_verify' are from background knowledge, not read in this session",
+   "url": null,
+   "access": "verify before use",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "REPO-EXPPKG",
+   "citation": "repository @782f900",
+   "url": "docs/architecture_comparison/experiment_package/experiment_package_v1.json (REQ-FAC-01..05, REQ-HW-01..08) and lock1_decision_brief_v1.json D-12",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "REPO-METSPEC",
+   "citation": "repository @782f900",
+   "url": "docs/experiments/instrumentation/metrology_spec/metrology_measurement_spec_v1.json + A3 decision OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "REPO-MINEXP-IIST",
+   "citation": "repository @782f900",
+   "url": "docs/architecture_comparison/minimum_decisive_experiment/MINIMUM_DECISIVE_EXPERIMENT_DRAFT.md Sec. 12 (IIST published info) and docs/experiments/DISCRIMINATING_EXPERIMENTS.md Sec. 10",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-LPSC-ADV",
+   "citation": "LPSC official page",
+   "url": "https://www.lpsc.gov.in/advpropulsionsystems.html",
+   "access": "full page read via fetch tool",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-ISRO-1000H",
+   "citation": "ISRO press release (1000 h life test, 300 mN SPT, 5.4 kW, 27 Mar 2025)",
+   "url": "https://www.isro.gov.in/ISRO_successfully_conducts_1000hrs_life_test_of_SPT.html",
+   "access": "full page read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-ISRO-EPROC",
+   "citation": "ISRO e-procurement tender titled 'Tender for REPLACEMENT OF THRUST MEASUREMENT ...' (title from search result only)",
+   "url": "https://eproc.isro.gov.in/viewDocumentPT?tenderId=LB202600003501",
+   "access": "page returned 'Unauthorized Access' - not bypassed; title only",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-ISTI-LPSC",
+   "citation": "ISTI portal: LPSC Valiamala project on Hall thruster plume / chamber / background-pressure modelling",
+   "url": "https://www.indiascienceandtechnology.gov.in/research/modelling-plasma-and-its-interaction-vacuum-chamber-during-hall-thruster-firing",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-IIST-WEB",
+   "citation": "IIST Space Research page",
+   "url": "https://iist.ac.in/space-research",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-INC42-BELLATRIX",
+   "citation": "news, 28 May 2021",
+   "url": "https://inc42.com/buzz/bellatrix-aerospace-test-fires-indias-first-commercial-hall-thruster/",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-PRINT-BELLATRIX",
+   "citation": "news, 18 Sep 2024",
+   "url": "https://theprint.in/ground-reports/bellatrix-aerospace-is-rising-with-isro-nano-thrusters-are-its-big-game-now/2272660/",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-WIKI-BELLATRIX",
+   "citation": "Wikipedia (secondary)",
+   "url": "https://en.wikipedia.org/wiki/Bellatrix_Aerospace",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-IPR-FAC",
+   "citation": "IPR research facilities page",
+   "url": "https://www.ipr.res.in/research-facilities",
+   "access": "read (lists 'Plasma Thruster Technology', no specs)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-IITK-PROP",
+   "citation": "IIT Kanpur propulsion lab page",
+   "url": "https://www.iitk.ac.in/aero/propulsion-lab",
+   "access": "read (pulsed plasma thruster only)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-AETHER-IEPC2022",
+   "citation": "Andreussi, Ferrato et al. (SITAEL), 'Characterization of an Atmospheric Propellant-fed Hall ...', IEPC-2022-435",
+   "url": "https://aether-h2020.eu/wp-content/uploads/2023/11/IEPC-2022-435.pdf",
+   "access": "PDF text extracted and read (facility paragraph, diagnostics)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-SITAEL-TOOLS",
+   "citation": "SITAEL tools & testing services page",
+   "url": "https://www.sitael.com/electric-propulsion/tools-services/",
+   "access": "NOT read: site served a captcha challenge (not bypassed); facility figures quoted from the search-engine snippet only - verify",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-PHYS-RAMEP",
+   "citation": "ESA/phys.org news on RAM-EP firing (2018)",
+   "url": "https://phys.org/news/2018-03-world-first-air-breathing-electric-thruster.html",
+   "access": "search snippet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-UM-LVTF",
+   "citation": "Viges, Jorns, Gallimore, Sheehan, 'University of Michigan's Upgraded Large Vacuum Test Facility', IEPC-2019-653",
+   "url": "https://pepl.engin.umich.edu/pdf/IEPC-2019-653.pdf",
+   "access": "search snippet only (numbers verify against the PDF)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-UM-APTF",
+   "citation": "UM Aerospace news 17 Nov 2025: PEPL Alternative Propellant Test Facility",
+   "url": "https://aero.engin.umich.edu/2025/11/17/the-plasmadynamics-and-electric-propulsion-laboratory-unveils-new-alternative-propellant-test-facility/",
+   "access": "page 403 to fetch tool; content from search snippet only",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-ESA-EPL",
+   "citation": "ESA Propulsion Laboratory page (+ academia/researchgate 'ESA Propulsion Lab at ESTEC')",
+   "url": "https://technology.esa.int/lab/tec-m-epl-esa-propulsion-laboratory",
+   "access": "search snippet only",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-MARCHIONI2021",
+   "citation": "Marchioni & Cappelli, J. Appl. Phys. 130, 053306 (2021) (ECHT, Stanford)",
+   "url": "https://pubs.aip.org/aip/jap/article/130/5/053306/1079086/Extended-channel-Hall-thruster-for-air-breathing",
+   "access": "metadata via search; publisher page 403",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-PPPL-RAITSES",
+   "citation": "Raitses et al., IEPC-2022-443, e-beam ExB plasma for air-breathing (PPPL)",
+   "url": "https://htx.pppl.gov/publication/Conference/2022-06-IEPC-2022-%20443_Raitses_Electron-Beam%20Generated%20ExB%20Plasma%20for%20Air-Breathing.pdf",
+   "access": "title only (search)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-ABEP-REVIEW",
+   "citation": "Review of air-breathing EP (J. Electric Propulsion 2022): PPS1350 on N2/O2 (ESA 2011-12), RAM-HET 6+/-1 mN, Lanzhou intake",
+   "url": "https://link.springer.com/article/10.1007/s44205-022-00024-9",
+   "access": "search snippet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-IRS-IPT",
+   "citation": "Romano et al., RF helicon IPT for ABEP (IRS Stuttgart)",
+   "url": "https://arxiv.org/abs/2007.06397",
+   "access": "PDF grepped: no chamber pumping data found",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-NPL-MASS",
+   "citation": "CSIR-NPL Mass Metrology section",
+   "url": "https://www.nplindia.in/index.php/science-technology/physico-mechanical-metrology/mass-metrology-section/",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-NPL-CFCT",
+   "citation": "CSIR-NPL Centre for Calibration & Testing (via search snippet: ISO/IEC 17025:2017, CIPM-MRA, weights 1 mg - 2000 kg)",
+   "url": "https://www.nplindia.org/index.php/commercial-services/calibration-testing/",
+   "access": "search snippet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-CMTI-MET",
+   "citation": "CMTI Precision Metrology & Calibration page",
+   "url": "https://cmti.res.in/precision-metrology-calibration/",
+   "access": "HTTP 503 to fetch tool; content from search snippet (NABL accreditation in dimensional metrology; roughness masters)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-NABL500-2020",
+   "citation": "NABL 500 Directory of Accredited Calibration Laboratories as on 31-Mar-2020 (historical)",
+   "url": "https://nabl-india.org/wp-content/uploads/2020/04/Calibration-directory-2-dtd-22.04.2020-1-1.pdf",
+   "access": "PDF downloaded and grepped",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-NABL-SEARCH",
+   "citation": "NABL public laboratory search (ASP.NET form, no captcha observed)",
+   "url": "https://nablwp.qci.org.in/laboratorysearchone",
+   "access": "reachable; one automated name query returned no parsable record - manual lookup needed",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-ULVAC-CRYO",
+   "citation": "ULVAC cryopump safety instructions (O2/ozone during regeneration)",
+   "url": "https://showcase.ulvac.co.jp/en/how-to/trouble-shooting/cryo-pump-safety.html",
+   "access": "search snippet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R5",
+   "id": "S-ASTM-E1508",
+   "citation": "ASTM E1508-12a(2019) scope (elements >= Na, > 0.1 wt%)",
+   "url": "https://store.astm.org/e1508-12ar19.html",
+   "access": "search snippet (consistent with REPO-METSPEC)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R6",
+   "id": "CONVERSANO_US10919649",
+   "citation": "R. W. Conversano, D. M. Goebel, I. Katz, R. R. Hofer, 'Low-power Hall thruster with an internally mounted low-current hollow cathode', US 10,919,649 B2 (Caltech/JPL; filed 2020-06-17) - MaSMi-DM and its low-current cathode (LUC)",
+   "url": "https://patents.google.com/patent/US10919649B2/en",
+   "access": "open full text (Google Patents HTML; USPTO PDF is image-only)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R6",
+   "id": "MOONEY_IEPC2019_695",
+   "citation": "M. M. Mooney, M. Baird, K. Lemmer, 'Featherweight Heaterless Hollow Cathode Characterization', IEPC-2019-695",
+   "url": "https://electricrocket.org/2019/695.pdf",
+   "access": "open full text",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R6",
+   "id": "AKIMOV_KM5_EUCASS",
+   "citation": "V. N. Akimov et al., 'Development of KM-5 Hall effect thruster and its flight testing onboard GEO spacecraft Express-A4', 2nd EUCASS",
+   "url": "https://www.eucass.eu/component/docindexer/?task=download&id=2724",
+   "access": "open full text",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R6",
+   "id": "KIM_IEPC2009_061",
+   "citation": "Y. Kim et al. (Satrec Initiative / KAIST), 'Development of Xenon feed system for a 300-W Hall-Thruster', IEPC-2009-061",
+   "url": "https://electricrocket.org/IEPC/IEPC-2009-061.pdf",
+   "access": "open full text",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R6",
+   "id": "MTA_XS_XTA",
+   "citation": "MT Aerospace, 'XS-XTA / 1-7 l Family Xenon Tank' datasheet (tank catalogue p. 11; PDF dated 2019-06-05), status UNDER DEVELOPMENT",
+   "url": "https://www.mt-aerospace.de/files/mta/tankkatalog/XS-XTA.pdf",
+   "access": "open datasheet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R6",
+   "id": "MTA_S_XTA",
+   "citation": "MT Aerospace, 'S-XTA / 40-120 l Family Xenon Tank' datasheet (catalogue p. 12), status UNDER DEVELOPMENT",
+   "url": "https://www.mt-aerospace.de/files/mta/tankkatalog/S-XTA.pdf",
+   "access": "open datasheet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R6",
+   "id": "MTA_S_XTA_60",
+   "citation": "MT Aerospace, 'S-XTA-60 Xenon Tank - COTS' datasheet (catalogue p. 8; heritage SGEO, AMOS 6)",
+   "url": "https://www.mt-aerospace.de/files/mta/tankkatalog/S-XTA-60.pdf",
+   "access": "open datasheet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R6",
+   "id": "MTA_L_XTA",
+   "citation": "MT Aerospace, 'L-XTA / 300-900 Family' datasheet (catalogue p. 13)",
+   "url": "https://www.mt-aerospace.de/files/mta/tankkatalog/L-XTA.pdf",
+   "access": "open datasheet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R6",
+   "id": "NIST_WEBBOOK_XE",
+   "citation": "NIST Chemistry WebBook, SRD 69, Thermophysical Properties of Fluid Systems, xenon (C7440633) isotherms 293.15/300/323.15 K, 60-200 bar (reference equation of state)",
+   "url": "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C7440633&Type=IsoTherm&Digits=5&PLow=60&PHigh=200&PInc=10&T=300&TUnit=K&PUnit=bar&DUnit=g%2Fml",
+   "access": "open database",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R6",
+   "id": "MOOG_XFC",
+   "citation": "Moog, 'Xenon Flow Controller (XFC)' product page",
+   "url": "https://www.moog.com/products/propulsion/space-propulsion/spacecraft-propulsion/systems-and-subsystems/xenon-flow-controller.html",
+   "access": "open web page (via fetch-tool summary; quote verbatim before use)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R6",
+   "id": "BRADFORD_FCU_SATSEARCH",
+   "citation": "Bradford Space, 'Flow Control Unit' listing on satsearch",
+   "url": "https://satsearch.co/products/bradford-flow-control-unit",
+   "access": "open marketplace listing (datasheet behind request form, not requested)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R6",
+   "id": "BUSEK_BHT1500_DS",
+   "citation": "Busek, BHT-1500 datasheet v1.0 (Aug 2021)",
+   "url": "https://satcatalog.s3.amazonaws.com/components/941/SatCatalog_-_Busek_-_BHT-1500_-_Datasheet.pdf",
+   "access": "open datasheet",
+   "accessed": "2026-09-27"
+  }
+ ]
+}
