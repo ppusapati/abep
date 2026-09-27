@@ -396,7 +396,7 @@
         {
           "path": "docs/experiments/hardware/hardware_requirements_v1.json",
           "what": "W3 hardware requirements register (planned; DRAFT_PENDING_OWNER)",
-          "sha256": "4752aafd4a42326f2cdf8387c3d9280d274ea96108be0450568d72e785f7ca61"
+          "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0"
         },
         {
           "path": "docs/architecture_comparison/hall_reference/hall_reference_v1.json",
@@ -696,7 +696,7 @@
         {
           "path": "docs/experiments/hardware/hardware_requirements_v1.json",
           "what": "W3 hardware requirements (planned; DRAFT_PENDING_OWNER)",
-          "sha256": "4752aafd4a42326f2cdf8387c3d9280d274ea96108be0450568d72e785f7ca61"
+          "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0"
         },
         {
           "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
