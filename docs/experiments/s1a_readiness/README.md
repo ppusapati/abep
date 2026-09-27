@@ -25,8 +25,8 @@ python -m pytest -q tests/test_s1a_readiness.py
 ```
 
 The report records the sha256 of every precursor it finds. **Regenerate it after any merge that adds or changes a
-precursor**, for example `docs/experiments/capability_demo/capability_demo_prep_v1.json` from fo_capability_demo_prep,
-which is absent in this lane's tree. Otherwise `--check` and `test_repository_today_not_ready_and_report_reproduces`
+precursor**, for example `docs/experiments/capability_demo/capability_demo_prep_v1.json` from fo_capability_demo_prep
+(now merged; DRAFT, recorded by sha256 as a precursor). Otherwise `--check` and `test_repository_today_not_ready_and_report_reproduces`
 report DIFFERS.
 
 ## What S1a is, and how it relates to N4 and to W4
@@ -138,8 +138,8 @@ satisfy a condition:
   gates.
 - **C3:** the W1 closure (32 GROUND_QUALIFICATION_POINT labels, all `PROPOSED (candidate-conditional)`, with
   T_feed_ground TBD under DI-1.10) and the lane 16 feed envelope.
-- **C4:** the W4 definition and the lane 25 `s1_plan.S1a_no_plasma`. The fo_capability_demo_prep record is absent from
-  this tree.
+- **C4:** the W4 definition and the lane 25 `s1_plan.S1a_no_plasma`. The fo_capability_demo_prep record (DRAFT) is now
+  present and recorded by sha256; being DRAFT, it satisfies nothing.
 - **C5:** the experiment package (D-12) and the lane 06 protocol draft.
 - **FW:** the W5 pre-registration DRAFT.
 

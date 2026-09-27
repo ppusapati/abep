@@ -323,20 +323,20 @@
         {
           "path": "docs/experiments/hardware/hardware_requirements_v1.json",
           "what": "W3 hardware requirements register (DRAFT_PENDING_OWNER): configuration items H-1, MC-1, C-1, FS-C, PS-C, SVC-1, PIM-*; S1a verification stages",
-          "sha256": "4752aafd4a42326f2cdf8387c3d9280d274ea96108be0450568d72e785f7ca61"
+          "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0"
         },
         {
           "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
           "what": "W4 instrumentation definition v1-r2 (DRAFT_PENDING_OWNER): instruments INS-01..INS-24",
           "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96"
-        }
-      ],
-      "precursors_absent": [
+        },
         {
           "path": "docs/experiments/capability_demo/capability_demo_prep_v1.json",
-          "what": "W4 capability-demonstration preparation (fo_capability_demo_prep; DRAFT): instruments used by CD-01..CD-07"
+          "what": "W4 capability-demonstration preparation (fo_capability_demo_prep; DRAFT): instruments used by CD-01..CD-07",
+          "sha256": "d7e986ae8d32408d0c4c693c5683c56450e7a1ce1035e3a042ecb33a696f9e9c"
         }
-      ]
+      ],
+      "precursors_absent": []
     },
     {
       "id": "S1A-C2",
@@ -376,7 +376,7 @@
         {
           "path": "docs/experiments/hardware/hardware_requirements_v1.json",
           "what": "W3 hardware requirements (DRAFT_PENDING_OWNER): supply ratings, gas isolator, S1a verification items",
-          "sha256": "4752aafd4a42326f2cdf8387c3d9280d274ea96108be0450568d72e785f7ca61"
+          "sha256": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0"
         },
         {
           "path": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json",
@@ -494,6 +494,11 @@
       ],
       "precursors_found": [
         {
+          "path": "docs/experiments/capability_demo/capability_demo_prep_v1.json",
+          "what": "W4 capability-demonstration preparation (fo_capability_demo_prep; DRAFT): CD-01..CD-07 and calibration_plan_candidates",
+          "sha256": "d7e986ae8d32408d0c4c693c5683c56450e7a1ce1035e3a042ecb33a696f9e9c"
+        },
+        {
           "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
           "what": "W4 instrumentation definition v1-r2 (DRAFT_PENDING_OWNER): calibration procedures INS-P-*",
           "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96"
@@ -504,12 +509,7 @@
           "sha256": "54b7b00a60134f2d92f2eb5c9fb49f18d23623a566e04a4b7d70325a0e332509"
         }
       ],
-      "precursors_absent": [
-        {
-          "path": "docs/experiments/capability_demo/capability_demo_prep_v1.json",
-          "what": "W4 capability-demonstration preparation (fo_capability_demo_prep; DRAFT): CD-01..CD-07 and calibration_plan_candidates"
-        }
-      ]
+      "precursors_absent": []
     },
     {
       "id": "S1A-C5",
@@ -625,14 +625,14 @@
           "path": "docs/validation/hall_transport_v2_prereg/hall_transport_v2_prereg_DRAFT.json",
           "what": "W5 held-out validation pre-registration draft (DRAFT): observables VO-*, registration_inputs REG-*, custody_and_blinding (roles, K1..K6, publication_rule, leak_rule)",
           "sha256": "24de36ed89b4455783d4f38becdcb97effbbd37dc28f93d90f54d3c8798a68d2"
-        }
-      ],
-      "precursors_absent": [
+        },
         {
           "path": "docs/experiments/capability_demo/capability_demo_prep_v1.json",
-          "what": "W4 capability-demonstration preparation (DRAFT): s1a_path.leak_rule (CD records contain calibration data only)"
+          "what": "W4 capability-demonstration preparation (DRAFT): s1a_path.leak_rule (CD records contain calibration data only)",
+          "sha256": "d7e986ae8d32408d0c4c693c5683c56450e7a1ce1035e3a042ecb33a696f9e9c"
         }
-      ]
+      ],
+      "precursors_absent": []
     }
   ],
   "relation": {
