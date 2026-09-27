@@ -5,7 +5,9 @@ execution directive 2026-09-27, controls C5 "AO early" and C6 "no extrapolation"
 
 What this script does (and nothing else):
 * holds the hand-written register content (mechanisms, witness coupons, requirements, W3/W4 interface table) as data;
-* computes ONE derived block deterministically: the external ram atomic-oxygen environment at 180/200/230 km from the
+* builds an index (no yield values) of the lane 32 sputter-yield database docs/evidence/wall_life/sputter_yield_db_v1.json
+  (sha256-pinned) for AOL-M02, and lists the unverified W3/W4 draft ids the register mentions;
+* computes one physical derived block deterministically: the external ram atomic-oxygen environment at 180/200/230 km from the
   FROZEN NRLMSIS 2.1 dataset (abep_sim/data/atmosphere_msis21_v1.csv, sha256-pinned below, read with the csv module)
   times circular orbital velocity, plus illustrative recession-equivalents from MISSE 2 flight erosion yields
   (NASA/TM-2006-214482 Table 4). Every derived number is labelled model-derived with its flags;
@@ -24,6 +26,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -48,6 +51,12 @@ R_EARTH_M = 6371.0e3
 E_CHARGE_C = 1.602176634e-19
 RFP_MISSION_H = 26000.0     # abep_sim.constants.RFP.mission_hours (RFP: 26,000 h mission)
 RFP_FIRING_H = 15000.0      # abep_sim.constants.RFP.ignition_hours (RFP: > 15,000 h firing)
+
+# Lane 32 sputter-yield database (verified input in the base; read-only, sha256-pinned). The builder copies only an
+# INDEX of it (projectile, target, energy/angle coverage, row count, evidence class, locator); yield values stay in
+# lane 32 and are looked up there by entry id.
+WALL_LIFE_DB_REL = "docs/evidence/wall_life/sputter_yield_db_v1.json"
+WALL_LIFE_DB_SHA256 = "315fbd44da2ee16246edb95830be09e0f05b9237cd5ca0a4c86a02a7e25bfffa"
 
 ALTITUDES_KM = (180, 200, 230)                       # RFP envelope 180-230 km
 MISSE2_FLUENCE_ATOMS_CM2 = 8.43e21                   # NASA/TM-2006-214482 p. 15 (Kapton H witness mass loss)
@@ -119,7 +128,10 @@ SOURCES = {
         "note": "Locators are the printed page numbers ('NASA/TM-2006-214482 N'). Flight: MISSE 2 PEC 2 tray 1 (E5) on "
                 "the ISS exterior, installed 16 Aug 2001, nearly 4 years (pp. 1, 9); mission planning assumed a 400 km "
                 "circular orbit at 51.6 deg (p. 5). Exposure included solar and charged-particle radiation (p. 16). "
-                "The accessed text does not state the AO impact energy.",
+                "AO environment as stated in the introduction (printed p. 1, a review statement citing the source's "
+                "ref. [1], not a MISSE measurement): ISS-altitude ram flux ~5.23e13 atoms/cm2/s for normal-incident "
+                "ram surfaces (400 km, averaged over the 11-year solar cycle) and 'the average energy of an oxygen "
+                "atom impacting spacecraft at ram velocities is 4.5 eV'.",
     },
 }
 
@@ -183,6 +195,7 @@ def compute_ao_environment():
     f107s = sorted({k[1] for k in rows})
     m_o = M_O_AMU * AMU_KG
     table = []
+    fl_mission_unrounded = []
     for alt in ALTITUDES_KM:
         v = math.sqrt(MU_EARTH_M3_S2 / (R_EARTH_M + alt * 1e3))
         e_ram_ev = 0.5 * m_o * v * v / E_CHARGE_C
@@ -198,6 +211,7 @@ def compute_ao_environment():
             flux_cm2s = flux_m2s * 1e-4
             fl_1000h = flux_cm2s * 1000.0 * 3600.0
             fl_mission = flux_cm2s * RFP_MISSION_H * 3600.0
+            fl_mission_unrounded.append(fl_mission)
             table.append({
                 "alt_km": alt,
                 "f107": f107,
@@ -209,11 +223,11 @@ def compute_ao_environment():
                 "ram_flux_atoms_cm2_s": _g(flux_cm2s, 4),
                 "fluence_per_1000h_atoms_cm2": _g(fl_1000h, 4),
                 "fluence_rfp_mission_26000h_atoms_cm2": _g(fl_mission, 4),
-                "ratio_to_misse2_fluence": _g(fl_mission / MISSE2_FLUENCE_ATOMS_CM2, 3),
+                "ratio_to_misse2_fluence": _g(fl_mission / MISSE2_FLUENCE_ATOMS_CM2),
             })
-    # illustrative recession-equivalents at the envelope extremes of the mission fluence
-    fl_all = [t["fluence_rfp_mission_26000h_atoms_cm2"] for t in table]
-    fl_min, fl_max = min(fl_all), max(fl_all)
+    # illustrative recession-equivalents at the envelope extremes of the mission fluence. They are computed from the
+    # UNROUNDED fluences (stored values are rounded only for display: fluence 4 s.f., ratio and range 6 s.f.).
+    fl_min, fl_max = min(fl_mission_unrounded), max(fl_mission_unrounded)
     recession = []
     for mid, mat, abbr, ey, role in MISSE2_YIELDS:
         recession.append({
@@ -249,7 +263,7 @@ def compute_ao_environment():
             "n_O": "n_O = rho * fO / m_O  (same relation as abep_sim.atmosphere 'n_O')",
             "V_orb": "V = sqrt(mu / (R_E + h))  (abep_sim.atmosphere.orbital_velocity)",
             "E_ram": "E = 0.5 * m_O * V^2 / e  (kinetic energy of an O atom in the spacecraft frame, co-rotation and "
-                     "thermal motion neglected)",
+                     "thermal motion neglected; compare DEGROH2006 p. 1: 4.5 eV average at ISS altitude, review statement)",
             "flux": "Gamma = n_O * V  (ram-normal surface)",
             "fluence": "F = Gamma * t",
             "recession_equivalent": "x = E_y * F  (linear, fluence-independent yield ASSUMED)",
@@ -265,8 +279,11 @@ def compute_ao_environment():
             "COMPOSITION_SUM: fO is the O mass fraction of O+N2+O2 while rho includes the dropped species (He, H, Ar, N; "
             "< 2 % by mass at 180-230 km per the frozen metadata), so n_O is high by at most that share.",
             "OTHER_ENVIRONMENT (recession only): MISSE 2 yields are ISS-exterior values (planning orbit 400 km, 51.6 "
-            "deg; AO with solar UV and charged particles). The AO energy there is not stated in the accessed text; "
-            "E_ram here is model-derived. No energy or synergy correction is applied.",
+            "deg; AO with solar UV and charged particles). The source states an average ram impact energy of 4.5 eV at "
+            "ISS altitude (DEGROH2006 printed p. 1, review statement citing its ref. [1]); E_ram here is model-derived "
+            "for 180-230 km (see table, ~5 eV). The ~0.5 eV difference and any energy dependence of the yield are "
+            "NOT corrected for; no energy or synergy correction is applied, so the MISSE yields transfer only as an "
+            "uncorrected illustration.",
             "FLUENCE_EXTRAPOLATION (recession only): mission fluences exceed the MISSE 2 fluence by the "
             "'ratio_to_misse2_fluence' factor; a linear yield beyond the tested fluence is ASSUMED.",
         ],
@@ -276,9 +293,59 @@ def compute_ao_environment():
                       "ram-exposed surface would not survive the mission fluence unprotected; it is never a design "
                       "margin, a coating thickness or a verdict. Metals, BN, alumina and other ceramics: no open "
                       "erosion yield accessed by this lane -> TBD (AOL-EX-01).",
-            "mission_fluence_range_atoms_cm2": [fl_min, fl_max],
+            "mission_fluence_range_atoms_cm2": [_g(fl_min), _g(fl_max)],
+            "rounding": "computed from unrounded fluences; stored fluence 4 significant figures, ratio and range 6, "
+                        "recession 3",
             "rows": recession,
         },
+    }
+
+
+def compute_wall_sputter_index():
+    """Per-projectile / per-target / per-energy index of the lane 32 sputter-yield database (for AOL-M02)."""
+    sha = _sha256_file(WALL_LIFE_DB_REL)
+    if sha != WALL_LIFE_DB_SHA256:
+        raise RuntimeError(f"{WALL_LIFE_DB_REL} sha256 {sha} != pinned {WALL_LIFE_DB_SHA256}; lane 32 changed. "
+                           "Re-read it and re-pin deliberately.")
+    with open(os.path.join(ROOT, WALL_LIFE_DB_REL), encoding="utf-8") as f:
+        db = json.load(f)
+    entries = []
+    for e in db["entries"]:
+        er = e["energy_range_eV"]
+        data = e.get("data")
+        n_rows = len(data["rows"]) if isinstance(data, dict) and isinstance(data.get("rows"), list) else None
+        entries.append({
+            "entry_id": e["id"],
+            "projectile": e["projectile"],
+            "target": e["target"],
+            "energy_min_eV": er.get("min"),
+            "energy_max_eV": er.get("max"),
+            "energy_note": er.get("tbd"),
+            "incidence_angles_deg": e["incidence_angles_deg"],
+            "evidence_level": e["evidence_level"],
+            "evidence_class": e["evidence_class"],
+            "units": e["units"],
+            "n_rows_transcribed": n_rows,
+            "values_status": e["values_status"],
+            "source_ids_lane32": e["source"],
+            "source_locator": e["source_locator"],
+        })
+    coverage = []
+    for proj, targets in db["coverage_matrix"].items():
+        if proj == "legend":
+            continue
+        for tgt, c in targets.items():
+            coverage.append({"projectile": proj, "target": tgt, "status": c["status"],
+                             "n_entries": len(c["entries"]), "entries": c["entries"]})
+    return {
+        "status": "INDEX of a referenced lane record (lane 32). Yield values are not copied: look them up in the "
+                  "lane 32 database by entry_id. Every Xe+ entry is another projectile and every O+ entry is on a "
+                  "proxy target (B, B2O3, C) or closed-access (Al2O3); none is an H-1 wall-grade N/O yield.",
+        "input": {"path": WALL_LIFE_DB_REL, "sha256": WALL_LIFE_DB_SHA256, "db_id": db["id"],
+                  "db_version": db["version"], "db_date": db["date"]},
+        "coverage_legend": db["coverage_matrix"]["legend"],
+        "coverage": coverage,
+        "entries": entries,
     }
 
 
@@ -380,6 +447,8 @@ MECHANISMS = [
         "energy_statement": "Wall impact energy = sheath drop plus the ion's axial energy and angle; the solver's "
                             "WallSheath value Z*phi_s + T_e/2 omits both and is not a validated erosion input "
                             "(lane 32 use restriction 1). Lane 32 proposes coupon tests at 20-300 eV, 0-85 deg (H1). "
+                            "Per-projectile / per-target / per-energy coverage of the lane 32 database is indexed in "
+                            "derived.wall_sputter_index (register section 5b). "
                             "H-1 values: TBD - requires near-wall diagnostics (lane 32 H7) or an ADMITTED closure.",
         "degradation_mode": "wall recession profile, exit chamfer growth, eventual pole-piece exposure",
         "measurable_quantities": [
@@ -662,6 +731,15 @@ MECHANISMS = [
                 "DEGROH2006", "Table 4 p. 17; p. 15", 3, "measured",
                 "ISS exterior (~4 years), AO + solar UV + charged particles; polymers and graphite only",
                 verified_by_this_lane=True, value=3.00e-24, unit="cm3/atom (Kapton H)"),
+            _ev("Reference AO environment at ISS altitude, stated in the introduction as a review statement citing "
+                "the source's ref. [1] (not measured by MISSE): ram flux ~5.23e13 atoms/cm2/s on normal-incident ram "
+                "surfaces (400 km, 11-year solar-cycle average) and average ram impact energy 4.5 eV. The register's "
+                "model-derived E_ram at 180-230 km (derived.ao_environment) is higher; the difference is not "
+                "corrected for when MISSE yields are used illustratively. Level 5: the document is primary for its flight "
+                "yields (level 3) but only restates this environment value from its ref. [1]; the original quantity "
+                "type is not stated there, so it is carried as 'inferred'.", "DEGROH2006", "p. 1", 5, "inferred",
+                "ISS altitude (400 km); second-hand within the source (its ref. [1]); environment context only",
+                verified_by_this_lane=True, value=4.5, unit="eV (average ram O impact energy, ISS altitude)"),
             _ev("Method: erosion yield from mass loss with a Kapton H witness for fluence (Eqs. 1-3); Kapton absorbs "
                 "up to 2 % of its weight in moisture, so samples are dehydrated in a vacuum desiccator before pre- "
                 "and post-flight weighing (60-100 mtorr, >= 4 days, 3 readings averaged).", "DEGROH2006",
@@ -1098,11 +1176,42 @@ HARD_STATEMENTS = [
     "No architecture is ranked or eliminated: every mechanism is common-mode except AOL-M10 (module-specific, "
     "monitored).",
     "Nothing is wired into archengine or any abep_sim module; goldens are untouched.",
+    "References to W3 / W4 draft ids (HW-*, INS-*) are unverified, non-binding merge hints from unmerged drafts; they "
+    "are listed in unmerged_draft_references and must be re-verified after the W3 / W4 merge.",
 ]
 
 
+# Ids of items in the unmerged W3 (docs/experiments/hardware/) and W4 (docs/experiments/instrumentation/) drafts. No
+# file in this base backs them; they are collected from the register text so each one is flagged for re-verification.
+# (HW-0 / HW-RF / HW-ECR are configuration names from the owner decision, and D-15-B is an experiment-package option;
+# both are in the base and are not matched.)
+_DRAFT_ID_RE = re.compile(r"\b(?:HW-(?:H1|C1|MC|PIM|ELEC)-\d+|INS-\d+(?:/\d+)*)\b")
+
+
+def collect_unmerged_draft_references(reg):
+    text = json.dumps(reg, ensure_ascii=False)
+    ids = set()
+    for m in _DRAFT_ID_RE.findall(text):
+        if m.startswith("INS-") and "/" in m:
+            ids.update("INS-" + n for n in m[len("INS-"):].split("/"))
+        else:
+            ids.add(m)
+    extra = ["W3 draft section 6"] if "W3 draft section 6" in text else []
+    return {
+        "status": "UNVERIFIED_UNMERGED_DRAFT",
+        "statement": "These ids were observed read-only in unmerged, in-flight W3 / W4 drafts on 2026-09-27. No input "
+                     "file in this base backs them, and the drafts may change. Every rationale, cross-reference, "
+                     "measurable-quantity note and interface-table row that names one of them is a NON-BINDING merge "
+                     "hint, not evidence. None of them carries a number used here.",
+        "re_verify_when": "at the W3 and W4 merges (control C5 integration check): confirm each id exists with the "
+                          "cited content, or rewrite / drop the reference in a new register version",
+        "draft_paths_planned": [PLANNED_PATHS["W3_hardware_definition"], PLANNED_PATHS["W4_instrumentation"]],
+        "ids": sorted(ids) + extra,
+    }
+
+
 def build_register():
-    derived = {"ao_environment": compute_ao_environment()}
+    derived = {"ao_environment": compute_ao_environment(), "wall_sputter_index": compute_wall_sputter_index()}
     reg = {
         "schema": "ao_lifetime_register_v1",
         "schema_file": SCHEMA_REL,
@@ -1135,14 +1244,18 @@ def build_register():
         "interface_table": {
             "control": "C5_AO_early",
             "note": "Related ids were observed read-only in unmerged in-flight W3/W4 drafts on 2026-09-27; they are "
-                    "hints for merging and may change. This register does not depend on them.",
-            "rows": [{"requirement": r, "adopter": a, "target": t, "observed_related_ids": ids, "action": act,
+                    "hints for merging and may change. This register does not depend on them. Status "
+                    "UNVERIFIED_UNMERGED_DRAFT: no file in the base backs them; re-verify every row after the W3/W4 "
+                    "merge (see unmerged_draft_references).",
+            "rows": [{"requirement": r, "adopter": a, "target": t, "observed_related_ids": ids,
+                      "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT" if ids else "none", "action": act,
                       "note": n} for (r, a, t, ids, act, n) in INTERFACE],
         },
         "proposed_thresholds": PROPOSED_THRESHOLDS,
         "open_owner_questions": OPEN_QUESTIONS,
         "derived": derived,
     }
+    reg["unmerged_draft_references"] = collect_unmerged_draft_references(reg)
     return reg
 
 
@@ -1211,11 +1324,15 @@ def render_md(reg):
     a("")
     a(reg["interface_table"]["note"])
     a("")
-    a("| requirement | adopter | target | related ids (unmerged drafts) | action | note |")
-    a("|---|---|---|---|---|---|")
+    a("| requirement | adopter | target | related ids (unmerged drafts) | id status | action | note |")
+    a("|---|---|---|---|---|---|---|")
     for row in reg["interface_table"]["rows"]:
         a(f"| {row['requirement']} | {row['adopter']} | {row['target']} | {', '.join(row['observed_related_ids']) or '-'}"
-          f" | {row['action']} | {row['note'] or '-'} |")
+          f" | {row['related_ids_status']} | {row['action']} | {row['note'] or '-'} |")
+    a("")
+    ud = reg["unmerged_draft_references"]
+    a(f"**Unmerged draft references ({ud['status']}).** {ud['statement']} Re-verify: {ud['re_verify_when']}. "
+      f"Ids: {', '.join(ud['ids'])}.")
     a("")
     a("## 4. Degradation register (H-1 DEGRADATION REGISTER)")
     a("")
@@ -1276,6 +1393,31 @@ def render_md(reg):
         a(f"| {r['id']} | {r['abbreviation']} | {r['misse2_erosion_yield_cm3_per_atom']:.3g} | {r['role_on_ep_unit']} | "
           f"{r['illustrative_recession_um_at_min_mission_fluence']:.3g}–"
           f"{r['illustrative_recession_um_at_max_mission_fluence']:.3g} |")
+    a("")
+    wi = reg["derived"]["wall_sputter_index"]
+    a("## 5b. Derived: index of the lane 32 sputter-yield database (for AOL-M02)")
+    a("")
+    a(f"{wi['status']} Input: `{wi['input']['path']}` ({wi['input']['db_id']} v{wi['input']['db_version']}, "
+      f"{wi['input']['db_date']}; sha256 `{wi['input']['sha256'][:16]}…`).")
+    a("")
+    a("Coverage (projectile × target, lane 32 coverage matrix):")
+    a("")
+    a("| projectile | target | status | entries |")
+    a("|---|---|---|---|")
+    for c in wi["coverage"]:
+        a(f"| {c['projectile']} | {c['target']} | {c['status']} | {', '.join(c['entries']) or '-'} |")
+    a("")
+    a("Entries (values stay in lane 32; look up by entry id):")
+    a("")
+    a("| entry id | projectile | target | energy eV | angles deg | level / class | rows | values status | locator |")
+    a("|---|---|---|---|---|---|---|---|---|")
+    for e in wi["entries"]:
+        en = (f"{_fmt(e['energy_min_eV'])}–{_fmt(e['energy_max_eV'])}" if e["energy_min_eV"] is not None
+              else f"TBD ({e['energy_note']})")
+        ang = ", ".join(str(x) for x in e["incidence_angles_deg"]) or "-"
+        rows = "-" if e["n_rows_transcribed"] is None else str(e["n_rows_transcribed"])
+        a(f"| {e['entry_id']} | {e['projectile']} | {e['target']} | {en} | {ang} | {e['evidence_level']} / "
+          f"{e['evidence_class']} | {rows} | {e['values_status']} | {e['source_locator']} |")
     a("")
     a("## 6. Proposed thresholds (not in the RFP)")
     for p in reg["proposed_thresholds"]:

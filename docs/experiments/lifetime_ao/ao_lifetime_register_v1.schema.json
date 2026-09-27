@@ -4,7 +4,7 @@
  "title": "H-1 lifetime / atomic-oxygen degradation register v1 (fo_ao_lifetime_register)",
  "description": "Structure of ao_lifetime_register_v1.json. Generated content only (build_ao_lifetime_register.py). Every numeric evidence value carries a source and an evidence class; life numbers are measured on Vyovrinda hardware, literature on another device, or TBD (control C6). Requirements and thresholds not in the RFP are PROPOSED.",
  "type": "object",
- "required": ["schema", "schema_file", "id", "title", "status", "date", "lane", "builder", "milestones", "hard_statements", "vocabulary", "sources", "repository_references", "planned_paths_not_read", "mechanisms", "witness_coupons", "requirements", "interface_table", "proposed_thresholds", "open_owner_questions", "derived"],
+ "required": ["schema", "schema_file", "id", "title", "status", "date", "lane", "builder", "milestones", "hard_statements", "vocabulary", "sources", "repository_references", "planned_paths_not_read", "mechanisms", "witness_coupons", "requirements", "interface_table", "proposed_thresholds", "open_owner_questions", "derived", "unmerged_draft_references"],
  "additionalProperties": false,
  "properties": {
   "schema": {"const": "ao_lifetime_register_v1"},
@@ -74,13 +74,14 @@
      "type": "array",
      "items": {
       "type": "object",
-      "required": ["requirement", "adopter", "target", "observed_related_ids", "action", "note"],
+      "required": ["requirement", "adopter", "target", "observed_related_ids", "related_ids_status", "action", "note"],
       "additionalProperties": false,
       "properties": {
        "requirement": {"type": "string"},
        "adopter": {"enum": ["W2", "W3", "W4", "W5"]},
        "target": {"type": "string"},
        "observed_related_ids": {"type": "array", "items": {"type": "string"}},
+       "related_ids_status": {"enum": ["UNVERIFIED_UNMERGED_DRAFT", "none"]},
        "action": {"enum": ["ADD", "AMEND", "ALIGN", "OWNER_DECISION"]},
        "note": {"type": "string"}
       }
@@ -113,11 +114,79 @@
     "properties": {"id": {"type": "string"}, "to": {"type": "string"}, "question": {"type": "string"}}
    }
   },
-  "derived": {
+  "unmerged_draft_references": {
    "type": "object",
-   "required": ["ao_environment"],
+   "required": ["status", "statement", "re_verify_when", "draft_paths_planned", "ids"],
    "additionalProperties": false,
    "properties": {
+    "status": {"const": "UNVERIFIED_UNMERGED_DRAFT"},
+    "statement": {"type": "string"},
+    "re_verify_when": {"type": "string"},
+    "draft_paths_planned": {"type": "array", "items": {"type": "string"}},
+    "ids": {"type": "array", "items": {"type": "string"}}
+   }
+  },
+  "derived": {
+   "type": "object",
+   "required": ["ao_environment", "wall_sputter_index"],
+   "additionalProperties": false,
+   "properties": {
+    "wall_sputter_index": {
+     "type": "object",
+     "required": ["status", "input", "coverage_legend", "coverage", "entries"],
+     "additionalProperties": false,
+     "properties": {
+      "status": {"type": "string"},
+      "input": {
+       "type": "object",
+       "required": ["path", "sha256", "db_id", "db_version", "db_date"],
+       "additionalProperties": false,
+       "properties": {"path": {"const": "docs/evidence/wall_life/sputter_yield_db_v1.json"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "db_id": {"type": "string"}, "db_version": {"type": "string"}, "db_date": {"type": "string"}}
+      },
+      "coverage_legend": {"type": "object", "additionalProperties": {"type": "string"}},
+      "coverage": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "type": "object",
+        "required": ["projectile", "target", "status", "n_entries", "entries"],
+        "additionalProperties": false,
+        "properties": {
+         "projectile": {"type": "string"},
+         "target": {"type": "string"},
+         "status": {"enum": ["measured_transcribed", "measured_values_TBD", "model_proxy_only", "none_located"]},
+         "n_entries": {"type": "integer", "minimum": 0},
+         "entries": {"type": "array", "items": {"type": "string"}}
+        }
+       }
+      },
+      "entries": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "type": "object",
+        "required": ["entry_id", "projectile", "target", "energy_min_eV", "energy_max_eV", "energy_note", "incidence_angles_deg", "evidence_level", "evidence_class", "units", "n_rows_transcribed", "values_status", "source_ids_lane32", "source_locator"],
+        "additionalProperties": false,
+        "properties": {
+         "entry_id": {"type": "string"},
+         "projectile": {"type": "string"},
+         "target": {"type": "string"},
+         "energy_min_eV": {"type": ["number", "null"]},
+         "energy_max_eV": {"type": ["number", "null"]},
+         "energy_note": {"type": ["string", "null"]},
+         "incidence_angles_deg": {"type": "array", "items": {"type": "number"}},
+         "evidence_level": {"type": "integer", "minimum": 1, "maximum": 7},
+         "evidence_class": {"$ref": "#/$defs/evidence_class"},
+         "units": {"type": "string"},
+         "n_rows_transcribed": {"type": ["integer", "null"]},
+         "values_status": {"type": "string"},
+         "source_ids_lane32": {"type": "array", "items": {"type": "string"}},
+         "source_locator": {"type": "string"}
+        }
+       }
+      }
+     }
+    },
     "ao_environment": {
      "type": "object",
      "required": ["status", "evidence_class", "evidence_level", "inputs", "equations", "flags", "table", "illustrative_recession_equivalents"],
@@ -152,11 +221,12 @@
       },
       "illustrative_recession_equivalents": {
        "type": "object",
-       "required": ["status", "mission_fluence_range_atoms_cm2", "rows"],
+       "required": ["status", "mission_fluence_range_atoms_cm2", "rounding", "rows"],
        "additionalProperties": false,
        "properties": {
         "status": {"type": "string"},
         "mission_fluence_range_atoms_cm2": {"type": "array", "items": {"type": "number"}},
+        "rounding": {"type": "string"},
         "rows": {
          "type": "array",
          "items": {

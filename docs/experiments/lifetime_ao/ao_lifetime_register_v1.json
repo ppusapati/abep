@@ -41,7 +41,8 @@
   "Witness and metrology data are not model-promotion evidence until the W5 pre-registration is frozen (execution directive data_rule); the same data never both select and validate a closure (control C1).",
   "Nothing here is a design variable of the intake, compressor, gas chambers or valves; Hall-closure uncertainty does not leak upstream.",
   "No architecture is ranked or eliminated: every mechanism is common-mode except AOL-M10 (module-specific, monitored).",
-  "Nothing is wired into archengine or any abep_sim module; goldens are untouched."
+  "Nothing is wired into archengine or any abep_sim module; goldens are untouched.",
+  "References to W3 / W4 draft ids (HW-*, INS-*) are unverified, non-binding merge hints from unmerged drafts; they are listed in unmerged_draft_references and must be re-verified after the W3 / W4 merge."
  ],
  "vocabulary": {
   "evidence_class": [
@@ -116,7 +117,7 @@
    "license": "NASA technical report (NTRS, public)",
    "sha256_of_accessed_file": "e3111dafbf5a34567581c6d3dbf5cba99fe2f4429fdd3166516a05551b546564",
    "accessed_on": "2026-09-27",
-   "note": "Locators are the printed page numbers ('NASA/TM-2006-214482 N'). Flight: MISSE 2 PEC 2 tray 1 (E5) on the ISS exterior, installed 16 Aug 2001, nearly 4 years (pp. 1, 9); mission planning assumed a 400 km circular orbit at 51.6 deg (p. 5). Exposure included solar and charged-particle radiation (p. 16). The accessed text does not state the AO impact energy."
+   "note": "Locators are the printed page numbers ('NASA/TM-2006-214482 N'). Flight: MISSE 2 PEC 2 tray 1 (E5) on the ISS exterior, installed 16 Aug 2001, nearly 4 years (pp. 1, 9); mission planning assumed a 400 km circular orbit at 51.6 deg (p. 5). Exposure included solar and charged-particle radiation (p. 16). AO environment as stated in the introduction (printed p. 1, a review statement citing the source's ref. [1], not a MISSE measurement): ISS-altitude ram flux ~5.23e13 atoms/cm2/s for normal-incident ram surfaces (400 km, averaged over the 11-year solar cycle) and 'the average energy of an oxygen atom impacting spacecraft at ram velocities is 4.5 eV'."
   }
  },
  "repository_references": {
@@ -277,7 +278,7 @@
     "N2+ / N++ / O++ (TBD)"
    ],
    "energy_regime": "sheath_accelerated_ions",
-   "energy_statement": "Wall impact energy = sheath drop plus the ion's axial energy and angle; the solver's WallSheath value Z*phi_s + T_e/2 omits both and is not a validated erosion input (lane 32 use restriction 1). Lane 32 proposes coupon tests at 20-300 eV, 0-85 deg (H1). H-1 values: TBD - requires near-wall diagnostics (lane 32 H7) or an ADMITTED closure.",
+   "energy_statement": "Wall impact energy = sheath drop plus the ion's axial energy and angle; the solver's WallSheath value Z*phi_s + T_e/2 omits both and is not a validated erosion input (lane 32 use restriction 1). Lane 32 proposes coupon tests at 20-300 eV, 0-85 deg (H1). Per-projectile / per-target / per-energy coverage of the lane 32 database is indexed in derived.wall_sputter_index (register section 5b). H-1 values: TBD - requires near-wall diagnostics (lane 32 H7) or an ADMITTED closure.",
    "degradation_mode": "wall recession profile, exit chamfer growth, eventual pole-piece exposure",
    "measurable_quantities": [
     "wall erosion profile (contact or optical profilometry / laser scan against fiducials) at every stage",
@@ -894,6 +895,18 @@
      "value": 3e-24,
      "unit": "cm3/atom (Kapton H)",
      "applicability": "ISS exterior (~4 years), AO + solar UV + charged particles; polymers and graphite only",
+     "verified_by_this_lane": true,
+     "transfer": "literature on another device or environment: recorded, NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "Reference AO environment at ISS altitude, stated in the introduction as a review statement citing the source's ref. [1] (not measured by MISSE): ram flux ~5.23e13 atoms/cm2/s on normal-incident ram surfaces (400 km, 11-year solar-cycle average) and average ram impact energy 4.5 eV. The register's model-derived E_ram at 180-230 km (derived.ao_environment) is higher; the difference is not corrected for when MISSE yields are used illustratively. Level 5: the document is primary for its flight yields (level 3) but only restates this environment value from its ref. [1]; the original quantity type is not stated there, so it is carried as 'inferred'.",
+     "source_id": "DEGROH2006",
+     "locator": "p. 1",
+     "evidence_level": 5,
+     "evidence_class": "inferred",
+     "value": 4.5,
+     "unit": "eV (average ram O impact energy, ISS altitude)",
+     "applicability": "ISS altitude (400 km); second-hand within the source (its ref. [1]); environment context only",
      "verified_by_this_lane": true,
      "transfer": "literature on another device or environment: recorded, NOT transferred to H-1 as a verdict"
     },
@@ -1745,7 +1758,7 @@
  ],
  "interface_table": {
   "control": "C5_AO_early",
-  "note": "Related ids were observed read-only in unmerged in-flight W3/W4 drafts on 2026-09-27; they are hints for merging and may change. This register does not depend on them.",
+  "note": "Related ids were observed read-only in unmerged in-flight W3/W4 drafts on 2026-09-27; they are hints for merging and may change. This register does not depend on them. Status UNVERIFIED_UNMERGED_DRAFT: no file in the base backs them; re-verify every row after the W3/W4 merge (see unmerged_draft_references).",
   "rows": [
    {
     "requirement": "AOL-WC-01",
@@ -1754,6 +1767,7 @@
     "observed_related_ids": [
      "HW-H1-04"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ADD",
     "note": "W3 draft has no witness-coupon mount"
    },
@@ -1764,6 +1778,7 @@
     "observed_related_ids": [
      "INS-17"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ADD",
     "note": "W4 draft has no witness metrology instrument"
    },
@@ -1775,6 +1790,7 @@
      "HW-H1-05",
      "HW-H1-06"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "AMEND",
     "note": ""
    },
@@ -1786,6 +1802,7 @@
      "HW-C1-01",
      "HW-C1-03"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ADD",
     "note": "fixed positions per HW-C1-01"
    },
@@ -1797,6 +1814,7 @@
      "HW-MC-03",
      "HW-MC-04"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ADD",
     "note": ""
    },
@@ -1808,6 +1826,7 @@
      "HW-PIM-10",
      "HW-H1-02"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ADD",
     "note": "CONFLICT CHECK: coupon exchange at arm boundaries must be classified by W3 as non-functional (not creating H-1') - AOL-OQ-01"
    },
@@ -1819,6 +1838,7 @@
      "INS-08",
      "INS-11"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ADD",
     "note": ""
    },
@@ -1830,6 +1850,7 @@
      "HW-H1-02",
      "HW-H1-05"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "AMEND",
     "note": "consistent with HW-H1-02: removal only at pre-registered phase boundaries, each creates H-1' with a new HW-0 reference"
    },
@@ -1840,6 +1861,7 @@
     "observed_related_ids": [
      "HW-ELEC-01"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ADD",
     "note": ""
    },
@@ -1850,6 +1872,7 @@
     "observed_related_ids": [
      "INS-04"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ADD",
     "note": ""
    },
@@ -1861,6 +1884,7 @@
      "HW-H1-03",
      "HW-H1-04"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "AMEND",
     "note": ""
    },
@@ -1871,6 +1895,7 @@
     "observed_related_ids": [
      "HW-H1-01"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "OWNER_DECISION",
     "note": "AOL-OQ-02"
    },
@@ -1881,6 +1906,7 @@
     "observed_related_ids": [
      "HW-C1-03"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ALIGN",
     "note": "already present in W3 draft (daily Xe check)"
    },
@@ -1892,6 +1918,7 @@
      "INS-04",
      "INS-18"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ALIGN",
     "note": ""
    },
@@ -1902,6 +1929,7 @@
     "observed_related_ids": [
      "INS-18"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ADD",
     "note": ""
    },
@@ -1912,6 +1940,7 @@
     "observed_related_ids": [
      "INS-11"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "AMEND",
     "note": "add a near-cathode sampling point"
    },
@@ -1922,6 +1951,7 @@
     "observed_related_ids": [
      "INS-17"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "AMEND",
     "note": "cathode emitter / tube channel"
    },
@@ -1933,6 +1963,7 @@
      "INS-18",
      "HW-C1-03"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ADD",
     "note": ""
    },
@@ -1943,6 +1974,7 @@
     "observed_related_ids": [
      "INS-10"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ALIGN",
     "note": "add feed composition + cathode state to each extinction record"
    },
@@ -1953,6 +1985,7 @@
     "observed_related_ids": [
      "HW-H1-07"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "AMEND",
     "note": "add wall-ring and coupon TCs"
    },
@@ -1963,6 +1996,7 @@
     "observed_related_ids": [
      "INS-17"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "AMEND",
     "note": ""
    },
@@ -1971,6 +2005,7 @@
     "adopter": "W4",
     "target": "new metrology section",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "ADD",
     "note": ""
    },
@@ -1979,6 +2014,7 @@
     "adopter": "W4",
     "target": "new metrology section",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "ADD",
     "note": ""
    },
@@ -1989,6 +2025,7 @@
     "observed_related_ids": [
      "HW-H1-04"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ALIGN",
     "note": ""
    },
@@ -1997,6 +2034,7 @@
     "adopter": "W4",
     "target": "new metrology section",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "ADD",
     "note": ""
    },
@@ -2007,6 +2045,7 @@
     "observed_related_ids": [
      "HW-C1-05"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ADD",
     "note": ""
    },
@@ -2015,6 +2054,7 @@
     "adopter": "W4",
     "target": "new metrology section",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "ADD",
     "note": ""
    },
@@ -2023,6 +2063,7 @@
     "adopter": "W2",
     "target": "LOCK-1 facility choice",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "OWNER_DECISION",
     "note": ""
    },
@@ -2034,6 +2075,7 @@
      "HW-MC-03",
      "HW-MC-04"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ALIGN",
     "note": "add pole-face inspection"
    },
@@ -2044,6 +2086,7 @@
     "observed_related_ids": [
      "INS-09"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ALIGN",
     "note": ""
    },
@@ -2052,6 +2095,7 @@
     "adopter": "W2",
     "target": "LOCK-1 facility / lab choice",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "OWNER_DECISION",
     "note": ""
    },
@@ -2060,6 +2104,7 @@
     "adopter": "W2",
     "target": "owner facility channel",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "OWNER_DECISION",
     "note": "not on the S1 critical path"
    },
@@ -2068,6 +2113,7 @@
     "adopter": "W2",
     "target": "owner facility channel",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "OWNER_DECISION",
     "note": "not on the S1 critical path"
    },
@@ -2076,6 +2122,7 @@
     "adopter": "W2",
     "target": "owner facility channel",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "OWNER_DECISION",
     "note": "not on the S1 critical path"
    },
@@ -2084,6 +2131,7 @@
     "adopter": "W5",
     "target": "data custody / blinding plan",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "ADD",
     "note": "W5 decides whether any metrology is held-out"
    },
@@ -2094,6 +2142,7 @@
     "observed_related_ids": [
      "INS-18"
     ],
+    "related_ids_status": "UNVERIFIED_UNMERGED_DRAFT",
     "action": "ADD",
     "note": ""
    },
@@ -2102,6 +2151,7 @@
     "adopter": "W4",
     "target": "record format",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "ADD",
     "note": ""
    },
@@ -2110,6 +2160,7 @@
     "adopter": "W3",
     "target": "section 9 compliance",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "ALIGN",
     "note": ""
    },
@@ -2118,6 +2169,7 @@
     "adopter": "W4",
     "target": "compliance",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "ALIGN",
     "note": ""
    },
@@ -2126,6 +2178,7 @@
     "adopter": "W5",
     "target": "pre-registration",
     "observed_related_ids": [],
+    "related_ids_status": "none",
     "action": "ADD",
     "note": ""
    }
@@ -2228,7 +2281,7 @@
    "equations": {
     "n_O": "n_O = rho * fO / m_O  (same relation as abep_sim.atmosphere 'n_O')",
     "V_orb": "V = sqrt(mu / (R_E + h))  (abep_sim.atmosphere.orbital_velocity)",
-    "E_ram": "E = 0.5 * m_O * V^2 / e  (kinetic energy of an O atom in the spacecraft frame, co-rotation and thermal motion neglected)",
+    "E_ram": "E = 0.5 * m_O * V^2 / e  (kinetic energy of an O atom in the spacecraft frame, co-rotation and thermal motion neglected; compare DEGROH2006 p. 1: 4.5 eV average at ISS altitude, review statement)",
     "flux": "Gamma = n_O * V  (ram-normal surface)",
     "fluence": "F = Gamma * t",
     "recession_equivalent": "x = E_y * F  (linear, fluence-independent yield ASSUMED)"
@@ -2238,7 +2291,7 @@
     "NO_COROTATION_NO_THERMAL: atmospheric co-rotation and O thermal motion are neglected (they change the relative speed and let non-ram surfaces receive flux).",
     "FROZEN_SCENARIO_ONLY: one epoch, orbit-averaged; no solar-cycle-averaged mission profile. The F10.7 70-230 columns bracket activity; the mission F10.7 history is TBD - requires the mission profile.",
     "COMPOSITION_SUM: fO is the O mass fraction of O+N2+O2 while rho includes the dropped species (He, H, Ar, N; < 2 % by mass at 180-230 km per the frozen metadata), so n_O is high by at most that share.",
-    "OTHER_ENVIRONMENT (recession only): MISSE 2 yields are ISS-exterior values (planning orbit 400 km, 51.6 deg; AO with solar UV and charged particles). The AO energy there is not stated in the accessed text; E_ram here is model-derived. No energy or synergy correction is applied.",
+    "OTHER_ENVIRONMENT (recession only): MISSE 2 yields are ISS-exterior values (planning orbit 400 km, 51.6 deg; AO with solar UV and charged particles). The source states an average ram impact energy of 4.5 eV at ISS altitude (DEGROH2006 printed p. 1, review statement citing its ref. [1]); E_ram here is model-derived for 180-230 km (see table, ~5 eV). The ~0.5 eV difference and any energy dependence of the yield are NOT corrected for; no energy or synergy correction is applied, so the MISSE yields transfer only as an uncorrected illustration.",
     "FLUENCE_EXTRAPOLATION (recession only): mission fluences exceed the MISSE 2 fluence by the 'ratio_to_misse2_fluence' factor; a linear yield beyond the tested fluence is ASSUMED."
    ],
    "table": [
@@ -2253,7 +2306,7 @@
      "ram_flux_atoms_cm2_s": 3871000000000000.0,
      "fluence_per_1000h_atoms_cm2": 1.393e+22,
      "fluence_rfp_mission_26000h_atoms_cm2": 3.623e+23,
-     "ratio_to_misse2_fluence": 43.0
+     "ratio_to_misse2_fluence": 42.9782
     },
     {
      "alt_km": 180,
@@ -2266,7 +2319,7 @@
      "ram_flux_atoms_cm2_s": 4592000000000000.0,
      "fluence_per_1000h_atoms_cm2": 1.653e+22,
      "fluence_rfp_mission_26000h_atoms_cm2": 4.299e+23,
-     "ratio_to_misse2_fluence": 51.0
+     "ratio_to_misse2_fluence": 50.991
     },
     {
      "alt_km": 180,
@@ -2279,7 +2332,7 @@
      "ram_flux_atoms_cm2_s": 5934000000000000.0,
      "fluence_per_1000h_atoms_cm2": 2.136e+22,
      "fluence_rfp_mission_26000h_atoms_cm2": 5.554e+23,
-     "ratio_to_misse2_fluence": 65.9
+     "ratio_to_misse2_fluence": 65.885
     },
     {
      "alt_km": 180,
@@ -2292,7 +2345,7 @@
      "ram_flux_atoms_cm2_s": 7115000000000000.0,
      "fluence_per_1000h_atoms_cm2": 2.561e+22,
      "fluence_rfp_mission_26000h_atoms_cm2": 6.66e+23,
-     "ratio_to_misse2_fluence": 79.0
+     "ratio_to_misse2_fluence": 79.0023
     },
     {
      "alt_km": 180,
@@ -2305,7 +2358,7 @@
      "ram_flux_atoms_cm2_s": 8365000000000000.0,
      "fluence_per_1000h_atoms_cm2": 3.011e+22,
      "fluence_rfp_mission_26000h_atoms_cm2": 7.829e+23,
-     "ratio_to_misse2_fluence": 92.9
+     "ratio_to_misse2_fluence": 92.8761
     },
     {
      "alt_km": 200,
@@ -2318,7 +2371,7 @@
      "ram_flux_atoms_cm2_s": 2259000000000000.0,
      "fluence_per_1000h_atoms_cm2": 8.133e+21,
      "fluence_rfp_mission_26000h_atoms_cm2": 2.114e+23,
-     "ratio_to_misse2_fluence": 25.1
+     "ratio_to_misse2_fluence": 25.083
     },
     {
      "alt_km": 200,
@@ -2331,7 +2384,7 @@
      "ram_flux_atoms_cm2_s": 2783000000000000.0,
      "fluence_per_1000h_atoms_cm2": 1.002e+22,
      "fluence_rfp_mission_26000h_atoms_cm2": 2.605e+23,
-     "ratio_to_misse2_fluence": 30.9
+     "ratio_to_misse2_fluence": 30.9038
     },
     {
      "alt_km": 200,
@@ -2344,7 +2397,7 @@
      "ram_flux_atoms_cm2_s": 3754000000000000.0,
      "fluence_per_1000h_atoms_cm2": 1.351e+22,
      "fluence_rfp_mission_26000h_atoms_cm2": 3.513e+23,
-     "ratio_to_misse2_fluence": 41.7
+     "ratio_to_misse2_fluence": 41.6776
     },
     {
      "alt_km": 200,
@@ -2357,7 +2410,7 @@
      "ram_flux_atoms_cm2_s": 4618000000000000.0,
      "fluence_per_1000h_atoms_cm2": 1.662e+22,
      "fluence_rfp_mission_26000h_atoms_cm2": 4.322e+23,
-     "ratio_to_misse2_fluence": 51.3
+     "ratio_to_misse2_fluence": 51.2731
     },
     {
      "alt_km": 200,
@@ -2370,7 +2423,7 @@
      "ram_flux_atoms_cm2_s": 5546000000000000.0,
      "fluence_per_1000h_atoms_cm2": 1.997e+22,
      "fluence_rfp_mission_26000h_atoms_cm2": 5.191e+23,
-     "ratio_to_misse2_fluence": 61.6
+     "ratio_to_misse2_fluence": 61.5768
     },
     {
      "alt_km": 230,
@@ -2383,7 +2436,7 @@
      "ram_flux_atoms_cm2_s": 1074000000000000.0,
      "fluence_per_1000h_atoms_cm2": 3.867e+21,
      "fluence_rfp_mission_26000h_atoms_cm2": 1.005e+23,
-     "ratio_to_misse2_fluence": 11.9
+     "ratio_to_misse2_fluence": 11.9259
     },
     {
      "alt_km": 230,
@@ -2396,7 +2449,7 @@
      "ram_flux_atoms_cm2_s": 1418000000000000.0,
      "fluence_per_1000h_atoms_cm2": 5.105e+21,
      "fluence_rfp_mission_26000h_atoms_cm2": 1.327e+23,
-     "ratio_to_misse2_fluence": 15.7
+     "ratio_to_misse2_fluence": 15.7459
     },
     {
      "alt_km": 230,
@@ -2409,7 +2462,7 @@
      "ram_flux_atoms_cm2_s": 2059000000000000.0,
      "fluence_per_1000h_atoms_cm2": 7.413e+21,
      "fluence_rfp_mission_26000h_atoms_cm2": 1.927e+23,
-     "ratio_to_misse2_fluence": 22.9
+     "ratio_to_misse2_fluence": 22.862
     },
     {
      "alt_km": 230,
@@ -2422,7 +2475,7 @@
      "ram_flux_atoms_cm2_s": 2638000000000000.0,
      "fluence_per_1000h_atoms_cm2": 9.498e+21,
      "fluence_rfp_mission_26000h_atoms_cm2": 2.47e+23,
-     "ratio_to_misse2_fluence": 29.3
+     "ratio_to_misse2_fluence": 29.2949
     },
     {
      "alt_km": 230,
@@ -2435,15 +2488,16 @@
      "ram_flux_atoms_cm2_s": 3270000000000000.0,
      "fluence_per_1000h_atoms_cm2": 1.177e+22,
      "fluence_rfp_mission_26000h_atoms_cm2": 3.061e+23,
-     "ratio_to_misse2_fluence": 36.3
+     "ratio_to_misse2_fluence": 36.3096
     }
    ],
    "illustrative_recession_equivalents": {
     "status": "ILLUSTRATIVE, OUT_OF_DOMAIN (flags above). Shows only that polymer exterior parts on a ram-exposed surface would not survive the mission fluence unprotected; it is never a design margin, a coating thickness or a verdict. Metals, BN, alumina and other ceramics: no open erosion yield accessed by this lane -> TBD (AOL-EX-01).",
     "mission_fluence_range_atoms_cm2": [
-     1.005e+23,
-     7.829e+23
+     1.00535e+23,
+     7.82945e+23
     ],
+    "rounding": "computed from unrounded fluences; stored fluence 4 significant figures, ratio and range 6, recession 3",
     "rows": [
      {
       "id": "MISSE2-2-E5-30",
@@ -2474,7 +2528,7 @@
        "evidence_class": "measured",
        "note": "flight mass loss / (area x density x Kapton-H-witness fluence), Eq. (1)-(3) p. 2; Kapton H yield itself is the reference 3.0e-24 cm3/atom (p. 2, citing Banks 1997 [4]), so every yield is relative to that calibration"
       },
-      "illustrative_recession_um_at_min_mission_fluence": 2820.0,
+      "illustrative_recession_um_at_min_mission_fluence": 2830.0,
       "illustrative_recession_um_at_max_mission_fluence": 22000.0
      },
      {
@@ -2506,7 +2560,7 @@
        "evidence_class": "measured",
        "note": "flight mass loss / (area x density x Kapton-H-witness fluence), Eq. (1)-(3) p. 2; Kapton H yield itself is the reference 3.0e-24 cm3/atom (p. 2, citing Banks 1997 [4]), so every yield is relative to that calibration"
       },
-      "illustrative_recession_um_at_min_mission_fluence": 3000.0,
+      "illustrative_recession_um_at_min_mission_fluence": 3010.0,
       "illustrative_recession_um_at_max_mission_fluence": 23400.0
      },
      {
@@ -2575,6 +2629,722 @@
      }
     ]
    }
+  },
+  "wall_sputter_index": {
+   "status": "INDEX of a referenced lane record (lane 32). Yield values are not copied: look them up in the lane 32 database by entry_id. Every Xe+ entry is another projectile and every O+ entry is on a proxy target (B, B2O3, C) or closed-access (Al2O3); none is an H-1 wall-grade N/O yield.",
+   "input": {
+    "path": "docs/evidence/wall_life/sputter_yield_db_v1.json",
+    "sha256": "315fbd44da2ee16246edb95830be09e0f05b9237cd5ca0a4c86a02a7e25bfffa",
+    "db_id": "sputter_yield_db_v1",
+    "db_version": "1.0",
+    "db_date": "2026-09-26"
+   },
+   "coverage_legend": {
+    "measured_transcribed": "measured values transcribed here (still a proxy unless projectile, grade, energy and angle match)",
+    "measured_values_TBD": "a measurement exists but its values were not accessible",
+    "model_proxy_only": "only model-derived values on an elemental or oxide proxy target",
+    "none_located": "no measured or model value located in this search (see search_log)"
+   },
+   "coverage": [
+    {
+     "projectile": "Xe+",
+     "target": "BN",
+     "status": "measured_transcribed",
+     "n_entries": 12,
+     "entries": [
+      "Y-XE-BN-HBC-RUBIN2009",
+      "Y-XE-BN-HBR-RUBIN2009",
+      "Y-XE-BN-HP-RUBIN2009",
+      "Y-XE-BN-FIT-RUBIN2009",
+      "Y-XE-BN-LOWE-RAW-TOPPER2011",
+      "Y-XE-BN-BRITTON2002",
+      "Y-XE-BN-TARTZ2009",
+      "Y-XE-BN-MD-YIM2008",
+      "Y-XE-BN-FITS-CHENG2007",
+      "Y-XE-BN-SIO2-AL2O3-TONDU2011",
+      "Y-XE-AL2O3-BN-CROFTON2021",
+      "Y-XE-BN-BNSIO2-RANJAN2016"
+     ]
+    },
+    {
+     "projectile": "Xe+",
+     "target": "BN-SiO2",
+     "status": "measured_values_TBD",
+     "n_entries": 3,
+     "entries": [
+      "Y-XE-BNSIO2-BN05-ABASHKIN2007",
+      "Y-XE-CERAMICS-GARNIER1999",
+      "Y-XE-BN-BNSIO2-RANJAN2016"
+     ]
+    },
+    {
+     "projectile": "Xe+",
+     "target": "SiC",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "Xe+",
+     "target": "Al2O3",
+     "status": "measured_transcribed",
+     "n_entries": 4,
+     "entries": [
+      "Y-XE-AL2O3-TARTZ2009",
+      "Y-XE-AL2O3-FIT-YIM2017",
+      "Y-XE-BN-SIO2-AL2O3-TONDU2011",
+      "Y-XE-AL2O3-BN-CROFTON2021"
+     ]
+    },
+    {
+     "projectile": "Xe+",
+     "target": "other",
+     "status": "measured_values_TBD",
+     "n_entries": 2,
+     "entries": [
+      "Y-XE-CERAMICS-GARNIER1999 (BN-AlN, MgO)",
+      "Y-XE-BNSIO2-BN05-ABASHKIN2007 (BN-05)"
+     ]
+    },
+    {
+     "projectile": "N+",
+     "target": "BN",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "N+",
+     "target": "BN-SiO2",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "N+",
+     "target": "SiC",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "N+",
+     "target": "Al2O3",
+     "status": "measured_values_TBD",
+     "n_entries": 1,
+     "entries": [
+      "Y-NO-AL2O3-ESPY1993"
+     ]
+    },
+    {
+     "projectile": "N+",
+     "target": "other",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "N2+",
+     "target": "BN",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "N2+",
+     "target": "BN-SiO2",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "N2+",
+     "target": "SiC",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "N2+",
+     "target": "Al2O3",
+     "status": "measured_values_TBD",
+     "n_entries": 1,
+     "entries": [
+      "Y-NO-AL2O3-ESPY1993"
+     ]
+    },
+    {
+     "projectile": "N2+",
+     "target": "other",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "O+",
+     "target": "BN",
+     "status": "model_proxy_only",
+     "n_entries": 2,
+     "entries": [
+      "Y-O-B-TRIMSP-ECKSTEIN2002",
+      "Y-O-B2O3-TRIMSP-ECKSTEIN2002"
+     ]
+    },
+    {
+     "projectile": "O+",
+     "target": "BN-SiO2",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "O+",
+     "target": "SiC",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "O+",
+     "target": "Al2O3",
+     "status": "measured_values_TBD",
+     "n_entries": 1,
+     "entries": [
+      "Y-NO-AL2O3-ESPY1993"
+     ]
+    },
+    {
+     "projectile": "O+",
+     "target": "other",
+     "status": "model_proxy_only",
+     "n_entries": 1,
+     "entries": [
+      "Y-O-C-TRIMSP-ECKSTEIN2002 (graphite, physical only)"
+     ]
+    },
+    {
+     "projectile": "O2+",
+     "target": "BN",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "O2+",
+     "target": "BN-SiO2",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "O2+",
+     "target": "SiC",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    },
+    {
+     "projectile": "O2+",
+     "target": "Al2O3",
+     "status": "measured_values_TBD",
+     "n_entries": 1,
+     "entries": [
+      "Y-NO-AL2O3-ESPY1993"
+     ]
+    },
+    {
+     "projectile": "O2+",
+     "target": "other",
+     "status": "none_located",
+     "n_entries": 0,
+     "entries": []
+    }
+   ],
+   "entries": [
+    {
+     "entry_id": "Y-XE-BN-HBC-RUBIN2009",
+     "projectile": "Xe+",
+     "target": "BN",
+     "energy_min_eV": 60,
+     "energy_max_eV": 500,
+     "energy_note": null,
+     "incidence_angles_deg": [
+      0,
+      15,
+      30,
+      45
+     ],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "mm3/C",
+     "n_rows_transcribed": 20,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S01"
+     ],
+     "source_locator": "IEPC-2009-042 Table 1 (pp. 11-12)"
+    },
+    {
+     "entry_id": "Y-XE-BN-HBR-RUBIN2009",
+     "projectile": "Xe+",
+     "target": "BN",
+     "energy_min_eV": 60,
+     "energy_max_eV": 500,
+     "energy_note": null,
+     "incidence_angles_deg": [
+      0,
+      15,
+      30,
+      45
+     ],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "mm3/C",
+     "n_rows_transcribed": 18,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S01"
+     ],
+     "source_locator": "IEPC-2009-042 Table 2 (p. 12)"
+    },
+    {
+     "entry_id": "Y-XE-BN-HP-RUBIN2009",
+     "projectile": "Xe+",
+     "target": "BN",
+     "energy_min_eV": 60,
+     "energy_max_eV": 250,
+     "energy_note": null,
+     "incidence_angles_deg": [
+      0,
+      15,
+      30,
+      45
+     ],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "mm3/C",
+     "n_rows_transcribed": 7,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S01"
+     ],
+     "source_locator": "IEPC-2009-042 Table 3 (p. 12)"
+    },
+    {
+     "entry_id": "Y-XE-BN-FIT-RUBIN2009",
+     "projectile": "Xe+",
+     "target": "BN",
+     "energy_min_eV": 60,
+     "energy_max_eV": 500,
+     "energy_note": null,
+     "incidence_angles_deg": [
+      0,
+      15,
+      30,
+      45
+     ],
+     "evidence_level": 3,
+     "evidence_class": "model-derived",
+     "units": "k in mm3/C (condensable basis per Fig. 15; verify)",
+     "n_rows_transcribed": 5,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S01"
+     ],
+     "source_locator": "IEPC-2009-042 Eqs. (4)-(6), Tables 4-5, p. 13-15 (equations checked against the rendered page)"
+    },
+    {
+     "entry_id": "Y-XE-BN-LOWE-RAW-TOPPER2011",
+     "projectile": "Xe+",
+     "target": "BN",
+     "energy_min_eV": 40,
+     "energy_max_eV": 80,
+     "energy_note": null,
+     "incidence_angles_deg": [
+      0,
+      15,
+      30,
+      45
+     ],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "mm3/C (condensable only)",
+     "n_rows_transcribed": 25,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S02"
+     ],
+     "source_locator": "Topper 2011 thesis Appendix A, Tables A1-A3 (pp. 88-90), low-energy rows only"
+    },
+    {
+     "entry_id": "Y-XE-BN-BRITTON2002",
+     "projectile": "Xe+",
+     "target": "BN",
+     "energy_min_eV": 300,
+     "energy_max_eV": 1000,
+     "energy_note": null,
+     "incidence_angles_deg": [
+      15,
+      40,
+      60
+     ],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "reported: Angstrom/(s * mA/cm2); converted: mm3/C",
+     "n_rows_transcribed": 9,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S03"
+     ],
+     "source_locator": "NASA/TM-2002-211837 Table 1 (p. 3); angle definition Fig. 5 (p. 5)"
+    },
+    {
+     "entry_id": "Y-XE-BN-TARTZ2009",
+     "projectile": "Xe+",
+     "target": "BN",
+     "energy_min_eV": 100,
+     "energy_max_eV": 800,
+     "energy_note": null,
+     "incidence_angles_deg": [
+      0
+     ],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "mm3/C",
+     "n_rows_transcribed": 5,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S04"
+     ],
+     "source_locator": "IEPC-2009-240 Sec. V summary table (p. 14); Sec. IV.B"
+    },
+    {
+     "entry_id": "Y-XE-AL2O3-TARTZ2009",
+     "projectile": "Xe+",
+     "target": "Al2O3",
+     "energy_min_eV": 100,
+     "energy_max_eV": 800,
+     "energy_note": null,
+     "incidence_angles_deg": [
+      0
+     ],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "mm3/C",
+     "n_rows_transcribed": 5,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S04"
+     ],
+     "source_locator": "IEPC-2009-240 Sec. V summary table (p. 14); Fig. 18"
+    },
+    {
+     "entry_id": "Y-XE-SIO2-TARTZ2009",
+     "projectile": "Xe+",
+     "target": "SiO2",
+     "energy_min_eV": 100,
+     "energy_max_eV": 800,
+     "energy_note": null,
+     "incidence_angles_deg": [
+      0
+     ],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "mm3/C",
+     "n_rows_transcribed": 5,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S04"
+     ],
+     "source_locator": "IEPC-2009-240 Sec. V summary table (p. 14)"
+    },
+    {
+     "entry_id": "Y-XE-AL2O3-FIT-YIM2017",
+     "projectile": "Xe+",
+     "target": "Al2O3",
+     "energy_min_eV": 100,
+     "energy_max_eV": 800,
+     "energy_note": null,
+     "incidence_angles_deg": [],
+     "evidence_level": 5,
+     "evidence_class": "model-derived",
+     "units": "Q in mm3/C",
+     "n_rows_transcribed": 2,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S11"
+     ],
+     "source_locator": "IEPC-2017-060 Table 2 (Eckstein generalized form), Eq. (7)-(8), Table 6, Table 7, Eq. (10) (checked against rendered pages)"
+    },
+    {
+     "entry_id": "Y-XE-SIO2-FIT-YIM2017",
+     "projectile": "Xe+",
+     "target": "SiO2",
+     "energy_min_eV": 100,
+     "energy_max_eV": 800,
+     "energy_note": null,
+     "incidence_angles_deg": [],
+     "evidence_level": 5,
+     "evidence_class": "model-derived",
+     "units": "Q in mm3/C",
+     "n_rows_transcribed": 2,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S11"
+     ],
+     "source_locator": "IEPC-2017-060 Tables 6-7"
+    },
+    {
+     "entry_id": "Y-XE-BN-MD-YIM2008",
+     "projectile": "Xe+",
+     "target": "BN",
+     "energy_min_eV": 10,
+     "energy_max_eV": 350,
+     "energy_note": null,
+     "incidence_angles_deg": [
+      45
+     ],
+     "evidence_level": 4,
+     "evidence_class": "model-derived",
+     "units": "mm3/C",
+     "n_rows_transcribed": 1,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S10"
+     ],
+     "source_locator": "arXiv:0802.1960v1 Sec. III, Eq. (5), Figs. 4-8"
+    },
+    {
+     "entry_id": "Y-XE-BN-FITS-CHENG2007",
+     "projectile": "Xe+",
+     "target": "BN",
+     "energy_min_eV": null,
+     "energy_max_eV": null,
+     "energy_note": "energy range of the Yalin et al. data used by the source is shown only graphically (their Fig. 3, axis 0-600 eV); TBD - requires reading the figure or the Yalin AIAA-2007-5314 paper. Curves below the data are threshold assumptions.",
+     "incidence_angles_deg": [
+      0
+     ],
+     "evidence_level": 6,
+     "evidence_class": "model-derived",
+     "units": "mm3/C",
+     "n_rows_transcribed": 6,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S14"
+     ],
+     "source_locator": "IEPC-2007-250 Eq. (5), Table 2; Table 1 (borosil thresholds)"
+    },
+    {
+     "entry_id": "Y-XE-BN-SIO2-AL2O3-TONDU2011",
+     "projectile": "Xe+",
+     "target": "BN",
+     "energy_min_eV": 200,
+     "energy_max_eV": 800,
+     "energy_note": null,
+     "incidence_angles_deg": [],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "mm3/C",
+     "n_rows_transcribed": null,
+     "values_status": "TBD - requires digitization of IEPC-2011-106 Figs. 4-8",
+     "source_ids_lane32": [
+      "S05"
+     ],
+     "source_locator": "IEPC-2011-106 Figs. 4-8 (energy 200-800 eV normal; angle 0-75 deg at 500 eV)"
+    },
+    {
+     "entry_id": "Y-XE-BNSIO2-BN05-ABASHKIN2007",
+     "projectile": "Xe+",
+     "target": "BN-SiO2",
+     "energy_min_eV": null,
+     "energy_max_eV": null,
+     "energy_note": "ion energy distribution of a HET plume, not monoenergetic; nominal discharge voltages 325 and 500 V (source). Energy axis of Figs. 4-5 TBD - requires reading the figures",
+     "incidence_angles_deg": [
+      0,
+      20,
+      40,
+      50,
+      60,
+      70
+     ],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "mm3/C",
+     "n_rows_transcribed": null,
+     "values_status": "TBD - requires digitization of IEPC-2007-133 Figs. 4-5",
+     "source_ids_lane32": [
+      "S06"
+     ],
+     "source_locator": "IEPC-2007-133 Sec. II, Figs. 4-5; Sec. on local yield (Fig. 28)"
+    },
+    {
+     "entry_id": "Y-XE-CERAMICS-GARNIER1999",
+     "projectile": "Xe+",
+     "target": "BN-SiO2",
+     "energy_min_eV": 350,
+     "energy_max_eV": 1000,
+     "energy_note": null,
+     "incidence_angles_deg": [],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "TBD",
+     "n_rows_transcribed": null,
+     "values_status": "TBD - requires the JVST A full text (closed access)",
+     "source_ids_lane32": [
+      "S07"
+     ],
+     "source_locator": "abstract only"
+    },
+    {
+     "entry_id": "Y-XE-AL2O3-BN-CROFTON2021",
+     "projectile": "Xe+",
+     "target": "Al2O3",
+     "energy_min_eV": null,
+     "energy_max_eV": null,
+     "energy_note": "'low energy' per title; exact range TBD - requires the CC BY full text",
+     "incidence_angles_deg": [],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "TBD",
+     "n_rows_transcribed": null,
+     "values_status": "TBD - requires manual reading of the CC BY PDF (automated access blocked by a bot challenge; not bypassed)",
+     "source_ids_lane32": [
+      "S08"
+     ],
+     "source_locator": "abstract only"
+    },
+    {
+     "entry_id": "Y-XE-BN-BNSIO2-RANJAN2016",
+     "projectile": "Xe+",
+     "target": "BN-SiO2",
+     "energy_min_eV": 100,
+     "energy_max_eV": 550,
+     "energy_note": null,
+     "incidence_angles_deg": [],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "TBD",
+     "n_rows_transcribed": null,
+     "values_status": "TBD - requires the full text (AIP bot challenge; not bypassed)",
+     "source_ids_lane32": [
+      "S09"
+     ],
+     "source_locator": "abstract only (OpenAlex abstract_inverted_index, retrieved 2026-09-27)"
+    },
+    {
+     "entry_id": "Y-NO-AL2O3-ESPY1993",
+     "projectile": "O+",
+     "target": "Al2O3",
+     "energy_min_eV": 50,
+     "energy_max_eV": 200,
+     "energy_note": null,
+     "incidence_angles_deg": [],
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "units": "TBD",
+     "n_rows_transcribed": null,
+     "values_status": "TBD - requires the SPIE full text (closed access). Highest-priority literature item: the only located N/O measurement on a candidate wall ceramic, and the only located source that used both molecular and atomic N/O ions on one target (whether it presents a matched-energy molecular-vs-atomic comparison is inferred from the abstract only: verify).",
+     "source_ids_lane32": [
+      "S13"
+     ],
+     "source_locator": "abstract only"
+    },
+    {
+     "entry_id": "Y-O-B-TRIMSP-ECKSTEIN2002",
+     "projectile": "O+",
+     "target": "B (elemental; proxy for the B sublattice of BN)",
+     "energy_min_eV": 150,
+     "energy_max_eV": 6000,
+     "energy_note": null,
+     "incidence_angles_deg": [
+      0
+     ],
+     "evidence_level": 4,
+     "evidence_class": "model-derived",
+     "units": "atoms/ion",
+     "n_rows_transcribed": 5,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S12"
+     ],
+     "source_locator": "IPP 9/132 p. 40 ('program: IPP 9/82'); checked against page image"
+    },
+    {
+     "entry_id": "Y-O-B2O3-TRIMSP-ECKSTEIN2002",
+     "projectile": "O+",
+     "target": "B2O3 (proxy for an oxidized BN surface layer)",
+     "energy_min_eV": 150,
+     "energy_max_eV": 3000,
+     "energy_note": null,
+     "incidence_angles_deg": [
+      0
+     ],
+     "evidence_level": 4,
+     "evidence_class": "model-derived",
+     "units": "atoms/ion",
+     "n_rows_transcribed": 4,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S12"
+     ],
+     "source_locator": "IPP 9/132 p. 278; checked against page image"
+    },
+    {
+     "entry_id": "Y-O-C-TRIMSP-ECKSTEIN2002",
+     "projectile": "O+",
+     "target": "C (graphite; physical sputtering only)",
+     "energy_min_eV": 38,
+     "energy_max_eV": 6000,
+     "energy_note": null,
+     "incidence_angles_deg": [
+      0
+     ],
+     "evidence_level": 4,
+     "evidence_class": "model-derived",
+     "units": "atoms/ion",
+     "n_rows_transcribed": 13,
+     "values_status": "transcribed",
+     "source_ids_lane32": [
+      "S12"
+     ],
+     "source_locator": "IPP 9/132 p. 65; checked against page image"
+    }
+   ]
   }
+ },
+ "unmerged_draft_references": {
+  "status": "UNVERIFIED_UNMERGED_DRAFT",
+  "statement": "These ids were observed read-only in unmerged, in-flight W3 / W4 drafts on 2026-09-27. No input file in this base backs them, and the drafts may change. Every rationale, cross-reference, measurable-quantity note and interface-table row that names one of them is a NON-BINDING merge hint, not evidence. None of them carries a number used here.",
+  "re_verify_when": "at the W3 and W4 merges (control C5 integration check): confirm each id exists with the cited content, or rewrite / drop the reference in a new register version",
+  "draft_paths_planned": [
+   "docs/experiments/hardware/",
+   "docs/experiments/instrumentation/"
+  ],
+  "ids": [
+   "HW-C1-01",
+   "HW-C1-03",
+   "HW-C1-05",
+   "HW-ELEC-01",
+   "HW-H1-01",
+   "HW-H1-02",
+   "HW-H1-03",
+   "HW-H1-04",
+   "HW-H1-05",
+   "HW-H1-06",
+   "HW-H1-07",
+   "HW-MC-03",
+   "HW-MC-04",
+   "HW-PIM-10",
+   "INS-04",
+   "INS-08",
+   "INS-09",
+   "INS-10",
+   "INS-11",
+   "INS-12",
+   "INS-14",
+   "INS-17",
+   "INS-18",
+   "W3 draft section 6"
+  ]
  }
 }

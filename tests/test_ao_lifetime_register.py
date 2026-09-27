@@ -58,6 +58,27 @@ def _is_type(v, t):
     return isinstance(v, _TYPES[t])
 
 
+# Keywords this validator implements. Annotation-only keywords are accepted without checking. Any other keyword in
+# the schema makes the test FAIL (so a keyword outside the subset can never go silently unchecked).
+_SUPPORTED_KEYWORDS = {"$ref", "type", "const", "enum", "pattern", "minimum", "maximum", "required", "properties",
+                       "additionalProperties", "minItems", "items"}
+_ANNOTATION_KEYWORDS = {"$schema", "$id", "$defs", "title", "description"}
+
+
+def _schema_keywords(s, out, in_properties=False):
+    if isinstance(s, dict):
+        for k, v in s.items():
+            if in_properties:
+                _schema_keywords(v, out)
+                continue
+            out.add(k)
+            if k in ("properties", "$defs"):
+                _schema_keywords(v, out, in_properties=True)
+            elif k in ("items", "additionalProperties") and isinstance(v, dict):
+                _schema_keywords(v, out)
+    return out
+
+
 def _validate(v, s, root, path="$"):
     errs = []
     if "$ref" in s:
@@ -110,6 +131,23 @@ def test_builder_is_pure_and_not_wired():
     src = open(BUILDER, encoding="utf-8").read()
     assert not re.search(r"^\s*(import|from)\s+(abep_sim|hallthruster_bridge)", src, re.M)
     assert "archengine" not in re.findall(r"^\s*(?:import|from)\s+(\S+)", src, re.M)
+
+
+def test_schema_uses_only_supported_keywords(schema):
+    used = _schema_keywords(schema, set())
+    unknown = used - _SUPPORTED_KEYWORDS - _ANNOTATION_KEYWORDS
+    assert not unknown, f"schema keywords not implemented by the local validator: {sorted(unknown)}"
+
+
+def test_local_validator_rejects_bad_documents(reg, schema):
+    bad = json.loads(json.dumps(reg))
+    bad["unexpected_top_level"] = 1
+    del bad["derived"]["wall_sputter_index"]["entries"][0]["evidence_class"]
+    bad["interface_table"]["rows"][0]["related_ids_status"] = "VERIFIED"
+    errs = "\n".join(_validate(bad, schema, schema))
+    assert "unexpected key unexpected_top_level" in errs
+    assert "missing evidence_class" in errs
+    assert "not in enum" in errs
 
 
 def test_schema_conformance(reg, schema):
@@ -285,3 +323,73 @@ def test_markdown_mentions_c5_and_primary_output():
     md = open(MD_PATH, encoding="utf-8").read()
     for s in ("control C5", "Witness coupons", "DRAFT", "AOL-WC-01", "AOL-RC-01", "AOL-CX-01", "AOL-PM-01"):
         assert s in md, s
+
+
+def test_degroh_p1_ao_energy_recorded(reg):
+    """DEGROH2006 printed p. 1 states 4.5 eV average ram impact energy (review statement citing its ref. [1])."""
+    note = reg["sources"]["DEGROH2006"]["note"]
+    assert "4.5 eV" in note and "p. 1" in note and "does not state the AO impact energy" not in note
+    flags = " ".join(reg["derived"]["ao_environment"]["flags"])
+    assert "4.5 eV" in flags and "NOT corrected" in flags
+    m09 = next(m for m in reg["mechanisms"] if m["id"] == "AOL-M09")
+    e = next(x for x in m09["evidence"] if x["value"] == 4.5)
+    assert e["source_id"] == "DEGROH2006" and e["locator"] == "p. 1" and e["evidence_level"] == 5
+    assert "AO energy there is not stated" not in json.dumps(reg)
+
+
+def test_ratio_and_recession_from_unrounded_fluence(reg):
+    ao = reg["derived"]["ao_environment"]
+    csv_path = os.path.join(ROOT, ao["inputs"]["atmosphere"]["path"])
+    rows = {(float(r["alt_km"]), float(r["f107"])): r for r in csv.DictReader(open(csv_path, newline=""))}
+    m_o = 16.0 * 1.66053906660e-27
+    fl = []
+    for t in ao["table"]:
+        r = rows[(float(t["alt_km"]), float(t["f107"]))]
+        v = math.sqrt(3.986004418e14 / (6371.0e3 + t["alt_km"] * 1e3))
+        f = float(r["rho"]) * float(r["fO"]) / m_o * v * 1e-4 * 26000 * 3600
+        fl.append(f)
+        assert math.isclose(t["ratio_to_misse2_fluence"], f / 8.43e21, rel_tol=1e-5)
+    rr = ao["illustrative_recession_equivalents"]
+    assert math.isclose(rr["mission_fluence_range_atoms_cm2"][0], min(fl), rel_tol=1e-5)
+    assert math.isclose(rr["mission_fluence_range_atoms_cm2"][1], max(fl), rel_tol=1e-5)
+    for row in rr["rows"]:
+        ey = row["misse2_erosion_yield_cm3_per_atom"]
+        assert math.isclose(row["illustrative_recession_um_at_min_mission_fluence"], ey * min(fl) * 1e4, rel_tol=5e-3)
+        assert math.isclose(row["illustrative_recession_um_at_max_mission_fluence"], ey * max(fl) * 1e4, rel_tol=5e-3)
+
+
+def test_wall_sputter_index_matches_lane32(reg):
+    wi = reg["derived"]["wall_sputter_index"]
+    db = json.load(open(os.path.join(ROOT, wi["input"]["path"]), encoding="utf-8"))
+    assert [e["entry_id"] for e in wi["entries"]] == [e["id"] for e in db["entries"]]
+    for ie, de in zip(wi["entries"], db["entries"]):
+        assert (ie["projectile"], ie["target"], ie["evidence_class"]) == (de["projectile"], de["target"],
+                                                                           de["evidence_class"])
+        assert ie["energy_min_eV"] == de["energy_range_eV"].get("min")
+        assert ie["energy_max_eV"] == de["energy_range_eV"].get("max")
+    # the headline statement of AOL-M02 matches the index: no N/O yield on BN, BN-SiO2 or SiC
+    for c in wi["coverage"]:
+        if c["projectile"] in ("N+", "N2+", "O+", "O2+") and c["target"] in ("BN-SiO2", "SiC"):
+            assert c["status"] == "none_located", c
+        if c["projectile"] in ("N+", "N2+", "O2+") and c["target"] == "BN":
+            assert c["status"] == "none_located", c
+    m02 = next(m for m in reg["mechanisms"] if m["id"] == "AOL-M02")
+    assert "derived.wall_sputter_index" in m02["energy_statement"]
+
+
+def test_wall_sputter_index_pin_enforced(monkeypatch):
+    mod = _builder_module()
+    monkeypatch.setattr(mod, "WALL_LIFE_DB_SHA256", "0" * 64)
+    with pytest.raises(RuntimeError, match="sha256"):
+        mod.compute_wall_sputter_index()
+
+
+def test_every_draft_id_is_flagged_unverified(reg):
+    ud = reg["unmerged_draft_references"]
+    assert ud["status"] == "UNVERIFIED_UNMERGED_DRAFT"
+    blob = json.dumps({k: v for k, v in reg.items() if k != "unmerged_draft_references"})
+    found = set(re.findall(r"\b(?:HW-(?:H1|C1|MC|PIM|ELEC)-\d+|INS-\d+)\b", blob))
+    assert found <= set(ud["ids"]), found - set(ud["ids"])
+    for row in reg["interface_table"]["rows"]:
+        assert row["related_ids_status"] == ("UNVERIFIED_UNMERGED_DRAFT" if row["observed_related_ids"] else "none")
+    assert "UNVERIFIED_UNMERGED_DRAFT" in reg["interface_table"]["note"]
