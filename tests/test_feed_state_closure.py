@@ -333,3 +333,54 @@ def test_knee_levels_missing_draft_raises(monkeypatch):
     monkeypatch.setattr(mod, "LANE25_DRAFT_REL", "docs/architecture_comparison/does_not_exist.json")
     with pytest.raises(mod.FeedClosureError):
         mod._knee_levels()
+
+
+# ------------------------------------------------------------------ owner control C2 (A1 addendum): flight status
+FS_FLIGHT = "PROPOSED_FLIGHT_REPRESENTATIVE"
+FS_GROUND = "GROUND_QUALIFICATION_POINT"
+
+
+def test_flight_status_labels_c2(doc):
+    fsc = doc["flight_status_control"]
+    assert fsc["control"] == "C2_W1_flight_status"
+    assert set(fsc["values"]) == {FS_FLIGHT, FS_GROUND}
+    assert (REPO / fsc["decision_file"]).exists()
+    assert any(f["path"] == fsc["decision_file"] for f in doc["provenance"]["input_files"])
+    n_vo = {FS_FLIGHT: 0, FS_GROUND: 0}
+    for rows in doc["valve_outlet"].values():
+        for r in rows.values():
+            for rec in (r, r["nominal"], r["backflow_self_consistent"]):
+                assert rec["flight_status"] == FS_FLIGHT
+                assert rec["status"] == "PROPOSED (candidate-conditional)"
+                assert rec["evidence_class"] == "model-derived (from assumed inputs)"
+            n_vo[r["flight_status"]] += 1
+    assert fsc["counts"]["valve_outlet_records"] == n_vo
+    tp = doc["test_points"]
+    for t in tp["phase1_knee_N2"]:
+        assert t["flight_status"] == FS_GROUND
+    for t in tp["phase2_common_condition"]:
+        want = FS_GROUND if t["operating_point"] == "OP2" else FS_FLIGHT
+        assert t["flight_status"] == want, t["id"]
+    for t in tp["phase3_absolute_demonstration"]:
+        assert t["flight_status"] == FS_FLIGHT
+    for ph, pts in tp.items():
+        assert fsc["counts"]["test_points"][ph] == {v: sum(1 for t in pts if t["flight_status"] == v)
+                                                    for v in (FS_FLIGHT, FS_GROUND)}
+
+
+def test_schema_rejects_missing_or_wrong_flight_status(doc):
+    schema = json.loads(SCHEMA_PATH.read_text())
+    bad = copy.deepcopy(doc)
+    cid = next(iter(bad["valve_outlet"]))
+    k = next(iter(bad["valve_outlet"][cid]))
+    del bad["valve_outlet"][cid][k]["flight_status"]
+    assert validate(bad, schema)
+    bad = copy.deepcopy(doc)
+    bad["test_points"]["phase3_absolute_demonstration"][0]["flight_status"] = FS_GROUND
+    assert validate(bad, schema)
+    bad = copy.deepcopy(doc)
+    bad["test_points"]["phase2_common_condition"][0]["flight_status"] = "FLIGHT_CONDITION"
+    assert validate(bad, schema)
+    bad = copy.deepcopy(doc)
+    bad["test_points"]["phase1_knee_N2"][0]["flight_status"] = FS_FLIGHT
+    assert validate(bad, schema)

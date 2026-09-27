@@ -106,6 +106,21 @@ SENSITIVITIES = (
 SC_BISECTION_ITER = 48                         # self-consistent backflow root: bisection steps on b in (0, 1)
 VALUE_STATUS = "PROPOSED (candidate-conditional)"
 VALUE_EVIDENCE = "model-derived (from assumed inputs)"
+# Owner control C2 (A1 addendum, docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json): every feed state /
+# test point derived from an assumed design candidate is PROPOSED_FLIGHT_REPRESENTATIVE until the owner freezes DI-1;
+# points intended purely as ground qualification may instead carry GROUND_QUALIFICATION_POINT.
+A1_CONTROLS_REL = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json"
+FS_FLIGHT = "PROPOSED_FLIGHT_REPRESENTATIVE"
+FS_GROUND = "GROUND_QUALIFICATION_POINT"
+FLIGHT_STATUS_VALUES = (FS_FLIGHT, FS_GROUND)
+FLIGHT_STATUS_MEANING = {
+    FS_FLIGHT: "derived from an assumed (PROPOSED) intake/compressor/buffer/valve design candidate; reproducible on the "
+               "ground with MFCs, pressure control and gas bottles; NOT a flight condition and never asserted as one "
+               "until the owner freezes DI-1 (control C2)",
+    FS_GROUND: "ground qualification point only: its flow is a scan level chosen to locate the Hall-only sustainment "
+               "knee (Phase 1) or is set by the measured knee; the candidate-derived flow levels only bracket the scan "
+               "range; it is NOT a flight-representative feed state and NOT a flight condition",
+}
 SCCM_P0_PA = 101325.0                          # standard-condition definition used for the sccm conversion
 SCCM_T0_K = 273.15                             # (0 degC, 1 atm); MFC vendors use other references: verify per MFC
 
@@ -363,7 +378,7 @@ def self_consistent_backflow(fe, dv: dict, run: dict, setpoint: float) -> dict:
     lo, hi = 0.0, 1.0 - 1e-12
     base = {"model": "backflow = F x p_plenum / p_passive (inferred from the TPMC CR_passive flux balance); compressor "
                      "= chain-sized nominal machine (DragCompressor.run, code-default parameters); p_out = setpoint",
-            "status": VALUE_STATUS, "evidence_class": VALUE_EVIDENCE,
+            "status": VALUE_STATUS, "evidence_class": VALUE_EVIDENCE, "flight_status": FS_FLIGHT,
             "machine": {"turbo_rows": int(c["turbo_rows"]), "n_stages": int(c["n_stages"]), "rpm": float(c["rpm"])}}
     if at(hi)["p_out_Pa"] < setpoint:
         return {**base, "closed": False, "b": None, "delivered_factor": None, "mdot_total_kgps": None,
@@ -502,9 +517,9 @@ def build() -> dict:
             lower = min([rng(lambda ff: ff["mdot_total_kgps"])["min"]]
                         + ([scb["mdot_total_kgps"]] if scb["closed"] else []))
             rows[k] = {
-                "status": VALUE_STATUS, "evidence_class": VALUE_EVIDENCE,
+                "status": VALUE_STATUS, "evidence_class": VALUE_EVIDENCE, "flight_status": FS_FLIGHT,
                 "altitude_km": float(k.split("_")[0][3:]), "solar_level": k.split("_")[1],
-                "nominal": {"status": VALUE_STATUS, "evidence_class": VALUE_EVIDENCE,
+                "nominal": {"status": VALUE_STATUS, "evidence_class": VALUE_EVIDENCE, "flight_status": FS_FLIGHT,
                             "flow_basis": "upper bound: no plenum backflow (FC-01)", "setpoint_Pa": sp, **f,
                             "compressor_P_el_W": nom["compressor"]["P_el_W"],
                             "compressor_T_comp_K": nom["compressor"]["T_comp_K"],
@@ -639,18 +654,21 @@ def derive_test_points(candidates, closure, valve_outlet):
             m = m_nom - (m_nom - m_min) * i / (n_levels - 1)
             tps["phase1_knee_N2"].append({
                 "id": f"TP1-{cid}-L{i + 1}", "phase": 1, "gas": "N2", "basis": "mass-equivalent (DI-1.8 PROPOSED)",
+                "flight_status": FS_GROUND,
                 "mdot_N2_kgps": m, "mdot_N2_mgps": m * 1e6, "sccm_N2": m / _M("N2") / sccm_molecules_per_s(),
                 "trace": {"level": i + 1, "of": n_levels, "from": {"mdot_nom": k_des, "mdot_min": k_min},
                           "rule": "lane-25 knee scan (T-KNEE-LEVELS equally spaced flows, nom -> min, then back up)"},
                 **common})
         tps["phase1_knee_N2"].append({
             "id": f"TP1-{cid}-EXT", "phase": 1, "gas": "N2", "basis": "mass-equivalent (DI-1.8 PROPOSED)",
+            "flight_status": FS_GROUND,
             "mdot_N2_kgps": m_max, "mdot_N2_mgps": m_max * 1e6, "sccm_N2": m_max / _M("N2") / sccm_molecules_per_s(),
             "trace": {"level": "upper extension", "from": {"mdot_max": k_max},
                       "rule": "PROPOSED optional point: upper edge of the candidate's feed envelope (not in the lane-25 "
                               "minimum)"}, **common})
         tps["phase1_knee_N2"].append({
             "id": f"TP1-{cid}-BFL", "phase": 1, "gas": "N2", "basis": "mass-equivalent (DI-1.8 PROPOSED)",
+            "flight_status": FS_GROUND,
             "mdot_N2_kgps": sc_lo[k_lo], "mdot_N2_mgps": sc_lo[k_lo] * 1e6,
             "sccm_N2": sc_lo[k_lo] / _M("N2") / sccm_molecules_per_s(),
             "trace": {"level": "backflow lower extension", "from": {"mdot_bracket_lower": k_lo},
@@ -669,6 +687,7 @@ def derive_test_points(candidates, closure, valve_outlet):
                 extra["mdot_backflow_lower_kgps"] = rows[kk]["mdot_total_kgps_bracket"]["lower"]
             tps["phase2_common_condition"].append({
                 "id": f"TP2-{cid}-{op}", "phase": 2, "operating_point": op, "gas": "N2",
+                "flight_status": FS_FLIGHT if m is not None else FS_GROUND,
                 "basis": "mass-equivalent (DI-1.8 PROPOSED)",
                 "mdot_N2_kgps": m, "mdot_N2_mgps": None if m is None else m * 1e6,
                 "sccm_N2": None if m is None else m / _M("N2") / sccm_molecules_per_s(),
@@ -680,6 +699,7 @@ def derive_test_points(candidates, closure, valve_outlet):
                 t["status"] = "TBD - requires the measured Phase-1 knee"
         tps["phase2_common_condition"].append({
             "id": f"TP2-{cid}-OP5", "phase": 2, "operating_point": "OP5", "gas": "N2+O2 air surrogate",
+            "flight_status": FS_FLIGHT,
             "basis": "O supplied as O2 at equal oxygen-element mass (DI-1.7 PROPOSED)",
             "mdot_total_kgps": None, "w_O2": gdes["w_O2"], "w_N2": gdes["w_N2"],
             "value_status": "TBD - total flow = the measured Phase-1 knee; composition PROPOSED from the design case",
@@ -691,7 +711,7 @@ def derive_test_points(candidates, closure, valve_outlet):
             g = r["ground"]
             n = r["nominal"]
             base = {"candidate": cid, "status": VALUE_STATUS, "evidence_class": VALUE_EVIDENCE,
-                    "flow_basis": common["flow_basis"],
+                    "flight_status": FS_FLIGHT, "flow_basis": common["flow_basis"],
                     "mdot_backflow_lower_kgps": r["mdot_total_kgps_bracket"]["lower"],
                     "P_feed_target_Pa": n["setpoint_Pa"], "T_feed_flight_K": n["T_feed_K"],
                     "T_feed_ground": common["T_feed_ground"], "P_feed_role": common["P_feed_role"],
@@ -1005,13 +1025,33 @@ def milestones() -> dict:
     }
 
 
+def flight_status_control(valve_outlet, test_points) -> dict:
+    """Owner control C2 (A1 addendum): label definitions and counts; no numeric value depends on the label."""
+    vo = [r for rows in valve_outlet.values() for r in rows.values()]
+    vo_counts = {v: sum(1 for r in vo if r["flight_status"] == v) for v in FLIGHT_STATUS_VALUES}
+    tp_counts = {ph: {v: sum(1 for t in pts if t["flight_status"] == v) for v in FLIGHT_STATUS_VALUES}
+                 for ph, pts in test_points.items()}
+    total = {v: vo_counts[v] + sum(c[v] for c in tp_counts.values()) for v in FLIGHT_STATUS_VALUES}
+    return {
+        "control": "C2_W1_flight_status", "decision_file": A1_CONTROLS_REL,
+        "values": list(FLIGHT_STATUS_VALUES), "meaning": dict(FLIGHT_STATUS_MEANING),
+        "until": "the owner freezes DI-1 (owner_decisions_DI1); no feed state here is a flight condition",
+        "assignment_rule": "valve_outlet records, their nominal and backflow_self_consistent states, Phase-2 OP1/OP3/"
+                           "OP5 and every Phase-3 point -> " + FS_FLIGHT + "; Phase-1 knee ladder (L*, EXT, BFL) and "
+                           "Phase-2 OP2 (flow = measured Phase-1 knee) -> " + FS_GROUND,
+        "independent_of": "the label changes no number; 'status' = 'PROPOSED (candidate-conditional)' and "
+                          "'evidence_class' are kept unchanged on every record",
+        "counts": {"valve_outlet_records": vo_counts, "test_points": tp_counts, "total": total},
+    }
+
+
 def assemble(fe, d, candidates, design_docs, ladder, closure, sens, valve_outlet, sensitivity_rank, design_axis,
              test_points, mfc, atms) -> dict:
     inputs = ["abep_sim/data/atmosphere_msis21_v1.csv", "abep_sim/data/atmosphere_msis21_v1.json",
               "abep_sim/data/intake_surface_v1.csv", "abep_sim/data/intake_surface_v1.json", LANE16_SCRIPT_REL,
               "abep_sim/atmosphere.py", "abep_sim/intake.py", "abep_sim/intake_tpmc.py", "abep_sim/compressor.py",
               "abep_sim/reservoir.py", "abep_sim/materials.py", "abep_sim/constants.py", "abep_sim/system.py",
-              DECISION_REL, LANE25_DRAFT_REL]
+              DECISION_REL, A1_CONTROLS_REL, LANE25_DRAFT_REL]
     return {
         "schema": SCHEMA_ID, "version": VERSION, "status": "DRAFT for owner review",
         "follow_on": "fo_feed_state_closure", "trigger": "T_PIVOT_FEED_STATE_CLOSURE",
@@ -1048,6 +1088,7 @@ def assemble(fe, d, candidates, design_docs, ladder, closure, sens, valve_outlet
         "sensitivity_runs": {c: {sid: {k: slim(r) for k, r in runs.items()} for sid, runs in v.items()}
                              for c, v in sens.items()},
         "valve_outlet": valve_outlet,
+        "flight_status_control": flight_status_control(valve_outlet, test_points),
         "sensitivity_ranking": sensitivity_rank,
         "design_axis_effects_at_design_case": design_axis,
         "test_points": test_points,
@@ -1240,28 +1281,35 @@ def render_md(doc: dict) -> str:
       "valve-outlet setpoint, recorded as a covariate (lane 25); T_feed on the ground is DI-1.10. sccm at "
       f"{SCCM_T0_K} K / {SCCM_P0_PA:.0f} Pa (check each MFC's reference). Test points exist only for closed candidates.")
     a("")
+    fsc = doc["flight_status_control"]
+    a(f"**Flight status (owner control C2, `{fsc['decision_file']}`).** `{FS_FLIGHT}`: "
+      f"{fsc['meaning'][FS_FLIGHT]}. `{FS_GROUND}`: {fsc['meaning'][FS_GROUND]}. Rule: {fsc['assignment_rule']}. "
+      "Counts: valve-outlet records " + ", ".join(f"{k} {v}" for k, v in fsc["counts"]["valve_outlet_records"].items())
+      + "; test points " + "; ".join(f"{ph}: " + ", ".join(f"{k} {v}" for k, v in c.items())
+                                      for ph, c in fsc["counts"]["test_points"].items()) + ".")
+    a("")
     a("### Phase 1 — Hall-only sustainment knee on N₂ (HW-0)")
     a("")
     a("L1–L5 follow the lane-25 knee rule on the upper-bound flows; EXT is the upper envelope edge; BFL extends the "
       "sweep down to the lowest backflow-consistent flow of the candidate (FC-01, DI-1.12).")
     a("")
-    a("| id | ṁ_N2 [mg/s] | sccm N₂ | P_feed target [Pa] | trace |")
-    a("|---|---|---|---|---|")
+    a("| id | ṁ_N2 [mg/s] | sccm N₂ | P_feed target [Pa] | trace | flight status |")
+    a("|---|---|---|---|---|---|")
     for t in tp["phase1_knee_N2"]:
         tr = t["trace"]
         a(f"| {t['id']} | {fmt(t['mdot_N2_mgps'])} | {fmt(t['sccm_N2'])} | {fmt(t['P_feed_target_Pa'])} | "
           f"level {tr['level']}{'/' + str(tr['of']) if 'of' in tr else ''} "
-          f"({', '.join(f'{kk} = {vv}' for kk, vv in tr['from'].items())}) |")
+          f"({', '.join(f'{kk} = {vv}' for kk, vv in tr['from'].items())}) | {t['flight_status']} |")
     a("")
     a("### Phase 2 — common-condition comparison (HW-0 / HW-RF / HW-ECR)")
     a("")
-    a("| id | point | gas | ṁ [mg/s] (upper bound) | ṁ backflow lower [mg/s] | composition | status |")
-    a("|---|---|---|---|---|---|---|")
+    a("| id | point | gas | ṁ [mg/s] (upper bound) | ṁ backflow lower [mg/s] | composition | status | flight status |")
+    a("|---|---|---|---|---|---|---|---|")
     for t in tp["phase2_common_condition"]:
         comp = (f"w_O2 {fmt(t['w_O2'], 3)} / w_N2 {fmt(t['w_N2'], 3)}" if "w_O2" in t else "N₂")
         lo = t.get("mdot_backflow_lower_kgps")
         a(f"| {t['id']} | {t['operating_point']} | {t['gas']} | {fmt(t.get('mdot_N2_mgps'))} | "
-          f"{fmt(None if lo is None else lo * 1e6)} | {comp} | {t['status']} |")
+          f"{fmt(None if lo is None else lo * 1e6)} | {comp} | {t['status']} | {t['flight_status']} |")
     a("")
     a("Lane-25 iso-power references OP2H and OP3H (`hall_only` only, V_hi) use the same feed as OP2 and OP3; they add "
       "no feed state and are cross-referenced on those records (`iso_power_reference`).")
@@ -1270,14 +1318,14 @@ def render_md(doc: dict) -> str:
     a("")
     a("Flows are the upper-bound flight flows; the backflow-consistent total flow of each case is in the last column.")
     a("")
-    a("| id | case | gas | ṁ_N2 [mg/s] | ṁ_O2 [mg/s] | sccm N₂ | sccm O₂ | ground/flight particle flow | flight x_O | ṁ backflow lower [mg/s] |")
-    a("|---|---|---|---|---|---|---|---|---|---|")
+    a("| id | case | gas | ṁ_N2 [mg/s] | ṁ_O2 [mg/s] | sccm N₂ | sccm O₂ | ground/flight particle flow | flight x_O | ṁ backflow lower [mg/s] | flight status |")
+    a("|---|---|---|---|---|---|---|---|---|---|---|")
     for t in tp["phase3_absolute_demonstration"]:
         a(f"| {t['id']} | {t['trace']['case']} | {t['gas']} | {fmt(t['mdot_N2_kgps'] * 1e6)} | "
           f"{fmt(t['mdot_O2_kgps'] * 1e6) if 'mdot_O2_kgps' in t else '—'} | {fmt(t['sccm_N2'])} | "
           f"{fmt(t['sccm_O2']) if 'sccm_O2' in t else '—'} | "
           f"{fmt(t['particle_flow_ratio_ground_over_flight'], 3) if 'particle_flow_ratio_ground_over_flight' in t else '—'} | "
-          f"{fmt(t['flight_x_s']['O'], 3)} | {fmt(t['mdot_backflow_lower_kgps'] * 1e6)} |")
+          f"{fmt(t['flight_x_s']['O'], 3)} | {fmt(t['mdot_backflow_lower_kgps'] * 1e6)} | {t['flight_status']} |")
     a("")
     m = doc["mfc_range_requirement"]
     if m.get("candidates"):
