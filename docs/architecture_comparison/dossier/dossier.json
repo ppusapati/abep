@@ -6294,7 +6294,9 @@
    ],
    "files": [
     "docs/hallmap/HALLMAP_PRODUCTION_SPEC.md",
-    "docs/hallmap/drafts/hallmap_convergence_prereg_DRAFT.json"
+    "docs/hallmap/drafts/hallmap_convergence_prereg_DRAFT.json",
+    "docs/hallmap/schema_v2/HALLMAP_REGISTRY.md",
+    "docs/hallmap/schema_v2/HALLMAP_SCHEMA_V2.md"
    ],
    "key": "hallmap_spec",
    "lane": "lane_35_hallmap_spec",
@@ -6560,12 +6562,12 @@
    "provenance.generation.generated_at"
   ],
   "generation": {
-   "generated_at": "2026-09-27T04:09:56Z"
+   "generated_at": "2026-09-27T05:16:07Z"
   },
   "generator_sha256": {
    "scripts/architecture/build_decision_dossier.py": "9c6ff9ca58733357e94966f57d166d4255ba2742638d69a81704c60f0b03f3d3"
   },
-  "git_commit": "77337095eb35d5b5fd81b1b83c6900dd21b7c53c",
+  "git_commit": "7b5f3ebde989c421bc25a4dea4bac04af598b909",
   "input_files_sha256": {
    "CLAUDE.md": "2bd58ce43ba0ec7b22b48fa0175636460801eed2cfe6429dadc7539ba97a7401",
    "abep_sim/arch_boundary.py": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
@@ -6653,6 +6655,8 @@
    "docs/forensics/p5_n2_v1/scoreable_subset/scoreable_subset.json": "45ec9f17a727e15b1e8d787127c55347dc67c73095c445eb28388e4fcc0c8144",
    "docs/hallmap/HALLMAP_PRODUCTION_SPEC.md": "ec0dc0c86f6a9bb376d5c89b63542b4c5338b4c5dc95d635b9026f8cedbdee75",
    "docs/hallmap/drafts/hallmap_convergence_prereg_DRAFT.json": "6eec2f0c6676526c6ee07c1065c0d8c21cd222a6780fe9745b0e35a42eb14f6f",
+   "docs/hallmap/schema_v2/HALLMAP_REGISTRY.md": "74dd83be5b1e3e379b541232f49e354e8245684f706aa43950f48073979fa8f8",
+   "docs/hallmap/schema_v2/HALLMAP_SCHEMA_V2.md": "6a12c802e91245decb2e028f4ed55657455f198c5b008c6ad0a762b1227219de",
    "docs/milestones/bundle1/BUNDLE1.md": "94f40ee2021a47b1c2390dd21a95faa6ef4fcedf55b979662fd713d14e0840fd",
    "docs/milestones/bundle1/BUNDLE1_v2.md": "8375b0a9a7f1decfcd47f4404b479784947a28d122f6c832152cf4aabe9d2b6e",
    "docs/milestones/bundle1/BUNDLE1_v3.md": "68ded897b2be56475d1244fb794347121b9e72e956d92eb193cdfddc2634fa3d",
