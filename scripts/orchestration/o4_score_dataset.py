@@ -2,7 +2,9 @@
 claim -> freeze (scripts/score_p5_n2_staged.py freeze) -> LAUNCHED (evidence: freeze manifest) -> score once -> VERIFIED
 (evidence: provenance sha256, scores sha256, mandatory reproduced, o4_trigger_fired). Any exception leaves the claim in its
 last state; recovery is by the operator with evidence (never an automatic re-run).
-Usage: python scripts/orchestration/o4_score_dataset.py <manifest_name> [--followon DIR]
+Usage: python scripts/orchestration/o4_score_dataset.py <manifest_name> [--followon DIR] [--subdir NAME]
+(--subdir: runner output directory under DIR when it is not the manifest name, e.g. <manifest>_attempt2 after an
+infrastructure interruption; the interrupted attempt is never read.)
 """
 import hashlib, json, os, subprocess, sys
 
@@ -18,9 +20,9 @@ def run(*a):
     return r.stdout
 
 
-def main(name, followon=FOLLOWON):
+def main(name, followon=FOLLOWON, subdir=None):
     member = f"ds_{name}"
-    shards = [os.path.join(followon, name, f"s{i}.jsonl") for i in range(4)]
+    shards = [os.path.join(followon, subdir or name, f"s{i}.jsonl") for i in range(4)]
     print(run("scripts/orchestration/trigger_ledger.py", "claim", "T_O4_SCORE", member).strip())
     run("scripts/score_p5_n2_staged.py", "freeze", f"hallthruster_bridge/campaign/manifests/{name}.json", *shards)
     V = f"hallthruster_bridge/validation/p5_n2_campaign_v1_{name}_"
@@ -44,4 +46,6 @@ def main(name, followon=FOLLOWON):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[sys.argv.index("--followon") + 1] if "--followon" in sys.argv else FOLLOWON)
+    a = sys.argv
+    main(a[1], a[a.index("--followon") + 1] if "--followon" in a else FOLLOWON,
+         a[a.index("--subdir") + 1] if "--subdir" in a else None)
