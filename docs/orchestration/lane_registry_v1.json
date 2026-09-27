@@ -1025,6 +1025,21 @@
    "id": "fo_repo_decisions_batch",
    "kind": "follow_on",
    "title": "low-cost repository decisions (pymsis to [msis] extra; golden CLI test stays in normal CI; ruleset only, 0 approvals, 3 contexts, branch current; S12 template decision hash empty)"
+  },
+  {
+   "id": "fo_s1a_engineering_gate",
+   "kind": "follow_on",
+   "title": "S1a engineering-readiness gate (non-score-bearing qualification; N4 unchanged)"
+  },
+  {
+   "id": "fo_capability_demo_prep",
+   "kind": "follow_on",
+   "title": "W4 actual-hardware capability demonstration preparation + measurement specification"
+  },
+  {
+   "id": "fo_compressor_downselect",
+   "kind": "follow_on",
+   "title": "DI-1.4 compressor down-selection (engineering critical path for the feed boundary)"
   }
  ],
  "owner_dispositions": [
@@ -1049,7 +1064,8 @@
    },
    "addenda": [
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json",
-    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json"
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json"
    ],
    "immutability": "the disposition file and each addendum are never edited after commit (consumers pin them by sha256); later owner amendments are new addendum files"
   }

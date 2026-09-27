@@ -534,6 +534,42 @@
    "produces": "fo_repo_decisions_batch",
    "kind": "follow_on_launch",
    "note": "owner execution directive 2026-09-27 (OD_HARDWARE_PIVOT execution_directive_2026_09_27)"
+  },
+  {
+   "id": "T_PIVOT_S1A_ENGINEERING_GATE",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_s1a_engineering_gate",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A3 2026-09-27"
+  },
+  {
+   "id": "T_PIVOT_CAPABILITY_DEMO_PREP",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_capability_demo_prep",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A3 2026-09-27"
+  },
+  {
+   "id": "T_PIVOT_COMPRESSOR_DOWNSELECT",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_compressor_downselect",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A3 2026-09-27"
   }
  ]
 }
