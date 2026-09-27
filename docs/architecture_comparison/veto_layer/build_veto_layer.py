@@ -53,7 +53,7 @@ SCHEMA_FILE = os.path.join(HERE, "veto_layer_v1.schema.json")
 REL_SELF = "docs/architecture_comparison/veto_layer/build_veto_layer.py"
 
 SCHEMA_ID = "veto_layer_v1"
-BASE_COMMIT = "49604b6eee234314951b9cfee1181842bf604491"
+BASE_COMMIT = "bad6ea0d6b94c343082dbbc5c0740310e0e7726d"
 CREATED = "2026-09-26"
 ARCHITECTURES = ("hall_only", "rf_hall", "ecr_hall")
 STATUSES = ("VETO_CANDIDATE", "NO_VETO_WITHIN_EVIDENCE", "UNDETERMINED")
@@ -73,7 +73,7 @@ class InputError(RuntimeError):
 # Input pins: every file read, with the lane that produced it (merged, verified at BASE_COMMIT)
 # ---------------------------------------------------------------------------------------------------------------------
 _L21 = ("lane_21_mass_bom", "41acbb9e8d43f68925b23d3449b83f28acddd7d1")
-_L15 = ("lane_15_thermal_life", "d2325c8da35abfa5d2b89c8b4c53bdf845ff9391")
+_L15 = ("lane_15_thermal_life", "66ff83be5506097025905332b0b28e9e3fe4e19e")   # repaired (G11 wall-flux gate)
 _L24 = ("lane_24_hard_gates", "08b9f9bf32a0b34142338b2003f2b2cf02ecaacc")
 _L19 = ("lane_19_cathode_integration", "eff15f85c53244556b1a9a9274fb7ffe80e9fa90")
 _L20 = ("lane_20_ppu_magnet", "f7c226848d85fedb70c03bae9971be3b2bbde1fe")
@@ -91,16 +91,16 @@ PINS: tuple = (
      "items, lower bounds, plausibility screen (G3 FAIL-side feed)"),
     ("docs/architecture_comparison/mass_bom/MASS_BOM.md",
      "e050e2fb445ca613fac970b0a0cf2664a2f021dab381c5cce11b71d9e2a7387e", _L21, "mass accounting rules"),
-    ("abep_sim/thermal_life.py", "c1ddd11f9927164b3e37e1709e1852dd42f2e37395dab7d0de8f439409098337", _L15,
+    ("abep_sim/thermal_life.py", "dce2048233746ecc596866c1d561c8828f820c7960b9778db0d6d66a9c86d83c", _L15,
      "thermal/life framework (no Vyovrinda result exists; read for provenance)"),
     ("abep_sim/thermal.py", "3ad94b716dd78e863ad441a78ffdc7fd3ef38b2764a7aabaace6876a2f1444fb", _REPO,
      "legacy Phase-4 lumped thermal network with uncited dataclass defaults; NOT used as evidence"),
-    ("schemas/thermal_life/limits_v1.json", "4ebe30cb3d70c4bd1f0a4097526fe4884e41e1da1b3c5c51779918a7d6297114",
+    ("schemas/thermal_life/limits_v1.json", "0df363f76dcb6efcef41bc0a07e1775b6255c2c9d84b185228862958ef827dbb",
      _L15, "sourced / TBD thermal and life limit records"),
-    ("schemas/thermal_life/inputs_v1.json", "3a6289bf7317f81ce76427a4ff69a6d35f19da862cbef158dcecbaf7c5771b60",
+    ("schemas/thermal_life/inputs_v1.json", "937e5c643ef6d1b567319ad788915cd8e9f9b6ab78fc8df91454bdb300f0777f",
      _L15, "thermal/life input contract (what each component needs, and from where)"),
     ("docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md",
-     "273549ab336024701c46626c177ea33730212b447806420b464e1399884e903e", _L15, "thermal/life framework document"),
+     "c07c9441505669ee6d4c3fcd3cf54d2e03dc749ea991f99098e64c193d6f134e", _L15, "thermal/life framework document"),
     ("abep_sim/hard_gates.py", "a36fe3c9065291f0fe5be3f17e179d5b691f00c013f7f8ef299fa89db896dda8", _L24,
      "lane-24 evaluator (called, never modified)"),
     ("docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
@@ -741,6 +741,33 @@ THERMAL_LIMIT_FOR = {"hall_discharge": ["bn_combat_m26"], "cathode": ["cathode_a
                      "hall_magnet": [], "ecr_magnet": []}
 
 
+def wall_flux_gate_status(inputs: dict) -> dict:
+    """Checks (from the pinned files, not by assumption) that the lane-15 G11 wall-flux gate is present and that no
+    wall-flux input could exist today: the inputs contract carries wall_flux_provenance with its two admissible kinds,
+    both wall-flux inputs are TBD, and the transport ensemble has no admitted member. This layer never imports
+    abep_sim.thermal_life, never calls hallmap_wall_inputs / check_feasibility and never reads a Hall map or a
+    screening-candidate flux, so no wall-flux verdict (heat or erosion life) is produced here."""
+    contract = inputs["schemas/thermal_life/inputs_v1.json"]
+    ens = inputs["hallthruster_bridge/ensemble/transport_ensemble_v0.json"]
+    wfp = _get(contract, ["wall_flux_provenance", "kinds"], "thermal_life inputs contract")
+    _need(set(wfp) == {"admitted_hallmap", "measured_hardware"},
+          f"thermal_life wall_flux_provenance kinds changed: {sorted(wfp)} (update this layer)")
+    cin = _get(contract, ["components", "hall_discharge", "inputs"], "thermal_life inputs contract")
+    for f in ("wall_ion_flux_m2s", "wall_ion_energy_eV"):
+        _need(str(cin[f].get("now", "")).startswith("TBD"), f"thermal_life input {f} is no longer TBD: update this "
+              "layer")
+    members = _get(ens, ["members"], "transport ensemble")
+    _need(isinstance(members, list) and not members, "transport ensemble has admitted members: update this layer")
+    return {"admissible_kinds": sorted(wfp), "admitted_members": 0,
+            "statement": "not read and never passed: abep_sim/thermal_life.py (lane 15, G11 gate) accepts wall flux "
+                         "only from an admitted ensemble member's wall_life_trustworthy Hall map or from measured "
+                         "hardware with an evidence record; the pinned ensemble has 0 admitted members and no hardware "
+                         "measurement exists, so both inputs are TBD and every hall_discharge heat / erosion-life cell "
+                         "stays UNDETERMINED. This layer does not import thermal_life, does not call "
+                         "hallmap_wall_inputs or check_feasibility, and has never used a screening-candidate "
+                         "(sgb-screen-*) flux (build check)."}
+
+
 def missing_inputs(dim: str, arch: str, inputs: dict) -> list:
     out = []
     if dim == "mass":
@@ -1015,6 +1042,8 @@ def build(root: str = ROOT, pins: tuple = PINS) -> dict:
     status_counts = {s: sum(1 for a in ARCHITECTURES for d in DIMENSIONS if cells[a][d]["status"] == s)
                      for s in STATUSES}
 
+    wall_flux_gate = wall_flux_gate_status(inputs)
+
     return {
         "schema": SCHEMA_ID, "id": "veto_layer_v1", "follow_on": "fo_veto_layer", "trigger": "T_VETO_LAYER",
         "status": "DRAFT_FOR_OWNER_REVIEW", "created": CREATED, "base_commit": BASE_COMMIT,
@@ -1083,6 +1112,8 @@ def build(root: str = ROOT, pins: tuple = PINS) -> dict:
                     + ") keeps them non-score-bearing and never a transport discriminator; quoting the published "
                     "sustainment as a level-3 literature measurement stays allowed. Any citing source_ref would carry "
                     "the status (build check)."},
+            {"what": "Hall wall ion flux / energy (thermal_life hall_discharge.wall_ion_flux_m2s, wall_ion_energy_eV)",
+             "why": wall_flux_gate["statement"]},
             {"what": "compressor bus draw and valve-outlet feed state",
              "why": "upstream ICD (lane_33, not verified) and lane_16 values are TBD; never filled here"},
         ],

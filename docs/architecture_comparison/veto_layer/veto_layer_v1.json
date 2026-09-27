@@ -5,7 +5,7 @@
   "rf_hall",
   "ecr_hall"
  ],
- "base_commit": "49604b6eee234314951b9cfee1181842bf604491",
+ "base_commit": "bad6ea0d6b94c343082dbbc5c0740310e0e7726d",
  "cells": {
   "ecr_hall": {
    "life_firing": {
@@ -681,7 +681,7 @@
        "thermal geometry / radiator design (rejection paths)"
       ],
       "input": "thermal_life component 'hall_discharge': 16 TBD inputs (additional_wall_heat_W, allowable_erosion_depth_m, anode_electron_temperature_eV, discharge_current_A, discharge_power_W, hot_spot_allowance_K, peak_to_average_flux_ratio, rejection_paths, volumetric_sputter_yield_m3_per_ion, wall_area_m2, wall_electron_temperature_eV, wall_environment, wall_ion_energy_eV, wall_ion_flux_m2s, wall_material_record, wall_see_yield)",
-      "requires": "HallMap field discharge_current_A; HallMap field discharge_power_W or bus-power 'hall_discharge'; HallMap field wall_ion_energy_eV (thermal_life.hallmap_wall_inputs); HallMap field wall_ion_flux_m2s (thermal_life.hallmap_wall_inputs); Vyovrinda channel geometry: inner + outer wall area over z <= L; Vyovrinda wall geometry (erodible thickness before the magnetic circuit is exposed); any wall heat not covered by the ion and electron terms (e.g. recombination, absorbed plasma radiation); zero only with a documented justification; axial wall-flux profile (hall_map_schema_v1 gives only the z <= L average); owner decision (ABEP air path: atomic-oxygen plasma has no sourced limit); solver output (WallSheath SEE yield, not a hall_map_schema_v1 field); solver output (not a hall_map_schema_v1 field); solver output near the anode (not a hall_map_schema_v1 field); sourced sputter yield of the wall material for the ion mix at wall_ion_energy_eV; thermal geometry model; wall material selection (record id in limits_v1.json); wall thermal model (peak vs lumped)",
+      "requires": "HallMap field discharge_current_A; HallMap field discharge_power_W or bus-power 'hall_discharge'; HallMap field wall_ion_energy_eV of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance); HallMap field wall_ion_flux_m2s of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance); Vyovrinda channel geometry: inner + outer wall area over z <= L; Vyovrinda wall geometry (erodible thickness before the magnetic circuit is exposed); any wall heat not covered by the ion and electron terms (e.g. recombination, absorbed plasma radiation); zero only with a documented justification; axial wall-flux profile (hall_map_schema_v1 gives only the z <= L average); owner decision (ABEP air path: atomic-oxygen plasma has no sourced limit); solver output (WallSheath SEE yield, not a hall_map_schema_v1 field); must be the gamma of the same solve whose sheath is in wall_ion_energy_eV (not checked in v1); solver output (not a hall_map_schema_v1 field); must be the T_e of the same solve whose sheath is in wall_ion_energy_eV (not checked in v1); solver output near the anode (not a hall_map_schema_v1 field); sourced sputter yield of the wall material for the ion mix at wall_ion_energy_eV; thermal geometry model; wall material selection (record id in limits_v1.json); wall thermal model (peak vs lumped)",
       "scope": "common_mode"
      },
      {
@@ -1368,7 +1368,7 @@
        "thermal geometry / radiator design (rejection paths)"
       ],
       "input": "thermal_life component 'hall_discharge': 16 TBD inputs (additional_wall_heat_W, allowable_erosion_depth_m, anode_electron_temperature_eV, discharge_current_A, discharge_power_W, hot_spot_allowance_K, peak_to_average_flux_ratio, rejection_paths, volumetric_sputter_yield_m3_per_ion, wall_area_m2, wall_electron_temperature_eV, wall_environment, wall_ion_energy_eV, wall_ion_flux_m2s, wall_material_record, wall_see_yield)",
-      "requires": "HallMap field discharge_current_A; HallMap field discharge_power_W or bus-power 'hall_discharge'; HallMap field wall_ion_energy_eV (thermal_life.hallmap_wall_inputs); HallMap field wall_ion_flux_m2s (thermal_life.hallmap_wall_inputs); Vyovrinda channel geometry: inner + outer wall area over z <= L; Vyovrinda wall geometry (erodible thickness before the magnetic circuit is exposed); any wall heat not covered by the ion and electron terms (e.g. recombination, absorbed plasma radiation); zero only with a documented justification; axial wall-flux profile (hall_map_schema_v1 gives only the z <= L average); owner decision (ABEP air path: atomic-oxygen plasma has no sourced limit); solver output (WallSheath SEE yield, not a hall_map_schema_v1 field); solver output (not a hall_map_schema_v1 field); solver output near the anode (not a hall_map_schema_v1 field); sourced sputter yield of the wall material for the ion mix at wall_ion_energy_eV; thermal geometry model; wall material selection (record id in limits_v1.json); wall thermal model (peak vs lumped)",
+      "requires": "HallMap field discharge_current_A; HallMap field discharge_power_W or bus-power 'hall_discharge'; HallMap field wall_ion_energy_eV of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance); HallMap field wall_ion_flux_m2s of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance); Vyovrinda channel geometry: inner + outer wall area over z <= L; Vyovrinda wall geometry (erodible thickness before the magnetic circuit is exposed); any wall heat not covered by the ion and electron terms (e.g. recombination, absorbed plasma radiation); zero only with a documented justification; axial wall-flux profile (hall_map_schema_v1 gives only the z <= L average); owner decision (ABEP air path: atomic-oxygen plasma has no sourced limit); solver output (WallSheath SEE yield, not a hall_map_schema_v1 field); must be the gamma of the same solve whose sheath is in wall_ion_energy_eV (not checked in v1); solver output (not a hall_map_schema_v1 field); must be the T_e of the same solve whose sheath is in wall_ion_energy_eV (not checked in v1); solver output near the anode (not a hall_map_schema_v1 field); sourced sputter yield of the wall material for the ion mix at wall_ion_energy_eV; thermal geometry model; wall material selection (record id in limits_v1.json); wall thermal model (peak vs lumped)",
       "scope": "common_mode"
      },
      {
@@ -2083,7 +2083,7 @@
        "thermal geometry / radiator design (rejection paths)"
       ],
       "input": "thermal_life component 'hall_discharge': 16 TBD inputs (additional_wall_heat_W, allowable_erosion_depth_m, anode_electron_temperature_eV, discharge_current_A, discharge_power_W, hot_spot_allowance_K, peak_to_average_flux_ratio, rejection_paths, volumetric_sputter_yield_m3_per_ion, wall_area_m2, wall_electron_temperature_eV, wall_environment, wall_ion_energy_eV, wall_ion_flux_m2s, wall_material_record, wall_see_yield)",
-      "requires": "HallMap field discharge_current_A; HallMap field discharge_power_W or bus-power 'hall_discharge'; HallMap field wall_ion_energy_eV (thermal_life.hallmap_wall_inputs); HallMap field wall_ion_flux_m2s (thermal_life.hallmap_wall_inputs); Vyovrinda channel geometry: inner + outer wall area over z <= L; Vyovrinda wall geometry (erodible thickness before the magnetic circuit is exposed); any wall heat not covered by the ion and electron terms (e.g. recombination, absorbed plasma radiation); zero only with a documented justification; axial wall-flux profile (hall_map_schema_v1 gives only the z <= L average); owner decision (ABEP air path: atomic-oxygen plasma has no sourced limit); solver output (WallSheath SEE yield, not a hall_map_schema_v1 field); solver output (not a hall_map_schema_v1 field); solver output near the anode (not a hall_map_schema_v1 field); sourced sputter yield of the wall material for the ion mix at wall_ion_energy_eV; thermal geometry model; wall material selection (record id in limits_v1.json); wall thermal model (peak vs lumped)",
+      "requires": "HallMap field discharge_current_A; HallMap field discharge_power_W or bus-power 'hall_discharge'; HallMap field wall_ion_energy_eV of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance); HallMap field wall_ion_flux_m2s of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance); Vyovrinda channel geometry: inner + outer wall area over z <= L; Vyovrinda wall geometry (erodible thickness before the magnetic circuit is exposed); any wall heat not covered by the ion and electron terms (e.g. recombination, absorbed plasma radiation); zero only with a documented justification; axial wall-flux profile (hall_map_schema_v1 gives only the z <= L average); owner decision (ABEP air path: atomic-oxygen plasma has no sourced limit); solver output (WallSheath SEE yield, not a hall_map_schema_v1 field); must be the gamma of the same solve whose sheath is in wall_ion_energy_eV (not checked in v1); solver output (not a hall_map_schema_v1 field); must be the T_e of the same solve whose sheath is in wall_ion_energy_eV (not checked in v1); solver output near the anode (not a hall_map_schema_v1 field); sourced sputter yield of the wall material for the ion mix at wall_ion_energy_eV; thermal geometry model; wall material selection (record id in limits_v1.json); wall thermal model (peak vs lumped)",
       "scope": "common_mode"
      },
      {
@@ -2243,38 +2243,38 @@
   },
   {
    "lane": "lane_15_thermal_life",
-   "lane_commit": "d2325c8da35abfa5d2b89c8b4c53bdf845ff9391",
+   "lane_commit": "66ff83be5506097025905332b0b28e9e3fe4e19e",
    "path": "abep_sim/thermal_life.py",
    "role": "thermal/life framework (no Vyovrinda result exists; read for provenance)",
-   "sha256": "c1ddd11f9927164b3e37e1709e1852dd42f2e37395dab7d0de8f439409098337"
+   "sha256": "dce2048233746ecc596866c1d561c8828f820c7960b9778db0d6d66a9c86d83c"
   },
   {
    "lane": "repository (not a lane; CLAUDE.md next-work 1)",
-   "lane_commit": "49604b6eee234314951b9cfee1181842bf604491",
+   "lane_commit": "bad6ea0d6b94c343082dbbc5c0740310e0e7726d",
    "path": "abep_sim/thermal.py",
    "role": "legacy Phase-4 lumped thermal network with uncited dataclass defaults; NOT used as evidence",
    "sha256": "3ad94b716dd78e863ad441a78ffdc7fd3ef38b2764a7aabaace6876a2f1444fb"
   },
   {
    "lane": "lane_15_thermal_life",
-   "lane_commit": "d2325c8da35abfa5d2b89c8b4c53bdf845ff9391",
+   "lane_commit": "66ff83be5506097025905332b0b28e9e3fe4e19e",
    "path": "schemas/thermal_life/limits_v1.json",
    "role": "sourced / TBD thermal and life limit records",
-   "sha256": "4ebe30cb3d70c4bd1f0a4097526fe4884e41e1da1b3c5c51779918a7d6297114"
+   "sha256": "0df363f76dcb6efcef41bc0a07e1775b6255c2c9d84b185228862958ef827dbb"
   },
   {
    "lane": "lane_15_thermal_life",
-   "lane_commit": "d2325c8da35abfa5d2b89c8b4c53bdf845ff9391",
+   "lane_commit": "66ff83be5506097025905332b0b28e9e3fe4e19e",
    "path": "schemas/thermal_life/inputs_v1.json",
    "role": "thermal/life input contract (what each component needs, and from where)",
-   "sha256": "3a6289bf7317f81ce76427a4ff69a6d35f19da862cbef158dcecbaf7c5771b60"
+   "sha256": "937e5c643ef6d1b567319ad788915cd8e9f9b6ab78fc8df91454bdb300f0777f"
   },
   {
    "lane": "lane_15_thermal_life",
-   "lane_commit": "d2325c8da35abfa5d2b89c8b4c53bdf845ff9391",
+   "lane_commit": "66ff83be5506097025905332b0b28e9e3fe4e19e",
    "path": "docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md",
    "role": "thermal/life framework document",
-   "sha256": "273549ab336024701c46626c177ea33730212b447806420b464e1399884e903e"
+   "sha256": "c07c9441505669ee6d4c3fcd3cf54d2e03dc749ea991f99098e64c193d6f134e"
   },
   {
    "lane": "lane_24_hard_gates",
@@ -2369,14 +2369,14 @@
   },
   {
    "lane": "repository (not a lane; CLAUDE.md next-work 1)",
-   "lane_commit": "49604b6eee234314951b9cfee1181842bf604491",
+   "lane_commit": "bad6ea0d6b94c343082dbbc5c0740310e0e7726d",
    "path": "abep_sim/hall_ensemble.py",
    "role": "admitted-member lookup used by the lane-24 evaluator",
    "sha256": "218f890c8444af1f593396da5051e38d2d093bbb3cb0bc976cc44b01b67df704"
   },
   {
    "lane": "repository (not a lane; CLAUDE.md next-work 1)",
-   "lane_commit": "49604b6eee234314951b9cfee1181842bf604491",
+   "lane_commit": "bad6ea0d6b94c343082dbbc5c0740310e0e7726d",
    "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
    "role": "transport ensemble (admitted members: none; read-only)",
    "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"
@@ -2604,6 +2604,10 @@
   {
    "what": "lane-09 entries with a repository_status (E03: HISTORICAL_UNSUPPORTED, E04: HISTORICAL_UNSUPPORTED; ECHT on pure N2)",
    "why": "not cited by this layer: they are sustainment / operating-window observations, not mass, heat rejection, life or start-up evidence. Their status (HISTORICAL_UNSUPPORTED, hallthruster_bridge/identification/echt_n2/STATUS.json) keeps them non-score-bearing and never a transport discriminator; quoting the published sustainment as a level-3 literature measurement stays allowed. Any citing source_ref would carry the status (build check)."
+  },
+  {
+   "what": "Hall wall ion flux / energy (thermal_life hall_discharge.wall_ion_flux_m2s, wall_ion_energy_eV)",
+   "why": "not read and never passed: abep_sim/thermal_life.py (lane 15, G11 gate) accepts wall flux only from an admitted ensemble member's wall_life_trustworthy Hall map or from measured hardware with an evidence record; the pinned ensemble has 0 admitted members and no hardware measurement exists, so both inputs are TBD and every hall_discharge heat / erosion-life cell stays UNDETERMINED. This layer does not import thermal_life, does not call hallmap_wall_inputs or check_feasibility, and has never used a screening-candidate (sgb-screen-*) flux (build check)."
   },
   {
    "what": "compressor bus draw and valve-outlet feed state",

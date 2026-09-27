@@ -265,3 +265,61 @@ def test_echt_historical_unsupported_status_is_carried(doc, inputs):
             "source_refs": [{"file": LANE09_MATRIX, "path": "entries[E03].observations"}]}]
     vl._carry_hs_repository_status(ris, hs, LANE09_MATRIX)
     assert ris[0]["source_refs"][0]["repository_status"] == "HISTORICAL_UNSUPPORTED"
+
+
+# lane_15_thermal_life repaired (G11 wall-flux admission / wall_life_trustworthy gate), re-verified: 66ff83b
+LANE15_COMMIT = "66ff83be5506097025905332b0b28e9e3fe4e19e"
+LANE15_PINS = {
+    "abep_sim/thermal_life.py": "dce2048233746ecc596866c1d561c8828f820c7960b9778db0d6d66a9c86d83c",
+    "schemas/thermal_life/limits_v1.json": "0df363f76dcb6efcef41bc0a07e1775b6255c2c9d84b185228862958ef827dbb",
+    "schemas/thermal_life/inputs_v1.json": "937e5c643ef6d1b567319ad788915cd8e9f9b6ab78fc8df91454bdb300f0777f",
+    "docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md":
+        "c07c9441505669ee6d4c3fcd3cf54d2e03dc749ea991f99098e64c193d6f134e",
+}
+
+
+@pytest.mark.parametrize("rel", sorted(LANE15_PINS))
+def test_lane15_files_pinned_to_repaired_version_and_mismatch_fails(rel):
+    """Pinned-hash mismatch must raise (a test failure, never a skip)."""
+    pin = [p for p in vl.PINS if p[0] == rel]
+    assert len(pin) == 1 and pin[0][1] == LANE15_PINS[rel]
+    assert pin[0][2] == ("lane_15_thermal_life", LANE15_COMMIT)
+    assert vl._sha256_file(os.path.join(vl.ROOT, rel)) == LANE15_PINS[rel]
+    pins = [(r, ("f" * 64 if r == rel else s), l, ro) for r, s, l, ro in vl.PINS]
+    with pytest.raises(vl.InputError, match="changed input"):
+        vl.build(vl.ROOT, tuple(pins))
+
+
+def test_no_wall_flux_is_read_or_passed(doc, inputs):
+    """The veto layer never forms a wall-flux verdict: the G11 gate exists, both inputs are TBD, no admitted member,
+    and the build script never imports thermal_life or calls its wall-flux / feasibility entry points."""
+    g = vl.wall_flux_gate_status(inputs)
+    assert g["admitted_members"] == 0 and g["admissible_kinds"] == ["admitted_hallmap", "measured_hardware"]
+    assert any(n["why"] == g["statement"] for n in doc["not_used"])
+    import ast
+    with open(SCRIPT, encoding="utf-8") as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):                     # code, not prose: imports and call targets
+        if isinstance(node, ast.Import):
+            assert not any("thermal_life" in a.name or "hall_map" in a.name for a in node.names)
+        if isinstance(node, ast.ImportFrom):
+            assert not any(a.name in ("thermal_life", "hall_map") for a in node.names)
+            assert "thermal_life" not in (node.module or "") and "hall_map" not in (node.module or "")
+        if isinstance(node, ast.Call):
+            fn = node.func
+            name = fn.attr if isinstance(fn, ast.Attribute) else getattr(fn, "id", "")
+            assert name not in ("hallmap_wall_inputs", "check_feasibility", "HallMap")
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            assert "sgb-screen-0" not in node.value     # no concrete screening-candidate id is ever referenced
+    # a contract whose wall-flux input is no longer TBD, or an ensemble with a member, must stop the build
+    bad = copy.deepcopy(inputs)
+    bad["schemas/thermal_life/inputs_v1.json"]["components"]["hall_discharge"]["inputs"]["wall_ion_flux_m2s"]["now"] = "x"
+    with pytest.raises(vl.InputError):
+        vl.wall_flux_gate_status(bad)
+    bad = copy.deepcopy(inputs)
+    bad["hallthruster_bridge/ensemble/transport_ensemble_v0.json"]["members"] = [{"id": "m"}]
+    with pytest.raises(vl.InputError):
+        vl.wall_flux_gate_status(bad)
+    for arch in vl.ARCHITECTURES:
+        for dim in ("thermal", "life_firing"):
+            assert doc["cells"][arch][dim]["status"] == "UNDETERMINED"
