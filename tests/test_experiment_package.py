@@ -7,6 +7,7 @@ covers every lane-25 measurement / decisive quantity / open owner question, and 
 """
 from __future__ import annotations
 
+import functools
 import importlib.util
 import json
 import re
@@ -27,18 +28,33 @@ def _load_builder():
     return mod
 
 
-B = _load_builder()
-PKG = B.build()
-STORED = json.loads((PKG_DIR / "experiment_package_v1.json").read_text(encoding="utf-8"))
+B = _load_builder()                                   # import only: no input is read or verified here
+
+
+@functools.lru_cache(maxsize=None)
+def _built():
+    """Build lazily inside a test body, so a missing/changed pinned input is a test FAILURE, not a collection error."""
+    return B.build()
+
+
+@functools.lru_cache(maxsize=None)
+def _stored():
+    return json.loads((PKG_DIR / "experiment_package_v1.json").read_text(encoding="utf-8"))
+
+
+def test_pinned_inputs_verify():
+    B.verify_inputs()                                     # raises FileNotFoundError / InputChanged -> FAIL
 
 
 def test_reproduces_byte_for_byte():
+    PKG = _built()
     assert (PKG_DIR / "experiment_package_v1.json").read_text(encoding="utf-8") == B.dumps(PKG)
     assert (PKG_DIR / "EXPERIMENT_PACKAGE.md").read_text(encoding="utf-8") == B.render_md(PKG)
     assert B.main(["--check"]) == 0
 
 
 def test_schema_and_number_discipline():
+    STORED = _stored()
     B.validate(STORED)                                    # schema + numeric-leaf + forbidden-pattern checks
     assert B.numeric_leaf_errors(STORED) == []
     bad = json.loads(json.dumps(STORED))
@@ -47,6 +63,7 @@ def test_schema_and_number_discipline():
 
 
 def test_draft_status_nothing_locked():
+    STORED = _stored()
     assert STORED["status"] == "DRAFT_PENDING_OWNER"
     for d in STORED["decisions"]:
         assert d["status"] == "OPEN_OWNER_DECISION"
@@ -56,6 +73,7 @@ def test_draft_status_nothing_locked():
 
 
 def test_no_winner_no_elimination():
+    STORED = _stored()
     text = json.dumps(STORED)
     for pat in B.FORBIDDEN_PATTERNS:
         assert not re.search(pat, text), pat
@@ -69,6 +87,7 @@ def test_no_winner_no_elimination():
 
 
 def test_feed_state_and_compressor_stay_tbd():
+    STORED = _stored()
     whats = {t["what"] for t in STORED["tbd_register"]}
     assert "compressor bus draw per operating point" in whats
     assert any(w.startswith("valve-outlet feed state") for w in whats)
@@ -89,6 +108,7 @@ def test_feed_state_and_compressor_stay_tbd():
 
 
 def test_coverage_of_lane25_measurements_and_open_questions():
+    STORED = _stored()
     draft = json.loads((ROOT / B.INPUTS["minexp_draft"][0]).read_text(encoding="utf-8"))
     rows = STORED["traceability"]["rows"]
     assert {m for r in rows for m in r["measurement"]["lane25"]} == {m["id"] for m in draft["measurements"]}
@@ -102,6 +122,7 @@ def test_coverage_of_lane25_measurements_and_open_questions():
 
 
 def test_consequences_use_lane25_tools():
+    STORED = _stored()
     d01 = next(d for d in STORED["decisions"] if d["id"] == "D-01")
     eq = d01["options"][0]["consequences"]["statistics_and_targets"]
     draft = json.loads((ROOT / B.INPUTS["minexp_draft"][0]).read_text(encoding="utf-8"))
@@ -132,7 +153,26 @@ def test_missing_or_changed_input_raises(tmp_path):
 
 
 def test_every_input_pinned_with_lane():
+    STORED = _stored()
     for key, (rel, lane, sha) in B.INPUTS.items():
         assert lane and re.fullmatch(r"[0-9a-f]{64}", sha), key
         assert B.sha256_file(ROOT / rel) == sha, key
     assert [i["path"] for i in STORED["inputs"]] == [v[0] for v in B.INPUTS.values()]
+
+
+def test_repin_log_matches_pins():
+    STORED = _stored()
+    for rp in STORED["input_repin_log"]:
+        assert B.INPUTS[rp["key"]][0] == rp["path"]
+        assert B.INPUTS[rp["key"]][2] == rp["to_sha256"] != rp["from_sha256"]
+    body = json.dumps({k: v for k, v in STORED.items() if k != "input_repin_log"})
+    if re.search(r"\bECHT\b", body):
+        assert "HISTORICAL_UNSUPPORTED" in body and re.search(r"\bA1\b", body)
+
+
+def test_changed_pin_fails_build_not_collection(monkeypatch):
+    key = "overlay_hs"
+    rel, lane, _ = B.INPUTS[key]
+    monkeypatch.setitem(B.INPUTS, key, (rel, lane, "0" * 64))
+    with pytest.raises(B.InputChanged):
+        B.build()
