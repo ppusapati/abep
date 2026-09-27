@@ -1,0 +1,52 @@
+{
+ "schema": "o4_disposition_matrix_schema_v1",
+ "describes": ["o4_disposition_matrix_v1 (official; emitted only when every required O4 dataset is scored)",
+               "o4_evidence_matrix_preview_v1 (PREVIEW over the scored subset; never committed, never a disposition record)"],
+ "producer": "docs/o4/disposition_matrix/build_o4_disposition_matrix.py",
+ "purpose": "Evidence matrix for the owner's O4 dispositions (follow-on fo_o4_disposition_matrix, trigger T_O4_DISPOSITION_MATRIX). One row per pre-registered O4 staged sensitivity family x baseline it is compared against (first stage + escalation combinations; prereg/p5_n2_validation_criteria_v1.json staged_sensitivities). It decides nothing: every owner_disposition is null; the owner records dispositions in an o4_dispositions_v1 file (hallthruster_bridge/ensemble/o4_dispositions_schema_v1.json), which abep_sim/hall_ensemble._check_o4 verifies.",
+ "top_level_fields": {
+  "schema": "\"o4_disposition_matrix_v1\" | \"o4_evidence_matrix_preview_v1\"",
+  "campaign_id": "\"p5_n2_campaign_v1\"",
+  "trigger": "\"T_O4_DISPOSITION_MATRIX\"",
+  "follow_on": "\"fo_o4_disposition_matrix\"",
+  "status_of_this_document": "text; states that the document decides nothing (preview: that it is not the matrix)",
+  "o4_rule": "{first_run, triggers, facility}: copied verbatim from operational_rules.O4_staged_escalation",
+  "required_datasets": "{required, missing, undetermined, not_required_trigger_not_fired, scored}: lane-registry dataset ids. required = the 5 first stages + every escalation of a first stage whose scored trigger fired; undetermined = escalations of a first stage that is not scored yet. Official output requires missing = undetermined = []",
+  "families": "{<staged sensitivity config>: {baseline, first_stage_dataset, first_stage_trigger_fired, escalations_required, escalations_missing, combinations_with_trigger_fired, combinations_scored, all_required_scored, owner_disposition: null}}",
+  "rows": "list of row objects (below), first stages then escalations, in pre-registration order",
+  "johnsonlow_assessment": "{file, sha256, ledger_verified_commit} of the verified Johnson-low assessment, hash-bound to its four datasets; null in a preview that lacks them",
+  "provenance": "{all_checks_passed (must be true), n_checks, checks: [{check, ok}], datasets: [hash rows: mandatory v1 + every scored O4 dataset], inputs_sha256}",
+  "o4_dispositions_feed": "official only: skeleton conforming to o4_dispositions_v1 with every owner field empty (sensitivities.*.disposition null, cleared_for_admission [], decided_by null, decided_utc null) and owner_fills listing them; scores_provenance_file paths are relative to hallthruster_bridge/ as _check_o4 expects",
+  "PREVIEW": "preview only: true",
+  "missing_required_datasets": "preview only: missing + undetermined"
+ },
+ "row_fields": {
+  "family": "staged sensitivity config (e.g. n2_n_rot_off.toml)",
+  "stage": "\"first_stage\" | \"escalation\"",
+  "dataset_id": "lane-registry dataset id (ds_staged_* | ds_escalation_*)",
+  "config": "chemistry config of the dataset",
+  "baseline": "the primary combination it is compared against (pre-registered)",
+  "state": "\"SCORED\" | \"MISSING\" (SCORED = its scores-provenance manifest is present and all bindings verify)",
+  "required": "true | false | \"UNDETERMINED\"",
+  "trigger_fired": "SCORED only: scored staged_escalation[config].trigger_fired",
+  "n_runs": "SCORED only",
+  "n_run_level_triggers": "SCORED only: len(run_level_triggers)",
+  "n_runs_with_any_run_level_trigger": "SCORED only: distinct run keys with >= 1 run-level trigger",
+  "n_runs_with_status_change": "SCORED only: distinct run keys with a status transition under reading A or B",
+  "trigger_counts": "SCORED only: {by_kind: {status, dI_d, dT}, by_kind_and_reading: {kind: {A, B}}, by_point: {N1..N5: {status, dI_d, dT}}}; sum(by_kind) == n_run_level_triggers",
+  "status_transitions": "SCORED only: {A: {\"FROM -> TO\": n}, B: {...}}",
+  "verdict_changes": "SCORED only: {n_candidates_with_any_change, candidate_verdict_changes: {cand: [from, to]}, n_member_verdict_changes, member_verdict_changes: {cand: {member: [from, to]}}}",
+  "scored_block_reproduced_by_frozen_scorer": "SCORED only: true (the builder raises otherwise)",
+  "scores_provenance": "SCORED only: {scores_provenance_file, scores_provenance_sha256}",
+  "evidence_only_for_owner": "list of factual statements for the owner's disposition (no recommendation)",
+  "owner_disposition": "always null in builder output",
+  "attempt_history_note": "present when the lane registry records earlier attempts; earlier attempts are never read"
+ },
+ "rules": [
+  "the builder never reads hallthruster_bridge/validation/interrupted/** (attempt-1 outputs are not evidence)",
+  "every scored dataset is verified: raw gz and canonical sha256 vs freeze manifest; provenance input/output bindings; scores sha256; vacuum mode; mandatory_reproduced true and mandatory statistics identical to the official v1 scores; bound to the v1 mandatory raw dataset and scores; frozen scorer sha256; prereg lock; pre-registered baseline and family; chemistry config sha256 vs propellants; trigger_fired consistent; the frozen scorer recomputes run_level_triggers and verdict_changes exactly",
+  "the official matrix is refused while any required dataset is missing or undetermined; the refusal lists them",
+  "facility results are never read (O4: facility-only differences never trigger escalation)",
+  "no disposition, criterion, tolerance, chemistry, transport parameter or campaign record is changed or decided"
+ ]
+}
