@@ -1,13 +1,44 @@
 {
  "schema": "abep-rtm-v1",
  "title": "Requirement traceability matrix - DRDO TDF ABEP-VLEO",
+ "status": "DRAFT_PENDING_OWNER",
+ "status_note": "Requirement categorisation (which rows count as RFP rows, which are inferred from repository text or project-derived), the reading of each statement and the hard-gate mapping are PROPOSED for owner review. No threshold here is new: every limit is transcribed from in-repo text.",
  "rfp_id": "DTDF/06/13516/DSP/ABEP/X/L/M/01",
  "rfp_id_source": "CLAUDE.md 'What this is'",
- "matrix_date": "2026-09-26",
- "base_commit": "daa0e75",
+ "matrix_date": "2026-09-27",
+ "base_commit": "d07249bef0f9d415cad1a33c5a427cfc105f7835",
+ "architectures": [
+  "hall_only",
+  "rf_hall",
+  "ecr_hall"
+ ],
+ "architecture_note": "The RF and ECR arms change only the pre-ionization method; the downstream Hall accelerator, feed state, cathode and bus boundary are common. No architecture winner is claimed.",
+ "milestones": {
+  "supports": [
+   "A"
+  ],
+  "A": "Supports conditional selection as a traceability input: it lists, per RFP requirement as recorded in the repository, the model quantity, current evidence, open gap and the lane-24 gate that decides it. It adds no evidence and no verdict of its own.",
+  "to_reach_B": "Every blocked_by_gate_3 row needs an admitted Hall transport closure and Vyovrinda design Hall maps per member; the RFP document must be obtained so every 'verify against RFP document' and the open readings (OD1, OD4, OD6, OD8, OD13, OD14; BUS_POWER_BOUNDARY.md rule 6) can be settled; the second verification lens of this lane must pass (single-lens-v1 lanes are not decisive for B or C before it).",
+  "to_reach_C": "Hardware evidence for each verification method (thruster, wear, electrical, thermal-vacuum tests; weighed BoM; AO-beam coupons), an FMEA for the redundancy row, and the integrated mass, power, thermal, life, startup, cathode and mission closure.",
+  "verification_protocol": "lane_36_traceability is registered single-lens-v1 (docs/orchestration/lane_registry_v1.json); until its second lens passes it is not decisive evidence for Milestone B or C."
+ },
+ "three_questions": {
+  "i_conditional_selection_now": "This matrix selects nothing. Per the lane-24 hard-gate status every gate is UNDETERMINED for hall_only, rf_hall and ecr_hall and nothing is eliminated; Bundle 1 v3 (DRAFT_FOR_OWNER_REVIEW) proposes NO_BASELINE_YET.",
+  "ii_what_blocks_physics_backed_selection": [
+   "no admitted Hall transport closure (gate 3 FAIL; credible set empty): every blocked_by_gate_3 row",
+   "RFP document not in the repository: every source is a secondary transcription ('verify against RFP document')",
+   "open owner readings of recorded requirements: OD1 (25 mN), OD4, OD6, OD8, OD13, OD14 and the bus-power boundary scope",
+   "no O/O2 discharge chemistry (RFP-NASCENT-O, RFP-IGN-SUST)"
+  ],
+  "iii_what_could_overturn": [
+   "the RFP text itself: a clause, threshold or scope that differs from the in-repo transcriptions would change rows here and gates in lane 24",
+   "an owner decision on OD1-OD14 that changes which criterion binds",
+   "a committed hard-bound script or Vyovrinda hardware measurement registered in the lane-24 evidence register"
+  ]
+ },
  "rfp_document_in_repository": false,
- "source_policy": "The RFP document is not in the repository. Every requirement cites the in-repo text it was taken from and carries page_ref 'verify against RFP document' (or states it is project-derived). No RFP clauses, page numbers or values were invented. Rows marked rfp_inferred_from_code come from code docstrings or docs/HISTORY.md text that claim an RFP origin; that origin is unverified.",
- "searched": "grep -ri 'rfp|drdo' over CLAUDE.md, README.md, docs/, abep_sim/, pyproject.toml, tests/ at the base commit",
+ "source_policy": "The RFP document is not in the repository. Every requirement cites the in-repo text it was taken from and carries page_ref 'verify against RFP document' (or states it is project-derived). No RFP clauses, page numbers or values were invented. Rows marked rfp_inferred_from_repo_text come from code docstrings, docs/HISTORY.md text or the lane-24 hard-gate matrix that claim or infer an RFP origin; that origin is unverified. rfp_record_refs use the lane-24 record ids R1-R7 (hard_gate_matrix_v1.json rfp.recorded_in).",
+ "searched": "grep -ri 'rfp|drdo' over CLAUDE.md, README.md, docs/, abep_sim/, pyproject.toml, tests/; the lane-24 hard-gate matrix record list R1-R7 was used as a cross-check (at the base commit)",
  "status_vocabulary": {
   "modeled": "a model exists and its integrity checks are reported passing; says nothing about hardware compliance",
   "partial": "some of the needed quantities are modeled; others are missing or gated",
@@ -20,7 +51,7 @@
   "demonstration",
   "inspection"
  ],
- "hall_status": "All absolute Hall results from the superseded 0-D closure (v1.2-v1.6) are withdrawn (CLAUDE.md 'Superseded / withdrawn'); gate 3 (multi-point Hall validation) is FAIL and the credible transport set is empty, so no Hall performance number may be used as evidence of compliance. The P5-N2 v1 vacuum outcome committed in the repository is INCONCLUSIVE / NOT ELIGIBLE for all nine screening candidates (permanent for v1). Results of campaigns running after that release are not known to this matrix and are not stated.",
+ "hall_status": "All absolute Hall results from the superseded 0-D closure (v1.2-v1.6) are withdrawn (CLAUDE.md 'Superseded / withdrawn'); gate 3 (multi-point Hall validation) is FAIL and the credible transport set is empty, so no Hall performance number may be used as evidence of compliance. The P5-N2 v1 vacuum outcome is INCONCLUSIVE / NOT ELIGIBLE for all nine screening candidates (permanent for v1). O4 first-stage and escalation score files are committed (Johnson-low trigger fired); no O4 disposition file and no facility score file is present at the base commit (a facility attempt is recorded under hallthruster_bridge/validation/interrupted/), so no admission is possible.",
  "gate_status_snapshot": {
   "source": "CLAUDE.md gate table (as of the base commit)",
   "1": "pass",
@@ -29,6 +60,25 @@
   "4": "done, conditional on gate 3",
   "5": "pass",
   "6": "pass"
+ },
+ "hard_gate_link": {
+  "matrix": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+  "status": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+  "evidence_register": "docs/architecture_comparison/hard_gates/evidence_register_v1.json",
+  "matrix_status": "DRAFT_PENDING_OWNER",
+  "current": "hard-gate status: UNDETERMINED for hall_only, rf_hall and ecr_hall (evidence register empty); nothing eliminated",
+  "note": "Lane 24 is the pass/fail criterion for the RFP requirements; this RTM is the traceability view. Each row's hard_gate_xref names the gate and criterion ids and the open owner decisions (OD*). Where the two differ, the difference is stated in the row (e.g. RFP-THR-MAX OD1, RFP-IGN-SUST OD14)."
+ },
+ "bundle1_link": {
+  "file": "docs/milestones/bundle1/bundle1_v3.json",
+  "status": "DRAFT_FOR_OWNER_REVIEW",
+  "outcome": "NO_BASELINE_YET"
+ },
+ "pinned_cross_references_sha256": {
+  "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f",
+  "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json": "2c82b3277067b22c85eabd25539b18101f429e6d34ee698d2f5d6e183aa44527",
+  "docs/architecture_comparison/hard_gates/evidence_register_v1.json": "45dfbfb311441aeb7c9c58f5dbb9ffb39c28fa448b85de552c37e8268ff94a3d",
+  "docs/milestones/bundle1/bundle1_v3.json": "d161fe2900668dbeb5d2f4919d2cba6cf3aa88121654d2f14bcfbd4b20c96a08"
  },
  "compliance_claim": "none - this matrix claims no RFP compliance, no demonstrated ABEP closure, no architecture winner and no transport admission",
  "requirements": [
@@ -52,6 +102,24 @@
      "abep_sim/constants.py, class RFPConstraints (docstring says 'Hard limits from Part III Para 2 of the RFP'; that clause reference is itself unverified in-repo text) (alt_min_km, alt_max_km)",
      "README.md line 3"
     ]
+   },
+   "rfp_record_refs": [
+    "R1",
+    "R2",
+    "R3"
+   ],
+   "hard_gate_xref": {
+    "gates": [
+     "G1_thrust",
+     "G2_bus_power",
+     "G6_ignition_sustainment"
+    ],
+    "criteria": [],
+    "open_owner_decisions": [
+     "OD2",
+     "OD3"
+    ],
+    "note": "envelope dimension of these gates, not a gate"
    },
    "model_quantities": [
     {
@@ -83,6 +151,10 @@
     {
      "ref": "abep_sim/data/golden_v1.json",
      "note": "golden case_atmosphere; gate 6 = pass per CLAUDE.md gate table (not re-run in this lane)"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+     "note": "altitude is an envelope dimension (coverage_dimensions.altitude_km) of G1, G2 and G6, not a gate of its own; OD2 (envelope quantifier) and OD3 (atmosphere states) open"
     }
    ],
    "status": "partial",
@@ -91,13 +163,13 @@
     "analysis"
    ],
    "verification_status": "not_verified",
-   "open_gap": "Environment definition is modeled. Holding an altitude inside the band needs thrust >= drag, which depends on Hall performance (gate 3). Spacecraft ram area / ballistic coefficient is a DRDO input not in the repository (docs/HISTORY.md says it must be requested)."
+   "open_gap": "Environment definition is modeled. Holding an altitude inside the band needs thrust >= drag, which depends on Hall performance (gate 3). Spacecraft ram area / ballistic coefficient is a DRDO input not in the repository (docs/HISTORY.md says it must be requested). Whether the requirement holds at every point of the band or at some operating altitude is owner decision OD2."
   },
   {
    "id": "RFP-THR-MIN",
    "category": "rfp_envelope",
-   "title": "Thrust lower bound",
-   "statement": "Thrust of at least 12 mN. The project reads this as 'sustained on air' (docs/HISTORY.md); verify against the RFP wording.",
+   "title": "Thrust floor (12 mN)",
+   "statement": "Lower edge of '12-25 mN'. The project reads it as '12 mN sustained on air' (docs/HISTORY.md constraint table); whether the floor must be met on atmospheric propellant alone or with Xe augmentation is open (lane 24 OD4). Verify against the RFP wording.",
    "value": {
     "quantity": "thrust",
     "limit": ">= 12",
@@ -113,6 +185,25 @@
      "abep_sim/constants.py, class RFPConstraints (docstring says 'Hard limits from Part III Para 2 of the RFP'; that clause reference is itself unverified in-repo text) (thrust_min_mN)",
      "docs/HISTORY.md constraint table (chk_thrust_air_ge_req)"
     ]
+   },
+   "rfp_record_refs": [
+    "R1",
+    "R2",
+    "R3"
+   ],
+   "hard_gate_xref": {
+    "gates": [
+     "G1_thrust"
+    ],
+    "criteria": [
+     "G1.thrust_floor"
+    ],
+    "open_owner_decisions": [
+     "OD1",
+     "OD2",
+     "OD4"
+    ],
+    "note": "binds under both OD1 readings; counts for PASS and FAIL"
    },
    "model_quantities": [
     {
@@ -139,7 +230,11 @@
     },
     {
      "ref": "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores_decision.json",
-     "note": "P5-N2 v1 vacuum: all nine screening candidates INCONCLUSIVE / NOT ELIGIBLE; promotable = []"
+     "note": "P5-N2 v1 vacuum: all nine screening candidates INCONCLUSIVE / NOT ELIGIBLE; promotable = [] (permanent for v1)"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "note": "hard-gate status: UNDETERMINED for hall_only, rf_hall and ecr_hall (evidence register empty); nothing eliminated"
     },
     {
      "ref": "CLAUDE.md",
@@ -153,16 +248,16 @@
     "test"
    ],
    "verification_status": "not_verified",
-   "open_gap": "All absolute Hall results from the superseded 0-D closure (v1.2-v1.6) are withdrawn (CLAUDE.md 'Superseded / withdrawn'); gate 3 (multi-point Hall validation) is FAIL and the credible transport set is empty, so no Hall performance number may be used as evidence of compliance. Needs an admitted closure, Vyovrinda-specific Hall maps, then a thruster test."
+   "open_gap": "All absolute Hall results from the superseded 0-D closure (v1.2-v1.6) are withdrawn (CLAUDE.md 'Superseded / withdrawn'); gate 3 (multi-point Hall validation) is FAIL and the credible transport set is empty, so no Hall performance number may be used as evidence of compliance. Needs an admitted closure, Vyovrinda-specific Hall maps, then a thruster test (or a Milestone-A hard bound or hardware measurement under the lane-24 evidence policy)."
   },
   {
    "id": "RFP-THR-MAX",
    "category": "rfp_envelope",
-   "title": "Thrust upper bound",
-   "statement": "Thrust up to 25 mN. The project reads this as a peak with Xe topping allowed (docs/HISTORY.md); verify against the RFP wording.",
+   "title": "Thrust 25 mN edge (reading open)",
+   "statement": "Upper edge of '12-25 mN'. Two readings are recorded and the owner has not chosen (lane 24 OD1): (i) an operating window, 25 mN as a cap (lane 24 G1.thrust_ceiling: minimum stable thrust <= 25 mN); (ii) '25 mN peak with Xe topping' (docs/HISTORY.md constraint table; lane 24 G1.peak_capability_25mN: peak capability >= 25 mN). This matrix does not choose. Note: abep_sim/constants.py thrust_max_mN and archengine rfp_preset T_max_mN apply it as a cap on delivered thrust (reading i). Verify against the RFP wording.",
    "value": {
     "quantity": "thrust",
-    "limit": "<= 25",
+    "limit": "25 mN edge: '<= 25' as a cap (reading i) or '>= 25' as a peak capability with Xe (reading ii); OD1 open",
     "unit": "mN",
     "value_source": "CLAUDE.md, 'What this is' section: RFP envelope summary (secondary in-repo transcription; the RFP document is not in the repository)",
     "evidence_class": "assumed",
@@ -176,10 +271,29 @@
      "docs/HISTORY.md constraint table (chk_thrust_peak_25mN)"
     ]
    },
+   "rfp_record_refs": [
+    "R1",
+    "R2",
+    "R3"
+   ],
+   "hard_gate_xref": {
+    "gates": [
+     "G1_thrust"
+    ],
+    "criteria": [
+     "G1.thrust_ceiling",
+     "G1.peak_capability_25mN"
+    ],
+    "open_owner_decisions": [
+     "OD1",
+     "OD2"
+    ],
+    "note": "PASS-only criteria; one binds per OD1 reading"
+   },
    "model_quantities": [
     {
      "ref": "abep_sim/archengine.py::rfp_preset",
-     "role": "T_max_mN constraint"
+     "role": "T_max_mN constraint (applied as a cap, reading i)"
     },
     {
      "ref": "abep_sim/mission5.py::run_mission_generic",
@@ -193,7 +307,15 @@
    "current_evidence": [
     {
      "ref": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
-     "note": "members = []"
+     "note": "members = [] (credible set empty)"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "note": "hard-gate status: UNDETERMINED for hall_only, rf_hall and ecr_hall (evidence register empty); nothing eliminated"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+     "note": "OD1 open: G1.thrust_ceiling (reading i) and G1.peak_capability_25mN (reading ii) count toward PASS only; neither can FAIL G1 until the owner decides"
     },
     {
      "ref": "CLAUDE.md",
@@ -207,13 +329,13 @@
     "test"
    ],
    "verification_status": "not_verified",
-   "open_gap": "All absolute Hall results from the superseded 0-D closure (v1.2-v1.6) are withdrawn (CLAUDE.md 'Superseded / withdrawn'); gate 3 (multi-point Hall validation) is FAIL and the credible transport set is empty, so no Hall performance number may be used as evidence of compliance."
+   "open_gap": "All absolute Hall results from the superseded 0-D closure (v1.2-v1.6) are withdrawn (CLAUDE.md 'Superseded / withdrawn'); gate 3 (multi-point Hall validation) is FAIL and the credible transport set is empty, so no Hall performance number may be used as evidence of compliance. The reading of '25 mN' (cap vs peak capability with Xe) is an open owner decision (OD1); the RFP text is needed to settle it."
   },
   {
    "id": "RFP-PWR",
    "category": "rfp_envelope",
    "title": "Power ceiling",
-   "statement": "Power below 1.5 kW. Scope (the project reads it as total power incl. PPU, compressor and Xe peak, docs/HISTORY.md; P_bus definition in CLAUDE.md) must be verified against the RFP wording.",
+   "statement": "Power below 1.5 kW. Whether this limit refers to the common propulsion bus-power boundary bus_power_boundary_v1 is TBD (docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md section 5 rule 6: settling it requires the RFP text of Part III Para 2; archengine applies it at the PPU bus input, archengine.py:641). Mode scope (every mode vs steady only) is lane 24 OD8. docs/HISTORY.md reads it as total power incl. PPU, compressor and Xe peak. Verify against the RFP wording.",
    "value": {
     "quantity": "power",
     "limit": "< 1.5",
@@ -229,10 +351,32 @@
      "abep_sim/constants.py, class RFPConstraints (docstring says 'Hard limits from Part III Para 2 of the RFP'; that clause reference is itself unverified in-repo text) (power_max_W)"
     ]
    },
+   "rfp_record_refs": [
+    "R1",
+    "R2",
+    "R3"
+   ],
+   "hard_gate_xref": {
+    "gates": [
+     "G2_bus_power"
+    ],
+    "criteria": [
+     "G2.bus_power_max"
+    ],
+    "open_owner_decisions": [
+     "OD4",
+     "OD8"
+    ],
+    "note": "counts for PASS and FAIL"
+   },
    "model_quantities": [
     {
      "ref": "abep_sim/archengine.py::DesignConstraints",
-     "role": "P_bus_max_W"
+     "role": "P_bus_max_W (checked against the PPU bus input)"
+    },
+    {
+     "ref": "abep_sim/arch_boundary.py::bus_power_ledger",
+     "role": "bus_power_boundary_v1 ledger (P_bus_W) for hall_only / rf_hall / ecr_hall; not wired into archengine"
     },
     {
      "ref": "abep_sim/ppu.py::default_ppu",
@@ -249,8 +393,16 @@
    ],
    "current_evidence": [
     {
-     "ref": "CLAUDE.md",
-     "note": "P_bus definition (all electrical power across the spacecraft-side DC boundary) and the bus_power_boundary_v1 admissibility rule; the boundary file lives under docs/orchestration/, which is not present at this lane's base commit"
+     "ref": "docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md",
+     "note": "bus_power_boundary_v1 definition; section 5 rule 6: whether the RFP '< 1.5 kW' refers to this boundary is TBD; archengine applies it at the PPU bus input"
+    },
+    {
+     "ref": "schemas/architecture_comparison/bus_power_boundary_v1.json",
+     "note": "machine-readable boundary (common and pre-ionizer components)"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "note": "hard-gate status: UNDETERMINED for hall_only, rf_hall and ecr_hall (evidence register empty); nothing eliminated"
     },
     {
      "ref": "abep_sim/data/golden_v1.json",
@@ -264,13 +416,13 @@
     "test"
    ],
    "verification_status": "not_verified",
-   "open_gap": "Non-Hall bus terms (PPU losses, compressor, magnets, heater/keeper) are modeled. The dominant Hall discharge power at the required thrust is not available (gate 3). The common bus-power boundary comparison is not yet populated."
+   "open_gap": "Non-Hall bus terms (PPU losses, compressor, magnets, heater/keeper) are modeled, and the common boundary is defined. The dominant Hall discharge power at the required thrust is not available (gate 3); every boundary load and efficiency is TBD for all three architectures. Open: which boundary the RFP limit refers to (BUS_POWER_BOUNDARY.md rule 6) and its mode scope (OD8)."
   },
   {
    "id": "RFP-MASS",
    "category": "rfp_envelope",
    "title": "Mass ceiling",
-   "statement": "Mass below 40 kg. Scope (the project reads it as total incl. intake, compressor, PSE, Xe + tank, structure and margin, docs/HISTORY.md) must be verified against the RFP wording.",
+   "statement": "Mass below 40 kg. docs/HISTORY.md reads it as total incl. intake, compressor, PSE, Xe + tank, structure and 10 % margin; strict vs inclusive and the margin policy are lane 24 OD7. Verify against the RFP wording.",
    "value": {
     "quantity": "mass",
     "limit": "< 40",
@@ -286,10 +438,36 @@
      "abep_sim/constants.py, class RFPConstraints (docstring says 'Hard limits from Part III Para 2 of the RFP'; that clause reference is itself unverified in-repo text) (mass_max_kg)"
     ]
    },
+   "rfp_record_refs": [
+    "R1",
+    "R2",
+    "R3"
+   ],
+   "hard_gate_xref": {
+    "gates": [
+     "G3_mass"
+    ],
+    "criteria": [
+     "G3.mass_mev"
+    ],
+    "open_owner_decisions": [
+     "OD7",
+     "OD10"
+    ],
+    "note": "closure-independent; counts for PASS and FAIL"
+   },
    "model_quantities": [
     {
      "ref": "abep_sim/mass_bom.py::build_bom",
-     "role": "CBE / MGA / MEV roll-up"
+     "role": "CBE / MGA / MEV roll-up (legacy)"
+    },
+    {
+     "ref": "abep_sim/mass_bom.py::rollup",
+     "role": "architecture mass BOM v1 roll-up (refuses TBD items)"
+    },
+    {
+     "ref": "abep_sim/mass_bom.py::plausibility_screen",
+     "role": "lower-bound screen feeding the G3 FAIL side"
     },
     {
      "ref": "abep_sim/mass_bom.py::xe_tank",
@@ -306,6 +484,14 @@
    ],
    "current_evidence": [
     {
+     "ref": "docs/architecture_comparison/mass_bom/mass_bom_v1.json",
+     "note": "architecture mass BOM skeleton: no item has a sourced CBE or lower bound; strict roll-up refused for all three; screen LOWER_BOUNDS_UNAVAILABLE"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "note": "hard-gate status: UNDETERMINED for hall_only, rf_hall and ecr_hall (evidence register empty); nothing eliminated"
+    },
+    {
      "ref": "CLAUDE.md",
      "note": "earlier absolute mass closures are listed as withdrawn ('Superseded / withdrawn')"
     }
@@ -317,7 +503,7 @@
     "inspection"
    ],
    "verification_status": "not_verified",
-   "open_gap": "Mass models exist, but Vyovrinda's own Hall geometry and B(z) are not defined, and the Xe load and radiator size depend on Hall performance (gate 3). Final verification needs a weighed BoM (inspection)."
+   "open_gap": "Mass accounting exists, but no item has a sourced CBE; Vyovrinda's own Hall geometry and B(z) are not defined, and the Xe load and radiator size depend on Hall performance (gate 3). Final verification needs a weighed BoM (inspection)."
   },
   {
    "id": "RFP-MISSION",
@@ -336,8 +522,27 @@
     "where": "CLAUDE.md, 'What this is' section: RFP envelope summary (secondary in-repo transcription; the RFP document is not in the repository)",
     "page_ref": "verify against RFP document",
     "corroborating_in_repo": [
-     "abep_sim/constants.py, class RFPConstraints (docstring says 'Hard limits from Part III Para 2 of the RFP'; that clause reference is itself unverified in-repo text) (mission_hours; code comment '3 years')"
+     "abep_sim/constants.py, class RFPConstraints (docstring says 'Hard limits from Part III Para 2 of the RFP'; that clause reference is itself unverified in-repo text) (mission_hours; code comment '3 years')",
+     "abep_sim/transient.py module docstring"
     ]
+   },
+   "rfp_record_refs": [
+    "R1",
+    "R2",
+    "R3",
+    "R5"
+   ],
+   "hard_gate_xref": {
+    "gates": [
+     "G5_mission"
+    ],
+    "criteria": [
+     "G5.mission_capability"
+    ],
+    "open_owner_decisions": [
+     "OD10"
+    ],
+    "note": "counts for PASS and FAIL"
    },
    "model_quantities": [
     {
@@ -361,6 +566,10 @@
     {
      "ref": "abep_sim/data/golden_v1.json",
      "note": "golden case_mission"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "note": "hard-gate status: UNDETERMINED for hall_only, rf_hall and ecr_hall (evidence register empty); nothing eliminated"
     }
    ],
    "status": "partial",
@@ -369,13 +578,13 @@
     "analysis"
    ],
    "verification_status": "not_verified",
-   "open_gap": "Propagator and mission ROM exist; mission closure needs Hall thrust and power (gate 3) and a DRDO spacecraft definition."
+   "open_gap": "Propagator and mission ROM exist; mission closure needs Hall thrust and power (gate 3) and a DRDO spacecraft definition. Lane 24 G5 reads it as calendar capability per element, not as a drag-compensation requirement."
   },
   {
    "id": "RFP-FIRING",
    "category": "rfp_envelope",
    "title": "Firing (ignition) life",
-   "statement": "Cumulative firing time above 15,000 h.",
+   "statement": "Cumulative firing time above 15,000 h ('> 15,000 h firing' in CLAUDE.md; '>15,000 h ignition' in docs/HISTORY.md and abep_sim/transient.py; wording is lane 24 OD13).",
    "value": {
     "quantity": "firing time",
     "limit": "> 15000",
@@ -390,6 +599,28 @@
     "corroborating_in_repo": [
      "abep_sim/constants.py, class RFPConstraints (docstring says 'Hard limits from Part III Para 2 of the RFP'; that clause reference is itself unverified in-repo text) (ignition_hours)"
     ]
+   },
+   "rfp_record_refs": [
+    "R1",
+    "R2",
+    "R3",
+    "R5"
+   ],
+   "hard_gate_xref": {
+    "gates": [
+     "G4_firing_life",
+     "P2_cathode"
+    ],
+    "criteria": [
+     "G4.firing_life",
+     "P2.cathode_life"
+    ],
+    "open_owner_decisions": [
+     "OD9",
+     "OD10",
+     "OD13"
+    ],
+    "note": "G4 binding; P2 PROPOSED (non-binding)"
    },
    "model_quantities": [
     {
@@ -409,6 +640,10 @@
      "role": "R(15,000 h), R(26,000 h)"
     },
     {
+     "ref": "abep_sim/thermal_life.py::solve_node_temperature",
+     "role": "thermal/life framework (margins; not wired into archengine)"
+    },
+    {
      "ref": "abep_sim/hall_map.py::HallMap",
      "role": "erosion inputs only when wall_life_trustworthy"
     }
@@ -417,6 +652,22 @@
     {
      "ref": "hallthruster_bridge/hall_map_schema_v1.json",
      "note": "wall ion flux/energy fields defined; life use needs wall_life_trustworthy"
+    },
+    {
+     "ref": "docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md",
+     "note": "framework only; every design input TBD; no life number for any architecture"
+    },
+    {
+     "ref": "docs/evidence/wall_life/WALL_LIFE_EVIDENCE.md",
+     "note": "sputter/erosion yield evidence; the solver wall ion flux is not a validated erosion prediction"
+    },
+    {
+     "ref": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "note": "cathode evidence; air-fed cathode operation unresolved; no life test of the demonstrated air-fed plasma cathodes"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "note": "hard-gate status: UNDETERMINED for hall_only, rf_hall and ecr_hall (evidence register empty); nothing eliminated"
     },
     {
      "ref": "CLAUDE.md",
@@ -446,6 +697,17 @@
      "docs/HISTORY.md constraint table (chk_hall_preferred)"
     ]
    },
+   "rfp_record_refs": [
+    "R1",
+    "R2",
+    "R3"
+   ],
+   "hard_gate_xref": {
+    "gates": [],
+    "criteria": [],
+    "open_owner_decisions": [],
+    "note": "not a gate (hard_gate_matrix not_gates)"
+   },
    "model_quantities": [
     {
      "ref": "abep_sim/archengine.py::enumerate_architectures",
@@ -468,6 +730,14 @@
     {
      "ref": "hallthruster_bridge/identification/p5_xe_identification_sgb_v1_summary.json",
      "note": "P5-Xe identification closed: transport not uniquely identifiable"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+     "note": "not_gates: 'Hall preferred' is a preference, not a pass/fail limit; all three architectures share the downstream Hall accelerator"
+    },
+    {
+     "ref": "docs/milestones/bundle1/bundle1_v3.json",
+     "note": "Bundle 1 v3 (DRAFT_FOR_OWNER_REVIEW): outcome NO_BASELINE_YET; no architecture eliminated or singled out"
     }
    ],
    "status": "partial",
@@ -477,20 +747,37 @@
     "analysis"
    ],
    "verification_status": "not_verified",
-   "open_gap": "Choosing a Hall accelerator is a design decision (inspection). A physics-backed choice among Hall-only / RF+Hall / ECR+Hall needs absolute Hall performance (gate 3). No architecture winner is claimed."
+   "open_gap": "Choosing a Hall accelerator is a design decision (inspection). All three candidates (hall_only, rf_hall, ecr_hall) use the same downstream Hall accelerator, so this preference does not discriminate between them. No architecture winner is claimed."
   },
   {
    "id": "RFP-PROP",
    "category": "rfp_envelope",
-   "title": "Propellants: air and xenon",
-   "statement": "Atmospheric air (intake-collected) and xenon as propellants.",
+   "title": "Propellants: air and xenon (gas path)",
+   "statement": "Atmospheric air (intake-collected) and xenon as propellants, via the RFP architecture recorded in the repository (atmospheric path intake -> filter -> compressor -> atmospheric gas chamber -> valve; Xe path Xe chamber -> valve; both feed ionization/discharge -> acceleration/thrust).",
    "value": null,
    "source": {
     "where": "CLAUDE.md, 'What this is' section: RFP envelope summary (secondary in-repo transcription; the RFP document is not in the repository)",
     "page_ref": "verify against RFP document",
     "corroborating_in_repo": [
-     "docs/HISTORY.md constraint table (N2 + nascent O; Xe as propellant)"
+     "docs/HISTORY.md constraint table (N2 + nascent O; Xe as propellant)",
+     "CLAUDE.md next-work item 1 'Scope' (RFP architecture)"
     ]
+   },
+   "rfp_record_refs": [
+    "R1",
+    "R3",
+    "R4"
+   ],
+   "hard_gate_xref": {
+    "gates": [
+     "G6_ignition_sustainment",
+     "G7_air_xenon"
+    ],
+    "criteria": [],
+    "open_owner_decisions": [
+     "OD6"
+    ],
+    "note": "the gas path defines the 'atmospheric' and 'xenon' propellants these gates are evaluated on"
    },
    "model_quantities": [
     {
@@ -526,6 +813,10 @@
     {
      "ref": "CLAUDE.md",
      "note": "O2/O chemistry and intake-delivered mixtures only after next-work items 1-3 succeed"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "note": "hard-gate status: UNDETERMINED for hall_only, rf_hall and ecr_hall (evidence register empty); nothing eliminated"
     }
    ],
    "status": "partial",
@@ -535,11 +826,229 @@
     "test"
    ],
    "verification_status": "not_verified",
-   "open_gap": "Gas path is modeled. Hall-discharge chemistry exists only for N2/N (validation domain T_e 2-30 eV); O/O2 is not started; Hall performance on air or Xe is gate-3 blocked."
+   "open_gap": "Gas path is modeled. Hall-discharge chemistry exists only for N2/N (validation domain T_e 2-30 eV); O/O2 is not started; discharge operation on the delivered atmospheric composition is lane 24 G6 (RFP-IGN-SUST) and on xenon G7 (RFP-XE-OP), both gate-3 blocked for model evidence."
+  },
+  {
+   "id": "RFP-XE-OP",
+   "category": "rfp_envelope",
+   "title": "Operation on xenon (air + Xe)",
+   "statement": "Steady operation on the Xe feed within the power limit; whether 'air + Xe' also means feed switching without extinction or simultaneous mixed feed is open (lane 24 OD6). Verify against the RFP wording.",
+   "value": null,
+   "source": {
+    "where": "CLAUDE.md, 'What this is' section: RFP envelope summary (secondary in-repo transcription; the RFP document is not in the repository)",
+    "page_ref": "verify against RFP document",
+    "corroborating_in_repo": [
+     "docs/HISTORY.md constraint table (Xe as propellant; 25 mN peak with Xe topping)",
+     "CLAUDE.md next-work item 1 'Scope' (Xe path Xe chamber -> valve)"
+    ]
+   },
+   "rfp_record_refs": [
+    "R1",
+    "R3",
+    "R4"
+   ],
+   "hard_gate_xref": {
+    "gates": [
+     "G7_air_xenon"
+    ],
+    "criteria": [
+     "G7.xenon_operation",
+     "G7.feed_switching",
+     "G7.mixed_feed"
+    ],
+    "open_owner_decisions": [
+     "OD1",
+     "OD6"
+    ],
+    "note": "xenon_operation counts for PASS and FAIL; feed_switching and mixed_feed PASS only (OD6)"
+   },
+   "model_quantities": [
+    {
+     "ref": "abep_sim/mass_bom.py::xe_tank",
+     "role": "Xe storage"
+    },
+    {
+     "ref": "abep_sim/ppu.py::load_modes",
+     "role": "peak mode (Xe augmentation) electrical loads"
+    },
+    {
+     "ref": "abep_sim/hall_map.py::HallMap",
+     "role": "intended Hall performance source on Xe (no admitted members)"
+    }
+   ],
+   "current_evidence": [
+    {
+     "ref": "docs/controls/DUAL_FEED_STATES.md",
+     "note": "dual-feed state machine v1 DRAFT: conceptual, every parameter TBD; asserts nothing about discharge physics"
+    },
+    {
+     "ref": "schemas/controls/dual_feed_state_machine_v1.json",
+     "note": "machine-readable state machine"
+    },
+    {
+     "ref": "hallthruster_bridge/identification/p5_xe_identification_sgb_v1_summary.json",
+     "note": "P5-Xe: transport not uniquely identifiable; screening candidates are never performance sources"
+    },
+    {
+     "ref": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+     "note": "members = [] (credible set empty)"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "note": "hard-gate status: UNDETERMINED for hall_only, rf_hall and ecr_hall (evidence register empty); nothing eliminated"
+    }
+   ],
+   "status": "blocked_by_gate_3",
+   "gate3_dependent": true,
+   "verification_method": [
+    "analysis",
+    "test",
+    "demonstration"
+   ],
+   "verification_status": "not_verified",
+   "open_gap": "All absolute Hall results from the superseded 0-D closure (v1.2-v1.6) are withdrawn (CLAUDE.md 'Superseded / withdrawn'); gate 3 (multi-point Hall validation) is FAIL and the credible transport set is empty, so no Hall performance number may be used as evidence of compliance. Feed switching and mixed-feed operation need a demonstration; no Vyovrinda hardware data exist."
+  },
+  {
+   "id": "RFP-IGN-SUST",
+   "category": "rfp_inferred_from_repo_text",
+   "title": "Ignition and sustainment on atmospheric propellant",
+   "statement": "A discharge is sustained on the delivered atmospheric composition, and ignites from the off state. No ignition or restart clause is recorded in the repository: lane 24 carries G6 with status RFP but records the EXISTENCE of G6.ignition as INFERRED (from 'air + Xe' and the RFP architecture), owner decision OD14. Also the mandatory comparison field 'startup' (CLAUDE.md admissibility rule). Verify against the RFP document.",
+   "value": null,
+   "source": {
+    "where": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json, gate G6_ignition_sustainment (rfp_source: inferred from R1 'air + Xe', R3/R6 'N2 + nascent O', R4 RFP architecture)",
+    "page_ref": "verify against RFP document",
+    "corroborating_in_repo": [
+     "CLAUDE.md, 'What this is' section: RFP envelope summary (secondary in-repo transcription; the RFP document is not in the repository)",
+     "CLAUDE.md admissibility rule (mandatory field 'startup')"
+    ]
+   },
+   "rfp_record_refs": [
+    "R1",
+    "R3",
+    "R4",
+    "R6"
+   ],
+   "hard_gate_xref": {
+    "gates": [
+     "G6_ignition_sustainment"
+    ],
+    "criteria": [
+     "G6.sustainment",
+     "G6.ignition",
+     "G6.restart_count"
+    ],
+    "open_owner_decisions": [
+     "OD5",
+     "OD14"
+    ],
+    "note": "G6 status RFP; G6.ignition existence inferred; restart_count TBD, does not count"
+   },
+   "model_quantities": [
+    {
+     "ref": "abep_sim/reservoir.py::startup_transient",
+     "role": "gas-chamber fill to ignition pressure"
+    },
+    {
+     "ref": "abep_sim/cathode_integration.py::startup_transient",
+     "role": "cathode start-up phases (explicit inputs, no Hall prediction)"
+    },
+    {
+     "ref": "abep_sim/ppu.py::load_modes",
+     "role": "startup electrical mode"
+    }
+   ],
+   "current_evidence": [
+    {
+     "ref": "docs/evidence/hall_sustainment/HALL_SUSTAINMENT_EVIDENCE.md",
+     "note": "Hall sustainment evidence matrix (published data; not Vyovrinda hardware)"
+    },
+    {
+     "ref": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "note": "DRAFT: IF-THEN cathode consequences; no I_d available (gate 3)"
+    },
+    {
+     "ref": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "note": "Xe-fed hollow cathode baseline; atmospheric-gas-fed cathode operation unresolved"
+    },
+    {
+     "ref": "docs/controls/DUAL_FEED_STATES.md",
+     "note": "start / transfer sequence proposal; guards gated, all parameters TBD"
+    },
+    {
+     "ref": "hallthruster_bridge/identification/echt_n2/STATUS.json",
+     "note": "ECHT-N2 HISTORICAL_UNSUPPORTED: not score-bearing sustainment evidence"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_status_v1.json",
+     "note": "hard-gate status: UNDETERMINED for hall_only, rf_hall and ecr_hall (evidence register empty); nothing eliminated"
+    }
+   ],
+   "status": "blocked_by_gate_3",
+   "gate3_dependent": true,
+   "verification_method": [
+    "analysis",
+    "demonstration"
+   ],
+   "verification_status": "not_verified",
+   "open_gap": "Gas-path fill and cathode start-up relations are modeled; Hall ignition and sustainment on the delivered air composition are not established (gate 3; no O/O2 chemistry; pure N2 never covers 'atmospheric' per lane 24). Restart count threshold is TBD (G6.restart_count). Whether ignition is an RFP requirement is OD14; air-only vs xenon-assisted start is OD5."
+  },
+  {
+   "id": "RFP-NASCENT-O",
+   "category": "rfp_inferred_from_repo_text",
+   "title": "Ionise nascent O",
+   "statement": "The ABEP ionises nascent (atomic) O from the collected atmosphere (docs/HISTORY.md: 'RFP: \"ionise nascent O\"'; constraint table 'N2 + nascent O'). No threshold is recorded.",
+   "value": null,
+   "source": {
+    "where": "docs/HISTORY.md, v0.2 additions, heterogeneous wall recombination bullet ('RFP: \"ionise nascent O\"')",
+    "page_ref": "verify against RFP document",
+    "corroborating_in_repo": [
+     "docs/HISTORY.md constraint table ('N2 + nascent O')"
+    ]
+   },
+   "rfp_record_refs": [
+    "R3",
+    "R6"
+   ],
+   "hard_gate_xref": {
+    "gates": [],
+    "criteria": [],
+    "open_owner_decisions": [
+     "OD12"
+    ],
+    "note": "recorded, not gated (rfp_requirements_recorded_not_gated); enters G1/G6 via the 'atmospheric' propellant definition"
+   },
+   "model_quantities": [
+    {
+     "ref": "abep_sim/aochem.py::recombination_fraction",
+     "role": "wall recombination (gamma): how much atomic O reaches the thruster"
+    },
+    {
+     "ref": "abep_sim/aochem.py::inlet_composition",
+     "role": "thruster inlet composition (N2 / O2 / O)"
+    }
+   ],
+   "current_evidence": [
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+     "note": "rfp_requirements_recorded_not_gated: carried through the definition of 'atmospheric propellant' in G1 and G6; whether it needs its own gate is OD12"
+    },
+    {
+     "ref": "CLAUDE.md",
+     "note": "next-work item 4: O2/O chemistry only after items 1-3 succeed (not started)"
+    }
+   ],
+   "status": "open",
+   "gate3_dependent": true,
+   "verification_method": [
+    "analysis",
+    "test"
+   ],
+   "verification_status": "not_verified",
+   "open_gap": "Wall recombination (how much O arrives) is modeled with literature-class priors; O/O2 Hall-discharge chemistry does not exist in the validated chain, so ionisation of O is not modeled. Clause and meaning must be checked against the RFP."
   },
   {
    "id": "RFP-IC",
-   "category": "rfp_inferred_from_code",
+   "category": "rfp_inferred_from_repo_text",
    "title": "Indigenous content (IC)",
    "statement": "Total IC >= 75 %; subsystem IC thruster >= 80 %, intake >= 80 %, compressor >= 60 %, PSE >= 70 % (as encoded in code; reading 'IC' as indigenous content follows docs/HISTORY.md).",
    "value": {
@@ -558,6 +1067,18 @@
      "abep_sim/explorer.py header text ('IC >= 75 %')"
     ]
    },
+   "rfp_record_refs": [
+    "R2",
+    "R3"
+   ],
+   "hard_gate_xref": {
+    "gates": [],
+    "criteria": [],
+    "open_owner_decisions": [
+     "OD12"
+    ],
+    "note": "recorded, not gated (rfp_requirements_recorded_not_gated)"
+   },
    "model_quantities": [
     {
      "ref": "abep_sim/system.py::evaluate",
@@ -572,6 +1093,10 @@
     {
      "ref": "docs/HISTORY.md",
      "note": "component IC values are priors (e.g. the microwave-source IC prior); a supply-chain finding, not physics"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+     "note": "rfp_requirements_recorded_not_gated (programmatic; OD12)"
     }
    ],
    "status": "partial",
@@ -584,7 +1109,7 @@
   },
   {
    "id": "RFP-REDUND",
-   "category": "rfp_inferred_from_code",
+   "category": "rfp_inferred_from_repo_text",
    "title": "Electronics redundancy",
    "statement": "No single-point failure in electronics (as stated in a code docstring).",
    "value": null,
@@ -594,6 +1119,17 @@
     "corroborating_in_repo": [
      "docs/HISTORY.md ('cold-redundant converters (RFP redundancy)')"
     ]
+   },
+   "rfp_record_refs": [
+    "R7"
+   ],
+   "hard_gate_xref": {
+    "gates": [],
+    "criteria": [],
+    "open_owner_decisions": [
+     "OD12"
+    ],
+    "note": "recorded, not gated; consequences via G2/G3"
    },
    "model_quantities": [
     {
@@ -605,7 +1141,16 @@
      "role": "series reliability and SPF list"
     }
    ],
-   "current_evidence": [],
+   "current_evidence": [
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+     "note": "rfp_requirements_recorded_not_gated: mass and power consequences carried by G2/G3 (redundant units in the ledgers); OD12"
+    },
+    {
+     "ref": "docs/architecture_comparison/failure_tree/failure_trees_v1.json",
+     "note": "architecture failure trees (DRAFT): contain no electronics-redundancy / single-point-failure node; not an FMEA"
+    }
+   ],
    "status": "partial",
    "gate3_dependent": false,
    "verification_method": [
@@ -617,13 +1162,22 @@
   },
   {
    "id": "RFP-AO-TEST",
-   "category": "rfp_inferred_from_code",
+   "category": "rfp_inferred_from_repo_text",
    "title": "Atomic-oxygen beam testing",
    "statement": "AO-beam tests of materials (docs/HISTORY.md cites 'RFP 4.1a'; abep_sim/aochem.py calls them 'RFP-mandated').",
    "value": null,
    "source": {
     "where": "docs/HISTORY.md AO chemistry section ('AO-beam test (RFP 4.1a)'); abep_sim/aochem.py module docstring",
     "page_ref": "verify against RFP document"
+   },
+   "rfp_record_refs": [
+    "R6"
+   ],
+   "hard_gate_xref": {
+    "gates": [],
+    "criteria": [],
+    "open_owner_decisions": [],
+    "note": "recorded, not gated; supplies G5 evidence"
    },
    "model_quantities": [
     {
@@ -643,6 +1197,10 @@
     {
      "ref": "docs/HISTORY.md",
      "note": "erosion yields and gammas are literature-class priors, to be replaced by coupon data"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+     "note": "rfp_requirements_recorded_not_gated: a test requirement; supplies G5 evidence for AO-exposed surfaces"
     }
    ],
    "status": "open",
@@ -670,6 +1228,15 @@
     "where": "CLAUDE.md, 'What this is' section: RFP envelope summary (secondary in-repo transcription; the RFP document is not in the repository)",
     "page_ref": "verify against RFP document"
    },
+   "rfp_record_refs": [
+    "R1"
+   ],
+   "hard_gate_xref": {
+    "gates": [],
+    "criteria": [],
+    "open_owner_decisions": [],
+    "note": "not a technical gate"
+   },
    "model_quantities": [],
    "current_evidence": [],
    "status": "open",
@@ -690,6 +1257,15 @@
     "where": "docs/HISTORY.md ('abep_closed' definition: the RFP does not state it)",
     "page_ref": "not an RFP clause (project-derived)"
    },
+   "rfp_record_refs": [
+    "R3"
+   ],
+   "hard_gate_xref": {
+    "gates": [],
+    "criteria": [],
+    "open_owner_decisions": [],
+    "note": "not a gate (hard_gate_matrix not_gates)"
+   },
    "model_quantities": [
     {
      "ref": "abep_sim/mission_env.py::spacecraft_drag",
@@ -704,6 +1280,10 @@
     {
      "ref": "CLAUDE.md",
      "note": "gate 3 FAIL"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+     "note": "not_gates: not an RFP requirement as recorded; can enter only as an owner-PROPOSED gate"
     }
    ],
    "status": "blocked_by_gate_3",
@@ -723,6 +1303,15 @@
    "source": {
     "where": "CLAUDE.md next-work item 1 (promotion rule) and item 3 (O4 gating)",
     "page_ref": "not an RFP clause (project-derived)"
+   },
+   "rfp_record_refs": [],
+   "hard_gate_xref": {
+    "gates": [],
+    "criteria": [],
+    "open_owner_decisions": [
+     "OD11"
+    ],
+    "note": "evidence-policy basis model_admitted_closure (lane 24): verdict-bearing only from admitted members; screening candidates never are. Enters G1, G2, G4, G5, G6, G7 as the Milestone-B model route"
    },
    "model_quantities": [
     {
@@ -745,11 +1334,35 @@
     },
     {
      "ref": "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores_decision.json",
-     "note": "all nine INCONCLUSIVE / NOT ELIGIBLE (v1 outcome is permanent)"
+     "note": "P5-N2 v1 vacuum: all nine screening candidates INCONCLUSIVE / NOT ELIGIBLE; promotable = [] (permanent for v1)"
     },
     {
      "ref": "hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json",
      "note": "pre-registered criteria"
+    },
+    {
+     "ref": "hallthruster_bridge/validation/p5_n2_campaign_v1_staged_n2_n_exc_johnsonlow_scores.json",
+     "note": "O4 first stage (Johnson-low) scored; its trigger fired"
+    },
+    {
+     "ref": "docs/o4/johnsonlow_assessment/JOHNSONLOW_ASSESSMENT.md",
+     "note": "Johnson-low escalation assessment: evidence summary only; changes no P5-N2 v1 result; Johnson-low stays a sensitivity"
+    },
+    {
+     "ref": "hallthruster_bridge/identification/echt_n2/STATUS.json",
+     "note": "ECHT-N2 HISTORICAL_UNSUPPORTED: not a transport discriminator, not score-bearing"
+    },
+    {
+     "ref": "docs/v2/question_a/QUESTION_A_DISPOSITION.json",
+     "note": "owner disposition A-NO: active N2 domain stays at 45 eV; no P5-N2 v2 now"
+    },
+    {
+     "ref": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
+     "note": "members = [] (credible set empty)"
+    },
+    {
+     "ref": "docs/milestones/bundle1/bundle1_v3.json",
+     "note": "Bundle 1 v3 (DRAFT_FOR_OWNER_REVIEW): outcome NO_BASELINE_YET; no architecture eliminated or singled out"
     }
    ],
    "status": "blocked_by_gate_3",
@@ -759,7 +1372,7 @@
     "test"
    ],
    "verification_status": "not_verified",
-   "open_gap": "Credible set is empty. Outcomes of campaigns running after the v1 vacuum release (O4 staged escalations, facility) are not known to this matrix and are not stated."
+   "open_gap": "Credible set is empty. O4 staged and escalation score files are committed, but no O4 disposition file and no facility score file is present at the base commit; v2 Question A was answered A-NO (no v2 now). Admission needs genuinely new predictive evidence not used in selection."
   },
   {
    "id": "DER-THERMAL",
@@ -771,6 +1384,20 @@
     "where": "CLAUDE.md admissibility rule (mandatory fields)",
     "page_ref": "not an RFP clause (project-derived); check the RFP for thermal requirements"
    },
+   "rfp_record_refs": [],
+   "hard_gate_xref": {
+    "gates": [
+     "P1_thermal"
+    ],
+    "criteria": [
+     "P1.thermal_margin"
+    ],
+    "open_owner_decisions": [
+     "OD9",
+     "OD10"
+    ],
+    "note": "PROPOSED gate: reported, never eliminates"
+   },
    "model_quantities": [
     {
      "ref": "abep_sim/thermal.py::solve_network",
@@ -779,9 +1406,22 @@
     {
      "ref": "abep_sim/thermal.py::size_radiator",
      "role": "radiator sizing"
+    },
+    {
+     "ref": "abep_sim/thermal_life.py::solve_node_temperature",
+     "role": "lumped steady-state node temperature (framework; not wired)"
     }
    ],
-   "current_evidence": [],
+   "current_evidence": [
+    {
+     "ref": "docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md",
+     "note": "framework only; every design input TBD; no admitted HallMap supplies wall heat"
+    },
+    {
+     "ref": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+     "note": "P1_thermal is a PROPOSED (non-binding) gate; allowables TBD (OD9)"
+    }
+   ],
    "status": "partial",
    "gate3_dependent": true,
    "verification_method": [
@@ -789,37 +1429,7 @@
     "test"
    ],
    "verification_status": "not_verified",
-   "open_gap": "Thermal network exists; Hall discharge heat loads need gate 3."
-  },
-  {
-   "id": "DER-STARTUP",
-   "category": "derived_project",
-   "title": "Startup",
-   "statement": "System reaches ignition conditions from cold (mandatory comparison field 'startup' in CLAUDE.md).",
-   "value": null,
-   "source": {
-    "where": "CLAUDE.md admissibility rule (mandatory fields)",
-    "page_ref": "not an RFP clause (project-derived); check the RFP"
-   },
-   "model_quantities": [
-    {
-     "ref": "abep_sim/reservoir.py::startup_transient",
-     "role": "gas-chamber fill to ignition pressure"
-    },
-    {
-     "ref": "abep_sim/ppu.py::load_modes",
-     "role": "startup electrical mode"
-    }
-   ],
-   "current_evidence": [],
-   "status": "partial",
-   "gate3_dependent": true,
-   "verification_method": [
-    "analysis",
-    "demonstration"
-   ],
-   "verification_status": "not_verified",
-   "open_gap": "Gas-path fill is modeled; Hall ignition and sustainment on air are not established (gate 3)."
+   "open_gap": "Thermal network and framework exist; Hall discharge heat loads need gate 3; allowables and margins TBD."
   },
   {
    "id": "DER-MODEL-INTEGRITY",
@@ -837,6 +1447,13 @@
    "source": {
     "where": "CLAUDE.md rules 1-5 and gate table",
     "page_ref": "not an RFP clause (project-derived)"
+   },
+   "rfp_record_refs": [],
+   "hard_gate_xref": {
+    "gates": [],
+    "criteria": [],
+    "open_owner_decisions": [],
+    "note": "not a hard gate"
    },
    "model_quantities": [
     {
@@ -869,112 +1486,144 @@
  ],
  "chains": [
   {
-   "requirement_id": "RFP-THR-MIN",
-   "design_feature": "Hall accelerator with Vyovrinda-specific geometry and B(z) (TBD - requires a design definition)",
-   "verification": "Analysis with admitted-member Hall maps, then thruster test",
-   "evidence": "None admissible: credible set empty; gate 3 FAIL"
-  },
-  {
-   "requirement_id": "RFP-THR-MAX",
-   "design_feature": "Xe path (Xe chamber -> valve) into the same discharge; thrust cap in the mission controller",
-   "verification": "Analysis (mission ROM) + thruster test",
-   "evidence": "None admissible (gate 3)"
-  },
-  {
-   "requirement_id": "RFP-PWR",
-   "design_feature": "PPU converter set with cold redundancy; compressor motor drive",
-   "verification": "Analysis on the common bus-power boundary + electrical test",
-   "evidence": "PPU/compressor models only; Hall discharge power unavailable (gate 3)"
-  },
-  {
-   "requirement_id": "RFP-MASS",
-   "design_feature": "Mass BoM: Xe tank, Hall magnetic circuit, radiator, structure, PPU",
-   "verification": "Analysis (CBE/MGA/MEV), then inspection (weighing)",
-   "evidence": "Models only; earlier closures withdrawn"
-  },
-  {
    "requirement_id": "RFP-ALT",
    "design_feature": "Intake + compressor sized over the 180-230 km density range",
    "verification": "Analysis over the frozen NRLMSIS dataset",
-   "evidence": "Frozen atmosphere + golden; altitude hold gated by thrust (gate 3)"
+   "evidence": "Frozen atmosphere + golden; altitude hold gated by thrust (gate 3)",
+   "hard_gate": "G1_thrust, G2_bus_power, G6_ignition_sustainment (UNDETERMINED)"
+  },
+  {
+   "requirement_id": "RFP-THR-MIN",
+   "design_feature": "Hall accelerator with Vyovrinda-specific geometry and B(z) (TBD - requires a design definition)",
+   "verification": "Analysis with admitted-member Hall maps, or a Milestone-A hard bound / hardware measurement; then thruster test",
+   "evidence": "None admissible: credible set empty; gate 3 FAIL; G1 UNDETERMINED",
+   "hard_gate": "G1.thrust_floor (UNDETERMINED)"
+  },
+  {
+   "requirement_id": "RFP-THR-MAX",
+   "design_feature": "Xe path (Xe chamber -> valve) into the same discharge; thrust cap or peak-capability sizing per OD1",
+   "verification": "Analysis (mission ROM) + thruster test",
+   "evidence": "None admissible (gate 3); OD1 reading open",
+   "hard_gate": "G1.thrust_ceiling, G1.peak_capability_25mN (UNDETERMINED)"
+  },
+  {
+   "requirement_id": "RFP-PWR",
+   "design_feature": "PPU converter set with cold redundancy; compressor motor drive; common bus_power_boundary_v1 ledger",
+   "verification": "Analysis on the common bus-power boundary + electrical test",
+   "evidence": "Boundary defined; all loads/efficiencies TBD; Hall discharge power unavailable (gate 3); RFP boundary scope TBD",
+   "hard_gate": "G2.bus_power_max (UNDETERMINED)"
+  },
+  {
+   "requirement_id": "RFP-MASS",
+   "design_feature": "Mass BoM: Xe tank, Hall magnetic circuit, radiator, structure, PPU, pre-ionizer hardware",
+   "verification": "Analysis (CBE/MGA/MEV), then inspection (weighing)",
+   "evidence": "BOM skeleton; no sourced CBE; roll-up refused",
+   "hard_gate": "G3.mass_mev (UNDETERMINED)"
   },
   {
    "requirement_id": "RFP-MISSION",
    "design_feature": "Mission controller (altitude hold, Xe topping)",
    "verification": "Analysis (propagator + UQ)",
-   "evidence": "Convergence pass; mission UQ conditional on gate 3"
+   "evidence": "Convergence pass; mission UQ conditional on gate 3; G5 UNDETERMINED",
+   "hard_gate": "G5.mission_capability (UNDETERMINED)"
   },
   {
    "requirement_id": "RFP-FIRING",
    "design_feature": "Channel wall material and magnetic topology; cathode; compressor bearings",
    "verification": "Analysis (erosion from wall_life_trustworthy maps) + wear test",
-   "evidence": "No trustworthy wall-flux map; no test data"
+   "evidence": "No trustworthy wall-flux map; wall-life evidence and thermal/life framework only; no test data",
+   "hard_gate": "G4.firing_life, P2.cathode_life (UNDETERMINED)"
   },
   {
    "requirement_id": "RFP-HALL",
-   "design_feature": "Hall accelerator baseline family",
-   "verification": "Inspection of design; comparison on the common bus boundary",
-   "evidence": "Comparison not populated; no winner claimed"
+   "design_feature": "Hall accelerator common to hall_only, rf_hall and ecr_hall",
+   "verification": "Inspection of design",
+   "evidence": "Preference, not a gate; Bundle 1 v3 NO_BASELINE_YET; no winner claimed",
+   "hard_gate": "not a gate (hard_gate_matrix not_gates)"
   },
   {
    "requirement_id": "RFP-PROP",
    "design_feature": "Intake -> filter -> compressor -> atmospheric gas chamber -> valve; Xe chamber -> valve",
    "verification": "Analysis (TPMC ROM, compressor, reservoir, AO chemistry) + tests",
-   "evidence": "Frozen intake surface; N2/N chemistry abep-n2n-0.11 domain-limited; O/O2 not started"
+   "evidence": "Frozen intake surface; N2/N chemistry abep-n2n-0.11 domain-limited; O/O2 not started",
+   "hard_gate": "G6_ignition_sustainment, G7_air_xenon (UNDETERMINED)"
+  },
+  {
+   "requirement_id": "RFP-XE-OP",
+   "design_feature": "Xe feed valves and dual-feed controller (state machine v1 DRAFT)",
+   "verification": "Analysis with admitted Hall maps + demonstration of switching / mixed feed",
+   "evidence": "State machine conceptual; no admitted closure; G7 UNDETERMINED",
+   "hard_gate": "G7.xenon_operation, G7.feed_switching, G7.mixed_feed (UNDETERMINED)"
+  },
+  {
+   "requirement_id": "RFP-IGN-SUST",
+   "design_feature": "Reservoir fill, cathode heater/keeper, ignition sequence (air-only or Xe-assisted, OD5)",
+   "verification": "Analysis + demonstration",
+   "evidence": "Gas-path and cathode start-up relations only; G6 UNDETERMINED; OD14 open",
+   "hard_gate": "G6.sustainment, G6.ignition, G6.restart_count (UNDETERMINED)"
+  },
+  {
+   "requirement_id": "RFP-NASCENT-O",
+   "design_feature": "Wall / coating material of intake-compressor path (recombination gamma); discharge chemistry",
+   "verification": "Test (AO-beam gamma) + analysis once O/O2 chemistry exists",
+   "evidence": "Priors only; O/O2 chemistry not started",
+   "hard_gate": "recorded, not gated (rfp_requirements_recorded_not_gated); enters G1/G6 via the 'atmospheric' propellant definition"
   },
   {
    "requirement_id": "RFP-IC",
    "design_feature": "Supplier selection per subsystem",
    "verification": "Inspection of BoM",
-   "evidence": "Priors only"
+   "evidence": "Priors only",
+   "hard_gate": "recorded, not gated (rfp_requirements_recorded_not_gated)"
   },
   {
    "requirement_id": "RFP-REDUND",
    "design_feature": "Cold-redundant PPU converters",
    "verification": "Analysis (FMEA) + inspection",
-   "evidence": "Mass/reliability bookkeeping only"
+   "evidence": "Mass/reliability bookkeeping only; no FMEA",
+   "hard_gate": "recorded, not gated; consequences via G2/G3"
   },
   {
    "requirement_id": "RFP-AO-TEST",
    "design_feature": "Wall / coating material selection",
    "verification": "Test (AO beam: erosion yield and recombination gamma)",
-   "evidence": "Literature priors only"
+   "evidence": "Literature priors only",
+   "hard_gate": "recorded, not gated; supplies G5 evidence"
   },
   {
    "requirement_id": "PRG-BID",
    "design_feature": "Bid package",
    "verification": "Inspection (submission record)",
-   "evidence": "None yet"
+   "evidence": "None yet",
+   "hard_gate": "not a technical gate"
   },
   {
    "requirement_id": "DER-NETDRAG",
    "design_feature": "Whole ABEP system",
    "verification": "Analysis (T/D over the mission)",
-   "evidence": "Gated by gate 3 and DRDO spacecraft data"
+   "evidence": "Gated by gate 3 and DRDO spacecraft data",
+   "hard_gate": "not a gate (hard_gate_matrix not_gates)"
   },
   {
    "requirement_id": "DER-HALL-CLOSURE",
    "design_feature": "Transport closure selection (never a Vyovrinda design variable)",
    "verification": "Pre-registered blind prediction of new evidence",
-   "evidence": "v1 vacuum INCONCLUSIVE; later campaigns not known here"
+   "evidence": "v1 vacuum INCONCLUSIVE (permanent); O4 dispositions and facility scores not in the repository",
+   "hard_gate": "evidence-policy basis model_admitted_closure (lane 24): verdict-bearing only from admitted members; screening candidates never are. Enters G1, G2, G4, G5, G6, G7 as the Milestone-B model route"
   },
   {
    "requirement_id": "DER-THERMAL",
    "design_feature": "Radiator and conductive straps",
    "verification": "Analysis + thermal-vacuum test",
-   "evidence": "Network model only"
-  },
-  {
-   "requirement_id": "DER-STARTUP",
-   "design_feature": "Reservoir fill, heater/keeper, ignition sequence",
-   "verification": "Analysis + demonstration",
-   "evidence": "Gas-path transient only"
+   "evidence": "Network model and framework only; P1 PROPOSED",
+   "hard_gate": "P1.thermal_margin (UNDETERMINED)"
   },
   {
    "requirement_id": "DER-MODEL-INTEGRITY",
    "design_feature": "Frozen datasets, golden benchmarks, convergence checks",
    "verification": "Test (golden check, pytest)",
-   "evidence": "Gates 1, 2, 5, 6 pass per CLAUDE.md"
+   "evidence": "Gates 1, 2, 5, 6 pass per CLAUDE.md",
+   "hard_gate": "not a hard gate"
   }
  ]
 }
