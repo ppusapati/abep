@@ -32,16 +32,16 @@
   "supports": ["B"],
   "A": {
    "role": "not required for A and does not block A",
-   "contribution": "adding lane-25/package decision D-14-B to LOCK-1 costs no readings; the only demands on the experiment are custody rules (section custody) and the release of the S1a registration inputs before the first Hall-on reading",
+   "contribution": "adding lane-25/package decision D-14-B to LOCK-1 costs no readings. Demands on the experiment: custody rules (section custody_and_blinding), LOCK-H1 before the S1a registration-input release, and the S1a registration-input release itself. Whether the hardware schedule also waits for the blind prediction set PF-1 is an owner decision (VP-17): under the PROPOSED option RELEASE_GATED it does not (PF-1 must be frozen before any held-out output is released to the physics track); under the alternative HOLD_S1B, S1b waits for a Julia campaign of 9 x 4 x N_cond nominal runs plus the u_reg runs (x 2 x N_reg) and the staged sensitivities (run_count_formula; order of the v1 campaign size or larger), which would put a simulation campaign on the hardware critical path and so on the Milestone A schedule",
    "next": "nothing from this lane is needed for a conditional selection"
   },
   "B": {
    "role": "primary: the only route in this workstream set by which a transport closure can be ADMITTED, which Milestone B needs for credible envelopes",
    "needs_to_reach_B": [
-    "owner decisions VP-01..VP-16 and LOCK-H1 of the successor of this draft",
+    "owner decisions VP-01..VP-19 and LOCK-H1 of the successor of this draft",
     "W4 audited measurement uncertainties (all TBD_FROM_INSTRUMENTATION values)",
     "W3 H-1 geometry release and S1a B(z) at actual coil currents (registration inputs)",
-    "the lane-35 runnability items (RG-01..RG-12)",
+    "this draft's own runnability gates RG-01..RG-12 (defined in runnability_gates; only some map to lane-35 items: RG-01 to lane 35 P6, RG-03 to open decision 10, RG-04 to open decision 7, RG-05 to open decision 3)",
     "a PROMOTABLE outcome, then the O4-equivalent staged-sensitivity dispositions and an owner admission record (admission_record_schema_v1)",
     "for rf_hall / ecr_hall absolute performance additionally: the owner-approved inflow model change at HALL_INLET_Z0 (lane 17 section 8, lane 35 open decision 10); O/O2 chemistry (W7) for an atomic-O-bearing feed"
    ]
@@ -120,7 +120,8 @@
    {"id": "RG-04", "item": "numerical settings fixed for the H-1 geometry (cells, dt, duration, averaging window) and a blind, data-free grid-adequacy check on H-1 inputs", "owner_lane": "lane 35 open decision 7 (docs/hallmap/drafts/hallmap_convergence_prereg_DRAFT.json)", "required_before_PF1": true, "status": "TBD - requires the owner's convergence decision"},
    {"id": "RG-05", "item": "wall model and ion_wall_losses setting for validation runs", "owner_lane": "lane 35 open decision 3; lane 17 section 10", "required_before_PF1": true, "status": "PROPOSED: as in P5-N2 v1 (solver default WallSheath(BNSiO2, 1.0), ion_wall_losses = false), wall-material difference recorded as a transfer assumption"},
    {"id": "RG-06", "item": "use of reaction set abep-n2n-0.11 (status COMPLETE_FOR_P5_N2_VALIDATION, scoped to P5-N2 validation) for H-1 N2 validation", "owner_lane": "owner (VP-07)", "required_before_PF1": true, "status": "owner decision"},
-   {"id": "RG-07", "item": "audited measurement uncertainties of every held-out observable and every registration input", "owner_lane": "W4", "required_before_PF1": false, "required_before": "LOCK-H2", "status": "TBD_FROM_INSTRUMENTATION"},
+   {"id": "RG-07a", "item": "audited standard uncertainties of every registration input (REG-GEOM, REG-BZ, REG-FEED, REG-VD, REG-PB, REG-DIV): needed because u_reg_rule perturbs each registration input by its audited standard uncertainty inside PF-1", "owner_lane": "W4", "required_before_PF1": true, "status": "TBD_FROM_INSTRUMENTATION"},
+   {"id": "RG-07b", "item": "audited measurement uncertainties of every held-out observable (VO-ID, VO-T, VO-OSC, VO-SPECIES, VO-IEDF, VO-TENE; and the S1b dispersion statistics)", "owner_lane": "W4", "required_before_PF1": false, "required_before": "LOCK-H2", "status": "TBD_FROM_INSTRUMENTATION"},
    {"id": "RG-08", "item": "registered N2 test points (mdot, composition, P_feed, T_feed) and V_d levels", "owner_lane": "W1; LOCK-1 (lane 25 section 10 item 2)", "required_before_PF1": true, "status": "TBD - requires W1 and LOCK-1"},
    {"id": "RG-09", "item": "LOCK-1 adopts D-14-B (physics track pre-registers before S1)", "owner_lane": "W2 / owner", "required_before_PF1": true, "status": "PROPOSED in experiment_package D-14"},
    {"id": "RG-10", "item": "frozen prediction and scoring scripts (sha256 in LOCK-H1)", "owner_lane": "physics track (future lane)", "required_before_PF1": true, "status": "TBD - not written; this draft specifies their contract only"},
@@ -169,7 +170,7 @@
    {"id": "REG-DIV", "quantity": "beam divergence / axial-momentum factor per reading from the far-field Faraday sweep", "instrument_or_source": "W4 INS-15; lane 25 M8", "solver_mapping": "observation operator for thrust only: T_axial,sim = T_1D x f_div,measured (the 1-D solver cannot predict divergence); PROPOSED, alternative in VP-04", "evidence_class": "measured (f_div is inferred from the sweep)", "uncertainty": "TBD_FROM_INSTRUMENTATION"},
    {"id": "REG-WALL", "quantity": "channel wall material grade", "instrument_or_source": "W3 geometry release", "solver_mapping": "recorded; solver wall model fixed by RG-05 (difference = transfer assumption)", "evidence_class": "measured (part record)", "uncertainty": "not applicable"}
   ],
-  "u_reg_rule": "PROPOSED: before any Hall-on data, each registration input is perturbed by +/- its audited standard uncertainty one at a time for every candidate x mandatory chemistry x condition (blind runs); u_reg is the root-sum-square of the half-differences per observable. It is frozen with PF-1 and enters the tolerance (TH-ID, TH-T). Runs used for u_reg are not scored."
+  "u_reg_rule": "PROPOSED: blind (before any held-out output is released to the physics track; under VP-17 HOLD_S1B before any Hall-on reading), each registration input is perturbed by +/- its audited standard uncertainty (RG-07a, required before PF-1) one at a time for every candidate x mandatory chemistry x condition (blind runs); u_reg is the root-sum-square of the half-differences per observable. It is frozen with PF-1 and enters the tolerance (TH-ID, TH-T). Runs used for u_reg are not scored."
  },
  "observables": {
   "note": "ids follow the W4 instrumentation draft (VO-*). The owner named B(z) and the feed state among held-out candidates (od_hardware_pivot W5); this draft proposes to classify them as REGISTRATION inputs because the solver takes them as boundary conditions and cannot predict them (VP-01).",
@@ -187,7 +188,7 @@
  "condition_families": {
   "rule": "Condition sets are fixed at LOCK-H1 as a finite, enumerated grid known before data (all lane-25 setpoints, incl. every knee-scan level and the knee-fallback midpoint), so that PF-1 can predict every condition before it is measured.",
   "families": [
-   {"id": "F1", "name": "Phase 1 hall_only N2 sustainment knee scan (S2, down and up)", "arm": "hall_only (HW-0)", "role": "HELD_OUT mandatory", "count": "T-KNEE-LEVELS levels x 2 directions (lane 25 PROPOSED 5 levels; TBD at LOCK-1)", "runnable": "yes once RG-01, RG-02, RG-04..RG-06, RG-08, RG-10, RG-11 are met"},
+   {"id": "F1", "name": "Phase 1 hall_only N2 sustainment knee scan (S2, down and up)", "arm": "hall_only (HW-0)", "role": "HELD_OUT mandatory", "count": "T-KNEE-LEVELS levels x 2 directions (lane 25 PROPOSED 5 levels; TBD at LOCK-1)", "runnable": "yes once RG-01, RG-02, RG-04..RG-06, RG-07a, RG-08, RG-10, RG-11 are met", "direction_rule": "PROPOSED (VP-19): the pinned 1-D solver starts every run from a fixed initial state and has no path memory, so it makes ONE prediction per level, compared with both the down and the up reading. If the measured sustainment class of a level differs between the two directions (hysteresis), that level is HYSTERETIC: it is not scored for C-SUST (as SUSTAINMENT_MIXED), C-ID and C-T are not scored at that level, and the hysteresis is reported as a non-gating diagnostic that a path-free model cannot test. It is neither FAIL_VALIDATION nor a pass. If both directions agree, each direction's reading is scored against the single prediction. Alternative for the owner: treat a HYSTERETIC mandatory level as a non-admissible target (candidate INCONCLUSIVE, not FAIL)."},
    {"id": "F2", "name": "Phase 2 hall_only N2 operating points OP1, OP2, OP3, OP2H, OP3H (S2/S4 HW-0 readings, S6 re-installation)", "arm": "hall_only (HW-0)", "role": "HELD_OUT mandatory", "count": "TBD at LOCK-1 (lane 25 section 4)", "runnable": "as F1"},
    {"id": "F3", "name": "source-OFF readings of HW-RF / HW-ECR (module installed, unenergized) on N2", "arm": "HW-RF / HW-ECR, source off", "role": "HELD_OUT secondary (VP-11): runnable only with the B(z) measured in that configuration (ECR permanent magnet perturbs B(z))", "count": "TBD at LOCK-1", "runnable": "as F1, with configuration-specific REG-BZ"},
    {"id": "F4", "name": "source-ON readings (rf_hall, ecr_hall)", "arm": "rf_hall / ecr_hall", "role": "SEQUESTERED_FOR_FUTURE_PREREG", "count": "all", "runnable": "no: RG-03 inflow gap. A future pre-registration must be locked before the inflow-capable model is run against them; because the architecture track publishes R_arch, T and P_bus of these arms during the campaign, that future use carries the flag OUTPUTS_SEEN_BEFORE_MODEL and its evidential weight is an owner decision"},
@@ -195,7 +196,7 @@
    {"id": "F6", "name": "hall_only on Xe (package D-15-B XE_HEALTH_CHECK)", "arm": "hall_only", "role": "OPTIONAL held-out family (VP-12); new geometry for the gas the candidates were selected on", "count": "TBD - requires the facility schedule", "runnable": "yes (built-in Xe tables; limitation recorded)"},
    {"id": "F7", "name": "S5 elevated background pressure readings", "arm": "hall_only", "role": "FACILITY evidence: used for the target-admissibility test TH-FAC and the secondary facility mode; never a primary target", "count": "lane 25 S5 (D-12)", "runnable": "facility mode only"}
   ],
-  "S1b_note": "S1b re-mount readings (HW-0 at OP3) are Hall-on readings taken before LOCK-2. PF-1 is frozen before S1b; the custodian releases only their dispersion statistics (u_T, u_P, u_inst) to LOCK-2, never their means, and they are not scored (lane 25: not score-bearing)."
+  "S1b_note": "S1b re-mount readings (HW-0 at OP3) are Hall-on readings taken before LOCK-2. Whether PF-1 is frozen before S1b is VP-17; the custodian releases only their dispersion statistics (u_T, u_P, u_inst) to LOCK-2, never their means, and they are not scored (lane 25: not score-bearing)."
  },
  "modes": {
   "primary": "VACUUM_VS_RAW_WITH_FACILITY_ADMISSIBILITY (PROPOSED, VP-03): vacuum-mode simulation (facility ingestion OFF) compared with RAW measured targets at base p_b. No ingestion correction is applied to the data (lane 25 section 8: no ingestion model rescues a class). A target is admissible only if the S5-measured background-pressure sensitivity, extrapolated linearly from base p_b to zero, shifts the observable by less than TH-FAC x its tolerance; otherwise TARGET_NOT_ADMISSIBLE_FACILITY.",
@@ -205,7 +206,7 @@
  "criteria": {
   "C-ID": {"observable": "VO-ID", "gating": true, "form": "|I_d,sim - I_d,exp| <= tol_Id at every mandatory condition", "tolerance_form": "PROPOSED (VP-02): tol_Id = I_d,exp x eps_Id, with eps_Id >= k x sqrt(u_exp,rel^2 + u_reg,rel^2)", "eps_Id": "PROPOSED - owner value (VP-02)", "u_exp": "TBD_FROM_INSTRUMENTATION", "k": "PROPOSED 2 (coverage factor) - owner value", "target_source": "H-1 HW-0 readings, mean over the n blocks of the condition (new common-hardware experiment)", "tolerance_source": "W4 audited uncertainty + blind u_reg + owner eps_Id", "status": "PROPOSED"},
   "C-T":  {"observable": "VO-T", "gating": true, "form": "|T_1D x f_div,measured - T_exp| <= tol_T at every mandatory condition with an admissible thrust reading", "tolerance_form": "PROPOSED: tol_T = k x sqrt(u_T,exp^2 + (T_1D u_f_div)^2 + u_reg,T^2)", "u_exp": "TBD_FROM_INSTRUMENTATION", "k": "PROPOSED 2 - owner value", "target_source": "H-1 HW-0 thrust-stand readings (new common-hardware experiment)", "tolerance_source": "W4 audited uncertainty + blind u_reg", "status": "PROPOSED"},
-  "C-SUST": {"observable": "VO-IGNEXT", "gating": true, "form": "(a) experiment SUSTAINED and model extinct (v1 O1 definition, mode-matched target = raw I_d) -> FAIL_VALIDATION / SUSTAINMENT; (b) experiment NOT_SUSTAINED and model sustained -> FAIL_VALIDATION / SUSTAINMENT_FALSE_POSITIVE (PROPOSED new reason, VP-08); (c) SUSTAINMENT_MIXED -> condition not scored for sustainment", "target_source": "H-1 HW-0 per-condition sustainment class (lane 25 section 9) (new common-hardware experiment)", "tolerance_source": "not applicable (categorical)", "status": "PROPOSED"},
+  "C-SUST": {"observable": "VO-IGNEXT", "gating": true, "form": "(a) experiment SUSTAINED and model extinct (v1 O1 definition, mode-matched target = raw I_d) -> FAIL_VALIDATION / SUSTAINMENT; (b) experiment NOT_SUSTAINED and model sustained -> FAIL_VALIDATION / SUSTAINMENT_FALSE_POSITIVE (PROPOSED new reason, VP-08); (c) SUSTAINMENT_MIXED (or HYSTERETIC, F1 direction_rule) -> condition not scored for sustainment", "model_sustained_definition": "PROPOSED (VP-18), needed because case (b) has no measured sustained I_d to act as the v1 O1 I_d,target: the run is model-extinct iff v1 O1 holds with I_d,target replaced by I_d,ref, and model-sustained otherwise. I_d,ref is data-free and fixed by the grid: the time-mean PF-1 I_d of the SAME candidate x chemistry x configuration at the highest-flow level of the F1 scan (the scan starts at mdot_nom, lane 25). If the model is itself O1-extinct at that reference level (O1 applied with I_d,target = its own PF-1 mean over the first half of the simulated time), every level of that scan is model-extinct. For F2 points outside the scan, I_d,ref is the same F1 reference at the same V_d, or, for V_hi points, the PF-1 I_d at OP3H. Alternative for the owner: a fixed absolute threshold on I_d in A, set at LOCK-H1 before data.", "target_source": "H-1 HW-0 per-condition sustainment class (lane 25 section 9) (new common-hardware experiment)", "tolerance_source": "not applicable (categorical)", "status": "PROPOSED"},
   "C-OSC":  {"observable": "VO-OSC", "gating": false, "form": "PROPOSED: class match QUIET / OSCILLATORY using one pre-registered relative-amplitude threshold applied identically to measured and simulated I_d(t) (threshold PROPOSED - owner value, VP-05); peak-frequency residual reported", "target_source": "H-1 HW-0 I_d traces (new common-hardware experiment)", "tolerance_source": "owner threshold; W4 sampling band", "status": "PROPOSED"},
   "C-DIAG": {"observables": ["VO-SPECIES", "VO-IEDF", "VO-TENE"], "gating": false, "form": "signed residuals and orderings reported per condition; never admit or reject", "target_source": "H-1 HW-0 readings (new common-hardware experiment)", "tolerance_source": "TBD_FROM_INSTRUMENTATION (reported with the residual)", "status": "PROPOSED"}
  },
@@ -248,33 +249,34 @@
    "PHYSICS_TRACK": "generates predictions; sees registration inputs only, until the scoring release"
   },
   "sequence": [
-   "K0: this DRAFT -> owner decisions VP-01..VP-16 -> successor draft",
-   "K1: LOCK-H1 (sha256 of criteria, rules, candidate set, chemistry configs, numerics, prediction and scoring scripts, condition grid): before S1a ends and before any Hall-on reading of H-1",
+   "K0: this DRAFT -> owner decisions VP-01..VP-19 -> successor draft",
+   "K1: LOCK-H1 (sha256 of criteria, rules, candidate set, chemistry configs, numerics, prediction and scoring scripts, condition grid): before the custodian releases any S1a registration input to the physics track, and therefore before any Hall-on reading of H-1",
    "K2: S1a (no plasma) -> custodian releases registration inputs (geometry, B(z) at coil currents, calibrated feed setpoints) to the physics track",
-   "K3: physics track runs the blind prediction set PF-1 (9 candidates x mandatory chemistry x full condition grid, incl. u_reg perturbation runs and staged sensitivities) and hash-freezes it (sha256 recorded in the trigger ledger) BEFORE the first Hall-on reading (S1b)",
+   "K3: physics track runs the blind prediction set PF-1 (9 candidates x mandatory chemistry x full condition grid, incl. u_reg perturbation runs and staged sensitivities) and hash-freezes it (sha256 recorded in the trigger ledger). Freeze point = owner decision VP-17: PROPOSED RELEASE_GATED = PF-1 frozen before the custodian releases any held-out output to the physics track (at the latest K6); the hardware schedule is not held and blinding rests on custody (roles, leak_rule). Alternative HOLD_S1B = PF-1 frozen BEFORE the first Hall-on reading (S1b); S1b waits for PF-1. Under either option: if PF-1 is not frozen at the freeze point, the held-out release (and so scoring) waits; no condition is dropped or added because PF-1 is late; under HOLD_S1B the owner may instead switch the whole campaign to RELEASE_GATED by a dated addendum recorded before S1b, never per condition and never after any Hall-on reading",
    "K4: S1b -> custodian releases dispersion statistics only -> LOCK-H2 adds the audited uncertainty values through the LOCK-H1 formulas without discretion",
    "K5: S2..S6 run; condition-mismatched readings -> input-only extract -> PF-2 frozen before any output release",
    "K6: raw dataset frozen (sha256) at campaign end -> custodian releases held-out outputs to the frozen scoring script -> score once -> mechanical decision file -> owner"
   ],
   "leak_rule": "If a held-out output reaches the physics track before K6, the custodian records it; predictions frozen before the leak remain valid; any prediction frozen after it for the leaked condition is flagged OUTPUTS_SEEN and cannot support PROMOTABLE for that condition.",
+  "pf1_freeze_rule": "VP-17 (see K3). Under RELEASE_GATED a Hall-on reading exists before PF-1 is frozen, so blinding depends entirely on custody: any held-out output that reaches the physics track before PF-1 is frozen triggers the leak_rule (OUTPUTS_SEEN for the affected conditions). Neither option lets a held-out output be used to select, tune or rerun a prediction.",
   "hash_lock": "no score-bearing run and no PF-1 run before LOCK-H1; any change after LOCK-H1 is a new dated addendum, never an edit (as prereg/p5_n2_prereg_lock_v1.json)",
   "planned_lock_location": "PROPOSED (VP-15): docs/validation/hall_transport_v2_prereg/lock/ (not created by this draft)"
  },
  "run_count_formula": {
-  "mandatory_vacuum_predictions": "9 candidates x 4 mandatory chemistry x N_cond (F1 + F2 enumerated at LOCK-1)",
+  "mandatory_vacuum_predictions": "9 candidates x 4 mandatory chemistry x N_cond (F1 + F2 grid enumerated at LOCK-H1 from the LOCK-1 setpoints)",
   "u_reg_runs": "9 x 4 x N_cond x 2 x N_reg (N_reg registration inputs perturbed)",
   "staged": "9 x N_cond per staged sensitivity (5 configs), escalations when triggered",
   "facility_secondary": "9 x 4 x N_cond_F7",
-  "N_cond": "TBD - requires LOCK-1 (lane 25 T-KNEE-LEVELS and operating points) and W1 test points",
+  "N_cond": "TBD - enumerated at LOCK-H1; requires the LOCK-1 setpoints (lane 25 T-KNEE-LEVELS and operating points) and W1 test points",
   "note": "no run is performed by this draft; CPU budget and scheduling are a later lane's concern"
  },
  "forecast_risk": {
-  "chemistry_domain": "In P5-N2 v1, 66 % of run-readings were OUT_OF_DOMAIN (chemistry T_e > 30 eV; CLAUDE.md gate 3). If H-1 discharges reach similar electron temperatures, every candidate may again be INCONCLUSIVE regardless of data. PF-1 reveals this before any data exist.",
+  "chemistry_domain": "In P5-N2 v1, 66 % of run-readings were OUT_OF_DOMAIN (chemistry T_e > 30 eV; CLAUDE.md gate 3). If H-1 discharges reach similar electron temperatures, every candidate may again be INCONCLUSIVE regardless of data. A data-free blind state envelope run before LOCK-H1 on the W3 design geometry and design (computed) B(z), not on released S1a inputs (not PF-1, not score-bearing), reveals this before any data exist.",
   "legitimate_response": "PROPOSED (VP-09): the owner may, BEFORE LOCK-H1 and without any data, add held-out conditions chosen from the blind state envelope of the candidates (e.g. conditions where the pre-data blind runs stay inside the domain). Choosing conditions from data-free model output is experimental design, not tuning. Relaxing f_out or the 45 eV cap is not a legitimate response."
  },
  "owner_decisions": [
   {"id": "VP-01", "question": "Classify B(z) and the feed state as registration inputs (not held-out targets)?", "PROPOSED": "yes; B(z)-vs-magnetic-circuit reported as a magnetics consistency check"},
-  {"id": "VP-02", "question": "I_d tolerance form and eps_Id", "PROPOSED": "form in C-ID; eps_Id is an owner value. Option: 0.15, the project's pre-registered blind I_d scale (not derived from H-1 uncertainty); it may only be widened by k x combined uncertainty, never tightened or widened after data"},
+  {"id": "VP-02", "question": "I_d tolerance form and eps_Id", "PROPOSED": "form in C-ID; eps_Id is an owner value. Option: 0.15, the project's pre-registered blind I_d scale (transport_ensemble_v0.json admission_rule, the 15 % blind criterion of the P5-Xe selection record). Importing it is a CONVENTION, not evidence: it is not derived from H-1 uncertainty and no P5 value is a tolerance source here. It may only be widened by k x combined uncertainty, never tightened or widened after data"},
   {"id": "VP-03", "question": "Primary mode: vacuum simulation vs raw targets with facility admissibility (TH-FAC)", "PROPOSED": "yes; TH-FAC value PROPOSED - owner value; alternative: facility mode primary with ingestion parameters as recorded assumptions"},
   {"id": "VP-04", "question": "Thrust observation operator: measured f_div per reading (REG-DIV)", "PROPOSED": "yes; alternative: compare T_1D with T_exp / f_div,measured (algebraically equivalent; uncertainty propagation differs)"},
   {"id": "VP-05", "question": "Oscillation class gating or non-gating", "PROPOSED": "non-gating in this campaign; the quiet-regime match was part of Xe selection, so it is informative"},
@@ -288,7 +290,10 @@
   {"id": "VP-13", "question": "Coverage factor k for C-ID / C-T", "PROPOSED": "2 - owner value"},
   {"id": "VP-14", "question": "Custodian designation and release log location", "PROPOSED": "owner designates; log beside the lock"},
   {"id": "VP-15", "question": "Lock location", "PROPOSED": "docs/validation/hall_transport_v2_prereg/lock/"},
-  {"id": "VP-16", "question": "O4-equivalent escalation fractions", "PROPOSED": "0.5 x tolerance for I_d and T (v1 structure) - owner value"}
+  {"id": "VP-16", "question": "O4-equivalent escalation fractions", "PROPOSED": "0.5 x tolerance for I_d and T (v1 structure) - owner value"},
+  {"id": "VP-17", "question": "PF-1 freeze point: hold S1b until PF-1 is frozen (HOLD_S1B), or freeze PF-1 before any held-out output is released to the physics track (RELEASE_GATED)", "PROPOSED": "RELEASE_GATED: same blinding through custody without putting a Julia campaign of order v1 size on the hardware critical path; HOLD_S1B is the stricter alternative (predictions exist before the measurements), at a schedule cost. Late-PF-1 fallback in K3."},
+  {"id": "VP-18", "question": "Reference I_d for model sustainment in C-SUST case (b)", "PROPOSED": "C-SUST model_sustained_definition (data-free PF-1 reference at the highest-flow scan level); alternative: absolute threshold fixed at LOCK-H1"},
+  {"id": "VP-19", "question": "Scoring of the F1 knee scan when H-1 shows hysteresis", "PROPOSED": "F1 direction_rule: HYSTERETIC level not scored (neither FAIL nor pass), reported as non-gating diagnostic; alternative: non-admissible target"}
  ],
  "thresholds": [
   {"id": "TH-RFP-T-MIN", "value": 12, "unit": "mN", "status": "RFP", "source": "CLAUDE.md RFP envelope 12-25 mN", "role": "context only (absolute gate belongs to W2/lane 25, not to this validation)"},
@@ -297,7 +302,7 @@
   {"id": "TH-FOUT", "value": 1e-12, "unit": "fraction", "status": "PRE_REGISTERED_PROJECT_RULE", "source": "hallthruster_bridge/prereg/p5_n2_run_status_rule_v1.json chemistry_trust_rule", "role": "chemistry domain; not relaxed"},
   {"id": "TH-DOMAIN", "value": 45, "unit": "eV mean energy (T_e 30 eV)", "status": "PRE_REGISTERED_PROJECT_RULE", "source": "PINNED.toml [reaction_set].domain; QUESTION_A_DISPOSITION A-NO", "role": "chemistry domain; not widened"},
   {"id": "TH-PRIOR-A", "value": 0.0625, "unit": "anom_scale (1/16)", "status": "PRE_REGISTERED_PROJECT_RULE", "source": "transport_ensemble_v0.json admission_rule", "role": "physical prior"},
-  {"id": "TH-EPS-ID", "value": "TBD", "unit": "relative", "status": "PROPOSED", "source": "owner (VP-02)", "role": "C-ID"},
+  {"id": "TH-EPS-ID", "value": "TBD", "unit": "relative", "status": "PROPOSED", "source": "owner (VP-02)", "role": "C-ID", "option_value": 0.15, "option_source": "hallthruster_bridge/ensemble/transport_ensemble_v0.json admission_rule (pre-registered 15 % blind I_d criterion); imported as a convention only, not evidence and not derived from H-1 uncertainty"},
   {"id": "TH-K", "value": 2, "unit": "coverage factor", "status": "PROPOSED", "source": "owner (VP-13)", "role": "C-ID, C-T"},
   {"id": "TH-U-EXP", "value": "TBD_FROM_INSTRUMENTATION", "unit": "per observable", "status": "TBD_FROM_INSTRUMENTATION", "source": "W4 audit", "role": "C-ID, C-T, C-DIAG"},
   {"id": "TH-FAC", "value": "TBD", "unit": "fraction of tolerance", "status": "PROPOSED", "source": "owner (VP-03)", "role": "target admissibility"},
@@ -310,6 +315,7 @@
   {"value": "9 screening candidates", "source": "transport_ensemble_v0.json screening_candidates", "class": "project record"},
   {"value": "66 % of run-readings OUT_OF_DOMAIN in P5-N2 v1", "source": "CLAUDE.md gate status (gate 3)", "class": "project record (context only, not evidence here)"},
   {"value": "1080 vacuum runs in P5-N2 v1", "source": "CLAUDE.md gate status", "class": "project record (context only)"},
+  {"value": "0.15 (eps_Id option, VP-02)", "source": "hallthruster_bridge/ensemble/transport_ensemble_v0.json admission_rule: pre-registered 15 % blind I_d criterion", "class": "project record (convention option only, not evidence)"},
   {"value": "5 knee-scan levels", "source": "lane 25 T-KNEE-LEVELS (PROPOSED there)", "class": "assumed (proposed design value)"},
   {"value": "sha256 digests", "source": "pin_inputs.py (deterministic)", "class": "model-derived (computed)"}
  ]
