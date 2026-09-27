@@ -1,0 +1,2580 @@
+{
+ "schema": "ao_lifetime_register_v1",
+ "schema_file": "docs/experiments/lifetime_ao/ao_lifetime_register_v1.schema.json",
+ "id": "fo_ao_lifetime_register",
+ "title": "H-1 lifetime / atomic-oxygen degradation register and witness / coupon / metrology provisions",
+ "status": "DRAFT_FOR_OWNER_REVIEW",
+ "date": "2026-09-27",
+ "lane": {
+  "id": "fo_ao_lifetime_register",
+  "trigger": "T_PIVOT_AO_LIFETIME_REGISTER",
+  "owner_disposition": "od_hardware_pivot",
+  "directive": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json execution_directive_2026_09_27",
+  "controls": [
+   "C1",
+   "C4",
+   "C5",
+   "C6"
+  ]
+ },
+ "builder": "docs/experiments/lifetime_ao/build_ao_lifetime_register.py",
+ "milestones": {
+  "supports": [
+   "A",
+   "C"
+  ],
+  "A": "Supplies the life/AO conditions a CONDITIONAL_BASELINE(X) must carry (all common-mode, so they do not discriminate hall_only / rf_hall / ecr_hall): (1) anode material/design whose oxidation on the delivered composition does not change the discharge over the firing life (AOL-M01); (2) wall grade N/O erosion life demonstrated (AOL-M02/M03); (3) C-1 tolerance of the measured cathode-region exposure (AOL-M04/M05); (4) exterior materials compatible with the mission AO fluence (AOL-M09). It eliminates nothing.",
+  "B": "Not a performance input. Wall/erosion evidence stays evidence-only until an admitted closure exists (credible set empty) or H-1 near-wall data exist.",
+  "C": "Defines the witness / replaceable-part / metrology provisions without which no H-1 life evidence can be produced for the PDR life closure (G4_firing_life, P2_cathode).",
+  "to_reach_next": [
+   "owner review of this DRAFT and of AOL-OQ-01..06",
+   "W3 and W4 adopt the interface-table rows before W3 merges (control C5 integration check)",
+   "LOCK-1: facility and metrology-lab choice; coupon positions frozen",
+   "S1: baselines (AOL-PM-01) and first exposure data; LOCK-2 sets AOL-PT-02/03",
+   "C: pre-registered endurance segment (AOL-LF-02) plus AOL-EX-01..03 results"
+  ]
+ },
+ "hard_statements": [
+  "DRAFT for owner review. Every requirement is PROPOSED; every threshold not in the RFP is PROPOSED.",
+  "No life number for H-1 exists. Life entries are literature on another device (labelled, not transferred as a verdict) or TBD (control C6). No 15,000 h extrapolation is made from any Hall closure; the credible set is empty.",
+  "No Hall map, screening candidate (sgb-screen-*), unadmitted closure or withdrawn 0-D number is used anywhere.",
+  "Witness and metrology data are not model-promotion evidence until the W5 pre-registration is frozen (execution directive data_rule); the same data never both select and validate a closure (control C1).",
+  "Nothing here is a design variable of the intake, compressor, gas chambers or valves; Hall-closure uncertainty does not leak upstream.",
+  "No architecture is ranked or eliminated: every mechanism is common-mode except AOL-M10 (module-specific, monitored).",
+  "Nothing is wired into archengine or any abep_sim module; goldens are untouched."
+ ],
+ "vocabulary": {
+  "evidence_class": [
+   "measured",
+   "digitized",
+   "inferred",
+   "reconstructed",
+   "model-derived",
+   "assumed"
+  ],
+  "evidence_level": "1-7 per docs/EVIDENCE.md (source strength and proximity)",
+  "life_number_status": [
+   "measured_vyovrinda_hardware",
+   "literature_other_device",
+   "TBD"
+  ],
+  "verification_method": {
+   "I": "inspection",
+   "A": "analysis",
+   "D": "demonstration",
+   "T": "test"
+  },
+  "merge_action": {
+   "ADD": "new item in the adopting register",
+   "AMEND": "extend an existing item",
+   "ALIGN": "already covered; cross-reference only",
+   "OWNER_DECISION": "needs an owner decision before adoption"
+  }
+ },
+ "sources": {
+  "ANDREUSSI2022": {
+   "citation": "T. Andreussi, E. Ferrato, V. Giannetti, 'A review of air-breathing electric propulsion: from mission studies to technology verification', J. Electr. Propuls. 1:31 (2022)",
+   "doi": "10.1007/s44205-022-00024-9",
+   "urls_accessed": [
+    "https://link.springer.com/content/pdf/10.1007/s44205-022-00024-9.pdf"
+   ],
+   "access": "open_full_text",
+   "license": "CC BY 4.0",
+   "sha256_of_accessed_file": "490ca6f6b763fe4ee1089d9815d4075a94223ec74d577f61d67986708c3ce3b7",
+   "accessed_on": "2026-09-27",
+   "note": "Springer copy (57 pages; locators 'Page N of 57'). lane HSUS recorded the IRIS copy (sha256 092befad...), same article, different bytes. Review: evidence level 5 for what it reports second-hand."
+  },
+  "CIFALI2011": {
+   "citation": "G. Cifali, T. Misuri, P. Rossetti, M. Andrenucci, D. Valentian, D. Feili, B. Lotz, 'Experimental characterization of HET and RIT with atmospheric propellants', IEPC-2011-224 (2011)",
+   "doi": null,
+   "urls_accessed": [
+    "https://electricrocket.org/IEPC/IEPC-2011-224.pdf"
+   ],
+   "access": "open_full_text",
+   "license": "ERPS (open repository)",
+   "sha256_of_accessed_file": "44b0fc265f35bbf707b1d99f8cbbdcf938aef48831ad28f97350550803254d11",
+   "accessed_on": "2026-09-27",
+   "note": "same bytes as recorded by lane HSUS (docs/evidence/hall_sustainment/). Page locators are the printed page numbers."
+  },
+  "CIFALI2012": {
+   "citation": "G. Cifali et al., 'Completion of HET and RIT characterization with atmospheric propellants', Space Propulsion 2012, SP2012-2355386 (as identified by lane HSUS; ANDREUSSI2022 ref. [97])",
+   "doi": null,
+   "urls_accessed": [],
+   "access": "not_accessed",
+   "license": "unknown",
+   "sha256_of_accessed_file": null,
+   "accessed_on": null,
+   "note": "primary of the 314 h endurance result; not located openly. Content used only as reported by ANDREUSSI2022 Page 24 of 57. Acquisition candidate for the closed-access list (control C4)."
+  },
+  "DEGROH2006": {
+   "citation": "K. K. de Groh, B. A. Banks, C. E. McCarthy, R. N. Rucker, L. M. Roberts, L. A. Berger, 'MISSE PEACE Polymers Atomic Oxygen Erosion Results', NASA/TM-2006-214482 (November 2006)",
+   "doi": null,
+   "urls_accessed": [
+    "https://ntrs.nasa.gov/api/citations/20070002707/downloads/20070002707.pdf"
+   ],
+   "access": "open_full_text",
+   "license": "NASA technical report (NTRS, public)",
+   "sha256_of_accessed_file": "e3111dafbf5a34567581c6d3dbf5cba99fe2f4429fdd3166516a05551b546564",
+   "accessed_on": "2026-09-27",
+   "note": "Locators are the printed page numbers ('NASA/TM-2006-214482 N'). Flight: MISSE 2 PEC 2 tray 1 (E5) on the ISS exterior, installed 16 Aug 2001, nearly 4 years (pp. 1, 9); mission planning assumed a 400 km circular orbit at 51.6 deg (p. 5). Exposure included solar and charged-particle radiation (p. 16). The accessed text does not state the AO impact energy."
+  }
+ },
+ "repository_references": {
+  "od_hardware_pivot": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+  "evidence_policy": "docs/EVIDENCE.md",
+  "hall_sustainment_matrix": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
+  "wall_life_db": "docs/evidence/wall_life/sputter_yield_db_v1.json",
+  "wall_life_md": "docs/evidence/wall_life/WALL_LIFE_EVIDENCE.md",
+  "cathode_dossier": "docs/evidence/cathode/cathode_evidence_v1.json",
+  "cathode_dossier_md": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+  "cathode_integration": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+  "thermal_life_framework": "docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md",
+  "thermal_life_limits": "schemas/thermal_life/limits_v1.json",
+  "thermal_life_inputs": "schemas/thermal_life/inputs_v1.json",
+  "veto_layer": "docs/architecture_comparison/veto_layer/veto_layer_v1.json",
+  "hard_gates": "docs/architecture_comparison/hard_gates/HARD_GATES.md",
+  "hallmap_spec": "docs/hallmap/HALLMAP_PRODUCTION_SPEC.md",
+  "hallmap_provenance_schema": "schemas/hallmap/hallmap_provenance_v1.json",
+  "atmosphere_frozen": "abep_sim/data/atmosphere_msis21_v1.csv"
+ },
+ "planned_paths_not_read": {
+  "W1_feed_state_closure": "docs/architecture_comparison/feed_state_closure/",
+  "W2_lock1": "docs/architecture_comparison/lock1/",
+  "W3_hardware_definition": "docs/experiments/hardware/",
+  "W4_instrumentation": "docs/experiments/instrumentation/",
+  "W5_validation_prereg": "docs/validation/hall_transport_v2_prereg/",
+  "W7_o_o2_chemistry": "docs/chemistry/o_o2/v0/",
+  "fo_magnet_coil_qualification": "planned path not published at this base (lane registry title only)",
+  "fo_hallmap_schema_v2_registry": "planned path not published at this base (lane registry title only)",
+  "fo_s1_readiness_gate": "planned path not published at this base (lane registry title only)"
+ },
+ "mechanisms": [
+  {
+   "id": "AOL-M01",
+   "title": "Anode / gas-distributor oxidation",
+   "components": [
+    "H-1 anode",
+    "H-1 gas distributor"
+   ],
+   "species": [
+    "O2",
+    "O",
+    "O+ / O2+ (near-anode, if present)",
+    "NO/NOx (TBD)"
+   ],
+   "energy_regime": "thermal_neutral_internal",
+   "energy_statement": "Chemical oxidation by the O-bearing anode feed and discharge-produced atomic O at the anode temperature (TBD - requires H-1 thermal design / S1 anode thermocouple, W3 HW-H1-07). Ion bombardment of the anode is not identified as the driver in any accessed source.",
+   "degradation_mode": "oxide growth on the anode surface; rising electrical (contact) resistance; anomalous discharge behaviour and spontaneous flame-outs in the one recorded endurance test",
+   "measurable_quantities": [
+    "anode mass change (pre/post, dehydrated protocol)",
+    "oxide thickness and composition (SEM cross-section, EDS, XPS)",
+    "anode-to-terminal electrical resistance (4-wire, pre/post and in situ if designed in)",
+    "flame-out count and time stamps; I_d oscillation statistics during O-bearing operation",
+    "anode temperature during firing",
+    "visual / photographic state at each inspection (borescope if in situ)"
+   ],
+   "evidence": [
+    {
+     "statement": "After a 10 h N2/O2 firing of the PPS1350-TSD the anode 'seems rusty', explained by reaction with oxygen; 'with respect to a future endurance test the anode oxidation with the consequent increase in electrical resistance is the main concern'.",
+     "source_id": "CIFALI2011",
+     "locator": "p. 5",
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "value": 10,
+     "unit": "h (test duration)",
+     "applicability": "PPS1350-TSD, 305 V, 2.75 mg/s 1.27N2 + O2, Xe start and Xe cathode, facility-fed, 10 h; visual inspection only (qualitative)",
+     "verified_by_this_lane": true,
+     "transfer": "literature on another device or environment: recorded, NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "'In order to limit anode oxidation', the planned pure-O2 test of the PPS1350-TSD was replaced by the 1.27N2 + O2 mixture.",
+     "source_id": "CIFALI2011",
+     "locator": "p. 2",
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "test-planning statement (no oxidation measurement)",
+     "verified_by_this_lane": true,
+     "transfer": "literature on another device or environment: recorded, NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "PPS1350 on N2/O2 + 10 % Xe mass flow, 305 V, 2.75 mg/s: steady for 'about 314 hours' at 3.8-4 A; then 'severe oxidation of the anode produced anomalous discharge behavior and a spontaneous flame-out' and a refurbishment (cleaning); 'in the subsequent 75 hrs of firing several flame-outs occurred likely linked to the oxidation of the anode surface and the test was prematurely stopped'. The authors suggest oxidation-resistant anode materials.",
+     "source_id": "ANDREUSSI2022",
+     "locator": "Page 24 of 57 (citing ref. [97], CIFALI2012)",
+     "evidence_level": 5,
+     "evidence_class": "measured",
+     "value": 314,
+     "unit": "h (steady duration before first flame-out)",
+     "applicability": "PPS1350 (flight-type SPT, not H-1), 10 % Xe in the anode flow, facility-fed, Xe start; second-hand (primary CIFALI2012 not accessed); anode material not stated in the accessed text",
+     "verified_by_this_lane": true,
+     "transfer": "literature on another device or environment: recorded, NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "Same datum recorded as hall-sustainment E07 and veto-layer RI-LIFE-HALL-ANODE-OXIDATION; W3 draft HW-H1-05 already requires anode inspection after O-bearing operation.",
+     "source_id": "REPO",
+     "repo_path": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
+     "locator": "entries[E07]",
+     "evidence_level": 5,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "as stated by the referenced lane",
+     "verified_by_this_lane": false,
+     "transfer": "referenced lane record; NOT transferred to H-1 as a verdict"
+    }
+   ],
+   "evidence_status": "OTHER_DEVICE_LITERATURE",
+   "life_number": {
+    "status": "literature_other_device",
+    "statement": "~314 h to first flame-out on a PPS1350 with 10 % Xe (second-hand). A duration on another device and feed; not an H-1 life and not extrapolated.",
+    "value": 314,
+    "unit": "h",
+    "source_id": "ANDREUSSI2022",
+    "locator": "Page 24 of 57",
+    "device": "PPS1350 (N2/O2 + 10 % Xe)",
+    "evidence_class": "measured",
+    "evidence_level": 5
+   },
+   "required_experiment": {
+    "ground_ao_source": "Anode-material coupons (H-1 anode material plus owner-selected oxidation-resistant candidates; no candidate is sourced here) exposed to O2 and to an atomic-O source at the anode temperature range (TBD, from S1): mass, oxide thickness, XPS, resistance (AOL-EX-02).",
+    "in_thruster_witness": "Replaceable, serialized anode with baseline metrology (AOL-RC-01); anode-material witness coupons at the distributor outlet region if the design allows without changing the flow path (AOL-WC-02); in-situ resistance lead (AOL-RC-02); flame-out logging (AOL-CX-06, AOL-DC-02).",
+    "post_test_metrology": "AOL-PM-01, AOL-PM-02, AOL-PM-04, AOL-PM-06"
+   },
+   "architecture_scope": "common_mode (the anode is part of the common H-1); a pre-ionizer may change the atomic-O share reaching the anode (W7 / lane 19 note) - TBD, measured per arm by AOL-WC-05",
+   "cross_refs": [
+    "RI-LIFE-HALL-ANODE-OXIDATION",
+    "hall-sustainment E06, E07",
+    "W3 draft HW-H1-05"
+   ],
+   "linked_requirements": [
+    "AOL-RC-01",
+    "AOL-RC-02",
+    "AOL-WC-02",
+    "AOL-WC-05",
+    "AOL-CX-06",
+    "AOL-PM-01",
+    "AOL-PM-02",
+    "AOL-PM-04",
+    "AOL-PM-06",
+    "AOL-EX-02",
+    "AOL-DC-02"
+   ]
+  },
+  {
+   "id": "AOL-M02",
+   "title": "Channel-wall physical sputtering by N+, N2+, O+, O2+ and Xe+ (incl. multiply charged)",
+   "components": [
+    "H-1 channel walls (BN, BN-SiO2 or alternative grade; owner decision)",
+    "exit-region chamfers"
+   ],
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+",
+    "Xe+ (start / transition / reference points)",
+    "N2+ / N++ / O++ (TBD)"
+   ],
+   "energy_regime": "sheath_accelerated_ions",
+   "energy_statement": "Wall impact energy = sheath drop plus the ion's axial energy and angle; the solver's WallSheath value Z*phi_s + T_e/2 omits both and is not a validated erosion input (lane 32 use restriction 1). Lane 32 proposes coupon tests at 20-300 eV, 0-85 deg (H1). H-1 values: TBD - requires near-wall diagnostics (lane 32 H7) or an ADMITTED closure.",
+   "degradation_mode": "wall recession profile, exit chamfer growth, eventual pole-piece exposure",
+   "measurable_quantities": [
+    "wall erosion profile (contact or optical profilometry / laser scan against fiducials) at every stage",
+    "wall-ring mass change (dehydrated protocol; BN is hygroscopic-sensitive: moisture uptake flagged by lane 32 SURFACE_STATE)",
+    "surface roughness and grain detachment (SEM)",
+    "wall temperature map"
+   ],
+   "evidence": [
+    {
+     "statement": "No measured N+, N2+, O+ or O2+ sputter yield on BN, BN-SiO2 or SiC was located; Xe+ on BN differs up to 11.8x between laboratories; thresholds are not identified; any N/O lookup on the primary wall materials is OUT_OF_DOMAIN -> NOT_DEMONSTRATED.",
+     "source_id": "REPO",
+     "repo_path": "docs/evidence/wall_life/WALL_LIFE_EVIDENCE.md",
+     "locator": "sections 1-3, 6, 6a",
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "as stated by the referenced lane",
+     "verified_by_this_lane": false,
+     "transfer": "referenced lane record; NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "PPS1350 on N2/O2 + 10 % Xe: 'the ceramic erosion was still compatible with a 7000-9500 hrs lifetime' (authors' estimate; method not given in the review).",
+     "source_id": "ANDREUSSI2022",
+     "locator": "Page 24 of 57",
+     "evidence_level": 5,
+     "evidence_class": "model-derived",
+     "value": [
+      7000,
+      9500
+     ],
+     "unit": "h",
+     "applicability": "PPS1350, 10 % Xe, second-hand; wear-model extrapolation of unknown method",
+     "verified_by_this_lane": true,
+     "transfer": "literature on another device or environment: recorded, NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "Counter-indicator: magnetically shielded SITAEL HT5k DM2 on N2/O2, shielding 'seems effective', no critical damage after a cumulative 10 h air test (qualitative).",
+     "source_id": "REPO",
+     "repo_path": "docs/architecture_comparison/veto_layer/veto_layer_v1.json",
+     "locator": "RI-LIFE-HALL-SHIELDED-COUNTER",
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "as stated by the referenced lane",
+     "verified_by_this_lane": false,
+     "transfer": "referenced lane record; NOT transferred to H-1 as a verdict"
+    }
+   ],
+   "evidence_status": "NO_N_O_EVIDENCE_ON_WALL_GRADES",
+   "life_number": {
+    "status": "literature_other_device",
+    "statement": "7000-9500 h authors' erosion-compatible estimate on a PPS1350 (second-hand, model-derived). Not an H-1 life; lane 24 basis engineering_estimate, never verdict-bearing. H-1 wall life: TBD - requires measured N/O yields on the H-1 grade plus a measured H-1 erosion profile (no admitted closure exists).",
+    "value": [
+     7000,
+     9500
+    ],
+    "unit": "h",
+    "source_id": "ANDREUSSI2022",
+    "locator": "Page 24 of 57",
+    "device": "PPS1350 (N2/O2 + 10 % Xe)",
+    "evidence_class": "model-derived",
+    "evidence_level": 5
+   },
+   "required_experiment": {
+    "ground_ao_source": "Not an AO-source test: ion-beam coupons of the H-1 wall grade with N+, N2+, O+, O2+ (lane 32 H1-H3, H5, H8) in a coupon facility; ground-AO source only for the combined chemistry case (AOL-M03).",
+    "in_thruster_witness": "Replaceable exit-region wall rings with fiducials (AOL-RC-03); owner-optional sector inserts of alternative grades (AOL-RC-04); wall thermocouples (AOL-CX-07).",
+    "post_test_metrology": "AOL-PM-01, AOL-PM-03, AOL-PM-04, AOL-PM-02"
+   },
+   "architecture_scope": "common_mode (wall is common); pre-ionization may change the species/energy mix at the wall (veto layer TR-16) - measured, never assumed",
+   "cross_refs": [
+    "RI-LIFE-HALL-CHANNEL-AIR-EROSION",
+    "RI-LIFE-HALL-SHIELDED-COUNTER",
+    "RI-LIFE-SCALE-WALL-FLUX",
+    "lane 32 H1-H9, G1-G11",
+    "W3 draft HW-H1-04"
+   ],
+   "linked_requirements": [
+    "AOL-RC-03",
+    "AOL-RC-04",
+    "AOL-CX-07",
+    "AOL-PM-01",
+    "AOL-PM-02",
+    "AOL-PM-03",
+    "AOL-PM-04",
+    "AOL-LF-01"
+   ]
+  },
+  {
+   "id": "AOL-M03",
+   "title": "Channel-wall chemical erosion / oxidation and N implantation (O, O+, N, N+ on B, Si, C constituents)",
+   "components": [
+    "H-1 channel walls"
+   ],
+   "species": [
+    "O",
+    "O+",
+    "O2",
+    "N",
+    "N+"
+   ],
+   "energy_regime": "mixed_thermal_and_sheath_ions",
+   "energy_statement": "Thermal neutrals at wall temperature plus sheath-accelerated ions; wall temperature TBD (S1). The manufacturer oxidizing-atmosphere use limit recorded by lane 15 for HeBoSint BN grades (~900 degC, datasheet guide value, no plasma / AO coverage) is context only.",
+   "degradation_mode": "B2O3 / SiO2 surface layer formation, volatilization, altered sputter yield and SEE yield",
+   "measurable_quantities": [
+    "surface composition (XPS) and depth profile",
+    "oxide layer morphology (SEM/EDS)",
+    "wall temperature",
+    "SEE yield before/after exposure (lane 32 H9)"
+   ],
+   "evidence": [
+    {
+     "statement": "Reactive chemistry is outside every yield entry; O oxidizes B (B2O3), Si and C; physical-sputtering yields cannot bound N/O erosion from either side. O on B vs O on B2O3 (TRIM.SP proxies) differ ~20x at 150 eV.",
+     "source_id": "REPO",
+     "repo_path": "docs/evidence/wall_life/WALL_LIFE_EVIDENCE.md",
+     "locator": "section 3, section 5",
+     "evidence_level": 4,
+     "evidence_class": "model-derived",
+     "value": null,
+     "unit": null,
+     "applicability": "as stated by the referenced lane",
+     "verified_by_this_lane": false,
+     "transfer": "referenced lane record; NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "After the 10 h N2/O2 PPS1350-TSD test, 'the signs of operation with oxygen are also visible on the ceramics'.",
+     "source_id": "CIFALI2011",
+     "locator": "p. 5",
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "visual only, 10 h",
+     "verified_by_this_lane": true,
+     "transfer": "literature on another device or environment: recorded, NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "HeBoSint BN grades: 'Use Temperature max.' ~900 degC in oxidizing atmosphere (manufacturer guide value; does not cover plasma bombardment or atomic oxygen).",
+     "source_id": "REPO",
+     "repo_path": "schemas/thermal_life/limits_v1.json",
+     "locator": "records bn_hebosint_*",
+     "evidence_level": 5,
+     "evidence_class": "assumed",
+     "value": null,
+     "unit": null,
+     "applicability": "as stated by the referenced lane",
+     "verified_by_this_lane": false,
+     "transfer": "referenced lane record; NOT transferred to H-1 as a verdict"
+    }
+   ],
+   "evidence_status": "QUALITATIVE_OBSERVATION_ONLY",
+   "life_number": {
+    "status": "TBD",
+    "statement": "TBD - requires lane 32 H4 (combined ion + atomic-O + N2 exposure at 30-600 degC with XPS/SEM) and the H-1 witness rings.",
+    "value": null,
+    "unit": null,
+    "source_id": null,
+    "locator": null,
+    "device": null,
+    "evidence_class": null,
+    "evidence_level": null
+   },
+   "required_experiment": {
+    "ground_ao_source": "Wall-grade coupons in a combined ion + atomic-O facility at wall temperature (lane 32 H4; AOL-EX-02).",
+    "in_thruster_witness": "Exit-region rings (AOL-RC-03) and near-exit wall-grade coupons (AOL-WC-01).",
+    "post_test_metrology": "AOL-PM-04 (XPS depth profile, SEM/EDS), AOL-PM-07 (SEE yield, if facility allows)"
+   },
+   "architecture_scope": "common_mode",
+   "cross_refs": [
+    "lane 32 H4, H9",
+    "fo_hallmap_schema_v2_registry (SEE yield field)"
+   ],
+   "linked_requirements": [
+    "AOL-RC-03",
+    "AOL-WC-01",
+    "AOL-PM-04",
+    "AOL-PM-07",
+    "AOL-EX-02"
+   ]
+  },
+  {
+   "id": "AOL-M04",
+   "title": "Cathode emitter poisoning by O / O2 / H2O (LaB6 baseline; BaO-W, C12A7 alternatives)",
+   "components": [
+    "C-1 emitter (insert)",
+    "C-1 orifice"
+   ],
+   "species": [
+    "O2",
+    "O",
+    "H2O",
+    "N2 / N (effect unknown)"
+   ],
+   "energy_regime": "thermal_neutral_internal",
+   "energy_statement": "Neutral back-flow from the plume and facility background to the hot emitter; emitter-region O partial pressure TBD - not measurable directly (lane 10 G02; W3 draft HW-C1-03).",
+   "degradation_mode": "work-function rise, higher emitter temperature or heater power needed, ignition failure, plume-mode growth (and hence Xe consumption, lane 19)",
+   "measurable_quantities": [
+    "keeper voltage and coupling voltage at a fixed Xe reference condition (daily)",
+    "heater power and time-to-ignition at every start",
+    "emitter temperature (pyrometer or thermocouple, if designed in)",
+    "RGA partial pressures near the cathode",
+    "post-test insert surface composition (XPS/EDS)"
+   ],
+   "evidence": [
+    {
+     "statement": "LaB6: O2 at ~1e-5 Torr degrades emission below 1440 degC; tolerates up to 1e-4 Torr at 1570 degC (textbook statement of diode tests). BaO-W: ~1e-7 Torr O2 fully poisons at 1100 degC. No atomic-O or N2 data for either.",
+     "source_id": "REPO",
+     "repo_path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "locator": "sections 3.1, 3.2, U03-U05",
+     "evidence_level": 5,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "as stated by the referenced lane",
+     "verified_by_this_lane": false,
+     "transfer": "referenced lane record; NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "HC20h hollow cathode (LaB6 emitter) characterized with N2 and N2/O2 mixtures (AETHER): 8-20 A on N2; after the atmospheric-mixture test, 'severe erosion and embrittlement of the cathode tube and of some ceramic elements, suggesting the incompatibility of the HC20h design with oxygen propellant'.",
+     "source_id": "ANDREUSSI2022",
+     "locator": "Page 38 of 57",
+     "evidence_level": 5,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "cathode FED with the atmospheric mixture (not the Xe-fed C-1 baseline); second-hand review",
+     "verified_by_this_lane": true,
+     "transfer": "literature on another device or environment: recorded, NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "RAM-HET cathode (Kaufman & Robinson SHC 1000) could not be ignited after two days of N2/O2 testing; the accessed text does not attribute this to poisoning (IEPC-2017-377 pp. 7-8).",
+     "source_id": "REPO",
+     "repo_path": "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md",
+     "locator": "section 6",
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "as stated by the referenced lane",
+     "verified_by_this_lane": false,
+     "transfer": "referenced lane record; NOT transferred to H-1 as a verdict"
+    }
+   ],
+   "evidence_status": "OTHER_DEVICE_LITERATURE",
+   "life_number": {
+    "status": "TBD",
+    "statement": "TBD - requires lane 10 G02/G04 and the C-1 exposure log (AOL-CX-01..06). Xe-only vacuum life data (e.g. 27,800 h / 51,184 h BaO-W tests in lane 10) are another environment and are not transferred.",
+    "value": null,
+    "unit": null,
+    "source_id": null,
+    "locator": null,
+    "device": null,
+    "evidence_class": null,
+    "evidence_level": null
+   },
+   "required_experiment": {
+    "ground_ao_source": "Emitter coupons (LaB6 and, if kept as alternatives, BaO-W / C12A7) heated to operating temperature under controlled O2 and atomic-O partial pressure: emission, work function, recovery (lane 10 G02, G03; AOL-EX-03).",
+    "in_thruster_witness": "C-1 exposure monitoring AOL-CX-01..06; cathode-vicinity witness coupons AOL-WC-03.",
+    "post_test_metrology": "AOL-PM-05 (insert, orifice, keeper), AOL-PM-04"
+   },
+   "architecture_scope": "common_mode; a pre-ionizer may raise the atomic-O share of the back-flow (RI-LIFE-CATHODE-AIR-EXPOSURE architecture_modulation: TBD) - measured per arm",
+   "cross_refs": [
+    "RI-LIFE-CATHODE-AIR-EXPOSURE",
+    "lane 10 G02-G05, U03-U05",
+    "lane 19",
+    "W3 draft HW-C1-03"
+   ],
+   "linked_requirements": [
+    "AOL-CX-01",
+    "AOL-CX-02",
+    "AOL-CX-03",
+    "AOL-CX-04",
+    "AOL-CX-05",
+    "AOL-CX-06",
+    "AOL-WC-03",
+    "AOL-PM-04",
+    "AOL-PM-05",
+    "AOL-EX-03"
+   ]
+  },
+  {
+   "id": "AOL-M05",
+   "title": "Cathode keeper / orifice / tube erosion in an N/O plume",
+   "components": [
+    "C-1 keeper",
+    "C-1 orifice plate",
+    "C-1 cathode tube and ceramic insulators"
+   ],
+   "species": [
+    "N+",
+    "N2+",
+    "O+",
+    "O2+",
+    "Xe+",
+    "O (chemical)"
+   ],
+   "energy_regime": "plume_ions_backflow",
+   "energy_statement": "Ions accelerated by the keeper / cathode sheath and plume potential structure; energies TBD (RPA near the cathode if feasible, W4 draft INS-14).",
+   "degradation_mode": "keeper-face and orifice erosion, embrittlement, deposits",
+   "measurable_quantities": [
+    "orifice diameter and keeper-face profile (pre/post)",
+    "keeper mass",
+    "SEM/EDS of keeper and tube",
+    "keeper voltage trend"
+   ],
+   "evidence": [
+    {
+     "statement": "HC20h on N2/O2 mixtures: severe erosion and embrittlement of cathode tube and ceramic elements.",
+     "source_id": "ANDREUSSI2022",
+     "locator": "Page 38 of 57",
+     "evidence_level": 5,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "O-fed cathode; second-hand",
+     "verified_by_this_lane": true,
+     "transfer": "literature on another device or environment: recorded, NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "NSTAR ELT (Xe only): keeper fully eroded; test length 30,352 h (chapter text) / 30,152 h (figure caption), a source-internal inconsistency carried by lane 10 (U13).",
+     "source_id": "REPO",
+     "repo_path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "locator": "section 3.2",
+     "evidence_level": 5,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "as stated by the referenced lane",
+     "verified_by_this_lane": false,
+     "transfer": "referenced lane record; NOT transferred to H-1 as a verdict"
+    }
+   ],
+   "evidence_status": "OTHER_DEVICE_LITERATURE",
+   "life_number": {
+    "status": "TBD",
+    "statement": "TBD - requires lane 10 G04 wear test in a representative mixed-gas background.",
+    "value": null,
+    "unit": null,
+    "source_id": null,
+    "locator": null,
+    "device": null,
+    "evidence_class": null,
+    "evidence_level": null
+   },
+   "required_experiment": {
+    "ground_ao_source": "Keeper-material coupons in combined ion + O exposure (AOL-EX-02).",
+    "in_thruster_witness": "Keeper-material witness coupons near C-1 (AOL-WC-03); keeper voltage trend (AOL-CX-01).",
+    "post_test_metrology": "AOL-PM-05"
+   },
+   "architecture_scope": "common_mode",
+   "cross_refs": [
+    "lane 10 G04",
+    "W3 draft HW-C1-05"
+   ],
+   "linked_requirements": [
+    "AOL-WC-03",
+    "AOL-CX-01",
+    "AOL-PM-05",
+    "AOL-EX-02"
+   ]
+  },
+  {
+   "id": "AOL-M06",
+   "title": "Magnetic-circuit materials: oxidation, temperature and demagnetization",
+   "components": [
+    "pole pieces and magnetic core (soft-magnetic material TBD)",
+    "permanent magnets if used",
+    "coil windings"
+   ],
+   "species": [
+    "O",
+    "O2 (plume / back-flow neutrals)",
+    "N+ / O+ on exposed pole faces"
+   ],
+   "energy_regime": "mixed_thermal_and_sheath_ions",
+   "energy_statement": "Thermal neutral oxidation of exposed ferromagnetic surfaces; ion bombardment of pole faces if the plume reaches them; temperature-driven reversible/irreversible magnetic loss.",
+   "degradation_mode": "B(z) drift at constant coil current, pole-face oxidation / erosion, irreversible demagnetization of permanent magnets above the knee (lane 15 relation irreversible_loss_criterion)",
+   "measurable_quantities": [
+    "B(z) at recorded coil currents before/after every block series (W3 draft HW-MC-03)",
+    "fixed reference field sensor during firing (W3 draft HW-MC-04)",
+    "coil resistance / temperature",
+    "pole-face oxide (XPS/SEM) on witness coupons"
+   ],
+   "evidence": [
+    {
+     "statement": "Permanent-magnet reversible temperature coefficients (MMPA 0100-00, manufacturer datasheets) and the irreversible-loss criterion are recorded as grade/family typical values (level 5); they carry no oxidation data.",
+     "source_id": "REPO",
+     "repo_path": "schemas/thermal_life/limits_v1.json",
+     "locator": "records pm_*; relations irreversible_loss_criterion",
+     "evidence_level": 5,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "as stated by the referenced lane",
+     "verified_by_this_lane": false,
+     "transfer": "referenced lane record; NOT transferred to H-1 as a verdict"
+    }
+   ],
+   "evidence_status": "NO_EVIDENCE",
+   "life_number": {
+    "status": "TBD",
+    "statement": "TBD - requires fo_magnet_coil_qualification (actual candidate grades) and the H-1 B(z) drift record; no oxidation evidence for magnetic materials in an N/O plume was accessed by this lane.",
+    "value": null,
+    "unit": null,
+    "source_id": null,
+    "locator": null,
+    "device": null,
+    "evidence_class": null,
+    "evidence_level": null
+   },
+   "required_experiment": {
+    "ground_ao_source": "Pole-piece / magnet-grade coupons in O2 and atomic-O at the magnetic-circuit temperature (TBD, S1): mass, oxide, magnetic properties (AOL-EX-02).",
+    "in_thruster_witness": "Pole-material witness coupons at plume-exposed and shadowed positions (AOL-WC-04); B(z) drift monitoring (adopt W3 HW-MC-03/04).",
+    "post_test_metrology": "AOL-PM-08 (B(z) re-map, magnet inspection), AOL-PM-04"
+   },
+   "architecture_scope": "common_mode (MC-1 is common); an ECR arm adds its own ecr_magnet (module-specific)",
+   "cross_refs": [
+    "fo_magnet_coil_qualification",
+    "W3 draft HW-MC-03, HW-MC-04",
+    "lane 15 limits pm_*"
+   ],
+   "linked_requirements": [
+    "AOL-WC-04",
+    "AOL-PM-08",
+    "AOL-PM-04",
+    "AOL-EX-02"
+   ]
+  },
+  {
+   "id": "AOL-M07",
+   "title": "Electrical insulation: conductive deposits, oxidation and thermal ageing",
+   "components": [
+    "anode isolator ceramics",
+    "coil insulation",
+    "harness / connectors",
+    "cathode heater insulation"
+   ],
+   "species": [
+    "sputtered wall / module material (deposit)",
+    "O",
+    "O2"
+   ],
+   "energy_regime": "mixed_thermal_and_sheath_ions",
+   "energy_statement": "Deposition of sputter products (wall, keeper, pre-ionizer module) on insulating surfaces; oxidation at temperature; thermal class limits (IEC 60085, lane 15) for coil insulation.",
+   "degradation_mode": "leakage current, insulation-resistance drop, arcing",
+   "measurable_quantities": [
+    "insulation resistance (pre/post, and between blocks)",
+    "leakage current during firing (if the power topology allows)",
+    "deposit thickness / composition on insulator witness coupons (EDS)"
+   ],
+   "evidence": [
+    {
+     "statement": "AMPCAT microwave cathode on O2/N2: antenna erosion and MoOx deposition within ~1 h, mitigated by alumina isolation (another device; deposition in an O environment).",
+     "source_id": "REPO",
+     "repo_path": "docs/evidence/cathode/CATHODE_DOSSIER.md",
+     "locator": "section 3.5",
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "as stated by the referenced lane",
+     "verified_by_this_lane": false,
+     "transfer": "referenced lane record; NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "Only statements on RF-source erosion are a design claim and a review judgement; dielectric-tube erosion and O recombination over > 15,000 h are not addressed by any accessed measurement.",
+     "source_id": "REPO",
+     "repo_path": "docs/architecture_comparison/veto_layer/veto_layer_v1.json",
+     "locator": "RI-LIFE-RF-DIELECTRIC",
+     "evidence_level": 5,
+     "evidence_class": "assumed",
+     "value": null,
+     "unit": null,
+     "applicability": "as stated by the referenced lane",
+     "verified_by_this_lane": false,
+     "transfer": "referenced lane record; NOT transferred to H-1 as a verdict"
+    }
+   ],
+   "evidence_status": "NO_EVIDENCE",
+   "life_number": {
+    "status": "TBD",
+    "statement": "TBD - requires insulation-resistance trend and deposit metrology on H-1.",
+    "value": null,
+    "unit": null,
+    "source_id": null,
+    "locator": null,
+    "device": null,
+    "evidence_class": null,
+    "evidence_level": null
+   },
+   "required_experiment": {
+    "ground_ao_source": "Not primary; isolator material coupons may join AOL-EX-02.",
+    "in_thruster_witness": "Insulator-material witness coupons near the anode isolator and at the module interface (AOL-WC-05, AOL-WC-06).",
+    "post_test_metrology": "AOL-PM-06 (resistance), AOL-PM-04 (EDS of deposits)"
+   },
+   "architecture_scope": "common_mode plus module-specific deposits in rf_hall / ecr_hall",
+   "cross_refs": [
+    "RI-LIFE-RF-DIELECTRIC",
+    "W3 draft HW-PIM-10",
+    "lane 15 iec60085_thermal_classes"
+   ],
+   "linked_requirements": [
+    "AOL-WC-05",
+    "AOL-WC-06",
+    "AOL-PM-04",
+    "AOL-PM-06"
+   ]
+  },
+  {
+   "id": "AOL-M08",
+   "title": "Coatings and surface treatments (anode coatings, thermal-control finishes, emissivity change)",
+   "components": [
+    "anode (if coated)",
+    "thruster body / radiator finishes",
+    "MLI"
+   ],
+   "species": [
+    "O (internal and external)",
+    "deposits"
+   ],
+   "energy_regime": "mixed_thermal_and_ram",
+   "energy_statement": "Internal: discharge-produced O at component temperature. External: ram AO (AOL-M09 energy).",
+   "degradation_mode": "coating loss or conversion, changed emissivity / absorptance (thermal balance), changed electrical contact",
+   "measurable_quantities": [
+    "coating thickness / mass",
+    "hemispherical emissivity and solar absorptance (optical)",
+    "XPS of coating surface"
+   ],
+   "evidence": [
+    {
+     "statement": "Authors suggest 'alternative, oxidation-resistant anode materials could solve the observed lifetime issues' (suggestion; no material named or tested in the accessed text).",
+     "source_id": "ANDREUSSI2022",
+     "locator": "Page 24 of 57",
+     "evidence_level": 5,
+     "evidence_class": "assumed",
+     "value": null,
+     "unit": null,
+     "applicability": "authors' suggestion",
+     "verified_by_this_lane": true,
+     "transfer": "literature on another device or environment: recorded, NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "RIT10 (gridded ion engine): grid erosion after 10 h on pure O2 'noticeably higher' than after N2, 'likely due to chemical reactions ... between oxygen and the graphite'; titanium grids later showed much lower erosion.",
+     "source_id": "ANDREUSSI2022",
+     "locator": "Page 24 of 57",
+     "evidence_level": 5,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "ion-engine grids, another device class; qualitative material hint for carbon parts in O plasma",
+     "verified_by_this_lane": true,
+     "transfer": "literature on another device or environment: recorded, NOT transferred to H-1 as a verdict"
+    }
+   ],
+   "evidence_status": "NO_EVIDENCE",
+   "life_number": {
+    "status": "TBD",
+    "statement": "TBD - requires owner-selected coating/material candidates and AOL-EX-01/02.",
+    "value": null,
+    "unit": null,
+    "source_id": null,
+    "locator": null,
+    "device": null,
+    "evidence_class": null,
+    "evidence_level": null
+   },
+   "required_experiment": {
+    "ground_ao_source": "Coated / treated coupons alongside uncoated references with a Kapton H fluence witness (AOL-EX-01, AOL-EX-02).",
+    "in_thruster_witness": "Coated and uncoated coupon pairs in the same holder (AOL-WC-01, AOL-WC-02).",
+    "post_test_metrology": "AOL-PM-04, AOL-PM-09 (optical properties)"
+   },
+   "architecture_scope": "common_mode",
+   "cross_refs": [
+    "lane 15 thermal rejection ledger (emissivity inputs)"
+   ],
+   "linked_requirements": [
+    "AOL-WC-01",
+    "AOL-WC-02",
+    "AOL-EX-01",
+    "AOL-EX-02",
+    "AOL-PM-04",
+    "AOL-PM-09"
+   ]
+  },
+  {
+   "id": "AOL-M09",
+   "title": "External atomic-oxygen exposure of the thruster exterior in VLEO (ram AO)",
+   "components": [
+    "H-1 / C-1 exterior surfaces",
+    "MLI, harness, connectors",
+    "exposed polymer / graphite parts"
+   ],
+   "species": [
+    "O (ground-state atomic oxygen, ram)"
+   ],
+   "energy_regime": "thermal_neutral_ram_AO",
+   "energy_statement": "Ram impact energy E = 0.5 m_O V^2 (model-derived; values per altitude in derived.ao_environment.table E_ram_O_eV); thermal spread and co-rotation neglected.",
+   "degradation_mode": "polymer recession / mass loss, graphite erosion, metal oxidation, optical property change",
+   "measurable_quantities": [
+    "mass loss (dehydrated protocol)",
+    "recession depth (profilometry against a protected reference)",
+    "surface texture (SEM)",
+    "XPS",
+    "optical properties"
+   ],
+   "evidence": [
+    {
+     "statement": "MISSE 2 flight erosion yields (Table 4), e.g. Kapton H 3.00E-24, FEP 2.00E-25, PTFE 1.42E-25, pyrolytic graphite 4.15E-25 cm3/atom; fluence 8.43E21 atoms/cm2 from Kapton H witnesses.",
+     "source_id": "DEGROH2006",
+     "locator": "Table 4 p. 17; p. 15",
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "value": 3e-24,
+     "unit": "cm3/atom (Kapton H)",
+     "applicability": "ISS exterior (~4 years), AO + solar UV + charged particles; polymers and graphite only",
+     "verified_by_this_lane": true,
+     "transfer": "literature on another device or environment: recorded, NOT transferred to H-1 as a verdict"
+    },
+    {
+     "statement": "Method: erosion yield from mass loss with a Kapton H witness for fluence (Eqs. 1-3); Kapton absorbs up to 2 % of its weight in moisture, so samples are dehydrated in a vacuum desiccator before pre- and post-flight weighing (60-100 mtorr, >= 4 days, 3 readings averaged).",
+     "source_id": "DEGROH2006",
+     "locator": "pp. 2-3, p. 7",
+     "evidence_level": 3,
+     "evidence_class": "measured",
+     "value": null,
+     "unit": null,
+     "applicability": "measurement protocol (transferable as a METHOD, not as a value)",
+     "verified_by_this_lane": true,
+     "transfer": "literature on another device or environment: recorded, NOT transferred to H-1 as a verdict"
+    }
+   ],
+   "evidence_status": "OTHER_ENVIRONMENT_LITERATURE",
+   "life_number": {
+    "status": "TBD",
+    "statement": "TBD - requires the H-1 exterior material list, the exposure geometry (RAM_NORMAL_UPPER_BOUND flag) and AOL-EX-01 ground exposure. The recession-equivalents in derived.ao_environment are illustrative only.",
+    "value": null,
+    "unit": null,
+    "source_id": null,
+    "locator": null,
+    "device": null,
+    "evidence_class": null,
+    "evidence_level": null
+   },
+   "required_experiment": {
+    "ground_ao_source": "Exterior-material coupons in a ground AO facility with a Kapton H fluence witness, to a fluence set from derived.ao_environment (AOL-EX-01).",
+    "in_thruster_witness": "Not applicable (a vacuum test facility does not reproduce ram AO); facility background witness only (AOL-WC-06).",
+    "post_test_metrology": "AOL-PM-02 (dehydrated mass), AOL-PM-04, AOL-PM-09"
+   },
+   "architecture_scope": "common_mode (exterior of the common H-1/C-1); module exteriors add their own materials",
+   "cross_refs": [
+    "derived.ao_environment"
+   ],
+   "linked_requirements": [
+    "AOL-EX-01",
+    "AOL-PM-02",
+    "AOL-PM-04",
+    "AOL-PM-09",
+    "AOL-WC-06"
+   ]
+  },
+  {
+   "id": "AOL-M10",
+   "title": "Pre-ionizer module erosion products and extra atomic O reaching H-1 / C-1 (rf_hall, ecr_hall)",
+   "components": [
+    "RF dielectric tube / antenna",
+    "ECR window / chamber",
+    "H-1 inlet and walls (deposits)"
+   ],
+   "species": [
+    "O (from O2 dissociation in the source)",
+    "module sputter products"
+   ],
+   "energy_regime": "mixed_thermal_and_sheath_ions",
+   "energy_statement": "Source-plasma sheath ions on module surfaces; neutral O carried into H-1.",
+   "degradation_mode": "module erosion, deposits on H-1 (changing the common hardware between arms), higher anode / cathode O exposure",
+   "measurable_quantities": [
+    "deposit mass / composition on interstage witness coupons per arm",
+    "module surface inspection pre/post (W3 draft HW-PIM-10)",
+    "O / O2 composition at the H-1 inlet (OES / RGA, W4 draft INS-11/12)"
+   ],
+   "evidence": [
+    {
+     "statement": "Plasma-facing module materials must be O2-compatible; no accessed source measures RF tube, antenna or shield erosion; modules are inspected before and after and deposits on H-1 recorded.",
+     "source_id": "REPO",
+     "repo_path": "docs/architecture_comparison/veto_layer/veto_layer_v1.json",
+     "locator": "RI-LIFE-RF-DIELECTRIC",
+     "evidence_level": 5,
+     "evidence_class": "assumed",
+     "value": null,
+     "unit": null,
+     "applicability": "as stated by the referenced lane",
+     "verified_by_this_lane": false,
+     "transfer": "referenced lane record; NOT transferred to H-1 as a verdict"
+    }
+   ],
+   "evidence_status": "NO_EVIDENCE",
+   "life_number": {
+    "status": "TBD",
+    "statement": "TBD - module life is module-specific and requires module endurance data.",
+    "value": null,
+    "unit": null,
+    "source_id": null,
+    "locator": null,
+    "device": null,
+    "evidence_class": null,
+    "evidence_level": null
+   },
+   "required_experiment": {
+    "ground_ao_source": "Not primary.",
+    "in_thruster_witness": "Per-arm interstage witness set (AOL-WC-05), exchanged at arm boundaries only.",
+    "post_test_metrology": "AOL-PM-04"
+   },
+   "architecture_scope": "module_specific (rf_hall, ecr_hall); it can contaminate the paired comparison, so it is monitored, never assumed zero",
+   "cross_refs": [
+    "RI-LIFE-RF-DIELECTRIC",
+    "W3 draft HW-PIM-10",
+    "W3 draft section 6 (extra atomic O at H-1/C-1)"
+   ],
+   "linked_requirements": [
+    "AOL-WC-05",
+    "AOL-PM-04"
+   ]
+  },
+  {
+   "id": "AOL-M11",
+   "title": "Facility-induced confounders: back-sputtered deposits and background gas",
+   "components": [
+    "all witness coupons",
+    "H-1 surfaces"
+   ],
+   "species": [
+    "beam-dump / chamber-wall sputter products",
+    "background O2 / H2O / N2"
+   ],
+   "energy_regime": "facility_background",
+   "energy_statement": "Not a flight mechanism: facility back-sputter and background can add or remove mass on witnesses and mask or mimic flight degradation.",
+   "degradation_mode": "false mass gain / loss on witnesses, emitter exposure not representative of flight",
+   "measurable_quantities": [
+    "deposition on beam-dump-facing and shadowed control coupons",
+    "background composition (RGA) and pressure (W4 draft INS-08/INS-11)"
+   ],
+   "evidence": [],
+   "evidence_status": "NO_EVIDENCE",
+   "life_number": {
+    "status": "TBD",
+    "statement": "not a life mechanism; a confounder control",
+    "value": null,
+    "unit": null,
+    "source_id": null,
+    "locator": null,
+    "device": null,
+    "evidence_class": null,
+    "evidence_level": null
+   },
+   "required_experiment": {
+    "ground_ao_source": "Not applicable.",
+    "in_thruster_witness": "Control coupons AOL-WC-06 (facility background, shadowed, lab-stored).",
+    "post_test_metrology": "AOL-PM-04 (EDS of deposits distinguishes facility materials)"
+   },
+   "architecture_scope": "facility (common to all arms; must be recorded per block)",
+   "cross_refs": [
+    "lane 10 G09 (facility-to-flight transfer)",
+    "W4 draft INS-08, INS-11"
+   ],
+   "linked_requirements": [
+    "AOL-WC-06",
+    "AOL-PM-04"
+   ]
+  }
+ ],
+ "witness_coupons": [
+  {
+   "id": "AOL-WC-01",
+   "name": "Near-exit plume witness array",
+   "placement": "fixed holder on the stand / chamber, outside the beam core, at pre-registered angles and distance from the H-1 exit (positions TBD - W3 layout; must not change B(z), flow or the thrust-stand tare, checked per AOL-PM-08 and W4 stand calibration)",
+   "materials": [
+    "H-1 wall grade",
+    "H-1 anode material",
+    "H-1 pole-piece material",
+    "owner-selected coated / alternative candidates (pairs coated/uncoated)"
+   ],
+   "exposure": "all O-bearing and N2 operation of the block series it is installed for; exposure log per AOL-DC-01",
+   "pre_metrology": [
+    "dehydrated mass",
+    "profilometry with masked reference region",
+    "SEM/EDS",
+    "XPS",
+    "photographs"
+   ],
+   "post_metrology": [
+    "dehydrated mass",
+    "step height vs masked region",
+    "SEM/EDS",
+    "XPS depth profile"
+   ],
+   "mechanisms": [
+    "AOL-M02",
+    "AOL-M03",
+    "AOL-M08",
+    "AOL-M11"
+   ]
+  },
+  {
+   "id": "AOL-WC-02",
+   "name": "Anode-material witness near the gas distributor",
+   "placement": "inside H-1 at the distributor region ONLY if W3 can place it without altering the flow path or anode area (otherwise omitted and the replaceable anode AOL-RC-01 is the witness)",
+   "materials": [
+    "H-1 anode material",
+    "owner-selected oxidation-resistant candidates"
+   ],
+   "exposure": "anode-side O-bearing feed at anode temperature",
+   "pre_metrology": [
+    "dehydrated mass",
+    "SEM",
+    "XPS",
+    "4-wire resistance"
+   ],
+   "post_metrology": [
+    "dehydrated mass",
+    "SEM cross-section (oxide thickness)",
+    "EDS",
+    "XPS",
+    "4-wire resistance"
+   ],
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M08"
+   ]
+  },
+  {
+   "id": "AOL-WC-03",
+   "name": "Cathode-vicinity witness set",
+   "placement": "on the C-1 mount, facing the keeper region, not in the cathode plume core; fixed positions that do not move when a module is exchanged (consistent with W3 draft HW-C1-01)",
+   "materials": [
+    "keeper material",
+    "unheated emitter-material coupon (LaB6)",
+    "cathode insulator ceramic"
+   ],
+   "exposure": "all operation; the unheated emitter coupon records deposition / oxidation at ambient, NOT emitter poisoning (a heated emitter witness is an owner decision, AOL-OQ-04)",
+   "pre_metrology": [
+    "mass",
+    "SEM/EDS",
+    "XPS"
+   ],
+   "post_metrology": [
+    "mass",
+    "SEM/EDS",
+    "XPS"
+   ],
+   "mechanisms": [
+    "AOL-M04",
+    "AOL-M05"
+   ]
+  },
+  {
+   "id": "AOL-WC-04",
+   "name": "Magnetic-circuit material witness pair",
+   "placement": "one pole-material coupon at a plume-exposed position near the outer pole face, one at a shadowed position on the magnetic circuit",
+   "materials": [
+    "H-1 pole / core material (grade from fo_magnet_coil_qualification)",
+    "permanent-magnet grade if used (encapsulated as in the design)"
+   ],
+   "exposure": "all operation; thermocouple next to each coupon",
+   "pre_metrology": [
+    "mass",
+    "XPS",
+    "SEM",
+    "magnetic properties if the lab allows (TBD)"
+   ],
+   "post_metrology": [
+    "mass",
+    "XPS",
+    "SEM/EDS"
+   ],
+   "mechanisms": [
+    "AOL-M06"
+   ]
+  },
+  {
+   "id": "AOL-WC-05",
+   "name": "Interstage / module-interface witness set (per arm)",
+   "placement": "at the pre-ionizer module outlet / H-1 inlet interface, identical position in HW-0 (blank module position) and in HW-RF / HW-ECR; exchanged only at arm boundaries",
+   "materials": [
+    "H-1 wall grade",
+    "anode material",
+    "insulator ceramic"
+   ],
+   "exposure": "one set per arm block series, so arm-specific deposits and O exposure are attributable",
+   "pre_metrology": [
+    "mass",
+    "SEM/EDS",
+    "XPS"
+   ],
+   "post_metrology": [
+    "mass",
+    "SEM/EDS",
+    "XPS"
+   ],
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M07",
+    "AOL-M10"
+   ]
+  },
+  {
+   "id": "AOL-WC-06",
+   "name": "Control coupons (facility background, shadowed, lab-stored)",
+   "placement": "(a) chamber wall far from the plume, (b) facing the beam dump, (c) shadowed next to AOL-WC-01, (d) lab-stored in a dry container, never in the chamber",
+   "materials": [
+    "same lot as AOL-WC-01 and AOL-WC-03 coupons"
+   ],
+   "exposure": "(a)-(c) chamber exposure without direct plume; (d) handling-only",
+   "pre_metrology": [
+    "same as the coupons they control"
+   ],
+   "post_metrology": [
+    "same as the coupons they control"
+   ],
+   "mechanisms": [
+    "AOL-M11",
+    "AOL-M09",
+    "AOL-M07"
+   ]
+  }
+ ],
+ "requirements": [
+  {
+   "id": "AOL-WC-01",
+   "category": "witness_coupon",
+   "title": "Near-exit plume witness array",
+   "requirement": "H-1 test installation shall provide a fixed witness holder carrying coupons of the wall grade, anode material, pole material and owner-selected candidates at pre-registered positions outside the beam core.",
+   "rationale": "Only in-plume coupons of the actual H-1 materials give N/O-environment erosion and oxidation evidence; lane 32 has no N/O yield on BN, BN-SiO2 or SiC.",
+   "mechanisms": [
+    "AOL-M02",
+    "AOL-M03",
+    "AOL-M08"
+   ],
+   "adopter": "W3 (mount) + W4 (metrology)",
+   "install_phase": "design-in before S1; installed from first ignition",
+   "verification_method": "I + T",
+   "verification": "Inspection: holder drawing and position record; Test: B(z) re-map and thrust-stand tare with the holder installed show no change beyond W4 instrument uncertainty (value TBD - W4).",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-WC-02",
+   "category": "witness_coupon",
+   "title": "Anode-material witness at the distributor",
+   "requirement": "If W3 can place it without altering the flow path or anode area, H-1 shall carry an anode-material witness at the distributor region; otherwise W3 records why not and AOL-RC-01 is the anode witness.",
+   "rationale": "Anode oxidation is the recorded endurance limiter on an N2/O2 SPT (AOL-M01).",
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M08"
+   ],
+   "adopter": "W3",
+   "install_phase": "design-in before S1",
+   "verification_method": "I + A",
+   "verification": "Inspection of the drawing; analysis that flow path and anode area are unchanged.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-WC-03",
+   "category": "witness_coupon",
+   "title": "Cathode-vicinity witness set",
+   "requirement": "The C-1 mount shall carry keeper-material, unheated LaB6 and insulator-ceramic witness coupons at fixed positions.",
+   "rationale": "Cathode exposure to N/O plume back-flow is unquantified (lane 10 U03-U05).",
+   "mechanisms": [
+    "AOL-M04",
+    "AOL-M05"
+   ],
+   "adopter": "W3 + W4",
+   "install_phase": "design-in before S1",
+   "verification_method": "I",
+   "verification": "Inspection of mount drawing and installed positions (photographic record).",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-WC-04",
+   "category": "witness_coupon",
+   "title": "Magnetic-circuit material witness pair",
+   "requirement": "MC-1 shall carry a plume-exposed and a shadowed pole-material coupon, each with a thermocouple.",
+   "rationale": "No oxidation evidence for magnetic materials in an N/O plume was accessed (AOL-M06).",
+   "mechanisms": [
+    "AOL-M06"
+   ],
+   "adopter": "W3 + W4",
+   "install_phase": "design-in before S1",
+   "verification_method": "I",
+   "verification": "Inspection; thermocouple channels listed in the W4 channel map.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-WC-05",
+   "category": "witness_coupon",
+   "title": "Per-arm interstage witness set",
+   "requirement": "The module interface shall carry an interstage witness set at an identical position in HW-0, HW-RF and HW-ECR, exchanged only at arm boundaries under the W3 installation-reproducibility procedure.",
+   "rationale": "Module erosion products and extra atomic O could alter the common hardware between arms (AOL-M10).",
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M07",
+    "AOL-M10"
+   ],
+   "adopter": "W3",
+   "install_phase": "design-in before S1 (HW-0 blank position exists from S1)",
+   "verification_method": "I + D",
+   "verification": "Demonstration: exchange procedure executed in S1 without changing the HW-0 reference beyond the LOCK-2 repeatability (TBD - LOCK-2).",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-WC-06",
+   "category": "witness_coupon",
+   "title": "Control coupons",
+   "requirement": "Every witness lot shall have facility-background, beam-dump-facing, shadowed and lab-stored controls.",
+   "rationale": "Separates facility deposits and handling from plume effects (AOL-M11).",
+   "mechanisms": [
+    "AOL-M11"
+   ],
+   "adopter": "W4 (+ facility)",
+   "install_phase": "S1",
+   "verification_method": "I",
+   "verification": "Inspection of the coupon register (serials, lot, positions).",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-RC-01",
+   "category": "replaceable_component",
+   "title": "Replaceable, serialized anode",
+   "requirement": "The H-1 anode (and distributor if integral) shall be removable and re-installable with a documented torque / alignment procedure, serialized, with baseline metrology before first ignition.",
+   "rationale": "Anode oxidation needs direct post-test metrology; the PPS1350 anode required refurbishment after ~314 h (AOL-M01). Per W3 draft HW-H1-02 any replacement downstream of IP-DN creates H-1' with a new HW-0 reference; removal is therefore scheduled only at pre-registered phase boundaries.",
+   "mechanisms": [
+    "AOL-M01"
+   ],
+   "adopter": "W3",
+   "install_phase": "design-in before S1",
+   "verification_method": "I + D",
+   "verification": "Inspection of drawings; demonstration of one remove/re-install cycle before S1 with B(z) and HW-0 reference re-measured.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-RC-02",
+   "category": "replaceable_component",
+   "title": "In-situ anode resistance lead",
+   "requirement": "H-1 shall provide a separate sense lead so that anode-to-terminal resistance can be measured 4-wire between blocks without disassembly.",
+   "rationale": "Cifali 2011 names the resistance increase from anode oxidation as the main endurance concern (p. 5).",
+   "mechanisms": [
+    "AOL-M01"
+   ],
+   "adopter": "W3 + W4",
+   "install_phase": "design-in before S1",
+   "verification_method": "T",
+   "verification": "Test: resistance measured at S1 baseline with stated uncertainty (TBD - W4).",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-RC-03",
+   "category": "replaceable_component",
+   "title": "Replaceable exit-region wall rings with fiducials",
+   "requirement": "The exit-region channel wall shall be separate replaceable rings carrying fiducial reference marks for profilometry, with as-built geometry recorded (W3 draft HW-H1-03).",
+   "rationale": "Wall erosion on N/O is unquantified for every grade (AOL-M02, AOL-M03); rings allow profile and mass metrology without destroying H-1.",
+   "mechanisms": [
+    "AOL-M02",
+    "AOL-M03"
+   ],
+   "adopter": "W3",
+   "install_phase": "design-in before S1",
+   "verification_method": "I + T",
+   "verification": "Inspection of drawings; profilometry baseline repeatability measured at S1 (value TBD - W4).",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-RC-04",
+   "category": "replaceable_component",
+   "title": "Optional alternative-grade sector inserts (owner decision)",
+   "requirement": "If the owner approves, small wall sector inserts of alternative grades shall be identical in all arms and recorded as part of the H-1 configuration.",
+   "rationale": "Would give comparative N/O wall data in the same plasma; it changes H-1 design-representativeness (W3 draft HW-H1-01), so it is an owner decision (AOL-OQ-02).",
+   "mechanisms": [
+    "AOL-M02"
+   ],
+   "adopter": "owner -> W3",
+   "install_phase": "only if approved before LOCK-1",
+   "verification_method": "I",
+   "verification": "Inspection of configuration record.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-CX-01",
+   "category": "cathode_exposure",
+   "title": "Daily Xe reference check of C-1",
+   "requirement": "C-1 keeper and coupling voltage shall be recorded daily at a fixed Xe reference condition.",
+   "rationale": "Trend detection of emitter degradation (AOL-M04, AOL-M05); aligns with W3 draft HW-C1-03 / D-15-B.",
+   "mechanisms": [
+    "AOL-M04",
+    "AOL-M05"
+   ],
+   "adopter": "W3 + W4",
+   "install_phase": "S1",
+   "verification_method": "T",
+   "verification": "Test record per day; reference condition frozen in LOCK-1.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-CX-02",
+   "category": "cathode_exposure",
+   "title": "Start log",
+   "requirement": "Every C-1 start shall log heater power, heater time to ignition, keeper ignition voltage and outcome.",
+   "rationale": "Ignition degradation was the observed failure mode of the RAM-HET cathode (not attributed to poisoning).",
+   "mechanisms": [
+    "AOL-M04"
+   ],
+   "adopter": "W4",
+   "install_phase": "S1",
+   "verification_method": "T",
+   "verification": "DAQ record for every start.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-CX-03",
+   "category": "cathode_exposure",
+   "title": "Cathode gas-composition sampling",
+   "requirement": "A sampling point near C-1 shall feed the RGA (W4 draft INS-11) so O2 / H2O / N2 partial pressures near the cathode are logged during O-bearing operation.",
+   "rationale": "Emitter-region O partial pressure is not measurable directly (lane 10 G02); a near-cathode proxy is the minimum.",
+   "mechanisms": [
+    "AOL-M04"
+   ],
+   "adopter": "W4",
+   "install_phase": "design-in before S1",
+   "verification_method": "D",
+   "verification": "Demonstration of calibrated RGA sampling at S1 (calibration TBD).",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-CX-04",
+   "category": "cathode_exposure",
+   "title": "Emitter / cathode temperature",
+   "requirement": "C-1 emitter or cathode-tube temperature shall be measured (pyrometer or thermocouple, per W4) during firing.",
+   "rationale": "LaB6 O2 tolerance depends on emitter temperature (lane 10 section 3.1).",
+   "mechanisms": [
+    "AOL-M04"
+   ],
+   "adopter": "W4 + W3",
+   "install_phase": "design-in before S1",
+   "verification_method": "T",
+   "verification": "Channel in the W4 map with stated uncertainty (TBD).",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-CX-05",
+   "category": "cathode_exposure",
+   "title": "Hot-emitter O-exposure interlock log",
+   "requirement": "Every interval during which the emitter is hot while O2 is present in the chamber or feed shall be logged, with Xe cathode flow state (W3 draft HW-C1-03 rule).",
+   "rationale": "Exposure dose accounting for C-1.",
+   "mechanisms": [
+    "AOL-M04"
+   ],
+   "adopter": "W4",
+   "install_phase": "S1",
+   "verification_method": "D",
+   "verification": "Log exists for every block; interlock states recorded.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-CX-06",
+   "category": "cathode_exposure",
+   "title": "Flame-out and anomaly log",
+   "requirement": "Every spontaneous extinction, ignition failure and anomalous-discharge episode shall be time-stamped with feed composition, I_d trace and cathode state.",
+   "rationale": "Flame-outs were the observable symptom of anode oxidation on the PPS1350 (AOL-M01).",
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M04"
+   ],
+   "adopter": "W4",
+   "install_phase": "S1",
+   "verification_method": "T",
+   "verification": "Extinction detection (W4 draft INS-10) record per block.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-CX-07",
+   "category": "cathode_exposure",
+   "title": "Wall and anode thermocouples for life mechanisms",
+   "requirement": "Thermocouples shall exist on the anode, the exit-region wall rings and next to each witness coupon.",
+   "rationale": "Oxidation and sputter yields depend on temperature (lane 32 section 3; lane 15 BN oxidizing limit).",
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M02",
+    "AOL-M03"
+   ],
+   "adopter": "W3 + W4",
+   "install_phase": "design-in before S1",
+   "verification_method": "I",
+   "verification": "Channel map and drawing.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-PM-01",
+   "category": "post_test_metrology",
+   "title": "Baseline metrology before first ignition",
+   "requirement": "Every witness coupon, replaceable part, anode, wall ring and C-1 keeper shall be measured before first ignition (mass, profile, SEM/EDS, XPS as listed per item, resistance, photographs), with instrument, uncertainty and operator recorded.",
+   "rationale": "Without a baseline no post-test difference is interpretable.",
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M02",
+    "AOL-M03",
+    "AOL-M04",
+    "AOL-M05",
+    "AOL-M06"
+   ],
+   "adopter": "W4 (+ metrology lab)",
+   "install_phase": "before S1 first ignition",
+   "verification_method": "I",
+   "verification": "Baseline records exist for every serialized item.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-PM-02",
+   "category": "post_test_metrology",
+   "title": "Dehydrated mass protocol",
+   "requirement": "Mass measurements of hygroscopic items (polymers, BN) shall follow a dehydrated protocol (vacuum desiccator, fixed time under vacuum, repeated readings averaged, room temperature and humidity logged) identical pre and post; parameters TBD - W4 / metrology lab.",
+   "rationale": "Kapton absorbs up to 2 % of its weight in moisture (NASA/TM-2006-214482 p. 3); lane 32 flags moisture uptake for BN (SURFACE_STATE).",
+   "mechanisms": [
+    "AOL-M02",
+    "AOL-M09",
+    "AOL-M01"
+   ],
+   "adopter": "W4",
+   "install_phase": "S1",
+   "verification_method": "D",
+   "verification": "Repeatability of a control coupon demonstrated before S1 (value TBD).",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-PM-03",
+   "category": "post_test_metrology",
+   "title": "Channel erosion profile at each stage",
+   "requirement": "The wall-ring profile shall be measured against fiducials at S1 end, at each phase boundary and at campaign end.",
+   "rationale": "W3 draft HW-H1-04 requires an erosion profile at each stage; lane 32 H6 needs it.",
+   "mechanisms": [
+    "AOL-M02"
+   ],
+   "adopter": "W3 + W4",
+   "install_phase": "S1 onwards",
+   "verification_method": "T",
+   "verification": "Profile data with uncertainty per stage.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-PM-04",
+   "category": "post_test_metrology",
+   "title": "Surface analysis",
+   "requirement": "Post-test SEM/EDS (morphology, deposits), XPS (oxidation state, depth profile) shall be applied to the items listed per coupon; samples transferred in sealed dry containers with custody record.",
+   "rationale": "Distinguishes oxidation, nitridation, deposits and facility contamination.",
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M03",
+    "AOL-M04",
+    "AOL-M06",
+    "AOL-M07",
+    "AOL-M10",
+    "AOL-M11"
+   ],
+   "adopter": "W4 (+ metrology lab)",
+   "install_phase": "after each removal",
+   "verification_method": "T",
+   "verification": "Analysis report per item referencing its baseline.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-PM-05",
+   "category": "post_test_metrology",
+   "title": "Cathode post-test inspection",
+   "requirement": "At campaign end (or C-1 retirement), insert, orifice and keeper shall be inspected: orifice diameter, keeper-face profile, SEM/EDS and XPS of the insert surface.",
+   "rationale": "Lane 10 G02/G04.",
+   "mechanisms": [
+    "AOL-M04",
+    "AOL-M05"
+   ],
+   "adopter": "W4",
+   "install_phase": "campaign end",
+   "verification_method": "T",
+   "verification": "Inspection report.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-PM-06",
+   "category": "post_test_metrology",
+   "title": "Electrical resistance and insulation tests",
+   "requirement": "Anode resistance (AOL-RC-02) and insulation resistance of anode isolator, coils and harness shall be measured at baseline, every phase boundary and campaign end.",
+   "rationale": "AOL-M01, AOL-M07.",
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M07"
+   ],
+   "adopter": "W4",
+   "install_phase": "S1 onwards",
+   "verification_method": "T",
+   "verification": "Measurement record with uncertainty (TBD).",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-PM-07",
+   "category": "post_test_metrology",
+   "title": "SEE yield of wall material (if facility allows)",
+   "requirement": "SEE yield of wall-ring / coupon material before and after N/O exposure shall be measured if an accessible facility exists (lane 32 H9).",
+   "rationale": "SEE sets the sheath and hence impact energy; also a Hall-map schema v2 field.",
+   "mechanisms": [
+    "AOL-M03"
+   ],
+   "adopter": "owner (facility choice)",
+   "install_phase": "campaign end",
+   "verification_method": "T",
+   "verification": "Report or recorded as not feasible.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-PM-08",
+   "category": "post_test_metrology",
+   "title": "B(z) re-map and magnetic-circuit inspection",
+   "requirement": "Adopt W3 draft HW-MC-03 and HW-MC-04 (B(z) at actual coil currents before/after each block series, reference sensor during firing) and add a visual / XPS inspection of the pole faces at campaign end.",
+   "rationale": "AOL-M06 degradation shows as B(z) drift.",
+   "mechanisms": [
+    "AOL-M06"
+   ],
+   "adopter": "W3 + W4",
+   "install_phase": "S1 onwards",
+   "verification_method": "T",
+   "verification": "Map records.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-PM-09",
+   "category": "post_test_metrology",
+   "title": "Optical properties",
+   "requirement": "Solar absorptance and hemispherical emissivity of exterior / coated coupons shall be measured pre and post ground AO exposure.",
+   "rationale": "AOL-M08, AOL-M09 thermal consequences.",
+   "mechanisms": [
+    "AOL-M08",
+    "AOL-M09"
+   ],
+   "adopter": "owner (lab)",
+   "install_phase": "with AOL-EX-01",
+   "verification_method": "T",
+   "verification": "Measurement report.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-EX-01",
+   "category": "ground_ao_exposure",
+   "title": "Ground AO exposure of exterior materials",
+   "requirement": "H-1 / C-1 exterior material candidates shall be exposed in a ground AO facility with a Kapton H fluence witness (DEGROH2006 Eqs. 1-3 method) to a target fluence chosen by the owner from derived.ao_environment; facility and AO energy TBD - owner channel.",
+   "rationale": "Mission ram fluence exceeds the MISSE 2 flight fluence by the tabulated factor; no open erosion yield for BN, alumina or metals was accessed.",
+   "mechanisms": [
+    "AOL-M08",
+    "AOL-M09"
+   ],
+   "adopter": "owner (facility)",
+   "install_phase": "parallel to S1; not on the S1 critical path",
+   "verification_method": "T",
+   "verification": "Exposure report with fluence witness.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-EX-02",
+   "category": "ground_ao_exposure",
+   "title": "Combined ion + atomic-O coupon exposure of internal materials",
+   "requirement": "Wall grade, anode material and candidates, keeper, pole and insulator materials shall be exposed to controlled O2 / atomic-O (and ions where available) at their operating temperatures (lane 32 H4).",
+   "rationale": "Separates chemistry from the plasma environment of H-1.",
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M03",
+    "AOL-M05",
+    "AOL-M06",
+    "AOL-M08"
+   ],
+   "adopter": "owner (facility)",
+   "install_phase": "parallel to S1",
+   "verification_method": "T",
+   "verification": "Exposure reports.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-EX-03",
+   "category": "ground_ao_exposure",
+   "title": "Heated emitter exposure",
+   "requirement": "LaB6 (and alternatives if kept) emitter coupons shall be exposed hot to O2 / atomic O / H2O with emission measured (lane 10 G02, G03).",
+   "rationale": "Only O2 / H2O diode data exist; no atomic-O data.",
+   "mechanisms": [
+    "AOL-M04"
+   ],
+   "adopter": "owner (facility)",
+   "install_phase": "parallel to S1",
+   "verification_method": "T",
+   "verification": "Exposure report.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-DC-01",
+   "category": "data_custody",
+   "title": "Exposure log and coupon register",
+   "requirement": "A coupon/part register (serial, lot, material, position, install/remove timestamps, cumulative exposure per feed composition, arm and block) shall be kept under the W5 data-custody plan; metrology operators receive coded sample IDs (PROPOSED).",
+   "rationale": "Attribution per arm and per mechanism; blinding against expectation bias.",
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M02",
+    "AOL-M10",
+    "AOL-M11"
+   ],
+   "adopter": "W4 + W5",
+   "install_phase": "S1",
+   "verification_method": "I",
+   "verification": "Register audit before LOCK-2.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-DC-02",
+   "category": "data_custody",
+   "title": "Evidence records compatible with thermal_life measured_hardware",
+   "requirement": "Every life-relevant measurement shall be recorded with the fields test_article, facility, document, measurement_method, uncertainty, operating_point, applicability_domain (schemas/thermal_life/inputs_v1.json measured_hardware) so it can later enter abep_sim/thermal_life.py without an admitted closure.",
+   "rationale": "The only non-closure path for wall-flux / life inputs in thermal_life is measured_hardware.",
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M02",
+    "AOL-M04"
+   ],
+   "adopter": "W4",
+   "install_phase": "S1",
+   "verification_method": "I",
+   "verification": "Schema check of records.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-LF-01",
+   "category": "life_discipline",
+   "title": "No life extrapolation from an unadmitted closure (C6)",
+   "requirement": "No H-1 life number shall be computed from a Hall map, screening candidate (sgb-screen-*) or withdrawn 0-D result; life statements are measured on H-1, literature for another device (labelled), or TBD.",
+   "rationale": "Credible set is empty (gate 3 FAIL); control C6.",
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M02",
+    "AOL-M03",
+    "AOL-M04"
+   ],
+   "adopter": "all lanes",
+   "install_phase": "always",
+   "verification_method": "I",
+   "verification": "Review; the register test asserts it for this register.",
+   "status": "PROPOSED"
+  },
+  {
+   "id": "AOL-LF-02",
+   "category": "life_discipline",
+   "title": "Endurance durations and acceptance pre-registered",
+   "requirement": "Any wear / endurance segment and its acceptance criteria shall be pre-registered before data (duration TBD - owner); S1 results never alter a pre-registered decision threshold.",
+   "rationale": "Execution directive LOCK-2 rule; lane 10 G04.",
+   "mechanisms": [
+    "AOL-M01",
+    "AOL-M02",
+    "AOL-M04"
+   ],
+   "adopter": "owner + W5",
+   "install_phase": "before any endurance segment",
+   "verification_method": "I",
+   "verification": "Pre-registration document exists before data.",
+   "status": "PROPOSED"
+  }
+ ],
+ "interface_table": {
+  "control": "C5_AO_early",
+  "note": "Related ids were observed read-only in unmerged in-flight W3/W4 drafts on 2026-09-27; they are hints for merging and may change. This register does not depend on them.",
+  "rows": [
+   {
+    "requirement": "AOL-WC-01",
+    "adopter": "W3",
+    "target": "H-1 test installation / stand layout (new HW item)",
+    "observed_related_ids": [
+     "HW-H1-04"
+    ],
+    "action": "ADD",
+    "note": "W3 draft has no witness-coupon mount"
+   },
+   {
+    "requirement": "AOL-WC-01",
+    "adopter": "W4",
+    "target": "metrology section (new INS item: coupon metrology)",
+    "observed_related_ids": [
+     "INS-17"
+    ],
+    "action": "ADD",
+    "note": "W4 draft has no witness metrology instrument"
+   },
+   {
+    "requirement": "AOL-WC-02",
+    "adopter": "W3",
+    "target": "section 4.1 H-1 (anode/distributor)",
+    "observed_related_ids": [
+     "HW-H1-05",
+     "HW-H1-06"
+    ],
+    "action": "AMEND",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-WC-03",
+    "adopter": "W3",
+    "target": "section 4.3 C-1 mount",
+    "observed_related_ids": [
+     "HW-C1-01",
+     "HW-C1-03"
+    ],
+    "action": "ADD",
+    "note": "fixed positions per HW-C1-01"
+   },
+   {
+    "requirement": "AOL-WC-04",
+    "adopter": "W3",
+    "target": "section 4.2 MC-1",
+    "observed_related_ids": [
+     "HW-MC-03",
+     "HW-MC-04"
+    ],
+    "action": "ADD",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-WC-05",
+    "adopter": "W3",
+    "target": "section 4.5 removable modules / section 4.7 installation reproducibility",
+    "observed_related_ids": [
+     "HW-PIM-10",
+     "HW-H1-02"
+    ],
+    "action": "ADD",
+    "note": "CONFLICT CHECK: coupon exchange at arm boundaries must be classified by W3 as non-functional (not creating H-1') - AOL-OQ-01"
+   },
+   {
+    "requirement": "AOL-WC-06",
+    "adopter": "W4",
+    "target": "facility / background section",
+    "observed_related_ids": [
+     "INS-08",
+     "INS-11"
+    ],
+    "action": "ADD",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-RC-01",
+    "adopter": "W3",
+    "target": "section 4.1 H-1",
+    "observed_related_ids": [
+     "HW-H1-02",
+     "HW-H1-05"
+    ],
+    "action": "AMEND",
+    "note": "consistent with HW-H1-02: removal only at pre-registered phase boundaries, each creates H-1' with a new HW-0 reference"
+   },
+   {
+    "requirement": "AOL-RC-02",
+    "adopter": "W3",
+    "target": "section 4.6 electrical interfaces",
+    "observed_related_ids": [
+     "HW-ELEC-01"
+    ],
+    "action": "ADD",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-RC-02",
+    "adopter": "W4",
+    "target": "INS-04 neighbourhood (resistance measurement)",
+    "observed_related_ids": [
+     "INS-04"
+    ],
+    "action": "ADD",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-RC-03",
+    "adopter": "W3",
+    "target": "section 4.1 H-1 wall",
+    "observed_related_ids": [
+     "HW-H1-03",
+     "HW-H1-04"
+    ],
+    "action": "AMEND",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-RC-04",
+    "adopter": "W3",
+    "target": "section 7 owner questions",
+    "observed_related_ids": [
+     "HW-H1-01"
+    ],
+    "action": "OWNER_DECISION",
+    "note": "AOL-OQ-02"
+   },
+   {
+    "requirement": "AOL-CX-01",
+    "adopter": "W3",
+    "target": "section 4.3 C-1",
+    "observed_related_ids": [
+     "HW-C1-03"
+    ],
+    "action": "ALIGN",
+    "note": "already present in W3 draft (daily Xe check)"
+   },
+   {
+    "requirement": "AOL-CX-01",
+    "adopter": "W4",
+    "target": "INS-04 / INS-18 logging",
+    "observed_related_ids": [
+     "INS-04",
+     "INS-18"
+    ],
+    "action": "ALIGN",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-CX-02",
+    "adopter": "W4",
+    "target": "INS-18 DAQ",
+    "observed_related_ids": [
+     "INS-18"
+    ],
+    "action": "ADD",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-CX-03",
+    "adopter": "W4",
+    "target": "INS-11 RGA",
+    "observed_related_ids": [
+     "INS-11"
+    ],
+    "action": "AMEND",
+    "note": "add a near-cathode sampling point"
+   },
+   {
+    "requirement": "AOL-CX-04",
+    "adopter": "W4",
+    "target": "INS-17 temperatures",
+    "observed_related_ids": [
+     "INS-17"
+    ],
+    "action": "AMEND",
+    "note": "cathode emitter / tube channel"
+   },
+   {
+    "requirement": "AOL-CX-05",
+    "adopter": "W4",
+    "target": "INS-18 DAQ + W3 HW-C1-03 interlock",
+    "observed_related_ids": [
+     "INS-18",
+     "HW-C1-03"
+    ],
+    "action": "ADD",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-CX-06",
+    "adopter": "W4",
+    "target": "INS-10 stability / extinction",
+    "observed_related_ids": [
+     "INS-10"
+    ],
+    "action": "ALIGN",
+    "note": "add feed composition + cathode state to each extinction record"
+   },
+   {
+    "requirement": "AOL-CX-07",
+    "adopter": "W3",
+    "target": "section 4.1 HW-H1-07 thermocouples",
+    "observed_related_ids": [
+     "HW-H1-07"
+    ],
+    "action": "AMEND",
+    "note": "add wall-ring and coupon TCs"
+   },
+   {
+    "requirement": "AOL-CX-07",
+    "adopter": "W4",
+    "target": "INS-17 temperatures",
+    "observed_related_ids": [
+     "INS-17"
+    ],
+    "action": "AMEND",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-PM-01",
+    "adopter": "W4",
+    "target": "new metrology section",
+    "observed_related_ids": [],
+    "action": "ADD",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-PM-02",
+    "adopter": "W4",
+    "target": "new metrology section",
+    "observed_related_ids": [],
+    "action": "ADD",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-PM-03",
+    "adopter": "W3",
+    "target": "HW-H1-04 erosion profile",
+    "observed_related_ids": [
+     "HW-H1-04"
+    ],
+    "action": "ALIGN",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-PM-04",
+    "adopter": "W4",
+    "target": "new metrology section",
+    "observed_related_ids": [],
+    "action": "ADD",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-PM-05",
+    "adopter": "W4",
+    "target": "new metrology section",
+    "observed_related_ids": [
+     "HW-C1-05"
+    ],
+    "action": "ADD",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-PM-06",
+    "adopter": "W4",
+    "target": "new metrology section",
+    "observed_related_ids": [],
+    "action": "ADD",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-PM-07",
+    "adopter": "W2",
+    "target": "LOCK-1 facility choice",
+    "observed_related_ids": [],
+    "action": "OWNER_DECISION",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-PM-08",
+    "adopter": "W3",
+    "target": "HW-MC-03/04",
+    "observed_related_ids": [
+     "HW-MC-03",
+     "HW-MC-04"
+    ],
+    "action": "ALIGN",
+    "note": "add pole-face inspection"
+   },
+   {
+    "requirement": "AOL-PM-08",
+    "adopter": "W4",
+    "target": "INS-09 B(z)",
+    "observed_related_ids": [
+     "INS-09"
+    ],
+    "action": "ALIGN",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-PM-09",
+    "adopter": "W2",
+    "target": "LOCK-1 facility / lab choice",
+    "observed_related_ids": [],
+    "action": "OWNER_DECISION",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-EX-01",
+    "adopter": "W2",
+    "target": "owner facility channel",
+    "observed_related_ids": [],
+    "action": "OWNER_DECISION",
+    "note": "not on the S1 critical path"
+   },
+   {
+    "requirement": "AOL-EX-02",
+    "adopter": "W2",
+    "target": "owner facility channel",
+    "observed_related_ids": [],
+    "action": "OWNER_DECISION",
+    "note": "not on the S1 critical path"
+   },
+   {
+    "requirement": "AOL-EX-03",
+    "adopter": "W2",
+    "target": "owner facility channel",
+    "observed_related_ids": [],
+    "action": "OWNER_DECISION",
+    "note": "not on the S1 critical path"
+   },
+   {
+    "requirement": "AOL-DC-01",
+    "adopter": "W5",
+    "target": "data custody / blinding plan",
+    "observed_related_ids": [],
+    "action": "ADD",
+    "note": "W5 decides whether any metrology is held-out"
+   },
+   {
+    "requirement": "AOL-DC-01",
+    "adopter": "W4",
+    "target": "INS-18 DAQ",
+    "observed_related_ids": [
+     "INS-18"
+    ],
+    "action": "ADD",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-DC-02",
+    "adopter": "W4",
+    "target": "record format",
+    "observed_related_ids": [],
+    "action": "ADD",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-LF-01",
+    "adopter": "W3",
+    "target": "section 9 compliance",
+    "observed_related_ids": [],
+    "action": "ALIGN",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-LF-01",
+    "adopter": "W4",
+    "target": "compliance",
+    "observed_related_ids": [],
+    "action": "ALIGN",
+    "note": ""
+   },
+   {
+    "requirement": "AOL-LF-02",
+    "adopter": "W5",
+    "target": "pre-registration",
+    "observed_related_ids": [],
+    "action": "ADD",
+    "note": ""
+   }
+  ]
+ },
+ "proposed_thresholds": [
+  {
+   "id": "AOL-PT-01",
+   "status": "PROPOSED (not in the RFP)",
+   "rule": "Any spontaneous flame-out during O-bearing operation stops the block at its end and triggers an anode inspection (borescope if designed in; removal only at a pre-registered boundary).",
+   "value": 1,
+   "unit": "flame-out",
+   "basis": "AOL-M01 symptom (ANDREUSSI2022 Page 24 of 57); owner to confirm"
+  },
+  {
+   "id": "AOL-PT-02",
+   "status": "PROPOSED (not in the RFP)",
+   "rule": "Anode-resistance change that triggers inspection",
+   "value": null,
+   "unit": "ohm",
+   "basis": "TBD - requires S1 baseline scatter (LOCK-2)"
+  },
+  {
+   "id": "AOL-PT-03",
+   "status": "PROPOSED (not in the RFP)",
+   "rule": "C-1 daily Xe reference keeper/coupling voltage shift that triggers a cathode review",
+   "value": null,
+   "unit": "V",
+   "basis": "TBD - requires S1 day-to-day scatter (LOCK-2)"
+  },
+  {
+   "id": "AOL-PT-04",
+   "status": "PROPOSED (not in the RFP)",
+   "rule": "Witness removal cadence: at S1 end, at each phase boundary and at arm boundaries (AOL-WC-05 only)",
+   "value": null,
+   "unit": null,
+   "basis": "structure only; no number"
+  }
+ ],
+ "open_owner_questions": [
+  {
+   "id": "AOL-OQ-01",
+   "to": "owner + W3",
+   "question": "Classify witness coupons and their mounts as non-functional exchangeable items that do NOT create a new unit H-1' when exchanged at arm boundaries (W3 draft HW-H1-02), provided B(z) and the HW-0 reference are unchanged within LOCK-2 repeatability?"
+  },
+  {
+   "id": "AOL-OQ-02",
+   "to": "owner",
+   "question": "Approve alternative-grade wall sector inserts (AOL-RC-04)? They add comparative N/O wall data but change H-1 design-representativeness."
+  },
+  {
+   "id": "AOL-OQ-03",
+   "to": "owner",
+   "question": "Candidate oxidation-resistant anode materials and coatings to put on coupons (no candidate is sourced in this register)."
+  },
+  {
+   "id": "AOL-OQ-04",
+   "to": "owner",
+   "question": "Heated emitter witness near C-1 (adds a heater load to the bus boundary metering) or ground-only AOL-EX-03?"
+  },
+  {
+   "id": "AOL-OQ-05",
+   "to": "owner",
+   "question": "Ground AO facility and target fluence for AOL-EX-01 (and whether a legitimately acquired closed-access standard or paper is used, per control C4)."
+  },
+  {
+   "id": "AOL-OQ-06",
+   "to": "owner",
+   "question": "Acquire CIFALI2012 (primary of the 314 h endurance result) and Espy 1993 (lane 32 highest priority) under the C4 rule."
+  }
+ ],
+ "derived": {
+  "ao_environment": {
+   "status": "model-derived; ILLUSTRATIVE (sets the witness-exposure target scale; not a design value, not a verdict)",
+   "evidence_class": "model-derived",
+   "evidence_level": 6,
+   "inputs": {
+    "atmosphere": {
+     "path": "abep_sim/data/atmosphere_msis21_v1.csv",
+     "sha256": "5e108c6e5cb7c03ed9b741233fafbc71c7813987e1ff3d0596b04c99c4a9bff7",
+     "model": "NRLMSIS 2.1 frozen scenario (abep_sim/data/atmosphere_msis21_v1.json): epoch 2028-03-21T12:00, ap 15, F10.7A = F10.7, orbit-averaged lat -60..60 x 4 longitudes"
+    },
+    "constants": {
+     "amu_kg": 1.6605390666e-27,
+     "m_O_amu": 16.0,
+     "mu_earth_m3_s2": 398600441800000.0,
+     "R_earth_m": 6371000.0,
+     "e_C": 1.602176634e-19,
+     "source": "abep_sim/constants.py (read-only)"
+    },
+    "rfp_mission_h": 26000.0,
+    "misse2_fluence_atoms_cm2": {
+     "value": 8.43e+21,
+     "source_id": "DEGROH2006",
+     "locator": "p. 15",
+     "evidence_class": "measured",
+     "note": "from two Kapton H witness samples; ISS exterior, ~4 years"
+    }
+   },
+   "equations": {
+    "n_O": "n_O = rho * fO / m_O  (same relation as abep_sim.atmosphere 'n_O')",
+    "V_orb": "V = sqrt(mu / (R_E + h))  (abep_sim.atmosphere.orbital_velocity)",
+    "E_ram": "E = 0.5 * m_O * V^2 / e  (kinetic energy of an O atom in the spacecraft frame, co-rotation and thermal motion neglected)",
+    "flux": "Gamma = n_O * V  (ram-normal surface)",
+    "fluence": "F = Gamma * t",
+    "recession_equivalent": "x = E_y * F  (linear, fluence-independent yield ASSUMED)"
+   },
+   "flags": [
+    "RAM_NORMAL_UPPER_BOUND: flux onto a surface facing the ram direction at normal incidence. An ABEP thruster sits behind the intake; the actual exposure of each H-1 exterior surface is TBD - requires the spacecraft layout and a free-molecular / DSMC view-factor analysis (owner/system design).",
+    "NO_COROTATION_NO_THERMAL: atmospheric co-rotation and O thermal motion are neglected (they change the relative speed and let non-ram surfaces receive flux).",
+    "FROZEN_SCENARIO_ONLY: one epoch, orbit-averaged; no solar-cycle-averaged mission profile. The F10.7 70-230 columns bracket activity; the mission F10.7 history is TBD - requires the mission profile.",
+    "COMPOSITION_SUM: fO is the O mass fraction of O+N2+O2 while rho includes the dropped species (He, H, Ar, N; < 2 % by mass at 180-230 km per the frozen metadata), so n_O is high by at most that share.",
+    "OTHER_ENVIRONMENT (recession only): MISSE 2 yields are ISS-exterior values (planning orbit 400 km, 51.6 deg; AO with solar UV and charged particles). The AO energy there is not stated in the accessed text; E_ram here is model-derived. No energy or synergy correction is applied.",
+    "FLUENCE_EXTRAPOLATION (recession only): mission fluences exceed the MISSE 2 fluence by the 'ratio_to_misse2_fluence' factor; a linear yield beyond the tested fluence is ASSUMED."
+   ],
+   "table": [
+    {
+     "alt_km": 180,
+     "f107": 70.0,
+     "rho_kg_m3": 3.82129e-10,
+     "fO_mass_fraction": 0.34502,
+     "n_O_m3": 4962320000000000.0,
+     "V_orb_m_s": 7800.37,
+     "E_ram_O_eV": 5.045,
+     "ram_flux_atoms_cm2_s": 3871000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 1.393e+22,
+     "fluence_rfp_mission_26000h_atoms_cm2": 3.623e+23,
+     "ratio_to_misse2_fluence": 43.0
+    },
+    {
+     "alt_km": 180,
+     "f107": 100.0,
+     "rho_kg_m3": 4.33691e-10,
+     "fO_mass_fraction": 0.360678,
+     "n_O_m3": 5887500000000000.0,
+     "V_orb_m_s": 7800.37,
+     "E_ram_O_eV": 5.045,
+     "ram_flux_atoms_cm2_s": 4592000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 1.653e+22,
+     "fluence_rfp_mission_26000h_atoms_cm2": 4.299e+23,
+     "ratio_to_misse2_fluence": 51.0
+    },
+    {
+     "alt_km": 180,
+     "f107": 150.0,
+     "rho_kg_m3": 5.20551e-10,
+     "fO_mass_fraction": 0.388266,
+     "n_O_m3": 7607170000000000.0,
+     "V_orb_m_s": 7800.37,
+     "E_ram_O_eV": 5.045,
+     "ram_flux_atoms_cm2_s": 5934000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 2.136e+22,
+     "fluence_rfp_mission_26000h_atoms_cm2": 5.554e+23,
+     "ratio_to_misse2_fluence": 65.9
+    },
+    {
+     "alt_km": 180,
+     "f107": 190.0,
+     "rho_kg_m3": 5.93092e-10,
+     "fO_mass_fraction": 0.408623,
+     "n_O_m3": 9121710000000000.0,
+     "V_orb_m_s": 7800.37,
+     "E_ram_O_eV": 5.045,
+     "ram_flux_atoms_cm2_s": 7115000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 2.561e+22,
+     "fluence_rfp_mission_26000h_atoms_cm2": 6.66e+23,
+     "ratio_to_misse2_fluence": 79.0
+    },
+    {
+     "alt_km": 180,
+     "f107": 230.0,
+     "rho_kg_m3": 6.68585e-10,
+     "fO_mass_fraction": 0.426141,
+     "n_O_m3": 1.07236e+16,
+     "V_orb_m_s": 7800.37,
+     "E_ram_O_eV": 5.045,
+     "ram_flux_atoms_cm2_s": 8365000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 3.011e+22,
+     "fluence_rfp_mission_26000h_atoms_cm2": 7.829e+23,
+     "ratio_to_misse2_fluence": 92.9
+    },
+    {
+     "alt_km": 200,
+     "f107": 70.0,
+     "rho_kg_m3": 1.77123e-10,
+     "fO_mass_fraction": 0.435083,
+     "n_O_m3": 2900530000000000.0,
+     "V_orb_m_s": 7788.49,
+     "E_ram_O_eV": 5.03,
+     "ram_flux_atoms_cm2_s": 2259000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 8.133e+21,
+     "fluence_rfp_mission_26000h_atoms_cm2": 2.114e+23,
+     "ratio_to_misse2_fluence": 25.1
+    },
+    {
+     "alt_km": 200,
+     "f107": 100.0,
+     "rho_kg_m3": 2.14603e-10,
+     "fO_mass_fraction": 0.442428,
+     "n_O_m3": 3573630000000000.0,
+     "V_orb_m_s": 7788.49,
+     "E_ram_O_eV": 5.03,
+     "ram_flux_atoms_cm2_s": 2783000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 1.002e+22,
+     "fluence_rfp_mission_26000h_atoms_cm2": 2.605e+23,
+     "ratio_to_misse2_fluence": 30.9
+    },
+    {
+     "alt_km": 200,
+     "f107": 150.0,
+     "rho_kg_m3": 2.77839e-10,
+     "fO_mass_fraction": 0.460869,
+     "n_O_m3": 4819490000000000.0,
+     "V_orb_m_s": 7788.49,
+     "E_ram_O_eV": 5.03,
+     "ram_flux_atoms_cm2_s": 3754000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 1.351e+22,
+     "fluence_rfp_mission_26000h_atoms_cm2": 3.513e+23,
+     "ratio_to_misse2_fluence": 41.7
+    },
+    {
+     "alt_km": 200,
+     "f107": 190.0,
+     "rho_kg_m3": 3.30934e-10,
+     "fO_mass_fraction": 0.47601,
+     "n_O_m3": 5929090000000000.0,
+     "V_orb_m_s": 7788.49,
+     "E_ram_O_eV": 5.03,
+     "ram_flux_atoms_cm2_s": 4618000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 1.662e+22,
+     "fluence_rfp_mission_26000h_atoms_cm2": 4.322e+23,
+     "ratio_to_misse2_fluence": 51.3
+    },
+    {
+     "alt_km": 200,
+     "f107": 230.0,
+     "rho_kg_m3": 3.86533e-10,
+     "fO_mass_fraction": 0.489439,
+     "n_O_m3": 7120590000000000.0,
+     "V_orb_m_s": 7788.49,
+     "E_ram_O_eV": 5.03,
+     "ram_flux_atoms_cm2_s": 5546000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 1.997e+22,
+     "fluence_rfp_mission_26000h_atoms_cm2": 5.191e+23,
+     "ratio_to_misse2_fluence": 61.6
+    },
+    {
+     "alt_km": 230,
+     "f107": 70.0,
+     "rho_kg_m3": 6.46124e-11,
+     "fO_mass_fraction": 0.56837,
+     "n_O_m3": 1382220000000000.0,
+     "V_orb_m_s": 7770.77,
+     "E_ram_O_eV": 5.007,
+     "ram_flux_atoms_cm2_s": 1074000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 3.867e+21,
+     "fluence_rfp_mission_26000h_atoms_cm2": 1.005e+23,
+     "ratio_to_misse2_fluence": 11.9
+    },
+    {
+     "alt_km": 230,
+     "f107": 100.0,
+     "rho_kg_m3": 8.64726e-11,
+     "fO_mass_fraction": 0.560719,
+     "n_O_m3": 1824970000000000.0,
+     "V_orb_m_s": 7770.77,
+     "E_ram_O_eV": 5.007,
+     "ram_flux_atoms_cm2_s": 1418000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 5.105e+21,
+     "fluence_rfp_mission_26000h_atoms_cm2": 1.327e+23,
+     "ratio_to_misse2_fluence": 15.7
+    },
+    {
+     "alt_km": 230,
+     "f107": 150.0,
+     "rho_kg_m3": 1.251e-10,
+     "fO_mass_fraction": 0.562745,
+     "n_O_m3": 2649730000000000.0,
+     "V_orb_m_s": 7770.77,
+     "E_ram_O_eV": 5.007,
+     "ram_flux_atoms_cm2_s": 2059000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 7.413e+21,
+     "fluence_rfp_mission_26000h_atoms_cm2": 1.927e+23,
+     "ratio_to_misse2_fluence": 22.9
+    },
+    {
+     "alt_km": 230,
+     "f107": 190.0,
+     "rho_kg_m3": 1.58533e-10,
+     "fO_mass_fraction": 0.569021,
+     "n_O_m3": 3395310000000000.0,
+     "V_orb_m_s": 7770.77,
+     "E_ram_O_eV": 5.007,
+     "ram_flux_atoms_cm2_s": 2638000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 9.498e+21,
+     "fluence_rfp_mission_26000h_atoms_cm2": 2.47e+23,
+     "ratio_to_misse2_fluence": 29.3
+    },
+    {
+     "alt_km": 230,
+     "f107": 230.0,
+     "rho_kg_m3": 1.94137e-10,
+     "fO_mass_fraction": 0.575931,
+     "n_O_m3": 4208330000000000.0,
+     "V_orb_m_s": 7770.77,
+     "E_ram_O_eV": 5.007,
+     "ram_flux_atoms_cm2_s": 3270000000000000.0,
+     "fluence_per_1000h_atoms_cm2": 1.177e+22,
+     "fluence_rfp_mission_26000h_atoms_cm2": 3.061e+23,
+     "ratio_to_misse2_fluence": 36.3
+    }
+   ],
+   "illustrative_recession_equivalents": {
+    "status": "ILLUSTRATIVE, OUT_OF_DOMAIN (flags above). Shows only that polymer exterior parts on a ram-exposed surface would not survive the mission fluence unprotected; it is never a design margin, a coating thickness or a verdict. Metals, BN, alumina and other ceramics: no open erosion yield accessed by this lane -> TBD (AOL-EX-01).",
+    "mission_fluence_range_atoms_cm2": [
+     1.005e+23,
+     7.829e+23
+    ],
+    "rows": [
+     {
+      "id": "MISSE2-2-E5-30",
+      "material": "Polyimide (PMDA)",
+      "abbreviation": "PI (Kapton H)",
+      "role_on_ep_unit": "MLI / harness film; the AO fluence witness",
+      "misse2_erosion_yield_cm3_per_atom": 3e-24,
+      "yield_source": {
+       "source_id": "DEGROH2006",
+       "locator": "Table 4, p. 17",
+       "evidence_level": 3,
+       "evidence_class": "measured",
+       "note": "flight mass loss / (area x density x Kapton-H-witness fluence), Eq. (1)-(3) p. 2; Kapton H yield itself is the reference 3.0e-24 cm3/atom (p. 2, citing Banks 1997 [4]), so every yield is relative to that calibration"
+      },
+      "illustrative_recession_um_at_min_mission_fluence": 3020.0,
+      "illustrative_recession_um_at_max_mission_fluence": 23500.0
+     },
+     {
+      "id": "MISSE2-2-E5-31",
+      "material": "Polyimide (PMDA)",
+      "abbreviation": "PI (Kapton HN)",
+      "role_on_ep_unit": "MLI / harness film",
+      "misse2_erosion_yield_cm3_per_atom": 2.81e-24,
+      "yield_source": {
+       "source_id": "DEGROH2006",
+       "locator": "Table 4, p. 17",
+       "evidence_level": 3,
+       "evidence_class": "measured",
+       "note": "flight mass loss / (area x density x Kapton-H-witness fluence), Eq. (1)-(3) p. 2; Kapton H yield itself is the reference 3.0e-24 cm3/atom (p. 2, citing Banks 1997 [4]), so every yield is relative to that calibration"
+      },
+      "illustrative_recession_um_at_min_mission_fluence": 2820.0,
+      "illustrative_recession_um_at_max_mission_fluence": 22000.0
+     },
+     {
+      "id": "MISSE2-2-E5-32",
+      "material": "Polyimide (BPDA)",
+      "abbreviation": "PI (Upilex-S)",
+      "role_on_ep_unit": "MLI / harness film",
+      "misse2_erosion_yield_cm3_per_atom": 9.22e-25,
+      "yield_source": {
+       "source_id": "DEGROH2006",
+       "locator": "Table 4, p. 17",
+       "evidence_level": 3,
+       "evidence_class": "measured",
+       "note": "flight mass loss / (area x density x Kapton-H-witness fluence), Eq. (1)-(3) p. 2; Kapton H yield itself is the reference 3.0e-24 cm3/atom (p. 2, citing Banks 1997 [4]), so every yield is relative to that calibration"
+      },
+      "illustrative_recession_um_at_min_mission_fluence": 927.0,
+      "illustrative_recession_um_at_max_mission_fluence": 7220.0
+     },
+     {
+      "id": "MISSE2-2-E5-37",
+      "material": "Polyetheretherkeytone",
+      "abbreviation": "PEEK",
+      "role_on_ep_unit": "structural / connector polymer",
+      "misse2_erosion_yield_cm3_per_atom": 2.99e-24,
+      "yield_source": {
+       "source_id": "DEGROH2006",
+       "locator": "Table 4, p. 17",
+       "evidence_level": 3,
+       "evidence_class": "measured",
+       "note": "flight mass loss / (area x density x Kapton-H-witness fluence), Eq. (1)-(3) p. 2; Kapton H yield itself is the reference 3.0e-24 cm3/atom (p. 2, citing Banks 1997 [4]), so every yield is relative to that calibration"
+      },
+      "illustrative_recession_um_at_min_mission_fluence": 3000.0,
+      "illustrative_recession_um_at_max_mission_fluence": 23400.0
+     },
+     {
+      "id": "MISSE2-2-E5-42",
+      "material": "Fluorinated ethylene propylene",
+      "abbreviation": "FEP",
+      "role_on_ep_unit": "MLI outer layer / wire insulation",
+      "misse2_erosion_yield_cm3_per_atom": 2e-25,
+      "yield_source": {
+       "source_id": "DEGROH2006",
+       "locator": "Table 4, p. 17",
+       "evidence_level": 3,
+       "evidence_class": "measured",
+       "note": "flight mass loss / (area x density x Kapton-H-witness fluence), Eq. (1)-(3) p. 2; Kapton H yield itself is the reference 3.0e-24 cm3/atom (p. 2, citing Banks 1997 [4]), so every yield is relative to that calibration"
+      },
+      "illustrative_recession_um_at_min_mission_fluence": 201.0,
+      "illustrative_recession_um_at_max_mission_fluence": 1570.0
+     },
+     {
+      "id": "MISSE2-2-E5-43",
+      "material": "Polytetrafluoroethylene",
+      "abbreviation": "PTFE",
+      "role_on_ep_unit": "wire insulation / spacers",
+      "misse2_erosion_yield_cm3_per_atom": 1.42e-25,
+      "yield_source": {
+       "source_id": "DEGROH2006",
+       "locator": "Table 4, p. 17",
+       "evidence_level": 3,
+       "evidence_class": "measured",
+       "note": "flight mass loss / (area x density x Kapton-H-witness fluence), Eq. (1)-(3) p. 2; Kapton H yield itself is the reference 3.0e-24 cm3/atom (p. 2, citing Banks 1997 [4]), so every yield is relative to that calibration"
+      },
+      "illustrative_recession_um_at_min_mission_fluence": 143.0,
+      "illustrative_recession_um_at_max_mission_fluence": 1110.0
+     },
+     {
+      "id": "MISSE2-2-E5-41",
+      "material": "Tetrafluorethylene-ethylene copolymer",
+      "abbreviation": "ETFE (Tefzel)",
+      "role_on_ep_unit": "wire insulation",
+      "misse2_erosion_yield_cm3_per_atom": 9.61e-25,
+      "yield_source": {
+       "source_id": "DEGROH2006",
+       "locator": "Table 4, p. 17",
+       "evidence_level": 3,
+       "evidence_class": "measured",
+       "note": "flight mass loss / (area x density x Kapton-H-witness fluence), Eq. (1)-(3) p. 2; Kapton H yield itself is the reference 3.0e-24 cm3/atom (p. 2, citing Banks 1997 [4]), so every yield is relative to that calibration"
+      },
+      "illustrative_recession_um_at_min_mission_fluence": 966.0,
+      "illustrative_recession_um_at_max_mission_fluence": 7520.0
+     },
+     {
+      "id": "MISSE2-2-E5-25",
+      "material": "Graphite",
+      "abbreviation": "PG",
+      "role_on_ep_unit": "graphite / carbon parts (pyrolytic graphite sample)",
+      "misse2_erosion_yield_cm3_per_atom": 4.15e-25,
+      "yield_source": {
+       "source_id": "DEGROH2006",
+       "locator": "Table 4, p. 17",
+       "evidence_level": 3,
+       "evidence_class": "measured",
+       "note": "flight mass loss / (area x density x Kapton-H-witness fluence), Eq. (1)-(3) p. 2; Kapton H yield itself is the reference 3.0e-24 cm3/atom (p. 2, citing Banks 1997 [4]), so every yield is relative to that calibration"
+      },
+      "illustrative_recession_um_at_min_mission_fluence": 417.0,
+      "illustrative_recession_um_at_max_mission_fluence": 3250.0
+     }
+    ]
+   }
+  }
+ }
+}
