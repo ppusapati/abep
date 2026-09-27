@@ -149,5 +149,14 @@
   "run_escalation_ndd_hmshigh.sh": "01f1a041c080def379bc88b17d94d296a7b612da85b299b229ea98255562f2d0",
   "run_escalation_ndd_hmslow.sh": "396c05b64ac3ce22c59d75f99bb8197365cceeb7300454cf6c2f229bf8298341",
   "run_escalation_rot_off.sh": "7732405d8b4b66325f533b7f2e6dc9e0b4e8c993d879dcb9dbffbc00f3d70c06"
+ },
+ "reporting_rule_2026_09_27": {
+  "decided_by": "owner",
+  "rule": [
+   "a watcher/daemon is infrastructure, never reported as project progress",
+   "no orchestration watch is kept alive when zero productive lanes are CLAIMED or LAUNCHED",
+   "every background workflow is reported as: workflow ID -> objective -> current step -> last completed artifact -> blocker -> next terminal artifact",
+   "report only when a lane produces a reviewable artifact, reaches a blocker needing owner input, or reaches VERIFIED/FAILED; no periodic 'still running' messages without a state change"
+  ]
  }
 }
