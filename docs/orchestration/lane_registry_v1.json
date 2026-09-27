@@ -909,7 +909,14 @@
   {
    "id": "fo_o4_disposition_matrix",
    "kind": "follow_on",
-   "title": "O4 disposition matrix (owner records dispositions; ensemble/o4_dispositions_schema_v1.json)"
+   "title": "O4 disposition matrix (owner records dispositions; ensemble/o4_dispositions_schema_v1.json)",
+   "repairs": [
+    {
+     "workflow_run": "wf_f91149e3-bad",
+     "workflow_key": "S12",
+     "reason": "provenance binds only immutable evidence; registries only as canonical projections (dataset/trigger fields); owner dispositions never read"
+    }
+   ]
   },
   {
    "id": "fo_absolute_comparison",
