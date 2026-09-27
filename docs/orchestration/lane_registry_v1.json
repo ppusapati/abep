@@ -910,7 +910,14 @@
   {
    "id": "fo_feed_state_closure",
    "kind": "follow_on",
-   "title": "W1 feed-state closure: atmosphere -> intake -> compressor -> buffer -> valve-outlet test points"
+   "title": "W1 feed-state closure: atmosphere -> intake -> compressor -> buffer -> valve-outlet test points",
+   "repairs": [
+    {
+     "workflow_run": "wf_c901e2cf-537",
+     "workflow_key": "FEED",
+     "reason": "control C2: explicit flight_status PROPOSED_FLIGHT_REPRESENTATIVE / GROUND_QUALIFICATION_POINT"
+    }
+   ]
   },
   {
    "id": "fo_lock1_decision_brief",
@@ -920,7 +927,14 @@
   {
    "id": "fo_hardware_definition",
    "kind": "follow_on",
-   "title": "W3 common-hardware definition: H-1, C-1, removable RF/ECR modules"
+   "title": "W3 common-hardware definition: H-1, C-1, removable RF/ECR modules",
+   "repairs": [
+    {
+     "workflow_run": "wf_c901e2cf-537",
+     "workflow_key": "HW",
+     "reason": "control C5: adopt AO/lifetime provisions and magnet/coil requirements into H-1"
+    }
+   ]
   },
   {
    "id": "fo_instrumentation_definition",
@@ -945,7 +959,14 @@
   {
    "id": "fo_ao_lifetime_register",
    "kind": "follow_on",
-   "title": "Hall lifetime / atomic-oxygen degradation register and H-1 witness/coupon/diagnostic provisions"
+   "title": "Hall lifetime / atomic-oxygen degradation register and H-1 witness/coupon/diagnostic provisions",
+   "repairs": [
+    {
+     "workflow_run": "wf_c901e2cf-537",
+     "workflow_key": "AOLIFE",
+     "reason": "re-verify W3/W4 draft references against merged files; C5 cross-check (ordered after HW)"
+    }
+   ]
   },
   {
    "id": "fo_hallmap_schema_v2_registry",
@@ -960,7 +981,14 @@
   {
    "id": "fo_s1_readiness_gate",
    "kind": "follow_on",
-   "title": "explicit S1-readiness gate reporting S1_NOT_READY with missing items"
+   "title": "explicit S1-readiness gate reporting S1_NOT_READY with missing items",
+   "repairs": [
+    {
+     "workflow_run": "wf_c901e2cf-537",
+     "workflow_key": "S1GATE",
+     "reason": "authority read from the A2 addendum (decision file restored byte-identical); S1-C3 aligned with feed labels (ordered after FEED)"
+    }
+   ]
   },
   {
    "id": "fo_repo_decisions_batch",

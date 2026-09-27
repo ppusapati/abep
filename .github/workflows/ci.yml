@@ -27,7 +27,7 @@ env:
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
   # abep_sim is installed editable (`pip install --no-deps -e .`, explicit package discovery, docs/ci/PACKAGING.md) after
   # the lock-file install, so no PYTHONPATH workaround is needed. --no-deps: the lock file is the dependency source of
-  # truth, and pyproject.toml still lists pymsis as a hard dependency, which would otherwise re-install it in the absent leg.
+  # truth (the editable install can never add or upgrade an unpinned package); pymsis is only in the [msis] extra.
 
 jobs:
   integrity:

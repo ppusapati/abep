@@ -176,8 +176,9 @@ the P5-N2 campaign is running, so their CI runtime is unknown (timeout 90 min).
 ## Open points for the owner
 
 1. Resolved 2026-09-27 (owner decision): explicit setuptools package discovery with `abep_sim/data` as package data;
-   `pip install -e .` and a wheel install both work (`docs/ci/PACKAGING.md`). Open: `pymsis` is still a hard dependency in
-   `pyproject.toml` although gate 1 requires running without it (recommended: keep it only in the `[msis]` extra).
+   `pip install -e .` and a wheel install both work (`docs/ci/PACKAGING.md`). Resolved 2026-09-27 (owner decision): `pymsis`
+   is only in the `[msis]` extra, so a plain install no longer pulls it (gate 1); CI keeps `--no-deps` so the lock file stays
+   the single dependency source.
 2. Resolved 2026-09-27 (owner decision): `requires-python >= 3.11`.
 3. Resolved 2026-09-27 (owner decision): `python -m abep_sim.golden check` now exits 1 on deviations, and CI gates on
    the exit code instead of parsing the output text.
