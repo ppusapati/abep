@@ -186,9 +186,63 @@ def test_derived_consistency(committed):
     assert row["u_rel_spec"] == pytest.approx(0.007)
     assert row["u_m_15000h_kg_spec"] == pytest.approx(0.0378)
     assert all(r["setpoint_fraction_of_fs"] <= 1.0 for r in d["flow_measurement_uncertainty"]["rows"])
-    assert d["echt_context"]["inner_channel_wall_diameter_mm"] == 80.0
+    assert "echt_context" not in d and d["central_bore_check"]["status"].startswith("PENDING H2-1")
     lo, hi = d["emitter_temperature_points"]["operating_span_K"]
     assert lo == pytest.approx(1844.5) and hi == pytest.approx(1973.15)
+
+
+def test_flow_headline_is_conservative_and_carries_zero_terms(committed):
+    d = committed["derived"]
+    appl = {r["fs_mg_s"]: r for r in d["catalog_class_applicability"]["rows"]}
+    # ~2 sccm Xe read against the catalog air and Ar columns falls only in the -002 model (+/-2 % FS)
+    assert appl[0.2]["conservative_spec"] == "SPEC-CAT-002"
+    assert appl[0.2]["models_if_read_as_air"] == ["F-110C-002 / F-200CV-002"]
+    hl = d["flow_measurement_headline"]
+    cons, std = hl["conservative_catalog_class"], hl["standard_class_procurement_requirement"]
+    assert cons["u_rel_spec_only"] == pytest.approx(0.04)
+    assert std["u_rel_spec_only"] == pytest.approx(0.007)
+    z = math.hypot(0.004, 0.0012) * 2.0
+    assert std["u_rel_with_zero_terms_dT1C"] == pytest.approx(math.hypot(0.007, z), rel=1e-3)
+    assert std["u_rel_with_zero_terms_dT1C"] > 0.01           # the < 1 % claim does not hold with zero terms
+    ifd = next(x for x in committed["interface_demands"] if x["id"] == "IFD-15")
+    u = ifd["value"]["u_rel_flow_at_0.10_mg_s_FS0.2"]
+    assert u["conservative_catalog_class_spec_only"] == cons["u_rel_spec_only"]
+    assert u["standard_class_requirement_with_zero_terms_dT1C_dT5C"][0] == std["u_rel_with_zero_terms_dT1C"]
+    hic = {c["item"]: c for c in committed["hard_incompatibility_check"]["checked"]}
+    assert "not yet to < 1 %" in hic["flow-measurement capability at 0.10 mg/s"]["finding"]
+
+
+def test_resolution_and_lower_limit(committed):
+    fr = committed["derived"]["flow_resolution_and_lower_limit"]
+    row = fr["lower_control_limit_rows"][0]
+    assert row["fs_mg_s"] == 0.2
+    assert row["min_controllable_mg_s_digital"] == pytest.approx(0.2 / 187.5, rel=1e-3)
+    assert row["flow_at_u_rel_10pct_conservative_mg_s"] == pytest.approx(0.04)
+    assert fr["search_step_mg_s"] >= 10 * fr["resolution_requirement_PROPOSED_mg_s"] - 1e-12
+    ids = {p["id"] for p in committed["design_parameters"]}
+    assert {"H22-52", "H22-53"} <= ids
+
+
+def test_sccm_convention_and_preheat_bound(committed):
+    sc = committed["derived"]["sccm_convention"]
+    assert sc["ideal_gas_mg_s_per_sccm_273_15K_1atm"] == pytest.approx(0.0976274, rel=1e-5)
+    assert sc["ideal_over_Z"] == pytest.approx(sc["used_mg_s_per_sccm"], rel=1e-5)
+    rows = committed["derived"]["preheat_purge_xe"]["rows"]
+    b = next(r for r in rows if r["case"] == "PH-JPL-1p5cm" and r["purge_flow"] == "ignition_flow_dwell_bound")
+    assert b["xe_per_start_g"] == pytest.approx(1.2)
+
+
+def test_state_machine_sequence_matches(committed):
+    sm = json.loads((REPO / B.CONTROLS_REL).read_text())
+    states = {s["id"]: s for s in sm["states"]}
+    seq = next(p for p in committed["design_parameters"] if p["id"] == "H22-27")["value"]
+    names = [x.split(" ")[0] for x in seq]
+    for n in names:
+        assert n in states, n
+    assert names.index("PREIONIZER_SEED") < names.index("XE_DISCHARGE_IGNITION")
+    assert states["XE_DISCHARGE_IGNITION"]["outputs"]["magnet"] == "on"
+    assert states["CATHODE_IGNITION"]["outputs"]["magnet"] == "off"
+    assert "heater off" not in next(x for x in seq if x.startswith("XE_DISCHARGE_IGNITION"))
 
 
 @pytest.mark.parametrize("call", [
@@ -203,6 +257,9 @@ def test_derived_consistency(committed):
     lambda: B.rate_of_rise_Pa_s(0.1, None, 293.15),
     lambda: B.discharge_current_upper_bound_A(1500, float("nan")),
     lambda: B.rss(),
+    lambda: B.catalog_models_for_fs(2.0, "Xe"),
+    lambda: B.min_controllable_flow(0.2, None),
+    lambda: B.flow_at_u_rel(0.2, 0.0, 0.02, 0.0),
 ])
 def test_missing_inputs_raise(call):
     with pytest.raises(B.InputMissing):

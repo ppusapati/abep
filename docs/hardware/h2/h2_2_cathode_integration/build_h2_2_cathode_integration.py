@@ -99,7 +99,9 @@ PARALLEL_PATHS = (H2_1, H2_3, H2_4, H2_5, H2_6, H2_7, PMI, M16)
 # Vocabularies (the test enforces them)
 # ----------------------------------------------------------------------------------------------------------------------
 BASES = ("requirement", "allocation", "analog", "derived", "assumed", "pending")
-EVIDENCE_CLASSES = ("measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed", "none")
+# docs/EVIDENCE.md classes; "measured (secondary)" = a measured value known only through a secondary statement.
+EVIDENCE_CLASSES = ("measured", "measured (secondary)", "digitized", "inferred", "reconstructed", "model-derived",
+                    "assumed", "none")
 ARTICLE_CLASSES = ("FLIGHT_REPRESENTATIVE", "H1_TEST_ARTICLE_ONLY", "GROUND_FACILITY_ONLY")
 M16_STATES = ("READY", "RUNNING", "BLOCKED", "VERIFIED")
 ROLLUP = ("architecture blocker", "hardware-definition blocker", "procurement blocker", "test-readiness blocker",
@@ -175,14 +177,14 @@ SOURCES = {
                  "access": "repository deliverable (read only)"},
     "A5": {"citation": "Owner addendum A5", "path": A5_REL, "access": "immutable owner decision (pinned)"},
     "A7": {"citation": "Owner addendum A7", "path": A7_REL, "access": "immutable owner decision (pinned)"},
-    "CLAUDE_MD": {"citation": "CLAUDE.md 'Superseded / withdrawn' (true ECHT geometry: 86 mm long, 10 mm wide, "
-                              "100 mm OD)", "path": "CLAUDE.md", "access": "repository instructions (read only)"},
 }
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Constants used in derivations (each sourced)
 # ----------------------------------------------------------------------------------------------------------------------
 XE_MG_S_PER_SCCM = 0.0983009      # G&K App. B Eq. (B-5) p. 464, via LANE19 parameters.xe_mg_s_per_sccm (273.15 K, 1 atm)
+XE_COMPRESSIBILITY_Z = 0.9931468   # G&K App. B Eq. (B-5) compressibility correction, via LANE19 locator (verify)
+P_ATM_PA = 101325.0                # 1 atm (definition)
 R_UNIVERSAL = 8.314462618          # J/(mol K), CODATA exact-derived (k_B * N_A)
 M_XE_KG_PER_MOL = 0.131293         # G&K App. B (M_a = 131.293), via LANE19 locator
 KELVIN = 273.15
@@ -253,6 +255,36 @@ def rate_of_rise_Pa_s(mdot_mg_s, volume_L, temperature_K):
         _req("volume_L", volume_L) * 1e-3)
 
 
+def ideal_gas_xe_mg_s_per_sccm():
+    """Ideal-gas Xe mass flow of 1 sccm at 273.15 K / 1 atm: P V_dot M / (R T), no compressibility."""
+    return P_ATM_PA * 1e-6 / 60.0 * M_XE_KG_PER_MOL / (R_UNIVERSAL * KELVIN) * 1e6
+
+
+def catalog_models_for_fs(fs_value, gas):
+    """Catalog low-range models whose selectable FS range (in mln/min of `gas`) contains fs_value (reference only)."""
+    fs_value = _req("fs_value", fs_value)
+    if gas not in ("air", "Ar"):
+        raise InputMissing(f"gas must be 'air' or 'Ar' (the catalog columns read here), got {gas!r}")
+    return [m for m in CATALOG_LOW_MODELS
+            if m["fs_range_mln_min"][gas][0] <= fs_value <= m["fs_range_mln_min"][gas][1]]
+
+
+def min_controllable_flow(fs, turndown):
+    """Lower control limit FS / turndown (catalog turndown; the accuracy class is not stated to hold there)."""
+    return _req("fs", fs) / _req("turndown", turndown)
+
+
+def flow_at_u_rel(fs, rd_frac, fs_frac, u_target):
+    """Smallest setpoint at which rd_frac + fs_frac * FS / q <= u_target (None if rd_frac >= u_target)."""
+    fs = _req("fs", fs)
+    rd = _req("rd_frac", rd_frac, positive=False)
+    fsf = _req("fs_frac", fs_frac, positive=False)
+    u = _req("u_target", u_target)
+    if rd >= u:
+        return None
+    return fsf * fs / (u - rd)
+
+
 def discharge_current_upper_bound_A(p_W, v_d_V):
     """I_d <= P / V_d (all of P into the discharge): a bound from power, never a prediction."""
     return _req("p_W", p_W) / _req("v_d_V", v_d_V)
@@ -313,14 +345,40 @@ SPEC_CLASSES = [
                "accuracy typically 1% full scale'); W4 treats it as 1 sigma (coverage to verify)",
      "evidence_class": "measured"},
     {"id": "SPEC-CAT-STD", "rd_frac": 0.005, "fs_frac": 0.001,
-     "source": "BRONKHORST_ELFLOW_SELECT p. 2 'Accuracy (incl. linearity) standard: +/-0,5% Rd plus +/-0,1%FS' "
-               "(based on actual calibration)", "evidence_class": "assumed"},
+     "source": "BRONKHORST_ELFLOW_SELECT p. 2 [PDF page 3 of 8, 'Technical specifications'] 'Accuracy (incl. "
+               "linearity) standard: +/-0,5% Rd plus +/-0,1%FS' (based on actual calibration); applies to the models "
+               "other than F-110C-002/-005 and F-200CV-002/-005", "evidence_class": "assumed"},
     {"id": "SPEC-CAT-LOW", "rd_frac": 0.008, "fs_frac": 0.002,
-     "source": "BRONKHORST_ELFLOW_SELECT p. 2 '+/-0,8% Rd plus +/-0,2% FS for F-110C-005/F-200CV-005' (lowest "
-               "ranges)", "evidence_class": "assumed"},
+     "source": "BRONKHORST_ELFLOW_SELECT p. 2 [PDF page 3] '+/-0,8% Rd plus +/-0,2% FS for F-110C-005/F-200CV-005' "
+               "(second-lowest range model)", "evidence_class": "assumed"},
     {"id": "SPEC-CAT-002", "rd_frac": 0.0, "fs_frac": 0.02,
-     "source": "BRONKHORST_ELFLOW_SELECT p. 2 '+/-2% FS for F-110C-002/F-200CV-002'", "evidence_class": "assumed"},
+     "source": "BRONKHORST_ELFLOW_SELECT p. 2 [PDF page 3] '+/-2% FS for F-110C-002/F-200CV-002' (lowest range "
+               "model)", "evidence_class": "assumed"},
 ]
+# Selectable full-scale ranges of the lowest catalog models (BRONKHORST_ELFLOW_SELECT PDF page 4, 'Table with minimum
+# and maximum flow ranges ... Multi Fluid / Multi Range'): the 'Min.' row gives the smallest range (upper value = the
+# smallest selectable FS) and the 'Max.' row the largest range (upper value = the largest selectable FS), in mln/min of
+# the named gas. Transcribed from the catalog table (reference only). Xe is NOT listed in the table; Ar is the only
+# listed monatomic gas. Footnote 1) of the table: 'Multi Gas / Multi Range option not available for these models'
+# (applies to F-200CV-002 and F-200CV-005).
+CATALOG_LOW_MODELS = [
+    {"model": "F-110C-002 / F-200CV-002", "spec": "SPEC-CAT-002",
+     "fs_range_mln_min": {"air": [0.7, 5.0], "Ar": [1.0, 6.0]}},
+    {"model": "F-110C-005 / F-200CV-005", "spec": "SPEC-CAT-LOW",
+     "fs_range_mln_min": {"air": [3.0, 9.0], "Ar": [3.5, 9.5]}},
+    {"model": "F-111B-020 / F-201CV-020", "spec": "SPEC-CAT-STD",
+     "fs_range_mln_min": {"air": [8.0, 30.0], "Ar": [10.0, 30.0]}},
+    {"model": "F-111B-050 / F-201CV-050", "spec": "SPEC-CAT-STD",
+     "fs_range_mln_min": {"air": [20.0, 75.0], "Ar": [27.0, 75.0]}},
+]
+SPEC_ORDER_WORST_FIRST = ["SPEC-CAT-002", "SPEC-CAT-LOW", "SPEC-CAT-STD"]
+# Other catalog figures used here (reference only, same page): turndown 'up to 1:187,5 (1:50 in analog mode)';
+# 'Control stability < +/-0,1% FS (typical for 1 ln/min N2)'; 'Temperature sensitivity zero: < 0,05% FS/degC';
+# 'Attitude sensitivity max. error at 90 deg off horizontal 0,2% at 1 bar, typical N2'. No readout or setpoint
+# resolution is stated in the accessed catalog.
+CAT_TURNDOWN_DIGITAL = 187.5
+CAT_TURNDOWN_ANALOG = 50.0
+CAT_CONTROL_STABILITY_FS = 0.001
 # Candidate full scales in mg/s Xe (a design axis of this lane, not a product range: catalog ranges are air-based and
 # the Xe range of any unit is TBD - requires the manufacturer's Xe calibration).
 FS_OPTIONS_MG_S = [0.2, 0.3, 0.5, 1.0, 2.0]
@@ -328,6 +386,8 @@ FS_OPTIONS_MG_S = [0.2, 0.3, 0.5, 1.0, 2.0]
 ORIENTATION_ZERO_FS = 0.004        # 'can alter the zero point ... by up to 0.4% of full scale'
 TEMP_ZERO_FS_PER_C = 0.0012        # 'approximately 0.12% per degree'
 DELTA_T_C_OPTIONS = [1.0, 5.0]     # parametric axis (assumed), not a facility value
+# Upper bound of the analog heated-ignition flows (IEPC2017_365 pp. 6-8; the start range H22-44 is sized to it).
+IGNITION_FLOW_BOUND_MG_S = 1.0
 
 
 def derive(inp: dict) -> dict:
@@ -338,9 +398,26 @@ def derive(inp: dict) -> dict:
 
     d["flow_units"] = {
         k: {"mdot_mg_s": v, "sccm_Xe": r(mg_s_to_sccm(v)),
-            "source": "mdot / 0.0983009 mg/s per sccm (G&K App. B Eq. B-5 p. 464, 273.15 K / 1 atm; LANE19 "
-                      "parameters.xe_mg_s_per_sccm)", "evidence_class": "model-derived"}
+            "source": "mdot / 0.0983009 mg/s per sccm (G&K App. B Eq. B-5 p. 464, 273.15 K / 1 atm, including the Xe "
+                      "compressibility factor 0.9931468; LANE19 parameters.xe_mg_s_per_sccm)",
+            "evidence_class": "model-derived"}
         for k, v in flows.items()}
+    ideal = ideal_gas_xe_mg_s_per_sccm()
+    d["sccm_convention"] = {
+        "used_mg_s_per_sccm": XE_MG_S_PER_SCCM,
+        "ideal_gas_mg_s_per_sccm_273_15K_1atm": r(ideal),
+        "compressibility_Z_used_by_source": XE_COMPRESSIBILITY_Z,
+        "ideal_over_Z": r(ideal / XE_COMPRESSIBILITY_Z),
+        "relative_difference_used_vs_ideal": r(XE_MG_S_PER_SCCM / ideal - 1.0, 4),
+        "note": "the lane constant equals the ideal-gas value divided by the compressibility factor quoted in the "
+                "LANE19 locator for G&K Eq. B-5 (verify against the book). The two conventions differ by about "
+                "0.7 %; this affects only the informational sccm columns (masses and uncertainties are computed in "
+                "mg/s). An MFC certificate states its own conversion (ideal gas or real gas, and its reference "
+                "conditions); the H3 order must name the convention explicitly",
+        "evidence_class": "model-derived",
+    }
+    for v in d["flow_units"].values():
+        v["sccm_Xe_ideal_gas"] = r(v["mdot_mg_s"] / ideal)
 
     mass = {}
     for k, v in flows.items():
@@ -384,6 +461,114 @@ def derive(inp: dict) -> dict:
         "rows": grid,
         "evidence_class": "model-derived",
     }
+    # Which catalog accuracy class applies at each candidate FS (indicative; Xe is not in the catalog table).
+    spec_by_id = {s["id"]: s for s in SPEC_CLASSES}
+    appl = []
+    for fs in FS_OPTIONS_MG_S:
+        fs_sccm = mg_s_to_sccm(fs)
+        reading = {}
+        union = set()
+        for gas in ("air", "Ar"):
+            ms = catalog_models_for_fs(fs_sccm, gas)
+            reading[gas] = [m["model"] for m in ms]
+            union.update(m["spec"] for m in ms)
+        conservative = next((s for s in SPEC_ORDER_WORST_FIRST if s in union), None)
+        appl.append({"fs_mg_s": fs, "fs_sccm_Xe": r(fs_sccm, 4), "models_if_read_as_air": reading["air"],
+                     "models_if_read_as_Ar": reading["Ar"], "conservative_spec": conservative})
+    d["catalog_class_applicability"] = {
+        "method": "the Xe FS in sccm is read numerically against the catalog's air and Ar columns of the "
+                  "min/max-range table (BRONKHORST_ELFLOW_SELECT PDF page 4). This is INDICATIVE only: Xe is not "
+                  "listed, the Xe conversion factor of the instrument is not in any accessed source (TBD - requires "
+                  "the manufacturer's Xe range and calibration statement), and the table's normal reference "
+                  "conditions are not defined on the accessed pages (verify). The conservative class is the worst "
+                  "class among all models matched under either reading",
+        "rows": appl,
+        "finding": "at FS about 2 sccm Xe (0.2 mg/s) both readings fall only in the F-110C-002 / F-200CV-002 model, "
+                   "whose catalog class is +/-2 % FS; the standard +/-(0.5 % Rd + 0.1 % FS) class is NOT established "
+                   "by the catalog for this range and is therefore a procurement requirement still to be "
+                   "demonstrated (Xe calibration certificate + S1a gravimetric calibration)",
+        "evidence_class": "model-derived (arithmetic on catalog reference data)",
+    }
+
+    def _row(spec_id, fs, flow="design_target"):
+        return next(x for x in grid if x["spec"] == spec_id and x["fs_mg_s"] == fs and x["flow"] == flow)
+
+    fs_p = 0.2
+    cons = next(a["conservative_spec"] for a in appl if a["fs_mg_s"] == fs_p)
+    headline = {}
+    for label, sid in (("conservative_catalog_class", cons), ("standard_class_procurement_requirement",
+                                                                "SPEC-CAT-STD")):
+        row = _row(sid, fs_p)
+        headline[label] = {
+            "spec": sid, "fs_mg_s": fs_p, "flow_mg_s": q_d,
+            "u_rel_spec_only": row["u_rel_spec"], "u_m_15000h_kg_spec_only": row["u_m_15000h_kg_spec"],
+            "u_rel_with_zero_terms_dT1C": row["u_rel_with_zero_terms_dT1C"],
+            "u_rel_with_zero_terms_dT5C": row["u_rel_with_zero_terms_dT5C"],
+            "u_m_15000h_kg_with_zero_terms_dT1C": row["u_m_15000h_kg_with_zero_terms_dT1C"],
+            "u_m_15000h_kg_with_zero_terms_dT5C": row["u_m_15000h_kg_with_zero_terms_dT5C"],
+            "rd_frac": spec_by_id[sid]["rd_frac"], "fs_frac": spec_by_id[sid]["fs_frac"]}
+    headline["zero_term_condition"] = (
+        "the spec-only values hold only if (PROPOSED requirement) the zero is checked in the installed orientation "
+        "at the operating temperature before each block (removes the 0.4 % FS orientation term) and the MFC body "
+        "temperature stays within a declared dT of the zero-check temperature during the block; otherwise the "
+        "zero-term-inclusive values apply (REF-SNYDER2017 via W4: 0.4 % FS orientation, 0.12 % FS/degC; the catalog "
+        "states < 0.05 % FS/degC zero and 0.2 % at 90 deg attitude, typical N2 - the lane keeps the larger W4 terms)")
+    headline["finding"] = (
+        "at 0.10 mg/s with FS 0.2 mg/s the flow-measurement term is between the standard-class requirement "
+        f"({r(headline['standard_class_procurement_requirement']['u_rel_spec_only'] * 100, 3)} % spec-only) and the "
+        f"conservative catalog class ({r(headline['conservative_catalog_class']['u_rel_spec_only'] * 100, 3)} % "
+        "spec-only, "
+        f"{r(headline['conservative_catalog_class']['u_rel_with_zero_terms_dT5C'] * 100, 3)} % with zero terms at "
+        "dT 5 degC); the < 1 % level is reachable only if the standard class is demonstrated on Xe AND the zero "
+        "terms are removed by the per-block zero check")
+    headline["evidence_class"] = "model-derived"
+    d["flow_measurement_headline"] = headline
+
+    # Resolution, lower control limit and the spot-mode search step.
+    lcl = []
+    for fs in (0.2, 1.0):
+        lcl.append({"fs_mg_s": fs,
+                    "min_controllable_mg_s_digital": r(min_controllable_flow(fs, CAT_TURNDOWN_DIGITAL), 4),
+                    "min_controllable_mg_s_analog": r(min_controllable_flow(fs, CAT_TURNDOWN_ANALOG), 4),
+                    "control_stability_mg_s": r(CAT_CONTROL_STABILITY_FS * fs, 4),
+                    "flow_at_u_rel_5pct_conservative_mg_s": r(flow_at_u_rel(fs, 0.0, 0.02, 0.05), 4),
+                    "flow_at_u_rel_10pct_conservative_mg_s": r(flow_at_u_rel(fs, 0.0, 0.02, 0.10), 4),
+                    "flow_at_u_rel_10pct_standard_mg_s": r(flow_at_u_rel(fs, 0.005, 0.001, 0.10), 4)})
+    step = 0.005
+    res_req = step / 10.0
+    d["flow_resolution_and_lower_limit"] = {
+        "readout_setpoint_resolution": "TBD - requires the selected instrument's readout and setpoint resolution "
+                                       "(not stated in the accessed catalog)",
+        "resolution_requirement_PROPOSED_mg_s": res_req,
+        "resolution_requirement_basis": "PROPOSED by this lane: <= 1/10 of the spot-mode search step (H22-47)",
+        "resolution_requirement_fraction_of_FS0.2": r(res_req / 0.2, 4),
+        "lower_control_limit_rows": lcl,
+        "lower_control_limit_note": "FS / turndown with the catalog turndown 1:187.5 (digital) or 1:50 (analog), "
+                                    "reference only; the catalog does not state that the accuracy class holds down "
+                                    "to this limit, so the usable floor of the minimum-flow search is where the "
+                                    "accuracy is still acceptable (flow_at_u_rel columns; the 5 %/10 % targets are "
+                                    "parametric axes, assumed). Digital setpoint communication is PROPOSED because "
+                                    "the analog turndown gives 0.004 mg/s at FS 0.2 mg/s",
+        "search_step_mg_s": step,
+        "step_vs_limits": {
+            "step_over_resolution_requirement": r(step / res_req, 4),
+            "step_over_control_stability_FS0.2": r(step / (CAT_CONTROL_STABILITY_FS * 0.2), 4),
+            "step_over_repeatability_at_0.10": r(step / (0.002 * q_d), 4),
+            "step_over_min_controllable_digital_FS0.2": r(step / min_controllable_flow(0.2, CAT_TURNDOWN_DIGITAL),
+                                                          4),
+            "conservative_absolute_accuracy_at_0.10_mg_s": r(0.02 * 0.2, 4),
+        },
+        "step_finding": "the step is at least 10x the PROPOSED resolution, the catalog control stability and the "
+                        "repeatability, and "
+                        f"{r(step / min_controllable_flow(0.2, CAT_TURNDOWN_DIGITAL), 2)}x the digital lower "
+                        "control limit at FS 0.2 mg/s, so successive steps are "
+                        "distinguishable on the same instrument; the absolute value of the minimum flow still carries "
+                        "the class accuracy (0.004 mg/s under the conservative class, about one step) until the "
+                        "gravimetric calibration closes it. Catalog control stability is quoted 'typical for 1 ln/min "
+                        "N2' and is not a Xe value",
+        "evidence_class": "model-derived (arithmetic on catalog reference data and PROPOSED values)",
+    }
+
     d["reference_condition_mismatch"] = {
         "ratio_293_15_over_273_15": r((20.0 + KELVIN) / KELVIN),
         "meaning": "a flow unit referenced to 20 degC read as if referenced to 0 degC (or the reverse) is off by "
@@ -432,8 +617,10 @@ def derive(inp: dict) -> dict:
                    "capability, p. 3; the power used is not stated)", "evidence_class": "measured"},
     ]
     ph_rows = []
+    purge_flows = dict(flows)
+    purge_flows["ignition_flow_dwell_bound"] = IGNITION_FLOW_BOUND_MG_S
     for c in preheat_cases:
-        for k, q in flows.items():
+        for k, q in purge_flows.items():
             g_per_start = q * 1e-3 * c["t_s"]
             row = {"case": c["id"], "t_preheat_s": c["t_s"], "purge_flow": k, "purge_mdot_mg_s": q,
                    "xe_per_start_g": r(g_per_start, 4),
@@ -450,9 +637,18 @@ def derive(inp: dict) -> dict:
         "N_starts_source": f"{XEL_REL} scenarios SC-1 (nominal_restart) / SC-2 (heavy_restart: one start per orbit "
                            "over 26,000 h at 180 km); scenario values, not allocations",
         "rows": ph_rows,
+        "ignition_flow_dwell_bound": {
+            "mdot_mg_s": IGNITION_FLOW_BOUND_MG_S,
+            "source": "IEPC2017_365 pp. 6-8 (heated ignitions of HC1/HC3 at 0.1-0.8 mg/s; start range sized to 1 "
+                      "mg/s, H22-44)", "evidence_class": "measured (analog)",
+            "meaning": "upper bound if conditioning and ignition ran at the start flow for the whole preheat; the "
+                       "real ignition-flow dwell is a C-1 start-procedure result (H22-OQ-06)"},
         "finding": "the preheat time is set by the C-1 heater design; under the purge-while-hot rule it converts "
                    "directly into Xe per start. Heater power (start-phase bus peak, H2-4) trades against Xe per start "
-                   "(Xe ledger m_startup); with per-orbit restarts this term can reach the kg class",
+                   "(Xe ledger m_startup). At the cathode design flows (0.10-0.15 mg/s) the term reaches the kg class "
+                   "only with per-orbit restarts; if conditioning or ignition ran at the analog start flow (up to "
+                   "1 mg/s) for the whole preheat, Xe per start rises by up to 10x (bound rows), so the "
+                   "ignition-flow dwell must be bounded by the start procedure (H22-OQ-06)",
         "evidence_class": "model-derived",
     }
 
@@ -494,15 +690,17 @@ def derive(inp: dict) -> dict:
         },
         "evidence_class": "model-derived (unit conversion of the cited points)",
     }
-    d["echt_context"] = {
-        "channel_OD_mm": 100.0, "channel_width_mm": 10.0,
-        "inner_channel_wall_diameter_mm": 100.0 - 2 * 10.0,
-        "jpl_1p5cm_keeper_OD_mm": 30.0,
-        "note": "published-analog geometry only (CLAUDE.md; IEPC2015_43 p. 4 'keeper has an outer diameter of about "
-                "3.0 cm'): at analog scale a 30 mm keeper is smaller than the 80 mm inner channel-wall diameter, so "
-                "a central bore is not geometrically excluded; the real check needs H-1's inner wall, inner core and "
-                "coil cross-sections (PENDING H2-1). Never a Vyovrinda dimension.",
-        "evidence_class": "model-derived (arithmetic on analog values)",
+    d["central_bore_check"] = {
+        "status": "PENDING H2-1 - no evidence either way",
+        "what_decides_it": "the H-1 inner-core bore left after the inner channel wall thickness, the inner coil radial "
+                           "build and the core flux cross-section needed to stay below saturation (MC-1 design), "
+                           "compared with the C-1 keeper OD plus radial and thermal clearance",
+        "analog_inputs_only": "keeper OD about 3.0 cm for the JPL 1.5-cm LaB6 cathode (IEPC2015_43 p. 4); SITAEL "
+                              "HC1/HC3 keeper OD not stated (IEPC2017_365)",
+        "not_used": "no ECHT or other published thruster dimension is used as an H-1 proxy "
+                    f"({HWDEF_REL} forbids ECHT as a design-value source); analog practice of central cathodes at "
+                    "the H-1 power class is not cited here because no source at that class was accessed (verify)",
+        "evidence_class": "none (pending)",
     }
     return d
 
@@ -559,7 +757,7 @@ def parameters(inp: dict, d: dict) -> list:
         P("H22-07", "emitter temperature floor during O-bearing operation (PROPOSED design rule)",
           d["emitter_temperature_points"]["o2_tolerance_point_K"], "K", "analog",
           "DOSSIER lab6.env.o2_withstand_1570C (G&K p. 306) and IEPC2015_43 p. 2: LaB6 at 1570 degC withstands O2 up "
-          "to 1e-4 Torr without emission degradation", "measured", "PRELIMINARY", FR,
+          "to 1e-4 Torr without emission degradation", "measured (secondary)", "PRELIMINARY", FR,
           "secondary statement of diode tests (level 5); O2 only - no atomic-O or N2 threshold exists "
           "(DOSSIER U04, U05); PROPOSED, not in the RFP"),
         P("H22-08", "required attenuation of O from the local environment to the emitter", None, "-", "pending",
@@ -588,7 +786,10 @@ def parameters(inp: dict, d: dict) -> list:
           "inhibited by gas flow and/or the applied axial field): the field is a functional parameter of the "
           "cathode, not only an interference", "none",
           "TBD - requires C-1 characterization inside the MC-1 field at the operating coil currents (S1a) and the "
-          "H2-1 field at the cathode location", FR),
+          "H2-1 field at the cathode location", FR,
+          "the magnet is off in CATHODE_IGNITION and comes on in XE_DISCHARGE_IGNITION ({CONTROLS_REL}), so the lit "
+          "keeper discharge sees a field step at discharge ignition; the S1a characterization must include that "
+          "transient (keeper voltage/current through magnet turn-on)".format(CONTROLS_REL=CONTROLS_REL)),
         P("H22-13", "ferromagnetic-free zone around C-1 and its mount", "no ferromagnetic conductor, fastener or "
           "structure near MC-1 unless the model and M0/M0b map show it within INV-B3", "-", "requirement",
           f"{HWDEF_REL} HW-MC-12", "assumed", "PRELIMINARY", FR,
@@ -630,7 +831,9 @@ def parameters(inp: dict, d: dict) -> list:
         # --- (5) keeper / igniter ----------------------------------------------------------------------------------
         P("H22-21", "keeper DC ignition voltage capability (PROPOSED)", 150.0, "V", "analog",
           "IEPC2015_43 p. 4 (150 V applied to the keeper); G&K pp. 310-311 (standard DC keeper voltage 50-150 V; "
-          "100-500 V for larger-orifice LaB6 cathodes)", "measured", PEND(H2_4), FR,
+          "higher ignition voltages for 'cathodes with larger orifices (typically 2-mm diameter or larger)' - a "
+          "statement about orifice size, not specific to LaB6; the 100-500 V figure recorded in the first draft of "
+          "this row is to verify)", "measured", PEND(H2_4), FR,
           "minimum capability; the C-1 value comes from its ignition test with heater (SITAEL HC1 45-50 V; HC3 < "
           "300 V: IEPC2017_365 pp. 6, 8)"),
         P("H22-22", "keeper pulse ignition capability (PROPOSED)", [300.0, 600.0], "V", "analog",
@@ -657,11 +860,18 @@ def parameters(inp: dict, d: dict) -> list:
           "LANE19 startup_reference / IEPC-2017-276 p. 3 (1.5-cm LaB6 heater current 13 A); IEPC2017_365 p. 4 (lab "
           "heater supply 80 V / 13 A, reference only)", "measured", PEND(H2_4), FR,
           "C-1 value TBD - requires the C-1 selection"),
-        P("H22-27", "ignition sequence", ["XE_PURGE", "CATHODE_CONDITIONING (heater on, Xe cathode flow on)",
-          "CATHODE_IGNITION (keeper voltage, then keeper current regulation)", "XE_DISCHARGE_IGNITION (anode supply "
-          "on, heater off)", "keeper off/floating or held on (H22-25)"], "-", "requirement",
+        P("H22-27", "ignition sequence", ["XE_PURGE (Xe cathode flow at the purge setpoint; heater, keeper, magnet "
+          "off)", "CATHODE_CONDITIONING (heater on, Xe cathode flow at its setpoint; magnet off)", "CATHODE_IGNITION "
+          "(keeper voltage, then keeper current regulation; heater on; magnet off)", "PREIONIZER_SEED (start variant "
+          "V2 of rf_hall / ecr_hall only: pre-ionizer ignited on Xe after keeper coupling and before anode voltage; "
+          "absent in hall_only and in V1)", "XE_DISCHARGE_IGNITION (magnet on, Xe anode flow at the ignition setpoint, "
+          "anode voltage applied; heater 'per cathode design (TBD - requires cathode qualification)')", "WARM_UP "
+          "(heater off; keeper 'per cathode design', off/floating or held on per H22-25)"], "-", "requirement",
           f"{CONTROLS_REL} state names; LANE19 startup_reference.hall_only (G&K p. 337; IEPC-2017-276 pp. 3-4; "
-          "IEPC2015_43 p. 4)", "assumed", "PRELIMINARY", FR, "identical in every arm (INV-C1)"),
+          "IEPC2015_43 p. 4)", "assumed", "PRELIMINARY", FR,
+          "state outputs as in the state machine; the C-1 part (purge, conditioning, cathode ignition) is identical "
+          "in every arm (INV-C1); PREIONIZER_SEED is an arm-specific start step between keeper coupling and anode "
+          "voltage; the heater-off point (XE_DISCHARGE_IGNITION or WARM_UP) is a C-1 qualification result"),
         P("H22-28", "heaterless ignition", "alternative only, not baseline", "-", "analog",
           "IEPC2017_365 p. 3 (heater is a single point of failure; heaterless ignition possible 'at the cost of "
           "requiring higher voltages with the risk of damaging the LaB6 emitter due to thermal shocks'), p. 6 (HC1 "
@@ -725,35 +935,70 @@ def parameters(inp: dict, d: dict) -> list:
         P("H22-43", "cathode MFC precision range full scale (PROPOSED)", 0.2, "mg/s Xe", "derived",
           "derived.flow_measurement_uncertainty: FS 0.2 mg/s puts 0.10 / 0.15 mg/s at 50 % / 75 % of FS",
           "model-derived", PEND(H2_6), TA,
-          f"= {r(mg_s_to_sccm(0.2), 4)} sccm Xe; Xe range of any real unit TBD - requires the manufacturer's Xe "
-          "calibration"),
+          f"= {r(mg_s_to_sccm(0.2), 4)} sccm Xe (G&K/LANE19 convention; "
+          f"{r(0.2 / ideal_gas_xe_mg_s_per_sccm(), 4)} sccm ideal gas, derived.sccm_convention); Xe range of any real "
+          "unit TBD - requires the manufacturer's Xe calibration; lower control limit "
+          f"{d['flow_resolution_and_lower_limit']['lower_control_limit_rows'][0]['min_controllable_mg_s_digital']} "
+          "mg/s digital (catalog turndown 1:187.5, reference only); resolution: see H22-52"),
         P("H22-44", "cathode start-flow range full scale (PROPOSED)", 1.0, "mg/s Xe", "analog",
           "IEPC2017_365 p. 6 (HC1 started at 0.6 and 0.1 mg/s with heater), p. 8 (HC3 0.4-0.8 mg/s with heater), "
           "p. 7 (HC1 diode 0.8 mg/s); heaterless 1-2 mg/s (p. 8) excluded", "measured", PEND(H2_6), TA,
           "separate controller or second range; covers heated-start analogs up to 1 mg/s"),
-        P("H22-45", "flow accuracy class (PROPOSED)", "+/-(0.5 % of reading + 0.1 % of FS), calibrated on Xe",
-          "-", "analog", "BRONKHORST_ELFLOW_SELECT p. 2 (catalog class, reference only)", "assumed", PEND(H2_6), TA,
-          "at FS 0.2 mg/s: u_rel = 0.70 % at 0.10 mg/s (see derived); a 1 % FS class at FS 1.0 mg/s gives 10 %"),
+        P("H22-45", "flow accuracy class", {"procurement_requirement_PROPOSED": "+/-(0.5 % of reading + 0.1 % of "
+          "FS), calibrated on Xe, to be demonstrated at FS about 0.2 mg/s Xe", "conservative_catalog_class_at_FS0.2":
+          "+/-2 % FS (F-110C-002 / F-200CV-002 range)"}, "-", "analog",
+          "BRONKHORST_ELFLOW_SELECT p. 2 [PDF pages 3-4] (catalog classes and range table, reference only); "
+          "derived.catalog_class_applicability", "assumed", PEND(H2_6), TA,
+          "at FS 0.2 mg/s and 0.10 mg/s: 4.0 % under the conservative catalog class, 0.70 % under the standard class "
+          "(spec-only; the standard class is not established by the catalog for this range - procurement "
+          "requirement still to be demonstrated); a 1 % FS class at FS 1.0 mg/s gives 10 %"),
         P("H22-46", "flow repeatability", 0.002, "fraction of reading", "analog",
           "BRONKHORST_ELFLOW_SELECT p. 2 ('Repeatability < 0,2% Rd', catalog class)", "assumed", PEND(H2_6), TA,
           "repeatability is what R_arch sees (same MFC, same setpoint in every arm; W4 INS-05)"),
         P("H22-47", "flow step for the spot-mode minimum-flow search (PROPOSED)", 0.005, "mg/s", "assumed",
-          "PROPOSED by this lane: 5 % of the design flow, 2.5 % of the proposed precision FS, above the repeatability",
-          "assumed", "TBD - requires owner confirmation (H22-OQ-05)", TA),
+          "PROPOSED by this lane: 5 % of the design flow, 2.5 % of the proposed precision FS; checked against the "
+          "resolution requirement (H22-52), the catalog control stability, the repeatability and the lower control "
+          "limit in derived.flow_resolution_and_lower_limit", "assumed", "TBD - requires owner confirmation "
+          "(H22-OQ-05)", TA, d["flow_resolution_and_lower_limit"]["step_finding"]),
+        P("H22-52", "flow readout / setpoint resolution", {"requirement_PROPOSED_mg_s":
+          d["flow_resolution_and_lower_limit"]["resolution_requirement_PROPOSED_mg_s"],
+          "instrument_value": None}, "mg/s", "assumed",
+          "PROPOSED by this lane (<= 1/10 of the H22-47 step); the accessed catalog states no resolution", "assumed",
+          "TBD - requires the selected instrument's stated resolution (H3-C1-02)", TA),
+        P("H22-53", "minimum controllable / usable flow of the precision range", {
+          "lower_control_limit_digital_mg_s": d["flow_resolution_and_lower_limit"]["lower_control_limit_rows"][0][
+              "min_controllable_mg_s_digital"],
+          "lower_control_limit_analog_mg_s": d["flow_resolution_and_lower_limit"]["lower_control_limit_rows"][0][
+              "min_controllable_mg_s_analog"],
+          "flow_at_10pct_u_rel_conservative_class_mg_s": d["flow_resolution_and_lower_limit"][
+              "lower_control_limit_rows"][0]["flow_at_u_rel_10pct_conservative_mg_s"]}, "mg/s", "derived",
+          "FS 0.2 mg/s / catalog turndown (BRONKHORST_ELFLOW_SELECT PDF page 3, reference only); accuracy floor from "
+          "derived.flow_resolution_and_lower_limit", "model-derived", PEND(H2_6), TA,
+          "the catalog does not state that the accuracy class holds at the turndown limit; the usable floor of the "
+          "search is set by the accepted accuracy (10 % is a parametric axis, assumed)"),
         P("H22-48", "flow calibration method", "gravimetric on Xe in the final configuration (primary) with a "
           "constant-volume rate-of-rise cross-check; reference conditions declared", "-", "requirement",
           f"{W4_REL} INS-05 calibration (REF-SNYDER2017: each gas, final configuration, across the range, at least "
           "every 12 months; constant-volume or constant-pressure calibrator)", "assumed", PEND(H2_6), GF,
           "gravimetric primary PROPOSED by this lane; see derived.gravimetric_calibration and rate_of_rise_check"),
         P("H22-49", "uncertainty of the 15,000 h cathode Xe mass from flow measurement", {
-            "FS0.2_catalog_std_at_0.10": next(x for x in d["flow_measurement_uncertainty"]["rows"]
-                                             if x["spec"] == "SPEC-CAT-STD" and x["fs_mg_s"] == 0.2
-                                             and x["flow"] == "design_target")["u_m_15000h_kg_spec"],
+            "FS0.2_conservative_catalog_class_at_0.10_spec_only": d["flow_measurement_headline"][
+                "conservative_catalog_class"]["u_m_15000h_kg_spec_only"],
+            "FS0.2_conservative_catalog_class_at_0.10_with_zero_terms_dT5C": d["flow_measurement_headline"][
+                "conservative_catalog_class"]["u_m_15000h_kg_with_zero_terms_dT5C"],
+            "FS0.2_standard_class_requirement_at_0.10_spec_only": d["flow_measurement_headline"][
+                "standard_class_procurement_requirement"]["u_m_15000h_kg_spec_only"],
+            "FS0.2_standard_class_requirement_at_0.10_with_zero_terms_dT1C": d["flow_measurement_headline"][
+                "standard_class_procurement_requirement"]["u_m_15000h_kg_with_zero_terms_dT1C"],
+            "FS0.2_standard_class_requirement_at_0.10_with_zero_terms_dT5C": d["flow_measurement_headline"][
+                "standard_class_procurement_requirement"]["u_m_15000h_kg_with_zero_terms_dT5C"],
             "FS1.0_1pctFS_at_0.10": next(x for x in d["flow_measurement_uncertainty"]["rows"]
                                         if x["spec"] == "SPEC-FS1" and x["fs_mg_s"] == 1.0
                                         and x["flow"] == "design_target")["u_m_15000h_kg_spec"]},
-          "kg", "derived", "derived.flow_measurement_uncertainty", "model-derived", "PRELIMINARY", TA,
-          "measurement term only; the flow itself is an H4 output"),
+          "kg", "derived", "derived.flow_measurement_uncertainty, derived.flow_measurement_headline",
+          "model-derived", "PRELIMINARY", TA,
+          "measurement term only; the flow itself is an H4 output; spec-only values require the per-block installed "
+          "zero check (derived.flow_measurement_headline.zero_term_condition)"),
         # --- (9) Xe ledger -----------------------------------------------------------------------------------------
         P("H22-50", "cathode flow delivered to the Xe ledger", None, "mg/s", "pending",
           f"{XEL_REL} parameters mdot_cathode (closes with the C-1 measured spot-mode minimum flow)", "none",
@@ -846,7 +1091,11 @@ FLOW_MEASUREMENT = {
                 "zero checked at the installed orientation and temperature before each block"],
     "percent_of_reading_vs_full_scale": "a % FS specification inflates the relative error as 1/Q: at 0.10 mg/s a "
                                         "1 % FS device with FS 1.0 mg/s gives 10 % (0.54 kg over 15,000 h), the "
-                                        "same class with FS 0.2 mg/s gives 2 %; a % Rd + % FS class gives 0.70 %",
+                                        "same class with FS 0.2 mg/s gives 2 %; the catalog's lowest-range model "
+                                        "(+/-2 % FS, the conservative class at FS 0.2 mg/s) gives 4 %; the standard "
+                                        "+/-(0.5 % Rd + 0.1 % FS) class would give 0.70 %, but the catalog does not "
+                                        "establish it for a FS of about 2 sccm Xe (procurement requirement to be "
+                                        "demonstrated); all spec-only, zero terms excluded",
 }
 
 
@@ -882,6 +1131,9 @@ def interface_demands(inp: dict, d: dict) -> list:
                                                                                "predictions)"},
         {"id": "IFD-09", "from": "H2-2", "to": f"H2-5 ({H2_5})", "quantity": "C-1 heat loads and nodes", "value": {
          "start_heat_W": [45.0, 400.0], "emitter_K": d["emitter_temperature_points"]["operating_span_K"],
+         "emitter_K_span_note": "span of cited points for other hardware; its lower end (1844.5 K) is a "
+                                "model-derived Lafferty-fit point (LANE19), the other points are measured analog "
+                                "values (derived.emitter_temperature_points)",
          "analog_flange_K": 500.0, "analog_keeper_K": 600.0, "steady_heat_to_body_W": None}, "units": "W / K",
          "status": "PRELIMINARY; steady heat TBD - requires the C-1 selection and S1a tube thermocouple data"},
         {"id": "IFD-10", "from": f"H2-5 ({H2_5})", "to": "H2-2", "quantity": "inner-coil hot spot with C-1 "
@@ -891,7 +1143,12 @@ def interface_demands(inp: dict, d: dict) -> list:
          "value": "H22-29..H22-35", "units": "-", "status": "PENDING H2-3 (if the Xe branch is outside H2-3's scope, "
                                                               "the integration pass reassigns it)"},
         {"id": "IFD-12", "from": "H2-2", "to": f"H2-6 ({H2_6})", "quantity": "cathode diagnostics and flow metrology",
-         "value": ["precision cathode MFC FS about 0.2 mg/s Xe", "start range FS about 1 mg/s Xe",
+         "value": ["precision cathode MFC FS about 0.2 mg/s Xe; accuracy class: standard +/-(0.5 % Rd + 0.1 % FS) "
+                   "on Xe as a requirement to be demonstrated, +/-2 % FS as the conservative catalog class for this "
+                   "range; readout/setpoint resolution <= 0.0005 mg/s (PROPOSED, H22-52); lower control limit about "
+                   "0.0011 mg/s with digital setpoint (catalog turndown, reference only, H22-53)",
+                   "start range FS about 1 mg/s Xe", "per-block installed zero check (orientation, temperature) with "
+                   "MFC body temperature logged",
                    "gravimetric + rate-of-rise calibration rig", "tube thermocouple (HW-C1-09)", "pyrometer view if "
                    "possible", "RGA port near C-1 (HW-C1-07)", "cathode-line pressure transducer", "keeper voltage "
                    "oscillation channel (plume-mode detection)", "cathode-to-ground potential", "witness coupons "
@@ -905,8 +1162,26 @@ def interface_demands(inp: dict, d: dict) -> list:
          "metered", "value": "H22-05, H22-41", "units": "-", "status": PEND(PMI)},
         {"id": "IFD-15", "from": "H2-2", "to": f"A6 Xe ledger ({XEL})", "quantity": "measured mdot_cathode with its "
          "uncertainty; t_preheat and purge flow per start", "value": {"mdot_cathode": "H4 output",
-         "u_rel_flow_at_0.10_mg_s_FS0.2_catalog_std": 0.007, "xe_per_start_g": "derived.preheat_purge_xe"},
-         "units": "mg/s, g", "status": "PRELIMINARY (ledger present and verified in base; values closed by H4)"},
+         "u_rel_flow_at_0.10_mg_s_FS0.2": {
+             "conservative_catalog_class_spec_only": d["flow_measurement_headline"]["conservative_catalog_class"][
+                 "u_rel_spec_only"],
+             "conservative_catalog_class_with_zero_terms_dT1C_dT5C": [
+                 d["flow_measurement_headline"]["conservative_catalog_class"]["u_rel_with_zero_terms_dT1C"],
+                 d["flow_measurement_headline"]["conservative_catalog_class"]["u_rel_with_zero_terms_dT5C"]],
+             "standard_class_requirement_spec_only": d["flow_measurement_headline"][
+                 "standard_class_procurement_requirement"]["u_rel_spec_only"],
+             "standard_class_requirement_with_zero_terms_dT1C_dT5C": [
+                 d["flow_measurement_headline"]["standard_class_procurement_requirement"][
+                     "u_rel_with_zero_terms_dT1C"],
+                 d["flow_measurement_headline"]["standard_class_procurement_requirement"][
+                     "u_rel_with_zero_terms_dT5C"]],
+             "use": "the ledger carries the conservative class until the Xe calibration demonstrates the standard "
+                    "class; spec-only values apply only under the per-block installed zero check "
+                    "(derived.flow_measurement_headline.zero_term_condition), otherwise the zero-term values"},
+         "xe_per_start_g": "derived.preheat_purge_xe (design-flow rows exclude the ignition-flow dwell; bound rows "
+                           "at 1 mg/s include it)"},
+         "units": "mg/s (fraction for u_rel), g", "status": "PRELIMINARY (ledger present and verified in base, "
+                                                             "unlike the brief's PENDING listing; values closed by H4)"},
         {"id": "IFD-16", "from": "H2-2", "to": f"A6 Phase-1 prereg framework ({P1PF})", "quantity": "cathode flow and "
          "power identical across arms (INV-C1) and logged at every point; cathode state logged at every extinction",
          "value": "HW-C1-01, HW-C1-05, AOL-CX-06", "units": "-", "status": "PRELIMINARY"},
@@ -919,16 +1194,23 @@ def interface_demands(inp: dict, d: dict) -> list:
 HARD_INCOMPATIBILITY = {
     "verdict": "none found",
     "checked": [
-        {"item": "central-mount geometry", "finding": "at analog scale a 30 mm keeper fits inside an 80 mm inner "
-         "channel-wall diameter (ECHT OD 100 mm, width 10 mm); the real check is PENDING H2-1", "evidence_class":
-         "model-derived (analog arithmetic)", "veto": False},
+        {"item": "central-mount geometry", "finding": "no evidence either way: the check is the H-1 inner-core bore "
+         "(after inner wall, inner coil radial build and non-saturating core cross-section) against the C-1 keeper "
+         "OD + clearance, PENDING H2-1 and the C-1 selection; L-EXTERNAL remains the fallback, so even a negative "
+         "result moves the location, not the architecture (derived.central_bore_check)", "evidence_class":
+         "none (pending)", "veto": False},
         {"item": "cathode Xe mass vs the 40 kg requirement", "finding": "the A5 design term 0.10 mg/s gives 5.4 kg "
          "(13.5 %); analog diode minimum flows (0.6 mg/s at 2.5-4 A) would give 81 % but belong to other hardware "
          "and are not verdict-bearing (veto layer RI-MASS-CATHODE-XE straddles); closes only by measurement "
          "(A7 blocker 3)", "evidence_class": "model-derived / measured (analog)", "veto": False},
         {"item": "purge-while-hot Xe per start", "finding": "0.02-0.18 g per start for the analog preheat times at "
-         "0.10-0.15 mg/s; kg-class only with per-orbit restarts (N_starts is TBD) - a design driver for fast "
-         "preheat, not an incompatibility", "evidence_class": "model-derived", "veto": False},
+         "0.10-0.15 mg/s (ignition-flow dwell excluded); up to 1.2 g per start if conditioning ran at the analog "
+         "start flow of 1 mg/s for a 20-min preheat (bound rows), which at the Xe ledger's SC-2 heavy-restart "
+         "N_starts would be about 21 kg, more than half of the 40 kg requirement; at design flows the term is "
+         "kg-class only with per-orbit restarts. The bound combines the longest analog preheat with the highest "
+         "analog ignition flow and is not evidence about C-1, so it is not a veto; it makes a fast preheat and a "
+         "bounded ignition-flow dwell (H22-OQ-06) start-procedure requirements",
+         "evidence_class": "model-derived", "veto": False},
         {"item": "oxygen exposure of the emitter", "finding": "no atomic-O or N2 threshold exists "
          "(NO_QUANTITATIVE_EVIDENCE); O2 evidence tolerates up to 1e-4 Torr at 1570 degC; cannot be refuted or "
          "confirmed without test", "evidence_class": "measured (secondary)", "veto": False},
@@ -940,8 +1222,11 @@ HARD_INCOMPATIBILITY = {
          "unknown low end) straddles published classes (SITAEL HC3 1-3 A design; JPL 1.5-cm needs >= 7.5 A without "
          "keeper; Joussot self-heats from 5 A): a steady keeper or heater load may be needed at the low end - a bus "
          "cost to carry, not a veto", "evidence_class": "measured (analog)", "veto": False},
-        {"item": "flow-measurement capability at 0.10 mg/s", "finding": "catalog-class instruments with Xe "
-         "calibration reach < 1 % (1 sigma treated) at FS 0.2 mg/s; measurable", "evidence_class":
+        {"item": "flow-measurement capability at 0.10 mg/s", "finding": "measurable, but not yet to < 1 %: at FS "
+         "0.2 mg/s the conservative catalog class for that range (+/-2 % FS) gives 4 % spec-only (0.22 kg over "
+         "15,000 h, about 0.5 % of the 40 kg requirement); < 1 % needs the standard class demonstrated on Xe (a "
+         "procurement requirement) AND the zero terms removed by a per-block installed zero check "
+         "(derived.flow_measurement_headline) - a measurement-quality item, not a veto", "evidence_class":
          "model-derived", "veto": False},
     ],
 }
@@ -991,8 +1276,13 @@ H3_PROCUREMENT = [
      "(IEPC2015_43), Joussot laboratory LaB6 (DOSSIER) - published reference only, no supplier contact"},
     {"id": "H3-C1-02", "item": "cathode precision MFC (FS about 0.2 mg/s Xe) and start-range MFC (FS about 1 mg/s "
      "Xe), Xe-calibrated", "long_lead": False, "spec_level_needed_to_order": [
-         "Xe calibration by the manufacturer at the stated reference conditions", "accuracy class +/-(0.5 % Rd + "
-         "0.1 % FS) or better", "repeatability < 0.2 % Rd", "zero temperature coefficient stated", "vacuum-rated "
+         "Xe calibration by the manufacturer at the stated reference conditions, with the sccm/normal-unit "
+         "convention (ideal or real gas, reference temperature) named (derived.sccm_convention)",
+         "accuracy class +/-(0.5 % Rd + 0.1 % FS) or better demonstrated ON Xe at FS about 0.2 mg/s (about 2 sccm "
+         "Xe); the catalog's lowest-range model is only +/-2 % FS, so the supplier's Xe statement for this range is "
+         "the order criterion", "readout and setpoint resolution <= 0.0005 mg/s (PROPOSED, H22-52)",
+         "digital setpoint communication (catalog turndown 1:187.5 digital vs 1:50 analog)",
+         "repeatability < 0.2 % Rd", "zero temperature coefficient and attitude sensitivity stated", "vacuum-rated "
          "outlet, metal seals preferred, He leak spec stated"],
      "reference_data": "BRONKHORST_ELFLOW_SELECT catalog (reference only; not a selection)"},
     {"id": "H3-C1-03", "item": "gravimetric calibration kit (small Xe cylinder, balance, fixture) and a constant-"
@@ -1014,8 +1304,12 @@ H4_TESTS = [
      "discharge current without keeper and heater; keeper current needed below it"},
     {"closes": "H22-16/H22-21/H22-22/H22-23 (heater, keeper)", "stage": "S1a", "measure": "heater power and time to "
      "ignition; keeper ignition voltage; start log per start (AOL-CX-02)"},
-    {"closes": "H22-43..H22-49 (flow measurement)", "stage": "S1a", "measure": "gravimetric Xe calibration of both "
-     "ranges installed; rate-of-rise cross-check; zero vs orientation and temperature"},
+    {"closes": "H22-43..H22-49, H22-52, H22-53 (flow measurement)", "stage": "S1a", "measure": "gravimetric Xe "
+     "calibration of both ranges installed (demonstrates or refutes the standard class on Xe); rate-of-rise "
+     "cross-check; zero vs orientation and temperature; setpoint resolution and the lowest flow at which the "
+     "calibrated accuracy is still acceptable"},
+    {"closes": "H22-12 (field transient)", "stage": "S1a", "measure": "keeper voltage/current of the lit C-1 through "
+     "magnet turn-on at the operating coil currents (CATHODE_IGNITION -> XE_DISCHARGE_IGNITION)"},
     {"closes": "H22-50 (mdot_cathode)", "stage": "S1a + Phase 1", "measure": "spot-mode minimum Xe flow vs emission "
      "current with an atmospheric anode feed (D-CX-03); plume-mode onset by keeper-voltage oscillation"},
     {"closes": "H22-38 (cathode-to-ground potential)", "stage": "S1 / every reading", "measure": "cathode-to-ground "
@@ -1049,7 +1343,8 @@ OWNER_QUESTIONS = [
                              "common."},
     {"id": "H22-OQ-05", "q": "Flow step (PROPOSED 0.005 mg/s) and stopping rule for the spot-mode minimum-flow "
                              "search."},
-    {"id": "H22-OQ-06", "q": "Purge flow and purge duration rule before heating (sets Xe per start)."},
+    {"id": "H22-OQ-06", "q": "Purge flow and purge duration rule before heating, and the bound on the "
+                             "ignition-flow dwell (together they set Xe per start; bound rows at 1 mg/s)."},
     {"id": "H22-OQ-07", "q": "Keeper material (graphite vs an O-resistant alternative) given the O-chemistry "
                              "warning."},
     {"id": "H22-OQ-08", "q": "Adopt the PROPOSED emitter temperature floor of 1843 K during O-bearing operation?"},
@@ -1160,6 +1455,7 @@ def render_md(doc: dict) -> str:
     a("")
     a("## Summary")
     a("")
+    hl = doc["derived"]["flow_measurement_headline"]
     a("- **Location (PRELIMINARY): L-CENTRAL.** Put C-1 on the axis inside the inner magnetic core. The published "
       "analog practice is JPL/Busek internal mounting. On the 8-kW BHT-8000 the internal cathode gave a 5-10 V "
       "better coupling voltage than the external one, and a more collimated, symmetric plume (Hofer et al. 2008). "
@@ -1168,15 +1464,30 @@ def render_md(doc: dict) -> str:
       "O ions) and service lines that leave through the rear axis, where the pre-ionizer module slot sits. "
       "L-EXTERNAL remains the alternative if H2-1 cannot provide the bore.")
     a("- **Flow measurement.** Two ranges are proposed: a precision range with FS about 0.2 mg/s Xe and a start "
-      "range with FS about 1 mg/s. In the tabulated grid, better than 1 % at 0.10 mg/s needs a precision FS of about "
-      "0.3 mg/s or less, and that cannot also cover the analog ignition flows (up to about 1 mg/s). A single "
+      "range with FS about 1 mg/s. Even under the standard class, better than 1 % spec-only at 0.10 mg/s needs a "
+      "precision FS of about 0.3 mg/s or less, and that cannot also cover the analog ignition flows (up to about "
+      "1 mg/s). A single "
       "1 %-FS device sized for ignition flows (FS 1 mg/s) gives 10 % at 0.10 mg/s, which is 0.54 kg on the 5.4 kg "
-      "cathode term. A catalog-class ±(0.5 % Rd + 0.1 % FS) device, calibrated on Xe at FS 0.2 mg/s, gives 0.70 % "
-      "(0.038 kg). Every certificate must declare its reference conditions: 0 °C versus 20 °C is a 7.3 % trap.")
+      "cathode term. At FS 0.2 mg/s (about 2 sccm Xe) the catalog places the range in its lowest model, rated "
+      f"±2 % FS: {r(hl['conservative_catalog_class']['u_rel_spec_only'] * 100, 3)} % "
+      f"({hl['conservative_catalog_class']['u_m_15000h_kg_spec_only']} kg) spec-only, and "
+      f"{r(hl['conservative_catalog_class']['u_rel_with_zero_terms_dT1C'] * 100, 3)}-"
+      f"{r(hl['conservative_catalog_class']['u_rel_with_zero_terms_dT5C'] * 100, 3)} % with the zero terms "
+      "(ΔT 1-5 °C). That is the value the Xe ledger carries for now. The standard ±(0.5 % Rd + 0.1 % FS) class "
+      f"would give {r(hl['standard_class_procurement_requirement']['u_rel_spec_only'] * 100, 3)} % "
+      f"({hl['standard_class_procurement_requirement']['u_m_15000h_kg_spec_only']} kg) spec-only, or "
+      f"{r(hl['standard_class_procurement_requirement']['u_rel_with_zero_terms_dT1C'] * 100, 3)}-"
+      f"{r(hl['standard_class_procurement_requirement']['u_rel_with_zero_terms_dT5C'] * 100, 3)} % with the zero "
+      "terms. It is a procurement requirement still to be demonstrated on Xe. Reaching < 1 % needs both that class "
+      "and a per-block installed zero check. Every certificate must declare its reference conditions: 0 °C versus "
+      "20 °C is a 7.3 % trap.")
     a("- **Purge-while-hot costs Xe per start.** The poisoning rule (heat the emitter only under Xe flow) turns the "
-      "preheat time into Xe: 0.02-0.18 g per start for the analog preheat times at 0.10-0.15 mg/s. Heater power "
-      "(the start-phase bus peak) therefore trades against Xe per start. The term reaches the kg class only with "
-      "per-orbit restarts, and N_starts is TBD.")
+      "preheat time into Xe: 0.02-0.18 g per start for the analog preheat times at 0.10-0.15 mg/s, excluding any "
+      "ignition-flow dwell. If conditioning ran at the analog start flow (1 mg/s) for the whole preheat, the figure "
+      "would be up to 1.2 g per start (bound rows), about 21 kg at the SC-2 heavy-restart N_starts. The start "
+      "procedure must therefore bound the ignition-flow dwell. Heater power (the start-phase bus peak) trades against "
+      "Xe per start. At design flows the term reaches the kg class only with per-orbit restarts, and N_starts is "
+      "TBD.")
     a("- **Emission class straddle.** The H-1 envelope is bounded at 8.33 A at 180 V (RFP), and its low end is "
       "unknown. It spans published LaB6 classes. At the low end a steady keeper or heater load may be needed, and "
       "that load is booked per arm.")
@@ -1244,7 +1555,8 @@ def render_md(doc: dict) -> str:
     for row in t["rows"]:
         a(f"| {row['point']} | {row['T_K']} | {_esc(row['source'])} | {row['evidence_class']} |")
     a("")
-    a(f"The operating span of the cited points is {t['operating_span_K'][0]}-{t['operating_span_K'][1]} K. The O2 "
+    a(f"The operating span of the cited points is {t['operating_span_K'][0]}-{t['operating_span_K'][1]} K. Its "
+      "lower end is a model-derived Lafferty-fit point; the others are measured analog values. The O2 "
       f"tolerance point is {t['o2_tolerance_point_K']} K.")
     a("")
     a("Discharge-current upper bounds I_d ≤ P/V_d. These are bounds, not predictions; they size the C-1 emission "
@@ -1281,6 +1593,52 @@ def render_md(doc: dict) -> str:
     a("")
     for s in SPEC_CLASSES:
         a(f"- `{s['id']}`: {s['source']}.")
+    a("")
+    ca = doc["derived"]["catalog_class_applicability"]
+    a(f"Which catalog class applies: {ca['method']}.")
+    a("")
+    a("| FS (mg/s) | FS (sccm Xe) | models if read as air | models if read as Ar | conservative class |")
+    a("|---|---|---|---|---|")
+    for row in ca["rows"]:
+        a(f"| {row['fs_mg_s']} | {row['fs_sccm_Xe']} | {', '.join(row['models_if_read_as_air']) or '—'} | "
+          f"{', '.join(row['models_if_read_as_Ar']) or '—'} | {row['conservative_spec'] or '—'} |")
+    a("")
+    a(f"Finding: {ca['finding']}.")
+    a("")
+    a("Headline at 0.10 mg/s, FS 0.2 mg/s (u_rel as a fraction; u_m in kg over 15,000 h):")
+    a("")
+    a("| class | spec | u_rel spec-only | u_m spec-only | u_rel +zero ΔT 1 °C | u_rel +zero ΔT 5 °C | "
+      "u_m +zero ΔT 1 °C | u_m +zero ΔT 5 °C |")
+    a("|---|---|---|---|---|---|---|---|")
+    for lbl in ("conservative_catalog_class", "standard_class_procurement_requirement"):
+        h = hl[lbl]
+        a(f"| {lbl.replace('_', ' ')} | {h['spec']} | {h['u_rel_spec_only']} | {h['u_m_15000h_kg_spec_only']} | "
+          f"{h['u_rel_with_zero_terms_dT1C']} | {h['u_rel_with_zero_terms_dT5C']} | "
+          f"{h['u_m_15000h_kg_with_zero_terms_dT1C']} | {h['u_m_15000h_kg_with_zero_terms_dT5C']} |")
+    a("")
+    a(f"Zero-term condition: {hl['zero_term_condition']}.")
+    a("")
+    a(f"Finding: {hl['finding']}.")
+    a("")
+    fr = doc["derived"]["flow_resolution_and_lower_limit"]
+    a(f"Resolution and lower control limit. Instrument resolution: {fr['readout_setpoint_resolution']}. Requirement: "
+      f"≤ {fr['resolution_requirement_PROPOSED_mg_s']} mg/s ({fr['resolution_requirement_basis']}). "
+      f"{fr['lower_control_limit_note']}.")
+    a("")
+    a("| FS (mg/s) | LCL digital (mg/s) | LCL analog (mg/s) | control stability (mg/s) | q at 5 % (±2 % FS) | "
+      "q at 10 % (±2 % FS) | q at 10 % (standard) |")
+    a("|---|---|---|---|---|---|---|")
+    for row in fr["lower_control_limit_rows"]:
+        a(f"| {row['fs_mg_s']} | {row['min_controllable_mg_s_digital']} | {row['min_controllable_mg_s_analog']} | "
+          f"{row['control_stability_mg_s']} | {row['flow_at_u_rel_5pct_conservative_mg_s']} | "
+          f"{row['flow_at_u_rel_10pct_conservative_mg_s']} | {row['flow_at_u_rel_10pct_standard_mg_s']} |")
+    a("")
+    a(f"Search step {fr['search_step_mg_s']} mg/s: {_fmt(fr['step_vs_limits'])}. {fr['step_finding']}.")
+    a("")
+    sc = doc["derived"]["sccm_convention"]
+    a(f"sccm convention: {sc['used_mg_s_per_sccm']} mg/s per sccm is used (ideal gas at 273.15 K / 1 atm: "
+      f"{sc['ideal_gas_mg_s_per_sccm_273_15K_1atm']}; ideal / Z = {sc['ideal_over_Z']}; difference "
+      f"{sc['relative_difference_used_vs_ideal']}). {sc['note']}.")
     a("")
     gc = doc["derived"]["gravimetric_calibration"]
     a(f"Gravimetric calibration: {gc['relation']}. {gc['axes_note']}.")
