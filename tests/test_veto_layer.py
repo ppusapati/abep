@@ -130,8 +130,9 @@ def test_mass_screen_feeds_the_mass_cell(inputs):
     scr.update(items_with_lower_bound=["rf_source"], cbe_margin_free_lower_bound_kg=41.0,
                verdict="EXCEEDS_LIMIT_MARGIN_FREE", g3_fail_evidence=True)
     assert vl.classify(vl.eligible_bounds("mass", "rf_hall", inp, cinfo)) == "VETO_CANDIDATE"
+    # a partial lower bound below the limit only shows absence of failing-side evidence: it stays UNDETERMINED
     scr.update(cbe_margin_free_lower_bound_kg=9.0, verdict="NOT_EXCLUDED_PARTIAL_COVERAGE", g3_fail_evidence=False)
-    assert vl.classify(vl.eligible_bounds("mass", "rf_hall", inp, cinfo)) == "NO_VETO_WITHIN_EVIDENCE"
+    assert vl.classify(vl.eligible_bounds("mass", "rf_hall", inp, cinfo)) == "UNDETERMINED"
 
 
 def test_current_result_no_veto_no_elimination(doc):
@@ -323,3 +324,45 @@ def test_no_wall_flux_is_read_or_passed(doc, inputs):
     for arch in vl.ARCHITECTURES:
         for dim in ("thermal", "life_firing"):
             assert doc["cells"][arch][dim]["status"] == "UNDETERMINED"
+
+
+def test_blocking_lanes_status_matches_base_and_files_are_pinned(doc):
+    eb = doc["external_blockers"]
+    pinned = {i["path"]: i["lane"] for i in doc["inputs"]}
+    for lane, f in (("lane_32_wall_life", "docs/evidence/wall_life/sputter_yield_db_v1.json"),
+                    ("lane_10_cathode_dossier", "docs/evidence/cathode/cathode_evidence_v1.json"),
+                    ("lane_33_upstream_icd", "schemas/interfaces/upstream_icd_v1.json")):
+        assert eb[lane]["in_base_commit"] is True
+        assert "two-lens-v2" in eb[lane]["verification"]
+        assert pinned[f] == lane
+        assert eb[lane]["read"], lane
+    text = json.dumps(doc) + open(MD_FILE, encoding="utf-8").read()
+    assert "single-lens" not in text
+    assert "not in base" not in text
+    # compressor bus draw stays TBD (never filled)
+    assert any(r["value"] == "tbd" for r in eb["lane_33_upstream_icd"]["read"])
+
+
+def test_lane15_repair_pin_is_disclosed_as_not_verified_at_base(doc):
+    notes = {n["lane"]: n for n in doc["pin_provenance_notes"]}
+    n = notes["lane_15_thermal_life"]
+    assert n["lane_commit"] == vl._L15[1]
+    assert "NOT in base" in n["note"] and "d2325c8da3" in n["note"]
+
+
+def test_level5_items_carry_a_basis_label_note(doc):
+    ris = {r["id"]: r for r in doc["risk_indicators"]}
+    for rid in ("RI-LIFE-HALL-ANODE-OXIDATION", "RI-LIFE-CATHODE-AIR-EXPOSURE"):
+        assert "level 3" in ris[rid]["lane24_basis_note"] and "overstates" in ris[rid]["lane24_basis_note"]
+    cm = ris["RI-MASS-CATHODE-XE"]["conditional_margin"]
+    assert "fraction_of_limit" not in cm and "cathode_xe_consumption_fraction_of_limit" in cm
+
+
+def test_sub_threshold_mass_lower_bound_never_counts(inputs):
+    cinfo = vl.criteria_info(inputs["docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json"])
+    fake = copy.deepcopy(inputs)
+    scr = fake["docs/architecture_comparison/mass_bom/mass_bom_v1.json"]["plausibility_screen"]["architectures"]
+    scr["hall_only"].update({"items_with_lower_bound": ["xe_tank"], "cbe_margin_free_lower_bound_kg": 5.0,
+                             "verdict": "BELOW_LIMIT", "g3_fail_evidence": False})
+    bounds = [b for b in vl.eligible_bounds("mass", "hall_only", fake, cinfo) if b["id"].startswith("mass_bom:")]
+    assert bounds == []

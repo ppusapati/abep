@@ -107,7 +107,7 @@
     "missing_inputs": [
      {
       "blocking": [
-       "lane_32_wall_life (not in base)",
+       "lane_32_wall_life (DB v1: no N/O design-life number derivable)",
        "design_release:vyovrinda_channel",
        "admitted Hall closure (gate 3) for wall_life_trustworthy maps"
       ],
@@ -144,7 +144,7 @@
      },
      {
       "blocking": [
-       "lane_33_upstream_icd (not verified)",
+       "lane_33_upstream_icd (compressor load TBD)",
        "design_release:vyovrinda_compressor"
       ],
       "input": "compressor and valve firing life",
@@ -223,7 +223,7 @@
     "missing_inputs": [
      {
       "blocking": [
-       "lane_33_upstream_icd (not verified)",
+       "lane_33_upstream_icd (compressor load TBD)",
        "design_release:upstream_elements"
       ],
       "input": "mission-duration (26,000 h) capability of intake, filter, compressor, gas chambers and valves",
@@ -259,10 +259,11 @@
     "common_mode_missing": 16,
     "conditional_margins": [
      {
-      "fraction_of_limit": [
+      "cathode_xe_consumption_fraction_of_limit": [
        0.108,
        1.35
       ],
+      "consumption_fraction_relation": "cathode Xe over the minimum firing / G3 threshold (consumption share, not a margin)",
       "quantity": "40 kg limit minus cathode Xe over the minimum firing",
       "range": [
        -14.0,
@@ -588,7 +589,7 @@
      },
      {
       "blocking": [
-       "lane_33_upstream_icd (not verified)"
+       "lane_33_upstream_icd (compressor load TBD)"
       ],
       "input": "compressor bus draw during start-up",
       "requires": "upstream ICD value; TBD, never filled here",
@@ -865,7 +866,7 @@
     "missing_inputs": [
      {
       "blocking": [
-       "lane_32_wall_life (not in base)",
+       "lane_32_wall_life (DB v1: no N/O design-life number derivable)",
        "design_release:vyovrinda_channel",
        "admitted Hall closure (gate 3) for wall_life_trustworthy maps"
       ],
@@ -902,7 +903,7 @@
      },
      {
       "blocking": [
-       "lane_33_upstream_icd (not verified)",
+       "lane_33_upstream_icd (compressor load TBD)",
        "design_release:vyovrinda_compressor"
       ],
       "input": "compressor and valve firing life",
@@ -970,7 +971,7 @@
     "missing_inputs": [
      {
       "blocking": [
-       "lane_33_upstream_icd (not verified)",
+       "lane_33_upstream_icd (compressor load TBD)",
        "design_release:upstream_elements"
       ],
       "input": "mission-duration (26,000 h) capability of intake, filter, compressor, gas chambers and valves",
@@ -998,10 +999,11 @@
     "common_mode_missing": 16,
     "conditional_margins": [
      {
-      "fraction_of_limit": [
+      "cathode_xe_consumption_fraction_of_limit": [
        0.108,
        1.35
       ],
+      "consumption_fraction_relation": "cathode Xe over the minimum firing / G3 threshold (consumption share, not a margin)",
       "quantity": "40 kg limit minus cathode Xe over the minimum firing",
       "range": [
        -14.0,
@@ -1287,7 +1289,7 @@
      },
      {
       "blocking": [
-       "lane_33_upstream_icd (not verified)"
+       "lane_33_upstream_icd (compressor load TBD)"
       ],
       "input": "compressor bus draw during start-up",
       "requires": "upstream ICD value; TBD, never filled here",
@@ -1521,7 +1523,7 @@
     "missing_inputs": [
      {
       "blocking": [
-       "lane_32_wall_life (not in base)",
+       "lane_32_wall_life (DB v1: no N/O design-life number derivable)",
        "design_release:vyovrinda_channel",
        "admitted Hall closure (gate 3) for wall_life_trustworthy maps"
       ],
@@ -1558,7 +1560,7 @@
      },
      {
       "blocking": [
-       "lane_33_upstream_icd (not verified)",
+       "lane_33_upstream_icd (compressor load TBD)",
        "design_release:vyovrinda_compressor"
       ],
       "input": "compressor and valve firing life",
@@ -1637,7 +1639,7 @@
     "missing_inputs": [
      {
       "blocking": [
-       "lane_33_upstream_icd (not verified)",
+       "lane_33_upstream_icd (compressor load TBD)",
        "design_release:upstream_elements"
       ],
       "input": "mission-duration (26,000 h) capability of intake, filter, compressor, gas chambers and valves",
@@ -1673,10 +1675,11 @@
     "common_mode_missing": 16,
     "conditional_margins": [
      {
-      "fraction_of_limit": [
+      "cathode_xe_consumption_fraction_of_limit": [
        0.108,
        1.35
       ],
+      "consumption_fraction_relation": "cathode Xe over the minimum firing / G3 threshold (consumption share, not a margin)",
       "quantity": "40 kg limit minus cathode Xe over the minimum firing",
       "range": [
        -14.0,
@@ -1991,7 +1994,7 @@
      },
      {
       "blocking": [
-       "lane_33_upstream_icd (not verified)"
+       "lane_33_upstream_icd (compressor load TBD)"
       ],
       "input": "compressor bus draw during start-up",
       "requires": "upstream ICD value; TBD, never filled here",
@@ -2196,24 +2199,74 @@
  "eliminated_within_tested_envelope": [],
  "external_blockers": {
   "lane_10_cathode_dossier": {
-   "in_base_commit": false,
-   "note": "cathode dossier; consumed by lane 19",
-   "path": "docs/evidence/cathode/"
+   "in_base_commit": true,
+   "lane_commit": "1b6fc10ab11798dce1e5ed3079cae1210fbb8d2d",
+   "note": "cathode dossier; pinned and read here. Its numeric cathode parameters enter this layer through lane_19_cathode_integration (which consumes the dossier); the dossier itself is cited for the baseline decision and the open uncertainty / hardware-test items (U.., G..) named in the cells.",
+   "path": "docs/evidence/cathode/",
+   "read": [
+    {
+     "file": "docs/evidence/cathode/cathode_evidence_v1.json",
+     "path": "baseline_decision.system_baseline_cathode",
+     "value": "Xe-fed hollow cathode"
+    },
+    {
+     "file": "docs/evidence/cathode/cathode_evidence_v1.json",
+     "path": "baseline_decision.atmospheric_gas_fed_cathode_operation",
+     "value": "UNRESOLVED"
+    }
+   ],
+   "verification": "two-lens-v2, second lens passed, verified commit unchanged (docs/orchestration/lane_registry_v1.json at base bad6ea0)"
   },
   "lane_16_feed_envelope": {
    "in_base_commit": true,
+   "lane_commit": null,
    "note": "valve-outlet feed state is TBD there; never filled here",
-   "path": "docs/architecture_comparison/feed_envelope/"
+   "path": "docs/architecture_comparison/feed_envelope/",
+   "read": [],
+   "verification": "not read by this layer"
   },
   "lane_32_wall_life": {
-   "in_base_commit": false,
-   "note": "wall erosion / sputter-yield evidence; single-lens-v1",
-   "path": "docs/evidence/wall_life/"
+   "in_base_commit": true,
+   "lane_commit": "f3c924a791a01f69e1a9165a74b88c1446e203d3",
+   "note": "wall erosion / sputter-yield evidence DB; pinned and read here. Not used as a life value because the DB itself states that no N/O design-life or erosion-rate number can be derived from this version (quoted in 'read'); it names the evidence a Hall-channel life bound still needs.",
+   "path": "docs/evidence/wall_life/",
+   "read": [
+    {
+     "file": "docs/evidence/wall_life/sputter_yield_db_v1.json",
+     "path": "hard_statements.no_design_life_from_this_version",
+     "value": "No N/O design-life or erosion-rate number is supported by this database version: no measured N+, N2+, O+ or O2+ yield on BN, BN-SiO2 or SiC was located, and the only located N/O measurement on a candidate ceramic (Espy et al. 1993, Al2O3 thin films, 50-200 eV) is closed-access with values TBD."
+    }
+   ],
+   "verification": "two-lens-v2, second lens passed; verified_pin f3c924a (docs/orchestration/lane_registry_v1.json at base bad6ea0)"
   },
   "lane_33_upstream_icd": {
-   "in_base_commit": false,
-   "note": "upstream ICD (compressor bus draw, delivered feed state); single-lens-v1, not verified",
-   "path": "schemas/interfaces/"
+   "in_base_commit": true,
+   "lane_commit": "ced4aa08c4f19455a7b0c70b50a47d1f8e7727fe",
+   "note": "upstream ICD; pinned and read here. The compressor electrical input field lists a repository model producer (abep_sim.compressor, model-derived, validity domain D-DRAGCOMP, uncertainty TBD), i.e. a model interface, not a sourced or measured load; lane_20 electrical closure keeps the compressor load TBD (its code defaults are unsourced). This layer therefore keeps the compressor bus draw TBD and never fills it (lane brief).",
+   "path": "schemas/interfaces/",
+   "read": [
+    {
+     "file": "schemas/interfaces/upstream_icd_v1.json",
+     "path": "$defs.IF-A3.properties.electrical_power_W.x-field.status",
+     "value": "supplied"
+    },
+    {
+     "file": "schemas/interfaces/upstream_icd_v1.json",
+     "path": "$defs.IF-A3.properties.electrical_power_W.x-field.evidence_class_current",
+     "value": "model-derived"
+    },
+    {
+     "file": "schemas/interfaces/upstream_icd_v1.json",
+     "path": "$defs.IF-A3.properties.electrical_power_W.x-field.uncertainty",
+     "value": "not produced by any upstream module; TBD - requires an uncertainty model for this producer"
+    },
+    {
+     "file": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+     "path": "components.compressor.entries[CP-LOAD].evidence_class",
+     "value": "tbd"
+    }
+   ],
+   "verification": "two-lens-v2, second lens passed (docs/orchestration/lane_registry_v1.json at base bad6ea0)"
   }
  },
  "follow_on": "fo_veto_layer",
@@ -2380,6 +2433,27 @@
    "path": "hallthruster_bridge/ensemble/transport_ensemble_v0.json",
    "role": "transport ensemble (admitted members: none; read-only)",
    "sha256": "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b"
+  },
+  {
+   "lane": "lane_32_wall_life",
+   "lane_commit": "f3c924a791a01f69e1a9165a74b88c1446e203d3",
+   "path": "docs/evidence/wall_life/sputter_yield_db_v1.json",
+   "role": "wall-life evidence DB (read for its no-design-life statement; blocker record)",
+   "sha256": "315fbd44da2ee16246edb95830be09e0f05b9237cd5ca0a4c86a02a7e25bfffa"
+  },
+  {
+   "lane": "lane_10_cathode_dossier",
+   "lane_commit": "1b6fc10ab11798dce1e5ed3079cae1210fbb8d2d",
+   "path": "docs/evidence/cathode/cathode_evidence_v1.json",
+   "role": "cathode dossier (baseline decision; numeric parameters enter via lane 19)",
+   "sha256": "050060204e443d5583c307becadaab55a9f213d406ff4454be856bca21249110"
+  },
+  {
+   "lane": "lane_33_upstream_icd",
+   "lane_commit": "ced4aa08c4f19455a7b0c70b50a47d1f8e7727fe",
+   "path": "schemas/interfaces/upstream_icd_v1.json",
+   "role": "upstream ICD (compressor electrical-input field status; the bus draw stays TBD)",
+   "sha256": "2437d125060f2f24da06ac33b22220483f70b411033c91682cdffb5f01310850"
   }
  ],
  "lane24_evaluation": {
@@ -2611,7 +2685,7 @@
   },
   {
    "what": "compressor bus draw and valve-outlet feed state",
-   "why": "upstream ICD (lane_33, not verified) and lane_16 values are TBD; never filled here"
+   "why": "the upstream ICD (lane_33) offers only a repository compressor model (evidence class model-derived, uncertainty TBD) and lane_20 keeps the compressor load TBD; the lane_16 valve-outlet feed state is TBD; neither is filled here"
   }
  ],
  "note": "DRAFT for owner review. No winner, no ranking; eliminations only through the lane-24 evaluator. Thresholds not in the RFP are PROPOSED.",
@@ -2619,6 +2693,13 @@
   "Adopt P1 (thermal) and P2 (cathode life / start cycles) as binding, or keep them reporting-only?",
   "Does '< 1.5 kW' bound start-up transients (startup_peak_limit), and should G2 fail_must_cover include 'startup'?",
   "Xe allocation (OD-M4) and whether cathode flow continues between firings (x 26,000/15,000)."
+ ],
+ "pin_provenance_notes": [
+  {
+   "lane": "lane_15_thermal_life",
+   "lane_commit": "66ff83be5506097025905332b0b28e9e3fe4e19e",
+   "note": "The four lane_15 files (abep_sim/thermal_life.py, schemas/thermal_life/limits_v1.json, inputs_v1.json, docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md) are pinned at the lane_15 repair commit 66ff83b (G11 wall-flux admission gate, on top of 1fb82f3). That commit is NOT in base bad6ea0, and at base neither docs/orchestration/lane_registry_v1.json nor trigger_ledger_v2.jsonl records it as verified: the T_VETO_LAYER claim records the verified lane_15 identity as d2325c8da3. Until the lane_15 repair is verified and merged, this layer does NOT rest on verified lane_15 inputs, and it must be merged only after that repair (merge order: lane_15 repair, then this layer). The branch carries the lane_15 repair commits only so that the pins resolve; this lane does not author them. No cell status depends on the difference from d2325c8da3 (the G11 gate only tightens the hall_discharge wall-flux contract)."
+  }
  ],
  "proposed_for_owner": [
   {
@@ -2703,10 +2784,11 @@
     "ecr_hall"
    ],
    "conditional_margin": {
-    "fraction_of_limit": [
+    "cathode_xe_consumption_fraction_of_limit": [
      0.108,
      1.35
     ],
+    "consumption_fraction_relation": "cathode Xe over the minimum firing / G3 threshold (consumption share, not a margin)",
     "quantity": "40 kg limit minus cathode Xe over the minimum firing",
     "range": [
      -14.0,
@@ -2798,7 +2880,7 @@
     }
    ],
    "statement": "A flight-type SPT (PPS1350) on N2/O2 with 10 % Xe was reported (second-hand) with ceramic erosion 'compatible with' a lifetime below the RFP firing requirement.",
-   "to_become_verdict_bearing": "Vyovrinda-geometry wall-erosion evidence: N/O sputter yields on the wall grade (lane_32_wall_life, not in base), wall_life_trustworthy maps from an ADMITTED closure (gate 3), or an endurance test of the Vyovrinda channel",
+   "to_become_verdict_bearing": "Vyovrinda-geometry wall-erosion evidence: N/O sputter yields on the wall grade (lane_32_wall_life: no N/O design-life number derivable from DB v1), wall_life_trustworthy maps from an ADMITTED closure (gate 3), or an endurance test of the Vyovrinda channel",
    "unit": "h",
    "values": {
     "lifetime_estimate_h": [
@@ -2833,6 +2915,7 @@
    ],
    "id": "RI-LIFE-HALL-ANODE-OXIDATION",
    "lane24_basis": "measurement_similar_hardware",
+   "lane24_basis_note": "lane 24 has no level-5 basis. measurement_similar_hardware is the closest non-verdict basis in kind (a measured observation on other hardware), but its reason text ('EVIDENCE.md level 3') overstates this item: the source entry is level 5 (second-hand report via a review). Either label is non-verdict-bearing; the outcome is unchanged.",
    "scope": "common_mode",
    "source_refs": [
     {
@@ -2901,6 +2984,7 @@
    "evidence_levels": [],
    "id": "RI-LIFE-CATHODE-AIR-EXPOSURE",
    "lane24_basis": "measurement_similar_hardware",
+   "lane24_basis_note": "measurement_similar_hardware is the closest non-verdict lane-24 basis in kind, but its reason text ('EVIDENCE.md level 3') overstates this item: ECR-E155 is a secondary citation with no evidence level stated, and the lane-09 E09 cathode observation is a review's report. The item is treated as level 5-class (secondary); it is not submitted to the evaluator (no lane-24 metric) and is non-verdict-bearing under either label.",
    "scope": "common_mode",
    "source_refs": [
     {
@@ -3219,8 +3303,8 @@
      "path": "parameters.jpl_h6_heater_starts_min"
     }
    ],
-   "statement": "Reported LaB6 heater powers at ignition are far below the PROPOSED start-up peak limit; they are only one contributor to the start-up peak (discharge ignition, magnets, flow control, housekeeping and, in the V2 sequence, the pre-ionizer are TBD).",
-   "to_become_verdict_bearing": "the full start-up sequence at the bus boundary: discharge-ignition transient (admitted closure or measurement), pre-ionizer schedule V1/V2 (owner), compressor bus draw (lane_33 upstream ICD, TBD), and the mission start count (operations concept; P2.start_cycles threshold TBD)",
+   "statement": "Reported LaB6 heater powers at ignition are far below the PROPOSED start-up peak limit; they are only one contributor to the start-up peak (discharge ignition, magnets, flow control, housekeeping and, in the V2 sequence, the pre-ionizer are TBD). The bracket extremes rest on CH-PEDRINI17-HC1 (level 6) for 45 W and CH-MONTERO24 (level 6) for 305 W (lane_20 electrical_closure entries; evidence levels as recorded there).",
+   "to_become_verdict_bearing": "the full start-up sequence at the bus boundary: discharge-ignition transient (admitted closure or measurement), pre-ionizer schedule V1/V2 (owner), compressor bus draw (lane_33 upstream ICD: model interface only; TBD), and the mission start count (operations concept; P2.start_cycles threshold TBD)",
    "unit": "W",
    "values": {
     "energy_per_start_Wh": [
