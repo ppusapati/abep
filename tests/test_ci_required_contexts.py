@@ -3,7 +3,9 @@
 GitHub reports one status-check context per workflow job (per matrix leg for a matrix job), named by the job's `name:`
 after `${{ matrix.* }}` substitution. The branch-protection specification lists the contexts the owner makes required.
 These tests assert that the documented list equals the contexts `.github/workflows/ci.yml` actually produces, exactly,
-so that renaming a job or changing a matrix value cannot silently orphan a required check. Repository governance only:
+so that renaming a job or changing a matrix value cannot silently orphan a required check. They also pin the owner's
+mechanism decision (fo_repo_decisions_batch, 2026-09-27): one repository ruleset, never classic protection, 0 approvals,
+all three contexts, branch up to date, no bypass actors. Repository governance only:
 no physics, data or scientific outcome is read.
 """
 from __future__ import annotations
@@ -121,3 +123,53 @@ def test_no_other_workflows_unaccounted_for():
     found = sorted(f for f in os.listdir(wf_dir) if f.endswith((".yml", ".yaml")))
     assert found == ["ci.yml", "julia-smoke.yml"], (
         f"new workflow(s) {found}: decide (owner) whether they are required and update docs/ci/BRANCH_PROTECTION.md")
+
+
+# ---------------------------------------------------------------------------------- ruleset decision (owner, 2026-09-27)
+RULESET_BLOCK_RE = re.compile(r"^```ruleset-decision[ \t]*\n(.*?)^```[ \t]*$", re.M | re.S)
+RULESET_DECISION = {
+    "mechanism": "ruleset",                            # a GitHub repository ruleset, not classic branch protection
+    "classic_branch_protection": "none",               # never both
+    "enforcement": "active",
+    "required_approvals": "0",                         # while there is one maintainer
+    "required_status_checks": "3",                     # all three CI contexts of the required-status-checks block
+    "strict_required_status_checks_policy": "true",    # branch must be up to date before merging
+    "bypass_actors": "none",
+}
+
+
+def _spec_text() -> str:
+    with open(SPEC_MD, encoding="utf-8") as fh:
+        return fh.read()
+
+
+def _ruleset_decision() -> dict:
+    blocks = RULESET_BLOCK_RE.findall(_spec_text())
+    assert len(blocks) == 1, f"expected exactly one ```ruleset-decision block in {SPEC_MD}, found {len(blocks)}"
+    out = {}
+    for ln in blocks[0].splitlines():
+        assert ln == ln.strip() and ": " in ln, f"malformed ruleset-decision line {ln!r} (one 'key: value' per line)"
+        k, v = ln.split(": ", 1)
+        assert k not in out, f"duplicate key {k!r}"
+        out[k] = v
+    return out
+
+
+def test_ruleset_decision_block_equals_owner_decision():
+    """fo_repo_decisions_batch: ruleset only (never classic, never both), 0 approvals, all three contexts, branch current."""
+    assert _ruleset_decision() == RULESET_DECISION
+
+
+def test_ruleset_requires_every_documented_context():
+    n = int(_ruleset_decision()["required_status_checks"])
+    assert n == len(_documented_contexts()) == len(_workflow_contexts(CI_YML)), n
+
+
+def test_no_classic_protection_procedure_in_spec():
+    text = _spec_text()
+    headings = [ln for ln in text.splitlines() if ln.startswith("#")]
+    assert not any(re.search(r"procedure", h, re.I) and re.search(r"classic", h, re.I) for h in headings), headings
+    assert sum(bool(re.search(r"procedure", h, re.I) and re.search(r"ruleset", h, re.I)) for h in headings) == 1, headings
+    for forbidden in ("Add branch protection rule**", "Add classic branch protection rule", "Include administrators**",
+                      "use one, not both"):
+        assert forbidden not in text, f"classic-protection instruction left in the spec: {forbidden!r}"

@@ -5,11 +5,12 @@ description = "System-closure simulator for air-breathing electric propulsion (D
 # >= 3.11: the code uses tomllib and the locked environment (requirements-lock.txt: numpy 2.4.4, scipy 1.17.1,
 # pandas 3.0.2) needs 3.11; CI runs 3.11 (docs/ci/PACKAGING.md).
 requires-python = ">=3.11"
-# pymsis is listed here as a hard dependency although gate 1 requires running without it (frozen NRLMSIS dataset);
-# moving it to the [msis] extra is an open owner question (docs/ci/PACKAGING.md). Dependencies are unchanged.
-dependencies = ["numpy", "pandas", "pyyaml", "matplotlib", "scipy", "pymsis>=0.13"]
+# pymsis is NOT a hard dependency (owner decision 2026-09-27, fo_repo_decisions_batch; docs/ci/PACKAGING.md): gate 1
+# requires running without it (frozen NRLMSIS dataset is the default; live MSIS only when asked). Live MSIS:
+# `pip install -e .[msis]`. requirements-lock.txt stays the dependency source of truth (it pins pymsis==0.13.0).
+dependencies = ["numpy", "pandas", "pyyaml", "matplotlib", "scipy"]
 [project.optional-dependencies]
-msis = ["pymsis"]
+msis = ["pymsis>=0.13"]
 [project.scripts]
 abep-sim = "abep_sim.sweep:main"
 [build-system]

@@ -33,10 +33,28 @@ an `o4_dispositions_v1` file (`hallthruster_bridge/ensemble/o4_dispositions_sche
 The official matrix also carries `o4_dispositions_feed`, a skeleton that conforms to `o4_dispositions_v1`:
 - baselines, first-stage and escalation `scores_provenance_file`/`sha256` (paths relative to `hallthruster_bridge/`) and
   the scored `trigger_fired`;
-- every owner field left empty (`disposition: null`, `cleared_for_admission: []`, `decided_by`/`decided_utc: null`).
+- every owner field left empty (`disposition: null`, `cleared_for_admission: []`, `decided_by`/`decided_utc: null`);
+- `mandatory_decision_sha256` left **EMPTY** (`null`), together with any other decision hash (owner decision 2026-09-27,
+  follow-on `fo_repo_decisions_batch`). The builder never pre-fills it: binding the feed to a decision is part of making the
+  dispositions, so an unfilled template must never look bound. `mandatory_decision_file` only names the mandatory-vacuum
+  decision file (repository-relative) the owner is expected to bind; it carries no hash. The decision file's sha256 does
+  not appear anywhere in the builder output. `assert_feed_unbound` raises `ProvenanceError` if any `*decision_sha256`,
+  disposition, clearance or `decided_by`/`decided_utc` is non-empty in the feed the builder is about to emit.
 
-`_check_o4` rejects the feed as emitted. It passes only once the owner has filled those fields and bound
-`mandatory_decision_sha256` to the decision that the citing record uses.
+`_check_o4` rejects the feed as emitted (first because it is not bound to the citing admission's decision). It passes
+only once the owner has filled the owner fields and set `mandatory_decision_sha256` to the `decision_sha256` of the
+admission record that cites the dispositions file.
+
+## Milestone
+
+Supports **Milestone B** (physics-backed selection): admission of a Hall transport closure, and therefore design Hall maps
+and absolute Hall performance in the architecture comparison, is gated on the O4 dispositions (`hall_ensemble._check_o4`;
+CLAUDE.md *admission/Hall maps stay gated until the O4 dispositions are complete*). It is **not** needed for
+**Milestone A** (conditional selection), which does not require Physics Baseline 1.0, and it never delays hardware
+preparation (`docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json`, W6). Indirectly it feeds Milestone C only through B.
+To contribute to B it still needs: the 7 attempt-2 escalations scored; the official matrix built under the ledger; the
+owner's dispositions recorded (with the decision hash bound then); and, separately, a transport closure that passes
+genuinely new predictive evidence. The credible set is empty today, so the matrix alone admits nothing.
 
 The layout of the matrix is in `o4_disposition_matrix_schema_v1.json`.
 
