@@ -96,7 +96,7 @@ def test_requirement_basis_equals_lane25():
     for n, row in doc["requirement_basis"]["lane25_by_n"].items():
         plan = draft["derived_numbers"]["plan_by_n"][n]
         for key in ("u_T_max", "u_P_max", "u_inst_max", "sigma_lnR_max", "k_primary"):
-            assert row[key]["value"] == pytest.approx(plan[key]["value"], rel=1e-5)
+            assert row[key]["value"] == plan[key]["value"]  # copied bit-for-bit (A3-repair-2)
     assert doc["requirement_basis"]["lane25_by_n"]["4"]["u_T_max"]["value"] == pytest.approx(0.0049836144, rel=1e-6)
 
 
@@ -293,8 +293,9 @@ def test_c5_review_findings_closed():
     # versioning: stays v1 with a change log, the original base commit is kept
     assert doc["version"] == "v1" and doc["revision"] == "v1-r2"
     assert doc["base_commit"] == "510e464fb8e128e4cf3325572a4d36ad33a4899d"
-    assert [c["revision"] for c in doc["change_log"]] == ["v1-r1", "v1-r2", "v1-r2", "v1-r2"]
-    assert [c["entry"] for c in doc["change_log"]] == ["v1-r1", "v1-r2/C5", "v1-r2/A3", "v1-r2/A3-repair"]
+    assert [c["revision"] for c in doc["change_log"]] == ["v1-r1", "v1-r2", "v1-r2", "v1-r2", "v1-r2"]
+    assert [c["entry"] for c in doc["change_log"]] == ["v1-r1", "v1-r2/C5", "v1-r2/A3", "v1-r2/A3-repair",
+                                                       "v1-r2/A3-repair-2"]
     assert doc["change_log"][-1]["amendment"] == "A3"
 
 
@@ -412,7 +413,7 @@ def test_downstream_repin_declared():
     assert {"docs/experiments/lifetime_ao/ao_lifetime_register_v3.json",
             "docs/experiments/hardware/hardware_requirements_v1.json",
             "docs/experiments/s1_readiness/s1_readiness_status_current.json"} <= files
-    assert "9a33979" in dr["merge_order"]
+    assert "9a33979" in dr["merge_order"] and "removed from this branch" in dr["merge_order"]
     md = (DIR / "INSTRUMENTATION_DEFINITION.md").read_text(encoding="utf-8")
     assert "Downstream re-pin required" in md and "Pin cycle resolved" in md
     assert "7d373374dc" in md.split("\n")[2]

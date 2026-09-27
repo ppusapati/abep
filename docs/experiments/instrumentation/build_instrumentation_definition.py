@@ -119,10 +119,11 @@ def _r(x: float, sig: int = 6) -> float:
     return float(f"{x:.{sig}g}")
 
 
-def q(value, unit: str, evidence_class: str, source: str, **extra) -> dict:
+def q(value, unit: str, evidence_class: str, source: str, exact: bool = False, **extra) -> dict:
+    """exact=True stores a value copied from another lane's file bit-for-bit (no rounding)."""
     if evidence_class not in EVIDENCE_CLASSES:
         raise ValueError(f"unknown evidence class {evidence_class!r}")
-    if isinstance(value, float):
+    if isinstance(value, float) and not exact:
         value = _r(value)
     d = {"value": value, "unit": unit, "evidence_class": evidence_class, "source": source}
     d.update(extra)
@@ -331,7 +332,7 @@ def _l25q(draft: dict, *path, unit: str | None = None) -> dict:
     for p in path:
         node = node[p]
     return q(node["value"], unit or node["unit"], "model-derived",
-             f"{L25}: derived_numbers.{'.'.join(map(str, path))} (lane 25, minexp_numbers.py)")
+             f"{L25}: derived_numbers.{'.'.join(map(str, path))} (lane 25, minexp_numbers.py)", exact=True)
 
 
 def requirement_basis(draft: dict, rfp) -> dict:
@@ -1330,6 +1331,15 @@ CHANGE_LOG = [
                "correction's uncertainty; Markdown header names both the original and the current base commit",
      "material": False,
      "why_v1": "no id, threshold, derived number or decision-quantity role changed"},
+    {"entry": "v1-r2/A3-repair-2", "revision": "v1-r2", "amendment": "A3", "date": "2026-09-27",
+     "base_commit": A3_BASE_COMMIT,
+     "change": "second review repair: the W3 dependency commit 9a33979 is no longer carried in this branch's history "
+               "(W4 relies only on its immutable snapshot, which the snapshot-vs-git test checks when the commit is "
+               "available and skips otherwise); lane-25 values copied into requirement_basis are stored bit-for-bit "
+               "instead of rounded to 6 significant figures (e.g. k_primary[n=4] 3.1726749, previously 3.17267); "
+               "merge-order statement updated",
+     "material": False,
+     "why_v1": "no id, threshold, derived number or decision-quantity role changed (copied values gain digits only)"},
 ]
 
 # Consumers outside W4's ALLOWED paths that pin the bytes of this file. Every W4 byte change (including the A3 entry
@@ -1352,10 +1362,11 @@ DOWNSTREAM_REPIN = [
      "stale_pin": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f (pre-A3)",
      "test_affected": "regenerate with the S1 readiness builder (status report, not a W4 test)"},
 ]
-MERGE_ORDER = ("This branch carries the W3 dependency commit 9a33979 (docs/experiments/hardware/**, "
-               "tests/test_hardware_definition.py; branch worktree-wf_b92499f0-718-3), which W4 did not author. W3 must "
-               "be merged and verified before or together with this branch. W4's own pin uses the immutable snapshot, "
-               "so W4 verification does not depend on W3's live bytes.")
+MERGE_ORDER = ("This branch carries only W4-authored commits on top of base 7d37337 (the W3 integration-review "
+               "commit 9a33979 was removed from this branch's history in the A3-repair-2 review repair). W4's pin of "
+               "the W3 register is the immutable snapshot of 9a33979, so W4 merges and verifies independently of W3's "
+               "live bytes. The W3 branch (worktree-wf_b92499f0-718-3) is merged and verified by its own lane; the "
+               "downstream re-pins listed above are sequenced by the merge controller after both merges.")
 
 
 def build() -> dict:
