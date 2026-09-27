@@ -1,0 +1,72 @@
+{
+ "id": "o_o2_channel_status_v0",
+ "lane": "fo_o_o2_chemistry_v0 (W7 of od_hardware_pivot, trigger T_PIVOT_O_O2_CHEMISTRY_V0)",
+ "status": "DRAFT_FOR_OWNER_REVIEW",
+ "drafted": "2026-09-27",
+ "drafted_by": "agent session (workflow lane OO2); not reviewed by the owner",
+ "inputs_read": [
+  "docs/chemistry/o_o2/o_o2_source_matrix_v1.json (lane 13; row ids OO2-xx used below)",
+  "docs/chemistry/o_o2/o_o2_completeness_prereg_DRAFT.json (lane 13; DRAFT_PENDING_OWNER)",
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json (W7_o_o2_chemistry)",
+  "docs/architecture_comparison/feed_envelope/FEED_ENVELOPE.md (lane 16; free-stream composition)"
+ ],
+ "authority_and_precedence": "The lane-13 DRAFT completeness rule asks to be frozen before any O/O2 table is built. It is DRAFT_PENDING_OWNER and binds nothing; the owner's od_hardware_pivot disposition (W7, 2026-09-27) registered this lane to build first DRAFT tables. This lane therefore builds tables only: no F_P, F_ion, F_S or F_att value is computed, no process is included, promoted or excluded, and no table enters hallthruster_bridge/propellants/. CLAUDE.md 'Next work' item 4 (O2/O only if items 1-3 succeed) is not changed by this file; these tables are unused until the owner promotes them.",
+ "why_it_matters_context": {
+  "statement": "Free-stream mole fractions at 180-230 km from the frozen NRLMSIS dataset (lane 16): x_O 0.4831-0.7046, x_N2 0.2784-0.4669, x_O2 0.006985-0.05002.",
+  "source": "docs/architecture_comparison/feed_envelope/FEED_ENVELOPE.md, table rows x_s.O / x_s.N2 / x_s.O2 (model-derived from abep_sim/data/atmosphere_msis21_v1)",
+  "caveat": "Free-stream values, not the delivered feed at the Hall boundary: collected-flow composition convention (ICD G-02) and wall recombination are open, so the delivered O/O2 split is TBD - requires fo_feed_state_closure / ICD G-02. Consequence for this lane: atomic-O channels (ionization, momentum transfer, excitation) are as important as the O2 channels."
+ },
+ "built_tables": [
+  {"row": "OO2-01", "channel": "e + O -> O+ + 2e", "files": ["tables/ionization_O_beb_kd2002.dat", "tables/ionization_O_thompson1995.dat"], "role": "two alternatives; nominal = OWNER DECISION", "manifest": "manifest_nist107_o_v0.json"},
+  {"row": "OO2-05", "channel": "e + O2 -> O2+ + 2e", "files": ["tables/ionization_O2_song2026.dat"], "role": "nominal DRAFT", "manifest": "manifest_song2026_v0.json"},
+  {"row": "OO2-06", "channel": "e + O2 -> O+ + O + 2e (dissociative ionization; channel split from the O2+ and O^2+ partials)", "files": ["tables/dissociative_ionization_O2_upper_song2026.dat", "tables/dissociative_ionization_O2_lower_song2026.dat"], "role": "upper/lower uncertainty pair for the O+/O2^2+ ambiguity", "manifest": "manifest_song2026_v0.json"},
+  {"row": "OO2-07", "channel": "e + O2 -> O^2+ + O + 3e", "files": ["tables/dissociative_ionization_O2_to_O_Z2plus_song2026.dat"], "role": "DRAFT tier-3 candidate (built because tabulated; needs O max_charge 2 and the OO2-17 energy link before any use)", "manifest": "manifest_song2026_v0.json"},
+  {"row": "OO2-08", "channel": "e + O2 -> O + O + e (neutral dissociation, Cosby total >= 13.5 eV)", "files": ["tables/dissociation_O2_song2026.dat"], "role": "nominal DRAFT, KNOWN INCOMPLETE below 13.5 eV and double-counting-prone (OD-4)", "manifest": "manifest_song2026_v0.json"},
+  {"row": "OO2-09", "channel": "e + O2 momentum transfer", "files": ["tables/elastic_O2_song2026.dat"], "role": "nominal DRAFT", "manifest": "manifest_song2026_v0.json"},
+  {"row": "OO2-16", "channel": "e + O2 -> O- + O (dissociative attachment)", "files": ["tables/attachment_O2_song2026.dat"], "role": "assessment input only (F_att / OD-5); not usable by the pinned solver (CC-2)", "manifest": "manifest_song2026_v0.json"}
+ ],
+ "unresolved_channels": [
+  {"row": "OO2-02", "channel": "e + O momentum transfer", "draft_tier": "1", "priority": "highest (atomic O dominates the free-stream composition; any O-containing Hall run needs it)",
+   "why_unresolved": "The recommended BSR-1116 MTCS (Tayal & Zatsarinny, PRA 94, 042707 (2016), doi:10.1103/PhysRevA.94.042707) is tabulated only in the TZ2016 supplement (APS, paywalled; not accessed) and the SONG2026 supplement (not accessed). The open Itikawa & Ichimura 1990 reprint gives the Thomas & Nesbet Q_m only as a figure below about 14 eV (Fig. 4.1; read 2026-09-27), which is neither the recommended set nor covers the domain.",
+   "proposed_route": "legitimate access to the SONG2026 / TZ2016 supplementary data (fo_closed_access_acquisition, owner-approved acquisition channel); otherwise a vector extraction of SONG2026 Fig. 24 (angle-integrated elastic and momentum-transfer, atomic O; figure number from the accepted manuscript) from the version of record, labelled digitized. Not attempted in v0."},
+  {"row": "OO2-03", "channel": "e + O electronic excitation (1D, 1S, 3s 5S, 3s 3S, allowed 3D; lumped remainder)", "draft_tier": "1 (state list = OD-3)",
+   "why_unresolved": "BSR-1116 numbers are in the supplements (not accessed). Laher & Gilmore, JPCRD 19, 277 (1990) (open NIST reprint) gives analytic fits for > 60 profiles but was not transcribed in v0; the state list is owner decision OD-3.",
+   "proposed_route": "v0.1: one table per state from LG1990 open fits (evaluated measurement) as an alternative, BSR-1116 as nominal once the supplement is legitimately obtained; headers from the Itikawa & Ichimura 1990 Table 2.1 level list."},
+  {"row": "OO2-10 / OO2-11 / OO2-13", "channel": "O2 excitation a1Delta_g (0.98 eV), b1Sigma_g+ (1.63 eV), Herzberg c/A'/A (6.12/6.27/6.47 eV), and above 20 eV", "draft_tier": "1",
+   "why_unresolved": "Recommended HUANG2022 R-matrix values paywalled (ACS); TASHIRO2006 open on arXiv but figure-only as audited; SONG2026 plots only to 20 eV; the extension source above the R-matrix range is owner decision OD-6; the Herzberg states overlap the dissociation table (OD-4).",
+   "proposed_route": "owner fixes OD-4 and OD-6 first; then SONG2026 supplement (legitimate access) or vector extraction of SONG2026 Figs. 8-10 (digitized) plus the OD-6 extension."},
+  {"row": "OO2-08 (part)", "channel": "O2 dissociation below 13.5 eV (via Herzberg and Schumann-Runge states)", "draft_tier": "1",
+   "why_unresolved": "No total measurement below 13.5 eV; the built table therefore UNDER-counts dissociation at low T_e by an unquantified amount, and above 13.5 eV any dissociative-excitation table would double count (lane 13 CC-4).",
+   "proposed_route": "owner decision OD-4 (accounting), then a combined table built from the chosen excitation source below a crossover and Cosby above."},
+  {"row": "OO2-12", "channel": "O2 B3Sigma_u- (Schumann-Runge) and higher", "draft_tier": "2", "why_unresolved": "HUANG2022 / Shyn et al. 1994 paywalled.", "proposed_route": "as OO2-10."},
+  {"row": "OO2-14", "channel": "O2 vibrational excitation", "draft_tier": "2", "why_unresolved": "Laporta, Celiberto & Tennyson 2013 numeric supplement not accessed; arXiv preprint licence is read-only (no redistribution of derived tables asserted).", "proposed_route": "journal supplement via legitimate access; then the N2-style v = 0 -> v_f audit."},
+  {"row": "OO2-15", "channel": "O2 rotational excitation", "draft_tier": "3", "why_unresolved": "model-only (Born / Gerjuoy-Stein); convention gross/net = OD-7.", "proposed_route": "after OD-7, as the N2 rotational tables."},
+  {"row": "OO2-04", "channel": "O ground-term fine structure", "draft_tier": "3", "why_unresolved": "large low-energy disagreement (II1990 Sec. 5.1); not transcribed.", "proposed_route": "bound only."},
+  {"row": "OO2-06 (part)", "channel": "O2 -> O+ + O+ (double dissociative ionization) and O2^2+ inside the O+ column", "draft_tier": "1 (inside DI)", "why_unresolved": "Tian & Vidal 1998 paywalled; SONG2026 cannot recommend O2^2+ values; carried as the upper/lower pair.", "proposed_route": "owner decision on the lower-bound construction; TV1998 via legitimate access."},
+  {"row": "OO2-17", "channel": "O+ -> O^2+", "draft_tier": "3 (energy link)", "why_unresolved": "Bell et al. JPCRD 12, 891 (1983) O II is open (same file as the N II source) but was not transcribed in v0; required before the OO2-07 table could ever be used.", "proposed_route": "v0.1, mirroring scripts/build_n_z1plus_to_z2plus_table.py."},
+  {"row": "OO2-18", "channel": "direct O -> O^2+", "draft_tier": "3", "why_unresolved": "Thompson 1995 double-ionization data not in the fetched NIST columns; paper paywalled.", "proposed_route": "legitimate access or bound from SONG2026's '~3 % of O+ at 200-2000 eV' statement."},
+  {"row": "OO2-19 / OO2-20", "channel": "O2+ dissociative excitation / O2+ -> O2^2+ / O2 -> O2^2+", "draft_tier": "2 / 3", "why_unresolved": "Cherkani-Hassani 2006 paywalled; O2^2+ no recommendation.", "proposed_route": "legitimate access; bounds."},
+  {"row": "OO2-21..24", "channel": "O2+ dissociative recombination, O- sinks, O+ radiative recombination", "draft_tier": "outside the electron-impact rule", "why_unresolved": "need their own relevance criterion (OD-5, OD-8).", "proposed_route": "owner decisions first."}
+ ],
+ "proposed_completeness_audit": {
+  "status": "PROPOSED (analogue of hallthruster_bridge/prereg/n2_completeness_audit_v1.json; the lane-13 DRAFT o_o2_completeness_prereg_DRAFT.json already carries the same thresholds). Nothing here is evaluated.",
+  "rule": "Promote an omitted process if F_P > 0.01 OR F_ion > 0.01 OR F_S_s > 0.05 anywhere in its applicable T_e domain (identical to the frozen N2 rule; thresholds are project conventions, not RFP values).",
+  "fractions": {
+   "F_P": "k_omit dE_omit / sum_j k_j dE_j (share of total electron inelastic power)",
+   "F_ion": "nu_ions,omit k_omit / sum_j nu_ions,j k_j (share of total positive-ion production)",
+   "F_S_s": "share of production or destruction of modeled species s due to the omitted channel",
+   "F_att_PROPOSED": "k_att n_O2 / sum_j nu_ions,j k_j n_j (electron loss by attachment vs production by ionization); threshold TBD - owner decision OD-5"
+  },
+  "domain_PROPOSED": "T_e 2-30 eV (mean energy 3-45 eV); T_e 0.2-30 eV for vibrational, rotational, a/b and fine-structure channels (OD-1)",
+  "ambiguity_rule_PROPOSED": "upper bound below threshold -> EXCLUDE; lower bound above -> PROMOTE; threshold between bounds -> PROMOTE AS UNCERTAINTY VARIANT (N2 addendum 1)",
+  "state_basis_for_F_S": "OD-2. The composition grid must span the delivered-feed O/O2/N2 range from fo_feed_state_closure (free-stream range in the context block is NOT the delivered feed).",
+  "what_v0_enables": "F_ion for ionizing channels is evaluable against the v0 ionizing set (O, O2, DI) without the excitation denominators, as the N2 DI audit was. F_P and F_S remain PROVISIONAL until every tier-1 table (O MTCS, O excitation, O2 excitation, complete O2 dissociation) exists.",
+  "must_happen_first": ["owner freezes the rule under hallthruster_bridge/prereg/ (owner's step)", "OD-1..OD-8 decided", "SONG2026 version of record obtained and every transcribed value re-checked", "a separate O/O2 reaction-set label recorded (PROPOSED name: abep-oo2-0.x; never abep-n2n-*)"]
+ },
+ "milestones": {
+  "supports": "A (conditional selection) indirectly: it shows the atmospheric-feed chemistry path is source-backed and names what blocks it. It is not a gate for A and changes no architecture statement. It feeds W5 (held-out Hall-transport validation prereg) only as a list of the chemistry that would be needed to model O-containing feeds.",
+  "needed_for_B": ["owner-frozen O/O2 completeness rule and verdicts on the complete tier-1 set (O MTCS and O/O2 excitation are the blocking gaps)", "version-of-record verification of every SONG2026 value", "owner-approved promotion into hallthruster_bridge/propellants/ with rate_validity.toml entries and the separate reaction-set label (a model change)", "an admitted Hall transport closure (physics track; independent of this lane)", "delivered-feed composition from fo_feed_state_closure / ICD G-02"],
+  "needed_for_C": ["O/O2/N2 mixture chemistry over the mission composition envelope, consistent with the thermal/life and startup chemistry (wall recombination, O- if admitted)"]
+ },
+ "not_claimed": "No O/O2 process is included, promoted or excluded. No Hall performance, architecture, transport-admission or RFP-compliance statement is made. No screening candidate or unadmitted closure was used."
+}

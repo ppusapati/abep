@@ -16,7 +16,7 @@
   "rows": "list of row objects (below), first stages then escalations, in pre-registration order",
   "johnsonlow_assessment": "{file, sha256, ledger_verified_commit} of the verified Johnson-low assessment, hash-bound to its four datasets; null in a preview that lacks them",
   "provenance": "{all_checks_passed (must be true), n_checks, checks: [{check, ok}], datasets: [hash rows: mandatory v1 + every scored O4 dataset], inputs_sha256}",
-  "o4_dispositions_feed": "official only: skeleton conforming to o4_dispositions_v1 with every owner field empty (sensitivities.*.disposition null, cleared_for_admission [], decided_by null, decided_utc null) and owner_fills listing them; scores_provenance_file paths are relative to hallthruster_bridge/ as _check_o4 expects",
+  "o4_dispositions_feed": "official only: skeleton conforming to o4_dispositions_v1 with every owner field empty (sensitivities.*.disposition null, cleared_for_admission [], decided_by null, decided_utc null, mandatory_decision_sha256 null: no decision hash is ever pre-filled by the builder; owner decision 2026-09-27) and owner_fills listing them; mandatory_decision_file names the decision file to bind (repository-relative, no hash); scores_provenance_file paths are relative to hallthruster_bridge/ as _check_o4 expects",
   "PREVIEW": "preview only: true",
   "missing_required_datasets": "preview only: missing + undetermined"
  },

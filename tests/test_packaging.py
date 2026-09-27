@@ -2,7 +2,9 @@
 
 pyproject.toml must (i) require Python >= 3.11 (tomllib, locked environment), (ii) configure setuptools package discovery
 explicitly (flat-layout auto-discovery refuses abep_sim + hallthruster_bridge), distributing abep_sim only, and
-(iii) ship every file under abep_sim/data (frozen atmosphere, intake surface, goldens, rate tables) as package data.
+(iii) ship every file under abep_sim/data (frozen atmosphere, intake surface, goldens, rate tables) as package data, and
+(iv) keep pymsis out of the hard dependencies: it lives only in the [msis] extra (owner decision 2026-09-27,
+fo_repo_decisions_batch; gate 1 runs without it), while requirements-lock.txt stays the pinned dependency source.
 Pure file inspection: no build, no install, no network.
 """
 from __future__ import annotations
@@ -26,6 +28,37 @@ def pyproject() -> dict:
 def test_requires_python_311(pyproject):
     spec = pyproject["project"]["requires-python"].replace(" ", "")
     assert spec == ">=3.11", spec
+
+
+def _req_name(req: str) -> str:
+    """Distribution name of a PEP 508 requirement string (normalised: lower case, '_'/'.' -> '-')."""
+    import re
+    m = re.match(r"\s*([A-Za-z0-9][A-Za-z0-9._-]*)", req)
+    assert m, req
+    return re.sub(r"[-_.]+", "-", m.group(1)).lower()
+
+
+def test_pymsis_only_in_msis_extra(pyproject):
+    """Owner decision 2026-09-27: pymsis is an optional extra ([msis]), never a hard dependency, so a plain
+    `pip install -e .` in a pymsis-free environment does not pull it (gate 1: frozen NRLMSIS dataset, no pymsis)."""
+    proj = pyproject["project"]
+    deps = [_req_name(r) for r in proj["dependencies"]]
+    assert "pymsis" not in deps, proj["dependencies"]
+    # The other hard dependencies are unchanged by this decision.
+    assert sorted(deps) == sorted(["numpy", "pandas", "pyyaml", "matplotlib", "scipy"]), deps
+    extras = proj["optional-dependencies"]
+    assert [_req_name(r) for r in extras["msis"]] == ["pymsis"], extras["msis"]
+    assert all("pymsis" not in [_req_name(r) for r in reqs] for name, reqs in extras.items() if name != "msis"), extras
+
+
+def test_lock_file_still_pins_pymsis_and_every_hard_dependency(pyproject):
+    """requirements-lock.txt remains the dependency source of truth: it pins every hard dependency and pymsis (the
+    pymsis-present CI leg installs it from the lock; the absent leg filters the `pymsis` line)."""
+    with open(os.path.join(ROOT, "requirements-lock.txt"), encoding="utf-8") as f:
+        pinned = {_req_name(ln.split("==")[0]) for ln in (x.split("#")[0].strip() for x in f) if "==" in ln}
+    deps = {_req_name(r) for r in pyproject["project"]["dependencies"]}
+    assert deps <= pinned, sorted(deps - pinned)
+    assert "pymsis" in pinned
 
 
 def test_explicit_package_discovery(pyproject):
@@ -87,7 +120,9 @@ def test_manifest_in_carries_data():
 
 
 def test_ci_uses_editable_install_without_pythonpath():
-    """CI installs the lock file, then abep_sim editable with --no-deps (keeps the pymsis-absent leg pymsis-free)."""
+    """CI installs the lock file, then abep_sim editable with --no-deps. Since pymsis moved to the [msis] extra, --no-deps is
+    no longer what keeps the pymsis-absent leg pymsis-free (a plain `pip install -e .` does not pull it either); it is kept
+    so that the lock file stays the only dependency source (docs/ci/PACKAGING.md, owner decision 2026-09-27)."""
     import yaml
     with open(os.path.join(ROOT, ".github", "workflows", "ci.yml"), encoding="utf-8") as f:
         doc = yaml.safe_load(f)

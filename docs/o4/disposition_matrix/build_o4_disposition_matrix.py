@@ -8,6 +8,13 @@ compared against (first stage + escalation combinations) it tabulates, from the 
 It decides NOTHING. Dispositions are owner decisions (hallthruster_bridge/ensemble/o4_dispositions_schema_v1.json, enforced
 by abep_sim/hall_ensemble._check_o4). The builder never writes a disposition, never fills `disposition`, `cleared_for_admission`,
 `decided_by` or `decided_utc`, and changes no criterion, tolerance, chemistry, transport parameter or campaign record.
+It also never pre-fills a decision hash: `mandatory_decision_sha256` (and any other `*decision_sha256`) of the dispositions
+feed stays EMPTY (null) until the owner dispositions are actually made (owner decision 2026-09-27, fo_repo_decisions_batch;
+enforced by assert_feed_unbound before the feed is returned).
+MILESTONE. Supports Milestone B (physics-backed selection): admission of any Hall transport closure, and hence design Hall
+maps, is gated on the O4 dispositions (hall_ensemble._check_o4). Not needed for Milestone A (conditional selection).
+To reach B it still needs: the 7 attempt-2 escalations scored, the official matrix built, the owner's dispositions recorded,
+and (separately) a closure that passes new predictive evidence; the credible set is empty today.
 
 REFUSAL. The official matrix (o4_disposition_matrix_v1.json next to this file) is emitted ONLY when every required O4 dataset
 is scored: the five first stages, and every escalation combination of each first stage whose scored trigger fired
@@ -527,12 +534,46 @@ def dispositions_feed(fams, verified, required, mand, paths):
             ent["escalations"] = {e["config"]: verified[e["id"]]["provenance_ref"] for e in f["escalations"]
                                   if e["id"] in required}
         sens[f["sensitivity"]] = ent
-    return {"schema": "o4_dispositions_v1", "campaign_id": CAMPAIGN,
-            "mandatory_decision_sha256": mand["decision_sha256"],
+    feed = {"schema": "o4_dispositions_v1", "campaign_id": CAMPAIGN,
+            "mandatory_decision_sha256": None,
             "mandatory_decision_file": paths.rel(mand["decision_path"]),
             "sensitivities": sens, "cleared_for_admission": [], "decided_by": None, "decided_utc": None,
             "owner_fills": ["sensitivities.*.disposition", "cleared_for_admission", "decided_by", "decided_utc",
-                            "mandatory_decision_sha256 (must equal the decision_sha256 of the record that cites this file)"]}
+                            "mandatory_decision_sha256 (left empty by the builder; the owner binds it when the dispositions "
+                            "are actually made, and it must equal the decision_sha256 of the record that cites this file)"]}
+    assert_feed_unbound(feed)
+    return feed
+
+
+# Owner decision 2026-09-27 (fo_repo_decisions_batch): every decision-hash field of the feed stays EMPTY until the owner
+# dispositions are actually made. The builder never pre-fills one, so an unfilled template can never look bound to a decision.
+DECISION_HASH_FIELDS = ("mandatory_decision_sha256",)
+OWNER_FIELDS_EMPTY = {"cleared_for_admission": [], "decided_by": None, "decided_utc": None}
+
+
+def assert_feed_unbound(feed):
+    """Raise ProvenanceError if the builder's feed carries any owner-filled value: a decision hash (any key ending in
+    'decision_sha256' at any depth, plus DECISION_HASH_FIELDS), a disposition, a clearance, or decided_by / decided_utc."""
+    def walk(o, path):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                p = f"{path}.{k}" if path else k
+                if (k in DECISION_HASH_FIELDS or k.endswith("decision_sha256")) and v not in (None, ""):
+                    raise ProvenanceError(f"dispositions feed pre-fills decision hash {p}; it stays empty until the owner decides")
+                walk(v, p)
+        elif isinstance(o, list):
+            for i, v in enumerate(o):
+                walk(v, f"{path}[{i}]")
+    for k in DECISION_HASH_FIELDS:
+        if k not in feed:
+            raise ProvenanceError(f"dispositions feed lacks the (empty) owner field {k}")
+    walk(feed, "")
+    for k, empty in OWNER_FIELDS_EMPTY.items():
+        if feed.get(k) != empty:
+            raise ProvenanceError(f"dispositions feed pre-fills owner field {k}")
+    for s, e in (feed.get("sensitivities") or {}).items():
+        if e.get("disposition") is not None:
+            raise ProvenanceError(f"dispositions feed pre-fills the disposition of {s}")
 
 
 def dumps(obj):

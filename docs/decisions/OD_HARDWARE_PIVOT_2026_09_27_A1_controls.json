@@ -1,0 +1,17 @@
+{
+ "schema": "owner_disposition_addendum_v1",
+ "amends": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+ "amends_sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+ "decided_by": "owner",
+ "decided_utc": "2026-09-27",
+ "what": "owner review of 350bf41: controls C1-C4",
+ "controls_addendum_2026_09_27": {
+  "C1_W5_partition": "Before any H-1 data exist, the experiment is partitioned explicitly into calibration/registration data and held-out prediction data. Geometry, B(z), facility interpretation and every other allowed nuisance treatment are frozen from the calibration portion before any held-out case is exposed. Sequence: freeze closure and nuisance choices -> predict unseen operating points -> compare once, no retuning. The same new experiment is never used both to select a closure and to validate it.",
+  "C2_W1_flight_status": "Feed states derived from assumed intake/compressor design candidates carry status PROPOSED_FLIGHT_REPRESENTATIVE (ground-test reproducible) until DI-1 is frozen by the owner; they are never asserted as flight conditions.",
+  "C3_W7_containment": "O/O2 tables stay under docs/chemistry/o_o2/v0/ as DRAFT; they never enter hallthruster_bridge, a scoring campaign or the production solver automatically. Promotion is a separate controlled model change after completeness/domain review.",
+  "C4_closed_access": "The closed-access lane remains an acquisition/priority list. Before any legitimately purchased or institutional-access paper becomes score-bearing input, the evidence-access rule is made explicit in one owner disposition (exception vs clarification of 'published/open sources only').",
+  "CLAUDE_md": "no further expansion; detailed experiment decisions belong in LOCK-1/LOCK-2 and pre-registration artifacts",
+  "convergence_point": "DI-1 feed state + LOCK-1 + H-1/C-1 hardware + instrument capability -> define the S1 qualification test",
+  "enforcement": "the running lanes (wf_b92499f0-718) were launched before this addendum; each lane's output is checked against C1-C4 before merge, and a non-compliant lane gets a targeted repair (never a silent edit)"
+ }
+}

@@ -307,30 +307,86 @@ def test_official_feed_conforms_to_dispositions_schema_and_is_checked_by_hall_en
     assert feed["cleared_for_admission"] == [] and feed["decided_by"] is None and feed["decided_utc"] is None
     assert all(e["disposition"] is None for e in feed["sensitivities"].values())
 
+    assert feed["mandatory_decision_sha256"] is None                             # never pre-filled by the builder
+
     br = os.path.join(r, "hallthruster_bridge")
     mprov = json.load(open(os.path.join(br, "validation", f"{CAMPAIGN}_vacuum_scores_provenance.json")))
+    dec_sha = _sha(os.path.join(r, feed["mandatory_decision_file"]))            # what a citing admission record would carry
     os.makedirs(os.path.join(br, "ensemble_test"))
     fp = os.path.join(br, "ensemble_test", "o4_dispositions_test.json")
 
     def check(d):
         json.dump(d, open(fp, "w"), indent=1)
         adm = {"o4_dispositions_file": "ensemble_test/o4_dispositions_test.json", "o4_dispositions_sha256": _sha(fp),
-               "decision_sha256": feed["mandatory_decision_sha256"],
+               "decision_sha256": dec_sha,
                "preregistration": "prereg/p5_n2_validation_criteria_v1.json"}
         hall_ensemble._check_o4("sgb-screen-01", adm, br, mprov)
 
+    with pytest.raises(ValueError, match="not bound to this admission's decision"):
+        check(feed)                                                              # as emitted: unbound
+    bound_only = copy.deepcopy(feed)
+    bound_only["mandatory_decision_sha256"] = dec_sha                            # TEST stand-in for the owner's binding
     with pytest.raises(ValueError, match="no owner disposition"):
-        check(feed)
-    filled = copy.deepcopy(feed)
+        check(bound_only)
+    filled = copy.deepcopy(bound_only)
     for e in filled["sensitivities"].values():
         e["disposition"] = "TEST STAND-IN (not an owner decision)"
     filled.update(cleared_for_admission=["sgb-screen-01"], decided_by="test", decided_utc="2026-09-27T00:00:00Z")
     check(filled)
+    # The decision file's hash appears nowhere in the builder output (matrix and feed): no pre-binding anywhere.
+    assert dec_sha not in M.dumps(off)
     bad = copy.deepcopy(filled)
     bad["sensitivities"]["n2_n_rot_off.toml"]["trigger_fired"] = False
     with pytest.raises(ValueError, match="differs from the scored evaluation"):
         check(bad)
     assert M.dumps(M.build(r)) == M.dumps(off)                                   # deterministic
+
+
+# -------------------------------------------------------------- decision hash stays empty (owner decision 2026-09-27)
+def _unbound_feed():
+    return {"schema": "o4_dispositions_v1", "campaign_id": CAMPAIGN, "mandatory_decision_sha256": None,
+            "mandatory_decision_file": "x", "sensitivities": {"a.toml": {"baseline": "n2_n.toml", "disposition": None,
+                                                                         "first_stage": {"scores_provenance_sha256": "ab"}}},
+            "cleared_for_admission": [], "decided_by": None, "decided_utc": None}
+
+
+def test_feed_guard_accepts_the_unbound_template():
+    M.assert_feed_unbound(_unbound_feed())
+    assert "mandatory_decision_sha256" in M.DECISION_HASH_FIELDS
+
+
+@pytest.mark.parametrize("edit", [
+    lambda f: f.update(mandatory_decision_sha256="0" * 64),
+    lambda f: f.update(mandatory_decision_sha256="TBD"),
+    lambda f: f.pop("mandatory_decision_sha256"),
+    lambda f: f["sensitivities"]["a.toml"].update(decision_sha256="0" * 64),
+    lambda f: f.update(extra={"source_decision_sha256": "0" * 64}),
+    lambda f: f["sensitivities"]["a.toml"].update(disposition="x"),
+    lambda f: f.update(cleared_for_admission=["sgb-screen-01"]),
+    lambda f: f.update(decided_by="someone"),
+    lambda f: f.update(decided_utc="2026-09-27T00:00:00Z"),
+], ids=["mandatory_hash", "mandatory_placeholder", "mandatory_missing", "nested_hash", "other_decision_hash",
+        "disposition", "cleared", "decided_by", "decided_utc"])
+def test_feed_guard_refuses_any_prefilled_owner_field(edit):
+    f = _unbound_feed()
+    edit(f)
+    with pytest.raises(M.ProvenanceError):
+        M.assert_feed_unbound(f)
+
+
+def test_builder_source_never_binds_the_decision_hash():
+    """Static check: the only value dispositions_feed assigns to mandatory_decision_sha256 is None."""
+    src = open(os.path.join(HERE, "build_o4_disposition_matrix.py")).read()
+    body = src[src.index("def dispositions_feed("):src.index("def assert_feed_unbound(")]
+    assigned = re.findall(r'"mandatory_decision_sha256":\s*([^,\n]+)', body)
+    assert assigned == ["None"], assigned
+    assert "assert_feed_unbound(feed)" in body
+
+
+def test_readme_states_milestone_and_empty_decision_hash():
+    text = open(os.path.join(HERE, "README.md")).read()
+    assert "Milestone B" in text and "Milestone A" in text
+    assert "mandatory_decision_sha256" in text and "EMPTY" in text
 
 
 # ----------------------------------------------------------------------------------------------------- preview naming

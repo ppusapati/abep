@@ -4,6 +4,8 @@
 `main`. The settings can only be applied by the repository owner in GitHub *Settings*: the integration used by Claude
 cannot read or write the branch-protection or rulesets endpoints. This file is the exact, checkable specification of what
 to apply; `tests/test_ci_required_contexts.py` keeps it in step with the workflow (see *Keeping this file honest*).
+**Mechanism (owner decision 2026-09-27): one GitHub repository ruleset, never classic branch protection, never both**
+(§2, §4, §5). Status: DRAFT specification for the owner to apply; nothing here is applied by Claude.
 
 This is repository governance only. It changes no physics, frozen data, goldens, chemistry, pre-registration, campaign
 record or scientific outcome.
@@ -36,18 +38,42 @@ Notes:
   frozen atmosphere) or of the pymsis-present path merge unnoticed.
 * Where the UI offers a source for the check, choose **GitHub Actions** (not "any source"), so that no other app can post a
   status with the same name and satisfy the requirement.
+* The golden CLI exit-status test (`tests/test_golden_cli.py`) stays in the normal `python -m pytest -q tests` run of both
+  `tests` legs, with no `slow` marker and no separate job (owner decision 2026-09-27, `fo_repo_decisions_batch`; recorded
+  in `docs/ci/PACKAGING.md` D2). It is therefore gated by the two `Tests + golden benchmarks (…)` contexts; no fourth
+  context exists for it.
 
 ## 2. Settings to apply to `main`
 
-| setting | value | why |
+**Owner decision 2026-09-27 (`fo_repo_decisions_batch`, `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json` →
+`execution_directive_2026_09_27`): the mechanism is a GitHub repository RULESET, not classic branch protection. Never
+both.** A classic branch-protection rule on `main` must not exist alongside the ruleset (GitHub enforces the union of
+both, so two places would drift apart silently); if one exists, the owner deletes it when creating the ruleset (§4 step 1).
+
+The machine-read summary of the decided settings (checked by `tests/test_ci_required_contexts.py`; `key: value`, one per
+line):
+
+```ruleset-decision
+mechanism: ruleset
+classic_branch_protection: none
+enforcement: active
+required_approvals: 0
+required_status_checks: 3
+strict_required_status_checks_policy: true
+bypass_actors: none
+```
+
+| ruleset rule / field | value | why |
 |---|---|---|
+| Enforcement status | **Active** | an *Evaluate* or *Disabled* ruleset gates nothing |
+| Bypass list | **empty** (no Repository admin, Maintain, team or app) | the owner is also the administrator; a bypass entry lets an admin merge skip the gate silently. If it is ever incompatible with a needed operation, the owner changes it deliberately and records why in docs/HISTORY.md |
+| Target | the default branch (`main`) | |
 | Require a pull request before merging | **on** | every change to `main` passes through a PR, which is where the checks run |
-| Required approvals | **0** unless a second maintainer with write access exists | with a single maintainer, GitHub does not let the author approve their own PR, so a non-zero count would block every merge; the checks, not approvals, are the gate decided here |
-| Require status checks to pass before merging | **on**, with exactly the three contexts of §1 | the owner decision |
-| Require branches to be up to date before merging (classic: "strict") | **on** | a PR must have passed CI on top of the current `main`, not on an older base |
-| Do not allow bypassing the above settings / include administrators | **on** (classic); **empty bypass list** (rulesets) | the owner is also the administrator; without this, an admin merge silently skips the gate. If it is ever incompatible with a needed operation, the owner changes it deliberately and records why in docs/HISTORY.md |
-| Allow force pushes | **off** (block force pushes) | rewriting `main` would orphan pinned commits that provenance tests resolve with `git show` |
-| Allow deletions | **off** (restrict deletions) | same reason |
+| Required approvals | **0** while there is one maintainer | owner decision. GitHub does not let the author approve their own PR, so a non-zero count would block every merge with a single maintainer; the checks, not approvals, are the gate. Raising it when a second maintainer with write access exists is a new owner decision, recorded here and in docs/HISTORY.md |
+| Require status checks to pass | **on**, with exactly the three contexts of §1, source **GitHub Actions** | owner decision: all three CI contexts required |
+| Require branches to be up to date before merging (`strict_required_status_checks_policy`) | **on** | owner decision: a PR must have passed CI on top of the current `main`, not on an older base |
+| Block force pushes (`non_fast_forward`) | **on** | rewriting `main` would orphan pinned commits that provenance tests resolve with `git show` |
+| Restrict deletions (`deletion`) | **on** | same reason |
 
 Everything else (signed commits, linear history, merge queue, code owners, conversation resolution, deployments) is
 **not** part of this decision. Leave it at the current value unless the owner decides otherwise.
@@ -71,10 +97,10 @@ Everything else (signed commits, linear history, merge queue, code owners, conve
 1. **The CI workflow must exist on `main`.** Today `ci.yml` lives only on the execution branch
    `claude/nifty-ramanujan-w68f9z` (`main` is `daa0e75`; CLAUDE.md, *Execution baseline*). Merging that branch to `main`
    needs **explicit owner approval**; this specification does not grant or imply it.
-2. **CI must have run at least once** so GitHub knows the contexts. The classic UI only suggests checks that have reported
-   in this repository recently (about the last week); rulesets likewise list recent checks, and a context typed by hand
-   that never reports leaves every PR blocked. The simplest sequence: open the PR that brings `ci.yml` to `main` (the
-   `pull_request` trigger runs it on the PR itself), let all three jobs report, then apply protection, then merge.
+2. **CI must have run at least once** so GitHub knows the contexts. The ruleset check picker lists checks that have
+   reported in this repository recently, and a context typed by hand that never reports leaves every PR blocked. The
+   simplest sequence: open the PR that brings `ci.yml` to `main` (the `pull_request` trigger runs it on the PR itself),
+   let all three jobs report, then create the ruleset (§4), then merge.
 3. **The three jobs must be green** on the PR before it can merge once protection is on. `docs/ci/CI.md`, *Open points*
    6 and 7, list known reasons the `tests` job may be red; those are fixed by their owning lanes, never by removing a
    required context or relaxing rule 9.
@@ -82,68 +108,62 @@ Everything else (signed commits, linear history, merge queue, code owners, conve
    Keep it so: a path filter or a skipped job can leave a required context unreported (blocked PR) or reported as skipped.
    The test below enforces both.
 
-## 4. Procedure A: classic branch protection
+## 4. Procedure: repository ruleset (the decided mechanism)
 
-1. GitHub → repository `ppusapati/abep` → **Settings** → **Branches** (under *Code and automation*).
-2. **Add branch protection rule** (or **Add classic branch protection rule**, depending on the UI version).
-3. **Branch name pattern:** `main`.
-4. Tick **Require a pull request before merging**. Set **Require approvals** per §2 (unticked / 0 with a single
-   maintainer).
-5. Tick **Require status checks to pass before merging**.
-   * Tick **Require branches to be up to date before merging**.
-   * In **Search for status checks in the last week for this repository**, type and select each of the three contexts of
-     §1. For each, set the source to **GitHub Actions** if the selector is offered.
-6. Tick **Do not allow bypassing the above settings** (older UIs: **Include administrators**).
-7. Under *Rules applied to everyone including administrators*: leave **Allow force pushes** and **Allow deletions**
-   **unticked**.
-8. **Create** (or **Save changes**).
-
-## 5. Procedure B: repository ruleset (alternative to A; use one, not both)
-
-1. GitHub → **Settings** → **Rules** → **Rulesets** → **New ruleset** → **New branch ruleset**.
-2. **Ruleset name:** `main: required CI`. **Enforcement status:** **Active**.
-3. **Bypass list:** leave **empty** (do not add Repository admin, Maintain or any app).
-4. **Target branches** → **Add target** → **Include default branch** (or **Include by pattern** `main`).
-5. **Branch rules:**
+1. **No classic rule.** GitHub → repository `ppusapati/abep` → **Settings** → **Branches**. If a classic branch
+   protection rule matching `main` is listed, delete it (the ruleset below replaces it; never keep both).
+2. GitHub → **Settings** → **Rules** → **Rulesets** → **New ruleset** → **New branch ruleset**.
+3. **Ruleset name:** `main: required CI`. **Enforcement status:** **Active**.
+4. **Bypass list:** leave **empty** (do not add Repository admin, Maintain, any team or any app).
+5. **Target branches** → **Add target** → **Include default branch** (or **Include by pattern** `main`).
+6. **Branch rules:**
    * Tick **Restrict deletions**.
    * Tick **Block force pushes**.
-   * Tick **Require a pull request before merging**; **Required approvals** per §2.
+   * Tick **Require a pull request before merging**; **Required approvals: 0** (§2).
    * Tick **Require status checks to pass**; tick **Require branches to be up to date before merging**; **Add checks** →
      add each of the three contexts of §1, choosing **GitHub Actions** as the source.
    * Leave the other rules unticked (§2).
-6. **Create**.
+7. **Create**.
 
-If both a classic rule and a ruleset apply, GitHub enforces the union; keep only one to avoid two places drifting apart.
 UI labels are as of 2026 and may move; the settings in §2 are what matters (**verify** label wording against the current UI).
+
+## 5. Classic branch protection: not used
+
+Classic branch protection (**Settings** → **Branches** → *Add branch protection rule*) is **not** used for `main` (owner
+decision 2026-09-27). The earlier alternative procedure for it was removed from this file so that there is one
+specification only. Re-introducing classic protection, alone or next to the ruleset, needs a new owner decision.
 
 ## 6. Verifying it afterwards
 
 1. **Read back via the API** (owner's own token; the integration cannot do this):
-   * classic: `gh api repos/ppusapati/abep/branches/main/protection` →
-     `required_status_checks.strict == true`, `required_status_checks.contexts` (or `checks[].context`) equals the three
-     contexts of §1 exactly, `enforce_admins.enabled == true`, `allow_force_pushes.enabled == false`,
-     `allow_deletions.enabled == false`, `required_pull_request_reviews` present.
-   * rulesets: `gh api repos/ppusapati/abep/rules/branches/main` → rules of type `deletion`, `non_fast_forward`,
-     `pull_request`, and `required_status_checks` with `strict_required_status_checks_policy: true` and the three
-     contexts; `gh api repos/ppusapati/abep/rulesets` shows `enforcement: active` and no `bypass_actors`.
-2. **Compare with this file:** the context list read back must equal the `required-status-checks` block above, as a set,
-   with no extra and no missing entry.
+   * `gh api repos/ppusapati/abep/rulesets` → exactly one ruleset targeting `main` (`main: required CI`) with
+     `enforcement: active`; `gh api repos/ppusapati/abep/rulesets/<id>` → `bypass_actors` empty.
+   * `gh api repos/ppusapati/abep/rules/branches/main` → rules of type `deletion`, `non_fast_forward`, `pull_request`
+     with `required_approving_review_count: 0`, and `required_status_checks` with
+     `strict_required_status_checks_policy: true` and the three contexts of §1.
+   * **No classic protection:** `gh api repos/ppusapati/abep/branches/main/protection` returns HTTP 404
+     ("Branch not protected"). A 200 means a classic rule exists next to the ruleset: delete it (§4 step 1).
+2. **Compare with this file:** the context list read back must equal the `required-status-checks` block of §1, as a set,
+   with no extra and no missing entry; the other values must equal the `ruleset-decision` block of §2.
 3. **Behavioural checks:**
-   * `git push origin HEAD:main` from a local commit is rejected ("protected branch" / "repository rule violations").
-   * `git push --force` to `main` is rejected; deleting `main` in the UI is not offered or is refused.
+   * A direct push of a local commit to `main` is rejected ("repository rule violations").
+   * A force push to `main` is rejected; deleting `main` in the UI is not offered or is refused.
    * On an open PR, the merge box lists the three checks as **Required**; while any is pending or failing, **Merge** is
-     disabled for everyone including the owner (no "bypass" checkbox visible).
+     disabled for everyone including the owner (no "bypass" checkbox visible). No approval is requested.
    * A PR whose base moved shows **This branch is out-of-date** and needs **Update branch** before it can merge.
-4. Record the date and the method (classic or ruleset) in docs/HISTORY.md.
+4. Record the date and the method (ruleset) in docs/HISTORY.md.
 
 ## 7. Keeping this file honest
 
 `tests/test_ci_required_contexts.py` parses `.github/workflows/ci.yml`, expands every job `name:` over its matrix, and
 asserts that the result equals the `required-status-checks` block of this file **exactly**. Renaming a job, changing a
-matrix value or adding a job therefore fails the test until this file (and then the GitHub setting, per §4/§5) is updated
+matrix value or adding a job therefore fails the test until this file (and then the GitHub ruleset, per §4) is updated
 in the same change, so a rename cannot silently orphan a required check (an orphaned required context blocks every PR as
 "Expected — Waiting for status"; a renamed job no longer being required would silently drop the gate). The test also
 checks that the manual Julia smoke workflow contributes no required context and that the required jobs run on every
 `pull_request` unconditionally.
 
-After any change to the block above, the owner re-applies §4 or §5 and re-runs §6.
+It also checks the `ruleset-decision` block of §2 (ruleset only, no classic protection, active, 0 approvals, three
+required contexts, strict up-to-date policy, no bypass actors) and that no classic-protection procedure is present.
+
+After any change to either block, the owner re-applies §4 and re-runs §6.
