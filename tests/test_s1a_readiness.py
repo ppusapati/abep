@@ -88,7 +88,8 @@ def add_firewall(root: Path, spec: dict, **over) -> None:
         "id": "s1a_data_firewall", "status": "FROZEN", "decided_by": "owner", "decided_utc": "2026-10-01",
         "w5_basis": _ref(root, P_W5), "data_custodian": "custodian role (fixture)",
         "h1_hall_discharge_in_s1a": "FORBIDDEN",
-        "allowed_classes": [{"id": i, "definition": f"{i} (fixture)", "release_rule": "any track (fixture)"}
+        "allowed_classes": [{"id": i, "definition": f"{i} (fixture)", "release_rule": "any track (fixture)",
+                             "excludes_registration_inputs": True}
                             for i in _required(spec, "S1A-FW", "allowed_classes", "id")],
         "forbidden_or_embargoed": [{"id": i, "quantity": f"{i} (fixture)", "treatment": "FORBIDDEN_IN_S1A",
                                     "consequence_if_exposed": "OUTPUTS_SEEN per W5 (fixture)"}
@@ -370,3 +371,87 @@ def test_gate_is_independent_of_n4():
     spec_text = (REPO / SPEC_REL).read_text(encoding="utf-8")
     assert "docs/experiments/s1_readiness/" not in json.dumps([c["alternatives"] for c in _spec()["conditions"]])
     assert "S1_NOT_READY 0/8" in spec_text
+
+
+# ------------------------------------------------------------------------------- firewall consistency (review round)
+def test_firewall_forbidden_id_also_allowed_fails_closed(tmp_path):
+    root = complete_repo(tmp_path)
+    _edit(root, P_FW, lambda o: o["allowed_classes"].append(
+        {"id": "VO-ID", "definition": "x", "release_rule": "x", "excludes_registration_inputs": True}))
+    _edit(root, P_CAL, lambda o: o["procedures"][0].update(s1a_data_class="VO-ID"))
+    rep = gate.evaluate(root)
+    assert _state(rep, "S1A-FW") == "INVALID" and rep["firewall"]["fail_closed"]
+    assert _state(rep, "S1A-C4") == "INVALID" and rep["verdict"] == "S1A_NOT_READY"
+    fails = next(m for m in rep["missing"] if m["condition"] == "S1A-FW")["needed"][0]["failures"]
+    assert any("overlap" in f and "VO-ID" in f for f in fails)
+    assert any("not permitted" in f and "VO-ID" in f for f in fails)
+
+
+def test_firewall_arbitrary_allowed_class_rejected(tmp_path):
+    root = complete_repo(tmp_path)
+    _edit(root, P_FW, lambda o: o["allowed_classes"].append(
+        {"id": "HALL_ON_IDLE", "definition": "x", "release_rule": "x", "excludes_registration_inputs": True}))
+    _edit(root, P_CAL, lambda o: o["procedures"][0].update(s1a_data_class="HALL_ON_IDLE"))
+    rep = gate.evaluate(root)
+    assert _state(rep, "S1A-FW") == "INVALID" and _state(rep, "S1A-C4") == "INVALID"
+    assert rep["verdict"] == "S1A_NOT_READY"
+
+
+def test_firewall_registration_input_never_allowed_class(tmp_path):
+    root = complete_repo(tmp_path)
+    _edit(root, P_FW, lambda o: o["forbidden_or_embargoed"].append(
+        {"id": "REG-BZ", "quantity": "x", "treatment": "EMBARGOED_CUSTODY_ONLY", "consequence_if_exposed": "x"}))
+    assert _state(gate.evaluate(root), "S1A-FW") == "INVALID"
+    root2 = complete_repo(tmp_path / "b")
+    _edit(root2, P_FW, lambda o: o["allowed_classes"][0].pop("excludes_registration_inputs"))
+    assert _state(gate.evaluate(root2), "S1A-FW") == "INVALID"
+    root3 = complete_repo(tmp_path / "c")
+    _edit(root3, P_FW, lambda o: o.update(registration_inputs=[x for x in o["registration_inputs"]
+                                                               if x["id"] != "REG-PB"]))
+    assert _state(gate.evaluate(root3), "S1A-FW") == "INVALID"
+
+
+def test_procedure_may_produce_custody_registration_input(tmp_path):
+    root = complete_repo(tmp_path)
+    _edit(root, P_CAL, lambda o: [p.update(s1a_data_class="REG-BZ") for p in o["procedures"]
+                                  if p["category"] == "magnetic_field_Bz"])
+    assert gate.evaluate(root)["verdict"] == "S1A_READY"
+
+
+def test_member_rule_excludes_forbidden_ids_directly(tmp_path):
+    """Defence in depth: even if a firewall artifact listed an id as both allowed and forbidden, member_of_artifact
+    rejects it (the check is made on a hand-built SATISFIED context)."""
+    root = complete_repo(tmp_path)
+    _edit(root, P_FW, lambda o: o["allowed_classes"].append({"id": "VO-T"}))
+    rule = next(r for r in next(a for a in next(c for c in _spec()["conditions"] if c["id"] == "S1A-C4")
+                                ["alternatives"])["rules"] if r["type"] == "each_item")
+    member = next(r for r in rule["rules"] if r["type"] == "member_of_artifact")
+    ctx = gate._Ctx(root, {"S1A-FW": P_FW}, {"S1A-FW": "SATISFIED"})
+    assert gate.check_rule(member, {"s1a_data_class": "VO-T"}, ctx)
+    assert gate.check_rule(member, {"s1a_data_class": "CALIBRATION"}, ctx) == []
+    assert gate.check_rule(member, {"s1a_data_class": "REG-GEOM"}, ctx) == []
+
+
+def test_both_facility_files_resolve_to_satisfied_alternative(tmp_path):
+    root = complete_repo(tmp_path)
+    _write(root, "docs/decisions/OD_S1_FACILITY.json", {
+        "id": "od_s1_facility", "decided_by": "owner", "decided_utc": "2026-10-01", "decision": "APPROVED",
+        "facility": {"name": "facility (fixture)", "hall_on_vacuum_facility": "chamber (fixture)"}})
+    rep = gate.evaluate(root)
+    assert _state(rep, "S1A-C5") == "SATISFIED" and _state(rep, "S1A-C2") == "SATISFIED"
+    assert rep["verdict"] == "S1A_READY"
+
+
+def test_limits_pin_fails_closed_if_facility_not_satisfied(tmp_path):
+    root = complete_repo(tmp_path)
+    _edit(root, P_FAC, lambda o: o.update(decision="REJECTED"))
+    _edit(root, P_LIM, lambda o: o.update(facility_choice=_ref(root, P_FAC)))
+    rep = gate.evaluate(root)
+    assert _state(rep, "S1A-C5") == "INVALID" and _state(rep, "S1A-C2") == "INVALID"
+
+
+@pytest.mark.parametrize("placeholder", ["unknown", "N/A", "to be decided", "TBC", "none", "?", "Placeholder."])
+def test_placeholder_strings_rejected(tmp_path, placeholder):
+    root = complete_repo(tmp_path)
+    _edit(root, P_HW, lambda o: o["items"][0].update(serial_or_part_id=placeholder))
+    assert _state(gate.evaluate(root), "S1A-C1") == "INVALID"

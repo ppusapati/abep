@@ -47,10 +47,17 @@ VERDICT_NOT_READY = "S1A_NOT_READY"
 FIREWALL_ID = "S1A-FW"
 EVIDENCE_CLASSES = ("measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed")
 RULE_TYPES = ("equals", "in", "is_true", "is_bool", "iso_date", "nonempty_string", "sha256_ref", "covers",
-              "each_item", "any_item", "quantity", "member_of_artifact")
+              "each_item", "any_item", "quantity", "member_of_artifact", "disjoint", "keys_subset")
 _DATE_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})(?:T(\d{2}:\d{2}(?::\d{2})?)Z)?$")
 _SHA_RE = re.compile(r"^[0-9a-f]{64}$")
 _MISSING = object()
+# placeholders that never count as a filled string (compared after strip / lower-case / trailing-punctuation removal)
+_PLACEHOLDERS = frozenset({
+    "to be decided", "to be determined", "to be defined", "to be confirmed", "to be announced", "to be provided",
+    "unknown", "n/a", "na", "n.a", "not applicable", "not available", "none", "null", "nil", "placeholder", "todo",
+    "xxx", "?", "??", "???", "tbd", "tbc", "tba"})
+# ('-' is deliberately NOT a placeholder: it is the conventional unit of a dimensionless quantity such as x_s)
+_PLACEHOLDER_PREFIX_RE = re.compile(r"^(tbd|tbc|tba|todo|to be (decided|determined|defined|confirmed))(?![a-z])")
 
 
 class SpecError(ValueError):
@@ -107,7 +114,13 @@ def get_field(obj, dotted: str):
 
 
 def _is_nonempty_str(v) -> bool:
-    return isinstance(v, str) and v.strip() != "" and not v.strip().upper().startswith("TBD")
+    """A filled string: non-empty and not a placeholder (TBD / TBC / TBA / to be decided / unknown / N/A / none ...)."""
+    if not isinstance(v, str) or v.strip() == "":
+        return False
+    norm = v.strip().lower()
+    if _PLACEHOLDER_PREFIX_RE.match(norm):
+        return False
+    return norm.rstrip(".:;!, ") not in _PLACEHOLDERS and norm not in _PLACEHOLDERS
 
 
 def _is_number(v) -> bool:
@@ -170,9 +183,26 @@ def _validate_rules(rules, where: str, cond_ids: set[str]):
             _validate_rules(r.get("rules"), f"{where}/{t}:{r['field']}", cond_ids)
         if t in ("sha256_ref", "member_of_artifact") and "artifact_of" in r and r["artifact_of"] not in cond_ids:
             raise SpecError(f"{where}: artifact_of {r['artifact_of']!r} is not a condition id")
-        if t == "member_of_artifact" and not (r.get("artifact_of") and isinstance(r.get("list_field"), str)
-                                              and isinstance(r.get("key"), str)):
-            raise SpecError(f"{where}: member_of_artifact needs artifact_of, list_field and key")
+        if t == "member_of_artifact":
+            lf = r.get("list_field")
+            lfs = [lf] if isinstance(lf, str) else lf
+            if not (r.get("artifact_of") and isinstance(lfs, list) and lfs and all(isinstance(x, str) and x for x in lfs)
+                    and isinstance(r.get("key"), str)):
+                raise SpecError(f"{where}: member_of_artifact needs artifact_of, list_field (string or list) and key")
+            ex = r.get("exclude_list_fields", [])
+            if not (isinstance(ex, list) and all(isinstance(x, str) and x for x in ex)):
+                raise SpecError(f"{where}: exclude_list_fields must be a list of field names")
+            if "exclude_pattern" in r:
+                try:
+                    re.compile(r["exclude_pattern"])
+                except (re.error, TypeError) as e:
+                    raise SpecError(f"{where}: exclude_pattern is not a valid regular expression") from e
+        if t == "disjoint" and not (isinstance(r.get("key"), str) and isinstance(r.get("other_field"), str)
+                                    and isinstance(r.get("other_key"), str)):
+            raise SpecError(f"{where}: disjoint needs key, other_field and other_key")
+        if t == "keys_subset" and not (isinstance(r.get("key"), str) and isinstance(r.get("values"), list)
+                                       and r["values"]):
+            raise SpecError(f"{where}: keys_subset needs key and values")
         if t == "sha256_ref" and "path_prefix" in r and (safe_relpath(r["path_prefix"]) is None
                                                           or not r["path_prefix"].endswith("/")):
             raise SpecError(f"{where}: path_prefix must be a repository-relative directory ending in '/'")
@@ -247,12 +277,12 @@ def validate_spec(spec: dict) -> None:
 
 
 def _deps(cond: dict) -> set[str]:
-    """Condition ids whose SATISFIED state this condition's rules need (member_of_artifact)."""
+    """Condition ids whose SATISFIED artifact this condition's rules need (member_of_artifact, sha256_ref artifact_of)."""
     out: set[str] = set()
 
     def walk(rules):
         for r in rules:
-            if r["type"] == "member_of_artifact":
+            if r["type"] in ("member_of_artifact", "sha256_ref") and r.get("artifact_of"):
                 out.add(r["artifact_of"])
             if r["type"] in ("each_item", "any_item"):
                 walk(r["rules"])
@@ -269,7 +299,7 @@ def _evaluation_order(conds: list[dict]) -> list[str]:
     while len(order) < len(ids):
         ready = [i for i in ids if i not in order and deps[i] <= set(order)]
         if not ready:
-            raise SpecError("member_of_artifact dependencies form a cycle")
+            raise SpecError("artifact_of dependencies form a cycle")
         order.extend(ready)
     return order
 
@@ -289,7 +319,7 @@ def describe_rule(r: dict) -> str:
     if t == "iso_date":
         return f"{f} is an ISO 8601 date{what}"
     if t == "nonempty_string":
-        return f"{f} is a non-empty, non-TBD string{what}"
+        return f"{f} is a non-empty, non-placeholder string{what}"
     if t == "quantity":
         return f"{f} = {{value, unit, source, evidence_class}}{what}"
     if t == "sha256_ref":
@@ -297,14 +327,23 @@ def describe_rule(r: dict) -> str:
         if r.get("path_equals"):
             pin.append(f"path {r['path_equals']}")
         if r.get("artifact_of"):
-            pin.append(f"the {r['artifact_of']} artifact")
+            pin.append(f"the SATISFIED {r['artifact_of']} artifact")
         if r.get("path_prefix"):
             pin.append(f"under {r['path_prefix']}")
         return f"{f} = {{path, sha256}} matching the file on disk" + (f" ({'; '.join(pin)})" if pin else "") + what
     if t == "covers":
         return f"{f}[].{r['key']} covers {', '.join(r['required'])}{what}"
     if t == "member_of_artifact":
-        return (f"{f} is one of the {r['list_field']}[].{r['key']} of the SATISFIED {r['artifact_of']} artifact{what}")
+        lfs = [r["list_field"]] if isinstance(r["list_field"], str) else r["list_field"]
+        ex = r.get("exclude_list_fields", [])
+        extra = (f", never one of its {' / '.join(x + '[].' + r['key'] for x in ex)}" if ex else "") + \
+            (f", never matching /{r['exclude_pattern']}/" if r.get("exclude_pattern") else "")
+        return (f"{f} is one of the {' / '.join(x + '[].' + r['key'] for x in lfs)} of the SATISFIED "
+                f"{r['artifact_of']} artifact{extra}{what}")
+    if t == "disjoint":
+        return f"{f}[].{r['key']} and {r['other_field']}[].{r['other_key']} share no value{what}"
+    if t == "keys_subset":
+        return f"every {f}[].{r['key']} is one of {', '.join(r['values'])}{what}"
     if t == "each_item":
         return f"every {f}[] item: " + "; ".join(describe_rule(x) for x in r["rules"])
     if t == "any_item":
@@ -315,7 +354,7 @@ def describe_rule(r: dict) -> str:
 class _Ctx:
     def __init__(self, root: Path, resolved: dict, states: dict, draft_tokens=("DRAFT", "PROPOSED", "PENDING")):
         self.root = root
-        self.resolved = resolved        # condition id -> uniquely resolved artifact path (or None)
+        self.resolved = resolved        # condition id -> artifact path of its SATISFIED alternative (or None)
         self.states = states            # condition id -> evaluated state (for member_of_artifact)
         self.draft_tokens = tuple(draft_tokens)
 
@@ -335,9 +374,11 @@ def _check_sha_ref(r: dict, v, ctx: _Ctx) -> str | None:
     if r.get("path_prefix") and not srel.startswith(safe_relpath(r["path_prefix"]) + "/"):
         return f"{f}.path must lie under {r['path_prefix']}, got {srel}"
     if r.get("artifact_of"):
-        want = ctx.resolved.get(r["artifact_of"])
-        if want is None:
-            return f"{f}: cannot verify, no unique {r['artifact_of']} artifact exists"
+        dep = r["artifact_of"]
+        want = ctx.resolved.get(dep)
+        if ctx.states.get(dep) != "SATISFIED" or want is None:
+            return (f"{f}: cannot be checked, the {dep} artifact is not SATISFIED "
+                    f"(state {ctx.states.get(dep, 'NOT_EVALUATED')}); fails closed")
         if srel != want:
             return f"{f}.path must be the {r['artifact_of']} artifact {want}, got {srel}"
     p = _inside(ctx.root, srel)
@@ -356,12 +397,34 @@ def _check_member(r: dict, v, ctx: _Ctx) -> str | None:
                 f"(state {ctx.states.get(dep, 'NOT_EVALUATED')}); fails closed")
     rel = ctx.resolved.get(dep)
     obj, err = _load_json(ctx.root, rel) if rel else (None, "not resolved")
-    lst = get_field(obj, r["list_field"]) if isinstance(obj, dict) else _MISSING
-    if err or not isinstance(lst, list):
-        return f"{f}: cannot read {r['list_field']} of the {dep} artifact; fails closed"
-    allowed = sorted({x.get(r["key"]) for x in lst if isinstance(x, dict) and isinstance(x.get(r["key"]), str)})
+    if err or not isinstance(obj, dict):
+        return f"{f}: cannot read the {dep} artifact; fails closed"
+
+    def ids_of(field):
+        lst = get_field(obj, field)
+        if not isinstance(lst, list):
+            return None
+        return {x.get(r["key"]) for x in lst if isinstance(x, dict) and isinstance(x.get(r["key"]), str)}
+    lfs = [r["list_field"]] if isinstance(r["list_field"], str) else r["list_field"]
+    allowed: set[str] = set()
+    for lf in lfs:
+        got = ids_of(lf)
+        if got is None:
+            return f"{f}: cannot read {lf} of the {dep} artifact; fails closed"
+        allowed |= got
+    excluded: set[str] = set()
+    for xf in r.get("exclude_list_fields", []):
+        got = ids_of(xf)
+        if got is None:
+            return f"{f}: cannot read {xf} of the {dep} artifact; fails closed"
+        excluded |= got
     if not isinstance(v, str) or v not in allowed:
-        return f"{f} = {_show(v)} is not one of the {dep} {r['list_field']} ids {allowed}"
+        return f"{f} = {_show(v)} is not one of the {dep} {' / '.join(lfs)} ids {sorted(allowed)}"
+    if v in excluded:
+        return (f"{f} = {_show(v)} is also listed in the {dep} {' / '.join(r['exclude_list_fields'])}; a forbidden / "
+                "embargoed id never counts as allowed; fails closed")
+    if r.get("exclude_pattern") and re.search(r["exclude_pattern"], v):
+        return f"{f} = {_show(v)} matches the excluded id pattern /{r['exclude_pattern']}/; fails closed"
     return None
 
 
@@ -381,7 +444,7 @@ def check_rule(r: dict, obj, ctx: _Ctx) -> list[str]:
     if t == "iso_date":
         return [] if _is_iso_date(v) else [f"{f} must be a valid ISO 8601 date, got {_show(v)}"]
     if t == "nonempty_string":
-        return [] if _is_nonempty_str(v) else [f"{f} must be a non-empty, non-TBD string, got {_show(v)}"]
+        return [] if _is_nonempty_str(v) else [f"{f} must be a non-empty, non-placeholder string, got {_show(v)}"]
     if t == "quantity":
         if not isinstance(v, dict):
             return [f"{f} must be {{value, unit, source, evidence_class}}, got {_show(v)}"]
@@ -391,7 +454,7 @@ def check_rule(r: dict, obj, ctx: _Ctx) -> list[str]:
             errs.append(f"{f}.value must be a number or an object of numbers, got {_show(val)}")
         for k in ("unit", "source"):
             if not _is_nonempty_str(v.get(k)):
-                errs.append(f"{f}.{k} must be a non-empty, non-TBD string, got {_show(v.get(k, _MISSING))}")
+                errs.append(f"{f}.{k} must be a non-empty, non-placeholder string, got {_show(v.get(k, _MISSING))}")
         if v.get("evidence_class") not in EVIDENCE_CLASSES:
             errs.append(f"{f}.evidence_class must be one of {list(EVIDENCE_CLASSES)}, "
                         f"got {_show(v.get('evidence_class', _MISSING))}")
@@ -402,6 +465,20 @@ def check_rule(r: dict, obj, ctx: _Ctx) -> list[str]:
     if t == "member_of_artifact":
         e = _check_member(r, v, ctx)
         return [e] if e else []
+    if t == "disjoint":
+        w = get_field(obj, r["other_field"])
+        if not isinstance(v, list) or not isinstance(w, list):
+            return [f"{f} and {r['other_field']} must both be lists, got {_show(v)} / {_show(w)}"]
+        a = {d.get(r["key"]) for d in v if isinstance(d, dict) and isinstance(d.get(r["key"]), str)}
+        b = {d.get(r["other_key"]) for d in w if isinstance(d, dict) and isinstance(d.get(r["other_key"]), str)}
+        both = sorted(a & b)
+        return [f"{f}[].{r['key']} and {r['other_field']}[].{r['other_key']} overlap: {', '.join(both)}"] if both else []
+    if t == "keys_subset":
+        if not isinstance(v, list):
+            return [f"{f} must be a list, got {_show(v)}"]
+        extra = sorted({str(d.get(r["key"])) if isinstance(d, dict) else _show(d) for d in v}
+                       - set(r["values"]))
+        return [f"{f}[].{r['key']} not permitted by the spec: {', '.join(extra)}"] if extra else []
     if t == "covers":
         if not isinstance(v, list):
             return [f"{f} must be a list, got {_show(v)}"]
@@ -564,15 +641,12 @@ def evaluate(repo_root: Path | str | None = None, spec_path: Path | str | None =
     conds = spec["conditions"]
     by_id = {c["id"]: c for c in conds}
 
-    # pass 1: unique artifact location per condition (for artifact_of references); no content is trusted here
-    resolved: dict[str, str | None] = {}
-    for c in conds:
-        hits = [f for a in c["alternatives"] for f in _locate(root, a["paths"])]
-        resolved[c["id"]] = hits[0] if len(hits) == 1 else None
-
     auth = evaluate_authority(root, spec)
 
-    # pass 2: conditions in dependency order (the firewall before the procedures that must match its classes)
+    # conditions in dependency order (the firewall before the procedures that must match its classes; the facility
+    # before the limits that pin it). An artifact_of reference resolves to the artifact of the referenced condition's
+    # SATISFIED alternative only; if that condition is not SATISFIED the referencing rule fails closed.
+    resolved: dict[str, str | None] = {}
     states: dict[str, str] = {}
     evaluated: dict[str, tuple[str, list[dict]]] = {}
     for cid in _evaluation_order(conds):
@@ -584,6 +658,8 @@ def evaluate(repo_root: Path | str | None = None, spec_path: Path | str | None =
             present = [a["state"] for a in alts if a["state"] != "MISSING"]
             state = min(present, key=_STATE_ORDER.index) if present else "MISSING"
         states[cid] = state
+        sat_alt = next((a for a in alts if a["state"] == "SATISFIED"), None)
+        resolved[cid] = sat_alt["found_paths"][0] if sat_alt else None
         evaluated[cid] = (state, alts)
 
     results, missing = [], []

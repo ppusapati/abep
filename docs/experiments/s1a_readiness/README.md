@@ -15,7 +15,7 @@ pre-registered or locked. The gate carries no physical, efficiency, safety-limit
 | `s1a_readiness_conditions_v1.json` | spec: the authority pins, the A3 owner text, the six conditions, the artifact(s) that can satisfy each one, the machine-checkable rules, precursors and producers |
 | `../../../scripts/experiments/s1a_readiness.py` | the gate. It is pure and read-only (it writes only with `--out`), deterministic, and uses the standard library only. It does not import or read the N4 gate |
 | `s1a_readiness_status_current.json` | report generated from this lane's repository state: **S1A_NOT_READY, 0/6 satisfied, 6 missing, firewall MISSING (fail closed)** |
-| `../../../tests/test_s1a_readiness.py` | tests: DRAFT rejected, firewall missing → not ready (fail closed), synthetic complete fixture → ready, deterministic, authority fails closed |
+| `../../../tests/test_s1a_readiness.py` | tests: DRAFT rejected, firewall missing → not ready (fail closed), contradictory firewall (an id both allowed and forbidden, an arbitrary allowed class, a registration input as allowed class) → not ready, placeholder strings rejected, synthetic complete fixture → ready, deterministic, authority fails closed |
 
 ```
 python scripts/experiments/s1a_readiness.py            # print report; exit 0 = S1A_READY, 1 = S1A_NOT_READY, 2 = spec error
@@ -25,8 +25,8 @@ python -m pytest -q tests/test_s1a_readiness.py
 ```
 
 The report records the sha256 of every precursor it finds. **Regenerate it after any merge that adds or changes a
-precursor**, for example `docs/experiments/capability_demo/capability_demo_prep_v1.json` from fo_capability_demo_prep,
-which is absent in this lane's tree. Otherwise `--check` and `test_repository_today_not_ready_and_report_reproduces`
+precursor**, for example `docs/experiments/capability_demo/capability_demo_prep_v1.json` from fo_capability_demo_prep
+(now merged; DRAFT, recorded by sha256 as a precursor). Otherwise `--check` and `test_repository_today_not_ready_and_report_reproduces`
 report DIFFERS.
 
 ## What S1a is, and how it relates to N4 and to W4
@@ -67,8 +67,22 @@ including the mandatory firewall S1A-FW.
 
 **Firewall (fail closed):** if S1A-FW is not `SATISFIED` (missing, draft, invalid or ambiguous), the verdict is
 `S1A_NOT_READY` whatever else holds. The report's `firewall.fail_closed` is then `true`. Every calibration procedure
-must also declare an `s1a_data_class` that is one of the firewall's allowed classes (rule `member_of_artifact`). That
-check fails closed too, so S1A-C4 cannot be satisfied without a satisfied firewall.
+must also declare an `s1a_data_class` that is one of the firewall's allowed classes or one of its custody-held
+registration inputs (for example REG-BZ for the B(z) map procedure), and that is never one of its forbidden / embargoed
+ids and never a W5 `VO-*` id (rule `member_of_artifact`). That check fails closed too, so S1A-C4 cannot be satisfied
+without a satisfied firewall.
+
+**Firewall consistency:** the firewall is also checked internally, so a contradictory firewall cannot satisfy S1A-FW:
+- the allowed class ids must be a subset of the eight owner-listed classes (rule `keys_subset`); an arbitrary class
+  such as a "Hall-on idle" reading can never be declared allowed, and adding a class needs a spec change;
+- the allowed, registration-input and forbidden / embargoed id sets must be pairwise disjoint (rule `disjoint`);
+- every allowed class must carry `excludes_registration_inputs = true`, i.e. its definition excludes the registration
+  inputs, which leave custody only after LOCK-H1 (W5 K1).
+
+**Cross-references (`artifact_of`):** a reference to another condition's artifact (the limits → facility, the
+procedures → firewall) resolves to the artifact of that condition's `SATISFIED` alternative, whichever alternative it
+is. If the referenced condition is not `SATISFIED`, the referencing rule fails closed. Conditions are evaluated in
+dependency order.
 
 **States:**
 
@@ -81,7 +95,9 @@ check fails closed too, so S1A-C4 cannot be satisfied without a satisfied firewa
 | `AMBIGUOUS` | the artifact is found at several candidate locations; the gate never chooses |
 
 **Rules:**
-- A value starting with `TBD` never counts as present.
+- A placeholder never counts as present: a value starting with `TBD`, `TBC`, `TBA`, `TODO` or "to be
+  decided/determined/defined/confirmed", or equal to "unknown", "N/A", "not applicable", "none", "null", "placeholder",
+  "?" and similar (full list `_PLACEHOLDERS` in the script). `-` is accepted, as the unit of a dimensionless quantity.
 - Dates must be real calendar dates.
 - Every reference is a repository-relative `{path, sha256}` pair, and the gate re-hashes the file on disk.
 - Nothing outside the repository is read.
@@ -91,9 +107,9 @@ check fails closed too, so S1A-C4 cannot be satisfied without a satisfied firewa
 | id | owner clause (A3, verbatim) | expected artifact | key machine checks | producer |
 |---|---|---|---|---|
 | S1A-C1 | "the hardware needed for calibration/shakedown" | `docs/experiments/hardware/s1a_engineering_hardware_record.json` | `IDENTIFIED_FOR_S1A`; recorded_by / recorded_utc; `accepted_by=owner`; W3 register sha256. Items H-1, MC-1, FS-C, PS-C, SVC-1, INS-01, -02, -04..-09, -17, -18 are each `AVAILABLE`, with serial/part id, a configuration record and `configuration_state` ∈ {`RECORDED_NOT_FROZEN`, `FROZEN_FOR_QUALIFICATION`}. H-1 need not be frozen, but it must be recorded | W3 + experiment team; owner accepts |
-| S1A-C2 | "safe operational limits" | `docs/experiments/hardware/s1a_safety_operational_limits.json` | `APPROVED`, `approved_by=owner`; facility ref (S1A-C5 artifact). Limit domains: electrical, vacuum, thermal, gas. Required quantities: magnet current, supply voltage, cathode heater current, background pressure, component temperature, coil winding temperature, feed pressure, oxidizer (O₂) gas handling. Each limit carries limit, source and action on exceedance. Required interlocks: IL-VACUUM, IL-HALL-DISCHARGE-INHIBIT, IL-OXIDIZER-ISOLATION, IL-EMERGENCY-STOP, each with function and verification. At least one abort condition with trigger and action | W3 with the facility's limits and fo_magnet_coil_qualification; owner approves |
-| S1A-C3 | "released ground-qualification feed points" | (a) `docs/architecture_comparison/feed_state_closure/s1a_feed_points.json` or (b) N4's `.../s1_feed_points.json` | (a) `RELEASED_FOR_S1A`, owner, W1 closure sha256, `use_restriction = COLD_FLOW_CALIBRATION_NO_HALL_DISCHARGE`; every point `flight_status = GROUND_QUALIFICATION_POINT`, with `source_point_id` (the W1 id) and {ṁ_s, P_feed, T_feed, x_s}, each carrying value, unit, source and evidence class; at least one N₂ point. (b) `RELEASED_FOR_S1` with the same point rules. A label in the W1 closure alone never counts | W1 selects; owner releases |
-| S1A-C4 | "frozen calibration procedures" | `docs/experiments/instrumentation/s1a_calibration_procedures_frozen.json` | `FROZEN`, owner, firewall ref (S1A-FW artifact). Categories: thrust_stand, power_channels, mass_flow_controllers, magnetic_field_Bz, daq_time_base, temperature_channels. Each has procedure id, procedure, traceability, acceptance rule and an `s1a_data_class` the firewall allows. The temperature procedure carries `cathode_temperature_labelling` (A3: the tube thermocouple is never labelled emitter temperature) | W4 (CD-01..CD-07 candidates) drafts; owner freezes |
+| S1A-C2 | "safe operational limits" | `docs/experiments/hardware/s1a_safety_operational_limits.json` | `APPROVED`, `approved_by=owner`; facility ref (S1A-C5 artifact). Limit domains: electrical, vacuum, thermal, gas. Required quantities: magnet current, supply voltage, background pressure, component temperature, coil winding temperature, feed pressure, oxidizer (O₂) gas handling. Cathode limits (heater current, keeper) are not in the required set because C-1 is optional in S1A-C1; if the owner includes C-1 they should be added (not machine-checked; open item). Each limit carries limit, source and action on exceedance. Required interlocks: IL-VACUUM, IL-HALL-DISCHARGE-INHIBIT, IL-OXIDIZER-ISOLATION, IL-EMERGENCY-STOP, each with function and verification. At least one abort condition with trigger and action | W3 with the facility's limits and fo_magnet_coil_qualification; owner approves |
+| S1A-C3 | "released ground-qualification feed points" | (a) `docs/architecture_comparison/feed_state_closure/s1a_feed_points.json` or (b) N4's `.../s1_feed_points.json` | (a) `RELEASED_FOR_S1A`, owner, W1 closure sha256, `use_restriction = COLD_FLOW_CALIBRATION_NO_HALL_DISCHARGE`; every point `flight_status = GROUND_QUALIFICATION_POINT`, with `source_point_id` (the W1 id) and {ṁ_s, P_feed, T_feed, x_s}, each carrying value, unit, source and evidence class; at least one N₂ point. (b) `RELEASED_FOR_S1` with the same point rules, but without the `use_restriction` requirement (an S1 release is not written for S1a); then the no-discharge rule rests on S1A-FW and IL-HALL-DISCHARGE-INHIBIT only (open item). A label in the W1 closure alone never counts | W1 selects; owner releases |
+| S1A-C4 | "frozen calibration procedures" | `docs/experiments/instrumentation/s1a_calibration_procedures_frozen.json` | `FROZEN`, owner, firewall ref (S1A-FW artifact). Categories: thrust_stand, power_channels, mass_flow_controllers, magnetic_field_Bz, daq_time_base, temperature_channels. Each has procedure id, procedure, traceability, acceptance rule and an `s1a_data_class` that is a firewall allowed class or a custody-held registration input, never a forbidden id. The temperature procedure carries `cathode_temperature_labelling` (A3: the tube thermocouple is never labelled emitter temperature) | W4 (CD-01..CD-07 candidates) drafts; owner freezes |
 | S1A-C5 | "an engineering facility" | (a) `docs/decisions/OD_S1A_FACILITY.json` or (b) N4's `docs/decisions/OD_S1_FACILITY.json` | (a) `id=od_s1a_facility`, owner, `APPROVED`; facility name, vacuum facility, safety-responsible role; `same_as_hall_on_facility` recorded as a boolean. It is not required to be true, but S1a calibrations from another facility do not carry into LOCK-2 | owner |
 | S1A-FW | "it explicitly forbids held-out H-1 physics outputs from leaking into W5" | `docs/experiments/custody/s1a_data_firewall_frozen.json` | see below | W5 with the custodian; owner designates the custodian and freezes |
 
@@ -102,16 +118,23 @@ Required content of the owner-frozen artifact:
 - **Identity and basis:**
   - `id=s1a_data_firewall`, `FROZEN`, owner, `decided_utc`;
   - `w5_basis` = sha256 of the W5 document under `docs/validation/hall_transport_v2_prereg/` whose classes it
-    implements. A later W5 change breaks the pin and the gate fails closed until the firewall is re-frozen;
+    implements. A later W5 change breaks the pin and the gate fails closed until the firewall is re-frozen. The gate
+    checks the pin's existence and sha256 only, not whether the pinned W5 document is itself frozen (today it is a
+    DRAFT); whether the firewall may be frozen against a W5 DRAFT is an open owner item;
   - the owner-designated `data_custodian`, never a physics-track modeller (W5 roles).
 - **`h1_hall_discharge_in_s1a = FORBIDDEN`.** W5 classes no Hall-on reading as S1a calibration or registration. Its only
   pre-LOCK-2 Hall-on data are the S1b dispersion statistics, and S1b falls under N4. Interlock IL-HALL-DISCHARGE-INHIBIT
   (S1A-C2) enforces this physically.
-- **Allowed classes** (each with a definition and a release rule): CALIBRATION, NOISE, DRIFT, REPEATABILITY,
-  REINSTALLATION (no-plasma CD-02a only; the Hall-on re-mount CD-02b is S1b), CHANNEL_PERFORMANCE, QUALITATIVE_RGA and
-  FACILITY_BACKGROUND. QUALITATIVE_RGA must carry `no_dose_or_lifetime_claim = true`, per the A3 rule that an
-  uncalibrated S1a RGA is qualitative only.
-- **Registration inputs measured in S1a:** REG-GEOM, REG-BZ and REG-FEED. Each has a `release_condition`: per W5 K1/K2,
+- **Allowed classes** (each with a definition, a release rule and `excludes_registration_inputs = true`; no other id
+  allowed): CALIBRATION, NOISE, DRIFT, REPEATABILITY, REINSTALLATION (no-plasma CD-02a only; the Hall-on re-mount CD-02b
+  is S1b), CHANNEL_PERFORMANCE, QUALITATIVE_RGA and FACILITY_BACKGROUND. QUALITATIVE_RGA must carry
+  `no_dose_or_lifetime_claim = true`, per the A3 rule that an uncalibrated S1a RGA is qualitative only. The PROPOSED
+  definitions exclude the registration inputs explicitly: CALIBRATION covers the stand, power, temperature and DAQ
+  channels and the B(z)-probe constants, but not the MFC calibration / calibrated setpoints at the released points
+  (REG-FEED), the B(z) maps of the H-1 magnetic circuit (REG-BZ), the facility-gauge calibration (REG-PB) or the as-built
+  geometry (REG-GEOM); FACILITY_BACKGROUND is the no-flow base pressure and qualitative residual gas of the empty
+  facility, not the cold-flow pressure at the released feed points (REG-PB).
+- **Registration inputs measured in S1a:** REG-GEOM, REG-BZ, REG-FEED and REG-PB (all W5 ids). Each has a `release_condition`: per W5 K1/K2,
   the custodian releases them to the physics track only after LOCK-H1. A B(z)-vs-magnetic-circuit comparison is a
   magnetics check, never transport-validation evidence (W5 VO-BZ).
 - **Forbidden or embargoed** (treatment `FORBIDDEN_IN_S1A` or `EMBARGOED_CUSTODY_ONLY`, each with a consequence):
@@ -119,6 +142,9 @@ Required content of the owner-frozen artifact:
     energy), VO-DIV (divergence) and VO-TENE (T_e/n_e);
   - the embargoed HW-0 derived quantities HW0-PBUS-HALL-ON, HW0-RARCH and HW0-KNEE;
   - the catch-all H1-ANY-HALL-OPERATING-POINT.
+
+  The `VO-*` and `REG-*` ids are W5 ids. HW0-PBUS-HALL-ON, HW0-RARCH, HW0-KNEE and H1-ANY-HALL-OPERATING-POINT are
+  **not W5 ids**: this lane coined them (PROPOSED). The first three paraphrase W5 `publication_rule.embargoed_values`.
 - **Rules:** `custody_rule`, `outputs_seen_rule`, `repository_rule`, `breach_response` and `release_log`.
   - Under the W5 `publication_rule.automatic_flag` and `leak_rule`, any exposure of an embargoed value outside the
     custody circle before PF-1 is hash-frozen automatically flags every affected F1/F2/F3/F6 condition `OUTPUTS_SEEN`.
@@ -129,17 +155,19 @@ Required content of the owner-frozen artifact:
 The feed points released for S1a include Phase-1 knee-ladder points, which are W5 held-out family F1. In S1a they are
 cold-flow calibration setpoints only (`use_restriction`), and no discharge is run at them.
 
-## Current status (this lane's tree: 7d37337 + S1GATE 0b8aa34)
+## Current status (this lane's tree: regenerated at the review-repair commit on top of 32a5062, which merged 0c4d26e, W3 b92499f0-718-3 and 9c658d9b-919-1/-4)
 **S1A_NOT_READY, 0/6, firewall MISSING → fail closed.** The authority holds: all four pins match and the A3 text
 matches verbatim. All six conditions are `MISSING` with `PARTIAL_PRECURSORS_ONLY`. The precursors are drafts that never
 satisfy a condition:
 - **C1:** the W3 register and the W4 instrumentation definition v1-r2.
 - **C2:** the W3 register, the magnet/coil qualification basis, the lane 20 electrical closure and the lane 24 hard
   gates.
-- **C3:** the W1 closure (32 GROUND_QUALIFICATION_POINT labels, all `PROPOSED (candidate-conditional)`, with
-  T_feed_ground TBD under DI-1.10) and the lane 16 feed envelope.
-- **C4:** the W4 definition and the lane 25 `s1_plan.S1a_no_plasma`. The fo_capability_demo_prep record is absent from
-  this tree.
+- **C3:** the W1 closure and the lane 16 feed envelope. The closure has 32 GROUND_QUALIFICATION_POINT labels: 28
+  Phase-1 knee-ladder points with status `PROPOSED (candidate-conditional)` and 4 Phase-2 OP2 points with status
+  `TBD - requires the measured Phase-1 knee`. Each point carries numeric T_feed values alongside a T_feed_ground entry
+  that is TBD under DI-1.10.
+- **C4:** the W4 definition and the lane 25 `s1_plan.S1a_no_plasma`. The fo_capability_demo_prep record (DRAFT) is now
+  present and recorded by sha256; being DRAFT, it satisfies nothing.
 - **C5:** the experiment package (D-12) and the lane 06 protocol draft.
 - **FW:** the W5 pre-registration DRAFT.
 
@@ -164,12 +192,20 @@ satisfy a condition:
 4. Whether C-1 diode / keeper operation belongs in S1a. If it does, the owner must say which allowed data class covers
    it. It is not an H-1 Hall operating point, but cathode-to-ground potential during Hall operation is a W5 VP-10
    registration candidate.
-5. The allowed and forbidden class lists and the catch-all definition "any H-1 anode discharge (H-1 anode, C-1 and MC-1
+5. The allowed and forbidden class lists (including the lane-coined, non-W5 ids HW0-PBUS-HALL-ON, HW0-RARCH, HW0-KNEE,
+   H1-ANY-HALL-OPERATING-POINT), the proposed class definitions and their boundary with the registration inputs
+   REG-FEED / REG-BZ / REG-PB, and the catch-all definition "any H-1 anode discharge (H-1 anode, C-1 and MC-1
    energized together)".
 6. The response to a registration input released before LOCK-H1. W5 defines no automatic flag for it; this lane
    PROPOSES an owner disposition.
 7. Whether installation/reinstallation (CD-02a) must be a required S1A-C4 category. It is optional here.
 8. Whether the S1a facility must equal the Hall-on facility. It is recorded here, not required.
+9. Whether the S1A-C3 alternative (b) (N4's S1 feed-point release) must also carry
+   `use_restriction = COLD_FLOW_CALIBRATION_NO_HALL_DISCHARGE`. Today it does not; the no-discharge rule then rests on
+   S1A-FW and IL-HALL-DISCHARGE-INHIBIT.
+10. Whether the firewall's `w5_basis` may pin a W5 DRAFT, or must pin a frozen W5 pre-registration (the gate does not
+    check the pinned file's own status).
+11. If C-1 is in S1a, which cathode limits (heater current, keeper) become required in S1A-C2.
 
 Compliance:
 - The gate reads no Hall transport closure, screening candidate or withdrawn 0-D number.
