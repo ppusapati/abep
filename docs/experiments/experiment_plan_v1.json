@@ -2,7 +2,7 @@
   "id": "experiment_plan_v1",
   "title": "Discriminating experiment: Hall-only vs RF+Hall vs ECR+Hall on one common accelerator",
   "date": "2026-09-26",
-  "status": "DRAFT FOR DISCUSSION (IIST / professor), revision r2 (second-lens repair against execution branch e15f66f). Not pre-registered, not approved, no hardware committed. Every threshold, convention and decision rule in this file is PROPOSED for the owner (see proposed_register); nothing here is binding until the owner reconciles it with lane_06_experiment_protocol and lane_25_min_decisive_experiment.",
+  "status": "DRAFT FOR DISCUSSION (IIST / professor), revision r3 (second-lens repair against integrated execution branch d07249b; r2 was against e15f66f). Not pre-registered, not approved, no hardware committed. Every threshold, convention and decision rule in this file is PROPOSED for the owner (see proposed_register); nothing here is binding. Where this package differs, the owner decision record fo_experiment_package (docs/architecture_comparison/experiment_package/, D-01..D-15, reconciling lane_25_min_decisive_experiment and lane_06_experiment_protocol) governs.",
   "companion": "docs/experiments/DISCRIMINATING_EXPERIMENTS.md",
   "premise": {
     "architecture_winner": "NONE. The plan does not assume one and is designed so that each outcome discriminates between the hypotheses.",
@@ -74,7 +74,7 @@
         "evidence_class": "model-derived, not validated"
       }
     ],
-    "historical_sensitivity_note": "A superseded 0-D closure ranked pre-ioniser gain, Hall eta_u,max and interstage transport among the dominant T/D sensitivities (docs/HISTORY.md v0.3). The ranking is indicative only of which priors the architecture model is sensitive to; the absolute results are withdrawn."
+    "historical_sensitivity_note": "A superseded 0-D closure ranked pre-ioniser gain, Hall eta_u,max and interstage transport among the dominant T/D sensitivities (Spearman ECR gain 0.48, Hall eta_u,max 0.28, interstage transport 0.28) and put source efficiency and p_min below 0.06, 'irrelevant to closure, relevant only to compliance margins' (docs/HISTORY.md v0.3). p_min and source efficiency are therefore carried for the feed-pressure window (H2, H7) and the P_bus ledger, not as closure drivers. The ranking is indicative only of which priors the architecture model is sensitive to; the absolute results are withdrawn."
   },
   "hypotheses": [
     {
@@ -126,13 +126,13 @@
         "id": "M0",
         "name": "MODE_PREIONIZER_REMOVED",
         "description": "Pre-ionizer hardware absent; feed enters the Hall anode through the reference feed line.",
-        "architecture_id": "hall_only (M0b: installed reference)"
+        "architecture_id": "hall_only (architecture reference; the only state reported under hall_only)"
       },
       {
         "id": "M0b",
         "name": "MODE_INSTALLED_UNPOWERED",
-        "description": "RF or ECR stage installed and unpowered. For an electromagnet ECR circuit: magnets de-energized. For a PERMANENT-MAGNET ECR circuit the field cannot be switched off, so M0b = M0c for that hardware and H6 (field perturbation) cannot be separated by switching the magnets; it is then isolated only by M0 vs M0b (which confounds field and conductance) plus measured B(z) in both states, and optionally a re-trimmed Hall coil condition (D7). Control that separates geometry/conductance/neutral-pressure effects of the hardware from plasma effects. M0 vs M0b difference must be measured before attributing any M1/M2 effect to pre-ionization.",
-        "architecture_id": "hall_only (M0b: installed reference)"
+        "description": "RF or ECR stage installed and unpowered. For an electromagnet ECR circuit: magnets de-energized. For a PERMANENT-MAGNET ECR circuit the field cannot be switched off, so M0b = M0c for that hardware and H6 (field perturbation) cannot be separated by switching the magnets; it is then isolated only by M0 vs M0b (which confounds field and conductance) plus measured B(z) in both states, and optionally a re-trimmed Hall coil condition (D7). Control that separates geometry/conductance/neutral-pressure effects of the hardware from plasma effects. Within-block drift reference and denominator of the attribution term R_within = M1/M0b (or M2/M0b); R_install = M0b/M0. It never replaces M0 as the architecture baseline.",
+        "architecture_id": "none (control state). Not hall_only: lane_25 section 2 ('With its source unpowered, HW-RF or HW-ECR is *not* Hall-only'); fo_experiment_package ('a CFG-A reference with both applicators installed is not bare hall_only')."
       },
       {
         "id": "M0c",
@@ -206,11 +206,11 @@
     "mode_name_crosswalk": {
       "note": "PROPOSED crosswalk to the merged lane_25_min_decisive_experiment hardware ids; owner reconciles.",
       "M0": "lane_25_min_decisive_experiment HW-0 (bare feed, hall_only arm)",
-      "M0b": "lane_25_min_decisive_experiment HW-RF or HW-ECR with source unpowered (lane_25_min_decisive_experiment 'installed-off' within-block drift reference; R_install term)",
+      "M0b": "lane_25_min_decisive_experiment HW-RF or HW-ECR with source unpowered (lane_25 'installed-off' within-block drift reference; denominator of R_within = powered/installed-off, and numerator of R_install = installed-off/HW-0)",
       "M0c": "no lane_25_min_decisive_experiment equivalent (lane_25_min_decisive_experiment maps B(z) with source magnet on/off, M11)",
       "M1": "lane_25_min_decisive_experiment HW-RF powered",
       "M2": "lane_25_min_decisive_experiment HW-ECR powered",
-      "lane_06_experiment_protocol_crosswalk": "lane_06_experiment_protocol arms hall_only / rf_hall / ecr_hall, hardware configurations CFG-A (no-vent switching) / CFG-B (separate builds with sham controls)"
+      "lane_06_experiment_protocol_crosswalk": "lane_06_experiment_protocol arms hall_only / rf_hall / ecr_hall, hardware configurations CFG-A (no-vent switching) / CFG-B (separate builds with sham controls); hardware configuration choice (HW-0 spacer / OPTION-DIVERTER / CFG-A / CFG-B) is fo_experiment_package decision D-06"
     }
   },
   "measurements": [
@@ -240,7 +240,7 @@
       "compressor": "ABSENT_IN_LAB in every mode: the laboratory feed starts at the valve outlets, so no compressor exists. The compressor row is carried explicitly as unavailable from E1 and is RECONSTRUCTED from the upstream ICD (compressor bus draw at the delivered total flow and composition of the point; evidence class 'reconstructed', with ICD revision and uncertainty), as in lane_06_experiment_protocol section 5. It is never a placeholder and never zero.",
       "totals": "P_bus,lab = sum over the components measured in E1 (compressor excluded) is a PARTIAL_BOUNDARY total and is labelled PARTIAL_BOUNDARY wherever it appears. P_bus,v1 = P_bus,lab + P_compressor,ICD only when the ICD supplies it; otherwise P_bus,v1 is UNAVAILABLE. A common additive term does not cancel in paired ratios, so partial-boundary ratios are never reported as bus_power_boundary_v1 ratios. Common loads the lab hardware does not represent (flow_control, housekeeping, thermal_control of flight hardware) are ledger inputs with their evidence class, identical across arms (lane_25_min_decisive_experiment section 5).",
       "rule": "Never substitute forward or absorbed RF/microwave power at a non-load plane, or Hall discharge power alone, for P_bus (CLAUDE.md bus_power_boundary_v1 definition). Reflected power is used only to form net load-plane power.",
-      "open_reconciliation": "lane_06_experiment_protocol books rf_source / ecr_source at the generator DC input (rf_generator_input / microwave_source_input); lane_25_min_decisive_experiment and the lane_11_bus_boundary contract book them at the load plane plus ledger efficiency. This package follows the contract (load plane); the owner reconciles lane_06_experiment_protocol (see lane_25_min_decisive_experiment section 13)."
+      "open_reconciliation": "lane_06_experiment_protocol books rf_source / ecr_source at the generator DC input (rf_generator_input / microwave_source_input); lane_25_min_decisive_experiment and the lane_11_bus_boundary contract book them at the load plane plus ledger efficiency. This package follows the contract (load plane); the reconciliation is recorded in fo_experiment_package (docs/architecture_comparison/experiment_package/), which this package defers to."
     },
     {
       "id": "m_Prf",
@@ -347,9 +347,14 @@
       "primary": true
     },
     {
-      "id": "delta_T_over_Pbus",
-      "definition": "paired difference (M1 or M2) - M0b at matched conditions, per comparison basis and per power basis (PARTIAL_BOUNDARY / V1); M0b - M0 reported separately. Equivalent log-ratio form ln R_arch as in lane_25_min_decisive_experiment section 3 (owner chooses the governing form).",
+      "id": "delta_arch_T_over_Pbus",
+      "definition": "Architecture comparison of each source arm against hall_only: paired difference (M1 or M2) - M0 at matched conditions, per comparison basis and per power basis (PARTIAL_BOUNDARY / V1). Log-ratio form: ln R_arch with R_arch = (T/P_bus)[M1 or M2] / (T/P_bus)[M0] (lane_25_min_decisive_experiment sections 0/2/3); the installation penalty is inside R_arch. The owner (fo_experiment_package) chooses the governing form.",
       "primary": true
+    },
+    {
+      "id": "attribution_split",
+      "definition": "Diagnostic only, never decisive: R_arch = R_within x R_install, with R_within = (T/P_bus)[M1 or M2] / (T/P_bus)[M0b] (effect of powering the source) and R_install = (T/P_bus)[M0b] / (T/P_bus)[M0] (passive presence of the hardware). M0b is also the drift reference (R7).",
+      "primary": false
     },
     {
       "id": "eta_u",
@@ -388,8 +393,8 @@
     "rules": [
       {
         "id": "R1",
-        "metric": "delta_T_over_Pbus",
-        "requirement": "The uncertainty of the paired difference must be small enough that the decision threshold delta_req (the break-even gain at which the pre-ionizer's added bus power, mass, thermal load and complexity are repaid) is resolvable; proposed: expanded uncertainty (k=2) < delta_req/2 so a mid-band outcome is not ambiguous.",
+        "metric": "delta_arch_T_over_Pbus",
+        "requirement": "The uncertainty of the architecture difference (M1/M2 vs M0, equivalently ln R_arch; including installation/re-mount reproducibility when M0 is not measured in the same installation, fo_experiment_package D-06) must be small enough that the decision threshold delta_req (the break-even gain at which the pre-ionizer's added bus power, mass, thermal load and complexity are repaid) is resolvable; proposed: expanded uncertainty (k=2) < delta_req/2 so a mid-band outcome is not ambiguous.",
         "delta_req": "TBD - requires lane_28_break_even surfaces on bus_power_boundary_v1 (lane_11_bus_boundary) with lane_15_thermal_life and the mass BOM of lane_21_mass_bom. The factor 1/2 and k=2 are proposed conventions (owner decision), superseded by the multiplicity-corrected convention if the owner adopts lane_25_min_decisive_experiment's.",
         "status": "PROPOSED"
       },
@@ -439,7 +444,7 @@
   "decision_logic": [
     {
       "id": "D1",
-      "outcome": "delta_T_over_Pbus(M1 or M2) resolvably > +delta_req at matched mdot and V_d, within the delivered feed envelope, on the V1 power basis (a PARTIAL_BOUNDARY-only result is reported but is not decisive)",
+      "outcome": "delta_arch_T_over_Pbus(M1 or M2 vs M0, i.e. R_arch including the installation penalty) resolvably > +delta_req at matched mdot and V_d, within the delivered feed envelope, on the V1 power basis (a PARTIAL_BOUNDARY-only result is reported but is not decisive)",
       "supports": "H1 for that pre-ionizer; CONDITIONAL_BASELINE candidacy for rf_hall or ecr_hall within the tested envelope",
       "refutes": "H0 within the tested envelope",
       "does_not_establish": "absolute flight performance, life, or ABEP closure",
@@ -447,14 +452,14 @@
     },
     {
       "id": "D2",
-      "outcome": "|delta_T_over_Pbus| < delta_req (resolved, V1 basis) and no ignition-threshold shift",
+      "outcome": "|delta_arch_T_over_Pbus| < delta_req (resolved, V1 basis) and no ignition-threshold shift",
       "supports": "H0; hall_only as the simpler conditional baseline",
       "refutes": "H1 and H2 for that pre-ionizer within the tested envelope",
       "status": "PROPOSED"
     },
     {
       "id": "D3",
-      "outcome": "delta_T_over_Pbus resolvably < 0 (pre-ionizer costs more than it returns) but ignition/sustainment threshold resolvably lower",
+      "outcome": "delta_arch_T_over_Pbus resolvably < 0 (pre-ionizer costs more than it returns) but ignition/sustainment threshold resolvably lower",
       "supports": "H2 without H1: the pre-ionizer is a startup/low-density enabler, not a performance improver",
       "decision": "no winner; the choice depends on whether the delivered feed state falls below the Hall-only threshold (lane_16_feed_envelope, lane_28_break_even); consider duty-cycled pre-ionization as a separate engineering question",
       "status": "PROPOSED"
@@ -479,7 +484,7 @@
       "id": "D6",
       "outcome": "M0b differs resolvably from M0",
       "supports": "hardware (conductance/neutral pressure) effect",
-      "decision": "all M1/M2 effects are referenced to M0b, not M0; report the installation penalty separately (it is a real cost of the architecture)",
+      "decision": "architecture decisions D1-D3 stay referenced to M0 (hall_only) and include the installation penalty, which is a real cost of the architecture; report the split R_within (vs M0b) and R_install (M0b vs M0) for attribution only. A pre-ionizer whose powered gain over M0b is cancelled by its installation penalty does not pass D1.",
       "status": "PROPOSED"
     },
     {
@@ -588,7 +593,8 @@
     "RF/helicon pre-ionisers add nothing (mechanism-level model finding, CLAUDE.md) - this is hypothesis H0, which E1 tests on hardware."
   ],
   "links_to_lanes": {
-    "note": "Machine ids from docs/orchestration/lane_registry_v1.json at execution-branch commit e15f66f. Paths are referenced read-only; nothing here imports or depends on them.",
+    "note": "Machine ids from docs/orchestration/lane_registry_v1.json (built at e15f66f, re-checked at integrated branch d07249b). Paths are referenced read-only; nothing here imports or depends on them.",
+    "fo_experiment_package": "owner decision record reconciling lane_25_min_decisive_experiment and lane_06_experiment_protocol (docs/architecture_comparison/experiment_package/EXPERIMENT_PACKAGE.md, experiment_package_v1.json; D-01..D-15 incl. D-06 hardware configuration and D-07 decision margin delta). Governs wherever this package differs.",
     "lane_06_experiment_protocol": "full common-condition protocol (docs/architecture_comparison/experiment_protocol/); its section 17 defers 'alignment with docs/experiments/' to owner review. Reciprocal note: this package defers to lane_06_experiment_protocol for the protocol and to the owner for reconciling its generator-DC-input booking with the load-plane contract.",
     "lane_07_rf_evidence": "RF source evidence (docs/evidence/rf_source/): priors for p_min and source-chain efficiency that E1 tests",
     "lane_08_ecr_evidence": "ECR source evidence (docs/evidence/ecr_source/): as lane_07_rf_evidence for ECR",
@@ -646,18 +652,19 @@
     "docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md (e15f66f)",
     "docs/architecture_comparison/experiment_protocol/EXPERIMENT_PROTOCOL_DRAFT.md (e15f66f)",
     "docs/architecture_comparison/minimum_decisive_experiment/MINIMUM_DECISIVE_EXPERIMENT_DRAFT.md (e15f66f)",
-    "docs/orchestration/lane_registry_v1.json (e15f66f)"
+    "docs/orchestration/lane_registry_v1.json (e15f66f)",
+    "docs/architecture_comparison/experiment_package/EXPERIMENT_PACKAGE.md (d07249b)"
   ],
   "external_sources": "Accessed for revision r2 (2026-09-26): Crossref and OpenAlex metadata/abstract for doi:10.2514/1.B35041 (see prior_evidence). Otherwise literature (Brabston et al. JPP 2025 doi:10.2514/1.B39623; Marchioni MSc thesis 2020) is cited only through the repository audit files that record their access. The historical RF p_min prior 'Shabshelowitz 2013' in docs/HISTORY.md remains 'verify' (not the same item as the 2014 JPP paper).",
   "architecture_ids": {
     "contract": "Shared ids used exactly: 'hall_only', 'rf_hall', 'ecr_hall' (abep_sim/arch_boundary.py ARCHITECTURES; docs/architecture_comparison/comparison_grid/comparison_grid_v1.json; docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json).",
-    "modes_vs_architectures": "Modes (M0, M0b, M0c, M1, M2) are hardware/power STATES of the experiment, not architecture ids. Architecture-level results are reported under hall_only (M0, with M0b as installed reference), rf_hall (M1) and ecr_hall (M2)."
+    "modes_vs_architectures": "Modes (M0, M0b, M0c, M1, M2) are hardware/power STATES of the experiment, not architecture ids. Architecture-level results are reported under hall_only (M0 only), rf_hall (M1) and ecr_hall (M2). M0b and M0c are control states (architecture id none); M0b is not hall_only (lane_25 section 2; fo_experiment_package)."
   },
   "milestones": {
     "status": "PROPOSED statement for the owner",
     "A_conditional_selection": {
       "supports": "Measured, paired, common-boundary (V1 basis) differences and threshold shifts per architecture and condition, enough for 'architecture X is baseline provided conditions ... are demonstrated' (D1-D3, with the break-even source-chain efficiency as a condition since flight generators are not tested). Does not need Physics Baseline 1.0.",
-      "needs": "delta_req from lane_28_break_even; feed envelope (lane_16_feed_envelope, ICD IF-A5); ledger efficiencies and the ICD compressor draw (V1 basis); owner reconciliation of conventions with lane_25_min_decisive_experiment / lane_06_experiment_protocol; hardware and facility (section 10 questions)."
+      "needs": "delta_req from lane_28_break_even; feed envelope (lane_16_feed_envelope, ICD IF-A5); ledger efficiencies and the ICD compressor draw (V1 basis); owner decisions in fo_experiment_package (reconciling lane_25_min_decisive_experiment / lane_06_experiment_protocol); hardware and facility (section 10 questions)."
     },
     "B_physics_backed_selection": {
       "supports": "Transport-independent source data (load-plane source power, interstage delivered current, species) and Hall identifiability data on the tested hardware (measured B(z) with coil currents, as-built geometry, I_d traces, per-point divergence, species fractions).",
