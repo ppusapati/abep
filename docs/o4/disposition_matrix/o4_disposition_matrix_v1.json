@@ -2276,13 +2276,29 @@
    }
   ],
   "inputs_sha256": {
-   "docs/orchestration/lane_registry_v1.json": "6da184862e32e96d20833d1e50a25aaac1119dfa32795c8f10029927241e207e",
-   "docs/orchestration/trigger_registry_v1.json": "195ad43e82f0d2c33e892ab12b720b1b10e78593892c568296237e6f4e9cfa2a",
+   "docs/o4/johnsonlow_assessment/johnsonlow_assessment_v1.json": "b275e9ef47df2c58dd990277416aafe42aecb2d3e72e162b4c186ae34808c91c",
    "hallthruster_bridge/ensemble/o4_dispositions_schema_v1.json": "37acdbdb449bc06b9e8be8d332c13f1867fd1d463d201758ca82953aa1b23ba8",
+   "hallthruster_bridge/prereg/p5_n2_prereg_lock_v1.json": "71ecd39fa25ea60e2e4aff9474bdd700ec8cd718e819dfdae774594709e805be",
    "hallthruster_bridge/prereg/p5_n2_validation_criteria_v1.json": "8ca75ae2fac3a47ba008474f706cdfa8b60e3d1cf27429e1a4ad55dc47068462",
    "scripts/score_p5_n2_campaign.py": "907ca7b5ef8e802ed97129ca9e3fd09b7493bc688088425b150ed02352a39fe3"
   },
-  "n_checks": 432
+  "n_checks": 432,
+  "registry_identity": {
+   "lane_registry_o4_datasets_projection_keys": [
+    "id",
+    "manifest",
+    "role",
+    "escalations"
+   ],
+   "lane_registry_o4_datasets_projection_sha256": "5e3eedbf334e95d3707b90712f9b3cf7c63ec3244f34b1f7940b1c3cb3b06126",
+   "note": "mutable governance files are never hashed whole; only these canonical projections (sorted keys, compact JSON) bind their identity",
+   "trigger_projection_keys": [
+    "id",
+    "prerequisites",
+    "plus"
+   ],
+   "trigger_projection_sha256": "99f8f56285148501dd539e26963df52c5b2220c3bce065c24d82b8c169111f89"
+  }
  },
  "required_datasets": {
   "missing": [],
