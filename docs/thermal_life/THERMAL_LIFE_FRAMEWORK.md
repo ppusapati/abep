@@ -5,6 +5,49 @@ produces no thermal or life number for any Vyovrinda architecture today. Every d
 transport set is empty (gate 3 FAIL, P5-N₂ v1 INCONCLUSIVE), so no admitted HallMap exists to supply wall heat. This
 document claims no thermal closure, no architecture ranking and no hardware qualification.
 
+## 0. Milestones, operating-model question and what this lane unlocks
+**Milestone.** This lane is a framework for **Milestone C** (proposal/PDR freeze: mass, power, thermal, life, startup,
+cathode and mission closure integrated). It is the thermal/life part of that integration.
+
+**It cannot support Milestone A or B today.**
+- Milestone A (conditional selection) needs no thermal number. This framework can at most name thermal/life
+  *conditions* ("architecture X is baseline provided its coil, wall, source and cathode nodes close against the limits
+  in `limits_v1.json`"). It cannot demonstrate any of them.
+- Milestone B (physics-backed selection) needs credible envelopes. Every design input in `inputs_v1.json` is TBD. The
+  credible Hall transport set is ∅, so no admitted HallMap can supply wall flux, and no hardware measurement exists.
+  Every `hall_discharge` wall check is therefore refused today (§2.3).
+- To reach Milestone C, all of the following are needed:
+  - the bus-power allocations per component (`bus_power_boundary_v1`);
+  - an admitted transport closure with design Hall maps (or measured wall-flux hardware data);
+  - the thermal geometry (rejection paths);
+  - the cathode dossier inputs;
+  - the owner decisions listed in §3 (derating policy, wall environment, copper model);
+  - the TBD limits of §4.
+
+**Operating-model question.** `docs/orchestration/lane_registry_v1.json` lists `lane_15_thermal_life` with
+`answers = "iii"`: *what engineering issue could later overturn the choice*. A `FAIL` margin on a component that only one
+architecture instantiates (see the table below) is exactly such an issue. v1 produces none, because no input exists.
+The lane does not answer (i) conditional selection now. It answers (ii), what blocks physics-backed selection, only
+through the TBD list in §3–§4.
+
+**Unlocks.** In `docs/orchestration/trigger_registry_v1.json`, trigger `T_VETO_LAYER` launches `fo_veto_layer` (mass /
+thermal / life veto layer) once `lane_21_mass_bom` and `lane_15_thermal_life` are both `verified`. Launching it is
+justified only as a veto *framework*: it can wire these checks and their refusal paths into hard-gate logic. It cannot
+veto any architecture on thermal/life grounds until the inputs above exist with evidence classes. Until then, a
+thermal/life veto may only report `NOT_DEMONSTRATED` or a refusal. It is never `ELIMINATED_WITHIN_TESTED_ENVELOPE`.
+
+**Thermal nodes per architecture.** RF and ECR change only the pre-ionization method. The Hall accelerator, cathode and
+bus boundary are common to all three architectures.
+
+| architecture id | thermal nodes instantiated (`check_feasibility(components=...)`) |
+|---|---|
+| `hall_only` | `hall_discharge`, `hall_magnet`, `cathode` |
+| `rf_hall` | `hall_discharge`, `hall_magnet`, `cathode`, `rf_source` |
+| `ecr_hall` | `hall_discharge`, `hall_magnet`, `cathode`, `ecr_source`, `ecr_magnet` |
+
+The architecture decides the component list. The module takes that list from the caller and does not encode it, so no
+architecture id is hard-coded in `thermal_life.py`.
+
 Files:
 | file | role |
 |---|---|
@@ -38,6 +81,8 @@ the result always lists `not_covered`, and it inherits the evidence levels of it
 
 **Refusals (ValueError, never a default).** The module refuses:
 - a missing or unknown input;
+- a numeric input record without non-empty `uncertainty`, `applicability_domain` and `validation_status` statements
+  (CLAUDE.md rule 10; write "unquantified" or "TBD - requires ..." explicitly);
 - a unit string different from the contract (no unit conversion is done);
 - an input without a source, or without evidence level 1–7 and a quantity type;
 - a TBD limit record or TBD value;
@@ -73,7 +118,10 @@ are in `limits_v1.json` → `sources`.
   maximum continuous use temperature of the electrical insulation system (EIS) and carries **no life basis** (3.11 NOTE 1).
 - Optional derating (an owner decision; applying it to a thruster coil is an analogy): NASA EEE-INST-002, Section M1,
   Table 4 and notes (p. 10 of 11):
-  - Class C: "Max. Temp. − 20 °C" with a 50,000 h life basis (note 1/b).
+  - Class C: "Max. Temp. − 20 °C" (Table 4). Note 1/b states the 50,000 h life basis for **MIL-style** inductive parts,
+    while note 1/c assigns custom devices (a thruster coil is one) the 0.75 factor. Mapping an IEC 60085 class onto
+    the MIL class C row is therefore an analogy. The module labels this life basis `inferred`, **not** `stated`
+    (repair 2026-09-27).
   - Custom devices: 0.75 × the maximum operating temperature (note 1/c). Carrying the 50,000 h basis over to this factor
     is our **inference (verify)**. Applying 0.75 in °C is our reading (verify).
   - Note 1/a also gives the hot-spot allowance convention (+10 °C) and the MIL-PRF-27 resistance-rise formula
@@ -82,7 +130,8 @@ are in `limits_v1.json` → `sources`.
   - winding hot-spot temperature against the allowable;
   - coil power against the `hall_magnet` bus allocation;
   - insulation life against the RFP firing hours. This check stays `NOT_DEMONSTRATED` unless the policy carries a
-    *stated* life basis.
+    *stated* life basis. No v1 policy does: `none` has no life basis, and both EEE-INST-002 policies are `inferred`.
+    Insulation life therefore needs a thermal-endurance evaluation of the actual EIS (IEC 60216) or a coil life test.
 
 ### 2.3 Hall walls (`hall_discharge`)
 - Wall ion heat: Q_i = e Γ_i ε_i A_wall.
@@ -91,6 +140,12 @@ are in `limits_v1.json` → `sources`.
 - Wall electron heat: Q_e = e Γ_i · 2T_e,w/(1 − γ) · A_wall. This combines Goebel & Katz 2008 Ch. 7 Eq. (7.3-28)
   (p. 348), zero net wall current I_iw = I_ew(1 − γ), with Eqs. (7.3-43) and (7.3-45) (p. 354), under which each
   electron deposits 2T_e. Secondary-electron cooling is neglected, as in the source.
+  - **Sheath consistency is not checked in v1.** HallMap `wall_ion_energy_eV` already contains the solver's per-cell
+    sheath: γ = SEE_yield(material, T_e), φ_s = sheath_potential(T_e, γ) and Zφ_s + T_e/2 (`bridge_lib.jl`
+    `wall_ion_metrics`).
+  - T_e,w and γ here are separate inputs because they are not `hall_map_schema_v1` fields. The caller must take them
+    from the same solve.
+  - The result carries `sheath_consistency: NOT_CHECKED`, and the item is listed in `not_covered`.
 - Anode heat: P_a = 2 I_d T_e(anode), from Eq. (7.3-53) (p. 358). It is accounted only; the anode has no node or limit in v1.
 - **Conservation gate:** Q_i + Q_e + Q_additional + P_a ≤ P_d, otherwise ValueError.
 - Wall limit: Henze HeBoSint datasheet (08.2021), "Use Temperature max." in oxidizing (~900 °C) or inert/vacuum
@@ -103,21 +158,33 @@ are in `limits_v1.json` → `sources`.
   wall heat and the erosion life, so `check_feasibility` accepts `hall_discharge.wall_ion_flux_m2s` and
   `wall_ion_energy_eV` only when both records carry the same `wall_flux_provenance` of one of two kinds
   (`inputs_v1.json` → `wall_flux_provenance`):
-  - `admitted_hallmap`: `ensemble_member_id`, `trustworthy`, `wall_life_trustworthy`, `hallthruster_commit`. At check time
-    the member id is re-verified with `abep_sim.hall_ensemble.require_admitted` (read-only, imported lazily). That call
-    refuses screening candidates (`sgb-screen-*`) and unknown ids. Both trust flags must be `true`, the commit must equal
-    the `PINNED.toml` commit, and the record's quantity type must be `model-derived`.
+  - `admitted_hallmap`: `ensemble_member_id`, `trustworthy`, `wall_life_trustworthy`, `hallthruster_commit`,
+    `map_meta_sha256`.
+    - At check time the member id is re-verified with `abep_sim.hall_ensemble.require_admitted` (read-only, imported
+      lazily). That call refuses screening candidates (`sgb-screen-*`) and unknown ids.
+    - Both trust flags must be `true`, and the commit must equal the `PINNED.toml` commit.
+    - `map_meta_sha256` must be a 64-hex sha256, and the record's quantity type must be `model-derived`.
+    - **Known limit (minor while the credible set is ∅):** the trust flags and the hash are written by
+      `hallmap_wall_inputs`, but `check_feasibility` cannot re-open the map file. A hand-written record naming an
+      admitted id would pass once members exist. Closing this needs a map registry with file hashes (owner decision).
   - `measured_hardware`: an `evidence_record` with non-empty `test_article`, `facility`, `document`,
     `measurement_method`, `uncertainty`, `operating_point` and `applicability_domain`; quantity type `measured`.
   - Anything else raises `ValueError`: a missing provenance (hand-entered flux), a screening candidate, an unadmitted or
     unknown member, or mixed sources for flux and energy. No PASS, FAIL or NOT_DEMONSTRATED is produced from such
     input. The credible set is ∅ and no hardware measurement exists, so **every wall-flux input is refused today**. The
     wall-temperature and erosion-life checks of `hall_discharge` therefore cannot run for any architecture yet.
-- `thermal_life.hallmap_wall_inputs(point, member_id, evidence_level)` builds the input records from a HallMap query.
-  It refuses unless `member_id` passes `require_admitted`, the query is `trustworthy` **and** `wall_life_trustworthy`,
-  and it carries the pinned HallThruster.jl commit. It attaches the `admitted_hallmap` provenance, which
-  `check_feasibility` verifies again. There is no default evidence level: the caller states it (Vyovrinda geometry is
-  outside any P5-validated domain).
+- `thermal_life.hallmap_wall_inputs(point, member_id, evidence_level, *, map_meta, uncertainty, applicability_domain,
+  validation_status)` builds the input records from a HallMap query. It refuses unless:
+  - `member_id` passes `require_admitted`;
+  - `member_id` equals `map_meta["ensemble_member_id"]`. The query output does not carry the member id, so the id is
+    bound to the queried map's meta here;
+  - the meta commit equals the query commit, which must be the pinned HallThruster.jl commit;
+  - `map_meta["ion_wall_losses"]` is `true`;
+  - the query is `trustworthy` **and** `wall_life_trustworthy`.
+
+  It attaches the `admitted_hallmap` provenance with the canonical sha256 of `map_meta`, and `check_feasibility`
+  verifies that provenance again. There are no defaults for the evidence level or for the three evidence statements: the
+  caller states them (Vyovrinda geometry is outside any P5-validated domain).
 - Still open from G11 (not part of this gate): carrying the sputter-yield extrapolation flags of
   `docs/evidence/wall_life/sputter_yield_db_v1.json` into the result and mapping OUT_OF_DOMAIN to NOT_DEMONSTRATED.
   `volumetric_sputter_yield_m3_per_ion` is still a plain sourced input.
@@ -131,7 +198,9 @@ are in `limits_v1.json` → `sources`.
 - Q = f_to_magnets · P_ECR. The input fraction is shared with `ecr_source`, and the combined fractions must be ≤ 1.
 - Maximum use temperature per grade. Sources, typical values:
   - Arnold Recoma 35E datasheet;
-  - MMPA 0100-00 Table IV-4 (p. 20) family values;
+  - MMPA 0100-00 Table IV-4 (p. 20) family values. The NdFeB family value "150** C" is **gated**: its `**` footnote is
+    not legible in the accessed PDF, so `pm_ndfeb_mmpa.T_max_use_C` is null/TBD and refused until the footnote is read
+    (repair 2026-09-27);
   - Arnold RTC slides (Constantinides, slide 14) for Sm₂Co₁₇ 27 MGOe, SmCo₅ 20 MGOe, N38UJ, L-38UHT and N48M.
   N42SH has no maximum-use row on its datasheet, so its maximum use temperature is TBD and the check refuses.
 - Reversible loss: Br(T)/Br(20 °C) = 1 + α(T − 20)/100 (Arnold RTC slides 11–12). It is applied **only** inside the
@@ -141,7 +210,8 @@ are in `limits_v1.json` → `sources`.
   the linear section over the whole temperature range; p. 16: H_K,90 / H_D5).
   - The knee field must be quoted at a temperature ≥ the magnet temperature, otherwise `NOT_DEMONSTRATED`.
   - Hcj(T) from the datasheet is used as a consistency check (knee field ≤ Hcj) and a necessary condition. It is not a
-    substitute for a knee field.
+    substitute for a knee field. If the knee temperature lies outside the grade's Hcj coefficient range, the consistency
+    check is recorded as `knee_field_Hcj_consistency: NOT_DEMONSTRATED`. It is never skipped silently.
 
 ### 2.6 Cathode (`cathode`, LaB₆)
 - Assembly heat: f_keeper · P_keeper + duty · P_heater + P_emitter,plasma. All terms are inputs from the cathode dossier.
@@ -186,13 +256,15 @@ The full list, with units, is in `inputs_v1.json`. None is available today excep
 | `rf_source_structure_limit` | sourced RF source material limit (`T_max_C`) |
 | `ecr_source_structure_limit` | sourced ECR window or coupler limit (`T_max_C`) |
 | `pm_ndfeb_n42sh_arnold.T_max_use_C` | manufacturer maximum-use statement for N42SH |
+| `pm_ndfeb_mmpa.T_max_use_C` | a legible copy of MMPA 0100-00 Table IV-4 with the `**` footnote to the NdFeB 150 °C value (gated, verify) |
 | `iec60085_thermal_classes.life_basis_h` | thermal-endurance evaluation of the actual EIS (IEC 60216) or a coil life test |
 
 Other open items, all verify:
 - the IEC 60085 edition currency;
 - the MMPA 0100-00 publication year, and its Table IV-4 footnotes `*` and `**`, which are not legible in the PDF text layer;
 - the Goebel & Katz publisher details;
-- the inference that the EEE-INST-002 note 1/c factor carries the 50,000 h life basis.
+- the inference that the EEE-INST-002 note 1/c factor carries the 50,000 h life basis;
+- the analogy of applying the MIL class C row (note 1/b, 50,000 h) to an IEC 60085 class of a custom coil.
 
 ## 5. Not covered in v1
 The following are not covered (see also `thermal_life.NOT_COVERED`):
@@ -202,7 +274,9 @@ The following are not covered (see also `thermal_life.NOT_COVERED`):
 - PPU losses (bus-power lane);
 - radiation dose, atomic-oxygen and outgassing effects;
 - keeper erosion;
-- heater failure modes other than the cycle count.
+- heater failure modes other than the cycle count;
+- sheath consistency between the wall electron-heat inputs and HallMap `wall_ion_energy_eV` (§2.3);
+- provenance of `admitted_hallmap` records beyond member id, commit and hash form (no map registry, §2.3).
 
 ## 6. Evidence notes
 - Every sourced limit has evidence level 4–6. None is a Vyovrinda hardware measurement (levels 1–2 are absent).

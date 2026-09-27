@@ -24,6 +24,9 @@ Heat sources (equations; sources and page numbers are in limits_v1.json 'relatio
                   Wall flux/energy gate (G11): accepted only from an ADMITTED ensemble member's Hall-map point with
                   wall_life_trustworthy (re-checked via hall_ensemble.require_admitted) or measured hardware data
                   with an evidence record; anything else raises. Credible set empty => refused today.
+                  hallmap_wall_inputs binds the member id to the queried map's meta (id, commit, ion_wall_losses) and
+                  records its sha256. Wall T_e and SEE yield are separate inputs: their consistency with the sheath
+                  inside wall_ion_energy_eV is NOT checked (listed in NOT_COVERED).
   rf_source / ecr_source  antenna/coupler copper, dielectric and plasma-to-structure heat = input fractions x RF power.
   ecr_magnet      heat = input fraction x ECR power; margins vs the grade's maximum use temperature, reversible Br loss
                   (Br(T)/Br20 = 1 + alpha (T - 20)/100 inside the coefficient range), and irreversible loss (opposing
@@ -38,7 +41,8 @@ the paths are inputs (thermal geometry: TBD). Steady state only.
 Outcomes: each check is PASS, FAIL or NOT_DEMONSTRATED (inputs complete but the sourced evidence cannot decide, e.g. a
 temperature outside a coefficient's measured range). The overall status is FAIL, NOT_DEMONSTRATED or
 PASS_CHECKED_ITEMS; the last one is NOT a thermal qualification (see NOT_COVERED). Missing/unsourced/mis-unitted inputs,
-TBD limits and non-physical input sets (heat fractions > 1, heat above the discharge power) raise ValueError.
+numeric records without uncertainty/applicability_domain/validation_status statements, TBD limits and non-physical
+input sets (heat fractions > 1, heat above the discharge power) raise ValueError.
 """
 from __future__ import annotations
 
@@ -81,6 +85,10 @@ NOT_COVERED = (
     "PPU / converter losses (bus-power lane)",
     "radiation dose, atomic-oxygen and outgassing effects on insulation, magnets and emitter",
     "keeper erosion life and heater failure modes other than the qualified-cycle count",
+    "consistency of the wall electron-heat inputs (wall_electron_temperature_eV, wall_see_yield) with the sheath "
+    "(T_e, gamma, phi_s) already contained in HallMap wall_ion_energy_eV (bridge_lib.jl wall_ion_metrics): these "
+    "quantities are not hall_map_schema_v1 fields, so the caller must take them from the same solve; not checked in v1",
+    "provenance of admitted_hallmap wall-flux records beyond member id, commit and map-meta hash form (no map registry)",
 )
 
 
@@ -194,12 +202,21 @@ def _check_evidence(level, qtype, where: str) -> None:
         raise ValueError(f"{where}: quantity_type must be one of {QUANTITY_TYPES}, got {qtype!r}")
 
 
+NUMBER_RECORD_FIELDS = ("value", "unit", "source", "evidence_level", "quantity_type", "uncertainty",
+                        "applicability_domain", "validation_status")
+NUMBER_RECORD_TEXT_FIELDS = ("uncertainty", "applicability_domain", "validation_status")   # CLAUDE.md rule 10
+
+
 def _number(rec, unit: str, where: str) -> float:
     if not isinstance(rec, dict):
-        raise ValueError(f"{where}: input must be a record with value/unit/source/evidence_level/quantity_type")
-    for k in ("value", "unit", "source", "evidence_level", "quantity_type"):
+        raise ValueError(f"{where}: input must be a record with {'/'.join(NUMBER_RECORD_FIELDS)}")
+    for k in NUMBER_RECORD_FIELDS:
         if k not in rec:
             raise ValueError(f"{where}: input record lacks {k!r}")
+    for k in NUMBER_RECORD_TEXT_FIELDS:
+        if not isinstance(rec[k], str) or not rec[k].strip():
+            raise ValueError(f"{where}: input record field {k!r} must be a non-empty statement "
+                             "(write 'unquantified' / 'TBD - requires ...' explicitly; docs/EVIDENCE.md, CLAUDE.md rule 10)")
     if rec["unit"] != unit:
         raise ValueError(f"{where}: unit {rec['unit']!r} is not the contract unit {unit!r} (no unit conversion is done)")
     if not isinstance(rec["source"], str) or not rec["source"].strip():
@@ -432,9 +449,14 @@ def insulation_allowable_C(class_C: float, policy: str, limits: dict) -> dict:
     if policy == "eee_inst_002_class_c_minus_20":
         if class_C <= 125:
             raise ValueError("the 'Max. Temp. - 20 C' row of EEE-INST-002 Table 4 is for class C ratings > +125 C")
+        # Note 1/b states the 50,000 h basis for MIL-style inductive parts; note 1/c assigns custom devices (a thruster
+        # coil is one) the 0.75 factor instead. Mapping an IEC 60085 EIS class onto the MIL class C row is an analogy,
+        # so the life basis is 'inferred' here, never 'stated' (insulation_life then stays NOT_DEMONSTRATED).
         return {"allowable_C": class_C - limit_value(limits, rid, "class_c_derating_K"), "policy": policy,
-                "life_basis_h": limit_value(limits, rid, "life_basis_at_derated_h"), "life_basis_status": "stated",
-                "life_basis_note": "EEE-INST-002 M1 Table 4 note 1/b (MIL-style parts, at rated voltage)"}
+                "life_basis_h": limit_value(limits, rid, "life_basis_at_derated_h"), "life_basis_status": "inferred",
+                "life_basis_note": "EEE-INST-002 M1 Table 4 note 1/b states 50,000 h for MIL-style inductive parts at "
+                                   "rated voltage; applying the MIL class C row to an IEC 60085 class of a custom "
+                                   "thruster coil (note 1/c territory) is an analogy (verify)"}
     raise ValueError(f"unknown derating policy {policy!r}")
 
 
@@ -536,7 +558,11 @@ WALL_FLUX_PROVENANCE_KEY = "wall_flux_provenance"
 PROV_ADMITTED_HALLMAP = "admitted_hallmap"
 PROV_MEASURED_HARDWARE = "measured_hardware"
 ADMITTED_HALLMAP_PROV_FIELDS = ("kind", "ensemble_member_id", "trustworthy", "wall_life_trustworthy",
-                                "hallthruster_commit")
+                                "hallthruster_commit", "map_meta_sha256")
+# Known limit (v1): check_feasibility re-verifies the member id (hall_ensemble.require_admitted), the commit and the
+# form of map_meta_sha256, but it cannot re-open the map file, so the trust flags are only as good as the producer
+# (hallmap_wall_inputs, which binds them to the HallMap meta). A hand-written admitted_hallmap record naming an admitted
+# id would pass once members exist; closing this needs a map registry with file hashes (owner decision).
 HARDWARE_EVIDENCE_FIELDS = ("test_article", "facility", "document", "measurement_method", "uncertainty",
                             "operating_point", "applicability_domain")
 
@@ -570,7 +596,7 @@ def _check_wall_flux_provenance(raw: dict, where: str) -> dict:
             if set(prov) != set(ADMITTED_HALLMAP_PROV_FIELDS):
                 raise ValueError(f"{where}.{f}: admitted_hallmap provenance must have exactly {ADMITTED_HALLMAP_PROV_FIELDS}")
             if rec.get("quantity_type") != "model-derived":
-                raise ValueError(f"{where}.{f}: a Hall-map value is 'model-derived', got {rec['quantity_type']!r}")
+                raise ValueError(f"{where}.{f}: a Hall-map value is 'model-derived', got {rec.get('quantity_type')!r}")
             mid = prov["ensemble_member_id"]
             if not isinstance(mid, str) or not mid:
                 raise ValueError(f"{where}.{f}: admitted_hallmap provenance needs an ensemble_member_id")
@@ -582,6 +608,10 @@ def _check_wall_flux_provenance(raw: dict, where: str) -> dict:
                                  "diagnostic only")
             if prov["hallthruster_commit"] != _pinned_hall_commit():
                 raise ValueError(f"{where}.{f}: Hall-map point was not produced with the pinned HallThruster.jl commit")
+            h = prov["map_meta_sha256"]
+            if not (isinstance(h, str) and len(h) == 64 and all(ch in "0123456789abcdef" for ch in h)):
+                raise ValueError(f"{where}.{f}: map_meta_sha256 must be the 64-hex sha256 of the HallMap meta "
+                                 "(written by hallmap_wall_inputs)")
         elif kind == PROV_MEASURED_HARDWARE:
             if set(prov) != {"kind", "evidence_record"} or not isinstance(prov["evidence_record"], dict):
                 raise ValueError(f"{where}.{f}: measured_hardware provenance must be {{'kind', 'evidence_record'}}")
@@ -593,7 +623,7 @@ def _check_wall_flux_provenance(raw: dict, where: str) -> dict:
                                  f"(required: {HARDWARE_EVIDENCE_FIELDS})")
             if rec.get("quantity_type") != "measured":
                 raise ValueError(f"{where}.{f}: hardware wall-flux data must be quantity_type 'measured', "
-                                 f"got {rec['quantity_type']!r}")
+                                 f"got {rec.get('quantity_type')!r}")
         else:
             raise ValueError(f"{where}.{f}: provenance kind must be {PROV_ADMITTED_HALLMAP!r} or "
                              f"{PROV_MEASURED_HARDWARE!r}, got {kind!r}")
@@ -604,9 +634,15 @@ def _check_wall_flux_provenance(raw: dict, where: str) -> dict:
     return copy.deepcopy(provs[0])
 
 
-def hallmap_wall_inputs(point: dict, ensemble_member_id: str, evidence_level: int,
+def hallmap_wall_inputs(point: dict, ensemble_member_id: str, evidence_level: int, *, map_meta: dict,
+                        uncertainty: str, applicability_domain: str, validation_status: str,
                         schema: dict | None = None) -> dict:
     """Input records for hall_discharge from one HallMap query (abep_sim.hall_map.HallMap.__call__ output).
+
+    map_meta is the queried map's meta (HallMap.meta). The query output does not carry the member id, so the id is
+    bound to the map here: map_meta['ensemble_member_id'] must equal ensemble_member_id, map_meta['hallthruster_commit']
+    must equal the query commit, and the canonical sha256 of map_meta is recorded in the provenance. uncertainty,
+    applicability_domain and validation_status are the caller's explicit statements (no defaults; CLAUDE.md rule 10).
 
     Refuses unless ensemble_member_id is an ADMITTED transport-ensemble member (hall_ensemble.require_admitted:
     screening candidates and unknown ids raise), the query is performance-trustworthy AND wall_life_trustworthy
@@ -628,8 +664,23 @@ def hallmap_wall_inputs(point: dict, ensemble_member_id: str, evidence_level: in
     commit = point.get("hallthruster_commit")
     if commit != _pinned_hall_commit():
         raise ValueError(f"HallMap query commit {commit!r} is not the pinned HallThruster.jl commit")
+    if not isinstance(map_meta, dict):
+        raise ValueError("map_meta must be the queried HallMap's meta dict")
+    if map_meta.get("ensemble_member_id") != ensemble_member_id:
+        raise ValueError(f"map meta ensemble_member_id {map_meta.get('ensemble_member_id')!r} is not "
+                         f"{ensemble_member_id!r}: the point must be labelled with the member that produced its map")
+    if map_meta.get("hallthruster_commit") != commit:
+        raise ValueError("map meta hallthruster_commit differs from the query commit")
+    if map_meta.get("ion_wall_losses") is not True:
+        raise ValueError("map meta ion_wall_losses is not true: wall flux/energy are diagnostic only")
+    stmts = {"uncertainty": uncertainty, "applicability_domain": applicability_domain,
+             "validation_status": validation_status}
+    for k, v in stmts.items():
+        if not isinstance(v, str) or not v.strip():
+            raise ValueError(f"hallmap_wall_inputs: {k} must be an explicit non-empty statement")
     prov = {"kind": PROV_ADMITTED_HALLMAP, "ensemble_member_id": ensemble_member_id, "trustworthy": True,
-            "wall_life_trustworthy": True, "hallthruster_commit": commit}
+            "wall_life_trustworthy": True, "hallthruster_commit": commit,
+            "map_meta_sha256": _canonical_sha256(map_meta)}
     out = {}
     for f in HALLMAP_FIELDS_USED:
         if f not in point:
@@ -637,7 +688,7 @@ def hallmap_wall_inputs(point: dict, ensemble_member_id: str, evidence_level: in
         out[f] = {"value": float(point[f]), "unit": schema["fields"][f]["unit"],
                   "source": f"HallMap query, ensemble member {ensemble_member_id}, hall_map_schema_v1 field {f}, "
                             f"HallThruster.jl {commit}",
-                  "evidence_level": evidence_level, "quantity_type": "model-derived"}
+                  "evidence_level": evidence_level, "quantity_type": "model-derived", **stmts}
         if f in WALL_FLUX_INPUTS:
             out[f][WALL_FLUX_PROVENANCE_KEY] = dict(prov)
     return out
@@ -680,7 +731,9 @@ def _check_hall_discharge(ci: _ComponentInputs, limits: dict, mission: dict) -> 
                                 {"erosion_rate_m_per_s": rate, "life_h": life_h, "required_h": req}))
     return {"heat_W": {"wall_ion_W": Q_i, "wall_electron_W": Q_e, "wall_additional_W": Q_add, "anode_W": P_a,
                        "wall_total_W": Q_wall, "heat_fraction_of_discharge_power": total / Pd},
-            "wall_flux_provenance": wall_prov, "T_node": sol, "checks": checks}
+            "wall_flux_provenance": wall_prov, "T_node": sol, "checks": checks,
+            "sheath_consistency": "NOT_CHECKED: T_e,w and gamma must come from the same solve as wall_ion_energy_eV "
+                                  "(not hall_map_schema_v1 fields; see not_covered)"}
 
 
 # ----------------------------------------------------------------------------------------------- permanent magnets
@@ -723,12 +776,12 @@ def _check_ecr_magnet(ci: _ComponentInputs, limits: dict, mission: dict) -> dict
         Hcj20 = limit_value(limits, grade, "Hcj_min_20C_A_per_m")
         try:
             Hcj_knee_T = Hcj20 * magnet_property_fraction(Hk_T, grade, limits, "beta_Hcj_pct_per_C")
-            if Hk > Hcj_knee_T:
-                raise ValueError(f"ecr_magnet: knee field {Hk} A/m exceeds the grade's minimum Hcj {Hcj_knee_T:.6g} A/m "
-                                 f"at {Hk_T} C: inconsistent inputs")
-        except ValueError as e:
-            if "inconsistent" in str(e):
-                raise
+        except ValueError as e:        # knee temperature outside the Hcj coefficient range: say so, never skip silently
+            Hcj_knee_T = None
+            checks.append(_nd("knee_field_Hcj_consistency", f"knee field vs minimum Hcj not evaluated: {e}"))
+        if Hcj_knee_T is not None and Hk > Hcj_knee_T:
+            raise ValueError(f"ecr_magnet: knee field {Hk} A/m exceeds the grade's minimum Hcj {Hcj_knee_T:.6g} A/m "
+                             f"at {Hk_T} C: inconsistent inputs")
     if Hk_T < T_mag:
         checks.append(_nd("irreversible_loss_knee", f"knee field given at {Hk_T} C, below the magnet temperature "
                           f"{T_mag:.6g} C (knee fields fall with temperature)"))

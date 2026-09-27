@@ -32,7 +32,9 @@ def contract():
 
 
 def num(v, unit, level=7, qtype="assumed", src="test fixture (hand calculation)"):
-    return {"value": v, "unit": unit, "source": src, "evidence_level": level, "quantity_type": qtype}
+    return {"value": v, "unit": unit, "source": src, "evidence_level": level, "quantity_type": qtype,
+            "uncertainty": "test fixture: unquantified", "applicability_domain": "test fixture only",
+            "validation_status": "test fixture, not validated"}
 
 
 def ident(v, src="test fixture"):
@@ -71,7 +73,17 @@ def admitted_ensemble(monkeypatch):
 
 def hallmap_prov(mid=ADMITTED_FIXTURE_ID, wlt=True, commit=None):
     return {"kind": "admitted_hallmap", "ensemble_member_id": mid, "trustworthy": True, "wall_life_trustworthy": wlt,
-            "hallthruster_commit": commit or tl._pinned_hall_commit()}
+            "hallthruster_commit": commit or tl._pinned_hall_commit(), "map_meta_sha256": "0" * 64}
+
+
+def map_meta(mid=ADMITTED_FIXTURE_ID, commit=None, iwl=True):
+    """Synthetic HallMap meta subset (test fixture; no real admitted map exists)."""
+    return {"schema": "hall_map_schema_v1", "ensemble_member_id": mid,
+            "hallthruster_commit": commit or tl._pinned_hall_commit(), "ion_wall_losses": iwl}
+
+
+STMTS = {"uncertainty": "test fixture: unquantified", "applicability_domain": "test fixture only",
+         "validation_status": "test fixture, not validated"}
 
 
 HW_EVIDENCE = {k: "test fixture (synthetic, not a measurement)" for k in tl.HARDWARE_EVIDENCE_FIELDS}
@@ -253,7 +265,8 @@ def test_insulation_allowable(limits):
     d = tl.insulation_allowable_C(180, "eee_inst_002_custom_0p75", limits)
     assert d["allowable_C"] == pytest.approx(135.0) and d["life_basis_status"] == "inferred"
     d = tl.insulation_allowable_C(180, "eee_inst_002_class_c_minus_20", limits)
-    assert d["allowable_C"] == 160.0 and d["life_basis_h"] == 50000.0 and d["life_basis_status"] == "stated"
+    # MIL class C row applied to an IEC class of a custom coil is an analogy: life basis 'inferred', never 'stated'
+    assert d["allowable_C"] == 160.0 and d["life_basis_h"] == 50000.0 and d["life_basis_status"] == "inferred"
     with pytest.raises(ValueError, match="not an IEC 60085 thermal class"):
         tl.insulation_allowable_C(170, "none", limits)
     assert tl.insulation_allowable_C(275, "none", limits)["allowable_C"] == 275   # +25 C steps above 250
@@ -288,8 +301,10 @@ def test_hall_magnet_self_consistent_coil(limits, contract):
     r = tl.check_feasibility({"mission": mission(), "hall_magnet": magnet_inputs(
         cls=180.0, policy="eee_inst_002_class_c_minus_20")}, limits, ["hall_magnet"], contract)
     chk = {k["name"]: k for k in r["components"]["hall_magnet"]["checks"]}
-    assert chk["insulation_life"]["margin"] == pytest.approx(50000.0 - 15000.0)
-    assert r["status"] == tl.OVERALL_PASS
+    assert chk["insulation_life"]["status"] == tl.NOT_DEMONSTRATED        # life basis only inferred (analogy)
+    assert chk["insulation_life"]["life_basis_h"] == 50000.0
+    assert chk["winding_hot_spot_temperature"]["status"] == tl.PASS
+    assert r["status"] == tl.NOT_DEMONSTRATED
     # allocation below the coil power -> FAIL
     r = tl.check_feasibility({"mission": mission(), "hall_magnet": magnet_inputs(alloc=1.0)}, limits,
                              ["hall_magnet"], contract)
@@ -348,11 +363,26 @@ def test_ecr_magnet_margins(limits, contract):
                              ["ecr_magnet"], contract)
     assert r["status"] == tl.NOT_DEMONSTRATED
     # outside the coefficient's measured range -> NOT_DEMONSTRATED, never extrapolated
-    r = tl.check_feasibility({"mission": mission(), "ecr_magnet": ecr_magnet_inputs(P=2500.0, grade="pm_ndfeb_mmpa")},
-                             limits, ["ecr_magnet"], contract)
-    chk = {k["name"]: k for k in r["components"]["ecr_magnet"]["checks"]}
+    # SmCo5 20 MGOe (Arnold RTC): coefficients 20-120 C, T_max_use 250 C; Q = 250 W into 1 W/K -> 270 C
+    r = tl.check_feasibility({"mission": mission(), "ecr_magnet": ecr_magnet_inputs(
+        P=2500.0, grade="pm_smco5_20mgoe_arnold_rtc")}, limits, ["ecr_magnet"], contract)
+    c = r["components"]["ecr_magnet"]
+    chk = {k["name"]: k for k in c["checks"]}
     assert chk["reversible_Br_loss"]["status"] == tl.NOT_DEMONSTRATED
-    assert chk["magnet_max_use_temperature"]["status"] == tl.FAIL             # 270 C > 150 C family limit
+    assert chk["magnet_max_use_temperature"]["status"] == tl.FAIL
+    assert chk["magnet_max_use_temperature"]["margin"] == pytest.approx(250.0 - 270.0, rel=1e-9)
+    # Recoma 35E: knee quoted at 250 C lies outside the 20-200 C Hcj coefficient range: the knee-vs-Hcj consistency
+    # check is recorded as NOT_DEMONSTRATED, never skipped silently
+    r = tl.check_feasibility({"mission": mission(), "ecr_magnet": ecr_magnet_inputs(Hk_T=250.0)}, limits,
+                             ["ecr_magnet"], contract)
+    chk = {k["name"]: k for k in r["components"]["ecr_magnet"]["checks"]}
+    assert chk["knee_field_Hcj_consistency"]["status"] == tl.NOT_DEMONSTRATED
+    assert chk["irreversible_loss_knee"]["status"] == tl.PASS
+    assert r["status"] == tl.NOT_DEMONSTRATED
+    # MMPA NdFeB family 150** C is gated (unread footnote): refused as TBD, not used as a live limit
+    with pytest.raises(ValueError, match="footnote"):
+        tl.check_feasibility({"mission": mission(), "ecr_magnet": ecr_magnet_inputs(grade="pm_ndfeb_mmpa")},
+                             limits, ["ecr_magnet"], contract)
 
 
 def test_ecr_magnet_refusals(limits, contract):
@@ -438,6 +468,9 @@ def test_ecr_shared_power_consistency(limits, contract):
     (lambda d: d.update(coil_current_A={**num(2.0, "A"), "quantity_type": "guessed"}), "quantity_type"),
     (lambda d: d.update(coil_current_A=num(float("nan"), "A")), "finite"),
     (lambda d: d.update(coil_current_A=2.0), "must be a record"),
+    (lambda d: d["coil_current_A"].pop("uncertainty"), "lacks 'uncertainty'"),
+    (lambda d: d.update(coil_current_A={**num(2.0, "A"), "applicability_domain": ""}), "applicability_domain"),
+    (lambda d: d.update(coil_current_A={**num(2.0, "A"), "validation_status": None}), "validation_status"),
     (lambda d: d.update(copper_model=ident("copper_guess")), "is not one of"),
     (lambda d: d.update(rejection_paths=[]), "at least one rejection path"),
     (lambda d: d.update(rejection_paths=[{"kind": "radiation", "emissivity": num(0.8, "-")}]), "missing"),
@@ -468,26 +501,40 @@ def test_hallmap_wall_inputs_gate(admitted_ensemble):
     pinned = tl._pinned_hall_commit()
     pt = {"trustworthy": True, "wall_life_trustworthy": True, "discharge_power_W": 900.0, "discharge_current_A": 3.0,
           "wall_ion_flux_m2s": 1e21, "wall_ion_energy_eV": 40.0, "hallthruster_commit": pinned}
-    out = tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID, evidence_level=6)
+    out = tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID, evidence_level=6, map_meta=map_meta(), **STMTS)
     assert out["wall_ion_flux_m2s"]["unit"] == "m^-2 s^-1" and out["wall_ion_energy_eV"]["unit"] == "eV"
     assert all(v["quantity_type"] == "model-derived" and v["evidence_level"] == 6 for v in out.values())
     assert out["wall_ion_flux_m2s"]["wall_flux_provenance"]["ensemble_member_id"] == ADMITTED_FIXTURE_ID
     with pytest.raises(ValueError, match="wall_life_trustworthy"):
-        tl.hallmap_wall_inputs({**pt, "wall_life_trustworthy": False}, ADMITTED_FIXTURE_ID, evidence_level=6)
+        tl.hallmap_wall_inputs({**pt, "wall_life_trustworthy": False}, ADMITTED_FIXTURE_ID, evidence_level=6, map_meta=map_meta(), **STMTS)
     with pytest.raises(ValueError, match="not trustworthy"):
-        tl.hallmap_wall_inputs({**pt, "trustworthy": False}, ADMITTED_FIXTURE_ID, evidence_level=6)
+        tl.hallmap_wall_inputs({**pt, "trustworthy": False}, ADMITTED_FIXTURE_ID, evidence_level=6, map_meta=map_meta(), **STMTS)
     with pytest.raises(ValueError, match="pinned"):
-        tl.hallmap_wall_inputs({**pt, "hallthruster_commit": "bfb3019"}, ADMITTED_FIXTURE_ID, evidence_level=6)
+        tl.hallmap_wall_inputs({**pt, "hallthruster_commit": "bfb3019"}, ADMITTED_FIXTURE_ID, evidence_level=6, map_meta=map_meta(), **STMTS)
     with pytest.raises(ValueError, match="ensemble member"):
-        tl.hallmap_wall_inputs(pt, "", evidence_level=6)
+        tl.hallmap_wall_inputs(pt, "", evidence_level=6, map_meta=map_meta(), **STMTS)
     with pytest.raises(ValueError, match="SCREENING"):
-        tl.hallmap_wall_inputs(pt, "sgb-screen-01", evidence_level=6)
+        tl.hallmap_wall_inputs(pt, "sgb-screen-01", evidence_level=6, map_meta=map_meta(), **STMTS)
     with pytest.raises(ValueError, match="not an admitted"):
-        tl.hallmap_wall_inputs(pt, "member-x", evidence_level=6)
+        tl.hallmap_wall_inputs(pt, "member-x", evidence_level=6, map_meta=map_meta(), **STMTS)
     with pytest.raises(ValueError, match="evidence_level"):
-        tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID, evidence_level=0)
+        tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID, evidence_level=0, map_meta=map_meta(), **STMTS)
     with pytest.raises(TypeError):
-        tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID)                        # no default evidence level
+        tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID, map_meta=map_meta(), **STMTS)   # no default evidence level
+    with pytest.raises(TypeError):
+        tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID, evidence_level=6, **STMTS)      # map meta is required
+    # the id must be the one in the queried map's meta (the query output does not carry it)
+    with pytest.raises(ValueError, match="map meta ensemble_member_id"):
+        tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID, evidence_level=6, map_meta=map_meta("adm-other"), **STMTS)
+    with pytest.raises(ValueError, match="differs from the query commit"):
+        tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID, evidence_level=6, map_meta=map_meta(commit="x"), **STMTS)
+    with pytest.raises(ValueError, match="ion_wall_losses"):
+        tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID, evidence_level=6, map_meta=map_meta(iwl=False), **STMTS)
+    with pytest.raises(ValueError, match="uncertainty"):
+        tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID, evidence_level=6, map_meta=map_meta(),
+                               **{**STMTS, "uncertainty": " "})
+    assert out["wall_ion_flux_m2s"]["wall_flux_provenance"]["map_meta_sha256"] == tl._canonical_sha256(map_meta())
+    assert out["wall_ion_flux_m2s"]["uncertainty"] == STMTS["uncertainty"]
 
 
 def test_hallmap_wall_inputs_refuses_real_ensemble():
@@ -499,9 +546,9 @@ def test_hallmap_wall_inputs_refuses_real_ensemble():
           "wall_ion_flux_m2s": 1e21, "wall_ion_energy_eV": 40.0, "hallthruster_commit": tl._pinned_hall_commit()}
     for sid in sorted(hall_ensemble.screening_ids(e)):
         with pytest.raises(ValueError, match="SCREENING"):
-            tl.hallmap_wall_inputs(pt, sid, evidence_level=6)
+            tl.hallmap_wall_inputs(pt, sid, evidence_level=6, map_meta=map_meta(), **STMTS)
     with pytest.raises(ValueError, match="not an admitted"):
-        tl.hallmap_wall_inputs(pt, "unknown-member", evidence_level=6)
+        tl.hallmap_wall_inputs(pt, "unknown-member", evidence_level=6, map_meta=map_meta(), **STMTS)
 
 
 def _discharge(inp, limits, contract):
@@ -549,6 +596,16 @@ def test_wall_flux_gate_paths(limits, contract, admitted_ensemble):
     inp["wall_ion_energy_eV"]["quantity_type"] = "measured"
     with pytest.raises(ValueError, match="model-derived"):
         _discharge(inp, limits, contract)
+    inp = discharge_inputs(prov=hw)                                             # missing quantity_type: ValueError
+    inp["wall_ion_flux_m2s"].pop("quantity_type")
+    with pytest.raises(ValueError, match="'measured'"):
+        _discharge(inp, limits, contract)
+    inp = discharge_inputs()
+    inp["wall_ion_flux_m2s"].pop("quantity_type")
+    with pytest.raises(ValueError, match="model-derived"):
+        _discharge(inp, limits, contract)
+    with pytest.raises(ValueError, match="map_meta_sha256"):
+        _discharge(discharge_inputs(prov={**hallmap_prov(), "map_meta_sha256": "abc"}), limits, contract)
     inp = discharge_inputs()                                                    # flux and energy from one source
     inp["wall_ion_energy_eV"]["wall_flux_provenance"] = {"kind": "measured_hardware", "evidence_record": HW_EVIDENCE}
     inp["wall_ion_energy_eV"]["quantity_type"] = "measured"
