@@ -1,0 +1,124 @@
+{
+ "admission_clearance_decision": "NONE_CLEARED - no candidate is PROMOTABLE (owner decision 2026-09-27); an explicit owner decision, distinct from 'owner has not decided'",
+ "basis": {
+  "note": "trigger values are read by hall_ensemble._check_o4 from the scored O4 files, never from this record; this file is immutable once committed; any future admission record cites its sha256 as o4_dispositions_sha256",
+  "o4_disposition_matrix": "docs/o4/disposition_matrix/o4_disposition_matrix_v1.json (S12, fo_o4_disposition_matrix VERIFIED; evidence only)",
+  "owner_decision": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json"
+ },
+ "campaign_id": "p5_n2_campaign_v1",
+ "cleared_for_admission": [],
+ "decided_by": "owner",
+ "decided_utc": "2026-09-27T09:00:00Z",
+ "mandatory_decision_file": "hallthruster_bridge/validation/p5_n2_campaign_v1_vacuum_scores_decision.json",
+ "mandatory_decision_sha256": "bbbe24ef56fd64d1837f078e2c26a14372271ea46b231f3a85578c7ef72eaa25",
+ "schema": "o4_dispositions_v1",
+ "sensitivities": {
+  "n2_n_exc_johnsonlow.toml": {
+   "baseline": "n2_n.toml",
+   "disposition": "Retain as sensitivity evidence only. The family demonstrates material sensitivity and/or domain-boundary movement but supplies no new predictive evidence sufficient for transport admission. No candidate promotion, no retuning, no threshold change, and no change to the permanent P5-N2 v1 INCONCLUSIVE status. Counterfactual candidate-level FAIL_VALIDATION outcomes under this sensitivity chemistry (sgb-screen-09 under n2_n_exc_johnsonlow.toml; sgb-screen-09 under n2_n_exc_johnsonlow_di_lower.toml) increase caution around the affected candidates but do not validate any other candidate.",
+   "escalations": {
+    "n2_n_exc_johnsonlow_di_lower.toml": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_scores_provenance.json",
+     "scores_provenance_sha256": "8a1e81095ec4c9b203b81d87be7defa5abeccec1d47c33431f56a0c55a6c366d"
+    },
+    "n2_n_exc_johnsonlow_di_lower_nel_wang.toml": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_di_lower_nel_wang_scores_provenance.json",
+     "scores_provenance_sha256": "07ed37f178afc4e9ae19c688fc5d3a39273786ea52cd8bfe8abd9beb79bb2aa8"
+    },
+    "n2_n_exc_johnsonlow_nel_wang.toml": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_exc_johnsonlow_nel_wang_scores_provenance.json",
+     "scores_provenance_sha256": "a0792fe82c2942c23cb4688330c464c7538e4b23f1a3ea2d8204f68c8e5ba341"
+    }
+   },
+   "first_stage": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_exc_johnsonlow_scores_provenance.json",
+    "scores_provenance_sha256": "dc902155f740167299e6ccfa9447ddcc6b42042070ab47b097e6990f2af5c574"
+   },
+   "trigger_fired": true
+  },
+  "n2_n_n2dication.toml": {
+   "baseline": "n2_n_di_lower.toml",
+   "disposition": "Retain as sensitivity evidence only. The family demonstrates material sensitivity and/or domain-boundary movement but supplies no new predictive evidence sufficient for transport admission. No candidate promotion, no retuning, no threshold change, and no change to the permanent P5-N2 v1 INCONCLUSIVE status. Counterfactual candidate-level FAIL_VALIDATION outcomes under this sensitivity chemistry (sgb-screen-05 under n2_n_n2dication.toml; sgb-screen-09 under n2_n_n2dication.toml; sgb-screen-05 under n2_n_n2dication_nel_wang.toml) increase caution around the affected candidates but do not validate any other candidate.",
+   "escalations": {
+    "n2_n_n2dication_nel_wang.toml": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_n2dication_nel_wang_scores_provenance.json",
+     "scores_provenance_sha256": "e5468f7cf8d07e66cdeeee666d3b354066764ea7a8cfa60f6df69889e94c2849"
+    }
+   },
+   "first_stage": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_n2dication_scores_provenance.json",
+    "scores_provenance_sha256": "befaf2a7b58a9f9c1c1badb2543ec42866cdf0ef9847a37d1f4e7d1c14096155"
+   },
+   "trigger_fired": true
+  },
+  "n2_n_ndd_hmshigh.toml": {
+   "baseline": "n2_n.toml",
+   "disposition": "Retain as sensitivity evidence only. The family demonstrates material sensitivity and/or domain-boundary movement but supplies no new predictive evidence sufficient for transport admission. No candidate promotion, no retuning, no threshold change, and no change to the permanent P5-N2 v1 INCONCLUSIVE status. Counterfactual candidate-level FAIL_VALIDATION outcomes under this sensitivity chemistry (sgb-screen-09 under n2_n_ndd_hmshigh.toml) increase caution around the affected candidates but do not validate any other candidate.",
+   "escalations": {
+    "n2_n_ndd_hmshigh_di_lower.toml": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_di_lower_scores_provenance.json",
+     "scores_provenance_sha256": "392e1142424f92c783c523059641656b6e611e9d4a1ce433068b59937d03d9e9"
+    },
+    "n2_n_ndd_hmshigh_di_lower_nel_wang.toml": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_di_lower_nel_wang_scores_provenance.json",
+     "scores_provenance_sha256": "750a9d02a1a465a0cec21b014043251bf58537cc7211ca2604d0cdcdfab08e80"
+    },
+    "n2_n_ndd_hmshigh_nel_wang.toml": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmshigh_nel_wang_scores_provenance.json",
+     "scores_provenance_sha256": "9a29b7464d1c13144aa55defc69cf169a2ca17d8e32bb11ddb397297028deaa8"
+    }
+   },
+   "first_stage": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_ndd_hmshigh_scores_provenance.json",
+    "scores_provenance_sha256": "b6180309f62b82ea50548636fc95491386538cbbea27e49e60e37b62bef94b31"
+   },
+   "trigger_fired": true
+  },
+  "n2_n_ndd_hmslow.toml": {
+   "baseline": "n2_n.toml",
+   "disposition": "Retain as sensitivity evidence only. The family demonstrates material sensitivity and/or domain-boundary movement but supplies no new predictive evidence sufficient for transport admission. No candidate promotion, no retuning, no threshold change, and no change to the permanent P5-N2 v1 INCONCLUSIVE status.",
+   "escalations": {
+    "n2_n_ndd_hmslow_di_lower.toml": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_di_lower_scores_provenance.json",
+     "scores_provenance_sha256": "6c39c96c4cd309d8fe9e33e38fdf86ae3044029dad797b64eb6f5897eaaf3cb7"
+    },
+    "n2_n_ndd_hmslow_di_lower_nel_wang.toml": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_di_lower_nel_wang_scores_provenance.json",
+     "scores_provenance_sha256": "d0335608c2b3640da50f8399efa6e772fb321596ad578cddf4b4de0cfd31f3d5"
+    },
+    "n2_n_ndd_hmslow_nel_wang.toml": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_ndd_hmslow_nel_wang_scores_provenance.json",
+     "scores_provenance_sha256": "b37f5c3b35ca5cd58dedb307931ae6f18022fbb107824e2b4579e4712b882de6"
+    }
+   },
+   "first_stage": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_ndd_hmslow_scores_provenance.json",
+    "scores_provenance_sha256": "f806017e6622927441137b896c1a0f1a0c3e3a280484d75e9d238a3ee0f801a5"
+   },
+   "trigger_fired": true
+  },
+  "n2_n_rot_off.toml": {
+   "baseline": "n2_n.toml",
+   "disposition": "Retain as sensitivity evidence only. The family demonstrates material sensitivity and/or domain-boundary movement but supplies no new predictive evidence sufficient for transport admission. No candidate promotion, no retuning, no threshold change, and no change to the permanent P5-N2 v1 INCONCLUSIVE status. Counterfactual candidate-level FAIL_VALIDATION outcomes under this sensitivity chemistry (sgb-screen-09 under n2_n_rot_off.toml; sgb-screen-09 under n2_n_rot_off_di_lower.toml; sgb-screen-06 under n2_n_rot_off_nel_wang.toml; sgb-screen-09 under n2_n_rot_off_nel_wang.toml; sgb-screen-09 under n2_n_rot_off_di_lower_nel_wang.toml) increase caution around the affected candidates but do not validate any other candidate.",
+   "escalations": {
+    "n2_n_rot_off_di_lower.toml": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_di_lower_scores_provenance.json",
+     "scores_provenance_sha256": "36db0cf05df34011f85407ccfd8c04f03651e99d544a951e4b6c1265c812cee9"
+    },
+    "n2_n_rot_off_di_lower_nel_wang.toml": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_di_lower_nel_wang_scores_provenance.json",
+     "scores_provenance_sha256": "5a69025c270cb643e4e6a58c2525e6fd3dc710c13e62dffcbb14a5ca92e26142"
+    },
+    "n2_n_rot_off_nel_wang.toml": {
+     "scores_provenance_file": "validation/p5_n2_campaign_v1_escalation_n2_n_rot_off_nel_wang_scores_provenance.json",
+     "scores_provenance_sha256": "ab864d3efd97203cc5a5eb83fb7e229728a92dd8f164e570079919d9399ec635"
+    }
+   },
+   "first_stage": {
+    "scores_provenance_file": "validation/p5_n2_campaign_v1_staged_n2_n_rot_off_scores_provenance.json",
+    "scores_provenance_sha256": "d23567cf791eaffb83804a1c2f8bcc35fc9f9556314982478bed87579602d55d"
+   },
+   "trigger_fired": true
+  }
+ }
+}

@@ -1114,9 +1114,19 @@
    "addenda": [
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json",
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
-    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json"
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json"
    ],
    "immutability": "the disposition file and each addendum are never edited after commit (consumers pin them by sha256); later owner amendments are new addendum files"
+  }
+ ],
+ "owner_records": [
+  {
+   "id": "o4_dispositions_p5_n2_campaign_v1",
+   "file": "hallthruster_bridge/ensemble/o4_dispositions_p5_n2_campaign_v1.json",
+   "sha256": "dbef0df003c7db6e78eb394a6237c0f259c2b3952c640e0bf58afbdf33538df4",
+   "decided_utc": "2026-09-27",
+   "note": "owner O4 dispositions (all five sensitivity families); immutable; cleared_for_admission empty by explicit decision"
   }
  ]
 }
