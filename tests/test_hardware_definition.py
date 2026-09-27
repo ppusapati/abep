@@ -380,3 +380,64 @@ def test_owner_decision_pins(reg):
             pytest.skip(f"{r['path']} not in this checkout")
         assert _sha(path) == r["sha256"], ref
     assert reg["references"]["SRC-OD-PIVOT"]["sha256"].startswith("5a5adb81")
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Owner addendum A3 (docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json): bounded W3
+# integration review against N1 (AO register v3), N3 (magnet/coil) and W4 (instrumentation v1-r2)
+A3_PROVISIONS = {
+    "replaceable serialized anode / gas distributor", "4-wire anode-resistance leads",
+    "replaceable / fiducial exit wall rings", "witness-coupon locations", "near-cathode RGA port",
+    "cathode temperature provision", "coil hot-spot thermocouples", "4-wire winding-temperature measurement",
+    "B(z) access", "AO-facing magnetic-material coupons",
+}
+
+
+def test_a3_integration_review(reg):
+    rev = reg["w3_integration_review"]
+    hw = {r["id"]: r for r in reg["requirements"]}
+    provs = {p["provision"]: p for p in rev["provisions"]}
+    assert set(provs) == A3_PROVISIONS
+    for name, p in provs.items():
+        assert p["status"] in {"PRESENT", "ADDED"}, name
+        assert p["hw_requirement_ids"] and all(h in hw for h in p["hw_requirement_ids"]), name
+        assert any(t.startswith(("AOL-", "MCQ-")) for t in p["traces_to"]), name
+        assert any(t.startswith("INS-") for t in p["traces_to"]), name
+        if p["status"] == "ADDED":
+            a = p["added"]
+            assert a["id"] in hw and a["rationale"] and a["verification"], name
+    # the cathode temperature provision follows A3: tube thermocouple mandatory, pyrometer where possible, labelling rule
+    assert provs["cathode temperature provision"]["status"] == "ADDED"
+    c9 = hw["HW-C1-09"]
+    assert "MANDATORY" in c9["text"] and "pyrometer" in c9["text"] and "never as emitter" in c9["text"]
+    assert "unmeasured" in c9["text"] and c9["identical_across_arms"] and not c9["values"]
+    assert "HW-C1-09" in hw["HW-C1-07"]["text"] and "choice W4's" not in hw["HW-C1-07"]["text"]
+    cx04 = [r for r in reg["c5_integration"]["rows"] if r["source_id"] == "AOL-CX-04"][0]
+    assert "HW-C1-09" in cx04["hw_requirements"]
+
+
+def test_a3_review_traces_exist_in_sources(reg):
+    """INS / AOL / MCQ ids named by the review exist in the pinned merged files (skipped when absent)."""
+    ids = set()
+    for p in reg["w3_integration_review"]["provisions"]:
+        ids |= set(p["traces_to"])
+    srcs = {"SRC-INS-V1R2": "INS-", "SRC-AOL-V3": "AOL-", "SRC-MCQ": "MCQ-"}
+    for ref, prefix in srcs.items():
+        r = reg["references"][ref]
+        path = os.path.join(ROOT, r["path"])
+        if not os.path.exists(path):
+            pytest.skip(f"{r['path']} not in this checkout")
+        assert _sha(path) == r["sha256"] == reg["w3_integration_review"]["reviewed_against"][ref], ref
+        text = open(path, encoding="utf-8").read()
+        for i in sorted(x for x in ids if x.startswith(prefix)):
+            assert f'"{i}"' in text, (ref, i)
+
+
+def test_a3_owner_decision_pin(reg):
+    r = reg["references"]["SRC-OD-A3"]
+    path = os.path.join(ROOT, r["path"])
+    if not os.path.exists(path):
+        pytest.skip(f"{r['path']} not in this checkout")
+    assert _sha(path) == r["sha256"] == reg["w3_integration_review"]["reviewed_against"]["SRC-OD-A3"]
+    od = _load(path)
+    assert "W3_integration_review" in od["next_execution"]
