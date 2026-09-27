@@ -388,7 +388,7 @@
         {
           "path": "docs/experiments/hardware/hardware_requirements_v1.json",
           "what": "W3 hardware requirements register (planned; DRAFT_PENDING_OWNER)",
-          "sha256": "3ce28ce49017bd0e93bfac3a83073e2219b5134d84736eb630acc73b5f0c1268"
+          "sha256": "552f4ca0e3c84f8f10f03d103d10b169e360e9c28f2a7a4d44e65c1d1b915d04"
         },
         {
           "path": "docs/architecture_comparison/hall_reference/hall_reference_v1.json",
@@ -515,7 +515,7 @@
         {
           "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
           "what": "W4 instrumentation definition and uncertainty budget (planned; design analysis, DRAFT_PENDING_OWNER; never a demonstration)",
-          "sha256": "8c428258b9da56c7738ce9d6d0c7c3878675ee95a6ed1245d8235c1e06093eed"
+          "sha256": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f"
         }
       ],
       "precursors_absent": []
@@ -557,7 +557,7 @@
         {
           "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
           "what": "W4 calibration procedures (planned; DRAFT_PENDING_OWNER)",
-          "sha256": "8c428258b9da56c7738ce9d6d0c7c3878675ee95a6ed1245d8235c1e06093eed"
+          "sha256": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f"
         }
       ],
       "precursors_absent": []
@@ -688,7 +688,7 @@
         {
           "path": "docs/experiments/hardware/hardware_requirements_v1.json",
           "what": "W3 hardware requirements (planned; DRAFT_PENDING_OWNER)",
-          "sha256": "3ce28ce49017bd0e93bfac3a83073e2219b5134d84736eb630acc73b5f0c1268"
+          "sha256": "552f4ca0e3c84f8f10f03d103d10b169e360e9c28f2a7a4d44e65c1d1b915d04"
         },
         {
           "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
