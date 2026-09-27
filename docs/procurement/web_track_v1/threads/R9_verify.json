@@ -1,0 +1,617 @@
+{
+ "generated": "2026-09-27",
+ "repo_commit": "c1ce3a5",
+ "package": "docs/procurement/web_track_v1/",
+ "method": "Primary pages/PDFs fetched with curl (TLS unchanged, no captcha/paywall bypass, no contact); text extracted locally; quotes are verbatim from extracted text. Search-engine summaries used only to locate URLs.",
+ "arithmetic_script": "r9_arith.py",
+ "checked": [
+  {
+   "thread": "R6",
+   "item": "Moog XFC mass",
+   "package_value": "< 0.974 kg (package summary '< 0.97 kg (verify)')",
+   "status": "CONFIRMED",
+   "verified_value": "< 974 g (< 2.2 lbm)",
+   "quote": "Mass < 2.2 lbm (<974 g)",
+   "locator": "product page, spec table 'Mass'",
+   "source": "https://www.moog.com/products/propulsion/space-propulsion/spacecraft-propulsion/systems-and-subsystems/xenon-flow-controller.html",
+   "access_date": "2026-09-27",
+   "note": "HTML read directly (curl), not a fetch summary."
+  },
+  {
+   "thread": "R6",
+   "item": "Moog XFC flow range / inlet pressure / heritage",
+   "package_value": "3-23 mg/s Xe; 2.4-2.8 bar regulated (186 bar capable); AEHF, Psyche, PPE",
+   "status": "CONFIRMED",
+   "verified_value": "3-23 mg/s GXe; 2.4-2.8 bar operating, MEOP 3.45 bar, 186 bar capable; heritage AEHF, Psyche, PPE, D2S2",
+   "quote": "Operating Pressure / MEOP 2.4-2.8 / 3.45 bar (35-40 / 50 psia); 186 bar (2700 psia) capable ... Flow 3– 23 mg/sec GXe. Flow Split Ratio C:A = 5% (LV closed) or 9% (LV open)",
+   "locator": "product page spec table",
+   "source": "same as above",
+   "access_date": "2026-09-27",
+   "note": "Page adds heritage 'D2S2' and a cathode:anode split of 5 % / 9 % - a primary supplier datum for the cathode-fraction item."
+  },
+  {
+   "thread": "R6",
+   "item": "MaSMi LUC insert material (package: 'MaSMi LUC (LaB6...)'; 'lowest open LaB6 point is MaSMi 0.20 mg/s')",
+   "package_value": "LaB6",
+   "status": "CORRECTED",
+   "verified_value": "Detailed description: LUC insert is BaO-W (OD 4 mm, ID 2 mm, L 7.25 mm); the heated-start 6 min / 0.20 mg/s procedure followed 'conditioning of the BaO-W insert'. LaB6 appears only in the life-model section (FIG. 14, Lafferty evaporation) - the patent is internally inconsistent.",
+   "quote": "At the core of MaSMi's LUC is a barium oxide impregnated tungsten (BaO—W) cathode insert with an outer diameter of 4 mm, an inner diameter of 2 mm, and a length of 7.25 mm. / ...following conditioning of the BaO—W insert. The heater was supplied with 5.5 A ... for 6 minutes. During the heating process, a 0.20 mg/s xenon flow rate was established",
+   "locator": "US 10,919,649 B2 detailed description (LUC paragraph; cathode I-V paragraph); FIG. 14 caption for LaB6",
+   "source": "https://patents.google.com/patent/US10919649B2/en (HTML sha256 f41c615c...)",
+   "access_date": "2026-09-27",
+   "note": "The 0.20 mg/s / 2 A point is therefore NOT open evidence for LaB6; R6 item 'mdot_cathode' and the package §1 Xe bullet must say BaO-W (or 'insert ambiguous')."
+  },
+  {
+   "thread": "R6",
+   "item": "MaSMi numbers: 0.20 mg/s normal operation, 2 A, 2-7 % flow fraction, 102 heaterless ignitions, 2.0-3.9 mg/s in 0.98 mg/s steps",
+   "package_value": "as package",
+   "status": "CONFIRMED",
+   "verified_value": "as package",
+   "quote": "reduction of propellant flow to 0.20 mg/s to demonstrate normal cathode operation / cathode flow fraction ... of between 2-7% / 102 heaterless ignitions / 2.0-3.9 mg/s in increments of 0.98 mg/s",
+   "locator": "US 10,919,649 B2 detailed description",
+   "source": "https://patents.google.com/patent/US10919649B2/en",
+   "access_date": "2026-09-27",
+   "note": ""
+  },
+  {
+   "thread": "R6",
+   "item": "BHT-1500 5-10 % cathode fraction ('verify locator')",
+   "package_value": "5-10 %",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "not in US 10,919,649 (patent mentions BHT-200 only)",
+   "quote": "-",
+   "locator": "patent full text searched for 'BHT', '5-10'",
+   "source": "https://patents.google.com/patent/US10919649B2/en",
+   "access_date": "2026-09-27",
+   "note": "Locator attributing it to the patent is wrong; Moog XFC 5 %/9 % split is a sourced alternative."
+  },
+  {
+   "thread": "R6",
+   "item": "Xe density at 150 bar (NIST)",
+   "package_value": "2.0455/1.9695/1.6735 g/cm3 at 293.15/300/323.15 K; 300 K 120-190 bar series",
+   "status": "CONFIRMED",
+   "verified_value": "identical (1.8580 @120, 1.9695 @150, 2.0725 @190 bar, 300 K)",
+   "quote": "293.15 150.00 2.0455 / 300.00 150.00 1.9695 / 323.15 150.00 1.6735",
+   "locator": "NIST Webbook fluid isotherm tables, Xe C7440633",
+   "source": "https://webbook.nist.gov/cgi/fluid.cgi?ID=C7440633&Type=IsoTherm ...",
+   "access_date": "2026-09-27",
+   "note": ""
+  },
+  {
+   "thread": "R3",
+   "item": "Schupp KD500 rating",
+   "package_value": "-90 to +500 C (2500 h min); 800 C short-term (240 h); 150 V AC (212 V DC); 5-20 um; Cu/Ni 27 %; bend 5x OD; outgassing 'None'",
+   "status": "CONFIRMED",
+   "verified_value": "as package",
+   "quote": "Heat resistance: Permanent -90°C to +500°C (2500 hours min.) Short-term up to 800°C (tested for 10 days or 240 hours) and peaks up to 1000°C. Electrical values: Test voltage 150V AC, corresponding to 212V DC",
+   "locator": "product page 'Heat resistance'/'Electrical values'; also product PDF KD500-Ceramic-Wires.pdf (sha256 5bd18a3f...)",
+   "source": "https://schupp.ch/en/p/kd500-winding-wires-with-ceramic-insulation-500c/ ; https://schupp.ch/wp-content/uploads/2026/09/KD500-Ceramic-Wires.pdf",
+   "access_date": "2026-09-27",
+   "note": "Add: 'Nickel migration: At temperatures >315°C ... considerable with wire diameters <0.15 mm (AWG 34) after an operating time of 48 hours' (resistance rise) and test-wire bend radius '= 20 x diameter' vs table 'Bending radius: 5x outer diameter'. Values now read from page text + PDF (hash available)."
+  },
+  {
+   "thread": "R4",
+   "item": "Lake Shore F71 DC accuracy",
+   "package_value": "±0.15 % rdg (350 mT-3.5 T); 35 mT 'not read (verify)'",
+   "status": "CONFIRMED",
+   "verified_value": "single axis standard probe: ±0.15 % rdg on 3.5 T, 350 mT and 35 mT ranges (±0.2 % on 35 T); 3-axis MAGNITUDE ±0.30 % rdg (35 mT-3.5 T)",
+   "quote": "35 mT (350 G) range ±0.15% of rdg ... 3-axis magnitude accuracy ... 35 mT (350 G) standard range ±0.30% of rdg",
+   "locator": "F71/F41 specification page, 'DC field measurement performance'",
+   "source": "https://www.lakeshore.com/products/categories/specification/magnetic-products/gaussmeters-teslameters/f71-and-f41-teslameters",
+   "access_date": "2026-09-27",
+   "note": "Use ±0.30 % for |B| from a 3-axis probe."
+  },
+  {
+   "thread": "R4",
+   "item": "Lake Shore F71 temperature coefficient",
+   "package_value": "±0.002 % rdg/°C beyond ±5 °C of cal temp",
+   "status": "CONFIRMED",
+   "verified_value": "as package",
+   "quote": "Temperature coefficient of ±0.002% of rdg/°C beyond ±5 °C of instrument calibration temperature applies to all accuracy specifications.",
+   "locator": "spec page footnote",
+   "source": "same",
+   "access_date": "2026-09-27",
+   "note": ""
+  },
+  {
+   "thread": "R4",
+   "item": "Lake Shore F71 axis orthogonality",
+   "package_value": "< 0.2°",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "not on the instrument spec page (probably on probe spec page, not fetched)",
+   "quote": "-",
+   "locator": "F71 spec page searched",
+   "source": "same",
+   "access_date": "2026-09-27",
+   "note": ""
+  },
+  {
+   "thread": "R4",
+   "item": "MKS 627F accuracy",
+   "package_value": "0.12 % of reading",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "-",
+   "quote": "-",
+   "locator": "datasheet 627F-DS.pdf",
+   "source": "https://www.mks.com/mam/celum/celum_assets/resources/627F-DS.pdf",
+   "access_date": "2026-09-27",
+   "note": "HTTP 301 -> api.p1.mks.com returns 403 / iframe bot page; not bypassed."
+  },
+  {
+   "thread": "R4",
+   "item": "Xu & Walker 2009 thrust-stand uncertainty",
+   "package_value": "0.6 % up to 230 mN (3.4 kW Hall); cal mass uncertainty 0.002 g",
+   "status": "CONFIRMED",
+   "verified_value": "±0.6 %; 3.4 kW Hall up to 230 mN; range 1 mN-5 N; mass up to 250 kg",
+   "quote": "The thrust of a 3.4 kW Hall thruster is measured for thrust levels up to 230 mN. The uncertainty of the thrust measurements in this experiment is +/-0.6%, determined by examination of the hysteresis, drift of the zero offset and calibration slope variation.",
+   "locator": "abstract, Rev. Sci. Instrum. 80, 055103 (2009), doi:10.1063/1.3125626, PMID 19485530",
+   "source": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=19485530&rettype=abstract",
+   "access_date": "2026-09-27",
+   "note": "0.002 g calibration-mass uncertainty STILL_UNVERIFIED (full text: HPEPL PDF 404, AIP paywalled)."
+  },
+  {
+   "thread": "R4",
+   "item": "IEC 60584-1 class 1 K/N",
+   "package_value": "±1.5 °C or ±0.004|t| (-40 to 1000 °C)",
+   "status": "CONFIRMED",
+   "verified_value": "K/N class 1: -40...+1000 °C, ±1.5 °C or 0.0040·|t| (greater applies); class 2 -40...+1200 °C ±2.5 °C or 0.0075|t|; ASTM E230 Special K/N 0...1260 °C ±1.1 °C or ±0.4 %, Standard ±2.2 °C or ±0.75 %",
+   "quote": "K NiCr-NiAl (NiCr-Ni) IEC 60584-1 1 -40 ... +1000 °C ±1.5 °C or 0.0040 ∙ | t |",
+   "locator": "WIKA data sheet IN 00.23 tolerance table (reproduces IEC 60584-1 / ASTM E230); IEC Table 12 itself is not in the open iTeh sample",
+   "source": "https://www.wika.com/media/Technical-information/English/ds_in0023_en_co.pdf (sha256 677b5fc4...)",
+   "access_date": "2026-09-27",
+   "note": "Secondary (manufacturer) confirmation; primary standard text is paywalled."
+  },
+  {
+   "thread": "R4",
+   "item": "R/S usable range",
+   "package_value": "to ~1600 °C in oxidizing",
+   "status": "CONFIRMED",
+   "verified_value": "R and S: continuous use oxidising or inert up to 1600 °C; 'Beware of embrittlement due to contamination'",
+   "quote": "Type S thermocouples are suitable for continuous use in oxidizing or inert atmospheres at temperatures up to 1600 °C.",
+   "locator": "WIKA IN 00.23, type descriptions",
+   "source": "same WIKA PDF",
+   "access_date": "2026-09-27",
+   "note": ""
+  },
+  {
+   "thread": "R4",
+   "item": "W-Re vacuum/inert only; embrittles with O2",
+   "package_value": "memory",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "-",
+   "quote": "-",
+   "locator": "not found in WIKA IN 00.23",
+   "source": "-",
+   "access_date": "2026-09-27",
+   "note": "not located in an open primary this pass"
+  },
+  {
+   "thread": "R4",
+   "item": "two-colour pyrometer emissivity/window handling",
+   "package_value": "reduces grey-body emissivity and window-attenuation sensitivity",
+   "status": "CONFIRMED",
+   "verified_value": "qualitatively, with the condition that attenuation/emissivity be equal at both wavelengths",
+   "quote": "a ratio pyrometer will only cancel out those losses if the attenuation is equal at both wavelengths ... if the transmittance of the path differs with wavelength, like non-grey attenuation, it effectively alters the measured emissivity ratio and introduces error",
+   "locator": "Optris knowledge library, ratio method article",
+   "source": "https://optris.com/us/knowledge-library/ratio-dual-two-colour-pyrometer/ (sha256 a09e92da...)",
+   "access_date": "2026-09-27",
+   "note": "Add the non-grey caveat: viewport deposition in a cathode/Hall plume is likely non-grey."
+  },
+  {
+   "thread": "R4",
+   "item": "SRS RGA200 specs",
+   "package_value": "1-200 amu; MDPP 5e-11 (FC)/5e-14 Torr (EM); max 1e-4 Torr FC; <0.5 amu @10 %",
+   "status": "CONFIRMED",
+   "verified_value": "as package",
+   "quote": "RGA200 1 to 200 amu ... Resolution Better than 0.5 amu @ 10 % peak height ... Minimum detectable partial pressure 5 × 10–11 Torr (FC), 5 × 10–14 Torr (EM) ... Operating range 10–4 Torr to UHV (FC) 10–6 Torr to UHV (EM)",
+   "locator": "SRS RGA catalog, specifications table",
+   "source": "https://www.thinksrs.com/downloads/pdfs/catalog/RGAc.pdf (sha256 c7bd8f93...)",
+   "access_date": "2026-09-27",
+   "note": "EM operating range is 1e-6 Torr."
+  },
+  {
+   "thread": "R4",
+   "item": "Bird 5010B accuracy / frequency",
+   "package_value": "5 % (0.2 dB); ~2 MHz upward",
+   "status": "CONFIRMED",
+   "verified_value": "±5 % of reading (15-35 °C), ±7 % (-10-50 °C); peak ±8 % FS; 2 MHz-2.7 GHz element dependent",
+   "quote": "Accuracy True Average Power , ± 5% of reading (15 °C to 35°C), ± 7% of reading (-10 °C to 50°C), Peak Power, ±8% of full scale",
+   "locator": "Bird 5010B/5014 specification sheet",
+   "source": "https://testequipment.center/Product_Documents/Bird-5010B-Specifications-95309.pdf (distributor-hosted Bird sheet, sha256 61dacc8d...)",
+   "access_date": "2026-09-27",
+   "note": "Hosted by a distributor; Bird-origin sheet."
+  },
+  {
+   "thread": "R4",
+   "item": "R&S NRT-Z14 frequency",
+   "package_value": "25 MHz-1 GHz",
+   "status": "CONFIRMED",
+   "verified_value": "25 MHz to 1 GHz",
+   "quote": "25 MHz to 1 GHz (R&S NRT-Z14)",
+   "locator": "NRT-Z14 operating manual 1171.6121.35",
+   "source": "https://www.farnell.com/datasheets/2362740.pdf (sha256 ae0373c3...)",
+   "access_date": "2026-09-27",
+   "note": ""
+  },
+  {
+   "thread": "R4",
+   "item": "R&S NRT-Z14 power range and ~6 % (k=2)",
+   "package_value": "6 mW-120 W avg, 300 W peak; ~6 %",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "manual gives 120 W nominal and 'max. 300 W average forward' overrange; 6 % k=2 not in manual (datasheet not read)",
+   "quote": "-",
+   "locator": "manual searched",
+   "source": "same",
+   "access_date": "2026-09-27",
+   "note": ""
+  },
+  {
+   "thread": "R4",
+   "item": "LEM IT 60-S principle",
+   "package_value": "closed-loop fluxgate",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "-",
+   "quote": "-",
+   "locator": "datasheet URL returns HTML page without specs",
+   "source": "https://www.lem.com/sites/default/files/products_datasheets/it_60-s_ultrastab.pdf",
+   "access_date": "2026-09-27",
+   "note": ""
+  },
+  {
+   "thread": "R4",
+   "item": "FCRI accreditation",
+   "package_value": "NABL flow labs water/oil/air; masters traceable to NPL",
+   "status": "CONFIRMED",
+   "verified_value": "as package",
+   "quote": "FCRI has full-fledged NABL accredited laboratories for the calibration of flow meters in water , oil and air media ... All our master instruments are traceable to National Physical Laboratory at New Delhi.",
+   "locator": "FCRI calibration page",
+   "source": "https://www.fcriindia.com/calibration/",
+   "access_date": "2026-09-27",
+   "note": "sccm-level/Xe scope still not found."
+  },
+  {
+   "thread": "R5",
+   "item": "CSIR-NPL CFCT",
+   "package_value": "ISO/IEC 17025:2017, CIPM-MRA, weights 1 mg-2000 kg",
+   "status": "CORRECTED",
+   "verified_value": "17025:2017 and CIPM-MRA confirmed; the '1 mg - 2000 kg' range is NOT on the page",
+   "quote": "India is also a signatory of International Bureau of Weights & Measures (BIPM) and Mutual Recognition Arrangement (CIPM-MRA) ... Quality System as per ISO/IEC 17025:2017 and ISO 17034:2016",
+   "locator": "CFCT page",
+   "source": "https://www.nplindia.org/index.php/commercial-services/calibration-testing/",
+   "access_date": "2026-09-27",
+   "note": "Mass range: STILL_UNVERIFIED (check KCDB)."
+  },
+  {
+   "thread": "R5",
+   "item": "ESA EPL pumping speed",
+   "package_value": "modular cryopumping 200,000 l/s continuous Xe; 1e-5 to 1e-9 mbar",
+   "status": "CORRECTED",
+   "verified_value": "official lab page: 7 chambers, per-chamber pumping speeds 5,000 (N2), 23,600 (Xe), 53,400 (Xe), 80,000 (Xe), 260 (N2), 500 (N2), 25,000 (Xe) L/s; largest Ø2 x 5 m (Corona); pressure range 1e-5 to 1e-9 mbar confirmed",
+   "quote": "Pumping Speed [L/s] 5,000 (N2) 23,600 (Xe) 53,400 (Xe) 80,000 (Xe) 260 (N2) 500 (N2) 25,000 (Xe) / dedicated pumping system to reach pressure range from 10-5 mbar down to 10-9 mbar",
+   "locator": "EPL page, 'Instruments & technical parameters' chamber table",
+   "source": "https://technology.esa.int/lab/tec-m-epl-esa-propulsion-laboratory",
+   "access_date": "2026-09-27",
+   "note": "200,000 l/s not on official page. Max 80,000 L/s Xe per chamber; even with sqrt(M) scaling to N2 (x2.17, if the cryopanels pump N2 at all) ~174,000 L/s, below ~214,000 L/s N2 screening. Page also lists thrust balances incl. Mettler-Toledo XP2004S load cell '2.3 kg = 23N ±10 µN 0.1 mg ≡ 1 µN' and 'ICL Thrust Balance 1- 600 mN ... ±0.1 mN' - relevant to the '~60 µN' thrust-stand gap claim."
+  },
+  {
+   "thread": "R5",
+   "item": "UM LVTF",
+   "package_value": "6 m x 9 m; 13 cryopumps; 500,000 l/s Xe operating (600,000 cold); earlier >100,000 l/s N2",
+   "status": "CORRECTED",
+   "verified_value": "13 PHPK TM1200i + 6 PEPL cryopumps; 500,000 l/s Xe operating / 600,000 cold flow; Kr 600,000/660,000; previous ~190,000 l/s Xe (7 TM1200i). Only the 13 TM1200i pump N2/O2.",
+   "quote": "The upgraded facility has thirteen PHPK-TM1200i and six PEPL-developed-cryopumps ... measured effective pumping speed of 500,000 l/s for xenon for operating high power thrusters and 600,000 l/s for xenon cold flow / The PEPL cryopumps are not designed to reach temperatures low enough to cryopump nitrogen, oxygen ... only the thirteen TM1200i cryopumps will be relevant for such propellants.",
+   "locator": "IEPC-2019-653 abstract and Sec. II.C",
+   "source": "https://pepl.engin.umich.edu/pdf/IEPC-2019-653.pdf (sha256 f866e956...)",
+   "access_date": "2026-09-27",
+   "note": "'>100,000 l/s N2' and '6 m x 9 m' not checked in this PDF (STILL_UNVERIFIED); N2/O2 speed is NOT 500 kl/s."
+  },
+  {
+   "thread": "R5",
+   "item": "SITAEL IV4/IV10 figures (tools page)",
+   "package_value": "IV4 2 m x 4.2 m, 7 kW, balance 1-200 mN; IV10 ~3e5 l/s",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "-",
+   "quote": "-",
+   "locator": "-",
+   "source": "https://www.sitael.com/electric-propulsion/tools-services/",
+   "access_date": "2026-09-27",
+   "note": "captcha; not bypassed"
+  },
+  {
+   "thread": "R5",
+   "item": "UM APTF",
+   "package_value": "news page",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "-",
+   "quote": "-",
+   "locator": "-",
+   "source": "https://aero.engin.umich.edu/2025/11/17/...",
+   "access_date": "2026-09-27",
+   "note": "403 previously; not retried"
+  },
+  {
+   "thread": "R5",
+   "item": "CMTI NABL / roughness",
+   "package_value": "NABL dimensional; CC-2153",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "-",
+   "quote": "-",
+   "locator": "-",
+   "source": "https://cmti.res.in/precision-metrology-calibration/",
+   "access_date": "2026-09-27",
+   "note": "TLS certificate verification failure; TLS not altered"
+  },
+  {
+   "thread": "R2",
+   "item": "RFP close date",
+   "package_value": "05 Oct 2026 (repo) vs 20 Oct 2026 17:00 (search summary)",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "-",
+   "quote": "-",
+   "locator": "-",
+   "source": "tdf.drdo.gov.in (connection reset x2); x.com/DrdoTdf (login-walled; search summary again says 20-Oct-2026 1700 h, pre-bid 24-Sep-2026); defproc captcha not attempted; both news articles (idrw, indiandefensenews) contain no date",
+   "access_date": "2026-09-27",
+   "note": "No official open page reachable."
+  },
+  {
+   "thread": "R2",
+   "item": "RFP number",
+   "package_value": "DTDF/06/13516/DSP/ABEP/XI/LM/01 (news) vs X/L/M (repo)",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "news text re-confirmed 'XI/LM'; RFP cover not accessible",
+   "quote": "The RPF, bearing the reference number, DTDF/06/13516/DSP/ABEP/XI/LM/01",
+   "locator": "idrw.org article",
+   "source": "https://idrw.org/drdo-seeks-air-breathing-propulsion-for-vleo-satellites/",
+   "access_date": "2026-09-27",
+   "note": "Secondary only."
+  },
+  {
+   "thread": "R1",
+   "item": "Li 2015 abstract values (500 mm, 56.47-57.85 %, 41.67-42.60 %, stage roles)",
+   "package_value": "search excerpts",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "bibliography confirmed: Vacuum 120 (2015) 89-95; abstract elided by publisher in OpenAlex and Semantic Scholar; ScienceDirect not accessed",
+   "quote": "-",
+   "locator": "-",
+   "source": "https://api.openalex.org/works/doi:10.1016/j.vacuum.2015.06.011",
+   "access_date": "2026-09-27",
+   "note": ""
+  },
+  {
+   "thread": "R1",
+   "item": "Romano 2021 volume/pages",
+   "package_value": "Acta Astronautica 187 (2021) 225-235 (verify)",
+   "status": "CONFIRMED",
+   "verified_value": "187, 225-235",
+   "quote": "biblio volume 187, first_page 225, last_page 235",
+   "locator": "OpenAlex record",
+   "source": "https://api.openalex.org/works/doi:10.1016/j.actaastro.2021.06.033",
+   "access_date": "2026-09-27",
+   "note": ""
+  },
+  {
+   "thread": "R1",
+   "item": "Moon 2025 published version",
+   "package_value": "Aerosp. Sci. Technol. (2026) doi:10.1016/j.ast.2026.112138 (verify)",
+   "status": "CONFIRMED",
+   "verified_value": "AST vol 176, art. 112138 (2026); Moon, Ko, Yi, Jun",
+   "quote": "-",
+   "locator": "OpenAlex record",
+   "source": "https://api.openalex.org/works/doi:10.1016/j.ast.2026.112138",
+   "access_date": "2026-09-27",
+   "note": ""
+  },
+  {
+   "thread": "R1",
+   "item": "TAES2023 authors",
+   "package_value": "not retrieved",
+   "status": "CONFIRMED",
+   "verified_value": "Zuo, Xu, Huang, Li, Peng; IEEE TAES 59(5) 6863-6877 (2023)",
+   "quote": "-",
+   "locator": "OpenAlex record",
+   "source": "https://api.openalex.org/works/doi:10.1109/TAES.2023.3282611",
+   "access_date": "2026-09-27",
+   "note": ""
+  },
+  {
+   "thread": "R1",
+   "item": "AIP2016 authors ('possibly same group' as Li 2015)",
+   "package_value": "possibly Lanzhou group",
+   "status": "CORRECTED",
+   "verified_value": "Binder, Boldini, Romano, Herdrich, Fasoulas (IRS Stuttgart group); AIP Conf. Proc. 1786, 190011 (2016)",
+   "quote": "-",
+   "locator": "OpenAlex record",
+   "source": "https://api.openalex.org/works/doi:10.1063/1.4967689",
+   "access_date": "2026-09-27",
+   "note": "Not the Lanzhou group."
+  },
+  {
+   "thread": "R1",
+   "item": "US 12,286,943 bibliographic data",
+   "package_value": "title only",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "-",
+   "quote": "-",
+   "locator": "-",
+   "source": "USPTO ppubs 403 earlier; not retried",
+   "access_date": "2026-09-27",
+   "note": ""
+  },
+  {
+   "thread": "R3",
+   "item": "other R3 'verify' items: ARMCO Curie ~770 C; 430F sulfide outgassing; Inconel/Ni-alloy oxidation and magnetism; Mo volatile oxide; Ta/Re LaB6 compatibility; Ni gaskets ferromagnetic; Kovar sleeve; Combat M vs M26 conductivity conflict; CoorsTek alumina; Kapton",
+   "package_value": "as flagged",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "-",
+   "quote": "-",
+   "locator": "-",
+   "source": "-",
+   "access_date": "2026-09-27",
+   "note": "not attempted this pass (token budget); Saint-Gobain/CoorsTek previously 403/TLS/503"
+  },
+  {
+   "thread": "R4",
+   "item": "other R4 memory items: molbloc/DryCal low-flow specs; Hiden/Inficon RGA; ASTM E220 citation; spinning-rotor gauge route; O2 filament effect",
+   "package_value": "memory",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "-",
+   "quote": "-",
+   "locator": "-",
+   "source": "-",
+   "access_date": "2026-09-27",
+   "note": "not attempted"
+  },
+  {
+   "thread": "R5",
+   "item": "other R5 snippet items: RAM-EP phys.org, ABEP review, ULVAC cryo O2, ASTM E1508 scope, NABL CC-2153/CC-2704",
+   "package_value": "snippet",
+   "status": "STILL_UNVERIFIED",
+   "verified_value": "-",
+   "quote": "-",
+   "locator": "-",
+   "source": "-",
+   "access_date": "2026-09-27",
+   "note": "not attempted"
+  }
+ ],
+ "arithmetic_checks": [
+  {
+   "check": "sccm->mg/s factors (MKS 0 C densities Xe 5.858, N2 1.250, O2 1.427 g/L)",
+   "package": "Xe 0.097633, N2 0.020833, O2 0.023783 mg/s per sccm",
+   "recomputed": "0.097633 / 0.020833 / 0.023783",
+   "status": "OK"
+  },
+  {
+   "check": "R4 conversion table (9 rows)",
+   "package": "0.512/1.024/1.536/2.048/8.194/1.418/150.836/58.663/102.424 sccm",
+   "recomputed": "all within 0.03 %",
+   "status": "OK"
+  },
+  {
+   "check": "repo M_N2=28.0 ideal basis at max",
+   "package": "150.93 sccm, diff <0.1 %",
+   "recomputed": "150.927",
+   "status": "OK"
+  },
+  {
+   "check": "Alicat 25 C factor",
+   "package": "1.0915",
+   "recomputed": "1.09152",
+   "status": "OK"
+  },
+  {
+   "check": "Alicat bound at 0.10 mg/s on 2 sccm FS",
+   "package": "±(0.8+0.39)=±1.2 %",
+   "recomputed": "1.19 % on 0 C basis; on Alicat 25 C basis 0.10 mg/s = 1.118 sccm -> 0.8+0.36 = 1.16 %",
+   "status": "OK (note basis)"
+  },
+  {
+   "check": "Mooney 2-6 sccm in mg/s (R6)",
+   "package": "0.197-0.590 mg/s",
+   "recomputed": "0.195-0.586 mg/s (MKS 0 C basis)",
+   "status": "MINOR DISCREPANCY (+0.7-0.9 %; basis not stated)"
+  },
+  {
+   "check": "0.10 mg/s Xe in sccm; 1.5 A/sccm in A per mg/s",
+   "package": "~1.02 sccm; <=~15 A per mg/s",
+   "recomputed": "1.024 sccm; 15.36 A per mg/s",
+   "status": "OK"
+  },
+  {
+   "check": "S_eff per mg/s at 1e-5 / 5e-5 Torr, 300 K",
+   "package": "N2 66,818 / 13,364; O2 58,466 / 11,693 L/s",
+   "recomputed": "66,818 / 13,364; 58,466 / 11,693 (M=28.0/32.0, 300 K)",
+   "status": "OK"
+  },
+  {
+   "check": "3.2 mg/s N2 at 1e-5 Torr",
+   "package": "~214,000 L/s (R5); '208-214 k' (package §1)",
+   "recomputed": "213,716 L/s at 300 K (M=28.0134); 208,836 at 293.15 K; 42,764 at 5e-5 Torr",
+   "status": "OK - but the 208 k lower end is only the 293 K case; the package does not state the temperature spread"
+  },
+  {
+   "check": "2.5e-5 mbar in Torr",
+   "package": "~1.9e-5 Torr",
+   "recomputed": "1.875e-5",
+   "status": "OK"
+  },
+  {
+   "check": "25 mN as mass",
+   "package": "2.55 g",
+   "recomputed": "2.549 g (g0=9.80665); 12 mN = 1.224 g; 60 uN = 6.1 mg",
+   "status": "OK"
+  },
+  {
+   "check": "0.5 % of 12 mN",
+   "package": "~60 uN",
+   "recomputed": "60 uN",
+   "status": "OK"
+  },
+  {
+   "check": "per-start cathode Xe",
+   "package": "72 mg / 36 mg; heaterless 0.16-0.41 g (0.14 g)",
+   "recomputed": "72.0 / 36.0 mg; 0.1595 / 0.408 / 0.140 g",
+   "status": "OK"
+  },
+  {
+   "check": "KM-5 cycle mean and 15,000 h starts",
+   "package": "1.84 h/cycle; ~8,100 starts",
+   "recomputed": "1.842 h; 8,142",
+   "status": "OK"
+  },
+  {
+   "check": "three years in hours",
+   "package": "26,280 h",
+   "recomputed": "26,280 (365 d); 26,298 (365.25 d)",
+   "status": "OK"
+  },
+  {
+   "check": "tankage fractions",
+   "package": "0.086/0.081/0.106/0.078/0.067-0.076",
+   "recomputed": "0.0863/0.0809/0.1064/0.0776/0.0673-0.0764",
+   "status": "OK"
+  },
+  {
+   "check": "5-30 kg Xe volume",
+   "package": "~3-18 L at 1.67-1.83 g/cm3 (summary 2.7-18 L)",
+   "recomputed": "2.73 L (5 kg @1.83) to 17.96 L (30 kg @1.67); 2.54-15.2 L at 1.97",
+   "status": "OK"
+  },
+  {
+   "check": "ECR resonance B",
+   "package": "87.5 mT (2.45 GHz) / 207 mT (5.8 GHz)",
+   "recomputed": "87.52 / 207.2 mT",
+   "status": "OK"
+  },
+  {
+   "check": "I_d <= 8.33 A",
+   "package": "8.33 A",
+   "recomputed": "1500 W / 180 V = 8.333 A",
+   "status": "OK"
+  },
+  {
+   "check": "NIST Xe density values",
+   "package": "2.0455/1.9695/1.6735 g/cm3 @150 bar",
+   "recomputed": "identical from NIST Webbook today",
+   "status": "OK"
+  }
+ ],
+ "corrections_needed": [
+  "R6 + package §1 (Xe): MaSMi LUC insert is BaO-W per US 10,919,649 detailed description (LaB6 only in life-model section/FIG. 14). The 0.20 mg/s @ 2 A point is not LaB6 evidence; rephrase 'No open source shows LaB6 spot mode...; lowest open point is MaSMi' accordingly.",
+  "R6: '5-10 % BHT-1500' is not in US 10,919,649 - remove the locator or mark unsourced; add Moog XFC primary datum 'Flow Split Ratio C:A = 5% (LV closed) or 9% (LV open)'.",
+  "R6/package: Moog XFC now read first-hand: '< 2.2 lbm (<974 g)', '3– 23 mg/sec GXe'; drop 'verify'; add D2S2 heritage.",
+  "R5: ESA EPL official page gives per-chamber speeds max 80,000 L/s (Xe); the 200,000 l/s claim is unsupported. Also note the published EPL balances (XP2004S load cell ±10 µN / 1 µN resolution; ICL balance 1-600 mN ±0.1 mN) - the package claim 'No published or commercial thrust stand demonstrates ~60 µN' should be re-examined against these (ranges/uncertainty definitions differ; verify applicability).",
+  "R5: UM LVTF - 13 TM1200i + 6 PEPL cryopumps; 500/600 kl/s is Xe; PEPL pumps do not pump N2/O2 (only the 13 TM1200i); previous config ~190 kl/s Xe.",
+  "R5: CSIR-NPL mass range '1 mg - 2000 kg' not on the CFCT page; keep as verify (KCDB).",
+  "R1: AIP2016 authors are Binder, Boldini, Romano, Herdrich, Fasoulas (IRS) - not 'possibly same group' as Li 2015; TAES2023 authors Zuo, Xu, Huang, Li, Peng, 59(5) 6863-6877; Moon AST vol 176, 112138; Romano 187, 225-235 confirmed.",
+  "R4: Lake Shore F71 35 mT range = ±0.15 % rdg single-axis (now read); 3-axis magnitude ±0.30 % rdg - use this for |B|. Orthogonality <0.2° still unverified.",
+  "R4: Bird 5010B accuracy ±5 % rdg only at 15-35 °C (±7 % at -10-50 °C); frequency 2 MHz-2.7 GHz.",
+  "R4: Xu & Walker 0.6 % confirmed from abstract; 0.002 g calibration-mass figure remains unverified.",
+  "R4: thermocouple class limits confirmed via WIKA IN 00.23 (secondary reproduction of IEC 60584-1/ASTM E230); add ASTM E230 Special K/N ±1.1 °C or ±0.4 %.",
+  "R4: two-colour pyrometry - add Optris caveat that cancellation holds only for equal attenuation at both wavelengths (non-grey viewport deposition introduces error).",
+  "R3: Schupp KD500 values confirmed from page and product PDF (sha256 5bd18a3f...); add nickel-migration >315 °C caveat and 20x-diameter test bend radius.",
+  "Package §1 facilities: state that 208 k L/s is the 293 K and 214 k the 300 K value (same 3.2 mg/s, 1e-5 Torr).",
+  "R6: Mooney 2-6 sccm = 0.195-0.586 mg/s on the MKS 0 °C basis (package 0.197-0.590); state basis or correct.",
+  "Still open (owner access): MKS 627F (403), LEM IT 60-S, R&S 6 % (k=2), SITAEL (captcha), APTF (403), CMTI (TLS failure), Li 2015 abstract (publisher-elided), RFP close date and number (tdf.drdo.gov.in reset, X login, defproc captcha)."
+ ]
+}

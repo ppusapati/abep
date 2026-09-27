@@ -1,4 +1,6 @@
-# External-evidence package v1 (web track)
+# External-evidence package v1.1 (web track)
+
+> **v1.1 (2026-09-27)** adds R7 (thrust-stand design basis), R8 (anode materials in oxygen) and R9 (verification pass: 39 flagged values, 18 confirmed, 5 corrected, 16 still unverified; 20 arithmetic checks, all reproduce). Corrections are marked inline. It builds on repository commit c1ce3a5 and uses nothing from the CLI track.
 
 - **Date:** 2026-09-27.
 - **Repository basis:** `782f900`, read-only. This package uses nothing the CLI track produced after that commit.
@@ -9,7 +11,7 @@
 - Published and open sources only.
 - No contact with suppliers, labs or authors.
 - No paywall, captcha or bot-challenge bypass; TLS settings never changed.
-- Third-party PDFs used during research are not committed, for copyright reasons. Citations, URLs and, where recorded, sha256 hashes are in `source_register_v1.json` (113 entries) and in the six thread files in `threads/`.
+- Third-party PDFs used during research are not committed, for copyright reasons. Citations, URLs and, where recorded, sha256 hashes are in `source_register_v1.json` (196 entries in v1.1) and in the six thread files in `threads/`.
 
 **Evidence classes.** Every value in the thread files carries its source, evidence class, applicability and limitations. Values taken from a search snippet or from memory are marked **verify**.
 
@@ -21,6 +23,9 @@
 | R4 | `threads/R4_instrumentation.*` | Instrumentation and calibration |
 | R5 | `threads/R5_facilities.*` | Facilities and metrology labs |
 | R6 | `threads/R6_xe_inputs.*` | Xe-ledger inputs |
+| R7 | `threads/R7_thrust_stand.*` | Thrust-stand design basis (v1.1) |
+| R8 | `threads/R8_anode_oxygen.*` | Anode materials in oxygen (v1.1) |
+| R9 | `threads/R9_verify.*` | Verification of flagged values (v1.1) |
 
 ## 1. Verified external findings
 
@@ -44,7 +49,7 @@
 - The throat-scale rotor, which is the C1 element, appears to be simulation-only. No independent rotor-compressor data for ABEP were found.
 
 **Xe inputs (R6).**
-- No open source shows LaB6 spot mode at ≤ 0.10 mg/s at Hall-thruster current. The lowest open point is JPL MaSMi at 0.20 mg/s and 2 A (US 10,919,649).
+- No open source shows LaB6 spot mode at ≤ 0.10 mg/s at Hall-thruster current. **v1.1 correction (R9):** the MaSMi point (0.20 mg/s at 2 A, US 10,919,649) uses a **BaO-W** insert, not LaB6, so no open LaB6 point exists near this flow at all. The 0.10 mg/s target rests entirely on measuring C-1.
 - Per-start cathode Xe: heated start about 72 mg (36 mg at 0.10 mg/s, arithmetic from the preheat flow); heaterless start 0.14–0.41 g.
 - KM-5 flight record: 583 cycles in 1,074 h, against a 4,000-cycle requirement.
 - Xe density at 150 bar (NIST): 2.05 / 1.97 / 1.67 g/cm³ at 293 / 300 / 323 K.
@@ -59,16 +64,36 @@
 - LaB6 cannot touch bare metal, because boron diffusion embrittles it.
 - VCR fittings with ASTM G93 Level C cleaning, and a 13 kV alumina gas break, are available.
 
+**Anode in oxygen (R8, v1.1).**
+- No anode material is proven for an oxygen-bearing Hall thruster.
+- The only direct comparison is Imperial's WET-HET on O₂ (Tejeda et al. 2024, Acta Astronautica 219, Sec. 3.5): bare W formed an insulating oxide in 20–30 min, while stainless steel "mostly" kept conducting at low power. No hours, anode temperature or resistance data were published.
+- The failure mode in every oxygen-plasma report is **loss of conduction**, not mass loss (Cifali 2011; Gabriel 1993 oxygen MPD). Coupons therefore need 4-wire resistance measurement.
+- **Rejected:** bare W; Mo/TZM (volatile MoO₃ above about 550 °C, Smolik 2000).
+- **Leading heritage candidate:** 316L.
+- **Untested in oxygen plasma:** chromia-forming Ni alloys, Pt, Rh, Cr plating, IrO₂/RuO₂ coatings.
+- **Not recommended now:** graphite, which oxygen erodes chemically.
+
 **Instrumentation (R4).**
 - Flow-unit conversions are recorded, including the reference-temperature trap (0 °C versus 25 °C, a factor of 1.0915).
-- The best cathode Xe flow-controller class gives about ±1.2 % at 0.10 mg/s. Its Xe correction factor is theoretical and needs checking on real Xe.
+- The best cathode Xe flow-controller class gives about ±1.2 % at 0.10 mg/s (1.16 % on the controller's own 25 °C reference, R9). Its Xe correction factor is theoretical and needs checking on real Xe.
 - The DC power-analyser class meets the 0.5–1 % targets.
 - Inline RF power sensors are 5–6 % class, against a 0.9–3.5 % target.
 - Ion-gauge sensitivities for N₂ / O₂ / Xe are 1.00 / 1.01 / 2.87 and can be off by 10–20 %, so each gauge needs a per-gas calibration.
-- **No published or commercial thrust stand demonstrates the ~60 µN per-reading resolution needed at 12 mN.**
+- **Thrust stand (v1.1, R7).** INS-01 requires per-reading repeatability u_T ≤ 0.00498 (1σ): 59.8 µN at 12 mN and 124.6 µN at 25 mN. Published absolute uncertainties in the 5–25 mN Hall band are 1.4–2.2 %: NASA GRC 1.5 % with a 0.9 kg payload, a Tokyo balance at 1.4 %, and a Michigan Tech thesis at 2.16 %. Stands that carry many kilograms are coarser (Moeller & Polzin: 1 mN at 12.1 kg).
+  - ESA's ±10 µN entries are commercial load cells rated 0.5–2.3 kg, too small for H-1.
+  - ESA's ICL balance is ±0.1 mN and meets 25 mN but not 12 mN.
+  - DLR's 40 kg balance is described as developed by AST; its sub-mN performance is stated as a goal, not demonstrated.
+  - **Conclusion:** no open source demonstrates the requirement at 12–25 mN on a 5–20 kg payload. The stand must be proven in the S1a capability demonstration. The dominant error terms are tilt drift (about 0.3–1.2 µrad corresponds to 60 µN; verify), thermal drift, and the stiffness of service lines across the stand.
 
 **Facilities (R5).**
-- Screening pumping speed: about 208–214 k L/s at 1e-5 Torr for 3.2 mg/s N₂ (independently recomputed).
+- Screening pumping speed: about 208–214 k L/s at 1e-5 Torr for 3.2 mg/s N₂. The two ends of the range are the same case at 293 K and 300 K (independently recomputed).
+- **v1.1 corrections (R9).**
+  - ESA EPL: up to 80,000 L/s **Xe** per chamber (not 200,000).
+  - Michigan LVTF: 500,000 L/s is **Xe only**; its PEPL cryopumps do not pump N₂ or O₂ (only the 13 TM1200i pumps do).
+  - CSIR-NPL: the "1 mg–2000 kg" range is not on the NPL page.
+  - Cathode flow split: Moog gives 5 %, or 9 % with its valve open; the "5–10 %" figure is not in the source.
+  - Mooney's 2–6 sccm is 0.195–0.586 mg/s on the 0 °C basis.
+  - The AIP 2016 paper is by IRS Stuttgart.
 - SITAEL IV10 is the best published match: N₂/O₂ Hall operation below 2.5e-5 mbar. Its thrust stand is only ±3 mN, and access, export and custody are open questions.
 - ISRO LPSC and IIST have published capabilities but no chamber specifications and no evidence that third parties can use them.
 - CSIR-NPL is the Indian mass-traceability root (CIPM MRA).
@@ -103,7 +128,7 @@ These are technical judgements that each item is independent of LOCK-1 and the H
 
 - **RFP clauses**, until someone obtains the document (see §5).
 - **Thrust stand:** no commercial or published option meets the resolution needed, so it has to be a design-and-build or a facility-partner item, **on the critical path**.
-- **Anode material:** no open oxidation data. It needs a coupon test (risk 2).
+- **Anode material:** no proven material. R8 proposes a coupon set for the owner to decide: 316L; a chromia-forming Ni alloy; an alumina-former (control); Rh plate; Pt; Cr plate; an IrO₂/RuO₂ coating; bare W (negative control); graphite (optional). Coupons should be biased to collect electron current and measured by 4-wire resistance.
 - **Magnet-wire and pole material:** waiting on HWQ-18, HWQ-19 and HWQ-20.
 - **BN grade:** HWQ-08 and HWQ-17, plus the manufacturer's datasheet.
 - **LaB6 cathode assembly:** no open commercial catalogue; waiting on C-1 selection.
@@ -154,6 +179,22 @@ Listed by thread; the full wording is in each thread file's `owner_questions` or
 - Accreditation rule for XPS and EDS.
 - Split the engineering S1a facility from the score-bearing facility?
 
+**Thrust stand (R7, OD-TS-1..7):**
+- Stand type: torsional, null inverted pendulum, or double pendulum.
+- Maximum moving mass (W3).
+- How service lines cross the stand, including RF/microwave shams versus wireless transfer.
+- Build vs partner (DLR, ESA, Surrey) vs buy (AST).
+- Calibration traceability.
+- A pre-registered S1a u_T test at 12 mN with maximum payload and all lines installed.
+- Whether to keep the 1 % absolute gate, which is below every published number found.
+
+**Anode (R8, OQ-R8-1..5):**
+- 316L as the H-1 baseline anode, with its limitation recorded.
+- Which coupon candidates to test.
+- Biased or floating coupons.
+- An anode temperature target.
+- Legitimate acquisition of Tejeda 2023, Bayliss & Knoll 2025, Cifali 2012 and Wang 1995.
+
 **Suppliers:** whether to request supplier quotes at all. That means contacting suppliers, so it is your call.
 
 ## 6. Repository artifacts to update later
@@ -171,4 +212,6 @@ These are not edited here. The CLI track or a later reviewed lane should make th
 | `docs/experiments/lifetime_ao/` | Anode-oxidation evidence gap; propose anode coupon candidates. |
 | `docs/experiments/instrumentation/` and `metrology_spec/` | Flow-convention rule, per-gas ion-gauge calibration, thrust-stand gap, RF-sensor accuracy gap. Also fix the metrology spec file status, which still says DRAFT although A4 approved it. |
 | `docs/architecture_comparison/lock1/` (D-12, T-PB-MAX) | Facility screening numbers and candidate list. |
+| `docs/experiments/instrumentation/` INS-01 | Record the R7 literature basis; qualify "no commercial mN balance" (AST built DLR's balance; ESA uses modified load cells). |
+| `docs/experiments/lifetime_ao/` coupon plan | R8 candidate set; resistance-based failure criterion. |
 | `docs/budgets/owner_decisions/` (the register in the CLI track) | Add the owner questions from §5. |

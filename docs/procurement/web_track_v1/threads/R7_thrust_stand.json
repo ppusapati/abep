@@ -1,0 +1,527 @@
+{
+ "meta": {
+  "thread": "R7 thrust stand",
+  "repo_commit": "c1ce3a5",
+  "date": "2026-09-27",
+  "rules": "published/open sources only; no vendor contact; no paywall/captcha bypass; numbers only as stated with locator; model_derived_here and verify marked"
+ },
+ "source_register": [
+  {
+   "id": "SRC-POLK2017",
+   "citation": "Polk, Pancotti, Haag, King, Walker, Blakely, Ziemer, 'Recommended Practice for Thrust Measurement in Electric Propulsion Testing', J. Propulsion & Power 33(3):539-555, 2017, doi:10.2514/1.B35564",
+   "url": "https://hpepl.ae.gatech.edu/sites/default/files/Journal_Articles/JPP%20V33%20No3%20MayJune2017_ThrustMeasurement.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "full_text_read (author-site copy; also PMC7839308)"
+  },
+  {
+   "id": "SRC-MACKEY2018",
+   "citation": "Mackey, Haag, Kamhawi, Hall, Peterson, 'Uncertainty in Inverted Pendulum Thrust Measurements', NASA GRC, NTRS 20190000300 (AIAA JPC 2018)",
+   "url": "https://ntrs.nasa.gov/api/citations/20190000300/downloads/20190000300.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "full_text_read"
+  },
+  {
+   "id": "SRC-XU2009",
+   "citation": "Xu, Walker, 'High-power, null-type, inverted pendulum thrust stand', Rev. Sci. Instrum. 80, 055103 (2009), doi:10.1063/1.3125626",
+   "url": "https://europepmc.org/article/MED/19485530",
+   "accessed": "2026-09-27",
+   "access_level": "abstract_read (Europe PMC API); full text not retrieved (hpepl link returns HTML/404)"
+  },
+  {
+   "id": "SRC-POLZIN2006",
+   "citation": "Polzin, Markusic, Stanojev, DeHoyos, Spaun, 'Thrust stand for electric propulsion performance evaluation', Rev. Sci. Instrum. 77, 105108 (2006); NTRS 20060025538 preprint",
+   "url": "https://ntrs.nasa.gov/api/citations/20060025538/downloads/20060025538.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "full_text_read (scanned/OCR preprint; OCR-garbled numbers flagged verify)"
+  },
+  {
+   "id": "SRC-MOELLER2010",
+   "citation": "Moeller, Polzin, 'Thrust stand for vertically oriented electric propulsion performance evaluation', Rev. Sci. Instrum. 81, 115108 (2010), doi:10.1063/1.3502463; NTRS 20100033281",
+   "url": "https://ntrs.nasa.gov/api/citations/20100033281/downloads/20100033281.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "full_text_read"
+  },
+  {
+   "id": "SRC-KALKMAN2023",
+   "citation": "Kalkman, 'Design, Development, and Testing of an Inverted Pendulum Thrust Stand for Low Power Hall-Effect Thrusters', M.S. thesis, Michigan Technological University, 2023",
+   "url": "https://digitalcommons.mtu.edu/etdr/1587/",
+   "accessed": "2026-09-27",
+   "access_level": "abstract_read (PDF behind Cloudflare challenge; not bypassed)"
+  },
+  {
+   "id": "SRC-MASILLO2022",
+   "citation": "Masillo, Stubbing, Swar, Staab, Garbayo, Lucca Fabris, 'Validation of a torsional balance for thrust measurements of Hall effect and microwave-based space propulsion systems', Rev. Sci. Instrum. 93, 114501 (2022), doi:10.1063/5.0117584 (CC BY per Semantic Scholar)",
+   "url": "https://pubs.aip.org/aip/rsi/article/93/11/114501/2849448",
+   "accessed": "2026-09-27",
+   "access_level": "abstract_read (Europe PMC / Semantic Scholar API); publisher page 403, PubMed captcha not bypassed"
+  },
+  {
+   "id": "SRC-NAGAO2007",
+   "citation": "Nagao, Yokota, Komurasaki, Arakawa, 'Development of a two-dimensional dual pendulum thrust stand for Hall thrusters', Rev. Sci. Instrum. 78, 115108 (2007), doi:10.1063/1.2815336",
+   "url": "https://europepmc.org/article/MED/18052500",
+   "accessed": "2026-09-27",
+   "access_level": "abstract_read (Europe PMC API; PMID locator verify)"
+  },
+  {
+   "id": "SRC-YAMASAKI2023",
+   "citation": "Yamasaki, Nonaka, Yokota, Shimamura, 'Development of inverted pendulum thrust stand with spring-shaped wire for high power electric thrusters', Rev. Sci. Instrum. 94, 034501 (2023), doi:10.1063/5.0087076",
+   "url": "https://pubs.aip.org/aip/rsi/article/94/3/034501/2881923",
+   "accessed": "2026-09-27",
+   "access_level": "abstract_read (Europe PMC API)"
+  },
+  {
+   "id": "SRC-HARMANN2015",
+   "citation": "Harmann, Dartsch, Werner, 'Low Drift Thrust Balance with High Resolution', IEPC-2015-257/ISTS-2015-b-257 (AST Advanced Space Technologies GmbH / DLR)",
+   "url": "https://electricrocket.org/IEPC/IEPC-2015-257_ISTS-2015-b-257.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "full_text_read"
+  },
+  {
+   "id": "SRC-DLR-JLSRF2018",
+   "citation": "DLR, 'STG-ET: DLR Electric Propulsion Test Facility', J. Large-Scale Research Facilities 4, A134 (2018), doi:10.17815/jlsrf-3-156-1, Sec. 4.4",
+   "url": "https://jlsrf.org/index.php/lsf/article/view/156",
+   "accessed": "2026-09-27",
+   "access_level": "full_text_read"
+  },
+  {
+   "id": "SRC-NEUMANN2021",
+   "citation": "Neumann, Simon, Schmidt, 'Thrust measurement and thrust balance development at DLR's electric propulsion test facility', EPJ Techniques and Instrumentation (2021), doi:10.1140/epjti/s40485-021-00074-7 (gold OA, CC BY)",
+   "url": "https://doi.org/10.1140/epjti/s40485-021-00074-7",
+   "accessed": "2026-09-27",
+   "access_level": "abstract_read (Semantic Scholar API); full text behind client challenge, not bypassed"
+  },
+  {
+   "id": "SRC-NEUMANN2013",
+   "citation": "Neumann, Sinske, Harmann, 'The 250mN Thrust Balance for the DLR Goettingen EP Test Facility', IEPC-2013-211",
+   "url": "https://elib.dlr.de/82209/",
+   "accessed": "2026-09-27",
+   "access_level": "not_read (cited via SRC-DLR-JLSRF2018, SRC-KOKAL-MS)"
+  },
+  {
+   "id": "SRC-KOKAL-MS",
+   "citation": "Kokal, 'Development of a mili-Newton level thrust stand for thrust measurements of electric propulsion systems and UK90 Hall effect thruster', M.S. thesis, Bogazici University (BUSTLab)",
+   "url": "https://bogazicispacetechlab.github.io/files/dissertations/ugur-kokal.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "full_text_read (grep-level)"
+  },
+  {
+   "id": "SRC-KOKAL2017",
+   "citation": "Kokal, Celik, 'Development of BUSTLab Thrust Stand for mili-Newton Level Thrust Measurements', IEPC-2017-317",
+   "url": "https://bogazicispacetechlab.github.io/files/conferences/39.pdf",
+   "accessed": "2026-09-27 (via repo R4 thread)",
+   "access_level": "repo_prior_read (R4)"
+  },
+  {
+   "id": "SRC-MEAS2024",
+   "citation": "'Investigating the repeatability error in thrust measurement on a pendulum-based stand', Measurement (Elsevier) 2024, pii S026322412401282X (authors not captured)",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S026322412401282X",
+   "accessed": "2026-09-27",
+   "access_level": "search_snippet_verify (paywalled; not opened)"
+  },
+  {
+   "id": "SRC-KODYS2006",
+   "citation": "Kodys, Murray, Cassady, Choueiri, 'An Inverted-Pendulum Thrust Stand for High-Power Electric Thrusters', AIAA 2006-4821",
+   "url": "https://alfven.princeton.edu/publications/pdf/kodys-jpc-2006-4821.pdf",
+   "accessed": "2026-09-27",
+   "access_level": "not_retrieved (host reset / HTTP 503)"
+  },
+  {
+   "id": "SRC-REPO",
+   "citation": "ABEP repo @c1ce3a5: docs/experiments/instrumentation/instrumentation_definition_v1.json (INS-01); docs/experiments/hardware/hardware_requirements_v1.json (HW-SVC-01..03, SVC-1, mass_max_kg); docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json (P1DQ-TABS); docs/procurement/web_track_v1/threads/R4_instrumentation.md sec. 8",
+   "url": "file:///home/user/abep",
+   "accessed": "2026-09-27",
+   "access_level": "repo"
+  },
+  {
+   "id": "SRC-ESA-EPL",
+   "citation": "ESA, 'ESA Propulsion Laboratory' (TEC-MPE EPL, ESTEC) lab page: tables 'EPL Thrust Balances — Instruments & technical parameters' and 'Vacuum chambers — Instruments & technical parameters'",
+   "url": "https://technology.esa.int/lab/tec-m-epl-esa-propulsion-laboratory",
+   "accessed": "2026-09-27",
+   "access_level": "full_page_read (raw HTML table parsed; lead supplied by coordinator verification pass, re-fetched here)"
+  },
+  {
+   "id": "SRC-SCHWERTHEIM2021",
+   "citation": "Schwertheim, Rosati Azevedo, Liu, Bosch Borràs, Bianchi, Knoll, 'Interlaboratory validation of a hanging pendulum thrust balance for electric propulsion testing', Rev. Sci. Instrum. 92, 034502 (2021), doi:10.1063/5.0037100 (CC BY per Europe PMC)",
+   "url": "https://pubs.aip.org/aip/rsi/article/92/3/034502/1061613",
+   "accessed": "2026-09-27",
+   "access_level": "abstract_read (Europe PMC API, PMID 33820057); AIP PDF returned an HTML challenge, not bypassed"
+  }
+ ],
+ "designs": [
+  {
+   "id": "D-GRC-VF6",
+   "type": "inverted pendulum, null-coil, in-situ pulley/weight calibration, active leveling, water-cooled enclosure (NASA GRC)",
+   "payload_kg": 46.7,
+   "thrust_range_mN": "100-600 (analysed); TDU 400-600 realistic",
+   "demonstrated_resolution": "not stated",
+   "uncertainty": "±6.9 mN absolute (95 %), 6.9 %-1.1 % over 100-600 mN; instrument bias only",
+   "drift": "dominant terms: stand inclination drift and stand displacement drift; mg/T = 1023 mN/mN at 590 mN",
+   "calibration": "in-situ weights over pulley on monofilament; slope repeatability = std of 47 calibration runs over two months; monofilament stiffness a significant part of calibration-mass uncertainty",
+   "source_id": "SRC-MACKEY2018",
+   "locator": "abstract; Sec. case study (TDU mass 46.7 kg; k/T, c/T, mg/T; natural frequency ~1 Hz); Table 6 / Fig. 6-7 discussion; conclusions",
+   "evidence_class": "published_analysis (design-stage uncertainty, not repeatability)",
+   "limitations": "high-thrust class; paper explicitly does not address repeatability of thrust measurements"
+  },
+  {
+   "id": "D-GRC-LOWPOWER-HALL",
+   "type": "inverted pendulum (NASA GRC type, Polk Fig. 7)",
+   "payload_kg": 0.9,
+   "thrust_range_mN": "5-20",
+   "demonstrated_resolution": "not stated",
+   "uncertainty": "estimated 1.5 %",
+   "drift": "not stated",
+   "calibration": "in-situ (type)",
+   "source_id": "SRC-POLK2017",
+   "locator": "Sec. III.B.1-2 (text after Fig. 7): '5 to 20 mN ... 0.3 kW Hall thruster ... 1.5% [30]'; '300 W Hall thrusters with a mass of 0.9 kg [30]'; [30]=Manzella et al. AIAA 1996-2736",
+   "evidence_class": "secondary_citation (review quoting Manzella 1996)",
+   "limitations": "closest thrust-band analogue but payload 0.9 kg, not 5-20 kg; absolute uncertainty, not per-reading repeatability; primary not read"
+  },
+  {
+   "id": "D-XU2009",
+   "type": "null-type inverted pendulum, electromagnetic actuator, active damping, closed-loop inclination, active cooling, in-situ calibration rig",
+   "payload_kg": "capacity up to 250 kg (test thruster mass not in abstract)",
+   "thrust_range_mN": "1-5000 design; measured up to 230 on 3.4 kW Hall",
+   "demonstrated_resolution": "not stated in abstract",
+   "uncertainty": "±0.6 % (from hysteresis, zero-offset drift, calibration slope variation)",
+   "drift": "included in ±0.6 %",
+   "calibration": "in-situ rig (weights per R4 snippet, verify)",
+   "source_id": "SRC-XU2009",
+   "locator": "abstract",
+   "evidence_class": "abstract_read",
+   "limitations": "0.6 % demonstrated at thrust up to 230 mN; 12-25 mN performance not stated; full text not read"
+  },
+  {
+   "id": "D-VAHPER",
+   "type": "hanging pendulum with amplifying balance mechanism, torsional flexure pivots, eddy-current damper, liquid-gallium power pots, water-cooled 1.5 in Al base plate + chiller, automated leveling (NASA MSFC)",
+   "payload_kg": "capacity up to 125 kg; CHT tested (mass not captured)",
+   "thrust_range_mN": "0.1-1000 design; CHT 4.8-6.2 measured",
+   "demonstrated_resolution": "'ultimate resolution without the thruster running' ~50 µN (OCR-garbled '-50 1.~3'; verify)",
+   "uncertainty": "CHT error bars 95 % (2σ); 'about 20 % of' prior published error bars (OCR, verify)",
+   "drift": "'very little zero-drift'; no significant drift with cathode heater (23 A) thanks to liquid-metal power conduction",
+   "calibration": "in-situ calibration rig, loads applied normal to pendulum arm; fit error bars 0.8 % (1σ) (OCR, verify)",
+   "source_id": "SRC-POLZIN2006",
+   "locator": "abstract; Sec. on LGDT (13 µm system resolution); Fig. 9 text; raw thrust data section",
+   "evidence_class": "full_text_read (OCR preprint)",
+   "limitations": "numbers partly OCR-garbled; demonstrated at ~5-6 mN on a light thruster; design curves for 5 kg/10 mN and 40 kg/20 mN are predictions (Fig. 4)"
+  },
+  {
+   "id": "D-MOELLER2010",
+   "type": "hanging pendulum variant (vertical thruster), counterweighted, balance mechanism, eddy-current damper, thermal management, self-leveling, in-situ calibration",
+   "payload_kg": "12.1 (26.8 lbm simulated thruster); 90.7 (200 lbm)",
+   "thrust_range_mN": "design up to ~800 for 10 kg; up to 12 N for 200 kg",
+   "demonstrated_resolution": "1 mN on 100 mN-level thrust (12.1 kg); ~2.5 mN at ≥0.5 N (90.7 kg)",
+   "uncertainty": "not separately stated",
+   "drift": "'minimal zero-drift' over 24 h tests",
+   "calibration": "in-situ calibration rig",
+   "source_id": "SRC-MOELLER2010",
+   "locator": "abstract; conclusions (text lines ~560-574)",
+   "evidence_class": "full_text_read",
+   "limitations": "calibration-only (simulated thruster); ~1 % resolution at 100 mN with ~12 kg, i.e. ~17x coarser than the 60 µN target in absolute terms"
+  },
+  {
+   "id": "D-MTU2023",
+   "type": "null-type inverted pendulum (MTU), vacuum-tested with Aurora Hall thruster",
+   "payload_kg": "not in abstract",
+   "thrust_range_mN": "nominal 19 mN operating point",
+   "demonstrated_resolution": "not in abstract",
+   "uncertainty": "overall 0.411 mN (2.16 %) at 19 mN; relative calibration uncertainty 1.242 %",
+   "drift": "'Temperature was proven to be a large factor in stable-power thrust drift'",
+   "calibration": "calibration system described (details not read)",
+   "source_id": "SRC-KALKMAN2023",
+   "locator": "abstract",
+   "evidence_class": "abstract_read",
+   "limitations": "the only open result found in the exact 12-25 mN Hall band; confidence level of 2.16 % not captured; payload unknown"
+  },
+  {
+   "id": "D-SURREY-TORSION",
+   "type": "torsional balance, titanium rotating beam, fibre-optic displacement sensor, liquid-metal pots for DC, wireless microwave power transfer, water-cooling hub around flex pivot, spring vibration-isolating feet",
+   "payload_kg": "not in abstract",
+   "thrust_range_mN": "Halo Hall 3-20 mN; XJET ECR 0.3-1.5 mN",
+   "demonstrated_resolution": "not in abstract",
+   "uncertainty": "'accurate and repeatable' (no number in abstract)",
+   "drift": "thermal issues addressed by water-cooled pivot hub",
+   "calibration": "described in paper (not read)",
+   "source_id": "SRC-MASILLO2022",
+   "locator": "abstract",
+   "evidence_class": "abstract_read",
+   "limitations": "most architecture-relevant precedent (same balance for Hall and ECR, microwave line decoupled) but numbers not accessible; full text is CC BY — owner can obtain legitimately"
+  },
+  {
+   "id": "D-TOKYO-DUAL",
+   "type": "two-dimensional dual pendulum (inner pendulum carries thruster, outer carries sensor; differential displacement cancels thermal drift), knife-edges, pulley-and-weight calibration",
+   "payload_kg": "not in abstract",
+   "thrust_range_mN": "Hall thruster (≈18 mN implied by 0.25 mN = 1.4 %; model-derived, verify)",
+   "demonstrated_resolution": "not stated",
+   "uncertainty": "measurement errors < 0.25 mN (1.4 %) main axis; 0.09 mN (1.4 %) transverse",
+   "drift": "thermal drift cancelled by dual-pendulum differential measurement",
+   "calibration": "pulley and weights",
+   "source_id": "SRC-NAGAO2007",
+   "locator": "abstract",
+   "evidence_class": "abstract_read",
+   "limitations": "knife-edge pivots; payload not stated"
+  },
+  {
+   "id": "D-SPRINGWIRE",
+   "type": "inverted pendulum with spring-shaped wires and pipes (1 kW-class MPD)",
+   "payload_kg": "not in abstract",
+   "thrust_range_mN": "not in abstract",
+   "demonstrated_resolution": "sensitivity 17 mN/V",
+   "uncertainty": "normalized std of structure-induced variation 1.8e-3",
+   "drift": "thermal drift ~4.5e-3 mN/s during long-time operation",
+   "calibration": "calibration (method not in abstract)",
+   "source_id": "SRC-YAMASAKI2023",
+   "locator": "abstract",
+   "evidence_class": "abstract_read",
+   "limitations": "illustrates the size of thermal drift at ~1 kW: 4.5e-3 mN/s x 13 s ≈ 60 µN (model-derived here) — drift must be removed on sub-minute scales"
+  },
+  {
+   "id": "D-AST-2KG",
+   "type": "counter-balanced, displacement-compensated balance with fast voice-coil force compensation; second identical voice coil for in-situ verification (AST/DLR)",
+   "payload_kg": "up to 2",
+   "thrust_range_mN": "0.1-250 optimised; 0.1-1000 full",
+   "demonstrated_resolution": "plateau stability 'by far better than 0.1 mN' at 0-10 mN steps; 40 µN pilot tone resolved over 27 h",
+   "uncertainty": "plateau deviation + drift < 0.5 mN (< 0.05 %) at 1 N steps",
+   "drift": "< ±250 µN over 27 h (< ±0.1 % of 250 mN FS), in air, rudimentary isolation; drift correlated with room temperature",
+   "calibration": "second voice coil (internal); gravimetric/independent in-situ calibration stated as future work",
+   "source_id": "SRC-HARMANN2015",
+   "locator": "abstract; Sec. IV.A.1-2 (Fig. 3-4); noise-floor section (Fig. 7-8); outlook",
+   "evidence_class": "full_text_read (manufacturer paper, ambient-air bench test)",
+   "limitations": "2 kg payload; no thruster; not in vacuum; forces from its own voice coil (not end-to-end traceable). Note: SRC-KOKAL-MS attributes 'thermal drift < 0.1 % per degree' to this paper — not found in the text; the paper states < ±0.1 % FS over 27 h"
+  },
+  {
+   "id": "D-DLR-AST-40KG",
+   "type": "actively compensated inverted double pendulum, counterweight on lower platform; 'cable harp' for lines; voice-coil + gravimetric (weights on wire over pulley) calibration (built by AST, operated by DLR STG-ET)",
+   "payload_kg": "up to 40",
+   "thrust_range_mN": "250 (range)",
+   "demonstrated_resolution": "not stated; facility text states the requirement '250 mN measured with a resolution of 0.1 % ... well below 1 mN'",
+   "uncertainty": "not stated in read sources",
+   "drift": "not stated",
+   "calibration": "voice coil (faster, smaller variance, possible systematic errors) and gravimetric (traceable)",
+   "source_id": "SRC-DLR-JLSRF2018; SRC-NEUMANN2021; SRC-NEUMANN2013",
+   "locator": "JLSRF Sec. 4.4; EPJ TI 2021 abstract",
+   "evidence_class": "full_text_read (facility description) / abstract_read",
+   "limitations": "evidence that a commercially built multi-kg (40 kg) mN balance exists; no demonstrated number at 12-25 mN in open text read; IEPC-2013-211 not read"
+  },
+  {
+   "id": "D-DLR-NEW",
+   "type": "new compact DLR balance with water-cooled housing, more robust calibration",
+   "payload_kg": "not stated",
+   "thrust_range_mN": "not stated",
+   "demonstrated_resolution": "'resolution well below 1 mN' (first tests)",
+   "uncertainty": "not stated",
+   "drift": "water-cooled housing",
+   "calibration": "'more robust'",
+   "source_id": "SRC-NEUMANN2021",
+   "locator": "abstract",
+   "evidence_class": "abstract_read",
+   "limitations": "qualitative"
+  },
+  {
+   "id": "D-BUSTLAB",
+   "type": "double inverted pendulum with counterweights; waterfall cabling; load-cell calibration on linear stage; stand on linear stage for null re-positioning",
+   "payload_kg": "max thruster 80 (160 kg flexure capacity with counterweights); heaviest lab thruster ~10",
+   "thrust_range_mN": "~6-300 (search summary); 20 mN range discussed",
+   "demonstrated_resolution": "~100 µN (IEPC-2017-317); 20 µN calibration-actuator resolution 'without considering external perturbations' (design)",
+   "uncertainty": "example calibration: 95 % prediction interval ±2.32 mN; initial uncertainty ~10 % (IEPC-2017)",
+   "drift": "residual cable/pipe force in thrust direction causes null drift, compensated by linear stage",
+   "calibration": "pre-calibrated load cell pushed by stepper linear stage",
+   "source_id": "SRC-KOKAL-MS; SRC-KOKAL2017",
+   "locator": "thesis Sec. 2.5 (capacity 160/80 kg; 1.25 µm/step; 20 µN), Sec. 2.5.7-2.5.8 (waterfall, drift), calibration example Fig. 2.44 text",
+   "evidence_class": "full_text_read",
+   "limitations": "early development; uncertainty an order of magnitude above target"
+  },
+  {
+   "id": "D-MEAS2024",
+   "type": "pendulum-based stand, two configurations",
+   "payload_kg": "not captured",
+   "thrust_range_mN": "1.8 and 450 (ranges)",
+   "demonstrated_resolution": "20 nN and 5 µN",
+   "uncertainty": "400.00 ± 0.63 µN and 100.00 ± 0.19 mN within 1 min",
+   "drift": "elastic-pivot drift dominant, drift rate 0.12-0.44 % (units as snippet)",
+   "calibration": "not captured",
+   "source_id": "SRC-MEAS2024",
+   "locator": "search snippet only",
+   "evidence_class": "search_snippet_verify",
+   "limitations": "paywalled, not opened; payload unknown"
+  },
+  {
+   "id": "D-ESA-LOADCELL",
+   "type": "'Modified commercial load-cell' (Mettler-Toledo AX504, XP2004S; also XPR2004SC) — weighing-type balances",
+   "payload_kg": "range column states load capacity: AX504 '500 g = 5N'; XP2004S '2.3 kg = 23N'; XPR2004SC '2.3 kg' (i.e. total load <= 0.5 / 2.3 kg)",
+   "thrust_range_mN": "not stated separately from load capacity",
+   "demonstrated_resolution": "'0.1 mg ≡ 1 µN' (AX504, XP2004S); XPR2004SC '±0.1 mg'",
+   "uncertainty": "'±10 µN' in the column headed 'Uncertainty (best practice)' (AX504, XP2004S)",
+   "drift": "not stated",
+   "calibration": "not stated",
+   "source_id": "SRC-ESA-EPL",
+   "locator": "EPL Thrust Balances table, rows Mettler–Toledo AX504 / XP2004S / XPR2004SC",
+   "evidence_class": "facility_declared (table values; no test data, confidence level or payload/orientation conditions given)",
+   "limitations": "meets 60 µN numerically, but the load capacity (<= 2.3 kg incl. thruster and fixtures) excludes a 5-20 kg H-1+MC-1+C-1+module stack; a weighing load cell measures along gravity, so thruster orientation would be vertical (inferred, verify); not demonstrated at 12-25 mN with a Hall thruster in the source"
+  },
+  {
+   "id": "D-ESA-ICL",
+   "type": "ICL Thrust Balance = Imperial College hanging pendulum (stainless-steel flexures, laser triangulation, closed-loop self-compensating heating for thermal stability, voice-coil + servomotor pulley calibration); unit installed in ESA Corona chamber",
+   "payload_kg": "not stated in either source read",
+   "thrust_range_mN": "ESA table '1- 600 mN'; paper 1 mN to 1 N design, linear 0.5-100 mN",
+   "demonstrated_resolution": "ESA table: the cell sequence is '1- 600 mN | Flexures dependant | ±0.1 mN' under columns 'Range | Uncertainty (best practice) | Resolution' — i.e. '±0.1 mN' sits in the Resolution column and 'Flexures dependant' in the Uncertainty column (column alignment in the HTML is irregular for adjacent rows; verify)",
+   "uncertainty": "paper: 'estimated standard deviation on thrust measurements better than 0.27 mN for low thrust measurements'; QCT test 2.21 ± 0.22 mN",
+   "drift": "'stable calibration over several days'",
+   "calibration": "voice coil actuator + servomotor pulley system (two separate subsystems, traceability)",
+   "source_id": "SRC-ESA-EPL; SRC-SCHWERTHEIM2021",
+   "locator": "ESA EPL Thrust Balances table row 'ICL Thrust Balance'; RSI 2021 abstract",
+   "evidence_class": "facility_declared + abstract_read (interlaboratory, two nearly identical balances: Imperial Boltzmann and ESA Corona)",
+   "limitations": "0.1 mN resolution > 59.8 µN target at 12 mN (< 124.6 µN at 25 mN); demonstrated σ < 0.27 mN at low thrust is ~4.5x the 12 mN target; test article was a ~50-115 W QCT (light, not multi-kg)"
+  },
+  {
+   "id": "D-ESA-ALTA",
+   "type": "Alta 1-axis optical thrust stand ('Inversed pendulum with optical strain gauges') and Alta low thrust balance ('Inversed pendulum with laser displacement probe')",
+   "payload_kg": "not stated",
+   "thrust_range_mN": "5-500 and 0.2-10",
+   "demonstrated_resolution": "'Variable'",
+   "uncertainty": "'±2 mN' (both)",
+   "drift": "not stated",
+   "calibration": "not stated",
+   "source_id": "SRC-ESA-EPL",
+   "locator": "EPL Thrust Balances table, first two rows",
+   "evidence_class": "facility_declared",
+   "limitations": "±2 mN is ~33x the 12 mN target"
+  }
+ ],
+ "requirement_quoted": {
+  "per_reading_repeatability": "u_T,max = 0.0049836144 relative (1σ, per reading, Type A) at n = 4 -> 59.8034 µN at 12 mN and 124.59 µN at 25 mN (INS-01 required_uncertainty.per_reading_repeatability; evidence_class model-derived; lane 25 minexp_numbers.py)",
+  "installation_reproducibility": "u_inst,max = 0.0024918072 ln-ratio (1σ, per installation) of ln(T/P_bus), shared with INS-02, measured by the S1b re-mount series K = 6 (INS-01; HW-SVC-03 splits it into five equal RSS shares: c1 stand calibration/zero shift, c2 thrust-axis alignment, c3 B(z), c4 gas path, c5 service-line/thermal/electrical)",
+  "absolute_for_gate": "I-U-ABS-T 0.01 relative (1σ), PROPOSED, evidence_class assumed",
+  "range": "TBD, blocked by fo_hardware_definition; must span the knee-scan extinction end to >= 25 mN",
+  "calibration": "S1a: >= 10 in-situ calibrations spanning the range before and >= 10 after each sequence (PROPOSED); zero with power and flow off before/after every point visit; end-to-end in-situ calibration under vacuum after every configuration change (HW-SVC-02)",
+  "service_lines": "HW-SVC-01: every line crossing the stand is present in every configuration; arm-specific RF coax / microwave feed installed as shams",
+  "mass_on_stand": "NOT FIXED by the repo: INS-01 range 'TBD - requires H-1 thrust range and mass on stand incl. the RF/ECR modules (W3)'; hardware_requirements mass_max_kg = 40 kg is system-level RFP with 'no H-1/C-1 allocation'. The 5-20 kg band used here is the caller's working assumption, not a repo value.",
+  "feasibility_status_in_repo": "INS-01 feasibility AT_RISK",
+  "source": "SRC-REPO"
+ },
+ "feasibility_assessment": {
+  "verdict": "NOT DEMONSTRATED IN OPEN LITERATURE; plausible but unproven. No open source read reports a per-reading (Type A) thrust repeatability of <= 0.5 % (~60 µN, 1σ) at 12-25 mN with a 5-20 kg payload.",
+  "closest_evidence": [
+   "Thrust band match, light payload: NASA GRC inverted pendulum, 5-20 mN, 0.9 kg Hall, 1.5 % estimated uncertainty (SRC-POLK2017 citing Manzella 1996).",
+   "Thrust band match, payload unknown: MTU null inverted pendulum, 19 mN, 0.411 mN (2.16 %) overall (SRC-KALKMAN2023); Tokyo dual pendulum < 0.25 mN (1.4 %) (SRC-NAGAO2007).",
+   "Heavy payload, higher thrust: Xu & Walker ±0.6 % up to 230 mN, 250 kg capacity (SRC-XU2009); Moeller & Polzin 1 mN resolution at 100 mN with 12.1 kg (SRC-MOELLER2010); DLR/AST double inverted pendulum 40 kg / 250 mN, resolution 'well below 1 mN' goal (SRC-DLR-JLSRF2018).",
+   "Noise/drift floor, light payload, in air: AST 2 kg balance plateau stability << 0.1 mN at 10 mN and ±250 µN / 27 h (SRC-HARMANN2015).",
+   "Hall + ECR on one torsional balance, 3-20 mN (SRC-MASILLO2022) — numbers not accessible.",
+   "ESA EPL: load-cell balances '±10 µN' / '0.1 mg ≡ 1 µN' but load capacity 0.5-2.3 kg; ICL hanging pendulum 1-600 mN, '±0.1 mN' (Resolution column), σ < 0.27 mN demonstrated at low thrust (SRC-ESA-EPL, SRC-SCHWERTHEIM2021)."
+  ],
+  "reading": "Published absolute uncertainties in the 5-25 mN Hall band are 1.4-2.2 %; the 0.5 % target is a Type A repeatability (not an absolute accuracy), which is a weaker requirement than the published absolute numbers, but no source reports Type A repeatability separately at this thrust with multi-kg payload. The repo's I-U-ABS-T 1 % absolute (PROPOSED) is below every open absolute number found in this band (best 1.4 %).",
+  "model_derived_scaling_here": [
+   "Weight-to-thrust ratio mg/T: 5 kg / 12 mN ≈ 4.1e3; 20 kg / 12 mN ≈ 1.6e4; NASA VF-6 case 1023 (SRC-MACKEY2018), where inclination drift was already a dominant term. For a gravity-coupled pendulum a base tilt γ acts roughly like a force m·g·γ (order-of-magnitude, verify against SRC-POLK2017 Eq. 16): 60 µN corresponds to γ ≈ 1.2 µrad at 5 kg and ≈ 0.31 µrad at 20 kg.",
+   "Thermal drift: the 1 kW MPD stand drift ~4.5e-3 mN/s (SRC-YAMASAKI2023) equals 60 µN in ~13 s; a per-reading 60 µN target therefore needs drift rates ~2 orders lower or bracketing zeros on the reading timescale.",
+   "Force-standard term negligible: 25 mN ≈ 2.549 g at g_n (R4); E2 mass error 3e-5 relative (R4). Transfer-mechanism terms (pulley friction, monofilament stiffness — SRC-MACKEY2018) dominate calibration."
+  ],
+  "conclusion": "Achievable-per-literature at 12-25 mN with 5-20 kg: ~1-2 % absolute is demonstrated-class; 0.5 % per-reading Type A is at or beyond the published edge and must be demonstrated by the S1a capability demo (CD) on the as-built stand with a dummy payload at the heaviest configuration mass and all SVC-1 lines/shams installed, before LOCK-2 fixes n. If S1a shows u_T > 0.5 %, the lane-25 plan by n (larger n) is the pre-registered lever, not relaxing the target post hoc.",
+  "reassessment_after_ESA_lead": "Claim narrowed, not overturned. The ESA EPL table does list balances at or below the 60 µN level ('±10 µN', '0.1 mg ≡ 1 µN'), but only for modified commercial weighing load cells with 0.5 kg / 2.3 kg load capacity — incompatible with a 5-20 kg H-1+MC-1+C-1+module stack and (inferred) vertical firing. The ESA ICL balance covering 1-600 mN lists '±0.1 mN' in the Resolution column (uncertainty 'Flexures dependant'); its peer-reviewed validation reports σ better than 0.27 mN at low thrust with a light QCT. Revised statement: no open source read demonstrates <= ~60 µN (1σ) per-reading repeatability at 12-25 mN with a multi-kg (5-20 kg) payload; the best multi-kg-capable numbers found are 0.1 mN resolution (ESA ICL, facility-declared, payload not stated), 'well below 1 mN' (DLR 40 kg class) and 1 mN at 100 mN with 12.1 kg (MSFC). A 0.1 mN-resolution balance would meet the 25 mN target (124.6 µN) but not the 12 mN target (59.8 µN) on a single reading."
+ },
+ "dominant_error_terms": [
+  {
+   "term": "thermal drift (zero and gain)",
+   "why": "Polk: compact inverted pendulums vulnerable to heat absorbed from thruster, altering spring constant -> zero and gain shifts; thermal shrouds and active cooling essential; thermal drift generally unavoidable -> frequent recalibration. MTU: temperature a large factor in stable-power drift. Yamasaki: ~4.5e-3 mN/s. Nagao: dual pendulum cancels it.",
+   "sources": [
+    "SRC-POLK2017 Sec. III.B, Sec. VI.B",
+    "SRC-KALKMAN2023",
+    "SRC-YAMASAKI2023",
+    "SRC-NAGAO2007"
+   ],
+   "relevance": "H-1 at 1.0-1.35 kW into a 5-20 kg stack; stand must be water-cooled/shrouded; thruster thermally isolated by water-cooled mount (GRC design)"
+  },
+  {
+   "term": "inclination (tilt) drift",
+   "why": "Two dominant terms in the NASA VF-6 analysis are stand inclination drift and displacement drift; relative uncertainty scales with mg/T. Tilt from facility distortion at pumpdown and thermal distortion; active leveling required for inverted pendulum.",
+   "sources": [
+    "SRC-MACKEY2018 results/Table 6",
+    "SRC-POLK2017 Sec. III.B.1"
+   ],
+   "relevance": "mg/T for 5-20 kg at 12 mN is 4-16x the VF-6 case: the dominant error term for a gravity-coupled stand; torsional (vertical axis) response is independent of thruster mass (Polk; INS-01)"
+  },
+  {
+   "term": "service-line stiffness and tare (SVC-1)",
+   "why": "Sensitivity depends on stiffness of leads and tubing; stranded conductors show non-repeatable tares; cable thermal expansion pushes/pulls stand; remedies: liquid-metal pots, waterfall/cable-harp routing orthogonal to thrust, spring-shaped lines; BUSTLab residual cable force causes null drift.",
+   "sources": [
+    "SRC-POLK2017 Sec. III.A-B, VI.B",
+    "SRC-POLZIN2006",
+    "SRC-DLR-JLSRF2018",
+    "SRC-YAMASAKI2023",
+    "SRC-KOKAL-MS Sec. 2.5.7-2.5.8",
+    "SRC-MASILLO2022"
+   ],
+   "relevance": "Module exchange HW-0/RF/ECR changes the line set unless shams are present (HW-SVC-01); RF coax and microwave waveguide are stiff — Surrey used wireless microwave transfer; per-configuration end-to-end calibration (HW-SVC-02) captures stiffness change but not its drift"
+  },
+  {
+   "term": "payload-mass change between configurations",
+   "why": "Inverted/hanging pendulum sensitivity depends on thruster mass (gravity term); torsional response independent of thruster mass.",
+   "sources": [
+    "SRC-POLK2017 Sec. III",
+    "INS-01 principle (SRC-REPO)"
+   ],
+   "relevance": "Pre-ionizer module mass differs per arm -> sensitivity and natural frequency change; mandatory re-calibration per configuration; counterweight/ballast retune for pendulums"
+  },
+  {
+   "term": "electromagnetic interaction",
+   "why": "Use non-ferrous materials, distance, coax/twisted pair; characterise magnetic tare across coil settings with discharge off.",
+   "sources": [
+    "SRC-POLK2017 Sec. VI.B",
+    "HW requirement on module-magnet interaction (SRC-REPO)"
+   ],
+   "relevance": "MC-1 coils plus ECR module magnets near a null-coil / voice-coil actuator or eddy-current damper"
+  },
+  {
+   "term": "calibration transfer",
+   "why": "Pulley friction moment (spin-down test), monofilament stiffness, calibration alignment angle, local g; voice coil faster/lower variance but may carry systematic error, gravimetric traceable.",
+   "sources": [
+    "SRC-MACKEY2018 Table 4 text",
+    "SRC-DLR-JLSRF2018 Sec. 4.4"
+   ],
+   "relevance": "A4 traceability: E2 masses are negligible; the transfer mechanism dominates"
+  },
+  {
+   "term": "facility vibration / noise",
+   "why": "Vibration generally the dominant disturbance limiting resolution; example 0.025 mm noise on 2.5 mm full scale -> 1 % noise; 12 Hz unknown noise seen at VF-6.",
+   "sources": [
+    "SRC-POLK2017 Sec. III.B.2",
+    "SRC-MACKEY2018"
+   ],
+   "relevance": "averaging window per reading vs drift trade"
+  }
+ ],
+ "owner_decisions": [
+  "OD-TS-1 Stand principle: (a) torsional (mass-independent response, lower tilt sensitivity, larger chamber footprint; Surrey Hall+ECR precedent), (b) null-type inverted pendulum with active leveling and water-cooled enclosure (NASA GRC / Xu-Walker lineage, best-documented), (c) double/dual pendulum (DLR/AST 40 kg commercial precedent; Tokyo thermal-drift cancellation). INS-01 open decision 2.",
+  "OD-TS-2 Mass on stand (W3): fix the maximum moving mass (H-1 + MC-1 + C-1 + heaviest pre-ionizer module + mount + line terminations) and the spread between HW-0/RF/ECR; the repo does not fix it (the 5-20 kg band is an assumption). This sets mg/T, tilt tolerance and counterweighting.",
+  "OD-TS-3 Service-line crossing strategy: liquid-metal pots for DC, cable-harp/waterfall or spring-shaped lines for gas, and how RF coax / microwave feed cross the stand (hard line with shams per HW-SVC-01 vs wireless microwave transfer as Surrey) — decides whether module exchange changes stiffness.",
+  "OD-TS-4 Build vs partner vs buy: build to a published basis (GRC/Xu-Walker or Surrey) vs partner with a facility operating a multi-kg mN balance (e.g. DLR STG-ET 40 kg AST balance, Surrey torsional; ESA EPL Corona with the ICL 1-600 mN balance, 80,000 L/s Xe) vs purchase from a manufacturer that has published one (AST) — no vendor or lab contacted; any approach is the owner's call.",
+  "OD-TS-5 Calibration principle and traceability: gravimetric pulley/weights (traceable, A4) with or without a voice-coil/electrostatic secondary; the force-standard traceability class is TBD in INS-01.",
+  "OD-TS-6 Acceptance test for the stand before LOCK-2: pre-register an S1a capability demonstration of u_T at 12 mN with a dummy payload at maximum configuration mass, all SVC-1 lines and shams installed, H-1-representative heat load, and the drift-correction/zero protocol that will be used in scoring.",
+  "OD-TS-7 Whether I-U-ABS-T = 1 % (PROPOSED) stays: open literature in this band shows 1.4-2.2 % absolute; keeping 1 % commits to exceeding published practice."
+ ],
+ "unresolved": [
+  "Full text of Masillo 2022 (CC BY) not retrieved: resolution/uncertainty/beam mass of the only Hall+ECR torsional precedent unknown.",
+  "Xu & Walker 2009 full text not retrieved: test-thruster mass, drift, resolution at low thrust unknown (abstract only).",
+  "Kalkman 2023 thesis PDF behind Cloudflare challenge: payload mass and drift magnitude unknown.",
+  "Neumann 2013 (IEPC-2013-211) and EPJ TI 2021 full text not read: demonstrated performance of the 40 kg DLR/AST balance at 10-25 mN unknown.",
+  "Kodys 2006 (Princeton) not retrieved (host 503/reset).",
+  "Measurement 2024 pendulum repeatability paper: snippet only.",
+  "Manzella 1996 primary not read (1.5 % via Polk 2017).",
+  "Polzin 2006 VAHPER numbers partly OCR-garbled (~50 µN ultimate resolution, 0.8 % fit, ~20 % error-bar ratio): verify against RSI version.",
+  "Tilt-to-force scaling m·g·γ is an order-of-magnitude derivation here; verify against Polk Eq. (16) for the chosen geometry.",
+  "Kokal thesis attributes '< 0.1 % per degree thermal drift' to Harmann 2015; that statement is not in Harmann 2015 (which gives < ±0.1 % FS over 27 h) — do not propagate.",
+  "Repo R4 statement 'no commercial mN EP thrust-balance located' should be qualified: SRC-NEUMANN2021 states DLR operates a 40 kg / 250 mN balance 'developed by the company AST'; no datasheet read and no performance at 12 mN found.",
+  "ESA EPL table column alignment for the ICL row ('Flexures dependant' vs '±0.1 mN') and the payload/orientation conditions of the '±10 µN' load-cell entries are not stated; confirm from the page owner's documentation only through legitimate channels.",
+  "Schwertheim 2021 full text (CC BY) not retrieved: payload capacity of the ICL balance unknown."
+ ],
+ "facility_notes": [
+  {
+   "note": "ESA EPL pumping speeds are listed per chamber with the gas stated: #2 Galileo 23,600 (Xe), #3 Gigant 53,400 (Xe), #4 Corona 80,000 (Xe), #7 SPF 25,000 (Xe); #1 FEEP 5,000 (N2), #5 Electron 260 (N2), #6 MicroNewton 500 (N2). No N2/O2 speed is given for the large Xe chambers — do not read the Xe figures as air-propellant pumping speeds.",
+   "source_id": "SRC-ESA-EPL",
+   "locator": "Vacuum chambers table, row 'Pumping Speed [L/s]'; Corona Ø2 x 5 m"
+  },
+  {
+   "note": "Coordinator-supplied (not verified in this thread): UM LVTF 500,000 L/s is a Xe figure; its PEPL cryopumps do not pump N2/O2, only the 13 TM1200i do. Relevant to where an N2-first Phase 1 thrust campaign can hold backpressure; out of R7 scope.",
+   "source_id": "coordinator verification pass",
+   "locator": "-"
+  }
+ ]
+}

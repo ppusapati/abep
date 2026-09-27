@@ -1,17 +1,21 @@
 {
  "schema": "web_track_source_register_v1",
- "repo_commit_basis": "782f900",
+ "version": "1.1",
+ "repo_commit_basis": "782f900 (v1), c1ce3a5 (v1.1)",
  "access_date": "2026-09-27",
- "rules": "published/open sources only; no contact; no paywall/captcha/bot-challenge bypass; TLS never changed; downloaded third-party PDFs are NOT committed (copyright), only citations, URLs and sha256 where recorded",
+ "rules": "published/open sources only; no contact; no paywall/captcha/bot-challenge bypass; TLS never changed; third-party PDFs NOT committed",
  "thread_files": {
   "R1_compressor": "d30c49cef7ecabe0e957b566cc1bb8b0e0e43552db627b1bc8eb7d6cdb510bca",
   "R2_rfp": "b2796ff856f041b22c623b87e403b75748e2c25e818b9e8149e5c766f22c4b8c",
   "R3_materials": "29633b98e060c98bfdc3cb7ea474fb3c7f190fd22e2a14bc0cf1e70c893bae7d",
   "R4_instrumentation": "cecb59d25b34fbb48f709eb1211cd80161759e35a9c6107d03dc9726d37f010b",
   "R5_facilities": "338132594ceb561992af03d93200e108924f54894f3ebbc3ca041472febc986a",
-  "R6_xe_inputs": "f8eda3db0419d56497a9e35b11e643d87549a1942e2d4677f53446a7c7c228cd"
+  "R6_xe_inputs": "f8eda3db0419d56497a9e35b11e643d87549a1942e2d4677f53446a7c7c228cd",
+  "R7_thrust_stand": "0159ebe869827d0ed56587152db73d77fc1dc96b142bca85bee05ddf7af575c7",
+  "R8_anode_oxygen": "31131ed6409a4d0a4c8b5935387d9c399767fb5507d25f21c0afa753f3d9e39c",
+  "R9_verify": "a476719687033f32338a6d925ff5c84fcc531cf6a041991f05853d69589d80ac"
  },
- "n_sources": 113,
+ "n_sources": 196,
  "sources": [
   {
    "thread": "R1",
@@ -915,6 +919,670 @@
    "citation": "Busek, BHT-1500 datasheet v1.0 (Aug 2021)",
    "url": "https://satcatalog.s3.amazonaws.com/components/941/SatCatalog_-_Busek_-_BHT-1500_-_Datasheet.pdf",
    "access": "open datasheet",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-POLK2017",
+   "citation": "Polk, Pancotti, Haag, King, Walker, Blakely, Ziemer, 'Recommended Practice for Thrust Measurement in Electric Propulsion Testing', J. Propulsion & Power 33(3):539-555, 2017, doi:10.2514/1.B35564",
+   "url": "https://hpepl.ae.gatech.edu/sites/default/files/Journal_Articles/JPP%20V33%20No3%20MayJune2017_ThrustMeasurement.pdf",
+   "access": "full_text_read (author-site copy; also PMC7839308)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-MACKEY2018",
+   "citation": "Mackey, Haag, Kamhawi, Hall, Peterson, 'Uncertainty in Inverted Pendulum Thrust Measurements', NASA GRC, NTRS 20190000300 (AIAA JPC 2018)",
+   "url": "https://ntrs.nasa.gov/api/citations/20190000300/downloads/20190000300.pdf",
+   "access": "full_text_read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-XU2009",
+   "citation": "Xu, Walker, 'High-power, null-type, inverted pendulum thrust stand', Rev. Sci. Instrum. 80, 055103 (2009), doi:10.1063/1.3125626",
+   "url": "https://europepmc.org/article/MED/19485530",
+   "access": "abstract_read (Europe PMC API); full text not retrieved (hpepl link returns HTML/404)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-POLZIN2006",
+   "citation": "Polzin, Markusic, Stanojev, DeHoyos, Spaun, 'Thrust stand for electric propulsion performance evaluation', Rev. Sci. Instrum. 77, 105108 (2006); NTRS 20060025538 preprint",
+   "url": "https://ntrs.nasa.gov/api/citations/20060025538/downloads/20060025538.pdf",
+   "access": "full_text_read (scanned/OCR preprint; OCR-garbled numbers flagged verify)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-MOELLER2010",
+   "citation": "Moeller, Polzin, 'Thrust stand for vertically oriented electric propulsion performance evaluation', Rev. Sci. Instrum. 81, 115108 (2010), doi:10.1063/1.3502463; NTRS 20100033281",
+   "url": "https://ntrs.nasa.gov/api/citations/20100033281/downloads/20100033281.pdf",
+   "access": "full_text_read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-KALKMAN2023",
+   "citation": "Kalkman, 'Design, Development, and Testing of an Inverted Pendulum Thrust Stand for Low Power Hall-Effect Thrusters', M.S. thesis, Michigan Technological University, 2023",
+   "url": "https://digitalcommons.mtu.edu/etdr/1587/",
+   "access": "abstract_read (PDF behind Cloudflare challenge; not bypassed)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-MASILLO2022",
+   "citation": "Masillo, Stubbing, Swar, Staab, Garbayo, Lucca Fabris, 'Validation of a torsional balance for thrust measurements of Hall effect and microwave-based space propulsion systems', Rev. Sci. Instrum. 93, 114501 (2022), doi:10.1063/5.0117584 (CC BY per Semantic Scholar)",
+   "url": "https://pubs.aip.org/aip/rsi/article/93/11/114501/2849448",
+   "access": "abstract_read (Europe PMC / Semantic Scholar API); publisher page 403, PubMed captcha not bypassed",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-NAGAO2007",
+   "citation": "Nagao, Yokota, Komurasaki, Arakawa, 'Development of a two-dimensional dual pendulum thrust stand for Hall thrusters', Rev. Sci. Instrum. 78, 115108 (2007), doi:10.1063/1.2815336",
+   "url": "https://europepmc.org/article/MED/18052500",
+   "access": "abstract_read (Europe PMC API; PMID locator verify)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-YAMASAKI2023",
+   "citation": "Yamasaki, Nonaka, Yokota, Shimamura, 'Development of inverted pendulum thrust stand with spring-shaped wire for high power electric thrusters', Rev. Sci. Instrum. 94, 034501 (2023), doi:10.1063/5.0087076",
+   "url": "https://pubs.aip.org/aip/rsi/article/94/3/034501/2881923",
+   "access": "abstract_read (Europe PMC API)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-HARMANN2015",
+   "citation": "Harmann, Dartsch, Werner, 'Low Drift Thrust Balance with High Resolution', IEPC-2015-257/ISTS-2015-b-257 (AST Advanced Space Technologies GmbH / DLR)",
+   "url": "https://electricrocket.org/IEPC/IEPC-2015-257_ISTS-2015-b-257.pdf",
+   "access": "full_text_read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-DLR-JLSRF2018",
+   "citation": "DLR, 'STG-ET: DLR Electric Propulsion Test Facility', J. Large-Scale Research Facilities 4, A134 (2018), doi:10.17815/jlsrf-3-156-1, Sec. 4.4",
+   "url": "https://jlsrf.org/index.php/lsf/article/view/156",
+   "access": "full_text_read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-NEUMANN2021",
+   "citation": "Neumann, Simon, Schmidt, 'Thrust measurement and thrust balance development at DLR's electric propulsion test facility', EPJ Techniques and Instrumentation (2021), doi:10.1140/epjti/s40485-021-00074-7 (gold OA, CC BY)",
+   "url": "https://doi.org/10.1140/epjti/s40485-021-00074-7",
+   "access": "abstract_read (Semantic Scholar API); full text behind client challenge, not bypassed",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-NEUMANN2013",
+   "citation": "Neumann, Sinske, Harmann, 'The 250mN Thrust Balance for the DLR Goettingen EP Test Facility', IEPC-2013-211",
+   "url": "https://elib.dlr.de/82209/",
+   "access": "not_read (cited via SRC-DLR-JLSRF2018, SRC-KOKAL-MS)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-KOKAL-MS",
+   "citation": "Kokal, 'Development of a mili-Newton level thrust stand for thrust measurements of electric propulsion systems and UK90 Hall effect thruster', M.S. thesis, Bogazici University (BUSTLab)",
+   "url": "https://bogazicispacetechlab.github.io/files/dissertations/ugur-kokal.pdf",
+   "access": "full_text_read (grep-level)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-KOKAL2017",
+   "citation": "Kokal, Celik, 'Development of BUSTLab Thrust Stand for mili-Newton Level Thrust Measurements', IEPC-2017-317",
+   "url": "https://bogazicispacetechlab.github.io/files/conferences/39.pdf",
+   "access": "repo_prior_read (R4)",
+   "accessed": "2026-09-27 (via repo R4 thread)"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-MEAS2024",
+   "citation": "'Investigating the repeatability error in thrust measurement on a pendulum-based stand', Measurement (Elsevier) 2024, pii S026322412401282X (authors not captured)",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S026322412401282X",
+   "access": "search_snippet_verify (paywalled; not opened)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-KODYS2006",
+   "citation": "Kodys, Murray, Cassady, Choueiri, 'An Inverted-Pendulum Thrust Stand for High-Power Electric Thrusters', AIAA 2006-4821",
+   "url": "https://alfven.princeton.edu/publications/pdf/kodys-jpc-2006-4821.pdf",
+   "access": "not_retrieved (host reset / HTTP 503)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-REPO",
+   "citation": "ABEP repo @c1ce3a5: docs/experiments/instrumentation/instrumentation_definition_v1.json (INS-01); docs/experiments/hardware/hardware_requirements_v1.json (HW-SVC-01..03, SVC-1, mass_max_kg); docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json (P1DQ-TABS); docs/procurement/web_track_v1/threads/R4_instrumentation.md sec. 8",
+   "url": "file:///home/user/abep",
+   "access": "repo",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-ESA-EPL",
+   "citation": "ESA, 'ESA Propulsion Laboratory' (TEC-MPE EPL, ESTEC) lab page: tables 'EPL Thrust Balances — Instruments & technical parameters' and 'Vacuum chambers — Instruments & technical parameters'",
+   "url": "https://technology.esa.int/lab/tec-m-epl-esa-propulsion-laboratory",
+   "access": "full_page_read (raw HTML table parsed; lead supplied by coordinator verification pass, re-fetched here)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R7",
+   "id": "SRC-SCHWERTHEIM2021",
+   "citation": "Schwertheim, Rosati Azevedo, Liu, Bosch Borràs, Bianchi, Knoll, 'Interlaboratory validation of a hanging pendulum thrust balance for electric propulsion testing', Rev. Sci. Instrum. 92, 034502 (2021), doi:10.1063/5.0037100 (CC BY per Europe PMC)",
+   "url": "https://pubs.aip.org/aip/rsi/article/92/3/034502/1061613",
+   "access": "abstract_read (Europe PMC API, PMID 33820057); AIP PDF returned an HTML challenge, not bypassed",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "CIFALI2011",
+   "citation": null,
+   "url": "https://electricrocket.org/IEPC/IEPC-2011-224.pdf",
+   "access": "full text read (open PDF)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "TEJEDA2023",
+   "citation": null,
+   "url": "https://ui.adsabs.harvard.edu/abs/2023AcAau.203..268T/abstract",
+   "access": "full text NOT accessed (ScienceDirect/ResearchGate 403); abstract content only via search-engine snippets -> verify",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "TEJEDA2024",
+   "citation": null,
+   "url": "https://www.imperial.ac.uk/bitstreams/ab3884e8-130c-4451-9d20-31b60b8607a9/download",
+   "access": "full text read (Imperial Spiral open copy)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "MUNOZTEJEDA2024",
+   "citation": null,
+   "url": "https://spiral.imperial.ac.uk/server/api/core/bitstreams/e2315fb4-4be7-45a4-a754-2d6433696df5/content",
+   "access": "full text read (open)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "SCHWERTHEIM2022",
+   "citation": null,
+   "url": "https://spiral.imperial.ac.uk/server/api/core/bitstreams/656ff833-cdee-470c-b3fc-381134a67f96/content",
+   "access": "accepted manuscript read (open)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "IPPL_WEB",
+   "citation": null,
+   "url": "https://www.imperial.ac.uk/a-z-research/plasma-propulsion-lab/research/oxidation-and-erosion-reduction-methods-in-water-fuelled-hets/",
+   "access": "web page read; Bayliss & Knoll IEPC-2025 paper NOT accessed",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "GABRIEL1993",
+   "citation": null,
+   "url": "https://electricrocket.org/IEPC/IEPC1993-167.pdf",
+   "access": "full text read (scan; two-column layout partly garbled in text extraction)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "ANDREUSSI2022",
+   "citation": null,
+   "url": "(repo record)",
+   "access": "second-hand via repo; not re-read here",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "SITAEL2017",
+   "citation": null,
+   "url": "https://electricrocket.org/IEPC/IEPC_2017_377.pdf",
+   "access": "full text read (grep for anode/oxidation/material)",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "BANKS2004",
+   "citation": null,
+   "url": "https://ntrs.nasa.gov/api/citations/20040191331/downloads/20040191331.pdf",
+   "access": "full text read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "MCCARTHY2010",
+   "citation": null,
+   "url": "https://ntrs.nasa.gov/api/citations/20100040422/downloads/20100040422.pdf",
+   "access": "full text read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "SMOLIK2000",
+   "citation": null,
+   "url": "https://www.osti.gov/servlets/purl/752007",
+   "access": "full text read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "ZHAO2019",
+   "citation": null,
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6804067/",
+   "access": "read via fetch-tool summary of PMC full text; table values should be re-checked -> verify",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "PGM1400_SNIPPET",
+   "citation": null,
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/0022508863900559",
+   "access": "search-engine snippet only; source page 403 -> verify",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "SMC_IN601",
+   "citation": null,
+   "url": "https://www.specialmetals.com/documents/technical-bulletins/inconel/inconel-alloy-601.pdf",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "SMC_IN600",
+   "citation": null,
+   "url": "https://www.specialmetals.com/documents/technical-bulletins/inconel/inconel-alloy-600.pdf",
+   "access": "read",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "SS316L_SLM2020",
+   "citation": null,
+   "url": "https://link.springer.com/article/10.1007/s11085-020-10005-8",
+   "access": "search snippet of abstract only (Springer login redirect) -> verify",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "TIN_CVD2020",
+   "citation": null,
+   "url": "https://www.sciencedirect.com/science/article/pii/S0257897220313037",
+   "access": "search snippet of abstract only (403) -> verify",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "ZRN_COAT2021",
+   "citation": null,
+   "url": "https://www.mdpi.com/2079-6412/11/3/264",
+   "access": "search snippet only (403) -> verify",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "THEODOSIOU2017",
+   "citation": null,
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5549958/",
+   "access": "read via fetch-tool summary -> values re-check recommended",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "HF_ARC_SNIPPET",
+   "citation": null,
+   "url": "https://www.researchgate.net/publication/304479718",
+   "access": "search snippet only -> verify",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "WANG1995",
+   "citation": null,
+   "url": "(paywalled; not accessed)",
+   "access": "not accessed",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "GUARNIERI1988",
+   "citation": null,
+   "url": "(not accessed)",
+   "access": "second-hand via GABRIEL1993",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R8",
+   "id": "HENTSCHEL1992",
+   "citation": null,
+   "url": "(not accessed)",
+   "access": "second-hand via GABRIEL1993",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "Moog XFC mass",
+   "citation": "Moog XFC mass",
+   "url": "https://www.moog.com/products/propulsion/space-propulsion/spacecraft-propulsion/systems-and-subsystems/xenon-flow-controller.html",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "Moog XFC flow range / inlet pressure / heritage",
+   "citation": "Moog XFC flow range / inlet pressure / heritage",
+   "url": "same as above",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "MaSMi LUC insert material (package: 'MaSMi LUC (LaB6...)'; 'lowest open LaB6 point is MaSMi 0.20 mg/s')",
+   "citation": "MaSMi LUC insert material (package: 'MaSMi LUC (LaB6...)'; 'lowest open LaB6 point is MaSMi 0.20 mg/s')",
+   "url": "https://patents.google.com/patent/US10919649B2/en (HTML sha256 f41c615c...)",
+   "access": "CORRECTED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "MaSMi numbers: 0.20 mg/s normal operation, 2 A, 2-7 % flow fraction, 102 heaterless ignitions, 2.0-3.9 mg/s in 0.98 mg/s steps",
+   "citation": "MaSMi numbers: 0.20 mg/s normal operation, 2 A, 2-7 % flow fraction, 102 heaterless ignitions, 2.0-3.9 mg/s in 0.98 mg/s steps",
+   "url": "https://patents.google.com/patent/US10919649B2/en",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "BHT-1500 5-10 % cathode fraction ('verify locator')",
+   "citation": "BHT-1500 5-10 % cathode fraction ('verify locator')",
+   "url": "https://patents.google.com/patent/US10919649B2/en",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "Xe density at 150 bar (NIST)",
+   "citation": "Xe density at 150 bar (NIST)",
+   "url": "https://webbook.nist.gov/cgi/fluid.cgi?ID=C7440633&Type=IsoTherm ...",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "Schupp KD500 rating",
+   "citation": "Schupp KD500 rating",
+   "url": "https://schupp.ch/en/p/kd500-winding-wires-with-ceramic-insulation-500c/ ; https://schupp.ch/wp-content/uploads/2026/09/KD500-Ceramic-Wires.pdf",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "Lake Shore F71 DC accuracy",
+   "citation": "Lake Shore F71 DC accuracy",
+   "url": "https://www.lakeshore.com/products/categories/specification/magnetic-products/gaussmeters-teslameters/f71-and-f41-teslameters",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "Lake Shore F71 temperature coefficient",
+   "citation": "Lake Shore F71 temperature coefficient",
+   "url": "same",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "Lake Shore F71 axis orthogonality",
+   "citation": "Lake Shore F71 axis orthogonality",
+   "url": "same",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "MKS 627F accuracy",
+   "citation": "MKS 627F accuracy",
+   "url": "https://www.mks.com/mam/celum/celum_assets/resources/627F-DS.pdf",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "Xu & Walker 2009 thrust-stand uncertainty",
+   "citation": "Xu & Walker 2009 thrust-stand uncertainty",
+   "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=19485530&rettype=abstract",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "IEC 60584-1 class 1 K/N",
+   "citation": "IEC 60584-1 class 1 K/N",
+   "url": "https://www.wika.com/media/Technical-information/English/ds_in0023_en_co.pdf (sha256 677b5fc4...)",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "R/S usable range",
+   "citation": "R/S usable range",
+   "url": "same WIKA PDF",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "W-Re vacuum/inert only; embrittles with O2",
+   "citation": "W-Re vacuum/inert only; embrittles with O2",
+   "url": "-",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "two-colour pyrometer emissivity/window handling",
+   "citation": "two-colour pyrometer emissivity/window handling",
+   "url": "https://optris.com/us/knowledge-library/ratio-dual-two-colour-pyrometer/ (sha256 a09e92da...)",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "SRS RGA200 specs",
+   "citation": "SRS RGA200 specs",
+   "url": "https://www.thinksrs.com/downloads/pdfs/catalog/RGAc.pdf (sha256 c7bd8f93...)",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "Bird 5010B accuracy / frequency",
+   "citation": "Bird 5010B accuracy / frequency",
+   "url": "https://testequipment.center/Product_Documents/Bird-5010B-Specifications-95309.pdf (distributor-hosted Bird sheet, sha256 61dacc8d...)",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "R&S NRT-Z14 frequency",
+   "citation": "R&S NRT-Z14 frequency",
+   "url": "https://www.farnell.com/datasheets/2362740.pdf (sha256 ae0373c3...)",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "R&S NRT-Z14 power range and ~6 % (k=2)",
+   "citation": "R&S NRT-Z14 power range and ~6 % (k=2)",
+   "url": "same",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "LEM IT 60-S principle",
+   "citation": "LEM IT 60-S principle",
+   "url": "https://www.lem.com/sites/default/files/products_datasheets/it_60-s_ultrastab.pdf",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "FCRI accreditation",
+   "citation": "FCRI accreditation",
+   "url": "https://www.fcriindia.com/calibration/",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "CSIR-NPL CFCT",
+   "citation": "CSIR-NPL CFCT",
+   "url": "https://www.nplindia.org/index.php/commercial-services/calibration-testing/",
+   "access": "CORRECTED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "ESA EPL pumping speed",
+   "citation": "ESA EPL pumping speed",
+   "url": "https://technology.esa.int/lab/tec-m-epl-esa-propulsion-laboratory",
+   "access": "CORRECTED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "UM LVTF",
+   "citation": "UM LVTF",
+   "url": "https://pepl.engin.umich.edu/pdf/IEPC-2019-653.pdf (sha256 f866e956...)",
+   "access": "CORRECTED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "SITAEL IV4/IV10 figures (tools page)",
+   "citation": "SITAEL IV4/IV10 figures (tools page)",
+   "url": "https://www.sitael.com/electric-propulsion/tools-services/",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "UM APTF",
+   "citation": "UM APTF",
+   "url": "https://aero.engin.umich.edu/2025/11/17/...",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "CMTI NABL / roughness",
+   "citation": "CMTI NABL / roughness",
+   "url": "https://cmti.res.in/precision-metrology-calibration/",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "RFP close date",
+   "citation": "RFP close date",
+   "url": "tdf.drdo.gov.in (connection reset x2); x.com/DrdoTdf (login-walled; search summary again says 20-Oct-2026 1700 h, pre-bid 24-Sep-2026); defproc captcha not attempted; both news articles (idrw, indiandefensenews) contain no date",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "RFP number",
+   "citation": "RFP number",
+   "url": "https://idrw.org/drdo-seeks-air-breathing-propulsion-for-vleo-satellites/",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "Li 2015 abstract values (500 mm, 56.47-57.85 %, 41.67-42.60 %, stage roles)",
+   "citation": "Li 2015 abstract values (500 mm, 56.47-57.85 %, 41.67-42.60 %, stage roles)",
+   "url": "https://api.openalex.org/works/doi:10.1016/j.vacuum.2015.06.011",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "Romano 2021 volume/pages",
+   "citation": "Romano 2021 volume/pages",
+   "url": "https://api.openalex.org/works/doi:10.1016/j.actaastro.2021.06.033",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "Moon 2025 published version",
+   "citation": "Moon 2025 published version",
+   "url": "https://api.openalex.org/works/doi:10.1016/j.ast.2026.112138",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "TAES2023 authors",
+   "citation": "TAES2023 authors",
+   "url": "https://api.openalex.org/works/doi:10.1109/TAES.2023.3282611",
+   "access": "CONFIRMED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "AIP2016 authors ('possibly same group' as Li 2015)",
+   "citation": "AIP2016 authors ('possibly same group' as Li 2015)",
+   "url": "https://api.openalex.org/works/doi:10.1063/1.4967689",
+   "access": "CORRECTED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "US 12,286,943 bibliographic data",
+   "citation": "US 12,286,943 bibliographic data",
+   "url": "USPTO ppubs 403 earlier; not retried",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "other R3 'verify' items: ARMCO Curie ~770 C; 430F sulfide outgassing; Inconel/Ni-alloy oxidation and magnetism; Mo volatile oxide; Ta/Re LaB6 compatibility; Ni gaskets ferromagnetic; Kovar sleeve; Combat M vs M26 conductivity conflict; CoorsTek alumina; Kapton",
+   "citation": "other R3 'verify' items: ARMCO Curie ~770 C; 430F sulfide outgassing; Inconel/Ni-alloy oxidation and magnetism; Mo volatile oxide; Ta/Re LaB6 compatibility; Ni gaskets ferromagnetic; Kovar sleeve; Combat M vs M26 conductivity conflict; CoorsTek alumina; Kapton",
+   "url": "-",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "other R4 memory items: molbloc/DryCal low-flow specs; Hiden/Inficon RGA; ASTM E220 citation; spinning-rotor gauge route; O2 filament effect",
+   "citation": "other R4 memory items: molbloc/DryCal low-flow specs; Hiden/Inficon RGA; ASTM E220 citation; spinning-rotor gauge route; O2 filament effect",
+   "url": "-",
+   "access": "STILL_UNVERIFIED",
+   "accessed": "2026-09-27"
+  },
+  {
+   "thread": "R9",
+   "id": "other R5 snippet items: RAM-EP phys.org, ABEP review, ULVAC cryo O2, ASTM E1508 scope, NABL CC-2153/CC-2704",
+   "citation": "other R5 snippet items: RAM-EP phys.org, ABEP review, ULVAC cryo O2, ASTM E1508 scope, NABL CC-2153/CC-2704",
+   "url": "-",
+   "access": "STILL_UNVERIFIED",
    "accessed": "2026-09-27"
   }
  ]
