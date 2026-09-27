@@ -150,3 +150,27 @@ def test_companion_document_exists_and_points_back():
     text = MD_PATH.read_text(encoding="utf-8")
     assert "sputter_yield_db_v1.json" in text
     assert "not a validated erosion prediction" in text
+
+
+def test_milestone_relevance_declared(db):
+    """Operating model section 1: every lane states which question it answers; registry says lane_32 answers (iii)."""
+    mr = db["milestone_relevance"]
+    assert mr["lane_id"] == "lane_32_wall_life"
+    assert mr["answers"] == "iii"
+    for key in ("milestone_A", "milestone_B", "milestone_C", "verification_status"):
+        assert isinstance(mr.get(key), str) and mr[key].strip(), key
+    assert mr["milestone_A"].startswith("NON-DECISIVE")
+    assert "single-lens" in mr["verification_status"]
+    md = MD_PATH.read_text(encoding="utf-8")
+    assert "Milestone A" in md and "(iii)" in md
+
+
+def test_consumer_requirements_bind_flags_and_crosswalk(db):
+    cr = db["consumer_requirements"]
+    assert "thermal_life.py" in cr["known_consumer"]
+    assert "1e-9" in cr["unit_crosswalk"] and "1.602176634e-19" in cr["unit_crosswalk"]
+    joined = " ".join(cr["required_behaviour"])
+    assert "NOT_DEMONSTRATED" in joined and "OUT_OF_DOMAIN" in joined
+    for flag in db["extrapolation_policy"]["flags"]:
+        assert flag in joined, flag
+    assert any(g["id"] == "G11" for g in db["gaps"])
