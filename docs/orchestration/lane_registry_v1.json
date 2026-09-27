@@ -952,6 +952,11 @@
      "workflow_run": "wf_fa553f8c-24f",
      "workflow_key": "HW",
      "reason": "A3: bounded W3 integration review (N1/N3/W4 provisions) and ordered re-pin chain HW -> INSTR -> AOLIFE -> S1GATE; no-op allowed"
+    },
+    {
+     "workflow_run": "wf_a8d8865f-f40",
+     "workflow_key": "HW",
+     "reason": "pin-only chain after the A3 merges: break the W3<->W4 live-file cross-pin with immutable snapshots; ordered re-pins; no content change"
     }
    ]
   },
@@ -1006,6 +1011,11 @@
      "workflow_run": "wf_fa553f8c-24f",
      "workflow_key": "AOLIFE",
      "reason": "A3: bounded W3 integration review (N1/N3/W4 provisions) and ordered re-pin chain HW -> INSTR -> AOLIFE -> S1GATE; no-op allowed"
+    },
+    {
+     "workflow_run": "wf_a8d8865f-f40",
+     "workflow_key": "AOLIFE",
+     "reason": "pin-only chain after the A3 merges: break the W3<->W4 live-file cross-pin with immutable snapshots; ordered re-pins; no content change"
     }
    ]
   },
@@ -1038,6 +1048,11 @@
      "workflow_run": "wf_fa553f8c-24f",
      "workflow_key": "S1GATE",
      "reason": "A3: bounded W3 integration review (N1/N3/W4 provisions) and ordered re-pin chain HW -> INSTR -> AOLIFE -> S1GATE; no-op allowed"
+    },
+    {
+     "workflow_run": "wf_a8d8865f-f40",
+     "workflow_key": "S1GATE",
+     "reason": "pin-only chain after the A3 merges: break the W3<->W4 live-file cross-pin with immutable snapshots; ordered re-pins; no content change"
     }
    ]
   },
@@ -1049,12 +1064,26 @@
   {
    "id": "fo_s1a_engineering_gate",
    "kind": "follow_on",
-   "title": "S1a engineering-readiness gate (non-score-bearing qualification; N4 unchanged)"
+   "title": "S1a engineering-readiness gate (non-score-bearing qualification; N4 unchanged)",
+   "repairs": [
+    {
+     "workflow_run": "wf_a8d8865f-f40",
+     "workflow_key": "S1A",
+     "reason": "pin-only chain after the A3 merges: break the W3<->W4 live-file cross-pin with immutable snapshots; ordered re-pins; no content change"
+    }
+   ]
   },
   {
    "id": "fo_capability_demo_prep",
    "kind": "follow_on",
-   "title": "W4 actual-hardware capability demonstration preparation + measurement specification"
+   "title": "W4 actual-hardware capability demonstration preparation + measurement specification",
+   "repairs": [
+    {
+     "workflow_run": "wf_a8d8865f-f40",
+     "workflow_key": "CAPDEMO",
+     "reason": "pin-only chain after the A3 merges: break the W3<->W4 live-file cross-pin with immutable snapshots; ordered re-pins; no content change"
+    }
+   ]
   },
   {
    "id": "fo_compressor_downselect",
