@@ -1096,6 +1096,26 @@
    "id": "fo_compressor_downselect",
    "kind": "follow_on",
    "title": "DI-1.4 compressor down-selection (engineering critical path for the feed boundary)"
+  },
+  {
+   "id": "fo_preionizer_module_icd",
+   "kind": "follow_on",
+   "title": "H-1 common pre-ionizer module interface ICD (RF primary / ECR alternate annexes; HW-0 blank/spacer)"
+  },
+  {
+   "id": "fo_xe_system_ledger",
+   "kind": "follow_on",
+   "title": "parametric Xe mass + stored-Xe subsystem ledger"
+  },
+  {
+   "id": "fo_phase1_prereg_framework",
+   "kind": "follow_on",
+   "title": "Phase-1 pre-registration framework (decision quantities; thresholds unfrozen until LOCK-2)"
+  },
+  {
+   "id": "fo_subsystem_maturity_matrix",
+   "kind": "follow_on",
+   "title": "A5 16-subsystem interface/BOM maturity matrix"
   }
  ],
  "owner_dispositions": [
@@ -1123,7 +1143,8 @@
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json",
-    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json"
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json"
    ],
    "immutability": "the disposition file and each addendum are never edited after commit (consumers pin them by sha256); later owner amendments are new addendum files"
   }

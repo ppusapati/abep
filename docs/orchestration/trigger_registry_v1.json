@@ -570,6 +570,54 @@
    "produces": "fo_compressor_downselect",
    "kind": "follow_on_launch",
    "note": "owner addendum A3 2026-09-27"
+  },
+  {
+   "id": "T_A5_PREIONIZER_ICD",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_preionizer_module_icd",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A6 2026-09-27 (A5 follow-ons)"
+  },
+  {
+   "id": "T_A5_XE_LEDGER",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_xe_system_ledger",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A6 2026-09-27 (A5 follow-ons)"
+  },
+  {
+   "id": "T_A5_PHASE1_PREREG_FRAMEWORK",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_phase1_prereg_framework",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A6 2026-09-27 (A5 follow-ons)"
+  },
+  {
+   "id": "T_A5_SUBSYSTEM_MATURITY",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_subsystem_maturity_matrix",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A6 2026-09-27 (A5 follow-ons)"
   }
  ]
 }
