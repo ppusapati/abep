@@ -106,13 +106,13 @@
    "workflow_run": "wf_020ac47f-09d",
    "workflow_key": "E",
    "deps": [],
-   "verification_protocol": "single-lens-v1",
+   "verification_protocol": "two-lens-v2",
    "answers": "iii",
    "second_lens": {
     "workflow_run": "wf_96f8f0bb-ae2",
     "workflow_key": "E",
-    "status": "running",
-    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+    "status": "passed",
+    "note": "two-lens pass in round 1, 0 fix rounds; verified commit unchanged"
    }
   },
   {
@@ -145,13 +145,13 @@
    "workflow_run": "wf_020ac47f-09d",
    "workflow_key": "D",
    "deps": [],
-   "verification_protocol": "single-lens-v1",
+   "verification_protocol": "two-lens-v2",
    "answers": "ii",
    "second_lens": {
     "workflow_run": "wf_96f8f0bb-ae2",
     "workflow_key": "D",
-    "status": "running",
-    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+    "status": "passed",
+    "note": "two-lens pass in round 1, 0 fix rounds; verified commit unchanged"
    }
   },
   {
@@ -167,8 +167,8 @@
    "second_lens": {
     "workflow_run": "wf_96f8f0bb-ae2",
     "workflow_key": "H",
-    "status": "running",
-    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+    "status": "interrupted",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
    }
   },
   {
@@ -391,8 +391,8 @@
    "second_lens": {
     "workflow_run": "wf_96f8f0bb-ae2",
     "workflow_key": "B",
-    "status": "running",
-    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+    "status": "interrupted",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
    }
   },
   {
@@ -403,13 +403,13 @@
    "workflow_run": "wf_020ac47f-09d",
    "workflow_key": "C",
    "deps": [],
-   "verification_protocol": "single-lens-v1",
+   "verification_protocol": "two-lens-v2",
    "answers": "ii",
    "second_lens": {
     "workflow_run": "wf_96f8f0bb-ae2",
     "workflow_key": "C",
-    "status": "running",
-    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+    "status": "passed",
+    "note": "two-lens pass in round 1, 0 fix rounds; verified commit unchanged"
    }
   },
   {
@@ -425,8 +425,8 @@
    "second_lens": {
     "workflow_run": "wf_96f8f0bb-ae2",
     "workflow_key": "F",
-    "status": "running",
-    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+    "status": "interrupted",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
    }
   },
   {
@@ -437,13 +437,13 @@
    "workflow_run": "wf_020ac47f-09d",
    "workflow_key": "G",
    "deps": [],
-   "verification_protocol": "single-lens-v1",
+   "verification_protocol": "two-lens-v2",
    "answers": "i",
    "second_lens": {
     "workflow_run": "wf_96f8f0bb-ae2",
     "workflow_key": "G",
-    "status": "running",
-    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+    "status": "passed",
+    "note": "two-lens pass in round 1, 0 fix rounds; verified commit unchanged"
    }
   },
   {
@@ -459,8 +459,8 @@
    "second_lens": {
     "workflow_run": "wf_96f8f0bb-ae2",
     "workflow_key": "I",
-    "status": "running",
-    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+    "status": "interrupted",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
    }
   },
   {
@@ -476,8 +476,8 @@
    "second_lens": {
     "workflow_run": "wf_96f8f0bb-ae2",
     "workflow_key": "J",
-    "status": "running",
-    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+    "status": "interrupted",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
    }
   },
   {
@@ -493,8 +493,8 @@
    "second_lens": {
     "workflow_run": "wf_96f8f0bb-ae2",
     "workflow_key": "K",
-    "status": "running",
-    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+    "status": "interrupted",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
    }
   },
   {
@@ -510,8 +510,8 @@
    "second_lens": {
     "workflow_run": "wf_96f8f0bb-ae2",
     "workflow_key": "L",
-    "status": "running",
-    "note": "two-lens re-verification of a single-lens-v1 lane; verification_protocol becomes two-lens-v2 only if it passes; state stays single-lens-verified meanwhile"
+    "status": "interrupted",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
    }
   }
  ],
