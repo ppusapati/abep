@@ -69,6 +69,6 @@
    "C6_no_extrapolation": "no 15,000 h extrapolation from an unadmitted Hall closure"
   },
   "management_rule": "maximize parallel progress toward S1 readiness; non-gating analysis never delays the hardware path unless it changes a safety limit, experimental validity or a pre-registered decision condition",
-  "reporting": "next updates organized around five decision-critical outputs only: DI-1 feed recommendation, LOCK-1 recommendations, H-1 hardware definition, instrumentation feasibility, held-out validation split"
+  "reporting": "SUPERSEDED by owner 2026-09-27: every update covers ALL workstreams (the 7 pivot lanes + the 5 execution-directive lanes) with their actual content, so the decision on thrust and subsystems can be taken from the full picture"
  }
 }
