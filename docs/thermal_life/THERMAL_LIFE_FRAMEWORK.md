@@ -13,6 +13,7 @@ Files:
 | `schemas/thermal_life/inputs_v1.json` | input contract: every required input per component, its unit, and the lane or module expected to produce it |
 | `tests/test_thermal_life_framework.py` | hand-calculation checks, refusal paths, "every limit sourced" check |
 | `hallthruster_bridge/hall_map_schema_v1.json` | read only; the source of the HallMap field names and units |
+| `abep_sim/hall_ensemble.py`, `abep_sim/hall_map.py` | read only, imported lazily; `require_admitted` and `pinned_commit` gate the Hall wall-flux inputs (§2.3) |
 
 ## 1. Scope
 **Question answered.** Once an architecture closes on power at the bus-power boundary, are its heat loads and
@@ -98,9 +99,28 @@ are in `limits_v1.json` → `sources`.
   mass), is **TBD**: its datasheet sat behind a bot challenge that was not bypassed.
 - Erosion life: life = d_allow / (Γ_i · (peak/avg) · Y_v) against the RFP firing hours. d_allow, peak/avg and the
   volumetric sputter yield Y_v are all inputs; no sputter yield is sourced in v1.
+- **Wall-flux provenance gate (gap G11 of `docs/evidence/wall_life/`, repaired 2026-09-27).** Γ_i and ε_i feed both the
+  wall heat and the erosion life, so `check_feasibility` accepts `hall_discharge.wall_ion_flux_m2s` and
+  `wall_ion_energy_eV` only when both records carry the same `wall_flux_provenance` of one of two kinds
+  (`inputs_v1.json` → `wall_flux_provenance`):
+  - `admitted_hallmap`: `ensemble_member_id`, `trustworthy`, `wall_life_trustworthy`, `hallthruster_commit`. At check time
+    the member id is re-verified with `abep_sim.hall_ensemble.require_admitted` (read-only, imported lazily). That call
+    refuses screening candidates (`sgb-screen-*`) and unknown ids. Both trust flags must be `true`, the commit must equal
+    the `PINNED.toml` commit, and the record's quantity type must be `model-derived`.
+  - `measured_hardware`: an `evidence_record` with non-empty `test_article`, `facility`, `document`,
+    `measurement_method`, `uncertainty`, `operating_point` and `applicability_domain`; quantity type `measured`.
+  - Anything else raises `ValueError`: a missing provenance (hand-entered flux), a screening candidate, an unadmitted or
+    unknown member, or mixed sources for flux and energy. No PASS, FAIL or NOT_DEMONSTRATED is produced from such
+    input. The credible set is ∅ and no hardware measurement exists, so **every wall-flux input is refused today**. The
+    wall-temperature and erosion-life checks of `hall_discharge` therefore cannot run for any architecture yet.
 - `thermal_life.hallmap_wall_inputs(point, member_id, evidence_level)` builds the input records from a HallMap query.
-  It refuses unless the query is `trustworthy` **and** `wall_life_trustworthy`. There is no default evidence level: the
-  caller states it (Vyovrinda geometry is outside any P5-validated domain).
+  It refuses unless `member_id` passes `require_admitted`, the query is `trustworthy` **and** `wall_life_trustworthy`,
+  and it carries the pinned HallThruster.jl commit. It attaches the `admitted_hallmap` provenance, which
+  `check_feasibility` verifies again. There is no default evidence level: the caller states it (Vyovrinda geometry is
+  outside any P5-validated domain).
+- Still open from G11 (not part of this gate): carrying the sputter-yield extrapolation flags of
+  `docs/evidence/wall_life/sputter_yield_db_v1.json` into the result and mapping OUT_OF_DOMAIN to NOT_DEMONSTRATED.
+  `volumetric_sputter_yield_m3_per_ion` is still a plain sourced input.
 
 ### 2.4 RF and ECR sources (`rf_source`, `ecr_source`)
 - Q = P_RF · (f_antenna_copper + f_coupler_dielectric + f_plasma_to_structure). All three fractions are **inputs** from
@@ -147,7 +167,7 @@ The full list, with units, is in `inputs_v1.json`. None is available today excep
 | input group | producer (lane / module) | state 2026-09-26 |
 |---|---|---|
 | component electrical powers: `hall_discharge`, `hall_magnet`, `cathode_keeper`, `cathode_heater`, `rf_source`, `ecr_source`, `ecr_magnet` | bus-power boundary lane (`bus_power_boundary_v1`) | TBD (other lane) |
-| discharge power and current, wall ion flux and energy | admitted HallMap (`abep_sim/hall_map.py`, schema v1) via `hallmap_wall_inputs` | TBD: credible set ∅, no admitted map |
+| discharge power and current, wall ion flux and energy | admitted HallMap (`abep_sim/hall_map.py`, schema v1) via `hallmap_wall_inputs`; wall flux/energy alternatively measured hardware data with an evidence record (provenance gate, §2.3) | TBD: credible set ∅, no admitted map, no hardware data (wall flux refused) |
 | wall T_e, SEE yield γ, anode-side T_e | solver outputs **not in hall_map_schema_v1** | TBD; a schema extension is an owner decision |
 | channel wall area, erodible depth, peak/average flux profile | Vyovrinda thruster geometry; axial flux profile | TBD |
 | sputter yield of the wall material for the ion mix | sourced sputter data (not in v1) | TBD |
@@ -192,4 +212,6 @@ The following are not covered (see also `thermal_life.NOT_COVERED`):
   - datasheet coefficients are `measured` (the procedure is unpublished);
   - Richardson fit parameters are `inferred`.
 - Test fixtures in `tests/test_thermal_life_framework.py` are hand-calculation inputs, not design values. Its
-  `SYNTHETIC` limit records exist only in an in-memory copy, to exercise code paths whose real limit is TBD.
+  `SYNTHETIC` limit records exist only in an in-memory copy, to exercise code paths whose real limit is TBD. The
+  admitted-member path is tested against a monkeypatched ensemble with one synthetic member (`adm-fixture-01`); no real
+  admission exists. The real ensemble is used to show that every screening candidate and unknown id is refused.

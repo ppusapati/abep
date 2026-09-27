@@ -55,9 +55,40 @@ def magnet_inputs(I=2.0, R=1.0, G=1.0, cls=155.0, policy="none", model="copper_i
             "hot_spot_allowance_K": num(hs, "K"), "rejection_paths": [cond(G, 20.0 + T0)]}
 
 
-def discharge_inputs(Pd=1000.0):
+ADMITTED_FIXTURE_ID = "adm-fixture-01"      # synthetic; NO real admitted member exists (credible set empty)
+
+
+@pytest.fixture
+def admitted_ensemble(monkeypatch):
+    """Monkeypatched transport ensemble with one SYNTHETIC admitted member, to exercise the admitted-member path only.
+    The real ensemble (hallthruster_bridge/ensemble/transport_ensemble_v0.json) has no members."""
+    from abep_sim import hall_ensemble
+    fake = {"members": [{"ensemble_member_id": ADMITTED_FIXTURE_ID}],
+            "screening_candidates": [{"ensemble_member_id": "sgb-screen-01"}]}
+    monkeypatch.setattr(hall_ensemble, "load_ensemble", lambda *a, **k: fake)
+    return fake
+
+
+def hallmap_prov(mid=ADMITTED_FIXTURE_ID, wlt=True, commit=None):
+    return {"kind": "admitted_hallmap", "ensemble_member_id": mid, "trustworthy": True, "wall_life_trustworthy": wlt,
+            "hallthruster_commit": commit or tl._pinned_hall_commit()}
+
+
+HW_EVIDENCE = {k: "test fixture (synthetic, not a measurement)" for k in tl.HARDWARE_EVIDENCE_FIELDS}
+
+
+def wall_rec(v, unit, prov, qtype=None):
+    q = qtype or ("measured" if prov and prov.get("kind") == "measured_hardware" else "model-derived")
+    r = num(v, unit, level=6, qtype=q)
+    if prov is not None:
+        r["wall_flux_provenance"] = copy.deepcopy(prov)
+    return r
+
+
+def discharge_inputs(Pd=1000.0, prov="default"):
+    prov = hallmap_prov() if prov == "default" else prov
     return {"discharge_power_W": num(Pd, "W"), "discharge_current_A": num(5.0, "A"),
-            "wall_ion_flux_m2s": num(1e21, "m^-2 s^-1"), "wall_ion_energy_eV": num(50.0, "eV"),
+            "wall_ion_flux_m2s": wall_rec(1e21, "m^-2 s^-1", prov), "wall_ion_energy_eV": wall_rec(50.0, "eV", prov),
             "wall_area_m2": num(0.01, "m^2"), "wall_electron_temperature_eV": num(20.0, "eV"),
             "wall_see_yield": num(0.5, "-"), "anode_electron_temperature_eV": num(5.0, "eV"),
             "additional_wall_heat_W": num(0.0, "W"), "wall_material_record": ident("bn_hebosint_pl100"),
@@ -277,7 +308,7 @@ def test_hall_magnet_never_extrapolates_copper(limits, contract):
     assert r["status"] == tl.FAIL
 
 
-def test_hall_wall_heat_hand_calc(limits, contract):
+def test_hall_wall_heat_hand_calc(limits, contract, admitted_ensemble):
     e = E_CHARGE
     assert tl.hall_wall_ion_heat_W(1e21, 50.0, 0.01) == pytest.approx(e * 1e21 * 50.0 * 0.01)
     assert tl.hall_wall_electron_heat_W(1e21, 20.0, 0.5, 0.01) == pytest.approx(e * 1e21 * 40.0 / 0.5 * 0.01)
@@ -294,7 +325,7 @@ def test_hall_wall_heat_hand_calc(limits, contract):
     assert chk["wall_erosion_life"]["margin"] == pytest.approx(life_h - 15000.0)
 
 
-def test_hall_wall_energy_gate(limits, contract):
+def test_hall_wall_energy_gate(limits, contract, admitted_ensemble):
     with pytest.raises(ValueError, match="energy conservation"):
         tl.check_feasibility({"mission": mission(), "hall_discharge": discharge_inputs(Pd=100.0)}, limits,
                              ["hall_discharge"], contract)
@@ -433,19 +464,93 @@ def test_call_level_refusals(limits, contract):
                              ["hall_magnet"], contract)
 
 
-def test_hallmap_wall_inputs_gate():
+def test_hallmap_wall_inputs_gate(admitted_ensemble):
+    pinned = tl._pinned_hall_commit()
     pt = {"trustworthy": True, "wall_life_trustworthy": True, "discharge_power_W": 900.0, "discharge_current_A": 3.0,
-          "wall_ion_flux_m2s": 1e21, "wall_ion_energy_eV": 40.0, "hallthruster_commit": "bfb3019"}
-    out = tl.hallmap_wall_inputs(pt, "member-x", evidence_level=6)
+          "wall_ion_flux_m2s": 1e21, "wall_ion_energy_eV": 40.0, "hallthruster_commit": pinned}
+    out = tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID, evidence_level=6)
     assert out["wall_ion_flux_m2s"]["unit"] == "m^-2 s^-1" and out["wall_ion_energy_eV"]["unit"] == "eV"
     assert all(v["quantity_type"] == "model-derived" and v["evidence_level"] == 6 for v in out.values())
+    assert out["wall_ion_flux_m2s"]["wall_flux_provenance"]["ensemble_member_id"] == ADMITTED_FIXTURE_ID
     with pytest.raises(ValueError, match="wall_life_trustworthy"):
-        tl.hallmap_wall_inputs({**pt, "wall_life_trustworthy": False}, "member-x", evidence_level=6)
+        tl.hallmap_wall_inputs({**pt, "wall_life_trustworthy": False}, ADMITTED_FIXTURE_ID, evidence_level=6)
     with pytest.raises(ValueError, match="not trustworthy"):
-        tl.hallmap_wall_inputs({**pt, "trustworthy": False}, "member-x", evidence_level=6)
+        tl.hallmap_wall_inputs({**pt, "trustworthy": False}, ADMITTED_FIXTURE_ID, evidence_level=6)
+    with pytest.raises(ValueError, match="pinned"):
+        tl.hallmap_wall_inputs({**pt, "hallthruster_commit": "bfb3019"}, ADMITTED_FIXTURE_ID, evidence_level=6)
     with pytest.raises(ValueError, match="ensemble member"):
         tl.hallmap_wall_inputs(pt, "", evidence_level=6)
+    with pytest.raises(ValueError, match="SCREENING"):
+        tl.hallmap_wall_inputs(pt, "sgb-screen-01", evidence_level=6)
+    with pytest.raises(ValueError, match="not an admitted"):
+        tl.hallmap_wall_inputs(pt, "member-x", evidence_level=6)
     with pytest.raises(ValueError, match="evidence_level"):
-        tl.hallmap_wall_inputs(pt, "member-x", evidence_level=0)
+        tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID, evidence_level=0)
     with pytest.raises(TypeError):
-        tl.hallmap_wall_inputs(pt, "member-x")                                 # no default evidence level
+        tl.hallmap_wall_inputs(pt, ADMITTED_FIXTURE_ID)                        # no default evidence level
+
+
+def test_hallmap_wall_inputs_refuses_real_ensemble():
+    """Against the REAL ensemble (credible set empty): every screening candidate and unknown id is refused."""
+    from abep_sim import hall_ensemble
+    e = hall_ensemble.load_ensemble()
+    assert hall_ensemble.member_ids(e) == set()
+    pt = {"trustworthy": True, "wall_life_trustworthy": True, "discharge_power_W": 900.0, "discharge_current_A": 3.0,
+          "wall_ion_flux_m2s": 1e21, "wall_ion_energy_eV": 40.0, "hallthruster_commit": tl._pinned_hall_commit()}
+    for sid in sorted(hall_ensemble.screening_ids(e)):
+        with pytest.raises(ValueError, match="SCREENING"):
+            tl.hallmap_wall_inputs(pt, sid, evidence_level=6)
+    with pytest.raises(ValueError, match="not an admitted"):
+        tl.hallmap_wall_inputs(pt, "unknown-member", evidence_level=6)
+
+
+def _discharge(inp, limits, contract):
+    return tl.check_feasibility({"mission": mission(), "hall_discharge": inp}, limits, ["hall_discharge"], contract)
+
+
+def test_wall_flux_gate_in_check_feasibility_real_ensemble(limits, contract):
+    """G11: the erosion/heat check itself refuses screening-candidate, unknown-id and hand-entered wall flux."""
+    with pytest.raises(ValueError, match="SCREENING"):
+        _discharge(discharge_inputs(prov=hallmap_prov("sgb-screen-01")), limits, contract)
+    with pytest.raises(ValueError, match="not an admitted"):
+        _discharge(discharge_inputs(prov=hallmap_prov("unknown-member")), limits, contract)
+    with pytest.raises(ValueError, match="wall_flux_provenance"):          # hand-entered, no provenance
+        _discharge(discharge_inputs(prov=None), limits, contract)
+    # the admitted-member provenance of the fixture is refused too, because the real ensemble admits nobody
+    with pytest.raises(ValueError, match="not an admitted"):
+        _discharge(discharge_inputs(), limits, contract)
+
+
+def test_wall_flux_gate_paths(limits, contract, admitted_ensemble):
+    ok = _discharge(discharge_inputs(), limits, contract)
+    assert ok["components"]["hall_discharge"]["wall_flux_provenance"]["ensemble_member_id"] == ADMITTED_FIXTURE_ID
+    hw = {"kind": "measured_hardware", "evidence_record": HW_EVIDENCE}
+    r = _discharge(discharge_inputs(prov=hw), limits, contract)
+    assert r["components"]["hall_discharge"]["wall_flux_provenance"]["kind"] == "measured_hardware"
+    bad = [
+        (discharge_inputs(prov=None), "wall_flux_provenance"),
+        (discharge_inputs(prov=hallmap_prov("sgb-screen-01")), "SCREENING"),
+        (discharge_inputs(prov=hallmap_prov("member-x")), "not an admitted"),
+        (discharge_inputs(prov=hallmap_prov(wlt=False)), "wall_life_trustworthy"),
+        (discharge_inputs(prov=hallmap_prov(commit="bfb3019")), "pinned"),
+        (discharge_inputs(prov={"kind": "hand_entered"}), "provenance kind"),
+        (discharge_inputs(prov={"kind": "measured_hardware", "evidence_record": {**HW_EVIDENCE, "uncertainty": ""}}),
+         "evidence record lacks"),
+        (discharge_inputs(prov={"kind": "measured_hardware"}), "measured_hardware provenance"),
+    ]
+    for inp, msg in bad:
+        with pytest.raises(ValueError, match=msg):
+            _discharge(inp, limits, contract)
+    inp = discharge_inputs(prov=hw)                                             # hardware data must be 'measured'
+    inp["wall_ion_flux_m2s"]["quantity_type"] = "assumed"
+    with pytest.raises(ValueError, match="'measured'"):
+        _discharge(inp, limits, contract)
+    inp = discharge_inputs()                                                    # Hall-map data must be model-derived
+    inp["wall_ion_energy_eV"]["quantity_type"] = "measured"
+    with pytest.raises(ValueError, match="model-derived"):
+        _discharge(inp, limits, contract)
+    inp = discharge_inputs()                                                    # flux and energy from one source
+    inp["wall_ion_energy_eV"]["wall_flux_provenance"] = {"kind": "measured_hardware", "evidence_record": HW_EVIDENCE}
+    inp["wall_ion_energy_eV"]["quantity_type"] = "measured"
+    with pytest.raises(ValueError, match="same Hall-map point"):
+        _discharge(inp, limits, contract)

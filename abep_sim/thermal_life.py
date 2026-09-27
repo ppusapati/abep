@@ -21,6 +21,9 @@ Heat sources (equations; sources and page numbers are in limits_v1.json 'relatio
   hall_discharge  wall ion heat  Q_i = e Gamma_i eps_i A_wall (HallMap fields wall_ion_flux_m2s, wall_ion_energy_eV);
                   wall electron heat Q_e = e Gamma_i 2 T_e,w / (1 - gamma) A_wall (Goebel & Katz 2008 Eqs. 7.3-28,
                   7.3-43, 7.3-45); anode heat P_a = 2 I_d T_e,anode (Eq. 7.3-53, accounted only). Sum <= P_d (gate).
+                  Wall flux/energy gate (G11): accepted only from an ADMITTED ensemble member's Hall-map point with
+                  wall_life_trustworthy (re-checked via hall_ensemble.require_admitted) or measured hardware data
+                  with an evidence record; anything else raises. Credible set empty => refused today.
   rf_source / ecr_source  antenna/coupler copper, dielectric and plasma-to-structure heat = input fractions x RF power.
   ecr_magnet      heat = input fraction x ECR power; margins vs the grade's maximum use temperature, reversible Br loss
                   (Br(T)/Br20 = 1 + alpha (T - 20)/100 inside the coefficient range), and irreversible loss (opposing
@@ -39,6 +42,7 @@ TBD limits and non-physical input sets (heat fractions > 1, heat above the disch
 """
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import math
@@ -137,6 +141,10 @@ def load_inputs_contract(path: str = INPUTS_FILE) -> dict:
         raise ValueError("inputs contract bus_power_components disagree with thermal_life.BUS_POWER_COMPONENTS")
     if set(c["components"]) != set(THERMAL_COMPONENTS):
         raise ValueError("inputs contract components disagree with thermal_life.THERMAL_COMPONENTS")
+    wk = c.get("wall_flux_provenance", {}).get("kinds", {})
+    if (tuple(wk.get(PROV_ADMITTED_HALLMAP, {}).get("fields", ())) != ADMITTED_HALLMAP_PROV_FIELDS
+            or tuple(wk.get(PROV_MEASURED_HARDWARE, {}).get("evidence_record_fields", ())) != HARDWARE_EVIDENCE_FIELDS):
+        raise ValueError("inputs contract wall_flux_provenance disagrees with thermal_life (gap G11 gate)")
     return c
 
 
@@ -517,36 +525,126 @@ def hall_anode_heat_W(discharge_current_A: float, Te_anode_eV: float) -> float:
     return 2.0 * discharge_current_A * Te_anode_eV
 
 
+# Hall wall-flux provenance gate (gap G11, docs/evidence/wall_life/). Wall ion flux and energy drive both the wall heat
+# and the erosion life, so they are accepted only from (a) a query of a Hall map produced by an ADMITTED transport-
+# ensemble member with wall_life_trustworthy = true, re-verified against the ensemble at check time
+# (abep_sim.hall_ensemble.require_admitted: screening candidates and unknown ids are refused), or (b) measured hardware
+# data carrying its evidence record. Anything else (hand-entered, screening-candidate, unadmitted-closure or
+# unprovenanced values) raises: no PASS/FAIL is ever produced from it.
+WALL_FLUX_INPUTS = ("wall_ion_flux_m2s", "wall_ion_energy_eV")
+WALL_FLUX_PROVENANCE_KEY = "wall_flux_provenance"
+PROV_ADMITTED_HALLMAP = "admitted_hallmap"
+PROV_MEASURED_HARDWARE = "measured_hardware"
+ADMITTED_HALLMAP_PROV_FIELDS = ("kind", "ensemble_member_id", "trustworthy", "wall_life_trustworthy",
+                                "hallthruster_commit")
+HARDWARE_EVIDENCE_FIELDS = ("test_article", "facility", "document", "measurement_method", "uncertainty",
+                            "operating_point", "applicability_domain")
+
+
+def _require_admitted_member(member_id: str) -> None:
+    """Lazy gate on the baseline transport ensemble (hall_ensemble is read, never modified). Refuses screening
+    candidates (sgb-screen-*) and unknown ids; the credible set is empty as of 2026-09-26, so every id is refused today."""
+    from abep_sim import hall_ensemble
+    hall_ensemble.require_admitted(member_id)
+
+
+def _pinned_hall_commit() -> str:
+    from abep_sim.hall_map import pinned_commit
+    return pinned_commit()
+
+
+def _check_wall_flux_provenance(raw: dict, where: str) -> dict:
+    """Validate the provenance of hall_discharge wall_ion_flux_m2s / wall_ion_energy_eV. Returns the provenance
+    summary for the result; raises ValueError for anything that is not an admitted-member Hall-map point or measured
+    hardware data with a complete evidence record."""
+    provs = []
+    for f in WALL_FLUX_INPUTS:
+        rec = raw[f]
+        prov = rec.get(WALL_FLUX_PROVENANCE_KEY) if isinstance(rec, dict) else None
+        if not isinstance(prov, dict):
+            raise ValueError(f"{where}.{f}: no {WALL_FLUX_PROVENANCE_KEY!r}. Hall wall flux/energy are accepted only from "
+                             "an admitted-member Hall-map point (hallmap_wall_inputs) or measured hardware data with its "
+                             "evidence record (gap G11; hand-entered or screening-candidate values are refused)")
+        kind = prov.get("kind")
+        if kind == PROV_ADMITTED_HALLMAP:
+            if set(prov) != set(ADMITTED_HALLMAP_PROV_FIELDS):
+                raise ValueError(f"{where}.{f}: admitted_hallmap provenance must have exactly {ADMITTED_HALLMAP_PROV_FIELDS}")
+            if rec.get("quantity_type") != "model-derived":
+                raise ValueError(f"{where}.{f}: a Hall-map value is 'model-derived', got {rec['quantity_type']!r}")
+            mid = prov["ensemble_member_id"]
+            if not isinstance(mid, str) or not mid:
+                raise ValueError(f"{where}.{f}: admitted_hallmap provenance needs an ensemble_member_id")
+            _require_admitted_member(mid)
+            if prov["trustworthy"] is not True:
+                raise ValueError(f"{where}.{f}: Hall-map point is not trustworthy")
+            if prov["wall_life_trustworthy"] is not True:
+                raise ValueError(f"{where}.{f}: Hall-map point is not wall_life_trustworthy: wall flux/energy are "
+                                 "diagnostic only")
+            if prov["hallthruster_commit"] != _pinned_hall_commit():
+                raise ValueError(f"{where}.{f}: Hall-map point was not produced with the pinned HallThruster.jl commit")
+        elif kind == PROV_MEASURED_HARDWARE:
+            if set(prov) != {"kind", "evidence_record"} or not isinstance(prov["evidence_record"], dict):
+                raise ValueError(f"{where}.{f}: measured_hardware provenance must be {{'kind', 'evidence_record'}}")
+            ev = prov["evidence_record"]
+            bad = [k for k in HARDWARE_EVIDENCE_FIELDS
+                   if not isinstance(ev.get(k), str) or not ev[k].strip()]
+            if bad:
+                raise ValueError(f"{where}.{f}: measured-hardware evidence record lacks {bad} "
+                                 f"(required: {HARDWARE_EVIDENCE_FIELDS})")
+            if rec.get("quantity_type") != "measured":
+                raise ValueError(f"{where}.{f}: hardware wall-flux data must be quantity_type 'measured', "
+                                 f"got {rec['quantity_type']!r}")
+        else:
+            raise ValueError(f"{where}.{f}: provenance kind must be {PROV_ADMITTED_HALLMAP!r} or "
+                             f"{PROV_MEASURED_HARDWARE!r}, got {kind!r}")
+        provs.append(prov)
+    if provs[0] != provs[1]:
+        raise ValueError(f"{where}: wall_ion_flux_m2s and wall_ion_energy_eV must come from the same Hall-map point or "
+                         "hardware record (identical provenance)")
+    return copy.deepcopy(provs[0])
+
+
 def hallmap_wall_inputs(point: dict, ensemble_member_id: str, evidence_level: int,
                         schema: dict | None = None) -> dict:
     """Input records for hall_discharge from one HallMap query (abep_sim.hall_map.HallMap.__call__ output).
 
-    Refuses unless the query is performance-trustworthy AND wall_life_trustworthy (wall flux is erosion/heat-grade only
-    with ion_wall_losses=true, WallSheath, unshielded). The credible transport set is empty (2026-09-26), so no
-    admitted HallMap exists yet: this is the intended path, currently unused. evidence_level has no default: the
-    caller states it per docs/EVIDENCE.md (a transport closure admitted on P5 data and applied to Vyovrinda geometry
-    is an extrapolation outside its directly validated domain); quantity_type is always 'model-derived'."""
-    schema = schema or load_hall_map_schema()
+    Refuses unless ensemble_member_id is an ADMITTED transport-ensemble member (hall_ensemble.require_admitted:
+    screening candidates and unknown ids raise), the query is performance-trustworthy AND wall_life_trustworthy
+    (ion_wall_losses=true, WallSheath, unshielded), and it carries the pinned HallThruster.jl commit. The credible
+    transport set is empty (2026-09-26), so no member is admitted and this path refuses every id today. The wall
+    flux/energy records carry 'wall_flux_provenance', which check_feasibility re-verifies (admission included).
+    evidence_level has no default: the caller states it per docs/EVIDENCE.md (a transport closure admitted on P5
+    data and applied to Vyovrinda geometry is an extrapolation outside its directly validated domain);
+    quantity_type is always 'model-derived'."""
     if not ensemble_member_id:
         raise ValueError("a HallMap point must name its admitted ensemble member")
     _check_evidence(evidence_level, "model-derived", "hallmap_wall_inputs")
+    _require_admitted_member(ensemble_member_id)
+    schema = schema or load_hall_map_schema()
     if point.get("trustworthy") is not True:
         raise ValueError("HallMap query is not trustworthy (convergence, sustainment or chemistry validity)")
     if point.get("wall_life_trustworthy") is not True:
         raise ValueError("HallMap query is not wall_life_trustworthy: wall flux/energy are diagnostic only")
+    commit = point.get("hallthruster_commit")
+    if commit != _pinned_hall_commit():
+        raise ValueError(f"HallMap query commit {commit!r} is not the pinned HallThruster.jl commit")
+    prov = {"kind": PROV_ADMITTED_HALLMAP, "ensemble_member_id": ensemble_member_id, "trustworthy": True,
+            "wall_life_trustworthy": True, "hallthruster_commit": commit}
     out = {}
     for f in HALLMAP_FIELDS_USED:
         if f not in point:
             raise ValueError(f"HallMap query lacks {f!r}")
-        commit = point.get("hallthruster_commit", "commit not reported")
         out[f] = {"value": float(point[f]), "unit": schema["fields"][f]["unit"],
                   "source": f"HallMap query, ensemble member {ensemble_member_id}, hall_map_schema_v1 field {f}, "
                             f"HallThruster.jl {commit}",
                   "evidence_level": evidence_level, "quantity_type": "model-derived"}
+        if f in WALL_FLUX_INPUTS:
+            out[f][WALL_FLUX_PROVENANCE_KEY] = dict(prov)
     return out
 
 
 def _check_hall_discharge(ci: _ComponentInputs, limits: dict, mission: dict) -> dict:
+    wall_prov = _check_wall_flux_provenance(ci.raw, ci.c)       # G11 gate before any heat or life number is formed
     Pd, Id = ci.num("discharge_power_W"), ci.num("discharge_current_A")
     G, eps, A = ci.num("wall_ion_flux_m2s"), ci.num("wall_ion_energy_eV"), ci.num("wall_area_m2")
     Q_i = hall_wall_ion_heat_W(G, eps, A)
@@ -582,7 +680,7 @@ def _check_hall_discharge(ci: _ComponentInputs, limits: dict, mission: dict) -> 
                                 {"erosion_rate_m_per_s": rate, "life_h": life_h, "required_h": req}))
     return {"heat_W": {"wall_ion_W": Q_i, "wall_electron_W": Q_e, "wall_additional_W": Q_add, "anode_W": P_a,
                        "wall_total_W": Q_wall, "heat_fraction_of_discharge_power": total / Pd},
-            "T_node": sol, "checks": checks}
+            "wall_flux_provenance": wall_prov, "T_node": sol, "checks": checks}
 
 
 # ----------------------------------------------------------------------------------------------- permanent magnets

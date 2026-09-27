@@ -20,6 +20,15 @@
    "T_sink_K": {"kind": "number", "unit": "K", "from": "orbit thermal environment (TBD)"}
   }
  },
+ "wall_flux_provenance": {
+  "applies_to": "hall_discharge.wall_ion_flux_m2s and hall_discharge.wall_ion_energy_eV; both records carry the key 'wall_flux_provenance' with identical content",
+  "why": "gap G11 (docs/evidence/wall_life/sputter_yield_db_v1.json): wall flux drives wall heat and erosion life; CLAUDE.md: screening candidates never produce performance, erosion/lifetime use requires wall_life_trustworthy, no silent fallbacks",
+  "kinds": {
+   "admitted_hallmap": {"fields": ["kind", "ensemble_member_id", "trustworthy", "wall_life_trustworthy", "hallthruster_commit"], "produced_by": "thermal_life.hallmap_wall_inputs", "rule": "ensemble_member_id passes abep_sim.hall_ensemble.require_admitted at check time (screening candidates and unknown ids refused); trustworthy and wall_life_trustworthy are true; hallthruster_commit equals the hallthruster_bridge/PINNED.toml commit; record quantity_type 'model-derived'"},
+   "measured_hardware": {"fields": ["kind", "evidence_record"], "evidence_record_fields": ["test_article", "facility", "document", "measurement_method", "uncertainty", "operating_point", "applicability_domain"], "rule": "every evidence_record field is a non-empty string; record quantity_type 'measured'"}
+  },
+  "otherwise": "ValueError (explicit refusal; no PASS / FAIL / NOT_DEMONSTRATED is produced)"
+ },
  "mission": {
   "required_firing_h": {"kind": "number", "unit": "h", "from": "RFP DTDF/06/13516 (> 15,000 h firing; abep_sim.constants.RFP.ignition_hours)", "now": "available (RFP)"}
  },
@@ -46,8 +55,8 @@
    "inputs": {
     "discharge_power_W": {"kind": "number", "unit": "W", "from": "HallMap field discharge_power_W or bus-power 'hall_discharge'", "now": "TBD (credible set empty: no admitted HallMap)"},
     "discharge_current_A": {"kind": "number", "unit": "A", "from": "HallMap field discharge_current_A", "now": "TBD (no admitted HallMap)"},
-    "wall_ion_flux_m2s": {"kind": "number", "unit": "m^-2 s^-1", "from": "HallMap field wall_ion_flux_m2s (thermal_life.hallmap_wall_inputs)", "now": "TBD (no admitted HallMap)"},
-    "wall_ion_energy_eV": {"kind": "number", "unit": "eV", "from": "HallMap field wall_ion_energy_eV (thermal_life.hallmap_wall_inputs)", "now": "TBD (no admitted HallMap)"},
+    "wall_ion_flux_m2s": {"kind": "number", "unit": "m^-2 s^-1", "from": "HallMap field wall_ion_flux_m2s of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance)", "now": "TBD (credible set empty, no hardware measurement: every wall-flux input is refused today)"},
+    "wall_ion_energy_eV": {"kind": "number", "unit": "eV", "from": "HallMap field wall_ion_energy_eV of an ADMITTED ensemble member with wall_life_trustworthy = true (thermal_life.hallmap_wall_inputs), or measured hardware data with its evidence record; the record must carry wall_flux_provenance (see top-level wall_flux_provenance)", "now": "TBD (credible set empty, no hardware measurement: every wall-flux input is refused today)"},
     "wall_area_m2": {"kind": "number", "unit": "m^2", "from": "Vyovrinda channel geometry: inner + outer wall area over z <= L", "now": "TBD"},
     "wall_electron_temperature_eV": {"kind": "number", "unit": "eV", "from": "solver output (not a hall_map_schema_v1 field)", "now": "TBD (needs a schema extension: owner decision)"},
     "wall_see_yield": {"kind": "number", "unit": "-", "from": "solver output (WallSheath SEE yield, not a hall_map_schema_v1 field)", "now": "TBD (needs a schema extension: owner decision)"},
