@@ -121,20 +121,93 @@ def test_vacuum_physics_anchors(mod):
     assert mod.santeler_tau(0.0, 1.0) == 1.0
     assert abs(mod.santeler_tau(2.0, 1.0) - 0.5) < 0.03
     assert abs(mod.santeler_tau(400.0, 1.0) / (8.0 / 1200.0) - 1.0) < 0.1
-    # Leybold 1.28b molecular limit implies <v>_air(20 C) ~ 462 m/s; Knudsen factor -> 1 in the molecular limit
+    # Leybold 1.28b molecular limit implies <v>_air(20 C) ~ 462 m/s; Eq. 1.28a (135) implies mu_air ~ 1.818e-5 Pa s,
+    # which the Sutherland air entry reproduces within 0.5 %; Z -> 1 (molecular) and -> 192/237 (viscous)
     assert abs(mod.CBAR_AIR_LEYBOLD - 462.2) < 0.5
-    assert abs(mod.knudsen_f(0.01, 1e-6) - 1.0) < 1e-6
-    assert 0.9 < mod.KNUDSEN_F_MIN < 1.0
+    assert abs(mod.MU_AIR_LEYBOLD / mod.mu_sutherland("air", 293.15) - 1.0) < 0.005
+    assert abs(mod.knudsen_z(0.01, 1e-6, 293.15) - 1.0) < 1e-6
+    assert abs(mod.Z_MIN - 192.0 / 237.0) < 1e-12
     # JANAF: 2 O -> O2 at 298.15 K releases 498.346 kJ/mol = 5.165 eV
     assert abs(mod.DH_REC_J_PER_MOL_O2 / mod.N_A / mod.EV - 5.165) < 0.002
 
 
+def test_conductance_reproduces_leybold_eq126_for_air(mod):
+    # the gas-specific form C_mol Z + Poiseuille(mu) reproduces the published air/20 degC Knudsen equation (l >= 10 d)
+    T = 293.15
+    mu = mod.mu_sutherland("air", T)
+    for p in (1e-3, 0.1, 1.0, 10.0, 100.0, 1000.0):
+        mine = mod.c_tube(0.01, 1.0, p, T, mod.CBAR_AIR_LEYBOLD, mu)
+        ref = mod.leybold_eq126_air(0.01, 1.0, p)
+        assert abs(mine / ref - 1.0) < 0.03, (p, mine, ref)
+
+
+def test_viscous_conductance_falls_with_temperature(mod):
+    # viscous regime: C ~ 1/mu(T), which rises with T, so the conductance at fixed p must FALL from 300 K to 500 K
+    # (the v1.0.0 air-factor transfer made it rise with <v>)
+    w = {"N2": 0.5, "O2": 0.5}
+    c3 = mod.c_tube(0.006, 1.0, 1000.0, 300.0, mod.cbar(300.0, mod.MOLAR["N2"]), mod.mu_bound(w, 300.0))
+    c5 = mod.c_tube(0.006, 1.0, 1000.0, 500.0, mod.cbar(500.0, mod.MOLAR["N2"]), mod.mu_bound(w, 500.0))
+    assert c5 < c3
+    assert mod.mu_bound(w, 500.0) == mod.mu_sutherland("O2", 500.0)
+    with pytest.raises(KeyError):
+        mod.mu_bound({"Xe": 1.0}, 300.0)  # no silent default viscosity
+
+
 def test_solver_satisfies_segment_equation(mod):
-    cb = mod.cbar(300.0, mod.MOLAR["N2"])
+    T = 300.0
+    cb = mod.cbar(T, mod.MOLAR["N2"])
+    mu = mod.mu_sutherland("N2", T)
     cm = mod.c_tube_mol(0.01, 1.0, cb)
+
+    def cfun(pm):
+        return mod.c_tube(0.01, 1.0, pm, T, cb, mu)
     for p_down, Q in ((0.0, 1e-3), (1.0, 0.05), (50.0, 0.3)):
-        p_up, f = mod.solve_upstream(p_down, Q, cm, 0.01)
-        assert abs(cm * f * (p_up - p_down) - Q) / Q < 1e-9
+        p_up = mod.solve_upstream(p_down, Q, cfun, cm)
+        assert abs(cfun(0.5 * (p_up + p_down)) * (p_up - p_down) - Q) / Q < 1e-9
+
+
+def test_refusal_paths(mod, monkeypatch):
+    rel = next(iter(mod.DECISION_PINS))
+    monkeypatch.setitem(mod.DECISION_PINS, rel, "0" * 64)
+    with pytest.raises(SystemExit, match="REFUSED"):
+        mod.check_pins()
+    monkeypatch.undo()
+    mod.check_pins()  # the committed pins pass
+    real_load = mod.load
+
+    def bad_load(r):
+        d = real_load(r)
+        if r == mod.ATM_META_REL:
+            d = dict(d, sha256_16="0" * 16)
+        return d
+    monkeypatch.setattr(mod, "load", bad_load)
+    with pytest.raises(SystemExit, match="REFUSED"):
+        mod.frozen_atmosphere()
+
+
+def test_w1_setpoint_ladder_used_in_full(mod, doc):
+    w1 = json.loads(W1.read_text())
+    ladder = w1["design_axes"]["setpoint_ladder_Pa"]
+    rows = doc["pressure_budget"]["rows"]
+    p_des = [v["p_plenum_min_Pa"] for r in rows if r["flow"] in ("F-DES-LO", "F-DES-HI")
+             for g in r["geometries"].values() for v in g["valve"].values()]
+    lo = mod.sig(min(p_des) / max(ladder), 3)
+    hi = mod.sig(max(p_des) / min(ladder), 3)
+    note = {p["id"]: p for p in doc["design_parameters"]}["H23-07"]["note"]
+    assert f"{lo}-{hi} x the W1 setpoint ladder" in note
+    assert f"{min(ladder):g}-{max(ladder):g} Pa" in note
+    blob = json.dumps({k: v for k, v in doc.items() if k != "revision_history"})
+    stale = "0.05-0.3 Pa" in blob  # the v1.0.0 misquote (kept only in revision_history)
+    assert not stale
+    rt = {r["pressure_basis"] for r in doc["plenum_sizing"]["ride_through"]["rows"]}
+    assert f"W1 ladder {min(ladder):g} Pa" in rt and f"W1 ladder {max(ladder):g} Pa" in rt
+    src = SCRIPT.read_text()
+    assert "setpoints[:" not in src
+
+
+def test_o_survival_uses_atomic_o_composition(doc):
+    assert doc["o_recombination"]["survival"]
+    assert all("COMP-W1-ORICH" in r["case"] for r in doc["o_recombination"]["survival"])
 
 
 def test_pressure_budget_is_monotonic_and_consistent(doc):
@@ -152,6 +225,7 @@ def test_pressure_budget_is_monotonic_and_consistent(doc):
                 assert abs(v["p_plenum_min_Pa"] - g["p_IF_A5_Pa"] * (1.0 + 1.0 / rr)) / v["p_plenum_min_Pa"] < 1e-4
                 assert abs(v["C_total_plenum_to_vacuum_m3_s"] * v["p_plenum_min_Pa"] - r["Q_Pa_m3_s"]) \
                     / r["Q_Pa_m3_s"] < 1e-4
+                assert v["C_incremental_plenum_m3_s"] >= v["C_total_plenum_to_vacuum_m3_s"] * (1 - 1e-4)
 
 
 def test_uniformity_rule_applied_as_stated(mod, doc):

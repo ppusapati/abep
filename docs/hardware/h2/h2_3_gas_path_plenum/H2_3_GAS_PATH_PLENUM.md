@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | machine-readable | [`h2_3_gas_path_plenum_v1.json`](h2_3_gas_path_plenum_v1.json) |
-| status | **DRAFT_PENDING_OWNER (H2 preliminary sizing; every value not in the RFP or a cited source is PROPOSED, ASSUMED or TBD)** (version 1.0.0) |
+| status | **DRAFT_PENDING_OWNER (H2 preliminary sizing; every value not in the RFP or a cited source is PROPOSED, ASSUMED or TBD)** (version 1.1.0) |
 | lane | `fo_h2_3_gas_path_plenum` (trigger `T_H2_3_GAS_PATH_PLENUM`, owner addendum A7) |
 | scope | H2 hardware design / preliminary sizing, **not** architecture selection (A7 `h2_scope`) |
 | architectures | `hall_only`, `rf_hall`, `ecr_hall`: one gas path; only the IP-UP → IP-DN occupant differs |
@@ -76,18 +76,18 @@ Ground substitution (GROUND/FACILITY-ONLY): FS-C: N2 / O2 / Xe-anode / Xe-cathod
 | H23-02 | delivered atmospheric flow range at IF-A5 (all closed W1 candidates, incl. backflow bracket) | 0.02955 – 3.142 | mg/s | requirement | model-derived | PRELIMINARY | FLIGHT-REPRESENTATIVE | docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json mfc_range_requirement; docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json decisions.MFC_ranges — candidate range, not a flight truth (A4); upper bound with backflow excluded (W1 FC-01) |
 | H23-03 | delivered O2 mass fraction (full recombination) test range | 0.4165 – 0.6042 | - | requirement | model-derived | PRELIMINARY | FLIGHT-REPRESENTATIVE | docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json phase1_branch_decision.test_matrix (0.42-0.60); recomputed here from abep_sim/data/atmosphere_msis21_v1.csv (w_O + w_O2) |
 | H23-04 | feed-gas temperature range used for sizing | 300 – 500 | K | derived | assumed | TBD - requires the H2-5 thermal network (plenum and line wall temperatures) | FLIGHT-REPRESENTATIVE | docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json finding FC-04 (chain clamp convention 300-500 K) — a convention, not a thermal result |
-| H23-05 | cold-flow back-pressure at HALL_INLET_Z0 (analog channel illustration) | 0.03578 – 4.416 | Pa | analog | model-derived | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT-REPRESENTATIVE | this script pressure_budget; CLAUDE.md 'Superseded / withdrawn' (true ECHT: 86 mm long, 10 mm wide, 100 mm OD) — ILLUSTRATION ONLY (ECHT-size channel, annulus approximation); plasma-on neutral pressure is not predicted |
-| H23-06 | pressure at IF-A5 (valve outlet) needed to push the flow through the downstream path, cold flow | 5.609 – 745.8 | Pa | derived | model-derived | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT-REPRESENTATIVE | this script pressure_budget (GEO-S/M/L, analog channel) — scales with the H-1 channel / distributor conductance |
-| H23-07 | minimum plenum pressure (valve authority r = 1..3), design-case flows | 37.51 – 947.5 | Pa | derived | model-derived | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT-REPRESENTATIVE | this script pressure_budget — 125.0-18900.0 x the W1 setpoint ladder values (finding GP-F01) |
-| H23-08 | Knudsen number range in the feed segments (line, isolator, PIM blank, stub) | 0.001566 – 0.3462 | - | derived | model-derived | PRELIMINARY | FLIGHT-REPRESENTATIVE | REF-CHIGGIATO Eq. 10 / Table 7; this script — regimes present: transitional (0.01 <= Kn <= 0.5); viscous (Kn < 0.01) |
-| H23-09 | allowable pressure drop IP-UP -> IP-DN (pre-ionizer slot) | — | Pa | pending | TBD | PENDING docs/interfaces/preionizer_module/ + schemas/interfaces/preionizer_module_icd_v1.json (fo_preionizer_module_icd) | FLIGHT-REPRESENTATIVE | PMI-10 epsilon_p_band / delta_p_per_occupant_cold (TBD there) — illustrative blank (bore 10-30 mm, 0.15 m) cold drop 0.0417-26.9 Pa over the budget rows; every Pa allowed here raises the required plenum pressure one-for-one |
+| H23-05 | cold-flow back-pressure at HALL_INLET_Z0 (analog channel illustration) | 0.03579 – 5.58 | Pa | analog | model-derived | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT-REPRESENTATIVE | this script pressure_budget; CLAUDE.md 'Superseded / withdrawn' (true ECHT: 86 mm long, 10 mm wide, 100 mm OD) — ILLUSTRATION ONLY (ECHT-size channel, annulus approximation); plasma-on neutral pressure is not predicted |
+| H23-06 | pressure at IF-A5 (valve outlet) needed to push the flow through the downstream path, cold flow | 5.74 – 1216 | Pa | derived | model-derived | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT-REPRESENTATIVE | this script pressure_budget (GEO-S/M/L, analog channel) — scales with the H-1 channel / distributor conductance |
+| H23-07 | minimum plenum pressure (valve authority r = 1..3), design-case flows | 38.06 – 1531 | Pa | derived | model-derived | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT-REPRESENTATIVE | this script pressure_budget — 38.1-30600.0 x the W1 setpoint ladder (design_axes.setpoint_ladder_Pa 0.05-1 Pa; lower ratio against the ladder maximum, upper against its minimum); 190.0-30600.0 x the p_feed of the closed W1 candidates (0.05-0.2 Pa) (finding GP-F01) |
+| H23-08 | Knudsen number range in the feed segments (line, isolator, PIM blank, stub) | 0.001348 – 0.324 | - | derived | model-derived | PRELIMINARY | FLIGHT-REPRESENTATIVE | REF-CHIGGIATO Eq. 10 / Table 7; this script — regimes present: transitional (0.01 <= Kn <= 0.5); viscous (Kn < 0.01) |
+| H23-09 | allowable pressure drop IP-UP -> IP-DN (pre-ionizer slot) | — | Pa | pending | TBD | PENDING docs/interfaces/preionizer_module/ + schemas/interfaces/preionizer_module_icd_v1.json (fo_preionizer_module_icd) | FLIGHT-REPRESENTATIVE | PMI-10 epsilon_p_band / delta_p_per_occupant_cold (TBD there) — illustrative blank (bore 10-30 mm, 0.15 m) cold drop 0.034-41.9 Pa over the budget rows; every Pa allowed here raises the required plenum pressure one-for-one |
 | H23-10 | anode-manifold azimuthal uniformity requirement (cold flow) | 0.05 – 0.1 | - (abs. deviation, peak-to-peak) | analog | inferred | PRELIMINARY (PROPOSED for the owner) | FLIGHT-REPRESENTATIVE | REF-ROBERTS2024 (abstract; 'NASA standard acceptance criteria', primary source not named: verify) |
 | H23-11 | distributor sizing rule | delta_p2p = C_h / (8 N_f^2 C_ring) <= 0.075 | - | derived | model-derived | PRELIMINARY | FLIGHT-REPRESENTATIVE | this script uniformity_table (1-D molecular diffusion along the ring) |
 | H23-12 | anode manifold ring mean diameter, bore, feed points | — | m / m / - | pending | TBD | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT-REPRESENTATIVE | H-1 design release HW-H1-03 — evaluated here on 90 mm (analog) x bore 4/6/8 mm x 1/2/4 feed points |
-| H23-13 | plenum volume, lower end of the minimum-volume range | 1.238e-07 | m^3 | derived | model-derived | PRELIMINARY | FLIGHT-REPRESENTATIVE | this script plenum_sizing (ripple, attenuation 0.1 at 1 kHz) |
-| H23-14 | plenum volume, upper end of the minimum-volume range | 0.006791 | m^3 | derived | model-derived | PRELIMINARY | FLIGHT-REPRESENTATIVE | this script plenum_sizing (ripple a = 0.01 at the chain rotation frequency / valve bandwidth 0.1 Hz) |
+| H23-13 | plenum volume, lower end of the minimum-volume range | 1.496e-07 | m^3 | derived | model-derived | PRELIMINARY | FLIGHT-REPRESENTATIVE | this script plenum_sizing (ripple, attenuation 0.1 at 1 kHz) |
+| H23-14 | plenum volume, upper end of the minimum-volume range | 0.006165 | m^3 | derived | model-derived | PRELIMINARY | FLIGHT-REPRESENTATIVE | this script plenum_sizing (ripple a = 0.01 at the chain rotation frequency / valve bandwidth 0.1 Hz) |
 | H23-15 | plenum maximum volume | — | m^3 | pending | TBD | PENDING docs/hardware/h2/h2_7_mechanical_bom/ | FLIGHT-REPRESENTATIVE | H2-7 envelope/mass; lane-14 admission time |
-| H23-16 | plenum time constant tau = V / C_tot (evaluation grid) | 0.1172 – 639.8 | s | derived | model-derived | PRELIMINARY | FLIGHT-REPRESENTATIVE | this script plenum_sizing |
+| H23-16 | plenum time constant tau = V / C_tot (evaluation grid) | 0.1291 – 683.4 | s | derived | model-derived | PRELIMINARY | FLIGHT-REPRESENTATIVE | this script plenum_sizing (small-signal V/C_inc to secant V/C_tot) |
 | H23-17 | compressor ripple frequency / amplitude | — | Hz / - | pending | TBD | TBD - requires the C1 compressor design (blade count, rpm, outlet ripple) | FLIGHT-REPRESENTATIVE | docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json (C1 LEADING_CANDIDATE_PENDING_PRIMARY_EVIDENCE, A4) — bracketed here by 125.0-154.4 Hz (chain, assumed) and 1 kHz (EV-04) |
 | H23-18 | metering-valve control bandwidth | — | Hz | pending | TBD | TBD - requires the metering-valve class selection | FLIGHT-REPRESENTATIVE | valve class selection (H3) — evaluated at 0.1 / 1 / 10 Hz (assumed) |
 | H23-19 | metering-valve conductance turndown, fixed plenum setpoint strategy (single candidate) | 10.63 – 33.8 | - (flow ratio; conductance ratio is larger, see text) | derived | model-derived | PRELIMINARY | FLIGHT-REPRESENTATIVE | docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json valve_outlet per candidate — flow turndown per candidate over the nine cases, upper-bound flows to backflow bracket |
@@ -97,7 +97,7 @@ Ground substitution (GROUND/FACILITY-ONLY): FS-C: N2 / O2 / Xe-anode / Xe-cathod
 | H23-23 | Xe hold-up of the shared line (tee -> Z0) | 1.399e-09 – 1.775e-08 | kg/Pa | derived | model-derived | PRELIMINARY | FLIGHT-REPRESENTATIVE | this script xe_tie_in |
 | H23-24 | ground feed (FS-C: MFCs, bottles, single mixing point, isolator, manifold manometer) | per HW-FS-01..07 | - | requirement | assumed | PRELIMINARY | GROUND/FACILITY-ONLY | docs/experiments/hardware/hardware_requirements_v1.json requirements HW-FS-01..07 — replaces compressor + plenum + metering valve on the ground; the ground IF-A5 analog is the manifold pressure upstream of IP-UP |
 | H23-25 | H-1 anode-manifold static-pressure tap (cold-flow uniformity and budget closure) | 1-3 taps | - | derived | inferred | PENDING docs/hardware/h2/h2_6_diagnostics_fixture/ | H-1 TEST-ARTICLE-ONLY | REF-REID2007 p. 7 (cold-flow probe practice); this lane — must not change the flow path; blanked or identical in every arm |
-| H23-26 | feed-path pressure span to be measured on the H-1 ground fixture (cold flow, all taps) | 0.0358 – 1490 | Pa | derived | model-derived | PRELIMINARY | GROUND/FACILITY-ONLY | this script pressure_budget; REF-LEYBOLD2016 Sec. 3.2.2.4 pp. 78-79 (capacitance diaphragm gauges: three decades per sensor, used down to 1e-3 mbar = 0.1 Pa) — 2 three-decade heads cover the span; values below 0.1 Pa (HALL_INLET_Z0 at the lowest flows, W1 0.05 Pa setpoints) sit where the gauge uncertainty rises; flight sensor class TBD (proposal gap) |
+| H23-26 | feed-path pressure span to be measured on the H-1 ground fixture (cold flow, all taps) | 0.0358 – 2430 | Pa | derived | model-derived | PRELIMINARY | GROUND/FACILITY-ONLY | this script pressure_budget; REF-LEYBOLD2016 Sec. 3.2.2.4 pp. 78-79 (capacitance diaphragm gauges: three decades per sensor, used down to 1e-3 mbar = 0.1 Pa) — 2 three-decade heads cover the span; values below 0.1 Pa (HALL_INLET_Z0 at the lowest flows, W1 0.05 Pa setpoints) sit where the gauge uncertainty rises; flight sensor class TBD (proposal gap) |
 | H23-27 | gas isolator (voltage break) position and rating | upstream of IP-UP, downstream of the Xe tee | - | requirement | assumed | TBD - requires the H2-4 discharge-voltage rating plus margin | FLIGHT-REPRESENTATIVE | docs/experiments/hardware/hardware_requirements_v1.json HW-FS-06 |
 | H23-28 | wetted-material set (O2 / O service) | see materials table | - | analog | inferred | PRELIMINARY | FLIGHT-REPRESENTATIVE | REF-PAUL2023; REF-CIFALI2011 as recorded; HW-FS-07; HW-H1-05 |
 
@@ -129,208 +129,208 @@ Ground substitution (GROUND/FACILITY-ONLY): FS-C: N2 / O2 / Xe-anode / Xe-cathod
 | COMP-N2 | {'N2': 1.0} | 0.028 | ground surrogate S-N2 (Phase 1 knee) (assumed) |
 | COMP-XE | {'Xe': 1.0} | 0.1313 | Xe ignition / transition feed through the same line (A5 operating modes) (assumed) |
 
-Mean free path λ = kT/(√2 σ_c p) with σ_c = 0.43 nm² (N₂, the largest tabulated value, used for every species because atomic O is not tabulated; shortest λ, conservative for 'molecular' statements). Regimes: free-molecular Kn > 0.5, viscous Kn < 0.01 (REF-CHIGGIATO Table 7). Molecular conductances: thin slot C = A⟨v⟩/4, tube C = (⟨v⟩/4)(πD²/4)τ with the Santeler τ; transitional segments use the Leybold Knudsen factor f(d·p̄) (Eq. 1.27, air 20 °C; inferred transfer, verify), f_min = 0.953.
+Mean free path λ = kT/(√2 σ_c p) with σ_c = 0.43 nm² (N₂, the largest tabulated value, used for every species because atomic O is not tabulated; shortest λ, conservative for 'molecular' statements). Regimes: free-molecular Kn > 0.5, viscous Kn < 0.01 (REF-CHIGGIATO Table 7). Molecular conductances: thin slot C = A⟨v⟩/4, tube C = (⟨v⟩/4)(πD²/4)τ with the Santeler τ. Transitional/viscous segments: C = C_mol·Z(d/λ) + πd⁴p̄/(128 μ(T) L), Z = (1 + 192 c* d/λ)/(1 + 237 c* d/λ) (Leybold Eq. 1.26 structure, c*_air = 6.67e-3 cm mbar; Z_min = 0.8101; inferred generalisation, verify), μ(T) from Sutherland (N₂/O₂ Table 5-2 of REF-SUTHERLAND-COMSOL; mixture = largest species value). For air at 20 °C this reproduces Leybold Eq. 1.26. v1.0.0 used the air/20 °C Eq. 1.27 factor on the gas-specific molecular term, which under-stated the 500 K viscous-regime pressures by about 1.3–1.4×; superseded.
 
 ## 6. Cold-flow pressure budget (analog channel illustration)
 
-cold-flow (no plasma) series solve from vacuum upstream; each segment Q = C_mol f(d p_mean) (p_up - p_down) with C_mol from REF-CHIGGIATO Eqs. 19-21 (tube) or the annulus approximation, f from REF-LEYBOLD2016 Eq. 1.27 (inferred transfer to other gases/temperatures); f_min over the tabulated range = 0.953. ILLUSTRATION ONLY of the cold-flow back-pressure scale at HALL_INLET_Z0; never an H-1 design value (HW-H1-03 forbids P5/ECHT as design-value sources); the H-1 channel is PENDING H2-1. holes sized to the largest conductance the uniformity limit allows (smallest drop); distributor options (ASSUMED): DIST-A ring bore 6 mm, 2 feed points; DIST-B ring bore 8 mm, 4 feed points.
+cold-flow (no plasma) series solve from vacuum upstream; each segment Q = C(p_mean) (p_up - p_down) with C = C_mol Z(d/lambda) + C_visc: C_mol from REF-CHIGGIATO Eqs. 19-21 (tube, Santeler tau) or the annulus approximation; Z = (1 + 192 c* d/lambda)/(1 + 237 c* d/lambda) with the REF-LEYBOLD2016 Eq. 1.26 coefficients and c*_air = 6.67e-3 cm mbar (inferred generalisation, verify); C_visc = pi d^4 p_mean / (128 mu(T) L) (tube; annulus: pi D_mean w^3 p_mean / (12 mu L)) with the gas- and temperature-specific Sutherland viscosity (REF-SUTHERLAND-COMSOL; mixture = largest species value present, atomic O assigned the O2 value, ASSUMED). The formula reproduces REF-LEYBOLD2016 Eq. 1.26 for air at 20 degC (test anchor). Supersedes v1.0.0, which applied the air/20 degC Eq. 1.27 factor multiplicatively to the gas-specific molecular conductance and understated the viscous-regime pressures at 500 K by about 1.3-1.4x. Entrance losses: short segments (L/D 3-17 < Leybold's l >= 10 d for some) carry entrance / kinetic-energy losses not in the Poiseuille term; bounded per non-free-molecular segment by K rho u^2 / 2 at the downstream end with K = 2.5 (ASSUMED bound, verify) and ADDED to the segment drop (conservative upper bound; not applied where the downstream end is free-molecular, where the Santeler transmission probability already covers the entrance); largest bound / segment drop = 0.363. C_inc = dQ/dp_plenum = 1 / (1/C_valve + dp_IF_A5/dQ), dp_IF_A5/dQ by a 0.0001 relative finite difference with the hole array and valve held fixed; in the viscous/transitional segments C_inc exceeds the secant Q/p. ILLUSTRATION ONLY of the cold-flow back-pressure scale at HALL_INLET_Z0; never an H-1 design value (HW-H1-03 forbids P5/ECHT as design-value sources); the H-1 channel is PENDING H2-1. holes sized to the largest conductance the uniformity limit allows (smallest drop); distributor options (ASSUMED): DIST-A ring bore 6 mm, 2 feed points; DIST-B ring bore 8 mm, 4 feed points.
 
 | flow | composition | T [K] | distributor | Q [Pa m³/s] | p_Z0 cold [Pa] | Kn channel | dp holes [Pa] | p manifold [Pa] | p_IF-A5 S/M/L [Pa] | p_plenum r=1 S/M/L [Pa] | dp PIM blank S/M/L [Pa] |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| F-MIN | COMP-REC-LO | 300 | DIST-A | 0.0025 | 0.0362 | 9.4 | 8.35 | 8.38 | 49.2 / 18.9 / 10.8 | 98.5 / 37.8 / 21.7 | 1.52 / 0.166 / 0.0419 |
-| F-MIN | COMP-REC-LO | 300 | DIST-B | 0.0025 | 0.0362 | 9.4 | 1.28 | 1.32 | 47.3 / 15.4 / 5.66 | 94.6 / 30.8 / 11.3 | 2.06 / 0.333 / 0.112 |
-| F-MIN | COMP-REC-LO | 500 | DIST-A | 0.00416 | 0.0469 | 12.1 | 9.98 | 10 | 57.2 / 22.1 / 12.8 | 114 / 44.3 / 25.6 | 1.74 / 0.188 / 0.0469 |
-| F-MIN | COMP-REC-LO | 500 | DIST-B | 0.00416 | 0.0469 | 12.1 | 1.61 | 1.66 | 55 / 18.2 / 6.79 | 110 / 36.4 / 13.6 | 2.39 / 0.389 / 0.131 |
-| F-MIN | COMP-REC-HI | 300 | DIST-A | 0.00243 | 0.0358 | 9.52 | 8.27 | 8.31 | 48.9 / 18.7 / 10.7 | 97.7 / 37.5 / 21.5 | 1.51 / 0.165 / 0.0417 |
-| F-MIN | COMP-REC-HI | 300 | DIST-B | 0.00243 | 0.0358 | 9.52 | 1.27 | 1.3 | 47 / 15.3 / 5.61 | 93.9 / 30.6 / 11.2 | 2.05 / 0.331 / 0.111 |
-| F-MIN | COMP-REC-HI | 500 | DIST-A | 0.00406 | 0.0463 | 12.2 | 9.89 | 9.94 | 56.7 / 22 / 12.7 | 113 / 43.9 / 25.4 | 1.73 / 0.187 / 0.0466 |
-| F-MIN | COMP-REC-HI | 500 | DIST-B | 0.00406 | 0.0463 | 12.2 | 1.6 | 1.64 | 54.6 / 18.1 / 6.73 | 109 / 36.1 / 13.5 | 2.37 / 0.386 / 0.13 |
-| F-MIN | COMP-W1-ORICH | 300 | DIST-A | 0.00362 | 0.0437 | 7.79 | 9.51 | 9.55 | 54.9 / 21.2 / 12.2 | 110 / 42.4 / 24.5 | 1.68 / 0.182 / 0.0455 |
-| F-MIN | COMP-W1-ORICH | 300 | DIST-B | 0.00362 | 0.0437 | 7.79 | 1.52 | 1.56 | 52.8 / 17.4 / 6.47 | 106 / 34.8 / 12.9 | 2.3 / 0.374 / 0.126 |
-| F-MIN | COMP-W1-ORICH | 500 | DIST-A | 0.00603 | 0.0566 | 10 | 11.3 | 11.4 | 63.6 / 24.8 / 14.4 | 127 / 49.6 / 28.9 | 1.93 / 0.206 / 0.0509 |
-| F-MIN | COMP-W1-ORICH | 500 | DIST-B | 0.00603 | 0.0566 | 10 | 1.9 | 1.96 | 61.3 / 20.5 / 7.73 | 123 / 40.9 / 15.5 | 2.65 / 0.433 / 0.146 |
-| F-MIN | COMP-N2 | 300 | DIST-A | 0.00263 | 0.0372 | 9.15 | 8.51 | 8.54 | 50 / 19.2 / 11 | 100 / 38.4 / 22 | 1.54 / 0.168 / 0.0424 |
-| F-MIN | COMP-N2 | 300 | DIST-B | 0.00263 | 0.0372 | 9.15 | 1.31 | 1.35 | 48.1 / 15.7 / 5.77 | 96.1 / 31.4 / 11.5 | 2.1 / 0.339 / 0.114 |
-| F-MIN | COMP-N2 | 500 | DIST-A | 0.00439 | 0.0482 | 11.8 | 10.2 | 10.2 | 58.1 / 22.5 / 13 | 116 / 45 / 26.1 | 1.77 / 0.19 / 0.0475 |
-| F-MIN | COMP-N2 | 500 | DIST-B | 0.00439 | 0.0482 | 11.8 | 1.65 | 1.7 | 55.9 / 18.5 / 6.92 | 112 / 37 / 13.8 | 2.42 / 0.395 / 0.133 |
-| F-DES-LO | COMP-REC-LO | 300 | DIST-A | 0.0318 | 0.479 | 0.71 | 40.6 | 41.1 | 200 / 81.4 / 49.8 | 400 / 163 / 99.6 | 5.64 / 0.561 / 0.132 |
-| F-DES-LO | COMP-REC-LO | 300 | DIST-B | 0.0318 | 0.479 | 0.71 | 9.29 | 9.77 | 194 / 69.1 / 28.3 | 389 / 138 / 56.7 | 7.66 / 1.25 / 0.412 |
-| F-DES-LO | COMP-REC-LO | 500 | DIST-A | 0.0531 | 0.616 | 0.921 | 46.8 | 47.4 | 228 / 93.3 / 57.3 | 457 / 187 / 115 | 6.41 / 0.634 / 0.149 |
-| F-DES-LO | COMP-REC-LO | 500 | DIST-B | 0.0531 | 0.616 | 0.921 | 10.9 | 11.6 | 222 / 79.4 / 32.7 | 445 / 159 / 65.4 | 8.68 / 1.41 / 0.464 |
-| F-DES-LO | COMP-REC-HI | 300 | DIST-A | 0.031 | 0.473 | 0.719 | 40.3 | 40.8 | 199 / 80.9 / 49.5 | 397 / 162 / 98.9 | 5.61 / 0.557 / 0.131 |
-| F-DES-LO | COMP-REC-HI | 300 | DIST-B | 0.031 | 0.473 | 0.719 | 9.21 | 9.69 | 193 / 68.7 / 28.1 | 386 / 137 / 56.3 | 7.61 / 1.24 / 0.41 |
-| F-DES-LO | COMP-REC-HI | 500 | DIST-A | 0.0517 | 0.609 | 0.932 | 46.5 | 47.1 | 227 / 92.7 / 56.9 | 454 / 185 / 114 | 6.37 / 0.63 / 0.148 |
-| F-DES-LO | COMP-REC-HI | 500 | DIST-B | 0.0517 | 0.609 | 0.932 | 10.9 | 11.5 | 221 / 78.8 / 32.5 | 442 / 158 / 65 | 8.63 / 1.41 / 0.461 |
-| F-DES-LO | COMP-W1-ORICH | 300 | DIST-A | 0.0462 | 0.576 | 0.591 | 45 | 45.6 | 220 / 90 / 55.2 | 441 / 180 / 110 | 6.19 / 0.613 / 0.144 |
-| F-DES-LO | COMP-W1-ORICH | 300 | DIST-B | 0.0462 | 0.576 | 0.591 | 10.5 | 11 | 214 / 76.5 / 31.5 | 429 / 153 / 63 | 8.39 / 1.37 / 0.449 |
-| F-DES-LO | COMP-W1-ORICH | 500 | DIST-A | 0.077 | 0.738 | 0.769 | 51.8 | 52.6 | 252 / 103 / 63.4 | 504 / 206 / 127 | 7.03 / 0.693 / 0.162 |
-| F-DES-LO | COMP-W1-ORICH | 500 | DIST-B | 0.077 | 0.738 | 0.769 | 12.3 | 13 | 245 / 87.7 / 36.3 | 490 / 175 / 72.6 | 9.5 / 1.55 / 0.505 |
-| F-DES-LO | COMP-N2 | 300 | DIST-A | 0.0336 | 0.492 | 0.692 | 41.2 | 41.7 | 203 / 82.6 / 50.5 | 405 / 165 / 101 | 5.72 / 0.568 / 0.134 |
-| F-DES-LO | COMP-N2 | 300 | DIST-B | 0.0336 | 0.492 | 0.692 | 9.45 | 9.94 | 197 / 70.1 / 28.8 | 394 / 140 / 57.5 | 7.76 / 1.27 / 0.417 |
-| F-DES-LO | COMP-N2 | 500 | DIST-A | 0.056 | 0.632 | 0.897 | 47.5 | 48.1 | 232 / 94.7 / 58.1 | 463 / 189 / 116 | 6.5 / 0.642 / 0.151 |
-| F-DES-LO | COMP-N2 | 500 | DIST-B | 0.056 | 0.632 | 0.897 | 11.1 | 11.8 | 225 / 80.5 / 33.2 | 451 / 161 / 66.4 | 8.79 / 1.43 / 0.47 |
-| F-DES-HI | COMP-REC-LO | 300 | DIST-A | 0.109 | 1.52 | 0.224 | 79.2 | 80.7 | 378 / 156 / 96.6 | 756 / 311 / 193 | 10.4 / 1.01 / 0.236 |
-| F-DES-HI | COMP-REC-LO | 300 | DIST-B | 0.109 | 1.52 | 0.224 | 19.7 | 21.2 | 368 / 133 / 55.8 | 737 / 266 / 112 | 14 / 2.25 / 0.728 |
-| F-DES-HI | COMP-REC-LO | 500 | DIST-A | 0.181 | 1.89 | 0.3 | 90.6 | 92.5 | 431 / 178 / 111 | 861 / 356 / 221 | 11.8 / 1.15 / 0.266 |
-| F-DES-HI | COMP-REC-LO | 500 | DIST-B | 0.181 | 1.89 | 0.3 | 22.7 | 24.6 | 420 / 152 / 64 | 840 / 304 / 128 | 15.8 / 2.55 / 0.82 |
-| F-DES-HI | COMP-REC-HI | 300 | DIST-A | 0.106 | 1.5 | 0.227 | 78.6 | 80.1 | 375 / 155 / 96 | 751 / 309 / 192 | 10.3 / 1.01 / 0.234 |
-| F-DES-HI | COMP-REC-HI | 300 | DIST-B | 0.106 | 1.5 | 0.227 | 19.5 | 21 | 366 / 132 / 55.4 | 732 / 264 / 111 | 13.9 / 2.24 / 0.724 |
-| F-DES-HI | COMP-REC-HI | 500 | DIST-A | 0.177 | 1.87 | 0.303 | 90 | 91.9 | 428 / 177 / 110 | 856 / 353 / 220 | 11.7 / 1.14 / 0.265 |
-| F-DES-HI | COMP-REC-HI | 500 | DIST-B | 0.177 | 1.87 | 0.303 | 22.6 | 24.5 | 417 / 151 / 63.5 | 834 / 302 / 127 | 15.7 / 2.53 / 0.815 |
-| F-DES-HI | COMP-W1-ORICH | 300 | DIST-A | 0.158 | 1.79 | 0.191 | 87.3 | 89.1 | 416 / 172 / 107 | 831 / 343 / 213 | 11.4 / 1.11 / 0.258 |
-| F-DES-HI | COMP-W1-ORICH | 300 | DIST-B | 0.158 | 1.79 | 0.191 | 21.9 | 23.6 | 405 / 147 / 61.6 | 810 / 293 / 123 | 15.3 / 2.46 / 0.794 |
-| F-DES-HI | COMP-W1-ORICH | 500 | DIST-A | 0.263 | 2.21 | 0.257 | 99.9 | 102 | 474 / 196 / 122 | 947 / 392 / 244 | 13 / 1.26 / 0.291 |
-| F-DES-HI | COMP-W1-ORICH | 500 | DIST-B | 0.263 | 2.21 | 0.257 | 25.2 | 27.5 | 462 / 167 / 70.6 | 924 / 335 / 141 | 17.3 / 2.79 / 0.895 |
-| F-DES-HI | COMP-N2 | 300 | DIST-A | 0.115 | 1.56 | 0.219 | 80.3 | 81.8 | 383 / 158 / 98 | 766 / 316 / 196 | 10.5 / 1.03 / 0.239 |
-| F-DES-HI | COMP-N2 | 300 | DIST-B | 0.115 | 1.56 | 0.219 | 20 | 21.5 | 373 / 135 / 56.6 | 747 / 270 / 113 | 14.1 / 2.28 / 0.737 |
-| F-DES-HI | COMP-N2 | 500 | DIST-A | 0.191 | 1.94 | 0.293 | 91.9 | 93.8 | 437 / 180 / 112 | 873 / 361 / 224 | 12 / 1.16 / 0.27 |
-| F-DES-HI | COMP-N2 | 500 | DIST-B | 0.191 | 1.94 | 0.293 | 23.1 | 25 | 426 / 154 / 64.9 | 851 / 308 / 130 | 16 / 2.58 / 0.831 |
-| F-MAX | COMP-REC-LO | 300 | DIST-A | 0.265 | 3.17 | 0.107 | 126 | 129 | 596 / 247 / 154 | 1.19e+03 / 494 / 308 | 16.2 / 1.57 / 0.362 |
-| F-MAX | COMP-REC-LO | 300 | DIST-B | 0.265 | 3.17 | 0.107 | 32.4 | 35.6 | 581 / 211 / 89.6 | 1.16e+03 / 423 / 179 | 21.6 / 3.46 / 1.11 |
-| F-MAX | COMP-REC-LO | 500 | DIST-A | 0.442 | 3.85 | 0.147 | 144 | 148 | 679 / 281 / 176 | 1.36e+03 / 563 / 352 | 18.4 / 1.78 / 0.41 |
-| F-MAX | COMP-REC-LO | 500 | DIST-B | 0.442 | 3.85 | 0.147 | 37.2 | 41 | 662 / 241 / 102 | 1.32e+03 / 482 / 205 | 24.6 / 3.92 / 1.25 |
-| F-MAX | COMP-REC-HI | 300 | DIST-A | 0.259 | 3.14 | 0.108 | 126 | 129 | 592 / 245 / 153 | 1.18e+03 / 491 / 306 | 16.1 / 1.56 / 0.36 |
-| F-MAX | COMP-REC-HI | 300 | DIST-B | 0.259 | 3.14 | 0.108 | 32.2 | 35.3 | 578 / 210 / 89 | 1.16e+03 / 420 / 178 | 21.5 / 3.44 / 1.1 |
-| F-MAX | COMP-REC-HI | 500 | DIST-A | 0.431 | 3.81 | 0.149 | 143 | 147 | 674 / 280 / 175 | 1.35e+03 / 559 / 350 | 18.3 / 1.77 / 0.408 |
-| F-MAX | COMP-REC-HI | 500 | DIST-B | 0.431 | 3.81 | 0.149 | 36.9 | 40.8 | 658 / 239 / 102 | 1.32e+03 / 479 / 203 | 24.4 / 3.9 / 1.24 |
-| F-MAX | COMP-W1-ORICH | 300 | DIST-A | 0.385 | 3.66 | 0.0932 | 139 | 143 | 655 / 272 / 170 | 1.31e+03 / 543 / 340 | 17.8 / 1.72 / 0.397 |
-| F-MAX | COMP-W1-ORICH | 300 | DIST-B | 0.385 | 3.66 | 0.0932 | 35.8 | 39.5 | 639 / 233 / 98.7 | 1.28e+03 / 465 / 197 | 23.7 / 3.79 / 1.21 |
-| F-MAX | COMP-W1-ORICH | 500 | DIST-A | 0.642 | 4.42 | 0.129 | 159 | 163 | 746 / 310 / 194 | 1.49e+03 / 619 / 388 | 20.2 / 1.95 / 0.449 |
-| F-MAX | COMP-W1-ORICH | 500 | DIST-B | 0.642 | 4.42 | 0.129 | 41.1 | 45.5 | 728 / 265 / 113 | 1.46e+03 / 530 / 226 | 26.9 / 4.29 / 1.37 |
-| F-MAX | COMP-N2 | 300 | DIST-A | 0.28 | 3.24 | 0.105 | 128 | 131 | 604 / 250 / 156 | 1.21e+03 / 501 / 313 | 16.4 / 1.59 / 0.367 |
-| F-MAX | COMP-N2 | 300 | DIST-B | 0.28 | 3.24 | 0.105 | 32.9 | 36.1 | 589 / 214 / 90.8 | 1.18e+03 / 429 / 182 | 21.9 / 3.51 / 1.12 |
-| F-MAX | COMP-N2 | 500 | DIST-A | 0.467 | 3.93 | 0.144 | 146 | 150 | 688 / 285 / 178 | 1.38e+03 / 571 / 357 | 18.7 / 1.8 / 0.416 |
-| F-MAX | COMP-N2 | 500 | DIST-B | 0.467 | 3.93 | 0.144 | 37.7 | 41.7 | 671 / 244 / 104 | 1.34e+03 / 489 / 208 | 24.9 / 3.97 / 1.27 |
+| F-MIN | COMP-REC-LO | 300 | DIST-A | 0.0025 | 0.0362 | 9.4 | 8.67 | 8.7 | 52.4 / 19.8 / 11.2 | 105 / 39.6 / 22.5 | 1.54 / 0.155 / 0.0361 |
+| F-MIN | COMP-REC-LO | 300 | DIST-B | 0.0025 | 0.0362 | 9.4 | 1.29 | 1.33 | 50.3 / 16.2 / 5.83 | 101 / 32.3 / 11.7 | 2.11 / 0.326 / 0.105 |
+| F-MIN | COMP-REC-LO | 500 | DIST-A | 0.00416 | 0.0467 | 12.2 | 12.4 | 12.4 | 78.8 / 29.3 / 16.4 | 158 / 58.6 / 32.7 | 2.36 / 0.246 / 0.0585 |
+| F-MIN | COMP-REC-LO | 500 | DIST-B | 0.00416 | 0.0467 | 12.2 | 1.71 | 1.76 | 75.6 / 23.6 / 8.29 | 151 / 47.3 / 16.6 | 3.16 / 0.483 / 0.156 |
+| F-MIN | COMP-REC-HI | 300 | DIST-A | 0.00243 | 0.0358 | 9.52 | 8.56 | 8.6 | 51.7 / 19.5 / 11.1 | 103 / 39.1 / 22.2 | 1.53 / 0.153 / 0.0356 |
+| F-MIN | COMP-REC-HI | 300 | DIST-B | 0.00243 | 0.0358 | 9.52 | 1.28 | 1.31 | 49.7 / 16 / 5.75 | 99.4 / 31.9 / 11.5 | 2.09 / 0.322 / 0.104 |
+| F-MIN | COMP-REC-HI | 500 | DIST-A | 0.00406 | 0.0461 | 12.3 | 12.2 | 12.3 | 77.8 / 28.9 / 16.2 | 156 / 57.8 / 32.3 | 2.33 / 0.243 / 0.0577 |
+| F-MIN | COMP-REC-HI | 500 | DIST-B | 0.00406 | 0.0461 | 12.3 | 1.69 | 1.74 | 74.6 / 23.3 / 8.19 | 149 / 46.7 / 16.4 | 3.12 / 0.477 / 0.154 |
+| F-MIN | COMP-W1-ORICH | 300 | DIST-A | 0.00362 | 0.0438 | 7.78 | 10.5 | 10.5 | 63.1 / 23.9 / 13.6 | 126 / 47.7 / 27.1 | 1.86 / 0.187 / 0.0434 |
+| F-MIN | COMP-W1-ORICH | 300 | DIST-B | 0.00362 | 0.0438 | 7.78 | 1.57 | 1.61 | 60.7 / 19.5 / 7.03 | 121 / 39 / 14.1 | 2.54 / 0.391 / 0.126 |
+| F-MIN | COMP-W1-ORICH | 500 | DIST-A | 0.00603 | 0.0564 | 10.1 | 15 | 15 | 95 / 35.3 / 19.7 | 190 / 70.6 / 39.5 | 2.85 / 0.296 / 0.0704 |
+| F-MIN | COMP-W1-ORICH | 500 | DIST-B | 0.00603 | 0.0564 | 10.1 | 2.08 | 2.14 | 91 / 28.5 / 10 | 182 / 57 / 20 | 3.81 / 0.582 / 0.188 |
+| F-MIN | COMP-N2 | 300 | DIST-A | 0.00263 | 0.0372 | 9.15 | 8.53 | 8.57 | 50.6 / 19.2 / 11 | 101 / 38.5 / 22 | 1.48 / 0.148 / 0.034 |
+| F-MIN | COMP-N2 | 300 | DIST-B | 0.00263 | 0.0372 | 9.15 | 1.31 | 1.35 | 48.7 / 15.8 / 5.74 | 97.4 / 31.6 / 11.5 | 2.04 / 0.316 / 0.101 |
+| F-MIN | COMP-N2 | 500 | DIST-A | 0.00439 | 0.048 | 11.8 | 12.2 | 12.2 | 75.7 / 28.3 / 16 | 151 / 56.7 / 31.9 | 2.25 / 0.231 / 0.0543 |
+| F-MIN | COMP-N2 | 500 | DIST-B | 0.00439 | 0.048 | 11.8 | 1.74 | 1.78 | 72.7 / 23 / 8.16 | 145 / 46 / 16.3 | 3.05 / 0.468 / 0.151 |
+| F-DES-LO | COMP-REC-LO | 300 | DIST-A | 0.0318 | 0.484 | 0.704 | 43.1 | 43.6 | 215 / 86.5 / 52.6 | 430 / 173 / 105 | 5.76 / 0.51 / 0.109 |
+| F-DES-LO | COMP-REC-LO | 300 | DIST-B | 0.0318 | 0.484 | 0.704 | 9.67 | 10.2 | 209 / 73.5 / 29.6 | 418 / 147 / 59.3 | 7.94 / 1.21 / 0.364 |
+| F-DES-LO | COMP-REC-LO | 500 | DIST-A | 0.0531 | 0.626 | 0.907 | 65.8 | 66.4 | 333 / 133 / 80.6 | 666 / 267 / 161 | 9.03 / 0.809 / 0.174 |
+| F-DES-LO | COMP-REC-LO | 500 | DIST-B | 0.0531 | 0.626 | 0.907 | 14.2 | 14.8 | 324 / 113 / 45.1 | 648 / 226 / 90.2 | 12.5 / 1.91 / 0.582 |
+| F-DES-LO | COMP-REC-HI | 300 | DIST-A | 0.031 | 0.477 | 0.714 | 42.5 | 43 | 212 / 85.4 / 52 | 424 / 171 / 104 | 5.69 / 0.504 / 0.108 |
+| F-DES-LO | COMP-REC-HI | 300 | DIST-B | 0.031 | 0.477 | 0.714 | 9.55 | 10 | 207 / 72.6 / 29.3 | 413 / 145 / 58.5 | 7.84 / 1.19 / 0.359 |
+| F-DES-LO | COMP-REC-HI | 500 | DIST-A | 0.0517 | 0.618 | 0.919 | 64.9 | 65.6 | 329 / 132 / 79.6 | 658 / 264 / 159 | 8.92 / 0.799 / 0.172 |
+| F-DES-LO | COMP-REC-HI | 500 | DIST-B | 0.0517 | 0.618 | 0.919 | 14 | 14.6 | 320 / 112 / 44.5 | 640 / 223 / 89.1 | 12.3 / 1.89 / 0.575 |
+| F-DES-LO | COMP-W1-ORICH | 300 | DIST-A | 0.0462 | 0.588 | 0.579 | 51.9 | 52.5 | 259 / 104 / 63.4 | 518 / 208 / 127 | 6.94 / 0.615 / 0.131 |
+| F-DES-LO | COMP-W1-ORICH | 300 | DIST-B | 0.0462 | 0.588 | 0.579 | 11.7 | 12.2 | 252 / 88.5 / 35.7 | 504 / 177 / 71.4 | 9.56 / 1.45 / 0.438 |
+| F-DES-LO | COMP-W1-ORICH | 500 | DIST-A | 0.077 | 0.761 | 0.746 | 79.2 | 80 | 401 / 161 / 97.1 | 803 / 322 / 194 | 10.9 / 0.974 / 0.209 |
+| F-DES-LO | COMP-W1-ORICH | 500 | DIST-B | 0.077 | 0.761 | 0.746 | 17.1 | 17.9 | 390 / 136 / 54.3 | 781 / 272 / 109 | 15.1 / 2.3 / 0.701 |
+| F-DES-LO | COMP-N2 | 300 | DIST-A | 0.0336 | 0.493 | 0.69 | 41.5 | 41.9 | 206 / 83 / 50.6 | 411 / 166 / 101 | 5.5 / 0.485 / 0.103 |
+| F-DES-LO | COMP-N2 | 300 | DIST-B | 0.0336 | 0.493 | 0.69 | 9.43 | 9.93 | 200 / 70.6 / 28.5 | 401 / 141 / 57.1 | 7.56 / 1.15 / 0.344 |
+| F-DES-LO | COMP-N2 | 500 | DIST-A | 0.056 | 0.64 | 0.887 | 62.8 | 63.4 | 316 / 127 / 76.8 | 631 / 254 / 154 | 8.52 / 0.759 / 0.162 |
+| F-DES-LO | COMP-N2 | 500 | DIST-B | 0.056 | 0.64 | 0.887 | 13.8 | 14.4 | 307 / 107 / 43.1 | 614 / 215 / 86.2 | 11.8 / 1.79 / 0.544 |
+| F-DES-HI | COMP-REC-LO | 300 | DIST-A | 0.109 | 1.56 | 0.218 | 84.3 | 85.9 | 408 / 166 / 102 | 816 / 332 / 205 | 10.7 / 0.928 / 0.196 |
+| F-DES-HI | COMP-REC-LO | 300 | DIST-B | 0.109 | 1.56 | 0.218 | 20.6 | 22.2 | 398 / 142 / 58.7 | 796 / 284 / 117 | 14.4 / 2.17 / 0.637 |
+| F-DES-HI | COMP-REC-LO | 500 | DIST-A | 0.181 | 2.09 | 0.271 | 130 | 133 | 635 / 258 / 159 | 1.27e+03 / 516 / 317 | 16.7 / 1.46 / 0.309 |
+| F-DES-HI | COMP-REC-LO | 500 | DIST-B | 0.181 | 2.09 | 0.271 | 31.3 | 33.4 | 620 / 220 / 90.4 | 1.24e+03 / 441 / 181 | 22.8 / 3.43 / 1.01 |
+| F-DES-HI | COMP-REC-HI | 300 | DIST-A | 0.106 | 1.54 | 0.221 | 83.3 | 84.8 | 403 / 164 / 101 | 806 / 328 / 202 | 10.5 / 0.917 / 0.193 |
+| F-DES-HI | COMP-REC-HI | 300 | DIST-B | 0.106 | 1.54 | 0.221 | 20.4 | 21.9 | 393 / 140 / 57.9 | 786 / 281 / 116 | 14.2 / 2.14 / 0.629 |
+| F-DES-HI | COMP-REC-HI | 500 | DIST-A | 0.177 | 2.07 | 0.275 | 129 | 131 | 628 / 255 / 157 | 1.26e+03 / 510 / 313 | 16.5 / 1.44 / 0.305 |
+| F-DES-HI | COMP-REC-HI | 500 | DIST-B | 0.177 | 2.07 | 0.275 | 30.9 | 33 | 612 / 218 / 89.3 | 1.22e+03 / 435 / 179 | 22.5 / 3.39 / 1 |
+| F-DES-HI | COMP-W1-ORICH | 300 | DIST-A | 0.158 | 1.89 | 0.18 | 102 | 103 | 491 / 200 / 123 | 983 / 400 / 247 | 12.9 / 1.12 / 0.236 |
+| F-DES-HI | COMP-W1-ORICH | 300 | DIST-B | 0.158 | 1.89 | 0.18 | 24.9 | 26.8 | 480 / 171 / 70.7 | 959 / 342 / 141 | 17.3 / 2.61 / 0.767 |
+| F-DES-HI | COMP-W1-ORICH | 500 | DIST-A | 0.263 | 2.54 | 0.224 | 157 | 160 | 765 / 311 / 191 | 1.53e+03 / 622 / 382 | 20.2 / 1.76 / 0.372 |
+| F-DES-HI | COMP-W1-ORICH | 500 | DIST-B | 0.263 | 2.54 | 0.224 | 37.7 | 40.2 | 747 / 265 / 109 | 1.49e+03 / 531 / 218 | 27.4 / 4.13 / 1.22 |
+| F-DES-HI | COMP-N2 | 300 | DIST-A | 0.115 | 1.57 | 0.216 | 80.8 | 82.4 | 390 / 159 / 98.2 | 780 / 318 / 196 | 10.2 / 0.886 / 0.187 |
+| F-DES-HI | COMP-N2 | 300 | DIST-B | 0.115 | 1.57 | 0.216 | 19.9 | 21.5 | 381 / 136 / 56.3 | 762 / 272 / 113 | 13.7 / 2.06 / 0.605 |
+| F-DES-HI | COMP-N2 | 500 | DIST-A | 0.191 | 2.11 | 0.269 | 124 | 126 | 601 / 244 / 150 | 1.2e+03 / 489 / 301 | 15.8 / 1.37 / 0.29 |
+| F-DES-HI | COMP-N2 | 500 | DIST-B | 0.191 | 2.11 | 0.269 | 30 | 32.1 | 586 / 209 / 85.9 | 1.17e+03 / 418 / 172 | 21.4 / 3.22 / 0.949 |
+| F-MAX | COMP-REC-LO | 300 | DIST-A | 0.265 | 3.32 | 0.102 | 135 | 138 | 648 / 265 / 164 | 1.3e+03 / 530 / 328 | 16.8 / 1.47 / 0.308 |
+| F-MAX | COMP-REC-LO | 300 | DIST-B | 0.265 | 3.32 | 0.102 | 34.1 | 37.5 | 634 / 227 / 94.9 | 1.27e+03 / 455 / 190 | 21.8 / 3.34 / 0.981 |
+| F-MAX | COMP-REC-LO | 500 | DIST-A | 0.442 | 4.62 | 0.123 | 210 | 214 | 1.01e+03 / 412 / 255 | 2.02e+03 / 825 / 510 | 26.3 / 2.28 / 0.48 |
+| F-MAX | COMP-REC-LO | 500 | DIST-B | 0.442 | 4.62 | 0.123 | 52.5 | 57.1 | 986 / 353 / 147 | 1.97e+03 / 707 / 294 | 34.8 / 5.27 / 1.54 |
+| F-MAX | COMP-REC-HI | 300 | DIST-A | 0.259 | 3.28 | 0.104 | 133 | 136 | 640 / 262 / 162 | 1.28e+03 / 523 / 324 | 16.6 / 1.45 / 0.304 |
+| F-MAX | COMP-REC-HI | 300 | DIST-B | 0.259 | 3.28 | 0.104 | 33.7 | 37 | 626 / 225 / 93.7 | 1.25e+03 / 449 / 187 | 21.5 / 3.3 / 0.969 |
+| F-MAX | COMP-REC-HI | 500 | DIST-A | 0.431 | 4.56 | 0.124 | 207 | 212 | 997 / 407 / 252 | 1.99e+03 / 814 / 504 | 25.9 / 2.25 / 0.474 |
+| F-MAX | COMP-REC-HI | 500 | DIST-B | 0.431 | 4.56 | 0.124 | 51.8 | 56.4 | 974 / 349 / 145 | 1.95e+03 / 698 / 290 | 34.3 / 5.2 / 1.52 |
+| F-MAX | COMP-W1-ORICH | 300 | DIST-A | 0.385 | 4.01 | 0.0849 | 162 | 166 | 780 / 319 / 198 | 1.56e+03 / 638 / 395 | 20.2 / 1.77 / 0.371 |
+| F-MAX | COMP-W1-ORICH | 300 | DIST-B | 0.385 | 4.01 | 0.0849 | 41.1 | 45.1 | 763 / 274 / 114 | 1.53e+03 / 548 / 229 | 26.2 / 4.02 / 1.18 |
+| F-MAX | COMP-W1-ORICH | 500 | DIST-A | 0.642 | 5.58 | 0.102 | 253 | 258 | 1.22e+03 / 497 / 307 | 2.43e+03 / 993 / 615 | 31.7 / 2.75 / 0.578 |
+| F-MAX | COMP-W1-ORICH | 500 | DIST-B | 0.642 | 5.58 | 0.102 | 63.2 | 68.8 | 1.19e+03 / 426 / 177 | 2.38e+03 / 851 / 354 | 41.9 / 6.34 / 1.86 |
+| F-MAX | COMP-N2 | 300 | DIST-A | 0.28 | 3.3 | 0.103 | 129 | 132 | 619 / 253 / 157 | 1.24e+03 / 507 / 314 | 16.1 / 1.4 / 0.295 |
+| F-MAX | COMP-N2 | 300 | DIST-B | 0.28 | 3.3 | 0.103 | 32.8 | 36.1 | 607 / 218 / 90.9 | 1.21e+03 / 436 / 182 | 20.6 / 3.18 / 0.936 |
+| F-MAX | COMP-N2 | 500 | DIST-A | 0.467 | 4.59 | 0.124 | 198 | 203 | 954 / 390 / 241 | 1.91e+03 / 780 / 483 | 24.8 / 2.16 / 0.454 |
+| F-MAX | COMP-N2 | 500 | DIST-B | 0.467 | 4.59 | 0.124 | 49.9 | 54.5 | 933 / 334 / 139 | 1.87e+03 / 669 / 278 | 32.5 / 4.95 / 1.45 |
 
 Geometry options (ASSUMED, not design values): GEO-S: line 6 mm × 1 m, isolator 6 mm × 0.1 m, PIM blank 10 mm × 0.15 m, stub 6 mm × 0.05 m; GEO-M: line 10 mm × 1 m, isolator 10 mm × 0.1 m, PIM blank 20 mm × 0.15 m, stub 10 mm × 0.05 m; GEO-L: line 16 mm × 1 m, isolator 16 mm × 0.1 m, PIM blank 30 mm × 0.15 m, stub 16 mm × 0.05 m. Valve authority r = C_valve,open / C_down (PROPOSED 1 or 3): p_plenum ≥ (1 + 1/r) p_IF-A5. Segment detail (C, Kn, regime, dp) is in the JSON.
 
 ## 7. Anode manifold / distributor
 
-Rule (model-derived): delta_p2p = C_h / (8 N_f^2 C_ring) <= 0.075 (from +-5 %). N_holes_max_molecular is the largest count of that hole size compatible with the limit if the holes are free-molecular; where Kn_hole <= 0.5 a hole passes more than its molecular conductance, so the count is an UPPER bound (fewer holes needed). Fewer/smaller holes raise the distributor drop and the required plenum pressure. Cold flow only: the plasma-on distribution is not predicted. Practice: the anode usually doubles as gas distributor with an annular array of small orifices whose spacing/location set azimuthal uniformity (REF-REID2007 p. 2); an azimuthal neutral-density non-uniformity from a manufacturing error reduced efficiency, symmetry and stability (p. 8); cold-flow probe sweeps are used to verify a new anode (p. 7). Criterion PROPOSED: ±5 % / 10 % peak-to-peak (REF-ROBERTS2024, abstract; verify primary). Options: orifice array (baseline), internal baffles (additive manufacturing, REF-ROBERTS2024), porous stage (no source accessed in this lane: verify).
+Rule (model-derived): delta_p2p = C_h / (8 N_f^2 C_ring) <= 0.075 (from +-5 %). N_holes_max_molecular is the largest count of that hole size compatible with the limit if the holes are free-molecular; where Kn_hole <= 0.5 a hole passes more than its molecular conductance, so the listed count is an UPPER bound on the allowed number: the maximum C_h is reached with fewer holes, and using the full listed count would exceed it. Fewer/smaller holes raise the distributor drop and the required plenum pressure. Cold flow only: the plasma-on distribution is not predicted. Practice: the anode usually doubles as gas distributor with an annular array of small orifices whose spacing/location set azimuthal uniformity (REF-REID2007 p. 2); an azimuthal neutral-density non-uniformity from a manufacturing error reduced efficiency, symmetry and stability (p. 8); cold-flow probe sweeps are used to verify a new anode (p. 7). Criterion PROPOSED: ±5 % / 10 % peak-to-peak (REF-ROBERTS2024, abstract; verify primary). Options: orifice array (baseline), internal baffles (additive manufacturing, REF-ROBERTS2024), porous stage (no source accessed in this lane: verify).
 
 | flow | T [K] | ring bore [mm] | feed points | p_Z0 [Pa] | p manifold [Pa] | dp holes [Pa] | Kn ring | N holes max 0.5 / 1 mm (Kn hole) |
 |---|---|---|---|---|---|---|---|---|
-| F-DES-LO | 300 | 4 | 1 | 0.479 | 198 | 198 | 0.00859 | 19 (0.069) / 3 (0.034) |
-| F-DES-LO | 300 | 4 | 2 | 0.479 | 95.2 | 94.7 | 0.0179 | 41 (0.14) / 7 (0.072) |
-| F-DES-LO | 300 | 4 | 4 | 0.479 | 43.9 | 43.5 | 0.0388 | 90 (0.31) / 15 (0.15) |
-| F-DES-LO | 300 | 6 | 1 | 0.479 | 87.1 | 86.7 | 0.013 | 45 (0.16) / 7 (0.078) |
-| F-DES-LO | 300 | 6 | 2 | 0.479 | 41.1 | 40.6 | 0.0276 | 97 (0.33) / 16 (0.17) |
-| F-DES-LO | 300 | 6 | 4 | 0.479 | 18.3 | 17.9 | 0.0619 | 220 (0.74) / 38 (0.37) |
-| F-DES-LO | 300 | 8 | 1 | 0.479 | 48.5 | 48 | 0.0175 | 82 (0.28) / 14 (0.14) |
-| F-DES-LO | 300 | 8 | 2 | 0.479 | 22.5 | 22 | 0.0378 | 178 (0.6) / 30 (0.3) |
-| F-DES-LO | 300 | 8 | 4 | 0.479 | 9.77 | 9.29 | 0.0872 | 424 (1.4) / 73 (0.7) |
-| F-DES-LO | 500 | 4 | 1 | 0.616 | 226 | 226 | 0.0125 | 22 (0.1) / 3 (0.05) |
-| F-DES-LO | 500 | 4 | 2 | 0.616 | 109 | 109 | 0.026 | 46 (0.21) / 8 (0.1) |
-| F-DES-LO | 500 | 4 | 4 | 0.616 | 51 | 50.3 | 0.0557 | 101 (0.45) / 17 (0.22) |
-| F-DES-LO | 500 | 6 | 1 | 0.616 | 99.8 | 99.2 | 0.019 | 51 (0.23) / 8 (0.11) |
-| F-DES-LO | 500 | 6 | 2 | 0.616 | 47.4 | 46.8 | 0.0399 | 108 (0.48) / 18 (0.24) |
-| F-DES-LO | 500 | 6 | 4 | 0.616 | 21.5 | 20.9 | 0.0881 | 243 (1.1) / 42 (0.53) |
-| F-DES-LO | 500 | 8 | 1 | 0.616 | 55.7 | 55.1 | 0.0255 | 92 (0.41) / 15 (0.2) |
-| F-DES-LO | 500 | 8 | 2 | 0.616 | 26.1 | 25.5 | 0.0543 | 199 (0.87) / 34 (0.43) |
-| F-DES-LO | 500 | 8 | 4 | 0.616 | 11.6 | 10.9 | 0.123 | 464 (2) / 80 (0.98) |
-| F-DES-HI | 300 | 4 | 1 | 1.52 | 374 | 372 | 0.00456 | 36 (0.036) / 6 (0.018) |
-| F-DES-HI | 300 | 4 | 2 | 1.52 | 183 | 182 | 0.0093 | 74 (0.074) / 12 (0.037) |
-| F-DES-HI | 300 | 4 | 4 | 1.52 | 87.9 | 86.4 | 0.0194 | 155 (0.15) / 26 (0.077) |
-| F-DES-HI | 300 | 6 | 1 | 1.52 | 166 | 164 | 0.00684 | 81 (0.082) / 14 (0.041) |
-| F-DES-HI | 300 | 6 | 2 | 1.52 | 80.7 | 79.2 | 0.0141 | 170 (0.17) / 29 (0.084) |
-| F-DES-HI | 300 | 6 | 4 | 1.52 | 38.2 | 36.7 | 0.0297 | 366 (0.36) / 63 (0.18) |
-| F-DES-HI | 300 | 8 | 1 | 1.52 | 93.4 | 91.9 | 0.00911 | 146 (0.15) / 25 (0.073) |
-| F-DES-HI | 300 | 8 | 2 | 1.52 | 45.1 | 43.6 | 0.0189 | 308 (0.3) / 53 (0.15) |
-| F-DES-HI | 300 | 8 | 4 | 1.52 | 21.2 | 19.6 | 0.0402 | 684 (0.64) / 118 (0.32) |
-| F-DES-HI | 500 | 4 | 1 | 1.89 | 426 | 424 | 0.00667 | 41 (0.053) / 7 (0.027) |
-| F-DES-HI | 500 | 4 | 2 | 1.89 | 209 | 207 | 0.0136 | 83 (0.11) / 14 (0.054) |
-| F-DES-HI | 500 | 4 | 4 | 1.89 | 101 | 99.2 | 0.0281 | 175 (0.23) / 30 (0.11) |
-| F-DES-HI | 500 | 6 | 1 | 1.89 | 189 | 188 | 0.00999 | 92 (0.12) / 15 (0.06) |
-| F-DES-HI | 500 | 6 | 2 | 1.89 | 92.5 | 90.6 | 0.0205 | 191 (0.24) / 33 (0.12) |
-| F-DES-HI | 500 | 6 | 4 | 1.89 | 44.2 | 42.3 | 0.0428 | 410 (0.51) / 70 (0.26) |
-| F-DES-HI | 500 | 8 | 1 | 1.89 | 107 | 105 | 0.0133 | 165 (0.21) / 28 (0.11) |
-| F-DES-HI | 500 | 8 | 2 | 1.89 | 51.9 | 50 | 0.0273 | 347 (0.44) / 59 (0.22) |
-| F-DES-HI | 500 | 8 | 4 | 1.89 | 24.6 | 22.7 | 0.0576 | 764 (0.92) / 131 (0.46) |
-| F-MAX | 300 | 4 | 1 | 3.17 | 589 | 586 | 0.00289 | 56 (0.023) / 9 (0.012) |
-| F-MAX | 300 | 4 | 2 | 3.17 | 291 | 288 | 0.00585 | 114 (0.047) / 19 (0.023) |
-| F-MAX | 300 | 4 | 4 | 3.17 | 142 | 139 | 0.012 | 236 (0.096) / 40 (0.048) |
-| F-MAX | 300 | 6 | 1 | 3.17 | 263 | 260 | 0.00432 | 126 (0.052) / 21 (0.026) |
-| F-MAX | 300 | 6 | 2 | 3.17 | 130 | 126 | 0.00877 | 260 (0.1) / 44 (0.053) |
-| F-MAX | 300 | 6 | 4 | 3.17 | 63 | 59.8 | 0.018 | 549 (0.22) / 94 (0.11) |
-| F-MAX | 300 | 8 | 1 | 3.17 | 149 | 146 | 0.00573 | 225 (0.092) / 38 (0.046) |
-| F-MAX | 300 | 8 | 2 | 3.17 | 73.2 | 70 | 0.0116 | 469 (0.19) / 80 (0.093) |
-| F-MAX | 300 | 8 | 4 | 3.17 | 35.5 | 32.4 | 0.0239 | 1014 (0.38) / 175 (0.19) |
-| F-MAX | 500 | 4 | 1 | 3.85 | 670 | 666 | 0.00423 | 63 (0.034) / 10 (0.017) |
-| F-MAX | 500 | 4 | 2 | 3.85 | 332 | 328 | 0.00855 | 129 (0.068) / 22 (0.034) |
-| F-MAX | 500 | 4 | 4 | 3.85 | 163 | 159 | 0.0174 | 266 (0.14) / 46 (0.07) |
-| F-MAX | 500 | 6 | 1 | 3.85 | 300 | 296 | 0.00632 | 143 (0.076) / 24 (0.038) |
-| F-MAX | 500 | 6 | 2 | 3.85 | 148 | 144 | 0.0128 | 294 (0.15) / 50 (0.077) |
-| F-MAX | 500 | 6 | 4 | 3.85 | 72.4 | 68.5 | 0.0261 | 618 (0.31) / 106 (0.16) |
-| F-MAX | 500 | 8 | 1 | 3.85 | 170 | 166 | 0.00836 | 255 (0.13) / 44 (0.067) |
-| F-MAX | 500 | 8 | 2 | 3.85 | 83.8 | 80 | 0.0169 | 530 (0.27) / 91 (0.14) |
-| F-MAX | 500 | 8 | 4 | 3.85 | 41 | 37.2 | 0.0346 | 1140 (0.55) / 196 (0.28) |
+| F-DES-LO | 300 | 4 | 1 | 0.484 | 213 | 212 | 0.008 | 18 (0.064) / 3 (0.032) |
+| F-DES-LO | 300 | 4 | 2 | 0.484 | 102 | 101 | 0.0167 | 38 (0.13) / 6 (0.067) |
+| F-DES-LO | 300 | 4 | 4 | 0.484 | 46.7 | 46.2 | 0.0364 | 85 (0.29) / 14 (0.15) |
+| F-DES-LO | 300 | 6 | 1 | 0.484 | 92.8 | 92.3 | 0.0122 | 42 (0.15) / 7 (0.073) |
+| F-DES-LO | 300 | 6 | 2 | 0.484 | 43.6 | 43.1 | 0.0261 | 91 (0.31) / 15 (0.16) |
+| F-DES-LO | 300 | 6 | 4 | 0.484 | 19.3 | 18.8 | 0.0589 | 209 (0.71) / 36 (0.35) |
+| F-DES-LO | 300 | 8 | 1 | 0.484 | 51.2 | 50.8 | 0.0166 | 77 (0.27) / 13 (0.13) |
+| F-DES-LO | 300 | 8 | 2 | 0.484 | 23.6 | 23.2 | 0.036 | 170 (0.58) / 29 (0.29) |
+| F-DES-LO | 300 | 8 | 4 | 0.484 | 10.2 | 9.67 | 0.0838 | 407 (1.3) / 70 (0.67) |
+| F-DES-LO | 500 | 4 | 1 | 0.626 | 331 | 330 | 0.00857 | 15 (0.069) / 2 (0.034) |
+| F-DES-LO | 500 | 4 | 2 | 0.626 | 157 | 156 | 0.0181 | 32 (0.14) / 5 (0.072) |
+| F-DES-LO | 500 | 4 | 4 | 0.626 | 70.5 | 69.9 | 0.0402 | 72 (0.32) / 12 (0.16) |
+| F-DES-LO | 500 | 6 | 1 | 0.626 | 144 | 143 | 0.0132 | 35 (0.16) / 6 (0.079) |
+| F-DES-LO | 500 | 6 | 2 | 0.626 | 66.4 | 65.8 | 0.0285 | 77 (0.34) / 13 (0.17) |
+| F-DES-LO | 500 | 6 | 4 | 0.626 | 28.6 | 27.9 | 0.0663 | 182 (0.8) / 31 (0.4) |
+| F-DES-LO | 500 | 8 | 1 | 0.626 | 78.9 | 78.2 | 0.018 | 65 (0.29) / 11 (0.14) |
+| F-DES-LO | 500 | 8 | 2 | 0.626 | 35.7 | 35.1 | 0.0398 | 145 (0.64) / 25 (0.32) |
+| F-DES-LO | 500 | 8 | 4 | 0.626 | 14.8 | 14.2 | 0.0959 | 358 (1.5) / 61 (0.77) |
+| F-DES-HI | 300 | 4 | 1 | 1.56 | 402 | 401 | 0.00423 | 33 (0.034) / 5 (0.017) |
+| F-DES-HI | 300 | 4 | 2 | 1.56 | 197 | 195 | 0.00866 | 68 (0.069) / 11 (0.035) |
+| F-DES-HI | 300 | 4 | 4 | 1.56 | 94.1 | 92.5 | 0.0181 | 145 (0.14) / 25 (0.072) |
+| F-DES-HI | 300 | 6 | 1 | 1.56 | 177 | 176 | 0.00641 | 76 (0.077) / 13 (0.038) |
+| F-DES-HI | 300 | 6 | 2 | 1.56 | 85.9 | 84.3 | 0.0132 | 159 (0.16) / 27 (0.079) |
+| F-DES-HI | 300 | 6 | 4 | 1.56 | 40.5 | 38.9 | 0.0281 | 346 (0.34) / 59 (0.17) |
+| F-DES-HI | 300 | 8 | 1 | 1.56 | 98.9 | 97.3 | 0.00861 | 138 (0.14) / 23 (0.069) |
+| F-DES-HI | 300 | 8 | 2 | 1.56 | 47.6 | 46.1 | 0.0179 | 292 (0.29) / 50 (0.14) |
+| F-DES-HI | 300 | 8 | 4 | 1.56 | 22.2 | 20.6 | 0.0383 | 651 (0.61) / 112 (0.31) |
+| F-DES-HI | 500 | 4 | 1 | 2.09 | 628 | 626 | 0.00452 | 27 (0.036) / 4 (0.018) |
+| F-DES-HI | 500 | 4 | 2 | 2.09 | 305 | 303 | 0.0093 | 57 (0.074) / 9 (0.037) |
+| F-DES-HI | 500 | 4 | 4 | 2.09 | 144 | 142 | 0.0196 | 122 (0.16) / 21 (0.079) |
+| F-DES-HI | 500 | 6 | 1 | 2.09 | 276 | 274 | 0.00686 | 63 (0.082) / 10 (0.041) |
+| F-DES-HI | 500 | 6 | 2 | 2.09 | 133 | 130 | 0.0143 | 133 (0.17) / 22 (0.086) |
+| F-DES-HI | 500 | 6 | 4 | 2.09 | 61.4 | 59.3 | 0.0308 | 292 (0.37) / 50 (0.18) |
+| F-DES-HI | 500 | 8 | 1 | 2.09 | 154 | 151 | 0.00925 | 114 (0.15) / 19 (0.074) |
+| F-DES-HI | 500 | 8 | 2 | 2.09 | 73.1 | 71 | 0.0194 | 244 (0.31) / 42 (0.15) |
+| F-DES-HI | 500 | 8 | 4 | 2.09 | 33.4 | 31.3 | 0.0425 | 555 (0.68) / 95 (0.34) |
+| F-MAX | 300 | 4 | 1 | 3.32 | 634 | 631 | 0.00268 | 52 (0.021) / 8 (0.011) |
+| F-MAX | 300 | 4 | 2 | 3.32 | 313 | 310 | 0.00544 | 106 (0.043) / 18 (0.022) |
+| F-MAX | 300 | 4 | 4 | 3.32 | 153 | 149 | 0.0112 | 219 (0.089) / 37 (0.045) |
+| F-MAX | 300 | 6 | 1 | 3.32 | 281 | 278 | 0.00404 | 118 (0.049) / 20 (0.024) |
+| F-MAX | 300 | 6 | 2 | 3.32 | 138 | 135 | 0.00822 | 243 (0.099) / 42 (0.049) |
+| F-MAX | 300 | 6 | 4 | 3.32 | 66.9 | 63.6 | 0.017 | 516 (0.2) / 89 (0.1) |
+| F-MAX | 300 | 8 | 1 | 3.32 | 158 | 154 | 0.0054 | 212 (0.086) / 36 (0.043) |
+| F-MAX | 300 | 8 | 2 | 3.32 | 77.4 | 74 | 0.011 | 443 (0.18) / 76 (0.088) |
+| F-MAX | 300 | 8 | 4 | 3.32 | 37.5 | 34.1 | 0.0227 | 962 (0.36) / 165 (0.18) |
+| F-MAX | 500 | 4 | 1 | 4.62 | 992 | 987 | 0.00286 | 42 (0.023) / 7 (0.011) |
+| F-MAX | 500 | 4 | 2 | 4.62 | 488 | 483 | 0.00582 | 87 (0.046) / 15 (0.023) |
+| F-MAX | 500 | 4 | 4 | 4.62 | 236 | 232 | 0.012 | 183 (0.096) / 31 (0.048) |
+| F-MAX | 500 | 6 | 1 | 4.62 | 438 | 434 | 0.00432 | 97 (0.052) / 16 (0.026) |
+| F-MAX | 500 | 6 | 2 | 4.62 | 214 | 210 | 0.00883 | 202 (0.11) / 34 (0.053) |
+| F-MAX | 500 | 6 | 4 | 4.62 | 103 | 98.1 | 0.0184 | 432 (0.22) / 74 (0.11) |
+| F-MAX | 500 | 8 | 1 | 4.62 | 245 | 241 | 0.00578 | 176 (0.092) / 30 (0.046) |
+| F-MAX | 500 | 8 | 2 | 4.62 | 120 | 115 | 0.0119 | 368 (0.19) / 63 (0.095) |
+| F-MAX | 500 | 8 | 4 | 4.62 | 57.1 | 52.5 | 0.0249 | 808 (0.4) / 139 (0.2) |
 
 ## 8. Plenum sizing
 
-C_tot (plenum → vacuum) range 7.815e-05 – 0.004267 m³/s (Q / p_plenum over the cold-flow budget rows F-DES-LO..F-MAX, GEO-S/M/L, r = 1 and 3 (analog channel illustration; PENDING H2-1)). The compressor is treated as an ideal flow source (ASSUMED; its back-conductance is a compressor-lane demand).
+Secant C_tot = Q/p_plenum range 7.317e-05 – 0.002721 m³/s; incremental C_inc = dQ/dp_plenum range 9.448e-05 – 0.003874 m³/s (C_inc/C_tot 1.077 – 1.56) (secant Q / p_plenum and incremental dQ/dp_plenum over the cold-flow budget rows F-DES-LO..F-MAX, all compositions, 300/500 K, DIST-A/B, GEO-S/M/L, r = 1 and 3 (analog channel illustration; PENDING H2-1)). Ripple and bandwidth volumes use C_inc (small-signal pole); residence, ride-through and fill/drain use the secant. The compressor is treated as an ideal flow source (ASSUMED; its back-conductance is a compressor-lane demand).
 
 **Compressor ripple** — |H| = 1/sqrt(1 + (2 pi f tau)^2) <= a => tau >= sqrt(1/a^2 - 1)/(2 pi f); once-per-revolution frequency of the W1 chain-sized machines (code-default rpm, assumed) and ~1 kHz DN100 turbomolecular pump rotation (compressor_downselect EV-04, REF-CHIGGIATO2013 as cited there); blade-passing harmonics are higher and filtered more; ripple amplitude TBD - requires the compressor design (C1).
 
-| f [Hz] | attenuation a | τ_min [s] | V_min at C_tot lo / hi [m³] |
+| f [Hz] | attenuation a | τ_min [s] | V_min at C_inc lo / hi [m³] |
 |---|---|---|---|
-| 125 | 0.1 | 0.0127 | 9.9e-07 / 5.4e-05 |
-| 125 | 0.01 | 0.127 | 9.95e-06 / 0.000543 |
-| 154.38 | 0.1 | 0.0103 | 8.02e-07 / 4.38e-05 |
-| 154.38 | 0.01 | 0.103 | 8.06e-06 / 0.00044 |
-| 1000 | 0.1 | 0.00158 | 1.24e-07 / 6.76e-06 |
-| 1000 | 0.01 | 0.0159 | 1.24e-06 / 6.79e-05 |
+| 125 | 0.1 | 0.0127 | 1.2e-06 / 4.91e-05 |
+| 125 | 0.01 | 0.127 | 1.2e-05 / 0.000493 |
+| 154.38 | 0.1 | 0.0103 | 9.69e-07 / 3.97e-05 |
+| 154.38 | 0.01 | 0.103 | 9.74e-06 / 0.000399 |
+| 1000 | 0.1 | 0.00158 | 1.5e-07 / 6.13e-06 |
+| 1000 | 0.01 | 0.0159 | 1.5e-06 / 6.16e-05 |
 
 **Valve bandwidth** — plenum pole at or below the valve control bandwidth, tau >= 1/(2 pi f_bw), so disturbances the valve loop cannot follow are attenuated by the plenum (TBD - requires the metering-valve class selection (H3)).
 
-| f_bw [Hz] | τ_min [s] | V_min at C_tot lo / hi [m³] |
+| f_bw [Hz] | τ_min [s] | V_min at C_inc lo / hi [m³] |
 |---|---|---|
-| 0.1 | 1.59 | 0.000124 / 0.00679 |
-| 1 | 0.159 | 1.24e-05 / 0.000679 |
-| 10 | 0.0159 | 1.24e-06 / 6.79e-05 |
+| 0.1 | 1.59 | 0.00015 / 0.00617 |
+| 1 | 0.159 | 1.5e-05 / 0.000616 |
+| 10 | 0.0159 | 1.5e-06 / 6.16e-05 |
 
 **Ride-through** — V = Q t_ride / dp_allow, dp_allow = 10 % of p_plenum (PROPOSED).
 
 | flow | plenum pressure basis | p [Pa] | t_ride [s] | V required [m³] |
 |---|---|---|---|---|
-| F-DES-HI | budget DIST-A GEO-M r=1 | 311 | 0.1 | 0.000349 |
-| F-DES-HI | budget DIST-A GEO-M r=1 | 311 | 1 | 0.00349 |
-| F-DES-HI | budget DIST-A GEO-M r=1 | 311 | 10 | 0.0349 |
+| F-DES-HI | budget DIST-A GEO-M r=1 | 332 | 0.1 | 0.000327 |
+| F-DES-HI | budget DIST-A GEO-M r=1 | 332 | 1 | 0.00327 |
+| F-DES-HI | budget DIST-A GEO-M r=1 | 332 | 10 | 0.0327 |
 | F-DES-HI | W1 ladder 0.05 Pa | 0.05 | 0.1 | 2.17 |
 | F-DES-HI | W1 ladder 0.05 Pa | 0.05 | 1 | 21.7 |
 | F-DES-HI | W1 ladder 0.05 Pa | 0.05 | 10 | 217 |
-| F-DES-HI | W1 ladder 0.3 Pa | 0.3 | 0.1 | 0.362 |
-| F-DES-HI | W1 ladder 0.3 Pa | 0.3 | 1 | 3.62 |
-| F-DES-HI | W1 ladder 0.3 Pa | 0.3 | 10 | 36.2 |
-| F-DES-HI | budget DIST-B GEO-M r=1 | 266 | 0.1 | 0.000409 |
-| F-DES-HI | budget DIST-B GEO-M r=1 | 266 | 1 | 0.00409 |
-| F-DES-HI | budget DIST-B GEO-M r=1 | 266 | 10 | 0.0409 |
-| F-MAX | budget DIST-A GEO-M r=1 | 494 | 0.1 | 0.000537 |
-| F-MAX | budget DIST-A GEO-M r=1 | 494 | 1 | 0.00537 |
-| F-MAX | budget DIST-A GEO-M r=1 | 494 | 10 | 0.0537 |
+| F-DES-HI | W1 ladder 1 Pa | 1 | 0.1 | 0.109 |
+| F-DES-HI | W1 ladder 1 Pa | 1 | 1 | 1.09 |
+| F-DES-HI | W1 ladder 1 Pa | 1 | 10 | 10.9 |
+| F-DES-HI | budget DIST-B GEO-M r=1 | 284 | 0.1 | 0.000382 |
+| F-DES-HI | budget DIST-B GEO-M r=1 | 284 | 1 | 0.00382 |
+| F-DES-HI | budget DIST-B GEO-M r=1 | 284 | 10 | 0.0382 |
+| F-MAX | budget DIST-A GEO-M r=1 | 530 | 0.1 | 0.000501 |
+| F-MAX | budget DIST-A GEO-M r=1 | 530 | 1 | 0.00501 |
+| F-MAX | budget DIST-A GEO-M r=1 | 530 | 10 | 0.0501 |
 | F-MAX | W1 ladder 0.05 Pa | 0.05 | 0.1 | 5.31 |
 | F-MAX | W1 ladder 0.05 Pa | 0.05 | 1 | 53.1 |
 | F-MAX | W1 ladder 0.05 Pa | 0.05 | 10 | 531 |
-| F-MAX | W1 ladder 0.3 Pa | 0.3 | 0.1 | 0.884 |
-| F-MAX | W1 ladder 0.3 Pa | 0.3 | 1 | 8.85 |
-| F-MAX | W1 ladder 0.3 Pa | 0.3 | 10 | 88.5 |
-| F-MAX | budget DIST-B GEO-M r=1 | 423 | 0.1 | 0.000628 |
-| F-MAX | budget DIST-B GEO-M r=1 | 423 | 1 | 0.00628 |
-| F-MAX | budget DIST-B GEO-M r=1 | 423 | 10 | 0.0628 |
+| F-MAX | W1 ladder 1 Pa | 1 | 0.1 | 0.265 |
+| F-MAX | W1 ladder 1 Pa | 1 | 1 | 2.65 |
+| F-MAX | W1 ladder 1 Pa | 1 | 10 | 26.5 |
+| F-MAX | budget DIST-B GEO-M r=1 | 455 | 0.1 | 0.000583 |
+| F-MAX | budget DIST-B GEO-M r=1 | 455 | 1 | 0.00583 |
+| F-MAX | budget DIST-B GEO-M r=1 | 455 | 10 | 0.0583 |
 
-ride-through volume scales as 1/p_plenum: at the W1 setpoint-ladder pressures (0.05-0.3 Pa) 1 s needs 3.62-53.1 m^3; at the cold-flow budget pressures 1 s needs 0.00349-0.00628 m^3 and 10 s 0.0349-0.0628 m^3. A plenum can therefore bridge at most seconds of compressor interruption; longer interruptions are handled by the dual-feed state machine (XE_FALLBACK, time-limited, A5) or by shutdown.
+ride-through volume scales as 1/p_plenum: at the ends of the W1 setpoint ladder (design_axes.setpoint_ladder_Pa 0.05-1 Pa) 1 s needs 1.09-53.1 m^3; at the cold-flow budget pressures 1 s needs 0.00327-0.00583 m^3 and 10 s 0.0327-0.0583 m^3. A plenum can therefore bridge at most seconds of compressor interruption; longer interruptions are handled by the dual-feed state machine (XE_FALLBACK, time-limited, A5) or by shutdown.
 
 **Ram-flow variation** — delta rho / rho = exp(dh/H) - 1 for an altitude excursion dh (ASSUMED 1 and 5 km; TBD - requires the mission altitude profile); H from the frozen dataset (orbit-averaged: within-orbit day/night and latitude variation is NOT in the frozen data, TBD - requires an orbit-resolved producer, ICD IF-A0 dmdot_dt_kgps2 gap). Scale height 24.3384–47.3101 km; δρ/ρ for 1 / 5 km: alt180_mean 1 km 0.0348, alt180_mean 5 km 0.186, alt200_mean 1 km 0.0295, alt200_mean 5 km 0.156, alt230_mean 1 km 0.0249, alt230_mean 5 km 0.131. Quarter-orbit / largest grid τ ≥ 829. ram-flow variation evolves on quarter-orbit time scales (>= 22.0 min), at least 829.0 x the largest required plenum time constant (1.59 s); a plenum sized to its requirement does not filter it: ram variation sets the metering-valve / compressor operating range (turndown), not the plenum volume; only plenums far above the minimum (tau of hundreds of seconds, see fill_drain) approach orbital time scales.
 
-**Fill / drain** — tau = V / C_tot; 99 % in 4.6 tau (first-order RC).
+**Fill / drain** — small-signal tau = V / C_inc (shortest, at the highest C_inc); secant tau = V / C_tot (longest, at the lowest C_tot); t99 = 4.6 V / C_tot is a first-order RC indication only (the viscous/transitional chain is nonlinear: large fill/drain transients are not first-order).
 
-| V [m³] | τ at C_tot hi [s] | τ at C_tot lo [s] | t99 at C_tot lo [s] |
+| V [m³] | small-signal τ at C_inc hi [s] | secant τ at C_tot lo [s] | t99 indicative at C_tot lo [s] |
 |---|---|---|---|
-| 0.0005 | 0.117 | 6.4 | 29.5 |
-| 0.002 | 0.469 | 25.6 | 118 |
-| 0.01 | 2.34 | 128 | 589 |
-| 0.05 | 11.7 | 640 | 2.95e+03 |
+| 0.0005 | 0.129 | 6.83 | 31.5 |
+| 0.002 | 0.516 | 27.3 | 126 |
+| 0.01 | 2.58 | 137 | 629 |
+| 0.05 | 12.9 | 683 | 3.15e+03 |
 
-**Volume range (PRELIMINARY):** minimum-volume requirement 1.24e-07 m³ (weakest requirement set: 1 kHz ripple, attenuation 0.1, lowest C_tot) up to 0.00679 m³ (strongest requirement set on the grid: max(ripple at the lowest rotation frequency with a = 0.01, valve bandwidth 0.1 Hz) at the highest C_tot); V_max TBD - requires the H2-7 envelope/mass allocation, the lane-14 atmosphere-admission time (fill time 4.6 tau) and the owner's O-survival preference (GP-D03).
+**Volume range (PRELIMINARY):** minimum-volume requirement 1.5e-07 m³ (weakest requirement set: 1 kHz ripple, attenuation 0.1, lowest incremental conductance) up to 0.00617 m³ (strongest requirement set on the grid: max(ripple at the lowest rotation frequency with a = 0.01, valve bandwidth 0.1 Hz) at the highest incremental conductance); V_max TBD - requires the H2-7 envelope/mass allocation, the lane-14 atmosphere-admission time (fill time 4.6 tau) and the owner's O-survival preference (GP-D03).
 
 ## 9. Composition, atomic-O recombination and materials
 
@@ -338,40 +338,40 @@ see o_recombination docstring (kinetic and diffusion limits; ASSUMED forms, veri
 
 | case | T [K] | p [Pa] | V [m³] | Kn | t_res [s] | O survival, kinetic limit (γ 0.001/0.01/0.07/0.14) | O survival, effective |
 |---|---|---|---|---|---|---|---|
-| F-DES-LO budget DIST-B GEO-M r=1 | 300 | 138 | 0.0005 | 0.000573 | 2.17 | 4.3e-11 / 7.35e-105 / 0 / 0 | 4.24e-09 / 2.02e-31 / 7.23e-42 / 4.54e-43 |
-| F-DES-LO budget DIST-B GEO-M r=1 | 300 | 138 | 0.002 | 0.000361 | 8.69 | 7.56e-27 / 3.98e-263 / 0 / 0 | 1.11e-19 / 2.05e-55 / 2.21e-67 / 1.27e-68 |
-| F-DES-LO budget DIST-B GEO-M r=1 | 300 | 138 | 0.01 | 0.000211 | 43.4 | 4.17e-77 / 0 / 0 / 0 | 4.09e-47 / 4.22e-103 / 2.14e-116 / 1.16e-117 |
-| F-DES-LO budget DIST-B GEO-M r=1 | 300 | 138 | 0.05 | 0.000123 | 217 | 4.6e-224 / 0 / 0 / 0 | 8.51e-107 / 4.74e-186 / 3e-200 / 1.56e-201 |
-| F-DES-LO budget DIST-B GEO-M r=1 | 500 | 159 | 0.0005 | 0.000831 | 1.5 | 6.03e-10 / 2.41e-93 / 0 / 0 | 1.2e-08 / 1.07e-35 / 1.47e-52 / 9.92e-55 |
-| F-DES-LO budget DIST-B GEO-M r=1 | 500 | 159 | 0.002 | 0.000524 | 5.98 | 5.85e-24 / 4.14e-234 / 0 / 0 | 3.7e-19 / 2.95e-65 / 1.96e-85 / 1.06e-87 |
-| F-DES-LO budget DIST-B GEO-M r=1 | 500 | 159 | 0.01 | 0.000306 | 29.9 | 1.16e-68 / 0 / 0 / 0 | 1e-47 / 2.21e-125 / 1.16e-148 / 5.29e-151 |
-| F-DES-LO budget DIST-B GEO-M r=1 | 500 | 159 | 0.05 | 0.000179 | 150 | 2.29e-199 / 0 / 0 / 0 | 1.75e-113 / 2.24e-231 / 6.93e-257 / 2.86e-259 |
-| F-DES-HI budget DIST-B GEO-M r=1 | 300 | 266 | 0.0005 | 0.000298 | 1.22 | 1.45e-06 / 2.19e-59 / 0 / 0 | 9.9e-05 / 3.39e-11 / 4.25e-13 / 2.74e-13 |
-| F-DES-HI budget DIST-B GEO-M r=1 | 300 | 266 | 0.002 | 0.000188 | 4.89 | 1.93e-15 / 1.55e-148 / 0 / 0 | 3.03e-09 / 1.61e-18 / 1.4e-20 / 8.98e-21 |
-| F-DES-HI budget DIST-B GEO-M r=1 | 300 | 266 | 0.01 | 0.00011 | 24.5 | 9.44e-44 / 0 / 0 / 0 | 6.68e-20 / 9.37e-33 / 6.13e-35 / 3.91e-35 |
-| F-DES-HI budget DIST-B GEO-M r=1 | 300 | 266 | 0.05 | 6.41e-05 | 122 | 1.56e-126 / 0 / 0 / 0 | 5.83e-41 / 3.12e-57 / 1.7e-59 / 1.08e-59 |
-| F-DES-HI at W1 setpoint 0.1 Pa (chain convention) | 300 | 0.1 | 0.0005 | 0.792 | 0.00046 | 0.995 / 0.95 / 0.693 / 0.467 | 0.995 / 0.951 / 0.696 / 0.476 |
-| F-DES-HI at W1 setpoint 0.1 Pa (chain convention) | 300 | 0.1 | 0.002 | 0.499 | 0.00184 | 0.987 / 0.88 / 0.397 / 0.147 | 0.987 / 0.88 / 0.404 / 0.158 |
-| F-DES-HI at W1 setpoint 0.1 Pa (chain convention) | 300 | 0.1 | 0.01 | 0.292 | 0.0092 | 0.963 / 0.688 / 0.0671 / 0.00364 | 0.963 / 0.689 / 0.0733 / 0.00527 |
-| F-DES-HI at W1 setpoint 0.1 Pa (chain convention) | 300 | 0.1 | 0.05 | 0.171 | 0.046 | 0.897 / 0.335 / 0.000371 / 7.4e-08 | 0.897 / 0.338 / 0.000572 / 4.33e-07 |
-| F-DES-HI budget DIST-B GEO-M r=1 | 500 | 304 | 0.0005 | 0.000434 | 0.839 | 6.78e-06 / 1.2e-52 / 0 / 0 | 0.000117 / 3.21e-13 / 1.74e-16 / 7.73e-17 |
-| F-DES-HI budget DIST-B GEO-M r=1 | 500 | 304 | 0.002 | 0.000274 | 3.35 | 9.46e-14 / 1.48e-131 / 0 / 0 | 2.04e-09 / 1.7e-22 / 3.86e-26 / 1.69e-26 |
-| F-DES-HI budget DIST-B GEO-M r=1 | 500 | 304 | 0.01 | 0.00016 | 16.8 | 8.27e-39 / 0 / 0 / 0 | 2.79e-21 / 1.02e-40 / 1.13e-44 / 4.86e-45 |
-| F-DES-HI budget DIST-B GEO-M r=1 | 500 | 304 | 0.05 | 9.35e-05 | 83.9 | 4.43e-112 / 0 / 0 / 0 | 5.02e-46 / 3.28e-72 / 2.25e-76 / 9.59e-77 |
-| F-DES-HI at W1 setpoint 0.1 Pa (chain convention) | 500 | 0.1 | 0.0005 | 1.32 | 0.000276 | 0.996 / 0.961 / 0.753 / 0.554 | 0.996 / 0.961 / 0.754 / 0.559 |
-| F-DES-HI at W1 setpoint 0.1 Pa (chain convention) | 500 | 0.1 | 0.002 | 0.831 | 0.0011 | 0.99 / 0.906 / 0.489 / 0.226 | 0.99 / 0.906 / 0.493 / 0.234 |
-| F-DES-HI at W1 setpoint 0.1 Pa (chain convention) | 500 | 0.1 | 0.01 | 0.486 | 0.00552 | 0.972 / 0.748 / 0.123 / 0.0129 | 0.972 / 0.749 / 0.129 / 0.0154 |
-| F-DES-HI at W1 setpoint 0.1 Pa (chain convention) | 500 | 0.1 | 0.05 | 0.284 | 0.0276 | 0.919 / 0.428 / 0.0022 / 3e-06 | 0.919 / 0.43 / 0.0027 / 7.07e-06 |
-| F-MAX budget DIST-B GEO-M r=1 | 300 | 423 | 0.0005 | 0.000187 | 0.796 | 0.000158 / 6.45e-39 / 1.73e-276 / 0 | 0.00631 / 2.55e-05 / 7.52e-06 / 6.7e-06 |
-| F-MAX budget DIST-B GEO-M r=1 | 300 | 423 | 0.002 | 0.000118 | 3.19 | 2.63e-10 / 5.84e-97 / 0 / 0 | 3.6e-05 / 2.34e-08 / 6.46e-09 / 5.75e-09 |
-| F-MAX budget DIST-B GEO-M r=1 | 300 | 423 | 0.01 | 6.9e-05 | 15.9 | 9.73e-29 / 4.09e-282 / 0 / 0 | 3.88e-10 / 3.22e-14 / 8.44e-15 / 7.51e-15 |
-| F-MAX budget DIST-B GEO-M r=1 | 300 | 423 | 0.05 | 4.04e-05 | 79.6 | 1.24e-82 / 0 / 0 / 0 | 1.99e-19 / 2.89e-24 / 7.33e-25 / 6.52e-25 |
-| F-MAX budget DIST-B GEO-M r=1 | 500 | 482 | 0.0005 | 0.000274 | 0.545 | 0.000438 / 1.84e-34 / 2.6e-244 / 0 | 0.00574 / 2.41e-06 / 2.76e-07 / 2.23e-07 |
-| F-MAX budget DIST-B GEO-M r=1 | 500 | 482 | 0.002 | 0.000172 | 2.18 | 3.45e-09 / 9.89e-86 / 0 / 0 | 1.88e-05 / 3.14e-10 / 3.05e-11 / 2.45e-11 |
-| F-MAX budget DIST-B GEO-M r=1 | 500 | 482 | 0.01 | 0.000101 | 10.9 | 1.81e-25 / 2.78e-249 / 0 / 0 | 3.03e-11 / 9.1e-18 / 7.75e-19 / 6.22e-19 |
-| F-MAX budget DIST-B GEO-M r=1 | 500 | 482 | 0.05 | 5.9e-05 | 54.5 | 4.46e-73 / 0 / 0 / 0 | 1.44e-22 / 1.01e-30 / 7.95e-32 / 6.38e-32 |
+| F-DES-LO budget COMP-W1-ORICH DIST-B GEO-M r=1 | 300 | 177 | 0.0005 | 0.000447 | 1.92 | 7.1e-10 / 1.25e-92 / 0 / 0 | 9.76e-08 / 2.43e-23 / 2.01e-29 / 4.4e-30 |
+| F-DES-LO budget COMP-W1-ORICH DIST-B GEO-M r=1 | 300 | 177 | 0.002 | 0.000282 | 7.67 | 8.84e-24 / 2.64e-232 / 0 / 0 | 2.93e-16 / 3.21e-40 / 5.06e-47 / 1.07e-47 |
+| F-DES-LO budget COMP-W1-ORICH DIST-B GEO-M r=1 | 300 | 177 | 0.01 | 0.000165 | 38.3 | 3.9e-68 / 0 / 0 / 0 | 1.33e-37 / 2.09e-73 / 8.22e-81 / 1.69e-81 |
+| F-DES-LO budget COMP-W1-ORICH DIST-B GEO-M r=1 | 300 | 177 | 0.05 | 9.64e-05 | 192 | 7.87e-198 / 0 / 0 / 0 | 2.56e-82 / 8.37e-131 / 1.32e-138 / 2.66e-139 |
+| F-DES-LO budget COMP-W1-ORICH DIST-B GEO-M r=1 | 500 | 272 | 0.0005 | 0.000485 | 1.77 | 1.26e-11 / 3.22e-110 / 0 / 0 | 3.12e-09 / 2.48e-29 / 1.22e-37 / 1.47e-38 |
+| F-DES-LO budget COMP-W1-ORICH DIST-B GEO-M r=1 | 500 | 272 | 0.002 | 0.000305 | 7.08 | 3.42e-28 / 1.25e-276 / 0 / 0 | 1.04e-19 / 5.38e-51 / 2.35e-60 / 2.69e-61 |
+| F-DES-LO budget COMP-W1-ORICH DIST-B GEO-M r=1 | 500 | 272 | 0.01 | 0.000179 | 35.4 | 4.89e-81 / 0 / 0 / 0 | 2.98e-46 / 1.01e-93 / 5.65e-104 / 6.22e-105 |
+| F-DES-LO budget COMP-W1-ORICH DIST-B GEO-M r=1 | 500 | 272 | 0.05 | 0.000104 | 177 | 1.48e-235 / 0 / 0 / 0 | 1.54e-102 / 9.73e-168 / 1.38e-178 / 1.48e-179 |
+| F-DES-HI budget COMP-W1-ORICH DIST-B GEO-M r=1 | 300 | 342 | 0.0005 | 0.000231 | 1.08 | 6.61e-06 / 9.21e-53 / 0 / 0 | 0.000552 / 3.06e-08 / 2.62e-09 / 2.06e-09 |
+| F-DES-HI budget COMP-W1-ORICH DIST-B GEO-M r=1 | 300 | 342 | 0.002 | 0.000146 | 4.34 | 8.85e-14 / 7.55e-132 / 0 / 0 | 1.81e-07 / 2.5e-13 / 1.82e-14 / 1.43e-14 |
+| F-DES-HI budget COMP-W1-ORICH DIST-B GEO-M r=1 | 300 | 342 | 0.01 | 8.52e-05 | 21.7 | 6.8e-39 / 0 / 0 / 0 | 2.12e-15 / 3.59e-23 / 2.31e-24 / 1.81e-24 |
+| F-DES-HI budget COMP-W1-ORICH DIST-B GEO-M r=1 | 300 | 342 | 0.05 | 4.98e-05 | 108 | 2.5e-112 / 0 / 0 / 0 | 1.38e-30 / 4.61e-40 / 2.74e-41 / 2.15e-41 |
+| F-DES-HI COMP-W1-ORICH at W1 setpoint 0.1 Pa (chain convention) | 300 | 0.1 | 0.0005 | 0.792 | 0.000317 | 0.997 / 0.966 / 0.777 / 0.591 | 0.997 / 0.966 / 0.779 / 0.599 |
+| F-DES-HI COMP-W1-ORICH at W1 setpoint 0.1 Pa (chain convention) | 300 | 0.1 | 0.002 | 0.499 | 0.00127 | 0.991 / 0.916 / 0.529 / 0.266 | 0.991 / 0.916 / 0.536 / 0.281 |
+| F-DES-HI COMP-W1-ORICH at W1 setpoint 0.1 Pa (chain convention) | 300 | 0.1 | 0.01 | 0.292 | 0.00634 | 0.975 / 0.773 / 0.155 / 0.0209 | 0.975 / 0.774 / 0.165 / 0.0269 |
+| F-DES-HI COMP-W1-ORICH at W1 setpoint 0.1 Pa (chain convention) | 300 | 0.1 | 0.05 | 0.171 | 0.0317 | 0.928 / 0.47 / 0.00432 / 1.22e-05 | 0.928 / 0.473 / 0.00582 / 4.11e-05 |
+| F-DES-HI budget COMP-W1-ORICH DIST-B GEO-M r=1 | 500 | 531 | 0.0005 | 0.000249 | 1.01 | 6e-07 / 3.14e-63 / 0 / 0 | 9.6e-05 / 2.53e-10 / 8.7e-12 / 6.26e-12 |
+| F-DES-HI budget COMP-W1-ORICH DIST-B GEO-M r=1 | 500 | 531 | 0.002 | 0.000157 | 4.04 | 2.09e-16 / 3.17e-158 / 0 / 0 | 4.17e-09 / 7.03e-17 / 1.91e-18 / 1.37e-18 |
+| F-DES-HI budget COMP-W1-ORICH DIST-B GEO-M r=1 | 500 | 531 | 0.01 | 9.16e-05 | 20.2 | 1.43e-46 / 0 / 0 / 0 | 3.85e-19 / 1.41e-29 / 3.2e-31 / 2.28e-31 |
+| F-DES-HI budget COMP-W1-ORICH DIST-B GEO-M r=1 | 500 | 531 | 0.05 | 5.36e-05 | 101 | 8.87e-135 / 0 / 0 / 0 | 1.61e-38 / 2.24e-51 / 4.51e-53 / 3.22e-53 |
+| F-DES-HI COMP-W1-ORICH at W1 setpoint 0.1 Pa (chain convention) | 500 | 0.1 | 0.0005 | 1.32 | 0.00019 | 0.997 / 0.973 / 0.822 / 0.666 | 0.997 / 0.973 / 0.823 / 0.67 |
+| F-DES-HI COMP-W1-ORICH at W1 setpoint 0.1 Pa (chain convention) | 500 | 0.1 | 0.002 | 0.831 | 0.000761 | 0.993 / 0.934 / 0.611 / 0.359 | 0.993 / 0.934 / 0.614 / 0.368 |
+| F-DES-HI COMP-W1-ORICH at W1 setpoint 0.1 Pa (chain convention) | 500 | 0.1 | 0.01 | 0.486 | 0.0038 | 0.98 / 0.819 / 0.236 / 0.0499 | 0.98 / 0.819 / 0.243 / 0.0564 |
+| F-DES-HI COMP-W1-ORICH at W1 setpoint 0.1 Pa (chain convention) | 500 | 0.1 | 0.05 | 0.284 | 0.019 | 0.944 / 0.558 / 0.0147 / 0.000156 | 0.944 / 0.559 / 0.017 / 0.000282 |
+| F-MAX budget COMP-W1-ORICH DIST-B GEO-M r=1 | 300 | 548 | 0.0005 | 0.000145 | 0.712 | 0.000401 / 7.58e-35 / 4.25e-247 / 0 | 0.0179 / 0.000556 / 0.000284 / 0.000267 |
+| F-MAX budget COMP-W1-ORICH DIST-B GEO-M r=1 | 300 | 548 | 0.002 | 9.1e-05 | 2.85 | 2.76e-09 / 1.05e-86 / 0 / 0 | 0.000375 / 4.41e-06 / 2.19e-06 / 2.06e-06 |
+| F-MAX budget COMP-W1-ORICH DIST-B GEO-M r=1 | 300 | 548 | 0.01 | 5.32e-05 | 14.2 | 9.41e-26 / 3.99e-252 / 0 / 0 | 9.44e-08 / 3.97e-10 / 1.93e-10 / 1.81e-10 |
+| F-MAX budget COMP-W1-ORICH DIST-B GEO-M r=1 | 300 | 548 | 0.05 | 3.11e-05 | 71.2 | 6.64e-74 / 0 / 0 / 0 | 2.52e-14 / 4.68e-17 / 2.25e-17 / 2.11e-17 |
+| F-MAX budget COMP-W1-ORICH DIST-B GEO-M r=1 | 500 | 851 | 0.0005 | 0.000155 | 0.663 | 8.18e-05 / 8.72e-42 / 3.31e-297 / 0 | 0.00669 / 6.71e-05 / 2.67e-05 / 2.45e-05 |
+| F-MAX budget COMP-W1-ORICH DIST-B GEO-M r=1 | 500 | 851 | 0.002 | 9.77e-05 | 2.65 | 5.02e-11 / 3.44e-104 / 0 / 0 | 5.04e-05 / 1.31e-07 / 4.99e-08 / 4.58e-08 |
+| F-MAX budget COMP-W1-ORICH DIST-B GEO-M r=1 | 500 | 851 | 0.01 | 5.71e-05 | 13.3 | 7.65e-31 / 2.95e-303 / 0 / 0 | 1.29e-09 / 7.86e-13 / 2.91e-13 / 2.67e-13 |
+| F-MAX budget COMP-W1-ORICH DIST-B GEO-M r=1 | 500 | 851 | 0.05 | 3.34e-05 | 66.3 | 8.68e-89 / 0 / 0 / 0 | 4.78e-18 / 8.95e-22 / 3.25e-22 / 2.98e-22 |
 
-Recombination heat (full recombination of the free-stream O, upper bound): F-DES-LO (0.37695 mg/s) 3.38 W; F-DES-HI (1.2874 mg/s) 11.6 W; F-MAX (3.1424 mg/s) 28.2 W. at the cold-flow budget plenum pressures the residence time is seconds and the largest effective O survival on the grid is 0.00631 (any wall class, including quartz-class gamma 1e-3): the plenum returns essentially all atomic O as O2, and the delivered feed is N2 + O2 at the A5 O2 mass fraction 0.42-0.60 (full recombination), which the ground surrogate S-O2E reproduces by construction. Only at the W1 chain convention (plenum ~0.1 Pa, short residence) can an inert lining keep a material O fraction. Recombination releases up to the tabulated heat in the compressor / plenum / line walls (demand to H2-5).
+Recombination heat (full recombination of the free-stream O, upper bound): F-DES-LO (0.37695 mg/s) 3.38 W; F-DES-HI (1.2874 mg/s) 11.6 W; F-MAX (3.1424 mg/s) 28.2 W. at the cold-flow budget plenum pressures the residence time is seconds and the largest effective O survival on the grid is 0.0179 (any wall class, including quartz-class gamma 1e-3): the plenum returns essentially all atomic O as O2, and the delivered feed is N2 + O2 at the A5 O2 mass fraction 0.42-0.60 (full recombination), which the ground surrogate S-O2E reproduces by construction. Only at the W1 chain convention (plenum ~0.1 Pa, short residence) can an inert lining keep a material O fraction. Recombination releases up to the tabulated heat in the compressor / plenum / line walls (demand to H2-5).
 
 | part | option | O / O₂ behaviour | consequence | status |
 |---|---|---|---|---|
@@ -402,20 +402,21 @@ the shared line holds 1.4e-09-1.78e-08 kg Xe per Pa: the gas-path dead volume is
 
 | from | to | quantity | value | units | status |
 |---|---|---|---|---|---|
-| H2-3 | compressor lane (C1; docs/architecture_comparison/compressor_downselect/) | compressor outlet (plenum) pressure at design flows, cold-flow analog illustration | 37.51 – 947.5 | Pa | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (channel conductance) |
+| H2-3 | compressor lane (C1; docs/architecture_comparison/compressor_downselect/) | compressor outlet (plenum) pressure at design flows, cold-flow analog illustration | 38.06 – 1531 | Pa | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (channel conductance) |
+| H2-3 | compressor lane | cited outlet (exhaust) pressure capability of the C1 stack incl. the optional drag back stage at the plenum pressures above, and the compressor shaft/bus power at that outlet pressure (evidence gap: EV-03 gives only a compression-ratio gain) | — | Pa / W | TBD - requires published drag-stage exhaust-pressure data or the C1 design |
 | H2-3 | compressor lane | outlet ripple amplitude and frequency; outlet back-conductance (ideal-source assumption here) | — | - / Hz / m^3 s^-1 | TBD - requires the C1 design |
 | H2-3 | compressor lane | outlet isolation valve (stopped-rotor back-streaming) | required | - | PRELIMINARY |
 | H2-3 | H2-1 (H-1 CI, HALL_INLET_Z0) | channel + distributor cold-flow conductance; manifold ring bore, mean diameter, feed points, hole count/diameter | — | m^3 s^-1 / m / - | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ |
 | H2-1 | H2-3 | distributor uniformity acceptance (cold flow) | 0.05 – 0.1 | - | PRELIMINARY (PROPOSED) |
-| H2-3 | PMI ICD (PMI-02, PMI-10) | allowable cold-flow dp IP-UP -> IP-DN at the W1 grid flows (epsilon_p band) | 0.04166 – 26.92 | Pa | PENDING docs/interfaces/preionizer_module/ + schemas/interfaces/preionizer_module_icd_v1.json (fo_preionizer_module_icd) (illustrative blank range given) |
+| H2-3 | PMI ICD (PMI-02, PMI-10) | allowable cold-flow dp IP-UP -> IP-DN at the W1 grid flows (epsilon_p band) | 0.03397 – 41.88 | Pa | PENDING docs/interfaces/preionizer_module/ + schemas/interfaces/preionizer_module_icd_v1.json (fo_preionizer_module_icd) (illustrative blank range given) |
 | H2-3 | PMI ICD (PMI-02.R7) | occupant free volume -> line time constant for the Xe -> atmosphere transfer | — | m^3 | PENDING docs/interfaces/preionizer_module/ + schemas/interfaces/preionizer_module_icd_v1.json (fo_preionizer_module_icd) |
 | H2-3 | H2-4 (PPU/bus; bus_power_boundary_v1 flow_control, thermal_control) | metering-valve drive power, isolation-valve power, plenum/line heater power (T_feed conditioning) | — | W | TBD - requires the valve class and the H2-5 thermal network |
 | H2-3 | H2-4 | gas-isolator voltage rating | — | V | TBD - requires the discharge-voltage rating plus margin (HW-FS-06) |
 | H2-3 | H2-5 (thermal network) | O recombination heat in compressor / plenum / line walls (full recombination, upper bound) | 3.381 – 28.18 | W | PRELIMINARY |
 | H2-5 | H2-3 | plenum / line wall temperature range (sets T_feed) | — | K | PENDING docs/hardware/h2/h2_5_thermal_network/ |
 | H2-3 | H2-6 (diagnostics + fixture) | pressure taps: FS-C manifold (INS-06), H-1 anode manifold (H23-25), module source-chamber port (PMI-07); T_feed thermocouple (INS-07); RGA feed sample (INS-11) | — | - | PENDING docs/hardware/h2/h2_6_diagnostics_fixture/ |
-| H2-3 | H2-6 | pressure span to be measured (cold flow) | 0.0358 – 1490 | Pa | PRELIMINARY |
-| H2-3 | H2-7 (mechanical/BOM; mass_bom atmospheric_gas_chamber, atmospheric_valve) | plenum volume range (minimum-volume range) and line routing lengths | 1.238e-07 – 0.006791 | m^3 | PRELIMINARY |
+| H2-3 | H2-6 | pressure span to be measured (cold flow) | 0.0358 – 2430 | Pa | PRELIMINARY |
+| H2-3 | H2-7 (mechanical/BOM; mass_bom atmospheric_gas_chamber, atmospheric_valve) | plenum volume range (minimum-volume range) and line routing lengths | 1.496e-07 – 0.006165 | m^3 | PRELIMINARY |
 | H2-7 | H2-3 | plenum envelope / mass allocation (sets V_max) | — | m^3 / kg | PENDING docs/hardware/h2/h2_7_mechanical_bom/ |
 | H2-3 | H2-2 (cathode integration) | cathode Xe line kept separate from the anode path; no shared plenum | separate | - | PRELIMINARY |
 | H2-3 | Xe ledger (docs/budgets/xe_ledger/) | shared-line Xe hold-up | 1.399e-09 – 1.775e-08 | kg/Pa | PRELIMINARY |
@@ -428,11 +429,11 @@ the shared line holds 1.4e-09-1.78e-08 kg Xe per Pa: the gas-path dead volume is
 
 | id | what | finding | evidence class | veto | why not |
 |---|---|---|---|---|---|
-| HI-01 | pressure budget: can a compressor outlet feed the path? | cold-flow plenum pressure for an ECHT-size channel is 125.0-18900.0 x the W1 setpoint ladder at the design-case flows; the required compression ratio rises by the same factor and exceeds the 0.1 Pa TMP molecular-regime limit (EV-03), so a drag stage behind the blades is needed (already an option in C1) | model-derived (analog geometry) | False | not evidenced for H-1: the channel/distributor conductance is PENDING H2-1 and the plasma-on neutral pressure is not predicted; measured cold-flow manifold pressure (S1a) closes it |
+| HI-01 | pressure budget: can a compressor outlet feed the path? | cold-flow plenum pressure for an ECHT-size channel at the design-case flows is 38.1-30600.0 x the W1 setpoint ladder (design_axes.setpoint_ladder_Pa 0.05-1 Pa; lower ratio against the ladder maximum, upper against its minimum); 190.0-30600.0 x the p_feed of the closed W1 candidates (0.05-0.2 Pa); the required compression ratio rises by the same factor and the outlet sits far above the 0.1 Pa TMP molecular-regime limit (EV-03). A drag (Gaede/Holweck) back stage is an option in C1, but EV-03 gives only its compression-ratio gain (up to 1e6), NOT an outlet (exhaust) pressure capability or the compressor power at an outlet of hundreds to thousands of Pa: no accessed source closes that. This evidence gap is stated as an explicit C1 demand (interface_demands), not assumed away | model-derived (analog geometry) | False | not evidenced for H-1: the channel/distributor conductance is PENDING H2-1 and the plasma-on neutral pressure is not predicted; measured cold-flow manifold pressure (S1a) closes it |
 | HI-02 | plenum ride-through | a plenum bridges at most seconds (GP-F03) | model-derived | False | A5 does not require atmospheric storage; interruptions go to time-limited XE_FALLBACK or shutdown (A5 operating_modes) |
 | HI-03 | O2 / atomic-O materials compatibility | inert and semi-catalytic wall options exist (REF-PAUL2023); anode oxidation is H2-1's selection | inferred | False | no evidence that no compatible material exists |
-| HI-04 | flight metering valve for 0.03-3.14 mg/s at IF-A5 pressures of 5.61-746.0 Pa (cold-flow budget) | no flight-qualified variable-conductance valve class identified in accessed sources | TBD | False | absence of an accessed source is not evidence of impossibility; H3 item |
-| HI-05 | azimuthal uniformity vs pressure budget | the uniformity rule sets a distributor drop of 9.31-85.2 x the analog channel back-pressure at F-DES-LO..F-MAX (DIST-A 40.3-159.0 Pa, DIST-B 9.21-41.1 Pa): the distributor, not the channel or the line, dominates the cold-flow budget; larger ring bore and more feed points (or multi-stage baffles) reduce it | model-derived | False | geometric options exist; the distributor is an H2-1 design choice |
+| HI-04 | flight metering valve for 0.03-3.14 mg/s at IF-A5 pressures of 5.74-1220.0 Pa (cold-flow budget) | no flight-qualified variable-conductance valve class identified in accessed sources | TBD | False | absence of an accessed source is not evidence of impossibility; H3 item |
+| HI-05 | azimuthal uniformity vs pressure budget | the uniformity rule sets a distributor drop of 9.93-105.0 x the analog channel back-pressure at F-DES-LO..F-MAX (DIST-A 41.5-253.0 Pa, DIST-B 9.43-63.2 Pa): the distributor, not the channel or the line, dominates the cold-flow budget; larger ring bore and more feed points (or multi-stage baffles) reduce it | model-derived | False | geometric options exist; the distributor is an H2-1 design choice |
 
 ## 13. Architecture-changing blockers touched (A7)
 
@@ -445,7 +446,7 @@ the shared line holds 1.4e-09-1.78e-08 kg Xe per Pa: the gas-path dead volume is
 | A5 subsystem | draft M16 row | matured here | proposed state | blocking item | rollup |
 |---|---|---|---|---|---|
 | buffer/plenum | SM-ATM-04 (PENDING docs/budgets/subsystem_maturity/ (fo_subsystem_maturity_matrix)) | topology, volume range from explicit requirements, tau, O recombination, materials options | BLOCKED | C1 compressor outlet characteristic (outlet pressure capability, ripple amplitude/frequency) needed to close the minimum volume and the plenum pressure | hardware-definition blocker |
-| atmospheric metering valve | SM-ATM-05 (PENDING docs/budgets/subsystem_maturity/ (fo_subsystem_maturity_matrix)) | function (plenum-pressure regulation vs fixed orifice), conductance range, authority rule, bandwidth requirement, sensor class | BLOCKED | no identified variable-conductance valve class for 0.03-3.14 mg/s at the cold-flow IF-A5 pressures (5.61-746.0 Pa) (H3 survey needed) | procurement blocker |
+| atmospheric metering valve | SM-ATM-05 (PENDING docs/budgets/subsystem_maturity/ (fo_subsystem_maturity_matrix)) | function (plenum-pressure regulation vs fixed orifice), conductance range, authority rule, bandwidth requirement, sensor class | BLOCKED | no identified variable-conductance valve class for 0.03-3.14 mg/s at the cold-flow IF-A5 pressures (5.74-1220.0 Pa) (H3 survey needed) | procurement blocker |
 | sensors/diagnostics | SM-SUP-04 (PENDING docs/budgets/subsystem_maturity/ (fo_subsystem_maturity_matrix)) | P_feed / T_feed / x_s measurement locations and ranges; H-1 manifold tap | RUNNING | — | — |
 | extended-channel Hall discharge chamber/accelerator | SM-PROP-01 (PENDING docs/budgets/subsystem_maturity/ (fo_subsystem_maturity_matrix)) | distributor sizing rule and uniformity criterion (input only; H2-1 owns the design) | RUNNING | — | — |
 | compressor | SM-ATM-03 (PENDING docs/budgets/subsystem_maturity/ (fo_subsystem_maturity_matrix)) | outlet-side demands only (pressure, isolation valve, ripple) | not proposed by this lane | — | — |
@@ -456,7 +457,7 @@ the shared line holds 1.4e-09-1.78e-08 kg Xe per Pa: the gas-path dead volume is
 |---|---|---|---|
 | atmospheric metering valve (variable conductance, flight-representative) | True | fully-open conductance >= r x C_down at 3.14 mg/s (r = 1-3 PROPOSED); conductance turndown per the chosen control strategy; bandwidth >= f_bw; internal leak; O2/O-compatible wetted materials; drive power | TBD - requires H2-1 conductance and the control-strategy decision GP-D01 |
 | compressor-outlet isolation valve | True | open conductance >> plenum C_tot; closure on rotor deceleration; O2/O compatible | PRELIMINARY |
-| capacitance diaphragm gauges (ground FS-C manifold, H-1 manifold tap, flight-like plenum) | False | gas-type independent; span 0.0358-1490.0 Pa needs 2 overlapping three-decade heads (REF-LEYBOLD2016 pp. 78-79); below 0.1 Pa uncertainty rises | PRELIMINARY |
+| capacitance diaphragm gauges (ground FS-C manifold, H-1 manifold tap, flight-like plenum) | False | gas-type independent; span 0.0358-2430.0 Pa needs 2 overlapping three-decade heads (REF-LEYBOLD2016 pp. 78-79); below 0.1 Pa uncertainty rises | PRELIMINARY |
 | MFCs (ground) | True | A4: 0.030-3.14 mg/s, >= 3 overlapping ranges per gas path, calibrated on each gas (HW-FS-01, INS-05) | PRELIMINARY (A4) |
 | gas isolator | True | bore >= line bore option; voltage rating TBD (H2-4); O2-compatible | TBD |
 | plenum vessel (+ optional inert liner) | False | volume within the minimum-volume range; wall material per GP-D03 | PRELIMINARY |
@@ -478,11 +479,11 @@ the shared line holds 1.4e-09-1.78e-08 kg Xe per Pa: the gas-path dead volume is
 
 | id | finding | evidence class | handling |
 |---|---|---|---|
-| GP-F01 | the cold-flow plenum pressure needed to push design-case flows through an ECHT-size channel plus a uniform distributor and the feed path is 37.5-947.0 Pa, i.e. 125.0-18900.0 x the W1 setpoint ladder (0.05-0.3 Pa); the compressor required compression ratio scales by the same factor | model-derived (analog illustration) | demand to the compressor lane; closes with the H-1 conductance (H2-1) and the S1a cold-flow data |
+| GP-F01 | the cold-flow plenum pressure needed to push design-case flows through an ECHT-size channel plus a uniform distributor and the feed path is 38.1-1530.0 Pa, i.e. 38.1-30600.0 x the W1 setpoint ladder (design_axes.setpoint_ladder_Pa 0.05-1 Pa; lower ratio against the ladder maximum, upper against its minimum); 190.0-30600.0 x the p_feed of the closed W1 candidates (0.05-0.2 Pa); the compressor required compression ratio scales by the same factor, and no accessed source gives a drag-stage outlet-pressure capability at that level (HI-01) | model-derived (analog illustration) | demand to the compressor lane; closes with the H-1 conductance (H2-1) and the S1a cold-flow data |
 | GP-F02 | the W1 chain lumps valve, line and distributor into one restriction, so its P_feed is a reservoir pressure; in hardware P_feed must be read at IF-A5 and differs from the manifold and HALL_INLET_Z0 pressures | inferred | measurement map; INS-06 location |
-| GP-F03 | ride-through volume scales as 1/p_plenum: at the W1 setpoint-ladder pressures (0.05-0.3 Pa) 1 s needs 3.62-53.1 m^3; at the cold-flow budget pressures 1 s needs 0.00349-0.00628 m^3 and 10 s 0.0349-0.0628 m^3. A plenum can therefore bridge at most seconds of compressor interruption; longer interruptions are handled by the dual-feed state machine (XE_FALLBACK, time-limited, A5) or by shutdown | model-derived | state machine handles interruptions (XE_FALLBACK, time-limited) |
+| GP-F03 | ride-through volume scales as 1/p_plenum: at the ends of the W1 setpoint ladder (design_axes.setpoint_ladder_Pa 0.05-1 Pa) 1 s needs 1.09-53.1 m^3; at the cold-flow budget pressures 1 s needs 0.00327-0.00583 m^3 and 10 s 0.0327-0.0583 m^3. A plenum can therefore bridge at most seconds of compressor interruption; longer interruptions are handled by the dual-feed state machine (XE_FALLBACK, time-limited, A5) or by shutdown | model-derived | state machine handles interruptions (XE_FALLBACK, time-limited) |
 | GP-F04 | ram-flow variation evolves on quarter-orbit time scales (>= 22.0 min), at least 829.0 x the largest required plenum time constant (1.59 s); a plenum sized to its requirement does not filter it: ram variation sets the metering-valve / compressor operating range (turndown), not the plenum volume; only plenums far above the minimum (tau of hundreds of seconds, see fill_drain) approach orbital time scales | model-derived | valve turndown requirement H23-19 |
-| GP-F05 | the W1 chain's valve-outlet x_O 0.44-0.65 (chain O_survival 0.731-0.964) rests on repository recombination priors (Al2O3_anodised low gamma, unsourced); the accessed review reports gamma 0.4-0.6 for anodized aluminium (one report) and 0.04-0.16 for steels. With this lane's model at the chain convention (0.1 Pa, 2 L plenum, 300 K) steel-class gamma 0.07 / 0.14 gives O survival 0.404 / 0.158 in the plenum alone, and at the cold-flow budget pressures survival is ~0 | inferred | flagged to the owner; not fixed here (W1 is another lane) |
+| GP-F05 | the W1 chain's valve-outlet x_O 0.44-0.65 (chain O_survival 0.731-0.964) rests on repository recombination priors (Al2O3_anodised low gamma, unsourced); the accessed review reports gamma 0.4-0.6 for anodized aluminium (one report) and 0.04-0.16 for steels. With this lane's model at the chain convention (0.1 Pa, 2 L plenum, 300 K) steel-class gamma 0.07 / 0.14 gives O survival 0.536 / 0.281 in the plenum alone, and at the cold-flow budget pressures survival is ~0 | inferred | flagged to the owner; not fixed here (W1 is another lane) |
 | GP-F06 | full recombination releases up to the tabulated heat (tens of W at the maximum flow) in the compressor / plenum / line walls | model-derived | H2-5 demand |
 
 | id | question | options | recommendation |
@@ -501,13 +502,14 @@ Supports **A**. A: a conditional selection can name the gas-path conditions: ple
 ## 19. References
 
 - **REF-CHIGGIATO**: P. Chiggiato, 'Vacuum Technology for Ion Sources', CERN Accelerator School: Ion Sources, CERN-2013-007 (2013); arXiv:1404.0960. https://arxiv.org/pdf/1404.0960 (full text read 2026-09-27). Used for: Eq. 3 mean speed; Eq. 7 mean free path; Table 6 sigma_c (N2 0.43 nm^2, O2 0.40 nm^2); Eq. 10 and Table 7 Knudsen regimes (free molecular Kn > 0.5, viscous Kn < 0.01, transitional between); Eq. 13 thin-slot conductance C = A<v>/4 and Table 8 (N2 117.5 m^3 s^-1 m^-2 at 293 K); Eqs. 19-20 C = C'A tau; Eq. 21 Santeler transmission probability (< 0.7 % error); Eq. 26 series combination.
-- **REF-LEYBOLD2016**: Leybold GmbH, 'Fundamentals of Vacuum Technology', Part No. 199 90 (00.200.02), 2016 edition. https://www.leybold.com/content/dam/brands/leybold/downloads/brochures/general-brochures/Fundamentals_of_Vacuum_Technology_EN.pdf (full text read 2026-09-27 (supplier handbook; used for textbook relations only, no product data)). Used for: Sec. 1.5.3 a) Eq. 1.26 / 1.26a / 1.27 Knudsen equation for straight pipes (air, 20 degC, l >= 10 d; transitional range 1e-2 < d p_mean < 6e-1 mbar cm) (pp. 16-17); Sec. 1.5.1 regime limits in p d (p. 15); Sec. 3.2.2.4 capacitance diaphragm gauges: gas-type independent, used to 1e-3 mbar with uncertainty rising rapidly from 1e-4 mbar, three decades per sensor, e.g. 1 to 1e-3 mbar (pp. 78-79).
-- **REF-SANTELER1986**: D. J. Santeler, 'New concepts in molecular gas flow', J. Vac. Sci. Technol. A 4 (1986) 338-343, doi:10.1116/1.573923. https://doi.org/10.1116/1.573923 (not read; formula used as given by REF-CHIGGIATO Eq. 21 (bibliographic data as recorded by docs/architecture_comparison/interstage/INTERSTAGE_MODEL.md section 7)). Used for: transmission probability of circular tubes (via REF-CHIGGIATO).
+- **REF-LEYBOLD2016**: Leybold GmbH, 'Fundamentals of Vacuum Technology', Part No. 199 90 (00.200.02), 2016 edition. https://www.leybold.com/content/dam/brands/leybold/downloads/brochures/general-brochures/Fundamentals_of_Vacuum_Technology_EN.pdf (full text read 2026-09-27 (supplier handbook; used for textbook relations only, no product data)). Used for: Sec. 1.5.3 a) Eq. 1.26 Knudsen equation for straight pipes C = 135 d^4 p_mean / l + 12.1 d^3 / l (1 + 192 d p_mean)/(1 + 237 d p_mean) [l/s; d, l in cm; p in mbar] (air, 20 degC, l >= 10 d; transitional range 1e-2 < d p_mean < 6e-1 mbar cm) and Eq. 1.28a laminar limit C = 135 d^4 p_mean / l (pp. 16-17; Eq. 1.27 is printed as (1 + 203 x + 2.78e3 x^2)/(1 + 237 x), whereas the algebraic expansion of Eq. 1.26 gives (1 + 203.2 x + 2644 x^2)/(1 + 237 x); Eq. 1.27 is NOT used here, only Eq. 1.26 as a cross-check); Chapter 9 Table III: c* = lambda p = 6.67e-3 cm mbar for air at 20 degC (Table III, pdf page 148 of the 2016 file, re-read 2026-09-27); Sec. 1.5.1 regime limits in p d (p. 15); Sec. 3.2.2.4 capacitance diaphragm gauges: gas-type independent, used to 1e-3 mbar with uncertainty rising rapidly from 1e-4 mbar, three decades per sensor, e.g. 1 to 1e-3 mbar (pp. 78-79).
+- **REF-SANTELER1986**: D. J. Santeler, 'New concepts in molecular gas flow', J. Vac. Sci. Technol. A 4 (1986) 338-343, doi:10.1116/1.573923. https://doi.org/10.1116/1.573923 (not read; formula used as given by REF-CHIGGIATO Eq. 21. Bibliographic data (vol. 4, issue 3, pp. 338-343, 1986) confirmed from the Crossref record https://api.crossref.org/works/10.1116/1.573923 (read 2026-09-27); the REF-CHIGGIATO reference list gives '348' as the page (discrepancy in that list, not used)). Used for: transmission probability of circular tubes (via REF-CHIGGIATO).
 - **REF-REID2007**: B. M. Reid, A. D. Gallimore, 'Review of Hall Thruster Neutral Flow Dynamics', IEPC-2007-038, 30th International Electric Propulsion Conference, Florence (2007). https://pepl.engin.umich.edu/wp-content/uploads/pdf/IEPC-2007-038.pdf (full text read 2026-09-27). Used for: p. 2: the anode typically serves as electrode and gas distributor, delivering neutrals through an annular array of small-diameter orifices whose spacing/location alter axial velocity and azimuthal uniformity; p. 7: a cold-flow pressure probe at the anode centerline with ~3 % reported probe error and a single azimuthal sweep was used to verify the azimuthal uniformity of a newly fabricated anode (deGrys et al., as reviewed); p. 8: a manufacturing error causing an azimuthal neutral-density non-uniformity decreased efficiency, plume symmetry and stability (Hofer, as reviewed); near-anode non-uniformities expected to be reduced within the first 50 % of the channel length.
 - **REF-ROBERTS2024**: D. Roberts, 'Enhancing Neutral Propellant Flow Uniformity in Hall Thrusters via Anode Design', Master's thesis, University of Washington (2024). https://digital.lib.washington.edu/researchworks/items/972b2e52-ea16-4c72-9524-ffb95dd1d632/full (repository record / abstract only, read 2026-09-27; body not read). Used for: abstract: results compared with 'the NASA standard acceptance criteria of <= 5 % absolute deviation and <= 10 % peak-to-peak deviation from the mean pressure at the axial midpoint between the anode and thruster exit plane'; additive-manufactured anodes with internal baffles. The primary NASA source of the criterion is not named in the accessed text: verify.
 - **REF-PAUL2023**: D. Paul, M. Mozetic, R. Zaplotnik, G. Primc, D. Donlagic, A. Vesel, 'A Review of Recombination Coefficients of Neutral Oxygen Atoms for Various Materials', Materials 16(5) (2023) 1774, doi:10.3390/ma16051774 (CC BY). https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10004365/fullTextXML (full text read 2026-09-27 via Europe PMC (PMC10004365); the publisher page returned HTTP 403 and was not bypassed). Used for: classes: catalytic gamma > 0.1, semi-catalytic 0.01-0.1, inert < 0.01; stainless steel 0.07 (10-100 Pa, 400-700 K) and 0.14 (1-15 Pa, 300-400 K); stainless steel and titanium rising 0.04 -> 0.16 and gold 0.03 -> 0.2 with O-plasma exposure (40 Pa, room temperature); anodized aluminium 0.4-0.6 at 1 Pa, room temperature (called 'very large compared to other reports'); quartz 0.0012-0.0039 and PTFE 0.0006-0.00066 at room temperature; silver the most catalytic of the metals surveyed; 'a large scattering of results' between authors.
 - **REF-JANAF-O**: NIST-JANAF Thermochemical Tables, Oxygen (O), O1(g), table O-001. https://janaf.nist.gov/tables/O-001.txt (table read 2026-09-27). Used for: delta-f H(O, g, 298.15 K) = 249.173 kJ/mol, so 2 O -> O2 releases 498.346 kJ per mol O2 (5.165 eV per O2 formed) at 298.15 K; 246.790 kJ/mol at 0 K.
 - **REF-CIFALI2011**: G. Cifali et al., 'Preliminary characterization test of HET and RIT with Nitrogen and Oxygen', IEPC-2011-224 (as recorded in the repository). https://electricrocket.org/IEPC/IEPC-2011-224.pdf (not re-read in this lane; quoted as recorded by docs/controls/DUAL_FEED_STATES.md (design rationale 1) and hardware_requirements_v1.json HW-H1-05 / HW-FS-03). Used for: Xe ignition then smooth anode transfer to N2 or N2/O2 with the cathode on Xe; post-test anode oxidation ('rusty') named the main endurance concern.
+- **REF-SUTHERLAND-COMSOL**: COMSOL Multiphysics 6.3 CFD Module User's Guide, High Mach Number Flow interfaces, 'Sutherland's Law', Table 5-2 (viscosity parameters): N2 mu0 = 1.663e-5 N s/m^2, T0 = 273 K, S = 107 K; O2 mu0 = 1.919e-5, T0 = 273 K, S = 139 K; air 1.716e-5, 273 K, 111 K. https://doc.comsol.com/6.3/doc/com.comsol.help.cfd/cfd_ug_fluidflow_high_mach.08.43.html (web documentation read 2026-09-27; COMSOL's primary reference for the table is not identified in the accessed page (believed F. M. White, Viscous Fluid Flow: verify)). Used for: gas- and temperature-specific dynamic viscosity mu(T) = mu0 (T/T0)^1.5 (T0 + S)/(T + S) in the viscous (Poiseuille) conductance term; the air entry cross-checks the viscosity implied by REF-LEYBOLD2016 Eq. 1.28a (135 l/s: mu_air(20 degC) = 1.818e-5 Pa s).
 - **REF-SI2019**: SI defining constants (9th SI Brochure, BIPM 2019): Avogadro constant N_A = 6.02214076e23 mol^-1 (exact); Boltzmann constant k = 1.380649e-23 J/K (exact, also abep_sim.constants.K_B). https://www.bipm.org/en/publications/si-brochure (exact defining values quoted from memory of the definition (verify against the brochure)). Used for: R = N_A k_B; unit conversions.
 
 ## 20. Reproduce

@@ -49,7 +49,7 @@ SCRIPT_REL = f"{OUT_DIR_REL}/build_h2_3_gas_path_plenum.py"
 JSON_NAME = "h2_3_gas_path_plenum_v1.json"
 MD_NAME = "H2_3_GAS_PATH_PLENUM.md"
 SCHEMA_ID = "h2_3_gas_path_plenum_v1"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 BASE_COMMIT = "8ea7e4bc882d39bb0bce61308e7a1f5b8c0ecd2e"
 ARCHS = ["hall_only", "rf_hall", "ecr_hall"]
 
@@ -137,8 +137,13 @@ REFERENCES = {
         "url": "https://www.leybold.com/content/dam/brands/leybold/downloads/brochures/general-brochures/"
                "Fundamentals_of_Vacuum_Technology_EN.pdf",
         "access": "full text read 2026-09-27 (supplier handbook; used for textbook relations only, no product data)",
-        "used_for": "Sec. 1.5.3 a) Eq. 1.26 / 1.26a / 1.27 Knudsen equation for straight pipes (air, 20 degC, "
-                    "l >= 10 d; transitional range 1e-2 < d p_mean < 6e-1 mbar cm) (pp. 16-17); Sec. 1.5.1 regime "
+        "used_for": "Sec. 1.5.3 a) Eq. 1.26 Knudsen equation for straight pipes C = 135 d^4 p_mean / l + 12.1 "
+                    "d^3 / l (1 + 192 d p_mean)/(1 + 237 d p_mean) [l/s; d, l in cm; p in mbar] (air, 20 degC, "
+                    "l >= 10 d; transitional range 1e-2 < d p_mean < 6e-1 mbar cm) and Eq. 1.28a laminar limit "
+                    "C = 135 d^4 p_mean / l (pp. 16-17; Eq. 1.27 is printed as (1 + 203 x + 2.78e3 x^2)/(1 + 237 x), "
+                    "whereas the algebraic expansion of Eq. 1.26 gives (1 + 203.2 x + 2644 x^2)/(1 + 237 x); Eq. 1.27 "
+                    "is NOT used here, only Eq. 1.26 as a cross-check); Chapter 9 Table III: c* = lambda p = 6.67e-3 "
+                    "cm mbar for air at 20 degC (Table III, pdf page 148 of the 2016 file, re-read 2026-09-27); Sec. 1.5.1 regime "
                     "limits in p d (p. 15); Sec. 3.2.2.4 capacitance diaphragm gauges: gas-type independent, used "
                     "to 1e-3 mbar with uncertainty rising rapidly from 1e-4 mbar, three decades per sensor, "
                     "e.g. 1 to 1e-3 mbar (pp. 78-79)",
@@ -147,8 +152,10 @@ REFERENCES = {
         "citation": "D. J. Santeler, 'New concepts in molecular gas flow', J. Vac. Sci. Technol. A 4 (1986) 338-343, "
                     "doi:10.1116/1.573923",
         "url": "https://doi.org/10.1116/1.573923",
-        "access": "not read; formula used as given by REF-CHIGGIATO Eq. 21 (bibliographic data as recorded by "
-                  "docs/architecture_comparison/interstage/INTERSTAGE_MODEL.md section 7)",
+        "access": "not read; formula used as given by REF-CHIGGIATO Eq. 21. Bibliographic data (vol. 4, issue 3, pp. "
+                  "338-343, 1986) confirmed from the Crossref record https://api.crossref.org/works/10.1116/1.573923 "
+                  "(read 2026-09-27); the REF-CHIGGIATO reference list gives '348' as the page (discrepancy in that "
+                  "list, not used)",
         "used_for": "transmission probability of circular tubes (via REF-CHIGGIATO)",
     },
     "REF-REID2007": {
@@ -204,6 +211,17 @@ REFERENCES = {
                   "rationale 1) and hardware_requirements_v1.json HW-H1-05 / HW-FS-03",
         "used_for": "Xe ignition then smooth anode transfer to N2 or N2/O2 with the cathode on Xe; post-test anode "
                     "oxidation ('rusty') named the main endurance concern",
+    },
+    "REF-SUTHERLAND-COMSOL": {
+        "citation": "COMSOL Multiphysics 6.3 CFD Module User's Guide, High Mach Number Flow interfaces, 'Sutherland's "
+                    "Law', Table 5-2 (viscosity parameters): N2 mu0 = 1.663e-5 N s/m^2, T0 = 273 K, S = 107 K; O2 "
+                    "mu0 = 1.919e-5, T0 = 273 K, S = 139 K; air 1.716e-5, 273 K, 111 K",
+        "url": "https://doc.comsol.com/6.3/doc/com.comsol.help.cfd/cfd_ug_fluidflow_high_mach.08.43.html",
+        "access": "web documentation read 2026-09-27; COMSOL's primary reference for the table is not identified in "
+                  "the accessed page (believed F. M. White, Viscous Fluid Flow: verify)",
+        "used_for": "gas- and temperature-specific dynamic viscosity mu(T) = mu0 (T/T0)^1.5 (T0 + S)/(T + S) in the "
+                    "viscous (Poiseuille) conductance term; the air entry cross-checks the viscosity implied by "
+                    "REF-LEYBOLD2016 Eq. 1.28a (135 l/s: mu_air(20 degC) = 1.818e-5 Pa s)",
     },
     "REF-SI2019": {
         "citation": "SI defining constants (9th SI Brochure, BIPM 2019): Avogadro constant N_A = 6.02214076e23 "
@@ -278,15 +296,54 @@ def santeler_tau(L: float, R: float) -> float:
     return 1.0 / (1.0 + (3.0 * L / (8.0 * R)) * (1.0 + 1.0 / (3.0 * (1.0 + L / (7.0 * R)))))
 
 
-def knudsen_f(d_m: float, pbar_pa: float) -> float:
-    """Leybold Eq. 1.27 transitional factor f(d p_mean) = (1 + 203 x + 2780 x^2)/(1 + 237 x), x = d[cm] p[mbar],
-    written for air at 20 degC. Applied here to N2/O2/O and Xe at 300-500 K as an INFERRED correction to the
-    gas-specific molecular conductance (verify: transfers the air-20 degC function to other gases/temperatures)."""
-    x = (d_m * 100.0) * (pbar_pa / 100.0)
-    return (1.0 + 203.0 * x + 2780.0 * x * x) / (1.0 + 237.0 * x)
+# Knudsen-type conductance, gas- and temperature-specific (repair of v1.0.0, which transferred the Leybold air/20 degC
+# factor f(d p) multiplicatively to other gases and temperatures; that made the viscous term scale with <v> instead of
+# 1/mu(T)). Form: C(p_mean) = C_mol Z(d/lambda) + C_visc(p_mean), with
+#   C_mol    gas-specific molecular conductance (REF-CHIGGIATO Eqs. 19-21, Santeler tau: valid for short tubes too),
+#   Z        Knudsen transition factor, the structure of REF-LEYBOLD2016 Eq. 1.26 rewritten in d/lambda with the
+#            Leybold air value c* = lambda p = 6.67e-3 cm mbar (Table III): Z = (1 + 192 c* d/lambda)/(1 + 237 c* d/lambda)
+#            (INFERRED generalisation: the transition correction is taken to depend on d/lambda only; verify),
+#   C_visc   isothermal compressible Poiseuille term pi d^4 p_mean / (128 mu(T) L) (REF-LEYBOLD2016 Eq. 1.28a with the
+#            air viscosity replaced by the gas-specific Sutherland mu(T), REF-SUTHERLAND-COMSOL); for the annular channel
+#            the narrow-gap (parallel-plate) form pi D_mean w^3 p_mean / (12 mu L) (ASSUMED approximation).
+# lambda uses the conservative sigma bound (shortest lambda -> smallest Z). Short-tube entrance / kinetic-energy losses
+# are not in the Poiseuille term; they are BOUNDED explicitly per segment (entrance_bound), not silently ignored.
+LEYBOLD_CSTAR_AIR_CM_MBAR = 6.67e-3  # c* = lambda p for air at 20 degC [cm mbar] (REF-LEYBOLD2016 Table III)
+Z_A = 192.0 * LEYBOLD_CSTAR_AIR_CM_MBAR  # coefficient of d/lambda: x = d[cm] p[mbar] = (d/lambda) c*[cm mbar]
+Z_B = 237.0 * LEYBOLD_CSTAR_AIR_CM_MBAR
+Z_MIN = Z_A / Z_B                                   # viscous-limit value of Z (0.81)
+MU_AIR_LEYBOLD = math.pi * 0.1 / (128.0 * 135.0)    # Pa s implied by Eq. 1.28a (135 l/s, d, l in cm, p in mbar)
+SUTHERLAND = {"N2": (1.663e-5, 273.0, 107.0), "O2": (1.919e-5, 273.0, 139.0),
+              "air": (1.716e-5, 273.0, 111.0)}      # REF-SUTHERLAND-COMSOL Table 5-2 (mu0 [Pa s], T0 [K], S [K])
+# Species without a tabulated Sutherland entry are assigned the highest-viscosity tabulated molecule present in the
+# bound (atomic O -> O2 value; ASSUMED, verify). Xe is never passed through the viscous budget (xe_tie_in is molecular).
+MU_SPECIES_MAP = {"N2": "N2", "O2": "O2", "O": "O2"}
+ENTRANCE_K = 2.5  # ASSUMED bound on (contraction + kinetic-energy + laminar developing-flow) loss coefficients, verify
 
 
-KNUDSEN_F_MIN = min(knudsen_f(0.01, p) for p in [i * 1e-3 for i in range(1, 20001)])
+def mu_sutherland(key: str, T: float) -> float:
+    mu0, T0, S = SUTHERLAND[key]
+    return mu0 * (T / T0) ** 1.5 * (T0 + S) / (T + S)
+
+
+def mu_bound(w: dict, T: float) -> float:
+    """Upper bound of the mixture viscosity: the largest species value present (larger mu -> smaller viscous
+    conductance -> higher required upstream pressure, the conservative side for the compressor-outlet demand)."""
+    keys = {MU_SPECIES_MAP[s] for s, v in w.items() if v > 0}  # KeyError for an unmapped species: no silent default
+    return max(mu_sutherland(k, T) for k in keys)
+
+
+def knudsen_z(d: float, p_mean: float, T: float) -> float:
+    if p_mean <= 0.0:
+        return 1.0
+    x = d / mfp(p_mean, T)
+    return (1.0 + Z_A * x) / (1.0 + Z_B * x)
+
+
+def leybold_eq126_air(d_m: float, L_m: float, p_mean_pa: float) -> float:
+    """REF-LEYBOLD2016 Eq. 1.26 for air at 20 degC (l >= 10 d) in m^3/s; used only as a cross-check anchor."""
+    d, L, p = d_m * 100.0, L_m * 100.0, p_mean_pa / 100.0
+    return (135.0 * d ** 4 / L * p + 12.1 * d ** 3 / L * (1.0 + 192.0 * d * p) / (1.0 + 237.0 * d * p)) * 1e-3
 
 
 def c_tube_mol(D: float, L: float, cb: float) -> float:
@@ -302,35 +359,51 @@ def c_annulus_mol(D_out: float, width: float, L: float, cb: float) -> float:
     return cb / 4.0 * A * santeler_tau(L, width)
 
 
-def solve_upstream(p_down: float, Q: float, c_mol: float, d_char: float) -> tuple:
-    """Upstream pressure p_up with Q = C_mol f(d p_mean) (p_up - p_down); bisection (deterministic, 200 steps)."""
+def c_tube(D: float, L: float, p_mean: float, T: float, cb: float, mu: float) -> float:
+    """Transitional tube conductance C_mol Z(D/lambda) + pi D^4 p_mean / (128 mu L) [m^3/s]."""
+    return c_tube_mol(D, L, cb) * knudsen_z(D, p_mean, T) + math.pi * D ** 4 * p_mean / (128.0 * mu * L)
+
+
+def c_annulus(D_out: float, width: float, L: float, p_mean: float, T: float, cb: float, mu: float) -> float:
+    D_mean = D_out - width
+    return (c_annulus_mol(D_out, width, L, cb) * knudsen_z(2.0 * width, p_mean, T)
+            + math.pi * D_mean * width ** 3 * p_mean / (12.0 * mu * L))
+
+
+def solve_upstream(p_down: float, Q: float, cfun, c_mol: float) -> float:
+    """Upstream pressure p_up with Q = C(p_mean) (p_up - p_down), C rising with p_mean and C >= Z_MIN C_mol.
+    Bisection (deterministic, 200 steps)."""
     lo = p_down
-    hi = p_down + Q / (c_mol * KNUDSEN_F_MIN) * 1.01 + 1e-12
+    hi = p_down + Q / (c_mol * Z_MIN) * 1.01 + 1e-12
     for _ in range(200):
         mid = 0.5 * (lo + hi)
-        g = c_mol * knudsen_f(d_char, 0.5 * (mid + p_down)) * (mid - p_down) - Q
+        g = cfun(0.5 * (mid + p_down)) * (mid - p_down) - Q
         if g > 0:
             hi = mid
         else:
             lo = mid
-    p_up = 0.5 * (lo + hi)
-    return p_up, knudsen_f(d_char, 0.5 * (p_up + p_down))
+    return 0.5 * (lo + hi)
 
 
-def solve_manifold(p_z0: float, Q: float, c_ring_mol: float, bore: float, nf: int, delta: float) -> tuple:
+def solve_manifold(p_z0: float, Q: float, cring, c_ring_mol: float, nf: int, delta: float) -> float:
     """Self-consistent manifold pressure for the uniformity rule: the hole-array conductance is set to its maximum
-    C_h = 8 N_f^2 delta C_ring(p_man), with C_ring(p_man) = C_ring,mol f(bore p_man) (the ring conductance rises with
-    pressure in the transitional range), and p_man - p_z0 = Q / C_h. Bisection (the right-hand side falls with p)."""
-    lo, hi = p_z0, p_z0 + Q / (8.0 * nf * nf * delta * c_ring_mol * KNUDSEN_F_MIN) * 1.01 + 1e-12
+    C_h = 8 N_f^2 delta C_ring(p_man) (C_ring rises with pressure), and p_man - p_z0 = Q / C_h. Bisection."""
+    lo, hi = p_z0, p_z0 + Q / (8.0 * nf * nf * delta * c_ring_mol * Z_MIN) * 1.01 + 1e-12
     for _ in range(200):
         mid = 0.5 * (lo + hi)
-        g = (mid - p_z0) - Q / (8.0 * nf * nf * delta * c_ring_mol * knudsen_f(bore, mid))
+        g = (mid - p_z0) - Q / (8.0 * nf * nf * delta * cring(mid))
         if g > 0:
             hi = mid
         else:
             lo = mid
-    p = 0.5 * (lo + hi)
-    return p, knudsen_f(bore, p)
+    return 0.5 * (lo + hi)
+
+
+def entrance_bound(Q: float, D: float, p_down: float, T: float, M: float) -> float:
+    """ASSUMED upper bound of the short-tube entrance / kinetic-energy pressure loss not contained in the Poiseuille
+    term: K rho u^2 / 2 at the downstream (highest-velocity) end, rho u^2/2 = M Q^2 / (2 R T p A^2)."""
+    A = math.pi * D * D / 4.0
+    return ENTRANCE_K * M * Q * Q / (2.0 * R_GAS * T * p_down * A * A)
 
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -405,6 +478,7 @@ def w1_facts(w1: dict) -> dict:
     return {"records": rec, "design": design, "per_candidate": per_cand, "o_rich": orich,
             "mdot_min": mfc["mdot_min_kgps"], "mdot_max": mfc["mdot_max_kgps"],
             "setpoint_ladder": w1["design_axes"]["setpoint_ladder_Pa"],
+            "p_feed_closed_min": min(r["p_feed"] for r in rec), "p_feed_closed_max": max(r["p_feed"] for r in rec),
             "rpm_min": min(r["rpm"] for r in rec), "rpm_max": max(r["rpm"] for r in rec),
             "T_min": min(r["T"] for r in rec), "T_max": max(r["T"] for r in rec)}
 
@@ -485,80 +559,151 @@ def flow_points(w1f: dict) -> dict:
     }
 
 
+SEGMENT_NAMES = (("H-1 stub IP-DN -> manifold", "stub"), ("PIM slot IP-UP -> IP-DN (blank, illustrative)", "pim"),
+                 ("gas isolator", "iso"), ("line tee/IF-A5 -> isolator", "line"))
+DQ_REL = 1e-4  # relative throughput step for the incremental (small-signal) conductance dQ/dp
+
+
+def downstream_chain(Q: float, T: float, M: float, cb: float, mu: float, g: dict, ring_bore: float, nf: int,
+                     delta: float, c_h_fixed: float = None) -> dict:
+    """Cold-flow series solve from vacuum upstream to IF-A5 for throughput Q. With c_h_fixed None the distributor
+    holes are sized by the uniformity rule at this Q; with c_h_fixed given the hole-array conductance is held fixed
+    (fixed hardware, used for the incremental conductance; a fixed C_h under-states dQ/dp slightly, since real holes
+    also gain conductance with pressure). For every feed segment whose downstream end is not free-molecular
+    (Kn <= 0.5) the entrance / kinetic-energy bound (entrance_bound) is ADDED to the segment drop (conservative: the
+    budget pressures are upper bounds on this account)."""
+    ch = ANALOG_CHANNEL
+    c_ch_mol = c_annulus_mol(ch["outer_diameter_m"], ch["width_m"], ch["length_m"], cb)
+    p_z0 = solve_upstream(0.0, Q, lambda pm: c_annulus(ch["outer_diameter_m"], ch["width_m"], ch["length_m"], pm, T,
+                                                        cb, mu), c_ch_mol)
+    ring_len = math.pi * RING["mean_diameter_m"]
+    c_ring_mol = c_tube_mol(ring_bore, ring_len, cb)
+
+    def cring(p):
+        return c_tube(ring_bore, ring_len, p, T, cb, mu)
+    if c_h_fixed is None:
+        p_man = solve_manifold(p_z0, Q, cring, c_ring_mol, nf, delta)
+        c_h = 8.0 * nf * nf * delta * cring(p_man)
+    else:
+        c_h = c_h_fixed
+        p_man = p_z0 + Q / c_h
+    p = p_man
+    segs = []
+    for name, k in SEGMENT_NAMES:
+        D, L = g[f"{k}_D_m"], g[f"{k}_L_m"]
+        cm = c_tube_mol(D, L, cb)
+        eb = entrance_bound(Q, D, p, T, M) if mfp(p, T) / D <= 0.5 else 0.0
+        p_f = p + eb
+        p_up = solve_upstream(p_f, Q, lambda pm, D=D, L=L, p_f=p_f: c_tube(D, L, pm, T, cb, mu), cm)
+        segs.append({"segment": name, "D_m": D, "L_m": L, "p_down": p, "p_up": p_up, "C_mol": cm, "entrance": eb,
+                     "C_friction": Q / (p_up - p_f), "Z": knudsen_z(D, 0.5 * (p_f + p_up), T)})
+        p = p_up
+    return {"p_z0": p_z0, "c_ch_mol": c_ch_mol, "p_man": p_man, "c_h": c_h, "c_ring": cring(p_man), "segs": segs,
+            "p_a5": p}
+
+
 def pressure_budget(comps: dict, flows: dict) -> dict:
     """Cold-flow pressure budget, solved from vacuum (p = 0 downstream of the channel exit; facility background is a
     ground-only item) upstream to the plenum: channel (ANALOG illustration) -> distributor holes (sized by the
     uniformity rule) -> manifold ring -> H-1 stub (IP-DN) -> PIM slot (blank, illustrative) -> isolator + line (IP-UP
-    <- IF-A5) -> metering valve (authority rule) -> plenum. Returns one row per (flow, composition, T, geometry)."""
+    <- IF-A5) -> metering valve (authority rule) -> plenum. Returns one row per (flow, composition, T, distributor)
+    with the three geometry options inside. Each valve entry carries the secant conductance Q / p_plenum (inventory /
+    residence-time basis) and the incremental conductance dQ/dp_plenum (small-signal basis for ripple and bandwidth),
+    the valve being held at its fixed open conductance (unchoked, ASSUMED) and the downstream hardware fixed."""
     rows = []
     ch = ANALOG_CHANNEL
+    delta = min(UNIFORMITY["p2p_max"], 1.5 * UNIFORMITY["abs_dev_max"])
+    ent_frac = []
     for fk in FLOW_POINTS:
         mdot = flows[fk]["mdot_kgps"]
         for ck in ("COMP-REC-LO", "COMP-REC-HI", "COMP-W1-ORICH", "COMP-N2"):
             M = comps[ck]["M_kg_per_mol"]
             for T in T_POINTS:
                 cb = cbar(T, M)
+                mu = mu_bound(comps[ck]["w"], T)
                 Q = throughput(mdot, T, M)
-                c_ch = c_annulus_mol(ch["outer_diameter_m"], ch["width_m"], ch["length_m"], cb)
-                p_z0, f_ch = solve_upstream(0.0, Q, c_ch, 2.0 * ch["width_m"])
                 for dk, (ring_bore, nf) in DIST_OPTIONS.items():
-                    ring_len = math.pi * RING["mean_diameter_m"]
-                    c_ring_mol = c_tube_mol(ring_bore, ring_len, cb)
-                    p2p = min(UNIFORMITY["p2p_max"], 1.5 * UNIFORMITY["abs_dev_max"])
-                    p_man, f_ring = solve_manifold(p_z0, Q, c_ring_mol, ring_bore, nf, p2p)
-                    c_h = 8.0 * nf * nf * p2p * c_ring_mol * f_ring
-                    dp_h = p_man - p_z0
-                    row = {"flow": fk, "composition": ck, "T_K": T, "distributor": dk,
-                           "mdot_mg_s": sig(mdot * 1e6, 5), "Q_Pa_m3_s": sig(Q),
-                           "cbar_m_s": sig(cb, 5), "C_channel_mol_m3_s": sig(c_ch), "p_HALL_INLET_Z0_cold_Pa": sig(p_z0),
-                           "Kn_channel": sig(mfp(max(p_z0, 1e-9), T) / (2 * ch["width_m"]), 4),
-                           "knudsen_f_channel": sig(f_ch, 4), "C_holes_max_m3_s": sig(c_h),
-                           "dp_holes_min_Pa": sig(dp_h), "p_manifold_Pa": sig(p_man),
-                           "Kn_ring": sig(mfp(p_man, T) / ring_bore, 4), "geometries": {}}
+                    row = None
                     for gk, g in GEOMETRY_OPTIONS.items():
-                        p = p_man
+                        base = downstream_chain(Q, T, M, cb, mu, g, ring_bore, nf, delta)
+                        if row is None:
+                            p_z0, p_man = base["p_z0"], base["p_man"]
+                            row = {"flow": fk, "composition": ck, "T_K": T, "distributor": dk,
+                                   "mdot_mg_s": sig(mdot * 1e6, 5), "Q_Pa_m3_s": sig(Q), "cbar_m_s": sig(cb, 5),
+                                   "mu_bound_Pa_s": sig(mu, 5),
+                                   "C_channel_mol_m3_s": sig(base["c_ch_mol"]), "p_HALL_INLET_Z0_cold_Pa": sig(p_z0),
+                                   "Kn_channel": sig(mfp(max(p_z0, 1e-9), T) / (2 * ch["width_m"]), 4),
+                                   "C_channel_eff_m3_s": sig(Q / p_z0), "C_holes_max_m3_s": sig(base["c_h"]),
+                                   "dp_holes_min_Pa": sig(p_man - p_z0), "p_manifold_Pa": sig(p_man),
+                                   "Kn_ring": sig(mfp(p_man, T) / ring_bore, 4), "geometries": {}}
+                        pert = downstream_chain(Q * (1.0 + DQ_REL), T, M, cb, mu, g, ring_bore, nf, delta,
+                                                c_h_fixed=base["c_h"])
+                        dpa5_dq = (pert["p_a5"] - base["p_a5"]) / (Q * DQ_REL)
                         segs = []
-                        for name, D, L in (("H-1 stub IP-DN -> manifold", g["stub_D_m"], g["stub_L_m"]),
-                                           ("PIM slot IP-UP -> IP-DN (blank, illustrative)", g["pim_D_m"], g["pim_L_m"]),
-                                           ("gas isolator", g["iso_D_m"], g["iso_L_m"]),
-                                           ("line tee/IF-A5 -> isolator", g["line_D_m"], g["line_L_m"])):
-                            cm = c_tube_mol(D, L, cb)
-                            p_up, f = solve_upstream(p, Q, cm, D)
-                            segs.append({"segment": name, "D_m": D, "L_m": L, "C_mol_m3_s": sig(cm), "knudsen_f": sig(f, 4),
-                                         "Kn_at_upstream_end": sig(mfp(p_up, T) / D, 4),
-                                         "regime": regime(mfp(p_up, T) / D), "dp_Pa": sig(p_up - p)})
-                            p = p_up
-                        p_a5 = p
+                        for s in base["segs"]:
+                            kn_up = mfp(s["p_up"], T) / s["D_m"]
+                            dp = s["p_up"] - s["p_down"]
+                            eb = s["entrance"] if s["entrance"] > 0.0 else None
+                            if eb is not None:
+                                ent_frac.append(eb / dp)
+                            segs.append({"segment": s["segment"], "D_m": s["D_m"], "L_m": s["L_m"],
+                                         "C_mol_m3_s": sig(s["C_mol"]), "C_friction_m3_s": sig(s["C_friction"]),
+                                         "knudsen_Z": sig(s["Z"], 4),
+                                         "Kn_at_upstream_end": sig(kn_up, 4), "regime": regime(kn_up),
+                                         "dp_Pa": sig(dp),
+                                         "entrance_loss_bound_added_Pa": None if eb is None else sig(eb, 4)})
+                        p_a5 = base["p_a5"]
                         per_r = {}
                         for r in VALVE_AUTHORITY_R:
-                            # C_valve,open = r * C_down, C_down = Q / p_A5 (incremental conductance of everything downstream)
-                            c_down = Q / p_a5
-                            dp_v = Q / (r * c_down)
+                            # C_valve,open = r * C_down, C_down = Q / p_A5 (secant conductance of everything downstream)
+                            c_v = r * Q / p_a5
+                            dp_v = Q / c_v
+                            c_inc = 1.0 / (1.0 / c_v + dpa5_dq)
                             per_r[f"r={r:g}"] = {"dp_valve_min_Pa": sig(dp_v), "p_plenum_min_Pa": sig(p_a5 + dp_v),
-                                                 "C_valve_open_m3_s": sig(r * c_down),
-                                                 "C_total_plenum_to_vacuum_m3_s": sig(Q / (p_a5 + dp_v))}
+                                                 "C_valve_open_m3_s": sig(c_v),
+                                                 "C_total_plenum_to_vacuum_m3_s": sig(Q / (p_a5 + dp_v)),
+                                                 "C_incremental_plenum_m3_s": sig(c_inc),
+                                                 "incremental_over_secant": sig(c_inc * (p_a5 + dp_v) / Q, 4)}
                         row["geometries"][gk] = {"segments": segs, "p_IF_A5_Pa": sig(p_a5),
-                                                 "dp_IP_UP_to_IP_DN_blank_Pa": segs[1]["dp_Pa"], "valve": per_r}
+                                                 "dp_IP_UP_to_IP_DN_blank_Pa": segs[1]["dp_Pa"],
+                                                 "C_down_incremental_m3_s": sig(1.0 / dpa5_dq), "valve": per_r}
                     rows.append(row)
     return {"rows": rows,
-            "method": "cold-flow (no plasma) series solve from vacuum upstream; each segment Q = C_mol f(d p_mean) "
-                      "(p_up - p_down) with C_mol from REF-CHIGGIATO Eqs. 19-21 (tube) or the annulus approximation, "
-                      "f from REF-LEYBOLD2016 Eq. 1.27 (inferred transfer to other gases/temperatures); f_min over the "
-                      f"tabulated range = {sig(KNUDSEN_F_MIN, 4)}",
+            "method": "cold-flow (no plasma) series solve from vacuum upstream; each segment Q = C(p_mean) (p_up - "
+                      "p_down) with C = C_mol Z(d/lambda) + C_visc: C_mol from REF-CHIGGIATO Eqs. 19-21 (tube, Santeler "
+                      "tau) or the annulus approximation; Z = (1 + 192 c* d/lambda)/(1 + 237 c* d/lambda) with the "
+                      "REF-LEYBOLD2016 Eq. 1.26 coefficients and c*_air = 6.67e-3 cm mbar (inferred generalisation, "
+                      "verify); C_visc = pi d^4 p_mean / (128 mu(T) L) (tube; annulus: pi D_mean w^3 p_mean / (12 mu L)) "
+                      "with the gas- and temperature-specific Sutherland viscosity (REF-SUTHERLAND-COMSOL; mixture = "
+                      "largest species value present, atomic O assigned the O2 value, ASSUMED). The formula reproduces "
+                      "REF-LEYBOLD2016 Eq. 1.26 for air at 20 degC (test anchor). Supersedes v1.0.0, which applied the "
+                      "air/20 degC Eq. 1.27 factor multiplicatively to the gas-specific molecular conductance and "
+                      "understated the viscous-regime pressures at 500 K by about 1.3-1.4x",
+            "entrance_loss": {
+                "treatment": "short segments (L/D 3-17 < Leybold's l >= 10 d for some) carry entrance / kinetic-energy "
+                             "losses not in the Poiseuille term; bounded per non-free-molecular segment by K rho u^2 / 2 "
+                             f"at the downstream end with K = {ENTRANCE_K:g} (ASSUMED bound, verify) and ADDED to the "
+                             "segment drop (conservative upper bound; not applied where the downstream end is "
+                             "free-molecular, where the Santeler transmission probability already covers the entrance)",
+                "max_fraction_of_segment_dp": sig(max(ent_frac), 3) if ent_frac else None},
             "channel_is_analog_illustration": ANALOG_CHANNEL["use"],
             "distributor_options": {k: {"ring_bore_m": v[0], "feed_points": v[1]} for k, v in DIST_OPTIONS.items()},
-            "distributor_rule_used": "holes sized to the largest conductance the uniformity limit allows (smallest drop)"}
+            "distributor_rule_used": "holes sized to the largest conductance the uniformity limit allows (smallest drop)",
+            "incremental_conductance": "C_inc = dQ/dp_plenum = 1 / (1/C_valve + dp_IF_A5/dQ), dp_IF_A5/dQ by a "
+                                       f"{DQ_REL:g} relative finite difference with the hole array and valve held "
+                                       "fixed; in the viscous/transitional segments C_inc exceeds the secant Q/p"}
 
 
 def uniformity_table(comps: dict, pb: dict) -> dict:
     """Azimuthal-uniformity sizing rule (model-derived; 1-D diffusion along the ring, uniform withdrawal by the
     injection holes, small deviation): for N_f equally spaced feed points the peak-to-peak manifold pressure deviation
     relative to the hole pressure drop is delta = C_h / (8 N_f^2 C_ring), C_ring = conductance of the full
-    circumference as a straight tube at the manifold pressure (molecular x Leybold f). Parabolic profile: max
+    circumference as a straight tube at the manifold pressure (C_mol Z + Poiseuille, c_tube). Parabolic profile: max
     |deviation from mean| = (2/3) delta, so the +-5 % criterion gives delta <= 0.075 (binding over 10 % p2p). The
     holes are set to the largest conductance the rule allows (smallest drop); manifold pressure solved
     self-consistently from the analog cold-flow back-pressure p_Z0 (illustration)."""
     M = comps["COMP-REC-LO"]["M_kg_per_mol"]
+    w = comps["COMP-REC-LO"]["w"]
     delta = min(UNIFORMITY["p2p_max"], 1.5 * UNIFORMITY["abs_dev_max"])
     rows = []
     for r in pb["rows"]:
@@ -566,11 +711,16 @@ def uniformity_table(comps: dict, pb: dict) -> dict:
             continue
         T, Q, p_z0 = r["T_K"], r["Q_Pa_m3_s"], r["p_HALL_INLET_Z0_cold_Pa"]
         cb = cbar(T, M)
+        mu = mu_bound(w, T)
+        ring_len = math.pi * RING["mean_diameter_m"]
         for bore in RING["bore_options_m"]:
-            c_ring = c_tube_mol(bore, math.pi * RING["mean_diameter_m"], cb)
+            c_ring_mol = c_tube_mol(bore, ring_len, cb)
+
+            def cring(p, bore=bore):
+                return c_tube(bore, ring_len, p, T, cb, mu)
             for nf in RING["feed_points_options"]:
-                p_man, f = solve_manifold(p_z0, Q, c_ring, bore, nf, delta)
-                c_h = 8.0 * nf * nf * delta * c_ring * f
+                p_man = solve_manifold(p_z0, Q, cring, c_ring_mol, nf, delta)
+                c_h = 8.0 * nf * nf * delta * cring(p_man)
                 a_h = c_h / (cb / 4.0)
                 holes = {}
                 for dh in RING["hole_diameter_options_m"]:
@@ -581,50 +731,58 @@ def uniformity_table(comps: dict, pb: dict) -> dict:
                                                  "Kn_hole": sig(kn, 3), "regime": regime(kn)}
                 rows.append({"flow": r["flow"], "T_K": T, "ring_bore_m": bore, "feed_points": nf,
                              "p_Z0_cold_Pa": p_z0, "p_manifold_Pa": sig(p_man, 4), "dp_holes_Pa": sig(p_man - p_z0, 4),
-                             "Kn_ring": sig(mfp(p_man, T) / bore, 3), "C_ring_m3_s": sig(c_ring * f),
+                             "Kn_ring": sig(mfp(p_man, T) / bore, 3), "C_ring_m3_s": sig(cring(p_man)),
                              "C_holes_max_m3_s": sig(c_h), "A_holes_equiv_thin_max_m2": sig(a_h),
                              "holes_for_max_C": holes})
     return {"rule": "delta_p2p = C_h / (8 N_f^2 C_ring) <= 0.075 (from +-5 %)", "composition": "COMP-REC-LO",
             "ring_mean_diameter_m": RING["mean_diameter_m"], "rows": rows,
             "note": "N_holes_max_molecular is the largest count of that hole size compatible with the limit if the "
                     "holes are free-molecular; where Kn_hole <= 0.5 a hole passes more than its molecular conductance, "
-                    "so the count is an UPPER bound (fewer holes needed). Fewer/smaller holes raise the distributor "
+                    "so the listed count is an UPPER bound on the allowed number: the maximum C_h is reached with fewer "
+                    "holes, and using the full listed count would exceed it. Fewer/smaller holes raise the distributor "
                     "drop and the required plenum pressure. Cold flow only: the plasma-on distribution is not "
                     "predicted"}
 
 
 def plenum_sizing(pb: dict, w1f: dict, atmf: dict) -> dict:
     """Plenum volume ranges from explicit requirements. RC model: plenum volume V fed by the compressor (ideal flow
-    source, ASSUMED) and drained through the valve + downstream path with total conductance C_tot = Q / p_plenum
-    (linear molecular chain); tau = V / C_tot."""
+    source, ASSUMED) and drained through the valve + downstream path. Two conductances are carried (pressure_budget):
+    the secant C_tot = Q / p_plenum (inventory basis: residence time, ride-through, fill/drain indication) and the
+    incremental C_inc = dQ/dp_plenum (small-signal basis: the plenum pole tau = V / C_inc governs ripple filtering and
+    the bandwidth rule). The path is viscous/transitional over part of the grid, so C_inc > C_tot; sizing V_min with
+    the secant would understate it. Fill/drain times from 4.6 tau are first-order indications only (the chain is
+    nonlinear)."""
     # representative C_tot range over the budget rows (F-DES-LO..F-MAX, GEO-S..GEO-L, r=1 and r=3)
-    ctots = []
+    ctots, cincs, ratios = [], [], []
     for row in pb["rows"]:
         if row["flow"] == "F-MIN":
             continue
         for g in row["geometries"].values():
             for v in g["valve"].values():
                 ctots.append(v["C_total_plenum_to_vacuum_m3_s"])
+                cincs.append(v["C_incremental_plenum_m3_s"])
+                ratios.append(v["incremental_over_secant"])
     c_lo, c_hi = min(ctots), max(ctots)
+    ci_lo, ci_hi = min(cincs), max(cincs)
     f_rot = sorted({sig(w1f["rpm_min"] / 60.0, 5), sig(w1f["rpm_max"] / 60.0, 5), 1000.0})
     ripple = []
     for f in f_rot:
         for a in RIPPLE_ATTENUATION:
             tau = math.sqrt(1.0 / (a * a) - 1.0) / (2.0 * math.pi * f)
             ripple.append({"f_ripple_Hz": f, "attenuation": a, "tau_min_s": sig(tau, 4),
-                           "V_min_m3_at_C_tot_lo": sig(tau * c_lo, 4), "V_min_m3_at_C_tot_hi": sig(tau * c_hi, 4)})
+                           "V_min_m3_at_C_inc_lo": sig(tau * ci_lo, 4), "V_min_m3_at_C_inc_hi": sig(tau * ci_hi, 4)})
     bw = []
     for fb in VALVE_BANDWIDTH_HZ:
         tau = 1.0 / (2.0 * math.pi * fb)
-        bw.append({"f_valve_bw_Hz": fb, "tau_min_s": sig(tau, 4), "V_min_m3_at_C_tot_lo": sig(tau * c_lo, 4),
-                   "V_min_m3_at_C_tot_hi": sig(tau * c_hi, 4)})
+        bw.append({"f_valve_bw_Hz": fb, "tau_min_s": sig(tau, 4), "V_min_m3_at_C_inc_lo": sig(tau * ci_lo, 4),
+                   "V_min_m3_at_C_inc_hi": sig(tau * ci_hi, 4)})
     ride = []
     for row in pb["rows"]:
         if row["composition"] != "COMP-REC-LO" or row["T_K"] != 300.0 or row["flow"] not in ("F-DES-HI", "F-MAX"):
             continue
         pbufs = {f"budget {row['distributor']} GEO-M r=1": row["geometries"]["GEO-M"]["valve"]["r=1"]["p_plenum_min_Pa"]}
         if row["distributor"] == "DIST-A":
-            pbufs.update({f"W1 ladder {p:g} Pa": p for p in (min(w1f["setpoint_ladder"]), 0.3)})
+            pbufs.update({f"W1 ladder {p:g} Pa": p for p in (min(w1f["setpoint_ladder"]), max(w1f["setpoint_ladder"]))})
         for label, pbuf in pbufs.items():
             for t in RIDE_THROUGH_S:
                 V = row["Q_Pa_m3_s"] * t / (RIDE_THROUGH_DP_FRACTION * pbuf)
@@ -634,8 +792,9 @@ def plenum_sizing(pb: dict, w1f: dict, atmf: dict) -> dict:
     rl = [r for r in ride if r["pressure_basis"].startswith("W1")]
     fill = []
     for V in PLENUM_VOLUMES_M3:
-        fill.append({"V_m3": V, "tau_at_C_tot_hi_s": sig(V / c_hi, 4), "tau_at_C_tot_lo_s": sig(V / c_lo, 4),
-                     "t99_fill_or_drain_at_C_tot_lo_s": sig(4.605 * V / c_lo, 4)})
+        fill.append({"V_m3": V, "tau_small_signal_at_C_inc_hi_s": sig(V / ci_hi, 4),
+                     "tau_secant_at_C_tot_lo_s": sig(V / c_lo, 4),
+                     "t99_fill_or_drain_indicative_at_C_tot_lo_s": sig(4.605 * V / c_lo, 4)})
     ram = []
     for c in atmf["cases"]:
         for dh in ALT_EXCURSION_KM:
@@ -645,8 +804,11 @@ def plenum_sizing(pb: dict, w1f: dict, atmf: dict) -> dict:
     tau_req_max = max(max(r["tau_min_s"] for r in ripple), max(r["tau_min_s"] for r in bw))
     return {
         "C_tot_range_m3_s": [c_lo, c_hi],
-        "C_tot_basis": "Q / p_plenum over the cold-flow budget rows F-DES-LO..F-MAX, GEO-S/M/L, r = 1 and 3 (analog "
-                       "channel illustration; PENDING H2-1)",
+        "C_inc_range_m3_s": [ci_lo, ci_hi],
+        "C_inc_over_C_tot_range": [min(ratios), max(ratios)],
+        "C_tot_basis": "secant Q / p_plenum and incremental dQ/dp_plenum over the cold-flow budget rows F-DES-LO..F-MAX, "
+                       "all compositions, 300/500 K, DIST-A/B, GEO-S/M/L, r = 1 and 3 (analog channel illustration; "
+                       "PENDING H2-1)",
         "compressor_ripple": {"rows": ripple, "frequency_basis": "once-per-revolution frequency of the W1 chain-sized "
                               "machines (code-default rpm, assumed) and ~1 kHz DN100 turbomolecular pump rotation "
                               "(compressor_downselect EV-04, REF-CHIGGIATO2013 as cited there); blade-passing "
@@ -658,8 +820,9 @@ def plenum_sizing(pb: dict, w1f: dict, atmf: dict) -> dict:
                             "f_bw_status": "TBD - requires the metering-valve class selection (H3)"},
         "ride_through": {"rows": ride, "rule": "V = Q t_ride / dp_allow, dp_allow = 10 % of p_plenum (PROPOSED)",
                          "conclusion": (
-                             "ride-through volume scales as 1/p_plenum: at the W1 setpoint-ladder pressures "
-                             f"({min(w1f['setpoint_ladder']):g}-0.3 Pa) 1 s needs "
+                             "ride-through volume scales as 1/p_plenum: at the ends of the W1 setpoint ladder "
+                             f"(design_axes.setpoint_ladder_Pa {min(w1f['setpoint_ladder']):g}-"
+                             f"{max(w1f['setpoint_ladder']):g} Pa) 1 s needs "
                              f"{sig(min(r['V_required_m3'] for r in rl if r['t_ride_s'] == 1.0), 3)}-"
                              f"{sig(max(r['V_required_m3'] for r in rl if r['t_ride_s'] == 1.0), 3)} m^3; at the cold-flow "
                              f"budget pressures 1 s needs {sig(min(r['V_required_m3'] for r in rb if r['t_ride_s'] == 1.0), 3)}-"
@@ -682,15 +845,19 @@ def plenum_sizing(pb: dict, w1f: dict, atmf: dict) -> dict:
                               "not filter it: ram variation sets the metering-valve / compressor operating range "
                               "(turndown), not the plenum volume; only plenums far above the minimum (tau of hundreds "
                               "of seconds, see fill_drain) approach orbital time scales")},
-        "fill_drain": {"rows": fill, "formula": "tau = V / C_tot; 99 % in 4.6 tau (first-order RC)"},
+        "fill_drain": {"rows": fill, "formula": "small-signal tau = V / C_inc (shortest, at the highest C_inc); secant "
+                       "tau = V / C_tot (longest, at the lowest C_tot); t99 = 4.6 V / C_tot is a first-order RC "
+                       "indication only (the viscous/transitional chain is nonlinear: large fill/drain transients are "
+                       "not first-order)"},
         "volume_range": {
-            "V_min_m3": sig(min(r["V_min_m3_at_C_tot_lo"] for r in ripple if r["attenuation"] == 0.1
+            "V_min_m3": sig(min(r["V_min_m3_at_C_inc_lo"] for r in ripple if r["attenuation"] == 0.1
                                 and r["f_ripple_Hz"] == 1000.0), 4),
-            "V_min_basis": "weakest requirement set: 1 kHz ripple, attenuation 0.1, lowest C_tot",
-            "V_upper_of_minimum_m3": sig(max(max(r["V_min_m3_at_C_tot_hi"] for r in ripple),
-                                             max(r["V_min_m3_at_C_tot_hi"] for r in bw)), 4),
+            "V_min_basis": "weakest requirement set: 1 kHz ripple, attenuation 0.1, lowest incremental conductance",
+            "V_upper_of_minimum_m3": sig(max(max(r["V_min_m3_at_C_inc_hi"] for r in ripple),
+                                             max(r["V_min_m3_at_C_inc_hi"] for r in bw)), 4),
             "V_upper_of_minimum_basis": "strongest requirement set on the grid: max(ripple at the lowest rotation "
-                                        "frequency with a = 0.01, valve bandwidth 0.1 Hz) at the highest C_tot",
+                                        "frequency with a = 0.01, valve bandwidth 0.1 Hz) at the highest incremental "
+                                        "conductance",
             "V_max_status": "TBD - requires the H2-7 envelope/mass allocation, the lane-14 atmosphere-admission time "
                             "(fill time 4.6 tau) and the owner's O-survival preference (GP-D03)",
             "status": "PRELIMINARY (derived from explicit PROPOSED/ASSUMED requirement values; the range narrows "
@@ -706,15 +873,17 @@ def o_recombination(pb: dict, atmf: dict, flows: dict, w1f: dict) -> dict:
     magnitude, verify); nu_eff = 1 / (1/nu_kin + 1/nu_D) (series combination, ASSUMED). Survival = exp(-nu_eff t_res).
     The kinetic-only survival is a LOWER bound on survival; the effective value accounts for diffusion limitation at
     transitional/viscous plenum pressures. Recombination heat P = (mdot w_O / M_O)(dH / 2), dH = 498.346 kJ per mol O2
-    (REF-JANAF-O), with the free-stream w_O as an upper bound on the O reaching the gas path."""
+    (REF-JANAF-O), with the free-stream w_O as an upper bound on the O reaching the gas path. Throughput and plenum
+    pressure come from the atomic-O-bearing composition COMP-W1-ORICH rows (the gas entering the plenum still carries
+    O; v1.0.0 used the recombined COMP-REC-LO rows)."""
     cases = []
     for r in pb["rows"]:
-        if r["composition"] == "COMP-REC-LO" and r["flow"] in ("F-DES-LO", "F-DES-HI", "F-MAX") \
+        if r["composition"] == "COMP-W1-ORICH" and r["flow"] in ("F-DES-LO", "F-DES-HI", "F-MAX") \
                 and r["distributor"] == "DIST-B":
-            cases.append({"label": f"{r['flow']} budget DIST-B GEO-M r=1", "T_K": r["T_K"], "Q": r["Q_Pa_m3_s"],
+            cases.append({"label": f"{r['flow']} budget COMP-W1-ORICH DIST-B GEO-M r=1", "T_K": r["T_K"], "Q": r["Q_Pa_m3_s"],
                           "p": r["geometries"]["GEO-M"]["valve"]["r=1"]["p_plenum_min_Pa"]})
             if r["flow"] == "F-DES-HI":
-                cases.append({"label": "F-DES-HI at W1 setpoint 0.1 Pa (chain convention)", "T_K": r["T_K"],
+                cases.append({"label": "F-DES-HI COMP-W1-ORICH at W1 setpoint 0.1 Pa (chain convention)", "T_K": r["T_K"],
                               "Q": r["Q_Pa_m3_s"], "p": 0.1})
     rows = []
     for c in cases:
@@ -821,9 +990,18 @@ def build() -> dict:
     p_pl_des = [v["p_plenum_min_Pa"] for r in pb["rows"] if r["flow"] in ("F-DES-LO", "F-DES-HI")
                 for g in r["geometries"].values() for v in g["valve"].values()]
     dp_pim = [g["dp_IP_UP_to_IP_DN_blank_Pa"] for r in pb["rows"] for g in r["geometries"].values()]
+    # W1 reference pressures, both read from the W1 file (no literal): the full design-axis setpoint ladder
+    # (design_axes.setpoint_ladder_Pa) and the p_feed values actually used by the closed candidates (valve_outlet).
     setpoints = w1f["setpoint_ladder"]
-    ratio_min = min(p_pl_des) / max(setpoints[:4])
-    ratio_max = max(p_pl_des) / min(setpoints)
+    lad_lo, lad_hi = min(setpoints), max(setpoints)
+    pf_lo, pf_hi = w1f["p_feed_closed_min"], w1f["p_feed_closed_max"]
+    ratio_min = min(p_pl_des) / lad_hi
+    ratio_max = max(p_pl_des) / lad_lo
+    ratio_closed_min = min(p_pl_des) / pf_hi
+    ladder_txt = (f"{sig(ratio_min, 3)}-{sig(ratio_max, 3)} x the W1 setpoint ladder (design_axes.setpoint_ladder_Pa "
+                  f"{lad_lo:g}-{lad_hi:g} Pa; lower ratio against the ladder maximum, upper against its minimum); "
+                  f"{sig(ratio_closed_min, 3)}-{sig(ratio_max, 3)} x the p_feed of the closed W1 candidates "
+                  f"({pf_lo:g}-{pf_hi:g} Pa)")
     kn_line = [s["Kn_at_upstream_end"] for r in pb["rows"] for g in r["geometries"].values() for s in g["segments"]]
     regimes_line = {s["regime"] for r in pb["rows"] for g in r["geometries"].values() for s in g["segments"]}
     dist_ratio = [r["dp_holes_min_Pa"] / r["p_HALL_INLET_Z0_cold_Pa"] for r in pb["rows"] if r["flow"] != "F-MIN"]
@@ -873,7 +1051,7 @@ def build() -> dict:
           "model-derived", PEND("H2-1"), FR, "scales with the H-1 channel / distributor conductance"),
         P("H23-07", "minimum plenum pressure (valve authority r = 1..3), design-case flows", [min(p_pl_des), max(p_pl_des)],
           "Pa", "derived", "this script pressure_budget", "model-derived", PEND("H2-1"), FR,
-          f"{sig(ratio_min, 3)}-{sig(ratio_max, 3)} x the W1 setpoint ladder values (finding GP-F01)"),
+          f"{ladder_txt} (finding GP-F01)"),
         P("H23-08", "Knudsen number range in the feed segments (line, isolator, PIM blank, stub)",
           [min(kn_line), max(kn_line)], "-", "derived", "REF-CHIGGIATO Eq. 10 / Table 7; this script",
           "model-derived", "PRELIMINARY", FR, "regimes present: " + "; ".join(sorted(regimes_line))),
@@ -897,8 +1075,9 @@ def build() -> dict:
         P("H23-15", "plenum maximum volume", None, "m^3", "pending", "H2-7 envelope/mass; lane-14 admission time",
           "TBD", PEND("H2-7"), FR),
         P("H23-16", "plenum time constant tau = V / C_tot (evaluation grid)",
-          [min(r["tau_at_C_tot_hi_s"] for r in ps["fill_drain"]["rows"]),
-           max(r["tau_at_C_tot_lo_s"] for r in ps["fill_drain"]["rows"])], "s", "derived", "this script plenum_sizing",
+          [min(r["tau_small_signal_at_C_inc_hi_s"] for r in ps["fill_drain"]["rows"]),
+           max(r["tau_secant_at_C_tot_lo_s"] for r in ps["fill_drain"]["rows"])], "s", "derived",
+          "this script plenum_sizing (small-signal V/C_inc to secant V/C_tot)",
           "model-derived", "PRELIMINARY", FR),
         P("H23-17", "compressor ripple frequency / amplitude", None, "Hz / -", "pending",
           f"{CMP_REL} (C1 LEADING_CANDIDATE_PENDING_PRIMARY_EVIDENCE, A4)", "TBD",
@@ -1044,6 +1223,10 @@ def build() -> dict:
         {"from": "H2-3", "to": "compressor lane (C1; docs/architecture_comparison/compressor_downselect/)",
          "quantity": "compressor outlet (plenum) pressure at design flows, cold-flow analog illustration",
          "value": [min(p_pl_des), max(p_pl_des)], "units": "Pa", "status": f"{PEND('H2-1')} (channel conductance)"},
+        {"from": "H2-3", "to": "compressor lane", "quantity": "cited outlet (exhaust) pressure capability of the C1 "
+         "stack incl. the optional drag back stage at the plenum pressures above, and the compressor shaft/bus power "
+         "at that outlet pressure (evidence gap: EV-03 gives only a compression-ratio gain)", "value": None,
+         "units": "Pa / W", "status": "TBD - requires published drag-stage exhaust-pressure data or the C1 design"},
         {"from": "H2-3", "to": "compressor lane", "quantity": "outlet ripple amplitude and frequency; outlet "
          "back-conductance (ideal-source assumption here)", "value": None, "units": "- / Hz / m^3 s^-1",
          "status": "TBD - requires the C1 design"},
@@ -1097,10 +1280,12 @@ def build() -> dict:
         "result": "none found",
         "checked": [
             {"id": "HI-01", "what": "pressure budget: can a compressor outlet feed the path?", "finding":
-             f"cold-flow plenum pressure for an ECHT-size channel is {sig(ratio_min, 3)}-{sig(ratio_max, 3)} x the "
-             "W1 setpoint ladder at the design-case flows; the required compression ratio rises by the same factor "
-             "and exceeds the 0.1 Pa TMP molecular-regime limit (EV-03), so a drag stage behind the blades is "
-             "needed (already an option in C1)", "evidence_class": "model-derived (analog geometry)", "veto": False,
+             f"cold-flow plenum pressure for an ECHT-size channel at the design-case flows is {ladder_txt}; the "
+             "required compression ratio rises by the same factor and the outlet sits far above the 0.1 Pa TMP "
+             "molecular-regime limit (EV-03). A drag (Gaede/Holweck) back stage is an option in C1, but EV-03 gives "
+             "only its compression-ratio gain (up to 1e6), NOT an outlet (exhaust) pressure capability or the "
+             "compressor power at an outlet of hundreds to thousands of Pa: no accessed source closes that. This "
+             "evidence gap is stated as an explicit C1 demand (interface_demands), not assumed away", "evidence_class": "model-derived (analog geometry)", "veto": False,
              "why_not": "not evidenced for H-1: the channel/distributor conductance is PENDING H2-1 and the plasma-on "
                         "neutral pressure is not predicted; measured cold-flow manifold pressure (S1a) closes it"},
             {"id": "HI-02", "what": "plenum ride-through", "finding": "a plenum bridges at most seconds (GP-F03)",
@@ -1204,8 +1389,9 @@ def build() -> dict:
     findings = [
         {"id": "GP-F01", "finding": f"the cold-flow plenum pressure needed to push design-case flows through an "
          f"ECHT-size channel plus a uniform distributor and the feed path is {sig(min(p_pl_des), 3)}-"
-         f"{sig(max(p_pl_des), 3)} Pa, i.e. {sig(ratio_min, 3)}-{sig(ratio_max, 3)} x the W1 setpoint ladder "
-         "(0.05-0.3 Pa); the compressor required compression ratio scales by the same factor", "evidence_class":
+         f"{sig(max(p_pl_des), 3)} Pa, i.e. {ladder_txt}; the compressor required compression ratio scales by the "
+         "same factor, and no accessed source gives a drag-stage outlet-pressure capability at that level (HI-01)",
+         "evidence_class":
          "model-derived (analog illustration)", "handling": "demand to the compressor lane; closes with the H-1 "
          "conductance (H2-1) and the S1a cold-flow data"},
         {"id": "GP-F02", "finding": "the W1 chain lumps valve, line and distributor into one restriction, so its "
@@ -1250,6 +1436,18 @@ def build() -> dict:
         "version": VERSION,
         "status": "DRAFT_PENDING_OWNER (H2 preliminary sizing; every value not in the RFP or a cited source is "
                   "PROPOSED, ASSUMED or TBD)",
+        "revision_history": [
+            {"version": "1.0.0", "note": "initial lane deliverable"},
+            {"version": "1.1.0", "note": "adversarial-review repair: (1) W1 setpoint ladder read in full from "
+             "design_axes.setpoint_ladder_Pa (0.05-1 Pa) with no literal and no slice, plus the closed-candidate p_feed "
+             "range, in H23-07 / GP-F01 / HI-01 / ride-through (v1.0.0 misquoted it as 0.05-0.3 Pa); (2) conductance "
+             "made gas- and temperature-specific (Sutherland viscosity Poiseuille term + Knudsen Z(d/lambda)) instead "
+             "of the air/20 degC Leybold Eq. 1.27 factor, raising the 500 K viscous-regime pressures by ~1.3-1.4x; "
+             "short-segment entrance losses bounded and added; (3) plenum ripple/bandwidth volumes use the incremental "
+             "conductance dQ/dp (secant kept for inventory quantities), fill/drain labelled indicative; (4) O-survival "
+             "cases use the atomic-O-bearing COMP-W1-ORICH rows; (5) Santeler pages confirmed via Crossref; Leybold "
+             "Eq. 1.27 coefficient discrepancy recorded; (6) uniformity hole-count wording corrected; (7) drag-stage "
+             "outlet-pressure evidence gap stated as an explicit C1 demand"}],
         "lane": "fo_h2_3_gas_path_plenum",
         "trigger": "T_H2_3_GAS_PATH_PLENUM",
         "owner_authorization": "A7 (waves H2; h2_scope design/preliminary-sizing lane)",
@@ -1413,12 +1611,19 @@ def render_md(d: dict) -> str:
     a("Mean free path λ = kT/(√2 σ_c p) with σ_c = 0.43 nm² (N₂, the largest tabulated value, used for every species "
       "because atomic O is not tabulated; shortest λ, conservative for 'molecular' statements). Regimes: "
       "free-molecular Kn > 0.5, viscous Kn < 0.01 (REF-CHIGGIATO Table 7). Molecular conductances: thin slot "
-      "C = A⟨v⟩/4, tube C = (⟨v⟩/4)(πD²/4)τ with the Santeler τ; transitional segments use the Leybold Knudsen factor "
-      f"f(d·p̄) (Eq. 1.27, air 20 °C; inferred transfer, verify), f_min = {KNUDSEN_F_MIN:.4g}.")
+      "C = A⟨v⟩/4, tube C = (⟨v⟩/4)(πD²/4)τ with the Santeler τ. Transitional/viscous segments: C = C_mol·Z(d/λ) + "
+      "πd⁴p̄/(128 μ(T) L), Z = (1 + 192 c* d/λ)/(1 + 237 c* d/λ) (Leybold Eq. 1.26 structure, c*_air = 6.67e-3 cm mbar; "
+      f"Z_min = {Z_MIN:.4g}; inferred generalisation, verify), μ(T) from Sutherland (N₂/O₂ Table 5-2 of "
+      "REF-SUTHERLAND-COMSOL; mixture = largest species value). For air at 20 °C this reproduces Leybold Eq. 1.26. "
+      "v1.0.0 used the air/20 °C Eq. 1.27 factor on the gas-specific molecular term, which under-stated the 500 K "
+      "viscous-regime pressures by about 1.3–1.4×; superseded.")
     a("")
     a("## 6. Cold-flow pressure budget (analog channel illustration)")
     a("")
-    a(d["pressure_budget"]["method"] + ". " + d["pressure_budget"]["channel_is_analog_illustration"] + ". "
+    a(d["pressure_budget"]["method"] + ". Entrance losses: " + d["pressure_budget"]["entrance_loss"]["treatment"]
+      + f"; largest bound / segment drop = {fmt(d['pressure_budget']['entrance_loss']['max_fraction_of_segment_dp'])}. "
+      + d["pressure_budget"]["incremental_conductance"] + ". "
+      + d["pressure_budget"]["channel_is_analog_illustration"] + ". "
       + d["pressure_budget"]["distributor_rule_used"] + "; distributor options (ASSUMED): " + "; ".join(
           f"{k} ring bore {v['ring_bore_m'] * 1e3:g} mm, {v['feed_points']} feed points"
           for k, v in d["pressure_budget"]["distributor_options"].items()) + ".")
@@ -1464,24 +1669,27 @@ def render_md(d: dict) -> str:
     a("## 8. Plenum sizing")
     a("")
     ps = d["plenum_sizing"]
-    a(f"C_tot (plenum → vacuum) range {fmt(ps['C_tot_range_m3_s'])} m³/s ({ps['C_tot_basis']}). The compressor is "
+    a(f"Secant C_tot = Q/p_plenum range {fmt(ps['C_tot_range_m3_s'])} m³/s; incremental C_inc = dQ/dp_plenum range "
+      f"{fmt(ps['C_inc_range_m3_s'])} m³/s (C_inc/C_tot {fmt(ps['C_inc_over_C_tot_range'])}) ({ps['C_tot_basis']}). "
+      "Ripple and bandwidth volumes use C_inc (small-signal pole); residence, ride-through and fill/drain use the "
+      "secant. The compressor is "
       "treated as an ideal flow source (ASSUMED; its back-conductance is a compressor-lane demand).")
     a("")
     a(f"**Compressor ripple** — {ps['compressor_ripple']['formula']}; {ps['compressor_ripple']['frequency_basis']}.")
     a("")
-    a("| f [Hz] | attenuation a | τ_min [s] | V_min at C_tot lo / hi [m³] |")
+    a("| f [Hz] | attenuation a | τ_min [s] | V_min at C_inc lo / hi [m³] |")
     a("|---|---|---|---|")
     for r in ps["compressor_ripple"]["rows"]:
-        a(f"| {r['f_ripple_Hz']:g} | {r['attenuation']:g} | {r['tau_min_s']:.3g} | {r['V_min_m3_at_C_tot_lo']:.3g} / "
-          f"{r['V_min_m3_at_C_tot_hi']:.3g} |")
+        a(f"| {r['f_ripple_Hz']:g} | {r['attenuation']:g} | {r['tau_min_s']:.3g} | {r['V_min_m3_at_C_inc_lo']:.3g} / "
+          f"{r['V_min_m3_at_C_inc_hi']:.3g} |")
     a("")
     a(f"**Valve bandwidth** — {ps['valve_bandwidth']['rule']} ({ps['valve_bandwidth']['f_bw_status']}).")
     a("")
-    a("| f_bw [Hz] | τ_min [s] | V_min at C_tot lo / hi [m³] |")
+    a("| f_bw [Hz] | τ_min [s] | V_min at C_inc lo / hi [m³] |")
     a("|---|---|---|")
     for r in ps["valve_bandwidth"]["rows"]:
-        a(f"| {r['f_valve_bw_Hz']:g} | {r['tau_min_s']:.3g} | {r['V_min_m3_at_C_tot_lo']:.3g} / "
-          f"{r['V_min_m3_at_C_tot_hi']:.3g} |")
+        a(f"| {r['f_valve_bw_Hz']:g} | {r['tau_min_s']:.3g} | {r['V_min_m3_at_C_inc_lo']:.3g} / "
+          f"{r['V_min_m3_at_C_inc_hi']:.3g} |")
     a("")
     a(f"**Ride-through** — {ps['ride_through']['rule']}.")
     a("")
@@ -1502,11 +1710,11 @@ def render_md(d: dict) -> str:
     a("")
     a(f"**Fill / drain** — {ps['fill_drain']['formula']}.")
     a("")
-    a("| V [m³] | τ at C_tot hi [s] | τ at C_tot lo [s] | t99 at C_tot lo [s] |")
+    a("| V [m³] | small-signal τ at C_inc hi [s] | secant τ at C_tot lo [s] | t99 indicative at C_tot lo [s] |")
     a("|---|---|---|---|")
     for r in ps["fill_drain"]["rows"]:
-        a(f"| {r['V_m3']:g} | {r['tau_at_C_tot_hi_s']:.3g} | {r['tau_at_C_tot_lo_s']:.3g} | "
-          f"{r['t99_fill_or_drain_at_C_tot_lo_s']:.3g} |")
+        a(f"| {r['V_m3']:g} | {r['tau_small_signal_at_C_inc_hi_s']:.3g} | {r['tau_secant_at_C_tot_lo_s']:.3g} | "
+          f"{r['t99_fill_or_drain_indicative_at_C_tot_lo_s']:.3g} |")
     vr = ps["volume_range"]
     a("")
     a(f"**Volume range (PRELIMINARY):** minimum-volume requirement {vr['V_min_m3']:.3g} m³ ({vr['V_min_basis']}) up to "
