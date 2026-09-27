@@ -1,0 +1,2282 @@
+{
+ "schema": "h2_design_lane_v1",
+ "id": "h2_2_cathode_integration_v1",
+ "lane": "fo_h2_2_cathode_integration",
+ "trigger": "T_H2_2_CATHODE_INTEGRATION",
+ "owner_addendum": "A7",
+ "wave": "H2 hardware (design / preliminary sizing; not architecture selection)",
+ "status": "PRELIMINARY_DRAFT_PENDING_INTEGRATION",
+ "base_commit": "8ea7e4bc882d39bb0bce61308e7a1f5b8c0ecd2e",
+ "generated_by": "docs/hardware/h2/h2_2_cathode_integration/build_h2_2_cathode_integration.py",
+ "companion_document": "docs/hardware/h2/h2_2_cathode_integration/H2_2_CATHODE_INTEGRATION.md",
+ "test": "tests/test_h2_2_cathode_integration.py",
+ "configuration_items": {
+  "primary": "C-1",
+  "touched": [
+   "H-1",
+   "MC-1",
+   "FS-C",
+   "PS-C",
+   "SVC-1",
+   "PIM-0",
+   "PIM-RF",
+   "PIM-ECR"
+  ],
+  "interface_planes": [
+   "IP-UP",
+   "IP-DN",
+   "HALL_INLET_Z0"
+  ]
+ },
+ "architectures": [
+  "hall_only",
+  "rf_hall",
+  "ecr_hall"
+ ],
+ "architecture_neutrality": "C-1 is common to hall_only, rf_hall and ecr_hall (INV-C1); no ranking, no winner, no elimination",
+ "what_this_is_not": [
+  "not a performance prediction (no thrust, efficiency, discharge current or plasma state)",
+  "not based on any Hall transport closure (credible set empty) or on abep_sim/plasma_devices.py",
+  "not a C-1 selection or a procurement; catalog data are reference only",
+  "A5 numbers are allocations or requirements, never predictions"
+ ],
+ "decision_pins": {
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json": "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json": "aaeb7c503c3791f81d4c589e8e25289befa6fcb3b16ce6f962b153715c883180",
+  "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json": "dae69983d9aeeb4838d9ff973a5f824c973219f8cc528adfb12717c4bb92c925",
+  "docs/decisions/verification/A5_BASELINE_VERIFICATION.json": "4bd0fb4312fba97b18bba92ca0726133947ea6d86327f5e1360ea6af2b163523"
+ },
+ "provenance_reads_sha256": {
+  "docs/experiments/hardware/hardware_requirements_v1.json": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0",
+  "docs/budgets/xe_ledger/xe_ledger_v1.json": "965fdafa60ae9c3ee1e36189f22ef00198ae3f8a906696213bec13bdcbfb09ad",
+  "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json": "df020bfe3ef87b0fc6f49c56db7e38dc585c4640b5c89dd167d1f18e928dbd6f",
+  "docs/evidence/cathode/cathode_evidence_v1.json": "050060204e443d5583c307becadaab55a9f213d406ff4454be856bca21249110",
+  "docs/experiments/lifetime_ao/ao_lifetime_register_v5.json": "fea8aa05bd561d5ea559b934803d472f1fb1ed1013bfa925a5afb6c68a33e637",
+  "docs/experiments/instrumentation/instrumentation_definition_v1.json": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96"
+ },
+ "never_pinned": [
+  "lane_registry_v1.json",
+  "trigger_registry_v1.json",
+  "fired_triggers.jsonl",
+  "trigger_ledger_v2.jsonl",
+  "runtime_state.json"
+ ],
+ "inputs_read": {
+  "mdot_design_mg_s": 0.1,
+  "mdot_upper_test_mg_s": 0.15,
+  "a5_ref_kg": {
+   "0.10_mg_s_kg": 5.4,
+   "0.15_mg_s_kg": 8.1
+  },
+  "vd_set_V": [
+   180,
+   200,
+   250,
+   300,
+   305
+  ],
+  "p_max_W": 1500,
+  "n_starts_sc1": 1000.0,
+  "n_starts_sc2": 17737.0
+ },
+ "sources": {
+  "GK2008": {
+   "citation": "D. M. Goebel and I. Katz, Fundamentals of Electric Propulsion: Ion and Hall Thrusters, JPL Space Science and Technology Series, JPL / Wiley, 2008",
+   "url": "https://descanso.jpl.nasa.gov/SciTechBook/series1/Goebel__cmprsd_opt.pdf",
+   "sha256": "a373c8a26137b7c7cd989880c303c4f6c1f84f20a11a02770047f6ba4c249e4e",
+   "access": "open full text, read by this lane 2026-09-27 (same file as lane 19 records)",
+   "evidence_level": "4-5 (textbook relations; summaries of the authors' measurements)"
+  },
+  "IEPC2015_43": {
+   "citation": "D. M. Goebel and J. E. Polk, 'Lanthanum Hexaboride Hollow Cathode for the Asteroid Redirect Robotic Mission 12.5 kW Hall Thruster', IEPC-2015-43/ISTS-2015-b-43, Kobe, 2015",
+   "url": "https://electricrocket.org/IEPC/IEPC-2015-43_ISTS-2015-b-43.pdf",
+   "sha256": "6f5873d4ca95496714d427b0bdb568f57043d601085d2bd8f8d5b718829e1501",
+   "access": "open full text, read by this lane 2026-09-27; page = printed page number",
+   "evidence_level": "3 (primary report on other hardware: JPL 1.5-cm LaB6, 7.5-40 A class)"
+  },
+  "IEPC2017_365": {
+   "citation": "D. Pedrini, F. Cannelli, C. Tellini, C. Ducci, T. Misuri, F. Paganucci and M. Andrenucci, 'Hollow Cathodes for Low-Power Hall Effect Thrusters', IEPC-2017-365, Atlanta, 2017",
+   "url": "https://electricrocket.org/IEPC/IEPC_2017_365.pdf",
+   "sha256": "d98374b080642877ed0b2aa2428173b104fa4ff4a633c6dc523203c5b6f81cf6",
+   "access": "open full text, read by this lane 2026-09-27; values from text, figures not digitized",
+   "evidence_level": "3 (primary report on other hardware: SITAEL HC1 0.3-1 A and HC3 1-3 A LaB6)"
+  },
+  "HOFER2008": {
+   "citation": "R. R. Hofer et al., 'Effects of Internally Mounted Cathodes on Hall Thruster Plume Properties', IEEE Trans. Plasma Sci. 36(5), Oct. 2008, starting p. 2005 (last page to verify), doi:10.1109/TPS.2008.2000962 (DOI printed on the first page of the file)",
+   "url": "http://richard.hofer.com/pdf/hofer_ieeetps_2008.pdf",
+   "sha256": "43661dd3f457b6c6f442aad6d9b0b35130ed1d459ff293fb2f1880e8bb82cb04",
+   "access": "author-hosted full text at an open URL, read 2026-09-27; nothing bypassed; co-author list and page range to verify against the journal record",
+   "evidence_level": "3 (primary measurements on the 8-kW BHT-8000 on Xe: another device and power class)"
+  },
+  "BRONKHORST_ELFLOW_SELECT": {
+   "citation": "Bronkhorst High-Tech, 'EL-FLOW Select: Digital Thermal Mass Flow Meters and Controllers for Gases', product catalog (8 pages)",
+   "url": "https://products.bronkhorst.com/media/cp3lfvo1/el-flow-select_en.pdf",
+   "sha256": "69e5a7654f03758b6b9939366a5113a9669c083fd84f0d18f6b3009d5428f296",
+   "access": "public manufacturer catalog downloaded 2026-09-27; REFERENCE ONLY for the specification level (no supplier contact, no selection, no quotation)",
+   "evidence_level": "6 (manufacturer specification of a product class, not a calibration of any unit)"
+  },
+  "LANE19": {
+   "citation": "CATHINT lane 19 data file (transcriptions of IEPC-2017-276, IEPC-2017-377, G&K and SITAEL values with locators)",
+   "path": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+   "access": "repository deliverable (read only)"
+  },
+  "DOSSIER": {
+   "citation": "Cathode evidence dossier v1 (Joussot 2017, Zschaetzsch 2022 and G&K Sec. 6.8.5 transcriptions)",
+   "path": "docs/evidence/cathode/cathode_evidence_v1.json",
+   "access": "repository deliverable (read only)"
+  },
+  "AOL5": {
+   "citation": "AO/lifetime register v5",
+   "path": "docs/experiments/lifetime_ao/ao_lifetime_register_v5.json",
+   "access": "repository deliverable (read only)"
+  },
+  "W4": {
+   "citation": "W4 instrumentation definition v1 (records REF-SNYDER2017, Snyder et al., J. Propul. Power 33(3) 2017, doi:10.2514/1.B35644, read by W4)",
+   "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+   "access": "repository deliverable (read only)"
+  },
+  "HWDEF": {
+   "citation": "W3 common-hardware definition (H-1, MC-1, C-1, FS-C, PS-C, SVC-1, PIM-*)",
+   "path": "docs/experiments/hardware/hardware_requirements_v1.json",
+   "access": "repository deliverable (read only; DRAFT_PENDING_OWNER)"
+  },
+  "XEL": {
+   "citation": "Parametric Xe ledger v1 (verified, T_A5_XE_LEDGER)",
+   "path": "docs/budgets/xe_ledger/xe_ledger_v1.json",
+   "access": "repository deliverable (read only)"
+  },
+  "CONTROLS": {
+   "citation": "Dual-feed state machine v1 (state names)",
+   "path": "schemas/controls/dual_feed_state_machine_v1.json",
+   "access": "repository deliverable (read only)"
+  },
+  "A5": {
+   "citation": "Owner addendum A5",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
+   "access": "immutable owner decision (pinned)"
+  },
+  "A7": {
+   "citation": "Owner addendum A7",
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json",
+   "access": "immutable owner decision (pinned)"
+  },
+  "CLAUDE_MD": {
+   "citation": "CLAUDE.md 'Superseded / withdrawn' (true ECHT geometry: 86 mm long, 10 mm wide, 100 mm OD)",
+   "path": "CLAUDE.md",
+   "access": "repository instructions (read only)"
+  }
+ },
+ "design_parameters": [
+  {
+   "id": "H22-01",
+   "name": "C-1 mounting location",
+   "value": "central, on the thruster axis inside the inner magnetic core (option L-CENTRAL); L-EXTERNAL retained as the alternative",
+   "units": "-",
+   "basis": "analog",
+   "source": "HOFER2008 pp. 2008-2009 (internal cathode improved coupling voltage by 5-10 V vs external; 6-11 V in the Jameson 6-kW study quoted there; centerline mounting 'favors the improved coupling'), pp. 2007, 2010-2011 (more collimated, symmetric plume), p. 2012 (drawbacks)",
+   "evidence_class": "inferred",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "choice inferred from analog practice; magnitudes are not transferable (8-kW Xe device). Owner question H22-OQ-01; feasibility PENDING H2-1 inner-core bore"
+  },
+  {
+   "id": "H22-02",
+   "name": "C-1 axis orientation",
+   "value": "parallel to the thrust axis",
+   "units": "-",
+   "basis": "analog",
+   "source": "HOFER2008 p. 2006 ('The major axis of both cathodes was aligned parallel with the thrust axis')",
+   "evidence_class": "measured",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-03",
+   "name": "C-1 orifice axial position relative to the H-1 exit plane / inner pole",
+   "value": null,
+   "units": "mm",
+   "basis": "pending",
+   "source": "HOFER2008 p. 2006 (analog: internal cathode 'slightly recessed upstream of a hollow section of the inner magnetic pole')",
+   "evidence_class": "none",
+   "status": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "needs the H-1 inner pole geometry and B map; fixed and recorded once chosen (HW-C1-01)"
+  },
+  {
+   "id": "H22-04",
+   "name": "inner-core bore diameter needed for L-CENTRAL",
+   "value": ">= C-1 keeper OD + radial clearance",
+   "units": "mm",
+   "basis": "pending",
+   "source": "IEPC2015_43 p. 4 (analog keeper OD about 3.0 cm for the 1.5-cm JPL cathode); SITAEL HC1/HC3 keeper OD not stated (IEPC2017_365)",
+   "evidence_class": "none",
+   "status": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "keeper OD TBD - requires the C-1 selection (HWQ-09); clearance TBD - requires H2-1/H2-5"
+  },
+  {
+   "id": "H22-05",
+   "name": "cathode service-line routing for L-CENTRAL",
+   "value": "heater, keeper, cathode-common, thermocouple leads and the Xe line exit through the rear of the inner core; they must pass the pre-ionizer module slot between IP-UP and IP-DN without changing with the module and without crossing HALL_INLET_Z0",
+   "units": "-",
+   "basis": "requirement",
+   "source": "docs/experiments/hardware/hardware_requirements_v1.json HW-C1-01, HW-C1-04, HW-PIM-01 (summary section 0), HW-SVC-01",
+   "evidence_class": "assumed",
+   "status": "PENDING docs/interfaces/preionizer_module/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "interface demand to the pre-ionizer module ICD (A6)"
+  },
+  {
+   "id": "H22-06",
+   "name": "shielding / isolation concept of the emitter",
+   "value": "S1 Xe flows whenever the emitter is hot and O2 may be present; S2 Xe purge before heating (XE_PURGE -> CATHODE_CONDITIONING); S3 keeper encloses the orifice and shields it from back-ion bombardment; S4 O-compatible keeper/orifice-plate material; S5 emitter kept at or above the reported O2-tolerance temperature during O-bearing operation",
+   "units": "-",
+   "basis": "requirement",
+   "source": "docs/experiments/hardware/hardware_requirements_v1.json HW-C1-03; schemas/controls/dual_feed_state_machine_v1.json states; IEPC2015_43 p. 2 (keeper protects the orifice plate from back-ion bombardment); IEPC2017_365 p. 3; DOSSIER lab6.env.o2_withstand_1570C",
+   "evidence_class": "inferred",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "S1-S3 are adopted requirements/practice; S4-S5 are PROPOSED design rules of this lane"
+  },
+  {
+   "id": "H22-07",
+   "name": "emitter temperature floor during O-bearing operation (PROPOSED design rule)",
+   "value": 1843.15,
+   "units": "K",
+   "basis": "analog",
+   "source": "DOSSIER lab6.env.o2_withstand_1570C (G&K p. 306) and IEPC2015_43 p. 2: LaB6 at 1570 degC withstands O2 up to 1e-4 Torr without emission degradation",
+   "evidence_class": "measured",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "secondary statement of diode tests (level 5); O2 only - no atomic-O or N2 threshold exists (DOSSIER U04, U05); PROPOSED, not in the RFP"
+  },
+  {
+   "id": "H22-08",
+   "name": "required attenuation of O from the local environment to the emitter",
+   "value": null,
+   "units": "-",
+   "basis": "pending",
+   "source": "LANE19 required_attenuation(p_ext, p_tol); DOSSIER U03, G02",
+   "evidence_class": "none",
+   "status": "TBD - requires a measured emitter-region O/O2 tolerance (G02) and near-cathode partial pressures (RGA, HW-C1-07)",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-09",
+   "name": "keeper / orifice-plate material",
+   "value": null,
+   "units": "-",
+   "basis": "pending",
+   "source": "IEPC2015_43 p. 2 (analog keeper and orifice-plate materials: graphite); AOL5 evidence on graphite in O (RIT10 grid erosion higher on O2 than N2, attributed to O-graphite chemistry; MISSE 2 pyrolytic graphite AO erosion yield 4.15e-25 cm3/atom)",
+   "evidence_class": "none",
+   "status": "TBD - requires the C-1 selection and keeper-material coupon results (HW-C1-06)",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "graphite keepers are standard on Xe but carry a published O-chemistry warning; owner question H22-OQ-07"
+  },
+  {
+   "id": "H22-10",
+   "name": "magnetic-field magnitude at the C-1 orifice",
+   "value": null,
+   "units": "G",
+   "basis": "pending",
+   "source": "HOFER2008 p. 2012 (analog: the centerline region has an axially diverging field of the order of the peak channel field, 100-300 G)",
+   "evidence_class": "none",
+   "status": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "value comes from the MC-1 design and the M0 B-map at the actual coil currents (HW-MC-03)"
+  },
+  {
+   "id": "H22-11",
+   "name": "magnetic-field orientation at the C-1 orifice",
+   "value": "axial (parallel to the cathode axis) for L-CENTRAL; set by the local field line for L-EXTERNAL",
+   "units": "-",
+   "basis": "analog",
+   "source": "HOFER2008 p. 2007 (internal cathode plume 'compressed and elongated in the axial direction by the axial magnetic field emanating from the inner magnetic circuit'); IEPC2015_43 p. 4 (solenoid gives 'an adjustable axial magnetic field at the cathode exit to simulate that found on axis' of HERMeS)",
+   "evidence_class": "measured",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-12",
+   "name": "allowed field magnitude at emitter and keeper",
+   "value": null,
+   "units": "G",
+   "basis": "pending",
+   "source": "no accessed source states a limit; G&K p. 313 (ionization instabilities in the cathode plume can be inhibited by gas flow and/or the applied axial field): the field is a functional parameter of the cathode, not only an interference",
+   "evidence_class": "none",
+   "status": "TBD - requires C-1 characterization inside the MC-1 field at the operating coil currents (S1a) and the H2-1 field at the cathode location",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-13",
+   "name": "ferromagnetic-free zone around C-1 and its mount",
+   "value": "no ferromagnetic conductor, fastener or structure near MC-1 unless the model and M0/M0b map show it within INV-B3",
+   "units": "-",
+   "basis": "requirement",
+   "source": "docs/experiments/hardware/hardware_requirements_v1.json HW-MC-12",
+   "evidence_class": "assumed",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "C-1 tube/flange/heat-shield materials must be declared magnetically (analog JPL: Mo tube, Ta foil, graphite; IEPC2015_43 pp. 2-3)"
+  },
+  {
+   "id": "H22-14",
+   "name": "LaB6 emitter operating temperature (reported/derived span)",
+   "value": [
+    1844.5,
+    1973.15
+   ],
+   "units": "K",
+   "basis": "analog",
+   "source": "see derived.emitter_temperature_points (G&K p. 254; IEPC2015_43 p. 1; IEPC2017_365 p. 2; DOSSIER Joussot; LANE19 Lafferty table)",
+   "evidence_class": "inferred",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "span of cited points for other hardware; the C-1 value depends on its emission current density; C-1 tube temperature is measured (HW-C1-09), emitter temperature only with a pyrometer view"
+  },
+  {
+   "id": "H22-15",
+   "name": "emitter temperature reached before ignition",
+   "value": [
+    1460.0,
+    1693.15
+   ],
+   "units": "K",
+   "basis": "analog",
+   "source": "IEPC2017_365 p. 5 (about 1460 K); DOSSIER lab6.t.joussot_preheat (about 1420 degC)",
+   "evidence_class": "measured",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-16",
+   "name": "heater power during preheat (analog envelope)",
+   "value": [
+    45.0,
+    400.0
+   ],
+   "units": "W",
+   "basis": "analog",
+   "source": "IEPC2017_365 p. 5 (45 W / 60 W, HC1); IEPC2015_43 p. 3 (120 W routinely, H6 LaB6; up to 300 W for the 1.5-cm cathode); DOSSIER lab6.start.joussot_heater_ignition (184.5 W), lab6.start.zsch_heater_max (up to 400 W, non-optimized)",
+   "evidence_class": "measured",
+   "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "C-1 value TBD - requires the C-1 selection; a start-phase load on cathode_heater"
+  },
+  {
+   "id": "H22-17",
+   "name": "steady heater power",
+   "value": "0 W if C-1 self-heats at the lowest H-1 operating I_d; otherwise the maintained heater power of the selected unit (analog 185 W below 5 A, Joussot)",
+   "units": "W",
+   "basis": "analog",
+   "source": "LANE19 (G&K p. 337: heater off once the discharge runs); DOSSIER lab6.heater.joussot_maintained, lab6.heater.joussot_selfheat_current",
+   "evidence_class": "measured",
+   "status": "TBD - requires the C-1 self-heating current (S1a) and the lowest operating I_d (Phase 1)",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-18",
+   "name": "conduction path C-1 -> H-1",
+   "value": "thin refractory cathode tube -> base flange -> insulating ring -> H-1 inner core / back pole",
+   "units": "-",
+   "basis": "analog",
+   "source": "IEPC2015_43 pp. 2-3 (tube 'sufficiently long and thin to minimize conduction of heat from the insert to the base plate'), p. 4 (flange 'insulated from the thruster body by a Macor-ceramic ring'; flight: brazed assembly)",
+   "evidence_class": "measured",
+   "status": "PENDING docs/hardware/h2/h2_5_thermal_network/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-19",
+   "name": "analog mounting-interface temperature",
+   "value": {
+    "flange_K": 500.0,
+    "keeper_K": 600.0,
+    "at_heater_W": 20.0
+   },
+   "units": "K",
+   "basis": "analog",
+   "source": "IEPC2017_365 p. 5 (HC1 thermal test: interface about 500 K, keeper about 600 K at about 20 W heater power; emitter about 1250 K)",
+   "evidence_class": "measured",
+   "status": "PENDING docs/hardware/h2/h2_5_thermal_network/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "one analog point at low heater power; not a C-1 boundary condition"
+  },
+  {
+   "id": "H22-20",
+   "name": "radiation path C-1 -> inner magnetic circuit",
+   "value": "heat shields around the heater (analog about ten turns of Ta foil) + an inner-coil hot-spot check against the coil insulation class",
+   "units": "-",
+   "basis": "analog",
+   "source": "HOFER2008 p. 2012 (internal mounting 'can potentially lead to overheating of the thruster's inner magnetic circuit due to radiation from the hot cathode insert'); IEPC2015_43 p. 3 (Ta foil heat shield); docs/experiments/hardware/hardware_requirements_v1.json HW-MC-07, HW-MC-08",
+   "evidence_class": "measured",
+   "status": "PENDING docs/hardware/h2/h2_5_thermal_network/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-21",
+   "name": "keeper DC ignition voltage capability (PROPOSED)",
+   "value": 150.0,
+   "units": "V",
+   "basis": "analog",
+   "source": "IEPC2015_43 p. 4 (150 V applied to the keeper); G&K pp. 310-311 (standard DC keeper voltage 50-150 V; 100-500 V for larger-orifice LaB6 cathodes)",
+   "evidence_class": "measured",
+   "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "minimum capability; the C-1 value comes from its ignition test with heater (SITAEL HC1 45-50 V; HC3 < 300 V: IEPC2017_365 pp. 6, 8)"
+  },
+  {
+   "id": "H22-22",
+   "name": "keeper pulse ignition capability (PROPOSED)",
+   "value": [
+    300.0,
+    600.0
+   ],
+   "units": "V",
+   "basis": "analog",
+   "source": "G&K pp. 310-311 ('To ensure reliable thruster ignition over life, it is standard to apply both a DC keeper voltage in the 50- to 150-V range and a pulsed keeper voltage in the 300- to 600-V range')",
+   "evidence_class": "measured",
+   "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "motivated also by O exposure: the RAM-HET cathode could not be re-ignited after two days of N2/O2 testing (LANE19 andreussi_ram_het_cathode; not attributed to poisoning in the source). Owner question H22-OQ-02"
+  },
+  {
+   "id": "H22-23",
+   "name": "keeper current: ignition limit and continuous capability",
+   "value": {
+    "ignition_limit_A": 2.0,
+    "continuous_capability_A": [
+     0.5,
+     3.0
+    ]
+   },
+   "units": "A",
+   "basis": "analog",
+   "source": "IEPC2015_43 p. 4 (keeper current regulated to 2 A at ignition); IEPC2017_365 p. 8 (HC1 350 h endurance on MSHT100 with 0.5 A keeper); DOSSIER lab6.start.zsch_keeper_min (at least 3 A keeper for self-heating)",
+   "evidence_class": "measured",
+   "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "C-1 value TBD - requires the C-1 selection"
+  },
+  {
+   "id": "H22-24",
+   "name": "keeper running voltage (analog envelope)",
+   "value": [
+    5.0,
+    35.0
+   ],
+   "units": "V",
+   "basis": "analog",
+   "source": "IEPC2015_43 p. 4 (5-15 V after ignition); IEPC2017_365 p. 7 (HC1 keeper-only 30 -> 15 V), p. 8 (HC3 14-35 V)",
+   "evidence_class": "measured",
+   "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-25",
+   "name": "keeper mode after discharge ignition",
+   "value": "floating if C-1 self-heats at the operating I_d; current-carrying otherwise (steady cathode_keeper load)",
+   "units": "-",
+   "basis": "analog",
+   "source": "IEPC2015_43 p. 4 (keeper off and floating above 10 A), p. 5 (below 5 A the cathode stopped unless keeper > 2 A); IEPC2017_365 pp. 8-9 (HC1 floating with HT100; keeper on with MSHT100 and with HC3 on HT100)",
+   "evidence_class": "measured",
+   "status": "TBD - requires the C-1 self-heating current measured in S1a vs the H-1 I_d range",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-26",
+   "name": "heater supply current capability",
+   "value": 13.0,
+   "units": "A",
+   "basis": "analog",
+   "source": "LANE19 startup_reference / IEPC-2017-276 p. 3 (1.5-cm LaB6 heater current 13 A); IEPC2017_365 p. 4 (lab heater supply 80 V / 13 A, reference only)",
+   "evidence_class": "measured",
+   "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "C-1 value TBD - requires the C-1 selection"
+  },
+  {
+   "id": "H22-27",
+   "name": "ignition sequence",
+   "value": [
+    "XE_PURGE",
+    "CATHODE_CONDITIONING (heater on, Xe cathode flow on)",
+    "CATHODE_IGNITION (keeper voltage, then keeper current regulation)",
+    "XE_DISCHARGE_IGNITION (anode supply on, heater off)",
+    "keeper off/floating or held on (H22-25)"
+   ],
+   "units": "-",
+   "basis": "requirement",
+   "source": "schemas/controls/dual_feed_state_machine_v1.json state names; LANE19 startup_reference.hall_only (G&K p. 337; IEPC-2017-276 pp. 3-4; IEPC2015_43 p. 4)",
+   "evidence_class": "assumed",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "identical in every arm (INV-C1)"
+  },
+  {
+   "id": "H22-28",
+   "name": "heaterless ignition",
+   "value": "alternative only, not baseline",
+   "units": "-",
+   "basis": "analog",
+   "source": "IEPC2017_365 p. 3 (heater is a single point of failure; heaterless ignition possible 'at the cost of requiring higher voltages with the risk of damaging the LaB6 emitter due to thermal shocks'), p. 6 (HC1 up to 800 V; pp. 6-7: 1 mg/s), p. 8 (HC3 up to 700 V at 1-2 mg/s); DOSSIER lab6.start.heaterless_ignitions_title (title-level, verify)",
+   "evidence_class": "measured",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "heaterless starts need a higher ignition flow (Xe per start) and a higher-voltage keeper supply"
+  },
+  {
+   "id": "H22-29",
+   "name": "cathode Xe branch topology",
+   "value": [
+    "Xe metering split (A5 Xe branch)",
+    "isolation valve(s), normally closed",
+    "particulate filter",
+    "flow control (H-1: cathode MFC; flight: restrictor or proportional valve, TBD)",
+    "pressure transducer near C-1",
+    "dielectric break (if the grounding scheme needs one)",
+    "C-1 gas inlet"
+   ],
+   "units": "-",
+   "basis": "requirement",
+   "source": "A5 architecture.xe_branch; docs/experiments/hardware/hardware_requirements_v1.json HW-C1-04 (own line, never crosses HALL_INLET_Z0), HW-FS-01",
+   "evidence_class": "assumed",
+   "status": "PENDING docs/hardware/h2/h2_3_gas_path_plenum/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "element order PROPOSED by this lane"
+  },
+  {
+   "id": "H22-30",
+   "name": "number of isolation valves in series (flight)",
+   "value": 2,
+   "units": "-",
+   "basis": "assumed",
+   "source": "PROPOSED by this lane (single-fault tolerance against Xe loss); no accessed source fixes it",
+   "evidence_class": "assumed",
+   "status": "TBD - requires the owner's fault-tolerance/safety standard and H2-3",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "owner question H22-OQ-03"
+  },
+  {
+   "id": "H22-31",
+   "name": "filter rating",
+   "value": null,
+   "units": "um",
+   "basis": "pending",
+   "source": "no accessed source",
+   "evidence_class": "none",
+   "status": "TBD - requires the smallest passage of the flow restrictor / C-1 orifice (C-1 selection) and H2-3",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-32",
+   "name": "flight flow restrictor / regulated inlet pressure",
+   "value": null,
+   "units": "Pa",
+   "basis": "pending",
+   "source": "no accessed source",
+   "evidence_class": "none",
+   "status": "PENDING docs/hardware/h2/h2_3_gas_path_plenum/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "sized from the measured C-1 flow (H4 output), never from an assumed flow"
+  },
+  {
+   "id": "H22-33",
+   "name": "cathode Xe purity",
+   "value": {
+    "flight_lower_bound_percent": 99.99,
+    "h1_test_PROPOSED_percent": 99.999
+   },
+   "units": "%",
+   "basis": "analog",
+   "source": "IEPC2015_43 p. 2 and DOSSIER lab6.purity.crudest_grade (LaB6 tolerates about 99.99 % Xe); HOFER2008 p. 2007 (research grade 99.9995 % used); IEPC2017_365 p. 5 (grade 4.5)",
+   "evidence_class": "measured",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "the H-1 test value is PROPOSED so that feed impurities do not confound the O-exposure attribution"
+  },
+  {
+   "id": "H22-34",
+   "name": "cathode-line pressure transducer",
+   "value": "near C-1 (analog: about 20 cm from the emitter)",
+   "units": "-",
+   "basis": "analog",
+   "source": "IEPC2017_365 p. 5 (Kulite transducer on the feed line about 20 cm from the emitter)",
+   "evidence_class": "measured",
+   "status": "PRELIMINARY",
+   "article_class": "H1_TEST_ARTICLE_ONLY",
+   "note": "test-article diagnostic; a flight pressure sensor is H2-3's decision"
+  },
+  {
+   "id": "H22-35",
+   "name": "dielectric break rating on the cathode line",
+   "value": null,
+   "units": "V",
+   "basis": "pending",
+   "source": "depends on the grounding choice (H22-37) and the keeper pulse (H22-22)",
+   "evidence_class": "none",
+   "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-36",
+   "name": "discharge-supply topology",
+   "value": "discharge supply between anode and cathode common; the thruster floats",
+   "units": "-",
+   "basis": "requirement",
+   "source": "docs/experiments/hardware/hardware_requirements_v1.json HW-ELEC-01; G&K p. 339 ('the thruster floats with respect to either spacecraft common in space or vacuum-chamber common on the ground')",
+   "evidence_class": "assumed",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-37",
+   "name": "cathode-common reference (option E-FLOAT-R)",
+   "value": "cathode common floating; spacecraft common (flight) or facility ground (test) tied to cathode common through a declared resistor",
+   "units": "-",
+   "basis": "analog",
+   "source": "G&K p. 339 ('can be controlled on a spacecraft by a resistor between the spacecraft common and the cathode common'); IEPC2017_365 p. 4 (all supplies to a common negative reference, setup floating with respect to ground)",
+   "evidence_class": "measured",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "resistor value TBD - requires the H2-4 bus/charging analysis and the facility safety case (H22-OQ-04)"
+  },
+  {
+   "id": "H22-38",
+   "name": "analog cathode-to-ground potential",
+   "value": [
+    -22.0,
+    -10.0
+   ],
+   "units": "V",
+   "basis": "analog",
+   "source": "HOFER2008 p. 2008 (internal BaO -10 to -13 V; external LaB6 -22 to -15 V; typical -10 to -20 V); G&K p. 339 (coupling voltage typically about 20 V)",
+   "evidence_class": "measured",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "sets the order of magnitude of cathode-common-to-ground stand-off; not a C-1 value"
+  },
+  {
+   "id": "H22-39",
+   "name": "C-1 body isolation from the H-1 body",
+   "value": "insulating ring between C-1 flange and H-1 mount; H-1 body potential declared",
+   "units": "-",
+   "basis": "analog",
+   "source": "IEPC2015_43 p. 4 (Macor ring); H-1 body potential: owner decision (extends docs/experiments/hardware/hardware_requirements_v1.json HWQ-07)",
+   "evidence_class": "measured",
+   "status": "TBD - requires the owner's H-1 body potential decision",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": ""
+  },
+  {
+   "id": "H22-40",
+   "name": "C-1 lines across the thrust stand",
+   "value": "heater +/-, keeper, cathode common, tube thermocouple, Xe line: all in SVC-1, identical in every configuration",
+   "units": "-",
+   "basis": "requirement",
+   "source": "docs/experiments/hardware/hardware_requirements_v1.json HW-SVC-01, HW-C1-05, HW-C1-09",
+   "evidence_class": "assumed",
+   "status": "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/",
+   "article_class": "H1_TEST_ARTICLE_ONLY",
+   "note": ""
+  },
+  {
+   "id": "H22-41",
+   "name": "interstage current return",
+   "value": "any separately biased pre-ionizer electrode returns to cathode common and is metered (enters I_emit)",
+   "units": "-",
+   "basis": "requirement",
+   "source": "docs/experiments/hardware/hardware_requirements_v1.json HW-ELEC-02; LANE19 section 2",
+   "evidence_class": "assumed",
+   "status": "PENDING docs/interfaces/preionizer_module/",
+   "article_class": "H1_TEST_ARTICLE_ONLY",
+   "note": "rf_hall / ecr_hall configurations only; hall_only has none"
+  },
+  {
+   "id": "H22-42",
+   "name": "cathode Xe design flow and upper test point (A5)",
+   "value": [
+    0.1,
+    0.15
+   ],
+   "units": "mg/s",
+   "basis": "allocation",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json xe_mass_allocation.cathode_flow_design_target_mg_s / cathode_flow_experimental_upper_test_point_mg_s",
+   "evidence_class": "assumed",
+   "status": "PRELIMINARY",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "allocation and test point, not demonstrated flows; the measured spot-mode flow is an H4 output"
+  },
+  {
+   "id": "H22-43",
+   "name": "cathode MFC precision range full scale (PROPOSED)",
+   "value": 0.2,
+   "units": "mg/s Xe",
+   "basis": "derived",
+   "source": "derived.flow_measurement_uncertainty: FS 0.2 mg/s puts 0.10 / 0.15 mg/s at 50 % / 75 % of FS",
+   "evidence_class": "model-derived",
+   "status": "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/",
+   "article_class": "H1_TEST_ARTICLE_ONLY",
+   "note": "= 2.035 sccm Xe; Xe range of any real unit TBD - requires the manufacturer's Xe calibration"
+  },
+  {
+   "id": "H22-44",
+   "name": "cathode start-flow range full scale (PROPOSED)",
+   "value": 1.0,
+   "units": "mg/s Xe",
+   "basis": "analog",
+   "source": "IEPC2017_365 p. 6 (HC1 started at 0.6 and 0.1 mg/s with heater), p. 8 (HC3 0.4-0.8 mg/s with heater), p. 7 (HC1 diode 0.8 mg/s); heaterless 1-2 mg/s (p. 8) excluded",
+   "evidence_class": "measured",
+   "status": "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/",
+   "article_class": "H1_TEST_ARTICLE_ONLY",
+   "note": "separate controller or second range; covers heated-start analogs up to 1 mg/s"
+  },
+  {
+   "id": "H22-45",
+   "name": "flow accuracy class (PROPOSED)",
+   "value": "+/-(0.5 % of reading + 0.1 % of FS), calibrated on Xe",
+   "units": "-",
+   "basis": "analog",
+   "source": "BRONKHORST_ELFLOW_SELECT p. 2 (catalog class, reference only)",
+   "evidence_class": "assumed",
+   "status": "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/",
+   "article_class": "H1_TEST_ARTICLE_ONLY",
+   "note": "at FS 0.2 mg/s: u_rel = 0.70 % at 0.10 mg/s (see derived); a 1 % FS class at FS 1.0 mg/s gives 10 %"
+  },
+  {
+   "id": "H22-46",
+   "name": "flow repeatability",
+   "value": 0.002,
+   "units": "fraction of reading",
+   "basis": "analog",
+   "source": "BRONKHORST_ELFLOW_SELECT p. 2 ('Repeatability < 0,2% Rd', catalog class)",
+   "evidence_class": "assumed",
+   "status": "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/",
+   "article_class": "H1_TEST_ARTICLE_ONLY",
+   "note": "repeatability is what R_arch sees (same MFC, same setpoint in every arm; W4 INS-05)"
+  },
+  {
+   "id": "H22-47",
+   "name": "flow step for the spot-mode minimum-flow search (PROPOSED)",
+   "value": 0.005,
+   "units": "mg/s",
+   "basis": "assumed",
+   "source": "PROPOSED by this lane: 5 % of the design flow, 2.5 % of the proposed precision FS, above the repeatability",
+   "evidence_class": "assumed",
+   "status": "TBD - requires owner confirmation (H22-OQ-05)",
+   "article_class": "H1_TEST_ARTICLE_ONLY",
+   "note": ""
+  },
+  {
+   "id": "H22-48",
+   "name": "flow calibration method",
+   "value": "gravimetric on Xe in the final configuration (primary) with a constant-volume rate-of-rise cross-check; reference conditions declared",
+   "units": "-",
+   "basis": "requirement",
+   "source": "docs/experiments/instrumentation/instrumentation_definition_v1.json INS-05 calibration (REF-SNYDER2017: each gas, final configuration, across the range, at least every 12 months; constant-volume or constant-pressure calibrator)",
+   "evidence_class": "assumed",
+   "status": "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/",
+   "article_class": "GROUND_FACILITY_ONLY",
+   "note": "gravimetric primary PROPOSED by this lane; see derived.gravimetric_calibration and rate_of_rise_check"
+  },
+  {
+   "id": "H22-49",
+   "name": "uncertainty of the 15,000 h cathode Xe mass from flow measurement",
+   "value": {
+    "FS0.2_catalog_std_at_0.10": 0.0378,
+    "FS1.0_1pctFS_at_0.10": 0.54
+   },
+   "units": "kg",
+   "basis": "derived",
+   "source": "derived.flow_measurement_uncertainty",
+   "evidence_class": "model-derived",
+   "status": "PRELIMINARY",
+   "article_class": "H1_TEST_ARTICLE_ONLY",
+   "note": "measurement term only; the flow itself is an H4 output"
+  },
+  {
+   "id": "H22-50",
+   "name": "cathode flow delivered to the Xe ledger",
+   "value": null,
+   "units": "mg/s",
+   "basis": "pending",
+   "source": "docs/budgets/xe_ledger/xe_ledger_v1.json parameters mdot_cathode (closes with the C-1 measured spot-mode minimum flow)",
+   "evidence_class": "none",
+   "status": "TBD - requires the H4 measurement (S1a / Phase 1)",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "the ledger keeps the A5 0.10 mg/s design term until then; this lane never replaces it"
+  },
+  {
+   "id": "H22-51",
+   "name": "Xe per start from the purge-while-hot rule",
+   "value": "t_preheat x mdot_purge (derived table)",
+   "units": "g",
+   "basis": "derived",
+   "source": "derived.preheat_purge_xe",
+   "evidence_class": "model-derived",
+   "status": "PENDING docs/budgets/xe_ledger/",
+   "article_class": "FLIGHT_REPRESENTATIVE",
+   "note": "feeds the ledger's m_startup; the ledger already books a preheat term (scenario_per_event_derivation)"
+  }
+ ],
+ "location_options": [
+  {
+   "id": "L-CENTRAL",
+   "description": "C-1 on the thruster axis inside the inner magnetic core, cantilevered from the back pole",
+   "published_practice": "internally mounted cathodes on JPL/Busek high-power thrusters (BHT-8000 internal BaO; HERMeS on-axis LaB6 field simulated by a solenoid)",
+   "sources": [
+    "HOFER2008 pp. 2006-2012",
+    "IEPC2015_43 p. 4"
+   ],
+   "analog_label": "ANALOG (8-kW BHT-8000 on Xe; 12.5-kW HERMeS cathode)",
+   "coupling_voltage": "analog improvement of 5-10 V (BHT-8000, 8 kW) and 6-11 V (6-kW study quoted) vs external; the source attributes it to location, not emitter (HOFER2008 p. 2009)",
+   "plume_exposure": "sits in the central region where the source notes a possible trap for low-energy ions and increased keeper erosion (HOFER2008 p. 2012); for ABEP those ions include N+, N2+, O+, O2+ (AOL-M05) - keeper erosion and O chemistry at the keeper are a C-1 test item",
+   "magnetic_field_at_orifice": "axial, of the order of the peak channel field (analog 100-300 G, HOFER2008 p. 2012); predictable from the MC-1 design because it lies on the axis",
+   "thermal": "radiates into the inner magnetic circuit (overheating risk, HOFER2008 p. 2012) -> heat shields and an inner-coil hot-spot check (H2-5, HW-MC-07/08)",
+   "mechanical": "cantilever from the back pole: launch-vibration moment arm (HOFER2008 p. 2012) -> H2-7; needs an inner-core bore (H2-1)",
+   "experiment_identity": "position cannot change with a module exchange; axisymmetric plume keeps the thrust vector on the axis for every arm",
+   "rear_interface": "service lines leave through the rear axis, where the pre-ionizer module slot sits (IP-UP..IP-DN): routing must be designed into the module ICD"
+  },
+  {
+   "id": "L-EXTERNAL",
+   "description": "C-1 outside the outer pole, axis parallel to the thrust axis",
+   "published_practice": "traditional external mounting (HOFER2008 p. 2006: 'typical of Hall thrusters with optimized cathode locations'); SITAEL HC1/HC3 coupled externally to HT100 (IEPC2017_365 pp. 7-9)",
+   "sources": [
+    "HOFER2008 pp. 2006-2012",
+    "IEPC2017_365 pp. 7-9"
+   ],
+   "analog_label": "ANALOG",
+   "coupling_voltage": "analog: larger coupling voltage (-15 to -22 V vs -10 to -13 V, HOFER2008 p. 2008)",
+   "plume_exposure": "outside the beam; the external cathode's electrons form a 'halo' along field lines around the pole pieces (HOFER2008 p. 2007); inner-core erosion negligible (p. 2012)",
+   "magnetic_field_at_orifice": "set by the fringing field at the chosen position; depends on the separatrix location (no accessed source for H-1) -> PENDING H2-1 map",
+   "thermal": "decoupled from the inner coil; radiates to the outer pole and the spacecraft side",
+   "mechanical": "bracket on the outer pole; no inner-core bore",
+   "experiment_identity": "asymmetric near-field plume (HOFER2008 pp. 2009-2011) - identical in every arm, so a common-mode effect on R_arch",
+   "rear_interface": "service lines stay clear of the pre-ionizer module slot"
+  }
+ ],
+ "location_preliminary_choice": "L-CENTRAL (PRELIMINARY; H22-01)",
+ "shielding_isolation": {
+  "threat": "A5 architecture-closing risk rank 3 ('Xe-fed cathode consumption and oxygen isolation', evidence RI-MASS-CATHODE-XE): O2/O from the thruster's own neutral efflux, back-flowing plume ions (N+, N2+, O+, O2+) and, on ground, the facility background; in flight the thruster faces the wake, so the ram-facing AO flux of lane 19 is an upper bound, not the local value (inferred; magnitude TBD)",
+  "concept": [
+   "S1 Xe cathode flow on whenever the emitter is hot (HW-C1-03)",
+   "S2 Xe purge before heating (XE_PURGE)",
+   "S3 keeper enclosing the orifice (physical and ion shield)",
+   "S4 O-compatible keeper/orifice-plate/insulator materials (TBD, coupons HW-C1-06)",
+   "S5 emitter at or above 1843 K (1570 degC) during O-bearing operation (PROPOSED, H22-07)",
+   "S6 no emitter heating while O2 is in the chamber without Xe flow; exposure log (AOL-CX-05)"
+  ],
+  "must_be_demonstrated": [
+   {
+    "id": "D-CX-01",
+    "what": "C-1 emission, keeper and coupling voltage stay within a pre-registered drift band over the O-bearing Phase-1 hours (daily Xe reference, AOL-CX-01)"
+   },
+   {
+    "id": "D-CX-02",
+    "what": "near-cathode O2 / H2O / N2 partial pressures logged during O-bearing operation (RGA sampling port, HW-C1-07 / AOL-CX-03), as the proxy for the emitter-region environment (G02)"
+   },
+   {
+    "id": "D-CX-03",
+    "what": "spot-mode minimum Xe flow vs emission current measured on C-1 in the H-1 field with an atmospheric anode feed (A5 risk 3, G06); poisoning can enlarge the plume-mode region (Suzuki 2024 abstract via LANE19)"
+   },
+   {
+    "id": "D-CX-04",
+    "what": "restart after O-bearing operation succeeds within the keeper capability (start log AOL-CX-02)"
+   },
+   {
+    "id": "D-CX-05",
+    "what": "post-campaign insert/orifice/keeper inspection (HW-C1-08, AOL-PM-05)"
+   }
+  ],
+  "not_demonstrable_on_ground_here": "atomic-O exposure (no AO source in HW-ENV-07; HWQ-11) - flight transfer stays open (DOSSIER G02, G09)"
+ },
+ "flow_measurement": {
+  "requirement": "measure the C-1 Xe flow at the A5 design target 0.10 mg/s and the upper test point 0.15 mg/s, and step down to the spot-mode minimum, with an uncertainty small enough that the measured flow can be booked in the Xe ledger; the flow itself is NOT assumed (H4 output)",
+  "concept": [
+   "two ranges: a precision cathode MFC (FS about 0.2 mg/s Xe) and a start-flow range (FS about 1 mg/s Xe)",
+   "calibrated on Xe, installed, at the operating inlet pressure and temperature (W4 INS-05)",
+   "gravimetric primary calibration + rate-of-rise cross-check",
+   "reference conditions declared on every certificate (7.3 % trap between 0 and 20 degC references)",
+   "zero checked at the installed orientation and temperature before each block"
+  ],
+  "percent_of_reading_vs_full_scale": "a % FS specification inflates the relative error as 1/Q: at 0.10 mg/s a 1 % FS device with FS 1.0 mg/s gives 10 % (0.54 kg over 15,000 h), the same class with FS 0.2 mg/s gives 2 %; a % Rd + % FS class gives 0.70 %"
+ },
+ "derived": {
+  "flow_units": {
+   "design_target": {
+    "mdot_mg_s": 0.1,
+    "sccm_Xe": 1.01728,
+    "source": "mdot / 0.0983009 mg/s per sccm (G&K App. B Eq. B-5 p. 464, 273.15 K / 1 atm; LANE19 parameters.xe_mg_s_per_sccm)",
+    "evidence_class": "model-derived"
+   },
+   "upper_test_point": {
+    "mdot_mg_s": 0.15,
+    "sccm_Xe": 1.52593,
+    "source": "mdot / 0.0983009 mg/s per sccm (G&K App. B Eq. B-5 p. 464, 273.15 K / 1 atm; LANE19 parameters.xe_mg_s_per_sccm)",
+    "evidence_class": "model-derived"
+   }
+  },
+  "cathode_xe_mass": {
+   "values": {
+    "design_target_15000h_kg": 5.4,
+    "design_target_18000h_kg": 6.48,
+    "upper_test_point_15000h_kg": 8.1,
+    "upper_test_point_18000h_kg": 9.72
+   },
+   "a5_reference_arithmetic_15000h": {
+    "0.10_mg_s_kg": 5.4,
+    "0.15_mg_s_kg": 8.1
+   },
+   "consistent_with_a5": true,
+   "note": "18,000 h is the A5 internal design-life target (sensitivity only; A5 books 15,000 h)",
+   "evidence_class": "model-derived"
+  },
+  "flow_measurement_uncertainty": {
+   "relation": "u_rel = rd_frac + fs_frac * FS / Q (specification form); zero terms added in quadrature: orientation 0.4 % FS and temperature 0.12 % FS/degC x dT (REF-SNYDER2017 via W4); u_m = u_rel x m_cathode(15,000 h), treated as fully correlated over the mission (a calibration bias does not average down)",
+   "gas_conversion_note": "every row assumes the instrument is calibrated ON XENON in its final configuration; a gas-conversion-factor (GCF) reading adds an uncertainty that no accessed source quantifies for Xe (REF-SNYDER2017 Table 2 covers Ar, He, SF6, C2F6, H2 only, per W4) -> TBD - requires a Xe calibration",
+   "rows": [
+    {
+     "spec": "SPEC-FS1",
+     "fs_mg_s": 0.2,
+     "fs_sccm_Xe": 2.035,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.5,
+     "u_rel_spec": 0.02,
+     "u_m_15000h_kg_spec": 0.108,
+     "u_rel_with_zero_terms_dT1C": 0.02167,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.117,
+     "u_rel_with_zero_terms_dT5C": 0.02466,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.1332
+    },
+    {
+     "spec": "SPEC-FS1",
+     "fs_mg_s": 0.2,
+     "fs_sccm_Xe": 2.035,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.75,
+     "u_rel_spec": 0.01333,
+     "u_m_15000h_kg_spec": 0.108,
+     "u_rel_with_zero_terms_dT1C": 0.01445,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.117,
+     "u_rel_with_zero_terms_dT5C": 0.01644,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.1332
+    },
+    {
+     "spec": "SPEC-FS1",
+     "fs_mg_s": 0.3,
+     "fs_sccm_Xe": 3.052,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.3333,
+     "u_rel_spec": 0.03,
+     "u_m_15000h_kg_spec": 0.162,
+     "u_rel_with_zero_terms_dT1C": 0.03251,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.1756,
+     "u_rel_with_zero_terms_dT5C": 0.03699,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.1997
+    },
+    {
+     "spec": "SPEC-FS1",
+     "fs_mg_s": 0.3,
+     "fs_sccm_Xe": 3.052,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.5,
+     "u_rel_spec": 0.02,
+     "u_m_15000h_kg_spec": 0.162,
+     "u_rel_with_zero_terms_dT1C": 0.02167,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.1756,
+     "u_rel_with_zero_terms_dT5C": 0.02466,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.1997
+    },
+    {
+     "spec": "SPEC-FS1",
+     "fs_mg_s": 0.5,
+     "fs_sccm_Xe": 5.086,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.2,
+     "u_rel_spec": 0.05,
+     "u_m_15000h_kg_spec": 0.27,
+     "u_rel_with_zero_terms_dT1C": 0.05418,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.2926,
+     "u_rel_with_zero_terms_dT5C": 0.06164,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.3329
+    },
+    {
+     "spec": "SPEC-FS1",
+     "fs_mg_s": 0.5,
+     "fs_sccm_Xe": 5.086,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.3,
+     "u_rel_spec": 0.03333,
+     "u_m_15000h_kg_spec": 0.27,
+     "u_rel_with_zero_terms_dT1C": 0.03612,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.2926,
+     "u_rel_with_zero_terms_dT5C": 0.0411,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.3329
+    },
+    {
+     "spec": "SPEC-FS1",
+     "fs_mg_s": 1.0,
+     "fs_sccm_Xe": 10.17,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.1,
+     "u_rel_spec": 0.1,
+     "u_m_15000h_kg_spec": 0.54,
+     "u_rel_with_zero_terms_dT1C": 0.1084,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.5852,
+     "u_rel_with_zero_terms_dT5C": 0.1233,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.6658
+    },
+    {
+     "spec": "SPEC-FS1",
+     "fs_mg_s": 1.0,
+     "fs_sccm_Xe": 10.17,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.15,
+     "u_rel_spec": 0.06667,
+     "u_m_15000h_kg_spec": 0.54,
+     "u_rel_with_zero_terms_dT1C": 0.07225,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.5852,
+     "u_rel_with_zero_terms_dT5C": 0.08219,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.6658
+    },
+    {
+     "spec": "SPEC-FS1",
+     "fs_mg_s": 2.0,
+     "fs_sccm_Xe": 20.35,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.05,
+     "u_rel_spec": 0.2,
+     "u_m_15000h_kg_spec": 1.08,
+     "u_rel_with_zero_terms_dT1C": 0.2167,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 1.17,
+     "u_rel_with_zero_terms_dT5C": 0.2466,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 1.332
+    },
+    {
+     "spec": "SPEC-FS1",
+     "fs_mg_s": 2.0,
+     "fs_sccm_Xe": 20.35,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.075,
+     "u_rel_spec": 0.1333,
+     "u_m_15000h_kg_spec": 1.08,
+     "u_rel_with_zero_terms_dT1C": 0.1445,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 1.17,
+     "u_rel_with_zero_terms_dT5C": 0.1644,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 1.332
+    },
+    {
+     "spec": "SPEC-CAT-STD",
+     "fs_mg_s": 0.2,
+     "fs_sccm_Xe": 2.035,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.5,
+     "u_rel_spec": 0.007,
+     "u_m_15000h_kg_spec": 0.0378,
+     "u_rel_with_zero_terms_dT1C": 0.0109,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.05885,
+     "u_rel_with_zero_terms_dT5C": 0.01603,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.08657
+    },
+    {
+     "spec": "SPEC-CAT-STD",
+     "fs_mg_s": 0.2,
+     "fs_sccm_Xe": 2.035,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.75,
+     "u_rel_spec": 0.006333,
+     "u_m_15000h_kg_spec": 0.0513,
+     "u_rel_with_zero_terms_dT1C": 0.008433,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.06831,
+     "u_rel_with_zero_terms_dT5C": 0.01151,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.09326
+    },
+    {
+     "spec": "SPEC-CAT-STD",
+     "fs_mg_s": 0.3,
+     "fs_sccm_Xe": 3.052,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.3333,
+     "u_rel_spec": 0.008,
+     "u_m_15000h_kg_spec": 0.0432,
+     "u_rel_with_zero_terms_dT1C": 0.01486,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.08027,
+     "u_rel_with_zero_terms_dT5C": 0.02307,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.1246
+    },
+    {
+     "spec": "SPEC-CAT-STD",
+     "fs_mg_s": 0.3,
+     "fs_sccm_Xe": 3.052,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.5,
+     "u_rel_spec": 0.007,
+     "u_m_15000h_kg_spec": 0.0567,
+     "u_rel_with_zero_terms_dT1C": 0.0109,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.08827,
+     "u_rel_with_zero_terms_dT5C": 0.01603,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.1299
+    },
+    {
+     "spec": "SPEC-CAT-STD",
+     "fs_mg_s": 0.5,
+     "fs_sccm_Xe": 5.086,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.2,
+     "u_rel_spec": 0.01,
+     "u_m_15000h_kg_spec": 0.054,
+     "u_rel_with_zero_terms_dT1C": 0.02315,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.125,
+     "u_rel_with_zero_terms_dT5C": 0.03742,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.202
+    },
+    {
+     "spec": "SPEC-CAT-STD",
+     "fs_mg_s": 0.5,
+     "fs_sccm_Xe": 5.086,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.3,
+     "u_rel_spec": 0.008333,
+     "u_m_15000h_kg_spec": 0.0675,
+     "u_rel_with_zero_terms_dT1C": 0.01622,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.1314,
+     "u_rel_with_zero_terms_dT5C": 0.02544,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.2061
+    },
+    {
+     "spec": "SPEC-CAT-STD",
+     "fs_mg_s": 1.0,
+     "fs_sccm_Xe": 10.17,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.1,
+     "u_rel_spec": 0.015,
+     "u_m_15000h_kg_spec": 0.081,
+     "u_rel_with_zero_terms_dT1C": 0.04437,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.2396,
+     "u_rel_with_zero_terms_dT5C": 0.07365,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.3977
+    },
+    {
+     "spec": "SPEC-CAT-STD",
+     "fs_mg_s": 1.0,
+     "fs_sccm_Xe": 10.17,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.15,
+     "u_rel_spec": 0.01167,
+     "u_m_15000h_kg_spec": 0.0945,
+     "u_rel_with_zero_terms_dT1C": 0.03019,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.2445,
+     "u_rel_with_zero_terms_dT5C": 0.04947,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.4007
+    },
+    {
+     "spec": "SPEC-CAT-STD",
+     "fs_mg_s": 2.0,
+     "fs_sccm_Xe": 20.35,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.05,
+     "u_rel_spec": 0.025,
+     "u_m_15000h_kg_spec": 0.135,
+     "u_rel_with_zero_terms_dT1C": 0.08718,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.4708,
+     "u_rel_with_zero_terms_dT5C": 0.1464,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.7904
+    },
+    {
+     "spec": "SPEC-CAT-STD",
+     "fs_mg_s": 2.0,
+     "fs_sccm_Xe": 20.35,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.075,
+     "u_rel_spec": 0.01833,
+     "u_m_15000h_kg_spec": 0.1485,
+     "u_rel_with_zero_terms_dT1C": 0.05862,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.4748,
+     "u_rel_with_zero_terms_dT5C": 0.09788,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.7928
+    },
+    {
+     "spec": "SPEC-CAT-LOW",
+     "fs_mg_s": 0.2,
+     "fs_sccm_Xe": 2.035,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.5,
+     "u_rel_spec": 0.012,
+     "u_m_15000h_kg_spec": 0.0648,
+     "u_rel_with_zero_terms_dT1C": 0.01462,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.07895,
+     "u_rel_with_zero_terms_dT5C": 0.01876,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.1013
+    },
+    {
+     "spec": "SPEC-CAT-LOW",
+     "fs_mg_s": 0.2,
+     "fs_sccm_Xe": 2.035,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.75,
+     "u_rel_spec": 0.01067,
+     "u_m_15000h_kg_spec": 0.0864,
+     "u_rel_with_zero_terms_dT1C": 0.01203,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.09746,
+     "u_rel_with_zero_terms_dT5C": 0.01436,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.1163
+    },
+    {
+     "spec": "SPEC-CAT-LOW",
+     "fs_mg_s": 0.3,
+     "fs_sccm_Xe": 3.052,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.3333,
+     "u_rel_spec": 0.014,
+     "u_m_15000h_kg_spec": 0.0756,
+     "u_rel_with_zero_terms_dT1C": 0.01879,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.1015,
+     "u_rel_with_zero_terms_dT5C": 0.02577,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.1391
+    },
+    {
+     "spec": "SPEC-CAT-LOW",
+     "fs_mg_s": 0.3,
+     "fs_sccm_Xe": 3.052,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.5,
+     "u_rel_spec": 0.012,
+     "u_m_15000h_kg_spec": 0.0972,
+     "u_rel_with_zero_terms_dT1C": 0.01462,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.1184,
+     "u_rel_with_zero_terms_dT5C": 0.01876,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.152
+    },
+    {
+     "spec": "SPEC-CAT-LOW",
+     "fs_mg_s": 0.5,
+     "fs_sccm_Xe": 5.086,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.2,
+     "u_rel_spec": 0.018,
+     "u_m_15000h_kg_spec": 0.0972,
+     "u_rel_with_zero_terms_dT1C": 0.02757,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.1489,
+     "u_rel_with_zero_terms_dT5C": 0.0403,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.2176
+    },
+    {
+     "spec": "SPEC-CAT-LOW",
+     "fs_mg_s": 0.5,
+     "fs_sccm_Xe": 5.086,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.3,
+     "u_rel_spec": 0.01467,
+     "u_m_15000h_kg_spec": 0.1188,
+     "u_rel_with_zero_terms_dT1C": 0.02022,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.1638,
+     "u_rel_with_zero_terms_dT5C": 0.02816,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.2281
+    },
+    {
+     "spec": "SPEC-CAT-LOW",
+     "fs_mg_s": 1.0,
+     "fs_sccm_Xe": 10.17,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.1,
+     "u_rel_spec": 0.028,
+     "u_m_15000h_kg_spec": 0.1512,
+     "u_rel_with_zero_terms_dT1C": 0.05028,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.2715,
+     "u_rel_with_zero_terms_dT5C": 0.07736,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.4177
+    },
+    {
+     "spec": "SPEC-CAT-LOW",
+     "fs_mg_s": 1.0,
+     "fs_sccm_Xe": 10.17,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.15,
+     "u_rel_spec": 0.02133,
+     "u_m_15000h_kg_spec": 0.1728,
+     "u_rel_with_zero_terms_dT1C": 0.03507,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.2841,
+     "u_rel_with_zero_terms_dT5C": 0.05259,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.426
+    },
+    {
+     "spec": "SPEC-CAT-LOW",
+     "fs_mg_s": 2.0,
+     "fs_sccm_Xe": 20.35,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.05,
+     "u_rel_spec": 0.048,
+     "u_m_15000h_kg_spec": 0.2592,
+     "u_rel_with_zero_terms_dT1C": 0.09633,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.5202,
+     "u_rel_with_zero_terms_dT5C": 0.152,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.8208
+    },
+    {
+     "spec": "SPEC-CAT-LOW",
+     "fs_mg_s": 2.0,
+     "fs_sccm_Xe": 20.35,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.075,
+     "u_rel_spec": 0.03467,
+     "u_m_15000h_kg_spec": 0.2808,
+     "u_rel_with_zero_terms_dT1C": 0.06559,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.5313,
+     "u_rel_with_zero_terms_dT5C": 0.1022,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.8279
+    },
+    {
+     "spec": "SPEC-CAT-002",
+     "fs_mg_s": 0.2,
+     "fs_sccm_Xe": 2.035,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.5,
+     "u_rel_spec": 0.04,
+     "u_m_15000h_kg_spec": 0.216,
+     "u_rel_with_zero_terms_dT1C": 0.04086,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.2207,
+     "u_rel_with_zero_terms_dT5C": 0.04252,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.2296
+    },
+    {
+     "spec": "SPEC-CAT-002",
+     "fs_mg_s": 0.2,
+     "fs_sccm_Xe": 2.035,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.75,
+     "u_rel_spec": 0.02667,
+     "u_m_15000h_kg_spec": 0.216,
+     "u_rel_with_zero_terms_dT1C": 0.02724,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.2207,
+     "u_rel_with_zero_terms_dT5C": 0.02835,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.2296
+    },
+    {
+     "spec": "SPEC-CAT-002",
+     "fs_mg_s": 0.3,
+     "fs_sccm_Xe": 3.052,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.3333,
+     "u_rel_spec": 0.06,
+     "u_m_15000h_kg_spec": 0.324,
+     "u_rel_with_zero_terms_dT1C": 0.06129,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.331,
+     "u_rel_with_zero_terms_dT5C": 0.06378,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.3444
+    },
+    {
+     "spec": "SPEC-CAT-002",
+     "fs_mg_s": 0.3,
+     "fs_sccm_Xe": 3.052,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.5,
+     "u_rel_spec": 0.04,
+     "u_m_15000h_kg_spec": 0.324,
+     "u_rel_with_zero_terms_dT1C": 0.04086,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.331,
+     "u_rel_with_zero_terms_dT5C": 0.04252,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.3444
+    },
+    {
+     "spec": "SPEC-CAT-002",
+     "fs_mg_s": 0.5,
+     "fs_sccm_Xe": 5.086,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.2,
+     "u_rel_spec": 0.1,
+     "u_m_15000h_kg_spec": 0.54,
+     "u_rel_with_zero_terms_dT1C": 0.1022,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.5516,
+     "u_rel_with_zero_terms_dT5C": 0.1063,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.574
+    },
+    {
+     "spec": "SPEC-CAT-002",
+     "fs_mg_s": 0.5,
+     "fs_sccm_Xe": 5.086,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.3,
+     "u_rel_spec": 0.06667,
+     "u_m_15000h_kg_spec": 0.54,
+     "u_rel_with_zero_terms_dT1C": 0.0681,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 0.5516,
+     "u_rel_with_zero_terms_dT5C": 0.07087,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 0.574
+    },
+    {
+     "spec": "SPEC-CAT-002",
+     "fs_mg_s": 1.0,
+     "fs_sccm_Xe": 10.17,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.1,
+     "u_rel_spec": 0.2,
+     "u_m_15000h_kg_spec": 1.08,
+     "u_rel_with_zero_terms_dT1C": 0.2043,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 1.103,
+     "u_rel_with_zero_terms_dT5C": 0.2126,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 1.148
+    },
+    {
+     "spec": "SPEC-CAT-002",
+     "fs_mg_s": 1.0,
+     "fs_sccm_Xe": 10.17,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.15,
+     "u_rel_spec": 0.1333,
+     "u_m_15000h_kg_spec": 1.08,
+     "u_rel_with_zero_terms_dT1C": 0.1362,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 1.103,
+     "u_rel_with_zero_terms_dT5C": 0.1417,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 1.148
+    },
+    {
+     "spec": "SPEC-CAT-002",
+     "fs_mg_s": 2.0,
+     "fs_sccm_Xe": 20.35,
+     "flow": "design_target",
+     "setpoint_fraction_of_fs": 0.05,
+     "u_rel_spec": 0.4,
+     "u_m_15000h_kg_spec": 2.16,
+     "u_rel_with_zero_terms_dT1C": 0.4086,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 2.207,
+     "u_rel_with_zero_terms_dT5C": 0.4252,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 2.296
+    },
+    {
+     "spec": "SPEC-CAT-002",
+     "fs_mg_s": 2.0,
+     "fs_sccm_Xe": 20.35,
+     "flow": "upper_test_point",
+     "setpoint_fraction_of_fs": 0.075,
+     "u_rel_spec": 0.2667,
+     "u_m_15000h_kg_spec": 2.16,
+     "u_rel_with_zero_terms_dT1C": 0.2724,
+     "u_m_15000h_kg_with_zero_terms_dT1C": 2.207,
+     "u_rel_with_zero_terms_dT5C": 0.2835,
+     "u_m_15000h_kg_with_zero_terms_dT5C": 2.296
+    }
+   ],
+   "evidence_class": "model-derived"
+  },
+  "reference_condition_mismatch": {
+   "ratio_293_15_over_273_15": 1.07322,
+   "meaning": "a flow unit referenced to 20 degC read as if referenced to 0 degC (or the reverse) is off by this factor (~7.3 %); the MFC certificate's standard/normal reference conditions must be declared and converted explicitly (G&K Eq. B-5 uses 273.15 K / 1 atm)",
+   "evidence_class": "model-derived"
+  },
+  "gravimetric_calibration": {
+   "relation": "m_min = sqrt(2) * u_balance / u_target (two weighings, balance term only; buoyancy, line-volume and temperature corrections come on top); duration = m_min / Q",
+   "axes_note": "u_balance values are a parametric axis (assumed), not a statement about any balance; a heavy Xe bottle on a high-capacity balance usually has a coarser readability - the bottle mass sets the achievable u_balance (TBD - requires the calibration-rig design, H2-6)",
+   "rows": [
+    {
+     "u_balance_mg": 1.0,
+     "u_target_rel": 0.005,
+     "min_collected_mass_g": 0.2828,
+     "duration_h_at_design_target": 0.7857,
+     "duration_h_at_upper_test_point": 0.5238
+    },
+    {
+     "u_balance_mg": 1.0,
+     "u_target_rel": 0.01,
+     "min_collected_mass_g": 0.1414,
+     "duration_h_at_design_target": 0.3928,
+     "duration_h_at_upper_test_point": 0.2619
+    },
+    {
+     "u_balance_mg": 10.0,
+     "u_target_rel": 0.005,
+     "min_collected_mass_g": 2.828,
+     "duration_h_at_design_target": 7.857,
+     "duration_h_at_upper_test_point": 5.238
+    },
+    {
+     "u_balance_mg": 10.0,
+     "u_target_rel": 0.01,
+     "min_collected_mass_g": 1.414,
+     "duration_h_at_design_target": 3.928,
+     "duration_h_at_upper_test_point": 2.619
+    }
+   ],
+   "evidence_class": "model-derived"
+  },
+  "rate_of_rise_check": {
+   "relation": "dp/dt = Q R_s T / V, R_s = R / M_Xe (M_Xe = 131.293 g/mol, G&K App. B)",
+   "axes_note": "volume and temperature are example axes (assumed); u(Q)^2 = u(V)^2 + u(T)^2 + u(dp/dt)^2 in relative terms",
+   "rows": [
+    {
+     "volume_L": 0.5,
+     "temperature_K": 293.15,
+     "flow": "design_target",
+     "dp_dt_Pa_per_s": 3.713
+    },
+    {
+     "volume_L": 0.5,
+     "temperature_K": 293.15,
+     "flow": "upper_test_point",
+     "dp_dt_Pa_per_s": 5.569
+    },
+    {
+     "volume_L": 1.0,
+     "temperature_K": 293.15,
+     "flow": "design_target",
+     "dp_dt_Pa_per_s": 1.856
+    },
+    {
+     "volume_L": 1.0,
+     "temperature_K": 293.15,
+     "flow": "upper_test_point",
+     "dp_dt_Pa_per_s": 2.785
+    }
+   ],
+   "evidence_class": "model-derived"
+  },
+  "preheat_purge_xe": {
+   "relation": "Xe per start = t_preheat x mdot_purge (HW-C1-03 rule: the emitter is heated only under Xe flow) ; mission = Xe per start x N_starts",
+   "cases": [
+    {
+     "id": "PH-HC1-60W",
+     "heater_W": 60.0,
+     "t_s": 200.0,
+     "source": "IEPC2017_365 p. 5 (60 W -> about 200 s to about 1460 K emitter)",
+     "evidence_class": "measured"
+    },
+    {
+     "id": "PH-HC1-45W",
+     "heater_W": 45.0,
+     "t_s": 600.0,
+     "source": "IEPC2017_365 p. 5 (45 W -> about 1460 K in about 600 s)",
+     "evidence_class": "measured"
+    },
+    {
+     "id": "PH-JPL-1p5cm",
+     "heater_W": null,
+     "t_s": 1200.0,
+     "source": "IEPC2015_43 p. 4 ('cathode heater turned on for about 20 minutes'; heater power up to 300 W capability, p. 3; the power used is not stated)",
+     "evidence_class": "measured"
+    }
+   ],
+   "N_starts_SC1": 1000.0,
+   "N_starts_SC2": 17737.0,
+   "N_starts_source": "docs/budgets/xe_ledger/xe_ledger_v1.json scenarios SC-1 (nominal_restart) / SC-2 (heavy_restart: one start per orbit over 26,000 h at 180 km); scenario values, not allocations",
+   "rows": [
+    {
+     "case": "PH-HC1-60W",
+     "t_preheat_s": 200.0,
+     "purge_flow": "design_target",
+     "purge_mdot_mg_s": 0.1,
+     "xe_per_start_g": 0.02,
+     "mission_kg_at_N_starts_SC1": 0.02,
+     "mission_kg_at_N_starts_SC2": 0.3547,
+     "heater_energy_Wh_per_start": 3.333
+    },
+    {
+     "case": "PH-HC1-60W",
+     "t_preheat_s": 200.0,
+     "purge_flow": "upper_test_point",
+     "purge_mdot_mg_s": 0.15,
+     "xe_per_start_g": 0.03,
+     "mission_kg_at_N_starts_SC1": 0.03,
+     "mission_kg_at_N_starts_SC2": 0.5321,
+     "heater_energy_Wh_per_start": 3.333
+    },
+    {
+     "case": "PH-HC1-45W",
+     "t_preheat_s": 600.0,
+     "purge_flow": "design_target",
+     "purge_mdot_mg_s": 0.1,
+     "xe_per_start_g": 0.06,
+     "mission_kg_at_N_starts_SC1": 0.06,
+     "mission_kg_at_N_starts_SC2": 1.064,
+     "heater_energy_Wh_per_start": 7.5
+    },
+    {
+     "case": "PH-HC1-45W",
+     "t_preheat_s": 600.0,
+     "purge_flow": "upper_test_point",
+     "purge_mdot_mg_s": 0.15,
+     "xe_per_start_g": 0.09,
+     "mission_kg_at_N_starts_SC1": 0.09,
+     "mission_kg_at_N_starts_SC2": 1.596,
+     "heater_energy_Wh_per_start": 7.5
+    },
+    {
+     "case": "PH-JPL-1p5cm",
+     "t_preheat_s": 1200.0,
+     "purge_flow": "design_target",
+     "purge_mdot_mg_s": 0.1,
+     "xe_per_start_g": 0.12,
+     "mission_kg_at_N_starts_SC1": 0.12,
+     "mission_kg_at_N_starts_SC2": 2.128
+    },
+    {
+     "case": "PH-JPL-1p5cm",
+     "t_preheat_s": 1200.0,
+     "purge_flow": "upper_test_point",
+     "purge_mdot_mg_s": 0.15,
+     "xe_per_start_g": 0.18,
+     "mission_kg_at_N_starts_SC1": 0.18,
+     "mission_kg_at_N_starts_SC2": 3.193
+    }
+   ],
+   "finding": "the preheat time is set by the C-1 heater design; under the purge-while-hot rule it converts directly into Xe per start. Heater power (start-phase bus peak, H2-4) trades against Xe per start (Xe ledger m_startup); with per-orbit restarts this term can reach the kg class",
+   "evidence_class": "model-derived"
+  },
+  "emission_current_upper_bounds": {
+   "relation": "I_d <= P / V_d with all of P in the discharge (bound only; the real I_d is lower and is an H-1 measurement). I_emit = I_d + I_keeper + I_interstage (G&K Eqs. 7.2-24/25 p. 339; LANE19)",
+   "V_d_source": "docs/experiments/hardware/hardware_requirements_v1.json requirements HW-ENV-01 values.V_d_proposed_set_V (PROPOSED there)",
+   "P_source": "docs/experiments/hardware/hardware_requirements_v1.json rfp_basis.power_max_W; A5 allocations_and_requirements 'bus-power design allocation <= 1.30-1.35 kW'",
+   "rows": [
+    {
+     "power_label": "RFP_1500W",
+     "P_W": 1500,
+     "V_d_V": 180,
+     "I_d_upper_bound_A": 8.333
+    },
+    {
+     "power_label": "RFP_1500W",
+     "P_W": 1500,
+     "V_d_V": 200,
+     "I_d_upper_bound_A": 7.5
+    },
+    {
+     "power_label": "RFP_1500W",
+     "P_W": 1500,
+     "V_d_V": 250,
+     "I_d_upper_bound_A": 6.0
+    },
+    {
+     "power_label": "RFP_1500W",
+     "P_W": 1500,
+     "V_d_V": 300,
+     "I_d_upper_bound_A": 5.0
+    },
+    {
+     "power_label": "RFP_1500W",
+     "P_W": 1500,
+     "V_d_V": 305,
+     "I_d_upper_bound_A": 4.918
+    },
+    {
+     "power_label": "A5_alloc_1350W",
+     "P_W": 1350.0,
+     "V_d_V": 180,
+     "I_d_upper_bound_A": 7.5
+    },
+    {
+     "power_label": "A5_alloc_1350W",
+     "P_W": 1350.0,
+     "V_d_V": 200,
+     "I_d_upper_bound_A": 6.75
+    },
+    {
+     "power_label": "A5_alloc_1350W",
+     "P_W": 1350.0,
+     "V_d_V": 250,
+     "I_d_upper_bound_A": 5.4
+    },
+    {
+     "power_label": "A5_alloc_1350W",
+     "P_W": 1350.0,
+     "V_d_V": 300,
+     "I_d_upper_bound_A": 4.5
+    },
+    {
+     "power_label": "A5_alloc_1350W",
+     "P_W": 1350.0,
+     "V_d_V": 305,
+     "I_d_upper_bound_A": 4.426
+    },
+    {
+     "power_label": "A5_alloc_1300W",
+     "P_W": 1300.0,
+     "V_d_V": 180,
+     "I_d_upper_bound_A": 7.222
+    },
+    {
+     "power_label": "A5_alloc_1300W",
+     "P_W": 1300.0,
+     "V_d_V": 200,
+     "I_d_upper_bound_A": 6.5
+    },
+    {
+     "power_label": "A5_alloc_1300W",
+     "P_W": 1300.0,
+     "V_d_V": 250,
+     "I_d_upper_bound_A": 5.2
+    },
+    {
+     "power_label": "A5_alloc_1300W",
+     "P_W": 1300.0,
+     "V_d_V": 300,
+     "I_d_upper_bound_A": 4.333
+    },
+    {
+     "power_label": "A5_alloc_1300W",
+     "P_W": 1300.0,
+     "V_d_V": 305,
+     "I_d_upper_bound_A": 4.262
+    }
+   ],
+   "evidence_class": "model-derived"
+  },
+  "emitter_temperature_points": {
+   "rows": [
+    {
+     "point": "Lafferty fit at 5 A/cm2",
+     "T_K": 1844.5,
+     "source": "LANE19 derived table (CATHODE_INTEGRATION.md section 5)",
+     "evidence_class": "model-derived"
+    },
+    {
+     "point": "Lafferty fit at 10 A/cm2",
+     "T_K": 1915.0,
+     "source": "LANE19 derived table (CATHODE_INTEGRATION.md section 5)",
+     "evidence_class": "model-derived"
+    },
+    {
+     "point": "G&K: > 10 A/cm2 at 1650 degC",
+     "T_K": 1923.15,
+     "source": "DOSSIER lab6.t.goebel_10Acm2 (G&K p. 254)",
+     "evidence_class": "measured"
+    },
+    {
+     "point": "IEPC-2015-43: > 20 A/cm2 at about 1700 degC",
+     "T_K": 1973.15,
+     "source": "IEPC2015_43 p. 1",
+     "evidence_class": "measured"
+    },
+    {
+     "point": "SITAEL: LaB6 operates at about 1900 K",
+     "T_K": 1900.0,
+     "source": "IEPC2017_365 p. 2",
+     "evidence_class": "measured"
+    },
+    {
+     "point": "Joussot: about 1600 degC at 19 A",
+     "T_K": 1873.15,
+     "source": "DOSSIER lab6.t.joussot_19A",
+     "evidence_class": "measured"
+    }
+   ],
+   "operating_span_K": [
+    1844.5,
+    1973.15
+   ],
+   "o2_tolerance_point_K": 1843.15,
+   "o2_tolerance_source": "DOSSIER lab6.env.o2_withstand_1570C / IEPC2015_43 p. 2 (withstands O2 up to 1e-4 Torr at 1570 degC without emission degradation)",
+   "ignition_points_K": {
+    "SITAEL HC1 heating target about 1460 K": 1460.0,
+    "Joussot ignition allowed above about 1300 degC": 1573.15,
+    "Joussot preheat about 1420 degC": 1693.15
+   },
+   "evidence_class": "model-derived (unit conversion of the cited points)"
+  },
+  "echt_context": {
+   "channel_OD_mm": 100.0,
+   "channel_width_mm": 10.0,
+   "inner_channel_wall_diameter_mm": 80.0,
+   "jpl_1p5cm_keeper_OD_mm": 30.0,
+   "note": "published-analog geometry only (CLAUDE.md; IEPC2015_43 p. 4 'keeper has an outer diameter of about 3.0 cm'): at analog scale a 30 mm keeper is smaller than the 80 mm inner channel-wall diameter, so a central bore is not geometrically excluded; the real check needs H-1's inner wall, inner core and coil cross-sections (PENDING H2-1). Never a Vyovrinda dimension.",
+   "evidence_class": "model-derived (arithmetic on analog values)"
+  }
+ },
+ "interface_demands": [
+  {
+   "id": "IFD-01",
+   "from": "H2-2",
+   "to": "H2-1 (docs/hardware/h2/h2_1_hall_chamber_magnet/)",
+   "quantity": "inner-core bore for L-CENTRAL",
+   "value": ">= C-1 keeper OD + clearance (analog keeper OD 30 mm)",
+   "units": "mm",
+   "status": "PENDING C-1 selection and H2-1 core flux cross-section"
+  },
+  {
+   "id": "IFD-02",
+   "from": "H2-1 (docs/hardware/h2/h2_1_hall_chamber_magnet/)",
+   "to": "H2-2",
+   "quantity": "B magnitude and direction at the C-1 orifice and along the keeper, at the operating coil currents",
+   "value": null,
+   "units": "G",
+   "status": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/"
+  },
+  {
+   "id": "IFD-03",
+   "from": "H2-2",
+   "to": "H2-1 (docs/hardware/h2/h2_1_hall_chamber_magnet/)",
+   "quantity": "ferromagnetic-free zone and declared magnetic properties of C-1 materials (HW-MC-12)",
+   "value": "declared list",
+   "units": "-",
+   "status": "PRELIMINARY"
+  },
+  {
+   "id": "IFD-04",
+   "from": "H2-2",
+   "to": "H2-4 PS-C (docs/hardware/h2/h2_4_ppu_bus/)",
+   "quantity": "keeper supply: DC ignition voltage, pulse capability, current limit, continuous current",
+   "value": {
+    "dc_V_min": 150.0,
+    "pulse_V": [
+     300.0,
+     600.0
+    ],
+    "ignition_limit_A": 2.0,
+    "continuous_A": [
+     0.5,
+     3.0
+    ],
+    "running_V": [
+     5.0,
+     35.0
+    ]
+   },
+   "units": "V / A",
+   "status": "PRELIMINARY (analog; C-1 values PENDING)"
+  },
+  {
+   "id": "IFD-05",
+   "from": "H2-2",
+   "to": "H2-4 PS-C (docs/hardware/h2/h2_4_ppu_bus/)",
+   "quantity": "heater supply",
+   "value": {
+    "power_W": [
+     45.0,
+     400.0
+    ],
+    "current_A_max": 13.0
+   },
+   "units": "W / A",
+   "status": "PENDING C-1 selection (analog envelope)"
+  },
+  {
+   "id": "IFD-06",
+   "from": "H2-2",
+   "to": "H2-4 PS-C (docs/hardware/h2/h2_4_ppu_bus/)",
+   "quantity": "bus components booked by C-1",
+   "value": [
+    "cathode_heater (start phases; steady only if not self-heating)",
+    "cathode_keeper (ignition; steady only if not self-heating)"
+   ],
+   "units": "W",
+   "status": "PRELIMINARY (bus_power_boundary_v1 component names)"
+  },
+  {
+   "id": "IFD-07",
+   "from": "H2-2",
+   "to": "H2-4 PS-C (docs/hardware/h2/h2_4_ppu_bus/)",
+   "quantity": "grounding: floating cathode common with a declared resistor to spacecraft common / facility ground; cathode-line dielectric break rating",
+   "value": "E-FLOAT-R; analog cathode-to-ground -10 to -22 V",
+   "units": "V / ohm",
+   "status": "TBD - requires H2-4 charging analysis and facility safety case"
+  },
+  {
+   "id": "IFD-08",
+   "from": "H2-2",
+   "to": "H2-4 PS-C (docs/hardware/h2/h2_4_ppu_bus/)",
+   "quantity": "emission capability to cover",
+   "value": "I_emit = I_d + I_keeper + I_interstage with I_d <= 8.33 A at 180 V (RFP bound); <= 7.5 A at 180 V under the 1.35 kW allocation",
+   "units": "A",
+   "status": "PRELIMINARY (bounds, not predictions)"
+  },
+  {
+   "id": "IFD-09",
+   "from": "H2-2",
+   "to": "H2-5 (docs/hardware/h2/h2_5_thermal_network/)",
+   "quantity": "C-1 heat loads and nodes",
+   "value": {
+    "start_heat_W": [
+     45.0,
+     400.0
+    ],
+    "emitter_K": [
+     1844.5,
+     1973.15
+    ],
+    "analog_flange_K": 500.0,
+    "analog_keeper_K": 600.0,
+    "steady_heat_to_body_W": null
+   },
+   "units": "W / K",
+   "status": "PRELIMINARY; steady heat TBD - requires the C-1 selection and S1a tube thermocouple data"
+  },
+  {
+   "id": "IFD-10",
+   "from": "H2-5 (docs/hardware/h2/h2_5_thermal_network/)",
+   "to": "H2-2",
+   "quantity": "inner-coil hot spot with C-1 radiation (L-CENTRAL); flange boundary temperature",
+   "value": null,
+   "units": "K",
+   "status": "PENDING docs/hardware/h2/h2_5_thermal_network/"
+  },
+  {
+   "id": "IFD-11",
+   "from": "H2-2",
+   "to": "H2-3 (docs/hardware/h2/h2_3_gas_path_plenum/)",
+   "quantity": "cathode Xe branch from the Xe metering split: isolation valves, filter, flow control, transducer, break; never crosses HALL_INLET_Z0",
+   "value": "H22-29..H22-35",
+   "units": "-",
+   "status": "PENDING H2-3 (if the Xe branch is outside H2-3's scope, the integration pass reassigns it)"
+  },
+  {
+   "id": "IFD-12",
+   "from": "H2-2",
+   "to": "H2-6 (docs/hardware/h2/h2_6_diagnostics_fixture/)",
+   "quantity": "cathode diagnostics and flow metrology",
+   "value": [
+    "precision cathode MFC FS about 0.2 mg/s Xe",
+    "start range FS about 1 mg/s Xe",
+    "gravimetric + rate-of-rise calibration rig",
+    "tube thermocouple (HW-C1-09)",
+    "pyrometer view if possible",
+    "RGA port near C-1 (HW-C1-07)",
+    "cathode-line pressure transducer",
+    "keeper voltage oscillation channel (plume-mode detection)",
+    "cathode-to-ground potential",
+    "witness coupons HW-C1-06"
+   ],
+   "units": "-",
+   "status": "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/"
+  },
+  {
+   "id": "IFD-13",
+   "from": "H2-2",
+   "to": "H2-7 (docs/hardware/h2/h2_7_mechanical_bom/)",
+   "quantity": "C-1 mass, envelope and mount",
+   "value": {
+    "analog_mass_g_without_cables": {
+     "SITAEL HC1": 30.0,
+     "SITAEL HC3": 50.0
+    },
+    "mount": "cantilever from the back pole (L-CENTRAL) - vibration check",
+    "disassembly": "HW-C1-08"
+   },
+   "units": "g",
+   "status": "PENDING C-1 selection (IEPC2017_365 pp. 5, 8 analog masses)"
+  },
+  {
+   "id": "IFD-14",
+   "from": "H2-2",
+   "to": "A6 pre-ionizer module ICD (docs/interfaces/preionizer_module/)",
+   "quantity": "C-1 service-line routing past the module slot; C-1 position independent of the module; interstage return to cathode common metered",
+   "value": "H22-05, H22-41",
+   "units": "-",
+   "status": "PENDING docs/interfaces/preionizer_module/"
+  },
+  {
+   "id": "IFD-15",
+   "from": "H2-2",
+   "to": "A6 Xe ledger (docs/budgets/xe_ledger/)",
+   "quantity": "measured mdot_cathode with its uncertainty; t_preheat and purge flow per start",
+   "value": {
+    "mdot_cathode": "H4 output",
+    "u_rel_flow_at_0.10_mg_s_FS0.2_catalog_std": 0.007,
+    "xe_per_start_g": "derived.preheat_purge_xe"
+   },
+   "units": "mg/s, g",
+   "status": "PRELIMINARY (ledger present and verified in base; values closed by H4)"
+  },
+  {
+   "id": "IFD-16",
+   "from": "H2-2",
+   "to": "A6 Phase-1 prereg framework (docs/experiments/phase1_prereg_framework/)",
+   "quantity": "cathode flow and power identical across arms (INV-C1) and logged at every point; cathode state logged at every extinction",
+   "value": "HW-C1-01, HW-C1-05, AOL-CX-06",
+   "units": "-",
+   "status": "PRELIMINARY"
+  },
+  {
+   "id": "IFD-17",
+   "from": "H-1 CI C-1 (hardware definition)",
+   "to": "H2-2",
+   "quantity": "C-1 fixed recorded position; HWQ-09 C-1 type and emission rating",
+   "value": null,
+   "units": "-",
+   "status": "TBD - requires the owner decision HWQ-09"
+  }
+ ],
+ "hard_incompatibility_check": {
+  "verdict": "none found",
+  "checked": [
+   {
+    "item": "central-mount geometry",
+    "finding": "at analog scale a 30 mm keeper fits inside an 80 mm inner channel-wall diameter (ECHT OD 100 mm, width 10 mm); the real check is PENDING H2-1",
+    "evidence_class": "model-derived (analog arithmetic)",
+    "veto": false
+   },
+   {
+    "item": "cathode Xe mass vs the 40 kg requirement",
+    "finding": "the A5 design term 0.10 mg/s gives 5.4 kg (13.5 %); analog diode minimum flows (0.6 mg/s at 2.5-4 A) would give 81 % but belong to other hardware and are not verdict-bearing (veto layer RI-MASS-CATHODE-XE straddles); closes only by measurement (A7 blocker 3)",
+    "evidence_class": "model-derived / measured (analog)",
+    "veto": false
+   },
+   {
+    "item": "purge-while-hot Xe per start",
+    "finding": "0.02-0.18 g per start for the analog preheat times at 0.10-0.15 mg/s; kg-class only with per-orbit restarts (N_starts is TBD) - a design driver for fast preheat, not an incompatibility",
+    "evidence_class": "model-derived",
+    "veto": false
+   },
+   {
+    "item": "oxygen exposure of the emitter",
+    "finding": "no atomic-O or N2 threshold exists (NO_QUANTITATIVE_EVIDENCE); O2 evidence tolerates up to 1e-4 Torr at 1570 degC; cannot be refuted or confirmed without test",
+    "evidence_class": "measured (secondary)",
+    "veto": false
+   },
+   {
+    "item": "magnetic field at the orifice",
+    "finding": "no accessed source gives a limit; axial fields of 100-300 G on axis are standard analog practice",
+    "evidence_class": "measured (analog)",
+    "veto": false
+   },
+   {
+    "item": "electrical return",
+    "finding": "floating cathode common with a resistor tie is published flight practice",
+    "evidence_class": "measured (textbook)",
+    "veto": false
+   },
+   {
+    "item": "emission range vs analog cathode classes",
+    "finding": "the H-1 envelope (bound 8.33 A at 180 V, unknown low end) straddles published classes (SITAEL HC3 1-3 A design; JPL 1.5-cm needs >= 7.5 A without keeper; Joussot self-heats from 5 A): a steady keeper or heater load may be needed at the low end - a bus cost to carry, not a veto",
+    "evidence_class": "measured (analog)",
+    "veto": false
+   },
+   {
+    "item": "flow-measurement capability at 0.10 mg/s",
+    "finding": "catalog-class instruments with Xe calibration reach < 1 % (1 sigma treated) at FS 0.2 mg/s; measurable",
+    "evidence_class": "model-derived",
+    "veto": false
+   }
+  ]
+ },
+ "architecture_changing_blockers_touched": [
+  {
+   "blocker": 3,
+   "text": "Xe/cathode closure",
+   "how": "direct: defines the flow-measurement capability for the 0.10-0.15 mg/s measurement, the spot-mode minimum-flow search (D-CX-03), the purge-while-hot Xe per start and the O-isolation demonstrations (D-CX-01..05); no value is closed here"
+  },
+  {
+   "blocker": 1,
+   "text": "Hall-only sustainment at the actual atmospheric feed state",
+   "how": "indirect: C-1 is identical in every arm; Phase-1 extinction records must separate cathode-limited (plume-mode, keeper oscillation) from discharge extinctions (AOL-CX-06) so that a cathode limit is never read as a sustainment limit"
+  },
+  {
+   "blocker": 2,
+   "text": "incremental RF/ECR benefit after full bus-power accounting",
+   "how": "indirect: cathode_keeper and cathode_heater are common bus components; if an arm's I_d falls below the C-1 self-heating current a steady keeper load appears in that arm only (LANE19) - measured per arm, never assumed"
+  }
+ ],
+ "m16_rows": [
+  {
+   "subsystem": "shielded Xe-fed LaB6 hollow cathode",
+   "role": "primary",
+   "proposed_state": "BLOCKED",
+   "blocking_item": "HWQ-09: C-1 type and emission rating (owner confirmation + selection) - fixes keeper OD, heater power, ignition flow and self-heating current used by every PENDING row here",
+   "rollup_category": "hardware-definition blocker",
+   "note": "the architecture-level closure (A5 risk 3) follows only from the H4 measurement; not a blocker of H-1 build"
+  },
+  {
+   "subsystem": "Xe metering (splits to ignition/transition feed and cathode feed)",
+   "role": "contributes the cathode branch and flow-measurement specification",
+   "proposed_state": "RUNNING",
+   "blocking_item": null,
+   "rollup_category": null
+  },
+  {
+   "subsystem": "sensors/diagnostics",
+   "role": "contributes C-1 diagnostics and flow metrology demands (H2-6 owns)",
+   "proposed_state": "RUNNING",
+   "blocking_item": null,
+   "rollup_category": null
+  },
+  {
+   "subsystem": "PPU/power distribution",
+   "role": "contributes keeper/heater supply demands (H2-4 owns)",
+   "proposed_state": "RUNNING",
+   "blocking_item": null,
+   "rollup_category": null
+  },
+  {
+   "subsystem": "thermal control",
+   "role": "contributes C-1 heat loads and nodes (H2-5 owns)",
+   "proposed_state": "RUNNING",
+   "blocking_item": null,
+   "rollup_category": null
+  },
+  {
+   "subsystem": "mechanical/structural interfaces",
+   "role": "contributes the C-1 mount and envelope (H2-7 owns)",
+   "proposed_state": "RUNNING",
+   "blocking_item": null,
+   "rollup_category": null
+  }
+ ],
+ "h3_procurement_inputs": [
+  {
+   "id": "H3-C1-01",
+   "item": "C-1 LaB6 hollow cathode unit (+ spare; a sacrificial unit if the owner wants a destructive O-exposure test)",
+   "long_lead": true,
+   "spec_level_needed_to_order": [
+    "emission range covering I_emit up to the 8.33 A bound plus keeper/interstage (HW-C1-02), with the lowest self-heating current the design allows (reported)",
+    "spot-mode minimum flow vs current curve on Xe (supplier data as reference)",
+    "heater power and time to ignition; keeper ignition voltage with heater",
+    "keeper OD/length/mass envelope (feeds H2-1 bore, H2-7)",
+    "keeper/orifice/insulator material list (O compatibility, magnetic properties)",
+    "tube thermocouple point and pyrometer view (HW-C1-09); disassemblable (HW-C1-08)"
+   ],
+   "reference_data": "SITAEL HC1/HC3 (IEPC2017_365), JPL 0.63/1.5-cm LaB6 (IEPC2015_43), Joussot laboratory LaB6 (DOSSIER) - published reference only, no supplier contact"
+  },
+  {
+   "id": "H3-C1-02",
+   "item": "cathode precision MFC (FS about 0.2 mg/s Xe) and start-range MFC (FS about 1 mg/s Xe), Xe-calibrated",
+   "long_lead": false,
+   "spec_level_needed_to_order": [
+    "Xe calibration by the manufacturer at the stated reference conditions",
+    "accuracy class +/-(0.5 % Rd + 0.1 % FS) or better",
+    "repeatability < 0.2 % Rd",
+    "zero temperature coefficient stated",
+    "vacuum-rated outlet, metal seals preferred, He leak spec stated"
+   ],
+   "reference_data": "BRONKHORST_ELFLOW_SELECT catalog (reference only; not a selection)"
+  },
+  {
+   "id": "H3-C1-03",
+   "item": "gravimetric calibration kit (small Xe cylinder, balance, fixture) and a constant-volume calibrator",
+   "long_lead": false,
+   "spec_level_needed_to_order": [
+    "balance capacity above cylinder + fixture and readability per derived.gravimetric_calibration",
+    "calibrator volume known to the uncertainty budget"
+   ],
+   "reference_data": "W4 REF-SNYDER2017 practice"
+  },
+  {
+   "id": "H3-C1-04",
+   "item": "cathode-branch valves, filter, dielectric break, pressure transducer",
+   "long_lead": false,
+   "spec_level_needed_to_order": [
+    "Xe service, cleanliness class TBD (H2-3)",
+    "break voltage PENDING H2-4"
+   ],
+   "reference_data": "none accessed"
+  },
+  {
+   "id": "H3-C1-05",
+   "item": "keeper (DC + pulse) and heater supplies (PS-C)",
+   "long_lead": false,
+   "spec_level_needed_to_order": [
+    "IFD-04, IFD-05"
+   ],
+   "reference_data": "IEPC2017_365 p. 4 lab supplies (reference only)"
+  }
+ ],
+ "h4_test_inputs": [
+  {
+   "closes": "H22-10/H22-11/H22-12 (field at the orifice)",
+   "stage": "S1a",
+   "measure": "B map at the C-1 orifice at the operating coil currents (M0); C-1 characterization inside that field"
+  },
+  {
+   "closes": "H22-17/H22-25 (self-heating current, keeper mode)",
+   "stage": "S1a",
+   "measure": "C-1 minimum discharge current without keeper and heater; keeper current needed below it"
+  },
+  {
+   "closes": "H22-16/H22-21/H22-22/H22-23 (heater, keeper)",
+   "stage": "S1a",
+   "measure": "heater power and time to ignition; keeper ignition voltage; start log per start (AOL-CX-02)"
+  },
+  {
+   "closes": "H22-43..H22-49 (flow measurement)",
+   "stage": "S1a",
+   "measure": "gravimetric Xe calibration of both ranges installed; rate-of-rise cross-check; zero vs orientation and temperature"
+  },
+  {
+   "closes": "H22-50 (mdot_cathode)",
+   "stage": "S1a + Phase 1",
+   "measure": "spot-mode minimum Xe flow vs emission current with an atmospheric anode feed (D-CX-03); plume-mode onset by keeper-voltage oscillation"
+  },
+  {
+   "closes": "H22-38 (cathode-to-ground potential)",
+   "stage": "S1 / every reading",
+   "measure": "cathode-to-ground and coupling voltage (HW-C1-05)"
+  },
+  {
+   "closes": "H22-01 position reproducibility",
+   "stage": "S1b",
+   "measure": "C-1 position after remount; daily Xe reference (AOL-CX-01)"
+  },
+  {
+   "closes": "H22-06/H22-07/H22-08 (shielding)",
+   "stage": "Phase 1",
+   "measure": "near-cathode RGA partial pressures, hot-emitter O-exposure log, emitter/tube temperature, drift of the daily Xe reference"
+  },
+  {
+   "closes": "H22-51 (Xe per start)",
+   "stage": "S1a + Phase 1",
+   "measure": "integrated Xe per start per phase (purge, conditioning, ignition)"
+  },
+  {
+   "closes": "H22-09 (keeper material)",
+   "stage": "post-campaign",
+   "measure": "keeper/insert/orifice inspection (HW-C1-08) and coupons (HW-C1-06)"
+  }
+ ],
+ "milestone": {
+  "A": "supported: C-1 integration is conditionally closable - 'the architecture holds provided C-1 sustains spot mode at <= the Xe flow the ledger can afford, keeps its emission/keeper drift inside the pre-registered band under O-bearing operation, and restarts within the keeper capability'",
+  "B": "needs the H4 measurements (D-CX-01..04), the H2-1 field at the orifice, the C-1 selection (HWQ-09) and the Xe ledger closed with the measured flow",
+  "C": "needs the flight C-1 design (heater/keeper qualification, start cycles G05, wear/life G04), the flight flow restrictor sized from measurement, thermal and vibration closure of the mount"
+ },
+ "owner_questions": [
+  {
+   "id": "H22-OQ-01",
+   "q": "Confirm L-CENTRAL as the PRELIMINARY C-1 location (L-EXTERNAL as the alternative if H2-1 cannot provide the inner-core bore)."
+  },
+  {
+   "id": "H22-OQ-02",
+   "q": "Require a pulsed keeper ignition capability (300-600 V) in PS-C?"
+  },
+  {
+   "id": "H22-OQ-03",
+   "q": "Two isolation valves in series on the flight cathode branch?"
+  },
+  {
+   "id": "H22-OQ-04",
+   "q": "Resistor value and switching for the cathode-common tie to facility ground / spacecraft common."
+  },
+  {
+   "id": "H22-OQ-05",
+   "q": "Flow step (PROPOSED 0.005 mg/s) and stopping rule for the spot-mode minimum-flow search."
+  },
+  {
+   "id": "H22-OQ-06",
+   "q": "Purge flow and purge duration rule before heating (sets Xe per start)."
+  },
+  {
+   "id": "H22-OQ-07",
+   "q": "Keeper material (graphite vs an O-resistant alternative) given the O-chemistry warning."
+  },
+  {
+   "id": "H22-OQ-08",
+   "q": "Adopt the PROPOSED emitter temperature floor of 1843 K during O-bearing operation?"
+  }
+ ],
+ "parallel_lanes_referenced": [
+  "docs/hardware/h2/h2_1_hall_chamber_magnet/",
+  "docs/hardware/h2/h2_3_gas_path_plenum/",
+  "docs/hardware/h2/h2_4_ppu_bus/",
+  "docs/hardware/h2/h2_5_thermal_network/",
+  "docs/hardware/h2/h2_6_diagnostics_fixture/",
+  "docs/hardware/h2/h2_7_mechanical_bom/",
+  "docs/interfaces/preionizer_module/",
+  "docs/budgets/subsystem_maturity/"
+ ]
+}
