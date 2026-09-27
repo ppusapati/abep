@@ -947,6 +947,11 @@
      "workflow_run": "wf_c901e2cf-537",
      "workflow_key": "HW",
      "reason": "control C5: adopt AO/lifetime provisions and magnet/coil requirements into H-1"
+    },
+    {
+     "workflow_run": "wf_fa553f8c-24f",
+     "workflow_key": "HW",
+     "reason": "A3: bounded W3 integration review (N1/N3/W4 provisions) and ordered re-pin chain HW -> INSTR -> AOLIFE -> S1GATE; no-op allowed"
     }
    ]
   },
@@ -959,6 +964,11 @@
      "workflow_run": "wf_a4b5dac6-36f",
      "workflow_key": "INSTR",
      "reason": "C5: W4 adopts AO/MCQ instrument provisions; AO register re-pins; S1 report regenerated (ordered chain)"
+    },
+    {
+     "workflow_run": "wf_fa553f8c-24f",
+     "workflow_key": "INSTR",
+     "reason": "A3: bounded W3 integration review (N1/N3/W4 provisions) and ordered re-pin chain HW -> INSTR -> AOLIFE -> S1GATE; no-op allowed"
     }
    ]
   },
@@ -991,6 +1001,11 @@
      "workflow_run": "wf_a4b5dac6-36f",
      "workflow_key": "AOLIFE",
      "reason": "C5: W4 adopts AO/MCQ instrument provisions; AO register re-pins; S1 report regenerated (ordered chain)"
+    },
+    {
+     "workflow_run": "wf_fa553f8c-24f",
+     "workflow_key": "AOLIFE",
+     "reason": "A3: bounded W3 integration review (N1/N3/W4 provisions) and ordered re-pin chain HW -> INSTR -> AOLIFE -> S1GATE; no-op allowed"
     }
    ]
   },
@@ -1018,6 +1033,11 @@
      "workflow_run": "wf_a4b5dac6-36f",
      "workflow_key": "S1GATE",
      "reason": "C5: W4 adopts AO/MCQ instrument provisions; AO register re-pins; S1 report regenerated (ordered chain)"
+    },
+    {
+     "workflow_run": "wf_fa553f8c-24f",
+     "workflow_key": "S1GATE",
+     "reason": "A3: bounded W3 integration review (N1/N3/W4 provisions) and ordered re-pin chain HW -> INSTR -> AOLIFE -> S1GATE; no-op allowed"
     }
    ]
   },
