@@ -7,7 +7,7 @@
  "additionalProperties": false,
  "required": ["schema", "id", "follow_on", "trigger", "status", "created", "base_commit", "generated_by", "question",
               "answer", "architectures", "dimensions", "status_definitions", "status_counts", "rfp_limits_as_recorded",
-              "inputs", "external_blockers", "cells", "risk_indicators", "common_mode_vs_architecture_specific",
+              "inputs", "pin_provenance_notes", "external_blockers", "cells", "risk_indicators", "common_mode_vs_architecture_specific",
               "lane24_evaluation", "veto_candidates", "eliminated_within_tested_envelope", "not_used", "milestones",
               "proposed_for_owner", "open_questions_for_owner", "note"],
  "properties": {
@@ -44,10 +44,20 @@
    "properties": {"path": {"$ref": "#/$defs/text"}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
                   "lane": {"$ref": "#/$defs/text"}, "lane_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
                   "role": {"$ref": "#/$defs/text"}}}},
-  "external_blockers": {"type": "object", "additionalProperties": {
-   "type": "object", "additionalProperties": false, "required": ["path", "in_base_commit", "note"],
-   "properties": {"path": {"$ref": "#/$defs/text"}, "in_base_commit": {"type": "boolean"},
+  "pin_provenance_notes": {"type": "array", "items": {
+   "type": "object", "additionalProperties": false, "required": ["lane", "lane_commit", "note"],
+   "properties": {"lane": {"$ref": "#/$defs/text"}, "lane_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
                   "note": {"$ref": "#/$defs/text"}}}},
+  "external_blockers": {"type": "object", "additionalProperties": {
+   "type": "object", "additionalProperties": false,
+   "required": ["path", "in_base_commit", "lane_commit", "verification", "note", "read"],
+   "properties": {"path": {"$ref": "#/$defs/text"}, "in_base_commit": {"type": "boolean"},
+                  "lane_commit": {"anyOf": [{"type": "null"}, {"type": "string", "pattern": "^[0-9a-f]{40}$"}]},
+                  "verification": {"$ref": "#/$defs/text"}, "note": {"$ref": "#/$defs/text"},
+                  "read": {"type": "array", "items": {
+                   "type": "object", "additionalProperties": false, "required": ["file", "path", "value"],
+                   "properties": {"file": {"$ref": "#/$defs/text"}, "path": {"$ref": "#/$defs/text"},
+                                  "value": {"type": "string"}}}}}}},
   "cells": {"type": "object", "additionalProperties": false, "required": ["hall_only", "rf_hall", "ecr_hall"],
             "properties": {"hall_only": {"$ref": "#/$defs/arch_cells"}, "rf_hall": {"$ref": "#/$defs/arch_cells"},
                            "ecr_hall": {"$ref": "#/$defs/arch_cells"}}},
@@ -175,6 +185,7 @@
     "evidence_levels": {"type": "array", "items": {"type": "integer", "minimum": 1, "maximum": 7}},
     "lane24_basis": {"anyOf": [{"type": "null"},
                                {"enum": ["measurement_similar_hardware", "engineering_estimate", "assumption"]}]},
+    "lane24_basis_note": {"$ref": "#/$defs/text"},
     "source_refs": {"type": "array", "minItems": 1, "items": {
      "type": "object", "required": ["file", "path"],
      "properties": {"file": {"$ref": "#/$defs/text"}, "path": {"$ref": "#/$defs/text"}}}},

@@ -29,8 +29,9 @@ Rules it implements (DRAFT for owner review):
   modified here) returns a binding-gate FAIL for that architecture on the mapped gate. VETO_CANDIDATEs and the risk
   indicators that map onto a lane-24 metric are submitted to that evaluator as hard_gate_evidence_v1 items.
 - No Hall transport closure is used (credible set empty, gate 3 FAIL); no screening candidate; no winner; no ranking.
-- The valve-outlet feed state (lane_16_feed_envelope) and the compressor bus draw (upstream ICD, lane_33_upstream_icd,
-  not verified) are never filled: they appear only as TBD blockers.
+- The valve-outlet feed state (lane_16_feed_envelope) and the compressor bus draw (upstream ICD lane_33_upstream_icd
+  offers only a repository model interface; lane_20 keeps the load TBD) are never filled: they appear only as TBD
+  blockers.
 
 Pure: standard library plus the in-repository abep_sim.hard_gates (imported lazily, after the pins are checked).
 Not wired into archengine; goldens do not move.
@@ -53,7 +54,7 @@ SCHEMA_FILE = os.path.join(HERE, "veto_layer_v1.schema.json")
 REL_SELF = "docs/architecture_comparison/veto_layer/build_veto_layer.py"
 
 SCHEMA_ID = "veto_layer_v1"
-BASE_COMMIT = "49604b6eee234314951b9cfee1181842bf604491"
+BASE_COMMIT = "bad6ea0d6b94c343082dbbc5c0740310e0e7726d"
 CREATED = "2026-09-26"
 ARCHITECTURES = ("hall_only", "rf_hall", "ecr_hall")
 STATUSES = ("VETO_CANDIDATE", "NO_VETO_WITHIN_EVIDENCE", "UNDETERMINED")
@@ -70,10 +71,12 @@ class InputError(RuntimeError):
 
 
 # ---------------------------------------------------------------------------------------------------------------------
-# Input pins: every file read, with the lane that produced it (merged, verified at BASE_COMMIT)
+# Input pins: every file read, with the lane commit that produced it. All are merged at BASE_COMMIT EXCEPT the four
+# lane_15_thermal_life files, which are pinned at the lane_15 repair commit 66ff83b (not in BASE_COMMIT, and not recorded
+# as verified in the registry or trigger ledger at BASE_COMMIT; see PIN_PROVENANCE_NOTES).
 # ---------------------------------------------------------------------------------------------------------------------
 _L21 = ("lane_21_mass_bom", "41acbb9e8d43f68925b23d3449b83f28acddd7d1")
-_L15 = ("lane_15_thermal_life", "d2325c8da35abfa5d2b89c8b4c53bdf845ff9391")
+_L15 = ("lane_15_thermal_life", "66ff83be5506097025905332b0b28e9e3fe4e19e")   # repair commit, NOT in BASE_COMMIT
 _L24 = ("lane_24_hard_gates", "08b9f9bf32a0b34142338b2003f2b2cf02ecaacc")
 _L19 = ("lane_19_cathode_integration", "eff15f85c53244556b1a9a9274fb7ffe80e9fa90")
 _L20 = ("lane_20_ppu_magnet", "f7c226848d85fedb70c03bae9971be3b2bbde1fe")
@@ -81,6 +84,9 @@ _L22 = ("lane_22_scaling", "c43d2d6ebddc244dc02d96ffbe7d52526de905c7")
 _L09 = ("lane_09_hall_sustainment", "f458811a5720a20216379dd1f701a54d21faf2b6")
 _L07 = ("lane_07_rf_evidence", "336d548042359f8559d0bf50a409a976c0158fc2")
 _L08 = ("lane_08_ecr_evidence", "a85fd592618cb15a02f14123659a0698db90df19")
+_L32 = ("lane_32_wall_life", "f3c924a791a01f69e1a9165a74b88c1446e203d3")
+_L10 = ("lane_10_cathode_dossier", "1b6fc10ab11798dce1e5ed3079cae1210fbb8d2d")
+_L33 = ("lane_33_upstream_icd", "ced4aa08c4f19455a7b0c70b50a47d1f8e7727fe")
 _REPO = ("repository (not a lane; CLAUDE.md next-work 1)", BASE_COMMIT)
 
 PINS: tuple = (
@@ -91,16 +97,16 @@ PINS: tuple = (
      "items, lower bounds, plausibility screen (G3 FAIL-side feed)"),
     ("docs/architecture_comparison/mass_bom/MASS_BOM.md",
      "e050e2fb445ca613fac970b0a0cf2664a2f021dab381c5cce11b71d9e2a7387e", _L21, "mass accounting rules"),
-    ("abep_sim/thermal_life.py", "c1ddd11f9927164b3e37e1709e1852dd42f2e37395dab7d0de8f439409098337", _L15,
+    ("abep_sim/thermal_life.py", "dce2048233746ecc596866c1d561c8828f820c7960b9778db0d6d66a9c86d83c", _L15,
      "thermal/life framework (no Vyovrinda result exists; read for provenance)"),
     ("abep_sim/thermal.py", "3ad94b716dd78e863ad441a78ffdc7fd3ef38b2764a7aabaace6876a2f1444fb", _REPO,
      "legacy Phase-4 lumped thermal network with uncited dataclass defaults; NOT used as evidence"),
-    ("schemas/thermal_life/limits_v1.json", "4ebe30cb3d70c4bd1f0a4097526fe4884e41e1da1b3c5c51779918a7d6297114",
+    ("schemas/thermal_life/limits_v1.json", "0df363f76dcb6efcef41bc0a07e1775b6255c2c9d84b185228862958ef827dbb",
      _L15, "sourced / TBD thermal and life limit records"),
-    ("schemas/thermal_life/inputs_v1.json", "3a6289bf7317f81ce76427a4ff69a6d35f19da862cbef158dcecbaf7c5771b60",
+    ("schemas/thermal_life/inputs_v1.json", "937e5c643ef6d1b567319ad788915cd8e9f9b6ab78fc8df91454bdb300f0777f",
      _L15, "thermal/life input contract (what each component needs, and from where)"),
     ("docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md",
-     "273549ab336024701c46626c177ea33730212b447806420b464e1399884e903e", _L15, "thermal/life framework document"),
+     "c07c9441505669ee6d4c3fcd3cf54d2e03dc749ea991f99098e64c193d6f134e", _L15, "thermal/life framework document"),
     ("abep_sim/hard_gates.py", "a36fe3c9065291f0fe5be3f17e179d5b691f00c013f7f8ef299fa89db896dda8", _L24,
      "lane-24 evaluator (called, never modified)"),
     ("docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
@@ -141,20 +147,95 @@ PINS: tuple = (
     ("hallthruster_bridge/ensemble/transport_ensemble_v0.json",
      "2d5069a3382ab667362befeeb5a737261f70a279d19cb89ee79cb61ae35ba08b", _REPO,
      "transport ensemble (admitted members: none; read-only)"),
+    ("docs/evidence/wall_life/sputter_yield_db_v1.json",
+     "315fbd44da2ee16246edb95830be09e0f05b9237cd5ca0a4c86a02a7e25bfffa", _L32,
+     "wall-life evidence DB (read for its no-design-life statement; blocker record)"),
+    ("docs/evidence/cathode/cathode_evidence_v1.json",
+     "050060204e443d5583c307becadaab55a9f213d406ff4454be856bca21249110", _L10,
+     "cathode dossier (baseline decision; numeric parameters enter via lane 19)"),
+    ("schemas/interfaces/upstream_icd_v1.json",
+     "2437d125060f2f24da06ac33b22220483f70b411033c91682cdffb5f01310850", _L33,
+     "upstream ICD (compressor electrical-input field status; the bus draw stays TBD)"),
 )
 
-# Blocking lanes named in the output that this layer does NOT read (referenced by id and path only).
-EXTERNAL_BLOCKERS = {
-    "lane_32_wall_life": {"path": "docs/evidence/wall_life/", "in_base_commit": False,
-                          "note": "wall erosion / sputter-yield evidence; single-lens-v1"},
-    "lane_33_upstream_icd": {"path": "schemas/interfaces/", "in_base_commit": False,
-                             "note": "upstream ICD (compressor bus draw, delivered feed state); single-lens-v1, not "
-                                     "verified"},
-    "lane_10_cathode_dossier": {"path": "docs/evidence/cathode/", "in_base_commit": False,
-                                "note": "cathode dossier; consumed by lane 19"},
-    "lane_16_feed_envelope": {"path": "docs/architecture_comparison/feed_envelope/", "in_base_commit": True,
-                              "note": "valve-outlet feed state is TBD there; never filled here"},
+# Blocking lanes named in the output. Lanes 10, 32 and 33 are merged at BASE_COMMIT and recorded as two-lens-v2 with the
+# second lens passed in docs/orchestration/lane_registry_v1.json at that commit (lane_32 verified_pin f3c924a); their
+# files are pinned above and read by external_blockers() only to record WHY they do not decide any cell.
+_EXTERNAL_BLOCKERS_STATIC = {
+    "lane_32_wall_life": {
+        "path": "docs/evidence/wall_life/", "in_base_commit": True, "lane_commit": _L32[1],
+        "verification": "two-lens-v2, second lens passed; verified_pin f3c924a (docs/orchestration/lane_registry_v1.json "
+                        "at base bad6ea0)",
+        "note": "wall erosion / sputter-yield evidence DB; pinned and read here. Not used as a life value because the "
+                "DB itself states that no N/O design-life or erosion-rate number can be derived from this version "
+                "(quoted in 'read'); it names the evidence a Hall-channel life bound still needs."},
+    "lane_33_upstream_icd": {
+        "path": "schemas/interfaces/", "in_base_commit": True, "lane_commit": _L33[1],
+        "verification": "two-lens-v2, second lens passed (docs/orchestration/lane_registry_v1.json at base bad6ea0)",
+        "note": "upstream ICD; pinned and read here. The compressor electrical input field lists a repository model "
+                "producer (abep_sim.compressor, model-derived, validity domain D-DRAGCOMP, uncertainty TBD), i.e. a "
+                "model interface, not a sourced or measured load; lane_20 electrical closure keeps the compressor load TBD "
+                "(its code defaults are unsourced). This layer therefore keeps the compressor bus draw TBD and never "
+                "fills it (lane brief)."},
+    "lane_10_cathode_dossier": {
+        "path": "docs/evidence/cathode/", "in_base_commit": True, "lane_commit": _L10[1],
+        "verification": "two-lens-v2, second lens passed, verified commit unchanged (docs/orchestration/"
+                        "lane_registry_v1.json at base bad6ea0)",
+        "note": "cathode dossier; pinned and read here. Its numeric cathode parameters enter this layer through "
+                "lane_19_cathode_integration (which consumes the dossier); the dossier itself is cited for the "
+                "baseline decision and the open uncertainty / hardware-test items (U.., G..) named in the cells."},
+    "lane_16_feed_envelope": {
+        "path": "docs/architecture_comparison/feed_envelope/", "in_base_commit": True, "lane_commit": None,
+        "verification": "not read by this layer",
+        "note": "valve-outlet feed state is TBD there; never filled here"},
 }
+
+
+PIN_PROVENANCE_NOTES = [
+    {"lane": _L15[0], "lane_commit": _L15[1],
+     "note": "The four lane_15 files (abep_sim/thermal_life.py, schemas/thermal_life/limits_v1.json, inputs_v1.json, "
+             "docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md) are pinned at the lane_15 repair commit 66ff83b (G11 "
+             "wall-flux admission gate, on top of 1fb82f3). That commit is NOT in base bad6ea0, and at base neither "
+             "docs/orchestration/lane_registry_v1.json nor trigger_ledger_v2.jsonl records it as verified: the "
+             "T_VETO_LAYER claim records the verified lane_15 identity as d2325c8da3. Until the lane_15 repair is "
+             "verified and merged, this layer does NOT rest on verified lane_15 inputs, and it must be merged only "
+             "after that repair (merge order: lane_15 repair, then this layer). The branch carries the lane_15 repair "
+             "commits only so that the pins resolve; this lane does not author them. No cell status depends on the "
+             "difference from d2325c8da3 (the G11 gate only tightens the hall_discharge wall-flux contract)."},
+]
+
+
+def external_blockers(inputs: dict) -> dict:
+    """Blocking-lane records, with the statements read from their pinned files (why none decides a cell)."""
+    WL = "docs/evidence/wall_life/sputter_yield_db_v1.json"
+    CA = "docs/evidence/cathode/cathode_evidence_v1.json"
+    IC = "schemas/interfaces/upstream_icd_v1.json"
+    EL = "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json"
+    wl, ca, ic, ecl = inputs[WL], inputs[CA], inputs[IC], inputs[EL]
+    nodl = _get(wl, ["hard_statements", "no_design_life_from_this_version"], WL)
+    _need("No N/O design-life or erosion-rate number is supported" in nodl,
+          f"{WL}: expected no-design-life statement changed")
+    atm = _get(ca, ["baseline_decision", "atmospheric_gas_fed_cathode_operation"], CA)
+    base_c = _get(ca, ["baseline_decision", "system_baseline_cathode"], CA)
+    xf = _get(ic, ["$defs", "IF-A3", "properties", "electrical_power_W", "x-field"], IC)
+    cp_load = _entry(_get(ecl, ["components", "compressor", "entries"], EL), "CP-LOAD", EL)
+    _need(cp_load["evidence_class"] == "tbd", f"{EL}: CP-LOAD is no longer TBD; re-review this layer")
+    out = copy.deepcopy(_EXTERNAL_BLOCKERS_STATIC)
+    out["lane_32_wall_life"]["read"] = [
+        {"file": WL, "path": "hard_statements.no_design_life_from_this_version", "value": nodl}]
+    out["lane_10_cathode_dossier"]["read"] = [
+        {"file": CA, "path": "baseline_decision.system_baseline_cathode", "value": base_c},
+        {"file": CA, "path": "baseline_decision.atmospheric_gas_fed_cathode_operation", "value": atm}]
+    out["lane_33_upstream_icd"]["read"] = [
+        {"file": IC, "path": "$defs.IF-A3.properties.electrical_power_W.x-field.status", "value": xf["status"]},
+        {"file": IC, "path": "$defs.IF-A3.properties.electrical_power_W.x-field.evidence_class_current",
+         "value": xf["evidence_class_current"]},
+        {"file": IC, "path": "$defs.IF-A3.properties.electrical_power_W.x-field.uncertainty",
+         "value": xf["uncertainty"]},
+        {"file": EL, "path": "components.compressor.entries[CP-LOAD].evidence_class", "value": cp_load["evidence_class"]},
+    ]
+    out["lane_16_feed_envelope"]["read"] = []
+    return out
 
 
 def _sha256_file(path: str) -> str:
@@ -299,15 +380,17 @@ def eligible_bounds(dim: str, arch: str, inputs: dict, cinfo: dict) -> list:
     if dim == "mass":
         bom = inputs["docs/architecture_comparison/mass_bom/mass_bom_v1.json"]
         scr = _get(bom, ["plausibility_screen", "architectures", arch], "mass_bom_v1.json")
+        # Only a lower bound that the mass BOM itself declares G3 FAIL-side evidence and that exceeds the limit counts.
+        # A partial lower bound below the limit shows only the absence of failing-side evidence (items without a
+        # lower bound are missing), so it is NOT added: it can never turn a cell into NO_VETO_WITHIN_EVIDENCE.
         if scr["items_with_lower_bound"]:
             lb = scr["cbe_margin_free_lower_bound_kg"]
             thr = cinfo["G3.mass_mev"]["threshold"]
-            out.append({"from": "docs/architecture_comparison/mass_bom/mass_bom_v1.json", "id": f"mass_bom:{arch}",
-                        "criterion": "G3.mass_mev", "basis": "per-item sourced lower bounds (mass_bom screen)",
-                        "value": {"kind": "lower_bound", "value": lb},
-                        "side": "fail" if (scr["verdict"] == "EXCEEDS_LIMIT_MARGIN_FREE" and scr["g3_fail_evidence"]
-                                           and lb > thr) else "not_fail",
-                        "evidence_item": None})
+            if scr["verdict"] == "EXCEEDS_LIMIT_MARGIN_FREE" and scr["g3_fail_evidence"] and lb > thr:
+                out.append({"from": "docs/architecture_comparison/mass_bom/mass_bom_v1.json",
+                            "id": f"mass_bom:{arch}", "criterion": "G3.mass_mev",
+                            "basis": "per-item sourced lower bounds (mass_bom screen)",
+                            "value": {"kind": "lower_bound", "value": lb}, "side": "fail", "evidence_item": None})
     return out
 
 
@@ -378,8 +461,11 @@ def risk_indicators(inputs: dict, cinfo: dict) -> list:
                                "range": [_r(mass_lim - fmax["xe_kg_over_min_firing"]),
                                          _r(mass_lim - fmin["xe_kg_over_min_firing"])],
                                "unit": "kg",
-                               "fraction_of_limit": [_r(fmin["xe_kg_over_min_firing"] / mass_lim),
-                                                     _r(fmax["xe_kg_over_min_firing"] / mass_lim)],
+                               "cathode_xe_consumption_fraction_of_limit": [
+                                   _r(fmin["xe_kg_over_min_firing"] / mass_lim),
+                                   _r(fmax["xe_kg_over_min_firing"] / mass_lim)],
+                               "consumption_fraction_relation": "cathode Xe over the minimum firing / G3 threshold "
+                                                                "(consumption share, not a margin)",
                                "relation": "margin = G3 threshold - xe_kg_over_min_firing (reference-flow extremes)"},
         "direction": "straddles_limit",
         "evidence_class": "inferred (arithmetic on measured / developer-stated flows of other cathodes)",
@@ -427,7 +513,7 @@ def risk_indicators(inputs: dict, cinfo: dict) -> list:
                                    "(never verdict-bearing); not of architecture scope: wall material, magnetic "
                                    "shielding (E09) and channel design are Vyovrinda design levers",
         "to_become_verdict_bearing": "Vyovrinda-geometry wall-erosion evidence: N/O sputter yields on the wall grade "
-                                     "(lane_32_wall_life, not in base), wall_life_trustworthy maps from an ADMITTED "
+                                     "(lane_32_wall_life: no N/O design-life number derivable from DB v1), wall_life_trustworthy maps from an ADMITTED "
                                      "closure (gate 3), or an endurance test of the Vyovrinda channel",
         "architecture_modulation": "pre-ionization may change the ion species/energy mix reaching the walls "
                                    "(interstage, TR-16): TBD; the channel itself is common",
@@ -448,6 +534,11 @@ def risk_indicators(inputs: dict, cinfo: dict) -> list:
         "source_refs": [{"file": HS, "path": "entries[E07].quantities[steady duration before first flame-out]",
                          "source_id": q_ox[0]["source"], "locator": q_ox[0]["locator"]},
                         {"file": HS, "path": "entries[E06].observations.erosion"}],
+        "lane24_basis_note": "lane 24 has no level-5 basis. measurement_similar_hardware is the closest "
+                             "non-verdict basis in kind (a measured observation on other hardware), but its reason "
+                             "text ('EVIDENCE.md level 3') overstates this item: the source entry is level 5 "
+                             "(second-hand report via a review). Either label is non-verdict-bearing; the outcome "
+                             "is unchanged.",
         "why_not_verdict_bearing": "different hardware and anode material, second-hand report (level 5); an anode "
                                    "material/design change is a design lever, so the observation has no architecture "
                                    "scope",
@@ -491,6 +582,11 @@ def risk_indicators(inputs: dict, cinfo: dict) -> list:
         "source_refs": [{"file": EC, "path": "entries[ECR-E155]", "doi_or_url": e155["source"]["doi_or_url"],
                          "locator": e155["source"]["locator"]},
                         {"file": HS, "path": "entries[E09].observations.cathode"}],
+        "lane24_basis_note": "measurement_similar_hardware is the closest non-verdict lane-24 basis in kind, but "
+                             "its reason text ('EVIDENCE.md level 3') overstates this item: ECR-E155 is a secondary "
+                             "citation with no evidence level stated, and the lane-09 E09 cathode observation is a "
+                             "review's report. The item is treated as level 5-class (secondary); it is not submitted "
+                             "to the evaluator (no lane-24 metric) and is non-verdict-bearing under either label.",
         "why_not_verdict_bearing": "secondary citations on other cathodes and feed compositions; no hours-to-failure; "
                                    "the emitter environment of the Xe-fed baseline is unknown (attenuation TBD)",
         "to_become_verdict_bearing": "emitter partial pressures of O/O2/N2 in the Vyovrinda configuration and a "
@@ -636,13 +732,21 @@ def risk_indicators(inputs: dict, cinfo: dict) -> list:
     heaters = [e for e in _get(ecl, ["components", "cathode_heater", "entries"], EL)
                if e.get("role") == "load-bracket" and e.get("units") == "W"]
     vals = []
+    val_src = []
     for e in heaters:
         v = e["value"]
         if e["value_kind"] == "number":
             vals.append(v)
+            val_src.append((v, e["id"], e["evidence_level"]))
         elif e["value_kind"] == "range":
             vals += [v["min"], v["max"]]
+            val_src += [(v["min"], e["id"], e["evidence_level"]), (v["max"], e["id"], e["evidence_level"])]
     _need(bool(vals), f"{EL}: no cathode-heater load brackets in W")
+    ext_lo = sorted(x for x in val_src if x[0] == min(vals))
+    ext_hi = sorted(x for x in val_src if x[0] == max(vals))
+
+    def _ext(xs: list) -> str:
+        return ", ".join(f"{i} (level {lv})" for _v, i, lv in xs)
     peak_lim = _get(cdat, ["proposed_thresholds", "startup_peak_limit"], CD)
     _need(peak_lim["status"] == "PROPOSED", f"{CD}: startup_peak_limit is expected to be PROPOSED")
     energy = [r["energy_Wh"] for r in _get(cder, ["startup_heater_energy"], CV)]
@@ -652,7 +756,9 @@ def risk_indicators(inputs: dict, cinfo: dict) -> list:
         "architectures": list(ARCHITECTURES), "element": "cathode_heater",
         "statement": "Reported LaB6 heater powers at ignition are far below the PROPOSED start-up peak limit; they are "
                      "only one contributor to the start-up peak (discharge ignition, magnets, flow control, "
-                     "housekeeping and, in the V2 sequence, the pre-ionizer are TBD).",
+                     "housekeeping and, in the V2 sequence, the pre-ionizer are TBD). The bracket extremes rest on "
+                     f"{_ext(ext_lo)} for {_fmt(min(vals))} W and {_ext(ext_hi)} for {_fmt(max(vals))} W "
+                     "(lane_20 electrical_closure entries; evidence levels as recorded there).",
         "values": {"heater_power_W": [min(vals), max(vals)], "energy_per_start_Wh": [_r(min(energy)),
                                                                                       _r(max(energy))],
                    "heater_starts_demonstrated_lower_bound": starts["value"]},
@@ -673,7 +779,7 @@ def risk_indicators(inputs: dict, cinfo: dict) -> list:
                                    "sum; a heater-only bound is a partial lower bound on the start-up peak",
         "to_become_verdict_bearing": "the full start-up sequence at the bus boundary: discharge-ignition transient "
                                      "(admitted closure or measurement), pre-ionizer schedule V1/V2 (owner), compressor "
-                                     "bus draw (lane_33 upstream ICD, TBD), and the mission start count (operations "
+                                     "bus draw (lane_33 upstream ICD: model interface only; TBD), and the mission start count (operations "
                                      "concept; P2.start_cycles threshold TBD)",
         "architecture_modulation": "rf_hall / ecr_hall add their source power to the peak only if the pre-ionizer "
                                    "overlaps the heater phase (V2, PROPOSED): TBD",
@@ -741,6 +847,33 @@ THERMAL_LIMIT_FOR = {"hall_discharge": ["bn_combat_m26"], "cathode": ["cathode_a
                      "hall_magnet": [], "ecr_magnet": []}
 
 
+def wall_flux_gate_status(inputs: dict) -> dict:
+    """Checks (from the pinned files, not by assumption) that the lane-15 G11 wall-flux gate is present and that no
+    wall-flux input could exist today: the inputs contract carries wall_flux_provenance with its two admissible kinds,
+    both wall-flux inputs are TBD, and the transport ensemble has no admitted member. This layer never imports
+    abep_sim.thermal_life, never calls hallmap_wall_inputs / check_feasibility and never reads a Hall map or a
+    screening-candidate flux, so no wall-flux verdict (heat or erosion life) is produced here."""
+    contract = inputs["schemas/thermal_life/inputs_v1.json"]
+    ens = inputs["hallthruster_bridge/ensemble/transport_ensemble_v0.json"]
+    wfp = _get(contract, ["wall_flux_provenance", "kinds"], "thermal_life inputs contract")
+    _need(set(wfp) == {"admitted_hallmap", "measured_hardware"},
+          f"thermal_life wall_flux_provenance kinds changed: {sorted(wfp)} (update this layer)")
+    cin = _get(contract, ["components", "hall_discharge", "inputs"], "thermal_life inputs contract")
+    for f in ("wall_ion_flux_m2s", "wall_ion_energy_eV"):
+        _need(str(cin[f].get("now", "")).startswith("TBD"), f"thermal_life input {f} is no longer TBD: update this "
+              "layer")
+    members = _get(ens, ["members"], "transport ensemble")
+    _need(isinstance(members, list) and not members, "transport ensemble has admitted members: update this layer")
+    return {"admissible_kinds": sorted(wfp), "admitted_members": 0,
+            "statement": "not read and never passed: abep_sim/thermal_life.py (lane 15, G11 gate) accepts wall flux "
+                         "only from an admitted ensemble member's wall_life_trustworthy Hall map or from measured "
+                         "hardware with an evidence record; the pinned ensemble has 0 admitted members and no hardware "
+                         "measurement exists, so both inputs are TBD and every hall_discharge heat / erosion-life cell "
+                         "stays UNDETERMINED. This layer does not import thermal_life, does not call "
+                         "hallmap_wall_inputs or check_feasibility, and has never used a screening-candidate "
+                         "(sgb-screen-*) flux (build check)."}
+
+
 def missing_inputs(dim: str, arch: str, inputs: dict) -> list:
     out = []
     if dim == "mass":
@@ -784,7 +917,7 @@ def missing_inputs(dim: str, arch: str, inputs: dict) -> list:
         out += [
             {"input": "Hall wall erosion: erodible depth, peak/average flux, volumetric sputter yield of the wall grade "
                       "for the N/O ion mix", "requires": "Vyovrinda channel geometry; sourced N/O yields on BN/BN-SiO2",
-             "blocking": ["lane_32_wall_life (not in base)", "design_release:vyovrinda_channel",
+             "blocking": ["lane_32_wall_life (DB v1: no N/O design-life number derivable)", "design_release:vyovrinda_channel",
                           "admitted Hall closure (gate 3) for wall_life_trustworthy maps"], "scope": "common_mode"},
             {"input": "Hall magnet insulation life basis", "requires": "thermal-endurance evaluation of the actual EIS "
                       "(iec60085_thermal_classes.life_basis_h TBD) or a coil life test",
@@ -796,7 +929,7 @@ def missing_inputs(dim: str, arch: str, inputs: dict) -> list:
              "blocking": ["lane_19_cathode_integration", "lane_10_cathode_dossier", "admitted Hall closure (gate 3)"],
              "scope": "common_mode"},
             {"input": "compressor and valve firing life", "requires": "compressor / valve design and duty",
-             "blocking": ["lane_33_upstream_icd (not verified)", "design_release:vyovrinda_compressor"],
+             "blocking": ["lane_33_upstream_icd (compressor load TBD)", "design_release:vyovrinda_compressor"],
              "scope": "common_mode"},
         ]
         if arch == "rf_hall":
@@ -814,7 +947,7 @@ def missing_inputs(dim: str, arch: str, inputs: dict) -> list:
         out += [
             {"input": "mission-duration (26,000 h) capability of intake, filter, compressor, gas chambers and valves",
              "requires": "upstream element design and life evidence",
-             "blocking": ["lane_33_upstream_icd (not verified)", "design_release:upstream_elements"],
+             "blocking": ["lane_33_upstream_icd (compressor load TBD)", "design_release:upstream_elements"],
              "scope": "common_mode"},
             {"input": "Hall thruster, cathode and PPU capability over 26,000 h including non-firing time (storage, "
                       "cycling, cathode flow between firings)",
@@ -835,7 +968,7 @@ def missing_inputs(dim: str, arch: str, inputs: dict) -> list:
                                                                    "lane_06_experiment_protocol (measurement)"],
              "scope": "common_mode"},
             {"input": "compressor bus draw during start-up", "requires": "upstream ICD value; TBD, never filled here",
-             "blocking": ["lane_33_upstream_icd (not verified)"], "scope": "common_mode"},
+             "blocking": ["lane_33_upstream_icd (compressor load TBD)"], "scope": "common_mode"},
             {"input": "mission start count and required start-cycle capability",
              "requires": "operations concept; P2.start_cycles and G6.restart_count thresholds (TBD, OD5)",
              "blocking": ["owner_decision:OD5", "lane_10_cathode_dossier (U15/G05)"], "scope": "common_mode"},
@@ -913,7 +1046,8 @@ def evidence_items(ris: list, cinfo: dict) -> list:
             "uncertainty": ri["why_not_verdict_bearing"], "applicability_domain": ri["statement"],
             "validation_status": "not validated for Vyovrinda hardware (risk indicator of the veto layer)",
             "transformation_chain": "pinned input file -> " + REL_SELF + " (values read, not retyped)",
-            "notes": "submitted by the veto layer as a risk indicator; expected NOT verdict-bearing",
+            "notes": "submitted by the veto layer as a risk indicator; expected NOT verdict-bearing"
+                     + ("; " + ri["lane24_basis_note"] if ri.get("lane24_basis_note") else ""),
         })
     return items
 
@@ -1015,6 +1149,8 @@ def build(root: str = ROOT, pins: tuple = PINS) -> dict:
     status_counts = {s: sum(1 for a in ARCHITECTURES for d in DIMENSIONS if cells[a][d]["status"] == s)
                      for s in STATUSES}
 
+    wall_flux_gate = wall_flux_gate_status(inputs)
+
     return {
         "schema": SCHEMA_ID, "id": "veto_layer_v1", "follow_on": "fo_veto_layer", "trigger": "T_VETO_LAYER",
         "status": "DRAFT_FOR_OWNER_REVIEW", "created": CREATED, "base_commit": BASE_COMMIT,
@@ -1050,7 +1186,8 @@ def build(root: str = ROOT, pins: tuple = PINS) -> dict:
                                    for cid in sorted({c for v in DIMENSION_CRITERIA.values() for c in v})},
         "inputs": [{"path": rel, "sha256": sha, "lane": lane[0], "lane_commit": lane[1], "role": role}
                    for rel, sha, lane, role in pins],
-        "external_blockers": EXTERNAL_BLOCKERS,
+        "pin_provenance_notes": PIN_PROVENANCE_NOTES,
+        "external_blockers": external_blockers(inputs),
         "cells": cells,
         "risk_indicators": ris,
         "common_mode_vs_architecture_specific": {
@@ -1083,8 +1220,12 @@ def build(root: str = ROOT, pins: tuple = PINS) -> dict:
                     + ") keeps them non-score-bearing and never a transport discriminator; quoting the published "
                     "sustainment as a level-3 literature measurement stays allowed. Any citing source_ref would carry "
                     "the status (build check)."},
+            {"what": "Hall wall ion flux / energy (thermal_life hall_discharge.wall_ion_flux_m2s, wall_ion_energy_eV)",
+             "why": wall_flux_gate["statement"]},
             {"what": "compressor bus draw and valve-outlet feed state",
-             "why": "upstream ICD (lane_33, not verified) and lane_16 values are TBD; never filled here"},
+             "why": "the upstream ICD (lane_33) offers only a repository compressor model (evidence class "
+                    "model-derived, uncertainty TBD) and lane_20 keeps the compressor load TBD; the lane_16 "
+                    "valve-outlet feed state is TBD; neither is filled here"},
         ],
         "milestones": {
             "supports": ["A"],
@@ -1208,7 +1349,9 @@ def render_md(doc: dict) -> str:
     w("")
     for ri in doc["risk_indicators"]:
         w(f"- **{ri['id']}** ({ri['element']}). {ri['statement']} *Not verdict-bearing:* "
-          f"{ri['why_not_verdict_bearing']}. *To become verdict-bearing:* {ri['to_become_verdict_bearing']}. "
+          f"{ri['why_not_verdict_bearing']}. "
+          + (f"*Lane-24 basis label:* {ri['lane24_basis_note']} " if ri.get("lane24_basis_note") else "")
+          + f"*To become verdict-bearing:* {ri['to_become_verdict_bearing']}. "
           f"*Architecture modulation:* {ri['architecture_modulation']}. Sources: "
           + "; ".join(f"`{s['file']}` {s['path']}"
                       + (f" (repository_status {s['repository_status']})" if s.get("repository_status") else "")
@@ -1253,10 +1396,15 @@ def render_md(doc: dict) -> str:
             for m in doc["cells"][a][d]["missing_inputs"]:
                 w(f"| {d} | {m['input']} | {', '.join(m['blocking'])} | {m['scope']} |")
         w("")
-    w("Blocking lanes named above that this layer does not read (referenced by path only):")
+    w("Blocking lanes named above (verification status as recorded at the base commit; what was read and why it "
+      "decides no cell):")
     w("")
     for k, v in doc["external_blockers"].items():
-        w(f"- `{k}` (`{v['path']}`, {'in' if v['in_base_commit'] else 'NOT in'} the base commit): {v['note']}")
+        w(f"- `{k}` (`{v['path']}`, {'in' if v['in_base_commit'] else 'NOT in'} the base commit"
+          + (f", lane commit `{v['lane_commit'][:10]}`" if v["lane_commit"] else "")
+          + f"; {v['verification']}): {v['note']}"
+          + ("" if not v["read"] else " Read: " + "; ".join(f"`{r['file']}` {r['path']} = {r['value']!r}"
+                                                             for r in v["read"]) + "."))
     w("")
     w("## Milestones")
     w("")
@@ -1284,6 +1432,11 @@ def render_md(doc: dict) -> str:
     w("|---|---|---|---|")
     for i in doc["inputs"]:
         w(f"| `{i['path']}` | {i['lane']} | `{i['lane_commit'][:10]}` | `{i['sha256'][:16]}…` |")
+    w("")
+    w("Pin provenance notes:")
+    w("")
+    for n in doc["pin_provenance_notes"]:
+        w(f"- `{n['lane']}` @ `{n['lane_commit'][:10]}`: {n['note']}")
     w("")
     w(f"_{doc['note']}_")
     return "\n".join(L) + "\n"
