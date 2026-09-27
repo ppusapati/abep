@@ -281,61 +281,63 @@ Design axes (between candidates, design case): `DC-S12-G10` ṁ 0.6179 mg/s, x_O
 
 All flows are anode flows; the cathode (C-1, Xe) flow is outside this chain (lane 19). P_feed is the flight valve-outlet setpoint, recorded as a covariate (lane 25); T_feed on the ground is DI-1.10. sccm at 273.15 K / 101325 Pa (check each MFC's reference). Test points exist only for closed candidates.
 
+**Flight status (owner control C2, `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json`).** `PROPOSED_FLIGHT_REPRESENTATIVE`: derived from an assumed (PROPOSED) intake/compressor/buffer/valve design candidate; reproducible on the ground with MFCs, pressure control and gas bottles; NOT a flight condition and never asserted as one until the owner freezes DI-1 (control C2). `GROUND_QUALIFICATION_POINT`: ground qualification point only: its flow is a scan level chosen to locate the Hall-only sustainment knee (Phase 1) or is set by the measured knee; the candidate-derived flow levels only bracket the scan range; it is NOT a flight-representative feed state and NOT a flight condition. Rule: valve_outlet records, their nominal and backflow_self_consistent states, Phase-2 OP1/OP3/OP5 and every Phase-3 point -> PROPOSED_FLIGHT_REPRESENTATIVE; Phase-1 knee ladder (L*, EXT, BFL) and Phase-2 OP2 (flow = measured Phase-1 knee) -> GROUND_QUALIFICATION_POINT. Counts: valve-outlet records PROPOSED_FLIGHT_REPRESENTATIVE 36, GROUND_QUALIFICATION_POINT 0; test points phase1_knee_N2: PROPOSED_FLIGHT_REPRESENTATIVE 0, GROUND_QUALIFICATION_POINT 28; phase2_common_condition: PROPOSED_FLIGHT_REPRESENTATIVE 12, GROUND_QUALIFICATION_POINT 4; phase3_absolute_demonstration: PROPOSED_FLIGHT_REPRESENTATIVE 72, GROUND_QUALIFICATION_POINT 0.
+
 ### Phase 1 — Hall-only sustainment knee on N₂ (HW-0)
 
 L1–L5 follow the lane-25 knee rule on the upper-bound flows; EXT is the upper envelope edge; BFL extends the sweep down to the lowest backflow-consistent flow of the candidate (FC-01, DI-1.12).
 
-| id | ṁ_N2 [mg/s] | sccm N₂ | P_feed target [Pa] | trace |
-|---|---|---|---|---|
-| TP1-DC-S12-G10-L1 | 0.6179 | 29.68 | 0.1 | level 1/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S12-G10-L2 | 0.4987 | 23.95 | 0.1 | level 2/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S12-G10-L3 | 0.3794 | 18.22 | 0.1 | level 3/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S12-G10-L4 | 0.2601 | 12.49 | 0.1 | level 4/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S12-G10-L5 | 0.1409 | 6.766 | 0.1 | level 5/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S12-G10-EXT | 1.497 | 71.9 | 0.1 | level upper extension (mdot_max = alt180_high) |
-| TP1-DC-S12-G10-BFL | 0.05141 | 2.469 | 0.1 | level backflow lower extension (mdot_bracket_lower = alt230_low) |
-| TP1-DC-S12-G20-L1 | 0.377 | 18.11 | 0.05 | level 1/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S12-G20-L2 | 0.3041 | 14.61 | 0.05 | level 2/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S12-G20-L3 | 0.2313 | 11.11 | 0.05 | level 3/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S12-G20-L4 | 0.1584 | 7.61 | 0.05 | level 4/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S12-G20-L5 | 0.0856 | 4.111 | 0.05 | level 5/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S12-G20-EXT | 0.9143 | 43.91 | 0.05 | level upper extension (mdot_max = alt180_high) |
-| TP1-DC-S12-G20-BFL | 0.02955 | 1.419 | 0.05 | level backflow lower extension (mdot_bracket_lower = alt230_low) |
-| TP1-DC-S25-G10-L1 | 1.287 | 61.83 | 0.2 | level 1/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S25-G10-L2 | 1.039 | 49.9 | 0.2 | level 2/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S25-G10-L3 | 0.7904 | 37.96 | 0.2 | level 3/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S25-G10-L4 | 0.542 | 26.03 | 0.2 | level 4/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S25-G10-L5 | 0.2935 | 14.1 | 0.2 | level 5/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S25-G10-EXT | 3.119 | 149.8 | 0.2 | level upper extension (mdot_max = alt180_high) |
-| TP1-DC-S25-G10-BFL | 0.111 | 5.333 | 0.2 | level backflow lower extension (mdot_bracket_lower = alt230_low) |
-| TP1-DC-S25-G20-L1 | 0.7853 | 37.72 | 0.1 | level 1/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S25-G20-L2 | 0.6336 | 30.43 | 0.1 | level 2/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S25-G20-L3 | 0.4818 | 23.14 | 0.1 | level 3/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S25-G20-L4 | 0.3301 | 15.85 | 0.1 | level 4/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S25-G20-L5 | 0.1783 | 8.565 | 0.1 | level 5/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) |
-| TP1-DC-S25-G20-EXT | 1.905 | 91.48 | 0.1 | level upper extension (mdot_max = alt180_high) |
-| TP1-DC-S25-G20-BFL | 0.07146 | 3.432 | 0.1 | level backflow lower extension (mdot_bracket_lower = alt230_low) |
+| id | ṁ_N2 [mg/s] | sccm N₂ | P_feed target [Pa] | trace | flight status |
+|---|---|---|---|---|---|
+| TP1-DC-S12-G10-L1 | 0.6179 | 29.68 | 0.1 | level 1/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S12-G10-L2 | 0.4987 | 23.95 | 0.1 | level 2/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S12-G10-L3 | 0.3794 | 18.22 | 0.1 | level 3/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S12-G10-L4 | 0.2601 | 12.49 | 0.1 | level 4/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S12-G10-L5 | 0.1409 | 6.766 | 0.1 | level 5/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S12-G10-EXT | 1.497 | 71.9 | 0.1 | level upper extension (mdot_max = alt180_high) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S12-G10-BFL | 0.05141 | 2.469 | 0.1 | level backflow lower extension (mdot_bracket_lower = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S12-G20-L1 | 0.377 | 18.11 | 0.05 | level 1/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S12-G20-L2 | 0.3041 | 14.61 | 0.05 | level 2/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S12-G20-L3 | 0.2313 | 11.11 | 0.05 | level 3/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S12-G20-L4 | 0.1584 | 7.61 | 0.05 | level 4/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S12-G20-L5 | 0.0856 | 4.111 | 0.05 | level 5/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S12-G20-EXT | 0.9143 | 43.91 | 0.05 | level upper extension (mdot_max = alt180_high) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S12-G20-BFL | 0.02955 | 1.419 | 0.05 | level backflow lower extension (mdot_bracket_lower = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G10-L1 | 1.287 | 61.83 | 0.2 | level 1/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G10-L2 | 1.039 | 49.9 | 0.2 | level 2/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G10-L3 | 0.7904 | 37.96 | 0.2 | level 3/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G10-L4 | 0.542 | 26.03 | 0.2 | level 4/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G10-L5 | 0.2935 | 14.1 | 0.2 | level 5/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G10-EXT | 3.119 | 149.8 | 0.2 | level upper extension (mdot_max = alt180_high) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G10-BFL | 0.111 | 5.333 | 0.2 | level backflow lower extension (mdot_bracket_lower = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G20-L1 | 0.7853 | 37.72 | 0.1 | level 1/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G20-L2 | 0.6336 | 30.43 | 0.1 | level 2/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G20-L3 | 0.4818 | 23.14 | 0.1 | level 3/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G20-L4 | 0.3301 | 15.85 | 0.1 | level 4/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G20-L5 | 0.1783 | 8.565 | 0.1 | level 5/5 (mdot_nom = alt200_mean, mdot_min = alt230_low) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G20-EXT | 1.905 | 91.48 | 0.1 | level upper extension (mdot_max = alt180_high) | GROUND_QUALIFICATION_POINT |
+| TP1-DC-S25-G20-BFL | 0.07146 | 3.432 | 0.1 | level backflow lower extension (mdot_bracket_lower = alt230_low) | GROUND_QUALIFICATION_POINT |
 
 ### Phase 2 — common-condition comparison (HW-0 / HW-RF / HW-ECR)
 
-| id | point | gas | ṁ [mg/s] (upper bound) | ṁ backflow lower [mg/s] | composition | status |
-|---|---|---|---|---|---|---|
-| TP2-DC-S12-G10-OP1 | OP1 | N2 | 0.1409 | 0.05141 | N₂ | PROPOSED (candidate-conditional) |
-| TP2-DC-S12-G10-OP2 | OP2 | N2 | — | — | N₂ | TBD - requires the measured Phase-1 knee |
-| TP2-DC-S12-G10-OP3 | OP3 | N2 | 0.6179 | 0.1394 | N₂ | PROPOSED (candidate-conditional) |
-| TP2-DC-S12-G10-OP5 | OP5 | N2+O2 air surrogate | — | — | w_O2 0.492 / w_N2 0.508 | TBD (total flow = the measured Phase-1 knee); composition PROPOSED (candidate-conditional) |
-| TP2-DC-S12-G20-OP1 | OP1 | N2 | 0.0856 | 0.02955 | N₂ | PROPOSED (candidate-conditional) |
-| TP2-DC-S12-G20-OP2 | OP2 | N2 | — | — | N₂ | TBD - requires the measured Phase-1 knee |
-| TP2-DC-S12-G20-OP3 | OP3 | N2 | 0.377 | 0.06802 | N₂ | PROPOSED (candidate-conditional) |
-| TP2-DC-S12-G20-OP5 | OP5 | N2+O2 air surrogate | — | — | w_O2 0.492 / w_N2 0.508 | TBD (total flow = the measured Phase-1 knee); composition PROPOSED (candidate-conditional) |
-| TP2-DC-S25-G10-OP1 | OP1 | N2 | 0.2935 | 0.111 | N₂ | PROPOSED (candidate-conditional) |
-| TP2-DC-S25-G10-OP2 | OP2 | N2 | — | — | N₂ | TBD - requires the measured Phase-1 knee |
-| TP2-DC-S25-G10-OP3 | OP3 | N2 | 1.287 | 0.6437 | N₂ | PROPOSED (candidate-conditional) |
-| TP2-DC-S25-G10-OP5 | OP5 | N2+O2 air surrogate | — | — | w_O2 0.492 / w_N2 0.508 | TBD (total flow = the measured Phase-1 knee); composition PROPOSED (candidate-conditional) |
-| TP2-DC-S25-G20-OP1 | OP1 | N2 | 0.1783 | 0.07146 | N₂ | PROPOSED (candidate-conditional) |
-| TP2-DC-S25-G20-OP2 | OP2 | N2 | — | — | N₂ | TBD - requires the measured Phase-1 knee |
-| TP2-DC-S25-G20-OP3 | OP3 | N2 | 0.7853 | 0.2213 | N₂ | PROPOSED (candidate-conditional) |
-| TP2-DC-S25-G20-OP5 | OP5 | N2+O2 air surrogate | — | — | w_O2 0.492 / w_N2 0.508 | TBD (total flow = the measured Phase-1 knee); composition PROPOSED (candidate-conditional) |
+| id | point | gas | ṁ [mg/s] (upper bound) | ṁ backflow lower [mg/s] | composition | status | flight status |
+|---|---|---|---|---|---|---|---|
+| TP2-DC-S12-G10-OP1 | OP1 | N2 | 0.1409 | 0.05141 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP2-DC-S12-G10-OP2 | OP2 | N2 | — | — | N₂ | TBD - requires the measured Phase-1 knee | GROUND_QUALIFICATION_POINT |
+| TP2-DC-S12-G10-OP3 | OP3 | N2 | 0.6179 | 0.1394 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP2-DC-S12-G10-OP5 | OP5 | N2+O2 air surrogate | — | — | w_O2 0.492 / w_N2 0.508 | TBD (total flow = the measured Phase-1 knee); composition PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP2-DC-S12-G20-OP1 | OP1 | N2 | 0.0856 | 0.02955 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP2-DC-S12-G20-OP2 | OP2 | N2 | — | — | N₂ | TBD - requires the measured Phase-1 knee | GROUND_QUALIFICATION_POINT |
+| TP2-DC-S12-G20-OP3 | OP3 | N2 | 0.377 | 0.06802 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP2-DC-S12-G20-OP5 | OP5 | N2+O2 air surrogate | — | — | w_O2 0.492 / w_N2 0.508 | TBD (total flow = the measured Phase-1 knee); composition PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP2-DC-S25-G10-OP1 | OP1 | N2 | 0.2935 | 0.111 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP2-DC-S25-G10-OP2 | OP2 | N2 | — | — | N₂ | TBD - requires the measured Phase-1 knee | GROUND_QUALIFICATION_POINT |
+| TP2-DC-S25-G10-OP3 | OP3 | N2 | 1.287 | 0.6437 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP2-DC-S25-G10-OP5 | OP5 | N2+O2 air surrogate | — | — | w_O2 0.492 / w_N2 0.508 | TBD (total flow = the measured Phase-1 knee); composition PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP2-DC-S25-G20-OP1 | OP1 | N2 | 0.1783 | 0.07146 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP2-DC-S25-G20-OP2 | OP2 | N2 | — | — | N₂ | TBD - requires the measured Phase-1 knee | GROUND_QUALIFICATION_POINT |
+| TP2-DC-S25-G20-OP3 | OP3 | N2 | 0.7853 | 0.2213 | N₂ | PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP2-DC-S25-G20-OP5 | OP5 | N2+O2 air surrogate | — | — | w_O2 0.492 / w_N2 0.508 | TBD (total flow = the measured Phase-1 knee); composition PROPOSED (candidate-conditional) | PROPOSED_FLIGHT_REPRESENTATIVE |
 
 Lane-25 iso-power references OP2H and OP3H (`hall_only` only, V_hi) use the same feed as OP2 and OP3; they add no feed state and are cross-referenced on those records (`iso_power_reference`).
 
@@ -343,80 +345,80 @@ Lane-25 iso-power references OP2H and OP3H (`hall_only` only, V_hi) use the same
 
 Flows are the upper-bound flight flows; the backflow-consistent total flow of each case is in the last column.
 
-| id | case | gas | ṁ_N2 [mg/s] | ṁ_O2 [mg/s] | sccm N₂ | sccm O₂ | ground/flight particle flow | flight x_O | ṁ backflow lower [mg/s] |
-|---|---|---|---|---|---|---|---|---|---|
-| TP3-DC-S12-G10-alt180_low-N2 | alt180_low | N2 | 0.869 | — | 41.74 | — | — | 0.448 | 0.3678 |
-| TP3-DC-S12-G10-alt180_low-AIR | alt180_low | N2+O2 air surrogate | 0.5071 | 0.3619 | 24.36 | 15.21 | 0.776 | 0.448 | 0.3678 |
-| TP3-DC-S12-G10-alt180_mean-N2 | alt180_mean | N2 | 1.174 | — | 56.38 | — | — | 0.495 | 0.358 |
-| TP3-DC-S12-G10-alt180_mean-AIR | alt180_mean | N2+O2 air surrogate | 0.6702 | 0.5037 | 32.19 | 21.17 | 0.753 | 0.495 | 0.358 |
-| TP3-DC-S12-G10-alt180_high-N2 | alt180_high | N2 | 1.497 | — | 71.9 | — | — | 0.542 | 0.3322 |
-| TP3-DC-S12-G10-alt180_high-AIR | alt180_high | N2+O2 air surrogate | 0.8273 | 0.6697 | 39.74 | 28.14 | 0.729 | 0.542 | 0.3322 |
-| TP3-DC-S12-G10-alt200_low-N2 | alt200_low | N2 | 0.396 | — | 19.02 | — | — | 0.514 | 0.181 |
-| TP3-DC-S12-G10-alt200_low-AIR | alt200_low | N2+O2 air surrogate | 0.202 | 0.1941 | 9.701 | 8.156 | 0.743 | 0.514 | 0.181 |
-| TP3-DC-S12-G10-alt200_mean-N2 | alt200_mean | N2 | 0.6179 | — | 29.68 | — | — | 0.556 | 0.1394 |
-| TP3-DC-S12-G10-alt200_mean-AIR | alt200_mean | N2+O2 air surrogate | 0.3136 | 0.3043 | 15.06 | 12.79 | 0.722 | 0.556 | 0.1394 |
-| TP3-DC-S12-G10-alt200_high-N2 | alt200_high | N2 | 0.855 | — | 41.07 | — | — | 0.586 | 0.3285 |
-| TP3-DC-S12-G10-alt200_high-AIR | alt200_high | N2+O2 air surrogate | 0.4228 | 0.4322 | 20.31 | 18.16 | 0.707 | 0.586 | 0.3285 |
-| TP3-DC-S12-G10-alt230_low-N2 | alt230_low | N2 | 0.1409 | — | 6.766 | — | — | 0.574 | 0.05141 |
-| TP3-DC-S12-G10-alt230_low-AIR | alt230_low | N2+O2 air surrogate | 0.05575 | 0.08511 | 2.678 | 3.577 | 0.713 | 0.574 | 0.05141 |
-| TP3-DC-S12-G10-alt230_mean-N2 | alt230_mean | N2 | 0.2728 | — | 13.1 | — | — | 0.613 | 0.06553 |
-| TP3-DC-S12-G10-alt230_mean-AIR | alt230_mean | N2+O2 air surrogate | 0.1133 | 0.1596 | 5.44 | 6.706 | 0.693 | 0.613 | 0.06553 |
-| TP3-DC-S12-G10-alt230_high-N2 | alt230_high | N2 | 0.4222 | — | 20.28 | — | — | 0.637 | 0.185 |
-| TP3-DC-S12-G10-alt230_high-AIR | alt230_high | N2+O2 air surrogate | 0.1742 | 0.248 | 8.368 | 10.42 | 0.681 | 0.637 | 0.185 |
-| TP3-DC-S12-G20-alt180_low-N2 | alt180_low | N2 | 0.5326 | — | 25.58 | — | — | 0.458 | 0.1015 |
-| TP3-DC-S12-G20-alt180_low-AIR | alt180_low | N2+O2 air surrogate | 0.3108 | 0.2218 | 14.93 | 9.321 | 0.771 | 0.458 | 0.1015 |
-| TP3-DC-S12-G20-alt180_mean-N2 | alt180_mean | N2 | 0.718 | — | 34.49 | — | — | 0.505 | 0.2654 |
-| TP3-DC-S12-G20-alt180_mean-AIR | alt180_mean | N2+O2 air surrogate | 0.4099 | 0.3081 | 19.69 | 12.95 | 0.748 | 0.505 | 0.2654 |
-| TP3-DC-S12-G20-alt180_high-N2 | alt180_high | N2 | 0.9143 | — | 43.91 | — | — | 0.552 | 0.166 |
-| TP3-DC-S12-G20-alt180_high-AIR | alt180_high | N2+O2 air surrogate | 0.5053 | 0.409 | 24.27 | 17.19 | 0.724 | 0.552 | 0.166 |
-| TP3-DC-S12-G20-alt200_low-N2 | alt200_low | N2 | 0.2419 | — | 11.62 | — | — | 0.529 | 0.03413 |
-| TP3-DC-S12-G20-alt200_low-AIR | alt200_low | N2+O2 air surrogate | 0.1234 | 0.1185 | 5.925 | 4.981 | 0.736 | 0.529 | 0.03413 |
-| TP3-DC-S12-G20-alt200_mean-N2 | alt200_mean | N2 | 0.377 | — | 18.11 | — | — | 0.568 | 0.06802 |
-| TP3-DC-S12-G20-alt200_mean-AIR | alt200_mean | N2+O2 air surrogate | 0.1913 | 0.1856 | 9.19 | 7.801 | 0.716 | 0.568 | 0.06802 |
-| TP3-DC-S12-G20-alt200_high-N2 | alt200_high | N2 | 0.5209 | — | 25.02 | — | — | 0.598 | 0.08529 |
-| TP3-DC-S12-G20-alt200_high-AIR | alt200_high | N2+O2 air surrogate | 0.2576 | 0.2633 | 12.37 | 11.07 | 0.701 | 0.598 | 0.08529 |
-| TP3-DC-S12-G20-alt230_low-N2 | alt230_low | N2 | 0.0856 | — | 4.111 | — | — | 0.596 | 0.02955 |
-| TP3-DC-S12-G20-alt230_low-AIR | alt230_low | N2+O2 air surrogate | 0.03388 | 0.05172 | 1.627 | 2.173 | 0.702 | 0.596 | 0.02955 |
-| TP3-DC-S12-G20-alt230_mean-N2 | alt230_mean | N2 | 0.1658 | — | 7.962 | — | — | 0.63 | 0.03385 |
-| TP3-DC-S12-G20-alt230_mean-AIR | alt230_mean | N2+O2 air surrogate | 0.06883 | 0.09695 | 3.306 | 4.075 | 0.685 | 0.63 | 0.03385 |
-| TP3-DC-S12-G20-alt230_high-N2 | alt230_high | N2 | 0.2564 | — | 12.32 | — | — | 0.653 | 0.03841 |
-| TP3-DC-S12-G20-alt230_high-AIR | alt230_high | N2+O2 air surrogate | 0.1058 | 0.1506 | 5.082 | 6.329 | 0.674 | 0.653 | 0.03841 |
-| TP3-DC-S25-G10-alt180_low-N2 | alt180_low | N2 | 1.81 | — | 86.96 | — | — | 0.438 | 0.7744 |
-| TP3-DC-S25-G10-alt180_low-AIR | alt180_low | N2+O2 air surrogate | 1.056 | 0.754 | 50.74 | 31.69 | 0.781 | 0.438 | 0.7744 |
-| TP3-DC-S25-G10-alt180_mean-N2 | alt180_mean | N2 | 2.446 | — | 117.5 | — | — | 0.481 | 1.19 |
-| TP3-DC-S25-G10-alt180_mean-AIR | alt180_mean | N2+O2 air surrogate | 1.396 | 1.049 | 67.06 | 44.1 | 0.759 | 0.481 | 1.19 |
-| TP3-DC-S25-G10-alt180_high-N2 | alt180_high | N2 | 3.119 | — | 149.8 | — | — | 0.518 | 1.559 |
-| TP3-DC-S25-G10-alt180_high-AIR | alt180_high | N2+O2 air surrogate | 1.724 | 1.395 | 82.78 | 58.63 | 0.741 | 0.518 | 1.559 |
-| TP3-DC-S25-G10-alt200_low-N2 | alt200_low | N2 | 0.8251 | — | 39.63 | — | — | 0.503 | 0.3678 |
-| TP3-DC-S25-G10-alt200_low-AIR | alt200_low | N2+O2 air surrogate | 0.4208 | 0.4043 | 20.21 | 16.99 | 0.748 | 0.503 | 0.3678 |
-| TP3-DC-S25-G10-alt200_mean-N2 | alt200_mean | N2 | 1.287 | — | 61.83 | — | — | 0.53 | 0.6437 |
-| TP3-DC-S25-G10-alt200_mean-AIR | alt200_mean | N2+O2 air surrogate | 0.6534 | 0.6339 | 31.38 | 26.64 | 0.735 | 0.53 | 0.6437 |
-| TP3-DC-S25-G10-alt200_high-N2 | alt200_high | N2 | 1.781 | — | 85.55 | — | — | 0.575 | 0.692 |
-| TP3-DC-S25-G10-alt200_high-AIR | alt200_high | N2+O2 air surrogate | 0.8809 | 0.9004 | 42.31 | 37.84 | 0.712 | 0.575 | 0.692 |
-| TP3-DC-S25-G10-alt230_low-N2 | alt230_low | N2 | 0.2935 | — | 14.1 | — | — | 0.565 | 0.111 |
-| TP3-DC-S25-G10-alt230_low-AIR | alt230_low | N2+O2 air surrogate | 0.1162 | 0.1773 | 5.579 | 7.452 | 0.718 | 0.565 | 0.111 |
-| TP3-DC-S25-G10-alt230_mean-N2 | alt230_mean | N2 | 0.5684 | — | 27.3 | — | — | 0.584 | 0.2842 |
-| TP3-DC-S25-G10-alt230_mean-AIR | alt230_mean | N2+O2 air surrogate | 0.236 | 0.3324 | 11.33 | 13.97 | 0.708 | 0.584 | 0.2842 |
-| TP3-DC-S25-G10-alt230_high-N2 | alt230_high | N2 | 0.8796 | — | 42.25 | — | — | 0.625 | 0.3703 |
-| TP3-DC-S25-G10-alt230_high-AIR | alt230_high | N2+O2 air surrogate | 0.363 | 0.5167 | 17.43 | 21.71 | 0.687 | 0.625 | 0.3703 |
-| TP3-DC-S25-G20-alt180_low-N2 | alt180_low | N2 | 1.11 | — | 53.29 | — | — | 0.45 | 0.5061 |
-| TP3-DC-S25-G20-alt180_low-AIR | alt180_low | N2+O2 air surrogate | 0.6474 | 0.4621 | 31.1 | 19.42 | 0.775 | 0.45 | 0.5061 |
-| TP3-DC-S25-G20-alt180_mean-N2 | alt180_mean | N2 | 1.496 | — | 71.85 | — | — | 0.497 | 0.5253 |
-| TP3-DC-S25-G20-alt180_mean-AIR | alt180_mean | N2+O2 air surrogate | 0.854 | 0.6419 | 41.02 | 26.98 | 0.752 | 0.497 | 0.5253 |
-| TP3-DC-S25-G20-alt180_high-N2 | alt180_high | N2 | 1.905 | — | 91.48 | — | — | 0.543 | 0.5355 |
-| TP3-DC-S25-G20-alt180_high-AIR | alt180_high | N2+O2 air surrogate | 1.053 | 0.8521 | 50.56 | 35.81 | 0.728 | 0.543 | 0.5355 |
-| TP3-DC-S25-G20-alt200_low-N2 | alt200_low | N2 | 0.5039 | — | 24.2 | — | — | 0.52 | 0.2436 |
-| TP3-DC-S25-G20-alt200_low-AIR | alt200_low | N2+O2 air surrogate | 0.257 | 0.2469 | 12.34 | 10.38 | 0.74 | 0.52 | 0.2436 |
-| TP3-DC-S25-G20-alt200_mean-N2 | alt200_mean | N2 | 0.7853 | — | 37.72 | — | — | 0.56 | 0.2213 |
-| TP3-DC-S25-G20-alt200_mean-AIR | alt200_mean | N2+O2 air surrogate | 0.3986 | 0.3867 | 19.15 | 16.25 | 0.72 | 0.56 | 0.2213 |
-| TP3-DC-S25-G20-alt200_high-N2 | alt200_high | N2 | 1.085 | — | 52.13 | — | — | 0.589 | 0.4557 |
-| TP3-DC-S25-G20-alt200_high-AIR | alt200_high | N2+O2 air surrogate | 0.5367 | 0.5486 | 25.78 | 23.06 | 0.706 | 0.589 | 0.4557 |
-| TP3-DC-S25-G20-alt230_low-N2 | alt230_low | N2 | 0.1783 | — | 8.565 | — | — | 0.588 | 0.07146 |
-| TP3-DC-S25-G20-alt230_low-AIR | alt230_low | N2+O2 air surrogate | 0.07058 | 0.1077 | 3.39 | 4.528 | 0.706 | 0.588 | 0.07146 |
-| TP3-DC-S25-G20-alt230_mean-N2 | alt230_mean | N2 | 0.3454 | — | 16.59 | — | — | 0.622 | 0.1008 |
-| TP3-DC-S25-G20-alt230_mean-AIR | alt230_mean | N2+O2 air surrogate | 0.1434 | 0.202 | 6.887 | 8.489 | 0.689 | 0.622 | 0.1008 |
-| TP3-DC-S25-G20-alt230_high-N2 | alt230_high | N2 | 0.5342 | — | 25.66 | — | — | 0.643 | 0.2483 |
-| TP3-DC-S25-G20-alt230_high-AIR | alt230_high | N2+O2 air surrogate | 0.2204 | 0.3137 | 10.59 | 13.19 | 0.679 | 0.643 | 0.2483 |
+| id | case | gas | ṁ_N2 [mg/s] | ṁ_O2 [mg/s] | sccm N₂ | sccm O₂ | ground/flight particle flow | flight x_O | ṁ backflow lower [mg/s] | flight status |
+|---|---|---|---|---|---|---|---|---|---|---|
+| TP3-DC-S12-G10-alt180_low-N2 | alt180_low | N2 | 0.869 | — | 41.74 | — | — | 0.448 | 0.3678 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt180_low-AIR | alt180_low | N2+O2 air surrogate | 0.5071 | 0.3619 | 24.36 | 15.21 | 0.776 | 0.448 | 0.3678 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt180_mean-N2 | alt180_mean | N2 | 1.174 | — | 56.38 | — | — | 0.495 | 0.358 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt180_mean-AIR | alt180_mean | N2+O2 air surrogate | 0.6702 | 0.5037 | 32.19 | 21.17 | 0.753 | 0.495 | 0.358 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt180_high-N2 | alt180_high | N2 | 1.497 | — | 71.9 | — | — | 0.542 | 0.3322 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt180_high-AIR | alt180_high | N2+O2 air surrogate | 0.8273 | 0.6697 | 39.74 | 28.14 | 0.729 | 0.542 | 0.3322 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt200_low-N2 | alt200_low | N2 | 0.396 | — | 19.02 | — | — | 0.514 | 0.181 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt200_low-AIR | alt200_low | N2+O2 air surrogate | 0.202 | 0.1941 | 9.701 | 8.156 | 0.743 | 0.514 | 0.181 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt200_mean-N2 | alt200_mean | N2 | 0.6179 | — | 29.68 | — | — | 0.556 | 0.1394 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt200_mean-AIR | alt200_mean | N2+O2 air surrogate | 0.3136 | 0.3043 | 15.06 | 12.79 | 0.722 | 0.556 | 0.1394 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt200_high-N2 | alt200_high | N2 | 0.855 | — | 41.07 | — | — | 0.586 | 0.3285 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt200_high-AIR | alt200_high | N2+O2 air surrogate | 0.4228 | 0.4322 | 20.31 | 18.16 | 0.707 | 0.586 | 0.3285 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt230_low-N2 | alt230_low | N2 | 0.1409 | — | 6.766 | — | — | 0.574 | 0.05141 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt230_low-AIR | alt230_low | N2+O2 air surrogate | 0.05575 | 0.08511 | 2.678 | 3.577 | 0.713 | 0.574 | 0.05141 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt230_mean-N2 | alt230_mean | N2 | 0.2728 | — | 13.1 | — | — | 0.613 | 0.06553 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt230_mean-AIR | alt230_mean | N2+O2 air surrogate | 0.1133 | 0.1596 | 5.44 | 6.706 | 0.693 | 0.613 | 0.06553 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt230_high-N2 | alt230_high | N2 | 0.4222 | — | 20.28 | — | — | 0.637 | 0.185 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G10-alt230_high-AIR | alt230_high | N2+O2 air surrogate | 0.1742 | 0.248 | 8.368 | 10.42 | 0.681 | 0.637 | 0.185 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt180_low-N2 | alt180_low | N2 | 0.5326 | — | 25.58 | — | — | 0.458 | 0.1015 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt180_low-AIR | alt180_low | N2+O2 air surrogate | 0.3108 | 0.2218 | 14.93 | 9.321 | 0.771 | 0.458 | 0.1015 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt180_mean-N2 | alt180_mean | N2 | 0.718 | — | 34.49 | — | — | 0.505 | 0.2654 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt180_mean-AIR | alt180_mean | N2+O2 air surrogate | 0.4099 | 0.3081 | 19.69 | 12.95 | 0.748 | 0.505 | 0.2654 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt180_high-N2 | alt180_high | N2 | 0.9143 | — | 43.91 | — | — | 0.552 | 0.166 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt180_high-AIR | alt180_high | N2+O2 air surrogate | 0.5053 | 0.409 | 24.27 | 17.19 | 0.724 | 0.552 | 0.166 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt200_low-N2 | alt200_low | N2 | 0.2419 | — | 11.62 | — | — | 0.529 | 0.03413 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt200_low-AIR | alt200_low | N2+O2 air surrogate | 0.1234 | 0.1185 | 5.925 | 4.981 | 0.736 | 0.529 | 0.03413 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt200_mean-N2 | alt200_mean | N2 | 0.377 | — | 18.11 | — | — | 0.568 | 0.06802 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt200_mean-AIR | alt200_mean | N2+O2 air surrogate | 0.1913 | 0.1856 | 9.19 | 7.801 | 0.716 | 0.568 | 0.06802 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt200_high-N2 | alt200_high | N2 | 0.5209 | — | 25.02 | — | — | 0.598 | 0.08529 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt200_high-AIR | alt200_high | N2+O2 air surrogate | 0.2576 | 0.2633 | 12.37 | 11.07 | 0.701 | 0.598 | 0.08529 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt230_low-N2 | alt230_low | N2 | 0.0856 | — | 4.111 | — | — | 0.596 | 0.02955 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt230_low-AIR | alt230_low | N2+O2 air surrogate | 0.03388 | 0.05172 | 1.627 | 2.173 | 0.702 | 0.596 | 0.02955 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt230_mean-N2 | alt230_mean | N2 | 0.1658 | — | 7.962 | — | — | 0.63 | 0.03385 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt230_mean-AIR | alt230_mean | N2+O2 air surrogate | 0.06883 | 0.09695 | 3.306 | 4.075 | 0.685 | 0.63 | 0.03385 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt230_high-N2 | alt230_high | N2 | 0.2564 | — | 12.32 | — | — | 0.653 | 0.03841 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S12-G20-alt230_high-AIR | alt230_high | N2+O2 air surrogate | 0.1058 | 0.1506 | 5.082 | 6.329 | 0.674 | 0.653 | 0.03841 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt180_low-N2 | alt180_low | N2 | 1.81 | — | 86.96 | — | — | 0.438 | 0.7744 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt180_low-AIR | alt180_low | N2+O2 air surrogate | 1.056 | 0.754 | 50.74 | 31.69 | 0.781 | 0.438 | 0.7744 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt180_mean-N2 | alt180_mean | N2 | 2.446 | — | 117.5 | — | — | 0.481 | 1.19 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt180_mean-AIR | alt180_mean | N2+O2 air surrogate | 1.396 | 1.049 | 67.06 | 44.1 | 0.759 | 0.481 | 1.19 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt180_high-N2 | alt180_high | N2 | 3.119 | — | 149.8 | — | — | 0.518 | 1.559 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt180_high-AIR | alt180_high | N2+O2 air surrogate | 1.724 | 1.395 | 82.78 | 58.63 | 0.741 | 0.518 | 1.559 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt200_low-N2 | alt200_low | N2 | 0.8251 | — | 39.63 | — | — | 0.503 | 0.3678 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt200_low-AIR | alt200_low | N2+O2 air surrogate | 0.4208 | 0.4043 | 20.21 | 16.99 | 0.748 | 0.503 | 0.3678 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt200_mean-N2 | alt200_mean | N2 | 1.287 | — | 61.83 | — | — | 0.53 | 0.6437 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt200_mean-AIR | alt200_mean | N2+O2 air surrogate | 0.6534 | 0.6339 | 31.38 | 26.64 | 0.735 | 0.53 | 0.6437 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt200_high-N2 | alt200_high | N2 | 1.781 | — | 85.55 | — | — | 0.575 | 0.692 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt200_high-AIR | alt200_high | N2+O2 air surrogate | 0.8809 | 0.9004 | 42.31 | 37.84 | 0.712 | 0.575 | 0.692 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt230_low-N2 | alt230_low | N2 | 0.2935 | — | 14.1 | — | — | 0.565 | 0.111 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt230_low-AIR | alt230_low | N2+O2 air surrogate | 0.1162 | 0.1773 | 5.579 | 7.452 | 0.718 | 0.565 | 0.111 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt230_mean-N2 | alt230_mean | N2 | 0.5684 | — | 27.3 | — | — | 0.584 | 0.2842 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt230_mean-AIR | alt230_mean | N2+O2 air surrogate | 0.236 | 0.3324 | 11.33 | 13.97 | 0.708 | 0.584 | 0.2842 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt230_high-N2 | alt230_high | N2 | 0.8796 | — | 42.25 | — | — | 0.625 | 0.3703 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G10-alt230_high-AIR | alt230_high | N2+O2 air surrogate | 0.363 | 0.5167 | 17.43 | 21.71 | 0.687 | 0.625 | 0.3703 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt180_low-N2 | alt180_low | N2 | 1.11 | — | 53.29 | — | — | 0.45 | 0.5061 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt180_low-AIR | alt180_low | N2+O2 air surrogate | 0.6474 | 0.4621 | 31.1 | 19.42 | 0.775 | 0.45 | 0.5061 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt180_mean-N2 | alt180_mean | N2 | 1.496 | — | 71.85 | — | — | 0.497 | 0.5253 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt180_mean-AIR | alt180_mean | N2+O2 air surrogate | 0.854 | 0.6419 | 41.02 | 26.98 | 0.752 | 0.497 | 0.5253 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt180_high-N2 | alt180_high | N2 | 1.905 | — | 91.48 | — | — | 0.543 | 0.5355 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt180_high-AIR | alt180_high | N2+O2 air surrogate | 1.053 | 0.8521 | 50.56 | 35.81 | 0.728 | 0.543 | 0.5355 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt200_low-N2 | alt200_low | N2 | 0.5039 | — | 24.2 | — | — | 0.52 | 0.2436 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt200_low-AIR | alt200_low | N2+O2 air surrogate | 0.257 | 0.2469 | 12.34 | 10.38 | 0.74 | 0.52 | 0.2436 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt200_mean-N2 | alt200_mean | N2 | 0.7853 | — | 37.72 | — | — | 0.56 | 0.2213 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt200_mean-AIR | alt200_mean | N2+O2 air surrogate | 0.3986 | 0.3867 | 19.15 | 16.25 | 0.72 | 0.56 | 0.2213 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt200_high-N2 | alt200_high | N2 | 1.085 | — | 52.13 | — | — | 0.589 | 0.4557 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt200_high-AIR | alt200_high | N2+O2 air surrogate | 0.5367 | 0.5486 | 25.78 | 23.06 | 0.706 | 0.589 | 0.4557 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt230_low-N2 | alt230_low | N2 | 0.1783 | — | 8.565 | — | — | 0.588 | 0.07146 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt230_low-AIR | alt230_low | N2+O2 air surrogate | 0.07058 | 0.1077 | 3.39 | 4.528 | 0.706 | 0.588 | 0.07146 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt230_mean-N2 | alt230_mean | N2 | 0.3454 | — | 16.59 | — | — | 0.622 | 0.1008 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt230_mean-AIR | alt230_mean | N2+O2 air surrogate | 0.1434 | 0.202 | 6.887 | 8.489 | 0.689 | 0.622 | 0.1008 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt230_high-N2 | alt230_high | N2 | 0.5342 | — | 25.66 | — | — | 0.643 | 0.2483 | PROPOSED_FLIGHT_REPRESENTATIVE |
+| TP3-DC-S25-G20-alt230_high-AIR | alt230_high | N2+O2 air surrogate | 0.2204 | 0.3137 | 10.59 | 13.19 | 0.679 | 0.643 | 0.2483 | PROPOSED_FLIGHT_REPRESENTATIVE |
 
 ### MFC range requirement (input to W4)
 
