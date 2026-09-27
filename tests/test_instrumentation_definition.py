@@ -292,7 +292,8 @@ def test_c5_review_findings_closed():
     # versioning: stays v1 with a change log, the original base commit is kept
     assert doc["version"] == "v1" and doc["revision"] == "v1-r2"
     assert doc["base_commit"] == "510e464fb8e128e4cf3325572a4d36ad33a4899d"
-    assert [c["revision"] for c in doc["change_log"]] == ["v1-r1", "v1-r2"]
+    assert [c["revision"] for c in doc["change_log"]] == ["v1-r1", "v1-r2", "v1-r2"]
+    assert doc["change_log"][-1]["amendment"] == "A3"
 
 
 def test_c5_validation_rejects_inconsistencies():
@@ -322,3 +323,55 @@ def test_c5_missing_disposition_raises(monkeypatch):
     monkeypatch.setattr(B, "C5_DISPOSITION", disp)
     with pytest.raises(ValueError):
         B.build()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# owner addendum A3 (instrument semantics; stays v1-r2)
+# ----------------------------------------------------------------------------------------------------------------------
+def test_a3_adopted_without_changing_ids_and_pins_hw_c1_09():
+    doc = _stored()
+    a3 = json.loads((ROOT / B.A3).read_text(encoding="utf-8"))
+    rows = {r["decision"]: r for r in doc["a3_adoption"]["rows"]}
+    assert set(rows) == set(a3["decisions"])
+    for k, r in rows.items():
+        assert r["owner_text"] == a3["decisions"][k]
+    assert B.A3 in {p["path"] for p in doc["inputs"]}
+    hw = json.loads((ROOT / B.HWR).read_text(encoding="utf-8"))
+    assert "HW-C1-09" in B._walk_ids(hw, set())
+    assert "HW-C1-09" in doc["c5_adoption"]["w3_ids_cited"]
+    assert doc["revision"] == "v1-r2" and doc["version"] == "v1"
+
+
+def test_a3_instrument_semantics():
+    doc = _stored()
+    ins = {i["id"]: i for i in doc["instruments"]}
+    i23 = ins["INS-23"]
+    assert "MANDATORY" in i23["principle"] and "HW-C1-09" in i23["principle"]
+    assert any("never as emitter temperature" in n and "'unmeasured'" in n for n in i23["notes"])
+    assert any("unmeasured" in n and "cathode-tube" in n for n in ins["INS-18"]["notes"])
+    i22 = ins["INS-22"]
+    assert any("QUALITATIVE" in n and "S1a" in n and "never supports an exposure-dose or lifetime claim" in n
+               for n in i22["notes"])
+    assert any("quantitative for the AO/lifetime programme" in c for c in i22["calibration"])
+    p12 = next(p for p in doc["procedures"] if p["id"] == "INS-P-12")
+    assert "k = 2" in p12["statement"] and "effective degrees of freedom" in p12["statement"]
+    assert any("ISO/IEC 17025" in c for c in ins["INS-19"]["calibration"])
+    assert any("ISO/IEC 17025" in c for c in ins["INS-20"]["calibration"])
+
+
+def test_a3_validation_rejects_missing_semantics():
+    doc = _stored()
+    bad = json.loads(json.dumps(doc))
+    i23 = next(i for i in bad["instruments"] if i["id"] == "INS-23")
+    i23["notes"] = [n for n in i23["notes"] if "never as emitter temperature" not in n]
+    with pytest.raises(ValueError):
+        B.validate(bad)
+    bad = json.loads(json.dumps(doc))
+    i22 = next(i for i in bad["instruments"] if i["id"] == "INS-22")
+    i22["notes"] = [n for n in i22["notes"] if "QUALITATIVE" not in n]
+    with pytest.raises(ValueError):
+        B.validate(bad)
+    bad = json.loads(json.dumps(doc))
+    next(p for p in bad["procedures"] if p["id"] == "INS-P-12")["statement"] = "k: owner"
+    with pytest.raises(ValueError):
+        B.validate(bad)

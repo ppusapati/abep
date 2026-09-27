@@ -59,6 +59,8 @@ PINNED = {   # path -> lane; the sha256 pins live in pinned_inputs.json (written
     "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json": "fo_magnet_coil_qualification",
     "docs/experiments/hardware/hardware_requirements_v1.json": "fo_hardware_definition (W3)",
     "schemas/thermal_life/inputs_v1.json": "thermal_life input schema (measured_hardware record)",
+    # owner addendum A3 (v1-r2, additive): metrology, cathode temperature, quantitative RGA, k = 2
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json": "od_hardware_pivot A3 (owner)",
 }
 
 
@@ -891,8 +893,10 @@ def c5_instruments(der: dict) -> list:
                             "or SiC), so the requirement is set from the demonstrated repeatability of a control coupon "
                             "(AOL-PM-02) before S1 and reported as a detection limit, not a target",
                             "metrology lab + S1")},
-              ["balance calibration with traceable reference masses at each session (class TBD - requires owner / "
-               "metrology lab)", "control-coupon repeatability demonstration before S1 (AOL-PM-02 verification)",
+              ["balance calibration at each session (owner addendum A3): SI-traceable microbalance calibration with "
+               "OIML E2 or better certified reference masses where appropriate (OIML R111 certificates and "
+               "traceability), performed by an ISO/IEC 17025-accredited laboratory with this measurement inside its "
+               "accredited scope; lab not yet named (W4 measurement specification first, then procurement)", "control-coupon repeatability demonstration before S1 (AOL-PM-02 verification)",
                "lab-stored control coupon weighed in every session (AOL-WC-06 control (d))"],
               none, [],
               {"status": "TBD", "why": "achievable resolution relative to the (unknown) plume-induced mass change is "
@@ -908,9 +912,12 @@ def c5_instruments(der: dict) -> list:
                             "resolution needed follows from the erosion depth to be resolved, which no admitted source "
                             "gives for the H-1 wall grade in N/O (AO register v2); report as detection limits",
                             "metrology lab")},
-              ["profilometer calibration on a certified step-height standard (class TBD - requires metrology lab)",
-               "SEM magnification / EDS and XPS energy-scale calibration per the lab's procedure, recorded with each "
-               "report", "baseline before first ignition for every serialized item (INS-P-02)"],
+              ["profilometer calibration / verification with traceable surface standards consistent with ISO 25178-700 "
+               "(owner addendum A3)",
+               "quantitative SEM/EDS by a documented method consistent with ASTM E1508; XPS energy-scale calibration "
+               "per ISO 15472 or an equivalent traceable procedure (owner addendum A3); each recorded with the report",
+               "performed by an ISO/IEC 17025-accredited laboratory with the measurement inside its accredited scope "
+               "(A3); lab not yet named (W4 measurement specification first, then procurement)", "baseline before first ignition for every serialized item (INS-P-02)"],
               none, [],
               {"status": "FEASIBLE_IN_PRINCIPLE", "why": "standard laboratory techniques; needs a metrology lab "
                "(not chosen) and sealed-transfer custody (INS-P-04)"},
@@ -939,26 +946,39 @@ def c5_instruments(der: dict) -> list:
                             "and H2O response at the sampling point (AOL-CX-03: 'calibration TBD')")},
               ["calibrate the sampled O2 and N2 response against known mixtures from the INS-05 flows; H2O response "
                "method TBD - requires the RGA and facility choice", "record the sampling-line transit delay against "
-               "INS-18 with a flow step"],
+               "INS-18 with a flow step",
+               "owner addendum A3: quantitative for the AO/lifetime programme (at least O2 / N2 / H2O partial "
+               "pressures or a calibrated response); before any score-bearing or life use the relevant species are "
+               "calibrated or traceable sensitivity factors are established"],
               sust, ["VO-FEED"],
               {"status": "AT_RISK", "why": "a sampled partial pressure near the cathode is a proxy for the emitter "
                "region (AO register v2 AOL-CX-03 rationale); H2O calibration method not identified by this lane"},
-              ["closes the review finding 'INS-11 has no near-C-1 sampling point' without changing INS-11"]),
+              ["closes the review finding 'INS-11 has no near-C-1 sampling point' without changing INS-11",
+               "data-use rule (owner addendum A3): an uncalibrated near-cathode RGA record is QUALITATIVE and usable "
+               "only for S1a engineering checkout; it never supports an exposure-dose or lifetime claim; every record "
+               "carries its calibration state (calibrated species / sensitivity-factor reference, or 'uncalibrated')"]),
         _inst("INS-23", "life-mechanism and C-1 emitter / cathode-tube temperatures (extends INS-17)", [],
               "temperatures of the anode, each exit-region wall ring, next to each witness coupon (HW-H1-12 positions), "
-              "and the C-1 emitter or cathode tube during firing", "thermocouples at the fixed W3 positions "
-              "(HW-H1-12, identical in every arm); C-1: thermocouple on the cathode tube as the baseline, a pyrometer "
-              "on the emitter only if the W3 C-1 design gives a view (proposed; choice W3 / owner)", [],
+              "and the C-1 cathode tube (mandatory) and emitter (only where a pyrometer view exists) during firing",
+              "thermocouples at the fixed W3 positions (HW-H1-12, identical in every arm); C-1 (owner addendum A3, W3 "
+              "HW-C1-09): a cathode-tube thermocouple is MANDATORY and logged continuously on INS-18; an emitter "
+              "pyrometer is added only if HW-C1-09 (b) records a defensible line of sight and an emissivity treatment",
+              [],
               {"value": tbd("the temperature resolution the oxidation / sputter-yield evidence needs (lane 32, lane 15 "
                             "limits) and the LaB6 temperature bands cited in W3 HW-C1-03; pyrometer emissivity "
                             "uncertainty TBD - requires the emitter material and view", "fo_hardware_definition")},
               ["thermocouple calibration and cold-junction check (as INS-17)", "pyrometer (if used) calibrated "
-               "against a thermocouple on a reference body at the emitter temperature range; emissivity recorded"],
+               "against a thermocouple on a reference body at the emitter temperature range; emissivity treatment "
+               "recorded (from the HW-C1-09 (b) C-1 design record)"],
               sust, [],
-              {"status": "AT_RISK", "why": "the emitter itself is usually not directly instrumentable; a cathode-tube "
-               "thermocouple gives the tube, not the emitter (from memory - verify against the C-1 design)"},
+              {"status": "AT_RISK", "why": "the emitter temperature is measured only if the C-1 design gives a "
+               "defensible pyrometer view (HW-C1-09 (b), not yet decided); a cathode-tube thermocouple gives the "
+               "tube, not the emitter (owner addendum A3)"},
               ["closes the review finding that no temperature channel is placed near the cathode (INS-17 is unchanged; "
-               "the finding named INS-14, which is the RPA)"]),
+               "the finding named INS-14, which is the RPA)",
+               "labelling rule (owner addendum A3, W3 HW-C1-09 (c)): the thermocouple channel is recorded as "
+               "'cathode-tube temperature' and never as emitter temperature; without a pyrometer the emitter "
+               "temperature is reported as 'unmeasured' (no value inferred from the tube reading)"]),
         _inst("INS-24", "coil winding temperature and coil electrical record", [], "average winding temperature per "
               "coil (4-wire potential-probe resistance), hot-spot temperatures (thermocouples at the predicted hot "
               "spots), coil current and voltage per reading", "4-wire coil resistance from the INS-02 hall_magnet / "
@@ -1064,11 +1084,15 @@ PROCEDURES = [
                   "installed show no change beyond W4 instrument uncertainty. W4 answer: the detection limits are the "
                   "INS-09 map repeatability and the INS-01 in-situ calibration repeatability, both measured in S1a; "
                   "the planning value for the thrust side is the lane-25 per-reading target (INS-01 "
-                  "required_uncertainty, n = 4). A change is 'beyond' when it exceeds the pre-registered coverage "
-                  "factor times the combined standard uncertainty of the two maps / tares (k: owner, LOCK-1).",
+                  "required_uncertainty, n = 4). A change is 'beyond' when it exceeds the coverage factor times the "
+                  "combined standard uncertainty of the two maps / tares. Owner addendum A3: planning coverage factor "
+                  "k = 2 (the ~95 % expanded-uncertainty convention, not a substitute for the measured uncertainty "
+                  "model); with low effective degrees of freedom the evaluated coverage factor is used and documented "
+                  "with its degrees of freedom.",
      "instruments": ["INS-01", "INS-09"],
      "required_uncertainty": "INS-01 and INS-09 values (no new number)", "calibration": "as INS-01 / INS-09",
-     "open": "coverage factor for the non-interference test: owner at LOCK-1"},
+     "open": "none for the planning coverage factor (A3: k = 2); the evaluated k and effective degrees of freedom are "
+             "documented per test"},
 ]
 
 # hand disposition per provision; adopted ids are derived. status in ADOPTED / ADOPTED_PARTIAL / NOT_ADOPTED
@@ -1082,8 +1106,8 @@ C5_DISPOSITION = {
     "AOL-CX-02": ("ADOPTED", "INS-18 start log, INS-P-08 (2)", None),
     "AOL-CX-03": ("ADOPTED_PARTIAL", "sampling point and log adopted (INS-22 into INS-11)",
                   "H2O calibration method at the sampling point not identified; RGA and facility not chosen"),
-    "AOL-CX-04": ("ADOPTED", "INS-23 (cathode-tube thermocouple baseline, emitter pyrometer if the C-1 design gives a "
-                  "view)", None),
+    "AOL-CX-04": ("ADOPTED", "INS-23 (cathode-tube thermocouple mandatory, emitter pyrometer only where W3 HW-C1-09 "
+                  "gives a view; owner addendum A3)", None),
     "AOL-CX-05": ("ADOPTED", "INS-18 interval log with Xe flow and interlock states, INS-P-08 (3)", None),
     "AOL-CX-06": ("ADOPTED", "INS-10 detection + INS-P-09 record fields", None),
     "AOL-CX-07": ("ADOPTED", "INS-23 at the W3 HW-H1-12 positions (INS-17 unchanged)", None),
@@ -1102,6 +1126,71 @@ C5_DISPOSITION = {
     "MCQ-W4-03": ("ADOPTED", "INS-P-07 map-record fields (coil currents, coil average and hot-spot temperatures, "
                   "magnet temperatures)", None),
 }
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# owner addendum A3 (still revision v1-r2: additive, no id / value / acceptance rule changed; A3 instrumentation_version)
+# ----------------------------------------------------------------------------------------------------------------------
+A3 = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json"
+A3_BASE_COMMIT = "7d373374dcd47eb6c2464423eb5f45a1fa14ef78"
+
+# A3 decision key -> (instrument / procedure ids whose semantics carry it, how)
+A3_ADOPTION = {
+    "metrology_lab": (["INS-19", "INS-20", "INS-P-02", "INS-P-04", "INS-P-05"],
+                      "INS-19 / INS-20 calibration items name the A3 metrology specification (ISO/IEC 17025 accredited "
+                      "scope, OIML E2 / R111 reference masses, ISO 25178-700, ASTM E1508, ISO 15472); the procedures "
+                      "inherit it; no lab is named (specification first, then procurement)"),
+    "cathode_temperature": (["INS-23", "INS-18"],
+                            "INS-23: cathode-tube thermocouple mandatory (W3 HW-C1-09 (a)), emitter pyrometer only with "
+                            "a HW-C1-09 (b) view; labelling rule in the INS-23 notes; INS-18 logs the tube channel "
+                            "continuously and never labels it emitter temperature; emitter reported 'unmeasured' "
+                            "without a pyrometer"),
+    "near_cathode_rga": (["INS-22", "INS-11"],
+                         "INS-22 calibration item (quantitative for AO/lifetime use) and data-use note (uncalibrated = "
+                         "qualitative S1a engineering only, never exposure-dose / life evidence); INS-11 note"),
+    "ins_p12_coverage_factor": (["INS-P-12"],
+                                "INS-P-12 statement: planning k = 2; evaluated k with low effective degrees of freedom, "
+                                "documented"),
+    "instrumentation_version": ([], "stays instrumentation_definition_v1.json revision v1-r2 (change-log entry "
+                                    "'A3'); no schema, measurement-semantics-breaking, acceptance-rule or id-meaning "
+                                    "change"),
+}
+
+# notes appended to instruments built by instruments() (their other fields are unchanged)
+A3_NOTES = {
+    "INS-11": ["owner addendum A3 (near_cathode_rga): the INS-22 near-cathode sample through this RGA is quantitative "
+               "only after species calibration or traceable sensitivity factors; uncalibrated records are qualitative "
+               "S1a engineering data and never exposure-dose or lifetime evidence"],
+    "INS-18": ["owner addendum A3 (cathode_temperature, W3 HW-C1-09): the INS-23 cathode-tube thermocouple is logged "
+               "continuously during firing under a cathode-tube label; no channel is labelled emitter temperature "
+               "unless an INS-23 pyrometer is installed, otherwise the emitter-temperature field is recorded as "
+               "'unmeasured'"],
+}
+
+
+def a3_adoption(ins: list) -> dict:
+    a3 = _load_json(A3)
+    if a3.get("amends") != OD or a3.get("decided_by") != "owner":
+        raise InputChanged(f"{A3} does not amend {OD} as an owner decision")
+    dec = a3["decisions"]
+    if set(dec) != set(A3_ADOPTION):
+        raise InputChanged(f"A3 decision keys {sorted(dec)} != adopted {sorted(A3_ADOPTION)}")
+    known = {i["id"] for i in ins} | {p["id"] for p in PROCEDURES}
+    rows = []
+    for key in sorted(A3_ADOPTION):
+        ids, how = A3_ADOPTION[key]
+        if not set(ids) <= known:
+            raise ValueError(f"A3 {key}: unknown id {sorted(set(ids) - known)}")
+        rows.append({"decision": key, "owner_text": dec[key], "carried_by": ids, "how": how})
+    return {"source": A3, "decided_utc": a3["decided_utc"], "rows": rows,
+            "w3_provision": "HW-C1-09 (cathode temperature provision) and HW-C1-07 (b) (near-cathode RGA port) in "
+                            + HWR,
+            "milestones": "supports A (S1a engineering checkout can use the qualitative RGA and the tube "
+                          "thermocouple under the labelling rule) and prepares C (quantitative RGA and accredited "
+                          "metrology are preconditions for exposure-dose / life evidence); B not affected. Next: "
+                          "W4 measurement specification issued to procure an accredited lab; RGA species "
+                          "calibration or sensitivity factors before score-bearing / life use; HW-C1-09 (b) view "
+                          "decision in the C-1 design release."}
 
 
 def _walk_ids(obj, out: set):
@@ -1208,6 +1297,15 @@ CHANGE_LOG = [
      "material": False,
      "why_v1": "additive: no existing requirement, threshold, derived number or decision-quantity role changed, so the "
                "file stays instrumentation_definition_v1.json (downstream lanes reference this path)"},
+    {"revision": "v1-r2", "amendment": "A3", "date": "2026-09-27", "base_commit": A3_BASE_COMMIT,
+     "change": "owner addendum A3 applied without changing any id or value: metrology specification (INS-19 / INS-20 "
+               "calibration), cathode temperature semantics (INS-23 tube thermocouple mandatory, never labelled "
+               "emitter temperature, pyrometer optional, emitter 'unmeasured' without one; INS-18 note; W3 HW-C1-09 "
+               "traced), near-cathode RGA data-use rule (INS-22 / INS-11), INS-P-12 planning k = 2; a3_adoption "
+               "table; A3 pinned and the W3 hardware definition re-pinned (HW-C1-09 added by the W3 integration "
+               "review); four C5 open owner decisions marked decided",
+     "material": False,
+     "why_v1": "owner addendum A3 decisions.instrumentation_version: keep v1-r2 (additive)"},
 ]
 
 
@@ -1227,7 +1325,9 @@ def build() -> dict:
     ins = instruments(basis, der) + c5_instruments(der)
     for i in ins:
         i["traces_to_provisions"] = INSTRUMENT_PROVISIONS.get(i["id"], [])
+        i["notes"] = i["notes"] + A3_NOTES.get(i["id"], [])
     c5 = c5_adoption(ins)
+    a3 = a3_adoption(ins)
     lane25_ids = [m["id"] for m in draft["measurements"]]
     covered = sorted({m for i in ins for m in i["lane25_measurements"]}, key=lambda s: int(s[1:]))
     if covered != sorted(lane25_ids, key=lambda s: int(s[1:])):
@@ -1306,6 +1406,7 @@ def build() -> dict:
         "instruments": ins,
         "procedures": PROCEDURES,
         "c5_adoption": c5,
+        "a3_adoption": a3,
         "bus_power_channels": bus_power_channels(),
         "lane06_component_ids": prot_components,
         "experiment_package_traceability_ids": [r["id"] for r in pkg["traceability"]["rows"]],
@@ -1319,11 +1420,14 @@ def build() -> dict:
             "whether OES, RGA and Langmuir probes are in the minimum instrument set",
             "absolute-gate facility rule: report T_measured with the S5 p_b slope and the ingestion scale (proposed) "
             "or require a p_b ceiling for Phase 3",
-            "C5: metrology lab for INS-19 / INS-20 (mass, profile, SEM/EDS, XPS) and its reference-standard classes",
-            "C5: C-1 temperature sensing - cathode-tube thermocouple (proposed baseline) and/or emitter pyrometer "
-            "(needs a view in the W3 C-1 design)",
-            "C5: coverage factor for the witness-holder non-interference test (INS-P-12)",
-            "C5: whether the near-cathode RGA proxy (INS-22) is quantitative (needs an H2O calibration method)",
+            "C5 (specification DECIDED by owner addendum A3; open: lab procurement): metrology lab for INS-19 / INS-20 "
+            "(mass, profile, SEM/EDS, XPS) and its reference-standard classes",
+            "C5 (DECIDED by owner addendum A3; open: HW-C1-09 (b) view in the C-1 design): C-1 temperature sensing - "
+            "cathode-tube thermocouple mandatory, emitter pyrometer where a view exists",
+            "C5 (DECIDED by owner addendum A3: planning k = 2): coverage factor for the witness-holder "
+            "non-interference test (INS-P-12)",
+            "C5 (DECIDED by owner addendum A3: quantitative for AO/lifetime use; open: H2O calibration method): whether "
+            "the near-cathode RGA proxy (INS-22) is quantitative",
         ],
         "tbd_register": [
             {"what": "thrust range and mass on stand per configuration", "requires": "H-1 and module design",
@@ -1444,6 +1548,23 @@ def validate(doc: dict) -> None:
     for p in doc["procedures"]:
         if not set(p["instruments"]) <= {i["id"] for i in doc["instruments"]}:
             raise ValueError(f"{p['id']} names an unknown instrument")
+    a3 = doc["a3_adoption"]
+    for r in a3["rows"]:
+        if not set(r["carried_by"]) <= set(ids):
+            raise ValueError(f"A3 {r['decision']}: unknown carrier id")
+        if r["decision"] != "instrumentation_version" and not r["carried_by"]:
+            raise ValueError(f"A3 {r['decision']}: not carried by any instrument or procedure")
+    ins23 = next(i for i in doc["instruments"] if i["id"] == "INS-23")
+    if not any("never as emitter temperature" in n and "'unmeasured'" in n for n in ins23["notes"]):
+        raise ValueError("INS-23 must carry the A3 labelling rule (tube thermocouple never labelled emitter temperature)")
+    ins22 = next(i for i in doc["instruments"] if i["id"] == "INS-22")
+    if not any("QUALITATIVE" in n and "never supports an exposure-dose or lifetime claim" in n for n in ins22["notes"]):
+        raise ValueError("INS-22 must carry the A3 data-use rule (uncalibrated RGA is qualitative only)")
+    p12 = next(p for p in doc["procedures"] if p["id"] == "INS-P-12")
+    if "k = 2" not in p12["statement"] or "effective degrees of freedom" not in p12["statement"]:
+        raise ValueError("INS-P-12 must carry the A3 planning coverage factor and the low-dof rule")
+    if doc["revision"] != "v1-r2":
+        raise ValueError("A3: instrumentation stays v1-r2")
     for path in _quantities_with_unit(doc, "h"):
         raise ValueError(f"life-type quantity in hours at {path} (control C6 / AOL-LF-01)")
     text = json.dumps(doc)
@@ -1710,6 +1831,18 @@ def render_md(doc: dict) -> str:
     a("")
     a(f"Milestones: {c5['milestones']}")
     a("")
+    a3 = doc["a3_adoption"]
+    a("## 7b. Owner addendum A3 (instrument semantics; revision stays v1-r2)")
+    a("")
+    a(f"Source: `{a3['source']}` (decided {a3['decided_utc']}). W3 provisions: {a3['w3_provision']}.")
+    a("")
+    a("| A3 decision | carried by | how | owner text |")
+    a("|---|---|---|---|")
+    for r in a3["rows"]:
+        a(f"| {r['decision']} | {', '.join(r['carried_by']) or '-'} | {r['how']} | {r['owner_text']} |")
+    a("")
+    a(f"Milestones: {a3['milestones']}")
+    a("")
     a("## 8. Feasibility flags (honest)")
     a("")
     a("| instrument | status | why |")
@@ -1755,7 +1888,8 @@ def render_md(doc: dict) -> str:
     a("|---|---|---|---|")
     for c in doc["change_log"]:
         extra = f" Why still v1: {c['why_v1']}" if "why_v1" in c else ""
-        a(f"| {c['revision']} | {c['date']} | `{c['base_commit'][:10]}` | {c['change']}.{extra} |")
+        rev = c["revision"] + (f" ({c['amendment']})" if "amendment" in c else "")
+        a(f"| {rev} | {c['date']} | `{c['base_commit'][:10]}` | {c['change']}.{extra} |")
     a("")
     return "\n".join(L)
 
