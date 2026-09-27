@@ -87,10 +87,14 @@ def validate(v, s, path="$") -> list[str]:
             if r not in v:
                 errs.append(f"{path}: missing {r}")
         props = s.get("properties", {})
-        if s.get("additionalProperties") is False:
+        ap = s.get("additionalProperties")
+        if ap is False:
             extra = set(v) - set(props)
             if extra:
                 errs.append(f"{path}: additional {sorted(extra)}")
+        elif isinstance(ap, dict):
+            for k in set(v) - set(props):
+                errs += validate(v[k], ap, f"{path}.{k}")
         for k, sub in props.items():
             if k in v:
                 errs += validate(v[k], sub, f"{path}.{k}")
@@ -117,6 +121,18 @@ def test_schema_uses_only_supported_keywords():
             for x in s:
                 walk(x)
     walk(json.loads(SCHEMA_PATH.read_text()))
+
+
+def test_schema_rejects_bare_valve_outlet_record(doc):
+    schema = json.loads(SCHEMA_PATH.read_text())
+    bad = copy.deepcopy(doc)
+    cid = next(iter(bad["valve_outlet"]))
+    k = next(iter(bad["valve_outlet"][cid]))
+    del bad["valve_outlet"][cid][k]["nominal"]["evidence_class"]
+    bad["test_points"]["phase1_knee_N2"][0].pop("status")
+    errs = validate(bad, schema)
+    assert any("nominal: missing evidence_class" in e for e in errs)
+    assert any("phase1_knee_N2[0]: missing status" in e for e in errs)
 
 
 def test_validates_against_schema(doc):
@@ -235,6 +251,10 @@ def test_test_points_traceable(doc):
     for t in tp["phase1_knee_N2"]:
         rows = doc["valve_outlet"][t["candidate"]]
         md = [r["nominal"]["mdot_total_kgps"] for r in rows.values()]
+        if t["id"].endswith("-BFL"):
+            lo = min(r["mdot_total_kgps_bracket"]["lower"] for r in rows.values())
+            assert math.isclose(t["mdot_N2_kgps"], lo, rel_tol=1e-9) and lo < min(md)
+            continue
         assert min(md) * (1 - 1e-9) <= t["mdot_N2_kgps"] <= max(md) * (1 + 1e-9)
         for case in t["trace"]["from"].values():
             assert case in CASES
@@ -266,3 +286,50 @@ def test_milestones_and_owner_decisions(doc):
     assert ids == [f"DI-1.{i}" for i in range(1, len(ids) + 1)]
     md = MD_PATH.read_text()
     assert "DRAFT for owner review" in md and "Owner decisions needed to freeze DI-1" in md
+
+
+# ------------------------------------------------------------------------------------------------ backflow (FC-01)
+def test_backflow_self_consistent_bracket(doc):
+    sens_ids = {s["id"] for s in doc["design_axes"]["sensitivities"]}
+    assert "SEN-BACKFLOW-0.5" in sens_ids
+    union_lo = doc["mfc_range_requirement"]["mdot_min_kgps"]
+    for cid, rows in doc["valve_outlet"].items():
+        for k, r in rows.items():
+            b = r["backflow_self_consistent"]
+            assert b["closed"] and 0.0 < b["b"] < 1.0
+            assert 0.0 < b["delivered_factor"] < 1.0
+            assert math.isclose(b["mdot_total_kgps"], b["delivered_factor"] * r["nominal"]["mdot_total_kgps"],
+                                rel_tol=1e-9)
+            assert math.isclose(b["CR_required"], r["nominal"]["setpoint_Pa"] / b["p_plenum_Pa"], rel_tol=1e-9)
+            br = r["mdot_total_kgps_bracket"]
+            assert br["lower"] <= b["mdot_total_kgps"] * (1 + 1e-12)
+            assert br["lower"] <= r["scenario_range"]["mdot_total_kgps"]["min"] * (1 + 1e-12)
+            assert br["upper"] >= r["nominal"]["mdot_total_kgps"] * (1 - 1e-12)
+            assert union_lo <= br["lower"] * (1 + 1e-12)
+    for t in doc["test_points"]["phase3_absolute_demonstration"]:
+        r = doc["valve_outlet"][t["candidate"]][t["trace"]["case"]]
+        assert t["mdot_backflow_lower_kgps"] == r["mdot_total_kgps_bracket"]["lower"]
+
+
+def test_sensitivity_ranking_puts_closure_loss_first(doc):
+    for sr in doc["sensitivity_ranking"]:
+        keys = [(-e["cases_losing_closure"], -e["max_rel_change_mdot"]) for e in sr["ranked"]]
+        assert keys == sorted(keys)
+        ids = {e["id"] for e in sr["ranked"]}
+        assert "SC-BACKFLOW" in ids and set(sr["ranked_by_x_O"]) <= ids and set(sr["ranked_by_T_feed"]) <= ids
+        xo = {e["id"]: e["max_abs_change_x_O"] for e in sr["ranked"]}
+        vals = [xo[i] for i in sr["ranked_by_x_O"]]
+        assert vals == sorted(vals, reverse=True)
+
+
+def test_phase2_cross_references_iso_power_points(doc):
+    for t in doc["test_points"]["phase2_common_condition"]:
+        if t["operating_point"] in ("OP2", "OP3"):
+            assert t["iso_power_reference"].startswith(t["operating_point"] + "H")
+
+
+def test_knee_levels_missing_draft_raises(monkeypatch):
+    mod = _load(SCRIPT, "_fsc_builder")
+    monkeypatch.setattr(mod, "LANE25_DRAFT_REL", "docs/architecture_comparison/does_not_exist.json")
+    with pytest.raises(mod.FeedClosureError):
+        mod._knee_levels()

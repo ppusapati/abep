@@ -48,7 +48,7 @@ LANE16_SCRIPT_REL = "scripts/architecture/build_feed_envelope.py"
 DECISION_REL = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"
 LANE25_DRAFT_REL = "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json"
 SCHEMA_ID = "feed_state_closure_v1"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 BASE_COMMIT = "510e464fb8e128e4cf3325572a4d36ad33a4899d"
 ARCHITECTURES = ("hall_only", "rf_hall", "ecr_hall")
 ALTITUDES_KM = (180.0, 200.0, 230.0)
@@ -95,11 +95,17 @@ SENSITIVITIES = (
     {"id": "SEN-WALL-TI", "axis": "buffer wall material", "override": {"chamber.wall_material": "Ti6Al4V",
                                                                         "chamber.upstream_material": "Ti6Al4V"},
      "source": "abep_sim/reservoir.py Reservoir.wall_material / upstream_material defaults (no cited source)"},
+    {"id": "SEN-BACKFLOW-0.5", "axis": "plenum backflow (FC-01)", "override": {"plenum.backflow_frac": 0.5},
+     "source": "PROPOSED level: simple self-consistent estimate b ~ 0.5 (compressor pumping speed S = F / p_passive "
+               "and net inflow (1 - b) F = pumped flow b F; finding FC-01); the chain still feeds the compressor at "
+               "p_passive, so only the flow reduction is represented (the per-case estimate is SC-BACKFLOW)"},
     {"id": "SEN-SPECIES-RESOLVED", "axis": "collected-flow composition convention", "override": {},
      "convention": "species_resolved_surface",
      "source": "lane 16 FE-05 / ICD G-02: per-species eta_c of the same frozen surface"},
 )
-KNEE_LEVELS_FALLBACK = 5
+SC_BISECTION_ITER = 48                         # self-consistent backflow root: bisection steps on b in (0, 1)
+VALUE_STATUS = "PROPOSED (candidate-conditional)"
+VALUE_EVIDENCE = "model-derived (from assumed inputs)"
 SCCM_P0_PA = 101325.0                          # standard-condition definition used for the sccm conversion
 SCCM_T0_K = 273.15                             # (0 degC, 1 atm); MFC vendors use other references: verify per MFC
 
@@ -126,7 +132,7 @@ COMPARABLES = (
     {"id": "LIT-01", "ref": "REF-ANDREUSSI2022", "where": "Table 1, p. 8",
      "statement": "ABEP platform concepts in the literature list frontal areas A_f from 0.01 to 1.5 m^2 and drag "
                   "coefficients C_D from 2 to 6 (e.g. Romano: 150-250 km, A_f 1 m^2, C_D 2.2; Diamant: 200 km, "
-                  "0.5 m^2, C_D 2.2; Shabshelowitz: 180-200 km, 0.36 m^2)",
+                  "0.5 m^2, C_D 2.2; Shabelowitz [46] (spelling as in the source): 180-200 km, 0.36 m^2)",
      "relevance": "range check for the candidate intake areas (sizing rule SR-DRAG); concept studies, not hardware",
      "evidence_class": "inferred", "role": "context_only"},
     {"id": "LIT-02", "ref": "REF-ANDREUSSI2022", "where": "Table 2, p. 15",
@@ -159,7 +165,7 @@ COMPARABLES = (
     {"id": "LIT-07", "ref": "REF-ANDREUSSI2022", "where": "p. 25",
      "statement": "Busek fed a Hall thruster with an 'air simulant' of 68.3 % N2, 6.7 % O2 and 25 % Ar, argon "
                   "chosen for its similarities with atomic oxygen",
-     "relevance": "only published atomic-O surrogate practice found; not proposed here (surrogate S-AR, section 9)",
+     "relevance": "only published atomic-O surrogate practice found; not proposed here (surrogate S-AR, section 7)",
      "evidence_class": "measured", "role": "context_only"},
     {"id": "LIT-08", "ref": "REF-ANDREUSSI2022", "where": "p. 26",
      "statement": "a 38 mm Hall thruster was tested with air and a 2-to-1 N2/O2 mixture at total flows of 0.8, 0.9 "
@@ -322,7 +328,9 @@ def compact(det: dict, atm: dict) -> dict:
                           "sized": c["sized"], "rotor_ok": c["rotor_ok"], "CR_active": c["CR_active"],
                           "T_comp_K": c["T_comp_K"], "P_el_W": c["P_el_W"],
                           "T_clamp_active": not (300.0 <= c["T_comp_K"] <= 500.0)},
-           "feed": None}
+           "feed": None,
+           "sc_inputs": {"mdot_to_compressor_kgps": det["mdot_to_compressor_kgps"],
+                         "w_s_to_compressor": dict(det["w_s_to_compressor"])}}
     if det["feed"] is not None:
         f = det["feed"]
         ch = det["chamber"]
@@ -331,6 +339,53 @@ def compact(det: dict, atm: dict) -> dict:
                        "O_survival": ch["O_survival"], "residence_time_s": ch["residence_time_s"],
                        "valve_area_m2": ch["anode_orifice_area_m2"], "A_eff_m2": f["A_eff_m2"]}
     return out
+
+
+def self_consistent_backflow(fe, dv: dict, run: dict, setpoint: float) -> dict:
+    """FC-01 estimate: plenum backflow proportional to the plenum pressure (b = p_plenum / p_passive, the TPMC flux
+    balance that defines CR_passive), compressor = the machine the chain sized for the nominal case (same rows, stages,
+    rpm and code-default parameters), valve outlet held at the setpoint. Solves for b such that the machine, fed at
+    p_in = b p_passive with the net flow (1 - b) F, reaches p_out = setpoint. Uses abep_sim.compressor.DragCompressor.run
+    read-only; no module is changed. A larger compressor lowers b (delivered flow moves toward the chain's upper
+    bound F); so the value is the self-consistent delivered flow of THIS machine, not a physical lower bound."""
+    from abep_sim.compressor import DragCompressor
+    kw = {f: (int(dv["compressor." + f]) if f in fe.COMP_INT_FIELDS else dv["compressor." + f])
+          for f in fe._dragcompressor_fields() if f not in fe.COMP_SIZED_FIELDS}
+    c = run["compressor"]
+    comp = DragCompressor(**kw, turbo_rows=int(c["turbo_rows"]), n_stages=int(c["n_stages"]), rpm=float(c["rpm"]))
+    F = run["sc_inputs"]["mdot_to_compressor_kgps"]
+    w = run["sc_inputs"]["w_s_to_compressor"]
+    pp = run["p_plenum_Pa"]
+
+    def at(b):
+        return comp.run(b * pp, {s: (1.0 - b) * F * w[s] for s in w})
+
+    lo, hi = 0.0, 1.0 - 1e-12
+    base = {"model": "backflow = F x p_plenum / p_passive (inferred from the TPMC CR_passive flux balance); compressor "
+                     "= chain-sized nominal machine (DragCompressor.run, code-default parameters); p_out = setpoint",
+            "status": VALUE_STATUS, "evidence_class": VALUE_EVIDENCE,
+            "machine": {"turbo_rows": int(c["turbo_rows"]), "n_stages": int(c["n_stages"]), "rpm": float(c["rpm"])}}
+    if at(hi)["p_out_Pa"] < setpoint:
+        return {**base, "closed": False, "b": None, "delivered_factor": None, "mdot_total_kgps": None,
+                "chamber_leak_kgps_held": None, "p_plenum_Pa": None, "p_plenum_chain_Pa": pp, "CR_required": None,
+                "compressor_P_el_W": None}
+    for _ in range(SC_BISECTION_ITER):
+        m = 0.5 * (lo + hi)
+        if at(m)["p_out_Pa"] < setpoint:
+            lo = m
+        else:
+            hi = m
+    r = at(hi)
+    if not r["rotor_ok"]:
+        raise FeedClosureError("self-consistent backflow state violates the rotor limit of the chain-sized machine")
+    leak = F - run["feed"]["mdot_total_kgps"]           # chamber leak at the same chamber pressure (setpoint)
+    mdot = (1.0 - hi) * F - leak
+    if mdot <= 0.0:
+        raise FeedClosureError("self-consistent backflow flow does not cover the chamber leak")
+    return {**base, "closed": True, "b": hi, "delivered_factor": mdot / run["feed"]["mdot_total_kgps"],
+            "mdot_total_kgps": mdot, "chamber_leak_kgps_held": leak,
+            "p_plenum_Pa": hi * pp, "p_plenum_chain_Pa": pp, "CR_required": setpoint / (hi * pp),
+            "compressor_P_el_W": r["P_el_W"]}
 
 
 # --------------------------------------------------------------------------------------------------------- build
@@ -425,6 +480,7 @@ def build() -> dict:
         if cl["status"] != "CLOSED":
             continue
         sp = cl["nominal_setpoint_Pa"]
+        dv_nom = fe.validate_design_inputs(design_docs[c["id"]])
         rows = {}
         for k, atm in atms.items():
             nom = ladder[c["id"]][f"{sp:g}"][k]
@@ -442,9 +498,14 @@ def build() -> dict:
                               L_over_d=c["L_over_d"], phi=c["phi"], use_tpmc=True)
             col = collection(ip, atm)
             D = col["drag_N"]
+            scb = self_consistent_backflow(fe, dv_nom, nom, sp)
+            lower = min([rng(lambda ff: ff["mdot_total_kgps"])["min"]]
+                        + ([scb["mdot_total_kgps"]] if scb["closed"] else []))
             rows[k] = {
+                "status": VALUE_STATUS, "evidence_class": VALUE_EVIDENCE,
                 "altitude_km": float(k.split("_")[0][3:]), "solar_level": k.split("_")[1],
-                "nominal": {"setpoint_Pa": sp, **f,
+                "nominal": {"status": VALUE_STATUS, "evidence_class": VALUE_EVIDENCE,
+                            "flow_basis": "upper bound: no plenum backflow (FC-01)", "setpoint_Pa": sp, **f,
                             "compressor_P_el_W": nom["compressor"]["P_el_W"],
                             "compressor_T_comp_K": nom["compressor"]["T_comp_K"],
                             "compressor_T_clamp_active": nom["compressor"]["T_clamp_active"],
@@ -459,6 +520,12 @@ def build() -> dict:
                     "T_feed_K": rng(lambda ff: ff["T_feed_K"]),
                     "x_s": {s: rng(lambda ff, s=s: ff["x_s"][s]) for s in AIR},
                     "w_s": {s: rng(lambda ff, s=s: ff["w_s"][s]) for s in AIR}},
+                "backflow_self_consistent": scb,
+                "mdot_total_kgps_bracket": {
+                    "lower": lower, "upper": rng(lambda ff: ff["mdot_total_kgps"])["max"],
+                    "note": "lower = min(scenario set incl. SEN-BACKFLOW-0.5, SC-BACKFLOW with the chain-sized "
+                            "machine); upper = scenario maximum without backflow. Not a probability interval; a "
+                            "compressor larger than the chain-sized one moves the self-consistent flow up"},
                 "tpmc_sampling_rel_bound_on_mdot": 0.5 / math.sqrt(n_tpmc) / f["mdot_total_kgps"]
                                                   * atm["flux_kg_m2_s"] * c["intake_area_m2"],
                 "intake_drag": {"D_int_mN": D * 1e3, "C_D": col["C_D"],
@@ -489,8 +556,26 @@ def build() -> dict:
                                        {k: ladder[cid][f"{sp:g}"][k] for k in rows}))
         for s in SENSITIVITIES:
             entries.append(_sens_entry(s["id"], s["axis"], rows, sens[cid][s["id"]]))
-        entries.sort(key=lambda e: (-e["max_rel_change_mdot"], -e["max_abs_change_x_O"], e["id"]))
-        sensitivity_rank.append({"candidate": cid, "ranked": entries})
+        scs = [r["backflow_self_consistent"] for r in rows.values()]
+        entries.append({"axis": "plenum backflow, self-consistent with the chain-sized compressor (FC-01)",
+                        "id": "SC-BACKFLOW",
+                        "max_rel_change_mdot": max(1.0 - b["delivered_factor"] for b in scs if b["closed"]),
+                        "max_abs_change_x_O": None, "max_abs_change_T_feed_K": None,
+                        "cases_losing_closure": sum(1 for b in scs if not b["closed"]),
+                        "note": "total flow only (composition and temperature not re-evaluated)"})
+        # closure loss first (a variant that destroys closure is the most consequential), then the flow change
+        entries.sort(key=lambda e: (-e["cases_losing_closure"], -e["max_rel_change_mdot"], e["id"]))
+        by_xo = sorted([e for e in entries if e["max_abs_change_x_O"] is not None],
+                       key=lambda e: (-e["max_abs_change_x_O"], e["id"]))
+        by_T = sorted([e for e in entries if e["max_abs_change_T_feed_K"] is not None],
+                      key=lambda e: (-e["max_abs_change_T_feed_K"], e["id"]))
+        sensitivity_rank.append({
+            "candidate": cid,
+            "ranking_rule": "ranked by cases losing closure (descending), then max relative change of the delivered "
+                            "flow over the cases that still close; composition and temperature ranked separately",
+            "ranked": entries,
+            "ranked_by_x_O": [e["id"] for e in by_xo],
+            "ranked_by_T_feed": [e["id"] for e in by_T]})
 
     # design-axis effects across candidates (design case)
     k_des = case_id(*DESIGN_CASE)
@@ -536,7 +621,15 @@ def derive_test_points(candidates, closure, valve_outlet):
         k_max = max(md, key=md.get)
         m_min, m_nom, m_max = md[k_min], md[k_des], md[k_max]
         des = rows[k_des]["nominal"]
-        common = {"candidate": cid, "P_feed_target_Pa": des["setpoint_Pa"],
+        sc_lo = {k: r["mdot_total_kgps_bracket"]["lower"] for k, r in rows.items()}
+        k_lo = min(sc_lo, key=sc_lo.get)
+        fac = [r["backflow_self_consistent"]["delivered_factor"] for r in rows.values()
+               if r["backflow_self_consistent"]["closed"]]
+        common = {"candidate": cid, "status": VALUE_STATUS, "evidence_class": VALUE_EVIDENCE,
+                  "flow_basis": "chain delivered flow = UPPER BOUND (no plenum backflow, FC-01); with the chain-sized "
+                                f"compressor the backflow-consistent flow is {fmt(1 / max(fac), 2)}-"
+                                f"{fmt(1 / min(fac), 2)}x lower (SC-BACKFLOW); see the BFL point",
+                  "P_feed_target_Pa": des["setpoint_Pa"],
                   "P_feed_role": "measured covariate at the valve-outlet plane (lane 25 Sec. 4); matched by pressure "
                                  "control only if the owner decides so (DI-1.9)",
                   "T_feed_flight_K": des["T_feed_K"],
@@ -556,9 +649,24 @@ def derive_test_points(candidates, closure, valve_outlet):
             "trace": {"level": "upper extension", "from": {"mdot_max": k_max},
                       "rule": "PROPOSED optional point: upper edge of the candidate's feed envelope (not in the lane-25 "
                               "minimum)"}, **common})
+        tps["phase1_knee_N2"].append({
+            "id": f"TP1-{cid}-BFL", "phase": 1, "gas": "N2", "basis": "mass-equivalent (DI-1.8 PROPOSED)",
+            "mdot_N2_kgps": sc_lo[k_lo], "mdot_N2_mgps": sc_lo[k_lo] * 1e6,
+            "sccm_N2": sc_lo[k_lo] / _M("N2") / sccm_molecules_per_s(),
+            "trace": {"level": "backflow lower extension", "from": {"mdot_bracket_lower": k_lo},
+                      "rule": "PROPOSED point: lowest backflow-consistent flow of the candidate (min over cases of "
+                              "mdot_total_kgps_bracket.lower: SC-BACKFLOW / SEN-BACKFLOW-0.5), so the Phase-1 "
+                              "sweep covers the FC-01 range below the upper-bound envelope minimum (DI-1.12)"},
+            **common})
         # Phase 2: OP1/OP2/OP3 on N2, OP5 air surrogate at the knee (lane 25 operating points)
         gdes = rows[k_des]["ground"]["air_surrogate_N2_O2"]
+        iso = {"OP2": "OP2H (lane 25: hall_only only, same feed at V_hi; iso-power reference, no new feed state)",
+               "OP3": "OP3H (lane 25: hall_only only, same feed at V_hi; iso-power reference, no new feed state)"}
         for op, m, src in (("OP1", m_min, k_min), ("OP2", None, "Phase-1 knee"), ("OP3", m_nom, k_des)):
+            extra = {"iso_power_reference": iso[op]} if op in iso else {}
+            if m is not None:
+                kk = k_min if op == "OP1" else k_des
+                extra["mdot_backflow_lower_kgps"] = rows[kk]["mdot_total_kgps_bracket"]["lower"]
             tps["phase2_common_condition"].append({
                 "id": f"TP2-{cid}-{op}", "phase": 2, "operating_point": op, "gas": "N2",
                 "basis": "mass-equivalent (DI-1.8 PROPOSED)",
@@ -566,18 +674,26 @@ def derive_test_points(candidates, closure, valve_outlet):
                 "sccm_N2": None if m is None else m / _M("N2") / sccm_molecules_per_s(),
                 "value_status": "PROPOSED" if m is not None else "TBD - requires the measured Phase-1 knee "
                                                                   "(lane 25 T-OP2-FALLBACK)",
-                "trace": {"from": src}, "arms": list(ARCHITECTURES), **common})
+                "trace": {"from": src}, "arms": list(ARCHITECTURES), **extra, **common})
+        for t in tps["phase2_common_condition"][-3:]:
+            if t["mdot_N2_kgps"] is None:
+                t["status"] = "TBD - requires the measured Phase-1 knee"
         tps["phase2_common_condition"].append({
             "id": f"TP2-{cid}-OP5", "phase": 2, "operating_point": "OP5", "gas": "N2+O2 air surrogate",
             "basis": "O supplied as O2 at equal oxygen-element mass (DI-1.7 PROPOSED)",
             "mdot_total_kgps": None, "w_O2": gdes["w_O2"], "w_N2": gdes["w_N2"],
             "value_status": "TBD - total flow = the measured Phase-1 knee; composition PROPOSED from the design case",
             "trace": {"composition_from": k_des}, "arms": list(ARCHITECTURES), **common})
+        tps["phase2_common_condition"][-1]["status"] = ("TBD (total flow = the measured Phase-1 knee); composition "
+                                                        + VALUE_STATUS)
         # Phase 3: every case, N2-only then air surrogate
         for k, r in rows.items():
             g = r["ground"]
             n = r["nominal"]
-            base = {"candidate": cid, "P_feed_target_Pa": n["setpoint_Pa"], "T_feed_flight_K": n["T_feed_K"],
+            base = {"candidate": cid, "status": VALUE_STATUS, "evidence_class": VALUE_EVIDENCE,
+                    "flow_basis": common["flow_basis"],
+                    "mdot_backflow_lower_kgps": r["mdot_total_kgps_bracket"]["lower"],
+                    "P_feed_target_Pa": n["setpoint_Pa"], "T_feed_flight_K": n["T_feed_K"],
                     "T_feed_ground": common["T_feed_ground"], "P_feed_role": common["P_feed_role"],
                     "trace": {"case": k, "altitude_km": r["altitude_km"], "solar_level": r["solar_level"]},
                     "flight_x_s": n["x_s"], "flight_w_s": n["w_s"],
@@ -593,7 +709,7 @@ def derive_test_points(candidates, closure, valve_outlet):
                 "mdot_N2_kgps": a["mdot_N2_kgps"], "mdot_O2_kgps": a["mdot_O2_kgps"], "sccm_N2": a["sccm_N2"],
                 "sccm_O2": a["sccm_O2"], "w_O2": a["w_O2"],
                 "particle_flow_ratio_ground_over_flight": a["particle_flow_ratio_ground_over_flight"], **base})
-        lo = min(r["scenario_range"]["mdot_total_kgps"]["min"] for r in rows.values())
+        lo = min(r["mdot_total_kgps_bracket"]["lower"] for r in rows.values())
         hi = max(r["scenario_range"]["mdot_total_kgps"]["max"] for r in rows.values())
         o2 = max(r["ground"]["air_surrogate_N2_O2"]["mdot_O2_kgps"] for r in rows.values())
         union["mdot_min_kgps"] = lo if union["mdot_min_kgps"] is None else min(union["mdot_min_kgps"], lo)
@@ -612,8 +728,9 @@ def derive_test_points(candidates, closure, valve_outlet):
             "accumulation_note": "RFP mission 26,000 h / firing > 15,000 h gives an upper factor if all collected "
                                  "gas were stored and fired in the minimum firing time; requires a storage model not "
                                  "in the repository (finding FC-08); PROPOSED as MFC headroom only",
-            "note": "min/max over every closed candidate's nine cases and scenario ranges: an instrumentation range "
-                    "requirement input for W4 (MFC full scale and resolution), not a test point"})
+            "note": "min over every closed candidate's nine cases of the backflow-inclusive lower bracket (SC-BACKFLOW, "
+                    "SEN-BACKFLOW-0.5 and the other scenario members); max over the no-backflow upper bound: an "
+                    "instrumentation range requirement input for W4 (MFC full scale and resolution), not a test point"})
     return tps, union
 
 
@@ -625,7 +742,7 @@ def _M(s):
 def _knee_levels() -> int:
     p = REPO / LANE25_DRAFT_REL
     if not p.exists():
-        return KNEE_LEVELS_FALLBACK
+        raise FeedClosureError(f"{LANE25_DRAFT_REL} (lane 25, T-KNEE-LEVELS) is required and was not found")
     for t in json.loads(p.read_text()).get("thresholds", []):
         if t.get("id") == "T-KNEE-LEVELS":
             return int(t["value"])
@@ -733,14 +850,23 @@ def owner_decisions() -> list[dict]:
          "options": ["the union of closed candidates (MFC range)", "one candidate after DI-1.1..1.6"],
          "recommendation": "PROPOSED: freeze the union MFC range now (hardware lead time); freeze point values after "
                            "DI-1.1..1.6"},
-        {"id": "DI-1.12", "question": "Backflow / plenum-pressure inconsistency (FC-01): accept the delivered flow "
-                                      "as an upper bound, or authorise a chain model change (goldens may move)",
-         "options": ["upper bound, documented", "model change via the normal process (HISTORY entry)"],
-         "recommendation": "PROPOSED: upper bound for LOCK-1; the Phase-1 ladder reaches down to the envelope minimum"},
+        {"id": "DI-1.12", "question": "Backflow / plenum-pressure inconsistency (FC-01): the chain flow is an upper "
+                                      "bound; the self-consistent estimate with the chain-sized compressor "
+                                      "(SC-BACKFLOW) is several times lower. Which flow basis does LOCK-1 use, and is "
+                                      "a chain model change authorised (goldens may move)?",
+         "options": ["bracket [SC-BACKFLOW lower, chain upper bound] per case, documented",
+                     "upper bound only (not recommended: the Phase-1/2 flows would not cover the backflow-consistent "
+                     "range)",
+                     "model change via the normal process (HISTORY entry) replacing the bracket by one value",
+                     "a sourced compressor design (DI-1.4) sized for the backflow-consistent plenum pressure"],
+         "recommendation": "PROPOSED: carry the bracket; Phase-1 L1-L5 follow the lane-25 rule on the upper-bound "
+                           "flows and the BFL point extends the sweep to the lowest backflow-consistent flow; the MFC "
+                           "range (W4) spans the bracket. The bracket is not a physical bound: both ends rest on "
+                           "code-default compressor parameters"},
     ]
 
 
-def findings(candidates, closure, valve_outlet, sens) -> list[dict]:
+def findings(candidates, closure, valve_outlet, sens, sensitivity_rank) -> list[dict]:
     closed = [c["id"] for c in candidates if closure[c["id"]]["status"] == "CLOSED"]
     not_closed = [c["id"] for c in candidates if closure[c["id"]]["status"] != "CLOSED"]
     clamp = sum(1 for cid in valve_outlet for r in valve_outlet[cid].values() if r["nominal"]["compressor_T_clamp_active"])
@@ -751,14 +877,35 @@ def findings(candidates, closure, valve_outlet, sens) -> list[dict]:
                    if r["intake_drag"]["exceeds_RFP_thrust_max"]})
     xo = [r["nominal"]["x_s"]["O"] for cid in valve_outlet for r in valve_outlet[cid].values()]
     xo_scen = [r["scenario_range"]["x_s"]["O"] for cid in valve_outlet for r in valve_outlet[cid].values()]
+    scb = [r["backflow_self_consistent"] for cid in valve_outlet for r in valve_outlet[cid].values()]
+    if not all(b["closed"] for b in scb):
+        raise FeedClosureError("SC-BACKFLOW did not close in every closed candidate-case; FC-01 text needs revision")
+    bs = [b["b"] for b in scb]
+    fs = [b["delivered_factor"] for b in scb]
+    crs = [b["CR_required"] for b in scb]
+    top = {}
+    for sr in sensitivity_rank:
+        e = max((x for x in sr["ranked"] if x["id"] != "SCEN-ATM"), key=lambda x: x["max_rel_change_mdot"])
+        top[sr["candidate"]] = e["id"]
+    sc_top = sorted(c for c, i in top.items() if i == "SC-BACKFLOW")
+    other_top = "; ".join(f"{c}: {i}" for c, i in sorted(top.items()) if i != "SC-BACKFLOW")
     return [
         {"id": "FC-01", "where": "abep_sim/intake.py:compress; abep_sim/intake_tpmc.py CR_passive",
          "finding": "the chain delivers the full forward-transmitted flow eta_c x rhoV x A x (1 - backflow_frac) while "
                     "feeding the compressor at the passive plenum pressure p_passive; p_passive is, by the TPMC flux "
                     "balance (CR_passive = eta_c V / (c_bar/4 phi K_back)), the plenum state at which backflow equals "
                     "inflow (zero net collection). backflow_frac is an independent input (default 0), so the delivered "
-                    "flow is an UPPER BOUND; with b = p_plenum/p_passive the net flow scales by (1 - b)",
-         "evidence_class": "inferred", "handling": "stated, not fixed (module change outside this lane; DI-1.12)"},
+                    "flow is an UPPER BOUND; with b = p_plenum/p_passive the net flow scales by (1 - b). Self-consistent "
+                    "estimate SC-BACKFLOW (chain-sized compressor fed at b p_passive with (1 - b) F, p_out = setpoint): "
+                    f"b = {fmt(min(bs), 3)}-{fmt(max(bs), 3)}, delivered flow x{fmt(min(fs), 3)}-{fmt(max(fs), 3)} "
+                    f"of the upper bound (all {len(bs)} closed candidate-cases close; required active CR "
+                    f"{fmt(min(crs), 3)}-{fmt(max(crs), 3)}). It is the largest non-atmosphere flow change in "
+                    f"{len(sc_top)} of {len(top)} closed candidates ({', '.join(sc_top)})"
+                    + (f"; elsewhere the largest is {other_top} (among cases that still close)" if other_top else ""),
+         "evidence_class": "inferred",
+         "handling": "not fixed in the chain (module change outside this lane; DI-1.12); carried as the lower end of "
+                     "mdot_total_kgps_bracket, as sensitivity SEN-BACKFLOW-0.5, in the BFL Phase-1 point and in the "
+                     "MFC range"},
         {"id": "FC-02", "where": "abep_sim/intake_tpmc.py eta_c definition",
          "finding": "the frozen TPMC eta_c is the forward transmission into the plenum (eta_c = phi x eta_open x "
                     "cos theta); for fully diffuse walls it reaches 0.74 at L/d 3 and 0.45 at L/d 10, whereas "
@@ -839,12 +986,14 @@ def milestones() -> dict:
         "supports": ["A"],
         "A": "Gives LOCK-1 (W2) explicit, traceable PROPOSED values for the lane-25 flow levels (m_dot_min, m_dot_nom, "
              "OP5 composition) and the MFC range (W4), conditional on the listed design candidates, so a conditional "
-             "selection 'architecture X is baseline provided ...' can be written against sourced feed conditions. "
+             "selection 'architecture X is baseline provided ...' can be written against PROPOSED, traceable feed "
+             "conditions (every design input is assumed / PROPOSED; none is a sourced Vyovrinda design value). "
              "It needs no Physics Baseline 1.0 and contains no Hall prediction.",
         "to_reach_B": [
             "owner decisions DI-1.1..DI-1.12 and a sourced Vyovrinda intake/compressor/buffer design replacing the "
             "PROPOSED placeholders (every code default here is 'assumed')",
-            "resolution of FC-01 (net collection with backflow) through a controlled model change",
+            "resolution of FC-01 (net collection with backflow; today a bracket of several x) through a controlled "
+            "model change and a sourced compressor design",
             "TPMC surfaces at the other atmospheric states (FC-07) and an NRLMSIS error characterisation",
             "an admitted Hall transport closure (physics track) to turn the test-point flows into credible thrust "
             "envelopes; W7 O/O2 chemistry for the atomic-O gap",
@@ -904,7 +1053,7 @@ def assemble(fe, d, candidates, design_docs, ladder, closure, sens, valve_outlet
         "test_points": test_points,
         "mfc_range_requirement": mfc,
         "atomic_oxygen": atomic_oxygen_section(valve_outlet),
-        "findings": findings(candidates, closure, valve_outlet, sens),
+        "findings": findings(candidates, closure, valve_outlet, sens, sensitivity_rank),
         "owner_decisions_DI1": owner_decisions(),
     }
 
@@ -1021,17 +1170,26 @@ def render_md(doc: dict) -> str:
     a("## 4. Valve-outlet states (ICD IF-A5) per closed candidate")
     a("")
     a("Nominal = candidate at its nominal setpoint; range = scenario set over the common feasible setpoints and the "
-      "one-at-a-time sensitivity variants that close (not a probability interval). ṁ is an upper bound (FC-01).")
+      "one-at-a-time sensitivity variants that close (not a probability interval). Every value is "
+      f"**{VALUE_STATUS}**, evidence class *{VALUE_EVIDENCE}* (also carried on each JSON record).")
+    a("")
+    a("**Flow basis (FC-01).** The chain's ṁ is an UPPER BOUND: it feeds the compressor at the passive plenum "
+      "pressure with the full forward flow, where the TPMC flux balance gives zero net collection. `SC-BACKFLOW` solves "
+      "the plenum self-consistently for the chain-sized compressor (backflow ∝ p_plenum/p_passive, p_out = setpoint); "
+      "its column gives that flow and b = p_plenum/p_passive. A larger compressor moves it toward the upper bound, so "
+      "the bracket [SC-BACKFLOW, upper bound] is design-conditional, not a physical bound.")
     a("")
     for cid, rows in doc["valve_outlet"].items():
         a(f"### {cid}")
         a("")
-        a("| case | ṁ [mg/s] (range) | P_feed [Pa] (range) | T_feed [K] (range) | x_O (range) | x_N2 | x_O2 | P_el,comp [W] | T clamp | D_int [mN] | v_req [km/s] |")
-        a("|---|---|---|---|---|---|---|---|---|---|---|")
+        a("| case | ṁ [mg/s] (range) | ṁ SC-BACKFLOW [mg/s] (b) | CR req. | P_feed [Pa] (range) | T_feed [K] (range) | x_O (range) | x_N2 | x_O2 | P_el,comp [W] | T clamp | D_int [mN] | v_req [km/s] |")
+        a("|---|---|---|---|---|---|---|---|---|---|---|---|---|")
         for k, r in rows.items():
             n, s = r["nominal"], r["scenario_range"]
             a(f"| {k} | {fmt(n['mdot_total_kgps'] * 1e6)} ({fmt(s['mdot_total_kgps']['min'] * 1e6)}–"
-              f"{fmt(s['mdot_total_kgps']['max'] * 1e6)}) | {fmt(n['p_feed_Pa'])} ({fmt(s['p_feed_Pa']['min'])}–"
+              f"{fmt(s['mdot_total_kgps']['max'] * 1e6)}) | {fmt(r['backflow_self_consistent']['mdot_total_kgps'] * 1e6)} "
+              f"({fmt(r['backflow_self_consistent']['b'], 3)}) | {fmt(r['backflow_self_consistent']['CR_required'], 3)} | "
+              f"{fmt(n['p_feed_Pa'])} ({fmt(s['p_feed_Pa']['min'])}–"
               f"{fmt(s['p_feed_Pa']['max'])}) | {fmt(n['T_feed_K'])} ({fmt(s['T_feed_K']['min'])}–"
               f"{fmt(s['T_feed_K']['max'])}) | {fmt(n['x_s']['O'], 3)} ({fmt(s['x_s']['O']['min'], 3)}–"
               f"{fmt(s['x_s']['O']['max'], 3)}) | {fmt(n['x_s']['N2'], 3)} | {fmt(n['x_s']['O2'], 3)} | "
@@ -1044,13 +1202,18 @@ def render_md(doc: dict) -> str:
             a("Scenario members that lose closure in at least one case: " + ", ".join(f"`{m}`" for m in lost) + ".")
         a("")
     a("D_int = intake-only drag (TPMC C_D, body drag excluded); v_req = D_int / ṁ is the Hall-free exhaust-velocity "
-      "requirement for intake-drag compensation at the delivered flow (momentum balance only, model-derived).")
+      "requirement for intake-drag compensation at the delivered (upper-bound) flow (momentum balance only, "
+      "model-derived); at the SC-BACKFLOW flow it rises by 1/(delivered factor). CR req. = active compression ratio "
+      "the compressor needs at the self-consistent plenum pressure.")
     a("")
     # 5 sensitivities
     a("## 5. Dominant sensitivities")
     a("")
-    a("Per closed candidate, ranked by the largest relative change of ṁ over the nine cases; the atmosphere scenario "
-      "(altitude × solar) is listed as the reference spread.")
+    a("Per closed candidate, ranked first by the number of cases in which the variant loses closure (a variant that "
+      "destroys closure is the most consequential), then by the largest relative change of ṁ over the cases that "
+      "still close; the atmosphere scenario (altitude × solar) is listed as the reference spread. Composition (x_O) "
+      "and feed temperature are ranked separately below each table. `SC-BACKFLOW` changes the total flow only "
+      "(composition and temperature not re-evaluated: —).")
     a("")
     for sr in doc["sensitivity_ranking"]:
         a(f"**{sr['candidate']}**")
@@ -1060,6 +1223,9 @@ def render_md(doc: dict) -> str:
         for i, e in enumerate(sr["ranked"], 1):
             a(f"| {i} | {e['axis']} | `{e['id']}` | {fmt(e['max_rel_change_mdot'], 3)} | "
               f"{fmt(e['max_abs_change_x_O'], 3)} | {fmt(e['max_abs_change_T_feed_K'], 3)} | {e['cases_losing_closure']} |")
+        a("")
+        a("Ranked by max Δx_O: " + ", ".join(f"`{x}`" for x in sr["ranked_by_x_O"][:5]) + " …; by max ΔT_feed: "
+          + ", ".join(f"`{x}`" for x in sr["ranked_by_T_feed"][:5]) + " ….")
         a("")
     a("Design axes (between candidates, design case): " + "; ".join(
         f"`{e['candidate']}` ṁ {fmt(e['mdot_design_case_kgps'] * 1e6)} mg/s, x_O {fmt(e['x_O_design_case'], 3)}"
@@ -1076,6 +1242,9 @@ def render_md(doc: dict) -> str:
     a("")
     a("### Phase 1 — Hall-only sustainment knee on N₂ (HW-0)")
     a("")
+    a("L1–L5 follow the lane-25 knee rule on the upper-bound flows; EXT is the upper envelope edge; BFL extends the "
+      "sweep down to the lowest backflow-consistent flow of the candidate (FC-01, DI-1.12).")
+    a("")
     a("| id | ṁ_N2 [mg/s] | sccm N₂ | P_feed target [Pa] | trace |")
     a("|---|---|---|---|---|")
     for t in tp["phase1_knee_N2"]:
@@ -1086,29 +1255,36 @@ def render_md(doc: dict) -> str:
     a("")
     a("### Phase 2 — common-condition comparison (HW-0 / HW-RF / HW-ECR)")
     a("")
-    a("| id | point | gas | ṁ [mg/s] | composition | status |")
-    a("|---|---|---|---|---|---|")
+    a("| id | point | gas | ṁ [mg/s] (upper bound) | ṁ backflow lower [mg/s] | composition | status |")
+    a("|---|---|---|---|---|---|---|")
     for t in tp["phase2_common_condition"]:
         comp = (f"w_O2 {fmt(t['w_O2'], 3)} / w_N2 {fmt(t['w_N2'], 3)}" if "w_O2" in t else "N₂")
-        a(f"| {t['id']} | {t['operating_point']} | {t['gas']} | {fmt(t.get('mdot_N2_mgps'))} | {comp} | "
-          f"{t.get('value_status', 'PROPOSED')} |")
+        lo = t.get("mdot_backflow_lower_kgps")
+        a(f"| {t['id']} | {t['operating_point']} | {t['gas']} | {fmt(t.get('mdot_N2_mgps'))} | "
+          f"{fmt(None if lo is None else lo * 1e6)} | {comp} | {t['status']} |")
+    a("")
+    a("Lane-25 iso-power references OP2H and OP3H (`hall_only` only, V_hi) use the same feed as OP2 and OP3; they add "
+      "no feed state and are cross-referenced on those records (`iso_power_reference`).")
     a("")
     a("### Phase 3 — absolute demonstration across the feed envelope")
     a("")
-    a("| id | case | gas | ṁ_N2 [mg/s] | ṁ_O2 [mg/s] | sccm N₂ | sccm O₂ | ground/flight particle flow | flight x_O |")
-    a("|---|---|---|---|---|---|---|---|---|")
+    a("Flows are the upper-bound flight flows; the backflow-consistent total flow of each case is in the last column.")
+    a("")
+    a("| id | case | gas | ṁ_N2 [mg/s] | ṁ_O2 [mg/s] | sccm N₂ | sccm O₂ | ground/flight particle flow | flight x_O | ṁ backflow lower [mg/s] |")
+    a("|---|---|---|---|---|---|---|---|---|---|")
     for t in tp["phase3_absolute_demonstration"]:
         a(f"| {t['id']} | {t['trace']['case']} | {t['gas']} | {fmt(t['mdot_N2_kgps'] * 1e6)} | "
           f"{fmt(t['mdot_O2_kgps'] * 1e6) if 'mdot_O2_kgps' in t else '—'} | {fmt(t['sccm_N2'])} | "
           f"{fmt(t['sccm_O2']) if 'sccm_O2' in t else '—'} | "
           f"{fmt(t['particle_flow_ratio_ground_over_flight'], 3) if 'particle_flow_ratio_ground_over_flight' in t else '—'} | "
-          f"{fmt(t['flight_x_s']['O'], 3)} |")
+          f"{fmt(t['flight_x_s']['O'], 3)} | {fmt(t['mdot_backflow_lower_kgps'] * 1e6)} |")
     a("")
     m = doc["mfc_range_requirement"]
     if m.get("candidates"):
         a("### MFC range requirement (input to W4)")
         a("")
-        a(f"Over closed candidates {m['candidates']}: anode ṁ {fmt(m['mdot_min_kgps'] * 1e6)}–"
+        a(f"Over closed candidates {m['candidates']} (lower end = backflow-inclusive bracket, FC-01): anode ṁ "
+          f"{fmt(m['mdot_min_kgps'] * 1e6)}–"
           f"{fmt(m['mdot_max_kgps'] * 1e6)} mg/s ({fmt(m['sccm_N2_min'])}–{fmt(m['sccm_N2_max'])} sccm N₂), O₂ up to "
           f"{fmt(m['O2_max_kgps'] * 1e6)} mg/s ({fmt(m['sccm_O2_max'])} sccm). Accumulation headroom (FC-08, "
           f"PROPOSED): ×{fmt(m['accumulation_factor_upper'])} → {fmt(m['mdot_max_with_accumulation_kgps'] * 1e6)} mg/s.")
