@@ -128,13 +128,16 @@
   "is_true": "field is the JSON boolean true",
   "is_bool": "field is a JSON boolean (true or false); the value is recorded, not judged",
   "iso_date": "field is a valid (existing) date in date_format",
-  "nonempty_string": "field is a non-empty string that does not start with 'TBD' (case-insensitive)",
-  "quantity": "field is {value, unit, source, evidence_class}: value a finite number (or an object of numbers), unit and source non-empty non-TBD strings, evidence_class one of measured / digitized / inferred / reconstructed / model-derived / assumed (docs/EVIDENCE.md)",
+  "nonempty_string": "field is a non-empty string that is not a placeholder: it does not start with TBD / TBC / TBA / TODO / 'to be decided|determined|defined|confirmed' and is not (case-insensitive, trailing punctuation ignored) 'unknown', 'N/A', 'NA', 'not applicable', 'not available', 'none', 'null', 'nil', 'placeholder', 'xxx', '?' or similar (the full list is _PLACEHOLDERS in the script; '-' is accepted as the unit of a dimensionless quantity)",
+  "quantity": "field is {value, unit, source, evidence_class}: value a finite number (or an object of numbers), unit and source non-empty non-placeholder strings, evidence_class one of measured / digitized / inferred / reconstructed / model-derived / assumed (docs/EVIDENCE.md)",
   "sha256_ref": "field is a sha256 reference to a file inside the repository whose sha256 matches; optional path_equals pins the path; optional path_prefix requires it under a directory; optional artifact_of pins it to the uniquely resolved artifact of another condition",
   "covers": "field is a list of objects whose key values include every entry of required",
   "each_item": "field is a non-empty list and every item passes rules",
   "any_item": "field is a non-empty list and at least one item passes rules",
-  "member_of_artifact": "field value is one of the key values of list_field in the artifact of condition artifact_of; that condition must itself be SATISFIED (used to tie S1a calibration procedures to the firewall's allowed data classes; fails closed if the firewall is not satisfied)",
+  "member_of_artifact": "field value is one of the key values of list_field (a field name or a list of field names) in the artifact of the SATISFIED alternative of condition artifact_of, and is NOT a key value of any exclude_list_fields list and does NOT match exclude_pattern; the referenced condition must itself be SATISFIED, otherwise the rule fails closed (used to tie S1a calibration procedures to the firewall's allowed data classes or custody-held registration inputs, never to a forbidden / embargoed id)",
+  "disjoint": "the key values of the list field and the other_key values of the list other_field share no value (used to keep the firewall's allowed, registration-input and forbidden / embargoed id sets mutually exclusive)",
+  "keys_subset": "every key value of the list field is one of values (used to restrict the firewall's allowed classes to the owner-listed set; an owner-added class needs a spec change)",
+  "artifact_of_resolution": "a sha256_ref or member_of_artifact rule with artifact_of resolves to the artifact of the referenced condition's SATISFIED alternative (any alternative); if the referenced condition is not SATISFIED the rule fails closed. Conditions are evaluated in artifact_of dependency order",
   "field_paths": "a field may be a dotted path into nested objects (e.g. facility.name)"
  },
  "conditions": [
@@ -188,7 +191,7 @@
      "paths": ["docs/experiments/hardware/s1a_safety_operational_limits.json"],
      "path_basis": "PROPOSED file in the W3 directory, next to the planned N4 S1-C8 file (s1_safety_operational_limits.json), which covers first Hall-on operation and is a different artifact",
      "produced_by": "W3 hardware definition (fo_hardware_definition) with the engineering facility's own limits (S1A-C5) and the magnet/coil qualification basis (fo_magnet_coil_qualification); owner approves. Every limit value comes from its source (facility rules, supply ratings, W3/MCQ) — this gate carries none",
-     "required_quantities_status": "PROPOSED minimum set; the owner may extend it (e.g. RF/microwave exposure before a dummy-load characterisation, cathode diode limits)",
+     "required_quantities_status": "PROPOSED minimum set for hardware that is always present in S1a (coils, supplies, feed, facility); the owner may extend it. Cathode limits (e.g. cathode_heater_current_max, keeper current / voltage) are NOT in the required set because C-1 is optional in S1A-C1; if the owner includes C-1 (the W3 'S1a (diode)' checkout of HW-C1-02) the owner should add them to this set (OPEN OWNER ITEM: this conditional requirement is not machine-checked). RF/microwave exposure limits before a dummy-load characterisation likewise",
      "rules": [
       {"type": "equals", "field": "status", "value": "APPROVED"},
       {"type": "equals", "field": "approved_by", "value": "owner"},
@@ -196,7 +199,7 @@
       {"type": "sha256_ref", "field": "facility_choice", "artifact_of": "S1A-C5", "what": "the owner's engineering-facility identification whose limits are included"},
       {"type": "covers", "field": "limits", "key": "domain", "required": ["electrical", "vacuum", "thermal", "gas"]},
       {"type": "covers", "field": "limits", "key": "quantity",
-       "required": ["magnet_current_max", "supply_voltage_max", "cathode_heater_current_max", "background_pressure_max", "component_temperature_max", "coil_winding_temperature_max", "feed_pressure_max", "gas_handling_oxidizer"]},
+       "required": ["magnet_current_max", "supply_voltage_max", "background_pressure_max", "component_temperature_max", "coil_winding_temperature_max", "feed_pressure_max", "gas_handling_oxidizer"]},
       {"type": "each_item", "field": "limits", "rules": [
        {"type": "nonempty_string", "field": "quantity"},
        {"type": "in", "field": "domain", "values": ["electrical", "vacuum", "thermal", "gas", "rf_microwave", "mechanical"]},
@@ -264,7 +267,7 @@
      "id": "S1A-C3-released-for-s1",
      "artifact": "owner-released ground-qualification S1 feed points (the N4 S1-C3 alternative b file), used for S1a",
      "paths": ["docs/architecture_comparison/feed_state_closure/s1_feed_points.json"],
-     "path_basis": "the N4 S1-C3(b) path; an owner release for S1 also releases the points for S1a. N4 separately checks its LOCK-1 reference; this gate does not",
+     "path_basis": "the N4 S1-C3(b) path; an owner release for S1 also releases the points for S1a. N4 separately checks its LOCK-1 reference; this gate does not. This alternative does NOT require use_restriction = COLD_FLOW_CALIBRATION_NO_HALL_DISCHARGE (an S1 release is not written for S1a); when it is used, the no-Hall-discharge rule in S1a rests on S1A-FW (h1_hall_discharge_in_s1a = FORBIDDEN) and the S1A-C2 interlock IL-HALL-DISCHARGE-INHIBIT only (OPEN OWNER ITEM)",
      "produced_by": "W1 selects; owner releases for S1 (N4 S1-C3 b)",
      "rules": [
       {"type": "equals", "field": "status", "value": "RELEASED_FOR_S1"},
@@ -287,7 +290,7 @@
     }
    ],
    "precursors": [
-    {"path": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json", "what": "W1 feed-state closure (DRAFT): 32 test points labelled GROUND_QUALIFICATION_POINT (28 Phase-1 knee ladder, 4 Phase-2 OP2), all with status 'PROPOSED (candidate-conditional)' and T_feed_ground 'TBD - requires owner decision DI-1.10'; precursor only"},
+    {"path": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json", "what": "W1 feed-state closure (DRAFT): 32 test points labelled GROUND_QUALIFICATION_POINT: 28 Phase-1 knee-ladder points with status 'PROPOSED (candidate-conditional)' and 4 Phase-2 OP2 points with status 'TBD - requires the measured Phase-1 knee'; each point carries numeric T_feed values alongside a T_feed_ground entry 'TBD - requires owner decision DI-1.10'; precursor only"},
     {"path": "docs/architecture_comparison/feed_envelope/feed_envelope_v1.json", "what": "lane 16 feed envelope"}
    ]
   },
@@ -317,7 +320,7 @@
        {"type": "nonempty_string", "field": "procedure"},
        {"type": "nonempty_string", "field": "traceability"},
        {"type": "nonempty_string", "field": "acceptance_rule"},
-       {"type": "member_of_artifact", "field": "s1a_data_class", "artifact_of": "S1A-FW", "list_field": "allowed_classes", "key": "id", "what": "every S1a procedure produces only a firewall-ALLOWED data class"}
+       {"type": "member_of_artifact", "field": "s1a_data_class", "artifact_of": "S1A-FW", "list_field": ["allowed_classes", "registration_inputs"], "key": "id", "exclude_list_fields": ["forbidden_or_embargoed"], "exclude_pattern": "^VO-", "what": "every S1a procedure produces only a firewall-ALLOWED data class or a custody-held registration input (e.g. the B(z) map procedure produces REG-BZ); never a forbidden / embargoed id or a W5 validation-observable id"}
       ]},
       {"type": "any_item", "field": "procedures", "what": "A3 decisions.cathode_temperature binds the temperature procedure: the cathode-tube thermocouple is never labelled emitter temperature", "rules": [
        {"type": "equals", "field": "category", "value": "temperature_channels"},
@@ -390,7 +393,7 @@
      "paths": ["docs/experiments/custody/s1a_data_firewall_frozen.json"],
      "path_basis": "PROPOSED file next to the planned N4 S1-C6 custody / blinding plan (docs/experiments/custody/); no workstream owns the directory yet",
      "produced_by": "W5 validation pre-registration (fo_hall_validation_prereg_draft) with the data custodian; owner designates the custodian and freezes. The firewall pins the W5 document whose classes it implements; a later W5 change breaks the pin and the gate fails closed until the firewall is re-frozen",
-     "class_lists_status": "PROPOSED. Allowed ids follow the lane task (calibration, noise, drift, repeatability, reinstallation, channel performance, qualitative RGA, facility background); forbidden / embargoed ids are the W5 validation-observable ids plus the HW-0 derived quantities of W5 publication_rule.embargoed_values and one catch-all for any H-1 Hall operating point",
+     "class_lists_status": "PROPOSED. Allowed ids follow the lane task (calibration, noise, drift, repeatability, reinstallation, channel performance, qualitative RGA, facility background) and are restricted to that set (keys_subset; an owner-added class needs a spec change and must not be a W5 observable). Forbidden / embargoed ids are the W5 validation-observable ids VO-* (W5 ids) plus four ids coined by this lane, which are NOT W5 ids: HW0-PBUS-HALL-ON, HW0-RARCH and HW0-KNEE paraphrase W5 publication_rule.embargoed_values, and H1-ANY-HALL-OPERATING-POINT is a catch-all for any H-1 Hall operating point. Registration-input ids REG-* are W5 ids. The allowed, registration-input and forbidden / embargoed id sets must be mutually disjoint (disjoint rules), and every allowed class must declare that it excludes the registration inputs, which leave custody only after LOCK-H1 (W5 K1). The w5_basis pin is checked for existence and sha256 only: the gate does not check that the pinned W5 document is itself frozen (today it is a DRAFT); whether the firewall may be frozen against a W5 DRAFT is an OPEN OWNER ITEM",
      "rules": [
       {"type": "equals", "field": "id", "value": "s1a_data_firewall"},
       {"type": "equals", "field": "status", "value": "FROZEN"},
@@ -401,10 +404,17 @@
       {"type": "equals", "field": "h1_hall_discharge_in_s1a", "value": "FORBIDDEN", "what": "no H-1 anode discharge in S1a: W5 classes no Hall-on reading as S1a calibration/registration; the first Hall-on reading is S1b under N4"},
       {"type": "covers", "field": "allowed_classes", "key": "id",
        "required": ["CALIBRATION", "NOISE", "DRIFT", "REPEATABILITY", "REINSTALLATION", "CHANNEL_PERFORMANCE", "QUALITATIVE_RGA", "FACILITY_BACKGROUND"]},
+      {"type": "keys_subset", "field": "allowed_classes", "key": "id",
+       "values": ["CALIBRATION", "NOISE", "DRIFT", "REPEATABILITY", "REINSTALLATION", "CHANNEL_PERFORMANCE", "QUALITATIVE_RGA", "FACILITY_BACKGROUND"],
+       "what": "no allowed class beyond the owner-listed set (an arbitrary class such as a Hall-on idle reading can never be declared allowed)"},
+      {"type": "disjoint", "field": "allowed_classes", "key": "id", "other_field": "forbidden_or_embargoed", "other_key": "id", "what": "no id is both allowed and forbidden / embargoed"},
+      {"type": "disjoint", "field": "allowed_classes", "key": "id", "other_field": "registration_inputs", "other_key": "id", "what": "registration inputs are custody-held, never an allowed class"},
+      {"type": "disjoint", "field": "registration_inputs", "key": "id", "other_field": "forbidden_or_embargoed", "other_key": "id"},
       {"type": "each_item", "field": "allowed_classes", "rules": [
        {"type": "nonempty_string", "field": "id"},
        {"type": "nonempty_string", "field": "definition"},
-       {"type": "nonempty_string", "field": "release_rule", "what": "who may receive it (S1a calibration data may go to every track; registration inputs only via the custodian after LOCK-H1)"}
+       {"type": "nonempty_string", "field": "release_rule", "what": "who may receive it (S1a calibration data may go to every track; registration inputs only via the custodian after LOCK-H1)"},
+       {"type": "is_true", "field": "excludes_registration_inputs", "what": "the class definition excludes every registration input (REG-GEOM, REG-BZ, REG-FEED, REG-PB ...), which are released only via the custodian after LOCK-H1 (W5 K1)"}
       ]},
       {"type": "any_item", "field": "allowed_classes", "what": "A3 decisions.near_cathode_rga: qualitative S1a RGA data cannot support an exposure-dose or lifetime claim", "rules": [
        {"type": "equals", "field": "id", "value": "QUALITATIVE_RGA"},
@@ -418,7 +428,7 @@
        {"type": "in", "field": "treatment", "values": ["FORBIDDEN_IN_S1A", "EMBARGOED_CUSTODY_ONLY"]},
        {"type": "nonempty_string", "field": "consequence_if_exposed", "what": "per W5 leak_rule / publication_rule.automatic_flag: OUTPUTS_SEEN for every affected condition"}
       ]},
-      {"type": "covers", "field": "registration_inputs", "key": "id", "required": ["REG-GEOM", "REG-BZ", "REG-FEED"], "what": "the W5 registration inputs S1a measures"},
+      {"type": "covers", "field": "registration_inputs", "key": "id", "required": ["REG-GEOM", "REG-BZ", "REG-FEED", "REG-PB"], "what": "the W5 registration inputs S1a measures (REG-PB: gauge calibration and cold-flow background pressure)"},
       {"type": "each_item", "field": "registration_inputs", "rules": [
        {"type": "nonempty_string", "field": "id"},
        {"type": "nonempty_string", "field": "release_condition", "what": "W5 K1/K2: released to the physics track by the custodian only after LOCK-H1"}
@@ -440,16 +450,16 @@
  "firewall_reference_classes": {
   "status": "PROPOSED content for the owner's firewall artifact (orientation only; the gate checks the artifact, never this block)",
   "allowed": {
-   "CALIBRATION": "calibration constants and their uncertainty for thrust stand, power channels (incl. the I_d / V_d channels calibrated without plasma), MFCs, gauges, B(z) probe, temperature channels, DAQ",
+   "CALIBRATION": "calibration constants and their uncertainty for thrust stand, power channels (incl. the I_d / V_d channels calibrated without plasma), temperature channels, DAQ, and the probe constants of the B(z) probe; EXCLUDES the registration inputs: the calibrated feed setpoints / MFC calibration at the released points (REG-FEED), the B(z) maps of the H-1 magnetic circuit (REG-BZ), the facility-gauge calibration (REG-PB) and the as-built geometry (REG-GEOM), which stay in custody until LOCK-H1",
    "NOISE": "channel noise floors with no plasma",
    "DRIFT": "zero and span drift with no plasma (thermal settling of the stand, gauge drift)",
    "REPEATABILITY": "repeatability of calibrations and of B(z) maps at fixed coil current (CD-05)",
    "REINSTALLATION": "no-plasma installation / re-installation reproducibility (CD-02a); the Hall-on re-mount series CD-02b is S1b (N4), not S1a",
    "CHANNEL_PERFORMANCE": "bandwidth, synchronization and time-base performance of the DAQ and power channels (CD-06) with test signals, no plasma",
    "QUALITATIVE_RGA": "uncalibrated RGA spectra used qualitatively (A3 decisions.near_cathode_rga); never an exposure-dose or lifetime claim",
-   "FACILITY_BACKGROUND": "no-plasma base pressure, residual-gas composition and cold-flow facility pressure at the released feed points"
+   "FACILITY_BACKGROUND": "no-plasma, no-flow base pressure and qualitative residual-gas composition of the empty facility; EXCLUDES the cold-flow facility pressure at the released feed points and the gauge calibration, which are REG-PB (custody until LOCK-H1)"
   },
-  "registration_inputs_measured_in_S1a": "REG-GEOM (as-built metrology), REG-BZ (B(z) at actual coil currents), REG-FEED (calibrated feed setpoints): measured in S1a, held by the custodian, released to the physics track only after LOCK-H1 (W5 K1/K2); a B(z)-vs-magnetic-circuit comparison is a magnetics check, never transport-validation evidence (W5 VO-BZ)",
+  "registration_inputs_measured_in_S1a": "REG-GEOM (as-built metrology), REG-BZ (B(z) at actual coil currents), REG-FEED (calibrated feed setpoints), REG-PB (gauge calibration, cold-flow background pressure): measured in S1a, held by the custodian, released to the physics track only after LOCK-H1 (W5 K1/K2); a B(z)-vs-magnetic-circuit comparison is a magnetics check, never transport-validation evidence (W5 VO-BZ)",
   "forbidden_or_embargoed": {
    "VO-ID": "discharge current I_d (any Hall-on reading)",
    "VO-T": "thrust",
@@ -459,6 +469,7 @@
    "VO-IEDF": "ion energy",
    "VO-DIV": "divergence (a registration observation operator, but only measurable Hall-on)",
    "VO-TENE": "T_e, n_e",
+   "_note": "VO-* are W5 ids; HW0-PBUS-HALL-ON, HW0-RARCH, HW0-KNEE and H1-ANY-HALL-OPERATING-POINT are ids coined by this lane (NOT W5 ids): the first three paraphrase W5 publication_rule.embargoed_values",
    "HW0-PBUS-HALL-ON": "HW-0 P_bus at a Hall-on reading",
    "HW0-RARCH": "R_arch (HW-0 denominator)",
    "HW0-KNEE": "the Phase-1 knee mdot_knee and the OP2/OP2H identity derived from it",

@@ -6,7 +6,7 @@
   "generated_by": "scripts/experiments/s1a_readiness.py",
   "spec": {
     "path": "docs/experiments/s1a_readiness/s1a_readiness_conditions_v1.json",
-    "sha256": "062fab4865a82eb9d5877d539bd252020e1235e15fd9d4949de696f01fda3143",
+    "sha256": "011808100ef38799668cb948324efa6492344d3b58ed3c436605ce5caf7025ac",
     "status": "DRAFT_PENDING_OWNER"
   },
   "note": "Generated from the repository state; deterministic (no clock, no absolute paths). S1a is non-score-bearing engineering qualification with no H-1 Hall discharge; S1A_READY never schedules S1 (N4, separate gate, not read here) and never satisfies an N4 condition. A DRAFT / PROPOSED artifact never satisfies a condition; nothing is inferred.",
@@ -81,13 +81,13 @@
           "produced_by": "W3 hardware definition (fo_hardware_definition) with the experiment team after delivery; owner accepts the record. Item ids follow W3 configuration_items (H-1, MC-1, FS-C, PS-C, SVC-1) and W4 instruments (INS-*)",
           "required": [
             "status == \"IDENTIFIED_FOR_S1A\"",
-            "recorded_by is a non-empty, non-TBD string (engineering lead or experiment team role)",
+            "recorded_by is a non-empty, non-placeholder string (engineering lead or experiment team role)",
             "recorded_utc is an ISO 8601 date",
             "accepted_by == \"owner\"",
             "accepted_utc is an ISO 8601 date",
             "requirements_basis = {path, sha256} matching the file on disk (path docs/experiments/hardware/hardware_requirements_v1.json) (the W3 hardware requirements register the recorded units are identified against)",
             "items[].id covers H-1, MC-1, FS-C, PS-C, SVC-1, INS-01, INS-02, INS-04, INS-05, INS-06, INS-07, INS-08, INS-09, INS-17, INS-18",
-            "every items[] item: id is a non-empty, non-TBD string; status == \"AVAILABLE\"; serial_or_part_id is a non-empty, non-TBD string; configuration_state in [\"RECORDED_NOT_FROZEN\", \"FROZEN_FOR_QUALIFICATION\"] (H-1 need not be frozen for S1a; RECORDED_NOT_FROZEN never satisfies N4 S1-C2); configuration_record is a non-empty, non-TBD string (drawing / as-built / setting record identifying the configuration used in S1a)"
+            "every items[] item: id is a non-empty, non-placeholder string; status == \"AVAILABLE\"; serial_or_part_id is a non-empty, non-placeholder string; configuration_state in [\"RECORDED_NOT_FROZEN\", \"FROZEN_FOR_QUALIFICATION\"] (H-1 need not be frozen for S1a; RECORDED_NOT_FROZEN never satisfies N4 S1-C2); configuration_record is a non-empty, non-placeholder string (drawing / as-built / setting record identifying the configuration used in S1a)"
           ]
         }
       ],
@@ -112,13 +112,13 @@
             "status == \"APPROVED\"",
             "approved_by == \"owner\"",
             "approved_utc is an ISO 8601 date",
-            "facility_choice = {path, sha256} matching the file on disk (the S1A-C5 artifact) (the owner's engineering-facility identification whose limits are included)",
+            "facility_choice = {path, sha256} matching the file on disk (the SATISFIED S1A-C5 artifact) (the owner's engineering-facility identification whose limits are included)",
             "limits[].domain covers electrical, vacuum, thermal, gas",
-            "limits[].quantity covers magnet_current_max, supply_voltage_max, cathode_heater_current_max, background_pressure_max, component_temperature_max, coil_winding_temperature_max, feed_pressure_max, gas_handling_oxidizer",
-            "every limits[] item: quantity is a non-empty, non-TBD string; domain in [\"electrical\", \"vacuum\", \"thermal\", \"gas\", \"rf_microwave\", \"mechanical\"]; limit is a non-empty, non-TBD string; source is a non-empty, non-TBD string; action_on_exceedance is a non-empty, non-TBD string",
+            "limits[].quantity covers magnet_current_max, supply_voltage_max, background_pressure_max, component_temperature_max, coil_winding_temperature_max, feed_pressure_max, gas_handling_oxidizer",
+            "every limits[] item: quantity is a non-empty, non-placeholder string; domain in [\"electrical\", \"vacuum\", \"thermal\", \"gas\", \"rf_microwave\", \"mechanical\"]; limit is a non-empty, non-placeholder string; source is a non-empty, non-placeholder string; action_on_exceedance is a non-empty, non-placeholder string",
             "interlocks[].id covers IL-VACUUM, IL-HALL-DISCHARGE-INHIBIT, IL-OXIDIZER-ISOLATION, IL-EMERGENCY-STOP (PROPOSED ids. IL-HALL-DISCHARGE-INHIBIT is the physical enforcement of the S1A-FW rule that no H-1 Hall discharge is run in S1a)",
-            "every interlocks[] item: id is a non-empty, non-TBD string; function is a non-empty, non-TBD string; verification is a non-empty, non-TBD string",
-            "at least one abort_conditions[] item: id is a non-empty, non-TBD string; trigger is a non-empty, non-TBD string; action is a non-empty, non-TBD string (at least one defined abort condition with its action)"
+            "every interlocks[] item: id is a non-empty, non-placeholder string; function is a non-empty, non-placeholder string; verification is a non-empty, non-placeholder string",
+            "at least one abort_conditions[] item: id is a non-empty, non-placeholder string; trigger is a non-empty, non-placeholder string; action is a non-empty, non-placeholder string (at least one defined abort condition with its action)"
           ]
         }
       ],
@@ -145,7 +145,7 @@
             "decided_utc is an ISO 8601 date",
             "source_closure = {path, sha256} matching the file on disk (path docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json) (the W1 feed-state closure the points are selected from)",
             "use_restriction == \"COLD_FLOW_CALIBRATION_NO_HALL_DISCHARGE\" (PROPOSED token: S1a uses the points for feed-system calibration and shakedown only)",
-            "every test_points[] item: id is a non-empty, non-TBD string; source_point_id is a non-empty, non-TBD string (the W1 closure test-point id the released point is taken from); flight_status == \"GROUND_QUALIFICATION_POINT\"; gas is a non-empty, non-TBD string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
+            "every test_points[] item: id is a non-empty, non-placeholder string; source_point_id is a non-empty, non-placeholder string (the W1 closure test-point id the released point is taken from); flight_status == \"GROUND_QUALIFICATION_POINT\"; gas is a non-empty, non-placeholder string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
             "at least one test_points[] item: gas == \"N2\" (at least one N2 point (Phase 1 is N2 first; od_hardware_pivot))"
           ]
         },
@@ -163,7 +163,7 @@
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
             "source_closure = {path, sha256} matching the file on disk (path docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json)",
-            "every test_points[] item: id is a non-empty, non-TBD string; flight_status == \"GROUND_QUALIFICATION_POINT\"; gas is a non-empty, non-TBD string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
+            "every test_points[] item: id is a non-empty, non-placeholder string; flight_status == \"GROUND_QUALIFICATION_POINT\"; gas is a non-empty, non-placeholder string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
             "at least one test_points[] item: gas == \"N2\" (at least one N2 point)"
           ]
         }
@@ -189,10 +189,10 @@
             "status == \"FROZEN\"",
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
-            "data_firewall = {path, sha256} matching the file on disk (the S1A-FW artifact) (the frozen S1a data firewall the procedures operate under)",
+            "data_firewall = {path, sha256} matching the file on disk (the SATISFIED S1A-FW artifact) (the frozen S1a data firewall the procedures operate under)",
             "procedures[].category covers thrust_stand, power_channels, mass_flow_controllers, magnetic_field_Bz, daq_time_base, temperature_channels",
-            "every procedures[] item: category is a non-empty, non-TBD string; procedure_id is a non-empty, non-TBD string; procedure is a non-empty, non-TBD string; traceability is a non-empty, non-TBD string; acceptance_rule is a non-empty, non-TBD string; s1a_data_class is one of the allowed_classes[].id of the SATISFIED S1A-FW artifact (every S1a procedure produces only a firewall-ALLOWED data class)",
-            "at least one procedures[] item: category == \"temperature_channels\"; cathode_temperature_labelling is a non-empty, non-TBD string (A3 decisions.cathode_temperature binds the temperature procedure: the cathode-tube thermocouple is never labelled emitter temperature)"
+            "every procedures[] item: category is a non-empty, non-placeholder string; procedure_id is a non-empty, non-placeholder string; procedure is a non-empty, non-placeholder string; traceability is a non-empty, non-placeholder string; acceptance_rule is a non-empty, non-placeholder string; s1a_data_class is one of the allowed_classes[].id / registration_inputs[].id of the SATISFIED S1A-FW artifact, never one of its forbidden_or_embargoed[].id, never matching /^VO-/ (every S1a procedure produces only a firewall-ALLOWED data class or a custody-held registration input (e.g. the B(z) map procedure produces REG-BZ); never a forbidden / embargoed id or a W5 validation-observable id)",
+            "at least one procedures[] item: category == \"temperature_channels\"; cathode_temperature_labelling is a non-empty, non-placeholder string (A3 decisions.cathode_temperature binds the temperature procedure: the cathode-tube thermocouple is never labelled emitter temperature)"
           ]
         }
       ],
@@ -218,9 +218,9 @@
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
             "decision == \"APPROVED\"",
-            "facility.name is a non-empty, non-TBD string",
-            "facility.vacuum_facility is a non-empty, non-TBD string",
-            "facility.safety_responsible is a non-empty, non-TBD string (organisation / role responsible for facility safety during S1a)",
+            "facility.name is a non-empty, non-placeholder string",
+            "facility.vacuum_facility is a non-empty, non-placeholder string",
+            "facility.safety_responsible is a non-empty, non-placeholder string (organisation / role responsible for facility safety during S1a)",
             "facility.same_as_hall_on_facility is a boolean (recorded: whether S1a calibrations can carry into S1b / LOCK-2)"
           ]
         },
@@ -238,8 +238,8 @@
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
             "decision == \"APPROVED\"",
-            "facility.name is a non-empty, non-TBD string",
-            "facility.hall_on_vacuum_facility is a non-empty, non-TBD string"
+            "facility.name is a non-empty, non-placeholder string",
+            "facility.hall_on_vacuum_facility is a non-empty, non-placeholder string"
           ]
         }
       ],
@@ -266,20 +266,24 @@
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
             "w5_basis = {path, sha256} matching the file on disk (under docs/validation/hall_transport_v2_prereg/) (the W5 pre-registration document whose held-out / registration classes the firewall implements)",
-            "data_custodian is a non-empty, non-TBD string (owner-designated; never a physics-track modeller (W5 custody_and_blinding.roles))",
+            "data_custodian is a non-empty, non-placeholder string (owner-designated; never a physics-track modeller (W5 custody_and_blinding.roles))",
             "h1_hall_discharge_in_s1a == \"FORBIDDEN\" (no H-1 anode discharge in S1a: W5 classes no Hall-on reading as S1a calibration/registration; the first Hall-on reading is S1b under N4)",
             "allowed_classes[].id covers CALIBRATION, NOISE, DRIFT, REPEATABILITY, REINSTALLATION, CHANNEL_PERFORMANCE, QUALITATIVE_RGA, FACILITY_BACKGROUND",
-            "every allowed_classes[] item: id is a non-empty, non-TBD string; definition is a non-empty, non-TBD string; release_rule is a non-empty, non-TBD string (who may receive it (S1a calibration data may go to every track; registration inputs only via the custodian after LOCK-H1))",
+            "every allowed_classes[].id is one of CALIBRATION, NOISE, DRIFT, REPEATABILITY, REINSTALLATION, CHANNEL_PERFORMANCE, QUALITATIVE_RGA, FACILITY_BACKGROUND (no allowed class beyond the owner-listed set (an arbitrary class such as a Hall-on idle reading can never be declared allowed))",
+            "allowed_classes[].id and forbidden_or_embargoed[].id share no value (no id is both allowed and forbidden / embargoed)",
+            "allowed_classes[].id and registration_inputs[].id share no value (registration inputs are custody-held, never an allowed class)",
+            "registration_inputs[].id and forbidden_or_embargoed[].id share no value",
+            "every allowed_classes[] item: id is a non-empty, non-placeholder string; definition is a non-empty, non-placeholder string; release_rule is a non-empty, non-placeholder string (who may receive it (S1a calibration data may go to every track; registration inputs only via the custodian after LOCK-H1)); excludes_registration_inputs is true (the class definition excludes every registration input (REG-GEOM, REG-BZ, REG-FEED, REG-PB ...), which are released only via the custodian after LOCK-H1 (W5 K1))",
             "at least one allowed_classes[] item: id == \"QUALITATIVE_RGA\"; no_dose_or_lifetime_claim is true (A3 decisions.near_cathode_rga: qualitative S1a RGA data cannot support an exposure-dose or lifetime claim)",
             "forbidden_or_embargoed[].id covers VO-ID, VO-T, VO-IGNEXT, VO-OSC, VO-SPECIES, VO-IEDF, VO-DIV, VO-TENE, HW0-PBUS-HALL-ON, HW0-RARCH, HW0-KNEE, H1-ANY-HALL-OPERATING-POINT",
-            "every forbidden_or_embargoed[] item: id is a non-empty, non-TBD string; quantity is a non-empty, non-TBD string; treatment in [\"FORBIDDEN_IN_S1A\", \"EMBARGOED_CUSTODY_ONLY\"]; consequence_if_exposed is a non-empty, non-TBD string (per W5 leak_rule / publication_rule.automatic_flag: OUTPUTS_SEEN for every affected condition)",
-            "registration_inputs[].id covers REG-GEOM, REG-BZ, REG-FEED (the W5 registration inputs S1a measures)",
-            "every registration_inputs[] item: id is a non-empty, non-TBD string; release_condition is a non-empty, non-TBD string (W5 K1/K2: released to the physics track by the custodian only after LOCK-H1)",
-            "custody_rule is a non-empty, non-TBD string (raw S1a data held by the custodian; sha256-frozen; what may leave custody and to whom)",
-            "outputs_seen_rule is a non-empty, non-TBD string (the W5 OUTPUTS_SEEN consequence applied to any exposure of a forbidden / embargoed quantity)",
-            "repository_rule is a non-empty, non-TBD string (S1a records committed to the repository (readable by the physics track) carry only allowed classes)",
-            "breach_response is a non-empty, non-TBD string (what the custodian and owner do on a breach (record in the release log, owner disposition))",
-            "release_log is a non-empty, non-TBD string (location of the custodian's release / disclosure log (W5 VP-14))"
+            "every forbidden_or_embargoed[] item: id is a non-empty, non-placeholder string; quantity is a non-empty, non-placeholder string; treatment in [\"FORBIDDEN_IN_S1A\", \"EMBARGOED_CUSTODY_ONLY\"]; consequence_if_exposed is a non-empty, non-placeholder string (per W5 leak_rule / publication_rule.automatic_flag: OUTPUTS_SEEN for every affected condition)",
+            "registration_inputs[].id covers REG-GEOM, REG-BZ, REG-FEED, REG-PB (the W5 registration inputs S1a measures (REG-PB: gauge calibration and cold-flow background pressure))",
+            "every registration_inputs[] item: id is a non-empty, non-placeholder string; release_condition is a non-empty, non-placeholder string (W5 K1/K2: released to the physics track by the custodian only after LOCK-H1)",
+            "custody_rule is a non-empty, non-placeholder string (raw S1a data held by the custodian; sha256-frozen; what may leave custody and to whom)",
+            "outputs_seen_rule is a non-empty, non-placeholder string (the W5 OUTPUTS_SEEN consequence applied to any exposure of a forbidden / embargoed quantity)",
+            "repository_rule is a non-empty, non-placeholder string (S1a records committed to the repository (readable by the physics track) carry only allowed classes)",
+            "breach_response is a non-empty, non-placeholder string (what the custodian and owner do on a breach (record in the release log, owner disposition))",
+            "release_log is a non-empty, non-placeholder string (location of the custodian's release / disclosure log (W5 VP-14))"
           ]
         }
       ],
@@ -308,13 +312,13 @@
           "failures": [],
           "required": [
             "status == \"IDENTIFIED_FOR_S1A\"",
-            "recorded_by is a non-empty, non-TBD string (engineering lead or experiment team role)",
+            "recorded_by is a non-empty, non-placeholder string (engineering lead or experiment team role)",
             "recorded_utc is an ISO 8601 date",
             "accepted_by == \"owner\"",
             "accepted_utc is an ISO 8601 date",
             "requirements_basis = {path, sha256} matching the file on disk (path docs/experiments/hardware/hardware_requirements_v1.json) (the W3 hardware requirements register the recorded units are identified against)",
             "items[].id covers H-1, MC-1, FS-C, PS-C, SVC-1, INS-01, INS-02, INS-04, INS-05, INS-06, INS-07, INS-08, INS-09, INS-17, INS-18",
-            "every items[] item: id is a non-empty, non-TBD string; status == \"AVAILABLE\"; serial_or_part_id is a non-empty, non-TBD string; configuration_state in [\"RECORDED_NOT_FROZEN\", \"FROZEN_FOR_QUALIFICATION\"] (H-1 need not be frozen for S1a; RECORDED_NOT_FROZEN never satisfies N4 S1-C2); configuration_record is a non-empty, non-TBD string (drawing / as-built / setting record identifying the configuration used in S1a)"
+            "every items[] item: id is a non-empty, non-placeholder string; status == \"AVAILABLE\"; serial_or_part_id is a non-empty, non-placeholder string; configuration_state in [\"RECORDED_NOT_FROZEN\", \"FROZEN_FOR_QUALIFICATION\"] (H-1 need not be frozen for S1a; RECORDED_NOT_FROZEN never satisfies N4 S1-C2); configuration_record is a non-empty, non-placeholder string (drawing / as-built / setting record identifying the configuration used in S1a)"
           ],
           "produced_by": "W3 hardware definition (fo_hardware_definition) with the experiment team after delivery; owner accepts the record. Item ids follow W3 configuration_items (H-1, MC-1, FS-C, PS-C, SVC-1) and W4 instruments (INS-*)"
         }
@@ -361,13 +365,13 @@
             "status == \"APPROVED\"",
             "approved_by == \"owner\"",
             "approved_utc is an ISO 8601 date",
-            "facility_choice = {path, sha256} matching the file on disk (the S1A-C5 artifact) (the owner's engineering-facility identification whose limits are included)",
+            "facility_choice = {path, sha256} matching the file on disk (the SATISFIED S1A-C5 artifact) (the owner's engineering-facility identification whose limits are included)",
             "limits[].domain covers electrical, vacuum, thermal, gas",
-            "limits[].quantity covers magnet_current_max, supply_voltage_max, cathode_heater_current_max, background_pressure_max, component_temperature_max, coil_winding_temperature_max, feed_pressure_max, gas_handling_oxidizer",
-            "every limits[] item: quantity is a non-empty, non-TBD string; domain in [\"electrical\", \"vacuum\", \"thermal\", \"gas\", \"rf_microwave\", \"mechanical\"]; limit is a non-empty, non-TBD string; source is a non-empty, non-TBD string; action_on_exceedance is a non-empty, non-TBD string",
+            "limits[].quantity covers magnet_current_max, supply_voltage_max, background_pressure_max, component_temperature_max, coil_winding_temperature_max, feed_pressure_max, gas_handling_oxidizer",
+            "every limits[] item: quantity is a non-empty, non-placeholder string; domain in [\"electrical\", \"vacuum\", \"thermal\", \"gas\", \"rf_microwave\", \"mechanical\"]; limit is a non-empty, non-placeholder string; source is a non-empty, non-placeholder string; action_on_exceedance is a non-empty, non-placeholder string",
             "interlocks[].id covers IL-VACUUM, IL-HALL-DISCHARGE-INHIBIT, IL-OXIDIZER-ISOLATION, IL-EMERGENCY-STOP (PROPOSED ids. IL-HALL-DISCHARGE-INHIBIT is the physical enforcement of the S1A-FW rule that no H-1 Hall discharge is run in S1a)",
-            "every interlocks[] item: id is a non-empty, non-TBD string; function is a non-empty, non-TBD string; verification is a non-empty, non-TBD string",
-            "at least one abort_conditions[] item: id is a non-empty, non-TBD string; trigger is a non-empty, non-TBD string; action is a non-empty, non-TBD string (at least one defined abort condition with its action)"
+            "every interlocks[] item: id is a non-empty, non-placeholder string; function is a non-empty, non-placeholder string; verification is a non-empty, non-placeholder string",
+            "at least one abort_conditions[] item: id is a non-empty, non-placeholder string; trigger is a non-empty, non-placeholder string; action is a non-empty, non-placeholder string (at least one defined abort condition with its action)"
           ],
           "produced_by": "W3 hardware definition (fo_hardware_definition) with the engineering facility's own limits (S1A-C5) and the magnet/coil qualification basis (fo_magnet_coil_qualification); owner approves. Every limit value comes from its source (facility rules, supply ratings, W3/MCQ) — this gate carries none"
         }
@@ -421,7 +425,7 @@
             "decided_utc is an ISO 8601 date",
             "source_closure = {path, sha256} matching the file on disk (path docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json) (the W1 feed-state closure the points are selected from)",
             "use_restriction == \"COLD_FLOW_CALIBRATION_NO_HALL_DISCHARGE\" (PROPOSED token: S1a uses the points for feed-system calibration and shakedown only)",
-            "every test_points[] item: id is a non-empty, non-TBD string; source_point_id is a non-empty, non-TBD string (the W1 closure test-point id the released point is taken from); flight_status == \"GROUND_QUALIFICATION_POINT\"; gas is a non-empty, non-TBD string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
+            "every test_points[] item: id is a non-empty, non-placeholder string; source_point_id is a non-empty, non-placeholder string (the W1 closure test-point id the released point is taken from); flight_status == \"GROUND_QUALIFICATION_POINT\"; gas is a non-empty, non-placeholder string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
             "at least one test_points[] item: gas == \"N2\" (at least one N2 point (Phase 1 is N2 first; od_hardware_pivot))"
           ],
           "produced_by": "W1 feed-state closure (fo_feed_state_closure) selects GROUND_QUALIFICATION_POINT points; owner releases them for S1a"
@@ -441,7 +445,7 @@
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
             "source_closure = {path, sha256} matching the file on disk (path docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json)",
-            "every test_points[] item: id is a non-empty, non-TBD string; flight_status == \"GROUND_QUALIFICATION_POINT\"; gas is a non-empty, non-TBD string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
+            "every test_points[] item: id is a non-empty, non-placeholder string; flight_status == \"GROUND_QUALIFICATION_POINT\"; gas is a non-empty, non-placeholder string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
             "at least one test_points[] item: gas == \"N2\" (at least one N2 point)"
           ],
           "produced_by": "W1 selects; owner releases for S1 (N4 S1-C3 b)"
@@ -450,7 +454,7 @@
       "precursors_found": [
         {
           "path": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
-          "what": "W1 feed-state closure (DRAFT): 32 test points labelled GROUND_QUALIFICATION_POINT (28 Phase-1 knee ladder, 4 Phase-2 OP2), all with status 'PROPOSED (candidate-conditional)' and T_feed_ground 'TBD - requires owner decision DI-1.10'; precursor only",
+          "what": "W1 feed-state closure (DRAFT): 32 test points labelled GROUND_QUALIFICATION_POINT: 28 Phase-1 knee-ladder points with status 'PROPOSED (candidate-conditional)' and 4 Phase-2 OP2 points with status 'TBD - requires the measured Phase-1 knee'; each point carries numeric T_feed values alongside a T_feed_ground entry 'TBD - requires owner decision DI-1.10'; precursor only",
           "sha256": "ff6e15db449151b5cf790088b4641504bd435a48de2d4c6235bf83625d508ef9"
         },
         {
@@ -484,10 +488,10 @@
             "status == \"FROZEN\"",
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
-            "data_firewall = {path, sha256} matching the file on disk (the S1A-FW artifact) (the frozen S1a data firewall the procedures operate under)",
+            "data_firewall = {path, sha256} matching the file on disk (the SATISFIED S1A-FW artifact) (the frozen S1a data firewall the procedures operate under)",
             "procedures[].category covers thrust_stand, power_channels, mass_flow_controllers, magnetic_field_Bz, daq_time_base, temperature_channels",
-            "every procedures[] item: category is a non-empty, non-TBD string; procedure_id is a non-empty, non-TBD string; procedure is a non-empty, non-TBD string; traceability is a non-empty, non-TBD string; acceptance_rule is a non-empty, non-TBD string; s1a_data_class is one of the allowed_classes[].id of the SATISFIED S1A-FW artifact (every S1a procedure produces only a firewall-ALLOWED data class)",
-            "at least one procedures[] item: category == \"temperature_channels\"; cathode_temperature_labelling is a non-empty, non-TBD string (A3 decisions.cathode_temperature binds the temperature procedure: the cathode-tube thermocouple is never labelled emitter temperature)"
+            "every procedures[] item: category is a non-empty, non-placeholder string; procedure_id is a non-empty, non-placeholder string; procedure is a non-empty, non-placeholder string; traceability is a non-empty, non-placeholder string; acceptance_rule is a non-empty, non-placeholder string; s1a_data_class is one of the allowed_classes[].id / registration_inputs[].id of the SATISFIED S1A-FW artifact, never one of its forbidden_or_embargoed[].id, never matching /^VO-/ (every S1a procedure produces only a firewall-ALLOWED data class or a custody-held registration input (e.g. the B(z) map procedure produces REG-BZ); never a forbidden / embargoed id or a W5 validation-observable id)",
+            "at least one procedures[] item: category == \"temperature_channels\"; cathode_temperature_labelling is a non-empty, non-placeholder string (A3 decisions.cathode_temperature binds the temperature procedure: the cathode-tube thermocouple is never labelled emitter temperature)"
           ],
           "produced_by": "W4 (fo_capability_demo_prep calibration_plan_candidates / CD-01..CD-07) drafts; owner freezes"
         }
@@ -535,9 +539,9 @@
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
             "decision == \"APPROVED\"",
-            "facility.name is a non-empty, non-TBD string",
-            "facility.vacuum_facility is a non-empty, non-TBD string",
-            "facility.safety_responsible is a non-empty, non-TBD string (organisation / role responsible for facility safety during S1a)",
+            "facility.name is a non-empty, non-placeholder string",
+            "facility.vacuum_facility is a non-empty, non-placeholder string",
+            "facility.safety_responsible is a non-empty, non-placeholder string (organisation / role responsible for facility safety during S1a)",
             "facility.same_as_hall_on_facility is a boolean (recorded: whether S1a calibrations can carry into S1b / LOCK-2)"
           ],
           "produced_by": "owner (facility contact is the owner's channel)"
@@ -557,8 +561,8 @@
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
             "decision == \"APPROVED\"",
-            "facility.name is a non-empty, non-TBD string",
-            "facility.hall_on_vacuum_facility is a non-empty, non-TBD string"
+            "facility.name is a non-empty, non-placeholder string",
+            "facility.hall_on_vacuum_facility is a non-empty, non-placeholder string"
           ],
           "produced_by": "owner"
         }
@@ -602,20 +606,24 @@
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
             "w5_basis = {path, sha256} matching the file on disk (under docs/validation/hall_transport_v2_prereg/) (the W5 pre-registration document whose held-out / registration classes the firewall implements)",
-            "data_custodian is a non-empty, non-TBD string (owner-designated; never a physics-track modeller (W5 custody_and_blinding.roles))",
+            "data_custodian is a non-empty, non-placeholder string (owner-designated; never a physics-track modeller (W5 custody_and_blinding.roles))",
             "h1_hall_discharge_in_s1a == \"FORBIDDEN\" (no H-1 anode discharge in S1a: W5 classes no Hall-on reading as S1a calibration/registration; the first Hall-on reading is S1b under N4)",
             "allowed_classes[].id covers CALIBRATION, NOISE, DRIFT, REPEATABILITY, REINSTALLATION, CHANNEL_PERFORMANCE, QUALITATIVE_RGA, FACILITY_BACKGROUND",
-            "every allowed_classes[] item: id is a non-empty, non-TBD string; definition is a non-empty, non-TBD string; release_rule is a non-empty, non-TBD string (who may receive it (S1a calibration data may go to every track; registration inputs only via the custodian after LOCK-H1))",
+            "every allowed_classes[].id is one of CALIBRATION, NOISE, DRIFT, REPEATABILITY, REINSTALLATION, CHANNEL_PERFORMANCE, QUALITATIVE_RGA, FACILITY_BACKGROUND (no allowed class beyond the owner-listed set (an arbitrary class such as a Hall-on idle reading can never be declared allowed))",
+            "allowed_classes[].id and forbidden_or_embargoed[].id share no value (no id is both allowed and forbidden / embargoed)",
+            "allowed_classes[].id and registration_inputs[].id share no value (registration inputs are custody-held, never an allowed class)",
+            "registration_inputs[].id and forbidden_or_embargoed[].id share no value",
+            "every allowed_classes[] item: id is a non-empty, non-placeholder string; definition is a non-empty, non-placeholder string; release_rule is a non-empty, non-placeholder string (who may receive it (S1a calibration data may go to every track; registration inputs only via the custodian after LOCK-H1)); excludes_registration_inputs is true (the class definition excludes every registration input (REG-GEOM, REG-BZ, REG-FEED, REG-PB ...), which are released only via the custodian after LOCK-H1 (W5 K1))",
             "at least one allowed_classes[] item: id == \"QUALITATIVE_RGA\"; no_dose_or_lifetime_claim is true (A3 decisions.near_cathode_rga: qualitative S1a RGA data cannot support an exposure-dose or lifetime claim)",
             "forbidden_or_embargoed[].id covers VO-ID, VO-T, VO-IGNEXT, VO-OSC, VO-SPECIES, VO-IEDF, VO-DIV, VO-TENE, HW0-PBUS-HALL-ON, HW0-RARCH, HW0-KNEE, H1-ANY-HALL-OPERATING-POINT",
-            "every forbidden_or_embargoed[] item: id is a non-empty, non-TBD string; quantity is a non-empty, non-TBD string; treatment in [\"FORBIDDEN_IN_S1A\", \"EMBARGOED_CUSTODY_ONLY\"]; consequence_if_exposed is a non-empty, non-TBD string (per W5 leak_rule / publication_rule.automatic_flag: OUTPUTS_SEEN for every affected condition)",
-            "registration_inputs[].id covers REG-GEOM, REG-BZ, REG-FEED (the W5 registration inputs S1a measures)",
-            "every registration_inputs[] item: id is a non-empty, non-TBD string; release_condition is a non-empty, non-TBD string (W5 K1/K2: released to the physics track by the custodian only after LOCK-H1)",
-            "custody_rule is a non-empty, non-TBD string (raw S1a data held by the custodian; sha256-frozen; what may leave custody and to whom)",
-            "outputs_seen_rule is a non-empty, non-TBD string (the W5 OUTPUTS_SEEN consequence applied to any exposure of a forbidden / embargoed quantity)",
-            "repository_rule is a non-empty, non-TBD string (S1a records committed to the repository (readable by the physics track) carry only allowed classes)",
-            "breach_response is a non-empty, non-TBD string (what the custodian and owner do on a breach (record in the release log, owner disposition))",
-            "release_log is a non-empty, non-TBD string (location of the custodian's release / disclosure log (W5 VP-14))"
+            "every forbidden_or_embargoed[] item: id is a non-empty, non-placeholder string; quantity is a non-empty, non-placeholder string; treatment in [\"FORBIDDEN_IN_S1A\", \"EMBARGOED_CUSTODY_ONLY\"]; consequence_if_exposed is a non-empty, non-placeholder string (per W5 leak_rule / publication_rule.automatic_flag: OUTPUTS_SEEN for every affected condition)",
+            "registration_inputs[].id covers REG-GEOM, REG-BZ, REG-FEED, REG-PB (the W5 registration inputs S1a measures (REG-PB: gauge calibration and cold-flow background pressure))",
+            "every registration_inputs[] item: id is a non-empty, non-placeholder string; release_condition is a non-empty, non-placeholder string (W5 K1/K2: released to the physics track by the custodian only after LOCK-H1)",
+            "custody_rule is a non-empty, non-placeholder string (raw S1a data held by the custodian; sha256-frozen; what may leave custody and to whom)",
+            "outputs_seen_rule is a non-empty, non-placeholder string (the W5 OUTPUTS_SEEN consequence applied to any exposure of a forbidden / embargoed quantity)",
+            "repository_rule is a non-empty, non-placeholder string (S1a records committed to the repository (readable by the physics track) carry only allowed classes)",
+            "breach_response is a non-empty, non-placeholder string (what the custodian and owner do on a breach (record in the release log, owner disposition))",
+            "release_log is a non-empty, non-placeholder string (location of the custodian's release / disclosure log (W5 VP-14))"
           ],
           "produced_by": "W5 validation pre-registration (fo_hall_validation_prereg_draft) with the data custodian; owner designates the custodian and freezes. The firewall pins the W5 document whose classes it implements; a later W5 change breaks the pin and the gate fails closed until the firewall is re-frozen"
         }
