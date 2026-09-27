@@ -270,7 +270,7 @@
     "alpha_Br_pct_per_C": {"value": -0.090, "unit": "%/degC", "as_published": "-0.090 % change per C (-100 C to +100 C)"},
     "coeff_T_min_C": {"value": -100.0, "unit": "degC", "as_published": "(-100 C to +100 C)"},
     "coeff_T_max_C": {"value": 100.0, "unit": "degC", "as_published": "(-100 C to +100 C)"},
-    "T_max_use_C": {"value": 150.0, "unit": "degC", "as_published": "Max. Service Temperature 150** C (300 F)", "quantity_type": "assumed"},
+    "T_max_use_C": {"value": null, "unit": "degC", "as_published": "Max. Service Temperature 150** C (300 F)", "quantity_type": "assumed", "TBD": "gated (verify): the printed 150 C carries a '**' footnote that is not legible in the accessed PDF text layer; the value is not used as a live limit until the footnote content is read from a legible copy of MMPA 0100-00"},
     "T_curie_C": {"value": 310.0, "unit": "degC", "as_published": "Curie Temperature 310 C"}
    },
    "transformation_chain": "industry data -> MMPA table -> transcribed",
