@@ -93,8 +93,9 @@ Other options: `--list` names the checks, and `--only a,b` runs a subset (exit c
   and asserts that `pymsis` is not importable. Both legs run the tests and the golden check. This is gate 1 ("runs with
   pymsis absent"): the frozen NRLMSIS dataset is the default, and live MSIS is used only when asked.
 * **No `pip install -e .`** The package is used from the repository root (`PYTHONPATH` = workspace), see *Open points*.
-* **Golden gate.** `python -m abep_sim.golden check` prints `OK` or the list of deviations, but exits 0 in both cases.
-  CI therefore requires the last output line to be exactly `OK` (rule 2). A moved golden is a model change and must be
+* **Golden gate.** `python -m abep_sim.golden check` prints `OK` and exits 0 when nothing moved; otherwise it prints one
+  line per deviation and exits 1 (owner decision 2026-09-27; `tests/test_golden_cli.py`). CI runs it as a plain step and
+  gates on the exit code (rule 2). A moved golden is a model change and must be
   justified, regenerated and logged. CI never regenerates goldens.
 * **Clean tree.** After each job, `git status --porcelain` must be empty, so tests, goldens and checks must not rewrite
   committed files. Gitignored caches are allowed.
@@ -177,8 +178,8 @@ the P5-N2 campaign is running, so their CI runtime is unknown (timeout 90 min).
    with `PYTHONPATH` and does not change packaging, which is outside this change. The fix (explicit `packages` / `find`
    include plus package data for `abep_sim/data`) is the owner's decision.
 2. `pyproject.toml` declares `requires-python >= 3.10`, but the lock and `tomllib` need ≥ 3.11 (see above).
-3. `python -m abep_sim.golden check` exits 0 on deviations. CI gates on the output text. A non-zero exit in `golden.py`
-   would be simpler, but that file is outside this change.
+3. Resolved 2026-09-27 (owner decision): `python -m abep_sim.golden check` now exits 1 on deviations, and CI gates on
+   the exit code instead of parsing the output text.
 4. Actions are pinned by major tag (`actions/checkout@v4`, `actions/setup-python@v5`, `julia-actions/setup-julia@v2`).
    Pinning them to commit SHAs is an option for supply-chain hardening.
 5. The smoke workflow has never been run. Its first manual run may surface environment issues (Julia registry access,

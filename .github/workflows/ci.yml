@@ -109,11 +109,8 @@ jobs:
         run: python scripts/ci_checks.py --pytest-junit "$RUNNER_TEMP/pytest.xml"
 
       - name: Golden benchmarks (python -m abep_sim.golden check)
-        run: |
-          # abep_sim.golden prints "OK" or the list of deviations and exits 0 either way, so gate on its output.
-          out="$(python -m abep_sim.golden check)"
-          printf '%s\n' "$out"
-          [ "$(printf '%s\n' "$out" | tail -n 1)" = "OK" ] || { echo "::error::golden benchmarks moved (CLAUDE.md rule 2)"; exit 1; }
+        # Prints "OK" and exits 0, or prints each deviation and exits 1 (a moved golden is a model change, CLAUDE.md rule 2).
+        run: python -m abep_sim.golden check
 
       - name: Working tree unchanged (tests and goldens must not rewrite committed files)
         run: |
