@@ -165,10 +165,11 @@
    "verification_protocol": "single-lens-v1",
    "answers": "iii",
    "second_lens": {
-    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "H",
-    "status": "interrupted",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
+    "status": "running",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
    }
   },
   {
@@ -389,10 +390,11 @@
    "verification_protocol": "single-lens-v1",
    "answers": null,
    "second_lens": {
-    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "B",
-    "status": "interrupted",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
+    "status": "running",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
    }
   },
   {
@@ -423,10 +425,11 @@
    "verification_protocol": "single-lens-v1",
    "answers": "iii",
    "second_lens": {
-    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "F",
-    "status": "interrupted",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
+    "status": "running",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
    }
   },
   {
@@ -457,10 +460,11 @@
    "verification_protocol": "single-lens-v1",
    "answers": "iii",
    "second_lens": {
-    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "I",
-    "status": "interrupted",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
+    "status": "running",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
    }
   },
   {
@@ -474,10 +478,11 @@
    "verification_protocol": "single-lens-v1",
    "answers": "ii",
    "second_lens": {
-    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "J",
-    "status": "interrupted",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
+    "status": "running",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
    }
   },
   {
@@ -491,10 +496,11 @@
    "verification_protocol": "single-lens-v1",
    "answers": null,
    "second_lens": {
-    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "K",
-    "status": "interrupted",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
+    "status": "running",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
    }
   },
   {
@@ -508,10 +514,11 @@
    "verification_protocol": "single-lens-v1",
    "answers": "i",
    "second_lens": {
-    "workflow_run": "wf_96f8f0bb-ae2",
+    "workflow_run": "wf_e806cb61-ce4",
     "workflow_key": "L",
-    "status": "interrupted",
-    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run"
+    "status": "running",
+    "note": "2026-09-26 ~22:00Z session usage limit killed verify2/fix2/verify3 agents (not a verdict); fix-round-1 commit in the worktree awaits verification; continued by a targeted run",
+    "previous_run": "wf_96f8f0bb-ae2 (interrupted)"
    }
   }
  ],
@@ -704,6 +711,11 @@
      "workflow_run": "wf_16b7de5d-7b9",
      "workflow_key": "BUNDLE1",
      "reason": "Bundle 1 v3: veto-layer context pin updated to the re-verified 7a7eb68 (orchestration race in wf_e16cec30-7b2); v1/v2 kept as records"
+    },
+    {
+     "workflow_run": "wf_e6704550-845",
+     "workflow_key": "BUNDLE1",
+     "reason": "Bundle 1 v4: experiment-package context pin updated to the re-verified 83fe4c4 (second occurrence of the parallel re-pin race); run alone, all pins checked current"
     }
    ]
   },
