@@ -1,11 +1,12 @@
-"""Tests for Bundle 1 (Milestone A, conditional selection): fo_bundle1_conditional_selection, bundle versions v1 to v4.
+"""Tests for Bundle 1 (Milestone A, conditional selection): fo_bundle1_conditional_selection, bundle versions v1 to v5.
 
-v1 (bundle1_v1.json / BUNDLE1.md / bundle1_v1.schema.json) is the historical record of T_BUNDLE1 attempt 2; v2 and v3
-(bundle1_vN.json / BUNDLE1_vN.md / bundle1_vN.schema.json / governance_snapshot_vN.json) are the records of the bundle1_v2
-and bundle1_v3 repairs: all are verified by their recorded sha256 and never rebuilt. v4: checks that
-docs/milestones/bundle1/build_bundle1.py reproduces bundle1_v4.json and BUNDLE1_v4.md byte for byte from the pinned inputs
-and the pinned governance snapshot (never the live governance files), that every pin is current, that the v3 -> v4 change
-log is consistent (fo_experiment_package context re-pin only, 0 decision-relevant changes), that the ECHT-N2 status is
+v1 (bundle1_v1.json / BUNDLE1.md / bundle1_v1.schema.json) is the historical record of T_BUNDLE1 attempt 2; v2, v3 and v4
+(bundle1_vN.json / BUNDLE1_vN.md / bundle1_vN.schema.json / governance_snapshot_vN.json) are the records of the bundle1_v2,
+bundle1_v3 and bundle1_v4 repairs: all are verified by their recorded sha256 and never rebuilt. v5: checks that
+docs/milestones/bundle1/build_bundle1.py reproduces bundle1_v5.json and BUNDLE1_v5.md byte for byte from the pinned inputs
+and the pinned governance snapshot (never the live governance files), that every pin is current, that the v4 -> v5 change
+log is consistent (fo_veto_layer context re-pin only, 0 decision-relevant changes), that the repair chain wf_60b458bb-a8d
+is recorded in the governance snapshot, that the ECHT-N2 status is
 carried, that the JSON
 validates against its schema, that every architecture x mandatory-field cell carries the full metadata, that the
 outcome is one of the two allowed forms, that any ELIMINATED_WITHIN_TESTED_ENVELOPE traces to a lane-24 demonstrated
@@ -286,6 +287,36 @@ def test_evidence_weight_flags(doc, snap):
         assert i["decisive_for_B_or_C_allowed"] is (i["lane"] not in single)
 
 
+def _walk(o):
+    if isinstance(o, dict):
+        yield o
+        for v in o.values():
+            yield from _walk(v)
+    elif isinstance(o, list):
+        for v in o:
+            yield from _walk(v)
+
+
+def test_blocker_protocol_labels_match_snapshot(doc, snap):
+    """No blocking annotation may claim a verification protocol the pinned governance snapshot does not record."""
+    single = set(snap["single_lens_lanes"])
+    n = 0
+    for d in _walk(doc):
+        if d.get("kind") == "lane" and isinstance(d.get("what"), str):
+            n += 1
+            if "single-lens" in d["what"]:
+                assert d["id"] in single, (d["id"], d["what"])
+            if "two-lens" in d["what"]:
+                assert d["id"] not in single, (d["id"], d["what"])
+    assert n > 0
+
+
+def test_rf_thresholds_scoped_to_overlay_box(doc):
+    txt = " ".join(doc["three_questions"]["iii_what_could_overturn"])
+    assert "182.149" in txt and "2208.19" in txt
+    assert "declared box" in txt and "omega_f = 0" in txt and "NOT evaluated on the lane-17" in txt
+
+
 def test_three_questions_and_owner_questions(doc, snap):
     q = doc["three_questions"]
     assert q["i_conditional_selection_now"].startswith(doc["outcome"]["label"])
@@ -314,7 +345,7 @@ def test_decision_rule_precedes_tables():
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-# v1 historical record, governance snapshot, change log, ECHT status, context lanes (bundle1_v2 to v4 repairs)
+# v1 historical record, governance snapshot, change log, ECHT status, context lanes (bundle1_v2 to v5 repairs)
 # ----------------------------------------------------------------------------------------------------------------------
 def test_v1_record_verified_by_sha256():
     for rel, digest in bb.V1_RECORD["files"].items():
@@ -371,28 +402,33 @@ def test_governance_snapshot_matches_captured_commit(snap):
 
 def test_change_log(doc):
     cl = doc["change_log"]
-    assert cl["from"] == "bundle1_v3" and cl["to"] == "bundle1_v4"
+    assert cl["from"] == "bundle1_v4" and cl["to"] == "bundle1_v5"
     assert all(cl["unchanged"].values()), cl["unchanged"]
     assert cl["decision_relevant_changes"] == []
     assert cl["inputs_added"] == [] and cl["inputs_removed"] == []
-    assert [(i["lane"], i["role"]) for i in cl["inputs_changed"]] == [("fo_experiment_package", "context")]
+    assert [(i["lane"], i["role"]) for i in cl["inputs_changed"]] == [("fo_veto_layer", "context")]
     ch = cl["inputs_changed"][0]
-    assert ch["from_commit"].startswith("c09fac4") and ch["to_commit"] == bb.CONTEXT["fo_experiment_package"]
-    assert bb.CONTEXT["fo_experiment_package"].startswith("83fe4c4")
-    assert [f["path"] for f in ch["files"]] == ["docs/architecture_comparison/experiment_package/experiment_package_v1.json"]
-    assert ch["files"][0]["from_sha256"].startswith("4c2d107d") and ch["files"][0]["to_sha256"].startswith("9278dfff")
-    v3 = json.loads((REPO / bb.V3_RECORD["json"]).read_text(encoding="utf-8"))
-    assert bb.change_log(v3, doc) == cl
-    v2 = json.loads((REPO / bb.V2_RECORD["json"]).read_text(encoding="utf-8"))
+    assert ch["from_commit"].startswith("7a7eb68") and ch["to_commit"] == bb.CONTEXT["fo_veto_layer"]
+    assert bb.CONTEXT["fo_veto_layer"].startswith("deafae0")
+    assert [f["path"] for f in ch["files"]] == ["docs/architecture_comparison/veto_layer/veto_layer_v1.json"]
+    assert ch["files"][0]["from_sha256"].startswith("1f4c2d8d") and ch["files"][0]["to_sha256"].startswith("1371e435")
+    v4 = json.loads((REPO / bb.V4_RECORD["json"]).read_text(encoding="utf-8"))
+    assert bb.change_log(v4, doc) == cl
+    older = [json.loads((REPO / r["json"]).read_text(encoding="utf-8")) for r in (bb.V2_RECORD, bb.V3_RECORD)]
     v1 = json.loads((REPO / "docs/milestones/bundle1/bundle1_v1.json").read_text(encoding="utf-8"))
-    assert doc["outcome"]["label"] == v3["outcome"]["label"] == v2["outcome"]["label"] == v1["outcome"]["label"] == "NO_BASELINE_YET"
-    assert doc["decision_rule"] == v3["decision_rule"] == v2["decision_rule"] == v1["decision_rule"]
+    for old in [v4, *older, v1]:
+        assert old["outcome"]["label"] == doc["outcome"]["label"] == "NO_BASELINE_YET"
+        assert old["decision_rule"] == doc["decision_rule"]
     assert doc["decision_rule"]["id"] == "B1-DR-1"
-    assert doc["outcome"] == v3["outcome"]
-    # the experiment-package context re-pin changes none of the package readings Bundle 1 carries
-    for k in ("status", "not_locked"):
-        if k in v3["context_followons"]["fo_experiment_package"]:
-            assert doc["context_followons"]["fo_experiment_package"][k] == v3["context_followons"]["fo_experiment_package"][k]
+    assert doc["outcome"] == v4["outcome"]
+    # the veto-layer context re-pin changes none of the veto-layer readings Bundle 1 carries
+    for k in ("status", "status_counts", "cells", "eliminated_within_tested_envelope", "veto_candidates"):
+        assert doc["context_followons"]["fo_veto_layer"][k] == v4["context_followons"]["fo_veto_layer"][k], k
+    # the only metadata changes: veto-layer commit annotations and dropped stale protocol labels on cells, the single-lens list
+    # (second lens recorded at base), and the RF-threshold scope note in question (iii)
+    for path in cl["metadata_changes"]:
+        assert path.startswith(("admissibility.cells.", "evidence_weight.")) or path == "three_questions.iii_what_could_overturn[1]", path
+    assert doc["evidence_weight"]["blocking_lanes_single_lens"] == []
 
 
 def test_every_pin_matches_current_file():
@@ -401,10 +437,10 @@ def test_every_pin_matches_current_file():
         assert hashlib.sha256((REPO / rel).read_bytes()).hexdigest() == digest, (lane, rel)
 
 
-@pytest.mark.parametrize("rec_name", ["V2_RECORD", "V3_RECORD"])
+@pytest.mark.parametrize("rec_name", ["V2_RECORD", "V3_RECORD", "V4_RECORD"])
 def test_historical_record_verified_by_sha256(tmp_path, rec_name):
     rec = getattr(bb, rec_name)
-    verify = {"V2_RECORD": bb.verify_v2_record, "V3_RECORD": bb.verify_v3_record}[rec_name]
+    verify = {"V2_RECORD": bb.verify_v2_record, "V3_RECORD": bb.verify_v3_record, "V4_RECORD": bb.verify_v4_record}[rec_name]
     for rel, digest in rec["files"].items():
         assert hashlib.sha256((REPO / rel).read_bytes()).hexdigest() == digest, rel
     old = verify()
@@ -421,7 +457,7 @@ def test_historical_record_verified_by_sha256(tmp_path, rec_name):
         verify(root)
 
 
-@pytest.mark.parametrize("rec_name", ["V2_RECORD", "V3_RECORD"])
+@pytest.mark.parametrize("rec_name", ["V2_RECORD", "V3_RECORD", "V4_RECORD"])
 def test_historical_files_equal_their_verified_commit(rec_name):
     rec = getattr(bb, rec_name)
     if shutil.which("git") is None:
@@ -436,22 +472,28 @@ def test_historical_files_equal_their_verified_commit(rec_name):
 
 
 def test_historical_records_and_repair_records(doc, snap):
-    assert [h["id"] for h in doc["historical_records"]] == ["bundle1_v1", "bundle1_v2", "bundle1_v3"]
-    assert doc["supersedes"]["id"] == "bundle1_v3" and doc["supersedes"]["commit"] == bb.V3_RECORD["commit"]
+    assert [h["id"] for h in doc["historical_records"]] == ["bundle1_v1", "bundle1_v2", "bundle1_v3", "bundle1_v4"]
+    assert doc["supersedes"]["id"] == "bundle1_v4" and doc["supersedes"]["commit"] == bb.V4_RECORD["commit"]
     recs = {(r["lane"], r["pinned_identity"]): r for r in snap["repair_records"]}
     expected_runs = {
-        ("fo_veto_layer", bb.CONTEXT["fo_veto_layer"]): "wf_e16cec30-7b2",
+        ("fo_veto_layer", bb.CONTEXT["fo_veto_layer"]): "wf_60b458bb-a8d",
         ("fo_experiment_package", bb.CONTEXT["fo_experiment_package"]): "wf_16b7de5d-7b9",
         ("fo_hall_sustainment_envelope", bb.PREREQUISITES["fo_hall_sustainment_envelope"]): "wf_e16cec30-7b2",
         ("fo_bundle1_conditional_selection", bb.V2_RECORD["commit"]): "wf_e16cec30-7b2",
         ("fo_bundle1_conditional_selection", bb.V3_RECORD["commit"]): "wf_16b7de5d-7b9",
+        ("fo_bundle1_conditional_selection", bb.V4_RECORD["commit"]): "wf_e6704550-845",
     }
     assert set(recs) == set(expected_runs)
     for key, r in recs.items():
         assert r["registry_repair"]["workflow_run"] == expected_runs[key]
         subj = r["merge_commit_subject"]
-        assert (subj.startswith(f"Merge verified {r['lane']} repair ({r['pinned_identity']})")
-                or subj.startswith(f"Merge verified {r['lane']} ({r['pinned_identity']})")), subj
+        if r["merge_commit"] is None:  # repair chain of this run: integrated by fast-forward, no merge commit
+            assert key == ("fo_veto_layer", bb.CONTEXT["fo_veto_layer"]) and subj is None
+            assert r["integration"] == {"mode": "fast-forward", "integration_commit": bb.INTEGRATION_COMMIT,
+                                        "ancestor_of_integration_commit": True, "registry_commit": bb.GOV_CAPTURE_COMMIT}
+            continue
+        m = bb.MERGE_SUBJECT.match(subj)
+        assert m and m.group("lane") == r["lane"] and r["pinned_identity"].startswith(m.group("sha")), subj
     for r in doc["claim"]["repin_log"] + doc["claim"]["context_repin_log"]:
         assert "TBD" not in r["verification_record"]
     assert [r["lane"] for r in doc["claim"]["context_repin_log"]] == ["fo_veto_layer", "fo_experiment_package"]
@@ -459,6 +501,37 @@ def test_historical_records_and_repair_records(doc, snap):
     assert vl["commit"] == bb.CONTEXT["fo_veto_layer"] and vl["ledger_verified_commit"].startswith("3e7805c")
     xp = doc["context_followons"]["fo_experiment_package"]["verified"]
     assert xp["commit"] == bb.CONTEXT["fo_experiment_package"] and xp["ledger_verified_commit"].startswith("c09fac4")
+
+
+def test_repair_chain_recorded(doc, snap):
+    rc = snap["repair_chain"]
+    assert rc["workflow_run"] == bb.REPAIR_CHAIN_RUN == "wf_60b458bb-a8d"
+    assert rc["registry_commit"] == bb.GOV_CAPTURE_COMMIT == snap["captured_from_commit"]
+    assert rc["registry_commit_parent"] == bb.BASE_COMMIT and rc["integration_commit"] == bb.INTEGRATION_COMMIT
+    assert rc["registry_commit_changes"] == sorted(["docs/orchestration/lane_registry_v1.json", bb.REPAIR_CHAIN_SCRIPT])
+    assert [e["lane"] for e in rc["entries"]] == ["lane_15_thermal_life", "fo_veto_layer", "fo_bundle1_conditional_selection"]
+    for e in rc["entries"]:
+        assert e["registry_repair"]["workflow_run"] == "wf_60b458bb-a8d"
+        assert e["registry_repair"]["workflow_key"] == bb.REPAIR_CHAIN[e["lane"]]["workflow_key"]
+        assert e["commit"] == bb.REPAIR_CHAIN[e["lane"]]["commit"]
+    assert rc["entries"][1]["commit"] == bb.CONTEXT["fo_veto_layer"]
+    assert doc["provenance"]["governance_snapshot"]["repair_chain"] == rc
+    assert "wf_60b458bb-a8d" in snap["protocols"]["fo_veto_layer"]["notes"][0]
+    if shutil.which("git") is None:
+        pytest.skip("git not available")
+    for e in rc["entries"]:
+        if e["commit"]:
+            r = subprocess.run(["git", "merge-base", "--is-ancestor", e["commit"], bb.INTEGRATION_COMMIT], cwd=REPO)
+            if r.returncode not in (0, 1):
+                pytest.skip("repair-chain commits not available in this clone")
+            assert r.returncode == 0, e["lane"]
+    r = subprocess.run(["git", "show", f"{bb.GOV_CAPTURE_COMMIT}:docs/orchestration/lane_registry_v1.json"], capture_output=True, cwd=REPO)
+    if r.returncode != 0:
+        pytest.skip("governance commit not available in this clone")
+    reg = json.loads(r.stdout)
+    entries = {x["id"]: x for x in reg["lanes"] + reg["follow_ons"]}
+    for e in rc["entries"]:
+        assert e["registry_repair"] in entries[e["lane"]]["repairs"]
 
 
 def test_blocker_annotations_not_duplicated(doc):
