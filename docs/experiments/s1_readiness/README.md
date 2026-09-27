@@ -58,7 +58,7 @@ Each condition gets one of these states:
 |---|---|
 | `SATISFIED` | the artifact passes every rule |
 | `MISSING` | there is no artifact at any expected path |
-| `REJECTED_DRAFT` | the top-level `status` or `decision` contains DRAFT, PROPOSED or PENDING |
+| `REJECTED_DRAFT` | a `status` or `decision` field anywhere in the artifact (top level or nested, e.g. one LOCK-1 decision, one hardware item, one feed point) contains DRAFT, PROPOSED or PENDING |
 | `INVALID` | the artifact fails one or more rules |
 | `AMBIGUOUS` | an artifact exists at more than one candidate location, and the gate never chooses between them |
 
@@ -66,7 +66,8 @@ Availability is `PARTIAL_PRECURSORS_ONLY` when a precursor draft exists. It is s
 never satisfies a condition.
 
 Rules the gate enforces:
-- **No condition is inferred or filled by assumption.** A value starting with `TBD` never counts as present.
+- **No condition is inferred or filled by assumption.** A value starting with `TBD` never counts as present. Dates
+  must be real calendar dates (`2026-13-45` is rejected).
 - **DRAFT or PROPOSED artifacts never satisfy a condition.** The per-point flight-status label `PROPOSED_FLIGHT_REPRESENTATIVE`
   (controls C2) is accepted as a label on a feed point. The document that carries those points must still be released by
   the owner.
@@ -76,15 +77,19 @@ Rules the gate enforces:
   freeze, the feed points, the calibration plan, the custody plan, the facility choice and the safety limits. The capability
   demonstration must reference the frozen calibration plan, and the safety limits must reference the facility choice.
 - **A design analysis is never a demonstration.** S1-C4 requires `evidence_basis = calibration_measurement`, per-instrument
-  `evidence_class = measured`, and committed raw calibration data (sha256).
+  `evidence_class = measured`, a `demonstrated_uncertainty` whose own `evidence_class` is `measured`, and committed raw
+  calibration data (sha256) under the PROPOSED raw-data directory `docs/experiments/instrumentation/raw/`. A plan, the
+  capability record itself or any other document is never accepted as raw data.
+- **LOCK-1 choices are option ids.** Each D-01..D-15 `owner_choice` must be an option id of that decision (`D-NN-X`, the
+  form used in `experiment_package_v1.json`). Free text, `PENDING`, `OPEN` or `PROPOSED` never count.
 
 ## The eight conditions → evidence artifacts (all paths and file names PROPOSED)
 | id | owner condition | expected artifact | key machine checks | producer |
 |---|---|---|---|---|
-| S1-C1 | LOCK-1 signed by the owner | `LOCK1.json` at the owner's D-05 location, one of: `docs/architecture_comparison/{experiment_protocol,minimum_decisive_experiment,experiment_package}/prereg/`, `docs/architecture_comparison/lock1/` | `status=SIGNED`, `locked=true`, `decided_by=owner`, `decided_utc`, `decision_source` = sha256 of `docs/architecture_comparison/lock1/lock1_decision_brief_v1.json`, D-01..D-15 `owner_choice` non-null, location = D-05 choice | owner signs, using the W2 brief (fo_lock1_decision_brief). `LOCK1_DRAFT.json` never counts |
+| S1-C1 | LOCK-1 signed by the owner | `LOCK1.json` at the owner's D-05 location, one of: `docs/architecture_comparison/{experiment_protocol,minimum_decisive_experiment,experiment_package}/prereg/`, `docs/architecture_comparison/lock1/` | `status=SIGNED`, `locked=true`, `decided_by=owner`, `decided_utc`, `decision_source` = sha256 of `docs/architecture_comparison/lock1/lock1_decision_brief_v1.json`, D-01..D-15 `owner_choice` = an option id `D-NN-X` of that decision, location = D-05 choice. D-05-D (`lock1/`) is not an option of `experiment_package_v1` D-05; it is PROPOSED from the planned W2 brief and needs owner confirmation | owner signs, using the W2 brief (fo_lock1_decision_brief). `LOCK1_DRAFT.json` never counts |
 | S1-C2 | H-1/C-1 configuration frozen sufficiently for qualification | `docs/experiments/hardware/configuration_freeze_H1_C1.json` | `FROZEN_FOR_QUALIFICATION`; owner; LOCK-1 ref; `requirements_basis` = W3 register sha256; items H-1, C-1, MC-1 each `FROZEN` with serial/part id and configuration record | W3 (fo_hardware_definition) after delivery; owner approves |
-| S1-C3 | DI-1 or explicitly labelled ground-qualification feed points | (a) `docs/architecture_comparison/feed_state_closure/DI1_FROZEN.json` or (b) `.../s1_feed_points.json` | (a) `id=DI-1`, `FROZEN`, owner, W1 closure sha256. (b) `RELEASED_FOR_S1`, owner, LOCK-1 ref. Every point is labelled `PROPOSED_FLIGHT_REPRESENTATIVE` or `GROUND_QUALIFICATION_POINT` and has {ṁ_s, P_feed, T_feed, x_s}, each with value, unit, source and evidence class. At least one N₂ point (S1b is at OP3 on N₂) | (a) owner freezes DI-1. (b) W1 (fo_feed_state_closure) selects the points and the owner releases them |
-| S1-C4 | instrumentation capability demonstrated | `docs/experiments/instrumentation/capability_demonstration_v1.json` | `DEMONSTRATED`; `evidence_basis=calibration_measurement`; `accepted_by=owner`; calibration-plan sha256; covers thrust stand, bus-power metering, I_d, flow, pressure, temperature, B(z), stability, species/divergence. Each entry is `measured`, dated, with raw data sha256 and a demonstrated uncertainty | W4 (fo_instrumentation_definition), measuring per S1-C5; owner accepts |
+| S1-C3 | DI-1 or explicitly labelled ground-qualification feed points | (a) `docs/architecture_comparison/feed_state_closure/DI1_FROZEN.json` or (b) `.../s1_feed_points.json` | (a) `id=DI-1`, `FROZEN`, owner, W1 closure sha256. (b) `RELEASED_FOR_S1`, owner, LOCK-1 ref. In both (a) and (b) (symmetry PROPOSED; the owner may relax it for DI-1) the record carries `test_points[]`; every point is labelled `PROPOSED_FLIGHT_REPRESENTATIVE` or `GROUND_QUALIFICATION_POINT` and has {ṁ_s, P_feed, T_feed, x_s}, each with value, unit, source and evidence class. At least one N₂ point (S1b is at OP3 on N₂) | (a) owner freezes DI-1. (b) W1 (fo_feed_state_closure) selects the points and the owner releases them |
+| S1-C4 | instrumentation capability demonstrated | `docs/experiments/instrumentation/capability_demonstration_v1.json` | `DEMONSTRATED`; `evidence_basis=calibration_measurement`; `accepted_by=owner`; calibration-plan sha256; covers thrust stand, bus-power metering, I_d, flow, pressure, temperature, B(z), stability, species/divergence. Each entry is `measured`, dated, with raw data sha256 under `docs/experiments/instrumentation/raw/` and a demonstrated uncertainty whose evidence class is `measured` | W4 (fo_instrumentation_definition), measuring per S1-C5; owner accepts |
 | S1-C5 | calibration plan frozen | `docs/experiments/instrumentation/calibration_plan_frozen.json` | `FROZEN`; owner; LOCK-1 ref; a procedure, traceability and acceptance rule for every category above | W4 drafts; owner freezes |
 | S1-C6 | data custody / blinding plan frozen | `docs/experiments/custody/custody_blinding_plan_frozen.json` | `FROZEN`; owner; LOCK-1 ref; named custodian; `partition_frozen_before_h1_data=true`; non-empty calibration/registration and held-out partitions (C1); raw-data freeze, blinding and release-log rules | W5 (fo_hall_validation_prereg_draft) with the lane 06/25 custody rules; owner designates the custodian and freezes |
 | S1-C7 | facility chosen | `docs/decisions/OD_S1_FACILITY.json` | `id=od_s1_facility`; owner; `APPROVED`; LOCK-1 ref (D-12); facility name, Hall-on vacuum facility and thrust stand; `same_for_S1b_and_score_bearing_stages=true` (lane 25 S1b rule) | owner (facility contact is the owner's channel) |
@@ -115,10 +120,17 @@ they appear as precursors, but they still never satisfy a condition. The authori
 1. The artifact paths and file names above. The S1-C6 location in particular has no owning workstream yet.
 2. The accepted status strings: `SIGNED`, `FROZEN_FOR_QUALIFICATION`, `FROZEN`, `RELEASED_FOR_S1`, `DEMONSTRATED`,
    `APPROVED`.
-3. The required instrument set for S1-C4/C5 (currently the full W4 list from the disposition) and the minimum safety-limit
-   set for S1-C8.
+3. The required instrument set for S1-C4/C5 and the minimum safety-limit set for S1-C8. S1-C4/C5 currently require the
+   full W4 list from the disposition, including stability/oscillations and species/divergence. That may be stricter than
+   S1 needs: lane 25 `s1_plan` names only M1, M2, M3, M9, M10 and M11 for S1a/S1b.
 4. Whether LOCK-1 must also record P-01..P-04 (W2 draft pivot items). The gate currently requires D-01..D-15 only.
-5. Alignment of the signed-LOCK-1 fields (`decided_by`, `decided_utc`, `decision_source`) with the `signature` block of
+5. Whether D-05-D (`docs/architecture_comparison/lock1/`) is a valid LOCK-1 location. It is not among the D-05 options
+   of `experiment_package_v1.json` (A–C only).
+6. Whether the frozen DI-1 record (S1-C3 alternative a) must carry the labelled S1 feed points, as proposed here, like
+   alternative (b).
+7. The raw-data directory `docs/experiments/instrumentation/raw/` for S1-C4 and the option-id form `D-NN-X` for
+   LOCK-1 choices.
+8. Alignment of the signed-LOCK-1 fields (`decided_by`, `decided_utc`, `decision_source`) with the `signature` block of
    the W2 draft.
 
 Compliance:

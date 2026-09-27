@@ -22,6 +22,7 @@ Exit status: 0 S1_READY (or --check identical), 1 S1_NOT_READY (or --check diffe
 from __future__ import annotations
 
 import argparse
+import datetime
 import hashlib
 import json
 import os
@@ -38,7 +39,7 @@ N_OWNER_CONDITIONS = 8
 EVIDENCE_CLASSES = ("measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed")
 RULE_TYPES = ("equals", "in", "is_true", "iso_date", "nonempty_string", "sha256_ref", "decisions_decided",
               "location_choice", "covers", "each_item", "any_item", "quantity")
-_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2})?Z)?$")
+_DATE_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})(?:T(\d{2}:\d{2}(?::\d{2})?)Z)?$")
 _SHA_RE = re.compile(r"^[0-9a-f]{64}$")
 _MISSING = object()
 
@@ -99,6 +100,22 @@ def _is_number(v) -> bool:
     return isinstance(v, (int, float)) and not isinstance(v, bool) and v == v and v not in (float("inf"), float("-inf"))
 
 
+def _is_iso_date(v) -> bool:
+    """ISO 8601 calendar date YYYY-MM-DD, optionally THH:MM[:SS]Z; the date and time must exist (2026-13-45 fails)."""
+    if not isinstance(v, str):
+        return False
+    m = _DATE_RE.match(v)
+    if not m:
+        return False
+    try:
+        datetime.date.fromisoformat(m.group(1))
+        if m.group(2):
+            datetime.time.fromisoformat(m.group(2))
+    except ValueError:
+        return False
+    return True
+
+
 def _show(v) -> str:
     if v is _MISSING:
         return "absent"
@@ -135,6 +152,17 @@ def _validate_rules(rules, where: str, cond_ids: set[str]):
             raise SpecError(f"{where}: artifact_of {r['artifact_of']!r} is not a condition id")
         if t == "decisions_decided" and not (isinstance(r.get("ids"), list) and r["ids"] and r.get("choice_key")):
             raise SpecError(f"{where}: decisions_decided needs ids and choice_key")
+        if t == "decisions_decided" and "choice_pattern" in r:
+            cp = r["choice_pattern"]
+            if not (isinstance(cp, str) and "{id}" in cp):
+                raise SpecError(f"{where}: choice_pattern must be a string containing {{id}}")
+            try:
+                re.compile(cp.replace("{id}", re.escape("D-01")))
+            except re.error as e:
+                raise SpecError(f"{where}: choice_pattern is not a valid regex: {e}") from e
+        if t == "sha256_ref" and "path_prefix" in r and (safe_relpath(r["path_prefix"]) is None
+                                                          or not r["path_prefix"].endswith("/")):
+            raise SpecError(f"{where}: path_prefix must be a repository-relative directory ending in '/'")
         if t == "covers" and not (isinstance(r.get("required"), list) and r["required"] and r.get("key")):
             raise SpecError(f"{where}: covers needs key and required")
         if t == "in" and not (isinstance(r.get("values"), list) and r["values"]):
@@ -200,9 +228,13 @@ def describe_rule(r: dict) -> str:
             pin.append(f"path {r['path_equals']}")
         if r.get("artifact_of"):
             pin.append(f"the {r['artifact_of']} artifact")
+        if r.get("path_prefix"):
+            pin.append(f"under {r['path_prefix']}")
         return f"{f} = {{path, sha256}} matching the file on disk" + (f" ({'; '.join(pin)})" if pin else "") + what
     if t == "decisions_decided":
-        return f"{f} records a non-null {r['choice_key']} for {r['ids'][0]}..{r['ids'][-1]} ({len(r['ids'])} decisions)"
+        pat = f" matching {r['choice_pattern']}" if r.get("choice_pattern") else ""
+        return (f"{f} records a decided {r['choice_key']}{pat} for {r['ids'][0]}..{r['ids'][-1]} "
+                f"({len(r['ids'])} decisions; DRAFT/PROPOSED/PENDING choices rejected)")
     if t == "location_choice":
         return f"file location matches the owner's {r['decision_id']} choice"
     if t == "covers":
@@ -215,8 +247,10 @@ def describe_rule(r: dict) -> str:
 
 
 class _Ctx:
-    def __init__(self, root: Path, resolved: dict[str, str | None], artifact_path: str | None):
+    def __init__(self, root: Path, resolved: dict[str, str | None], artifact_path: str | None,
+                 draft_tokens=("DRAFT", "PROPOSED", "PENDING")):
         self.root = root
+        self.draft_tokens = tuple(draft_tokens)
         self.resolved = resolved            # condition id -> uniquely resolved artifact path (or None)
         self.artifact_path = artifact_path  # the artifact under evaluation (repository-relative)
 
@@ -233,6 +267,8 @@ def _check_sha_ref(r: dict, v, ctx: _Ctx) -> str | None:
         return f"{f}.sha256 is not 64 lowercase hex: {_show(sha)}"
     if r.get("path_equals") and srel != safe_relpath(r["path_equals"]):
         return f"{f}.path must be {r['path_equals']}, got {srel}"
+    if r.get("path_prefix") and not srel.startswith(safe_relpath(r["path_prefix"]) + "/"):
+        return f"{f}.path must lie under {r['path_prefix']}, got {srel}"
     if r.get("artifact_of"):
         want = ctx.resolved.get(r["artifact_of"])
         if want is None:
@@ -274,7 +310,7 @@ def check_rule(r: dict, obj, ctx: _Ctx) -> list[str]:
     if t == "is_true":
         return [] if v is True else [f"{f} must be true, got {_show(v)}"]
     if t == "iso_date":
-        return [] if isinstance(v, str) and _DATE_RE.match(v) else [f"{f} must be an ISO 8601 date, got {_show(v)}"]
+        return [] if _is_iso_date(v) else [f"{f} must be a valid ISO 8601 date, got {_show(v)}"]
     if t == "nonempty_string":
         return [] if _is_nonempty_str(v) else [f"{f} must be a non-empty, non-TBD string, got {_show(v)}"]
     if t == "quantity":
@@ -297,8 +333,18 @@ def check_rule(r: dict, obj, ctx: _Ctx) -> list[str]:
         if not isinstance(v, list):
             return [f"{f} must be a list of decisions, got {_show(v)}"]
         got = {d.get("id"): d.get(r["choice_key"]) for d in v if isinstance(d, dict)}
-        undecided = [i for i in r["ids"] if i not in got or not _is_nonempty_str(got[i])]
-        return [f"{f}: no owner {r['choice_key']} for {', '.join(undecided)}"] if undecided else []
+        toks = tuple(ctx.draft_tokens)
+        errs = []
+        for i in r["ids"]:
+            c = got.get(i)
+            if not _is_nonempty_str(c):
+                errs.append(f"{f}: no owner {r['choice_key']} for {i}")
+            elif any(tok in c.upper() for tok in toks):
+                errs.append(f"{f}: {i}.{r['choice_key']} = {json.dumps(c)} is a DRAFT / PROPOSED / PENDING choice")
+            elif r.get("choice_pattern") and not re.fullmatch(r["choice_pattern"].replace("{id}", re.escape(i)), c):
+                errs.append(f"{f}: {i}.{r['choice_key']} = {json.dumps(c)} is not an option id of {i} "
+                            f"(pattern {r['choice_pattern']})")
+        return errs
     if t == "covers":
         if not isinstance(v, list):
             return [f"{f} must be a list, got {_show(v)}"]
@@ -321,14 +367,23 @@ def check_rule(r: dict, obj, ctx: _Ctx) -> list[str]:
     raise SpecError(f"unknown rule type {t!r}")
 
 
-def draft_markers(obj, sem: dict) -> list[str]:
+def draft_markers(obj, sem: dict, _prefix: str = "") -> list[str]:
+    """Every draft_status_fields key, at ANY nesting depth (objects and list items), whose string value contains a
+    draft token. A nested DRAFT / PROPOSED / PENDING (e.g. one LOCK-1 decision or one feed point) rejects the artifact."""
     out = []
-    if not isinstance(obj, dict):
-        return out
-    for fld in sem["draft_status_fields"]:
-        v = obj.get(fld)
-        if isinstance(v, str) and any(tok in v.upper() for tok in sem["draft_status_tokens"]):
-            out.append(f"{fld} = {json.dumps(v)} marks a DRAFT / PROPOSED / PENDING artifact (never satisfies a condition)")
+    if isinstance(obj, dict):
+        for k in sorted(obj):
+            v = obj[k]
+            where = f"{_prefix}{k}"
+            if k in sem["draft_status_fields"] and isinstance(v, str) and \
+                    any(tok in v.upper() for tok in sem["draft_status_tokens"]):
+                out.append(f"{where} = {json.dumps(v)} marks a DRAFT / PROPOSED / PENDING artifact "
+                           "(never satisfies a condition)")
+            out.extend(draft_markers(v, sem, where + "."))
+    elif isinstance(obj, list):
+        base = _prefix[:-1] if _prefix.endswith(".") else _prefix
+        for i, item in enumerate(obj):
+            out.extend(draft_markers(item, sem, f"{base}[{i}]."))
     return out
 
 
@@ -368,7 +423,7 @@ def _eval_alternative(root: Path, alt: dict, sem: dict, resolved: dict) -> dict:
     if err:
         out["state"], out["failures"] = "INVALID", [f"{rel} {err}"]
         return out
-    ctx = _Ctx(root, resolved, rel)
+    ctx = _Ctx(root, resolved, rel, sem["draft_status_tokens"])
     drafts = draft_markers(obj, sem)
     fails = []
     for r in alt["rules"]:
@@ -411,7 +466,7 @@ def evaluate(repo_root: Path | str | None = None, spec_path: Path | str | None =
         if err:
             auth["failures"] = [f"{arel} {err}"]
         else:
-            ctx = _Ctx(root, resolved, arel)
+            ctx = _Ctx(root, resolved, arel, sem["draft_status_tokens"])
             for r in spec["authority"]["rules"]:
                 auth["failures"].extend(check_rule(r, aobj, ctx))
         auth["ok"] = not auth["failures"]

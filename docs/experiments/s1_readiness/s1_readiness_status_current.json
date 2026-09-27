@@ -5,7 +5,7 @@
   "generated_by": "scripts/experiments/s1_readiness.py",
   "spec": {
     "path": "docs/experiments/s1_readiness/s1_readiness_conditions_v1.json",
-    "sha256": "e4cb88a3265d9ba5e82825720aba3fe372629e17d3cc7a2762b7da67bb480973",
+    "sha256": "cdc1da1c4096d5df7cec6860696d5fe4588cdd75e0dd82d1f6c33188c7f7bd53",
     "status": "DRAFT_PENDING_OWNER"
   },
   "note": "Generated from the repository state; deterministic (no clock, no absolute paths). S1 is qualification, not architecture selection. A DRAFT / PROPOSED artifact never satisfies a condition; nothing is inferred.",
@@ -45,7 +45,7 @@
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
             "decision_source = {path, sha256} matching the file on disk (path docs/architecture_comparison/lock1/lock1_decision_brief_v1.json) (sha256 of the W2 LOCK-1 decision brief the owner signs)",
-            "decisions records a non-null owner_choice for D-01..D-15 (15 decisions)",
+            "decisions records a decided owner_choice matching ^{id}-[A-Z]$ for D-01..D-15 (15 decisions; DRAFT/PROPOSED/PENDING choices rejected)",
             "file location matches the owner's D-05 choice"
           ]
         }
@@ -100,7 +100,9 @@
             "status == \"FROZEN\"",
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
-            "closure_basis = {path, sha256} matching the file on disk (path docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json) (the W1 feed-state closure DI-1 freezes)"
+            "closure_basis = {path, sha256} matching the file on disk (path docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json) (the W1 feed-state closure DI-1 freezes)",
+            "every test_points[] item: id is a non-empty, non-TBD string; label in [\"PROPOSED_FLIGHT_REPRESENTATIVE\", \"GROUND_QUALIFICATION_POINT\"]; gas is a non-empty, non-TBD string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
+            "at least one test_points[] item: gas == \"N2\" (at least one N2 point (S1b is at OP3 on N2, lane 25 s1_plan.S1b_hall_on))"
           ]
         },
         {
@@ -146,7 +148,7 @@
             "accepted_utc is an ISO 8601 date",
             "calibration_plan = {path, sha256} matching the file on disk (the S1-C5 artifact) (the frozen calibration plan the measurements executed)",
             "instruments[].category covers thrust_stand, bus_power_metering, discharge_current, flow, pressure, temperature, magnetic_field_Bz, stability_oscillations, species_divergence",
-            "every instruments[] item: category is a non-empty, non-TBD string; evidence_class == \"measured\"; calibration_date is an ISO 8601 date; raw_data = {path, sha256} matching the file on disk (raw calibration data file committed to the repository); demonstrated_uncertainty = {value, unit, source, evidence_class}"
+            "every instruments[] item: category is a non-empty, non-TBD string; evidence_class == \"measured\"; calibration_date is an ISO 8601 date; raw_data = {path, sha256} matching the file on disk (under docs/experiments/instrumentation/raw/) (raw calibration data file committed under the PROPOSED raw-data directory docs/experiments/instrumentation/raw/ (never the calibration plan, the capability record or any other document)); demonstrated_uncertainty = {value, unit, source, evidence_class}; demonstrated_uncertainty.evidence_class == \"measured\" (the demonstrated uncertainty itself comes from the calibration measurements, not from a design analysis, model or assumption)"
           ]
         }
       ],
@@ -299,7 +301,7 @@
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
             "decision_source = {path, sha256} matching the file on disk (path docs/architecture_comparison/lock1/lock1_decision_brief_v1.json) (sha256 of the W2 LOCK-1 decision brief the owner signs)",
-            "decisions records a non-null owner_choice for D-01..D-15 (15 decisions)",
+            "decisions records a decided owner_choice matching ^{id}-[A-Z]$ for D-01..D-15 (15 decisions; DRAFT/PROPOSED/PENDING choices rejected)",
             "file location matches the owner's D-05 choice"
           ],
           "produced_by": "owner: decides D-01..D-15 from the W2 LOCK-1 decision brief (fo_lock1_decision_brief, docs/architecture_comparison/lock1/) and signs LOCK-1 at the D-05 location"
@@ -398,7 +400,9 @@
             "status == \"FROZEN\"",
             "decided_by == \"owner\"",
             "decided_utc is an ISO 8601 date",
-            "closure_basis = {path, sha256} matching the file on disk (path docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json) (the W1 feed-state closure DI-1 freezes)"
+            "closure_basis = {path, sha256} matching the file on disk (path docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json) (the W1 feed-state closure DI-1 freezes)",
+            "every test_points[] item: id is a non-empty, non-TBD string; label in [\"PROPOSED_FLIGHT_REPRESENTATIVE\", \"GROUND_QUALIFICATION_POINT\"]; gas is a non-empty, non-TBD string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
+            "at least one test_points[] item: gas == \"N2\" (at least one N2 point (S1b is at OP3 on N2, lane 25 s1_plan.S1b_hall_on))"
           ],
           "produced_by": "owner: decides the W1 DI-1 questions (owner_decisions_DI1 of the W1 closure) and freezes DI-1"
         },
@@ -471,7 +475,7 @@
             "accepted_utc is an ISO 8601 date",
             "calibration_plan = {path, sha256} matching the file on disk (the S1-C5 artifact) (the frozen calibration plan the measurements executed)",
             "instruments[].category covers thrust_stand, bus_power_metering, discharge_current, flow, pressure, temperature, magnetic_field_Bz, stability_oscillations, species_divergence",
-            "every instruments[] item: category is a non-empty, non-TBD string; evidence_class == \"measured\"; calibration_date is an ISO 8601 date; raw_data = {path, sha256} matching the file on disk (raw calibration data file committed to the repository); demonstrated_uncertainty = {value, unit, source, evidence_class}"
+            "every instruments[] item: category is a non-empty, non-TBD string; evidence_class == \"measured\"; calibration_date is an ISO 8601 date; raw_data = {path, sha256} matching the file on disk (under docs/experiments/instrumentation/raw/) (raw calibration data file committed under the PROPOSED raw-data directory docs/experiments/instrumentation/raw/ (never the calibration plan, the capability record or any other document)); demonstrated_uncertainty = {value, unit, source, evidence_class}; demonstrated_uncertainty.evidence_class == \"measured\" (the demonstrated uncertainty itself comes from the calibration measurements, not from a design analysis, model or assumption)"
           ],
           "produced_by": "W4 instrumentation (fo_instrumentation_definition): calibration measurements executed per the frozen calibration plan (S1-C5); owner accepts the record"
         }

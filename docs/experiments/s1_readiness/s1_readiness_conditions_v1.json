@@ -40,7 +40,7 @@
     "condition_states": {
       "SATISFIED": "an artifact exists at an expected path and passes every rule",
       "MISSING": "no artifact exists at any expected path",
-      "REJECTED_DRAFT": "the artifact's top-level status marks it DRAFT, PROPOSED or PENDING; such an artifact never satisfies a condition, whatever else it contains",
+      "REJECTED_DRAFT": "a 'status' or 'decision' field ANYWHERE in the artifact (top level or nested, e.g. one LOCK-1 decision, one hardware item or one feed point) contains DRAFT, PROPOSED or PENDING; such an artifact never satisfies a condition, whatever else it contains. The feed-point flight-status 'label' is not a status field.",
       "INVALID": "the artifact exists but fails one or more rules (the failures are listed)",
       "AMBIGUOUS": "an artifact exists at more than one candidate location (the gate never chooses between them)"
     },
@@ -63,17 +63,18 @@
       "status",
       "decision"
     ],
-    "date_format": "decided/approved dates: ISO 8601 calendar date YYYY-MM-DD, optionally followed by THH:MM[:SS]Z (UTC)",
-    "sha256_ref_format": "an object {\"path\": <repository-relative path>, \"sha256\": <64 lowercase hex>}; the gate recomputes the sha256 of the file on disk and requires equality"
+    "date_format": "decided/approved/calibration dates: ISO 8601 calendar date YYYY-MM-DD, optionally followed by THH:MM[:SS]Z (UTC); the date and time must exist (e.g. 2026-13-45 is rejected)",
+    "sha256_ref_format": "an object {\"path\": <repository-relative path>, \"sha256\": <64 lowercase hex>}; the gate recomputes the sha256 of the file on disk and requires equality",
+    "draft_status_scope": "recursive: every object at every depth, including list items"
   },
   "rule_types": {
     "equals": "field == value",
     "in": "field is one of values",
     "is_true": "field is the JSON boolean true",
-    "iso_date": "field is a date in the gate's date_format",
+    "iso_date": "field is a valid (existing) date in the gate's date_format",
     "nonempty_string": "field is a non-empty string that does not start with 'TBD' (case-insensitive)",
-    "sha256_ref": "field is a sha256 reference to a file inside the repository whose sha256 matches; optional path_equals pins the path; optional artifact_of pins it to the resolved artifact of another condition (the chain LOCK-1 -> S1 records)",
-    "decisions_decided": "field is a list of objects covering every id in ids, each with a non-null, non-empty choice_key",
+    "sha256_ref": "field is a sha256 reference to a file inside the repository whose sha256 matches; optional path_equals pins the path; optional artifact_of pins it to the resolved artifact of another condition (the chain LOCK-1 -> S1 records); optional path_prefix requires the referenced file to lie under that repository directory",
+    "decisions_decided": "field is a list of objects covering every id in ids, each with a non-empty, non-TBD choice_key that contains no DRAFT/PROPOSED/PENDING token; optional choice_pattern (with {id} replaced by the decision id) must match the choice in full",
     "location_choice": "the directory of the resolved artifact equals map[choice] where choice is the choice_key of decision decision_id in decisions_field",
     "covers": "field is a list of objects whose key values include every value in required",
     "each_item": "field is a non-empty list and every item passes rules",
@@ -96,7 +97,7 @@
             "docs/architecture_comparison/experiment_package/prereg/LOCK1.json",
             "docs/architecture_comparison/lock1/LOCK1.json"
           ],
-          "path_basis": "the four candidate LOCK-1 locations of owner decision D-05 (options D-05-A..C: docs/architecture_comparison/experiment_package/experiment_package_v1.json#/decisions/4; D-05-D: W2 lock1 brief, planned). The file name LOCK1.json is PROPOSED. The W2 draft LOCK1_DRAFT.json never satisfies this condition.",
+          "path_basis": "the four candidate LOCK-1 locations. D-05-A..C are the options of owner decision D-05 in docs/architecture_comparison/experiment_package/experiment_package_v1.json (decisions[4].options). D-05-D (docs/architecture_comparison/lock1/) is NOT an option of experiment_package_v1 D-05; it is added here from the planned W2 LOCK-1 brief location and is PROPOSED: the owner must confirm D-05-D as a valid option (or drop it) when signing. The file name LOCK1.json is PROPOSED. The W2 draft LOCK1_DRAFT.json never satisfies this condition.",
           "produced_by": "owner: decides D-01..D-15 from the W2 LOCK-1 decision brief (fo_lock1_decision_brief, docs/architecture_comparison/lock1/) and signs LOCK-1 at the D-05 location",
           "rules": [
             {
@@ -149,7 +150,9 @@
                 "D-14",
                 "D-15"
               ],
-              "ids_basis": "od_hardware_pivot statement: 'resolve D-01..D-15 -> LOCK-1'"
+              "ids_basis": "od_hardware_pivot statement: 'resolve D-01..D-15 -> LOCK-1'",
+              "choice_pattern": "^{id}-[A-Z]$",
+              "choice_pattern_basis": "PROPOSED: owner choices are option ids of the form D-NN-X, as in docs/architecture_comparison/experiment_package/experiment_package_v1.json decisions[].options[].id (D-01-A..D-15-B). Free text, 'PENDING', 'OPEN' or 'PROPOSED' never count."
             },
             {
               "type": "location_choice",
@@ -163,7 +166,8 @@
                 "D-05-D": "docs/architecture_comparison/lock1"
               }
             }
-          ]
+          ],
+          "d05_d_status": "PROPOSED_REQUIRES_OWNER_CONFIRMATION"
         }
       ],
       "precursors": [
@@ -315,8 +319,59 @@
               "field": "closure_basis",
               "path_equals": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
               "what": "the W1 feed-state closure DI-1 freezes"
+            },
+            {
+              "type": "each_item",
+              "field": "test_points",
+              "rules": [
+                {
+                  "type": "nonempty_string",
+                  "field": "id"
+                },
+                {
+                  "type": "in",
+                  "field": "label",
+                  "values": [
+                    "PROPOSED_FLIGHT_REPRESENTATIVE",
+                    "GROUND_QUALIFICATION_POINT"
+                  ]
+                },
+                {
+                  "type": "nonempty_string",
+                  "field": "gas"
+                },
+                {
+                  "type": "quantity",
+                  "field": "m_dot_s"
+                },
+                {
+                  "type": "quantity",
+                  "field": "P_feed"
+                },
+                {
+                  "type": "quantity",
+                  "field": "T_feed"
+                },
+                {
+                  "type": "quantity",
+                  "field": "x_s"
+                }
+              ]
+            },
+            {
+              "type": "any_item",
+              "field": "test_points",
+              "what": "at least one N2 point (S1b is at OP3 on N2, lane 25 s1_plan.S1b_hall_on)",
+              "rules": [
+                {
+                  "type": "equals",
+                  "field": "gas",
+                  "value": "N2"
+                }
+              ]
             }
-          ]
+          ],
+          "symmetry_note": "PROPOSED: the frozen DI-1 record must carry the same explicitly labelled S1 feed points as alternative (b) (test_points[] with label, gas and {m_dot_s, P_feed, T_feed, x_s} each as {value, unit, source, evidence_class}, and at least one N2 point), so that either alternative gives the S1 operator the same machine-checkable feed state. The owner may relax this for DI-1."
         },
         {
           "id": "S1-C3-ground-qualification-points",
@@ -433,7 +488,7 @@
           ],
           "path_basis": "PROPOSED file in the W4 directory (fo_instrumentation_definition, docs/experiments/instrumentation/)",
           "produced_by": "W4 instrumentation (fo_instrumentation_definition): calibration measurements executed per the frozen calibration plan (S1-C5); owner accepts the record",
-          "required_categories_status": "PROPOSED: the owner's W4 instrument list (od_hardware_pivot workstreams.W4_instrumentation): thrust stand, bus-power metering, I_d, flow, pressure, temperature, B(z), stability, species/divergence. The owner may reduce the set required before S1.",
+          "required_categories_status": "PROPOSED: the owner's W4 instrument list (od_hardware_pivot workstreams.W4_instrumentation): thrust stand, bus-power metering, I_d, flow, pressure, temperature, B(z), stability, species/divergence. This may be stricter than S1 itself needs: lane 25 s1_plan (docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json#/s1_plan) names only M1, M2, M3, M9, M10 and M11 for S1a/S1b. The owner may reduce the set required before S1 (README open item 3).",
           "rules": [
             {
               "type": "equals",
@@ -496,11 +551,18 @@
                 {
                   "type": "sha256_ref",
                   "field": "raw_data",
-                  "what": "raw calibration data file committed to the repository"
+                  "what": "raw calibration data file committed under the PROPOSED raw-data directory docs/experiments/instrumentation/raw/ (never the calibration plan, the capability record or any other document)",
+                  "path_prefix": "docs/experiments/instrumentation/raw/"
                 },
                 {
                   "type": "quantity",
                   "field": "demonstrated_uncertainty"
+                },
+                {
+                  "type": "equals",
+                  "field": "demonstrated_uncertainty.evidence_class",
+                  "value": "measured",
+                  "what": "the demonstrated uncertainty itself comes from the calibration measurements, not from a design analysis, model or assumption"
                 }
               ]
             }
@@ -586,7 +648,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "required_categories_status": "PROPOSED: same set as S1-C4 (see its required_categories_status, incl. the lane 25 s1_plan M1/M2/M3/M9/M10/M11 note); the owner may reduce it."
         }
       ],
       "precursors": [

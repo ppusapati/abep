@@ -113,20 +113,21 @@ def _complete(root: Path, feed_alt: str = "points", lock1_path: str = P_LOCK1, d
         "items": [{"id": i, "status": "FROZEN", "serial_or_part_id": f"SN-{i}", "configuration_record": f"rec-{i}"}
                   for i in ("H-1", "C-1", "MC-1")],
     })
+    test_points = [
+        {"id": "TP-1", "label": "PROPOSED_FLIGHT_REPRESENTATIVE", "gas": "N2", "m_dot_s": _q(1.0, "mg/s"),
+         "P_feed": _q(1.0, "Pa"), "T_feed": _q(1.0, "K"), "x_s": _q({"N2": 1.0}, "mole fraction")},
+        {"id": "TP-2", "label": "GROUND_QUALIFICATION_POINT", "gas": "N2/O2", "m_dot_s": _q(1.0, "mg/s"),
+         "P_feed": _q(1.0, "Pa"), "T_feed": _q(1.0, "K"), "x_s": _q({"N2": 0.5, "O2": 0.5}, "mole fraction")},
+    ]
     if feed_alt == "points":
         put(P_POINTS, {
             "status": "RELEASED_FOR_S1", "decided_by": "owner", "decided_utc": "2026-10-02", "lock1": lock1,
-            "test_points": [
-                {"id": "TP-1", "label": "PROPOSED_FLIGHT_REPRESENTATIVE", "gas": "N2", "m_dot_s": _q(1.0, "mg/s"),
-                 "P_feed": _q(1.0, "Pa"), "T_feed": _q(1.0, "K"), "x_s": _q({"N2": 1.0}, "mole fraction")},
-                {"id": "TP-2", "label": "GROUND_QUALIFICATION_POINT", "gas": "N2/O2", "m_dot_s": _q(1.0, "mg/s"),
-                 "P_feed": _q(1.0, "Pa"), "T_feed": _q(1.0, "K"), "x_s": _q({"N2": 0.5, "O2": 0.5}, "mole fraction")},
-            ],
+            "test_points": test_points,
         })
     else:
         _write(root, P_CLOSURE, {"schema": "synthetic closure"})
         put(P_DI1, {"id": "DI-1", "status": "FROZEN", "decided_by": "owner", "decided_utc": "2026-10-02",
-                    "closure_basis": _ref(root, P_CLOSURE)})
+                    "closure_basis": _ref(root, P_CLOSURE), "test_points": test_points})
     put(P_CAL, {
         "status": "FROZEN", "decided_by": "owner", "decided_utc": "2026-10-02", "lock1": lock1,
         "procedures": [{"category": c, "procedure": f"proc-{c}", "traceability": "cert", "acceptance_rule": "rule"}
@@ -404,6 +405,106 @@ def test_non_json_artifact_is_invalid(tmp_path):
     assert _cond(G.evaluate(root), "S1-C7")["state"] == "INVALID"
 
 
+# ------------------------------------------------------------------------------------------------------ review repairs
+@pytest.mark.parametrize("bad", ["2026-13-45", "2026-02-30", "2026-10-01T25:00Z", "2026-10-01T12:61:00Z", "01/10/2026"])
+def test_impossible_dates_are_rejected(tmp_path, bad):
+    def m(o):
+        o["decided_utc"] = bad
+        return o
+    c1 = _cond(G.evaluate(_complete(tmp_path, mutate={P_LOCK1: m})), "S1-C1")
+    assert c1["state"] == "INVALID" and "decided_utc" in " ".join(c1["alternatives"][0]["failures"])
+
+
+@pytest.mark.parametrize("good", ["2026-10-01", "2026-10-01T12:30Z", "2026-10-01T12:30:59Z"])
+def test_valid_dates_are_accepted(good):
+    assert G._is_iso_date(good)
+
+
+def test_capability_uncertainty_must_be_measured(tmp_path):
+    for ec in ("assumed", "model-derived", "inferred"):
+        def m(o, ec=ec):
+            for i in o["instruments"]:
+                i["demonstrated_uncertainty"]["evidence_class"] = ec
+            return o
+        c4 = _cond(G.evaluate(_complete(tmp_path / ec, mutate={P_CAP: m})), "S1-C4")
+        assert c4["state"] == "INVALID"
+        assert "demonstrated_uncertainty.evidence_class" in " ".join(c4["alternatives"][0]["failures"])
+
+
+def test_capability_raw_data_must_be_raw_data_not_a_plan(tmp_path):
+    root = _complete(tmp_path)
+
+    def m(o):
+        o["instruments"][0]["raw_data"] = _ref(root, P_CAL)
+        return o
+    c4 = _cond(G.evaluate(_complete(root, mutate={P_CAP: m})), "S1-C4")
+    assert c4["state"] == "INVALID" and "must lie under" in " ".join(c4["alternatives"][0]["failures"])
+
+
+@pytest.mark.parametrize("rel,cid,path", [
+    (P_LOCK1, "S1-C1", ("decisions", 0)),
+    (P_FREEZE, "S1-C2", ("items", 1)),
+    (P_POINTS, "S1-C3", ("test_points", 0)),
+    (P_CAL, "S1-C5", ("procedures", 2)),
+])
+@pytest.mark.parametrize("token", ["DRAFT", "PROPOSED", "pending"])
+def test_nested_draft_markers_reject(tmp_path, rel, cid, path, token):
+    def m(o):
+        o[path[0]][path[1]]["status"] = token
+        return o
+    rep = G.evaluate(_complete(tmp_path, mutate={rel: m}))
+    assert _cond(rep, cid)["state"] == "REJECTED_DRAFT" and rep["verdict"] == "S1_NOT_READY"
+
+
+def test_nested_decision_marker_rejects(tmp_path):
+    def m(o):
+        o["facility"]["decision"] = "PENDING owner"
+        return o
+    assert _cond(G.evaluate(_complete(tmp_path, mutate={P_FAC: m})), "S1-C7")["state"] == "REJECTED_DRAFT"
+
+
+@pytest.mark.parametrize("choice", ["PROPOSED", "PENDING", "OPEN", "D-01-A (tentative)", "D-02-A", "yes"])
+def test_lock1_owner_choice_must_be_an_option_id(tmp_path, choice):
+    def m(o):
+        o["decisions"][0]["owner_choice"] = choice
+        return o
+    rep = G.evaluate(_complete(tmp_path, mutate={P_LOCK1: m}))
+    c1 = _cond(rep, "S1-C1")
+    assert c1["state"] == "INVALID" and "D-01" in " ".join(c1["alternatives"][0]["failures"])
+    assert rep["verdict"] == "S1_NOT_READY"
+
+
+def test_di1_needs_labelled_feed_points(tmp_path):
+    def m(o):
+        del o["test_points"]
+        return o
+    c3 = _cond(G.evaluate(_complete(tmp_path, feed_alt="di1", mutate={P_DI1: m})), "S1-C3")
+    assert c3["state"] == "INVALID" and "test_points" in " ".join(c3["alternatives"][0]["failures"])
+
+    def m2(o):
+        for tp in o["test_points"]:
+            tp["gas"] = "Xe"
+        return o
+    c3 = _cond(G.evaluate(_complete(tmp_path / "b", feed_alt="di1", mutate={P_DI1: m2})), "S1-C3")
+    assert c3["state"] == "INVALID"
+
+
+def test_bad_spec_options_are_spec_errors(tmp_path):
+    p = tmp_path / "s.json"
+    for mut in ("pattern", "prefix"):
+        spec = json.loads(SPEC.read_text())
+        rules = spec["conditions"][0]["alternatives"][0]["rules"] if mut == "pattern" else \
+            next(r for r in spec["conditions"][3]["alternatives"][0]["rules"] if r["type"] == "each_item")["rules"]
+        for r in rules:
+            if mut == "pattern" and r["type"] == "decisions_decided":
+                r["choice_pattern"] = "^D-[A-Z]$"
+            if mut == "prefix" and r["type"] == "sha256_ref":
+                r["path_prefix"] = "../raw/"
+        p.write_text(json.dumps(spec))
+        with pytest.raises(G.SpecError):
+            G.load_spec(p)
+
+
 # ------------------------------------------------------------------------------------------------------ determinism / purity
 def test_deterministic_and_location_independent(tmp_path):
     a = G.render(G.evaluate(_complete(tmp_path / "a")))
@@ -441,9 +542,10 @@ def test_module_is_standalone():
     tree = ast.parse(SCRIPT.read_text())
     mods = {a.name.split(".")[0] for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names}
     mods |= {n.module.split(".")[0] for n in ast.walk(tree) if isinstance(n, ast.ImportFrom) and n.module}
-    assert mods <= {"__future__", "argparse", "hashlib", "json", "os", "re", "sys", "pathlib"}, mods
+    assert mods <= {"__future__", "argparse", "datetime", "hashlib", "json", "os", "re", "sys", "pathlib"}, mods
     src = SCRIPT.read_text()
-    for bad in ("datetime.now", "time.time", "random"):
+    assert "time" not in mods and "random" not in mods
+    for bad in ("datetime.now", "datetime.utcnow", "date.today", "time.time()", "random"):
         assert bad not in src
 
 
