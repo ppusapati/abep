@@ -1,0 +1,486 @@
+{
+ "schema": "abep_s1a_readiness_conditions_v1",
+ "id": "s1a_readiness_conditions_v1",
+ "status": "DRAFT_PENDING_OWNER",
+ "status_note": "DRAFT for owner review. The S1a scope is the owner's (A3 next_execution.S1a_engineering_gate, quoted verbatim in authority.owner_text). The artifact paths, file names, required fields, accepted status values, required coverage sets and the data-firewall class lists that make each clause machine-checkable are PROPOSED by this lane; the owner may change any of them. Nothing here is decided, pre-registered or locked. This file is read by scripts/experiments/s1a_readiness.py. It carries no physical, efficiency, safety-limit or RFP number.",
+ "follow_on": "fo_s1a_engineering_gate",
+ "trigger": "T_PIVOT_S1A_ENGINEERING_GATE",
+ "question": "Can we safely and usefully begin NON-score-bearing engineering qualification (S1a)?",
+ "separate_from_n4": "This gate is separate from the S1-readiness gate N4 (fo_s1_readiness_gate: scripts/experiments/s1_readiness.py, docs/experiments/s1_readiness/), which is not modified and stays S1_NOT_READY 0/8. S1A_READY never schedules S1, never satisfies an N4 condition and never makes S1a data score-bearing. This gate reads no N4 file.",
+ "owner_disposition": {
+  "id": "od_hardware_pivot",
+  "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+  "addenda": [
+   "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json",
+   "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
+   "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json"
+  ],
+  "locator": "A3 next_execution.S1a_engineering_gate (the S1a scope and the W5 leak prohibition); A3 decisions.near_cathode_rga (qualitative RGA in S1a); A2 execution_directive_2026_09_27.data_rule; A1 controls_addendum_2026_09_27.C1_W5_partition, C2_W1_flight_status"
+ },
+ "authority": {
+  "rule": "The gate evaluates only while the four owner decision files exist unaltered: each byte-identical to the sha256 pinned here; the original APPROVED and decided by the owner; each addendum decided by the owner, naming the original in 'amends', with amends_sha256 equal to the sha256 of the original on disk. The S1a scope is read from A3 next_execution.S1a_engineering_gate and must equal owner_text verbatim; every condition's owner_clause must be a verbatim substring of that text; every quote below must be a verbatim substring of its field. If anything fails, the authority fails closed and the verdict is S1A_NOT_READY.",
+  "owner_text": {
+   "role": "s1a_and_instrumentation_A3",
+   "field": "next_execution.S1a_engineering_gate",
+   "text": "a separate gate answering 'can we safely and usefully begin non-score-bearing engineering qualification?'; N4 (S1_NOT_READY 0/8) is not modified. S1a requires only the hardware needed for calibration/shakedown, safe operational limits, released ground-qualification feed points, frozen calibration procedures and an engineering facility; it explicitly forbids held-out H-1 physics outputs from leaking into W5"
+  },
+  "quotes": [
+   {
+    "role": "s1a_and_instrumentation_A3",
+    "field": "decisions.near_cathode_rga",
+    "text": "For S1a engineering checkout an uncalibrated RGA may be used qualitatively, but such data cannot support an exposure-dose or lifetime claim.",
+    "used_by": "S1A-FW allowed class QUALITATIVE_RGA"
+   },
+   {
+    "role": "execution_directive_A2",
+    "field": "execution_directive_2026_09_27.data_rule",
+    "text": "no experimental data is used for model promotion until the W5 pre-registration is frozen",
+    "used_by": "S1A-FW"
+   },
+   {
+    "role": "controls_addendum_A1",
+    "field": "controls_addendum_2026_09_27.C1_W5_partition",
+    "text": "Before any H-1 data exist, the experiment is partitioned explicitly into calibration/registration data and held-out prediction data.",
+    "used_by": "S1A-FW (S1a produces the first H-1 data: B(z) maps, geometry metrology)"
+   }
+  ],
+  "documents": [
+   {
+    "role": "original_disposition",
+    "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+    "sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+    "rules": [
+     {"type": "equals", "field": "id", "value": "od_hardware_pivot"},
+     {"type": "equals", "field": "decided_by", "value": "owner"},
+     {"type": "equals", "field": "decision", "value": "APPROVED"}
+    ]
+   },
+   {
+    "role": "controls_addendum_A1",
+    "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json",
+    "sha256": "04c5a6f46ed2cb3e3fb174bcc7305d129e15ef53af2349d2a8abc4f6d8975992",
+    "amends_role": "original_disposition",
+    "amends_sha256_field": "amends_sha256",
+    "rules": [
+     {"type": "equals", "field": "schema", "value": "owner_disposition_addendum_v1"},
+     {"type": "equals", "field": "decided_by", "value": "owner"},
+     {"type": "iso_date", "field": "decided_utc"},
+     {"type": "equals", "field": "amends", "value": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"}
+    ]
+   },
+   {
+    "role": "execution_directive_A2",
+    "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
+    "sha256": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6",
+    "amends_role": "original_disposition",
+    "amends_sha256_field": "amends_sha256",
+    "rules": [
+     {"type": "equals", "field": "schema", "value": "owner_disposition_addendum_v1"},
+     {"type": "equals", "field": "decided_by", "value": "owner"},
+     {"type": "iso_date", "field": "decided_utc"},
+     {"type": "equals", "field": "amends", "value": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"}
+    ]
+   },
+   {
+    "role": "s1a_and_instrumentation_A3",
+    "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+    "sha256": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e",
+    "amends_role": "original_disposition",
+    "amends_sha256_field": "amends_sha256",
+    "rules": [
+     {"type": "equals", "field": "schema", "value": "owner_disposition_addendum_v1"},
+     {"type": "equals", "field": "decided_by", "value": "owner"},
+     {"type": "iso_date", "field": "decided_utc"},
+     {"type": "equals", "field": "amends", "value": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"}
+    ]
+   }
+  ]
+ },
+ "gate_semantics": {
+  "verdicts": ["S1A_READY", "S1A_NOT_READY"],
+  "rule": "S1A_READY only if the authority holds and every condition (S1A-C1..S1A-C5 and the mandatory data firewall S1A-FW) is SATISFIED. The firewall fails closed: if S1A-FW is not SATISFIED (missing, draft, invalid or ambiguous) the verdict is S1A_NOT_READY whatever else holds, and every rule that cross-checks against the firewall (member_of_artifact) fails too. Otherwise S1A_NOT_READY, listing every unsatisfied condition with its expected artifact(s), the failed checks and the producer.",
+  "condition_states": {
+   "SATISFIED": "an artifact exists at an expected path and passes every rule",
+   "MISSING": "no artifact exists at any expected path",
+   "REJECTED_DRAFT": "a 'status', 'decision' or 'flight_status' field ANYWHERE in the artifact (top level or nested) contains DRAFT, PROPOSED or PENDING; such an artifact never satisfies a condition, whatever else it contains",
+   "INVALID": "the artifact exists but fails one or more rules (the failures are listed)",
+   "AMBIGUOUS": "an artifact exists at more than one candidate location (the gate never chooses between them)"
+  },
+  "availability": {
+   "NONE": "no precursor draft exists either",
+   "PARTIAL_PRECURSORS_ONLY": "one or more precursor drafts exist in the repository; precursors are reported for orientation and NEVER satisfy a condition"
+  },
+  "never": [
+   "infer or fill a condition by assumption",
+   "accept a DRAFT, PROPOSED or PENDING artifact",
+   "treat S1A_READY as S1 readiness (N4) or as authority to take score-bearing or Hall-on H-1 data",
+   "read an artifact outside the repository or follow a reference outside it"
+  ],
+  "draft_status_tokens": ["DRAFT", "PROPOSED", "PENDING"],
+  "draft_status_fields": ["status", "decision", "flight_status"],
+  "draft_status_scope": "recursive: every object at every depth, including list items",
+  "date_format": "ISO 8601 calendar date YYYY-MM-DD, optionally followed by THH:MM[:SS]Z (UTC); the date and time must exist (e.g. 2026-13-45 is rejected)",
+  "sha256_ref_format": "an object {\"path\": <repository-relative path>, \"sha256\": <64 lowercase hex>}; the gate recomputes the sha256 of the file on disk and requires equality"
+ },
+ "rule_types": {
+  "equals": "field == value (same JSON type)",
+  "in": "field is one of values",
+  "is_true": "field is the JSON boolean true",
+  "is_bool": "field is a JSON boolean (true or false); the value is recorded, not judged",
+  "iso_date": "field is a valid (existing) date in date_format",
+  "nonempty_string": "field is a non-empty string that does not start with 'TBD' (case-insensitive)",
+  "quantity": "field is {value, unit, source, evidence_class}: value a finite number (or an object of numbers), unit and source non-empty non-TBD strings, evidence_class one of measured / digitized / inferred / reconstructed / model-derived / assumed (docs/EVIDENCE.md)",
+  "sha256_ref": "field is a sha256 reference to a file inside the repository whose sha256 matches; optional path_equals pins the path; optional path_prefix requires it under a directory; optional artifact_of pins it to the uniquely resolved artifact of another condition",
+  "covers": "field is a list of objects whose key values include every entry of required",
+  "each_item": "field is a non-empty list and every item passes rules",
+  "any_item": "field is a non-empty list and at least one item passes rules",
+  "member_of_artifact": "field value is one of the key values of list_field in the artifact of condition artifact_of; that condition must itself be SATISFIED (used to tie S1a calibration procedures to the firewall's allowed data classes; fails closed if the firewall is not satisfied)",
+  "field_paths": "a field may be a dotted path into nested objects (e.g. facility.name)"
+ },
+ "conditions": [
+  {
+   "id": "S1A-C1",
+   "owner_clause": "the hardware needed for calibration/shakedown",
+   "task_statement": "hardware needed for calibration/shakedown available and identified (serial numbers); H-1 need not be the frozen qualification configuration but its configuration must be recorded",
+   "why": "S1a runs the no-plasma calibrations of lane 25 s1_plan.S1a_no_plasma (power-analyzer channels M2, thrust-stand in-situ calibration M1, MFC and gauge calibrations M9/M10, B(z) maps at the operating coil currents M11) and the W4 capability-demonstration procedures (fo_capability_demo_prep CD-01..CD-07). Engineering data are only useful if every unit is identified and its configuration is recorded; a B(z) map on an unrecorded magnetic circuit or a thrust-stand calibration with an unrecorded service-line bundle is not reusable.",
+   "alternatives": [
+    {
+     "id": "S1A-C1-hardware-record",
+     "artifact": "S1a engineering hardware record (identified, available units and their recorded configuration)",
+     "paths": ["docs/experiments/hardware/s1a_engineering_hardware_record.json"],
+     "path_basis": "PROPOSED file in the W3 directory (fo_hardware_definition, docs/experiments/hardware/)",
+     "produced_by": "W3 hardware definition (fo_hardware_definition) with the experiment team after delivery; owner accepts the record. Item ids follow W3 configuration_items (H-1, MC-1, FS-C, PS-C, SVC-1) and W4 instruments (INS-*)",
+     "required_items_status": "PROPOSED minimum set for the no-plasma calibrations: H-1 (geometry metrology, B(z) registration to the anode face), MC-1 (B(z) at coil currents), FS-C (MFC / feed calibration), PS-C (coil and cathode supplies, power channels), SVC-1 (service lines across the thrust stand, part of the stand calibration), INS-01 thrust stand, INS-02 bus-power metering, INS-04 discharge V/I channels (calibrated without plasma), INS-05 mass flow, INS-06 feed pressure, INS-07 feed temperature, INS-08 facility pressure, INS-09 B(z) mapping, INS-17 temperatures, INS-18 DAQ / time base. Optional (owner): C-1 if S1a includes the W3 'S1a (diode)' checkout of HW-C1-02; INS-11/INS-22 RGA; INS-23/INS-24; PIM-0/PIM-RF/PIM-ECR for configuration-specific B(z) maps; INS-03 for the RF/microwave load-plane characterisation.",
+     "rules": [
+      {"type": "equals", "field": "status", "value": "IDENTIFIED_FOR_S1A"},
+      {"type": "nonempty_string", "field": "recorded_by", "what": "engineering lead or experiment team role"},
+      {"type": "iso_date", "field": "recorded_utc"},
+      {"type": "equals", "field": "accepted_by", "value": "owner"},
+      {"type": "iso_date", "field": "accepted_utc"},
+      {"type": "sha256_ref", "field": "requirements_basis", "path_equals": "docs/experiments/hardware/hardware_requirements_v1.json", "what": "the W3 hardware requirements register the recorded units are identified against"},
+      {"type": "covers", "field": "items", "key": "id",
+       "required": ["H-1", "MC-1", "FS-C", "PS-C", "SVC-1", "INS-01", "INS-02", "INS-04", "INS-05", "INS-06", "INS-07", "INS-08", "INS-09", "INS-17", "INS-18"]},
+      {"type": "each_item", "field": "items", "rules": [
+       {"type": "nonempty_string", "field": "id"},
+       {"type": "equals", "field": "status", "value": "AVAILABLE"},
+       {"type": "nonempty_string", "field": "serial_or_part_id"},
+       {"type": "in", "field": "configuration_state", "values": ["RECORDED_NOT_FROZEN", "FROZEN_FOR_QUALIFICATION"], "what": "H-1 need not be frozen for S1a; RECORDED_NOT_FROZEN never satisfies N4 S1-C2"},
+       {"type": "nonempty_string", "field": "configuration_record", "what": "drawing / as-built / setting record identifying the configuration used in S1a"}
+      ]}
+     ]
+    }
+   ],
+   "precursors": [
+    {"path": "docs/experiments/hardware/hardware_requirements_v1.json", "what": "W3 hardware requirements register (DRAFT_PENDING_OWNER): configuration items H-1, MC-1, C-1, FS-C, PS-C, SVC-1, PIM-*; S1a verification stages"},
+    {"path": "docs/experiments/instrumentation/instrumentation_definition_v1.json", "what": "W4 instrumentation definition v1-r2 (DRAFT_PENDING_OWNER): instruments INS-01..INS-24"},
+    {"path": "docs/experiments/capability_demo/capability_demo_prep_v1.json", "what": "W4 capability-demonstration preparation (fo_capability_demo_prep; DRAFT): instruments used by CD-01..CD-07"}
+   ]
+  },
+  {
+   "id": "S1A-C2",
+   "owner_clause": "safe operational limits",
+   "task_statement": "safe operational limits defined and owner-approved: electrical, vacuum, thermal, gas (incl. O2 handling), interlocks, abort",
+   "why": "S1a energizes coils, supplies and the feed system (and the cathode if the owner includes the C-1 diode checkout) in a vacuum facility. Limits must exist and be owner-approved before power is applied. Management rule (A2): non-gating analysis never delays the hardware path unless it changes a safety limit.",
+   "alternatives": [
+    {
+     "id": "S1A-C2-limits",
+     "artifact": "owner-approved S1a safety / operational limits",
+     "paths": ["docs/experiments/hardware/s1a_safety_operational_limits.json"],
+     "path_basis": "PROPOSED file in the W3 directory, next to the planned N4 S1-C8 file (s1_safety_operational_limits.json), which covers first Hall-on operation and is a different artifact",
+     "produced_by": "W3 hardware definition (fo_hardware_definition) with the engineering facility's own limits (S1A-C5) and the magnet/coil qualification basis (fo_magnet_coil_qualification); owner approves. Every limit value comes from its source (facility rules, supply ratings, W3/MCQ) — this gate carries none",
+     "required_quantities_status": "PROPOSED minimum set; the owner may extend it (e.g. RF/microwave exposure before a dummy-load characterisation, cathode diode limits)",
+     "rules": [
+      {"type": "equals", "field": "status", "value": "APPROVED"},
+      {"type": "equals", "field": "approved_by", "value": "owner"},
+      {"type": "iso_date", "field": "approved_utc"},
+      {"type": "sha256_ref", "field": "facility_choice", "artifact_of": "S1A-C5", "what": "the owner's engineering-facility identification whose limits are included"},
+      {"type": "covers", "field": "limits", "key": "domain", "required": ["electrical", "vacuum", "thermal", "gas"]},
+      {"type": "covers", "field": "limits", "key": "quantity",
+       "required": ["magnet_current_max", "supply_voltage_max", "cathode_heater_current_max", "background_pressure_max", "component_temperature_max", "coil_winding_temperature_max", "feed_pressure_max", "gas_handling_oxidizer"]},
+      {"type": "each_item", "field": "limits", "rules": [
+       {"type": "nonempty_string", "field": "quantity"},
+       {"type": "in", "field": "domain", "values": ["electrical", "vacuum", "thermal", "gas", "rf_microwave", "mechanical"]},
+       {"type": "nonempty_string", "field": "limit"},
+       {"type": "nonempty_string", "field": "source"},
+       {"type": "nonempty_string", "field": "action_on_exceedance"}
+      ]},
+      {"type": "covers", "field": "interlocks", "key": "id",
+       "required": ["IL-VACUUM", "IL-HALL-DISCHARGE-INHIBIT", "IL-OXIDIZER-ISOLATION", "IL-EMERGENCY-STOP"],
+       "what": "PROPOSED ids. IL-HALL-DISCHARGE-INHIBIT is the physical enforcement of the S1A-FW rule that no H-1 Hall discharge is run in S1a"},
+      {"type": "each_item", "field": "interlocks", "rules": [
+       {"type": "nonempty_string", "field": "id"},
+       {"type": "nonempty_string", "field": "function"},
+       {"type": "nonempty_string", "field": "verification"}
+      ]},
+      {"type": "any_item", "field": "abort_conditions", "what": "at least one defined abort condition with its action", "rules": [
+       {"type": "nonempty_string", "field": "id"},
+       {"type": "nonempty_string", "field": "trigger"},
+       {"type": "nonempty_string", "field": "action"}
+      ]}
+     ]
+    }
+   ],
+   "precursors": [
+    {"path": "docs/experiments/hardware/hardware_requirements_v1.json", "what": "W3 hardware requirements (DRAFT_PENDING_OWNER): supply ratings, gas isolator, S1a verification items"},
+    {"path": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json", "what": "magnet/coil qualification basis (fo_magnet_coil_qualification): coil temperature / current items"},
+    {"path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json", "what": "lane 20 electrical closure (verified input)"},
+    {"path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json", "what": "lane 24 hard gates (verified input)"}
+   ]
+  },
+  {
+   "id": "S1A-C3",
+   "owner_clause": "released ground-qualification feed points",
+   "task_statement": "released ground-qualification feed points (GROUND_QUALIFICATION_POINT from the feed-state closure, owner-released)",
+   "why": "S1a calibrates the MFCs and the feed path across the required low-flow range (lane 25 M9/M10; W4 CD-04) at the flows the experiment will use. Control C2 (A1): feed states from assumed intake/compressor candidates are PROPOSED_FLIGHT_REPRESENTATIVE until DI-1 is frozen and never flight conditions. The W1 closure labels Phase-1 knee-ladder points and OP2 GROUND_QUALIFICATION_POINT; a label alone is a precursor. In S1a the released points are flow setpoints for cold-flow calibration only: the Phase-1 knee ladder is W5 held-out family F1, so no Hall discharge is run at them in S1a (S1A-FW).",
+   "alternatives": [
+    {
+     "id": "S1A-C3-released-ground-qualification-points",
+     "artifact": "owner-released ground-qualification feed points for S1a",
+     "paths": ["docs/architecture_comparison/feed_state_closure/s1a_feed_points.json"],
+     "path_basis": "PROPOSED file in the W1 directory (fo_feed_state_closure)",
+     "produced_by": "W1 feed-state closure (fo_feed_state_closure) selects GROUND_QUALIFICATION_POINT points; owner releases them for S1a",
+     "rules": [
+      {"type": "equals", "field": "status", "value": "RELEASED_FOR_S1A"},
+      {"type": "equals", "field": "decided_by", "value": "owner"},
+      {"type": "iso_date", "field": "decided_utc"},
+      {"type": "sha256_ref", "field": "source_closure", "path_equals": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json", "what": "the W1 feed-state closure the points are selected from"},
+      {"type": "equals", "field": "use_restriction", "value": "COLD_FLOW_CALIBRATION_NO_HALL_DISCHARGE", "what": "PROPOSED token: S1a uses the points for feed-system calibration and shakedown only"},
+      {"type": "each_item", "field": "test_points", "rules": [
+       {"type": "nonempty_string", "field": "id"},
+       {"type": "nonempty_string", "field": "source_point_id", "what": "the W1 closure test-point id the released point is taken from"},
+       {"type": "equals", "field": "flight_status", "value": "GROUND_QUALIFICATION_POINT"},
+       {"type": "nonempty_string", "field": "gas"},
+       {"type": "quantity", "field": "m_dot_s"},
+       {"type": "quantity", "field": "P_feed"},
+       {"type": "quantity", "field": "T_feed"},
+       {"type": "quantity", "field": "x_s"}
+      ]},
+      {"type": "any_item", "field": "test_points", "what": "at least one N2 point (Phase 1 is N2 first; od_hardware_pivot)", "rules": [
+       {"type": "equals", "field": "gas", "value": "N2"}
+      ]}
+     ]
+    },
+    {
+     "id": "S1A-C3-released-for-s1",
+     "artifact": "owner-released ground-qualification S1 feed points (the N4 S1-C3 alternative b file), used for S1a",
+     "paths": ["docs/architecture_comparison/feed_state_closure/s1_feed_points.json"],
+     "path_basis": "the N4 S1-C3(b) path; an owner release for S1 also releases the points for S1a. N4 separately checks its LOCK-1 reference; this gate does not",
+     "produced_by": "W1 selects; owner releases for S1 (N4 S1-C3 b)",
+     "rules": [
+      {"type": "equals", "field": "status", "value": "RELEASED_FOR_S1"},
+      {"type": "equals", "field": "decided_by", "value": "owner"},
+      {"type": "iso_date", "field": "decided_utc"},
+      {"type": "sha256_ref", "field": "source_closure", "path_equals": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json"},
+      {"type": "each_item", "field": "test_points", "rules": [
+       {"type": "nonempty_string", "field": "id"},
+       {"type": "equals", "field": "flight_status", "value": "GROUND_QUALIFICATION_POINT"},
+       {"type": "nonempty_string", "field": "gas"},
+       {"type": "quantity", "field": "m_dot_s"},
+       {"type": "quantity", "field": "P_feed"},
+       {"type": "quantity", "field": "T_feed"},
+       {"type": "quantity", "field": "x_s"}
+      ]},
+      {"type": "any_item", "field": "test_points", "what": "at least one N2 point", "rules": [
+       {"type": "equals", "field": "gas", "value": "N2"}
+      ]}
+     ]
+    }
+   ],
+   "precursors": [
+    {"path": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json", "what": "W1 feed-state closure (DRAFT): 32 test points labelled GROUND_QUALIFICATION_POINT (28 Phase-1 knee ladder, 4 Phase-2 OP2), all with status 'PROPOSED (candidate-conditional)' and T_feed_ground 'TBD - requires owner decision DI-1.10'; precursor only"},
+    {"path": "docs/architecture_comparison/feed_envelope/feed_envelope_v1.json", "what": "lane 16 feed envelope"}
+   ]
+  },
+  {
+   "id": "S1A-C4",
+   "owner_clause": "frozen calibration procedures",
+   "task_statement": "frozen calibration procedures: thrust stand, power channels, MFCs, B(z), DAQ time base, temperature channels",
+   "why": "Engineering qualification is useful only if the calibrations it runs follow procedures frozen before execution, so that the S1a records can later be accepted as the measured capability demonstration (N4 S1-C4) instead of being repeated. Each procedure declares the S1a data class it produces; that class must be an ALLOWED class of the data firewall (S1A-FW).",
+   "alternatives": [
+    {
+     "id": "S1A-C4-frozen-procedures",
+     "artifact": "owner-frozen S1a calibration procedures",
+     "paths": ["docs/experiments/instrumentation/s1a_calibration_procedures_frozen.json"],
+     "path_basis": "PROPOSED file in the W4 directory (fo_instrumentation_definition / fo_capability_demo_prep). The N4 S1-C5 calibration plan (calibration_plan_frozen.json) is a different, LOCK-1-referencing artifact with a different category set",
+     "produced_by": "W4 (fo_capability_demo_prep calibration_plan_candidates / CD-01..CD-07) drafts; owner freezes",
+     "required_categories_status": "PROPOSED from the owner's A3 W4_capability_demonstration_prep list (thrust-stand force calibration, power-channel calibration, MFC behaviour, B(z) measurement repeatability, DAQ synchronization, temperature-channel performance); installation/reinstallation reproducibility is optional in S1a (the owner may add it)",
+     "rules": [
+      {"type": "equals", "field": "status", "value": "FROZEN"},
+      {"type": "equals", "field": "decided_by", "value": "owner"},
+      {"type": "iso_date", "field": "decided_utc"},
+      {"type": "sha256_ref", "field": "data_firewall", "artifact_of": "S1A-FW", "what": "the frozen S1a data firewall the procedures operate under"},
+      {"type": "covers", "field": "procedures", "key": "category",
+       "required": ["thrust_stand", "power_channels", "mass_flow_controllers", "magnetic_field_Bz", "daq_time_base", "temperature_channels"]},
+      {"type": "each_item", "field": "procedures", "rules": [
+       {"type": "nonempty_string", "field": "category"},
+       {"type": "nonempty_string", "field": "procedure_id"},
+       {"type": "nonempty_string", "field": "procedure"},
+       {"type": "nonempty_string", "field": "traceability"},
+       {"type": "nonempty_string", "field": "acceptance_rule"},
+       {"type": "member_of_artifact", "field": "s1a_data_class", "artifact_of": "S1A-FW", "list_field": "allowed_classes", "key": "id", "what": "every S1a procedure produces only a firewall-ALLOWED data class"}
+      ]},
+      {"type": "any_item", "field": "procedures", "what": "A3 decisions.cathode_temperature binds the temperature procedure: the cathode-tube thermocouple is never labelled emitter temperature", "rules": [
+       {"type": "equals", "field": "category", "value": "temperature_channels"},
+       {"type": "nonempty_string", "field": "cathode_temperature_labelling"}
+      ]}
+     ]
+    }
+   ],
+   "precursors": [
+    {"path": "docs/experiments/capability_demo/capability_demo_prep_v1.json", "what": "W4 capability-demonstration preparation (fo_capability_demo_prep; DRAFT): CD-01..CD-07 and calibration_plan_candidates"},
+    {"path": "docs/experiments/instrumentation/instrumentation_definition_v1.json", "what": "W4 instrumentation definition v1-r2 (DRAFT_PENDING_OWNER): calibration procedures INS-P-*"},
+    {"path": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json", "what": "lane 25 s1_plan.S1a_no_plasma (DRAFT)"}
+   ]
+  },
+  {
+   "id": "S1A-C5",
+   "owner_clause": "an engineering facility",
+   "task_statement": "an engineering facility identified by the owner",
+   "why": "S1a needs a vacuum facility for the in-situ thrust-stand calibration, the MFC calibration in the final configuration and the facility-background characterisation; facility and supplier contact is the owner's channel (od_hardware_pivot). Whether it is the same facility as S1b and the score-bearing stages is recorded, not required: calibrations and noise measured in a different facility cannot be carried into LOCK-2 (lane 25 s1_plan.S1b_hall_on facility rule).",
+   "alternatives": [
+    {
+     "id": "S1A-C5-facility",
+     "artifact": "owner identification of the S1a engineering facility",
+     "paths": ["docs/decisions/OD_S1A_FACILITY.json"],
+     "path_basis": "PROPOSED owner-disposition file next to od_hardware_pivot",
+     "produced_by": "owner (facility contact is the owner's channel)",
+     "rules": [
+      {"type": "equals", "field": "id", "value": "od_s1a_facility"},
+      {"type": "equals", "field": "decided_by", "value": "owner"},
+      {"type": "iso_date", "field": "decided_utc"},
+      {"type": "equals", "field": "decision", "value": "APPROVED"},
+      {"type": "nonempty_string", "field": "facility.name"},
+      {"type": "nonempty_string", "field": "facility.vacuum_facility"},
+      {"type": "nonempty_string", "field": "facility.safety_responsible", "what": "organisation / role responsible for facility safety during S1a"},
+      {"type": "is_bool", "field": "facility.same_as_hall_on_facility", "what": "recorded: whether S1a calibrations can carry into S1b / LOCK-2"}
+     ]
+    },
+    {
+     "id": "S1A-C5-s1-facility",
+     "artifact": "owner facility choice for S1 (the N4 S1-C7 file), used for S1a",
+     "paths": ["docs/decisions/OD_S1_FACILITY.json"],
+     "path_basis": "the N4 S1-C7 path; an owner facility choice for S1 also identifies the S1a facility. N4 separately checks its LOCK-1 reference; this gate does not",
+     "produced_by": "owner",
+     "rules": [
+      {"type": "equals", "field": "id", "value": "od_s1_facility"},
+      {"type": "equals", "field": "decided_by", "value": "owner"},
+      {"type": "iso_date", "field": "decided_utc"},
+      {"type": "equals", "field": "decision", "value": "APPROVED"},
+      {"type": "nonempty_string", "field": "facility.name"},
+      {"type": "nonempty_string", "field": "facility.hall_on_vacuum_facility"}
+     ]
+    }
+   ],
+   "precursors": [
+    {"path": "docs/architecture_comparison/experiment_package/experiment_package_v1.json", "what": "open owner decision D-12 (facility per stage; DRAFT)"},
+    {"path": "docs/architecture_comparison/experiment_protocol/protocol_draft.json", "what": "lane 06 facility-effect controls (DRAFT)"}
+   ]
+  },
+  {
+   "id": "S1A-FW",
+   "owner_clause": "it explicitly forbids held-out H-1 physics outputs from leaking into W5",
+   "task_statement": "mandatory data firewall: S1a data may never expose held-out H-1 physics outputs to W5; allowed and forbidden/embargoed quantities, custody rule and OUTPUTS_SEEN consequence per W5; the gate fails closed if the firewall artifact is missing",
+   "mandatory": true,
+   "fail_closed": true,
+   "why": "S1a produces the first H-1 data. A1 C1: before any H-1 data exist the experiment is partitioned into calibration/registration data and held-out prediction data. A2 data rule: no experimental data is used for model promotion until the W5 pre-registration is frozen. The W5 draft (docs/validation/hall_transport_v2_prereg/) classifies I_d, thrust, sustainment/extinction, oscillations, species, ion energy and T_e/n_e as HELD_OUT (VO-ID, VO-T, VO-IGNEXT, VO-OSC, VO-SPECIES, VO-IEDF, VO-TENE), divergence as a registration observation operator measurable only in Hall-on readings (VO-DIV), and B(z), geometry and feed state as registration inputs released only after LOCK-H1 (sequence K1/K2). Its publication_rule makes a disclosure of an embargoed value before PF-1 is frozen AUTOMATICALLY flag the affected conditions OUTPUTS_SEEN (TARGET_NOT_ADMISSIBLE_OUTPUTS_SEEN -> candidate INCONCLUSIVE, not FAIL). W5 classes no Hall-on reading as S1a calibration or registration (S1b dispersion statistics only, after S1a).",
+   "alternatives": [
+    {
+     "id": "S1A-FW-firewall",
+     "artifact": "owner-frozen S1a data firewall",
+     "paths": ["docs/experiments/custody/s1a_data_firewall_frozen.json"],
+     "path_basis": "PROPOSED file next to the planned N4 S1-C6 custody / blinding plan (docs/experiments/custody/); no workstream owns the directory yet",
+     "produced_by": "W5 validation pre-registration (fo_hall_validation_prereg_draft) with the data custodian; owner designates the custodian and freezes. The firewall pins the W5 document whose classes it implements; a later W5 change breaks the pin and the gate fails closed until the firewall is re-frozen",
+     "class_lists_status": "PROPOSED. Allowed ids follow the lane task (calibration, noise, drift, repeatability, reinstallation, channel performance, qualitative RGA, facility background); forbidden / embargoed ids are the W5 validation-observable ids plus the HW-0 derived quantities of W5 publication_rule.embargoed_values and one catch-all for any H-1 Hall operating point",
+     "rules": [
+      {"type": "equals", "field": "id", "value": "s1a_data_firewall"},
+      {"type": "equals", "field": "status", "value": "FROZEN"},
+      {"type": "equals", "field": "decided_by", "value": "owner"},
+      {"type": "iso_date", "field": "decided_utc"},
+      {"type": "sha256_ref", "field": "w5_basis", "path_prefix": "docs/validation/hall_transport_v2_prereg/", "what": "the W5 pre-registration document whose held-out / registration classes the firewall implements"},
+      {"type": "nonempty_string", "field": "data_custodian", "what": "owner-designated; never a physics-track modeller (W5 custody_and_blinding.roles)"},
+      {"type": "equals", "field": "h1_hall_discharge_in_s1a", "value": "FORBIDDEN", "what": "no H-1 anode discharge in S1a: W5 classes no Hall-on reading as S1a calibration/registration; the first Hall-on reading is S1b under N4"},
+      {"type": "covers", "field": "allowed_classes", "key": "id",
+       "required": ["CALIBRATION", "NOISE", "DRIFT", "REPEATABILITY", "REINSTALLATION", "CHANNEL_PERFORMANCE", "QUALITATIVE_RGA", "FACILITY_BACKGROUND"]},
+      {"type": "each_item", "field": "allowed_classes", "rules": [
+       {"type": "nonempty_string", "field": "id"},
+       {"type": "nonempty_string", "field": "definition"},
+       {"type": "nonempty_string", "field": "release_rule", "what": "who may receive it (S1a calibration data may go to every track; registration inputs only via the custodian after LOCK-H1)"}
+      ]},
+      {"type": "any_item", "field": "allowed_classes", "what": "A3 decisions.near_cathode_rga: qualitative S1a RGA data cannot support an exposure-dose or lifetime claim", "rules": [
+       {"type": "equals", "field": "id", "value": "QUALITATIVE_RGA"},
+       {"type": "is_true", "field": "no_dose_or_lifetime_claim"}
+      ]},
+      {"type": "covers", "field": "forbidden_or_embargoed", "key": "id",
+       "required": ["VO-ID", "VO-T", "VO-IGNEXT", "VO-OSC", "VO-SPECIES", "VO-IEDF", "VO-DIV", "VO-TENE", "HW0-PBUS-HALL-ON", "HW0-RARCH", "HW0-KNEE", "H1-ANY-HALL-OPERATING-POINT"]},
+      {"type": "each_item", "field": "forbidden_or_embargoed", "rules": [
+       {"type": "nonempty_string", "field": "id"},
+       {"type": "nonempty_string", "field": "quantity"},
+       {"type": "in", "field": "treatment", "values": ["FORBIDDEN_IN_S1A", "EMBARGOED_CUSTODY_ONLY"]},
+       {"type": "nonempty_string", "field": "consequence_if_exposed", "what": "per W5 leak_rule / publication_rule.automatic_flag: OUTPUTS_SEEN for every affected condition"}
+      ]},
+      {"type": "covers", "field": "registration_inputs", "key": "id", "required": ["REG-GEOM", "REG-BZ", "REG-FEED"], "what": "the W5 registration inputs S1a measures"},
+      {"type": "each_item", "field": "registration_inputs", "rules": [
+       {"type": "nonempty_string", "field": "id"},
+       {"type": "nonempty_string", "field": "release_condition", "what": "W5 K1/K2: released to the physics track by the custodian only after LOCK-H1"}
+      ]},
+      {"type": "nonempty_string", "field": "custody_rule", "what": "raw S1a data held by the custodian; sha256-frozen; what may leave custody and to whom"},
+      {"type": "nonempty_string", "field": "outputs_seen_rule", "what": "the W5 OUTPUTS_SEEN consequence applied to any exposure of a forbidden / embargoed quantity"},
+      {"type": "nonempty_string", "field": "repository_rule", "what": "S1a records committed to the repository (readable by the physics track) carry only allowed classes"},
+      {"type": "nonempty_string", "field": "breach_response", "what": "what the custodian and owner do on a breach (record in the release log, owner disposition)"},
+      {"type": "nonempty_string", "field": "release_log", "what": "location of the custodian's release / disclosure log (W5 VP-14)"}
+     ]
+    }
+   ],
+   "precursors": [
+    {"path": "docs/validation/hall_transport_v2_prereg/hall_transport_v2_prereg_DRAFT.json", "what": "W5 held-out validation pre-registration draft (DRAFT): observables VO-*, registration_inputs REG-*, custody_and_blinding (roles, K1..K6, publication_rule, leak_rule)"},
+    {"path": "docs/experiments/capability_demo/capability_demo_prep_v1.json", "what": "W4 capability-demonstration preparation (DRAFT): s1a_path.leak_rule (CD records contain calibration data only)"}
+   ]
+  }
+ ],
+ "firewall_reference_classes": {
+  "status": "PROPOSED content for the owner's firewall artifact (orientation only; the gate checks the artifact, never this block)",
+  "allowed": {
+   "CALIBRATION": "calibration constants and their uncertainty for thrust stand, power channels (incl. the I_d / V_d channels calibrated without plasma), MFCs, gauges, B(z) probe, temperature channels, DAQ",
+   "NOISE": "channel noise floors with no plasma",
+   "DRIFT": "zero and span drift with no plasma (thermal settling of the stand, gauge drift)",
+   "REPEATABILITY": "repeatability of calibrations and of B(z) maps at fixed coil current (CD-05)",
+   "REINSTALLATION": "no-plasma installation / re-installation reproducibility (CD-02a); the Hall-on re-mount series CD-02b is S1b (N4), not S1a",
+   "CHANNEL_PERFORMANCE": "bandwidth, synchronization and time-base performance of the DAQ and power channels (CD-06) with test signals, no plasma",
+   "QUALITATIVE_RGA": "uncalibrated RGA spectra used qualitatively (A3 decisions.near_cathode_rga); never an exposure-dose or lifetime claim",
+   "FACILITY_BACKGROUND": "no-plasma base pressure, residual-gas composition and cold-flow facility pressure at the released feed points"
+  },
+  "registration_inputs_measured_in_S1a": "REG-GEOM (as-built metrology), REG-BZ (B(z) at actual coil currents), REG-FEED (calibrated feed setpoints): measured in S1a, held by the custodian, released to the physics track only after LOCK-H1 (W5 K1/K2); a B(z)-vs-magnetic-circuit comparison is a magnetics check, never transport-validation evidence (W5 VO-BZ)",
+  "forbidden_or_embargoed": {
+   "VO-ID": "discharge current I_d (any Hall-on reading)",
+   "VO-T": "thrust",
+   "VO-IGNEXT": "sustainment / extinction / ignition",
+   "VO-OSC": "I_d oscillation character",
+   "VO-SPECIES": "species current fractions",
+   "VO-IEDF": "ion energy",
+   "VO-DIV": "divergence (a registration observation operator, but only measurable Hall-on)",
+   "VO-TENE": "T_e, n_e",
+   "HW0-PBUS-HALL-ON": "HW-0 P_bus at a Hall-on reading",
+   "HW0-RARCH": "R_arch (HW-0 denominator)",
+   "HW0-KNEE": "the Phase-1 knee mdot_knee and the OP2/OP2H identity derived from it",
+   "H1-ANY-HALL-OPERATING-POINT": "any H-1 anode discharge (H-1 anode, C-1 and MC-1 energized together) at any condition; W5 classes none as S1a calibration or registration"
+  },
+  "consequence": "W5 custody_and_blinding.publication_rule.automatic_flag and leak_rule: any exposure of an embargoed value outside the custody circle before PF-1 is hash-frozen flags every affected F1/F2/F3/F6 condition OUTPUTS_SEEN (TARGET_NOT_ADMISSIBLE_OUTPUTS_SEEN -> candidate INCONCLUSIVE, not FAIL); the flag does not depend on showing the value reached the physics track. W5 defines no automatic flag for a registration input released before LOCK-H1; such a release breaks W5 K1 and needs an owner disposition (PROPOSED)."
+ },
+ "relation": {
+  "N4": "N4 (fo_s1_readiness_gate) decides whether S1 (S1a no-plasma calibration + S1b Hall-on re-mount qualification per lane 25 s1_plan) may be scheduled after LOCK-1; it stays S1_NOT_READY 0/8 and is not modified. S1a here is the engineering path the owner opened in A3: it may begin before LOCK-1, never takes a Hall-on H-1 reading, is never score-bearing, and never satisfies an N4 condition by itself. Its records can later become N4 evidence only through the N4 artifacts (e.g. the S1-C4 capability-demonstration record from S1a calibration measurements, accepted by the owner under the frozen S1-C5 plan).",
+  "W4_capability_demonstration": "W4 (fo_capability_demo_prep) prepares CD-01..CD-07 and the record format for the N4 S1-C4 measured-capability artifact. S1A_READY is the point from which those demonstrations may be executed on actual hardware as non-score-bearing engineering qualification; their results become the S1-C4 record only when the owner accepts them against a frozen S1-C5 calibration plan (N4).",
+  "W5": "S1a produces the first H-1 data (registration inputs). The firewall keeps them in custody until LOCK-H1 and forbids every held-out output in S1a."
+ },
+ "milestones": {
+  "supports": ["A"],
+  "A": "Schedule enabler only: starting engineering qualification early shortens the path to S1 -> LOCK-2 -> the controlled HW-0 / HW-RF / HW-ECR experiment in which the conditions of a conditional selection are demonstrated. The gate selects, ranks or eliminates nothing.",
+  "to_next": "Milestone B needs N4 S1_READY, S1 executed, LOCK-2, Phase 1-3 data, the W5 pre-registration frozen and scored and an admitted Hall transport closure (credible set empty today, gate 3 FAIL). Milestone C additionally needs mass, power, thermal, life, startup, cathode and mission closure integrated."
+ },
+ "compliance": [
+  "no Hall transport closure, screening candidate or withdrawn 0-D number is read or used",
+  "no architecture (hall_only, rf_hall, ecr_hall) is ranked, preferred or eliminated; S1a is engineering qualification, not selection",
+  "no physical, efficiency, safety-limit or threshold value is carried; required coverage sets and class lists are PROPOSED",
+  "P5 calibration nuisance is never a design variable, map axis or gate item",
+  "reads only files inside the repository; writes only when --out is given; reads no N4 file"
+ ]
+}

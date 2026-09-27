@@ -1,0 +1,650 @@
+{
+  "schema": "abep_s1a_readiness_report_v1",
+  "gate": "fo_s1a_engineering_gate",
+  "trigger": "T_PIVOT_S1A_ENGINEERING_GATE",
+  "question": "Can we safely and usefully begin NON-score-bearing engineering qualification (S1a)?",
+  "generated_by": "scripts/experiments/s1a_readiness.py",
+  "spec": {
+    "path": "docs/experiments/s1a_readiness/s1a_readiness_conditions_v1.json",
+    "sha256": "062fab4865a82eb9d5877d539bd252020e1235e15fd9d4949de696f01fda3143",
+    "status": "DRAFT_PENDING_OWNER"
+  },
+  "note": "Generated from the repository state; deterministic (no clock, no absolute paths). S1a is non-score-bearing engineering qualification with no H-1 Hall discharge; S1A_READY never schedules S1 (N4, separate gate, not read here) and never satisfies an N4 condition. A DRAFT / PROPOSED artifact never satisfies a condition; nothing is inferred.",
+  "authority": {
+    "ok": true,
+    "owner_text_source": {
+      "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+      "field": "next_execution.S1a_engineering_gate",
+      "verbatim_match": true
+    },
+    "documents": [
+      {
+        "role": "original_disposition",
+        "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+        "expected_sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+        "sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac",
+        "ok": true,
+        "failures": []
+      },
+      {
+        "role": "controls_addendum_A1",
+        "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json",
+        "expected_sha256": "04c5a6f46ed2cb3e3fb174bcc7305d129e15ef53af2349d2a8abc4f6d8975992",
+        "sha256": "04c5a6f46ed2cb3e3fb174bcc7305d129e15ef53af2349d2a8abc4f6d8975992",
+        "ok": true,
+        "failures": []
+      },
+      {
+        "role": "execution_directive_A2",
+        "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
+        "expected_sha256": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6",
+        "sha256": "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6",
+        "ok": true,
+        "failures": []
+      },
+      {
+        "role": "s1a_and_instrumentation_A3",
+        "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+        "expected_sha256": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e",
+        "sha256": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e",
+        "ok": true,
+        "failures": []
+      }
+    ],
+    "failures": []
+  },
+  "verdict": "S1A_NOT_READY",
+  "n_conditions": 6,
+  "n_satisfied": 0,
+  "n_missing_items": 6,
+  "firewall": {
+    "condition": "S1A-FW",
+    "state": "MISSING",
+    "fail_closed": true,
+    "effect": "FAIL CLOSED: the data firewall is MISSING; the verdict is S1A_NOT_READY whatever else holds, and no S1a procedure can be matched to an allowed data class"
+  },
+  "missing": [
+    {
+      "condition": "S1A-C1",
+      "owner_clause": "the hardware needed for calibration/shakedown",
+      "state": "MISSING",
+      "availability": "PARTIAL_PRECURSORS_ONLY",
+      "needed": [
+        {
+          "alternative": "S1A-C1-hardware-record",
+          "artifact": "S1a engineering hardware record (identified, available units and their recorded configuration)",
+          "expected_paths": [
+            "docs/experiments/hardware/s1a_engineering_hardware_record.json"
+          ],
+          "state": "MISSING",
+          "failures": [],
+          "produced_by": "W3 hardware definition (fo_hardware_definition) with the experiment team after delivery; owner accepts the record. Item ids follow W3 configuration_items (H-1, MC-1, FS-C, PS-C, SVC-1) and W4 instruments (INS-*)",
+          "required": [
+            "status == \"IDENTIFIED_FOR_S1A\"",
+            "recorded_by is a non-empty, non-TBD string (engineering lead or experiment team role)",
+            "recorded_utc is an ISO 8601 date",
+            "accepted_by == \"owner\"",
+            "accepted_utc is an ISO 8601 date",
+            "requirements_basis = {path, sha256} matching the file on disk (path docs/experiments/hardware/hardware_requirements_v1.json) (the W3 hardware requirements register the recorded units are identified against)",
+            "items[].id covers H-1, MC-1, FS-C, PS-C, SVC-1, INS-01, INS-02, INS-04, INS-05, INS-06, INS-07, INS-08, INS-09, INS-17, INS-18",
+            "every items[] item: id is a non-empty, non-TBD string; status == \"AVAILABLE\"; serial_or_part_id is a non-empty, non-TBD string; configuration_state in [\"RECORDED_NOT_FROZEN\", \"FROZEN_FOR_QUALIFICATION\"] (H-1 need not be frozen for S1a; RECORDED_NOT_FROZEN never satisfies N4 S1-C2); configuration_record is a non-empty, non-TBD string (drawing / as-built / setting record identifying the configuration used in S1a)"
+          ]
+        }
+      ],
+      "note": "precursor drafts exist but never satisfy the condition"
+    },
+    {
+      "condition": "S1A-C2",
+      "owner_clause": "safe operational limits",
+      "state": "MISSING",
+      "availability": "PARTIAL_PRECURSORS_ONLY",
+      "needed": [
+        {
+          "alternative": "S1A-C2-limits",
+          "artifact": "owner-approved S1a safety / operational limits",
+          "expected_paths": [
+            "docs/experiments/hardware/s1a_safety_operational_limits.json"
+          ],
+          "state": "MISSING",
+          "failures": [],
+          "produced_by": "W3 hardware definition (fo_hardware_definition) with the engineering facility's own limits (S1A-C5) and the magnet/coil qualification basis (fo_magnet_coil_qualification); owner approves. Every limit value comes from its source (facility rules, supply ratings, W3/MCQ) — this gate carries none",
+          "required": [
+            "status == \"APPROVED\"",
+            "approved_by == \"owner\"",
+            "approved_utc is an ISO 8601 date",
+            "facility_choice = {path, sha256} matching the file on disk (the S1A-C5 artifact) (the owner's engineering-facility identification whose limits are included)",
+            "limits[].domain covers electrical, vacuum, thermal, gas",
+            "limits[].quantity covers magnet_current_max, supply_voltage_max, cathode_heater_current_max, background_pressure_max, component_temperature_max, coil_winding_temperature_max, feed_pressure_max, gas_handling_oxidizer",
+            "every limits[] item: quantity is a non-empty, non-TBD string; domain in [\"electrical\", \"vacuum\", \"thermal\", \"gas\", \"rf_microwave\", \"mechanical\"]; limit is a non-empty, non-TBD string; source is a non-empty, non-TBD string; action_on_exceedance is a non-empty, non-TBD string",
+            "interlocks[].id covers IL-VACUUM, IL-HALL-DISCHARGE-INHIBIT, IL-OXIDIZER-ISOLATION, IL-EMERGENCY-STOP (PROPOSED ids. IL-HALL-DISCHARGE-INHIBIT is the physical enforcement of the S1A-FW rule that no H-1 Hall discharge is run in S1a)",
+            "every interlocks[] item: id is a non-empty, non-TBD string; function is a non-empty, non-TBD string; verification is a non-empty, non-TBD string",
+            "at least one abort_conditions[] item: id is a non-empty, non-TBD string; trigger is a non-empty, non-TBD string; action is a non-empty, non-TBD string (at least one defined abort condition with its action)"
+          ]
+        }
+      ],
+      "note": "precursor drafts exist but never satisfy the condition"
+    },
+    {
+      "condition": "S1A-C3",
+      "owner_clause": "released ground-qualification feed points",
+      "state": "MISSING",
+      "availability": "PARTIAL_PRECURSORS_ONLY",
+      "needed": [
+        {
+          "alternative": "S1A-C3-released-ground-qualification-points",
+          "artifact": "owner-released ground-qualification feed points for S1a",
+          "expected_paths": [
+            "docs/architecture_comparison/feed_state_closure/s1a_feed_points.json"
+          ],
+          "state": "MISSING",
+          "failures": [],
+          "produced_by": "W1 feed-state closure (fo_feed_state_closure) selects GROUND_QUALIFICATION_POINT points; owner releases them for S1a",
+          "required": [
+            "status == \"RELEASED_FOR_S1A\"",
+            "decided_by == \"owner\"",
+            "decided_utc is an ISO 8601 date",
+            "source_closure = {path, sha256} matching the file on disk (path docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json) (the W1 feed-state closure the points are selected from)",
+            "use_restriction == \"COLD_FLOW_CALIBRATION_NO_HALL_DISCHARGE\" (PROPOSED token: S1a uses the points for feed-system calibration and shakedown only)",
+            "every test_points[] item: id is a non-empty, non-TBD string; source_point_id is a non-empty, non-TBD string (the W1 closure test-point id the released point is taken from); flight_status == \"GROUND_QUALIFICATION_POINT\"; gas is a non-empty, non-TBD string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
+            "at least one test_points[] item: gas == \"N2\" (at least one N2 point (Phase 1 is N2 first; od_hardware_pivot))"
+          ]
+        },
+        {
+          "alternative": "S1A-C3-released-for-s1",
+          "artifact": "owner-released ground-qualification S1 feed points (the N4 S1-C3 alternative b file), used for S1a",
+          "expected_paths": [
+            "docs/architecture_comparison/feed_state_closure/s1_feed_points.json"
+          ],
+          "state": "MISSING",
+          "failures": [],
+          "produced_by": "W1 selects; owner releases for S1 (N4 S1-C3 b)",
+          "required": [
+            "status == \"RELEASED_FOR_S1\"",
+            "decided_by == \"owner\"",
+            "decided_utc is an ISO 8601 date",
+            "source_closure = {path, sha256} matching the file on disk (path docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json)",
+            "every test_points[] item: id is a non-empty, non-TBD string; flight_status == \"GROUND_QUALIFICATION_POINT\"; gas is a non-empty, non-TBD string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
+            "at least one test_points[] item: gas == \"N2\" (at least one N2 point)"
+          ]
+        }
+      ],
+      "note": "precursor drafts exist but never satisfy the condition"
+    },
+    {
+      "condition": "S1A-C4",
+      "owner_clause": "frozen calibration procedures",
+      "state": "MISSING",
+      "availability": "PARTIAL_PRECURSORS_ONLY",
+      "needed": [
+        {
+          "alternative": "S1A-C4-frozen-procedures",
+          "artifact": "owner-frozen S1a calibration procedures",
+          "expected_paths": [
+            "docs/experiments/instrumentation/s1a_calibration_procedures_frozen.json"
+          ],
+          "state": "MISSING",
+          "failures": [],
+          "produced_by": "W4 (fo_capability_demo_prep calibration_plan_candidates / CD-01..CD-07) drafts; owner freezes",
+          "required": [
+            "status == \"FROZEN\"",
+            "decided_by == \"owner\"",
+            "decided_utc is an ISO 8601 date",
+            "data_firewall = {path, sha256} matching the file on disk (the S1A-FW artifact) (the frozen S1a data firewall the procedures operate under)",
+            "procedures[].category covers thrust_stand, power_channels, mass_flow_controllers, magnetic_field_Bz, daq_time_base, temperature_channels",
+            "every procedures[] item: category is a non-empty, non-TBD string; procedure_id is a non-empty, non-TBD string; procedure is a non-empty, non-TBD string; traceability is a non-empty, non-TBD string; acceptance_rule is a non-empty, non-TBD string; s1a_data_class is one of the allowed_classes[].id of the SATISFIED S1A-FW artifact (every S1a procedure produces only a firewall-ALLOWED data class)",
+            "at least one procedures[] item: category == \"temperature_channels\"; cathode_temperature_labelling is a non-empty, non-TBD string (A3 decisions.cathode_temperature binds the temperature procedure: the cathode-tube thermocouple is never labelled emitter temperature)"
+          ]
+        }
+      ],
+      "note": "precursor drafts exist but never satisfy the condition"
+    },
+    {
+      "condition": "S1A-C5",
+      "owner_clause": "an engineering facility",
+      "state": "MISSING",
+      "availability": "PARTIAL_PRECURSORS_ONLY",
+      "needed": [
+        {
+          "alternative": "S1A-C5-facility",
+          "artifact": "owner identification of the S1a engineering facility",
+          "expected_paths": [
+            "docs/decisions/OD_S1A_FACILITY.json"
+          ],
+          "state": "MISSING",
+          "failures": [],
+          "produced_by": "owner (facility contact is the owner's channel)",
+          "required": [
+            "id == \"od_s1a_facility\"",
+            "decided_by == \"owner\"",
+            "decided_utc is an ISO 8601 date",
+            "decision == \"APPROVED\"",
+            "facility.name is a non-empty, non-TBD string",
+            "facility.vacuum_facility is a non-empty, non-TBD string",
+            "facility.safety_responsible is a non-empty, non-TBD string (organisation / role responsible for facility safety during S1a)",
+            "facility.same_as_hall_on_facility is a boolean (recorded: whether S1a calibrations can carry into S1b / LOCK-2)"
+          ]
+        },
+        {
+          "alternative": "S1A-C5-s1-facility",
+          "artifact": "owner facility choice for S1 (the N4 S1-C7 file), used for S1a",
+          "expected_paths": [
+            "docs/decisions/OD_S1_FACILITY.json"
+          ],
+          "state": "MISSING",
+          "failures": [],
+          "produced_by": "owner",
+          "required": [
+            "id == \"od_s1_facility\"",
+            "decided_by == \"owner\"",
+            "decided_utc is an ISO 8601 date",
+            "decision == \"APPROVED\"",
+            "facility.name is a non-empty, non-TBD string",
+            "facility.hall_on_vacuum_facility is a non-empty, non-TBD string"
+          ]
+        }
+      ],
+      "note": "precursor drafts exist but never satisfy the condition"
+    },
+    {
+      "condition": "S1A-FW",
+      "owner_clause": "it explicitly forbids held-out H-1 physics outputs from leaking into W5",
+      "state": "MISSING",
+      "availability": "PARTIAL_PRECURSORS_ONLY",
+      "needed": [
+        {
+          "alternative": "S1A-FW-firewall",
+          "artifact": "owner-frozen S1a data firewall",
+          "expected_paths": [
+            "docs/experiments/custody/s1a_data_firewall_frozen.json"
+          ],
+          "state": "MISSING",
+          "failures": [],
+          "produced_by": "W5 validation pre-registration (fo_hall_validation_prereg_draft) with the data custodian; owner designates the custodian and freezes. The firewall pins the W5 document whose classes it implements; a later W5 change breaks the pin and the gate fails closed until the firewall is re-frozen",
+          "required": [
+            "id == \"s1a_data_firewall\"",
+            "status == \"FROZEN\"",
+            "decided_by == \"owner\"",
+            "decided_utc is an ISO 8601 date",
+            "w5_basis = {path, sha256} matching the file on disk (under docs/validation/hall_transport_v2_prereg/) (the W5 pre-registration document whose held-out / registration classes the firewall implements)",
+            "data_custodian is a non-empty, non-TBD string (owner-designated; never a physics-track modeller (W5 custody_and_blinding.roles))",
+            "h1_hall_discharge_in_s1a == \"FORBIDDEN\" (no H-1 anode discharge in S1a: W5 classes no Hall-on reading as S1a calibration/registration; the first Hall-on reading is S1b under N4)",
+            "allowed_classes[].id covers CALIBRATION, NOISE, DRIFT, REPEATABILITY, REINSTALLATION, CHANNEL_PERFORMANCE, QUALITATIVE_RGA, FACILITY_BACKGROUND",
+            "every allowed_classes[] item: id is a non-empty, non-TBD string; definition is a non-empty, non-TBD string; release_rule is a non-empty, non-TBD string (who may receive it (S1a calibration data may go to every track; registration inputs only via the custodian after LOCK-H1))",
+            "at least one allowed_classes[] item: id == \"QUALITATIVE_RGA\"; no_dose_or_lifetime_claim is true (A3 decisions.near_cathode_rga: qualitative S1a RGA data cannot support an exposure-dose or lifetime claim)",
+            "forbidden_or_embargoed[].id covers VO-ID, VO-T, VO-IGNEXT, VO-OSC, VO-SPECIES, VO-IEDF, VO-DIV, VO-TENE, HW0-PBUS-HALL-ON, HW0-RARCH, HW0-KNEE, H1-ANY-HALL-OPERATING-POINT",
+            "every forbidden_or_embargoed[] item: id is a non-empty, non-TBD string; quantity is a non-empty, non-TBD string; treatment in [\"FORBIDDEN_IN_S1A\", \"EMBARGOED_CUSTODY_ONLY\"]; consequence_if_exposed is a non-empty, non-TBD string (per W5 leak_rule / publication_rule.automatic_flag: OUTPUTS_SEEN for every affected condition)",
+            "registration_inputs[].id covers REG-GEOM, REG-BZ, REG-FEED (the W5 registration inputs S1a measures)",
+            "every registration_inputs[] item: id is a non-empty, non-TBD string; release_condition is a non-empty, non-TBD string (W5 K1/K2: released to the physics track by the custodian only after LOCK-H1)",
+            "custody_rule is a non-empty, non-TBD string (raw S1a data held by the custodian; sha256-frozen; what may leave custody and to whom)",
+            "outputs_seen_rule is a non-empty, non-TBD string (the W5 OUTPUTS_SEEN consequence applied to any exposure of a forbidden / embargoed quantity)",
+            "repository_rule is a non-empty, non-TBD string (S1a records committed to the repository (readable by the physics track) carry only allowed classes)",
+            "breach_response is a non-empty, non-TBD string (what the custodian and owner do on a breach (record in the release log, owner disposition))",
+            "release_log is a non-empty, non-TBD string (location of the custodian's release / disclosure log (W5 VP-14))"
+          ]
+        }
+      ],
+      "note": "precursor drafts exist but never satisfy the condition"
+    }
+  ],
+  "conditions": [
+    {
+      "id": "S1A-C1",
+      "owner_clause": "the hardware needed for calibration/shakedown",
+      "task_statement": "hardware needed for calibration/shakedown available and identified (serial numbers); H-1 need not be the frozen qualification configuration but its configuration must be recorded",
+      "mandatory_fail_closed": false,
+      "state": "MISSING",
+      "satisfied_by": null,
+      "availability": "PARTIAL_PRECURSORS_ONLY",
+      "alternatives": [
+        {
+          "id": "S1A-C1-hardware-record",
+          "artifact": "S1a engineering hardware record (identified, available units and their recorded configuration)",
+          "expected_paths": [
+            "docs/experiments/hardware/s1a_engineering_hardware_record.json"
+          ],
+          "found_paths": [],
+          "sha256": null,
+          "state": "MISSING",
+          "failures": [],
+          "required": [
+            "status == \"IDENTIFIED_FOR_S1A\"",
+            "recorded_by is a non-empty, non-TBD string (engineering lead or experiment team role)",
+            "recorded_utc is an ISO 8601 date",
+            "accepted_by == \"owner\"",
+            "accepted_utc is an ISO 8601 date",
+            "requirements_basis = {path, sha256} matching the file on disk (path docs/experiments/hardware/hardware_requirements_v1.json) (the W3 hardware requirements register the recorded units are identified against)",
+            "items[].id covers H-1, MC-1, FS-C, PS-C, SVC-1, INS-01, INS-02, INS-04, INS-05, INS-06, INS-07, INS-08, INS-09, INS-17, INS-18",
+            "every items[] item: id is a non-empty, non-TBD string; status == \"AVAILABLE\"; serial_or_part_id is a non-empty, non-TBD string; configuration_state in [\"RECORDED_NOT_FROZEN\", \"FROZEN_FOR_QUALIFICATION\"] (H-1 need not be frozen for S1a; RECORDED_NOT_FROZEN never satisfies N4 S1-C2); configuration_record is a non-empty, non-TBD string (drawing / as-built / setting record identifying the configuration used in S1a)"
+          ],
+          "produced_by": "W3 hardware definition (fo_hardware_definition) with the experiment team after delivery; owner accepts the record. Item ids follow W3 configuration_items (H-1, MC-1, FS-C, PS-C, SVC-1) and W4 instruments (INS-*)"
+        }
+      ],
+      "precursors_found": [
+        {
+          "path": "docs/experiments/hardware/hardware_requirements_v1.json",
+          "what": "W3 hardware requirements register (DRAFT_PENDING_OWNER): configuration items H-1, MC-1, C-1, FS-C, PS-C, SVC-1, PIM-*; S1a verification stages",
+          "sha256": "4752aafd4a42326f2cdf8387c3d9280d274ea96108be0450568d72e785f7ca61"
+        },
+        {
+          "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+          "what": "W4 instrumentation definition v1-r2 (DRAFT_PENDING_OWNER): instruments INS-01..INS-24",
+          "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96"
+        }
+      ],
+      "precursors_absent": [
+        {
+          "path": "docs/experiments/capability_demo/capability_demo_prep_v1.json",
+          "what": "W4 capability-demonstration preparation (fo_capability_demo_prep; DRAFT): instruments used by CD-01..CD-07"
+        }
+      ]
+    },
+    {
+      "id": "S1A-C2",
+      "owner_clause": "safe operational limits",
+      "task_statement": "safe operational limits defined and owner-approved: electrical, vacuum, thermal, gas (incl. O2 handling), interlocks, abort",
+      "mandatory_fail_closed": false,
+      "state": "MISSING",
+      "satisfied_by": null,
+      "availability": "PARTIAL_PRECURSORS_ONLY",
+      "alternatives": [
+        {
+          "id": "S1A-C2-limits",
+          "artifact": "owner-approved S1a safety / operational limits",
+          "expected_paths": [
+            "docs/experiments/hardware/s1a_safety_operational_limits.json"
+          ],
+          "found_paths": [],
+          "sha256": null,
+          "state": "MISSING",
+          "failures": [],
+          "required": [
+            "status == \"APPROVED\"",
+            "approved_by == \"owner\"",
+            "approved_utc is an ISO 8601 date",
+            "facility_choice = {path, sha256} matching the file on disk (the S1A-C5 artifact) (the owner's engineering-facility identification whose limits are included)",
+            "limits[].domain covers electrical, vacuum, thermal, gas",
+            "limits[].quantity covers magnet_current_max, supply_voltage_max, cathode_heater_current_max, background_pressure_max, component_temperature_max, coil_winding_temperature_max, feed_pressure_max, gas_handling_oxidizer",
+            "every limits[] item: quantity is a non-empty, non-TBD string; domain in [\"electrical\", \"vacuum\", \"thermal\", \"gas\", \"rf_microwave\", \"mechanical\"]; limit is a non-empty, non-TBD string; source is a non-empty, non-TBD string; action_on_exceedance is a non-empty, non-TBD string",
+            "interlocks[].id covers IL-VACUUM, IL-HALL-DISCHARGE-INHIBIT, IL-OXIDIZER-ISOLATION, IL-EMERGENCY-STOP (PROPOSED ids. IL-HALL-DISCHARGE-INHIBIT is the physical enforcement of the S1A-FW rule that no H-1 Hall discharge is run in S1a)",
+            "every interlocks[] item: id is a non-empty, non-TBD string; function is a non-empty, non-TBD string; verification is a non-empty, non-TBD string",
+            "at least one abort_conditions[] item: id is a non-empty, non-TBD string; trigger is a non-empty, non-TBD string; action is a non-empty, non-TBD string (at least one defined abort condition with its action)"
+          ],
+          "produced_by": "W3 hardware definition (fo_hardware_definition) with the engineering facility's own limits (S1A-C5) and the magnet/coil qualification basis (fo_magnet_coil_qualification); owner approves. Every limit value comes from its source (facility rules, supply ratings, W3/MCQ) — this gate carries none"
+        }
+      ],
+      "precursors_found": [
+        {
+          "path": "docs/experiments/hardware/hardware_requirements_v1.json",
+          "what": "W3 hardware requirements (DRAFT_PENDING_OWNER): supply ratings, gas isolator, S1a verification items",
+          "sha256": "4752aafd4a42326f2cdf8387c3d9280d274ea96108be0450568d72e785f7ca61"
+        },
+        {
+          "path": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json",
+          "what": "magnet/coil qualification basis (fo_magnet_coil_qualification): coil temperature / current items",
+          "sha256": "53e92f4536f7b30054d3521adbd504eca725c4c6d79a6cb3b51c2fc4ce220b32"
+        },
+        {
+          "path": "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json",
+          "what": "lane 20 electrical closure (verified input)",
+          "sha256": "d56f700198a64a919d736c8659b6e0aaaa01cd56521885772d2f5a40de374501"
+        },
+        {
+          "path": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+          "what": "lane 24 hard gates (verified input)",
+          "sha256": "7d77d2831214f3f3d96c8254ea43643ada15e7d1ce0685dec86a65eb79a8f65f"
+        }
+      ],
+      "precursors_absent": []
+    },
+    {
+      "id": "S1A-C3",
+      "owner_clause": "released ground-qualification feed points",
+      "task_statement": "released ground-qualification feed points (GROUND_QUALIFICATION_POINT from the feed-state closure, owner-released)",
+      "mandatory_fail_closed": false,
+      "state": "MISSING",
+      "satisfied_by": null,
+      "availability": "PARTIAL_PRECURSORS_ONLY",
+      "alternatives": [
+        {
+          "id": "S1A-C3-released-ground-qualification-points",
+          "artifact": "owner-released ground-qualification feed points for S1a",
+          "expected_paths": [
+            "docs/architecture_comparison/feed_state_closure/s1a_feed_points.json"
+          ],
+          "found_paths": [],
+          "sha256": null,
+          "state": "MISSING",
+          "failures": [],
+          "required": [
+            "status == \"RELEASED_FOR_S1A\"",
+            "decided_by == \"owner\"",
+            "decided_utc is an ISO 8601 date",
+            "source_closure = {path, sha256} matching the file on disk (path docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json) (the W1 feed-state closure the points are selected from)",
+            "use_restriction == \"COLD_FLOW_CALIBRATION_NO_HALL_DISCHARGE\" (PROPOSED token: S1a uses the points for feed-system calibration and shakedown only)",
+            "every test_points[] item: id is a non-empty, non-TBD string; source_point_id is a non-empty, non-TBD string (the W1 closure test-point id the released point is taken from); flight_status == \"GROUND_QUALIFICATION_POINT\"; gas is a non-empty, non-TBD string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
+            "at least one test_points[] item: gas == \"N2\" (at least one N2 point (Phase 1 is N2 first; od_hardware_pivot))"
+          ],
+          "produced_by": "W1 feed-state closure (fo_feed_state_closure) selects GROUND_QUALIFICATION_POINT points; owner releases them for S1a"
+        },
+        {
+          "id": "S1A-C3-released-for-s1",
+          "artifact": "owner-released ground-qualification S1 feed points (the N4 S1-C3 alternative b file), used for S1a",
+          "expected_paths": [
+            "docs/architecture_comparison/feed_state_closure/s1_feed_points.json"
+          ],
+          "found_paths": [],
+          "sha256": null,
+          "state": "MISSING",
+          "failures": [],
+          "required": [
+            "status == \"RELEASED_FOR_S1\"",
+            "decided_by == \"owner\"",
+            "decided_utc is an ISO 8601 date",
+            "source_closure = {path, sha256} matching the file on disk (path docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json)",
+            "every test_points[] item: id is a non-empty, non-TBD string; flight_status == \"GROUND_QUALIFICATION_POINT\"; gas is a non-empty, non-TBD string; m_dot_s = {value, unit, source, evidence_class}; P_feed = {value, unit, source, evidence_class}; T_feed = {value, unit, source, evidence_class}; x_s = {value, unit, source, evidence_class}",
+            "at least one test_points[] item: gas == \"N2\" (at least one N2 point)"
+          ],
+          "produced_by": "W1 selects; owner releases for S1 (N4 S1-C3 b)"
+        }
+      ],
+      "precursors_found": [
+        {
+          "path": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
+          "what": "W1 feed-state closure (DRAFT): 32 test points labelled GROUND_QUALIFICATION_POINT (28 Phase-1 knee ladder, 4 Phase-2 OP2), all with status 'PROPOSED (candidate-conditional)' and T_feed_ground 'TBD - requires owner decision DI-1.10'; precursor only",
+          "sha256": "ff6e15db449151b5cf790088b4641504bd435a48de2d4c6235bf83625d508ef9"
+        },
+        {
+          "path": "docs/architecture_comparison/feed_envelope/feed_envelope_v1.json",
+          "what": "lane 16 feed envelope",
+          "sha256": "ada3ee720b1b8d60526d3b092492589f62a4144112845b4d813dbc8dc7d5ca02"
+        }
+      ],
+      "precursors_absent": []
+    },
+    {
+      "id": "S1A-C4",
+      "owner_clause": "frozen calibration procedures",
+      "task_statement": "frozen calibration procedures: thrust stand, power channels, MFCs, B(z), DAQ time base, temperature channels",
+      "mandatory_fail_closed": false,
+      "state": "MISSING",
+      "satisfied_by": null,
+      "availability": "PARTIAL_PRECURSORS_ONLY",
+      "alternatives": [
+        {
+          "id": "S1A-C4-frozen-procedures",
+          "artifact": "owner-frozen S1a calibration procedures",
+          "expected_paths": [
+            "docs/experiments/instrumentation/s1a_calibration_procedures_frozen.json"
+          ],
+          "found_paths": [],
+          "sha256": null,
+          "state": "MISSING",
+          "failures": [],
+          "required": [
+            "status == \"FROZEN\"",
+            "decided_by == \"owner\"",
+            "decided_utc is an ISO 8601 date",
+            "data_firewall = {path, sha256} matching the file on disk (the S1A-FW artifact) (the frozen S1a data firewall the procedures operate under)",
+            "procedures[].category covers thrust_stand, power_channels, mass_flow_controllers, magnetic_field_Bz, daq_time_base, temperature_channels",
+            "every procedures[] item: category is a non-empty, non-TBD string; procedure_id is a non-empty, non-TBD string; procedure is a non-empty, non-TBD string; traceability is a non-empty, non-TBD string; acceptance_rule is a non-empty, non-TBD string; s1a_data_class is one of the allowed_classes[].id of the SATISFIED S1A-FW artifact (every S1a procedure produces only a firewall-ALLOWED data class)",
+            "at least one procedures[] item: category == \"temperature_channels\"; cathode_temperature_labelling is a non-empty, non-TBD string (A3 decisions.cathode_temperature binds the temperature procedure: the cathode-tube thermocouple is never labelled emitter temperature)"
+          ],
+          "produced_by": "W4 (fo_capability_demo_prep calibration_plan_candidates / CD-01..CD-07) drafts; owner freezes"
+        }
+      ],
+      "precursors_found": [
+        {
+          "path": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+          "what": "W4 instrumentation definition v1-r2 (DRAFT_PENDING_OWNER): calibration procedures INS-P-*",
+          "sha256": "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96"
+        },
+        {
+          "path": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json",
+          "what": "lane 25 s1_plan.S1a_no_plasma (DRAFT)",
+          "sha256": "54b7b00a60134f2d92f2eb5c9fb49f18d23623a566e04a4b7d70325a0e332509"
+        }
+      ],
+      "precursors_absent": [
+        {
+          "path": "docs/experiments/capability_demo/capability_demo_prep_v1.json",
+          "what": "W4 capability-demonstration preparation (fo_capability_demo_prep; DRAFT): CD-01..CD-07 and calibration_plan_candidates"
+        }
+      ]
+    },
+    {
+      "id": "S1A-C5",
+      "owner_clause": "an engineering facility",
+      "task_statement": "an engineering facility identified by the owner",
+      "mandatory_fail_closed": false,
+      "state": "MISSING",
+      "satisfied_by": null,
+      "availability": "PARTIAL_PRECURSORS_ONLY",
+      "alternatives": [
+        {
+          "id": "S1A-C5-facility",
+          "artifact": "owner identification of the S1a engineering facility",
+          "expected_paths": [
+            "docs/decisions/OD_S1A_FACILITY.json"
+          ],
+          "found_paths": [],
+          "sha256": null,
+          "state": "MISSING",
+          "failures": [],
+          "required": [
+            "id == \"od_s1a_facility\"",
+            "decided_by == \"owner\"",
+            "decided_utc is an ISO 8601 date",
+            "decision == \"APPROVED\"",
+            "facility.name is a non-empty, non-TBD string",
+            "facility.vacuum_facility is a non-empty, non-TBD string",
+            "facility.safety_responsible is a non-empty, non-TBD string (organisation / role responsible for facility safety during S1a)",
+            "facility.same_as_hall_on_facility is a boolean (recorded: whether S1a calibrations can carry into S1b / LOCK-2)"
+          ],
+          "produced_by": "owner (facility contact is the owner's channel)"
+        },
+        {
+          "id": "S1A-C5-s1-facility",
+          "artifact": "owner facility choice for S1 (the N4 S1-C7 file), used for S1a",
+          "expected_paths": [
+            "docs/decisions/OD_S1_FACILITY.json"
+          ],
+          "found_paths": [],
+          "sha256": null,
+          "state": "MISSING",
+          "failures": [],
+          "required": [
+            "id == \"od_s1_facility\"",
+            "decided_by == \"owner\"",
+            "decided_utc is an ISO 8601 date",
+            "decision == \"APPROVED\"",
+            "facility.name is a non-empty, non-TBD string",
+            "facility.hall_on_vacuum_facility is a non-empty, non-TBD string"
+          ],
+          "produced_by": "owner"
+        }
+      ],
+      "precursors_found": [
+        {
+          "path": "docs/architecture_comparison/experiment_package/experiment_package_v1.json",
+          "what": "open owner decision D-12 (facility per stage; DRAFT)",
+          "sha256": "9278dfffe43a37a2ea71c3215ce4a7eba022fa72e007ffa24f229371e1407e84"
+        },
+        {
+          "path": "docs/architecture_comparison/experiment_protocol/protocol_draft.json",
+          "what": "lane 06 facility-effect controls (DRAFT)",
+          "sha256": "287dd7ecd57087e46f2f3d786bfb2d64b01ac4fe29a29de21ef98b04c5ac96e3"
+        }
+      ],
+      "precursors_absent": []
+    },
+    {
+      "id": "S1A-FW",
+      "owner_clause": "it explicitly forbids held-out H-1 physics outputs from leaking into W5",
+      "task_statement": "mandatory data firewall: S1a data may never expose held-out H-1 physics outputs to W5; allowed and forbidden/embargoed quantities, custody rule and OUTPUTS_SEEN consequence per W5; the gate fails closed if the firewall artifact is missing",
+      "mandatory_fail_closed": true,
+      "state": "MISSING",
+      "satisfied_by": null,
+      "availability": "PARTIAL_PRECURSORS_ONLY",
+      "alternatives": [
+        {
+          "id": "S1A-FW-firewall",
+          "artifact": "owner-frozen S1a data firewall",
+          "expected_paths": [
+            "docs/experiments/custody/s1a_data_firewall_frozen.json"
+          ],
+          "found_paths": [],
+          "sha256": null,
+          "state": "MISSING",
+          "failures": [],
+          "required": [
+            "id == \"s1a_data_firewall\"",
+            "status == \"FROZEN\"",
+            "decided_by == \"owner\"",
+            "decided_utc is an ISO 8601 date",
+            "w5_basis = {path, sha256} matching the file on disk (under docs/validation/hall_transport_v2_prereg/) (the W5 pre-registration document whose held-out / registration classes the firewall implements)",
+            "data_custodian is a non-empty, non-TBD string (owner-designated; never a physics-track modeller (W5 custody_and_blinding.roles))",
+            "h1_hall_discharge_in_s1a == \"FORBIDDEN\" (no H-1 anode discharge in S1a: W5 classes no Hall-on reading as S1a calibration/registration; the first Hall-on reading is S1b under N4)",
+            "allowed_classes[].id covers CALIBRATION, NOISE, DRIFT, REPEATABILITY, REINSTALLATION, CHANNEL_PERFORMANCE, QUALITATIVE_RGA, FACILITY_BACKGROUND",
+            "every allowed_classes[] item: id is a non-empty, non-TBD string; definition is a non-empty, non-TBD string; release_rule is a non-empty, non-TBD string (who may receive it (S1a calibration data may go to every track; registration inputs only via the custodian after LOCK-H1))",
+            "at least one allowed_classes[] item: id == \"QUALITATIVE_RGA\"; no_dose_or_lifetime_claim is true (A3 decisions.near_cathode_rga: qualitative S1a RGA data cannot support an exposure-dose or lifetime claim)",
+            "forbidden_or_embargoed[].id covers VO-ID, VO-T, VO-IGNEXT, VO-OSC, VO-SPECIES, VO-IEDF, VO-DIV, VO-TENE, HW0-PBUS-HALL-ON, HW0-RARCH, HW0-KNEE, H1-ANY-HALL-OPERATING-POINT",
+            "every forbidden_or_embargoed[] item: id is a non-empty, non-TBD string; quantity is a non-empty, non-TBD string; treatment in [\"FORBIDDEN_IN_S1A\", \"EMBARGOED_CUSTODY_ONLY\"]; consequence_if_exposed is a non-empty, non-TBD string (per W5 leak_rule / publication_rule.automatic_flag: OUTPUTS_SEEN for every affected condition)",
+            "registration_inputs[].id covers REG-GEOM, REG-BZ, REG-FEED (the W5 registration inputs S1a measures)",
+            "every registration_inputs[] item: id is a non-empty, non-TBD string; release_condition is a non-empty, non-TBD string (W5 K1/K2: released to the physics track by the custodian only after LOCK-H1)",
+            "custody_rule is a non-empty, non-TBD string (raw S1a data held by the custodian; sha256-frozen; what may leave custody and to whom)",
+            "outputs_seen_rule is a non-empty, non-TBD string (the W5 OUTPUTS_SEEN consequence applied to any exposure of a forbidden / embargoed quantity)",
+            "repository_rule is a non-empty, non-TBD string (S1a records committed to the repository (readable by the physics track) carry only allowed classes)",
+            "breach_response is a non-empty, non-TBD string (what the custodian and owner do on a breach (record in the release log, owner disposition))",
+            "release_log is a non-empty, non-TBD string (location of the custodian's release / disclosure log (W5 VP-14))"
+          ],
+          "produced_by": "W5 validation pre-registration (fo_hall_validation_prereg_draft) with the data custodian; owner designates the custodian and freezes. The firewall pins the W5 document whose classes it implements; a later W5 change breaks the pin and the gate fails closed until the firewall is re-frozen"
+        }
+      ],
+      "precursors_found": [
+        {
+          "path": "docs/validation/hall_transport_v2_prereg/hall_transport_v2_prereg_DRAFT.json",
+          "what": "W5 held-out validation pre-registration draft (DRAFT): observables VO-*, registration_inputs REG-*, custody_and_blinding (roles, K1..K6, publication_rule, leak_rule)",
+          "sha256": "24de36ed89b4455783d4f38becdcb97effbbd37dc28f93d90f54d3c8798a68d2"
+        }
+      ],
+      "precursors_absent": [
+        {
+          "path": "docs/experiments/capability_demo/capability_demo_prep_v1.json",
+          "what": "W4 capability-demonstration preparation (DRAFT): s1a_path.leak_rule (CD records contain calibration data only)"
+        }
+      ]
+    }
+  ],
+  "relation": {
+    "N4": "N4 (fo_s1_readiness_gate) decides whether S1 (S1a no-plasma calibration + S1b Hall-on re-mount qualification per lane 25 s1_plan) may be scheduled after LOCK-1; it stays S1_NOT_READY 0/8 and is not modified. S1a here is the engineering path the owner opened in A3: it may begin before LOCK-1, never takes a Hall-on H-1 reading, is never score-bearing, and never satisfies an N4 condition by itself. Its records can later become N4 evidence only through the N4 artifacts (e.g. the S1-C4 capability-demonstration record from S1a calibration measurements, accepted by the owner under the frozen S1-C5 plan).",
+    "W4_capability_demonstration": "W4 (fo_capability_demo_prep) prepares CD-01..CD-07 and the record format for the N4 S1-C4 measured-capability artifact. S1A_READY is the point from which those demonstrations may be executed on actual hardware as non-score-bearing engineering qualification; their results become the S1-C4 record only when the owner accepts them against a frozen S1-C5 calibration plan (N4).",
+    "W5": "S1a produces the first H-1 data (registration inputs). The firewall keeps them in custody until LOCK-H1 and forbids every held-out output in S1a."
+  },
+  "milestones": {
+    "supports": [
+      "A"
+    ],
+    "A": "Schedule enabler only: starting engineering qualification early shortens the path to S1 -> LOCK-2 -> the controlled HW-0 / HW-RF / HW-ECR experiment in which the conditions of a conditional selection are demonstrated. The gate selects, ranks or eliminates nothing.",
+    "to_next": "Milestone B needs N4 S1_READY, S1 executed, LOCK-2, Phase 1-3 data, the W5 pre-registration frozen and scored and an admitted Hall transport closure (credible set empty today, gate 3 FAIL). Milestone C additionally needs mass, power, thermal, life, startup, cathode and mission closure integrated."
+  }
+}
