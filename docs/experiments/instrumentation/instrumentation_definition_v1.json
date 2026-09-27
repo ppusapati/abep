@@ -1,0 +1,2080 @@
+{
+ "schema": "abep_instrumentation_definition_v1",
+ "id": "instrumentation_definition_v1",
+ "follow_on": "fo_instrumentation_definition",
+ "trigger": "T_PIVOT_INSTRUMENTATION_DEFINITION",
+ "owner_disposition": {
+  "id": "od_hardware_pivot",
+  "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+  "workstream": "W4_instrumentation",
+  "statement": "thrust stand, bus-power metering, I_d, flow, pressure, temperature, B(z), stability, species/divergence diagnostics"
+ },
+ "status": "DRAFT_PENDING_OWNER",
+ "base_commit": "510e464fb8e128e4cf3325572a4d36ad33a4899d",
+ "generated_by": "docs/experiments/instrumentation/build_instrumentation_definition.py",
+ "companion_document": "docs/experiments/instrumentation/INSTRUMENTATION_DEFINITION.md",
+ "not_locked": "Nothing here is pre-registered, locked or decided. Thresholds not in the RFP are PROPOSED. No score-bearing reading before LOCK-1 and LOCK-2 (lane 25 Sec. 10). Instrument choices are principles, not product selections; no instrument accuracy is claimed.",
+ "compliance": [
+  "no Hall transport closure, screening candidate or withdrawn 0-D number is used; no retuning",
+  "no architecture is named preferred and none is eliminated; this document defines measurements only",
+  "P5 calibration nuisance (registration, coil shape, divergence reading, facility interpretation) is never an axis or a design variable here",
+  "the feed state is an IF-A5 input identical across arms; Hall-closure uncertainty does not reach intake, compressor, gas chambers or valves",
+  "every number carries unit, evidence class and source (computed by this script or pinned), else TBD with what it requires",
+  "the compressor bus draw and the W1 feed test points are never filled"
+ ],
+ "inputs": [
+  {
+   "path": "abep_sim/constants.py",
+   "lane": "repository (RFP record, physical constants)",
+   "sha256": "dd1c564324c139471bb361d27ef0f75b0f84de1878d100d4313aed12677f33d7"
+  },
+  {
+   "path": "docs/architecture_comparison/experiment_package/experiment_package_v1.json",
+   "lane": "fo_experiment_package",
+   "sha256": "9278dfffe43a37a2ea71c3215ce4a7eba022fa72e007ffa24f229371e1407e84"
+  },
+  {
+   "path": "docs/architecture_comparison/experiment_protocol/protocol_draft.json",
+   "lane": "lane_06_experiment_protocol",
+   "sha256": "287dd7ecd57087e46f2f3d786bfb2d64b01ac4fe29a29de21ef98b04c5ac96e3"
+  },
+  {
+   "path": "docs/architecture_comparison/minimum_decisive_experiment/MINIMUM_DECISIVE_EXPERIMENT_DRAFT.md",
+   "lane": "lane_25_min_decisive_experiment",
+   "sha256": "eadc0dacdf3bfd9260f8f588267445729237fe85a62b51a8d0b85c0817c40af2"
+  },
+  {
+   "path": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json",
+   "lane": "lane_25_min_decisive_experiment",
+   "sha256": "54b7b00a60134f2d92f2eb5c9fb49f18d23623a566e04a4b7d70325a0e332509"
+  },
+  {
+   "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
+   "lane": "od_hardware_pivot (owner)",
+   "sha256": "5a5adb8116eecee418992977c239f198a88835c739f357f13a8bddd51778c2ac"
+  }
+ ],
+ "cross_references_planned": [
+  {
+   "workstream": "W1 feed-state closure",
+   "follow_on": "fo_feed_state_closure",
+   "planned_path": "docs/architecture_comparison/feed_state_closure/",
+   "uses": "registered test points {mdot_s, P_feed, T_feed, x_s} and their tolerances -> INS-05..INS-07 ranges and I-FLOW-CONSERVATIVE"
+  },
+  {
+   "workstream": "W2 LOCK-1",
+   "follow_on": "fo_lock1_decision_brief",
+   "planned_path": "docs/architecture_comparison/lock1/",
+   "uses": "D-01 shares, D-06 configuration, D-07 delta, traceable calibration class, the PROPOSED thresholds of this document"
+  },
+  {
+   "workstream": "W3 hardware definition",
+   "follow_on": "fo_hardware_definition",
+   "planned_path": "TBD by fo_hardware_definition",
+   "uses": "H-1 thrust range, mass on stand per configuration, exit area, coil currents, source frequencies and powers"
+  },
+  {
+   "workstream": "W5 validation pre-registration",
+   "follow_on": "fo_hall_validation_prereg_draft",
+   "planned_path": "TBD by fo_hall_validation_prereg_draft",
+   "uses": "which VO-* are held-out evidence and their acceptance tolerances -> the TBD required uncertainties of INS-09, INS-11..INS-16"
+  }
+ ],
+ "milestones": {
+  "supports": [
+   "A"
+  ],
+  "A": {
+   "delivers": "the instrument set, required uncertainties and calibration procedures that make the lane-25 R_arch classes, the sustainment classes and the absolute T_measured / P_bus gates measurable; a traceability matrix from every instrument to what it decides",
+   "needs_next": [
+    "owner decisions on the PROPOSED thresholds (I-*) at LOCK-1 together with D-01..D-15",
+    "W1 registered test points and W3 hardware ranges to close the TBD ranges",
+    "S1a calibrations and S1b re-mount series: D0 decides from measured values whether the targets are met (LOCK-2)"
+   ]
+  },
+  "B": {
+   "delivers": "held-out validation observables (VO-*) are instrumented with the P5 gaps closed (B(z) at coil currents, I_d traces, per-point divergence, gauge location and calibration)",
+   "needs_next": [
+    "W5 pre-registration of the VO-* and their tolerances before any data",
+    "an admitted Hall transport closure (credible set empty; gate 3 FAIL)",
+    "O/O2 chemistry and an atomic-O-bearing feed (the bottled surrogate has none)"
+   ]
+  },
+  "C": {
+   "delivers": "measured load-plane power per consumer and temperatures at the tested points",
+   "needs_next": [
+    "flight-representative PPU / generator chains, mass, thermal, life, startup, cathode and mission closure integrated; this document alone does not support C"
+   ]
+  }
+ },
+ "requirement_basis": {
+  "note": "Relative per-reading and per-installation targets are lane 25's (model-derived from its PROPOSED T-DELTA, T-ALPHA-FW, T-BUDGET-SHARES, T-N-MIN/MAX, K); the n actually used is fixed at LOCK-2 by readiness_n() from measured S1 values. RFP values are hard limits (abep_sim/constants.py RFP).",
+  "rfp": {
+   "thrust_min": {
+    "value": 12.0,
+    "unit": "mN",
+    "evidence_class": "assumed",
+    "source": "RFP Part III Para 2 via abep_sim/constants.py RFPConstraints.thrust_min_mN (requirement, not a measurement)",
+    "status": "RFP"
+   },
+   "thrust_capability": {
+    "value": 25.0,
+    "unit": "mN",
+    "evidence_class": "assumed",
+    "source": "RFP Part III Para 2 via abep_sim/constants.py RFPConstraints.thrust_max_mN; the owner disposition calls it the registered 25 mN capability condition",
+    "status": "RFP"
+   },
+   "power_max": {
+    "value": 1500.0,
+    "unit": "W",
+    "evidence_class": "assumed",
+    "source": "RFP Part III Para 2 via abep_sim/constants.py RFPConstraints.power_max_W (P_bus < 1.5 kW)",
+    "status": "RFP"
+   }
+  },
+  "lane25_by_n": {
+   "4": {
+    "u_T_max": {
+     "value": 0.00498361,
+     "unit": "relative (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_T_max (lane 25, minexp_numbers.py)"
+    },
+    "u_P_max": {
+     "value": 0.00498361,
+     "unit": "relative (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_P_max (lane 25, minexp_numbers.py)"
+    },
+    "u_inst_max": {
+     "value": 0.00249181,
+     "unit": "ln-ratio (1 sigma, per installation)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_inst_max (lane 25, minexp_numbers.py)"
+    },
+    "sigma_lnR_max": {
+     "value": 0.00787979,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.sigma_lnR_max (lane 25, minexp_numbers.py)"
+    },
+    "k_primary": {
+     "value": 3.17267,
+     "unit": "-",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.k_primary (lane 25, minexp_numbers.py)"
+    },
+    "G4_share": {
+     "value": 0.00352395,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.group_share_max.G4 (lane 25, minexp_numbers.py)"
+    }
+   },
+   "6": {
+    "u_T_max": {
+     "value": 0.00626956,
+     "unit": "relative (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.u_T_max (lane 25, minexp_numbers.py)"
+    },
+    "u_P_max": {
+     "value": 0.00626956,
+     "unit": "relative (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.u_P_max (lane 25, minexp_numbers.py)"
+    },
+    "u_inst_max": {
+     "value": 0.00255954,
+     "unit": "ln-ratio (1 sigma, per installation)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.u_inst_max (lane 25, minexp_numbers.py)"
+    },
+    "sigma_lnR_max": {
+     "value": 0.00809397,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.sigma_lnR_max (lane 25, minexp_numbers.py)"
+    },
+    "k_primary": {
+     "value": 3.08872,
+     "unit": "-",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.k_primary (lane 25, minexp_numbers.py)"
+    },
+    "G4_share": {
+     "value": 0.00361973,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.6.group_share_max.G4 (lane 25, minexp_numbers.py)"
+    }
+   },
+   "8": {
+    "u_T_max": {
+     "value": 0.00732191,
+     "unit": "relative (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.u_T_max (lane 25, minexp_numbers.py)"
+    },
+    "u_P_max": {
+     "value": 0.00732191,
+     "unit": "relative (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.u_P_max (lane 25, minexp_numbers.py)"
+    },
+    "u_inst_max": {
+     "value": 0.00258869,
+     "unit": "ln-ratio (1 sigma, per installation)",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.u_inst_max (lane 25, minexp_numbers.py)"
+    },
+    "sigma_lnR_max": {
+     "value": 0.00818615,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.sigma_lnR_max (lane 25, minexp_numbers.py)"
+    },
+    "k_primary": {
+     "value": 3.05394,
+     "unit": "-",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.k_primary (lane 25, minexp_numbers.py)"
+    },
+    "G4_share": {
+     "value": 0.00366096,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.8.group_share_max.G4 (lane 25, minexp_numbers.py)"
+    }
+   }
+  },
+  "lane25_u_src_max_by_f_src": {
+   "0.1": {
+    "value": 0.0352395,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.1 (lane 25, minexp_numbers.py)"
+   },
+   "0.2": {
+    "value": 0.0176197,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.2 (lane 25, minexp_numbers.py)"
+   },
+   "0.3": {
+    "value": 0.0117465,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.3 (lane 25, minexp_numbers.py)"
+   },
+   "0.4": {
+    "value": 0.00880987,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.4 (lane 25, minexp_numbers.py)"
+   }
+  },
+  "lane25_delta": {
+   "value": 0.05,
+   "unit": "ln-ratio",
+   "evidence_class": "assumed",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: thresholds T-DELTA (PROPOSED, lane 25)",
+   "status": "PROPOSED"
+  },
+  "lane25_share_type_A_in_campaign": {
+   "value": 0.4,
+   "unit": "fraction of sigma_max^2",
+   "evidence_class": "model-derived",
+   "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.share_by_evaluation.type_A_in_campaign (lane 25, minexp_numbers.py)"
+  }
+ },
+ "proposed_thresholds": [
+  {
+   "id": "I-ALPHA-ABS",
+   "name": "one-sided error rate of the absolute gates (T_measured >= 12 mN, 25 mN capability, P_bus < 1.5 kW)",
+   "value": 0.05,
+   "unit": "-",
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "source": "this lane's proposal (same alpha as lane 25 T-ALPHA-SCREEN); not in the RFP",
+   "rationale": "a gate is claimed PASS only when the one-sided bound clears the RFP limit"
+  },
+  {
+   "id": "I-U-ABS-T",
+   "name": "absolute (calibration-traceable) relative 1-sigma uncertainty of a sustained thrust reading used for the absolute gate",
+   "value": 0.01,
+   "unit": "relative (1 sigma)",
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "source": "this lane's proposal; placed inside the 0.6-2 % range REF-SNYDER2017 reports for direct thrust measurement (a literature statement about uncertainty, not a specification of any stand)",
+   "rationale": "with I-ALPHA-ABS the 12 mN gate then passes from a measured 12.2 mN (derived.absolute_thrust_gate)"
+  },
+  {
+   "id": "I-U-ABS-P",
+   "name": "absolute relative 1-sigma uncertainty of the P_bus sum used for the 1.5 kW gate",
+   "value": 0.01,
+   "unit": "relative (1 sigma)",
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "source": "this lane's proposal; no reference value used",
+   "rationale": "the gate passes below a measured 1476 W (derived.absolute_power_gate); the ledger efficiencies and the reconstructed compressor draw are outside this number and are carried as conditioning inputs (lane 25 Sec. 6.7)"
+  },
+  {
+   "id": "I-U-ID-FLOOR",
+   "name": "I_d offset plus noise floor (1 sigma, within the extinction window) as a fraction of I_d,ref",
+   "value": 0.01,
+   "unit": "fraction of I_d,ref",
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "source": "this lane's proposal: a factor 5 below the smallest THR-EXTINCTION fraction (ext_mean_frac 0.05, lane 06, itself PROPOSED from P5-N2 rule O1)",
+   "rationale": "keeps the extinction classification an electrical decision, not a noise decision"
+  },
+  {
+   "id": "I-FLOW-CONSERVATIVE",
+   "name": "absolute-gate feed rule: the delivered anode flow must not exceed the registered W1 test-point flow with one-sided confidence",
+   "value": 0.05,
+   "unit": "one-sided alpha",
+   "evidence_class": "assumed",
+   "status": "PROPOSED",
+   "source": "this lane's proposal; not in the RFP",
+   "rationale": "thrust demonstrated on more flow than the registered feed state would overstate capability on the actual delivered feed; the rule makes flow uncertainty conservative"
+  }
+ ],
+ "derived": {
+  "k_one_sided": {
+   "value": 1.64485,
+   "unit": "-",
+   "evidence_class": "model-derived",
+   "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: k_one_sided(I-ALPHA-ABS = 0.05)"
+  },
+  "repeatability_absolute_by_n": {
+   "4": {
+    "sigma_T_at_12mN": {
+     "value": 59.8034,
+     "unit": "uN (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: abs_sigma(lane-25 u_T_max[n=4], RFP thrust_min)"
+    },
+    "sigma_T_at_25mN": {
+     "value": 124.59,
+     "unit": "uN (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: abs_sigma(lane-25 u_T_max[n=4], RFP thrust_max)"
+    },
+    "sigma_Pbus_at_1500W": {
+     "value": 7.47542,
+     "unit": "W (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: abs_sigma(lane-25 u_P_max[n=4], RFP power_max)"
+    }
+   },
+   "6": {
+    "sigma_T_at_12mN": {
+     "value": 75.2348,
+     "unit": "uN (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: abs_sigma(lane-25 u_T_max[n=6], RFP thrust_min)"
+    },
+    "sigma_T_at_25mN": {
+     "value": 156.739,
+     "unit": "uN (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: abs_sigma(lane-25 u_T_max[n=6], RFP thrust_max)"
+    },
+    "sigma_Pbus_at_1500W": {
+     "value": 9.40435,
+     "unit": "W (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: abs_sigma(lane-25 u_P_max[n=6], RFP power_max)"
+    }
+   },
+   "8": {
+    "sigma_T_at_12mN": {
+     "value": 87.863,
+     "unit": "uN (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: abs_sigma(lane-25 u_T_max[n=8], RFP thrust_min)"
+    },
+    "sigma_T_at_25mN": {
+     "value": 183.048,
+     "unit": "uN (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: abs_sigma(lane-25 u_T_max[n=8], RFP thrust_max)"
+    },
+    "sigma_Pbus_at_1500W": {
+     "value": 10.9829,
+     "unit": "W (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: abs_sigma(lane-25 u_P_max[n=8], RFP power_max)"
+    }
+   }
+  },
+  "channel_sum_check": {
+   "one_dominant": {
+    "value": 0.00479349,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: channel_sum_u([1000.0, 20.0, 15.0, 5.0] W hypothetical, all channels at lane-25 u_P_max[n=4])",
+    "bound": 0.00498361
+   },
+   "balanced": {
+    "value": 0.00272964,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: channel_sum_u([400.0, 300.0, 200.0, 100.0] W hypothetical, all channels at lane-25 u_P_max[n=4])",
+    "bound": 0.00498361
+   }
+  },
+  "consumer_scale_max_by_w_c": {
+   "0.01": {
+    "value": 0.352395,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: consumer_scale_max(lane-25 G4 share[n=4], w_c = 0.01) (planning grid, one consumer carrying the whole share)"
+   },
+   "0.02": {
+    "value": 0.176197,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: consumer_scale_max(lane-25 G4 share[n=4], w_c = 0.02) (planning grid, one consumer carrying the whole share)"
+   },
+   "0.05": {
+    "value": 0.0704789,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: consumer_scale_max(lane-25 G4 share[n=4], w_c = 0.05) (planning grid, one consumer carrying the whole share)"
+   },
+   "0.1": {
+    "value": 0.0352395,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: consumer_scale_max(lane-25 G4 share[n=4], w_c = 0.1) (planning grid, one consumer carrying the whole share)"
+   },
+   "0.2": {
+    "value": 0.0176197,
+    "unit": "relative (1 sigma)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: consumer_scale_max(lane-25 G4 share[n=4], w_c = 0.2) (planning grid, one consumer carrying the whole share)"
+   }
+  },
+  "absolute_thrust_gate": {
+   "0.005": {
+    "pass_min_12mN": {
+     "value": 12.0995,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_min, u = 0.005 (planning grid), k_one_sided)"
+    },
+    "fail_max_12mN": {
+     "value": 11.9021,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_min, u = 0.005, k_one_sided)"
+    },
+    "pass_min_25mN": {
+     "value": 25.2073,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_max, u = 0.005, k_one_sided)"
+    },
+    "fail_max_25mN": {
+     "value": 24.7961,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_max, u = 0.005, k_one_sided)"
+    }
+   },
+   "0.01": {
+    "pass_min_12mN": {
+     "value": 12.2007,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_min, u = 0.01 (planning grid), k_one_sided)"
+    },
+    "fail_max_12mN": {
+     "value": 11.8058,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_min, u = 0.01, k_one_sided)"
+    },
+    "pass_min_25mN": {
+     "value": 25.4181,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_max, u = 0.01, k_one_sided)"
+    },
+    "fail_max_25mN": {
+     "value": 24.5954,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_max, u = 0.01, k_one_sided)"
+    }
+   },
+   "0.015": {
+    "pass_min_12mN": {
+     "value": 12.3036,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_min, u = 0.015 (planning grid), k_one_sided)"
+    },
+    "fail_max_12mN": {
+     "value": 11.7111,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_min, u = 0.015, k_one_sided)"
+    },
+    "pass_min_25mN": {
+     "value": 25.6324,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_max, u = 0.015, k_one_sided)"
+    },
+    "fail_max_25mN": {
+     "value": 24.398,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_max, u = 0.015, k_one_sided)"
+    }
+   },
+   "0.02": {
+    "pass_min_12mN": {
+     "value": 12.4082,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_min, u = 0.02 (planning grid), k_one_sided)"
+    },
+    "fail_max_12mN": {
+     "value": 11.6178,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_min, u = 0.02, k_one_sided)"
+    },
+    "pass_min_25mN": {
+     "value": 25.8504,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_max, u = 0.02, k_one_sided)"
+    },
+    "fail_max_25mN": {
+     "value": 24.2038,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_max, u = 0.02, k_one_sided)"
+    }
+   },
+   "0.03": {
+    "pass_min_12mN": {
+     "value": 12.6229,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_min, u = 0.03 (planning grid), k_one_sided)"
+    },
+    "fail_max_12mN": {
+     "value": 11.4357,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_min, u = 0.03, k_one_sided)"
+    },
+    "pass_min_25mN": {
+     "value": 26.2977,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_max, u = 0.03, k_one_sided)"
+    },
+    "fail_max_25mN": {
+     "value": 23.8244,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_max, u = 0.03, k_one_sided)"
+    }
+   },
+   "0.05": {
+    "pass_min_12mN": {
+     "value": 13.0754,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_min, u = 0.05 (planning grid), k_one_sided)"
+    },
+    "fail_max_12mN": {
+     "value": 11.0881,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_min, u = 0.05, k_one_sided)"
+    },
+    "pass_min_25mN": {
+     "value": 27.2403,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_max, u = 0.05, k_one_sided)"
+    },
+    "fail_max_25mN": {
+     "value": 23.1002,
+     "unit": "mN",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: lower_gate(RFP thrust_max, u = 0.05, k_one_sided)"
+    }
+   }
+  },
+  "absolute_power_gate": {
+   "0.005": {
+    "pass_max_W": {
+     "value": 1487.76,
+     "unit": "W",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: upper_gate(RFP power_max, u = 0.005, k_one_sided)"
+    },
+    "fail_min_W": {
+     "value": 1512.44,
+     "unit": "W",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: upper_gate(RFP power_max, u = 0.005, k_one_sided)"
+    }
+   },
+   "0.01": {
+    "pass_max_W": {
+     "value": 1475.73,
+     "unit": "W",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: upper_gate(RFP power_max, u = 0.01, k_one_sided)"
+    },
+    "fail_min_W": {
+     "value": 1525.09,
+     "unit": "W",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: upper_gate(RFP power_max, u = 0.01, k_one_sided)"
+    }
+   },
+   "0.015": {
+    "pass_max_W": {
+     "value": 1463.88,
+     "unit": "W",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: upper_gate(RFP power_max, u = 0.015, k_one_sided)"
+    },
+    "fail_min_W": {
+     "value": 1537.95,
+     "unit": "W",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: upper_gate(RFP power_max, u = 0.015, k_one_sided)"
+    }
+   },
+   "0.02": {
+    "pass_max_W": {
+     "value": 1452.23,
+     "unit": "W",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: upper_gate(RFP power_max, u = 0.02, k_one_sided)"
+    },
+    "fail_min_W": {
+     "value": 1551.02,
+     "unit": "W",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: upper_gate(RFP power_max, u = 0.02, k_one_sided)"
+    }
+   },
+   "0.03": {
+    "pass_max_W": {
+     "value": 1429.46,
+     "unit": "W",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: upper_gate(RFP power_max, u = 0.03, k_one_sided)"
+    },
+    "fail_min_W": {
+     "value": 1577.86,
+     "unit": "W",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: upper_gate(RFP power_max, u = 0.03, k_one_sided)"
+    }
+   },
+   "0.05": {
+    "pass_max_W": {
+     "value": 1386.01,
+     "unit": "W",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: upper_gate(RFP power_max, u = 0.05, k_one_sided)"
+    },
+    "fail_min_W": {
+     "value": 1634.42,
+     "unit": "W",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: upper_gate(RFP power_max, u = 0.05, k_one_sided)"
+    }
+   }
+  },
+  "mfc_relative_u_by_setpoint_fraction": {
+   "0.1": {
+    "value": 0.1,
+    "unit": "relative (1 sigma treated)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mfc_relative_u(0.01 FS (REF-SNYDER2017 'typically 1% full scale'; treated as 1 sigma - verify the certificate's coverage), setpoint fraction 0.1)"
+   },
+   "0.2": {
+    "value": 0.05,
+    "unit": "relative (1 sigma treated)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mfc_relative_u(0.01 FS (REF-SNYDER2017 'typically 1% full scale'; treated as 1 sigma - verify the certificate's coverage), setpoint fraction 0.2)"
+   },
+   "0.5": {
+    "value": 0.02,
+    "unit": "relative (1 sigma treated)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mfc_relative_u(0.01 FS (REF-SNYDER2017 'typically 1% full scale'; treated as 1 sigma - verify the certificate's coverage), setpoint fraction 0.5)"
+   },
+   "1.0": {
+    "value": 0.01,
+    "unit": "relative (1 sigma treated)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mfc_relative_u(0.01 FS (REF-SNYDER2017 'typically 1% full scale'; treated as 1 sigma - verify the certificate's coverage), setpoint fraction 1.0)"
+   }
+  },
+  "mfc_orientation_zero_shift_relative": {
+   "0.1": {
+    "value": 0.04,
+    "unit": "relative (bound)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mfc_relative_u(0.004 FS orientation zero shift, REF-SNYDER2017, setpoint fraction 0.1)"
+   },
+   "0.2": {
+    "value": 0.02,
+    "unit": "relative (bound)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mfc_relative_u(0.004 FS orientation zero shift, REF-SNYDER2017, setpoint fraction 0.2)"
+   },
+   "0.5": {
+    "value": 0.008,
+    "unit": "relative (bound)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mfc_relative_u(0.004 FS orientation zero shift, REF-SNYDER2017, setpoint fraction 0.5)"
+   },
+   "1.0": {
+    "value": 0.004,
+    "unit": "relative (bound)",
+    "evidence_class": "model-derived",
+    "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mfc_relative_u(0.004 FS orientation zero shift, REF-SNYDER2017, setpoint fraction 1.0)"
+   }
+  },
+  "mixture_mass_fraction_u": {
+   "w=0.1": {
+    "u=0.005": {
+     "value": 0.000636396,
+     "unit": "mass fraction (1 sigma, absolute)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mass_fraction_u(w = 0.1 (planning grid, hypothetical), u_N2 = u_O2 = 0.005)"
+    },
+    "u=0.01": {
+     "value": 0.00127279,
+     "unit": "mass fraction (1 sigma, absolute)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mass_fraction_u(w = 0.1 (planning grid, hypothetical), u_N2 = u_O2 = 0.01)"
+    },
+    "u=0.02": {
+     "value": 0.00254558,
+     "unit": "mass fraction (1 sigma, absolute)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mass_fraction_u(w = 0.1 (planning grid, hypothetical), u_N2 = u_O2 = 0.02)"
+    }
+   },
+   "w=0.2": {
+    "u=0.005": {
+     "value": 0.00113137,
+     "unit": "mass fraction (1 sigma, absolute)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mass_fraction_u(w = 0.2 (planning grid, hypothetical), u_N2 = u_O2 = 0.005)"
+    },
+    "u=0.01": {
+     "value": 0.00226274,
+     "unit": "mass fraction (1 sigma, absolute)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mass_fraction_u(w = 0.2 (planning grid, hypothetical), u_N2 = u_O2 = 0.01)"
+    },
+    "u=0.02": {
+     "value": 0.00452548,
+     "unit": "mass fraction (1 sigma, absolute)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mass_fraction_u(w = 0.2 (planning grid, hypothetical), u_N2 = u_O2 = 0.02)"
+    }
+   },
+   "w=0.3": {
+    "u=0.005": {
+     "value": 0.00148492,
+     "unit": "mass fraction (1 sigma, absolute)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mass_fraction_u(w = 0.3 (planning grid, hypothetical), u_N2 = u_O2 = 0.005)"
+    },
+    "u=0.01": {
+     "value": 0.00296985,
+     "unit": "mass fraction (1 sigma, absolute)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mass_fraction_u(w = 0.3 (planning grid, hypothetical), u_N2 = u_O2 = 0.01)"
+    },
+    "u=0.02": {
+     "value": 0.0059397,
+     "unit": "mass fraction (1 sigma, absolute)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: mass_fraction_u(w = 0.3 (planning grid, hypothetical), u_N2 = u_O2 = 0.02)"
+    }
+   }
+  },
+  "background_one_way_mass_flux": {
+   "N2": {
+    "1.0e-05 Torr": {
+     "value": 0.0178203,
+     "unit": "mg s^-1 per 100 cm^2 of exit area",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: one_way_mass_flux(p_b = 1.0e-05 Torr (lane-25 planning scenarios from REF-DANKANICH2017 Sec. V, SPT-100/Xe specific), m_N2 (abep_sim/constants.py), T = 300 K (assumed wall-temperature gas), k_B) x 1e6 mg/kg x 1e-2 m^2; stationary-Maxwellian upper-scale estimate, not an ingestion model"
+    },
+    "1.3e-05 Torr": {
+     "value": 0.0231664,
+     "unit": "mg s^-1 per 100 cm^2 of exit area",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: one_way_mass_flux(p_b = 1.3e-05 Torr (lane-25 planning scenarios from REF-DANKANICH2017 Sec. V, SPT-100/Xe specific), m_N2 (abep_sim/constants.py), T = 300 K (assumed wall-temperature gas), k_B) x 1e6 mg/kg x 1e-2 m^2; stationary-Maxwellian upper-scale estimate, not an ingestion model"
+    },
+    "5.0e-05 Torr": {
+     "value": 0.0891014,
+     "unit": "mg s^-1 per 100 cm^2 of exit area",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: one_way_mass_flux(p_b = 5.0e-05 Torr (lane-25 planning scenarios from REF-DANKANICH2017 Sec. V, SPT-100/Xe specific), m_N2 (abep_sim/constants.py), T = 300 K (assumed wall-temperature gas), k_B) x 1e6 mg/kg x 1e-2 m^2; stationary-Maxwellian upper-scale estimate, not an ingestion model"
+    }
+   },
+   "O2": {
+    "1.0e-05 Torr": {
+     "value": 0.0190507,
+     "unit": "mg s^-1 per 100 cm^2 of exit area",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: one_way_mass_flux(p_b = 1.0e-05 Torr (lane-25 planning scenarios from REF-DANKANICH2017 Sec. V, SPT-100/Xe specific), m_O2 (abep_sim/constants.py), T = 300 K (assumed wall-temperature gas), k_B) x 1e6 mg/kg x 1e-2 m^2; stationary-Maxwellian upper-scale estimate, not an ingestion model"
+    },
+    "1.3e-05 Torr": {
+     "value": 0.0247659,
+     "unit": "mg s^-1 per 100 cm^2 of exit area",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: one_way_mass_flux(p_b = 1.3e-05 Torr (lane-25 planning scenarios from REF-DANKANICH2017 Sec. V, SPT-100/Xe specific), m_O2 (abep_sim/constants.py), T = 300 K (assumed wall-temperature gas), k_B) x 1e6 mg/kg x 1e-2 m^2; stationary-Maxwellian upper-scale estimate, not an ingestion model"
+    },
+    "5.0e-05 Torr": {
+     "value": 0.0952534,
+     "unit": "mg s^-1 per 100 cm^2 of exit area",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: one_way_mass_flux(p_b = 5.0e-05 Torr (lane-25 planning scenarios from REF-DANKANICH2017 Sec. V, SPT-100/Xe specific), m_O2 (abep_sim/constants.py), T = 300 K (assumed wall-temperature gas), k_B) x 1e6 mg/kg x 1e-2 m^2; stationary-Maxwellian upper-scale estimate, not an ingestion model"
+    }
+   }
+  },
+  "stop_rule_sensitivity_n4": {
+   "x1.0": {
+    "sigma_lnR": {
+     "value": 0.00787979,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: stop_sensitivity(lane-25 sigma_lnR_max[n=4], k_primary[n=4], T-DELTA, factor = 1.0, type_A_in_campaign share)"
+    },
+    "h": {
+     "value": 0.025,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: stop_sensitivity(lane-25 sigma_lnR_max[n=4], k_primary[n=4], T-DELTA, factor = 1.0, type_A_in_campaign share)"
+    },
+    "R_stop_below": {
+     "value": 0.97531,
+     "unit": "ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: stop_sensitivity(lane-25 sigma_lnR_max[n=4], k_primary[n=4], T-DELTA, factor = 1.0, type_A_in_campaign share)"
+    },
+    "equivalent_reachable": "yes",
+    "unresolved_impossible": "boundary"
+   },
+   "x1.5": {
+    "sigma_lnR": {
+     "value": 0.00965073,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: stop_sensitivity(lane-25 sigma_lnR_max[n=4], k_primary[n=4], T-DELTA, factor = 1.5, type_A_in_campaign share)"
+    },
+    "h": {
+     "value": 0.0306186,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: stop_sensitivity(lane-25 sigma_lnR_max[n=4], k_primary[n=4], T-DELTA, factor = 1.5, type_A_in_campaign share)"
+    },
+    "R_stop_below": {
+     "value": 0.969845,
+     "unit": "ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: stop_sensitivity(lane-25 sigma_lnR_max[n=4], k_primary[n=4], T-DELTA, factor = 1.5, type_A_in_campaign share)"
+    },
+    "equivalent_reachable": "yes",
+    "unresolved_impossible": "no"
+   },
+   "x2.0": {
+    "sigma_lnR": {
+     "value": 0.0116876,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: stop_sensitivity(lane-25 sigma_lnR_max[n=4], k_primary[n=4], T-DELTA, factor = 2.0, type_A_in_campaign share)"
+    },
+    "h": {
+     "value": 0.037081,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: stop_sensitivity(lane-25 sigma_lnR_max[n=4], k_primary[n=4], T-DELTA, factor = 2.0, type_A_in_campaign share)"
+    },
+    "R_stop_below": {
+     "value": 0.963598,
+     "unit": "ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: stop_sensitivity(lane-25 sigma_lnR_max[n=4], k_primary[n=4], T-DELTA, factor = 2.0, type_A_in_campaign share)"
+    },
+    "equivalent_reachable": "yes",
+    "unresolved_impossible": "no"
+   },
+   "x3.0": {
+    "sigma_lnR": {
+     "value": 0.0161488,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: stop_sensitivity(lane-25 sigma_lnR_max[n=4], k_primary[n=4], T-DELTA, factor = 3.0, type_A_in_campaign share)"
+    },
+    "h": {
+     "value": 0.0512348,
+     "unit": "ln-ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: stop_sensitivity(lane-25 sigma_lnR_max[n=4], k_primary[n=4], T-DELTA, factor = 3.0, type_A_in_campaign share)"
+    },
+    "R_stop_below": {
+     "value": 0.950056,
+     "unit": "ratio",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: stop_sensitivity(lane-25 sigma_lnR_max[n=4], k_primary[n=4], T-DELTA, factor = 3.0, type_A_in_campaign share)"
+    },
+    "equivalent_reachable": "no",
+    "unresolved_impossible": "no"
+   }
+  }
+ },
+ "decision_quantities": [
+  {
+   "id": "DQ-RARCH",
+   "name": "R_arch = (T/P_bus)_{rf_hall|ecr_hall} / (T/P_bus)_{hall_only}, paired, same point",
+   "phase": "Phase 2",
+   "stages": [
+    "S1",
+    "S2",
+    "S4",
+    "S5",
+    "S6"
+   ],
+   "classes": "lane 25 size classes + sign-form stop",
+   "requirement_source": "lane 25 plan_by_n (u_T, u_P, u_inst, u_src, G4)"
+  },
+  {
+   "id": "DQ-TABS",
+   "name": "T_measured: sustained thrust >= 12 mN on the actual delivered feed (W1 test points), and the registered 25 mN capability condition",
+   "phase": "Phase 3",
+   "stages": [
+    "S1a",
+    "Phase 3 runs"
+   ],
+   "classes": "PASS / FAIL / UNRESOLVED (PROPOSED one-sided rule, I-ALPHA-ABS)",
+   "requirement_source": "RFP limits + I-U-ABS-T (PROPOSED)"
+  },
+  {
+   "id": "DQ-PBUS",
+   "name": "P_bus < 1.5 kW on bus_power_boundary_v1 at the same reading as DQ-TABS",
+   "phase": "Phase 3",
+   "stages": [
+    "S1a",
+    "Phase 3 runs"
+   ],
+   "classes": "PASS / FAIL / UNRESOLVED; lab subset (PARTIAL_BOUNDARY) vs v1 (compressor reconstructed from the ICD)",
+   "requirement_source": "RFP limit + I-U-ABS-P (PROPOSED)"
+  },
+  {
+   "id": "DQ-SUST",
+   "name": "sustainment classes per condition (SUSTAINED / NOT_SUSTAINED / SUSTAINMENT_MIXED; ENABLES / DISABLES / NEITHER_SUSTAINED)",
+   "phase": "Phase 1-2",
+   "stages": [
+    "S2",
+    "S4",
+    "S5"
+   ],
+   "classes": "lane 25 Sec. 9 table; THR-EXTINCTION (lane 06) as the operational extinction definition",
+   "requirement_source": "THR-EXTINCTION fractions + I-U-ID-FLOOR (PROPOSED)"
+  },
+  {
+   "id": "DQ-KNEE",
+   "name": "Hall-only sustainment knee on N2 (mdot_knee, flow down and up)",
+   "phase": "Phase 1",
+   "stages": [
+    "S2"
+   ],
+   "classes": "T-OP2-FALLBACK (lane 25)",
+   "requirement_source": "MFC resolution vs knee-scan step (TBD - requires the W1 flow levels)"
+  }
+ ],
+ "validation_observables": [
+  {
+   "id": "VO-ID",
+   "name": "discharge current I_d",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json: workstreams.W5_validation_prereg"
+  },
+  {
+   "id": "VO-T",
+   "name": "thrust T",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json: workstreams.W5_validation_prereg"
+  },
+  {
+   "id": "VO-BZ",
+   "name": "B(z) at actual coil currents",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json: workstreams.W5_validation_prereg"
+  },
+  {
+   "id": "VO-FEED",
+   "name": "feed state (mdot_s, P_feed, T_feed, x_s)",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json: workstreams.W5_validation_prereg"
+  },
+  {
+   "id": "VO-SPECIES",
+   "name": "species fractions",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json: workstreams.W5_validation_prereg"
+  },
+  {
+   "id": "VO-IEDF",
+   "name": "ion energy",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json: workstreams.W5_validation_prereg"
+  },
+  {
+   "id": "VO-DIV",
+   "name": "divergence",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json: workstreams.W5_validation_prereg"
+  },
+  {
+   "id": "VO-TENE",
+   "name": "T_e / n_e (if feasible)",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json: workstreams.W5_validation_prereg"
+  },
+  {
+   "id": "VO-OSC",
+   "name": "oscillations",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json: workstreams.W5_validation_prereg"
+  },
+  {
+   "id": "VO-IGNEXT",
+   "name": "ignition / extinction limits",
+   "source": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json: workstreams.W5_validation_prereg"
+  }
+ ],
+ "roles": {
+  "D": "DECISIVE (enters the decision quantity directly)",
+  "C": "CONDITION (certifies the common condition / admissibility of the reading)",
+  "S": "SUPPORTING (explains or corrects; never enters the class)",
+  "V": "VALIDATION OBSERVABLE (if W5 pre-registers it)"
+ },
+ "instruments": [
+  {
+   "id": "INS-01",
+   "name": "thrust stand (inverted-pendulum or torsional, null-type preferred)",
+   "lane25_measurements": [
+    "M1"
+   ],
+   "quantity": "thrust T",
+   "principle": "displacement or null-force pendulum with end-to-end in-situ calibration under vacuum (REF-POLK2017); inverted pendulum: compact and sensitive but inclination- and thermally sensitive, needs active leveling; torsional: response independent of thruster mass, needs a larger chamber (REF-POLK2017). Because the HW-RF / HW-ECR modules change the mass on the stand between arms, a mass-independent response (torsional) or a mandatory in-situ re-calibration after every configuration change is required (this lane's reading of REF-POLK2017; stand choice is W3/owner). Example of a null-type inverted pendulum: REF-XU2009",
+   "references": [
+    "REF-POLK2017",
+    "REF-XU2009",
+    "REF-SNYDER2017"
+   ],
+   "required_uncertainty": {
+    "per_reading_repeatability": {
+     "n4": {
+      "value": 0.00498361,
+      "unit": "relative (1 sigma, per reading)",
+      "evidence_class": "model-derived",
+      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_T_max (lane 25, minexp_numbers.py)"
+     },
+     "absolute_at_12mN_n4": {
+      "value": 59.8034,
+      "unit": "uN (1 sigma, per reading)",
+      "evidence_class": "model-derived",
+      "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: abs_sigma(lane-25 u_T_max[n=4], RFP thrust_min)"
+     },
+     "absolute_at_25mN_n4": {
+      "value": 124.59,
+      "unit": "uN (1 sigma, per reading)",
+      "evidence_class": "model-derived",
+      "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: abs_sigma(lane-25 u_T_max[n=4], RFP thrust_max)"
+     }
+    },
+    "installation_reproducibility": {
+     "n4": {
+      "value": 0.00249181,
+      "unit": "ln-ratio (1 sigma, per installation)",
+      "evidence_class": "model-derived",
+      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_inst_max (lane 25, minexp_numbers.py)"
+     },
+     "note": "shared with INS-02 through ln(T/P_bus); S1b re-mount series (K = 6) measures it"
+    },
+    "absolute_for_gate": {
+     "value": 0.01,
+     "unit": "relative (1 sigma)",
+     "evidence_class": "assumed",
+     "source": "PROPOSED threshold I-U-ABS-T",
+     "status": "PROPOSED"
+    },
+    "range": {
+     "value": "TBD",
+     "tbd_requires": "H-1 thrust range and mass on stand incl. the RF/ECR modules (W3 hardware definition, planned path TBD by fo_hardware_definition); the calibration span must cover the expected thrust range (REF-POLK2017), from the knee-scan extinction end to >= 25 mN",
+     "blocked_by": "fo_hardware_definition"
+    }
+   },
+   "calibration": [
+    "S1a: >= 10 in-situ calibrations with known forces spanning the expected range before and >= 10 after each operating sequence (REF-POLK2017; lane 06 thrust_cal_before/after_min, PROPOSED)",
+    "zero with thruster power and flow off before and after every point visit (REF-POLK2017; lane 25 Sec. 7)",
+    "thermal shrouds / active cooling of critical stand components, low-conductivity thruster mount, thermocouples on the stand (INS-17) (REF-POLK2017)",
+    "active inclination control with an inclinometer for an inverted pendulum (REF-POLK2017)",
+    "tares: propellant lines (solid metal tubing), power cables, RF coax / waveguide crossing the stand characterised per configuration; magnetic tare across the Hall and ECR coil-current settings with the discharge off (REF-POLK2017; lane 06 applies the principle to pre-ionizer feed lines)",
+    "force standard traceability class: TBD - requires owner (package TBD 'traceable calibration class')"
+   ],
+   "serves": {
+    "DQ-RARCH": "D",
+    "DQ-TABS": "D",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "S",
+    "DQ-KNEE": "S"
+   },
+   "validation_observables": [
+    "VO-T"
+   ],
+   "feasibility": {
+    "status": "AT_RISK",
+    "why": "lane 25 needs 0.50 % per-reading repeatability (n = 4) and 0.25 % re-mount reproducibility of ln(T/P_bus); REF-SNYDER2017 reports 0.6-2 % uncertainties for direct thrust measurement (absolute, not repeatability, so not directly comparable). At 12 mN the n = 4 target is about 60 uN (1 sigma). Achievability TBD - requires S1b; if D0 fails the owner widens delta, raises n, or adopts OPTION-DIVERTER (removes G5)."
+   },
+   "notes": [
+    "sustained >= 12 mN (DQ-TABS) needs a long dwell: zero drift over the dwell is bounded only by the pre- and post-dwell zeros; the dwell length and its drift allowance are TBD - requires owner (hold time) and S1 thermal time constants"
+   ]
+  },
+  {
+   "id": "INS-02",
+   "name": "bus-power metering: one DC channel per bus_power_boundary_v1 component present in the lab",
+   "lane25_measurements": [
+    "M2",
+    "M14"
+   ],
+   "quantity": "load-plane DC power per component (V, I simultaneously sampled) and DC input of every lab generator / supply",
+   "principle": "4-wire voltage sense with calibrated shunt or zero-flux current transducer per channel, simultaneous sampling, same channels and positions in every arm (lane 25 M2; lane 06 bus_power_boundary components). Decisive P_bus on the contract basis: load-plane power / pre-registered ledger efficiency (abep_sim/arch_boundary.py bus_power_ledger); lane-06 DC-input metering kept as measured efficiency evidence (package reconciliation D-10)",
+   "references": [
+    "REF-GUM2008"
+   ],
+   "required_uncertainty": {
+    "per_channel_repeatability": {
+     "n4": {
+      "value": 0.00498361,
+      "unit": "relative (1 sigma, per reading)",
+      "evidence_class": "model-derived",
+      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.u_P_max (lane 25, minexp_numbers.py)"
+     },
+     "why": "if every channel meets u_P,max the sum does too (derived.channel_sum_check)"
+    },
+    "absolute_at_1500W_n4": {
+     "value": 7.47542,
+     "unit": "W (1 sigma, per reading)",
+     "evidence_class": "model-derived",
+     "source": "docs/experiments/instrumentation/build_instrumentation_definition.py: abs_sigma(lane-25 u_P_max[n=4], RFP power_max)"
+    },
+    "common_consumer_scale": {
+     "G4_share_n4": {
+      "value": 0.00352395,
+      "unit": "ln-ratio",
+      "evidence_class": "model-derived",
+      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.plan_by_n.4.group_share_max.G4 (lane 25, minexp_numbers.py)"
+     },
+     "u_c_max_by_w_c": "derived.consumer_scale_max_by_w_c (w_c needs the LOCK-1 allocation)"
+    },
+    "absolute_for_gate": {
+     "value": 0.01,
+     "unit": "relative (1 sigma)",
+     "evidence_class": "assumed",
+     "source": "PROPOSED threshold I-U-ABS-P",
+     "status": "PROPOSED"
+    }
+   },
+   "calibration": [
+    "S1a: channel calibration against a traceable DC standard (class TBD - requires owner); shunt / transducer temperature coefficient characterised over the S1 thermal range",
+    "DUMMY_LOAD_PICKUP control (lane 06, adopted by the package reconciliation) in S1a: generators into matched dummy loads with the Hall off, all channels recorded, to bound RF/microwave pickup on DC channels",
+    "cathode-to-ground and anode-to-ground potentials recorded every reading (M14)"
+   ],
+   "serves": {
+    "DQ-RARCH": "D",
+    "DQ-TABS": "C",
+    "DQ-PBUS": "D",
+    "DQ-SUST": "S",
+    "DQ-KNEE": "S"
+   },
+   "validation_observables": [
+    "VO-ID"
+   ],
+   "feasibility": {
+    "status": "TBD",
+    "why": "achievability of 0.50 % per channel is TBD - requires calibration certificates and S1 data; the v1 P_bus sum needs the compressor draw reconstructed from the upstream ICD (ABSENT_IN_LAB; lane 06 laboratory_subset); until it exists the power gate is only a PARTIAL_BOUNDARY result (necessary, not sufficient)"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-03",
+   "name": "net RF / microwave power at the source load plane",
+   "lane25_measurements": [
+    "M3"
+   ],
+   "quantity": "rf_source: net RF power at the coil/antenna feed terminals; ecr_source: net microwave power at the coupling-structure input",
+   "principle": "directional coupler with forward and reflected power sensors at the load plane, or upstream with the matching-network / isolator / cable loss characterised in S1a (evidence class 'reconstructed'); lab generator DC input metered on INS-02 as efficiency evidence only",
+   "references": [],
+   "required_uncertainty": {
+    "source_scale_max": {
+     "0.1": {
+      "value": 0.0352395,
+      "unit": "relative (1 sigma)",
+      "evidence_class": "model-derived",
+      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.1 (lane 25, minexp_numbers.py)"
+     },
+     "0.2": {
+      "value": 0.0176197,
+      "unit": "relative (1 sigma)",
+      "evidence_class": "model-derived",
+      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.2 (lane 25, minexp_numbers.py)"
+     },
+     "0.3": {
+      "value": 0.0117465,
+      "unit": "relative (1 sigma)",
+      "evidence_class": "model-derived",
+      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.3 (lane 25, minexp_numbers.py)"
+     },
+     "0.4": {
+      "value": 0.00880987,
+      "unit": "relative (1 sigma)",
+      "evidence_class": "model-derived",
+      "source": "docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json: derived_numbers.u_source_scale_max_by_f_src.0.4 (lane 25, minexp_numbers.py)"
+     }
+    },
+    "note": "u_src <= G3 share / f_src; f_src = P_src,bus / P_bus,X needs the LOCK-1 source allocation"
+   },
+   "calibration": [
+    "S1a: sensor and coupler calibration (certificates); load-plane loss characterisation into matched dummy loads at each P_lo / P_hi and frequency (method TBD - requires the RF / microwave design, W3)",
+    "reflected-power check at every reading; mismatch uncertainty carried as Type B"
+   ],
+   "serves": {
+    "DQ-RARCH": "D",
+    "DQ-TABS": "C",
+    "DQ-PBUS": "D",
+    "DQ-SUST": "-",
+    "DQ-KNEE": "-"
+   },
+   "validation_observables": [],
+   "feasibility": {
+    "status": "AT_RISK",
+    "why": "the G3 target falls from 3.5 % to 0.9 % as f_src rises from 0.1 to 0.4 (lane 25); no open reference located by this lane for load-plane net RF / microwave power at that level; achievability TBD - requires sensor certificates and the S1a characterisation"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-04",
+   "name": "discharge voltage and current, DC and time-resolved",
+   "lane25_measurements": [
+    "M4"
+   ],
+   "quantity": "V_d, I_d (mean), I_d(t) waveform, keeper voltage, coil currents",
+   "principle": "calibrated DC meters (INS-02 channel) plus a wide-band current probe on the discharge line and a time-synchronised DAQ with anti-alias filtering; the same rate in all arms (lane 06 DIAG-DISCHARGE)",
+   "references": [
+    "REF-CHOUEIRI2001"
+   ],
+   "required_uncertainty": {
+    "mean_I_d": "as INS-02 hall_discharge channel",
+    "noise_floor": {
+     "value": 0.01,
+     "unit": "fraction of I_d,ref",
+     "evidence_class": "assumed",
+     "source": "PROPOSED threshold I-U-ID-FLOOR",
+     "status": "PROPOSED"
+    },
+    "bandwidth": {
+     "value": "TBD",
+     "tbd_requires": "S1 I_d spectrum on HW-0 (lane 25 M4, lane 06 discharge_sampling_rate); REF-CHOUEIRI2001 reviews Hall oscillations over 1 kHz - 60 MHz, so the band to capture is set from the measured spectrum, not assumed"
+    }
+   },
+   "calibration": [
+    "S1a: probe gain and offset against the calibrated DC channel; DAQ timing against a common time base",
+    "archive every trace (lane 25; package: publish what P5 lacked)"
+   ],
+   "serves": {
+    "DQ-RARCH": "C",
+    "DQ-TABS": "C",
+    "DQ-PBUS": "C",
+    "DQ-SUST": "D",
+    "DQ-KNEE": "D"
+   },
+   "validation_observables": [
+    "VO-ID",
+    "VO-OSC",
+    "VO-IGNEXT"
+   ],
+   "feasibility": {
+    "status": "FEASIBLE_IN_PRINCIPLE",
+    "why": "standard electrical measurement; the band is TBD from S1"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-05",
+   "name": "propellant mass flow (anode N2, O2; cathode Xe)",
+   "lane25_measurements": [
+    "M10"
+   ],
+   "quantity": "mdot per species",
+   "principle": "thermal MFCs, one per pure gas (N2, O2) so that each is calibrated on its own gas; the air-surrogate composition follows from the flow ratio (derived.mixture_mass_fraction_u) - avoids a mixture gas correction factor, which REF-SNYDER2017 tabulates only for other gases",
+   "references": [
+    "REF-SNYDER2017"
+   ],
+   "required_uncertainty": {
+    "for_R_arch": "repeatability only: the same MFC at the same setpoint in all arms, so the scale term is common to both sides of the ratio",
+    "for_T_measured": {
+     "rule": "I-FLOW-CONSERVATIVE",
+     "relative_u_at_setpoint": "derived.mfc_relative_u_by_setpoint_fraction (1 % FS device: 10 % at 10 % of FS, 1 % at FS); choose FS so every registered point sits high in the range"
+    },
+    "knee_scan_resolution": {
+     "value": "TBD",
+     "tbd_requires": "W1 test-point flows and the lane-25 knee levels (T-KNEE-LEVELS = 5)",
+     "blocked_by": "fo_feed_state_closure"
+    }
+   },
+   "calibration": [
+    "calibrate each MFC on its own working gas, installed in the final configuration and orientation, at the expected inlet pressure and temperature, across the flow range, traceable, at least every 12 months (REF-SNYDER2017)",
+    "constant-volume (rate-of-rise) or constant-pressure calibrator (REF-SNYDER2017)",
+    "adjust any unavoidable GCF to the sensor operating temperature (REF-SNYDER2017)"
+   ],
+   "serves": {
+    "DQ-RARCH": "C",
+    "DQ-TABS": "C",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "C",
+    "DQ-KNEE": "D"
+   },
+   "validation_observables": [
+    "VO-FEED"
+   ],
+   "feasibility": {
+    "status": "AT_RISK",
+    "why": "REF-SNYDER2017: typical mass-flow uncertainty 1-5 % FS; a low-FS setpoint inflates the relative value; the absolute gate then carries a flow margin (I-FLOW-CONSERVATIVE)"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-06",
+   "name": "feed pressure at the valve outlet (IF-A5 P_feed)",
+   "lane25_measurements": [
+    "M9"
+   ],
+   "quantity": "static pressure at the thruster-side valve outlet / anode-distributor inlet",
+   "principle": "capacitance manometer (force-per-area sensing; gas-type independent in principle - verify on the certificate) at the IF-A5 plane",
+   "references": [],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "W1 registered P_feed tolerance per test point (docs/architecture_comparison/feed_state_closure/ planned) and the W5 comparison tolerance",
+     "blocked_by": "fo_feed_state_closure"
+    }
+   },
+   "calibration": [
+    "S1a: zero at base vacuum; span against a traceable standard; temperature of the head recorded"
+   ],
+   "serves": {
+    "DQ-RARCH": "C",
+    "DQ-TABS": "C",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "S",
+    "DQ-KNEE": "S"
+   },
+   "validation_observables": [
+    "VO-FEED"
+   ],
+   "feasibility": {
+    "status": "TBD",
+    "why": "with fixed hardware P_feed follows mdot and conductance (lane 25 Sec. 4); a mismatch with the registered W1 P_feed limits applicability rather than invalidating the reading"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-07",
+   "name": "feed temperature at the valve outlet (IF-A5 T_feed)",
+   "lane25_measurements": [],
+   "quantity": "gas / line temperature at the IF-A5 plane",
+   "principle": "thermocouple or RTD on the line at the valve outlet (surface temperature; gas temperature inferred)",
+   "references": [],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "W1 registered T_feed tolerance per test point",
+     "blocked_by": "fo_feed_state_closure"
+    }
+   },
+   "calibration": [
+    "S1a: sensor calibration; line heater state recorded (thermal_control channel)"
+   ],
+   "serves": {
+    "DQ-RARCH": "C",
+    "DQ-TABS": "C",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "-",
+    "DQ-KNEE": "-"
+   },
+   "validation_observables": [
+    "VO-FEED"
+   ],
+   "feasibility": {
+    "status": "TBD",
+    "why": "surface-to-gas relation is inferred; tolerance TBD from W1"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-08",
+   "name": "facility background pressure and ingestion scale",
+   "lane25_measurements": [
+    "M9"
+   ],
+   "quantity": "p_b (and wall temperature)",
+   "principle": "hot-cathode ion gauge(s) per REF-DANKANICH2017 Sec. IV.A (near the wall at the exit plane, >= 0.6 chamber radii off axis, >= 1 m from the thruster OD, >= 10 Hz, 3 s averages, no reading within 2 min of a > 10 % flow change); calibrated on the working gas and on the O2/N2 mixture",
+   "references": [
+    "REF-DANKANICH2017"
+   ],
+   "required_uncertainty": {
+    "p_b_max": {
+     "value": "TBD",
+     "tbd_requires": "T-PB-MAX (owner at LOCK-1, facility specification)",
+     "blocked_by": "owner"
+    },
+    "ingestion_scale": "derived.background_one_way_mass_flux x the H-1 exit area (TBD - requires W3) / anode flow (TBD - requires W1); a scale, not a correction: no ingestion model is applied to rescue a class (lane 25 Sec. 8)"
+   },
+   "calibration": [
+    "gauge calibration on each gas and mixture (package REQ-FAC-03); calibration interval per the package",
+    "S5 elevated-p_b check by downstream injection (REF-DANKANICH2017 Sec. IV.B, lane 25)"
+   ],
+   "serves": {
+    "DQ-RARCH": "C",
+    "DQ-TABS": "C",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "C",
+    "DQ-KNEE": "C"
+   },
+   "validation_observables": [
+    "VO-FEED"
+   ],
+   "feasibility": {
+    "status": "TBD",
+    "why": "gas-specific gauge response for O2/N2 mixtures needs calibration; for the absolute gate the p_b sensitivity (S5 slope) is reported with T_measured (PROPOSED rule in the MD)"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-09",
+   "name": "B(z) mapping at actual coil currents",
+   "lane25_measurements": [
+    "M11"
+   ],
+   "quantity": "axial (and radial) magnetic field along the channel centreline and exit region; coil currents",
+   "principle": "Hall-probe gaussmeter on a positioning stage, every configuration (HW-0, HW-RF, HW-ECR; ECR magnet on/off), before and after the campaign, at the operating coil currents; coil currents metered on INS-02 (hall_magnet, ecr_magnet)",
+   "references": [],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "the W5 pre-registered B(z) comparison tolerance (fo_hall_validation_prereg_draft; path TBD by that workstream) and the H-1 design range (W3)",
+     "blocked_by": "fo_hall_validation_prereg_draft"
+    }
+   },
+   "calibration": [
+    "S1a: probe calibration in a reference field; stage position calibration; room-temperature mapping (hot-state effects TBD, lane 25 Sec. 12)"
+   ],
+   "serves": {
+    "DQ-RARCH": "C",
+    "DQ-TABS": "S",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "S",
+    "DQ-KNEE": "S"
+   },
+   "validation_observables": [
+    "VO-BZ"
+   ],
+   "feasibility": {
+    "status": "FEASIBLE_IN_PRINCIPLE",
+    "why": "magnetostatic; the P5 non-identifiability (CLAUDE.md) is the reason it is mandatory with coil currents"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-10",
+   "name": "stability / extinction / ignition detection",
+   "lane25_measurements": [
+    "M4"
+   ],
+   "quantity": "per-dwell extinction flag, restarts, ignition success within timeout",
+   "principle": "applies THR-EXTINCTION (lane 06, same functional form as P5-N2 rule O1: mean I_d < 0.05 I_ref AND >= 90 % of samples < 0.1 I_ref over the window) to INS-04 traces; ignition attempts per the package D-13 module",
+   "references": [],
+   "required_uncertainty": {
+    "floor": "I-U-ID-FLOOR (PROPOSED)",
+    "window": {
+     "value": "TBD",
+     "tbd_requires": "ext_window from the S1 oscillation band (lane 06)"
+    }
+   },
+   "calibration": [
+    "validated on S1 traces with commanded shutdowns (known extinctions) before any score-bearing reading"
+   ],
+   "serves": {
+    "DQ-RARCH": "C",
+    "DQ-TABS": "C",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "D",
+    "DQ-KNEE": "D"
+   },
+   "validation_observables": [
+    "VO-IGNEXT",
+    "VO-OSC"
+   ],
+   "feasibility": {
+    "status": "FEASIBLE_IN_PRINCIPLE",
+    "why": "a logic on INS-04 data; thresholds PROPOSED"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-11",
+   "name": "residual gas analyser (RGA)",
+   "lane25_measurements": [
+    "M13"
+   ],
+   "quantity": "background and feed composition (O2 fraction, contaminants)",
+   "principle": "quadrupole RGA on the chamber (and, if practical, a differentially pumped sample of the feed line)",
+   "references": [],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "a W5 decision on whether feed composition is a validation observable; RGA is qualitative unless calibrated on the mixture"
+    }
+   },
+   "calibration": [
+    "calibrate against known N2/O2 mixtures from the INS-05 flows"
+   ],
+   "serves": {
+    "DQ-RARCH": "S",
+    "DQ-TABS": "S",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "-",
+    "DQ-KNEE": "-"
+   },
+   "validation_observables": [
+    "VO-FEED"
+   ],
+   "feasibility": {
+    "status": "OPTIONAL",
+    "why": "no reference located by this lane; qualitative O2 background check"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-12",
+   "name": "optical emission spectroscopy (OES)",
+   "lane25_measurements": [
+    "M13"
+   ],
+   "quantity": "emitting species in source / interstage / plume",
+   "principle": "spectrometer with fibre view of the source and interstage",
+   "references": [],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "a W5 decision; qualitative only unless a collisional-radiative model is admitted"
+    }
+   },
+   "calibration": [
+    "wavelength and relative intensity calibration"
+   ],
+   "serves": {
+    "DQ-RARCH": "S",
+    "DQ-TABS": "-",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "S",
+    "DQ-KNEE": "S"
+   },
+   "validation_observables": [
+    "VO-SPECIES"
+   ],
+   "feasibility": {
+    "status": "OPTIONAL",
+    "why": "qualitative (lane 25 M13); no quantitative species fraction without a model this project has not admitted"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-13",
+   "name": "ExB probe (ion species / charge-state current fractions)",
+   "lane25_measurements": [
+    "M7"
+   ],
+   "quantity": "N2+, N+, O2+, O+ (and multiply charged) current fractions",
+   "principle": "Wien filter with an accelerating bias for low-energy interstage ions (REF-ROVEY2025 as cited by lane 25)",
+   "references": [
+    "REF-ROVEY2025"
+   ],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "W5 pre-registered species-fraction tolerance; CEX correction uncertainty is dominated by the background neutral density from ion gauges, typically 10-20 % (REF-ROVEY2025 via lane 25)"
+    }
+   },
+   "calibration": [
+    "mass-resolution check on known ions; same analysis code for all arms (lane 06 DIAG-EXB)"
+   ],
+   "serves": {
+    "DQ-RARCH": "S",
+    "DQ-TABS": "-",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "-",
+    "DQ-KNEE": "-"
+   },
+   "validation_observables": [
+    "VO-SPECIES"
+   ],
+   "feasibility": {
+    "status": "AT_RISK",
+    "why": "at low energy the four air ions are not all resolved without an accelerating bias (REF-ROVEY2025 via lane 25)"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-14",
+   "name": "retarding potential analyzer (RPA)",
+   "lane25_measurements": [
+    "M6"
+   ],
+   "quantity": "ion energy distribution (interstage / channel exit in S3, far field in S4)",
+   "principle": "multi-grid RPA, same analyzer and position for all arms",
+   "references": [
+    "REF-LEMMER2025"
+   ],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "W5 pre-registered ion-energy tolerance; error analysis per REF-LEMMER2025 (abstract only read - verify)"
+    }
+   },
+   "calibration": [
+    "grid transparency and potential calibration; collector current zero; time-averaged operation"
+   ],
+   "serves": {
+    "DQ-RARCH": "S",
+    "DQ-TABS": "-",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "-",
+    "DQ-KNEE": "-"
+   },
+   "validation_observables": [
+    "VO-IEDF"
+   ],
+   "feasibility": {
+    "status": "FEASIBLE_IN_PRINCIPLE",
+    "why": "recommended practice exists (REF-LEMMER2025); tolerance TBD"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-15",
+   "name": "Faraday probes: source-exit collector, cold-transport I_del, far-field array",
+   "lane25_measurements": [
+    "M5",
+    "M8"
+   ],
+   "quantity": "I_src, I_del (Hall discharge off), far-field j(theta), beam current, divergence",
+   "principle": "guarded Faraday probes; far field > 4 channel diameters; ion-saturation bias checked; SEE, gap and alignment corrections (REF-BROWN2017 Table A1 via lane 25)",
+   "references": [
+    "REF-BROWN2017"
+   ],
+   "required_uncertainty": {
+    "I_del": "enters the break-even screen (lane 25 S3), not R_arch; u(I_del) never creates a stop candidate",
+    "divergence": {
+     "value": "TBD",
+     "tbd_requires": "W5 pre-registered divergence tolerance; the full practice asks for >= 4 background pressures and 4 distances, the minimum uses fewer and says so (lane 25 M5)"
+    }
+   },
+   "calibration": [
+    "probe area measurement; bias sweep; CEX attenuation bound on the collector path (TBD - requires a cited N2+ on N2 charge-exchange cross section, package REQ-HW-05)"
+   ],
+   "serves": {
+    "DQ-RARCH": "S",
+    "DQ-TABS": "S",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "-",
+    "DQ-KNEE": "-"
+   },
+   "validation_observables": [
+    "VO-DIV"
+   ],
+   "feasibility": {
+    "status": "AT_RISK",
+    "why": "CEX bound on the collector path needs a cited cross section not yet in the repository"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-16",
+   "name": "Langmuir probes (T_e, n_e), where feasible",
+   "lane25_measurements": [],
+   "quantity": "T_e, n_e in the plume / interstage (not inside the Hall channel)",
+   "principle": "single (or double) cylindrical probe; RF compensation in the rf_hall interstage (from memory - verify against REF-LOBBIA2017)",
+   "references": [
+    "REF-LOBBIA2017"
+   ],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "a W5 decision on whether T_e/n_e is pre-registered; REF-LOBBIA2017 not read (metadata only)"
+    }
+   },
+   "calibration": [
+    "probe area; sweep calibration; RF-compensation check against a dummy-load pickup test"
+   ],
+   "serves": {
+    "DQ-RARCH": "-",
+    "DQ-TABS": "-",
+    "DQ-PBUS": "-",
+    "DQ-SUST": "S",
+    "DQ-KNEE": "S"
+   },
+   "validation_observables": [
+    "VO-TENE"
+   ],
+   "feasibility": {
+    "status": "AT_RISK",
+    "why": "in-channel probing perturbs the discharge (from memory - verify); RF and microwave environments complicate interpretation; the owner lists T_e/n_e 'if feasible'"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-17",
+   "name": "temperatures (stand, thruster, magnet circuit, sources, generators, cathode mount)",
+   "lane25_measurements": [
+    "M12"
+   ],
+   "quantity": "temperatures and settling",
+   "principle": "thermocouples at fixed positions in every arm",
+   "references": [
+    "REF-POLK2017"
+   ],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "T-SETTLE from S1 thermal time constants (lane 25)"
+    }
+   },
+   "calibration": [
+    "thermocouple calibration; stand thermocouples feed the thrust-drift model (REF-POLK2017)"
+   ],
+   "serves": {
+    "DQ-RARCH": "C",
+    "DQ-TABS": "C",
+    "DQ-PBUS": "S",
+    "DQ-SUST": "-",
+    "DQ-KNEE": "-"
+   },
+   "validation_observables": [],
+   "feasibility": {
+    "status": "FEASIBLE_IN_PRINCIPLE",
+    "why": "standard"
+   },
+   "notes": []
+  },
+  {
+   "id": "INS-18",
+   "name": "common time base and DAQ",
+   "lane25_measurements": [
+    "M4",
+    "M14"
+   ],
+   "quantity": "time stamps of every channel",
+   "principle": "one time base for power, thrust, I_d(t), pressure and flow channels",
+   "references": [],
+   "required_uncertainty": {
+    "value": {
+     "value": "TBD",
+     "tbd_requires": "skew allowance from the S1 oscillation band"
+    }
+   },
+   "calibration": [
+    "timing check with a common trigger in S1a"
+   ],
+   "serves": {
+    "DQ-RARCH": "C",
+    "DQ-TABS": "C",
+    "DQ-PBUS": "C",
+    "DQ-SUST": "C",
+    "DQ-KNEE": "C"
+   },
+   "validation_observables": [
+    "VO-OSC"
+   ],
+   "feasibility": {
+    "status": "FEASIBLE_IN_PRINCIPLE",
+    "why": "standard"
+   },
+   "notes": []
+  }
+ ],
+ "bus_power_channels": [
+  {
+   "component": "hall_discharge",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "lab_status": "MEASURED",
+   "lab_measurement": "INS-02 at the anode-cathode terminals (V_d x I_d); lab supply DC input as efficiency evidence",
+   "v1_basis": "load / ledger efficiency (LOCK-1)"
+  },
+  {
+   "component": "hall_magnet",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "lab_status": "MEASURED",
+   "lab_measurement": "INS-02 at the coil terminals; 0 W explicit for a permanent-magnet circuit",
+   "v1_basis": "load / ledger efficiency"
+  },
+  {
+   "component": "cathode_keeper",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "lab_status": "MEASURED",
+   "lab_measurement": "INS-02 at the keeper terminals",
+   "v1_basis": "load / ledger efficiency"
+  },
+  {
+   "component": "cathode_heater",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "lab_status": "MEASURED",
+   "lab_measurement": "INS-02 at the heater terminals in the evaluated mode; 0 W explicit when off",
+   "v1_basis": "load / ledger efficiency"
+  },
+  {
+   "component": "flow_control",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "lab_status": "LEDGER_INPUT",
+   "lab_measurement": "lab MFC electronics are not flight actuators: metered as evidence, booked as a LOCK-1 ledger input with evidence class (lane 25 Sec. 5)",
+   "v1_basis": "ledger input, same in all arms"
+  },
+  {
+   "component": "compressor",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "lab_status": "ABSENT_IN_LAB",
+   "lab_measurement": "no compressor in the lab feed (lane 06 laboratory_subset); never zero, never a placeholder",
+   "v1_basis": "RECONSTRUCTED from the upstream ICD at each point's flow and composition; UNAVAILABLE until supplied (package D-11)"
+  },
+  {
+   "component": "thermal_control",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "lab_status": "MEASURED_OR_LEDGER",
+   "lab_measurement": "INS-02 on any propulsion heater present in the lab; otherwise a ledger input per arm with evidence class",
+   "v1_basis": "load / ledger efficiency"
+  },
+  {
+   "component": "housekeeping",
+   "architectures": [
+    "hall_only",
+    "rf_hall",
+    "ecr_hall"
+   ],
+   "lab_status": "LEDGER_INPUT",
+   "lab_measurement": "lab controller is not the flight controller",
+   "v1_basis": "ledger input, same in all arms"
+  },
+  {
+   "component": "rf_source",
+   "architectures": [
+    "rf_hall"
+   ],
+   "lab_status": "MEASURED",
+   "lab_measurement": "INS-03 net RF power at the load plane; generator DC input on INS-02 as efficiency evidence (R_lab only)",
+   "v1_basis": "load / ledger efficiency (rf_hall only)"
+  },
+  {
+   "component": "ecr_source",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "lab_status": "MEASURED",
+   "lab_measurement": "INS-03 net microwave power at the coupling input; generator DC input on INS-02 as efficiency evidence",
+   "v1_basis": "load / ledger efficiency (ecr_hall only)"
+  },
+  {
+   "component": "ecr_magnet",
+   "architectures": [
+    "ecr_hall"
+   ],
+   "lab_status": "MEASURED",
+   "lab_measurement": "INS-02 at the resonance-coil terminals; 0 W explicit for a permanent magnet",
+   "v1_basis": "load / ledger efficiency (ecr_hall only)"
+  }
+ ],
+ "lane06_component_ids": [
+  "hall_ppu_input",
+  "magnet_supplies",
+  "rf_generator_input",
+  "microwave_source_input",
+  "cathode_heater",
+  "cathode_keeper",
+  "valves_flow_control",
+  "compressor",
+  "thermal_control",
+  "housekeeping"
+ ],
+ "experiment_package_traceability_ids": [
+  "TR-01",
+  "TR-02",
+  "TR-03",
+  "TR-04",
+  "TR-05",
+  "TR-06",
+  "TR-07",
+  "TR-08",
+  "TR-09",
+  "TR-10",
+  "TR-11",
+  "TR-12",
+  "TR-13",
+  "TR-14",
+  "TR-15"
+ ],
+ "references": [
+  {
+   "id": "REF-POLK2017",
+   "citation": "J. E. Polk, A. Pancotti, T. Haag, S. King, M. Walker, J. Blakely, J. Ziemer, 'Recommended Practice for Thrust Measurement in Electric Propulsion Testing', J. Propulsion and Power 33(3):539-555 (2017), doi:10.2514/1.B35564",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7839308/",
+   "access": "full text (PMC) read through the fetch tool on 2026-09-27; statements paraphrased from the tool's extraction (stand types, end-to-end in-situ calibration, >= 10 calibrations, thermal shrouds/active cooling, zero before and after, active inclination control, line/cable tares, magnetic tare); exact wording: verify"
+  },
+  {
+   "id": "REF-SNYDER2017",
+   "citation": "J. S. Snyder, J. Baldwin, J. D. Frieman, M. L. R. Walker, N. S. Hicks, K. A. Polzin, J. T. Singleton, 'Recommended Practice for Flow Control and Measurement in Electric Propulsion Testing', J. Propulsion and Power 33(3) (2017), doi:10.2514/1.B35644",
+   "url": "https://hpepl.ae.gatech.edu/sites/default/files/Journal_Articles/JPP%20V33%20No3%20MayJune2017_MassFlowMeasurement.pdf",
+   "access": "full text (authors' lab PDF) read on 2026-09-27; quoted: 'typical uncertainties associated with mass flow measurement are 1-5% of full scale (FS) ... comparable in magnitude to the 0.6-2% uncertainties observed for direct thrust measurement'; manufacturer accuracy 'typically 1% full scale'; orientation 'can alter the zero point ... by up to 0.4% of full scale'; zero 'approximately 0.12% per degree'; 'Calibration tests should be conducted for each specific gas ... at the inlet pressure and environmental temperature expected'; 'calibrated across the intended flow scale range'; 'traceable to NIST and performed at least every 12 months'; installed 'in the final configuration'. The GCF errors it tabulates (Table 2) are for Ar, He, SF6, C2F6, H2, not for N2/O2"
+  },
+  {
+   "id": "REF-BROWN2017",
+   "citation": "D. L. Brown, M. L. R. Walker, J. Szabo, W. Huang, J. E. Foster, 'Recommended Practice for Use of Faraday Probes in Electric Propulsion Testing', J. Propulsion and Power 33(3):582-613 (2017), doi:10.2514/1.B35696",
+   "access": "as accessed and cited by lane 25 (Table A1, far field > 4 channel diameters); not re-accessed by this lane"
+  },
+  {
+   "id": "REF-DANKANICH2017",
+   "citation": "J. W. Dankanich, M. Walker, M. W. Swiatek, J. T. Yim, 'Recommended Practice for Pressure Measurement and Calculation of Effective Pumping Speed in Electric Propulsion Testing', J. Propulsion and Power 33(3) (2017), doi:10.2514/1.B35478",
+   "access": "as accessed and cited by lane 25 (Secs. II.A.2, IV.A, IV.B, V); not re-accessed by this lane"
+  },
+  {
+   "id": "REF-ROVEY2025",
+   "citation": "J. L. Rovey et al., 'Recommended Practice for Use of ExB Probes in Electric Propulsion Testing', IEPC-2025-483, 39th IEPC, London, 14-19 Sept 2025",
+   "url": "https://januselectricpropulsion.ae.gatech.edu/sites/default/files/2025-10/IEPC-2025-483_Rovey.pdf",
+   "access": "as accessed and cited by lane 25 (Sec. V.A air example: m/q 32, 28, 16, 14 not all resolved at low energy without an accelerating bias; CEX correction dominated by background neutral density from ion gauges); not re-accessed by this lane"
+  },
+  {
+   "id": "REF-LEMMER2025",
+   "citation": "K. M. Lemmer, A. J. Thomas, W. Huang, D. M. Goebel, R. B. Lobbia, 'Recommended Practices for Design and Use of Retarding Potential Analyzers in Electric Propulsion', IEPC-2025-363, 39th IEPC, London, 14-19 Sept 2025, NASA NTRS 20250008889",
+   "url": "https://ntrs.nasa.gov/citations/20250008889",
+   "access": "NTRS record and abstract only (2026-09-27): design, construction, operation, error analysis and data interpretation for EP plumes, Hall thrusters emphasised; body not read (verify before use)"
+  },
+  {
+   "id": "REF-LOBBIA2017",
+   "citation": "R. B. Lobbia, B. E. Beal, 'Recommended Practice for Use of Langmuir Probes in Electric Propulsion Testing', J. Propulsion and Power 33(3):566-581 (2017), doi:10.2514/1.B35531",
+   "access": "metadata only (search result, 2026-09-27); the DTIC copy returned HTTP 403 and was not bypassed; content not read (verify)"
+  },
+  {
+   "id": "REF-XU2009",
+   "citation": "K. G. Xu, M. L. R. Walker, 'High-power, null-type, inverted pendulum thrust stand', Rev. Sci. Instrum. 80(5):055103 (2009)",
+   "url": "https://pubs.aip.org/aip/rsi/article-abstract/80/5/055103/282363",
+   "access": "abstract only (search result, 2026-09-27): null-type inverted pendulum, thrusters up to 250 kg, 1 mN to 5 N range, electromagnetic damping, closed-loop inclination, active cooling; an example of the principle, not a specification for H-1 (verify)"
+  },
+  {
+   "id": "REF-CHOUEIRI2001",
+   "citation": "E. Y. Choueiri, 'Plasma oscillations in Hall thrusters', Physics of Plasmas 8(4):1411-1426 (2001), doi:10.1063/1.1354644",
+   "access": "abstract only (search result, 2026-09-27): oscillations in the 1 kHz - 60 MHz range reviewed band by band; the PDF returned HTTP 503; band-by-band values not read (verify)"
+  },
+  {
+   "id": "REF-GUM2008",
+   "citation": "JCGM 100:2008, 'Evaluation of measurement data - Guide to the expression of uncertainty in measurement'",
+   "url": "https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf",
+   "access": "as accessed and cited by lane 25 (G.4.1 Welch-Satterthwaite, G.4.3 Type B as known); not re-accessed"
+  }
+ ],
+ "open_owner_decisions": [
+  "approve, change or reject I-ALPHA-ABS, I-U-ABS-T, I-U-ABS-P, I-U-ID-FLOOR, I-FLOW-CONSERVATIVE",
+  "thrust-stand principle (torsional vs inverted pendulum, null vs displacement) given the per-arm mass change",
+  "traceable calibration class for force, DC power and RF / microwave power standards",
+  "one MFC per pure gas (proposed) or a mixture-calibrated MFC for the air surrogate",
+  "dwell (hold time) for 'sustained >= 12 mN' and its zero-drift allowance",
+  "whether OES, RGA and Langmuir probes are in the minimum instrument set",
+  "absolute-gate facility rule: report T_measured with the S5 p_b slope and the ingestion scale (proposed) or require a p_b ceiling for Phase 3"
+ ],
+ "tbd_register": [
+  {
+   "what": "thrust range and mass on stand per configuration",
+   "requires": "H-1 and module design",
+   "blocked_by": "fo_hardware_definition"
+  },
+  {
+   "what": "registered feed test points and tolerances",
+   "requires": "W1 closure",
+   "blocked_by": "fo_feed_state_closure"
+  },
+  {
+   "what": "VO-* tolerances (B(z), species, ion energy, divergence, T_e/n_e)",
+   "requires": "W5 pre-registration",
+   "blocked_by": "fo_hall_validation_prereg_draft"
+  },
+  {
+   "what": "I_d band / sampling rate, ext_window, T-SETTLE",
+   "requires": "S1 measurements",
+   "blocked_by": "S1"
+  },
+  {
+   "what": "T-PB-MAX",
+   "requires": "facility specification and owner decision",
+   "blocked_by": "owner"
+  },
+  {
+   "what": "f_src and w_c allocations",
+   "requires": "LOCK-1 bus allocation",
+   "blocked_by": "owner"
+  },
+  {
+   "what": "compressor bus draw on v1",
+   "requires": "upstream ICD",
+   "blocked_by": "lane_33_upstream_icd"
+  },
+  {
+   "what": "CEX attenuation bound for Faraday collectors",
+   "requires": "cited N2+ on N2 CEX cross section",
+   "blocked_by": "literature"
+  }
+ ]
+}
