@@ -15,13 +15,18 @@ What this script does (and nothing else):
   sha256-pinned by W3 as SRC-AOL; the build refuses to change it);
 * builds v2 (ao_lifetime_register_v2.json, AO_LIFETIME_REGISTER_v2.md): v1 content re-verified against the MERGED W3
   hardware definition and W4 instrumentation definition (sha256-pinned read-only inputs): a VERIFIED / CHANGED / ABSENT
-  verdict per v1 draft id, fixes of CHANGED usages, and the control-C5 adoption check of every provision.
+  verdict per v1 draft id, fixes of CHANGED usages, and the control-C5 adoption check of every provision. v2 is a
+  historical record since v3 (byte-identical, sha256-pinned by W4 v1-r2); it is regenerated from its pinned W3/W4
+  input bytes read from git history at commit V2_INPUTS_COMMIT (a full clone is required);
+* builds v3 (ao_lifetime_register_v3.json, AO_LIFETIME_REGISTER_v3.md; current): v2 re-verified against W4
+  instrumentation v1-r2 (re-pinned), with the per-provision W4 adoption status taken from the W4 c5_adoption table and
+  back-traced into the W4 instruments / procedures.
 
-Pure: standard library only; imports nothing from abep_sim or hallthruster_bridge; nothing is wired into archengine;
+Pure: standard library only (git is called read-only for the v2 historical inputs); imports nothing from abep_sim or hallthruster_bridge; nothing is wired into archengine;
 no Hall closure, screening candidate or withdrawn 0-D number is read or used. No life number is derived (control C6).
 
 Usage:  python docs/experiments/lifetime_ao/build_ao_lifetime_register.py [--check]
-        --check regenerates in memory and exits 1 if any committed file (v1 and v2) differs (deterministic build).
+        --check regenerates in memory and exits 1 if any committed file (v1, v2, v3) differs (deterministic build).
 """
 from __future__ import annotations
 
@@ -31,6 +36,7 @@ import json
 import math
 import os
 import re
+import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -1373,23 +1379,61 @@ V2_TO_REACH_NEXT = [
 ]
 
 
-def _load_merged():
-    for rel, pin in MERGED_PINS.items():
-        p = os.path.join(ROOT, rel)
-        if not os.path.exists(p):
-            raise RuntimeError(f"{rel} missing: v2 re-verifies the AO register against the merged W3/W4 files; "
-                               "it cannot be built without them.")
-        sha = _sha256_file(rel)
+# v2 is a historical record since v3 (W4 pins its sha256 in docs/experiments/instrumentation/pinned_inputs.json). Its
+# inputs are the exact pinned bytes at the commit that produced it, read from git history (never from the working
+# tree, whose W4 has since moved to v1-r2). Without that history the build stops; it never substitutes other bytes.
+V2_INPUTS_COMMIT = "53136aa76a970521e4e36ec0a538b4e35942e51f"
+
+
+def _git(args, what):
+    try:
+        r = subprocess.run(["git", "-C", ROOT] + args, capture_output=True, timeout=30)
+    except (OSError, subprocess.SubprocessError) as exc:
+        raise RuntimeError(f"{what}: git unavailable ({exc}); the historical v2 inputs cannot be read.") from exc
+    return r
+
+
+def _read_at_commit(rel, commit):
+    r = _git(["show", f"{commit}:{rel}"], rel)
+    if r.returncode != 0:
+        raise RuntimeError(f"{rel} at {commit} not in git history ({r.stderr.decode(errors='replace').strip()}); "
+                           "v2 is regenerated from its pinned historical inputs only (a full, non-shallow clone "
+                           "is required).")
+    return r.stdout
+
+
+def _isdir_at_commit(rel, commit):
+    r = _git(["cat-file", "-t", f"{commit}:{rel.rstrip('/')}"], rel)
+    if r.returncode != 0:
+        err = r.stderr.decode(errors="replace")
+        if "does not exist" in err or "Not a valid object name" in err or "not a valid" in err.lower():
+            return False
+        raise RuntimeError(f"git cat-file failed for {rel} at {commit}: {err.strip()}")
+    return r.stdout.decode().strip() == "tree"
+
+
+def _load_merged(pins=None, commit=None):
+    """Read the pinned W3/W4 files: from git at `commit` (v2 historical inputs) or the working tree (commit None)."""
+    pins = MERGED_PINS if pins is None else pins
+    data = {}
+    for rel, pin in pins.items():
+        if commit is None:
+            p = os.path.join(ROOT, rel)
+            if not os.path.exists(p):
+                raise RuntimeError(f"{rel} missing: the AO register re-verifies against the merged W3/W4 files; "
+                                   "it cannot be built without them.")
+            with open(p, "rb") as f:
+                raw = f.read()
+        else:
+            raw = _read_at_commit(rel, commit)
+        sha = hashlib.sha256(raw).hexdigest()
         if sha != pin:
             raise RuntimeError(f"{rel} sha256 {sha} != pinned {pin}; W3/W4 changed. Re-verify every reference "
                                "against the new file and re-pin deliberately (new register version).")
-    with open(os.path.join(ROOT, W3_JSON_REL), encoding="utf-8") as f:
-        w3 = json.load(f)
-    with open(os.path.join(ROOT, W4_JSON_REL), encoding="utf-8") as f:
-        w4 = json.load(f)
-    with open(os.path.join(ROOT, W3_MD_REL), encoding="utf-8") as f:
-        w3_md = f.read()
-    return w3, w4, w3_md
+        data[rel] = raw.decode("utf-8")
+    w3 = json.loads(data[W3_JSON_REL])
+    w4 = json.loads(data[W4_JSON_REL])
+    return w3, w4, data[W3_MD_REL]
 
 
 def _replace_strings(o, pairs):
@@ -1500,7 +1544,7 @@ def c5_adoption_check(reg1, w3, w4):
 
 def build_register_v2():
     reg1 = build_register()
-    w3, w4, w3_md = _load_merged()
+    w3, w4, w3_md = _load_merged(MERGED_PINS, V2_INPUTS_COMMIT)
     verdicts = verify_draft_references(reg1["unmerged_draft_references"]["ids"], w3, w4, w3_md)
     vmap = {v["id"]: v for v in verdicts}
     fixes = {(f[0], f[1]): f for f in REFERENCE_FIXES_V2}
@@ -1557,7 +1601,7 @@ def build_register_v2():
             }
             pp = dict(PLANNED_PATHS, **PLANNED_PATHS_V2_UPDATES)
             reg["planned_paths"] = {k2: {"path_or_status": v2, "present_in_base": (
-                v2.endswith("/") and os.path.isdir(os.path.join(ROOT, v2)))} for k2, v2 in pp.items()}
+                v2.endswith("/") and _isdir_at_commit(v2, V2_INPUTS_COMMIT))} for k2, v2 in pp.items()}
     reg["version"] = "v2"
     reg["supersedes"] = {"version": "v1", "path": V1_JSON_REL, "sha256": V1_JSON_SHA256,
                          "md": "docs/experiments/lifetime_ao/AO_LIFETIME_REGISTER.md",
@@ -1594,6 +1638,287 @@ def build_register_v2():
     return reg
 
 
+# =====================================================================================================================
+# v3 (2026-09-27): re-verification against W4 instrumentation v1-r2 (commit df6c970), which adopted the 19 W4 provisions
+# of register v2 (control C5). Material change: the per-provision W4 adoption status goes from NOT_ADOPTED (v2) to the
+# W4 v1-r2 disposition (ADOPTED / ADOPTED_PARTIAL, with the adopting INS / INS-P ids, back-traced into W4). v2 is kept
+# byte-identical because W4 v1-r2 pins its sha256 (docs/experiments/instrumentation/pinned_inputs.json); v1 is kept
+# byte-identical because W3 pins it (SRC-AOL). W3 is unchanged (same bytes as the v2 pin, re-verified). No mechanism,
+# evidence value, derived number, requirement text or threshold changes between v2 and v3.
+# =====================================================================================================================
+OUT_JSON_V3 = os.path.join(HERE, "ao_lifetime_register_v3.json")
+OUT_MD_V3 = os.path.join(HERE, "AO_LIFETIME_REGISTER_v3.md")
+SCHEMA_V3_REL = "docs/experiments/lifetime_ao/ao_lifetime_register_v3.schema.json"
+V2_JSON_REL = "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json"
+V2_JSON_SHA256 = "e922aff24a49c4dbf4b192548c6fe26caf20a20249c2c7b4c6ee7212af9e095b"   # = W4 v1-r2 pin
+W4_PINNED_INPUTS_REL = "docs/experiments/instrumentation/pinned_inputs.json"
+
+MERGED_PINS_V3 = {
+    W3_JSON_REL: "552f4ca0e3c84f8f10f03d103d10b169e360e9c28f2a7a4d44e65c1d1b915d04",   # unchanged since v2
+    W3_MD_REL: "e4ca9592bdfe83e8f3a5a41c44df95594ffe50d2161ec526db29e6eb97c7d212",     # unchanged since v2
+    W4_JSON_REL: "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f",   # W4 v1-r2
+    W4_MD_REL: "f35266c778af134117f56108367c5eefee45ddf6d60ef54b192009abc336b4d5",     # W4 v1-r2
+}
+MERGED_COMMITS_V3 = {"W3": "5024169 (W3 C5 integration; bytes unchanged at af6e494)",
+                     "W4": "df6c970 (W4 instrumentation v1-r2: C5 adoption of AO register v2 and MCQ-W4-01..03)"}
+W4_REVISION_EXPECTED = "v1-r2"
+
+# v3 notes for the W4 verdicts whose v2 note described the pre-v1-r2 W4 (hand-checked against W4 v1-r2 on 2026-09-27;
+# the builder asserts the ids named here exist in W4 v1-r2 and trace the named provision).
+W4_VERDICT_NOTES_V3 = {
+    "INS-04": ("VERIFIED", "INS-04 itself carries no anode-resistance measurement; W4 v1-r2 adopted AOL-RC-02 as the new "
+                           "INS-21 (4-wire, through the W3 HW-ELEC-04 sense lead)",
+               {"INS-21": "AOL-RC-02"}),
+    "INS-11": ("VERIFIED", "INS-11 is the chamber RGA (optionally a feed-line sample); W4 v1-r2 adds the near-C-1 "
+                           "sampling point as the new INS-22 (extends INS-11)",
+               {"INS-22": "AOL-CX-03"}),
+    "INS-17": ("CHANGED", "usage (a) verified: INS-17 is temperatures incl. the cathode mount, but W4 v1-r2 adopted the "
+                          "life-mechanism and C-1 emitter / cathode-tube channels as the new INS-23 (INS-17 unchanged); "
+                          "usage (b) wrong: INS-17 is temperatures; W4 v1-r2 adopted witness metrology as INS-19 (mass) "
+                          "and INS-20 (surface / profile / inspection)",
+               {"INS-23": "AOL-CX-04", "INS-19": "AOL-WC-01", "INS-20": "AOL-WC-01"}),
+}
+
+# v1 -> v3 fixes of CHANGED usages (same as v2 except the AOL-WC-01 W4 row, which now names W4's adopting ids).
+REFERENCE_FIXES_V3 = [
+    REFERENCE_FIXES_V2[0],
+    ("AOL-WC-01", "W4", ["INS-17"], ["INS-19", "INS-20"],
+     "INS-17 is temperatures; W4 v1-r2 adopted witness metrology as INS-19 (mass) and INS-20 (surface / profile)"),
+    REFERENCE_FIXES_V2[2],
+    REFERENCE_FIXES_V2[3],
+]
+
+INTERFACE_NOTE_OVERRIDES_V3 = dict(INTERFACE_NOTE_OVERRIDES_V2)
+INTERFACE_NOTE_OVERRIDES_V3[("AOL-WC-01", "W4")] = ("v1 hint INS-17 replaced (CHANGED); metrology adopted by W4 v1-r2 "
+                                                    "as INS-19 / INS-20 with the non-interference check INS-P-12; "
+                                                    "holder is W3 HW-SVC-06")
+
+PLANNED_PATHS_V3_UPDATES = dict(PLANNED_PATHS_V2_UPDATES, fo_s1_readiness_gate="docs/experiments/s1_readiness/")
+
+V3_HARD_STATEMENT = ("v3 re-verifies every W3 / W4 id the v1 register used against the merged W3 hardware definition "
+                     "and the W4 instrumentation definition v1-r2 (sha256-pinned in merged_inputs): see "
+                     "draft_reference_verification. The C5 adoption status of every provision, by W3 and by W4, is in "
+                     "c5_adoption_check; provisions NOT adopted and partially adopted items are listed there and are "
+                     "open, not waived.")
+
+W4_STATUSES = ("ADOPTED", "ADOPTED_PARTIAL", "NOT_ADOPTED", "MISSING_W4_DISPOSITION")
+
+
+def c5_adoption_check_v3(reg1, w3, w4, v2_c5):
+    """C5 check with the W4 v1-r2 dispositions (W4 c5_adoption rows) replacing v2's text search."""
+    base = c5_adoption_check(reg1, w3, w4)
+    ins = {i["id"]: i for i in w4["instruments"]}
+    procs = {p["id"]: p for p in w4["procedures"]}
+    w4rows = {}
+    for r in w4["c5_adoption"]["rows"]:
+        if not r["provision"].startswith("AOL-"):
+            continue                                   # MCQ-W4-* rows belong to the magnet/coil lane
+        if r["source_file"] != V2_JSON_REL:
+            raise RuntimeError(f"W4 c5_adoption row {r['provision']} reads {r['source_file']}, not {V2_JSON_REL}")
+        w4rows[r["provision"]] = r
+    v2_w4 = {r["id"]: r["w4_status"] for r in v2_c5["rows"]}
+    w4_involved = {r["id"] for r in base["rows"] if r["w4_status"] != "not_a_W4_row"}
+    extra = sorted(set(w4rows) - w4_involved)
+    if extra:
+        raise RuntimeError(f"W4 c5_adoption lists {extra}, which have no W4 row in the register interface table")
+    rows, not_adopted, partial = [], [], []
+    for r in base["rows"]:
+        pid = r["id"]
+        rec = {k: v for k, v in r.items() if k != "w4_status"}
+        if pid not in w4_involved:
+            rec.update(w4_status="not_a_W4_row", w4_adopted_ids=[], w4_back_trace={}, w4_how=None, w4_needs=None)
+        elif pid not in w4rows:
+            rec.update(w4_status="MISSING_W4_DISPOSITION", w4_adopted_ids=[], w4_back_trace={}, w4_how=None,
+                       w4_needs=None)
+        else:
+            wr = w4rows[pid]
+            if wr["status"] not in W4_STATUSES[:3]:
+                raise RuntimeError(f"{pid}: unknown W4 status {wr['status']}")
+            if wr["register_status_before"] != v2_w4[pid]:
+                raise RuntimeError(f"{pid}: W4 says register status before was {wr['register_status_before']}, "
+                                   f"register v2 says {v2_w4[pid]}")
+            back = {}
+            for aid in wr["adopted_ids"]:
+                if aid in ins:
+                    back[aid] = ("traces_to_provisions" if pid in ins[aid].get("traces_to_provisions", [])
+                                 else "none")
+                elif aid in procs:
+                    back[aid] = "procedure_provisions" if pid in procs[aid]["provisions"] else "none"
+                else:
+                    raise RuntimeError(f"{pid}: W4 adopting id {aid} is neither an instrument nor a procedure in W4")
+            if wr["status"] != "NOT_ADOPTED" and not wr["adopted_ids"]:
+                raise RuntimeError(f"{pid}: W4 status {wr['status']} without an adopting id")
+            rec.update(w4_status=wr["status"], w4_adopted_ids=list(wr["adopted_ids"]), w4_back_trace=back,
+                       w4_how=wr["how"], w4_needs=wr["needs"])
+        rows.append(rec)
+        # the other adopter's status is shown next to each open item (e.g. W3 NOT_ADOPTED because the item is W4's)
+        if r["w3_disposition"] in ("NOT_ADOPTED", "MISSING_DISPOSITION"):
+            not_adopted.append({"id": pid, "by": "W3", "status": r["w3_disposition"],
+                                "needed": r["w3_needed"] or "TBD - owner / adopting lane",
+                                "other_adopter_status": f"W4 {rec['w4_status']}"})
+        elif r["w3_disposition"] == "ADOPTED_PARTIAL":
+            partial.append({"id": pid, "by": "W3",
+                            "needed": r["w3_needed"] or ("not stated by W3" + (f" (W3 note: {r['w3_note']})"
+                                                                               if r["w3_note"] else "")),
+                            "other_adopter_status": f"W4 {rec['w4_status']}"})
+        if rec["w4_status"] in ("NOT_ADOPTED", "MISSING_W4_DISPOSITION"):
+            not_adopted.append({"id": pid, "by": "W4", "status": rec["w4_status"],
+                                "needed": "W4 instrumentation revision",
+                                "other_adopter_status": f"W3 {r['w3_disposition']}"})
+        elif rec["w4_status"] == "ADOPTED_PARTIAL":
+            partial.append({"id": pid, "by": "W4", "needed": rec["w4_needs"] or "not stated by W4",
+                            "other_adopter_status": f"W3 {r['w3_disposition']}"})
+    counts = dict(base["counts"])
+    del counts["w4_rows_not_adopted"]
+    counts["w4_by_status"] = {k: sum(1 for r in rows if r["w4_status"] == k) for k in W4_STATUSES}
+    counts["w4_rows"] = sum(1 for r in rows if r["w4_status"] != "not_a_W4_row")
+    counts["w4_back_trace_none"] = sum(1 for r in rows for v in r["w4_back_trace"].values() if v == "none")
+    return {
+        "control": "C5_AO_early",
+        "statement": "Checked against the pinned merged files (merged_inputs). W3: a provision counts as adopted into "
+                     "H-1 when W3 gives it ADOPTED, ADOPTED_PARTIAL or ALIGNED with at least one existing HW "
+                     "requirement id; w3_back_trace says whether that HW requirement names the provision in "
+                     "traces_to, only in its text, or not at all. W4: w4_status is the disposition in the W4 v1-r2 "
+                     "c5_adoption table (MISSING_W4_DISPOSITION if a W4 row has none); every adopting id is checked "
+                     "to exist in W4 and w4_back_trace says whether that W4 instrument (traces_to_provisions) or "
+                     "procedure (provisions) names the provision. partial_open lists what ADOPTED_PARTIAL items still "
+                     "need, as stated by the adopting lane.",
+        "w4_source": {"path": W4_JSON_REL, "revision": w4["revision"], "table": "c5_adoption"},
+        "counts": counts,
+        "rows": rows,
+        "not_adopted": not_adopted,
+        "partial_open": partial,
+    }
+
+
+def _check_w4_pins_v2():
+    with open(os.path.join(ROOT, W4_PINNED_INPUTS_REL), encoding="utf-8") as f:
+        pins = json.load(f)
+    got = pins.get(V2_JSON_REL)
+    if got != V2_JSON_SHA256:
+        raise RuntimeError(f"W4 {W4_PINNED_INPUTS_REL} pins {V2_JSON_REL} as {got}, register v2 is {V2_JSON_SHA256}; "
+                           "W4 and this register disagree about which v2 bytes W4 adopted.")
+    return got
+
+
+def build_register_v3():
+    reg1 = build_register()
+    reg2 = build_register_v2()
+    js2 = render_json(reg2)
+    if hashlib.sha256(js2.encode("utf-8")).hexdigest() != V2_JSON_SHA256:
+        raise RuntimeError("v2 register no longer reproduces its pinned sha256 (pinned by W4 v1-r2); v2 is a "
+                           "historical record and must not change.")
+    w4_pin_of_v2 = _check_w4_pins_v2()
+    w3, w4, w3_md = _load_merged(MERGED_PINS_V3, None)
+    if w4.get("revision") != W4_REVISION_EXPECTED:
+        raise RuntimeError(f"W4 revision {w4.get('revision')} != {W4_REVISION_EXPECTED}")
+    verdicts = verify_draft_references(reg1["unmerged_draft_references"]["ids"], w3, w4, w3_md)
+    ins = {i["id"]: i for i in w4["instruments"]}
+    for v in verdicts:
+        if v["id"] in W4_VERDICT_NOTES_V3:
+            verdict, note, named = W4_VERDICT_NOTES_V3[v["id"]]
+            for nid, prov in named.items():
+                if nid not in ins or prov not in ins[nid].get("traces_to_provisions", []):
+                    raise RuntimeError(f"{v['id']} v3 note names {nid} for {prov}, not confirmed by W4 v1-r2")
+            v["verdict"], v["note"] = verdict, note
+    vmap = {v["id"]: v for v in verdicts}
+    fixes = {(f[0], f[1]): f for f in REFERENCE_FIXES_V3}
+    for f in REFERENCE_FIXES_V3:
+        for i in f[3]:
+            if i.startswith("INS-") and i not in ins:
+                raise RuntimeError(f"reference fix {f[0]}/{f[1]} names {i}, absent from W4 v1-r2")
+    c5 = c5_adoption_check_v3(reg1, w3, w4, reg2["c5_adoption_check"])
+    c5map = {r["id"]: r for r in c5["rows"]}
+
+    rows = []
+    for row in reg1["interface_table"]["rows"]:
+        key = (row["requirement"], row["adopter"])
+        f = fixes.get(key)
+        ids = f[3] if f else row["observed_related_ids"]
+        rel = [{"id": i, "verdict": (vmap[i]["verdict"] if i in vmap else "ADOPTING_ID"),
+                "usage_fixed": bool(f)} for i in ids]
+        c = c5map[row["requirement"]]
+        if row["adopter"] == "W3":
+            status, adopted, needs = c["w3_disposition"], c["w3_requirement_ids"], c["w3_needed"]
+        elif row["adopter"] == "W4":
+            status, adopted, needs = c["w4_status"], c["w4_adopted_ids"], c["w4_needs"]
+        else:
+            status, adopted, needs = "NOT_CHECKED_OUTSIDE_C5_H1_CHECK", [], None
+        note = INTERFACE_NOTE_OVERRIDES_V3.get(key, _replace_strings(row["note"], [("W3 draft ", "W3 "),
+                                                                                   ("W4 draft ", "W4 ")]))
+        rows.append({"requirement": row["requirement"], "adopter": row["adopter"], "target": row["target"],
+                     "related_ids": rel, "action": row["action"], "note": note, "adoption_status": status,
+                     "adopted_ids": adopted, "open_needs": needs})
+
+    partial_w4 = [p for p in c5["partial_open"] if p["by"] == "W4"]
+    na_w4 = [n for n in c5["not_adopted"] if n["by"] == "W4"]
+    to_next = list(V2_TO_REACH_NEXT)
+    w4_line = ("W4 closes its ADOPTED_PARTIAL items (" + "; ".join(f"{p['id']}: {p['needed']}" for p in partial_w4)
+               + ")" if partial_w4 else "none: every W4 row is ADOPTED")
+    if na_w4:
+        w4_line += "; W4 adopts " + ", ".join(n["id"] for n in na_w4)
+    to_next[1] = w4_line
+
+    reg = {}
+    for k, v in reg2.items():
+        if k in ("change_log", "supersedes", "draft_reference_verification", "c5_adoption_check", "interface_table"):
+            continue
+        reg[k] = v
+    reg = json.loads(json.dumps(reg))
+    reg["schema"], reg["schema_file"], reg["version"] = "ao_lifetime_register_v3", SCHEMA_V3_REL, "v3"
+    reg["hard_statements"] = reg["hard_statements"][:-1] + [V3_HARD_STATEMENT]
+    reg["milestones"]["to_reach_next"] = to_next
+    reg["merged_inputs"] = {
+        "statement": "W3 and W4 v1-r2 are merged; v3 reads them read-only and the build refuses other bytes.",
+        "files": [{"path": p, "sha256": s_} for p, s_ in MERGED_PINS_V3.items()],
+        "commits": MERGED_COMMITS_V3,
+        "w3_pins_this_register": {"source_id": "SRC-AOL", "path": V1_JSON_REL, "sha256": V1_JSON_SHA256},
+        "w4_pins_this_register": {"source_id": W4_PINNED_INPUTS_REL, "path": V2_JSON_REL, "sha256": w4_pin_of_v2},
+    }
+    pp = dict(PLANNED_PATHS, **PLANNED_PATHS_V3_UPDATES)
+    reg["planned_paths"] = {k2: {"path_or_status": v2, "present_in_base": (
+        v2.endswith("/") and os.path.isdir(os.path.join(ROOT, v2)))} for k2, v2 in pp.items()}
+    reg["supersedes"] = {"version": "v2", "path": V2_JSON_REL, "sha256": V2_JSON_SHA256,
+                         "md": "docs/experiments/lifetime_ao/AO_LIFETIME_REGISTER_v2.md",
+                         "status": "HISTORICAL_RECORD (kept byte-identical: pinned by W4 v1-r2; reproduced by this "
+                                   f"builder from its pinned inputs at {V2_INPUTS_COMMIT[:7]} in git history)"}
+    reg["history"] = [
+        {"version": "v1", "path": V1_JSON_REL, "sha256": V1_JSON_SHA256, "pinned_by": "W3 SRC-AOL"},
+        {"version": "v2", "path": V2_JSON_REL, "sha256": V2_JSON_SHA256, "pinned_by": W4_PINNED_INPUTS_REL},
+    ]
+    n = {k: sum(1 for r in c5["rows"] if r["w4_status"] == k) for k in W4_STATUSES}
+    reg["change_log"] = reg2["change_log"] + [
+        {"version": "v3", "date": "2026-09-27",
+         "change": "W4 instrumentation v1-r2 (df6c970) merged: W4 re-pinned (merged_inputs); every v1 W4 id "
+                   "re-verified against it (INS-04, INS-11, INS-17 notes updated; INS-17 stays CHANGED, its AOL-WC-01 "
+                   "fix now names INS-19 / INS-20); per-provision W4 status taken from the W4 c5_adoption table with "
+                   f"adopting ids back-traced into W4 ({n['ADOPTED']} ADOPTED, {n['ADOPTED_PARTIAL']} ADOPTED_PARTIAL, "
+                   f"{n['NOT_ADOPTED']} NOT_ADOPTED, {n['MISSING_W4_DISPOSITION']} MISSING, of {c5['counts']['w4_rows']} "
+                   "W4 rows; v2 had all NOT_ADOPTED); partial_open added; fo_s1_readiness_gate path published. W3 "
+                   "unchanged (bytes equal to the v2 pin). v2 kept byte-identical (pinned by W4). Mechanisms, "
+                   "evidence, requirements, thresholds and derived numbers unchanged."},
+    ]
+    reg["interface_table"] = {
+        "control": "C5_AO_early",
+        "note": "Rows as in v1, re-verified against the merged W3 / W4 v1-r2 files (merged_inputs). related_ids carry "
+                "the draft-reference verdict (or ADOPTING_ID for an id introduced by a fix); adoption_status is the "
+                "W3 disposition (W3 rows), the W4 v1-r2 c5_adoption status (W4 rows) or "
+                "NOT_CHECKED_OUTSIDE_C5_H1_CHECK (W2 / W5 rows); adopted_ids are the adopting lane's ids; open_needs "
+                "is what the adopting lane says remains.",
+        "rows": rows,
+    }
+    reg["draft_reference_verification"] = {
+        "statement": "Every id in v1 unmerged_draft_references, checked against the merged W3 and W4 v1-r2 files. "
+                     "VERIFIED: exists with the meaning used; CHANGED: exists but a usage pointed at the wrong item "
+                     "(fixed, see reference_fixes); ABSENT: not in the merged file.",
+        "verdicts": verdicts,
+        "reference_fixes": [{"where": a, "field_or_adopter": b, "v1": c, "fixed": d, "why": e}
+                            for (a, b, c, d, e) in REFERENCE_FIXES_V3],
+    }
+    reg["c5_adoption_check"] = c5
+    return reg
+
+
 # ---------------------------------------------------------------------------------------------------------------------
 # Markdown rendering
 # ---------------------------------------------------------------------------------------------------------------------
@@ -1610,7 +1935,9 @@ def _fmt(x):
 def render_md(reg):
     L = []
     a = L.append
-    v2 = reg.get("version") == "v2"
+    ver = reg.get("version")
+    v2 = ver in ("v2", "v3")     # merged-W3/W4 layout (v2 and v3)
+    v3 = ver == "v3"
     if not v2:
         a("# H-1 lifetime / atomic-oxygen degradation register (fo_ao_lifetime_register) — DRAFT")
         a("")
@@ -1618,6 +1945,21 @@ def render_md(reg):
           "[`ao_lifetime_register_v1.json`](ao_lifetime_register_v1.json) (schema "
           "[`ao_lifetime_register_v1.schema.json`](ao_lifetime_register_v1.schema.json)). Do not edit by hand; run "
           "`python docs/experiments/lifetime_ao/build_ao_lifetime_register.py` (and `--check` in CI). The JSON wins.")
+        a("")
+    elif v3:
+        a("# H-1 lifetime / atomic-oxygen degradation register v3 (fo_ao_lifetime_register) — DRAFT")
+        a("")
+        a("Generated by `build_ao_lifetime_register.py` from the same data as "
+          "[`ao_lifetime_register_v3.json`](ao_lifetime_register_v3.json) (schema "
+          "[`ao_lifetime_register_v3.schema.json`](ao_lifetime_register_v3.schema.json)). Do not edit by hand; run "
+          "`python docs/experiments/lifetime_ao/build_ao_lifetime_register.py` (and `--check` in CI). The JSON wins. "
+          "Historical records, kept byte-identical and still reproduced by the builder: " +
+          "; ".join(f"{h['version']} `{os.path.basename(h['path'])}` (sha256 `{h['sha256']}`, pinned by "
+                    f"{h['pinned_by']})" for h in reg["history"]) + ".")
+        a("")
+        a("**Change log.**")
+        for c in reg["change_log"]:
+            a(f"- {c['version']} ({c['date']}): {c['change']}")
         a("")
     else:
         a("# H-1 lifetime / atomic-oxygen degradation register v2 (fo_ao_lifetime_register) — DRAFT")
@@ -1688,6 +2030,17 @@ def render_md(reg):
         a(f"**Unmerged draft references ({ud['status']}).** {ud['statement']} Re-verify: {ud['re_verify_when']}. "
           f"Ids: {', '.join(ud['ids'])}.")
         a("")
+    elif v3:
+        a("| requirement | adopter | target | related ids (verdict) | action | adoption status | adopted ids | open needs "
+          "| note |")
+        a("|---|---|---|---|---|---|---|---|---|")
+        for row in reg["interface_table"]["rows"]:
+            rel = ", ".join(f"{r['id']} ({r['verdict']}{', fixed' if r['usage_fixed'] else ''})"
+                            for r in row["related_ids"]) or "-"
+            a(f"| {row['requirement']} | {row['adopter']} | {row['target']} | {rel} | {row['action']} | "
+              f"{row['adoption_status']} | {', '.join(row['adopted_ids']) or '-'} | {row['open_needs'] or '-'} | "
+              f"{row['note'] or '-'} |")
+        a("")
     else:
         a("| requirement | adopter | target | related ids (verdict) | action | adoption status | adopted ids | note |")
         a("|---|---|---|---|---|---|---|---|")
@@ -1697,8 +2050,10 @@ def render_md(reg):
             a(f"| {row['requirement']} | {row['adopter']} | {row['target']} | {rel} | {row['action']} | "
               f"{row['adoption_status']} | {', '.join(row['adopted_ids']) or '-'} | {row['note'] or '-'} |")
         a("")
+    if v2:
         dv = reg["draft_reference_verification"]
-        a("### 3.1 Re-verification of the v1 draft references against the merged W3 / W4")
+        a("### 3.1 Re-verification of the v1 draft references against the merged W3 / W4"
+          + (" v1-r2" if v3 else ""))
         a("")
         a(dv["statement"])
         a("")
@@ -1708,36 +2063,70 @@ def render_md(reg):
             a(f"| {v['id']} | {v['register']} | {v['v1_usage']} | **{v['verdict']}** | {v['merged']['item']} | "
               f"{v['note'] or '-'} | {v['w3_own_verdict'] or '-'} |")
         a("")
-        a("Fixes applied in v2:")
+        a(f"Fixes applied in {ver}:")
         for f_ in dv["reference_fixes"]:
             a(f"- {f_['where']} ({f_['field_or_adopter']}): {', '.join(f_['v1'])} → "
-              f"{', '.join(f_['v2']) or '(none)'} — {f_['why']}.")
+              f"{', '.join(f_['fixed' if v3 else 'v2']) or '(none)'} — {f_['why']}.")
         a("")
         mi = reg["merged_inputs"]
         a("Pinned merged inputs: " + "; ".join(f"`{x['path']}` sha256 `{x['sha256']}`" for x in mi["files"]) + ".")
         a("")
+        if v3:
+            a("Commits: " + "; ".join(f"{k} {v}" for k, v in mi["commits"].items()) + ". W4 pins register v2 "
+              f"(`{mi['w4_pins_this_register']['sha256']}`) in `{mi['w4_pins_this_register']['source_id']}`; W3 pins "
+              f"v1 as {mi['w3_pins_this_register']['source_id']}.")
+            a("")
         c5 = reg["c5_adoption_check"]
         a("### 3.2 Control C5 adoption check (every provision → H-1 requirement id)")
         a("")
         a(c5["statement"])
         a("")
         cn = c5["counts"]
-        a(f"Provisions checked: {cn['provisions']}; with an H-1 (W3) requirement id: {cn['with_h1_requirement_id']}; "
-          "W3 dispositions: " + ", ".join(f"{k} {v}" for k, v in cn["w3_by_disposition"].items()) +
-          f"; W4 rows not adopted: {cn['w4_rows_not_adopted']}; W3 back-traces only in text: "
-          f"{cn['w3_back_trace_text_only']}, none: {cn['w3_back_trace_none']}.")
-        a("")
-        a("| provision | W3 disposition | H-1 requirement ids (back-trace) | W4 status | W3 note |")
-        a("|---|---|---|---|---|")
-        for r in c5["rows"]:
-            ids = ", ".join(f"{h} ({t})" for h, t in r["w3_back_trace"].items()) or "-"
-            a(f"| {r['id']} | {r['w3_disposition']} | {ids} | {r['w4_status']} | {r['w3_note'] or '-'} |")
-        a("")
-        a("**Not adopted (open, not waived):**")
-        a("")
-        for n in c5["not_adopted"]:
-            a(f"- {n['id']} — {n['by']}: {n['status']}; needed: {n['needed']}")
-        a("")
+        if v3:
+            a(f"Provisions checked: {cn['provisions']}; with an H-1 (W3) requirement id: "
+              f"{cn['with_h1_requirement_id']}; W3 dispositions: "
+              + ", ".join(f"{k} {v}" for k, v in cn["w3_by_disposition"].items())
+              + f"; W3 back-traces only in text: {cn['w3_back_trace_text_only']}, none: {cn['w3_back_trace_none']}. "
+              f"W4 rows: {cn['w4_rows']}; W4 status (from `{c5['w4_source']['path']}` {c5['w4_source']['revision']} "
+              f"{c5['w4_source']['table']}): " + ", ".join(f"{k} {v}" for k, v in cn["w4_by_status"].items())
+              + f"; W4 back-traces missing: {cn['w4_back_trace_none']}.")
+            a("")
+            a("| provision | W3 disposition | H-1 requirement ids (back-trace) | W4 status | W4 adopting ids "
+              "(back-trace) | W3 note |")
+            a("|---|---|---|---|---|---|")
+            for r in c5["rows"]:
+                ids = ", ".join(f"{h} ({t})" for h, t in r["w3_back_trace"].items()) or "-"
+                w4i = ", ".join(f"{h} ({t})" for h, t in r["w4_back_trace"].items()) or "-"
+                a(f"| {r['id']} | {r['w3_disposition']} | {ids} | {r['w4_status']} | {w4i} | {r['w3_note'] or '-'} |")
+            a("")
+            a("**Not adopted (open, not waived):**")
+            a("")
+            for n in c5["not_adopted"]:
+                a(f"- {n['id']} — {n['by']}: {n['status']}; needed: {n['needed']} ({n['other_adopter_status']})")
+            a("")
+            a("**Partially adopted (open remainder, as stated by the adopting lane):**")
+            a("")
+            for n in c5["partial_open"]:
+                a(f"- {n['id']} — {n['by']}: {n['needed']} ({n['other_adopter_status']})")
+            a("")
+        else:
+            cn = c5["counts"]
+            a(f"Provisions checked: {cn['provisions']}; with an H-1 (W3) requirement id: {cn['with_h1_requirement_id']}; "
+              "W3 dispositions: " + ", ".join(f"{k} {v}" for k, v in cn["w3_by_disposition"].items()) +
+              f"; W4 rows not adopted: {cn['w4_rows_not_adopted']}; W3 back-traces only in text: "
+              f"{cn['w3_back_trace_text_only']}, none: {cn['w3_back_trace_none']}.")
+            a("")
+            a("| provision | W3 disposition | H-1 requirement ids (back-trace) | W4 status | W3 note |")
+            a("|---|---|---|---|---|")
+            for r in c5["rows"]:
+                ids = ", ".join(f"{h} ({t})" for h, t in r["w3_back_trace"].items()) or "-"
+                a(f"| {r['id']} | {r['w3_disposition']} | {ids} | {r['w4_status']} | {r['w3_note'] or '-'} |")
+            a("")
+            a("**Not adopted (open, not waived):**")
+            a("")
+            for n in c5["not_adopted"]:
+                a(f"- {n['id']} — {n['by']}: {n['status']}; needed: {n['needed']}")
+            a("")
     a("## 4. Degradation register (H-1 DEGRADATION REGISTER)")
     a("")
     a("| id | mechanism | components | species | energy regime | evidence status | life number |")
@@ -1869,7 +2258,13 @@ def main(argv):
                            "record and must not change. Put changes in a new version.")
     reg2 = build_register_v2()
     js2, md2 = render_json(reg2), render_md(reg2)
-    outputs = ((OUT_JSON, js), (OUT_MD, md), (OUT_JSON_V2, js2), (OUT_MD_V2, md2))
+    if hashlib.sha256(js2.encode("utf-8")).hexdigest() != V2_JSON_SHA256:
+        raise RuntimeError("v2 register no longer reproduces its pinned sha256 (pinned by W4 v1-r2); v2 is a "
+                           "historical record and must not change. Put changes in a new version.")
+    reg3 = build_register_v3()
+    js3, md3 = render_json(reg3), render_md(reg3)
+    outputs = ((OUT_JSON, js), (OUT_MD, md), (OUT_JSON_V2, js2), (OUT_MD_V2, md2), (OUT_JSON_V3, js3),
+               (OUT_MD_V3, md3))
     if "--check" in argv:
         bad = []
         for path, text in outputs:
@@ -1882,7 +2277,7 @@ def main(argv):
         if bad:
             print("OUT OF DATE: " + ", ".join(os.path.relpath(p, ROOT) for p in bad))
             return 1
-        print("OK: v1 (historical) and v2 register JSON / Markdown are up to date")
+        print("OK: v1, v2 (historical) and v3 register JSON / Markdown are up to date")
         return 0
     for path, text in outputs:
         with open(path, "w", encoding="utf-8") as f:
