@@ -6,16 +6,18 @@ thresholds or chemistry, never runs the Hall solver on a push or pull request, a
 
 **Milestones.** This is infrastructure, not a performance deliverable. It supports Milestones A, B and C only by keeping
 the evidence chain those milestones rely on verifiable (locks, pins, generated artefacts, admission gate, goldens, rule 9).
-It adds no evidence for any architecture. To serve as a merge gate for B/C evidence, the owner has to make `integrity` and
-`tests` required checks (below) and the `tests` job has to be green on the execution branch (see *Open points* 6 and 7).
+It adds no evidence for any architecture. To serve as a merge gate for B/C evidence, the owner has to make the three CI
+contexts required checks on `main` (exact names and procedure: `docs/ci/BRANCH_PROTECTION.md`).
 
 | workflow | trigger | what it runs |
 |---|---|---|
 | `.github/workflows/ci.yml` | `pull_request`, `push` to `main` or to the pinned execution branch `claude/nifty-ramanujan-w68f9z` | job **integrity**: `python scripts/ci_checks.py`; job **tests** (pymsis present / absent): `python -m pytest -q tests`, the rule-9 outcome check, `python -m abep_sim.golden check` |
 | `.github/workflows/julia-smoke.yml` | `workflow_dispatch` only (manual, with a confirmation box) | pinned HallThruster.jl install and **one** `P5N2_SMOKE=1` construction job; never score-bearing |
 
-To make CI a merge gate, the repository owner has to mark the `integrity` and `tests` checks as required in the branch
-protection settings on GitHub. Nothing in this repository can do that.
+To make CI a merge gate, the repository owner has to mark the three status contexts (`Repository integrity
+(scripts/ci_checks.py)`, `Tests + golden benchmarks (pymsis present)`, `Tests + golden benchmarks (pymsis absent)`) as
+required on `main`; `docs/ci/BRANCH_PROTECTION.md` gives the procedure and `tests/test_ci_required_contexts.py` keeps the
+names in sync with `ci.yml`. Nothing in this repository can apply the setting.
 
 ## The evidence chain and where CI checks it
 
@@ -92,7 +94,9 @@ Other options: `--list` names the checks, and `--only a,b` runs a subset (exit c
 * **pymsis matrix.** The `present` leg installs the full lock. The `absent` leg installs the lock without the `pymsis` line
   and asserts that `pymsis` is not importable. Both legs run the tests and the golden check. This is gate 1 ("runs with
   pymsis absent"): the frozen NRLMSIS dataset is the default, and live MSIS is used only when asked.
-* **No `pip install -e .`** The package is used from the repository root (`PYTHONPATH` = workspace), see *Open points*.
+* **Editable install.** After the lock-file install, both jobs run `python -m pip install --no-deps -e .` (explicit package
+  discovery; owner decision 2026-09-27; `docs/ci/PACKAGING.md`). `--no-deps` keeps the lock file as the dependency source and
+  keeps the pymsis-absent leg free of pymsis.
 * **Golden gate.** `python -m abep_sim.golden check` prints `OK` and exits 0 when nothing moved; otherwise it prints one
   line per deviation and exits 1 (owner decision 2026-09-27; `tests/test_golden_cli.py`). CI runs it as a plain step and
   gates on the exit code (rule 2). A moved golden is a model change and must be
@@ -171,13 +175,10 @@ the P5-N2 campaign is running, so their CI runtime is unknown (timeout 90 min).
 
 ## Open points for the owner
 
-1. **`pip install -e .` fails with the current `pyproject.toml`.** setuptools stops with "Multiple top-level packages
-   discovered in a flat-layout: ['abep_sim', 'hallthruster_bridge']". Observed on 2026-09-26 with setuptools 68.1.2 on an
-   export of `efc4a4e`, via the same automatic discovery a PEP 517 build uses; newer setuptools keeps this discovery rule
-   (**verify** on the pinned build backend). So `scripts/install_and_test.sh` would stop at that line. CI works around it
-   with `PYTHONPATH` and does not change packaging, which is outside this change. The fix (explicit `packages` / `find`
-   include plus package data for `abep_sim/data`) is the owner's decision.
-2. `pyproject.toml` declares `requires-python >= 3.10`, but the lock and `tomllib` need ≥ 3.11 (see above).
+1. Resolved 2026-09-27 (owner decision): explicit setuptools package discovery with `abep_sim/data` as package data;
+   `pip install -e .` and a wheel install both work (`docs/ci/PACKAGING.md`). Open: `pymsis` is still a hard dependency in
+   `pyproject.toml` although gate 1 requires running without it (recommended: keep it only in the `[msis]` extra).
+2. Resolved 2026-09-27 (owner decision): `requires-python >= 3.11`.
 3. Resolved 2026-09-27 (owner decision): `python -m abep_sim.golden check` now exits 1 on deviations, and CI gates on
    the exit code instead of parsing the output text.
 4. Actions are pinned by major tag (`actions/checkout@v4`, `actions/setup-python@v5`, `julia-actions/setup-julia@v2`).

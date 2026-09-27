@@ -21,8 +21,8 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  # requirements-lock.txt (numpy 2.4.4, scipy 1.17.1, pandas 3.0.2) and the scripts' use of tomllib need Python >= 3.11,
-  # although pyproject.toml says >= 3.10 (see docs/ci/CI.md, open points).
+  # requirements-lock.txt (numpy 2.4.4, scipy 1.17.1, pandas 3.0.2) and the scripts' use of tomllib need Python >= 3.11
+  # (pyproject.toml requires-python >= 3.11).
   PYTHON_VERSION: "3.11"
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
   # abep_sim is installed editable (`pip install --no-deps -e .`, explicit package discovery, docs/ci/PACKAGING.md) after
