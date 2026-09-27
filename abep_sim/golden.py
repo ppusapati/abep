@@ -169,8 +169,12 @@ def check(cases=None, rtol: float = 1e-6) -> list[str]:
 
 
 if __name__ == "__main__":
+    # Exit status (owner decision 2026-09-27, CI signalling only): `check` prints "OK" and exits 0 when nothing moved;
+    # otherwise it prints one line per deviation and exits 1, so CI can gate on the exit code (CLAUDE.md rule 2).
+    # `generate` is unchanged (exit 0 after writing).
     import sys
     if len(sys.argv) > 1 and sys.argv[1] == "generate":
         d = generate(); print("written", GOLDEN_FILE, sum(len(v) for v in d["cases"].values()), "entries")
     else:
         e = check(); print("OK" if not e else "\n".join(e))
+        sys.exit(1 if e else 0)
