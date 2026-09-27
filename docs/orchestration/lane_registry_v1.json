@@ -698,7 +698,7 @@
    "kind": "campaign_dataset",
    "manifest": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang",
    "role": "O4 escalation of ds_staged_n2_n_ndd_hmslow",
-   "followon_dir": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang_attempt2",
+   "followon_dir": "escalation_n2_n_ndd_hmslow_di_lower_nel_wang_attempt3",
    "attempt_history": [
     {
      "attempt": 1,
@@ -706,6 +706,13 @@
      "status": "NOT_STARTED_BEFORE_INTERRUPTION",
      "preserved": null,
      "owner_decision": "2026-09-27 fresh attempt 2"
+    },
+    {
+     "attempt": 2,
+     "output": "<scratchpad>/followon/escalation_n2_n_ndd_hmslow_di_lower_nel_wang_attempt2",
+     "status": "INCOMPLETE_INFRASTRUCTURE_INTERRUPTION",
+     "preserved": "hallthruster_bridge/validation/interrupted/escalation_n2_n_ndd_hmslow_di_lower_nel_wang_attempt2/",
+     "owner_decision": "2026-09-27 fresh attempt 3"
     }
    ]
   },
@@ -746,7 +753,7 @@
    "kind": "campaign_dataset",
    "manifest": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang",
    "role": "O4 escalation of ds_staged_n2_n_ndd_hmshigh",
-   "followon_dir": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang_attempt2",
+   "followon_dir": "escalation_n2_n_ndd_hmshigh_di_lower_nel_wang_attempt3",
    "attempt_history": [
     {
      "attempt": 1,
@@ -754,6 +761,13 @@
      "status": "NOT_STARTED_BEFORE_INTERRUPTION",
      "preserved": null,
      "owner_decision": "2026-09-27 fresh attempt 2"
+    },
+    {
+     "attempt": 2,
+     "output": "<scratchpad>/followon/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang_attempt2",
+     "status": "INCOMPLETE_INFRASTRUCTURE_INTERRUPTION",
+     "preserved": "hallthruster_bridge/validation/interrupted/escalation_n2_n_ndd_hmshigh_di_lower_nel_wang_attempt2/",
+     "owner_decision": "2026-09-27 fresh attempt 3"
     }
    ]
   },
