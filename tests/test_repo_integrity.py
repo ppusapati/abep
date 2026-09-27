@@ -90,9 +90,33 @@ def test_parse_tree_reports_bad_files_and_prunes_run_output(tmp_path):
     for pruned in ("hallthruster_bridge/out", ".venv/lib", "__pycache__", ".claude/worktrees/x", "results"):
         (tmp_path / pruned).mkdir(parents=True)
         (tmp_path / pruned / "broken.json").write_text("{")
+    (tmp_path / "ledger.jsonl").write_text('{"a": 1}\n\n{"b": 2}\n')
+    (tmp_path / "badline.jsonl").write_text('{"a": 1}\n{"a": \n')
+    (tmp_path / "notobj.jsonl").write_text('[1, 2]\n')
+    run_records = tmp_path / "hallthruster_bridge" / "validation" / "interrupted"
+    run_records.mkdir(parents=True)
+    (run_records / "s0.jsonl").write_text("{")                           # campaign run records are never read
     bad, n = ci.parse_tree(str(tmp_path))
-    assert n == {".json": 1, ".toml": 1}
-    assert len(bad) == 2 and any("duplicate JSON key" in b for b in bad) and any(b.startswith("bad.toml") for b in bad)
+    assert n == {".json": 1, ".toml": 1, ".jsonl": 1}
+    assert len(bad) == 4 and any("duplicate JSON key" in b for b in bad) and any(b.startswith("bad.toml") for b in bad)
+    assert any(b.startswith("badline.jsonl") and "line 2" in b for b in bad)
+    assert any(b.startswith("notobj.jsonl") and "not a JSON object" in b for b in bad)
+
+
+def test_full_history_check(tmp_path):
+    import subprocess
+    assert ci.check_full_history(str(tmp_path))                             # not a repository: refused with a reason
+    src = tmp_path / "src"
+    src.mkdir()
+    g = lambda *a, cwd=src: subprocess.run(["git", *a], cwd=cwd, check=True, capture_output=True)
+    g("init", "-q")
+    for i in range(2):
+        (src / "f").write_text(str(i))
+        g("add", "f")
+        g("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", str(i))
+    assert ci.check_full_history(str(src)) == []
+    g("clone", "-q", "--depth", "1", f"file://{src}", str(tmp_path / "shallow"), cwd=tmp_path)
+    assert "shallow clone" in ci.check_full_history(str(tmp_path / "shallow"))[0]
 
 
 def test_pin_checks_detect_tampering(tmp_path):
@@ -191,7 +215,10 @@ def _workflow(name):
 
 def test_ci_workflow_runs_the_gates():
     doc, on, text = _workflow("ci.yml")
-    assert set(on) == {"pull_request", "push"} and on["push"]["branches"] == ["main"]
+    assert set(on) == {"pull_request", "push"} and on["push"]["branches"] == ["main", "claude/nifty-ramanujan-w68f9z"]
+    for job in ("integrity", "tests"):                                      # rule 9 needs full history (provenance tests)
+        co = [s for s in doc["jobs"][job]["steps"] if s.get("uses", "").startswith("actions/checkout@")]
+        assert len(co) == 1 and co[0]["with"]["fetch-depth"] == 0, job
     runs = "\n".join(s.get("run", "") for j in doc["jobs"].values() for s in j["steps"])
     for cmd in ("python -m pytest -q tests", "python -m abep_sim.golden check", "python scripts/ci_checks.py",
                 "python scripts/ci_checks.py --pytest-junit"):

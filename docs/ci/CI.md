@@ -4,9 +4,14 @@ CI turns the repository's evidence discipline (CLAUDE.md rules, [docs/EVIDENCE.m
 reviewer does not have to repeat by hand. It **verifies**. It never regenerates frozen data, never changes physics,
 thresholds or chemistry, never runs the Hall solver on a push or pull request, and never reads campaign records.
 
+**Milestones.** This is infrastructure, not a performance deliverable. It supports Milestones A, B and C only by keeping
+the evidence chain those milestones rely on verifiable (locks, pins, generated artefacts, admission gate, goldens, rule 9).
+It adds no evidence for any architecture. To serve as a merge gate for B/C evidence, the owner has to make `integrity` and
+`tests` required checks (below) and the `tests` job has to be green on the execution branch (see *Open points* 6 and 7).
+
 | workflow | trigger | what it runs |
 |---|---|---|
-| `.github/workflows/ci.yml` | `pull_request`, `push` to `main` | job **integrity**: `python scripts/ci_checks.py`; job **tests** (pymsis present / absent): `python -m pytest -q tests`, the rule-9 outcome check, `python -m abep_sim.golden check` |
+| `.github/workflows/ci.yml` | `pull_request`, `push` to `main` or to the pinned execution branch `claude/nifty-ramanujan-w68f9z` | job **integrity**: `python scripts/ci_checks.py`; job **tests** (pymsis present / absent): `python -m pytest -q tests`, the rule-9 outcome check, `python -m abep_sim.golden check` |
 | `.github/workflows/julia-smoke.yml` | `workflow_dispatch` only (manual, with a confirmation box) | pinned HallThruster.jl install and **one** `P5N2_SMOKE=1` construction job; never score-bearing |
 
 To make CI a merge gate, the repository owner has to mark the `integrity` and `tests` checks as required in the branch
@@ -36,7 +41,7 @@ never silent about its scope. The exit code is 1 if any check fails, and a check
 
 | check | what it verifies | rule it enforces |
 |---|---|---|
-| `parse_json_toml` | Every `*.json` and `*.toml` parses. A duplicate JSON key is an error, because Python would otherwise silently keep the last value. Pruned: `.git`, `hallthruster_bridge/out` (raw run output), gitignored `results/`, and local environments and caches (`.venv`, `__pycache__`, `.claude`, …). | integrity of every data file |
+| `parse_json_toml` | Every `*.json` and `*.toml` parses. A duplicate JSON key is an error, because Python would otherwise silently keep the last value. Every non-empty line of every `*.jsonl` evidence ledger (`docs/orchestration/fired_triggers.jsonl`, `trigger_ledger_v2.jsonl`, the audit record files) must be one JSON object. `*.jsonl` under `hallthruster_bridge/validation/` are campaign run records and are not read; the validation release pipeline binds them. Pruned: `.git`, `hallthruster_bridge/out` (raw run output), gitignored `results/`, and local environments and caches (`.venv`, `__pycache__`, `.claude`, …). | integrity of every data file |
 | `prereg_lock` | Every file listed in `prereg/p5_n2_prereg_lock_v1.json` matches its sha256. The inputs pinned by `p5_n2_validation_criteria_v1.json` (measurement audit, case set, transport candidates, all 22 chemistry configs) match theirs. These are the same refusal conditions the campaign driver applies at start-up, so CI fails wherever the driver would refuse. | pre-registration: "any change after this lock is a new, dated addendum, never an edit" |
 | `audit_manifest` | Each immutable audit snapshot in `audit/configs/` matches its sha256. The set of rate files it names equals the MANIFEST list, and every one of those rate tables matches its pinned sha256. The case-file snapshot also matches. | historical audits read immutable snapshots (PR #25 review) |
 | `hallthruster_pin` | The `PINNED.toml` commit, version and repository equal the `HallThruster` entry of `Manifest.toml` (repo-rev, version, repo-url). The `Project.toml` compat is `=<version>`. | rule 7 (pin; upgrade policy: never moved automatically) |
@@ -65,6 +70,18 @@ pytest failure). A new skip, for example a test silently disabled when a depende
 values are the constants `EXPECTED_SKIPPED`, `EXPECTED_SKIP_REASON_PREFIX` and `EXPECTED_XFAIL`, and change only together
 with an owner-logged change of rule 9.
 
+**Rule 9 needs full git history.** Several provenance tests from later lanes (for example `tests/test_bundle1.py`,
+`tests/test_echt_status.py` and `tests/test_v2_question_a_brief.py`) resolve pinned lane or base commits with `git show`
+and skip when those objects are missing. In a shallow clone, which is the `actions/checkout` default (depth 1), the suite
+therefore reports extra, non-SUPERSEDED skips. The second-lens review observed 5 + 3 = 8 skips in a single-commit copy of
+`e15f66f`. So both CI jobs check out with `fetch-depth: 0`, and `--pytest-junit` also fails with an explicit "shallow
+clone" reason when the repository is shallow or is not a git repository. The failure is not attributed to the tests.
+
+**Coupling (owner).** `EXPECTED_SKIPPED = 5` is a hard count. A future lane that adds a legitimate, environment-dependent
+skip (for example on an unreachable pinned input or a status condition) will turn CI red. That is intended, because rule 9
+says 5. But the owner has to decide either to amend rule 9 or to make such tests fail instead of skip. The gate must not
+be relaxed silently.
+
 Other options: `--list` names the checks, and `--only a,b` runs a subset (exit code 2 for an unknown name).
 
 ## `ci.yml` in detail
@@ -81,6 +98,9 @@ Other options: `--list` names the checks, and `--only a,b` runs a subset (exit c
   justified, regenerated and logged. CI never regenerates goldens.
 * **Clean tree.** After each job, `git status --porcelain` must be empty, so tests, goldens and checks must not rewrite
   committed files. Gitignored caches are allowed.
+* **Full history** (`fetch-depth: 0`) in both jobs, for the rule-9 reason above.
+* **Triggers.** `push` runs on `main` and on the pinned execution branch `claude/nifty-ramanujan-w68f9z`, because CLAUDE.md
+  says nobody executes from `main` until that branch merges. Other branches are checked through their pull requests.
 * `permissions: contents: read`. Superseded pull-request runs are cancelled.
 
 ## `julia-smoke.yml`: optional construction-only smoke (manual)
@@ -126,7 +146,10 @@ python -m pytest -q tests/test_repo_integrity.py  # the checks' own tests (tampe
 Measured on 2026-09-26 in this worktree at base `efc4a4e` (Python 3.11.15): `ci_checks.py` took 2.8 s wall, all 10 checks
 passing (55 JSON + 32 TOML parsed; 6 locked files; 22 pinned chemistry configs; 5 audit snapshots; 21 variants; 30 cases;
 19 launch manifests; 10 tables + 10 `.source`; 0 admitted members, 9 screening candidates refused). `test_repo_integrity.py`
-took 3.3 s, 11 passed. The full suite and the golden check were **not** run for this work, because of the CPU budget while
+took 3.3 s, 11 passed. Re-measured on 2026-09-26 during the second-lens repair. On an export of the current execution-branch
+commit `e15f66f`: 2.7 s wall, 10/10 checks passing, with 162 JSON + 32 TOML + 4 JSONL files parsed and the other counts
+unchanged. In the lane worktree, `test_repo_integrity.py` ran 12 tests, all passing, in 3.5 s. These counts grow as lanes
+add files; they are dated, not constants. The full suite and the golden check were **not** run for this work, because of the CPU budget while
 the P5-N2 campaign is running, so their CI runtime is unknown (timeout 90 min).
 
 ## When a check fails
@@ -160,3 +183,11 @@ the P5-N2 campaign is running, so their CI runtime is unknown (timeout 90 min).
    Pinning them to commit SHAs is an option for supply-chain hardening.
 5. The smoke workflow has never been run. Its first manual run may surface environment issues (Julia registry access,
    precompile time).
+6. **The rule-9 gate has never been exercised against the real full suite.** The full suite was not run for this lane
+   because of the CPU budget. The first CI run is also the first check of the 5-skip / 1-xfail outcome with full history.
+7. **Reported by the second-lens review, not re-run by this lane:** at `e15f66f`, `tests/test_bundle1.py` fails two tests
+   (the JSON-equality assertion and `test_check_mode_cli`) even with full history, because
+   `docs/milestones/bundle1/bundle1_v1.json` / `BUNDLE1.md` are not reproduced. The review attributes this to the lane_09
+   repair note. It is outside this lane, but the `tests` job will be red on it until the owning lane regenerates or
+   repairs Bundle 1.
+8. The `EXPECTED_SKIPPED` coupling point described under *Separate mode*.

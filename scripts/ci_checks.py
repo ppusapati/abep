@@ -4,7 +4,9 @@ Each check returns (problems, note): an empty problem list is a pass, the note s
 evidence chain of CLAUDE.md / docs/EVIDENCE.md mechanically. They never change physics, thresholds, frozen data or chemistry,
 and they never read campaign records (hallthruster_bridge/out/ and any run output are out of scope).
 
-  parse_json_toml          every *.json and *.toml in the repository parses (a duplicate JSON key is an error)
+  parse_json_toml          every *.json and *.toml in the repository parses (a duplicate JSON key is an error), and every
+                           non-empty line of every *.jsonl evidence ledger (docs/orchestration trigger ledgers, audit records)
+                           is one JSON object; campaign run records under hallthruster_bridge/validation/ are not read
   prereg_lock              hallthruster_bridge/prereg/p5_n2_prereg_lock_v1.json: every listed file matches its sha256; the
                            inputs pinned by the P5-N2 criteria (measurement audit, case set, transport candidates, chemistry
                            configs) match theirs (the same refusal conditions the campaign driver applies at start-up)
@@ -26,12 +28,15 @@ no bytecode is cached, so nothing reaches the disk. The captured bytes are compa
 Separate mode, used by CI after pytest (CLAUDE.md rule 9: all pass, 5 skipped = the SUPERSEDED 0-D Hall calibration, 1 strict
 xfail = test_v16_blind_validation_p5_nitrogen):
   python scripts/ci_checks.py --pytest-junit report.xml
+Rule 9 holds only in a FULL-HISTORY clone: several provenance tests (e.g. tests/test_bundle1.py, tests/test_echt_status.py,
+tests/test_v2_question_a_brief.py) resolve pinned lane commits with `git show` and skip when those objects are absent, as in a
+shallow (depth-1) checkout. This mode therefore also fails, with an explicit reason, when the repository is shallow.
 
 Usage: python scripts/ci_checks.py [--list] [--only NAME[,NAME...]] [--pytest-junit PATH]      exit 0 pass, 1 fail, 2 usage
 """
 from __future__ import annotations
 
-import builtins, contextlib, hashlib, importlib.util, io, json, locale, os, runpy, shutil, sys, time, tomllib
+import builtins, contextlib, hashlib, importlib.util, io, json, locale, os, runpy, shutil, subprocess, sys, time, tomllib
 import xml.etree.ElementTree as ET
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -44,6 +49,9 @@ SCRIPTS = os.path.join(ROOT, "scripts")
 # parse_json_toml: pruned directories. ".git" and "hallthruster_bridge/out" (raw run output, gitignored) as specified; the
 # others are gitignored run output ("results") or local environments / tool caches / agent worktrees, not repository content.
 PRUNE_RELPATHS = {".git", os.path.join("hallthruster_bridge", "out"), "results"}
+# *.jsonl: parsed line by line, except campaign run records (CI never reads campaign records; their integrity is bound by the
+# validation release pipeline, hallthruster_bridge/validation/VALIDATION_RELEASE_v1.json and its own scripts).
+JSONL_SKIP_RELPATHS = {os.path.join("hallthruster_bridge", "validation")}
 PRUNE_NAMES = {".git", ".venv", "venv", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache", "node_modules", ".claude"}
 
 # CLAUDE.md rule 9 (expected pytest outcome). Change only together with an owner-logged change of that rule.
@@ -93,24 +101,38 @@ def _no_duplicate_keys(pairs):
     return seen
 
 
-def iter_data_files(root: str = ROOT, suffixes=(".json", ".toml")):
+def iter_data_files(root: str = ROOT, suffixes=(".json", ".toml", ".jsonl")):
     for d, dirs, files in os.walk(root):
         rel_d = os.path.relpath(d, root)
         dirs[:] = sorted(x for x in dirs if x not in PRUNE_NAMES and not x.endswith(".egg-info")
                          and os.path.normpath(os.path.join(rel_d, x)) not in PRUNE_RELPATHS)
         for f in sorted(files):
-            if f.endswith(suffixes):
-                yield os.path.join(d, f)
+            if not f.endswith(suffixes):
+                continue
+            if f.endswith(".jsonl") and any(os.path.normpath(os.path.join(rel_d, f)).startswith(p + os.sep)
+                                            for p in JSONL_SKIP_RELPATHS):
+                continue
+            yield os.path.join(d, f)
 
 
 def parse_tree(root: str = ROOT) -> tuple[list[str], dict]:
-    bad, n = [], {".json": 0, ".toml": 0}
+    bad, n = [], {".json": 0, ".toml": 0, ".jsonl": 0}
     for p in iter_data_files(root):
         ext = os.path.splitext(p)[1]
         try:
             if ext == ".json":
                 with open(p, encoding="utf-8") as f:
                     json.load(f, object_pairs_hook=_no_duplicate_keys)
+            elif ext == ".jsonl":
+                with open(p, encoding="utf-8") as f:
+                    for i, line in enumerate(f, 1):
+                        if line.strip():
+                            try:
+                                obj = json.loads(line, object_pairs_hook=_no_duplicate_keys)
+                            except ValueError as e:
+                                raise ValueError(f"line {i}: {e}") from None
+                            if not isinstance(obj, dict):
+                                raise ValueError(f"line {i}: not a JSON object")
             else:
                 _toml(p)
             n[ext] += 1
@@ -123,7 +145,7 @@ def check_parse_json_toml(root: str = ROOT):
     bad, n = parse_tree(root)
     if n[".json"] + n[".toml"] == 0:
         bad.append("no *.json / *.toml file found: wrong repository root?")
-    return bad, f"{n['.json']} JSON + {n['.toml']} TOML files parsed"
+    return bad, f"{n['.json']} JSON + {n['.toml']} TOML + {n['.jsonl']} JSONL files parsed"
 
 
 # ------------------------------------------------------------------------------------------------------------ evidence pins
@@ -410,6 +432,21 @@ def check_ensemble_gate():
 
 
 # ------------------------------------------------------------------------------------------------------------ pytest outcome
+def check_full_history(root: str = ROOT) -> list[str]:
+    """Rule 9 is defined on a full-history clone (history-dependent provenance tests skip otherwise). [] = full history."""
+    try:
+        r = subprocess.run(["git", "-C", root, "rev-parse", "--is-shallow-repository"], capture_output=True, text=True,
+                           timeout=30)
+    except (OSError, subprocess.SubprocessError) as e:
+        return [f"cannot determine git history depth ({type(e).__name__}: {e}); the rule-9 outcome needs a full-history clone"]
+    if r.returncode != 0:
+        return [f"not a git repository ({r.stderr.strip()[:200]}); the rule-9 outcome needs a full-history clone"]
+    if r.stdout.strip() == "true":
+        return ["shallow clone: provenance tests that resolve pinned lane commits skip, so the rule-9 skip count is not "
+                "meaningful; check out with full history (actions/checkout fetch-depth: 0)"]
+    return []
+
+
 def check_pytest_outcomes(junit_path: str):
     """CLAUDE.md rule 9 from a pytest --junitxml report: no failure or error, exactly EXPECTED_SKIPPED skips (all SUPERSEDED),
     xfails exactly EXPECTED_XFAIL (strict, so an unexpected pass is already a pytest failure)."""
@@ -484,6 +521,7 @@ def main(argv=None) -> int:
             problems, note = check_pytest_outcomes(argv[i + 1])
         except (OSError, ET.ParseError) as e:
             problems, note = [f"cannot read junit report: {e}"], ""
+        problems = check_full_history() + problems
         return _report({"pytest_outcomes": (problems, note)})
     names = None
     if "--only" in argv:
