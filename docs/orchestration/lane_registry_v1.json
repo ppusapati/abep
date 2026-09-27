@@ -939,7 +939,14 @@
   {
    "id": "fo_instrumentation_definition",
    "kind": "follow_on",
-   "title": "W4 instrumentation definition and uncertainty budget"
+   "title": "W4 instrumentation definition and uncertainty budget",
+   "repairs": [
+    {
+     "workflow_run": "wf_a4b5dac6-36f",
+     "workflow_key": "INSTR",
+     "reason": "C5: W4 adopts AO/MCQ instrument provisions; AO register re-pins; S1 report regenerated (ordered chain)"
+    }
+   ]
   },
   {
    "id": "fo_hall_validation_prereg_draft",
@@ -965,6 +972,11 @@
      "workflow_run": "wf_c901e2cf-537",
      "workflow_key": "AOLIFE",
      "reason": "re-verify W3/W4 draft references against merged files; C5 cross-check (ordered after HW)"
+    },
+    {
+     "workflow_run": "wf_a4b5dac6-36f",
+     "workflow_key": "AOLIFE",
+     "reason": "C5: W4 adopts AO/MCQ instrument provisions; AO register re-pins; S1 report regenerated (ordered chain)"
     }
    ]
   },
@@ -987,6 +999,11 @@
      "workflow_run": "wf_c901e2cf-537",
      "workflow_key": "S1GATE",
      "reason": "authority read from the A2 addendum (decision file restored byte-identical); S1-C3 aligned with feed labels (ordered after FEED)"
+    },
+    {
+     "workflow_run": "wf_a4b5dac6-36f",
+     "workflow_key": "S1GATE",
+     "reason": "C5: W4 adopts AO/MCQ instrument provisions; AO register re-pins; S1 report regenerated (ordered chain)"
     }
    ]
   },
