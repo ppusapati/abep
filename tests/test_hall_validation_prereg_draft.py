@@ -221,3 +221,54 @@ def test_pins_match_repository():
     assert missing == []
     if problems:
         pytest.skip("DRAFT pins stale - re-review the draft before LOCK-H1: " + "; ".join(problems))
+
+
+def test_release_gated_embargoes_hw0_held_out_publication(draft):
+    """Under RELEASE_GATED, HW-0 held-out values must not become public before PF-1 is frozen; if they do, the
+    affected F1/F2 conditions are flagged OUTPUTS_SEEN automatically (as F4), independent of proving a leak."""
+    cb = draft["custody_and_blinding"]
+    pr = cb["publication_rule"]
+    for needle in ("R_arch", "knee", "I_d", "sustainment class", "Phase 3"):
+        assert needle in pr["embargoed_values"], needle
+    assert "until PF-1 is hash-frozen" in pr["embargo"]
+    assert "ARCHITECTURE_TRACK" in pr["embargo"]
+    af = pr["automatic_flag"]
+    assert "AUTOMATICALLY" in af and "OUTPUTS_SEEN" in af and "F1/F2" in af
+    assert "does not depend on showing" in af
+    assert "publication_rule" in cb["roles"]["ARCHITECTURE_TRACK"]
+    assert "publication_rule" in cb["leak_rule"] and "publication_rule" in cb["pf1_freeze_rule"]
+    assert any("OUTPUTS_SEEN" in v for v in draft["run_status"]["target_status"]["values"])
+    vp17 = {v["id"]: v for v in draft["owner_decisions"]}["VP-17"]
+    assert "publication_rule" in vp17["PROPOSED"]
+    assert "Only HOLD_S1B makes the PREDICTIONS" in vp17["owner_must_know"]
+    md = MD.read_text(encoding="utf-8")
+    assert "Publication rule" in md and "Automatic flag" in md and "Embargo" in md
+
+
+def test_sustainment_outcomes_and_ambiguous_class_explicit(draft):
+    cs = draft["criteria"]["C-SUST"]
+    assert "(d) experiment NOT_SUSTAINED and model extinct" in cs["form"] and "C-SUST PASS" in cs["form"]
+    assert "(e) experiment SUSTAINED and model sustained" in cs["form"]
+    assert "SUSTAINMENT_MIXED" in cs["ambiguous_class_rule"] and "VP-19" in cs["ambiguous_class_rule"]
+    assert "EXCLUDED_CLASS_AMBIGUOUS" in draft["verdict_logic"]["candidate"]["PROMOTABLE"]
+
+
+def test_u_reg_profile_perturbation_fixed_before_data(draft):
+    m = draft["registration_inputs"]["u_reg_perturbation_modes"]
+    assert "before any S1a input is released" in m["status"]
+    assert "AMPLITUDE" in m["REG-BZ_profile"] and "AXIAL_REGISTRATION" in m["REG-BZ_profile"]
+    assert "No pointwise envelope" in m["REG-BZ_profile"]
+    assert "VP-20" in {v["id"] for v in draft["owner_decisions"]}
+
+
+def test_cathode_placeholder_and_thrust_cost_disclosed(draft):
+    g = {g["id"]: g for g in draft["runnability_gates"]["gates"]}["RG-11"]
+    assert "PLACEHOLDER" in g["owner_warning"]
+    vps = {v["id"]: v for v in draft["owner_decisions"]}
+    assert "placeholder" in vps["VP-10"]["owner_warning"]
+    assert "NOT fully held out" in vps["VP-04"]["evidential_cost"]
+    assert "no P5 measurement or measurement uncertainty is a tolerance source" in vps["VP-02"]["PROPOSED"]
+    md = MD.read_text(encoding="utf-8")
+    assert "no P5 value is a tolerance source" not in md
+    for rg in ("| RG-03 |", "| RG-07b |"):
+        assert rg in md, rg

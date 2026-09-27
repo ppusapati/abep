@@ -27,8 +27,8 @@ data custody and blinding, and the verdict logic.
 
 | milestone | role | what the next step needs |
 |---|---|---|
-| **A** conditional selection | Not required. LOCK-1 adopting package decision D-14-B costs no readings. Whether the hardware schedule waits for the blind prediction set PF-1 is owner decision VP-17 (§10): under the PROPOSED option it does not; under the alternative HOLD_S1B, S1b waits for a Julia campaign of roughly v1 size, which would be a schedule cost to Milestone A work. | nothing from this lane |
-| **B** physics-backed selection | **Primary.** In this set of workstreams, this is the only route by which a closure can be *admitted*. | owner decisions VP-01…VP-19; W4 audited uncertainties; W3 H-1 geometry release; S1a B(z); this draft's runnability gates RG-01…RG-12 (§11; only RG-01, RG-03, RG-04 and RG-05 map to lane-35 items: P6 and open decisions 10, 7 and 3); LOCK-H1; a PROMOTABLE outcome; O4-equivalent dispositions; an admission record. For `rf_hall`/`ecr_hall` absolute performance, also the inflow model change at `HALL_INLET_Z0` and O/O₂ chemistry. |
+| **A** conditional selection | Not required. LOCK-1 adopting package decision D-14-B costs no readings. Whether the hardware schedule waits for the blind prediction set PF-1 is owner decision VP-17 (§10): under the PROPOSED option it does not; under the alternative HOLD_S1B, S1b waits for a Julia campaign of roughly v1 size, which would be a schedule cost to Milestone A work. Under RELEASE_GATED, the publication embargo (§10) means a Milestone A disclosure of HW-0 values (R_arch, the knee) before PF-1 is frozen either waits or costs those conditions (automatic OUTPUTS_SEEN). | nothing from this lane |
+| **B** physics-backed selection | **Primary.** In this set of workstreams, this is the only route by which a closure can be *admitted*. | owner decisions VP-01…VP-20; W4 audited uncertainties; W3 H-1 geometry release; S1a B(z); this draft's runnability gates RG-01…RG-12 (§11; only RG-01, RG-03, RG-04 and RG-05 map to lane-35 items: P6 and open decisions 10, 7 and 3); LOCK-H1; a PROMOTABLE outcome; O4-equivalent dispositions; an admission record. For `rf_hall`/`ecr_hall` absolute performance, also the inflow model change at `HALL_INLET_Z0` and O/O₂ chemistry. |
 | **C** PDR freeze | none directly | everything for B, plus wall-life-grade maps and integrated mass, power, thermal, life, startup, cathode and mission closure |
 
 Operating-model questions:
@@ -73,6 +73,14 @@ output reaches the physics track (under VP-17 HOLD_S1B, before any Hall-on readi
 audited standard uncertainty (RG-07a, required before PF-1), one at a time, and u_reg is the root-sum-square of the
 half-differences per observable.
 
+**How profile inputs are perturbed (PROPOSED, VP-20; fixed at LOCK-H1 before any S1a input is released).** Scalar
+inputs (ṁ, T_feed, V_d, and each geometry dimension L_ch, r_in, r_out, anode position) are perturbed separately. B(z)
+gets two separate modes: a uniform amplitude scale by (1 ± u_B,rel), from the probe calibration, and a rigid axial shift
+by ± u_z, from the probe position relative to the anode. There is no pointwise envelope and no shape deformation. f_div
+enters C-T directly through its uncertainty term. If W4 reports a profile uncertainty that doesn't decompose this way, a
+LOCK-H1 addendum fixes the mapping before S1a data are released, never afterwards. This keeps the perturbation shape from
+becoming a choice made after data exist.
+
 | id | registration input | from | into the solver |
 |---|---|---|---|
 | REG-GEOM | L_ch, r_in, r_out, anode position | W3 release + as-built metrology | case geometry |
@@ -80,7 +88,7 @@ half-differences per observable.
 | REG-FEED | anode ṁ, composition, T_feed | W4 INS-05…07, W1 test points | propellant flow and temperature |
 | REG-VD | V_d at the terminals | W4 INS-04 | discharge voltage |
 | REG-PB | p_b, gauge location and calibration | W4 INS-08 | facility-mode runs only; the admissibility test TH-FAC |
-| REG-DIV | f_div per reading, from the far-field sweep | W4 INS-15 | thrust observation operator T_axial = T_1D · f_div (a 1-D model can't predict divergence) |
+| REG-DIV | f_div per reading, from the far-field sweep | W4 INS-15 | thrust observation operator T_axial = T_1D · f_div (a 1-D model can't predict divergence). Evidential cost: see VP-04 below. |
 | REG-WALL | wall material | W3 | recorded; solver wall model fixed (RG-05) |
 
 Observables use the W4 ids:
@@ -97,6 +105,13 @@ Observables use the W4 ids:
 
 The owner listed B(z) and the feed state among the held-out candidates. This draft proposes to reclassify them, and the
 owner decides (VP-01).
+
+**Evidential cost of the thrust operator (VP-04).** The owner also listed divergence among the held-out candidates.
+Here it is used instead as an input: the measured f_div from the *same* reading multiplies T_1D. f_div depends on the
+transport, so the thrust "prediction" is partly conditioned on that reading. C-T then tests the 1-D axial momentum, not
+the total thrust, and **thrust is not fully held out**. A 1-D solver can't predict f_div. A fully held-out thrust test
+would need a divergence model pre-registered before PF-1, and this draft has none with a source. The owner should weigh
+this when counting C-T as promotion evidence.
 
 ## 5. Candidates and chemistry
 
@@ -134,6 +149,11 @@ owner decides (VP-01).
 | F6 | Xe on H-1 (D-15-B health check) | optional (VP-12) |
 | F7 | S5 elevated p_b | facility evidence: the TH-FAC admissibility test and the secondary mode only |
 
+The same publication risk applies to the HW-0 families F1 and F2, whose held-out values (T, I_d, sustainment class, the
+knee, R_arch) the architecture track receives and lane 25 plans to publish. Under VP-17 RELEASE_GATED they are therefore
+**embargoed** until PF-1 is hash-frozen. Any disclosure before that automatically flags the affected conditions
+OUTPUTS_SEEN (§10, publication rule).
+
 **Knee-scan direction rule (PROPOSED, VP-19).** The pinned 1-D solver starts every run from a fixed initial state and has
 no path memory, so it makes one prediction per level, compared with both the down and the up reading. If the measured
 sustainment class of a level differs between directions (hysteresis), the level is HYSTERETIC: it is not scored for
@@ -161,7 +181,7 @@ The facility mode (ingestion on) is secondary and non-gating. The two modes are 
 
 | criterion | form | tolerance |
 |---|---|---|
-| **C-ID** (gating) | \|I_d,sim − I_d,exp\| ≤ tol_Id at every mandatory condition | tol_Id = I_d,exp · ε_Id, with ε_Id ≥ k·√(u_exp,rel² + u_reg,rel²). ε_Id is the owner's value (VP-02). One option is 0.15, the project's pre-registered blind I_d scale from the P5-Xe selection record (`transport_ensemble_v0.json` `admission_rule`). Importing it is a convention, not evidence: it is not derived from H-1 uncertainty, and no P5 value is a tolerance source. u_exp is **TBD_FROM_INSTRUMENTATION**, and k is PROPOSED as 2. |
+| **C-ID** (gating) | \|I_d,sim − I_d,exp\| ≤ tol_Id at every mandatory condition | tol_Id = I_d,exp · ε_Id, with ε_Id ≥ k·√(u_exp,rel² + u_reg,rel²). ε_Id is the owner's value (VP-02). One option is 0.15, the project's pre-registered blind I_d scale from the P5-Xe selection record (`transport_ensemble_v0.json` `admission_rule`). Importing it is a convention, not evidence: it is not derived from H-1 uncertainty, and no P5 measurement or measurement uncertainty is a tolerance source (0.15 is a number from the P5-Xe selection record, adopted as a convention if the owner chooses it). u_exp is **TBD_FROM_INSTRUMENTATION**, and k is PROPOSED as 2. |
 | **C-T** (gating) | \|T_1D·f_div − T_exp\| ≤ tol_T at every mandatory condition with an admissible reading | tol_T = k·√(u_T,exp² + (T_1D·u_f)² + u_reg,T²), with u_T,exp **TBD_FROM_INSTRUMENTATION** |
 | **C-SUST** (gating) | see the three cases below | categorical |
 | **C-OSC** (non-gating) | QUIET/OSCILLATORY class match, with one threshold applied identically to measured and simulated I_d(t) | threshold PROPOSED (VP-05) |
@@ -173,6 +193,14 @@ C-SUST cases:
 - The experiment is NOT_SUSTAINED and the model is sustained → FAIL_VALIDATION / SUSTAINMENT_FALSE_POSITIVE. This is a
   PROPOSED new reason (VP-08).
 - The class is MIXED (or HYSTERETIC under the F1 direction rule) → the condition is not scored for sustainment.
+- The experiment is NOT_SUSTAINED and the model is extinct (VP-18 definition) → C-SUST PASS, a correct extinction
+  prediction. C-ID and C-T are not scored at that condition, because there is no sustained target.
+- The experiment is SUSTAINED and the model is sustained → C-SUST PASS, and C-ID and C-T are scored.
+
+**Ambiguous classes (PROPOSED, VP-19).** A mandatory condition whose measured class is SUSTAINMENT_MIXED or HYSTERETIC is
+EXCLUDED_CLASS_AMBIGUOUS. It is not scored for C-SUST, C-ID or C-T, and it is reported. It doesn't fail a candidate, and
+by itself it doesn't prevent PROMOTABLE: it is skipped, not counted as a non-admissible target. The alternative is to
+count it as a non-admissible target, which makes the candidate INCONCLUSIVE, not FAIL. The choice is fixed at LOCK-H1.
 
 **Model sustainment in case (b) (PROPOSED, VP-18).** v1 O1 decides extinction relative to I_d,target, but a
 NOT_SUSTAINED condition has no measured sustained I_d. The reference is therefore data-free and fixed by the grid:
@@ -191,10 +219,11 @@ physics track reruns mechanically, and PF-2 is frozen before any output is relea
   with precedence NUMERICAL_FAILURE → OUT_OF_DOMAIN → FAIL_VALIDATION → PASS. A collapse outside the domain is
   OUT_OF_DOMAIN, not a SUSTAINMENT failure.
 - **Target status.** This is measurement-side admissibility, evaluated before the model: TARGET_ADMISSIBLE, or
-  NOT_ADMISSIBLE for facility, instrument or condition-mismatch reasons. A non-admissible mandatory target makes the
+  NOT_ADMISSIBLE for facility, instrument, condition-mismatch or outputs-seen reasons. A non-admissible mandatory target makes the
   verdict INCONCLUSIVE, never FAIL.
 - **Candidate verdict.** It covers the vacuum mode, the 4 mandatory chemistry configs and every mandatory condition.
-  - **PROMOTABLE:** every run is PASS on every gating criterion with admissible targets.
+  - **PROMOTABLE:** every run is PASS on every gating criterion with admissible targets. Conditions excluded as
+    ambiguous (VP-19) are skipped under the proposed option.
   - **FAIL_VALIDATION:** at least one run is FAIL_VALIDATION.
   - **INCONCLUSIVE / NOT ELIGIBLE:** anything else. The candidate stays a screening hypothesis; it is not rejected.
   - There is one nominal registration per configuration, so there is no "some layer-1 member passes" quantifier. By
@@ -218,12 +247,12 @@ The roles are:
 - **DATA_CUSTODIAN:** designated by the owner, and not a physics-track modeller.
 - **EXPERIMENT_TEAM.**
 - **ARCHITECTURE_TRACK:** receives R_arch, T, P_bus and sustainment classes for its stop rules, and does not pass
-  held-out outputs to the physics track.
+  held-out outputs to the physics track. It is bound by the publication rule below.
 - **PHYSICS_TRACK:** sees registration inputs only, until scoring.
 
 The sequence is:
 
-1. **K0.** This draft goes to the owner, who decides VP-01…VP-19.
+1. **K0.** This draft goes to the owner, who decides VP-01…VP-20.
 2. **K1, LOCK-H1.** Records the sha256 of the criteria, rules, candidate set, chemistry configs, numerics, prediction
    and scoring scripts, and the condition grid. It happens before the custodian releases any S1a registration input,
    and therefore before any Hall-on reading of H-1.
@@ -237,6 +266,10 @@ The sequence is:
      predictions then exist before the measurements do, at the cost of putting a campaign of order v1 size
      (9 × 4 × N_cond nominal runs, plus 2 × N_reg u_reg runs per nominal run, plus the staged sensitivities) on the
      hardware critical path.
+   - **What the owner should know.** The *criteria* are locked before any measurement under both options. Only
+     HOLD_S1B makes the *predictions* strictly precede the measurements, which is the literal reading of D-14-B and of
+     Question A rule 2 ("pre-registered before measurement"). Under RELEASE_GATED, the held-out readings exist before
+     PF-1 and their blindness rests on custody and the publication embargo alone.
    - **Late PF-1, either option:** the held-out release, and so scoring, waits. No condition is dropped or added because
      PF-1 is late. Under HOLD_S1B the owner may instead switch the whole campaign to RELEASE_GATED by a dated addendum
      recorded before S1b, never per condition and never after a Hall-on reading.
@@ -246,7 +279,28 @@ The sequence is:
 7. **K6.** The raw dataset is frozen (sha256). The held-out outputs are released to the frozen scoring script, which
    scores once. The mechanical decision file goes to the owner.
 
-**Leaks.** If a held-out output reaches the physics track early, the custodian records it. Predictions frozen before the
+**Publication rule (PROPOSED, part of RELEASE_GATED).** The architecture track legitimately receives HW-0 values, and
+lane 25 plans to publish R_arch (its denominator is HW-0), the Phase 1 knee (which sets OP2/OP2H), and per-point I_d
+traces, divergence and B(z) (M8, M11). The OD also requires a Phase 3 absolute T_measured demonstration during the
+campaign. Once a value is published, nobody can verify that it didn't reach the physics track. So:
+
+- **Embargo.** No HW-0 held-out value of F1/F2 (or F3/F6 if mandatory), and no quantity derived from one, is published or
+  disclosed outside {custodian, experiment team, architecture track, owner} until PF-1 is hash-frozen. This covers I_d,
+  T, P_bus, sustainment class, the knee and the OP2/OP2H setpoints it fixes, R_arch, I_d traces, species, ion energy and
+  T_e/n_e. It applies to stop-rule disclosures, milestone bundles, Phase 3 reports and repository commits the physics
+  track can read.
+- **Automatic flag.** If such a value is disclosed before PF-1 is frozen, by choice (for example to meet a Milestone A
+  date) or by error, every condition whose value, or any input of a derived quantity, was disclosed is flagged
+  OUTPUTS_SEEN automatically, as F4 is. For R_arch and the knee, that means every condition entering them. The flag does
+  not depend on showing that the value reached the physics track. The target becomes TARGET_NOT_ADMISSIBLE_OUTPUTS_SEEN,
+  so the candidate is INCONCLUSIVE, not FAIL.
+- **Release log.** The custodian logs every release and disclosure. At K6 the log is compared mechanically with the PF-1
+  freeze time. PF-2 input-only extracts are produced only after PF-1 is frozen.
+
+Under HOLD_S1B this rule is unnecessary, because PF-1 is frozen before any Hall-on reading.
+
+**Leaks.** If a held-out output reaches the physics track early, or is disclosed outside the custody circle before PF-1
+is frozen, the custodian records it. Predictions frozen before the
 leak stay valid. A prediction frozen after it, for the leaked condition, is flagged OUTPUTS_SEEN and cannot support
 PROMOTABLE for that condition.
 
@@ -263,14 +317,16 @@ The campaign is **NOT_RUNNABLE** until the following hold:
 |---|---|
 | RG-01 | H-1 geometry released and measured (W3 HW-H1-03; lane 35 P6) |
 | RG-02 | S1a B(z) measured at the actual coil currents |
+| RG-03 | Hall-map inflow gap at `HALL_INLET_Z0` (lane 17 §8; lane 35 open decision 10). Blocks **only** source-on family F4; not required before PF-1 |
 | RG-04 | numerics fixed for H-1, and a data-free grid-adequacy check (lane 35 open decision 7) |
 | RG-05 | wall model and `ion_wall_losses` (lane 35 open decision 3; PROPOSED: as in v1) |
 | RG-06 / VP-07 | chemistry acceptance for H-1 |
-| RG-07a | W4 audited uncertainties of the registration inputs (needed by the u_reg rule) |
+| RG-07a | W4 audited uncertainties of the registration inputs (needed by the u_reg rule); required before PF-1 |
+| RG-07b | W4 audited uncertainties of the held-out observables; required only before LOCK-H2 |
 | RG-08 | W1 test points and LOCK-1 setpoints |
 | RG-09 | LOCK-1 adopts D-14-B |
 | RG-10 | frozen prediction and scoring scripts |
-| RG-11 | cathode boundary rule |
+| RG-11 | cathode boundary rule (see the warning below) |
 | RG-12 | pin unchanged |
 
 RG-07 is split. **RG-07a**, the W4 audited uncertainties of the registration inputs, is required before PF-1,
@@ -279,6 +335,13 @@ the held-out observables, is needed only before LOCK-H2.
 
 **RG-03**, the Hall-map inflow gap (lane 17 §8; lane 35 open decision 10), blocks only the source-on family F4. The
 `hall_only` families can run without it.
+
+**Cathode boundary warning (RG-11, VP-10).** The PROPOSED option keeps the lane-17 §10 solver settings, including a
+cathode coupling voltage of 0.0 V. Lane 17 itself calls that value a **placeholder solver setting, not a design value**
+(`hall_reference_v1.json`, INV-C2). Keeping it makes the gating I_d and thrust predictions depend on a boundary value
+with no hardware basis, so a FAIL_VALIDATION could reflect the placeholder rather than the transport closure. The
+alternative, the measured cathode-to-ground potential per reading as a registration input, removes the placeholder. Its
+mapping to the solver boundary would be fixed at LOCK-H1. The owner should choose knowingly.
 
 ## 12. Forecast risk and the legitimate response
 
@@ -295,24 +358,25 @@ not tuning. Relaxing f_out or the 45 eV cap is **not** a legitimate response.
 | id | question | proposed answer |
 |---|---|---|
 | VP-01 | B(z) and feed state as registration inputs | yes |
-| VP-02 | I_d tolerance form and ε_Id | owner value; one option is 0.15, imported as a convention, not evidence |
+| VP-02 | I_d tolerance form and ε_Id | owner value; one option is 0.15, imported as a convention, not evidence (no P5 measurement or uncertainty is a tolerance source) |
 | VP-03 | primary vacuum-vs-raw with TH-FAC | yes |
-| VP-04 | thrust operator uses the measured f_div | yes |
+| VP-04 | thrust operator uses the measured f_div | yes; cost: thrust then not fully held out (§4) |
 | VP-05 | oscillation class | non-gating |
 | VP-06 | species and ion energy | non-gating unless an operator is pre-registered |
 | VP-07 | accept `abep-n2n-0.11` for H-1 | owner decision |
 | VP-08 | SUSTAINMENT_FALSE_POSITIVE reason | yes |
 | VP-09 | data-free, domain-aware conditions before lock | yes |
-| VP-10 | cathode boundary | as lane 17 §10 |
+| VP-10 | cathode boundary | as lane 17 §10; **warning**: 0.0 V coupling is a lane-17 placeholder (§11) |
 | VP-11 | F3 | secondary |
 | VP-12 | F6 (Xe) | secondary |
 | VP-13 | k | 2 |
 | VP-14 | custodian | owner designates |
 | VP-15 | lock location | as proposed above |
 | VP-16 | O4-equivalent escalation fractions | 0.5 × tolerance |
-| VP-17 | PF-1 freeze point | RELEASE_GATED (alternative HOLD_S1B; §10) |
+| VP-17 | PF-1 freeze point | RELEASE_GATED with the publication embargo (alternative HOLD_S1B, the only option where predictions strictly precede measurements; §10) |
 | VP-18 | reference I_d for model sustainment in C-SUST case (b) | data-free PF-1 reference at the highest-flow scan level (§8) |
-| VP-19 | knee-scan hysteresis | HYSTERETIC level not scored, reported (§6) |
+| VP-19 | ambiguous sustainment class (hysteresis, MIXED) | excluded, not scored, skipped for PROMOTABLE (§6, §8) |
+| VP-20 | u_reg perturbation of profile inputs | scalars separately; B(z) amplitude scale and axial shift (§4) |
 
 ## 14. Numbers and their sources
 
