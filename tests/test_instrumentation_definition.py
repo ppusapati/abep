@@ -14,6 +14,7 @@ import importlib.util
 import json
 import math
 import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -95,7 +96,7 @@ def test_requirement_basis_equals_lane25():
     for n, row in doc["requirement_basis"]["lane25_by_n"].items():
         plan = draft["derived_numbers"]["plan_by_n"][n]
         for key in ("u_T_max", "u_P_max", "u_inst_max", "sigma_lnR_max", "k_primary"):
-            assert row[key]["value"] == pytest.approx(plan[key]["value"], rel=1e-5)
+            assert row[key]["value"] == plan[key]["value"]  # copied bit-for-bit (A3-repair-2)
     assert doc["requirement_basis"]["lane25_by_n"]["4"]["u_T_max"]["value"] == pytest.approx(0.0049836144, rel=1e-6)
 
 
@@ -292,7 +293,10 @@ def test_c5_review_findings_closed():
     # versioning: stays v1 with a change log, the original base commit is kept
     assert doc["version"] == "v1" and doc["revision"] == "v1-r2"
     assert doc["base_commit"] == "510e464fb8e128e4cf3325572a4d36ad33a4899d"
-    assert [c["revision"] for c in doc["change_log"]] == ["v1-r1", "v1-r2"]
+    assert [c["revision"] for c in doc["change_log"]] == ["v1-r1", "v1-r2", "v1-r2", "v1-r2", "v1-r2"]
+    assert [c["entry"] for c in doc["change_log"]] == ["v1-r1", "v1-r2/C5", "v1-r2/A3", "v1-r2/A3-repair",
+                                                       "v1-r2/A3-repair-2"]
+    assert doc["change_log"][-1]["amendment"] == "A3"
 
 
 def test_c5_validation_rejects_inconsistencies():
@@ -322,3 +326,108 @@ def test_c5_missing_disposition_raises(monkeypatch):
     monkeypatch.setattr(B, "C5_DISPOSITION", disp)
     with pytest.raises(ValueError):
         B.build()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# owner addendum A3 (instrument semantics; stays v1-r2)
+# ----------------------------------------------------------------------------------------------------------------------
+def test_a3_adopted_without_changing_ids_and_pins_hw_c1_09():
+    doc = _stored()
+    a3 = json.loads((ROOT / B.A3).read_text(encoding="utf-8"))
+    rows = {r["decision"]: r for r in doc["a3_adoption"]["rows"]}
+    assert set(rows) == set(a3["decisions"])
+    for k, r in rows.items():
+        assert r["owner_text"] == a3["decisions"][k]
+    assert B.A3 in {p["path"] for p in doc["inputs"]}
+    hw = json.loads((ROOT / B.HWR).read_text(encoding="utf-8"))
+    assert "HW-C1-09" in B._walk_ids(hw, set())
+    assert "HW-C1-09" in doc["c5_adoption"]["w3_ids_cited"]
+    assert doc["revision"] == "v1-r2" and doc["version"] == "v1"
+
+
+def test_a3_instrument_semantics():
+    doc = _stored()
+    ins = {i["id"]: i for i in doc["instruments"]}
+    i23 = ins["INS-23"]
+    assert "MANDATORY" in i23["principle"] and "HW-C1-09" in i23["principle"]
+    assert any("never as emitter temperature" in n and "'unmeasured'" in n for n in i23["notes"])
+    assert any("unmeasured" in n and "cathode-tube" in n for n in ins["INS-18"]["notes"])
+    i22 = ins["INS-22"]
+    assert any("QUALITATIVE" in n and "S1a" in n and "never supports an exposure-dose or lifetime claim" in n
+               for n in i22["notes"])
+    assert any("quantitative for the AO/lifetime programme" in c for c in i22["calibration"])
+    p12 = next(p for p in doc["procedures"] if p["id"] == "INS-P-12")
+    assert "k = 2" in p12["statement"] and "effective degrees of freedom" in p12["statement"]
+    assert any("ISO/IEC 17025" in c for c in ins["INS-19"]["calibration"])
+    assert any("ISO/IEC 17025" in c for c in ins["INS-20"]["calibration"])
+
+
+def test_a3_validation_rejects_missing_semantics():
+    doc = _stored()
+    bad = json.loads(json.dumps(doc))
+    i23 = next(i for i in bad["instruments"] if i["id"] == "INS-23")
+    i23["notes"] = [n for n in i23["notes"] if "never as emitter temperature" not in n]
+    with pytest.raises(ValueError):
+        B.validate(bad)
+    bad = json.loads(json.dumps(doc))
+    i22 = next(i for i in bad["instruments"] if i["id"] == "INS-22")
+    i22["notes"] = [n for n in i22["notes"] if "QUALITATIVE" not in n]
+    with pytest.raises(ValueError):
+        B.validate(bad)
+    bad = json.loads(json.dumps(doc))
+    next(p for p in bad["procedures"] if p["id"] == "INS-P-12")["statement"] = "k: owner"
+    with pytest.raises(ValueError):
+        B.validate(bad)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# A3 review repair: W3 pinned as an immutable snapshot (no pin cycle), downstream re-pins declared, unique entries
+# ----------------------------------------------------------------------------------------------------------------------
+def test_w3_pinned_as_immutable_snapshot_not_live_file():
+    doc = _stored()
+    paths = {p["path"] for p in doc["inputs"]}
+    assert B.HWR_LIVE not in paths and B.HWR in paths
+    assert B.HWR.startswith("docs/experiments/instrumentation/snapshots/")
+    sn = doc["downstream_repin_required"]["w3_snapshot"]
+    assert sn["source_path"] == B.HWR_LIVE and sn["source_commit"] in sn["reproduce"]
+    bad = json.loads(json.dumps(doc))
+    bad["inputs"].append({"path": B.HWR_LIVE, "lane": "W3", "sha256": "0" * 64})
+    with pytest.raises(ValueError):
+        B.validate(bad)
+
+
+def test_w3_snapshot_matches_git_commit_when_available():
+    sn = B.HWR_SNAPSHOT
+    try:
+        out = subprocess.run(["git", "-C", str(ROOT), "show", f"{sn['source_commit']}:{sn['source_path']}"],
+                             capture_output=True, check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        pytest.skip("git history with the W3 source commit is not available")
+    assert out == (ROOT / B.HWR).read_bytes()
+
+
+def test_downstream_repin_declared():
+    doc = _stored()
+    dr = doc["downstream_repin_required"]
+    files = {c["file"] for c in dr["consumers"]}
+    assert {"docs/experiments/lifetime_ao/ao_lifetime_register_v3.json",
+            "docs/experiments/hardware/hardware_requirements_v1.json",
+            "docs/experiments/s1_readiness/s1_readiness_status_current.json"} <= files
+    assert "9a33979" in dr["merge_order"] and "removed from this branch" in dr["merge_order"]
+    md = (DIR / "INSTRUMENTATION_DEFINITION.md").read_text(encoding="utf-8")
+    assert "Downstream re-pin required" in md and "Pin cycle resolved" in md
+    assert "7d373374dc" in md.split("\n")[2]
+
+
+def test_change_log_entries_unique():
+    doc = _stored()
+    bad = json.loads(json.dumps(doc))
+    bad["change_log"][-1]["entry"] = bad["change_log"][-2]["entry"]
+    with pytest.raises(ValueError):
+        B.validate(bad)
+
+
+def test_ins13_cex_wording():
+    ins13 = next(i for i in _stored()["instruments"] if i["id"] == "INS-13")
+    t = json.dumps(ins13["required_uncertainty"])
+    assert "ion-gauge uncertainty is typically 10-20 %" in t and "not the correction's" in t
