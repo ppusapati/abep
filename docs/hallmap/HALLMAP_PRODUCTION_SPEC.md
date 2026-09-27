@@ -13,9 +13,11 @@ Producing design Hall maps is **blocked** until all of the following are true:
 4. The **O4 dispositions** for the admitting decision are complete (owner decision 2026-09-26, CLAUDE.md "Next work"
    item 3). Admission and design Hall maps stay gated until then, **even if a later campaign yields PROMOTABLE**: every
    pre-registered O4 staged sensitivity and every escalation its trigger requires must be scored, and each must carry a
-   recorded owner disposition that clears the member. This is enforced by `abep_sim.hall_ensemble._check_o4` on the
-   execution baseline (branch `claude/nifty-ramanujan-w68f9z`, commit `bd0b6ce` "Admission gated on O4 dispositions"),
-   with the record format `hallthruster_bridge/ensemble/o4_dispositions_schema_v1.json`.
+   recorded owner disposition that clears the member. This is enforced by `abep_sim.hall_ensemble._check_o4`, with the
+   record format `hallthruster_bridge/ensemble/o4_dispositions_schema_v1.json`. The authoritative execution baseline is
+   the one CLAUDE.md pins (branch `claude/nifty-ramanujan-w68f9z` at `debce16`, and its successors on that branch). The
+   gate was introduced earlier in that history by commit `bd0b6ce` ("Admission gated on O4 dispositions"), which is an
+   ancestor of `debce16`; `bd0b6ce` is cited only as the introducing commit, not as the baseline.
 
 This document changes no physics, threshold, frozen dataset, chemistry, transport or campaign file. It does not claim an
 ABEP closure, an architecture winner or any transport admission. Where it proposes something, it says **PROPOSED** and
@@ -28,6 +30,48 @@ Companion files:
 | `schemas/hallmap/hallmap_provenance_v1.json` | JSON Schema for `meta.provenance` of one map set |
 | `docs/hallmap/drafts/hallmap_convergence_prereg_DRAFT.json` | DRAFT numerical-convergence pre-registration (not frozen) |
 | `tests/test_hallmap_spec.py` | keeps this spec, the schema and the draft consistent with `abep_sim/hall_map.py` and `abep_sim/hall_ensemble.py` |
+
+## 0. Milestones and architecture scope
+
+The three candidate architectures are `hall_only`, `rf_hall` and `ecr_hall`. They differ only in the pre-ionization
+method upstream of the Hall inlet plane (`HALL_INLET_Z0`, defined in
+`docs/architecture_comparison/hall_reference/HALL_ACCELERATOR_REFERENCE.md` section 8, lane_17_hall_reference). The Hall
+accelerator, feed state, cathode and bus boundary are common.
+
+**Which architectures a design map set can serve under this spec.** The map axes (section 4) describe a **neutral**
+anode feed. They have no axis for a pre-ionized inlet state, and the pinned HallThruster.jl v0.23.1 has no ion or electron
+inflow at the anode (HALL_ACCELERATOR_REFERENCE.md section 8, findings SC-1…SC-5, "Solver capability: GAP"). Therefore:
+
+| architecture | mappable under this spec? | what is missing |
+|---|---|---|
+| `hall_only` | **yes**, once the section 2 preconditions hold | preconditions P1–P9 only (admitted member, Vyovrinda geometry/B(z), frozen convergence pre-registration, O4 dispositions, …) |
+| `rf_hall` | **no** (outside the map domain; refused, section 12) | an owner-approved inlet-state axis or schema change (open decision 10, section 13) **and** the owner-approved solver/bridge model change that closes the inflow gap, with its own validation plan (zero injection must reproduce `hall_only`) |
+| `ecr_hall` | **no** (outside the map domain; refused, section 12) | as `rf_hall`, plus the INV-B3 constraint on the ECR field inside the Hall channel (HALL_ACCELERATOR_REFERENCE.md) |
+
+Running `rf_hall` or `ecr_hall` through a `hall_only` map with the pre-ionization dropped is forbidden: it would silently
+turn a pre-ionized architecture into `hall_only`.
+
+**Milestone support.**
+
+| milestone | what this spec contributes | what it needs to reach the milestone / the next one |
+|---|---|---|
+| **A** (conditional selection) | **Maps are not needed.** A conditional selection ("X is baseline provided A/B/C are demonstrated") can be written without any absolute Hall number. This spec contributes the *conditions*: which quantities a map must deliver (section 6), the trust flags (section 7), the chemistry domain (section 8), and the fact that `rf_hall`/`ecr_hall` absolute Hall performance needs the inlet-state gap closed first. | nothing from this lane blocks A |
+| **B** (physics-backed selection) | Defines how the absolute `T`, `eta_u`, `P_d`, `I_d` of the Hall block are produced for a same-condition comparison. | (1) at least one **admitted** member (credible set empty today, gate 3 FAIL); (2) Vyovrinda geometry/B(z) released; (3) frozen convergence pre-registration; (4) O4 dispositions; (5) map sets for **all three** architectures. Today only `hall_only` is mappable; `rf_hall`/`ecr_hall` need open decision 10 and the inflow model change. Until then a physics-backed comparison of the three arms is not possible through maps, and Milestone B stays blocked on that field for `rf_hall`/`ecr_hall` even after admission. |
+| **C** (proposal/PDR freeze) | Wall-life inputs (`wall_life_trustworthy` fields, section 7) and the frozen maps' provenance (section 10). | everything for B, plus a cited sputter-yield model and a decision on the `ion_wall_losses` split (open decision 3); a second-lens review of this lane (it is single-lens-v1 until then). |
+
+**Operating-model questions.** (i) *Conditional selection now:* this lane gives no ranking; it states that absolute Hall
+performance, for any arm, is unavailable today and that for `rf_hall`/`ecr_hall` it is additionally unavailable by
+construction of the map domain. (ii) *What blocks physics-backed selection:* the items in the Milestone B row. (iii) *What
+could overturn it:* (a) an owner decision that adds an inlet-state axis or schema field, and a validated inflow model change,
+would bring `rf_hall`/`ecr_hall` into the map domain; (b) a member admitted under a different chemistry config than the
+maps were built for would require new map sets (section 3); (c) failure of the convergence pre-registration at the chosen
+numerics would invalidate any map set built with them.
+
+**Consumers.** `docs/architecture_comparison/harness/HARNESS.md` and `abep_sim/arch_compare.py` (lane_12_arch_harness) key
+Hall maps by `(member, architecture)`. If the owner adopts one map set per chemistry config (section 3, open decision 1),
+that index needs a chemistry-config key as well; this is a change for the harness lane, not made here.
+`docs/milestones/bundle1/BUNDLE1.md` lists this lane as blocking for the `T` and `eta_u` fields of all three architectures;
+that is consistent with the table above.
 
 ## 1. Where the maps sit
 
@@ -353,8 +397,10 @@ Rules for the rewired branch:
 - A query that is not `trustworthy`, or that is outside the axes, becomes `MODEL_ERROR` / out-of-domain (CLAUDE.md rule 3).
   It is never infeasible-by-default, and it is never silently clamped to the box.
 - `L_ch` stops being continuous: geometry is chosen among map sets.
-- Architectures that feed a **pre-ionized** flow into the Hall channel (plasma ionizer → Hall) have no map axis for it.
-  They are outside the map domain and must be refused, not evaluated with pre-ionization dropped.
+- Architectures that feed a **pre-ionized** flow into the Hall channel (plasma ionizer → Hall), i.e. `rf_hall` and
+  `ecr_hall`, have no map axis for it. They are outside the map domain and must be refused, not evaluated with
+  pre-ionization dropped. Only `hall_only` is mappable under this spec (section 0); bringing the other two in needs open
+  decision 10 (section 13).
 - `HALL_OVERRIDES` (the 0-D UQ hook) must not be used to emulate transport members. Member variation comes only from
   loading a different member's map set.
 - The trade and UQ run once per admitted member (and per chemistry map set, if the owner adopts section 3). Results are
@@ -374,6 +420,14 @@ Rules for the rewired branch:
 8. Axis ranges: sources for the V_d, mdot and B_scale bounds (Vyovrinda design documents; intake-chain script).
 9. Producer changes outside this lane: pass `CFL`/`num_save`, report escape-hatch use, write ordered `axes`, emit
    `meta.provenance`.
+10. Pre-ionized inflow / Hall-inlet-state representation for `rf_hall` and `ecr_hall` (sections 0 and 12): whether to add
+    an inlet-state axis or a schema field (e.g. the PROPOSED `moments_v1` record at `HALL_INLET_Z0`,
+    HALL_ACCELERATOR_REFERENCE.md section 8, lane_17_hall_reference), together with the owner-approved solver/bridge model
+    change that removes the inflow gap (its own validation plan; zero injection must reproduce `hall_only`; pin never moved
+    automatically). Until decided, `rf_hall`/`ecr_hall` design maps are refused, and Milestone B cannot be reached for them
+    through maps.
+11. Harness index: if decision 1 adopts per-chemistry map sets, the harness (`abep_sim/arch_compare.py`,
+    lane_12_arch_harness) must key maps by `(member, architecture, chemistry config)` instead of `(member, architecture)`.
 
 ## 14. Numbers used in this document
 

@@ -362,3 +362,17 @@ def test_spec_covers_fields_nuisance_and_member_gate():
                   "schemas/hallmap/hallmap_provenance_v1.json",
                   "_check_o4", "o4_dispositions_schema_v1.json", "o4_dispositions_file", "o4_dispositions_sha256"):
         assert token in text, token
+
+
+def test_spec_states_milestones_and_architecture_scope():
+    text = open(SPEC_PATH).read()
+    for arch in ("hall_only", "rf_hall", "ecr_hall"):
+        assert f"`{arch}`" in text, arch
+    for m in ("**A** (conditional selection)", "**B** (physics-backed selection)", "**C** (proposal/PDR freeze)"):
+        assert m in text, m
+    assert "HALL_INLET_Z0" in text
+    # rf_hall / ecr_hall are outside the map domain until an owner decision closes the inlet-state gap
+    sec13 = text.split("## 13. Open decisions for the owner", 1)[1].split("## 14.", 1)[0]
+    assert "rf_hall" in sec13 and "ecr_hall" in sec13 and "inlet-state" in sec13
+    # the pinned baseline named by CLAUDE.md is cited as authoritative
+    assert "debce16" in text
