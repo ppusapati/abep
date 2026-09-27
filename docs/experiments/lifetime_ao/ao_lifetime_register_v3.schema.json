@@ -1,0 +1,1737 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "docs/experiments/lifetime_ao/ao_lifetime_register_v3.schema.json",
+ "title": "H-1 lifetime / atomic-oxygen degradation register v3 (fo_ao_lifetime_register)",
+ "description": "Structure of ao_lifetime_register_v3.json. Generated content only (build_ao_lifetime_register.py). v3 = v2 re-verified against the W4 instrumentation definition v1-r2 (re-pinned): per-provision W4 adoption status from the W4 c5_adoption table with the adopting ids back-traced into W4, partial_open items, and a history block; v1 and v2 stay byte-identical historical records (pinned by W3 SRC-AOL and by W4 v1-r2 respectively). Every numeric evidence value carries a source and an evidence class; life numbers are measured on Vyovrinda hardware, literature on another device, or TBD (control C6). Requirements and thresholds not in the RFP are PROPOSED.",
+ "type": "object",
+ "required": [
+  "schema",
+  "schema_file",
+  "id",
+  "title",
+  "status",
+  "date",
+  "lane",
+  "builder",
+  "milestones",
+  "hard_statements",
+  "vocabulary",
+  "sources",
+  "repository_references",
+  "merged_inputs",
+  "planned_paths",
+  "mechanisms",
+  "witness_coupons",
+  "requirements",
+  "interface_table",
+  "proposed_thresholds",
+  "open_owner_questions",
+  "derived",
+  "version",
+  "supersedes",
+  "change_log",
+  "draft_reference_verification",
+  "c5_adoption_check",
+  "history"
+ ],
+ "additionalProperties": false,
+ "properties": {
+  "schema": {
+   "const": "ao_lifetime_register_v3"
+  },
+  "schema_file": {
+   "const": "docs/experiments/lifetime_ao/ao_lifetime_register_v3.schema.json"
+  },
+  "id": {
+   "const": "fo_ao_lifetime_register"
+  },
+  "title": {
+   "type": "string"
+  },
+  "status": {
+   "const": "DRAFT_FOR_OWNER_REVIEW"
+  },
+  "date": {
+   "type": "string"
+  },
+  "lane": {
+   "type": "object",
+   "required": [
+    "id",
+    "trigger",
+    "owner_disposition",
+    "directive",
+    "controls"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "id": {
+     "const": "fo_ao_lifetime_register"
+    },
+    "trigger": {
+     "const": "T_PIVOT_AO_LIFETIME_REGISTER"
+    },
+    "owner_disposition": {
+     "const": "od_hardware_pivot"
+    },
+    "directive": {
+     "type": "string"
+    },
+    "controls": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "builder": {
+   "type": "string"
+  },
+  "milestones": {
+   "type": "object",
+   "required": [
+    "supports",
+    "A",
+    "B",
+    "C",
+    "to_reach_next"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "supports": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "A",
+       "B",
+       "C"
+      ]
+     }
+    },
+    "A": {
+     "type": "string"
+    },
+    "B": {
+     "type": "string"
+    },
+    "C": {
+     "type": "string"
+    },
+    "to_reach_next": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "hard_statements": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "vocabulary": {
+   "type": "object"
+  },
+  "sources": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "required": [
+     "citation",
+     "doi",
+     "urls_accessed",
+     "access",
+     "license",
+     "sha256_of_accessed_file",
+     "accessed_on",
+     "note"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "citation": {
+      "type": "string"
+     },
+     "doi": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "urls_accessed": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "access": {
+      "enum": [
+       "open_full_text",
+       "abstract_only",
+       "not_accessed"
+      ]
+     },
+     "license": {
+      "type": "string"
+     },
+     "sha256_of_accessed_file": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "accessed_on": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "note": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "repository_references": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "string"
+   }
+  },
+  "merged_inputs": {
+   "type": "object",
+   "required": [
+    "statement",
+    "files",
+    "commits",
+    "w3_pins_this_register",
+    "w4_pins_this_register"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "statement": {
+     "type": "string"
+    },
+    "files": {
+     "type": "array",
+     "minItems": 4,
+     "items": {
+      "type": "object",
+      "required": [
+       "path",
+       "sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "path": {
+        "type": "string"
+       },
+       "sha256": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+       }
+      }
+     }
+    },
+    "commits": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "string"
+     }
+    },
+    "w3_pins_this_register": {
+     "type": "object",
+     "required": [
+      "source_id",
+      "path",
+      "sha256"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "source_id": {
+       "type": "string"
+      },
+      "path": {
+       "type": "string"
+      },
+      "sha256": {
+       "type": "string",
+       "pattern": "^[0-9a-f]{64}$"
+      }
+     }
+    },
+    "w4_pins_this_register": {
+     "type": "object",
+     "required": [
+      "source_id",
+      "path",
+      "sha256"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "source_id": {
+       "type": "string"
+      },
+      "path": {
+       "type": "string"
+      },
+      "sha256": {
+       "type": "string",
+       "pattern": "^[0-9a-f]{64}$"
+      }
+     }
+    }
+   }
+  },
+  "planned_paths": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "required": [
+     "path_or_status",
+     "present_in_base"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "path_or_status": {
+      "type": "string"
+     },
+     "present_in_base": {
+      "type": "boolean"
+     }
+    }
+   }
+  },
+  "mechanisms": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/mechanism"
+   }
+  },
+  "witness_coupons": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/witness"
+   }
+  },
+  "requirements": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/requirement"
+   }
+  },
+  "interface_table": {
+   "type": "object",
+   "required": [
+    "control",
+    "note",
+    "rows"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "control": {
+     "const": "C5_AO_early"
+    },
+    "note": {
+     "type": "string"
+    },
+    "rows": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "requirement",
+       "adopter",
+       "target",
+       "related_ids",
+       "action",
+       "note",
+       "adoption_status",
+       "adopted_ids",
+       "open_needs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "requirement": {
+        "type": "string",
+        "pattern": "^AOL-[A-Z]{2}-\\d{2}$"
+       },
+       "adopter": {
+        "enum": [
+         "W2",
+         "W3",
+         "W4",
+         "W5"
+        ]
+       },
+       "target": {
+        "type": "string"
+       },
+       "related_ids": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "required": [
+          "id",
+          "verdict",
+          "usage_fixed"
+         ],
+         "additionalProperties": false,
+         "properties": {
+          "id": {
+           "type": "string"
+          },
+          "verdict": {
+           "enum": [
+            "VERIFIED",
+            "CHANGED",
+            "ABSENT",
+            "ADOPTING_ID"
+           ]
+          },
+          "usage_fixed": {
+           "type": "boolean"
+          }
+         }
+        }
+       },
+       "action": {
+        "enum": [
+         "ADD",
+         "AMEND",
+         "ALIGN",
+         "OWNER_DECISION"
+        ]
+       },
+       "note": {
+        "type": "string"
+       },
+       "adoption_status": {
+        "enum": [
+         "ADOPTED",
+         "ADOPTED_PARTIAL",
+         "ALIGNED",
+         "NOT_ADOPTED",
+         "MISSING_DISPOSITION",
+         "MISSING_W4_DISPOSITION",
+         "NOT_CHECKED_OUTSIDE_C5_H1_CHECK"
+        ]
+       },
+       "adopted_ids": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "open_needs": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      }
+     }
+    }
+   }
+  },
+  "proposed_thresholds": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "status",
+     "rule",
+     "value",
+     "unit",
+     "basis"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "status": {
+      "const": "PROPOSED (not in the RFP)"
+     },
+     "rule": {
+      "type": "string"
+     },
+     "value": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "unit": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "basis": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "open_owner_questions": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "to",
+     "question",
+     "w3_disposition"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "to": {
+      "type": "string"
+     },
+     "question": {
+      "type": "string"
+     },
+     "w3_disposition": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "derived": {
+   "type": "object",
+   "required": [
+    "ao_environment",
+    "wall_sputter_index"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "wall_sputter_index": {
+     "type": "object",
+     "required": [
+      "status",
+      "input",
+      "coverage_legend",
+      "coverage",
+      "entries"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "status": {
+       "type": "string"
+      },
+      "input": {
+       "type": "object",
+       "required": [
+        "path",
+        "sha256",
+        "db_id",
+        "db_version",
+        "db_date"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "path": {
+         "const": "docs/evidence/wall_life/sputter_yield_db_v1.json"
+        },
+        "sha256": {
+         "type": "string",
+         "pattern": "^[0-9a-f]{64}$"
+        },
+        "db_id": {
+         "type": "string"
+        },
+        "db_version": {
+         "type": "string"
+        },
+        "db_date": {
+         "type": "string"
+        }
+       }
+      },
+      "coverage_legend": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "string"
+       }
+      },
+      "coverage": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "type": "object",
+        "required": [
+         "projectile",
+         "target",
+         "status",
+         "n_entries",
+         "entries"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "projectile": {
+          "type": "string"
+         },
+         "target": {
+          "type": "string"
+         },
+         "status": {
+          "enum": [
+           "measured_transcribed",
+           "measured_values_TBD",
+           "model_proxy_only",
+           "none_located"
+          ]
+         },
+         "n_entries": {
+          "type": "integer",
+          "minimum": 0
+         },
+         "entries": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         }
+        }
+       }
+      },
+      "entries": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "type": "object",
+        "required": [
+         "entry_id",
+         "projectile",
+         "target",
+         "energy_min_eV",
+         "energy_max_eV",
+         "energy_note",
+         "incidence_angles_deg",
+         "evidence_level",
+         "evidence_class",
+         "units",
+         "n_rows_transcribed",
+         "values_status",
+         "source_ids_lane32",
+         "source_locator"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "entry_id": {
+          "type": "string"
+         },
+         "projectile": {
+          "type": "string"
+         },
+         "target": {
+          "type": "string"
+         },
+         "energy_min_eV": {
+          "type": [
+           "number",
+           "null"
+          ]
+         },
+         "energy_max_eV": {
+          "type": [
+           "number",
+           "null"
+          ]
+         },
+         "energy_note": {
+          "type": [
+           "string",
+           "null"
+          ]
+         },
+         "incidence_angles_deg": {
+          "type": "array",
+          "items": {
+           "type": "number"
+          }
+         },
+         "evidence_level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7
+         },
+         "evidence_class": {
+          "$ref": "#/$defs/evidence_class"
+         },
+         "units": {
+          "type": "string"
+         },
+         "n_rows_transcribed": {
+          "type": [
+           "integer",
+           "null"
+          ]
+         },
+         "values_status": {
+          "type": "string"
+         },
+         "source_ids_lane32": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         },
+         "source_locator": {
+          "type": "string"
+         }
+        }
+       }
+      }
+     }
+    },
+    "ao_environment": {
+     "type": "object",
+     "required": [
+      "status",
+      "evidence_class",
+      "evidence_level",
+      "inputs",
+      "equations",
+      "flags",
+      "table",
+      "illustrative_recession_equivalents"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "status": {
+       "type": "string"
+      },
+      "evidence_class": {
+       "const": "model-derived"
+      },
+      "evidence_level": {
+       "type": "integer"
+      },
+      "inputs": {
+       "type": "object"
+      },
+      "equations": {
+       "type": "object"
+      },
+      "flags": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "table": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "required": [
+         "alt_km",
+         "f107",
+         "rho_kg_m3",
+         "fO_mass_fraction",
+         "n_O_m3",
+         "V_orb_m_s",
+         "E_ram_O_eV",
+         "ram_flux_atoms_cm2_s",
+         "fluence_per_1000h_atoms_cm2",
+         "fluence_rfp_mission_26000h_atoms_cm2",
+         "ratio_to_misse2_fluence"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "alt_km": {
+          "type": "integer"
+         },
+         "f107": {
+          "type": "number"
+         },
+         "rho_kg_m3": {
+          "type": "number"
+         },
+         "fO_mass_fraction": {
+          "type": "number"
+         },
+         "n_O_m3": {
+          "type": "number"
+         },
+         "V_orb_m_s": {
+          "type": "number"
+         },
+         "E_ram_O_eV": {
+          "type": "number"
+         },
+         "ram_flux_atoms_cm2_s": {
+          "type": "number"
+         },
+         "fluence_per_1000h_atoms_cm2": {
+          "type": "number"
+         },
+         "fluence_rfp_mission_26000h_atoms_cm2": {
+          "type": "number"
+         },
+         "ratio_to_misse2_fluence": {
+          "type": "number"
+         }
+        }
+       }
+      },
+      "illustrative_recession_equivalents": {
+       "type": "object",
+       "required": [
+        "status",
+        "mission_fluence_range_atoms_cm2",
+        "rounding",
+        "rows"
+       ],
+       "additionalProperties": false,
+       "properties": {
+        "status": {
+         "type": "string"
+        },
+        "mission_fluence_range_atoms_cm2": {
+         "type": "array",
+         "items": {
+          "type": "number"
+         }
+        },
+        "rounding": {
+         "type": "string"
+        },
+        "rows": {
+         "type": "array",
+         "items": {
+          "type": "object",
+          "required": [
+           "id",
+           "material",
+           "abbreviation",
+           "role_on_ep_unit",
+           "misse2_erosion_yield_cm3_per_atom",
+           "yield_source",
+           "illustrative_recession_um_at_min_mission_fluence",
+           "illustrative_recession_um_at_max_mission_fluence"
+          ],
+          "additionalProperties": false,
+          "properties": {
+           "id": {
+            "type": "string"
+           },
+           "material": {
+            "type": "string"
+           },
+           "abbreviation": {
+            "type": "string"
+           },
+           "role_on_ep_unit": {
+            "type": "string"
+           },
+           "misse2_erosion_yield_cm3_per_atom": {
+            "type": "number"
+           },
+           "yield_source": {
+            "type": "object"
+           },
+           "illustrative_recession_um_at_min_mission_fluence": {
+            "type": "number"
+           },
+           "illustrative_recession_um_at_max_mission_fluence": {
+            "type": "number"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "version": {
+   "const": "v3"
+  },
+  "supersedes": {
+   "type": "object",
+   "required": [
+    "version",
+    "path",
+    "sha256",
+    "md",
+    "status"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "version": {
+     "const": "v2"
+    },
+    "path": {
+     "type": "string"
+    },
+    "sha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "md": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    }
+   }
+  },
+  "change_log": {
+   "type": "array",
+   "minItems": 3,
+   "items": {
+    "type": "object",
+    "required": [
+     "version",
+     "date",
+     "change"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "version": {
+      "type": "string"
+     },
+     "date": {
+      "type": "string"
+     },
+     "change": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "draft_reference_verification": {
+   "type": "object",
+   "required": [
+    "statement",
+    "verdicts",
+    "reference_fixes"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "statement": {
+     "type": "string"
+    },
+    "verdicts": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "register",
+       "v1_usage",
+       "verdict",
+       "note",
+       "merged",
+       "w3_own_verdict"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "register": {
+        "enum": [
+         "W3",
+         "W4"
+        ]
+       },
+       "v1_usage": {
+        "type": "string"
+       },
+       "verdict": {
+        "enum": [
+         "VERIFIED",
+         "CHANGED",
+         "ABSENT"
+        ]
+       },
+       "note": {
+        "type": "string"
+       },
+       "merged": {
+        "type": "object",
+        "required": [
+         "file",
+         "item",
+         "text_excerpt"
+        ],
+        "additionalProperties": false,
+        "properties": {
+         "file": {
+          "type": "string"
+         },
+         "item": {
+          "type": [
+           "string",
+           "null"
+          ]
+         },
+         "text_excerpt": {
+          "type": [
+           "string",
+           "null"
+          ]
+         }
+        }
+       },
+       "w3_own_verdict": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "reference_fixes": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "where",
+       "field_or_adopter",
+       "v1",
+       "fixed",
+       "why"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "where": {
+        "type": "string"
+       },
+       "field_or_adopter": {
+        "type": "string"
+       },
+       "v1": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "why": {
+        "type": "string"
+       },
+       "fixed": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "c5_adoption_check": {
+   "type": "object",
+   "required": [
+    "control",
+    "statement",
+    "w4_source",
+    "counts",
+    "rows",
+    "not_adopted",
+    "partial_open"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "control": {
+     "const": "C5_AO_early"
+    },
+    "statement": {
+     "type": "string"
+    },
+    "counts": {
+     "type": "object",
+     "required": [
+      "provisions",
+      "with_h1_requirement_id",
+      "w3_by_disposition",
+      "w3_back_trace_text_only",
+      "w3_back_trace_none",
+      "w4_by_status",
+      "w4_rows",
+      "w4_back_trace_none"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "provisions": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "with_h1_requirement_id": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "w3_by_disposition": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+       }
+      },
+      "w3_back_trace_text_only": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "w3_back_trace_none": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "w4_by_status": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+       }
+      },
+      "w4_rows": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "w4_back_trace_none": {
+       "type": "integer",
+       "minimum": 0
+      }
+     }
+    },
+    "rows": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "adopters_v1",
+       "w3_disposition",
+       "w3_requirement_ids",
+       "w3_back_trace",
+       "w3_note",
+       "w3_needed",
+       "w4_status",
+       "w4_adopted_ids",
+       "w4_back_trace",
+       "w4_how",
+       "w4_needs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^AOL-[A-Z]{2}-\\d{2}$"
+       },
+       "adopters_v1": {
+        "type": "array",
+        "items": {
+         "enum": [
+          "W2",
+          "W3",
+          "W4",
+          "W5"
+         ]
+        }
+       },
+       "w3_disposition": {
+        "enum": [
+         "ADOPTED",
+         "ADOPTED_PARTIAL",
+         "ALIGNED",
+         "NOT_ADOPTED",
+         "MISSING_DISPOSITION"
+        ]
+       },
+       "w3_requirement_ids": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "pattern": "^HW-"
+        }
+       },
+       "w3_back_trace": {
+        "type": "object",
+        "additionalProperties": {
+         "enum": [
+          "traces_to",
+          "text_only",
+          "none"
+         ]
+        }
+       },
+       "w3_note": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "w3_needed": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "w4_status": {
+        "enum": [
+         "ADOPTED",
+         "ADOPTED_PARTIAL",
+         "NOT_ADOPTED",
+         "MISSING_W4_DISPOSITION",
+         "not_a_W4_row"
+        ]
+       },
+       "w4_adopted_ids": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "pattern": "^INS-(P-)?\\d{2}$"
+        }
+       },
+       "w4_back_trace": {
+        "type": "object",
+        "additionalProperties": {
+         "enum": [
+          "traces_to_provisions",
+          "procedure_provisions",
+          "none"
+         ]
+        }
+       },
+       "w4_how": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "w4_needs": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "not_adopted": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "by",
+       "status",
+       "needed",
+       "other_adopter_status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "type": "string"
+       },
+       "by": {
+        "enum": [
+         "W3",
+         "W4"
+        ]
+       },
+       "status": {
+        "enum": [
+         "NOT_ADOPTED",
+         "MISSING_DISPOSITION",
+         "MISSING_W4_DISPOSITION"
+        ]
+       },
+       "needed": {
+        "type": "string"
+       },
+       "other_adopter_status": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "w4_source": {
+     "type": "object",
+     "required": [
+      "path",
+      "revision",
+      "table"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "path": {
+       "type": "string"
+      },
+      "revision": {
+       "type": "string"
+      },
+      "table": {
+       "const": "c5_adoption"
+      }
+     }
+    },
+    "partial_open": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "id",
+       "by",
+       "needed",
+       "other_adopter_status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "id": {
+        "type": "string",
+        "pattern": "^AOL-[A-Z]{2}-\\d{2}$"
+       },
+       "by": {
+        "enum": [
+         "W3",
+         "W4"
+        ]
+       },
+       "needed": {
+        "type": "string"
+       },
+       "other_adopter_status": {
+        "type": "string"
+       }
+      }
+     }
+    }
+   }
+  },
+  "history": {
+   "type": "array",
+   "minItems": 2,
+   "items": {
+    "type": "object",
+    "required": [
+     "version",
+     "path",
+     "sha256",
+     "pinned_by"
+    ],
+    "additionalProperties": false,
+    "properties": {
+     "version": {
+      "enum": [
+       "v1",
+       "v2"
+      ]
+     },
+     "path": {
+      "type": "string"
+     },
+     "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+     },
+     "pinned_by": {
+      "type": "string"
+     }
+    }
+   }
+  }
+ },
+ "$defs": {
+  "evidence_class": {
+   "enum": [
+    "measured",
+    "digitized",
+    "inferred",
+    "reconstructed",
+    "model-derived",
+    "assumed"
+   ]
+  },
+  "evidence_item": {
+   "type": "object",
+   "required": [
+    "statement",
+    "source_id",
+    "locator",
+    "evidence_level",
+    "evidence_class",
+    "value",
+    "unit",
+    "applicability",
+    "verified_by_this_lane",
+    "transfer"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "statement": {
+     "type": "string"
+    },
+    "source_id": {
+     "type": "string"
+    },
+    "repo_path": {
+     "type": "string"
+    },
+    "locator": {
+     "type": "string"
+    },
+    "evidence_level": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 7
+    },
+    "evidence_class": {
+     "$ref": "#/$defs/evidence_class"
+    },
+    "value": {
+     "type": [
+      "number",
+      "array",
+      "null"
+     ]
+    },
+    "unit": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "applicability": {
+     "type": "string"
+    },
+    "verified_by_this_lane": {
+     "type": "boolean"
+    },
+    "transfer": {
+     "type": "string"
+    }
+   }
+  },
+  "life_number": {
+   "type": "object",
+   "required": [
+    "status",
+    "statement",
+    "value",
+    "unit",
+    "source_id",
+    "locator",
+    "device",
+    "evidence_class",
+    "evidence_level"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "status": {
+     "enum": [
+      "measured_vyovrinda_hardware",
+      "literature_other_device",
+      "TBD"
+     ]
+    },
+    "statement": {
+     "type": "string"
+    },
+    "value": {
+     "type": [
+      "number",
+      "array",
+      "null"
+     ]
+    },
+    "unit": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "source_id": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "locator": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "device": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "evidence_class": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "evidence_level": {
+     "type": [
+      "integer",
+      "null"
+     ]
+    }
+   }
+  },
+  "mechanism": {
+   "type": "object",
+   "required": [
+    "id",
+    "title",
+    "components",
+    "species",
+    "energy_regime",
+    "energy_statement",
+    "degradation_mode",
+    "measurable_quantities",
+    "evidence",
+    "evidence_status",
+    "life_number",
+    "required_experiment",
+    "architecture_scope",
+    "cross_refs",
+    "linked_requirements"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^AOL-M[0-9]{2}$"
+    },
+    "title": {
+     "type": "string"
+    },
+    "components": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1
+    },
+    "species": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1
+    },
+    "energy_regime": {
+     "enum": [
+      "thermal_neutral_ram_AO",
+      "thermal_neutral_internal",
+      "sheath_accelerated_ions",
+      "plume_ions_backflow",
+      "mixed_thermal_and_sheath_ions",
+      "mixed_thermal_and_ram",
+      "facility_background"
+     ]
+    },
+    "energy_statement": {
+     "type": "string"
+    },
+    "degradation_mode": {
+     "type": "string"
+    },
+    "measurable_quantities": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1
+    },
+    "evidence": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/evidence_item"
+     }
+    },
+    "evidence_status": {
+     "enum": [
+      "NO_EVIDENCE",
+      "OTHER_DEVICE_LITERATURE",
+      "OTHER_ENVIRONMENT_LITERATURE",
+      "NO_N_O_EVIDENCE_ON_WALL_GRADES",
+      "QUALITATIVE_OBSERVATION_ONLY",
+      "MEASURED_ON_H1"
+     ]
+    },
+    "life_number": {
+     "$ref": "#/$defs/life_number"
+    },
+    "required_experiment": {
+     "type": "object",
+     "required": [
+      "ground_ao_source",
+      "in_thruster_witness",
+      "post_test_metrology"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "ground_ao_source": {
+       "type": "string"
+      },
+      "in_thruster_witness": {
+       "type": "string"
+      },
+      "post_test_metrology": {
+       "type": "string"
+      }
+     }
+    },
+    "architecture_scope": {
+     "type": "string"
+    },
+    "cross_refs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "linked_requirements": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1
+    }
+   }
+  },
+  "witness": {
+   "type": "object",
+   "required": [
+    "id",
+    "name",
+    "placement",
+    "materials",
+    "exposure",
+    "pre_metrology",
+    "post_metrology",
+    "mechanisms"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^AOL-WC-[0-9]{2}$"
+    },
+    "name": {
+     "type": "string"
+    },
+    "placement": {
+     "type": "string"
+    },
+    "materials": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1
+    },
+    "exposure": {
+     "type": "string"
+    },
+    "pre_metrology": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1
+    },
+    "post_metrology": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1
+    },
+    "mechanisms": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1
+    }
+   }
+  },
+  "requirement": {
+   "type": "object",
+   "required": [
+    "id",
+    "category",
+    "title",
+    "requirement",
+    "rationale",
+    "mechanisms",
+    "adopter",
+    "install_phase",
+    "verification_method",
+    "verification",
+    "status"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "id": {
+     "type": "string",
+     "pattern": "^AOL-(WC|RC|CX|PM|EX|DC|LF)-[0-9]{2}$"
+    },
+    "category": {
+     "enum": [
+      "witness_coupon",
+      "replaceable_component",
+      "cathode_exposure",
+      "post_test_metrology",
+      "ground_ao_exposure",
+      "data_custody",
+      "life_discipline"
+     ]
+    },
+    "title": {
+     "type": "string"
+    },
+    "requirement": {
+     "type": "string"
+    },
+    "rationale": {
+     "type": "string"
+    },
+    "mechanisms": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     },
+     "minItems": 1
+    },
+    "adopter": {
+     "type": "string"
+    },
+    "install_phase": {
+     "type": "string"
+    },
+    "verification_method": {
+     "type": "string",
+     "pattern": "^[IADT]( \\+ [IADT])*$"
+    },
+    "verification": {
+     "type": "string"
+    },
+    "status": {
+     "const": "PROPOSED"
+    }
+   }
+  }
+ }
+}
