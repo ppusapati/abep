@@ -10,13 +10,14 @@
     "file": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json",
     "addenda": [
       "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json",
-      "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json"
+      "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
+      "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json"
     ],
     "locator": "A2 execution_directive_2026_09_27.S1_readiness_conditions (the eight conditions), .chain, .S1_purpose, .LOCK2; A1 controls_addendum_2026_09_27.C1_W5_partition, C2_W1_flight_status, convergence_point",
     "immutability_note": "Owner decision files are immutable and pinned by sha256 in authority.documents. The original pivot file was restored byte-identical; the execution directive (with the S1-readiness conditions) now lives only in the A2 addendum, and the controls C1-C4 in the A1 addendum. Each addendum's amends_sha256 must equal the sha256 of the original file on disk."
   },
   "authority": {
-    "rule": "The gate evaluates only while the owner decision files that create it exist unaltered: the original pivot disposition (APPROVED) and its A1 (controls) and A2 (execution directive) addenda, each byte-identical to the sha256 pinned here; each addendum's amends_sha256 equals the sha256 of the original file on disk; and the eight owner conditions are read from A2 execution_directive_2026_09_27.S1_readiness_conditions and must equal this spec's owner_condition list verbatim and in order. If any document is missing or altered, or any check fails, the authority fails closed and the verdict is S1_NOT_READY. The sha256 of every document is recorded in the report.",
+    "rule": "The gate evaluates only while the owner decision files that create it exist unaltered: the original pivot disposition (APPROVED) and its A1 (controls), A2 (execution directive) and A3 (S1a path and instrumentation; provenance only, no change to the conditions) addenda, each byte-identical to the sha256 pinned here; each addendum's amends_sha256 equals the sha256 of the original file on disk; and the eight owner conditions are read from A2 execution_directive_2026_09_27.S1_readiness_conditions and must equal this spec's owner_condition list verbatim and in order. If any document is missing or altered, or any check fails, the authority fails closed and the verdict is S1_NOT_READY. The sha256 of every document is recorded in the report.",
     "documents": [
       {
         "role": "original_disposition",
@@ -75,6 +76,35 @@
         "amends_role": "original_disposition",
         "amends_sha256_field": "amends_sha256",
         "conditions_field": "execution_directive_2026_09_27.S1_readiness_conditions",
+        "rules": [
+          {
+            "type": "equals",
+            "field": "schema",
+            "value": "owner_disposition_addendum_v1"
+          },
+          {
+            "type": "equals",
+            "field": "decided_by",
+            "value": "owner"
+          },
+          {
+            "type": "iso_date",
+            "field": "decided_utc"
+          },
+          {
+            "type": "equals",
+            "field": "amends",
+            "value": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"
+          }
+        ]
+      },
+      {
+        "role": "s1a_and_instrumentation_A3",
+        "path": "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
+        "sha256": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e",
+        "amends_role": "original_disposition",
+        "amends_sha256_field": "amends_sha256",
+        "note": "Recorded for provenance only; it changes no condition, rule or verdict of this gate. A3 next_execution.S1a_engineering_gate states that N4 (this gate, S1_NOT_READY 0/8) is not modified and that S1a (non-score-bearing engineering qualification) is a separate gate. A3 decisions (ISO/IEC 17025 metrology, cathode tube thermocouple vs emitter temperature, quantitative near-cathode RGA, k = 2 planning coverage factor, instrumentation stays v1-r2) bind the producers of S1-C4/S1-C5 artifacts, not this gate's checks.",
         "rules": [
           {
             "type": "equals",

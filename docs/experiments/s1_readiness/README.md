@@ -4,7 +4,11 @@
 addendum `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json`
 (`execution_directive_2026_09_27.S1_readiness_conditions`). That addendum amends the immutable original pivot
 `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json`, and controls C1–C4 live in
-`docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json`. This lane
+`docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json`. The A3 addendum
+`docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json` is pinned for provenance only: it states that
+this gate (N4, `S1_NOT_READY` 0/8) is not modified and that S1a (non-score-bearing engineering qualification) is a
+separate gate; its metrology, cathode-temperature, RGA, coverage-factor and instrumentation-version decisions bind the
+producers of the S1-C4/S1-C5 artifacts, not this gate's checks. This lane
 proposes the artifact paths, required fields, accepted status values and coverage sets that make each condition
 machine-checkable. The owner may change any of them. Nothing here is decided, pre-registered or locked. The gate carries no
 physical, efficiency or RFP threshold value.
@@ -51,7 +55,7 @@ python scripts/experiments/s1_readiness.py --check docs/experiments/s1_readiness
 `S1_READY` requires two things. First, the authority must hold. Second, all eight conditions must be `SATISFIED`.
 
 The authority check fails closed. It requires all of the following:
-- the three owner decision files (original pivot, A1 controls, A2 execution directive) are present and byte-identical to
+- the four owner decision files (original pivot, A1 controls, A2 execution directive, A3 S1a/instrumentation) are present and byte-identical to
   the sha256 pinned in the spec (`authority.documents`);
 - the original is `od_hardware_pivot`, decided by the owner and `APPROVED`;
 - each addendum is decided by the owner, names the original in `amends`, and its `amends_sha256` equals the sha256 of the
@@ -110,8 +114,8 @@ Rules the gate enforces:
 | S1-C7 | facility chosen | `docs/decisions/OD_S1_FACILITY.json` | `id=od_s1_facility`; owner; `APPROVED`; LOCK-1 ref (D-12); facility name, Hall-on vacuum facility and thrust stand; `same_for_S1b_and_score_bearing_stages=true` (lane 25 S1b rule) | owner (facility contact is the owner's channel) |
 | S1-C8 | safety / operational limits defined | `docs/experiments/hardware/s1_safety_operational_limits.json` | `APPROVED`; `approved_by=owner`; LOCK-1 and facility refs; limits for discharge V/I max, magnet current max, cathode heater/keeper current max, background pressure max, component temperature max and oxidizer gas handling, each with source and exceedance action; ≥ 1 abort condition | W3 with the facility limits and fo_magnet_coil_qualification; owner approves |
 
-## Current status (regenerated after merging f61912e and the W1 flight-status repair 69ebc7d)
-**S1_NOT_READY.** The authority holds: all three owner decision files match their pins, and the A1/A2 `amends_sha256`
+## Current status (regenerated after merging 7d37337 (owner addendum A3), W3 9a33979, W4 v1-r2 fe2c05e and AO register v4 91a7989)
+**S1_NOT_READY.** The authority holds: all four owner decision files match their pins, and the A1/A2/A3 `amends_sha256`
 equal the original's sha256 `5a5adb81…`. All eight conditions are `MISSING`. Every condition has `PARTIAL_PRECURSORS_ONLY`
 availability: precursor drafts exist, but they never satisfy a condition. The precursors are:
 - **C1:** the W2 LOCK-1 draft and decision brief, and the experiment package (open D-01..D-15).
