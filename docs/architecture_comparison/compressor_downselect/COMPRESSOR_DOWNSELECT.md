@@ -28,7 +28,7 @@ Recomputed read-only from the W1 design-input documents (`abep_sim.intake.collec
 | inlet pumping speed for b = 0.5 [m³/s] | 4.74–19.2 (×1.58–6.41 of 3000 l/s) | FC-01 model; EV-03 |
 | inlet pumping speed for b = 0.25 [m³/s] | 14.2–57.7 (×4.74–19.2 of 3000 l/s) | FC-01 model; EV-03 |
 | inlet pumping speed for b = 0.1 [m³/s] | 42.6–173 (×14.2–57.7 of 3000 l/s) | FC-01 model; EV-03 |
-| min ideal rotor area at 500 m/s, b = 0.25 [m²] | 0.0568–0.231 | EV-01 S = uA/2 |
+| min inlet area, b = 0.25 [m²] | 0.0979–0.377 | max(2S/u at 500 m/s, EV-01; 4S/c̄, EV-20 orifice limit; c̄ 575–615 m/s) |
 | pneumatic power, eta 10 % / 1 % [W] | ≤ 9.22 / ≤ 92.2 | EV-05 |
 | chain-sized code-default machine P_el [W] | 14–89.3 | assumed inputs |
 | jet power of 12 mN at delivered flow [W] | 23.1–2.44e+03 | RFP, efficiency 1 |
@@ -109,8 +109,8 @@ Gate bases (with evidence ids and class):
   - HG-1b CONDITIONAL: within the PROPOSED 300 W allocation only if the fixed motor, bearing and control loads are; requires measured input power [EV-05; model-derived]
   - HG-2 NOT_EVALUABLE: no published mass for an ABEP-scale unit; LI2015 excerpt calls the device complex and heavy (verify) [EV-08; inferred]
   - HG-3 CONDITIONAL: metallic (Al alloy / Ti) or coated wetted parts: thermal-AO data TBD; bare CFRP or polymer wetted parts fail the ram-yield bound unless the thermal yield is lower by >= 159x (EV-17 says 'orders of magnitude' lower: verify with a test) [EV-16, EV-17, EV-18; inferred]
-  - HG-4 CONDITIONAL: published CR 210.2 and >= 3500 would cover the required 2.37-142 for heavy species; scaled to atomic O (EV-02, assuming the published CR is for N2): 57 (ZHENG2021) covers 31/36 self-consistent cases (35/36 upper-bound basis), 478 (LI2015) covers all; species and inlet pressure of the published values unverified [EV-08, EV-09, EV-02; inferred]
-  - HG-5 CONDITIONAL: inlet pumping speed must be 4.74-19.2x the largest published commercial TMP speed for b = 0.25 -> a throat-spanning rotor (as in LI2015 / ZHENG2021), not a catalogue pump; stopped-rotor back-streaming needs an isolation valve (EV-04) [EV-01, EV-03, EV-04; model-derived]
+  - HG-4 CONDITIONAL: single secondary-cited data point: published CR >= 3500 (LI2015) would cover the required 2.37-142 for heavy species; scaled to atomic O (EV-02, assuming the published CR is for N2): >= 478, covering 36/36 self-consistent cases (36/36 upper-bound basis); species, inlet pressure and throughput of the published value unverified (not read first-hand) [EV-08, EV-02; inferred]
+  - HG-5 CONDITIONAL: inlet pumping speed must be 4.74-19.2x the largest published commercial TMP speed for b = 0.25; minimum inlet area 0.0979-0.377 m^2 (max of drag form 2S/u at 500 m/s and orifice limit 4S/c_bar, EV-01/EV-20) -> a throat-spanning rotor (as in LI2015, secondary), not a catalogue pump; stopped-rotor back-streaming needs an isolation valve (EV-04) [EV-01, EV-20, EV-03, EV-04, EV-08; model-derived]
   - HG-6 PASS: upstream of the valve; identical for hall_only / rf_hall / ecr_hall [—; assumed]
 - **C2** (molecular-drag (active mechanical)):
   - HG-1 NOT_EVALUABLE: no sourced power data [—; assumed]
@@ -167,8 +167,8 @@ Gate bases (with evidence ids and class):
 
 | item | published / status |
 |---|---|
-| compression_ratio | LI2015: >= 3500 (secondary citation, species/inlet pressure not stated; verify); ZHENG2021: 210.2 (search excerpt; verify) |
-| capture_efficiency | LI2015 ~0.60; ZHENG2021 0.6579 (as above; not transferable to the W1 TPMC geometry) |
+| compression_ratio | LI2015: >= 3500 (secondary citation, species/inlet pressure not stated; verify); the only ABEP-specific active-compressor data point accessed (ZHENG2021 is a passive DSMC intake, see C3) |
+| capture_efficiency | LI2015 ~0.60 (secondary; not transferable to the W1 TPMC geometry) |
 | throughput_pumping_speed | commercial TMPs 10-3000 l/s (EV-03); no ABEP-scale published value accessed |
 | power | TBD - requires measured motor/drive/bearing input power of an ABEP-scale unit (none accessed); pneumatic band only (EV-05 eta 1-10 %, assumed by source) |
 | mass | TBD - no published mass accessed |
@@ -177,7 +177,7 @@ Gate bases (with evidence ids and class):
 | TRL | TBD - not stated in accessed sources; LI2015 reported as 'numerical simulations and subsystem experiments' (secondary) |
 | life | TBD - requires > 15,000 h (RFP firing) bearing/rotor life evidence; magnetic suspension exists (EV-04, qualitative) |
 
-DragCompressor parameters required: `turbo_rows`, `turbo_area_m2 (>= A_rotor_min at u)`, `turbo_radius_m`, `rpm`, `turbo_kS (measured S per area)`, `turbo_kK (measured ln K0 per row vs species)`, `turbo_blade_area_frac`, `rotor_material`, `stress_safety`, `eta_motor`, `k_bear_W_per_rads`, `P_ctrl_W`, `motor_kg_per_Nm`, `bearing_kg`, `stator_mass_factor`, `conductance_to_sink_W_K`, `leak_conductance_m3_s`, `and for a drag back stage: n_stages, h_mm, w_mm, L_per_stage_m, xi`. Sourced today: **none**.
+DragCompressor parameters required: `turbo_rows`, `turbo_area_m2 (>= A_inlet_min = max(2S/u, 4S/c_bar))`, `turbo_radius_m`, `rpm`, `turbo_kS (measured S per area)`, `turbo_kK (measured ln K0 per row vs species)`, `turbo_blade_area_frac`, `rotor_material`, `stress_safety`, `eta_motor`, `k_bear_W_per_rads`, `P_ctrl_W`, `motor_kg_per_Nm`, `bearing_kg`, `stator_mass_factor`, `conductance_to_sink_W_K`, `leak_conductance_m3_s`, `and for a drag back stage: n_stages, h_mm, w_mm, L_per_stage_m, xi`. Sourced today: **none**.
 
 - model change: species-resolved K per row fitted to measured N2/O2 (and O or a declared surrogate) data instead of the uncited turbo_kK; atomic O is the least compressed species (EV-02 sqrt(m) scaling)
 - model change: outlet pressures 0.05-1 Pa reach/exceed the 0.1 Pa (1e-3 mbar) molecular-regime limit (EV-03): the free-molecular Gaede characteristic in DragCompressor is outside its domain at the outlet; needs a transitional-regime stage characteristic from data
@@ -209,7 +209,7 @@ Implied states at the nine cases: **availability**: PROBE ONLY - DragCompressor 
 
 | item | published / status |
 |---|---|
-| compression_ratio | passive intake compression ~100-300 (EV-14, model-derived; definitions may differ); the frozen W1 TPMC CR_passive 162-278 is of the same order |
+| compression_ratio | passive intake compression ~100-300 (EV-14, model-derived; definitions may differ); 210.2 at capture efficiency 0.6579 for a DSMC-optimised passive intake (EV-09, search excerpt, verify); the frozen W1 TPMC CR_passive 162-278 is of the same order |
 | throughput_pumping_speed | n/a |
 | power | 0 W compressor |
 | mass | intake only |
@@ -308,8 +308,8 @@ C2 probe (DragCompressor, turbo_rows = 0, code-default channel, assumed): DC-S12
 Status: **PROPOSED for owner review (not a design freeze, not an architecture ranking)**.
 
 - **Primary: C1** — a throat-spanning bladed turbomolecular-type rotor as first stage (optionally followed by a drag or second TMP stage), metallic or coated AO-compatible wetted parts (no bare CFRP or polymer), with an isolation valve against stopped-rotor back-streaming.
-  - why: only concept with published ABEP-specific compression data in the required range (EV-08, EV-09; both need verification)
-  - why: the only surveyed mechanism that can supply the required inlet pumping speed continuously, at throat-scale rotor area (EV-01 / EV-03 bound; not demonstrated at ABEP scale)
+  - why: only continuous active concept with a published ABEP-specific compression data point in the required range, and that point is a single secondary citation (EV-08, LI2015; needs first-hand verification)
+  - why: the only surveyed mechanism that can supply the required inlet pumping speed continuously, at throat-scale inlet area (EV-01 / EV-20 / EV-03 bound; not demonstrated at ABEP scale)
   - why: pneumatic power is small (<= 92.2 W at eta 1 %); the fixed loads are the unknown
   - condition: measured CR vs inlet pressure for N2, O2 and O (or an owner-accepted surrogate) covering 142 on O
   - condition: measured inlet pumping speed at throat scale meeting S_required(b = 0.25)
@@ -342,13 +342,13 @@ Status: **PROPOSED for owner review (not a design freeze, not an architecture ra
 ## 7. Findings
 
 - **CD-01** (inferred): every DragCompressor parameter used by the W1 closure is an uncited code default; no accessed open source gives an ABEP compressor parameter set, so no concept can be run through the chain with sourced inputs today
-- **CD-02** (model-derived): the required inlet pumping speed for b = 0.25 is 14.2-57.7 m^3/s, 4.74-19.2x the largest published commercial TMP speed (3000 l/s, EV-03); the minimum ideal rotor area at 500 m/s is 0.0568-0.231 m^2 (throat scale)
+- **CD-02** (model-derived): the required inlet pumping speed for b = 0.25 is 14.2-57.7 m^3/s, 4.74-19.2x the largest published commercial TMP speed (3000 l/s, EV-03); the minimum inlet area, max(2S/u at 500 m/s (EV-01, valid for u << c_bar), 4S/c_bar (orifice limit, EV-20)), is 0.0979-0.377 m^2 (throat scale; c_bar = 575-615 m/s, binding: orifice_limit)
 - **CD-03** (model-derived): atomic O is the least-compressed species (ln K ~ sqrt(m), EV-02); the chain-sized code-default machine gives ln CR_O / ln CR_N2 = 0.718-0.749 (sqrt(16/28) = 0.756), so the valve is O-depleted relative to the inlet and HG-4 must be met on O
 - **CD-04** (inferred): the compressor outlet (setpoints 0.05-1 Pa) reaches/exceeds the 0.1 Pa molecular-regime limit of TMPs (EV-03): DragCompressor's free-molecular Gaede characteristic is out of domain at the outlet; the stage characteristic there must come from data (T-1)
 - **CD-05** (model-derived): pneumatic compression power is small (<= 92.2 W at eta = 1 %, EV-05); the compressor power is dominated by fixed motor/bearing/control loads that no accessed source quantifies (T-4)
 - **CD-06** (model-derived): RFP-derived power bound: 12 mN at the delivered flow needs jet power 23.1-2.44e+03 W (efficiency 1); at 4 candidate-case(s) on the self-consistent flow the 1.5 kW bus is exceeded before any compressor or loss (DC-S12-G20/alt200_low, DC-S12-G20/alt230_high, DC-S12-G20/alt230_low, DC-S12-G20/alt230_mean): those flows cannot give 12 mN within the RFP whatever the compressor, so DI-1.4 must raise the delivered flow (pumping speed, HG-5), not only compress
 - **CD-07** (inferred): bare CFRP wetted blades (the repository rotor default) would recede 0.000476-0.0159 m over 26,000 h at the ram-energy yield (EV-16); thermal gas erodes far less (EV-17) but by an unmeasured factor (needed: >= 159x) -> metallic/coated parts or test T-6
-- **CD-08** (inferred): published ABEP compressor data are few, partly secondary and all need verification (EV-08, EV-09); none reports power, mass, T_feed or life; the down-selection therefore stays PROPOSED and the 0.030-3.14 mg/s flow range stays a candidate range (owner addendum A3)
+- **CD-08** (inferred): published ABEP compressor data are few, partly secondary and all need verification: the only active-compressor point (EV-08) is a secondary citation; EV-09 (ZHENG2021) is a passive DSMC intake, not compressor evidence (v1 mis-attribution corrected); none reports power, mass, T_feed or life; the down-selection therefore stays PROPOSED and the 0.030-3.14 mg/s flow range stays a candidate range (owner addendum A3)
 
 ## 8. Owner decisions
 
@@ -387,7 +387,7 @@ Status: **PROPOSED for owner review (not a design freeze, not an architecture ra
 | EV-06 | REF-SINGH2014 | Sec. 2 (Reichel analysis), PDF p. 49 (printed p. 30) | collected air must be compressed above the triple point of nitrogen for liquefaction, approximately 94 Torr | inferred | no |
 | EV-07 | REF-SINGH2015 | Sec. 5, PDF p. 10 | compression and storage is the least addressed subsystem in the literature; an integrated compression and liquefaction system that operates in space, survives launch and provides the necessary compression remains to be demonstrated | inferred | no |
 | EV-08 | REF-LI2015 | as cited in REF-MOON2025 Sec. 1 (ref. [26]) | active intake with a multi-hole plate and a turbomolecular pump; numerical simulations and subsystem experiments estimated a capture efficiency of approximately 60 % and a compression ratio of 3500 or higher | inferred | yes |
-| EV-09 | REF-ZHENG2021 | abstract (web-search excerpt only) | active intake of a multi-hole plate, cylinder chamber and turbomolecular pump analysed experimentally; an optimized scheme reaches a compression ratio of 210.2 and a capture efficiency of 65.79 % | inferred | yes |
+| EV-09 | REF-ZHENG2021 | abstract (web-search excerpts only) | PASSIVE intake device consisting of a tapered chamber, grid ducts and a tube, analysed with DSMC under different gas-surface interaction models; capture efficiency 65.79 % with a compression ratio of 210.2; a parabola chamber, honeycomb grid ducts and a tube of a certain length benefit the intake under a mixed specular/diffuse reflection model | model-derived | yes |
 | EV-10 | REF-MOON2025 | Sec. 4.3.2 | an RTB cryocooler with a power consumption of 1.2 kW would be required to provide 14 W of cooling during the condensation sequence | model-derived | no |
 | EV-11 | REF-MOON2025 | Sec. 4.6.1 | effective capture efficiency 26.1 % and effective compression ratio 3.0e7 for the conceptual prototype model | model-derived | no |
 | EV-12 | REF-MOON2025 | Sec. 4.3.1 | free-stream conditions simplified by assuming complete recombination of AO atoms | assumed | no |
@@ -397,6 +397,7 @@ Status: **PROPOSED for owner review (not a design freeze, not an architecture ra
 | EV-16 | REF-GAIER1996 | Results, PDF p. 7; summary, PDF p. 8 | graphite-epoxy composites flown on EOIM-3 (STS-46, 230 km, ram fluence ~2.6e20 atoms/cm2): matrix erosion yield ~3.5e-24 cm3/atom, fiber ~0.85e-24 cm3/atom; SiO2-protected faces showed no noticeable erosion | measured | no |
 | EV-17 | REF-NASA-HDBK-6024 | Sec. 6.x, pp. 40-41 of 207 | thermal-energy atoms (~0.04 eV) require orders of magnitude more atoms to erode as much material as LEO atoms arriving at ~4.5 eV | inferred | no |
 | EV-18 | REF-NASA-HDBK-6024 | Sec. 6.3, p. 37 of 207 | the most common protection of AO-susceptible materials is a thin protective film (SiO2, Al2O3, ITO, Ge, Si, Al, Au; a few hundred angstroms to >100 nm) | inferred | no |
+| EV-20 | REF-CHIGGIATO2013 | Sec. 2.3, Eqs. (11)-(13) and Table 8, PDF pp. 6-7; Eq. (20), PDF p. 8 | the molecular-flow conductance of a thin wall slot of area A is C = A <v> / 4 (per unit area C' = <v>/4, e.g. 117.5 m^3 s^-1 m^-2 for N2 at 293 K); the conductance of a duct equals the entrance-slot conductance times the transmission probability (<= 1) | model-derived | no |
 | EV-19 | REF-CUSHEN2024 | abstract | ground test methods for sub-scaled ABEP intakes in an atomic-oxygen facility: pressure difference between the intake extremities, and a gas sensor for collection efficiency, both checked by DSMC | inferred | yes |
 
 ## 12. References (accessed 2026-09-27; open sources only, no contact, no paywall bypass)
@@ -406,7 +407,7 @@ Status: **PROPOSED for owner review (not a design freeze, not an architecture ra
 - **REF-SINGH2015**: L. A. Singh, M. L. R. Walker, 'A review of research in low earth orbit propellant collection', Progress in Aerospace Sciences 75 (2015) 15-25. doi:10.1016/j.paerosci.2015.03.001 (author copy https://hpepl.ae.gatech.edu/papers/ProgAerospace_Singh_V75_2015_pp15-25.pdf). Access: full_text. page numbers are PDF page indices
 - **REF-MOON2025**: G. Moon, Y. Ko, M. Yi, E. Jun, 'Operational Feasibility Analysis of a Cryogenic Active Intake Device for Atmosphere-Breathing Electric Propulsion', arXiv:2503.02021v1 (2025). https://arxiv.org/html/2503.02021v1. Access: full_text. preprint; the CRAID design paper it builds on is G. Moon, M. Yi, E. Jun, Aerosp. Sci. Technol. 151 (2024) 109300, doi:10.1016/j.ast.2024.109300 (publisher page not accessed; closed access)
 - **REF-LI2015**: Y. Li, X. Chen, D. Li, Y. Xiao, P. Dai, C. Gong, 'Design and analysis of vacuum air-intake device used in air-breathing electric propulsion', Vacuum 120 (2015) 89-95. doi:10.1016/j.vacuum.2015.06.011 (DOI from Crossref metadata). Access: secondary_citation. not read: publisher page returned HTTP 403 (not bypassed); values only as cited by REF-MOON2025 Sec. 1 [26]; verify
-- **REF-ZHENG2021**: P. Zheng, J. Wu, Y. Zhang, Y. Zhao, 'Design and Optimization of vacuum Intake for Atmosphere-Breathing electric propulsion (ABEP) system', Vacuum 195 (2021) 110652. doi:10.1016/j.vacuum.2021.110652 (DOI from Crossref metadata). Access: search_engine_excerpt. not read: publisher page returned HTTP 403 (not bypassed); values from a web-search excerpt of the abstract only; verify before any use
+- **REF-ZHENG2021**: P. Zheng, J. Wu, Y. Zhang, Y. Zhao, 'Design and Optimization of vacuum Intake for Atmosphere-Breathing electric propulsion (ABEP) system', Vacuum 195 (2021) 110652. doi:10.1016/j.vacuum.2021.110652 (DOI from Crossref metadata). Access: search_engine_excerpt. not read: publisher page and ResearchGate returned HTTP 403 (not bypassed); description and values from web-search excerpts of the abstract only (two independent excerpts agree: PASSIVE intake, DSMC); verify before any use. Correction 2026-09-27: v1 of this lane mis-described it as an active turbomolecular-pump intake analysed experimentally; that description was unsupported and is withdrawn
 - **REF-FERRATO2022**: E. Ferrato, V. Giannetti, M. Tisaev, A. Lucca Fabris, F. Califano, T. Andreussi, 'Rarefied Flow Simulation of Conical Intake and Plasma Thruster for Very Low Earth Orbit Spaceflight', Frontiers in Physics 10 (2022) 823098. doi:10.3389/fphy.2022.823098. Access: full_text. open access; page numbers are PDF page indices
 - **REF-GAIER1996**: J. R. Gaier, M. L. Davidson, R. Shively, 'Durability of Intercalated Graphite Epoxy Composites in Low Earth Orbit', NASA TM-107157 (1996). https://ntrs.nasa.gov/api/citations/19960020439/downloads/19960020439.pdf. Access: full_text. page numbers are PDF page indices
 - **REF-NASA-HDBK-6024**: NASA-HDBK-6024 w/Change 2, 'Spacecraft Polymers Atomic Oxygen Durability Handbook' (revalidated 2022-12-16). https://standards.nasa.gov/sites/default/files/standards/NASA/Baseline-w/CHANGE-2/2/2022-12-16-NASA-HDBK-6024_w-Chg-2_Reval-Final.pdf. Access: full_text. page numbers as printed ('N of 207')

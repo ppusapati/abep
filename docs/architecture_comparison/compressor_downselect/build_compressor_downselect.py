@@ -133,8 +133,10 @@ REFERENCES = {
                     "Atmosphere-Breathing electric propulsion (ABEP) system', Vacuum 195 (2021) 110652",
         "doi_or_url": "doi:10.1016/j.vacuum.2021.110652 (DOI from Crossref metadata)",
         "access_level": "search_engine_excerpt", "accessed": "2026-09-27",
-        "note": "not read: publisher page returned HTTP 403 (not bypassed); values from a web-search excerpt of the "
-                "abstract only; verify before any use"},
+        "note": "not read: publisher page and ResearchGate returned HTTP 403 (not bypassed); description and values "
+                "from web-search excerpts of the abstract only (two independent excerpts agree: PASSIVE intake, "
+                "DSMC); verify before any use. Correction 2026-09-27: v1 of this lane mis-described it as an active "
+                "turbomolecular-pump intake analysed experimentally; that description was unsupported and is withdrawn"},
     "REF-FERRATO2022": {
         "citation": "E. Ferrato, V. Giannetti, M. Tisaev, A. Lucca Fabris, F. Califano, T. Andreussi, 'Rarefied Flow "
                     "Simulation of Conical Intake and Plasma Thruster for Very Low Earth Orbit Spaceflight', "
@@ -216,14 +218,15 @@ EVIDENCE = (
      "verify": True,
      "used_for": "published compression-ratio capability of a throat-spanning TMP concept (C1, HG-4); species, inlet "
                  "pressure, throughput, power and mass not stated in the accessed text"},
-    {"id": "EV-09", "ref": "REF-ZHENG2021", "where": "abstract (web-search excerpt only)",
-     "statement": "active intake of a multi-hole plate, cylinder chamber and turbomolecular pump analysed "
-                  "experimentally; an optimized scheme reaches a compression ratio of 210.2 and a capture efficiency "
-                  "of 65.79 %",
-     "value": {"compression_ratio": 210.2, "capture_efficiency": 0.6579}, "evidence_class": "inferred",
+    {"id": "EV-09", "ref": "REF-ZHENG2021", "where": "abstract (web-search excerpts only)",
+     "statement": "PASSIVE intake device consisting of a tapered chamber, grid ducts and a tube, analysed with DSMC "
+                  "under different gas-surface interaction models; capture efficiency 65.79 % with a compression "
+                  "ratio of 210.2; a parabola chamber, honeycomb grid ducts and a tube of a certain length benefit "
+                  "the intake under a mixed specular/diffuse reflection model",
+     "value": {"compression_ratio": 210.2, "capture_efficiency": 0.6579}, "evidence_class": "model-derived",
      "verify": True,
-     "used_for": "second published compression-ratio point of a TMP concept (C1, HG-4); species and conditions not "
-                 "available in the accessed excerpt"},
+     "used_for": "passive-intake compression cross-check (C3) only, alongside EV-14; NOT compressor (C1) evidence; "
+                 "species, inlet conditions and CR definition not available in the accessed excerpts"},
     {"id": "EV-10", "ref": "REF-MOON2025", "where": "Sec. 4.3.2",
      "statement": "an RTB cryocooler with a power consumption of 1.2 kW would be required to provide 14 W of cooling "
                   "during the condensation sequence",
@@ -273,6 +276,15 @@ EVIDENCE = (
                   "Ge, Si, Al, Au; a few hundred angstroms to >100 nm)",
      "value": {}, "evidence_class": "inferred", "verify": False,
      "used_for": "coating mitigation path for non-metallic wetted parts (HG-3)"},
+    {"id": "EV-20", "ref": "REF-CHIGGIATO2013", "where": "Sec. 2.3, Eqs. (11)-(13) and Table 8, PDF pp. 6-7; "
+                                                     "Eq. (20), PDF p. 8",
+     "statement": "the molecular-flow conductance of a thin wall slot of area A is C = A <v> / 4 (per unit area C' "
+                  "= <v>/4, e.g. 117.5 m^3 s^-1 m^-2 for N2 at 293 K); the conductance of a duct equals the "
+                  "entrance-slot conductance times the transmission probability (<= 1)",
+     "value": {"form": "C = A*<v>/4", "C_prime_N2_293K_m3_s_m2": 117.5}, "evidence_class": "model-derived",
+     "verify": False,
+     "used_for": "entrance (orifice) limit on the pumping speed per unit inlet area, S/A <= <v>/4, used with EV-01 "
+                 "in the minimum inlet area bound max(2S/u, 4S/<v>) (HG-5, CD-02)"},
     {"id": "EV-19", "ref": "REF-CUSHEN2024", "where": "abstract",
      "statement": "ground test methods for sub-scaled ABEP intakes in an atomic-oxygen facility: pressure difference "
                   "between the intake extremities, and a gas sensor for collection efficiency, both checked by DSMC",
@@ -401,7 +413,12 @@ def requirement_envelope(fe, closure: dict) -> dict:
                 # pumping speed the compressor inlet needs so that the plenum backflow is b (FC-01 model):
                 # net pumped (1-b) F at p_plenum = b p_passive
                 S_req = {str(b): (1.0 - b) * Q / (b * p_pass) for b in PROPOSED["backflow_targets_b"]["value"]}
-                A_req = {k: v / (0.5 * u_ref) for k, v in S_req.items()}     # EV-01 ideal S/A = u/2 (lower bound)
+                # minimum inlet area: the drag-channel form S = u A / 2 (EV-01; derived for u << <v>) and the
+                # molecular entrance (orifice) limit S <= A <v> / 4 (EV-20) both bound S/A; the stricter one governs
+                c_bar = math.sqrt(8.0 * K_B * T_pl / (math.pi * m_bar))
+                A_drag = {k: v / (0.5 * u_ref) for k, v in S_req.items()}
+                A_orif = {k: 4.0 * v / c_bar for k, v in S_req.items()}
+                A_req = {k: max(A_drag[k], A_orif[k]) for k in S_req}
                 # pneumatic (isothermal) compression power band (EV-05), both flow ends
                 def pn(mdot, CR):
                     n = mdot / m_bar
@@ -437,7 +454,10 @@ def requirement_envelope(fe, closure: dict) -> dict:
                                         "bracket_upper": vo["mdot_total_kgps_bracket"]["upper"]},
                     "S_required_m3_s": S_req, "S_required_over_published_TMP_max": {
                         k: v / S_pub_max for k, v in S_req.items()},
-                    "A_rotor_min_m2_at_u_ref": A_req,
+                    "c_bar_mps": c_bar,
+                    "A_inlet_min_m2": A_req,
+                    "A_inlet_min_components_m2": {"drag_form_2S_over_u_ref": A_drag,
+                                                  "orifice_limit_4S_over_c_bar": A_orif},
                     "intake_area_m2": float(dv["intake.area_m2"]),
                     "P_pneumatic_W": {"upper_bound_flow": pn(mdot_up, CR_up),
                                       "self_consistent_backflow": pn(mdot_sc, CR_sc)},
@@ -473,7 +493,12 @@ def envelope_summary(env: dict) -> dict:
         "S_required_m3_s": {k: rng(collect(lambda r, k=k: r["S_required_m3_s"][k])) for k in b},
         "S_required_over_published_TMP_max": {
             k: rng(collect(lambda r, k=k: r["S_required_over_published_TMP_max"][k])) for k in b},
-        "A_rotor_min_m2_at_u_ref": {k: rng(collect(lambda r, k=k: r["A_rotor_min_m2_at_u_ref"][k])) for k in b},
+        "A_inlet_min_m2": {k: rng(collect(lambda r, k=k: r["A_inlet_min_m2"][k])) for k in b},
+        "c_bar_mps": rng(collect(lambda r: r["c_bar_mps"])),
+        "A_inlet_min_binding_limit": sorted({
+            ("orifice_limit" if r["A_inlet_min_components_m2"]["orifice_limit_4S_over_c_bar"][k]
+             >= r["A_inlet_min_components_m2"]["drag_form_2S_over_u_ref"][k] else "drag_form")
+            for r in collect(lambda r: r) for k in b}),
         "P_pneumatic_eta_0p01_W": rng(collect(lambda r: max(r["P_pneumatic_W"]["upper_bound_flow"]["eta_0p01_W"],
                                                             r["P_pneumatic_W"]["self_consistent_backflow"]["eta_0p01_W"]))),
         "P_pneumatic_eta_0p10_W": rng(collect(lambda r: max(r["P_pneumatic_W"]["upper_bound_flow"]["eta_0p10_W"],
@@ -534,13 +559,13 @@ def concepts(env: dict, summ: dict, drag_probe: dict) -> list[dict]:
     CR_req_max = summ["CR_required_self_consistent"]["max"]
     CR_req_min = summ["CR_required_self_consistent"]["min"]
     K_li = ev("EV-08")["value"]["compression_ratio_min"]
-    K_zh = ev("EV-09")["value"]["compression_ratio"]
-    KO_li, KO_zh = published_O_capability(K_li), published_O_capability(K_zh)
+    K_zh = ev("EV-09")["value"]["compression_ratio"]          # passive intake (C3 cross-check only)
+    KO_li = published_O_capability(K_li)
     n_cases = summ["candidate_cases"]
-    n_zh_ok = sum(1 for c in env.values() for r in c["cases"].values()
-                  if r["CR_required"]["self_consistent_backflow"] <= KO_zh)
-    n_zh_ok_up = sum(1 for c in env.values() for r in c["cases"].values()
-                     if r["CR_required"]["upper_bound_flow_basis"] <= KO_zh)
+    n_li_ok = sum(1 for c in env.values() for r in c["cases"].values()
+                  if r["CR_required"]["self_consistent_backflow"] <= KO_li)
+    n_li_ok_up = sum(1 for c in env.values() for r in c["cases"].values()
+                     if r["CR_required"]["upper_bound_flow_basis"] <= KO_li)
     p_pass_max = summ["p_passive_Pa"]["max"]
     set_min = summ["setpoint_Pa"]["min"]
     alloc_W = PROPOSED["compressor_power_allocation_frac"]["value"] * RFP.power_max_W
@@ -574,11 +599,12 @@ def concepts(env: dict, summ: dict, drag_probe: dict) -> list[dict]:
     C.append({
         "id": "C1", "name": "throat-spanning bladed turbomolecular rotor (+ optional downstream drag / second TMP stage)",
         "family": "molecular-drag / turbomolecular-type (active mechanical)",
-        "published_basis": ["EV-08", "EV-09", "EV-03", "EV-04", "EV-05", "EV-01", "EV-02"],
+        "published_basis": ["EV-08", "EV-03", "EV-04", "EV-05", "EV-01", "EV-02", "EV-20"],
         "published_performance": {
             "compression_ratio": f"LI2015: >= {K_li:g} (secondary citation, species/inlet pressure not stated; verify); "
-                                 f"ZHENG2021: {K_zh:g} (search excerpt; verify)",
-            "capture_efficiency": "LI2015 ~0.60; ZHENG2021 0.6579 (as above; not transferable to the W1 TPMC geometry)",
+                                 "the only ABEP-specific active-compressor data point accessed (ZHENG2021 is a "
+                                 "passive DSMC intake, see C3)",
+            "capture_efficiency": "LI2015 ~0.60 (secondary; not transferable to the W1 TPMC geometry)",
             "throughput_pumping_speed": "commercial TMPs 10-3000 l/s (EV-03); no ABEP-scale published value accessed",
             "power": "TBD - requires measured motor/drive/bearing input power of an ABEP-scale unit (none accessed); "
                      "pneumatic band only (EV-05 eta 1-10 %, assumed by source)",
@@ -591,7 +617,7 @@ def concepts(env: dict, summ: dict, drag_probe: dict) -> list[dict]:
             "life": "TBD - requires > 15,000 h (RFP firing) bearing/rotor life evidence; magnetic suspension exists "
                     "(EV-04, qualitative)"},
         "dragcompressor_mapping": {
-            "parameters_required": ["turbo_rows", "turbo_area_m2 (>= A_rotor_min at u)", "turbo_radius_m", "rpm",
+            "parameters_required": ["turbo_rows", "turbo_area_m2 (>= A_inlet_min = max(2S/u, 4S/c_bar))", "turbo_radius_m", "rpm",
                                     "turbo_kS (measured S per area)", "turbo_kK (measured ln K0 per row vs species)",
                                     "turbo_blade_area_frac", "rotor_material", "stress_safety", "eta_motor",
                                     "k_bear_W_per_rads", "P_ctrl_W", "motor_kg_per_Nm", "bearing_kg",
@@ -638,17 +664,22 @@ def concepts(env: dict, summ: dict, drag_probe: dict) -> list[dict]:
                                      f"lower by >= {summ['AO_required_yield_reduction']['max']:.3g}x (EV-17 says "
                                      "'orders of magnitude' lower: verify with a test)",
                       ["EV-16", "EV-17", "EV-18"], "inferred"),
-            "HG-4": g("CONDITIONAL", f"published CR {K_zh:g} and >= {K_li:g} would cover the required "
-                                     f"{CR_req_min:.3g}-{CR_req_max:.3g} for heavy species; scaled to atomic O (EV-02, assuming the "
-                                     f"published CR is for N2): {KO_zh:.3g} (ZHENG2021) covers {n_zh_ok}/{n_cases} "
-                                     f"self-consistent cases ({n_zh_ok_up}/{n_cases} upper-bound basis), "
-                                     f"{KO_li:.3g} (LI2015) covers all; species and inlet pressure of the published "
-                                     "values unverified", ["EV-08", "EV-09", "EV-02"], "inferred"),
+            "HG-4": g("CONDITIONAL", f"single secondary-cited data point: published CR >= {K_li:g} (LI2015) would "
+                                     f"cover the required {CR_req_min:.3g}-{CR_req_max:.3g} for heavy species; scaled "
+                                     "to atomic O (EV-02, assuming the published CR is for N2): "
+                                     f">= {KO_li:.3g}, covering {n_li_ok}/{n_cases} self-consistent cases "
+                                     f"({n_li_ok_up}/{n_cases} upper-bound basis); species, inlet pressure and "
+                                     "throughput of the published value unverified (not read first-hand)",
+                      ["EV-08", "EV-02"], "inferred"),
             "HG-5": g("CONDITIONAL", "inlet pumping speed must be "
                                      f"{S_over_pub['min']:.3g}-{S_over_pub['max']:.3g}x the largest published "
-                                     "commercial TMP speed for b = 0.25 -> a throat-spanning rotor (as in LI2015 / "
-                                     "ZHENG2021), not a catalogue pump; stopped-rotor back-streaming needs an "
-                                     "isolation valve (EV-04)", ["EV-01", "EV-03", "EV-04"], "model-derived"),
+                                     "commercial TMP speed for b = 0.25; minimum inlet area "
+                                     f"{summ['A_inlet_min_m2']['0.25']['min']:.3g}-"
+                                     f"{summ['A_inlet_min_m2']['0.25']['max']:.3g} m^2 (max of drag form 2S/u at "
+                                     "500 m/s and orifice limit 4S/c_bar, EV-01/EV-20) -> a throat-spanning rotor "
+                                     "(as in LI2015, secondary), not a catalogue pump; stopped-rotor back-streaming "
+                                     "needs an isolation valve (EV-04)", ["EV-01", "EV-20", "EV-03", "EV-04", "EV-08"],
+                      "model-derived"),
             "HG-6": g("PASS", "upstream of the valve; identical for hall_only / rf_hall / ecr_hall", [], "assumed"),
         },
     })
@@ -689,9 +720,11 @@ def concepts(env: dict, summ: dict, drag_probe: dict) -> list[dict]:
     C.append({
         "id": "C3", "name": "passive collimated intake only (no active compressor)",
         "family": "passive collimated-intake compression",
-        "published_basis": ["EV-14"],
+        "published_basis": ["EV-14", "EV-09"],
         "published_performance": {
             "compression_ratio": "passive intake compression ~100-300 (EV-14, model-derived; definitions may differ); "
+                                 f"{K_zh:g} at capture efficiency 0.6579 for a DSMC-optimised passive intake "
+                                 "(EV-09, search excerpt, verify); "
                                  "the frozen W1 TPMC CR_passive 162-278 is of the same order",
             "throughput_pumping_speed": "n/a", "power": "0 W compressor", "mass": "intake only",
             "T_feed": "intake wall temperature (TBD)", "rotor_material_O": "no rotor; intake walls see ram AO",
@@ -866,10 +899,11 @@ def recommendation(summ: dict) -> dict:
             "statement": "a throat-spanning bladed turbomolecular-type rotor as first stage (optionally followed by a "
                          "drag or second TMP stage), metallic or coated AO-compatible wetted parts (no bare CFRP "
                          "or polymer), with an isolation valve against stopped-rotor back-streaming",
-            "why": ["only concept with published ABEP-specific compression data in the required range (EV-08, "
-                    "EV-09; both need verification)",
+            "why": ["only continuous active concept with a published ABEP-specific compression data point in the "
+                    "required range, and that point is a single secondary citation (EV-08, LI2015; needs "
+                    "first-hand verification)",
                     "the only surveyed mechanism that can supply the required inlet pumping speed continuously, at "
-                    "throat-scale rotor area (EV-01 / EV-03 bound; not demonstrated at ABEP scale)",
+                    "throat-scale inlet area (EV-01 / EV-20 / EV-03 bound; not demonstrated at ABEP scale)",
                     "pneumatic power is small (<= %.3g W at eta 1 %%); the fixed loads are the unknown" %
                     summ["P_pneumatic_eta_0p01_W"]["max"]],
             "conditions": ["measured CR vs inlet pressure for N2, O2 and O (or an owner-accepted surrogate) covering "
@@ -931,13 +965,16 @@ def findings(summ: dict, drag_probe: dict) -> list[dict]:
                                    "be run through the chain with sourced inputs today",
          "evidence_class": "inferred"},
         {"id": "CD-02", "finding": "the required inlet pumping speed for b = 0.25 is %.3g-%.3g m^3/s, %.3g-%.3gx the "
-                                   "largest published commercial TMP speed (3000 l/s, EV-03); the minimum ideal rotor "
-                                   "area at 500 m/s is %.3g-%.3g m^2 (throat scale)" % (
+                                   "largest published commercial TMP speed (3000 l/s, EV-03); the minimum inlet area, "
+                                   "max(2S/u at 500 m/s (EV-01, valid for u << c_bar), 4S/c_bar (orifice limit, "
+                                   "EV-20)), is %.3g-%.3g m^2 (throat scale; c_bar = %.3g-%.3g m/s, binding: %s)" % (
                                        b["S_required_m3_s"]["0.25"]["min"], b["S_required_m3_s"]["0.25"]["max"],
                                        b["S_required_over_published_TMP_max"]["0.25"]["min"],
                                        b["S_required_over_published_TMP_max"]["0.25"]["max"],
-                                       b["A_rotor_min_m2_at_u_ref"]["0.25"]["min"],
-                                       b["A_rotor_min_m2_at_u_ref"]["0.25"]["max"]),
+                                       b["A_inlet_min_m2"]["0.25"]["min"],
+                                       b["A_inlet_min_m2"]["0.25"]["max"],
+                                       b["c_bar_mps"]["min"], b["c_bar_mps"]["max"],
+                                       "/".join(b["A_inlet_min_binding_limit"])),
          "evidence_class": "model-derived"},
         {"id": "CD-03", "finding": "atomic O is the least-compressed species (ln K ~ sqrt(m), EV-02); the chain-sized "
                                    "code-default machine gives ln CR_O / ln CR_N2 = %.3g-%.3g (sqrt(16/28) = %.3g), so "
@@ -970,7 +1007,9 @@ def findings(summ: dict, drag_probe: dict) -> list[dict]:
                                             b["AO_required_yield_reduction"]["max"]),
          "evidence_class": "inferred"},
         {"id": "CD-08", "finding": "published ABEP compressor data are few, partly secondary and all need "
-                                   "verification (EV-08, EV-09); none reports power, mass, T_feed or life; the "
+                                   "verification: the only active-compressor point (EV-08) is a secondary citation; EV-09 "
+                                   "(ZHENG2021) is a passive DSMC intake, not compressor evidence (v1 mis-attribution "
+                                   "corrected); none reports power, mass, T_feed or life; the "
                                    "down-selection therefore stays PROPOSED and the 0.030-3.14 mg/s flow range stays a "
                                    "candidate range (owner addendum A3)", "evidence_class": "inferred"},
     ]
@@ -1104,8 +1143,9 @@ def render_md(doc: dict) -> str:
         A(f"| inlet pumping speed for b = {k} [m³/s] | {fmt(s['S_required_m3_s'][k]['min'])}–"
           f"{fmt(s['S_required_m3_s'][k]['max'])} (×{fmt(s['S_required_over_published_TMP_max'][k]['min'])}–"
           f"{fmt(s['S_required_over_published_TMP_max'][k]['max'])} of 3000 l/s) | FC-01 model; EV-03 |")
-    A(f"| min ideal rotor area at 500 m/s, b = 0.25 [m²] | {fmt(s['A_rotor_min_m2_at_u_ref']['0.25']['min'])}–"
-      f"{fmt(s['A_rotor_min_m2_at_u_ref']['0.25']['max'])} | EV-01 S = uA/2 |")
+    A(f"| min inlet area, b = 0.25 [m²] | {fmt(s['A_inlet_min_m2']['0.25']['min'])}–"
+      f"{fmt(s['A_inlet_min_m2']['0.25']['max'])} | max(2S/u at 500 m/s, EV-01; 4S/c̄, EV-20 orifice limit; "
+      f"c̄ {fmt(s['c_bar_mps']['min'])}–{fmt(s['c_bar_mps']['max'])} m/s) |")
     A(f"| pneumatic power, eta 10 % / 1 % [W] | ≤ {fmt(s['P_pneumatic_eta_0p10_W']['max'])} / ≤ "
       f"{fmt(s['P_pneumatic_eta_0p01_W']['max'])} | EV-05 |")
     A(f"| chain-sized code-default machine P_el [W] | {fmt(s['chain_machine_P_el_W']['min'])}–"

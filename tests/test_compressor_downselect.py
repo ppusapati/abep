@@ -6,7 +6,7 @@ reference, an evidence class and an access level (secondary / search-excerpt val
 requirement envelope matches the W1 feed-state closure it reads, that the gate matrix is complete and eliminations carry
 explicit hard-gate logic, that nothing ranks hall_only / rf_hall / ecr_hall, that no Hall closure / screening candidate /
 P5 nuisance token appears, and that missing inputs raise.
-Run: python -m pytest -q tests/test_compressor_downselect.py   (~15 s; the reproduction test runs the builder once).
+Run: python -m pytest -q tests/test_compressor_downselect.py   (~30-40 s; the reproduction test runs the builder once).
 """
 from __future__ import annotations
 
@@ -182,3 +182,29 @@ def test_atomic_o_scaling(mod):
     # EV-02: ln K0 ~ sqrt(m) -> ln K_O / ln K_N2 = sqrt(16/28)
     k = mod.published_O_capability(3500.0)
     assert math.isclose(math.log(k) / math.log(3500.0), math.sqrt(16.0 / 28.0), rel_tol=1e-9)
+
+
+def test_zheng2021_is_passive_intake_evidence_only(doc):
+    # REF-ZHENG2021 is a passive DSMC intake (accessible abstract excerpts); it must not support the compressor (C1)
+    ev = {e["id"]: e for e in doc["evidence"]}
+    e9 = ev["EV-09"]
+    assert "PASSIVE" in e9["statement"] and "DSMC" in e9["statement"]
+    assert "turbomolecular" not in e9["statement"] and e9["verify"] is True
+    c = {x["id"]: x for x in doc["concepts"]}
+    assert "EV-09" not in c["C1"]["published_basis"] and "EV-09" in c["C3"]["published_basis"]
+    for g in c["C1"]["gates"].values():
+        assert "EV-09" not in g["evidence"] and "ZHENG" not in g["basis"]
+    assert not any("EV-09" in w for w in doc["recommendation"]["primary"]["why"])
+
+
+def test_inlet_area_bound_includes_orifice_limit(doc):
+    # S/A <= min(u/2 (EV-01 drag form), c_bar/4 (EV-20 entrance conductance)) -> A >= max(2S/u, 4S/c_bar)
+    k_b, amu = 1.380649e-23, 1.66053906660e-27
+    for c in doc["requirement_envelope"].values():
+        for r in c["cases"].values():
+            cbar = math.sqrt(8 * k_b * r["T_plenum_K"] / (math.pi * r["m_mean_amu"] * amu))
+            assert math.isclose(r["c_bar_mps"], cbar, rel_tol=1e-8)
+            for b, S in r["S_required_m3_s"].items():
+                A = r["A_inlet_min_m2"][b]
+                assert A >= 4 * S / cbar * (1 - 1e-8) and A >= 2 * S / 500.0 * (1 - 1e-8)
+                assert math.isclose(A, max(4 * S / cbar, 2 * S / 500.0), rel_tol=1e-8)

@@ -118,7 +118,7 @@
    "doi_or_url": "doi:10.1016/j.vacuum.2021.110652 (DOI from Crossref metadata)",
    "access_level": "search_engine_excerpt",
    "accessed": "2026-09-27",
-   "note": "not read: publisher page returned HTTP 403 (not bypassed); values from a web-search excerpt of the abstract only; verify before any use"
+   "note": "not read: publisher page and ResearchGate returned HTTP 403 (not bypassed); description and values from web-search excerpts of the abstract only (two independent excerpts agree: PASSIVE intake, DSMC); verify before any use. Correction 2026-09-27: v1 of this lane mis-described it as an active turbomolecular-pump intake analysed experimentally; that description was unsupported and is withdrawn"
   },
   "REF-FERRATO2022": {
    "citation": "E. Ferrato, V. Giannetti, M. Tisaev, A. Lucca Fabris, F. Califano, T. Andreussi, 'Rarefied Flow Simulation of Conical Intake and Plasma Thruster for Very Low Earth Orbit Spaceflight', Frontiers in Physics 10 (2022) 823098",
@@ -258,15 +258,15 @@
   {
    "id": "EV-09",
    "ref": "REF-ZHENG2021",
-   "where": "abstract (web-search excerpt only)",
-   "statement": "active intake of a multi-hole plate, cylinder chamber and turbomolecular pump analysed experimentally; an optimized scheme reaches a compression ratio of 210.2 and a capture efficiency of 65.79 %",
+   "where": "abstract (web-search excerpts only)",
+   "statement": "PASSIVE intake device consisting of a tapered chamber, grid ducts and a tube, analysed with DSMC under different gas-surface interaction models; capture efficiency 65.79 % with a compression ratio of 210.2; a parabola chamber, honeycomb grid ducts and a tube of a certain length benefit the intake under a mixed specular/diffuse reflection model",
    "value": {
     "compression_ratio": 210.2,
     "capture_efficiency": 0.6579
    },
-   "evidence_class": "inferred",
+   "evidence_class": "model-derived",
    "verify": true,
-   "used_for": "second published compression-ratio point of a TMP concept (C1, HG-4); species and conditions not available in the accessed excerpt"
+   "used_for": "passive-intake compression cross-check (C3) only, alongside EV-14; NOT compressor (C1) evidence; species, inlet conditions and CR definition not available in the accessed excerpts"
   },
   {
    "id": "EV-10",
@@ -385,6 +385,19 @@
    "used_for": "coating mitigation path for non-metallic wetted parts (HG-3)"
   },
   {
+   "id": "EV-20",
+   "ref": "REF-CHIGGIATO2013",
+   "where": "Sec. 2.3, Eqs. (11)-(13) and Table 8, PDF pp. 6-7; Eq. (20), PDF p. 8",
+   "statement": "the molecular-flow conductance of a thin wall slot of area A is C = A <v> / 4 (per unit area C' = <v>/4, e.g. 117.5 m^3 s^-1 m^-2 for N2 at 293 K); the conductance of a duct equals the entrance-slot conductance times the transmission probability (<= 1)",
+   "value": {
+    "form": "C = A*<v>/4",
+    "C_prime_N2_293K_m3_s_m2": 117.5
+   },
+   "evidence_class": "model-derived",
+   "verify": false,
+   "used_for": "entrance (orifice) limit on the pumping speed per unit inlet area, S/A <= <v>/4, used with EV-01 in the minimum inlet area bound max(2S/u, 4S/<v>) (HG-5, CD-02)"
+  },
+  {
    "id": "EV-19",
    "ref": "REF-CUSHEN2024",
    "where": "abstract",
@@ -485,10 +498,23 @@
       "0.25": 8.665992118,
       "0.1": 25.99797636
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.03466396847,
-      "0.25": 0.1039919054,
-      "0.1": 0.3119757163
+     "c_bar_mps": 575.1330909,
+     "A_inlet_min_m2": {
+      "0.5": 0.06027121204,
+      "0.25": 0.1808136361,
+      "0.1": 0.5424409084
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.03466396847,
+       "0.25": 0.1039919054,
+       "0.1": 0.3119757163
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06027121204,
+       "0.25": 0.1808136361,
+       "0.1": 0.5424409084
+      }
      },
      "intake_area_m2": 0.6330188218,
      "P_pneumatic_W": {
@@ -576,10 +602,23 @@
       "0.25": 8.784761667,
       "0.1": 26.354285
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.03513904667,
-      "0.25": 0.10541714,
-      "0.1": 0.31625142
+     "c_bar_mps": 583.4165541,
+     "A_inlet_min_m2": {
+      "0.5": 0.06022977308,
+      "0.25": 0.1806893192,
+      "0.1": 0.5420679577
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.03513904667,
+       "0.25": 0.10541714,
+       "0.1": 0.31625142
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06022977308,
+       "0.25": 0.1806893192,
+       "0.1": 0.5420679577
+      }
      },
      "intake_area_m2": 0.6330188218,
      "P_pneumatic_W": {
@@ -667,10 +706,23 @@
       "0.25": 8.886792057,
       "0.1": 26.66037617
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.03554716823,
-      "0.25": 0.1066415047,
-      "0.1": 0.3199245141
+     "c_bar_mps": 590.3744504,
+     "A_inlet_min_m2": {
+      "0.5": 0.06021122392,
+      "0.25": 0.1806336718,
+      "0.1": 0.5419010153
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.03554716823,
+       "0.25": 0.1066415047,
+       "0.1": 0.3199245141
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06021122392,
+       "0.25": 0.1806336718,
+       "0.1": 0.5419010153
+      }
      },
      "intake_area_m2": 0.6330188218,
      "P_pneumatic_W": {
@@ -758,10 +810,23 @@
       "0.25": 8.863573496,
       "0.1": 26.59072049
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.03545429398,
-      "0.25": 0.106362882,
-      "0.1": 0.3190886459
+     "c_bar_mps": 590.9324813,
+     "A_inlet_min_m2": {
+      "0.5": 0.05999719953,
+      "0.25": 0.1799915986,
+      "0.1": 0.5399747957
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.03545429398,
+       "0.25": 0.106362882,
+       "0.1": 0.3190886459
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.05999719953,
+       "0.25": 0.1799915986,
+       "0.1": 0.5399747957
+      }
      },
      "intake_area_m2": 0.6330188218,
      "P_pneumatic_W": {
@@ -849,10 +914,23 @@
       "0.25": 8.944083379,
       "0.1": 26.83225014
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.03577633351,
-      "0.25": 0.1073290005,
-      "0.1": 0.3219870016
+     "c_bar_mps": 595.8968546,
+     "A_inlet_min_m2": {
+      "0.5": 0.06003779553,
+      "0.25": 0.1801133866,
+      "0.1": 0.5403401598
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.03577633351,
+       "0.25": 0.1073290005,
+       "0.1": 0.3219870016
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06003779553,
+       "0.25": 0.1801133866,
+       "0.1": 0.5403401598
+      }
      },
      "intake_area_m2": 0.6330188218,
      "P_pneumatic_W": {
@@ -940,10 +1018,23 @@
       "0.25": 9.026269236,
       "0.1": 27.07880771
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.03610507694,
-      "0.25": 0.1083152308,
-      "0.1": 0.3249456925
+     "c_bar_mps": 601.0632494,
+     "A_inlet_min_m2": {
+      "0.5": 0.06006868159,
+      "0.25": 0.1802060448,
+      "0.1": 0.5406181343
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.03610507694,
+       "0.25": 0.1083152308,
+       "0.1": 0.3249456925
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06006868159,
+       "0.25": 0.1802060448,
+       "0.1": 0.5406181343
+      }
      },
      "intake_area_m2": 0.6330188218,
      "P_pneumatic_W": {
@@ -1031,10 +1122,23 @@
       "0.25": 9.182343566,
       "0.1": 27.5470307
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.03672937426,
-      "0.25": 0.1101881228,
-      "0.1": 0.3305643684
+     "c_bar_mps": 613.4243769,
+     "A_inlet_min_m2": {
+      "0.5": 0.05987596132,
+      "0.25": 0.179627884,
+      "0.1": 0.5388836519
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.03672937426,
+       "0.25": 0.1101881228,
+       "0.1": 0.3305643684
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.05987596132,
+       "0.25": 0.179627884,
+       "0.1": 0.5388836519
+      }
      },
      "intake_area_m2": 0.6330188218,
      "P_pneumatic_W": {
@@ -1122,10 +1226,23 @@
       "0.25": 9.181644289,
       "0.1": 27.54493287
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.03672657716,
-      "0.25": 0.1101797315,
-      "0.1": 0.3305391944
+     "c_bar_mps": 612.884904,
+     "A_inlet_min_m2": {
+      "0.5": 0.05992410144,
+      "0.25": 0.1797723043,
+      "0.1": 0.539316913
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.03672657716,
+       "0.25": 0.1101797315,
+       "0.1": 0.3305391944
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.05992410144,
+       "0.25": 0.1797723043,
+       "0.1": 0.539316913
+      }
      },
      "intake_area_m2": 0.6330188218,
      "P_pneumatic_W": {
@@ -1213,10 +1330,23 @@
       "0.25": 9.226328721,
       "0.1": 27.67898616
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.03690531488,
-      "0.25": 0.1107159447,
-      "0.1": 0.332147834
+     "c_bar_mps": 615.3033654,
+     "A_inlet_min_m2": {
+      "0.5": 0.0599790558,
+      "0.25": 0.1799371674,
+      "0.1": 0.5398115022
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.03690531488,
+       "0.25": 0.1107159447,
+       "0.1": 0.332147834
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.0599790558,
+       "0.25": 0.1799371674,
+       "0.1": 0.5398115022
+      }
      },
      "intake_area_m2": 0.6330188218,
      "P_pneumatic_W": {
@@ -1310,10 +1440,23 @@
       "0.25": 4.73567394,
       "0.1": 14.20702182
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.01894269576,
-      "0.25": 0.05682808728,
-      "0.1": 0.1704842618
+     "c_bar_mps": 575.1330909,
+     "A_inlet_min_m2": {
+      "0.5": 0.03293619522,
+      "0.25": 0.09880858567,
+      "0.1": 0.296425757
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.01894269576,
+       "0.25": 0.05682808728,
+       "0.1": 0.1704842618
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.03293619522,
+       "0.25": 0.09880858567,
+       "0.1": 0.296425757
+      }
      },
      "intake_area_m2": 0.6259376,
      "P_pneumatic_W": {
@@ -1401,10 +1544,23 @@
       "0.25": 4.799490304,
       "0.1": 14.39847091
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.01919796122,
-      "0.25": 0.05759388365,
-      "0.1": 0.1727816509
+     "c_bar_mps": 583.4165541,
+     "A_inlet_min_m2": {
+      "0.5": 0.03290609613,
+      "0.25": 0.0987182884,
+      "0.1": 0.2961548652
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.01919796122,
+       "0.25": 0.05759388365,
+       "0.1": 0.1727816509
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.03290609613,
+       "0.25": 0.0987182884,
+       "0.1": 0.2961548652
+      }
      },
      "intake_area_m2": 0.6259376,
      "P_pneumatic_W": {
@@ -1492,10 +1648,23 @@
       "0.25": 4.853812855,
       "0.1": 14.56143856
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.01941525142,
-      "0.25": 0.05824575426,
-      "0.1": 0.1747372628
+     "c_bar_mps": 590.3744504,
+     "A_inlet_min_m2": {
+      "0.5": 0.0328863341,
+      "0.25": 0.0986590023,
+      "0.1": 0.2959770069
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.01941525142,
+       "0.25": 0.05824575426,
+       "0.1": 0.1747372628
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.0328863341,
+       "0.25": 0.0986590023,
+       "0.1": 0.2959770069
+      }
      },
      "intake_area_m2": 0.6259376,
      "P_pneumatic_W": {
@@ -1583,10 +1752,23 @@
       "0.25": 4.837491812,
       "0.1": 14.51247544
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.01934996725,
-      "0.25": 0.05804990175,
-      "0.1": 0.1741497052
+     "c_bar_mps": 590.9324813,
+     "A_inlet_min_m2": {
+      "0.5": 0.03274480226,
+      "0.25": 0.09823440679,
+      "0.1": 0.2947032204
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.01934996725,
+       "0.25": 0.05804990175,
+       "0.1": 0.1741497052
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.03274480226,
+       "0.25": 0.09823440679,
+       "0.1": 0.2947032204
+      }
      },
      "intake_area_m2": 0.6259376,
      "P_pneumatic_W": {
@@ -1674,10 +1856,23 @@
       "0.25": 4.881362529,
       "0.1": 14.64408759
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.01952545012,
-      "0.25": 0.05857635035,
-      "0.1": 0.1757290511
+     "c_bar_mps": 595.8968546,
+     "A_inlet_min_m2": {
+      "0.5": 0.032766493,
+      "0.25": 0.09829947901,
+      "0.1": 0.294898437
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.01952545012,
+       "0.25": 0.05857635035,
+       "0.1": 0.1757290511
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.032766493,
+       "0.25": 0.09829947901,
+       "0.1": 0.294898437
+      }
      },
      "intake_area_m2": 0.6259376,
      "P_pneumatic_W": {
@@ -1765,10 +1960,23 @@
       "0.25": 4.925305345,
       "0.1": 14.77591603
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.01970122138,
-      "0.25": 0.05910366414,
-      "0.1": 0.1773109924
+     "c_bar_mps": 601.0632494,
+     "A_inlet_min_m2": {
+      "0.5": 0.03277728492,
+      "0.25": 0.09833185476,
+      "0.1": 0.2949955643
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.01970122138,
+       "0.25": 0.05910366414,
+       "0.1": 0.1773109924
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.03277728492,
+       "0.25": 0.09833185476,
+       "0.1": 0.2949955643
+      }
      },
      "intake_area_m2": 0.6259376,
      "P_pneumatic_W": {
@@ -1856,10 +2064,23 @@
       "0.25": 5.002132977,
       "0.1": 15.00639893
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.02000853191,
-      "0.25": 0.06002559572,
-      "0.1": 0.1800767872
+     "c_bar_mps": 613.4243769,
+     "A_inlet_min_m2": {
+      "0.5": 0.03261776457,
+      "0.25": 0.09785329371,
+      "0.1": 0.2935598811
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.02000853191,
+       "0.25": 0.06002559572,
+       "0.1": 0.1800767872
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.03261776457,
+       "0.25": 0.09785329371,
+       "0.1": 0.2935598811
+      }
      },
      "intake_area_m2": 0.6259376,
      "P_pneumatic_W": {
@@ -1947,10 +2168,23 @@
       "0.25": 5.003557424,
       "0.1": 15.01067227
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.0200142297,
-      "0.25": 0.06004268909,
-      "0.1": 0.1801280673
+     "c_bar_mps": 612.884904,
+     "A_inlet_min_m2": {
+      "0.5": 0.03265577202,
+      "0.25": 0.09796731605,
+      "0.1": 0.2939019481
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.0200142297,
+       "0.25": 0.06004268909,
+       "0.1": 0.1801280673
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.03265577202,
+       "0.25": 0.09796731605,
+       "0.1": 0.2939019481
+      }
      },
      "intake_area_m2": 0.6259376,
      "P_pneumatic_W": {
@@ -2038,10 +2272,23 @@
       "0.25": 5.027914626,
       "0.1": 15.08374388
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.0201116585,
-      "0.25": 0.06033497551,
-      "0.1": 0.1810049265
+     "c_bar_mps": 615.3033654,
+     "A_inlet_min_m2": {
+      "0.5": 0.03268576061,
+      "0.25": 0.09805728184,
+      "0.1": 0.2941718455
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.0201116585,
+       "0.25": 0.06033497551,
+       "0.1": 0.1810049265
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.03268576061,
+       "0.25": 0.09805728184,
+       "0.1": 0.2941718455
+      }
      },
      "intake_area_m2": 0.6259376,
      "P_pneumatic_W": {
@@ -2135,10 +2382,23 @@
       "0.25": 18.05415025,
       "0.1": 54.16245074
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.07221660099,
-      "0.25": 0.216649803,
-      "0.1": 0.6499494089
+     "c_bar_mps": 575.1330909,
+     "A_inlet_min_m2": {
+      "0.5": 0.1255650251,
+      "0.25": 0.3766950753,
+      "0.1": 1.130085226
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.07221660099,
+       "0.25": 0.216649803,
+       "0.1": 0.6499494089
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.1255650251,
+       "0.25": 0.3766950753,
+       "0.1": 1.130085226
+      }
      },
      "intake_area_m2": 1.318789212,
      "P_pneumatic_W": {
@@ -2226,10 +2486,23 @@
       "0.25": 18.30158681,
       "0.1": 54.90476042
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.07320634723,
-      "0.25": 0.2196190417,
-      "0.1": 0.658857125
+     "c_bar_mps": 583.4165541,
+     "A_inlet_min_m2": {
+      "0.5": 0.1254786939,
+      "0.25": 0.3764360818,
+      "0.1": 1.129308245
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.07320634723,
+       "0.25": 0.2196190417,
+       "0.1": 0.658857125
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.1254786939,
+       "0.25": 0.3764360818,
+       "0.1": 1.129308245
+      }
      },
      "intake_area_m2": 1.318789212,
      "P_pneumatic_W": {
@@ -2317,10 +2590,23 @@
       "0.25": 18.51415012,
       "0.1": 55.54245036
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.07405660048,
-      "0.25": 0.2221698014,
-      "0.1": 0.6665094043
+     "c_bar_mps": 590.3744504,
+     "A_inlet_min_m2": {
+      "0.5": 0.1254400498,
+      "0.25": 0.3763201495,
+      "0.1": 1.128960449
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.07405660048,
+       "0.25": 0.2221698014,
+       "0.1": 0.6665094043
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.1254400498,
+       "0.25": 0.3763201495,
+       "0.1": 1.128960449
+      }
      },
      "intake_area_m2": 1.318789212,
      "P_pneumatic_W": {
@@ -2408,10 +2694,23 @@
       "0.25": 18.46577812,
       "0.1": 55.39733435
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.07386311247,
-      "0.25": 0.2215893374,
-      "0.1": 0.6647680122
+     "c_bar_mps": 590.9324813,
+     "A_inlet_min_m2": {
+      "0.5": 0.1249941657,
+      "0.25": 0.374982497,
+      "0.1": 1.124947491
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.07386311247,
+       "0.25": 0.2215893374,
+       "0.1": 0.6647680122
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.1249941657,
+       "0.25": 0.374982497,
+       "0.1": 1.124947491
+      }
      },
      "intake_area_m2": 1.318789212,
      "P_pneumatic_W": {
@@ -2499,10 +2798,23 @@
       "0.25": 18.63350704,
       "0.1": 55.90052112
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.07453402815,
-      "0.25": 0.2236020845,
-      "0.1": 0.6708062534
+     "c_bar_mps": 595.8968546,
+     "A_inlet_min_m2": {
+      "0.5": 0.1250787407,
+      "0.25": 0.3752362221,
+      "0.1": 1.125708666
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.07453402815,
+       "0.25": 0.2236020845,
+       "0.1": 0.6708062534
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.1250787407,
+       "0.25": 0.3752362221,
+       "0.1": 1.125708666
+      }
      },
      "intake_area_m2": 1.318789212,
      "P_pneumatic_W": {
@@ -2590,10 +2902,23 @@
       "0.25": 18.80472757,
       "0.1": 56.41418272
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.0752189103,
-      "0.25": 0.2256567309,
-      "0.1": 0.6769701927
+     "c_bar_mps": 601.0632494,
+     "A_inlet_min_m2": {
+      "0.5": 0.1251430867,
+      "0.25": 0.37542926,
+      "0.1": 1.12628778
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.0752189103,
+       "0.25": 0.2256567309,
+       "0.1": 0.6769701927
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.1251430867,
+       "0.25": 0.37542926,
+       "0.1": 1.12628778
+      }
      },
      "intake_area_m2": 1.318789212,
      "P_pneumatic_W": {
@@ -2681,10 +3006,23 @@
       "0.25": 19.12988243,
       "0.1": 57.38964729
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.07651952972,
-      "0.25": 0.2295585891,
-      "0.1": 0.6886757674
+     "c_bar_mps": 613.4243769,
+     "A_inlet_min_m2": {
+      "0.5": 0.1247415861,
+      "0.25": 0.3742247583,
+      "0.1": 1.122674275
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.07651952972,
+       "0.25": 0.2295585891,
+       "0.1": 0.6886757674
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.1247415861,
+       "0.25": 0.3742247583,
+       "0.1": 1.122674275
+      }
      },
      "intake_area_m2": 1.318789212,
      "P_pneumatic_W": {
@@ -2772,10 +3110,23 @@
       "0.25": 19.1284256,
       "0.1": 57.38527681
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.07651370241,
-      "0.25": 0.2295411072,
-      "0.1": 0.6886233217
+     "c_bar_mps": 612.884904,
+     "A_inlet_min_m2": {
+      "0.5": 0.124841878,
+      "0.25": 0.374525634,
+      "0.1": 1.123576902
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.07651370241,
+       "0.25": 0.2295411072,
+       "0.1": 0.6886233217
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.124841878,
+       "0.25": 0.374525634,
+       "0.1": 1.123576902
+      }
      },
      "intake_area_m2": 1.318789212,
      "P_pneumatic_W": {
@@ -2863,10 +3214,23 @@
       "0.25": 19.22151817,
       "0.1": 57.66455451
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.07688607268,
-      "0.25": 0.230658218,
-      "0.1": 0.6919746541
+     "c_bar_mps": 615.3033654,
+     "A_inlet_min_m2": {
+      "0.5": 0.1249563662,
+      "0.25": 0.3748690987,
+      "0.1": 1.124607296
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.07688607268,
+       "0.25": 0.230658218,
+       "0.1": 0.6919746541
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.1249563662,
+       "0.25": 0.3748690987,
+       "0.1": 1.124607296
+      }
      },
      "intake_area_m2": 1.318789212,
      "P_pneumatic_W": {
@@ -2960,10 +3324,23 @@
       "0.25": 9.865987375,
       "0.1": 29.59796213
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.0394639495,
-      "0.25": 0.1183918485,
-      "0.1": 0.3551755455
+     "c_bar_mps": 575.1330909,
+     "A_inlet_min_m2": {
+      "0.5": 0.06861707338,
+      "0.25": 0.2058512201,
+      "0.1": 0.6175536604
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.0394639495,
+       "0.25": 0.1183918485,
+       "0.1": 0.3551755455
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06861707338,
+       "0.25": 0.2058512201,
+       "0.1": 0.6175536604
+      }
      },
      "intake_area_m2": 1.304036667,
      "P_pneumatic_W": {
@@ -3051,10 +3428,23 @@
       "0.25": 9.998938133,
       "0.1": 29.9968144
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.03999575253,
-      "0.25": 0.1199872576,
-      "0.1": 0.3599617728
+     "c_bar_mps": 583.4165541,
+     "A_inlet_min_m2": {
+      "0.5": 0.06855436694,
+      "0.25": 0.2056631008,
+      "0.1": 0.6169893025
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.03999575253,
+       "0.25": 0.1199872576,
+       "0.1": 0.3599617728
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06855436694,
+       "0.25": 0.2056631008,
+       "0.1": 0.6169893025
+      }
      },
      "intake_area_m2": 1.304036667,
      "P_pneumatic_W": {
@@ -3142,10 +3532,23 @@
       "0.25": 10.11211011,
       "0.1": 30.33633034
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.04044844046,
-      "0.25": 0.1213453214,
-      "0.1": 0.3640359641
+     "c_bar_mps": 590.3744504,
+     "A_inlet_min_m2": {
+      "0.5": 0.06851319604,
+      "0.25": 0.2055395881,
+      "0.1": 0.6166187644
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.04044844046,
+       "0.25": 0.1213453214,
+       "0.1": 0.3640359641
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06851319604,
+       "0.25": 0.2055395881,
+       "0.1": 0.6166187644
+      }
      },
      "intake_area_m2": 1.304036667,
      "P_pneumatic_W": {
@@ -3233,10 +3636,23 @@
       "0.25": 10.07810794,
       "0.1": 30.23432383
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.04031243177,
-      "0.25": 0.1209372953,
-      "0.1": 0.3628118859
+     "c_bar_mps": 590.9324813,
+     "A_inlet_min_m2": {
+      "0.5": 0.06821833805,
+      "0.25": 0.2046550141,
+      "0.1": 0.6139650424
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.04031243177,
+       "0.25": 0.1209372953,
+       "0.1": 0.3628118859
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06821833805,
+       "0.25": 0.2046550141,
+       "0.1": 0.6139650424
+      }
      },
      "intake_area_m2": 1.304036667,
      "P_pneumatic_W": {
@@ -3324,10 +3740,23 @@
       "0.25": 10.16950527,
       "0.1": 30.50851581
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.04067802108,
-      "0.25": 0.1220340632,
-      "0.1": 0.3661021897
+     "c_bar_mps": 595.8968546,
+     "A_inlet_min_m2": {
+      "0.5": 0.06826352709,
+      "0.25": 0.2047905813,
+      "0.1": 0.6143717438
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.04067802108,
+       "0.25": 0.1220340632,
+       "0.1": 0.3661021897
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06826352709,
+       "0.25": 0.2047905813,
+       "0.1": 0.6143717438
+      }
      },
      "intake_area_m2": 1.304036667,
      "P_pneumatic_W": {
@@ -3415,10 +3844,23 @@
       "0.25": 10.2610528,
       "0.1": 30.7831584
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.04104421121,
-      "0.25": 0.1231326336,
-      "0.1": 0.3693979009
+     "c_bar_mps": 601.0632494,
+     "A_inlet_min_m2": {
+      "0.5": 0.06828601025,
+      "0.25": 0.2048580308,
+      "0.1": 0.6145740923
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.04104421121,
+       "0.25": 0.1231326336,
+       "0.1": 0.3693979009
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06828601025,
+       "0.25": 0.2048580308,
+       "0.1": 0.6145740923
+      }
      },
      "intake_area_m2": 1.304036667,
      "P_pneumatic_W": {
@@ -3506,10 +3948,23 @@
       "0.25": 10.42111037,
       "0.1": 31.2633311
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.04168444147,
-      "0.25": 0.1250533244,
-      "0.1": 0.3751599732
+     "c_bar_mps": 613.4243769,
+     "A_inlet_min_m2": {
+      "0.5": 0.06795367619,
+      "0.25": 0.2038610286,
+      "0.1": 0.6115830857
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.04168444147,
+       "0.25": 0.1250533244,
+       "0.1": 0.3751599732
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06795367619,
+       "0.25": 0.2038610286,
+       "0.1": 0.6115830857
+      }
      },
      "intake_area_m2": 1.304036667,
      "P_pneumatic_W": {
@@ -3597,10 +4052,23 @@
       "0.25": 10.42407797,
       "0.1": 31.2722339
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.04169631187,
-      "0.25": 0.1250889356,
-      "0.1": 0.3752668068
+     "c_bar_mps": 612.884904,
+     "A_inlet_min_m2": {
+      "0.5": 0.06803285837,
+      "0.25": 0.2040985751,
+      "0.1": 0.6122957253
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.04169631187,
+       "0.25": 0.1250889356,
+       "0.1": 0.3752668068
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06803285837,
+       "0.25": 0.2040985751,
+       "0.1": 0.6122957253
+      }
      },
      "intake_area_m2": 1.304036667,
      "P_pneumatic_W": {
@@ -3688,10 +4156,23 @@
       "0.25": 10.47482214,
       "0.1": 31.42446641
      },
-     "A_rotor_min_m2_at_u_ref": {
-      "0.5": 0.04189928855,
-      "0.25": 0.1256978657,
-      "0.1": 0.377093597
+     "c_bar_mps": 615.3033654,
+     "A_inlet_min_m2": {
+      "0.5": 0.06809533461,
+      "0.25": 0.2042860038,
+      "0.1": 0.6128580115
+     },
+     "A_inlet_min_components_m2": {
+      "drag_form_2S_over_u_ref": {
+       "0.5": 0.04189928855,
+       "0.25": 0.1256978657,
+       "0.1": 0.377093597
+      },
+      "orifice_limit_4S_over_c_bar": {
+       "0.5": 0.06809533461,
+       "0.25": 0.2042860038,
+       "0.1": 0.6128580115
+      }
      },
      "intake_area_m2": 1.304036667,
      "P_pneumatic_W": {
@@ -3798,20 +4279,27 @@
     "max": 57.66455451
    }
   },
-  "A_rotor_min_m2_at_u_ref": {
+  "A_inlet_min_m2": {
    "0.5": {
-    "min": 0.01894269576,
-    "max": 0.07688607268
+    "min": 0.03261776457,
+    "max": 0.1255650251
    },
    "0.25": {
-    "min": 0.05682808728,
-    "max": 0.230658218
+    "min": 0.09785329371,
+    "max": 0.3766950753
    },
    "0.1": {
-    "min": 0.1704842618,
-    "max": 0.6919746541
+    "min": 0.2935598811,
+    "max": 1.130085226
    }
   },
+  "c_bar_mps": {
+   "min": 575.1330909,
+   "max": 615.3033654
+  },
+  "A_inlet_min_binding_limit": [
+   "orifice_limit"
+  ],
   "P_pneumatic_eta_0p01_W": {
    "min": 3.774678611,
    "max": 92.22009849
@@ -3904,16 +4392,16 @@
    "family": "molecular-drag / turbomolecular-type (active mechanical)",
    "published_basis": [
     "EV-08",
-    "EV-09",
     "EV-03",
     "EV-04",
     "EV-05",
     "EV-01",
-    "EV-02"
+    "EV-02",
+    "EV-20"
    ],
    "published_performance": {
-    "compression_ratio": "LI2015: >= 3500 (secondary citation, species/inlet pressure not stated; verify); ZHENG2021: 210.2 (search excerpt; verify)",
-    "capture_efficiency": "LI2015 ~0.60; ZHENG2021 0.6579 (as above; not transferable to the W1 TPMC geometry)",
+    "compression_ratio": "LI2015: >= 3500 (secondary citation, species/inlet pressure not stated; verify); the only ABEP-specific active-compressor data point accessed (ZHENG2021 is a passive DSMC intake, see C3)",
+    "capture_efficiency": "LI2015 ~0.60 (secondary; not transferable to the W1 TPMC geometry)",
     "throughput_pumping_speed": "commercial TMPs 10-3000 l/s (EV-03); no ABEP-scale published value accessed",
     "power": "TBD - requires measured motor/drive/bearing input power of an ABEP-scale unit (none accessed); pneumatic band only (EV-05 eta 1-10 %, assumed by source)",
     "mass": "TBD - no published mass accessed",
@@ -3925,7 +4413,7 @@
    "dragcompressor_mapping": {
     "parameters_required": [
      "turbo_rows",
-     "turbo_area_m2 (>= A_rotor_min at u)",
+     "turbo_area_m2 (>= A_inlet_min = max(2S/u, 4S/c_bar))",
      "turbo_radius_m",
      "rpm",
      "turbo_kS (measured S per area)",
@@ -3996,21 +4484,22 @@
     },
     "HG-4": {
      "result": "CONDITIONAL",
-     "basis": "published CR 210.2 and >= 3500 would cover the required 2.37-142 for heavy species; scaled to atomic O (EV-02, assuming the published CR is for N2): 57 (ZHENG2021) covers 31/36 self-consistent cases (35/36 upper-bound basis), 478 (LI2015) covers all; species and inlet pressure of the published values unverified",
+     "basis": "single secondary-cited data point: published CR >= 3500 (LI2015) would cover the required 2.37-142 for heavy species; scaled to atomic O (EV-02, assuming the published CR is for N2): >= 478, covering 36/36 self-consistent cases (36/36 upper-bound basis); species, inlet pressure and throughput of the published value unverified (not read first-hand)",
      "evidence": [
       "EV-08",
-      "EV-09",
       "EV-02"
      ],
      "evidence_class": "inferred"
     },
     "HG-5": {
      "result": "CONDITIONAL",
-     "basis": "inlet pumping speed must be 4.74-19.2x the largest published commercial TMP speed for b = 0.25 -> a throat-spanning rotor (as in LI2015 / ZHENG2021), not a catalogue pump; stopped-rotor back-streaming needs an isolation valve (EV-04)",
+     "basis": "inlet pumping speed must be 4.74-19.2x the largest published commercial TMP speed for b = 0.25; minimum inlet area 0.0979-0.377 m^2 (max of drag form 2S/u at 500 m/s and orifice limit 4S/c_bar, EV-01/EV-20) -> a throat-spanning rotor (as in LI2015, secondary), not a catalogue pump; stopped-rotor back-streaming needs an isolation valve (EV-04)",
      "evidence": [
       "EV-01",
+      "EV-20",
       "EV-03",
-      "EV-04"
+      "EV-04",
+      "EV-08"
      ],
      "evidence_class": "model-derived"
     },
@@ -4124,10 +4613,11 @@
    "name": "passive collimated intake only (no active compressor)",
    "family": "passive collimated-intake compression",
    "published_basis": [
-    "EV-14"
+    "EV-14",
+    "EV-09"
    ],
    "published_performance": {
-    "compression_ratio": "passive intake compression ~100-300 (EV-14, model-derived; definitions may differ); the frozen W1 TPMC CR_passive 162-278 is of the same order",
+    "compression_ratio": "passive intake compression ~100-300 (EV-14, model-derived; definitions may differ); 210.2 at capture efficiency 0.6579 for a DSMC-optimised passive intake (EV-09, search excerpt, verify); the frozen W1 TPMC CR_passive 162-278 is of the same order",
     "throughput_pumping_speed": "n/a",
     "power": "0 W compressor",
     "mass": "intake only",
@@ -4592,8 +5082,8 @@
    "concept": "C1",
    "statement": "a throat-spanning bladed turbomolecular-type rotor as first stage (optionally followed by a drag or second TMP stage), metallic or coated AO-compatible wetted parts (no bare CFRP or polymer), with an isolation valve against stopped-rotor back-streaming",
    "why": [
-    "only concept with published ABEP-specific compression data in the required range (EV-08, EV-09; both need verification)",
-    "the only surveyed mechanism that can supply the required inlet pumping speed continuously, at throat-scale rotor area (EV-01 / EV-03 bound; not demonstrated at ABEP scale)",
+    "only continuous active concept with a published ABEP-specific compression data point in the required range, and that point is a single secondary citation (EV-08, LI2015; needs first-hand verification)",
+    "the only surveyed mechanism that can supply the required inlet pumping speed continuously, at throat-scale inlet area (EV-01 / EV-20 / EV-03 bound; not demonstrated at ABEP scale)",
     "pneumatic power is small (<= 92.2 W at eta 1 %); the fixed loads are the unknown"
    ],
    "conditions": [
@@ -4732,7 +5222,7 @@
   },
   {
    "id": "CD-02",
-   "finding": "the required inlet pumping speed for b = 0.25 is 14.2-57.7 m^3/s, 4.74-19.2x the largest published commercial TMP speed (3000 l/s, EV-03); the minimum ideal rotor area at 500 m/s is 0.0568-0.231 m^2 (throat scale)",
+   "finding": "the required inlet pumping speed for b = 0.25 is 14.2-57.7 m^3/s, 4.74-19.2x the largest published commercial TMP speed (3000 l/s, EV-03); the minimum inlet area, max(2S/u at 500 m/s (EV-01, valid for u << c_bar), 4S/c_bar (orifice limit, EV-20)), is 0.0979-0.377 m^2 (throat scale; c_bar = 575-615 m/s, binding: orifice_limit)",
    "evidence_class": "model-derived"
   },
   {
@@ -4762,7 +5252,7 @@
   },
   {
    "id": "CD-08",
-   "finding": "published ABEP compressor data are few, partly secondary and all need verification (EV-08, EV-09); none reports power, mass, T_feed or life; the down-selection therefore stays PROPOSED and the 0.030-3.14 mg/s flow range stays a candidate range (owner addendum A3)",
+   "finding": "published ABEP compressor data are few, partly secondary and all need verification: the only active-compressor point (EV-08) is a secondary citation; EV-09 (ZHENG2021) is a passive DSMC intake, not compressor evidence (v1 mis-attribution corrected); none reports power, mass, T_feed or life; the down-selection therefore stays PROPOSED and the 0.030-3.14 mg/s flow range stays a candidate range (owner addendum A3)",
    "evidence_class": "inferred"
   }
  ],
