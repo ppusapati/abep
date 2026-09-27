@@ -276,6 +276,10 @@ def mfc_range(feed: dict, ins: dict) -> dict:
         "sccm_N2_min": q(m["sccm_N2_min"], "sccm N2", "model-derived", f"{s}.sccm_N2_min", exact=True),
         "sccm_N2_max": q(m["sccm_N2_max"], "sccm N2", "model-derived", f"{s}.sccm_N2_max", exact=True),
         "sccm_O2_max": q(m["sccm_O2_max"], "sccm O2", "model-derived", f"{s}.sccm_O2_max", exact=True),
+        "sccm_basis": "different bases: sccm_N2_min / sccm_N2_max are the N2 mass-equivalent of the TOTAL feed mass "
+                      "flow (mdot / M_N2); sccm_O2_max is only the O2 component of the air surrogate (O2_max / M_O2) "
+                      "at the envelope union (feed_state_closure build: mfc_range_requirement). They are not "
+                      "additive and must not be compared directly",
         "turndown_ratio": q(ratio, "max / min", "model-derived", _src("mfc_range(): mdot_max / mdot_min")),
         "single_device_u_at_min": q(u_fs * ratio, "relative (FS-referred term, 1 sigma treated)", "model-derived",
                                     _src("mfc_range(): 1 % FS (instrumentation derived.mfc_relative_u_by_setpoint_"
@@ -361,7 +365,7 @@ REFERENCES = [
     {"id": "REF-ASTM-E220", "citation": "ASTM E220, 'Standard Test Method for Calibration of Thermocouples by "
      "Comparison Techniques' (E220-19; E220-25 listed)", "url": "https://store.astm.org/e0220-19.html",
      "access": "metadata / scope summary only (search result 2026-09-27): comparison with a reference thermometer, "
-               "about -195 C to 1700 C; applicable to unused thermocouples, not to used ones (inhomogeneity); "
+               "approximately -196 C to 1700 C (verify against the current edition); applicable to unused thermocouples, not to used ones (inhomogeneity); "
                "content not read (verify the edition)"},
     {"id": "REF-IEEE1588", "citation": "IEEE Std 1588-2019, 'IEEE Standard for a Precision Clock Synchronization "
      "Protocol for Networked Measurement and Control Systems'", "url": "https://standards.ieee.org/standard/1588-2019.html",
@@ -431,9 +435,11 @@ def demonstrations(t25: dict, counts: dict, mfc: dict, ins: dict) -> list:
         "analysis": {
             "type_a": "per force level: sample SD of the stand response over the sequences (capability_analysis."
                       "type_a); per sequence: straight-line fit (linear_calibration) -> slope, intercept, residual SD, "
-                      "nonlinearity; zero drift across each sequence (drift_rate)",
+                      "nonlinearity; zero drift across each sequence (drift_rate; if resolution_limited, the Type B "
+                      "resolution term below bounds the drift instead of a zero-u Type A value)",
             "type_b": "applied-force standard (certificate), stand temperature coefficient if a correction is applied, "
-                      "tare uncertainty",
+                      "tare uncertainty, DAQ resolution q as u = q / (2 sqrt 3) per reading (GUM F.2.2.1; always "
+                      "included, and mandatory when drift_rate reports resolution_limited)",
             "repeatability_in_force": "s at the 12 mN-equivalent level converted to relative (s / 12 mN) and at 25 mN",
             "mass_change": "configuration_slope_shift(HW-0 slope, HW-X slope) with k per A3 (coverage_factor); "
                            "DETECTED -> per-configuration calibration mandatory and its uncertainty enters every "
@@ -487,6 +493,11 @@ def demonstrations(t25: dict, counts: dict, mfc: dict, ins: dict) -> list:
                       "power channel gain -> s_inst,P; combined no-plasma installation term "
                       "sqrt(s_inst,stand^2 + s_inst,P^2) in ln units (T and P_bus enter ln(T/P_bus) with opposite sign "
                       "and independent re-connection)",
+            "within_cycle_term": "the SD of K cycle means also contains the within-cycle repeatability s_r / sqrt(r) "
+                                 "(one-way random-effects model), so s_inst from cycle means is CONSERVATIVE (it "
+                                 "over-states the installation term). The acceptance uses the conservative value; "
+                                 "within_cycle_corrected_reproducibility reports s_inst^2 = s_between^2 - s_r^2 / r "
+                                 "alongside it for information (floored at 0, flagged when not resolved)",
             "coverage": "nu = K - 1 is low; A3 evaluated k documented (coverage_factor)",
         },
         "acceptance": {
@@ -798,7 +809,9 @@ def demonstrations(t25: dict, counts: dict, mfc: dict, ins: dict) -> list:
             "type_b": "reference thermometer certificate, comparison-medium uniformity, cold-junction uncertainty, "
                       "pickup bound",
             "coverage": "A3 k rule",
-            "labelling": "capability_analysis.record_item_errors enforces the A3 labels on every temperature record",
+            "labelling": "capability_analysis.record_item_errors enforces the A3 rules on every temperature record: "
+                         "declared scope, the mandatory cathode-tube thermocouple on C-1 items, no emitter label on a "
+                         "non-pyrometer sensor, 'unmeasured' emitter status without a pyrometer",
         },
         "acceptance": {
             "rule": "demonstrated uncertainty per channel reported against the INS-17 / INS-23 / INS-24 requirement "
@@ -918,9 +931,11 @@ def record_schema() -> dict:
                 "sensor_type": {"enum": ["thermocouple", "rtd", "pyrometer", "other"]},
                 "emissivity_treatment": {"type": "string"}}}},
         },
-        "a3_rules": "a thermocouple is never labelled emitter_temperature; emitter_temperature only from a calibrated "
-                    "pyrometer with a recorded emissivity treatment; C-1 items (scope 'cathode_c1') without a "
-                    "pyrometer carry emitter_temperature_status 'unmeasured' (capability_analysis.record_item_errors)",
+        "a3_rules": "every temperature item declares a scope; C-1 items (scope 'cathode_c1') must carry the mandatory "
+                    "thermocouple channel labelled cathode_tube_temperature; no non-pyrometer sensor carries an "
+                    "emitter label; emitter_temperature only from a calibrated pyrometer with a recorded emissivity "
+                    "treatment; C-1 items without a pyrometer carry emitter_temperature_status 'unmeasured' "
+                    "(capability_analysis.record_item_errors)",
     }
 
 
@@ -1142,7 +1157,11 @@ def build() -> dict:
         ],
         "milestones": {
             "supports": ["A"],
-            "A": {"delivers": "the ready-to-run procedures and the frozen-analysis candidate that turn delivered "
+            "A": {"conditional": "this lane alone does NOT satisfy S1-C4: pressure and species_divergence are "
+                                 "uncovered and stability_oscillations is covered only for the time base (CD-06). "
+                                 "The contribution to A holds only if W4 adds those demonstrations or the owner "
+                                 "reduces the S1-C4 category set",
+                  "delivers": "the ready-to-run procedures and the frozen-analysis candidate that turn delivered "
                               "instruments into the S1-C4 measured-capability record (and the calibration-plan "
                               "candidates for S1-C5), on the path LOCK-1 -> S1 -> LOCK-2 that conditional selection "
                               "rests on",
@@ -1287,6 +1306,8 @@ def render_md(doc: dict) -> str:
     L.append(f"Supports **{', '.join(ms['supports'])}**.")
     for k in ("A", "B", "C"):
         L.append(f"- **{k}**: {ms[k]['delivers']}. Next: " + "; ".join(ms[k]["needs_next"]) + ".")
+        if "conditional" in ms[k]:
+            L.append(f"  - Conditional: {ms[k]['conditional']}.")
     L += ["", "## Owner addendum A3 rules carried", ""]
     for k, v in doc["a3_rules_carried"].items():
         L.append(f"- **{k}**: {v}")
@@ -1325,6 +1346,7 @@ def render_md(doc: dict) -> str:
                 L.append(f"- {k}: {_qs(r[k])}")
             for k, v in r["ranges_needed"].items():
                 L.append(f"- ranges needed ({k}): {_qs(v)}")
+            L += [f"- sccm basis: {r['sccm_basis']}"]
             L += [f"- Xe cathode flow: {_qs(r['xe_cathode_flow'])}", "", r["reading"], ""]
         if "channels" in d:
             L += [f"Boundary: {d['boundary']}", "", "| component | architectures | lab status | demonstration |",

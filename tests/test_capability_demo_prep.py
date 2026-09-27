@@ -268,7 +268,13 @@ def test_calibration_fit_installation_and_configuration_shift():
 def test_drift_mfc_errors_skew_phase():
     d = A.drift_rate([0, 3600, 7200], [0.0, 1.0, 2.0])
     assert d["drift_per_hour"] == pytest.approx(1.0)
-    assert A.drift_rate([0, 1, 2], [5.0, 5.0, 5.0])["drift_per_hour"] == 0.0
+    flat = A.drift_rate([0, 1, 2], [5.0, 5.0, 5.0])
+    assert flat["drift_per_hour"] == 0.0 and flat["resolution_limited"] is True  # quantised DAQ: Type B term needed
+    assert d["resolution_limited"] is False
+    w = A.within_cycle_corrected_reproducibility(0.02, 0.03, 4)
+    assert w["s_inst_conservative"] == 0.02 and w["within_term"] == pytest.approx(0.015)
+    assert w["s_inst_corrected"] == pytest.approx(math.sqrt(0.02 ** 2 - 0.03 ** 2 / 4)) and w["installation_resolved"]
+    assert A.within_cycle_corrected_reproducibility(0.01, 0.04, 4)["installation_resolved"] is False
     assert A.relative_point_errors([1.1, 2.0], [1.0, 2.0]) == pytest.approx([0.1, 0.0])
     with pytest.raises(ValueError):
         A.relative_point_errors([1.0], [0.0])
@@ -314,6 +320,30 @@ def test_record_item_validator_and_a3_cathode_rule():
     assert A.record_item_errors(_item(channels=ok, emitter_temperature_status="measured")) == []
     no_eps = [{"id": "PY-1", "label": "emitter_temperature", "sensor_type": "pyrometer"}]
     assert A.record_item_errors(_item(channels=no_eps))
+
+
+def test_a3_cathode_tube_thermocouple_mandatory_and_guards():
+    # A3: C-1 item without the mandatory cathode-tube thermocouple fails (pyrometer-only, empty, RTD-labelled tube)
+    pyro_only = [{"id": "PY-1", "label": "emitter_temperature", "sensor_type": "pyrometer", "emissivity_treatment": "r"}]
+    assert any("mandatory" in m for m in A.record_item_errors(_item(channels=pyro_only,
+                                                                     emitter_temperature_status="measured")))
+    assert any("mandatory" in m for m in A.record_item_errors(_item(channels=[])))
+    assert any("mandatory" in m for m in A.record_item_errors(_item(channels=None)))
+    rtd_tube = [{"id": "R-1", "label": "cathode_tube_temperature", "sensor_type": "rtd"}]
+    assert any("mandatory" in m for m in A.record_item_errors(_item(channels=rtd_tube)))
+    # any emitter-like label on a non-pyrometer sensor fails
+    tc = {"id": "TC-1", "label": "cathode_tube_temperature", "sensor_type": "thermocouple"}
+    rtd_em = [tc, {"id": "R-2", "label": "emitter_temperature_est", "sensor_type": "rtd"}]
+    assert A.record_item_errors(_item(channels=rtd_em))
+    # scope omitted on a temperature item cannot skip the cathode rule
+    assert any(m.startswith("scope") for m in A.record_item_errors(
+        {k: v for k, v in _item().items() if k != "scope"}))
+    # malformed channels / coverage give messages, never exceptions
+    assert A.record_item_errors(_item(channels=["TC-1"]))
+    assert A.record_item_errors(_item(channels="TC-1"))
+    assert A.record_item_errors(_item(coverage={"k": 2.0, "nu_eff": "many", "low_effective_dof": False}))
+    assert A.record_item_errors(_item(coverage={"k": 2.0, "nu_eff": 0.5, "low_effective_dof": False}))
+    assert A.record_item_errors(_item(coverage={"k": 2.0, "nu_eff": 9, "low_effective_dof": False})) == []
 
 
 def test_record_schema_consistent_with_validator():
