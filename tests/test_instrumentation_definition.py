@@ -14,6 +14,7 @@ import importlib.util
 import json
 import math
 import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -292,7 +293,8 @@ def test_c5_review_findings_closed():
     # versioning: stays v1 with a change log, the original base commit is kept
     assert doc["version"] == "v1" and doc["revision"] == "v1-r2"
     assert doc["base_commit"] == "510e464fb8e128e4cf3325572a4d36ad33a4899d"
-    assert [c["revision"] for c in doc["change_log"]] == ["v1-r1", "v1-r2", "v1-r2"]
+    assert [c["revision"] for c in doc["change_log"]] == ["v1-r1", "v1-r2", "v1-r2", "v1-r2"]
+    assert [c["entry"] for c in doc["change_log"]] == ["v1-r1", "v1-r2/C5", "v1-r2/A3", "v1-r2/A3-repair"]
     assert doc["change_log"][-1]["amendment"] == "A3"
 
 
@@ -375,3 +377,56 @@ def test_a3_validation_rejects_missing_semantics():
     next(p for p in bad["procedures"] if p["id"] == "INS-P-12")["statement"] = "k: owner"
     with pytest.raises(ValueError):
         B.validate(bad)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# A3 review repair: W3 pinned as an immutable snapshot (no pin cycle), downstream re-pins declared, unique entries
+# ----------------------------------------------------------------------------------------------------------------------
+def test_w3_pinned_as_immutable_snapshot_not_live_file():
+    doc = _stored()
+    paths = {p["path"] for p in doc["inputs"]}
+    assert B.HWR_LIVE not in paths and B.HWR in paths
+    assert B.HWR.startswith("docs/experiments/instrumentation/snapshots/")
+    sn = doc["downstream_repin_required"]["w3_snapshot"]
+    assert sn["source_path"] == B.HWR_LIVE and sn["source_commit"] in sn["reproduce"]
+    bad = json.loads(json.dumps(doc))
+    bad["inputs"].append({"path": B.HWR_LIVE, "lane": "W3", "sha256": "0" * 64})
+    with pytest.raises(ValueError):
+        B.validate(bad)
+
+
+def test_w3_snapshot_matches_git_commit_when_available():
+    sn = B.HWR_SNAPSHOT
+    try:
+        out = subprocess.run(["git", "-C", str(ROOT), "show", f"{sn['source_commit']}:{sn['source_path']}"],
+                             capture_output=True, check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        pytest.skip("git history with the W3 source commit is not available")
+    assert out == (ROOT / B.HWR).read_bytes()
+
+
+def test_downstream_repin_declared():
+    doc = _stored()
+    dr = doc["downstream_repin_required"]
+    files = {c["file"] for c in dr["consumers"]}
+    assert {"docs/experiments/lifetime_ao/ao_lifetime_register_v3.json",
+            "docs/experiments/hardware/hardware_requirements_v1.json",
+            "docs/experiments/s1_readiness/s1_readiness_status_current.json"} <= files
+    assert "9a33979" in dr["merge_order"]
+    md = (DIR / "INSTRUMENTATION_DEFINITION.md").read_text(encoding="utf-8")
+    assert "Downstream re-pin required" in md and "Pin cycle resolved" in md
+    assert "7d373374dc" in md.split("\n")[2]
+
+
+def test_change_log_entries_unique():
+    doc = _stored()
+    bad = json.loads(json.dumps(doc))
+    bad["change_log"][-1]["entry"] = bad["change_log"][-2]["entry"]
+    with pytest.raises(ValueError):
+        B.validate(bad)
+
+
+def test_ins13_cex_wording():
+    ins13 = next(i for i in _stored()["instruments"] if i["id"] == "INS-13")
+    t = json.dumps(ins13["required_uncertainty"])
+    assert "ion-gauge uncertainty is typically 10-20 %" in t and "not the correction's" in t

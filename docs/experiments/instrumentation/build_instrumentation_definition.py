@@ -57,7 +57,10 @@ PINNED = {   # path -> lane; the sha256 pins live in pinned_inputs.json (written
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json": "od_hardware_pivot A2 (owner; C5)",
     "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json": "fo_ao_lifetime_register (v2)",
     "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json": "fo_magnet_coil_qualification",
-    "docs/experiments/hardware/hardware_requirements_v1.json": "fo_hardware_definition (W3)",
+    # W3 is pinned as an IMMUTABLE SNAPSHOT (bytes of commit 9a33979), never the live W3 file: W3 pins this file, so
+    # pinning the live W3 bytes here made a W3 <-> W4 pin cycle that could never settle (A3 repair review).
+    "docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json":
+        "fo_hardware_definition (W3), immutable snapshot of commit 9a33979",
     "schemas/thermal_life/inputs_v1.json": "thermal_life input schema (measured_hardware record)",
     # owner addendum A3 (v1-r2, additive): metrology, cathode temperature, quantitative RGA, k = 2
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json": "od_hardware_pivot A3 (owner)",
@@ -744,8 +747,9 @@ def instruments(basis: dict, der: dict) -> list:
         _inst("INS-13", "ExB probe (ion species / charge-state current fractions)", ["M7"], "N2+, N+, O2+, O+ (and "
               "multiply charged) current fractions", "Wien filter with an accelerating bias for low-energy interstage "
               "ions (REF-ROVEY2025 as cited by lane 25)", ["REF-ROVEY2025"],
-              {"value": tbd("W5 pre-registered species-fraction tolerance; CEX correction uncertainty is dominated by the "
-                            "background neutral density from ion gauges, typically 10-20 % (REF-ROVEY2025 via lane 25)")},
+              {"value": tbd("W5 pre-registered species-fraction tolerance; the CEX correction is dominated by the background "
+                            "neutral density, whose ion-gauge uncertainty is typically 10-20 % (REF-ROVEY2025 via lane "
+                            "25); 10-20 % is that density's uncertainty, not the correction's")},
               ["mass-resolution check on known ions; same analysis code for all arms (lane 06 DIAG-EXB)"],
               {"DQ-RARCH": "S", "DQ-TABS": "-", "DQ-PBUS": "-", "DQ-SUST": "-", "DQ-KNEE": "-"}, ["VO-SPECIES"],
               {"status": "AT_RISK", "why": "at low energy the four air ions are not all resolved without an "
@@ -832,7 +836,16 @@ def bus_power_channels() -> list:
 # ----------------------------------------------------------------------------------------------------------------------
 AOL = "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json"
 MCQ = "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json"
-HWR = "docs/experiments/hardware/hardware_requirements_v1.json"
+HWR_LIVE = "docs/experiments/hardware/hardware_requirements_v1.json"          # W3's live file (never pinned here)
+HWR = "docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json"   # pinned snapshot
+HWR_SNAPSHOT = {"snapshot": HWR, "source_path": HWR_LIVE,
+                "source_commit": "9a33979c5198a04cbbc8abdd988e9578aa589b1a",
+                "reproduce": "git show 9a33979c5198a04cbbc8abdd988e9578aa589b1a:" + HWR_LIVE,
+                "why": "W3 pins this file (instrumentation_definition_v1.json); W4 pinning W3's live bytes created a "
+                       "pin cycle (each re-pin changes the other's bytes). W4 therefore pins an immutable historical "
+                       "snapshot of the W3 register (the W3 integration-review version that adds HW-C1-09), the same "
+                       "pattern as the AO register v2 pin. W3 may now re-pin W4 once and the pair settles; a later W3 "
+                       "change reaches W4 only through a deliberate new snapshot and a new W4 revision."}
 A2 = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json"
 TL_SCHEMA = "schemas/thermal_life/inputs_v1.json"
 REPAIR_BASE_COMMIT = "af6e4948605081f6cab761ce3a74f67658738e44"
@@ -1184,7 +1197,7 @@ def a3_adoption(ins: list) -> dict:
         rows.append({"decision": key, "owner_text": dec[key], "carried_by": ids, "how": how})
     return {"source": A3, "decided_utc": a3["decided_utc"], "rows": rows,
             "w3_provision": "HW-C1-09 (cathode temperature provision) and HW-C1-07 (b) (near-cathode RGA port) in "
-                            + HWR,
+                            + HWR_LIVE + " (read from the pinned snapshot " + HWR + ")",
             "milestones": "supports A (S1a engineering checkout can use the qualitative RGA and the tube "
                           "thermocouple under the labelling rule) and prepares C (quantitative RGA and accredited "
                           "metrology are preconditions for exposure-dose / life evidence); B not affected. Next: "
@@ -1254,7 +1267,7 @@ def c5_adoption(ins: list) -> dict:
     a2 = _load_json(A2)
     return {"control": "C5_AO_early",
             "control_text": a2["execution_directive_2026_09_27"]["controls_added"]["C5_AO_early"],
-            "sources": [AOL, MCQ], "w3_ids_cited_verified_in": HWR, "w3_ids_cited": cited_hw,
+            "sources": [AOL, MCQ], "w3_ids_cited_verified_in": HWR, "w3_snapshot": HWR_SNAPSHOT, "w3_ids_cited": cited_hw,
             "measured_hardware_fields": mh["evidence_record_fields"],
             "counts": {s: q(sum(r["status"] == s for r in rows), "provisions", "model-derived", _src("c5_adoption"))
                        for s in ("ADOPTED", "ADOPTED_PARTIAL", "NOT_ADOPTED")},
@@ -1287,9 +1300,9 @@ def _find_key(obj, key):
 
 
 CHANGE_LOG = [
-    {"revision": "v1-r1", "date": "2026-09-27", "base_commit": "510e464fb8e128e4cf3325572a4d36ad33a4899d",
+    {"entry": "v1-r1", "revision": "v1-r1", "date": "2026-09-27", "base_commit": "510e464fb8e128e4cf3325572a4d36ad33a4899d",
      "change": "initial W4 instrumentation definition (INS-01..INS-18)"},
-    {"revision": "v1-r2", "date": "2026-09-27", "base_commit": REPAIR_BASE_COMMIT,
+    {"entry": "v1-r2/C5", "revision": "v1-r2", "date": "2026-09-27", "base_commit": REPAIR_BASE_COMMIT,
      "change": "control C5 (A2 addendum): adopts the 19 W4 provisions of the AO/lifetime register v2 and MCQ-W4-01..03: "
                "new INS-19..INS-24 and procedures INS-P-01..INS-P-12, c5_adoption table, five new pinned inputs, four "
                "references cited via those lanes; existing ids, values, thresholds and decision quantities unchanged "
@@ -1297,7 +1310,7 @@ CHANGE_LOG = [
      "material": False,
      "why_v1": "additive: no existing requirement, threshold, derived number or decision-quantity role changed, so the "
                "file stays instrumentation_definition_v1.json (downstream lanes reference this path)"},
-    {"revision": "v1-r2", "amendment": "A3", "date": "2026-09-27", "base_commit": A3_BASE_COMMIT,
+    {"entry": "v1-r2/A3", "revision": "v1-r2", "amendment": "A3", "date": "2026-09-27", "base_commit": A3_BASE_COMMIT,
      "change": "owner addendum A3 applied without changing any id or value: metrology specification (INS-19 / INS-20 "
                "calibration), cathode temperature semantics (INS-23 tube thermocouple mandatory, never labelled "
                "emitter temperature, pyrometer optional, emitter 'unmeasured' without one; INS-18 note; W3 HW-C1-09 "
@@ -1306,7 +1319,43 @@ CHANGE_LOG = [
                "review); four C5 open owner decisions marked decided",
      "material": False,
      "why_v1": "owner addendum A3 decisions.instrumentation_version: keep v1-r2 (additive)"},
+    {"entry": "v1-r2/A3-repair", "revision": "v1-r2", "amendment": "A3", "date": "2026-09-27",
+     "base_commit": A3_BASE_COMMIT,
+     "change": "review repair of the A3 entry: the W3 register is pinned as an immutable snapshot "
+               "(snapshots/w3_hardware_requirements_v1_at_9a33979.json, sha256 identical to the W3 file at commit "
+               "9a33979) instead of W3's live file, which removes the W3 <-> W4 pin cycle; downstream consumers "
+               "whose pins of this file are stale are declared (downstream_repin_required); change-log entries get a "
+               "unique 'entry' key (the revision label stays v1-r2 per A3); INS-13 wording: 10-20 % is the "
+               "ion-gauge uncertainty of the background neutral density that dominates the CEX correction, not the "
+               "correction's uncertainty; Markdown header names both the original and the current base commit",
+     "material": False,
+     "why_v1": "no id, threshold, derived number or decision-quantity role changed"},
 ]
+
+# Consumers outside W4's ALLOWED paths that pin the bytes of this file. Every W4 byte change (including the A3 entry
+# and this repair) makes their pins stale; W4 cannot edit them. Their owning lanes / the merge controller re-pin them
+# to the sha256 of this file at the W4 lane head (a file cannot contain its own hash). After the snapshot change W4 no
+# longer pins W3's live bytes, so a W3 re-pin does not change W4 and the pair settles in one step.
+DOWNSTREAM_REPIN = [
+    {"file": "docs/experiments/lifetime_ao/ao_lifetime_register_v3.json", "owner": "fo_ao_lifetime_register (v3)",
+     "pins": "merged_inputs entries for docs/experiments/instrumentation/instrumentation_definition_v1.json and "
+             "INSTRUMENTATION_DEFINITION.md",
+     "stale_pin": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f (JSON, pre-A3); "
+                  "f35266c778af134117f56108367c5eefee45ddf6d60ef54b192009abc336b4d5 (Markdown, pre-A3)",
+     "test_affected": "tests/test_ao_lifetime_register.py::test_merged_inputs_pinned"},
+    {"file": "docs/experiments/hardware/hardware_requirements_v1.json", "owner": "fo_hardware_definition (W3)",
+     "pins": "references['SRC-INS-V1R2'].sha256 and w3_integration_review.reviewed_against['SRC-INS-V1R2']",
+     "stale_pin": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f (pre-A3)",
+     "test_affected": "tests/test_hardware_definition.py::test_a3_review_traces_exist_in_sources"},
+    {"file": "docs/experiments/s1_readiness/s1_readiness_status_current.json", "owner": "fo_s1_readiness_gate",
+     "pins": "input sha256 entries for docs/experiments/instrumentation/instrumentation_definition_v1.json",
+     "stale_pin": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f (pre-A3)",
+     "test_affected": "regenerate with the S1 readiness builder (status report, not a W4 test)"},
+]
+MERGE_ORDER = ("This branch carries the W3 dependency commit 9a33979 (docs/experiments/hardware/**, "
+               "tests/test_hardware_definition.py; branch worktree-wf_b92499f0-718-3), which W4 did not author. W3 must "
+               "be merged and verified before or together with this branch. W4's own pin uses the immutable snapshot, "
+               "so W4 verification does not depend on W3's live bytes.")
 
 
 def build() -> dict:
@@ -1347,6 +1396,8 @@ def build() -> dict:
         "revision": CHANGE_LOG[-1]["revision"],
         "repair_base_commit": REPAIR_BASE_COMMIT,
         "change_log": CHANGE_LOG,
+        "downstream_repin_required": {"consumers": DOWNSTREAM_REPIN, "merge_order": MERGE_ORDER,
+                                      "w3_snapshot": HWR_SNAPSHOT},
         "generated_by": SCRIPT_REL,
         "companion_document": "docs/experiments/instrumentation/INSTRUMENTATION_DEFINITION.md",
         "not_locked": "Nothing here is pre-registered, locked or decided. Thresholds not in the RFP are PROPOSED. No "
@@ -1565,6 +1616,11 @@ def validate(doc: dict) -> None:
         raise ValueError("INS-P-12 must carry the A3 planning coverage factor and the low-dof rule")
     if doc["revision"] != "v1-r2":
         raise ValueError("A3: instrumentation stays v1-r2")
+    entries = [c.get("entry") for c in doc["change_log"]]
+    if None in entries or len(set(entries)) != len(entries):
+        raise ValueError(f"change_log entries must carry a unique 'entry' key: {entries}")
+    if HWR_LIVE in {p["path"] for p in doc["inputs"]}:
+        raise ValueError("W4 must not pin W3's live file (pin cycle); pin the immutable snapshot")
     for path in _quantities_with_unit(doc, "h"):
         raise ValueError(f"life-type quantity in hours at {path} (control C6 / AOL-LF-01)")
     text = json.dumps(doc)
@@ -1608,8 +1664,10 @@ def render_md(doc: dict) -> str:
     a("# W4 instrumentation definition: common-hardware Hall-only / RF+Hall / ECR+Hall experiment")
     a("")
     a(f"**Status: {doc['status']}.** Follow-on `{doc['follow_on']}` (trigger `{doc['trigger']}`, owner disposition "
-      f"`od_hardware_pivot`, workstream W4), base commit `{doc['base_commit'][:10]}`, version {doc['version']} "
-      f"revision {doc['revision']} (repair base `{doc['repair_base_commit'][:10]}`, change log section 14). "
+      f"`od_hardware_pivot`, workstream W4), version {doc['version']} revision {doc['revision']}. Original v1 base "
+      f"commit `{doc['base_commit'][:10]}`; C5 repair base `{doc['repair_base_commit'][:10]}`; current content "
+      f"(latest change-log entry `{doc['change_log'][-1]['entry']}`) rebuilt on "
+      f"`{doc['change_log'][-1]['base_commit'][:10]}` (change log section 14). "
       f"{doc['not_locked']}")
     a("")
     a(f"Generated by `{doc['generated_by']}` from `instrumentation_definition_v1.json` content built in that script; "
@@ -1884,12 +1942,30 @@ def render_md(doc: dict) -> str:
     a("")
     a("## 14. Change log")
     a("")
-    a("| revision | date | base commit | change |")
-    a("|---|---|---|---|")
+    a("| entry | revision | date | base commit | change |")
+    a("|---|---|---|---|---|")
     for c in doc["change_log"]:
         extra = f" Why still v1: {c['why_v1']}" if "why_v1" in c else ""
         rev = c["revision"] + (f" ({c['amendment']})" if "amendment" in c else "")
-        a(f"| {rev} | {c['date']} | `{c['base_commit'][:10]}` | {c['change']}.{extra} |")
+        a(f"| {c['entry']} | {rev} | {c['date']} | `{c['base_commit'][:10]}` | {c['change']}.{extra} |")
+    a("")
+    dr = doc["downstream_repin_required"]
+    a("## 15. Downstream re-pin required (outside W4's paths)")
+    a("")
+    a("These consumers pin the bytes of `instrumentation_definition_v1.json` (and, for AO v3, this Markdown file). "
+      "Their pins are stale after the A3 revision; W4 cannot edit them. Their owners or the merge controller re-pin "
+      "them to the sha256 of this file at the W4 lane head.")
+    a("")
+    a("| file | owner | pins | stale pin | test / action |")
+    a("|---|---|---|---|---|")
+    for c in dr["consumers"]:
+        a(f"| `{c['file']}` | {c['owner']} | {c['pins']} | `{c['stale_pin'][:16]}` | {c['test_affected']} |")
+    a("")
+    sn = dr["w3_snapshot"]
+    a(f"**Pin cycle resolved.** W4 pins the W3 register as the immutable snapshot `{sn['snapshot']}` "
+      f"(reproduce: `{sn['reproduce']}`). {sn['why']}")
+    a("")
+    a(f"**Merge order.** {dr['merge_order']}")
     a("")
     return "\n".join(L)
 

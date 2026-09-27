@@ -16,12 +16,14 @@
  "repair_base_commit": "af6e4948605081f6cab761ce3a74f67658738e44",
  "change_log": [
   {
+   "entry": "v1-r1",
    "revision": "v1-r1",
    "date": "2026-09-27",
    "base_commit": "510e464fb8e128e4cf3325572a4d36ad33a4899d",
    "change": "initial W4 instrumentation definition (INS-01..INS-18)"
   },
   {
+   "entry": "v1-r2/C5",
    "revision": "v1-r2",
    "date": "2026-09-27",
    "base_commit": "af6e4948605081f6cab761ce3a74f67658738e44",
@@ -30,6 +32,7 @@
    "why_v1": "additive: no existing requirement, threshold, derived number or decision-quantity role changed, so the file stays instrumentation_definition_v1.json (downstream lanes reference this path)"
   },
   {
+   "entry": "v1-r2/A3",
    "revision": "v1-r2",
    "amendment": "A3",
    "date": "2026-09-27",
@@ -37,8 +40,51 @@
    "change": "owner addendum A3 applied without changing any id or value: metrology specification (INS-19 / INS-20 calibration), cathode temperature semantics (INS-23 tube thermocouple mandatory, never labelled emitter temperature, pyrometer optional, emitter 'unmeasured' without one; INS-18 note; W3 HW-C1-09 traced), near-cathode RGA data-use rule (INS-22 / INS-11), INS-P-12 planning k = 2; a3_adoption table; A3 pinned and the W3 hardware definition re-pinned (HW-C1-09 added by the W3 integration review); four C5 open owner decisions marked decided",
    "material": false,
    "why_v1": "owner addendum A3 decisions.instrumentation_version: keep v1-r2 (additive)"
+  },
+  {
+   "entry": "v1-r2/A3-repair",
+   "revision": "v1-r2",
+   "amendment": "A3",
+   "date": "2026-09-27",
+   "base_commit": "7d373374dcd47eb6c2464423eb5f45a1fa14ef78",
+   "change": "review repair of the A3 entry: the W3 register is pinned as an immutable snapshot (snapshots/w3_hardware_requirements_v1_at_9a33979.json, sha256 identical to the W3 file at commit 9a33979) instead of W3's live file, which removes the W3 <-> W4 pin cycle; downstream consumers whose pins of this file are stale are declared (downstream_repin_required); change-log entries get a unique 'entry' key (the revision label stays v1-r2 per A3); INS-13 wording: 10-20 % is the ion-gauge uncertainty of the background neutral density that dominates the CEX correction, not the correction's uncertainty; Markdown header names both the original and the current base commit",
+   "material": false,
+   "why_v1": "no id, threshold, derived number or decision-quantity role changed"
   }
  ],
+ "downstream_repin_required": {
+  "consumers": [
+   {
+    "file": "docs/experiments/lifetime_ao/ao_lifetime_register_v3.json",
+    "owner": "fo_ao_lifetime_register (v3)",
+    "pins": "merged_inputs entries for docs/experiments/instrumentation/instrumentation_definition_v1.json and INSTRUMENTATION_DEFINITION.md",
+    "stale_pin": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f (JSON, pre-A3); f35266c778af134117f56108367c5eefee45ddf6d60ef54b192009abc336b4d5 (Markdown, pre-A3)",
+    "test_affected": "tests/test_ao_lifetime_register.py::test_merged_inputs_pinned"
+   },
+   {
+    "file": "docs/experiments/hardware/hardware_requirements_v1.json",
+    "owner": "fo_hardware_definition (W3)",
+    "pins": "references['SRC-INS-V1R2'].sha256 and w3_integration_review.reviewed_against['SRC-INS-V1R2']",
+    "stale_pin": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f (pre-A3)",
+    "test_affected": "tests/test_hardware_definition.py::test_a3_review_traces_exist_in_sources"
+   },
+   {
+    "file": "docs/experiments/s1_readiness/s1_readiness_status_current.json",
+    "owner": "fo_s1_readiness_gate",
+    "pins": "input sha256 entries for docs/experiments/instrumentation/instrumentation_definition_v1.json",
+    "stale_pin": "4542d26037357cc767c9ce2edc1b2802e040e16b7cc9fa16312730e18fdb441f (pre-A3)",
+    "test_affected": "regenerate with the S1 readiness builder (status report, not a W4 test)"
+   }
+  ],
+  "merge_order": "This branch carries the W3 dependency commit 9a33979 (docs/experiments/hardware/**, tests/test_hardware_definition.py; branch worktree-wf_b92499f0-718-3), which W4 did not author. W3 must be merged and verified before or together with this branch. W4's own pin uses the immutable snapshot, so W4 verification does not depend on W3's live bytes.",
+  "w3_snapshot": {
+   "snapshot": "docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json",
+   "source_path": "docs/experiments/hardware/hardware_requirements_v1.json",
+   "source_commit": "9a33979c5198a04cbbc8abdd988e9578aa589b1a",
+   "reproduce": "git show 9a33979c5198a04cbbc8abdd988e9578aa589b1a:docs/experiments/hardware/hardware_requirements_v1.json",
+   "why": "W3 pins this file (instrumentation_definition_v1.json); W4 pinning W3's live bytes created a pin cycle (each re-pin changes the other's bytes). W4 therefore pins an immutable historical snapshot of the W3 register (the W3 integration-review version that adds HW-C1-09), the same pattern as the AO register v2 pin. W3 may now re-pin W4 once and the pair settles; a later W3 change reaches W4 only through a deliberate new snapshot and a new W4 revision."
+  }
+ },
  "generated_by": "docs/experiments/instrumentation/build_instrumentation_definition.py",
  "companion_document": "docs/experiments/instrumentation/INSTRUMENTATION_DEFINITION.md",
  "not_locked": "Nothing here is pre-registered, locked or decided. Thresholds not in the RFP are PROPOSED. No score-bearing reading before LOCK-1 and LOCK-2 (lane 25 Sec. 10). Instrument choices are principles, not product selections; no instrument accuracy is claimed.",
@@ -92,8 +138,8 @@
    "sha256": "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e"
   },
   {
-   "path": "docs/experiments/hardware/hardware_requirements_v1.json",
-   "lane": "fo_hardware_definition (W3)",
+   "path": "docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json",
+   "lane": "fo_hardware_definition (W3), immutable snapshot of commit 9a33979",
    "sha256": "4752aafd4a42326f2cdf8387c3d9280d274ea96108be0450568d72e785f7ca61"
   },
   {
@@ -1706,7 +1752,7 @@
    "required_uncertainty": {
     "value": {
      "value": "TBD",
-     "tbd_requires": "W5 pre-registered species-fraction tolerance; CEX correction uncertainty is dominated by the background neutral density from ion gauges, typically 10-20 % (REF-ROVEY2025 via lane 25)"
+     "tbd_requires": "W5 pre-registered species-fraction tolerance; the CEX correction is dominated by the background neutral density, whose ion-gauge uncertainty is typically 10-20 % (REF-ROVEY2025 via lane 25); 10-20 % is that density's uncertainty, not the correction's"
     }
    },
    "calibration": [
@@ -2361,7 +2407,14 @@
    "docs/experiments/lifetime_ao/ao_lifetime_register_v2.json",
    "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json"
   ],
-  "w3_ids_cited_verified_in": "docs/experiments/hardware/hardware_requirements_v1.json",
+  "w3_ids_cited_verified_in": "docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json",
+  "w3_snapshot": {
+   "snapshot": "docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json",
+   "source_path": "docs/experiments/hardware/hardware_requirements_v1.json",
+   "source_commit": "9a33979c5198a04cbbc8abdd988e9578aa589b1a",
+   "reproduce": "git show 9a33979c5198a04cbbc8abdd988e9578aa589b1a:docs/experiments/hardware/hardware_requirements_v1.json",
+   "why": "W3 pins this file (instrumentation_definition_v1.json); W4 pinning W3's live bytes created a pin cycle (each re-pin changes the other's bytes). W4 therefore pins an immutable historical snapshot of the W3 register (the W3 integration-review version that adds HW-C1-09), the same pattern as the AO register v2 pin. W3 may now re-pin W4 once and the pair settles; a later W3 change reaches W4 only through a deliberate new snapshot and a new W4 revision."
+  },
   "w3_ids_cited": [
    "HW-C1-03",
    "HW-C1-08",
@@ -2771,7 +2824,7 @@
     "how": "INS-22 calibration item (quantitative for AO/lifetime use) and data-use note (uncalibrated = qualitative S1a engineering only, never exposure-dose / life evidence); INS-11 note"
    }
   ],
-  "w3_provision": "HW-C1-09 (cathode temperature provision) and HW-C1-07 (b) (near-cathode RGA port) in docs/experiments/hardware/hardware_requirements_v1.json",
+  "w3_provision": "HW-C1-09 (cathode temperature provision) and HW-C1-07 (b) (near-cathode RGA port) in docs/experiments/hardware/hardware_requirements_v1.json (read from the pinned snapshot docs/experiments/instrumentation/snapshots/w3_hardware_requirements_v1_at_9a33979.json)",
   "milestones": "supports A (S1a engineering checkout can use the qualitative RGA and the tube thermocouple under the labelling rule) and prepares C (quantitative RGA and accredited metrology are preconditions for exposure-dose / life evidence); B not affected. Next: W4 measurement specification issued to procure an accredited lab; RGA species calibration or sensitivity factors before score-bearing / life use; HW-C1-09 (b) view decision in the C-1 design release."
  },
  "bus_power_channels": [
