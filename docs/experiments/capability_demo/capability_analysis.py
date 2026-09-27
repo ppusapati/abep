@@ -229,6 +229,24 @@ def within_cycle_corrected_reproducibility(s_between: float, s_within: float, r:
             "within_term": sw / math.sqrt(r), "installation_resolved": d > 0}
 
 
+def pbus_installation_term(shares: Mapping[str, float], s_inst: Mapping[str, float], share_tolerance: float) -> dict:
+    """ln(P_bus) installation term of CD-02 from the per-channel gain reproducibilities. P_bus = sum_i P_i, so
+    d ln P_bus = sum_i w_i d ln g_i with w_i = P_i / P_bus at the operating point (first order, GUM 5.1.2). With
+    independent re-connection of each channel: s_inst,P = sqrt(sum_i w_i^2 s_inst,i^2). Also returned: the
+    share-free bound max_i s_inst,i (valid for any shares because sum w_i = 1 and w_i >= 0), usable before the
+    LOCK-1 power allocation fixes the shares. Shares are explicit inputs (no default allocation); they must be
+    non-negative and sum to 1 within share_tolerance; every channel needs both a share and an s_inst."""
+    if set(shares) != set(s_inst) or not shares:
+        raise ValueError("shares and s_inst must name the same non-empty set of channels")
+    tol = _finite("share_tolerance", share_tolerance)
+    w = {k: _finite(f"share[{k}]", v) for k, v in shares.items()}
+    s = {k: _finite(f"s_inst[{k}]", v) for k, v in s_inst.items()}
+    if any(v < 0 for v in w.values()) or any(v < 0 for v in s.values()):
+        raise ValueError("shares and s_inst must be >= 0")
+    if abs(math.fsum(w.values()) - 1.0) > tol:
+        raise ValueError(f"shares must sum to 1 within {tol}, got {math.fsum(w.values())}")
+    return {"s_inst_P": math.sqrt(math.fsum((w[k] * s[k]) ** 2 for k in w)), "share_free_bound": max(s.values())}
+
 def relative_point_errors(setpoints: Sequence[float], reference: Sequence[float]) -> list[float]:
     """(indicated - reference) / reference per point (MFC against a primary flow calibrator)."""
     s = _seq("setpoints", setpoints, 1)

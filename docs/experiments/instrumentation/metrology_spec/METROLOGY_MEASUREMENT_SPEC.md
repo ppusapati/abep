@@ -35,7 +35,9 @@ Authority: `docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentati
 - Range: TBD - requires coupon and part masses (W3)
 - Report: mean, SD and N of readings per session, desiccation parameters, environment, reference-mass certificate ids, buoyancy treatment, U with k
 
-| nominal | E2 MPE | U max (k = 2) |
+E2 MPE values quoted from OIML R 111-1:2004 Table 1 (verify: Amendment 2025 not read; confirm against the current edition before procurement).
+
+| nominal | E2 MPE (verify) | U max (k = 2) |
 |---|---|---|
 | 1 mg | +/- 0.006 mg | 0.002 mg |
 | 10 mg | +/- 0.008 mg | 0.00266667 mg |

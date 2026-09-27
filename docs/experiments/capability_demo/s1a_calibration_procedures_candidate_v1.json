@@ -1,0 +1,189 @@
+{
+ "schema": "abep.s1a_calibration_procedures.v1",
+ "id": "s1a_calibration_procedures",
+ "status": "CANDIDATE_NOT_FROZEN",
+ "decided_by": "not decided - owner freezes",
+ "decided_utc": "not decided",
+ "data_firewall": {
+  "path": "docs/experiments/custody/s1a_data_firewall_frozen.json",
+  "sha256": "not available - requires the owner-frozen S1A-FW firewall"
+ },
+ "generated_by": "docs/experiments/capability_demo/build_capability_demo_prep.py",
+ "gate_file": {
+  "path": "docs/experiments/s1a_readiness/s1a_readiness_conditions_v1.json",
+  "sha256": "011808100ef38799668cb948324efa6492344d3b58ed3c436605ce5caf7025ac"
+ },
+ "freeze_instructions": "owner: review, set status FROZEN, decided_by owner, decided_utc, data_firewall {path, sha256} of the frozen firewall, and write to docs/experiments/instrumentation/s1a_calibration_procedures_frozen.json",
+ "procedures": [
+  {
+   "procedure_id": "S1A-P-TS-01",
+   "category": "thrust_stand",
+   "demonstration_id": "CD-01",
+   "s1a_data_class": "CALIBRATION",
+   "data_scope": "in-situ force calibration constants (slope, offset, magnetic and cable tares with coils energised, discharge off) and their uncertainty, per configuration",
+   "procedure": "CD-01 steps restricted to the data scope above (no plasma, no H-1 anode discharge): pump down; thermal settling with stand cooling on (settling time TBD - requires S1 thermal time constants); zero with power and flow off; record inclination and stand temperatures; apply the calibration forces at CD-P-FORCE-LEVELS levels spanning zero to the top of the range (range TBD: from the knee-scan extinction end to >= 25 mN capability, INS-01) in ascending then descending order; repeat the sequence CD-P-FORCE-SEQ times within the same mount; zero before and after each; magnetic tare: Hall coil and ECR coil currents at the operating settings (TBD - W3/LOCK-1) with the discharge off, forces re-applied; cable / feed-line tare per configuration (INS-01 tares); mass-change behaviour: install HW-0, HW-RF (modules or dummies), HW-0, HW-ECR, HW-0 and repeat the alternation CD-P-CONFIG-CYCLES times, a full calibration in every configuration; archive every raw reading (stand output, applied force id, temperatures, inclination, timestamps)",
+   "traceability": "the delivered thrust stand with its in-situ calibration system (known forces applied under vacuum; REF-POLK2017 as cited by INS-01); force-standard traceability class TBD - requires owner (INS-01 open)",
+   "acceptance_rule": "repeatability_verdict(s_rel, nu, lane-25 u_T_max by n, CD-P-CONF): MEETS_N4/N6/N8 or EXCEEDS_ALL_TARGETS. This is the no-plasma component only; the firing-condition u_T is S1b (lane 25), so MEETS is necessary, not sufficient",
+   "custody": "S1a calibration-class data (S1A-FW allowed class); may go to every track",
+   "status": "PROPOSED"
+  },
+  {
+   "procedure_id": "S1A-P-TS-02",
+   "category": "thrust_stand",
+   "demonstration_id": "CD-01",
+   "s1a_data_class": "REPEATABILITY",
+   "data_scope": "repeatability of the force calibration within a mount and the configuration (mass-change) shift statistics between HW-0 / HW-RF / HW-ECR mounts (modules or dummies), no plasma",
+   "procedure": "CD-01 steps restricted to the data scope above (no plasma, no H-1 anode discharge): pump down; thermal settling with stand cooling on (settling time TBD - requires S1 thermal time constants); zero with power and flow off; record inclination and stand temperatures; apply the calibration forces at CD-P-FORCE-LEVELS levels spanning zero to the top of the range (range TBD: from the knee-scan extinction end to >= 25 mN capability, INS-01) in ascending then descending order; repeat the sequence CD-P-FORCE-SEQ times within the same mount; zero before and after each; magnetic tare: Hall coil and ECR coil currents at the operating settings (TBD - W3/LOCK-1) with the discharge off, forces re-applied; cable / feed-line tare per configuration (INS-01 tares); mass-change behaviour: install HW-0, HW-RF (modules or dummies), HW-0, HW-ECR, HW-0 and repeat the alternation CD-P-CONFIG-CYCLES times, a full calibration in every configuration; archive every raw reading (stand output, applied force id, temperatures, inclination, timestamps)",
+   "traceability": "the delivered thrust stand with its in-situ calibration system (known forces applied under vacuum; REF-POLK2017 as cited by INS-01); force-standard traceability class TBD - requires owner (INS-01 open)",
+   "acceptance_rule": "repeatability_verdict(s_rel, nu, lane-25 u_T_max by n, CD-P-CONF): MEETS_N4/N6/N8 or EXCEEDS_ALL_TARGETS. This is the no-plasma component only; the firing-condition u_T is S1b (lane 25), so MEETS is necessary, not sufficient",
+   "custody": "S1a calibration-class data (S1A-FW allowed class); may go to every track",
+   "status": "PROPOSED"
+  },
+  {
+   "procedure_id": "S1A-P-TS-03",
+   "category": "thrust_stand",
+   "demonstration_id": "CD-02",
+   "s1a_data_class": "REINSTALLATION",
+   "data_scope": "CD-02a only: no-plasma installation / re-installation reproducibility of the stand slope (optional in S1a per the gate's required_categories_status; the Hall-on re-mount series CD-02b is S1b, never S1a)",
+   "procedure": "CD-02 steps restricted to the data scope above (no plasma, no H-1 anode discharge): cycle k = 1..K: vent; remove and re-install the HW-0 feed spacer and the thruster mount exactly as a configuration change does (lane 25 S1b cycle definition); disconnect and re-connect the power leads at their break points; pump down; settle; per cycle: in-situ force calibration (CD-01 levels) r times; power-channel gain check against the reference source r times; K and r are lane 25's T-S1-REMOUNT-CYCLES and T-S1-READINGS-PER-CYCLE (PROPOSED there) so that CD-02a and S1b share one definition",
+   "traceability": "a stable DC reference source for a gain check of each re-connected power channel (class TBD - requires owner, INS-02)",
+   "acceptance_rule": "repeatability_verdict(no-plasma installation term, K - 1 (conservative lower end of nu_eff), lane-25 u_inst_max by n, CD-P-CONF). Necessary, not sufficient: the Hall-on S1b series adds thermal and plasma re-seating effects",
+   "custody": "S1a calibration-class data (S1A-FW allowed class); may go to every track",
+   "status": "PROPOSED"
+  },
+  {
+   "procedure_id": "S1A-P-PC-01",
+   "category": "power_channels",
+   "demonstration_id": "CD-03",
+   "s1a_data_class": "CALIBRATION",
+   "data_scope": "gain / offset / temperature coefficient of every MEASURED bus_power_boundary_v1 channel (incl. the I_d / V_d channels calibrated without plasma), coupler / sensor load-plane characterisation into dummy loads",
+   "procedure": "CD-03 steps restricted to the data scope above (no plasma, no H-1 anode discharge): per MEASURED channel: apply CD-P-PWR-POINTS reference levels spanning the channel range (range TBD - requires the LOCK-1 allocation), CD-P-PWR-REPEATS simultaneous V/I readings each, ascending and descending; repeat at two shunt / transducer temperatures within the S1 thermal range (range TBD - S1) to characterise the temperature coefficient (INS-02 calibration); DUMMY_LOAD_PICKUP: RF and microwave generators into matched dummy loads at each planned power level with the Hall off; record every DC channel (pickup bound); INS-03: coupler/sensor certificates; load-plane loss characterisation into matched dummy loads at each P_lo / P_hi and frequency (method TBD - requires the RF / microwave design, W3); INS-04: probe gain and offset against the calibrated hall_discharge DC current channel at several DC levels; noise floor with the discharge supply connected and off",
+   "traceability": "traceable DC voltage / current calibrator or reference meter with reference shunt (class TBD - requires owner, INS-02 open decision 'traceable calibration class'); directional couplers and power sensors with certificates (INS-03)",
+   "acceptance_rule": "per MEASURED channel: repeatability_verdict(relative s, nu, lane-25 u_P_max by n, CD-P-CONF); I_d floor: offset + noise (1 sigma) <= I-U-ID-FLOOR x I_d,ref (I_d,ref TBD - LOCK-1); source chain: u_src <= u_src_max(f_src) at the pre-registered f_src; pickup: reported, and a channel whose pickup exceeds its own u_P_max share is not usable source-on until fixed",
+   "custody": "S1a calibration-class data (S1A-FW allowed class); may go to every track",
+   "status": "PROPOSED"
+  },
+  {
+   "procedure_id": "S1A-P-PC-02",
+   "category": "power_channels",
+   "demonstration_id": "CD-03",
+   "s1a_data_class": "NOISE",
+   "data_scope": "channel noise floors and the DUMMY_LOAD_PICKUP bound (RF / microwave generators into matched dummy loads, Hall off)",
+   "procedure": "CD-03 steps restricted to the data scope above (no plasma, no H-1 anode discharge): per MEASURED channel: apply CD-P-PWR-POINTS reference levels spanning the channel range (range TBD - requires the LOCK-1 allocation), CD-P-PWR-REPEATS simultaneous V/I readings each, ascending and descending; repeat at two shunt / transducer temperatures within the S1 thermal range (range TBD - S1) to characterise the temperature coefficient (INS-02 calibration); DUMMY_LOAD_PICKUP: RF and microwave generators into matched dummy loads at each planned power level with the Hall off; record every DC channel (pickup bound); INS-03: coupler/sensor certificates; load-plane loss characterisation into matched dummy loads at each P_lo / P_hi and frequency (method TBD - requires the RF / microwave design, W3); INS-04: probe gain and offset against the calibrated hall_discharge DC current channel at several DC levels; noise floor with the discharge supply connected and off",
+   "traceability": "traceable DC voltage / current calibrator or reference meter with reference shunt (class TBD - requires owner, INS-02 open decision 'traceable calibration class'); directional couplers and power sensors with certificates (INS-03)",
+   "acceptance_rule": "per MEASURED channel: repeatability_verdict(relative s, nu, lane-25 u_P_max by n, CD-P-CONF); I_d floor: offset + noise (1 sigma) <= I-U-ID-FLOOR x I_d,ref (I_d,ref TBD - LOCK-1); source chain: u_src <= u_src_max(f_src) at the pre-registered f_src; pickup: reported, and a channel whose pickup exceeds its own u_P_max share is not usable source-on until fixed",
+   "custody": "S1a calibration-class data (S1A-FW allowed class); may go to every track",
+   "status": "PROPOSED"
+  },
+  {
+   "procedure_id": "S1A-P-PC-03",
+   "category": "power_channels",
+   "demonstration_id": "CD-02",
+   "s1a_data_class": "REINSTALLATION",
+   "data_scope": "CD-02a only: power-channel gain after lead disconnection / re-connection, no plasma",
+   "procedure": "CD-02 steps restricted to the data scope above (no plasma, no H-1 anode discharge): cycle k = 1..K: vent; remove and re-install the HW-0 feed spacer and the thruster mount exactly as a configuration change does (lane 25 S1b cycle definition); disconnect and re-connect the power leads at their break points; pump down; settle; per cycle: in-situ force calibration (CD-01 levels) r times; power-channel gain check against the reference source r times; K and r are lane 25's T-S1-REMOUNT-CYCLES and T-S1-READINGS-PER-CYCLE (PROPOSED there) so that CD-02a and S1b share one definition",
+   "traceability": "a stable DC reference source for a gain check of each re-connected power channel (class TBD - requires owner, INS-02)",
+   "acceptance_rule": "repeatability_verdict(no-plasma installation term, K - 1 (conservative lower end of nu_eff), lane-25 u_inst_max by n, CD-P-CONF). Necessary, not sufficient: the Hall-on S1b series adds thermal and plasma re-seating effects",
+   "custody": "S1a calibration-class data (S1A-FW allowed class); may go to every track",
+   "status": "PROPOSED"
+  },
+  {
+   "procedure_id": "S1A-P-MFC-01",
+   "category": "mass_flow_controllers",
+   "demonstration_id": "CD-04",
+   "s1a_data_class": "REG-FEED",
+   "data_scope": "MFC calibration on the working gas incl. every registered W1 flow, gas-correction factors and the air-surrogate composition check: this is the calibrated feed-setpoint record, a custody-held registration input (S1A-FW CALIBRATION excludes it); released only via the custodian after LOCK-H1",
+   "procedure": "CD-04 steps restricted to the data scope above (no plasma, no H-1 anode discharge): calibrate every MFC on its own working gas, installed in the final orientation, at the expected inlet pressure and temperature (REF-SNYDER2017 as cited by INS-05); points per range: 10, 20, 50 and 100 % of FS (the points of the instrumentation MFC table) plus every registered W1 flow in that range (TBD - W1/LOCK-1); CD-P-MFC-REPEATS readings each, ascending and descending; gas correction: no gas correction factor is used where the MFC is calibrated on its own gas; where one is unavoidable (e.g. a range only available on N2 used for O2) measure the actual ratio against the primary calibrator on the working gas and adjust it to the sensor operating temperature (REF-SNYDER2017 as cited by INS-05); record the factor with its uncertainty; zero drift: valve closed, zero flow, MFC at operating temperature; log the output over the planned dwell (hold time TBD - requires owner, INS-01 note) and repeat after a power cycle; air-surrogate check: set an N2/O2 pair and verify the composition by the two primary-calibrated flows (instrumentation derived.mixture_mass_fraction_u)",
+   "traceability": "a primary flow calibrator: constant-volume (rate-of-rise) or constant-pressure (REF-SNYDER2017 as cited by INS-05), traceable, able to reach the lower end of the smallest range (capability TBD - requires the calibrator choice)",
+   "acceptance_rule": "for R_arch: repeatability at every registered point reported (target TBD - requires the W1 tolerance and the knee-scan resolution, INS-05); for the absolute gate: the expanded relative uncertainty at each registered point sets the I-FLOW-CONSERVATIVE margin (the delivered flow may not exceed the registered flow at one-sided alpha); every registered point must sit at or above CD-P-MFC-MINFRAC of its MFC FS; zero drift over the dwell reported against the smallest registered flow of that range",
+   "custody": "custody-held registration input: raw data and results go to the owner-designated data custodian only, released after LOCK-H1 (S1A-FW; W5 K1)",
+   "status": "PROPOSED"
+  },
+  {
+   "procedure_id": "S1A-P-MFC-02",
+   "category": "mass_flow_controllers",
+   "demonstration_id": "CD-04",
+   "s1a_data_class": "DRIFT",
+   "data_scope": "MFC zero drift with the valve closed (zero flow) over the dwell and after a power cycle; carries no registered setpoint value",
+   "procedure": "CD-04 steps restricted to the data scope above (no plasma, no H-1 anode discharge): calibrate every MFC on its own working gas, installed in the final orientation, at the expected inlet pressure and temperature (REF-SNYDER2017 as cited by INS-05); points per range: 10, 20, 50 and 100 % of FS (the points of the instrumentation MFC table) plus every registered W1 flow in that range (TBD - W1/LOCK-1); CD-P-MFC-REPEATS readings each, ascending and descending; gas correction: no gas correction factor is used where the MFC is calibrated on its own gas; where one is unavoidable (e.g. a range only available on N2 used for O2) measure the actual ratio against the primary calibrator on the working gas and adjust it to the sensor operating temperature (REF-SNYDER2017 as cited by INS-05); record the factor with its uncertainty; zero drift: valve closed, zero flow, MFC at operating temperature; log the output over the planned dwell (hold time TBD - requires owner, INS-01 note) and repeat after a power cycle; air-surrogate check: set an N2/O2 pair and verify the composition by the two primary-calibrated flows (instrumentation derived.mixture_mass_fraction_u)",
+   "traceability": "a primary flow calibrator: constant-volume (rate-of-rise) or constant-pressure (REF-SNYDER2017 as cited by INS-05), traceable, able to reach the lower end of the smallest range (capability TBD - requires the calibrator choice)",
+   "acceptance_rule": "for R_arch: repeatability at every registered point reported (target TBD - requires the W1 tolerance and the knee-scan resolution, INS-05); for the absolute gate: the expanded relative uncertainty at each registered point sets the I-FLOW-CONSERVATIVE margin (the delivered flow may not exceed the registered flow at one-sided alpha); every registered point must sit at or above CD-P-MFC-MINFRAC of its MFC FS; zero drift over the dwell reported against the smallest registered flow of that range",
+   "custody": "S1a calibration-class data (S1A-FW allowed class); may go to every track",
+   "status": "PROPOSED"
+  },
+  {
+   "procedure_id": "S1A-P-BZ-01",
+   "category": "magnetic_field_Bz",
+   "demonstration_id": "CD-05",
+   "s1a_data_class": "CALIBRATION",
+   "data_scope": "Hall-probe offset (zero-field chamber) and gain (reference field) before and after each session: probe constants only",
+   "procedure": "CD-05 steps restricted to the data scope above (no plasma, no H-1 anode discharge): probe offset in the zero-field chamber and gain in the reference field before and after each session; approach protocol (PROPOSED, to be frozen): bring every coil from zero to the operating current monotonically after a defined cycling sequence; the same protocol in every configuration; per configuration (HW-0, HW-RF, HW-ECR with the ECR magnet on and off): CD-P-BZ-MAPS complete centreline (and exit-region radial) maps with the probe removed and re-seated between maps; hysteresis: CD-P-BZ-CYCLES current cycles, B at the peak-field location recorded ascending and descending; every map carries coil currents, coil average and hot-spot temperatures and magnet temperatures (MCQ-W4-03), position-scale readings and timestamps",
+   "traceability": "Hall-probe gaussmeter with a calibration certificate; a reference field for in-situ checks (reference magnet or calibrated coil; class TBD) and a zero-field chamber for the offset; positioning stage with a calibrated position scale; fixture keyed to the H-1 fiducials (W3 B(z) access)",
+   "acceptance_rule": "reported against the W5 pre-registered B(z) comparison tolerance when it exists (TBD); until then no pass/fail is claimed, only the demonstrated repeatability; hysteresis offset larger than the map repeatability makes the approach protocol mandatory in every configuration",
+   "custody": "S1a calibration-class data (S1A-FW allowed class); may go to every track",
+   "status": "PROPOSED"
+  },
+  {
+   "procedure_id": "S1A-P-BZ-02",
+   "category": "magnetic_field_Bz",
+   "demonstration_id": "CD-05",
+   "s1a_data_class": "REG-BZ",
+   "data_scope": "the B(z) maps of the H-1 magnetic circuit at actual coil currents, per configuration, and the hysteresis readings at the peak-field location: custody-held registration input, released only after LOCK-H1",
+   "procedure": "CD-05 steps restricted to the data scope above (no plasma, no H-1 anode discharge): probe offset in the zero-field chamber and gain in the reference field before and after each session; approach protocol (PROPOSED, to be frozen): bring every coil from zero to the operating current monotonically after a defined cycling sequence; the same protocol in every configuration; per configuration (HW-0, HW-RF, HW-ECR with the ECR magnet on and off): CD-P-BZ-MAPS complete centreline (and exit-region radial) maps with the probe removed and re-seated between maps; hysteresis: CD-P-BZ-CYCLES current cycles, B at the peak-field location recorded ascending and descending; every map carries coil currents, coil average and hot-spot temperatures and magnet temperatures (MCQ-W4-03), position-scale readings and timestamps",
+   "traceability": "Hall-probe gaussmeter with a calibration certificate; a reference field for in-situ checks (reference magnet or calibrated coil; class TBD) and a zero-field chamber for the offset; positioning stage with a calibrated position scale; fixture keyed to the H-1 fiducials (W3 B(z) access)",
+   "acceptance_rule": "reported against the W5 pre-registered B(z) comparison tolerance when it exists (TBD); until then no pass/fail is claimed, only the demonstrated repeatability; hysteresis offset larger than the map repeatability makes the approach protocol mandatory in every configuration",
+   "custody": "custody-held registration input: raw data and results go to the owner-designated data custodian only, released after LOCK-H1 (S1A-FW; W5 K1)",
+   "status": "PROPOSED"
+  },
+  {
+   "procedure_id": "S1A-P-BZ-03",
+   "category": "magnetic_field_Bz",
+   "demonstration_id": "CD-05",
+   "s1a_data_class": "REPEATABILITY",
+   "data_scope": "map-to-map dispersion statistics at fixed coil current (probe re-seated between maps) as relative / dimensionless spreads; the custodian computes them from the REG-BZ maps and releases no field value",
+   "procedure": "CD-05 steps restricted to the data scope above (no plasma, no H-1 anode discharge): probe offset in the zero-field chamber and gain in the reference field before and after each session; approach protocol (PROPOSED, to be frozen): bring every coil from zero to the operating current monotonically after a defined cycling sequence; the same protocol in every configuration; per configuration (HW-0, HW-RF, HW-ECR with the ECR magnet on and off): CD-P-BZ-MAPS complete centreline (and exit-region radial) maps with the probe removed and re-seated between maps; hysteresis: CD-P-BZ-CYCLES current cycles, B at the peak-field location recorded ascending and descending; every map carries coil currents, coil average and hot-spot temperatures and magnet temperatures (MCQ-W4-03), position-scale readings and timestamps",
+   "traceability": "Hall-probe gaussmeter with a calibration certificate; a reference field for in-situ checks (reference magnet or calibrated coil; class TBD) and a zero-field chamber for the offset; positioning stage with a calibrated position scale; fixture keyed to the H-1 fiducials (W3 B(z) access)",
+   "acceptance_rule": "reported against the W5 pre-registered B(z) comparison tolerance when it exists (TBD); until then no pass/fail is claimed, only the demonstrated repeatability; hysteresis offset larger than the map repeatability makes the approach protocol mandatory in every configuration",
+   "custody": "S1a calibration-class data (S1A-FW allowed class); may go to every track",
+   "status": "PROPOSED"
+  },
+  {
+   "procedure_id": "S1A-P-DAQ-01",
+   "category": "daq_time_base",
+   "demonstration_id": "CD-06",
+   "s1a_data_class": "CHANNEL_PERFORMANCE",
+   "data_scope": "common-edge skew, offset drift, V/I simultaneity and swept-sine gain / phase of the fast chains with test signals, no plasma",
+   "procedure": "CD-06 steps restricted to the data scope above (no plasma, no H-1 anode discharge): inject CD-P-DAQ-EDGES common edges over at least the longest planned dwell (TBD - owner hold time); slow channels (temperature, flow, pressure) receive a step through a test input where the sensor cannot see the edge; record every channel; subtract the measured cable delays; swept sine through the V, I and I_d(t) chains up to the band edge (TBD - S1 spectrum): gain and phase; verify that V and I of each power channel are sampled simultaneously (same edge within the skew budget)",
+   "traceability": "a reference pulse / step generator fanned out to every channel type with cable delays measured",
+   "acceptance_rule": "worst skew and offset drift reported; pass/fail against the skew allowance derived from the S1 oscillation band (INS-18 TBD) - until then no pass/fail is claimed. Hard rule: V and I of one power channel must be simultaneous (mean of the product, not product of the means, when I_d oscillates)",
+   "custody": "S1a calibration-class data (S1A-FW allowed class); may go to every track",
+   "status": "PROPOSED"
+  },
+  {
+   "procedure_id": "S1A-P-TEMP-01",
+   "category": "temperature_channels",
+   "demonstration_id": "CD-07",
+   "s1a_data_class": "CALIBRATION",
+   "data_scope": "thermocouple calibration by comparison, cold-junction check, pyrometer calibration (only if installed), coil R0 / T0; in-situ isothermal cross-check",
+   "procedure": "CD-07 steps restricted to the data scope above (no plasma, no H-1 anode discharge): calibrate each thermocouple type/lot by comparison at CD-P-TC-POINTS temperatures spanning its range (ranges TBD - W3 positions and life-mechanism limits); unused thermocouples only (ASTM E220 scope); cold-junction check at the reference point for every DAQ input; in-situ isothermal cross-check: after a long soak with every heater and supply off, all channels on the same body agree within their calibration uncertainty (PROPOSED check); pickup: energise coils, RF / microwave into dummy loads and HV supplies one at a time; record every temperature channel; C-1 (A3): the cathode-tube thermocouple is logged continuously on INS-18 under the label 'cathode_tube_temperature'; no channel is labelled 'emitter_temperature' unless a pyrometer is installed; without a pyrometer the emitter temperature is recorded as 'unmeasured' (no value inferred from the tube); pyrometer (only if installed): calibrated against a thermocouple on a reference body over the emitter temperature range; emissivity treatment recorded from the HW-C1-09 (b) design record (INS-23); coil winding: R0 and T0 of each coil isothermally before S1 (INS-24)",
+   "traceability": "reference thermometer and comparison medium (bath / dry block / furnace per range) for calibration by comparison (ASTM E220, metadata only - verify; it applies to unused thermocouples); cold-junction reference (ice point or calibrated reference junction)",
+   "acceptance_rule": "demonstrated uncertainty per channel reported against the INS-17 / INS-23 / INS-24 requirement when it exists (TBD: T-SETTLE, life-mechanism resolution, coil hot-spot margin); A3 labelling is a hard pass/fail: a record that labels a thermocouple as emitter temperature, or gives an emitter value without a calibrated pyrometer, fails",
+   "custody": "S1a calibration-class data (S1A-FW allowed class); may go to every track",
+   "status": "PROPOSED",
+   "cathode_temperature_labelling": "A3 decisions.cathode_temperature: the cathode-tube thermocouple is mandatory and is logged under the label 'cathode_tube_temperature'; it is never labelled emitter temperature. A channel is labelled 'emitter_temperature' only if a calibrated pyrometer with a recorded line of sight and emissivity treatment (HW-C1-09 (b)) is installed; otherwise the emitter temperature is recorded as 'unmeasured' and no value is inferred from the tube. Enforced on every temperature record by capability_analysis.record_item_errors"
+  },
+  {
+   "procedure_id": "S1A-P-TEMP-02",
+   "category": "temperature_channels",
+   "demonstration_id": "CD-07",
+   "s1a_data_class": "NOISE",
+   "data_scope": "temperature-channel pickup with coils, RF / microwave into dummy loads and HV supplies energised one at a time, no plasma",
+   "procedure": "CD-07 steps restricted to the data scope above (no plasma, no H-1 anode discharge): calibrate each thermocouple type/lot by comparison at CD-P-TC-POINTS temperatures spanning its range (ranges TBD - W3 positions and life-mechanism limits); unused thermocouples only (ASTM E220 scope); cold-junction check at the reference point for every DAQ input; in-situ isothermal cross-check: after a long soak with every heater and supply off, all channels on the same body agree within their calibration uncertainty (PROPOSED check); pickup: energise coils, RF / microwave into dummy loads and HV supplies one at a time; record every temperature channel; C-1 (A3): the cathode-tube thermocouple is logged continuously on INS-18 under the label 'cathode_tube_temperature'; no channel is labelled 'emitter_temperature' unless a pyrometer is installed; without a pyrometer the emitter temperature is recorded as 'unmeasured' (no value inferred from the tube); pyrometer (only if installed): calibrated against a thermocouple on a reference body over the emitter temperature range; emissivity treatment recorded from the HW-C1-09 (b) design record (INS-23); coil winding: R0 and T0 of each coil isothermally before S1 (INS-24)",
+   "traceability": "reference thermometer and comparison medium (bath / dry block / furnace per range) for calibration by comparison (ASTM E220, metadata only - verify; it applies to unused thermocouples); cold-junction reference (ice point or calibrated reference junction)",
+   "acceptance_rule": "demonstrated uncertainty per channel reported against the INS-17 / INS-23 / INS-24 requirement when it exists (TBD: T-SETTLE, life-mechanism resolution, coil hot-spot margin); A3 labelling is a hard pass/fail: a record that labels a thermocouple as emitter temperature, or gives an emitter value without a calibrated pyrometer, fails",
+   "custody": "S1a calibration-class data (S1A-FW allowed class); may go to every track",
+   "status": "PROPOSED",
+   "cathode_temperature_labelling": "A3 decisions.cathode_temperature: the cathode-tube thermocouple is mandatory and is logged under the label 'cathode_tube_temperature'; it is never labelled emitter temperature. A channel is labelled 'emitter_temperature' only if a calibrated pyrometer with a recorded line of sight and emissivity treatment (HW-C1-09 (b)) is installed; otherwise the emitter temperature is recorded as 'unmeasured' and no value is inferred from the tube. Enforced on every temperature record by capability_analysis.record_item_errors"
+  }
+ ]
+}

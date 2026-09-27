@@ -213,11 +213,12 @@ Repeats:
 
 Analysis:
 
-- type_a: ln_reproducibility(cycle-mean stand slopes) -> s_inst,stand with nu = K - 1; the same for each power channel gain -> s_inst,P; combined no-plasma installation term sqrt(s_inst,stand^2 + s_inst,P^2) in ln units (T and P_bus enter ln(T/P_bus) with opposite sign and independent re-connection)
+- type_a: ln_reproducibility(cycle-mean stand slopes) -> s_inst,stand with nu = K - 1; the same for each measured power channel gain -> s_inst,i; the ln(P_bus) term is pbus_installation_term(): s_inst,P = sqrt(sum_i w_i^2 s_inst,i^2) with w_i = P_i / P_bus at the operating point (P_bus is a sum of channels; first-order propagation, independent re-connection; shares TBD - requires the LOCK-1 power allocation; before that the share-free bound max_i s_inst,i is used, valid for any shares); combined no-plasma installation term sqrt(s_inst,stand^2 + s_inst,P^2) in ln units (T and P_bus enter ln(T/P_bus) with opposite sign and independent re-connection)
 - within_cycle_term: the SD of K cycle means also contains the within-cycle repeatability s_r / sqrt(r) (one-way random-effects model), so s_inst from cycle means is CONSERVATIVE (it over-states the installation term). The acceptance uses the conservative value; within_cycle_corrected_reproducibility reports s_inst^2 = s_between^2 - s_r^2 / r alongside it for information (floored at 0, flagged when not resolved)
 - coverage: nu = K - 1 is low; A3 evaluated k documented (coverage_factor)
+- dof_of_combined_term: the combined term sums two variances that each have K - 1 degrees of freedom; its Welch-Satterthwaite nu_eff (GUM G.4.1) lies between K - 1 and 2 (K - 1). The verdict uses nu = K - 1, the lower end: this is CONSERVATIVE for the chi-square upper confidence bound (a larger nu gives a smaller bound), and the record states nu = K - 1 as a conservative choice, with nu_eff reported alongside for information
 
-Acceptance: repeatability_verdict(no-plasma installation term, K - 1, lane-25 u_inst_max by n, CD-P-CONF). Necessary, not sufficient: the Hall-on S1b series adds thermal and plasma re-seating effects
+Acceptance: repeatability_verdict(no-plasma installation term, K - 1 (conservative lower end of nu_eff), lane-25 u_inst_max by n, CD-P-CONF). Necessary, not sufficient: the Hall-on S1b series adds thermal and plasma re-seating effects
 
 Record item: category `thrust_stand`, instrument `INS-01+INS-02`, evidence_class `measured`; demonstrated uncertainty = no-plasma installation reproducibility of ln(T/P_bus) (1 sigma, ln units, nu = K - 1). Extra fields: demonstration_id, calibration_date, raw_data {path, sha256}, analysis_script_sha256, calibration_plan_sha256, coverage {k, nu_eff, low_effective_dof}, type_a, type_b, verdict, traceability (certificate ids), environment, operator (coded id), per-cycle slopes and gains, cycle log (vent/pump times, torque values if specified by W3).
 
@@ -306,7 +307,7 @@ Range basis: W1 feed-state closure MFC range requirement (DRAFT for owner review
 - single_device_zero_shift_at_min: 0.42539 relative (bound) (model-derived)
 - ranges needed (min_setpoint_fraction=0.1): 3 MFC ranges per gas path (model-derived)
 - ranges needed (min_setpoint_fraction=0.2): 3 MFC ranges per gas path (model-derived)
-- sccm basis: different bases: sccm_N2_min / sccm_N2_max are the N2 mass-equivalent of the TOTAL feed mass flow (mdot / M_N2); sccm_O2_max is only the O2 component of the air surrogate (O2_max / M_O2) at the envelope union (feed_state_closure build: mfc_range_requirement). They are not additive and must not be compared directly
+- sccm basis: different bases: sccm_N2_min / sccm_N2_max are the N2 mass-equivalent of the TOTAL feed mass flow (mdot / M_N2); sccm_O2_max is only the O2 component of the air surrogate (O2_max / M_O2) at the envelope union (feed_state_closure build: mfc_range_requirement). They are not additive and must not be compared directly. sccm reference conditions: 273.15 K, 101325 Pa, ideal gas (feed_state_closure ground.sccm_reference, PROPOSED there), with the molecular mass M_N2 = 28.0 u of abep_sim.constants.M_SPECIES; against a standard molar mass of about 28.013 g/mol (verify) this shifts the sccm values by about 0.05 % (implied molar volume about 22,424 instead of 22,414 cm3/mol). MFC vendors use other reference conditions; every MFC conversion uses the MFC's own stated reference (verify per MFC)
 - Xe cathode flow: TBD - requires C-1 cathode Xe flow range (C-1 design, W3) and the LOCK-1 cathode operating point
 
 a single device spanning the candidate range cannot resolve its low end: the FS-referred term alone exceeds the reading. The demonstration therefore covers a set of overlapping ranges per gas path, each calibrated on its own gas; the actual range set follows the registered W1 points.
@@ -492,9 +493,38 @@ Calibration plan: the procedures here are candidate entries for the owner-frozen
 
 ## S1a path
 
-- gate: fo_s1a_engineering_gate (separate lane; A3 S1a_engineering_gate): 'can we safely and usefully begin non-score-bearing engineering qualification?'
-- what_this_gives_it: frozen-candidate calibration procedures (CD-01..CD-07) and a record format; S1a may run these demonstrations as non-score-bearing engineering qualification
-- leak_rule: no held-out H-1 physics output may leak into W5 (A3): CD records contain calibration data only; B(z) maps (CD-05) are condition records and, if W5 pre-registers VO-BZ, are handled under W5's blinding / custody rules (S1-C6), never used to tune a Hall closure
+- gate: fo_s1a_engineering_gate (separate lane; A3 S1a_engineering_gate): 'can we safely and usefully begin non-score-bearing engineering qualification?'; condition S1A-C4 (docs/experiments/s1a_readiness/s1a_readiness_conditions_v1.json, pinned)
+- what_this_gives_it: candidate S1a calibration procedures keyed to S1A-C4 (categories thrust_stand, power_channels, mass_flow_controllers, magnetic_field_Bz, daq_time_base, temperature_channels), each with procedure_id and an S1A-FW s1a_data_class, the temperature procedures with cathode_temperature_labelling (s1a_calibration_procedure_candidates; the same list in the gate-artifact shape in s1a_calibration_procedures_candidate_v1.json). They are CANDIDATES: the gate is satisfied only by the owner-frozen artifact, which also needs the frozen S1A-FW firewall. The S1-C4 / S1-C5 list (calibration_plan_candidates) is a different category set and is kept separately
+- leak_rule: no held-out H-1 physics output may leak into W5 (A3; S1A-FW): no S1a procedure includes an H-1 anode discharge; the MFC calibration at registered points (REG-FEED) and the B(z) maps (REG-BZ) are custody-held registration inputs released only after LOCK-H1; allowed-class records carry calibration, noise, drift, repeatability, reinstallation and channel performance data only, never used to tune a Hall closure
+
+### S1a calibration-procedure candidates (S1A-C4; PROPOSED, owner freezes)
+
+Gate: `docs/experiments/s1a_readiness/s1a_readiness_conditions_v1.json` (S1A-C4 frozen calibration procedures (alternative S1A-C4-frozen-procedures)); frozen artifact path `docs/experiments/instrumentation/s1a_calibration_procedures_frozen.json`. the candidate only (s1a_calibration_procedures_candidate_v1.json); the owner freezes it at the frozen path with status FROZEN, decided_by owner, decided_utc and the sha256 reference to the frozen S1A-FW firewall. The gate never accepts the candidate itself.
+
+| procedure_id | S1A-C4 category | CD item | s1a_data_class | data scope |
+|---|---|---|---|---|
+| S1A-P-TS-01 | thrust_stand | CD-01 | CALIBRATION | in-situ force calibration constants (slope, offset, magnetic and cable tares with coils energised, discharge off) and their uncertainty, per configuration |
+| S1A-P-TS-02 | thrust_stand | CD-01 | REPEATABILITY | repeatability of the force calibration within a mount and the configuration (mass-change) shift statistics between HW-0 / HW-RF / HW-ECR mounts (modules or dummies), no plasma |
+| S1A-P-TS-03 | thrust_stand | CD-02 | REINSTALLATION | CD-02a only: no-plasma installation / re-installation reproducibility of the stand slope (optional in S1a per the gate's required_categories_status; the Hall-on re-mount series CD-02b is S1b, never S1a) |
+| S1A-P-PC-01 | power_channels | CD-03 | CALIBRATION | gain / offset / temperature coefficient of every MEASURED bus_power_boundary_v1 channel (incl. the I_d / V_d channels calibrated without plasma), coupler / sensor load-plane characterisation into dummy loads |
+| S1A-P-PC-02 | power_channels | CD-03 | NOISE | channel noise floors and the DUMMY_LOAD_PICKUP bound (RF / microwave generators into matched dummy loads, Hall off) |
+| S1A-P-PC-03 | power_channels | CD-02 | REINSTALLATION | CD-02a only: power-channel gain after lead disconnection / re-connection, no plasma |
+| S1A-P-MFC-01 | mass_flow_controllers | CD-04 | REG-FEED | MFC calibration on the working gas incl. every registered W1 flow, gas-correction factors and the air-surrogate composition check: this is the calibrated feed-setpoint record, a custody-held registration input (S1A-FW CALIBRATION excludes it); released only via the custodian after LOCK-H1 |
+| S1A-P-MFC-02 | mass_flow_controllers | CD-04 | DRIFT | MFC zero drift with the valve closed (zero flow) over the dwell and after a power cycle; carries no registered setpoint value |
+| S1A-P-BZ-01 | magnetic_field_Bz | CD-05 | CALIBRATION | Hall-probe offset (zero-field chamber) and gain (reference field) before and after each session: probe constants only |
+| S1A-P-BZ-02 | magnetic_field_Bz | CD-05 | REG-BZ | the B(z) maps of the H-1 magnetic circuit at actual coil currents, per configuration, and the hysteresis readings at the peak-field location: custody-held registration input, released only after LOCK-H1 |
+| S1A-P-BZ-03 | magnetic_field_Bz | CD-05 | REPEATABILITY | map-to-map dispersion statistics at fixed coil current (probe re-seated between maps) as relative / dimensionless spreads; the custodian computes them from the REG-BZ maps and releases no field value |
+| S1A-P-DAQ-01 | daq_time_base | CD-06 | CHANNEL_PERFORMANCE | common-edge skew, offset drift, V/I simultaneity and swept-sine gain / phase of the fast chains with test signals, no plasma |
+| S1A-P-TEMP-01 | temperature_channels | CD-07 | CALIBRATION | thermocouple calibration by comparison, cold-junction check, pyrometer calibration (only if installed), coil R0 / T0; in-situ isothermal cross-check |
+| S1A-P-TEMP-02 | temperature_channels | CD-07 | NOISE | temperature-channel pickup with coils, RF / microwave into dummy loads and HV supplies energised one at a time, no plasma |
+
+Firewall class ids: the covers lists of the S1A-FW rules in the pinned gate file (the class lists are PROPOSED there; the frozen firewall artifact does not exist yet). If the owner's frozen firewall changes an id, this map must be re-keyed.
+
+Cathode-temperature labelling (temperature_channels procedures): A3 decisions.cathode_temperature: the cathode-tube thermocouple is mandatory and is logged under the label 'cathode_tube_temperature'; it is never labelled emitter temperature. A channel is labelled 'emitter_temperature' only if a calibrated pyrometer with a recorded line of sight and emissivity treatment (HW-C1-09 (b)) is installed; otherwise the emitter temperature is recorded as 'unmeasured' and no value is inferred from the tube. Enforced on every temperature record by capability_analysis.record_item_errors.
+
+Rule check of the procedures list against the S1A-C4 rules (owner-only fields excluded): covers PASS; each_item PASS; any_item PASS.
+
+Not in S1a: CD-02b (Hall-on re-mount series: S1b, N4); any H-1 anode discharge reading (S1A-FW H1-ANY-HALL-OPERATING-POINT); the S1-C4 categories pressure and species_divergence (no CD item; see s1_contract.uncovered_categories).
 
 ## TBD register
 
@@ -511,6 +541,7 @@ Calibration plan: the procedures here are candidate entries for the owner-frozen
 
 - approve, change or reject CD-P-* planning thresholds
 - freeze the calibration plan (S1-C5) from the calibration_plan_candidates
+- freeze the S1a calibration procedures (S1A-C4) from s1a_calibration_procedures_candidate_v1.json after the S1A-FW firewall is frozen; confirm the data-class split (REG-FEED / REG-BZ custody-held) and whether installation reproducibility (S1A-P-TS-03 / S1A-P-PC-03) stays in S1a
 - S1-C4 category set: add pressure and species/divergence demonstrations, or reduce the set
 - B(z) approach protocol and the isothermal thermocouple cross-check (both PROPOSED)
 - approve the metrology specification before procurement
@@ -536,7 +567,7 @@ Calibration plan: the procedures here are candidate entries for the owner-frozen
 - **REF-ISO25178-700**: ISO 25178-700:2022, 'Geometrical product specifications (GPS) - Surface texture: Areal - Part 700: Calibration, adjustment and verification of areal topography measuring instruments' <https://www.iso.org/standard/78204.html>. Access: metadata / scope summary only (search result 2026-09-27): generic procedures for the metrological characteristics of ISO 25178-600 (noise, flatness deviation, amplification, linearity deviation, x-y mapping deviations); methods adaptable to profiling instruments; content not read (verify).
 - **REF-ASTM-E1508**: ASTM E1508-12a(2019), 'Standard Guide for Quantitative Analysis by Energy-Dispersive Spectroscopy' <https://store.astm.org/e1508-12ar19.html>. Access: metadata / scope summary only (search result 2026-09-27): EDS quantification on SEM/EPMA with and without standards; routine quantification for elements >= Na at >= tenths of a weight percent; not TEM; content not read (verify). Note: that applicability statement means light elements (N, O, B, C) are outside its routine range - relevant to BN and oxide layers.
 - **REF-ISO15472**: ISO 15472:2010, 'Surface chemical analysis - X-ray photoelectron spectrometers - Calibration of energy scales' <https://www.iso.org/standard/55796.html>. Access: scope clause read 2026-09-27 from the publisher's preview (https://cdn.standards.iteh.ai/samples/55796/72dc0295fe1447ec93e6a6c190572c1b/ISO-15472-2010.pdf): Al/Mg (unmonochromated) or monochromated Al X-rays; instruments with an ion gun for sputter cleaning; Cu 2p3/2 and Au 4f7/2 reference peaks, linearity at one intermediate energy; expanded uncertainty of the scale calibration at 95 % confidence; not applicable below +/-0.03 eV tolerance or resolution worse than 1.5 eV.
-- **REF-ASTM-E220**: ASTM E220, 'Standard Test Method for Calibration of Thermocouples by Comparison Techniques' (E220-19; E220-25 listed) <https://store.astm.org/e0220-19.html>. Access: metadata / scope summary only (search result 2026-09-27): comparison with a reference thermometer, approximately -196 C to 1700 C (verify against the current edition); applicable to unused thermocouples, not to used ones (inhomogeneity); content not read (verify the edition).
+- **REF-ASTM-E220**: ASTM E220, 'Standard Test Method for Calibration of Thermocouples by Comparison Techniques' (E220-19; E220-25 listed) <https://store.astm.org/e0220-19.html>. Access: metadata / scope summary only (search result 2026-09-27): comparison with a reference thermometer, approximately -195 C to 1700 C (-320 F to 3100 F) per the ASTM scope summary (verify against the current edition); applicable to unused thermocouples, not to used ones (inhomogeneity); content not read (verify the edition).
 - **REF-IEEE1588**: IEEE Std 1588-2019, 'IEEE Standard for a Precision Clock Synchronization Protocol for Networked Measurement and Control Systems' <https://standards.ieee.org/standard/1588-2019.html>. Access: metadata only (search result 2026-09-27); content not read (verify). Named only as one generic option for a distributed time base.
 
 ## Inputs (sha256)
@@ -550,3 +581,4 @@ Calibration plan: the procedures here are candidate entries for the owner-frozen
 - `docs/architecture_comparison/minimum_decisive_experiment/experiment_draft.json` 54b7b00a60134f2d92f2eb5c9fb49f18d23623a566e04a4b7d70325a0e332509
 - `docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json` ff6e15db449151b5cf790088b4641504bd435a48de2d4c6235bf83625d508ef9
 - `docs/experiments/magnet_coil/magnet_coil_qualification_v1.json` 53e92f4536f7b30054d3521adbd504eca725c4c6d79a6cb3b51c2fc4ce220b32
+- `docs/experiments/s1a_readiness/s1a_readiness_conditions_v1.json` 011808100ef38799668cb948324efa6492344d3b58ed3c436605ce5caf7025ac
