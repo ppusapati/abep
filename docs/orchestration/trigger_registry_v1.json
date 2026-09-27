@@ -474,6 +474,66 @@
    "produces": "fo_closed_access_acquisition",
    "kind": "follow_on_launch",
    "note": "owner hardware-experiment pivot 2026-09-27 (docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json)"
+  },
+  {
+   "id": "T_PIVOT_AO_LIFETIME_REGISTER",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_ao_lifetime_register",
+   "kind": "follow_on_launch",
+   "note": "owner execution directive 2026-09-27 (OD_HARDWARE_PIVOT execution_directive_2026_09_27)"
+  },
+  {
+   "id": "T_PIVOT_HALLMAP_SCHEMA_V2_REGISTRY",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_hallmap_schema_v2_registry",
+   "kind": "follow_on_launch",
+   "note": "owner execution directive 2026-09-27 (OD_HARDWARE_PIVOT execution_directive_2026_09_27)"
+  },
+  {
+   "id": "T_PIVOT_MAGNET_COIL_QUALIFICATION",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_magnet_coil_qualification",
+   "kind": "follow_on_launch",
+   "note": "owner execution directive 2026-09-27 (OD_HARDWARE_PIVOT execution_directive_2026_09_27)"
+  },
+  {
+   "id": "T_PIVOT_S1_READINESS_GATE",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_s1_readiness_gate",
+   "kind": "follow_on_launch",
+   "note": "owner execution directive 2026-09-27 (OD_HARDWARE_PIVOT execution_directive_2026_09_27)"
+  },
+  {
+   "id": "T_PIVOT_REPO_DECISIONS_BATCH",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_repo_decisions_batch",
+   "kind": "follow_on_launch",
+   "note": "owner execution directive 2026-09-27 (OD_HARDWARE_PIVOT execution_directive_2026_09_27)"
   }
  ]
 }

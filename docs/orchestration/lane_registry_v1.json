@@ -941,6 +941,31 @@
    "id": "fo_closed_access_acquisition",
    "kind": "follow_on",
    "title": "D-X5 closed-access primary sources: acquisition list for legitimate access"
+  },
+  {
+   "id": "fo_ao_lifetime_register",
+   "kind": "follow_on",
+   "title": "Hall lifetime / atomic-oxygen degradation register and H-1 witness/coupon/diagnostic provisions"
+  },
+  {
+   "id": "fo_hallmap_schema_v2_registry",
+   "kind": "follow_on",
+   "title": "Hall-map schema v2 (wall-adjacent T_e, SEE model/yield, wall-impact species, incidence angle only where the solver genuinely supplies them) + immutable map registry"
+  },
+  {
+   "id": "fo_magnet_coil_qualification",
+   "kind": "follow_on",
+   "title": "H-1 magnet/coil qualification basis (actual candidate grades, insulation systems, conductors; MMPA/MIL generic values reference only)"
+  },
+  {
+   "id": "fo_s1_readiness_gate",
+   "kind": "follow_on",
+   "title": "explicit S1-readiness gate reporting S1_NOT_READY with missing items"
+  },
+  {
+   "id": "fo_repo_decisions_batch",
+   "kind": "follow_on",
+   "title": "low-cost repository decisions (pymsis to [msis] extra; golden CLI test stays in normal CI; ruleset only, 0 approvals, 3 contexts, branch current; S12 template decision hash empty)"
   }
  ],
  "owner_dispositions": [

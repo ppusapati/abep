@@ -33,5 +33,42 @@
   "CLAUDE_md": "no further expansion; detailed experiment decisions belong in LOCK-1/LOCK-2 and pre-registration artifacts",
   "convergence_point": "DI-1 feed state + LOCK-1 + H-1/C-1 hardware + instrument capability -> define the S1 qualification test",
   "enforcement": "the running lanes (wf_b92499f0-718) were launched before this addendum; each lane's output is checked against C1-C4 before merge, and a non-compliant lane gets a targeted repair (never a silent edit)"
+ },
+ "execution_directive_2026_09_27": {
+  "objective": "reach an executable S1 Hall-thruster qualification test, then LOCK-2, then the controlled HW-0 / HW-RF / HW-ECR experiment deciding thrust and sustainment",
+  "chain": "W1 + W2 + W3 + W4 + W5 -> owner review -> LOCK-1 -> S1 qualification -> measured uncertainty/calibration -> LOCK-2 -> score-bearing common-condition experiment",
+  "not_waiting_for": [
+   "O4",
+   "O/O2 chemistry",
+   "final Hall transport model"
+  ],
+  "data_rule": "no experimental data is used for model promotion until the W5 pre-registration is frozen",
+  "S1_purpose": "qualification, not architecture selection: stand, feed system, H-1, cathode, power measurement, magnetic configuration and diagnostics reproducible enough for the paired test; Phase 1 locates the Hall-only N2 sustainment knee and characterizes ignition/extinction, which then places the RF/ECR comparisons",
+  "LOCK2": "freezes what only real facility performance can determine (achieved thrust and power uncertainty, repeatability, drift, block count if the preregistered rule allows it, calibration constants, facility corrections); S1 architecture-comparison outcomes never alter decision thresholds",
+  "phase2": "HW-0 <-> HW-RF <-> HW-ECR on the same H-1, C-1, feed condition, V_d, magnetic configuration, facility and diagnostics; measure at minimum thrust, complete P_bus, I_d, feed state, stability/oscillations, ignition/extinction, cathode state; discriminator R_arch; absolute feasibility judged separately",
+  "phase3": "absolute capability across the representative feed envelope: >= 12 mN sustained and the registered 25 mN capability under P_bus < 1.5 kW",
+  "new_workstreams": {
+   "fo_ao_lifetime_register": "Hall lifetime / atomic-oxygen degradation register and H-1 witness/coupon/diagnostic provisions",
+   "fo_hallmap_schema_v2_registry": "Hall-map schema v2 (wall-adjacent T_e, SEE model/yield, wall-impact species, incidence angle only where the solver genuinely supplies them) + immutable map registry",
+   "fo_magnet_coil_qualification": "H-1 magnet/coil qualification basis (actual candidate grades, insulation systems, conductors; MMPA/MIL generic values reference only)",
+   "fo_s1_readiness_gate": "explicit S1-readiness gate reporting S1_NOT_READY with missing items",
+   "fo_repo_decisions_batch": "low-cost repository decisions (pymsis to [msis] extra; golden CLI test stays in normal CI; ruleset only, 0 approvals, 3 contexts, branch current; S12 template decision hash empty)"
+  },
+  "S1_readiness_conditions": [
+   "LOCK-1 signed by the owner",
+   "H-1/C-1 configuration frozen sufficiently for qualification",
+   "DI-1 or explicitly labelled ground-qualification feed points available",
+   "instrumentation capability demonstrated",
+   "calibration plan frozen",
+   "data custody / blinding plan frozen",
+   "facility chosen",
+   "safety / operational limits defined"
+  ],
+  "controls_added": {
+   "C5_AO_early": "W3, W4 and the AO/lifetime lane coordinate now: H-1 carries witness coupons, replaceable channel/anode components, cathode-exposure monitoring and post-test metrology provisions from the start (integration check before W3 is merged; targeted repair if absent)",
+   "C6_no_extrapolation": "no 15,000 h extrapolation from an unadmitted Hall closure"
+  },
+  "management_rule": "maximize parallel progress toward S1 readiness; non-gating analysis never delays the hardware path unless it changes a safety limit, experimental validity or a pre-registered decision condition",
+  "reporting": "next updates organized around five decision-critical outputs only: DI-1 feed recommendation, LOCK-1 recommendations, H-1 hardware definition, instrumentation feasibility, held-out validation split"
  }
 }
