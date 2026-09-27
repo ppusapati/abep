@@ -6562,12 +6562,12 @@
    "provenance.generation.generated_at"
   ],
   "generation": {
-   "generated_at": "2026-09-27T05:16:07Z"
+   "generated_at": "2026-09-27T06:54:20Z"
   },
   "generator_sha256": {
    "scripts/architecture/build_decision_dossier.py": "9c6ff9ca58733357e94966f57d166d4255ba2742638d69a81704c60f0b03f3d3"
   },
-  "git_commit": "7b5f3ebde989c421bc25a4dea4bac04af598b909",
+  "git_commit": "5c6d0f7f12e200e8ff117d88b7c8523cb4432dae",
   "input_files_sha256": {
    "CLAUDE.md": "2bd58ce43ba0ec7b22b48fa0175636460801eed2cfe6429dadc7539ba97a7401",
    "abep_sim/arch_boundary.py": "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
