@@ -197,14 +197,55 @@ def configuration_slope_shift(slope_ref: tuple[float, float], slope_cfg: tuple[f
 
 
 def drift_rate(times_s: Sequence[float], readings: Sequence[float]) -> dict:
-    """Zero (or offset) drift: least-squares slope of readings vs time, per hour, with its standard uncertainty."""
+    """Zero (or offset) drift: least-squares slope of readings vs time, per hour, with its standard uncertainty.
+
+    When every reading is identical (e.g. a quantised DAQ whose drift stays inside one count) the fit is undefined and
+    the Type A estimate is drift 0 with u 0. That is NOT a demonstrated zero drift: the result carries
+    resolution_limited = True and the caller MUST add the Type B resolution term (GUM F.2.2.1: a resolution step q
+    gives u = q / (2 sqrt 3) on each reading, i.e. a drift bound of order q / record length) before any verdict.
+    The demonstrations state this in their Type B list (resolution term)."""
     t = _seq("times_s", times_s, 3)
     r = _seq("readings", readings, 3)
-    fit = linear_calibration(t, r) if (max(r) - min(r)) > 0 else None
-    if fit is None:
-        return {"drift_per_hour": 0.0, "u_drift_per_hour": 0.0, "nu": len(t) - 2}
-    return {"drift_per_hour": fit["slope"] * 3600.0, "u_drift_per_hour": fit["u_slope"] * 3600.0, "nu": fit["nu"]}
+    if (max(r) - min(r)) == 0:
+        return {"drift_per_hour": 0.0, "u_drift_per_hour": 0.0, "nu": len(t) - 2, "resolution_limited": True}
+    fit = linear_calibration(t, r)
+    return {"drift_per_hour": fit["slope"] * 3600.0, "u_drift_per_hour": fit["u_slope"] * 3600.0, "nu": fit["nu"],
+            "resolution_limited": False}
 
+
+def within_cycle_corrected_reproducibility(s_between: float, s_within: float, r: int) -> dict:
+    """Installation reproducibility from cycle means (CD-02). The SD of K cycle means s_between contains the
+    within-cycle repeatability s_within / sqrt(r) as well as the installation term (one-way random-effects model):
+    s_inst^2 = s_between^2 - s_within^2 / r. Using s_between directly is conservative; this returns both, and the
+    corrected value is floored at 0 with a flag when the within term dominates (installation not resolved)."""
+    sb = _finite("s_between", s_between)
+    sw = _finite("s_within", s_within)
+    if sb < 0 or sw < 0:
+        raise ValueError("standard deviations must be >= 0")
+    if not isinstance(r, int) or isinstance(r, bool) or r < 1:
+        raise ValueError("r must be an integer >= 1")
+    d = sb * sb - sw * sw / r
+    return {"s_inst_conservative": sb, "s_inst_corrected": math.sqrt(d) if d > 0 else 0.0,
+            "within_term": sw / math.sqrt(r), "installation_resolved": d > 0}
+
+
+def pbus_installation_term(shares: Mapping[str, float], s_inst: Mapping[str, float], share_tolerance: float) -> dict:
+    """ln(P_bus) installation term of CD-02 from the per-channel gain reproducibilities. P_bus = sum_i P_i, so
+    d ln P_bus = sum_i w_i d ln g_i with w_i = P_i / P_bus at the operating point (first order, GUM 5.1.2). With
+    independent re-connection of each channel: s_inst,P = sqrt(sum_i w_i^2 s_inst,i^2). Also returned: the
+    share-free bound max_i s_inst,i (valid for any shares because sum w_i = 1 and w_i >= 0), usable before the
+    LOCK-1 power allocation fixes the shares. Shares are explicit inputs (no default allocation); they must be
+    non-negative and sum to 1 within share_tolerance; every channel needs both a share and an s_inst."""
+    if set(shares) != set(s_inst) or not shares:
+        raise ValueError("shares and s_inst must name the same non-empty set of channels")
+    tol = _finite("share_tolerance", share_tolerance)
+    w = {k: _finite(f"share[{k}]", v) for k, v in shares.items()}
+    s = {k: _finite(f"s_inst[{k}]", v) for k, v in s_inst.items()}
+    if any(v < 0 for v in w.values()) or any(v < 0 for v in s.values()):
+        raise ValueError("shares and s_inst must be >= 0")
+    if abs(math.fsum(w.values()) - 1.0) > tol:
+        raise ValueError(f"shares must sum to 1 within {tol}, got {math.fsum(w.values())}")
+    return {"s_inst_P": math.sqrt(math.fsum((w[k] * s[k]) ** 2 for k in w)), "share_free_bound": max(s.values())}
 
 def relative_point_errors(setpoints: Sequence[float], reference: Sequence[float]) -> list[float]:
     """(indicated - reference) / reference per point (MFC against a primary flow calibrator)."""
@@ -236,7 +277,8 @@ def channel_skew(edge_times_s: Mapping[str, Sequence[float]]) -> dict:
         off = [series[k][i] - ref[i] for i in range(n)]
         spread = max(off) - min(off)
         per[k] = {"mean_offset_s": math.fsum(off) / n, "s_offset_s": type_a(off)["s"],
-                  "offset_drift_s_per_s": (drift_rate(ref, off)["drift_per_hour"] / 3600.0) if spread > 0 else 0.0}
+                  "offset_drift_s_per_s": (drift_rate(ref, off)["drift_per_hour"] / 3600.0) if spread > 0 else 0.0,
+                  "resolution_limited": spread == 0}
     return {"worst_skew_s": worst, "reference_channel": names[0], "channels": per, "edges": n}
 
 
@@ -307,22 +349,46 @@ def record_item_errors(item: Mapping) -> list[str]:
         if not isinstance(item.get(f), str) or not item[f].strip() or item[f].strip().upper().startswith("TBD"):
             e.append(f"{f}: non-empty, not TBD")
     cov = item.get("coverage")
-    if not (isinstance(cov, Mapping) and isinstance(cov.get("k"), (int, float)) and "nu_eff" in cov
-            and isinstance(cov.get("low_effective_dof"), bool)):
-        e.append("coverage: {k, nu_eff, low_effective_dof} (owner addendum A3)")
-    # A3 cathode temperature: a thermocouple is never labelled emitter temperature
-    for ch in item.get("channels", []) or []:
+    nu_ok = False
+    if isinstance(cov, Mapping):
+        nu = cov.get("nu_eff")
+        nu_ok = nu == "inf" or (isinstance(nu, (int, float)) and not isinstance(nu, bool)
+                                and (nu == math.inf or (math.isfinite(nu) and nu >= 1)))
+    if not (isinstance(cov, Mapping) and isinstance(cov.get("k"), (int, float)) and not isinstance(cov.get("k"), bool)
+            and nu_ok and isinstance(cov.get("low_effective_dof"), bool)):
+        e.append("coverage: {k (number), nu_eff (number >= 1 or 'inf'), low_effective_dof (bool)} (owner addendum A3)")
+    # A3 cathode temperature: a thermocouple (or any non-pyrometer sensor) is never labelled emitter temperature
+    chans = item.get("channels", [])
+    if chans is None:
+        chans = []
+    if not isinstance(chans, list):
+        e.append("channels: must be a list of objects")
+        chans = []
+    good: list[Mapping] = []
+    for i, ch in enumerate(chans):
+        if not isinstance(ch, Mapping):
+            e.append(f"channels[{i}]: must be an object {{id, label, sensor_type}}")
+            continue
+        good.append(ch)
         label, sensor = ch.get("label"), ch.get("sensor_type")
-        if label == EMITTER_LABEL:
+        if "emitter" in str(label).lower():
             if sensor != "pyrometer":
-                e.append(f"channel {ch.get('id')}: '{EMITTER_LABEL}' only from a pyrometer (A3)")
+                e.append(f"channel {ch.get('id')}: emitter-temperature labels only from a pyrometer (A3)")
             elif not ch.get("emissivity_treatment"):
                 e.append(f"channel {ch.get('id')}: pyrometer needs a recorded emissivity treatment (A3)")
-        if sensor == "thermocouple" and label not in (None, CATHODE_TUBE_LABEL) and "emitter" in str(label).lower():
-            e.append(f"channel {ch.get('id')}: thermocouple labelled as emitter (A3)")
-    if cat == "temperature" and item.get("scope") == "cathode_c1":
-        em = item.get("emitter_temperature_status")
-        has_pyro = any(ch.get("label") == EMITTER_LABEL for ch in item.get("channels", []) or [])
-        if not has_pyro and em != UNMEASURED:
-            e.append("emitter_temperature_status: 'unmeasured' when no pyrometer channel exists (A3)")
+    if cat == "temperature":
+        scope = item.get("scope")
+        if not isinstance(scope, str) or not scope.strip():
+            e.append("scope: temperature items must declare their scope ('cathode_c1' for C-1 items) so the A3 "
+                     "cathode rule cannot be skipped by omission")
+        if scope == "cathode_c1":
+            if not any(ch.get("label") == CATHODE_TUBE_LABEL and ch.get("sensor_type") == "thermocouple"
+                       for ch in good):
+                e.append(f"channels: C-1 items need a mandatory thermocouple channel labelled '{CATHODE_TUBE_LABEL}' "
+                         "(A3: a cathode-tube thermocouple is mandatory)")
+            em = item.get("emitter_temperature_status")
+            has_pyro = any(ch.get("sensor_type") == "pyrometer" and "emitter" in str(ch.get("label")).lower()
+                           for ch in good)
+            if not has_pyro and em != UNMEASURED:
+                e.append("emitter_temperature_status: 'unmeasured' when no pyrometer channel exists (A3)")
     return e

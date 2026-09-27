@@ -268,7 +268,13 @@ def test_calibration_fit_installation_and_configuration_shift():
 def test_drift_mfc_errors_skew_phase():
     d = A.drift_rate([0, 3600, 7200], [0.0, 1.0, 2.0])
     assert d["drift_per_hour"] == pytest.approx(1.0)
-    assert A.drift_rate([0, 1, 2], [5.0, 5.0, 5.0])["drift_per_hour"] == 0.0
+    flat = A.drift_rate([0, 1, 2], [5.0, 5.0, 5.0])
+    assert flat["drift_per_hour"] == 0.0 and flat["resolution_limited"] is True  # quantised DAQ: Type B term needed
+    assert d["resolution_limited"] is False
+    w = A.within_cycle_corrected_reproducibility(0.02, 0.03, 4)
+    assert w["s_inst_conservative"] == 0.02 and w["within_term"] == pytest.approx(0.015)
+    assert w["s_inst_corrected"] == pytest.approx(math.sqrt(0.02 ** 2 - 0.03 ** 2 / 4)) and w["installation_resolved"]
+    assert A.within_cycle_corrected_reproducibility(0.01, 0.04, 4)["installation_resolved"] is False
     assert A.relative_point_errors([1.1, 2.0], [1.0, 2.0]) == pytest.approx([0.1, 0.0])
     with pytest.raises(ValueError):
         A.relative_point_errors([1.0], [0.0])
@@ -316,6 +322,30 @@ def test_record_item_validator_and_a3_cathode_rule():
     assert A.record_item_errors(_item(channels=no_eps))
 
 
+def test_a3_cathode_tube_thermocouple_mandatory_and_guards():
+    # A3: C-1 item without the mandatory cathode-tube thermocouple fails (pyrometer-only, empty, RTD-labelled tube)
+    pyro_only = [{"id": "PY-1", "label": "emitter_temperature", "sensor_type": "pyrometer", "emissivity_treatment": "r"}]
+    assert any("mandatory" in m for m in A.record_item_errors(_item(channels=pyro_only,
+                                                                     emitter_temperature_status="measured")))
+    assert any("mandatory" in m for m in A.record_item_errors(_item(channels=[])))
+    assert any("mandatory" in m for m in A.record_item_errors(_item(channels=None)))
+    rtd_tube = [{"id": "R-1", "label": "cathode_tube_temperature", "sensor_type": "rtd"}]
+    assert any("mandatory" in m for m in A.record_item_errors(_item(channels=rtd_tube)))
+    # any emitter-like label on a non-pyrometer sensor fails
+    tc = {"id": "TC-1", "label": "cathode_tube_temperature", "sensor_type": "thermocouple"}
+    rtd_em = [tc, {"id": "R-2", "label": "emitter_temperature_est", "sensor_type": "rtd"}]
+    assert A.record_item_errors(_item(channels=rtd_em))
+    # scope omitted on a temperature item cannot skip the cathode rule
+    assert any(m.startswith("scope") for m in A.record_item_errors(
+        {k: v for k, v in _item().items() if k != "scope"}))
+    # malformed channels / coverage give messages, never exceptions
+    assert A.record_item_errors(_item(channels=["TC-1"]))
+    assert A.record_item_errors(_item(channels="TC-1"))
+    assert A.record_item_errors(_item(coverage={"k": 2.0, "nu_eff": "many", "low_effective_dof": False}))
+    assert A.record_item_errors(_item(coverage={"k": 2.0, "nu_eff": 0.5, "low_effective_dof": False}))
+    assert A.record_item_errors(_item(coverage={"k": 2.0, "nu_eff": 9, "low_effective_dof": False})) == []
+
+
 def test_record_schema_consistent_with_validator():
     schema = json.loads((DIR / "capability_record_item_v1.schema.json").read_text(encoding="utf-8"))
     assert set(schema["properties"]["category"]["enum"]) == set(A.S1C4_CATEGORIES)
@@ -346,3 +376,90 @@ def test_metrology_spec_a3_standards_and_no_lab_named():
         assert v["mpe"]["evidence_class"] == "assumed"
     for m in spec["measurands"]:
         assert m["required_uncertainty"]["value"] == "TBD"
+
+
+# ------------------------------------------------------------------------------------------- S1a gate (S1A-C4) keying
+def _s1a_gate():
+    return json.loads((ROOT / B.S1A_REL).read_text(encoding="utf-8"))
+
+
+def test_s1a_candidates_keyed_to_s1a_c4_and_firewall():
+    assert B.S1A_REL in B.PINNED
+    gate = _s1a_gate()
+    c4 = next(c for c in gate["conditions"] if c["id"] == "S1A-C4")["alternatives"][0]
+    req = next(r for r in c4["rules"] if r["type"] == "covers" and r["field"] == "procedures")["required"]
+    sc = _doc()["s1a_calibration_procedure_candidates"]
+    procs = sc["procedures"]
+    assert set(req) <= {p["category"] for p in procs}
+    assert sc["frozen_artifact_path"] == c4["paths"][0]
+    fw = sc["firewall_class_ids_used"]
+    ok = set(fw["allowed_classes"]) | set(fw["registration_inputs"])
+    ids = [p["procedure_id"] for p in procs]
+    assert len(ids) == len(set(ids))
+    for p in procs:
+        for f in ("procedure_id", "category", "procedure", "traceability", "acceptance_rule", "s1a_data_class"):
+            assert isinstance(p[f], str) and p[f].strip() and not p[f].upper().startswith("TBD"), (p["procedure_id"], f)
+        assert p["s1a_data_class"] in ok and p["s1a_data_class"] not in fw["forbidden_or_embargoed"]
+        assert not p["s1a_data_class"].startswith("VO-")
+        assert p["status"] == "PROPOSED"
+        assert ("custody-held" in p["custody"]) == p["s1a_data_class"].startswith("REG-")
+    temps = [p for p in procs if p["category"] == "temperature_channels"]
+    assert temps and all("never labelled emitter temperature" in p["cathode_temperature_labelling"] for p in temps)
+    # registration inputs never ride in an allowed class
+    cls = {p["procedure_id"]: p["s1a_data_class"] for p in procs}
+    assert cls["S1A-P-MFC-01"] == "REG-FEED" and cls["S1A-P-BZ-02"] == "REG-BZ"
+    assert all(c["result"] == "PASS" for c in sc["rule_check_on_procedures"])
+    assert sc["category_map"]["daq_time_base"] == ["CD-06"]
+
+
+def test_s1a_candidate_artifact_shape_and_never_frozen():
+    art = json.loads((DIR / "s1a_calibration_procedures_candidate_v1.json").read_text(encoding="utf-8"))
+    assert art["status"] != "FROZEN" and art["decided_by"] != "owner"
+    assert art["gate_file"] == {"path": B.S1A_REL, "sha256": B.PINNED[B.S1A_REL]}
+    assert art["procedures"] == _doc()["s1a_calibration_procedure_candidates"]["procedures"]
+    for p in B.build_all():
+        assert p.relative_to(ROOT).as_posix() != _doc()["s1a_calibration_procedure_candidates"]["frozen_artifact_path"]
+
+
+def test_s1a_rule_check_detects_violations():
+    gate = _s1a_gate()
+    c4alt, classes = B._s1a_gate(gate)
+    procs = [dict(p) for p in _doc()["s1a_calibration_procedure_candidates"]["procedures"]]
+    bad = [dict(p) for p in procs]
+    bad[0]["s1a_data_class"] = "VO-T"
+    assert any(c["result"] == "FAIL" for c in B.s1a_rule_check(bad, c4alt, classes))
+    no_temp = [p for p in procs if p["category"] != "temperature_channels"]
+    res = {c["rule"].split(" ")[0]: c["result"] for c in B.s1a_rule_check(no_temp, c4alt, classes)}
+    assert res["covers"] == "FAIL" and res["any_item"] == "FAIL"
+    no_lab = [{k: v for k, v in p.items() if k != "cathode_temperature_labelling"} for p in procs]
+    res = {c["rule"].split(" ")[0]: c["result"] for c in B.s1a_rule_check(no_lab, c4alt, classes)}
+    assert res["any_item"] == "FAIL"
+
+
+def test_s1a_candidates_pass_gate_evaluator_rules_if_present(tmp_path):
+    """Cross-check with the S1a gate's own rule evaluator (another lane's script; skipped if absent), against a
+    synthetic firewall built from the gate's class ids. Only the procedures rules are evaluated."""
+    mod_path = ROOT / "scripts" / "experiments" / "s1a_readiness.py"
+    if not mod_path.exists():
+        pytest.skip("S1a gate evaluator not in this tree")
+    G = _load("_test_capdemo_s1a_gate", mod_path)
+    c4alt, classes = B._s1a_gate(_s1a_gate())
+    fw = {k: [{"id": i} for i in v] for k, v in classes.items()}
+    (tmp_path / "fw.json").write_text(json.dumps(fw), encoding="utf-8")
+    ctx = G._Ctx(tmp_path, {"S1A-FW": "fw.json"}, {"S1A-FW": "SATISFIED"})
+    obj = {"procedures": _doc()["s1a_calibration_procedure_candidates"]["procedures"]}
+    for r in c4alt["rules"]:
+        if r["field"] == "procedures":
+            assert G.check_rule(r, obj, ctx) == [], r["type"]
+
+
+def test_pbus_installation_term():
+    r = A.pbus_installation_term({"a": 0.6, "b": 0.4}, {"a": 0.01, "b": 0.02}, 1e-9)
+    assert math.isclose(r["s_inst_P"], math.sqrt((0.6 * 0.01) ** 2 + (0.4 * 0.02) ** 2))
+    assert r["share_free_bound"] == 0.02 and r["s_inst_P"] <= r["share_free_bound"]
+    with pytest.raises(ValueError):
+        A.pbus_installation_term({"a": 0.6, "b": 0.3}, {"a": 0.01, "b": 0.02}, 1e-9)
+    with pytest.raises(ValueError):
+        A.pbus_installation_term({"a": 1.0}, {"b": 0.01}, 1e-9)
+    with pytest.raises(ValueError):
+        A.pbus_installation_term({"a": 1.2, "b": -0.2}, {"a": 0.01, "b": 0.02}, 1e-9)

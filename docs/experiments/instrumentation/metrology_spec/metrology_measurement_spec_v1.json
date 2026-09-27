@@ -177,6 +177,7 @@
       }
      }
     },
+    "verify": "E2 MPE values from OIML R 111-1:2004 Table 1; Amendment 2025 not read - verify against the current edition before procurement",
     "note": "which nominal values apply depends on the coupon and part masses (TBD - W3 coupon and part design); the reference-mass U is a small part of the weighing uncertainty, the detection limit comes from the control-coupon repeatability"
    },
    "required_uncertainty": {

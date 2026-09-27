@@ -5,6 +5,7 @@ Outputs (deterministic; `--check` verifies the committed files byte for byte):
   docs/experiments/capability_demo/capability_demo_prep_v1.json
   docs/experiments/capability_demo/CAPABILITY_DEMO_PREP.md
   docs/experiments/capability_demo/capability_record_item_v1.schema.json
+  docs/experiments/capability_demo/s1a_calibration_procedures_candidate_v1.json
   docs/experiments/instrumentation/metrology_spec/metrology_measurement_spec_v1.json
   docs/experiments/instrumentation/metrology_spec/METROLOGY_MEASUREMENT_SPEC.md
 
@@ -33,6 +34,7 @@ ANALYSIS_REL = "docs/experiments/capability_demo/capability_analysis.py"
 OUT_JSON = HERE / "capability_demo_prep_v1.json"
 OUT_MD = HERE / "CAPABILITY_DEMO_PREP.md"
 OUT_SCHEMA = HERE / "capability_record_item_v1.schema.json"
+OUT_S1A = HERE / "s1a_calibration_procedures_candidate_v1.json"
 SPEC_DIR = ROOT / "docs" / "experiments" / "instrumentation" / "metrology_spec"
 OUT_SPEC_JSON = SPEC_DIR / "metrology_measurement_spec_v1.json"
 OUT_SPEC_MD = SPEC_DIR / "METROLOGY_MEASUREMENT_SPEC.md"
@@ -49,6 +51,7 @@ OD_REL = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json"
 A1_REL = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json"
 A2_REL = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json"
 A3_REL = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json"
+S1A_REL = "docs/experiments/s1a_readiness/s1a_readiness_conditions_v1.json"
 
 #: sha256 pins (inputs read-only; owner decision files are immutable). A different byte = InputChanged.
 PINNED = {
@@ -57,10 +60,11 @@ PINNED = {
     A2_REL: "f82fb78cc0f608c03fd37d9ecbede6aab4ec525eecf5f8a47619eca35e1e73b6",
     A3_REL: "10d79026f1a65e0c2a9fa9e1f9a5f9abc9d162692711857bd43575f3095c8d4e",
     INS_REL: "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
-    S1_REL: "2cb6256d3671604011117e219d5b95c39d9e1ecc71bfad2e043750df1123bbec",
+    S1_REL: "1d3388693191295f4c54ea9d1d38b36ca977193e0d9066aa40aac61776b27fd1",
     L25_REL: "54b7b00a60134f2d92f2eb5c9fb49f18d23623a566e04a4b7d70325a0e332509",
     FEED_REL: "ff6e15db449151b5cf790088b4641504bd435a48de2d4c6235bf83625d508ef9",
     MCQ_REL: "53e92f4536f7b30054d3521adbd504eca725c4c6d79a6cb3b51c2fc4ce220b32",
+    S1A_REL: "011808100ef38799668cb948324efa6492344d3b58ed3c436605ce5caf7025ac",
 }
 
 
@@ -276,6 +280,15 @@ def mfc_range(feed: dict, ins: dict) -> dict:
         "sccm_N2_min": q(m["sccm_N2_min"], "sccm N2", "model-derived", f"{s}.sccm_N2_min", exact=True),
         "sccm_N2_max": q(m["sccm_N2_max"], "sccm N2", "model-derived", f"{s}.sccm_N2_max", exact=True),
         "sccm_O2_max": q(m["sccm_O2_max"], "sccm O2", "model-derived", f"{s}.sccm_O2_max", exact=True),
+        "sccm_basis": "different bases: sccm_N2_min / sccm_N2_max are the N2 mass-equivalent of the TOTAL feed mass "
+                      "flow (mdot / M_N2); sccm_O2_max is only the O2 component of the air surrogate (O2_max / M_O2) "
+                      "at the envelope union (feed_state_closure build: mfc_range_requirement). They are not "
+                      "additive and must not be compared directly. sccm reference conditions: 273.15 K, 101325 Pa, "
+                      "ideal gas (feed_state_closure ground.sccm_reference, PROPOSED there), with the molecular mass "
+                      "M_N2 = 28.0 u of abep_sim.constants.M_SPECIES; against a standard molar mass of about 28.013 "
+                      "g/mol (verify) this shifts the sccm values by about 0.05 % (implied molar volume about 22,424 "
+                      "instead of 22,414 cm3/mol). MFC vendors use other reference conditions; every MFC conversion "
+                      "uses the MFC's own stated reference (verify per MFC)",
         "turndown_ratio": q(ratio, "max / min", "model-derived", _src("mfc_range(): mdot_max / mdot_min")),
         "single_device_u_at_min": q(u_fs * ratio, "relative (FS-referred term, 1 sigma treated)", "model-derived",
                                     _src("mfc_range(): 1 % FS (instrumentation derived.mfc_relative_u_by_setpoint_"
@@ -361,7 +374,7 @@ REFERENCES = [
     {"id": "REF-ASTM-E220", "citation": "ASTM E220, 'Standard Test Method for Calibration of Thermocouples by "
      "Comparison Techniques' (E220-19; E220-25 listed)", "url": "https://store.astm.org/e0220-19.html",
      "access": "metadata / scope summary only (search result 2026-09-27): comparison with a reference thermometer, "
-               "about -195 C to 1700 C; applicable to unused thermocouples, not to used ones (inhomogeneity); "
+               "approximately -195 C to 1700 C (-320 F to 3100 F) per the ASTM scope summary (verify against the current edition); applicable to unused thermocouples, not to used ones (inhomogeneity); "
                "content not read (verify the edition)"},
     {"id": "REF-IEEE1588", "citation": "IEEE Std 1588-2019, 'IEEE Standard for a Precision Clock Synchronization "
      "Protocol for Networked Measurement and Control Systems'", "url": "https://standards.ieee.org/standard/1588-2019.html",
@@ -431,9 +444,11 @@ def demonstrations(t25: dict, counts: dict, mfc: dict, ins: dict) -> list:
         "analysis": {
             "type_a": "per force level: sample SD of the stand response over the sequences (capability_analysis."
                       "type_a); per sequence: straight-line fit (linear_calibration) -> slope, intercept, residual SD, "
-                      "nonlinearity; zero drift across each sequence (drift_rate)",
+                      "nonlinearity; zero drift across each sequence (drift_rate; if resolution_limited, the Type B "
+                      "resolution term below bounds the drift instead of a zero-u Type A value)",
             "type_b": "applied-force standard (certificate), stand temperature coefficient if a correction is applied, "
-                      "tare uncertainty",
+                      "tare uncertainty, DAQ resolution q as u = q / (2 sqrt 3) per reading (GUM F.2.2.1; always "
+                      "included, and mandatory when drift_rate reports resolution_limited)",
             "repeatability_in_force": "s at the 12 mN-equivalent level converted to relative (s / 12 mN) and at 25 mN",
             "mass_change": "configuration_slope_shift(HW-0 slope, HW-X slope) with k per A3 (coverage_factor); "
                            "DETECTED -> per-configuration calibration mandatory and its uncertainty enters every "
@@ -484,13 +499,29 @@ def demonstrations(t25: dict, counts: dict, mfc: dict, ins: dict) -> list:
         "repeats": {"K": counts["T-S1-REMOUNT-CYCLES"], "r": counts["T-S1-READINGS-PER-CYCLE"]},
         "analysis": {
             "type_a": "ln_reproducibility(cycle-mean stand slopes) -> s_inst,stand with nu = K - 1; the same for each "
-                      "power channel gain -> s_inst,P; combined no-plasma installation term "
+                      "measured power channel gain -> s_inst,i; the ln(P_bus) term is "
+                      "pbus_installation_term(): s_inst,P = sqrt(sum_i w_i^2 s_inst,i^2) with w_i = P_i / P_bus at "
+                      "the operating point (P_bus is a sum of channels; first-order propagation, independent "
+                      "re-connection; shares TBD - requires the LOCK-1 power allocation; before that the share-free "
+                      "bound max_i s_inst,i is used, valid for any shares); combined no-plasma installation term "
                       "sqrt(s_inst,stand^2 + s_inst,P^2) in ln units (T and P_bus enter ln(T/P_bus) with opposite sign "
                       "and independent re-connection)",
+            "within_cycle_term": "the SD of K cycle means also contains the within-cycle repeatability s_r / sqrt(r) "
+                                 "(one-way random-effects model), so s_inst from cycle means is CONSERVATIVE (it "
+                                 "over-states the installation term). The acceptance uses the conservative value; "
+                                 "within_cycle_corrected_reproducibility reports s_inst^2 = s_between^2 - s_r^2 / r "
+                                 "alongside it for information (floored at 0, flagged when not resolved)",
             "coverage": "nu = K - 1 is low; A3 evaluated k documented (coverage_factor)",
+            "dof_of_combined_term": "the combined term sums two variances that each have K - 1 degrees of freedom; "
+                                    "its Welch-Satterthwaite nu_eff (GUM G.4.1) lies between K - 1 and 2 (K - 1). "
+                                    "The verdict uses nu = K - 1, the lower end: this is CONSERVATIVE for the "
+                                    "chi-square upper confidence bound (a larger nu gives a smaller bound), and the "
+                                    "record states nu = K - 1 as a conservative choice, with nu_eff reported "
+                                    "alongside for information",
         },
         "acceptance": {
-            "rule": "repeatability_verdict(no-plasma installation term, K - 1, lane-25 u_inst_max by n, CD-P-CONF). "
+            "rule": "repeatability_verdict(no-plasma installation term, K - 1 (conservative lower end of nu_eff), "
+                    "lane-25 u_inst_max by n, CD-P-CONF). "
                     "Necessary, not sufficient: the Hall-on S1b series adds thermal and plasma re-seating effects",
             "targets": {"u_inst_max": t25["u_inst_max"]},
         },
@@ -798,7 +829,9 @@ def demonstrations(t25: dict, counts: dict, mfc: dict, ins: dict) -> list:
             "type_b": "reference thermometer certificate, comparison-medium uniformity, cold-junction uncertainty, "
                       "pickup bound",
             "coverage": "A3 k rule",
-            "labelling": "capability_analysis.record_item_errors enforces the A3 labels on every temperature record",
+            "labelling": "capability_analysis.record_item_errors enforces the A3 rules on every temperature record: "
+                         "declared scope, the mandatory cathode-tube thermocouple on C-1 items, no emitter label on a "
+                         "non-pyrometer sensor, 'unmeasured' emitter status without a pyrometer",
         },
         "acceptance": {
             "rule": "demonstrated uncertainty per channel reported against the INS-17 / INS-23 / INS-24 requirement "
@@ -874,6 +907,194 @@ def calibration_plan_candidates(demos: list) -> list:
     return out
 
 
+# ----------------------------------------------------------------------------------------------------------------------
+# S1a calibration-procedure candidates (keyed to the S1a gate S1A-C4 and the S1A-FW data firewall)
+# ----------------------------------------------------------------------------------------------------------------------
+#: (procedure_id, S1A-C4 category, CD item, s1a_data_class, scope of the data this procedure produces).
+#: The data classes are the S1A-FW ids of the pinned S1a conditions file (allowed classes, or a custody-held REG-*
+#: registration input); the split follows its firewall_reference_classes (PROPOSED there), so that no S1a procedure
+#: mixes an allowed class with a registration input. PROPOSED by this lane; the owner freezes.
+S1A_PROCEDURE_MAP = (
+    ("S1A-P-TS-01", "thrust_stand", "CD-01", "CALIBRATION",
+     "in-situ force calibration constants (slope, offset, magnetic and cable tares with coils energised, discharge off) "
+     "and their uncertainty, per configuration"),
+    ("S1A-P-TS-02", "thrust_stand", "CD-01", "REPEATABILITY",
+     "repeatability of the force calibration within a mount and the configuration (mass-change) shift statistics "
+     "between HW-0 / HW-RF / HW-ECR mounts (modules or dummies), no plasma"),
+    ("S1A-P-TS-03", "thrust_stand", "CD-02", "REINSTALLATION",
+     "CD-02a only: no-plasma installation / re-installation reproducibility of the stand slope (optional in S1a per "
+     "the gate's required_categories_status; the Hall-on re-mount series CD-02b is S1b, never S1a)"),
+    ("S1A-P-PC-01", "power_channels", "CD-03", "CALIBRATION",
+     "gain / offset / temperature coefficient of every MEASURED bus_power_boundary_v1 channel (incl. the I_d / V_d "
+     "channels calibrated without plasma), coupler / sensor load-plane characterisation into dummy loads"),
+    ("S1A-P-PC-02", "power_channels", "CD-03", "NOISE",
+     "channel noise floors and the DUMMY_LOAD_PICKUP bound (RF / microwave generators into matched dummy loads, "
+     "Hall off)"),
+    ("S1A-P-PC-03", "power_channels", "CD-02", "REINSTALLATION",
+     "CD-02a only: power-channel gain after lead disconnection / re-connection, no plasma"),
+    ("S1A-P-MFC-01", "mass_flow_controllers", "CD-04", "REG-FEED",
+     "MFC calibration on the working gas incl. every registered W1 flow, gas-correction factors and the air-surrogate "
+     "composition check: this is the calibrated feed-setpoint record, a custody-held registration input (S1A-FW "
+     "CALIBRATION excludes it); released only via the custodian after LOCK-H1"),
+    ("S1A-P-MFC-02", "mass_flow_controllers", "CD-04", "DRIFT",
+     "MFC zero drift with the valve closed (zero flow) over the dwell and after a power cycle; carries no registered "
+     "setpoint value"),
+    ("S1A-P-BZ-01", "magnetic_field_Bz", "CD-05", "CALIBRATION",
+     "Hall-probe offset (zero-field chamber) and gain (reference field) before and after each session: probe "
+     "constants only"),
+    ("S1A-P-BZ-02", "magnetic_field_Bz", "CD-05", "REG-BZ",
+     "the B(z) maps of the H-1 magnetic circuit at actual coil currents, per configuration, and the hysteresis "
+     "readings at the peak-field location: custody-held registration input, released only after LOCK-H1"),
+    ("S1A-P-BZ-03", "magnetic_field_Bz", "CD-05", "REPEATABILITY",
+     "map-to-map dispersion statistics at fixed coil current (probe re-seated between maps) as relative / "
+     "dimensionless spreads; the custodian computes them from the REG-BZ maps and releases no field value"),
+    ("S1A-P-DAQ-01", "daq_time_base", "CD-06", "CHANNEL_PERFORMANCE",
+     "common-edge skew, offset drift, V/I simultaneity and swept-sine gain / phase of the fast chains with test "
+     "signals, no plasma"),
+    ("S1A-P-TEMP-01", "temperature_channels", "CD-07", "CALIBRATION",
+     "thermocouple calibration by comparison, cold-junction check, pyrometer calibration (only if installed), coil "
+     "R0 / T0; in-situ isothermal cross-check"),
+    ("S1A-P-TEMP-02", "temperature_channels", "CD-07", "NOISE",
+     "temperature-channel pickup with coils, RF / microwave into dummy loads and HV supplies energised one at a time, "
+     "no plasma"),
+)
+
+CATHODE_TEMPERATURE_LABELLING = (
+    "A3 decisions.cathode_temperature: the cathode-tube thermocouple is mandatory and is logged under the label "
+    "'cathode_tube_temperature'; it is never labelled emitter temperature. A channel is labelled "
+    "'emitter_temperature' only if a calibrated pyrometer with a recorded line of sight and emissivity treatment "
+    "(HW-C1-09 (b)) is installed; otherwise the emitter temperature is recorded as 'unmeasured' and no value is "
+    "inferred from the tube. Enforced on every temperature record by capability_analysis.record_item_errors")
+
+
+def _s1a_gate(s1a: dict) -> tuple:
+    c4 = next(c for c in s1a["conditions"] if c["id"] == "S1A-C4")
+    fw = next(c for c in s1a["conditions"] if c["id"] == "S1A-FW")
+    c4alt, fwalt = c4["alternatives"][0], fw["alternatives"][0]
+
+    def covers(rules, field):
+        return next(r for r in rules if r["type"] == "covers" and r["field"] == field)["required"]
+    classes = {"allowed_classes": covers(fwalt["rules"], "allowed_classes"),
+               "registration_inputs": covers(fwalt["rules"], "registration_inputs"),
+               "forbidden_or_embargoed": covers(fwalt["rules"], "forbidden_or_embargoed")}
+    return c4alt, classes
+
+
+def _nonempty(v) -> bool:
+    return isinstance(v, str) and v.strip() != "" and not v.strip().upper().startswith(("TBD", "TBC", "TBA"))
+
+
+def s1a_rule_check(procedures: list, c4alt: dict, classes: dict) -> list:
+    """Evaluate the S1A-C4 rules on the 'procedures' list only (covers / each_item / any_item). The owner-only fields
+    (status, decided_by, decided_utc, data_firewall) are not checked here: they are set when the owner freezes.
+    member_of_artifact is checked against the S1A-FW class ids named in the gate's own firewall rules (the firewall
+    artifact does not exist yet; the gate re-checks against the frozen artifact). Returns [{rule, result, detail}]."""
+    out = []
+    for r in c4alt["rules"]:
+        if r.get("field") != "procedures":
+            continue
+        fails = []
+        if r["type"] == "covers":
+            have = {p.get(r["key"]) for p in procedures}
+            fails = [f"missing {x}" for x in r["required"] if x not in have]
+        elif r["type"] in ("each_item", "any_item"):
+            per = []
+            for p in procedures:
+                e = []
+                for sub in r["rules"]:
+                    v = p.get(sub["field"])
+                    if sub["type"] == "nonempty_string" and not _nonempty(v):
+                        e.append(f"{p.get('procedure_id')}: {sub['field']} empty")
+                    elif sub["type"] == "equals" and v != sub["value"]:
+                        e.append(f"{p.get('procedure_id')}: {sub['field']} != {sub['value']}")
+                    elif sub["type"] == "member_of_artifact":
+                        ok = set()
+                        for lf in (sub["list_field"] if isinstance(sub["list_field"], list) else [sub["list_field"]]):
+                            ok |= set(classes[lf])
+                        bad = set()
+                        for xf in sub.get("exclude_list_fields", []):
+                            bad |= set(classes[xf])
+                        if v not in ok or v in bad or (sub.get("exclude_pattern") and
+                                                        __import__("re").search(sub["exclude_pattern"], str(v))):
+                            e.append(f"{p.get('procedure_id')}: s1a_data_class {v!r} not a firewall-allowed / "
+                                     f"registration id")
+                    elif sub["type"] not in ("nonempty_string", "equals", "member_of_artifact"):
+                        raise ValueError(f"unhandled S1A-C4 sub-rule type {sub['type']!r}")
+                per.append(e)
+            fails = [x for e in per for x in e] if r["type"] == "each_item" else \
+                ([] if any(not e for e in per) else ["no item satisfies the rule"])
+        else:
+            raise ValueError(f"unhandled S1A-C4 rule type {r['type']!r}")
+        out.append({"rule": r["type"] + (f" ({r['what']})" if r.get("what") else ""),
+                    "result": "PASS" if not fails else "FAIL", "detail": fails})
+    return out
+
+
+def s1a_procedure_candidates(demos: list, s1a: dict) -> dict:
+    c4alt, classes = _s1a_gate(s1a)
+    by_id = {d["id"]: d for d in demos}
+    procs = []
+    for pid, cat, cd, cls, scope in S1A_PROCEDURE_MAP:
+        d = by_id[cd]
+        tr = "; ".join(e for e in d["equipment"] if any(w in e for w in ("traceab", "certificate", "reference",
+                                                                         "calibrat")))
+        p = {"procedure_id": pid, "category": cat, "demonstration_id": cd, "s1a_data_class": cls,
+             "data_scope": scope,
+             "procedure": f"{cd} steps restricted to the data scope above (no plasma, no H-1 anode discharge): "
+                          + "; ".join(d["procedure"]),
+             "traceability": tr or f"{cd} equipment list (no reference standard named there)",
+             "acceptance_rule": d["acceptance"]["rule"],
+             "custody": ("custody-held registration input: raw data and results go to the owner-designated data "
+                         "custodian only, released after LOCK-H1 (S1A-FW; W5 K1)") if cls.startswith("REG-") else
+                        "S1a calibration-class data (S1A-FW allowed class); may go to every track",
+             "status": "PROPOSED"}
+        if cat == "temperature_channels":
+            p["cathode_temperature_labelling"] = CATHODE_TEMPERATURE_LABELLING
+        procs.append(p)
+    check = s1a_rule_check(procs, c4alt, classes)
+    if any(c["result"] != "PASS" for c in check):
+        raise ValueError(f"S1a candidate procedures fail the S1A-C4 rules: {check}")
+    return {
+        "gate_file": S1A_REL,
+        "gate_condition": "S1A-C4 frozen calibration procedures (alternative S1A-C4-frozen-procedures)",
+        "frozen_artifact_path": c4alt["paths"][0],
+        "this_lane_writes": "the candidate only (s1a_calibration_procedures_candidate_v1.json); the owner freezes it "
+                            "at the frozen path with status FROZEN, decided_by owner, decided_utc and the sha256 "
+                            "reference to the frozen S1A-FW firewall. The gate never accepts the candidate itself",
+        "firewall_class_ids_used": classes,
+        "firewall_class_ids_basis": "the covers lists of the S1A-FW rules in the pinned gate file (the class lists "
+                                    "are PROPOSED there; the frozen firewall artifact does not exist yet). If the "
+                                    "owner's frozen firewall changes an id, this map must be re-keyed",
+        "category_map": {c: sorted({p["demonstration_id"] for p in procs if p["category"] == c})
+                         for c in dict.fromkeys(p["category"] for p in procs)},
+        "not_in_s1a": ["CD-02b (Hall-on re-mount series: S1b, N4)", "any H-1 anode discharge reading (S1A-FW "
+                       "H1-ANY-HALL-OPERATING-POINT)", "the S1-C4 categories pressure and species_divergence (no CD "
+                       "item; see s1_contract.uncovered_categories)"],
+        "procedures": procs,
+        "rule_check_on_procedures": check,
+    }
+
+
+def s1a_candidate_artifact(cands: dict) -> dict:
+    """The candidate in the shape of the gate artifact. Owner fields are deliberately not filled: the gate fails
+    until the owner freezes it."""
+    return {
+        "schema": "abep.s1a_calibration_procedures.v1",
+        "id": "s1a_calibration_procedures",
+        "status": "CANDIDATE_NOT_FROZEN",
+        "decided_by": "not decided - owner freezes",
+        "decided_utc": "not decided",
+        "data_firewall": {"path": "docs/experiments/custody/s1a_data_firewall_frozen.json",
+                          "sha256": "not available - requires the owner-frozen S1A-FW firewall"},
+        "generated_by": SCRIPT_REL,
+        "gate_file": {"path": S1A_REL, "sha256": PINNED[S1A_REL]},
+        "freeze_instructions": "owner: review, set status FROZEN, decided_by owner, decided_utc, data_firewall "
+                               "{path, sha256} of the frozen firewall, and write to "
+                               + cands["frozen_artifact_path"],
+        "procedures": [{k: v for k, v in p.items()} for p in cands["procedures"]],
+    }
+
+
 def record_schema() -> dict:
     return {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -918,9 +1139,11 @@ def record_schema() -> dict:
                 "sensor_type": {"enum": ["thermocouple", "rtd", "pyrometer", "other"]},
                 "emissivity_treatment": {"type": "string"}}}},
         },
-        "a3_rules": "a thermocouple is never labelled emitter_temperature; emitter_temperature only from a calibrated "
-                    "pyrometer with a recorded emissivity treatment; C-1 items (scope 'cathode_c1') without a "
-                    "pyrometer carry emitter_temperature_status 'unmeasured' (capability_analysis.record_item_errors)",
+        "a3_rules": "every temperature item declares a scope; C-1 items (scope 'cathode_c1') must carry the mandatory "
+                    "thermocouple channel labelled cathode_tube_temperature; no non-pyrometer sensor carries an "
+                    "emitter label; emitter_temperature only from a calibrated pyrometer with a recorded emissivity "
+                    "treatment; C-1 items without a pyrometer carry emitter_temperature_status 'unmeasured' "
+                    "(capability_analysis.record_item_errors)",
     }
 
 
@@ -1008,6 +1231,8 @@ def metrology_spec(ins: dict, a3: dict) -> dict:
                                     "reference masses where appropriate, OIML R 111 certificates and traceability "
                                     "(A3; REF-OIML-R111-1)",
              "planning_values": {"e2_table_subset": e2,
+                                 "verify": "E2 MPE values from OIML R 111-1:2004 Table 1; Amendment 2025 not read - "
+                                           "verify against the current edition before procurement",
                                  "note": "which nominal values apply depends on the coupon and part masses (TBD - "
                                          "W3 coupon and part design); the reference-mass U is a small part of the "
                                          "weighing uncertainty, the detection limit comes from the control-coupon "
@@ -1100,6 +1325,7 @@ def build() -> dict:
     counts = lane25_s1_counts(l25)
     mfc = mfc_range(feed, ins)
     demos = demonstrations(t25, counts, mfc, ins)
+    s1a_c = s1a_procedure_candidates(demos, _load(S1A_REL))
     doc = {
         "schema": "abep_capability_demo_prep_v1",
         "id": "capability_demo_prep_v1",
@@ -1142,7 +1368,11 @@ def build() -> dict:
         ],
         "milestones": {
             "supports": ["A"],
-            "A": {"delivers": "the ready-to-run procedures and the frozen-analysis candidate that turn delivered "
+            "A": {"conditional": "this lane alone does NOT satisfy S1-C4: pressure and species_divergence are "
+                                 "uncovered and stability_oscillations is covered only for the time base (CD-06). "
+                                 "The contribution to A holds only if W4 adds those demonstrations or the owner "
+                                 "reduces the S1-C4 category set",
+                  "delivers": "the ready-to-run procedures and the frozen-analysis candidate that turn delivered "
                               "instruments into the S1-C4 measured-capability record (and the calibration-plan "
                               "candidates for S1-C5), on the path LOCK-1 -> S1 -> LOCK-2 that conditional selection "
                               "rests on",
@@ -1177,14 +1407,24 @@ def build() -> dict:
         "demonstrations": demos,
         "s1_contract": s1_contract(s1, demos),
         "calibration_plan_candidates": calibration_plan_candidates(demos),
+        "s1a_calibration_procedure_candidates": s1a_c,
         "s1a_path": {
             "gate": "fo_s1a_engineering_gate (separate lane; A3 S1a_engineering_gate): 'can we safely and usefully "
-                    "begin non-score-bearing engineering qualification?'",
-            "what_this_gives_it": "frozen-candidate calibration procedures (CD-01..CD-07) and a record format; S1a "
-                                  "may run these demonstrations as non-score-bearing engineering qualification",
-            "leak_rule": "no held-out H-1 physics output may leak into W5 (A3): CD records contain calibration data "
-                         "only; B(z) maps (CD-05) are condition records and, if W5 pre-registers VO-BZ, are handled "
-                         "under W5's blinding / custody rules (S1-C6), never used to tune a Hall closure",
+                    "begin non-score-bearing engineering qualification?'; condition S1A-C4 (" + S1A_REL + ", pinned)",
+            "what_this_gives_it": "candidate S1a calibration procedures keyed to S1A-C4 (categories thrust_stand, "
+                                  "power_channels, mass_flow_controllers, magnetic_field_Bz, daq_time_base, "
+                                  "temperature_channels), each with procedure_id and an S1A-FW s1a_data_class, the "
+                                  "temperature procedures with cathode_temperature_labelling "
+                                  "(s1a_calibration_procedure_candidates; the same list in the gate-artifact shape in "
+                                  "s1a_calibration_procedures_candidate_v1.json). They are CANDIDATES: the gate is "
+                                  "satisfied only by the owner-frozen artifact, which also needs the frozen S1A-FW "
+                                  "firewall. The S1-C4 / S1-C5 list (calibration_plan_candidates) is a different "
+                                  "category set and is kept separately",
+            "leak_rule": "no held-out H-1 physics output may leak into W5 (A3; S1A-FW): no S1a procedure includes an "
+                         "H-1 anode discharge; the MFC calibration at registered points (REG-FEED) and the B(z) maps "
+                         "(REG-BZ) are custody-held registration inputs released only after LOCK-H1; allowed-class "
+                         "records carry calibration, noise, drift, repeatability, reinstallation and channel "
+                         "performance data only, never used to tune a Hall closure",
         },
         "references": REFERENCES,
         "tbd_register": [
@@ -1204,6 +1444,9 @@ def build() -> dict:
         "open_owner_decisions": [
             "approve, change or reject CD-P-* planning thresholds",
             "freeze the calibration plan (S1-C5) from the calibration_plan_candidates",
+            "freeze the S1a calibration procedures (S1A-C4) from s1a_calibration_procedures_candidate_v1.json after "
+            "the S1A-FW firewall is frozen; confirm the data-class split (REG-FEED / REG-BZ custody-held) and whether "
+            "installation reproducibility (S1A-P-TS-03 / S1A-P-PC-03) stays in S1a",
             "S1-C4 category set: add pressure and species/divergence demonstrations, or reduce the set",
             "B(z) approach protocol and the isothermal thermocouple cross-check (both PROPOSED)",
             "approve the metrology specification before procurement",
@@ -1287,6 +1530,8 @@ def render_md(doc: dict) -> str:
     L.append(f"Supports **{', '.join(ms['supports'])}**.")
     for k in ("A", "B", "C"):
         L.append(f"- **{k}**: {ms[k]['delivers']}. Next: " + "; ".join(ms[k]["needs_next"]) + ".")
+        if "conditional" in ms[k]:
+            L.append(f"  - Conditional: {ms[k]['conditional']}.")
     L += ["", "## Owner addendum A3 rules carried", ""]
     for k, v in doc["a3_rules_carried"].items():
         L.append(f"- **{k}**: {v}")
@@ -1325,6 +1570,7 @@ def render_md(doc: dict) -> str:
                 L.append(f"- {k}: {_qs(r[k])}")
             for k, v in r["ranges_needed"].items():
                 L.append(f"- ranges needed ({k}): {_qs(v)}")
+            L += [f"- sccm basis: {r['sccm_basis']}"]
             L += [f"- Xe cathode flow: {_qs(r['xe_cathode_flow'])}", "", r["reading"], ""]
         if "channels" in d:
             L += [f"Boundary: {d['boundary']}", "", "| component | architectures | lab status | demonstration |",
@@ -1352,6 +1598,18 @@ def render_md(doc: dict) -> str:
     L += [f"- **{k}** partial: {v}" for k, v in s["partial_categories"].items()]
     L += ["", f"Calibration plan: {s['calibration_plan_link']}.", "", "## S1a path", ""]
     L += [f"- {k}: {v}" for k, v in doc["s1a_path"].items()]
+    sc = doc["s1a_calibration_procedure_candidates"]
+    L += ["", "### S1a calibration-procedure candidates (S1A-C4; PROPOSED, owner freezes)", "",
+          f"Gate: `{sc['gate_file']}` ({sc['gate_condition']}); frozen artifact path `{sc['frozen_artifact_path']}`. "
+          f"{sc['this_lane_writes']}.", "",
+          "| procedure_id | S1A-C4 category | CD item | s1a_data_class | data scope |", "|---|---|---|---|---|"]
+    L += [f"| {x['procedure_id']} | {x['category']} | {x['demonstration_id']} | {x['s1a_data_class']} | "
+          f"{x['data_scope']} |" for x in sc["procedures"]]
+    L += ["", f"Firewall class ids: {sc['firewall_class_ids_basis']}.", "",
+          f"Cathode-temperature labelling (temperature_channels procedures): {CATHODE_TEMPERATURE_LABELLING}.", "",
+          "Rule check of the procedures list against the S1A-C4 rules (owner-only fields excluded): "
+          + "; ".join(f"{c['rule'].split(' (')[0]} {c['result']}" for c in sc["rule_check_on_procedures"]) + ".", "",
+          "Not in S1a: " + "; ".join(sc["not_in_s1a"]) + "."]
     L += ["", "## TBD register", ""] + [f"- {x['what']}: requires {x['requires']}" for x in doc["tbd_register"]]
     L += ["", "## Open owner decisions", ""] + [f"- {x}" for x in doc["open_owner_decisions"]]
     L += ["", "## Compliance", ""] + [f"- {x}" for x in doc["compliance"]]
@@ -1385,7 +1643,9 @@ def render_spec_md(spec: dict) -> str:
             L.append(f"- Range: {_qs(x['range'])}")
         L.append(f"- Report: {x['report']}")
         if "planning_values" in x:
-            L += ["", "| nominal | E2 MPE | U max (k = 2) |", "|---|---|---|"]
+            L += ["", "E2 MPE values quoted from OIML R 111-1:2004 Table 1 (verify: Amendment 2025 not read; confirm "
+                  "against the current edition before procurement).", "",
+                  "| nominal | E2 MPE (verify) | U max (k = 2) |", "|---|---|---|"]
             for nom, v in x["planning_values"]["e2_table_subset"].items():
                 L.append(f"| {nom} | +/- {v['mpe']['value']} mg | {v['U_max_k2']['value']} mg |")
             L += ["", x["planning_values"]["note"] + "."]
@@ -1405,6 +1665,7 @@ def build_all() -> dict:
     if errs:
         raise ValueError("number discipline (spec): " + "; ".join(errs[:10]))
     return {OUT_JSON: dumps(doc), OUT_MD: render_md(doc), OUT_SCHEMA: dumps(record_schema()),
+            OUT_S1A: dumps(s1a_candidate_artifact(doc["s1a_calibration_procedure_candidates"])),
             OUT_SPEC_JSON: dumps(spec), OUT_SPEC_MD: render_spec_md(spec)}
 
 

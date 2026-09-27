@@ -162,5 +162,5 @@
    }
   }
  },
- "a3_rules": "a thermocouple is never labelled emitter_temperature; emitter_temperature only from a calibrated pyrometer with a recorded emissivity treatment; C-1 items (scope 'cathode_c1') without a pyrometer carry emitter_temperature_status 'unmeasured' (capability_analysis.record_item_errors)"
+ "a3_rules": "every temperature item declares a scope; C-1 items (scope 'cathode_c1') must carry the mandatory thermocouple channel labelled cathode_tube_temperature; no non-pyrometer sensor carries an emitter label; emitter_temperature only from a calibrated pyrometer with a recorded emissivity treatment; C-1 items without a pyrometer carry emitter_temperature_status 'unmeasured' (capability_analysis.record_item_errors)"
 }
