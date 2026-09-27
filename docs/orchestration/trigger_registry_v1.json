@@ -618,6 +618,114 @@
    "produces": "fo_subsystem_maturity_matrix",
    "kind": "follow_on_launch",
    "note": "owner addendum A6 2026-09-27 (A5 follow-ons)"
+  },
+  {
+   "id": "T_H2_1_HALL_CHAMBER_MAGNET",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_1_hall_chamber_magnet",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_H2_2_CATHODE_INTEGRATION",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_2_cathode_integration",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_H2_3_GAS_PATH_PLENUM",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_3_gas_path_plenum",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_H2_4_PPU_BUS",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_4_ppu_bus",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_H2_5_THERMAL_NETWORK",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_5_thermal_network",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_H2_6_DIAGNOSTICS_FIXTURE",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_6_diagnostics_fixture",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_H2_7_MECHANICAL_BOM",
+   "prerequisites": [
+    {
+     "id": "od_hardware_pivot",
+     "state": "approved"
+    }
+   ],
+   "produces": "fo_h2_7_mechanical_bom",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7 2026-09-27 (hardware wave H2; drafting in parallel with the A6 lanes; merges after the integration checkpoint)"
+  },
+  {
+   "id": "T_A6_INTEGRATION_REFRESH",
+   "prerequisites": [
+    {
+     "id": "fo_preionizer_module_icd",
+     "state": "verified"
+    },
+    {
+     "id": "fo_xe_system_ledger",
+     "state": "verified"
+    },
+    {
+     "id": "fo_phase1_prereg_framework",
+     "state": "verified"
+    },
+    {
+     "id": "fo_subsystem_maturity_matrix",
+     "state": "verified"
+    }
+   ],
+   "produces": "fo_a6_integration_refresh",
+   "kind": "follow_on_launch",
+   "note": "owner addendum A7: integration pass + M16 scheduler refresh, then the checkpoint merge"
   }
  ]
 }

@@ -1116,6 +1116,46 @@
    "id": "fo_subsystem_maturity_matrix",
    "kind": "follow_on",
    "title": "A5 16-subsystem interface/BOM maturity matrix"
+  },
+  {
+   "id": "fo_h2_1_hall_chamber_magnet",
+   "kind": "follow_on",
+   "title": "H2-1 Hall chamber + magnetic circuit preliminary sizing"
+  },
+  {
+   "id": "fo_h2_2_cathode_integration",
+   "kind": "follow_on",
+   "title": "H2-2 Xe-fed LaB6 cathode integration"
+  },
+  {
+   "id": "fo_h2_3_gas_path_plenum",
+   "kind": "follow_on",
+   "title": "H2-3 atmospheric gas path / plenum"
+  },
+  {
+   "id": "fo_h2_4_ppu_bus",
+   "kind": "follow_on",
+   "title": "H2-4 PPU and bus allocation (steady/startup/peak)"
+  },
+  {
+   "id": "fo_h2_5_thermal_network",
+   "kind": "follow_on",
+   "title": "H2-5 thermal network"
+  },
+  {
+   "id": "fo_h2_6_diagnostics_fixture",
+   "kind": "follow_on",
+   "title": "H2-6 diagnostics + H-1 fixture"
+  },
+  {
+   "id": "fo_h2_7_mechanical_bom",
+   "kind": "follow_on",
+   "title": "H2-7 mechanical envelope / evolving mass model"
+  },
+  {
+   "id": "fo_a6_integration_refresh",
+   "kind": "follow_on",
+   "title": "integration pass after the four A6 lanes: fill pending cells, M16 -> scheduler (READY/RUNNING/BLOCKED/VERIFIED, one blocker per BLOCKED row, 5 rollup categories), map H2 lanes"
   }
  ],
  "owner_dispositions": [
@@ -1144,7 +1184,8 @@
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json",
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json",
-    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json"
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json",
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json"
    ],
    "immutability": "the disposition file and each addendum are never edited after commit (consumers pin them by sha256); later owner amendments are new addendum files"
   }
