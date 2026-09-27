@@ -1122,7 +1122,8 @@
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A1_controls.json",
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A2_execution_directive.json",
     "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A3_s1a_and_instrumentation.json",
-    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json"
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json",
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json"
    ],
    "immutability": "the disposition file and each addendum are never edited after commit (consumers pin them by sha256); later owner amendments are new addendum files"
   }

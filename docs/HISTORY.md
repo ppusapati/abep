@@ -2288,3 +2288,14 @@ It is not a numerical failure and not a physics result, and it is never scored o
 A fresh 1080-record attempt (`facility_mandatory_attempt2`) launches only via `T_FACILITY_RELAUNCH`, after the 7 active O4 escalations
 are frozen and scored. It gets fresh execution provenance linked to attempt 1, and `T_FACILITY_SCORE` runs only after its complete
 structural audit. Facility stays non-gating; the priority after the escalations is S9/S12.
+
+## 2026-09-27 — A5: Proposal Reference Architecture / Phase-1 Baseline (owner decision)
+`docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json`. It freezes a dual-feed extended-channel
+Hall thruster as the proposal reference, **not** the flight architecture. Atmospheric propellant is the primary feed. Xe is used
+only for ignition, the shielded LaB6 cathode and time-limited contingency, drawing on one fixed Xe mass ledger. The cathode design
+target is 0.10 mg/s; 0.15 mg/s is a test point only. Continuous Xe support of the discharge counts as a Phase-1 failure. The RF
+pre-ionizer is interface-ready (its ICD is to be written now) but is not baseline flight hardware; ECR is the alternate.
+H-1 Phase 1 picks the branch: A (Hall-only), B (RF+Hall), C (ECR+Hall) or NO_VIABLE_CASE. It sweeps mdot_atm x x_O2 x V_d
+and runs Hall-only, then RF, then ECR at each point under common conditions. The discriminators are T/P_bus, sustainment, eta_u
+and envelope width. Thrust, power, mass and life figures are allocations or requirements, never predictions. Hall validation
+status is unchanged: the credible set remains empty.
