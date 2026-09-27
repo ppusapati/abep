@@ -4,7 +4,9 @@ Covers: deterministic build (--check), schema conformance (small local validator
 discipline (every numeric value sourced and classed; life numbers only measured / other-device literature / TBD; no
 screening candidate or Hall-closure life), referential integrity (mechanisms <-> requirements <-> coupons <-> interface
 table), the derived AO environment against the frozen atmosphere, and the 314 h datum against the hall-sustainment
-matrix when that file is present. Does not require W3/W4 drafts or any other in-flight lane.
+matrix when that file is present. v2 (current): re-verification of every W3/W4 reference against the merged, sha256-pinned
+W3/W4 files and the control-C5 adoption check. v1 is the historical record: byte-identical, sha256-pinned (W3 SRC-AOL),
+still reproduced by the builder. Does not require any in-flight lane (W3/W4 are merged in the base).
 """
 import csv
 import importlib.util
@@ -20,9 +22,15 @@ import pytest
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DIR = os.path.join(ROOT, "docs", "experiments", "lifetime_ao")
 BUILDER = os.path.join(DIR, "build_ao_lifetime_register.py")
-JSON_PATH = os.path.join(DIR, "ao_lifetime_register_v1.json")
-SCHEMA_PATH = os.path.join(DIR, "ao_lifetime_register_v1.schema.json")
-MD_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER.md")
+JSON_V1_PATH = os.path.join(DIR, "ao_lifetime_register_v1.json")
+SCHEMA_V1_PATH = os.path.join(DIR, "ao_lifetime_register_v1.schema.json")
+MD_V1_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER.md")
+JSON_PATH = os.path.join(DIR, "ao_lifetime_register_v2.json")
+SCHEMA_PATH = os.path.join(DIR, "ao_lifetime_register_v2.schema.json")
+MD_PATH = os.path.join(DIR, "AO_LIFETIME_REGISTER_v2.md")
+V1_SHA256 = "237c99aa8ee582b520d17aecff262020d79f3776f47af69b9c46185a230a2e12"
+W3_JSON = os.path.join(ROOT, "docs", "experiments", "hardware", "hardware_requirements_v1.json")
+W4_JSON = os.path.join(ROOT, "docs", "experiments", "instrumentation", "instrumentation_definition_v1.json")
 
 EVIDENCE_CLASSES = {"measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"}
 
@@ -36,6 +44,18 @@ def reg():
 @pytest.fixture(scope="module")
 def schema():
     with open(SCHEMA_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def reg_v1():
+    with open(JSON_V1_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="module")
+def schema_v1():
+    with open(SCHEMA_V1_PATH, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -133,25 +153,28 @@ def test_builder_is_pure_and_not_wired():
     assert "archengine" not in re.findall(r"^\s*(?:import|from)\s+(\S+)", src, re.M)
 
 
-def test_schema_uses_only_supported_keywords(schema):
-    used = _schema_keywords(schema, set())
-    unknown = used - _SUPPORTED_KEYWORDS - _ANNOTATION_KEYWORDS
-    assert not unknown, f"schema keywords not implemented by the local validator: {sorted(unknown)}"
+def test_schema_uses_only_supported_keywords(schema, schema_v1):
+    for sch in (schema, schema_v1):
+        used = _schema_keywords(sch, set())
+        unknown = used - _SUPPORTED_KEYWORDS - _ANNOTATION_KEYWORDS
+        assert not unknown, f"schema keywords not implemented by the local validator: {sorted(unknown)}"
 
 
 def test_local_validator_rejects_bad_documents(reg, schema):
     bad = json.loads(json.dumps(reg))
     bad["unexpected_top_level"] = 1
     del bad["derived"]["wall_sputter_index"]["entries"][0]["evidence_class"]
-    bad["interface_table"]["rows"][0]["related_ids_status"] = "VERIFIED"
+    bad["interface_table"]["rows"][0]["related_ids"][0]["verdict"] = "UNVERIFIED_UNMERGED_DRAFT"
     errs = "\n".join(_validate(bad, schema, schema))
     assert "unexpected key unexpected_top_level" in errs
     assert "missing evidence_class" in errs
     assert "not in enum" in errs
 
 
-def test_schema_conformance(reg, schema):
+def test_schema_conformance(reg, schema, reg_v1, schema_v1):
     errs = _validate(reg, schema, schema)
+    assert not errs, "\n".join(errs[:30])
+    errs = _validate(reg_v1, schema_v1, schema_v1)
     assert not errs, "\n".join(errs[:30])
 
 
@@ -320,8 +343,12 @@ def test_frozen_atmosphere_pin_enforced(tmp_path, monkeypatch):
 
 
 def test_markdown_mentions_c5_and_primary_output():
+    for path in (MD_PATH, MD_V1_PATH):
+        md = open(path, encoding="utf-8").read()
+        for s in ("control C5", "Witness coupons", "DRAFT", "AOL-WC-01", "AOL-RC-01", "AOL-CX-01", "AOL-PM-01"):
+            assert s in md, (path, s)
     md = open(MD_PATH, encoding="utf-8").read()
-    for s in ("control C5", "Witness coupons", "DRAFT", "AOL-WC-01", "AOL-RC-01", "AOL-CX-01", "AOL-PM-01"):
+    for s in ("Re-verification of the v1 draft references", "C5 adoption check", "Not adopted", V1_SHA256):
         assert s in md, s
 
 
@@ -384,7 +411,8 @@ def test_wall_sputter_index_pin_enforced(monkeypatch):
         mod.compute_wall_sputter_index()
 
 
-def test_every_draft_id_is_flagged_unverified(reg):
+def test_v1_every_draft_id_is_flagged_unverified(reg_v1):
+    reg = reg_v1
     ud = reg["unmerged_draft_references"]
     assert ud["status"] == "UNVERIFIED_UNMERGED_DRAFT"
     blob = json.dumps({k: v for k, v in reg.items() if k != "unmerged_draft_references"})
@@ -393,3 +421,101 @@ def test_every_draft_id_is_flagged_unverified(reg):
     for row in reg["interface_table"]["rows"]:
         assert row["related_ids_status"] == ("UNVERIFIED_UNMERGED_DRAFT" if row["observed_related_ids"] else "none")
     assert "UNVERIFIED_UNMERGED_DRAFT" in reg["interface_table"]["note"]
+
+
+# ---- v1 historical record / v2 re-verification ----------------------------------------------------------------------
+def _sha(path):
+    import hashlib
+    with open(path, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+def test_v1_is_byte_identical_historical_record(reg):
+    assert _sha(JSON_V1_PATH) == V1_SHA256
+    assert reg["supersedes"]["sha256"] == V1_SHA256 and reg["version"] == "v2"
+    assert [c["version"] for c in reg["change_log"]] == ["v1", "v2"]
+    w3 = json.load(open(W3_JSON, encoding="utf-8"))
+    src = w3["references"]["SRC-AOL"]
+    assert src["path"] == "docs/experiments/lifetime_ao/ao_lifetime_register_v1.json" and src["sha256"] == V1_SHA256
+
+
+def test_merged_inputs_pinned(reg):
+    files = {f["path"]: f["sha256"] for f in reg["merged_inputs"]["files"]}
+    assert {"docs/experiments/hardware/hardware_requirements_v1.json",
+            "docs/experiments/instrumentation/instrumentation_definition_v1.json"} <= set(files)
+    for p, h in files.items():
+        assert _sha(os.path.join(ROOT, p)) == h, p
+
+
+def test_merged_pin_enforced(monkeypatch):
+    mod = _builder_module()
+    monkeypatch.setitem(mod.MERGED_PINS, mod.W3_JSON_REL, "0" * 64)
+    with pytest.raises(RuntimeError, match="sha256"):
+        mod.build_register_v2()
+
+
+def test_every_v1_draft_id_has_one_verdict(reg, reg_v1):
+    dv = reg["draft_reference_verification"]
+    ids = [v["id"] for v in dv["verdicts"]]
+    assert sorted(ids) == sorted(reg_v1["unmerged_draft_references"]["ids"]) and len(ids) == len(set(ids))
+    w3 = json.load(open(W3_JSON, encoding="utf-8"))
+    w4 = json.load(open(W4_JSON, encoding="utf-8"))
+    hw = {r["id"] for r in w3["requirements"]}
+    ins = {i["id"] for i in w4["instruments"]}
+    for v in dv["verdicts"]:
+        if v["id"].startswith("HW-"):
+            assert (v["id"] in hw) == (v["verdict"] != "ABSENT"), v["id"]
+        elif v["id"].startswith("INS-"):
+            assert (v["id"] in ins) == (v["verdict"] != "ABSENT"), v["id"]
+        if v["verdict"] == "CHANGED":
+            assert v["note"] and any(v["id"] in " ".join(f["v1"]) for f in dv["reference_fixes"]), v["id"]
+    # no CHANGED usage survives in v2: fixed ids are gone from the rows / cross-refs they were fixed in
+    for f in dv["reference_fixes"]:
+        if f["field_or_adopter"] == "cross_refs":
+            m = next(m for m in reg["mechanisms"] if m["id"] == f["where"])
+            assert m["cross_refs"][-len(f["v2"]):] == f["v2"]
+        else:
+            row = next(r for r in reg["interface_table"]["rows"]
+                       if (r["requirement"], r["adopter"]) == (f["where"], f["field_or_adopter"]))
+            assert [x["id"] for x in row["related_ids"]] == f["v2"]
+
+
+def test_v2_has_no_unmerged_draft_wording(reg):
+    blob = json.dumps({k: v for k, v in reg.items() if k not in ("draft_reference_verification", "change_log")})
+    assert "W3 draft" not in blob and "W4 draft" not in blob and "UNVERIFIED_UNMERGED_DRAFT" not in blob
+
+
+def test_v2_content_unchanged_in_meaning(reg, reg_v1):
+    for k in ("mechanisms", "witness_coupons", "requirements", "proposed_thresholds", "derived", "sources"):
+        a = json.dumps(reg_v1[k]).replace("W3 draft ", "W3 ").replace("W4 draft ", "W4 ")
+        b = json.dumps(reg[k])
+        if k == "mechanisms":
+            a = a.replace('"W3 HW-C1-05"', '"W3 HW-C1-05 (keeper voltage metering)", '
+                                           '"W3 HW-C1-08 (post-test C-1 inspectability)"')
+            a = a.replace("W3 draft section 6", "W3 section 6")
+        assert a == b, k
+
+
+def test_c5_adoption_check(reg):
+    c5 = reg["c5_adoption_check"]
+    w3 = json.load(open(W3_JSON, encoding="utf-8"))
+    hw = {r["id"] for r in w3["requirements"]}
+    w3rows = {r["source_id"]: r for r in w3["c5_integration"]["rows"]}
+    provisions = ([r["id"] for r in reg["requirements"]] + [q["id"] for q in reg["open_owner_questions"]]
+                  + [p["id"] for p in reg["proposed_thresholds"]])
+    assert [r["id"] for r in c5["rows"]] == provisions
+    na = {(n["id"], n["by"]) for n in c5["not_adopted"]}
+    for r in c5["rows"]:
+        assert r["w3_disposition"] == w3rows[r["id"]]["disposition"]
+        assert set(r["w3_requirement_ids"]) <= hw
+        assert ((r["id"], "W3") in na) == (r["w3_disposition"] in ("NOT_ADOPTED", "MISSING_DISPOSITION"))
+        assert ((r["id"], "W4") in na) == (r["w4_status"] == "NOT_ADOPTED")
+    assert c5["counts"]["w3_by_disposition"]["MISSING_DISPOSITION"] == 0
+    # every witness / replaceable / cathode-exposure provision that W3 must carry has an H-1 requirement id
+    for r in c5["rows"]:
+        if r["id"].startswith(("AOL-WC-", "AOL-RC-")) and r["id"] != "AOL-RC-04":
+            assert r["w3_requirement_ids"], r["id"]
+    # the W3 rows of the interface table carry W3's disposition
+    for row in reg["interface_table"]["rows"]:
+        if row["adopter"] == "W3":
+            assert row["adoption_status"] == w3rows[row["requirement"]]["disposition"]

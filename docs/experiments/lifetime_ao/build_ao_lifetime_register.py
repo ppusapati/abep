@@ -11,13 +11,17 @@ What this script does (and nothing else):
   FROZEN NRLMSIS 2.1 dataset (abep_sim/data/atmosphere_msis21_v1.csv, sha256-pinned below, read with the csv module)
   times circular orbital velocity, plus illustrative recession-equivalents from MISSE 2 flight erosion yields
   (NASA/TM-2006-214482 Table 4). Every derived number is labelled model-derived with its flags;
-* writes ao_lifetime_register_v1.json and AO_LIFETIME_REGISTER.md next to itself.
+* writes ao_lifetime_register_v1.json and AO_LIFETIME_REGISTER.md next to itself (v1: historical record, byte-identical,
+  sha256-pinned by W3 as SRC-AOL; the build refuses to change it);
+* builds v2 (ao_lifetime_register_v2.json, AO_LIFETIME_REGISTER_v2.md): v1 content re-verified against the MERGED W3
+  hardware definition and W4 instrumentation definition (sha256-pinned read-only inputs): a VERIFIED / CHANGED / ABSENT
+  verdict per v1 draft id, fixes of CHANGED usages, and the control-C5 adoption check of every provision.
 
 Pure: standard library only; imports nothing from abep_sim or hallthruster_bridge; nothing is wired into archengine;
 no Hall closure, screening candidate or withdrawn 0-D number is read or used. No life number is derived (control C6).
 
 Usage:  python docs/experiments/lifetime_ao/build_ao_lifetime_register.py [--check]
-        --check regenerates in memory and exits 1 if either committed file differs (deterministic build).
+        --check regenerates in memory and exits 1 if any committed file (v1 and v2) differs (deterministic build).
 """
 from __future__ import annotations
 
@@ -1259,6 +1263,337 @@ def build_register():
     return reg
 
 
+# =====================================================================================================================
+# v2 (2026-09-27): re-verification of the W3 / W4 references after the W3 hardware definition and W4 instrumentation
+# definition were MERGED (control C5 integration check). v1 is kept byte-identical as the historical record (W3 pins
+# its sha256 as SRC-AOL); v2 is derived from the v1 content by the explicit, listed transformations below and adds the
+# reference verdicts, the W3/W4 pins and the C5 adoption check. No mechanism, evidence value, derived number or
+# requirement text changes meaning between v1 and v2.
+# =====================================================================================================================
+OUT_JSON_V2 = os.path.join(HERE, "ao_lifetime_register_v2.json")
+OUT_MD_V2 = os.path.join(HERE, "AO_LIFETIME_REGISTER_v2.md")
+SCHEMA_V2_REL = "docs/experiments/lifetime_ao/ao_lifetime_register_v2.schema.json"
+V1_JSON_REL = "docs/experiments/lifetime_ao/ao_lifetime_register_v1.json"
+V1_JSON_SHA256 = "237c99aa8ee582b520d17aecff262020d79f3776f47af69b9c46185a230a2e12"   # = W3 SRC-AOL pin
+
+# Merged W3 / W4 files (read-only inputs of v2; the build refuses other bytes).
+W3_JSON_REL = "docs/experiments/hardware/hardware_requirements_v1.json"
+W3_MD_REL = "docs/experiments/hardware/HARDWARE_DEFINITION.md"
+W4_JSON_REL = "docs/experiments/instrumentation/instrumentation_definition_v1.json"
+W4_MD_REL = "docs/experiments/instrumentation/INSTRUMENTATION_DEFINITION.md"
+MERGED_PINS = {
+    W3_JSON_REL: "552f4ca0e3c84f8f10f03d103d10b169e360e9c28f2a7a4d44e65c1d1b915d04",
+    W3_MD_REL: "e4ca9592bdfe83e8f3a5a41c44df95594ffe50d2161ec526db29e6eb97c7d212",
+    W4_JSON_REL: "8c428258b9da56c7738ce9d6d0c7c3878675ee95a6ed1245d8235c1e06093eed",
+    W4_MD_REL: "67ff0d5205170f6fe12e046c8977c012b58653e84f813ca65fbc66fda179f084",
+}
+MERGED_COMMITS = {"W3": "5024169 (W3 C5 integration, on top of f61912e)", "W4": "merged at f61912e"}
+
+# Hand-checked verdict per v1 draft reference (read against the merged files on 2026-09-27).
+#   VERIFIED: the id exists with the meaning the register used; CHANGED: exists, but the register's usage pointed at
+#   the wrong item (fixed in v2, see REFERENCE_FIXES_V2); ABSENT: not in the merged file (none found).
+# 'v1_usage' is what the v1 register used the id for; the builder asserts every id exists and records the merged text.
+DRAFT_REF_VERDICTS = [
+    ("HW-C1-01", "W3", "C-1 at a fixed position unchanged by module exchange (AOL-WC-03 placement)", "VERIFIED", ""),
+    ("HW-C1-03", "W3", "poisoning-protection rule (heat only under Xe flow), emitter O2 partial pressure not measurable "
+                       "directly, daily Xe reference check with D-15-B", "VERIFIED", ""),
+    ("HW-C1-05", "W3", "AOL-M05 cross-ref and AOL-PM-05 row: keeper erosion / post-test cathode inspection",
+     "CHANGED", "HW-C1-05 is keeper/heater power metering and coupling voltage (it carries the keeper-voltage trend "
+                "only); post-test keeper/insert/orifice inspectability is HW-C1-08"),
+    ("HW-ELEC-01", "W3", "electrical-interface section as the home of the anode sense lead (AOL-RC-02)", "VERIFIED",
+     "the sense lead itself was adopted as the new HW-ELEC-04"),
+    ("HW-H1-01", "W3", "design-representativeness definition of H-1 (AOL-RC-04, AOL-OQ-02)", "VERIFIED", ""),
+    ("HW-H1-02", "W3", "replacement / repair downstream of IP-DN creates H-1' with a new HW-0 reference", "VERIFIED", ""),
+    ("HW-H1-03", "W3", "channel geometry released and measured as built before S1 and after the campaign", "VERIFIED",
+     ""),
+    ("HW-H1-04", "W3", "(a) wall grade and erosion profile per stage (AOL-M02, AOL-PM-03, AOL-RC-03); "
+                       "(b) AOL-WC-01 row: host of a new witness-holder item", "CHANGED",
+     "usage (a) verified; usage (b) wrong: HW-H1-04 is the wall-grade requirement, the witness holder was adopted as "
+     "HW-SVC-06"),
+    ("HW-H1-05", "W3", "anode material with oxidation evidence; anode inspection after O-bearing operation", "VERIFIED",
+     ""),
+    ("HW-H1-06", "W3", "anode / gas distributor at HALL_INLET_Z0 belongs to H-1, identical in all arms", "VERIFIED", ""),
+    ("HW-H1-07", "W3", "fixed thermocouple points incl. the anode", "VERIFIED", "extended by HW-H1-12"),
+    ("HW-MC-03", "W3", "B(z) at actual coil currents before/after each block series", "VERIFIED", ""),
+    ("HW-MC-04", "W3", "hot-state fixed reference field sensor on MC-1", "VERIFIED", ""),
+    ("HW-PIM-10", "W3", "O2-compatible plasma-facing module materials; module inspection pre/post", "VERIFIED", ""),
+    ("W3 draft section 6", "W3", "extra atomic O at H-1/C-1 from O2 dissociation in a source arm", "VERIFIED",
+     "HARDWARE_DEFINITION.md section 6 'What must be identical, and what may differ'"),
+    ("INS-04", "W4", "discharge V/I incl. keeper voltage (AOL-CX-01, AOL-RC-02 neighbourhood)", "VERIFIED",
+     "no anode-resistance measurement exists in W4"),
+    ("INS-08", "W4", "facility background pressure (AOL-M11, AOL-WC-06)", "VERIFIED", ""),
+    ("INS-09", "W4", "B(z) mapping at actual coil currents (AOL-PM-08)", "VERIFIED", ""),
+    ("INS-10", "W4", "extinction / ignition detection (AOL-CX-06)", "VERIFIED", ""),
+    ("INS-11", "W4", "RGA for O2 / contaminant composition (AOL-CX-03, AOL-M10, AOL-M11)", "VERIFIED",
+     "W4 places it on the chamber (optionally a feed-line sample); no near-C-1 sampling point"),
+    ("INS-12", "W4", "OES for O / O2 composition at the H-1 inlet (AOL-M10)", "VERIFIED", ""),
+    ("INS-14", "W4", "RPA (ion energy) as a possible near-cathode measurement (AOL-M04)", "VERIFIED",
+     "W4 places the RPA at interstage / channel exit / far field, not near C-1"),
+    ("INS-17", "W4", "(a) temperatures incl. cathode mount (AOL-CX-04, AOL-CX-07); (b) AOL-WC-01 W4 row: related to a "
+                     "coupon-metrology item", "CHANGED",
+     "usage (a) verified; usage (b) wrong: INS-17 is temperatures; W4 has no witness-metrology instrument"),
+    ("INS-18", "W4", "common time base and DAQ (AOL-CX-01/02/05, AOL-DC-01)", "VERIFIED", ""),
+]
+
+# v1 -> v2 fixes of CHANGED usages: (requirement or mechanism id, adopter or field, v1 ids, v2 ids, why).
+REFERENCE_FIXES_V2 = [
+    ("AOL-WC-01", "W3", ["HW-H1-04"], ["HW-SVC-06"], "witness holder adopted as HW-SVC-06; HW-H1-04 is the wall grade"),
+    ("AOL-WC-01", "W4", ["INS-17"], [], "INS-17 is temperatures; merged W4 has no witness-metrology instrument"),
+    ("AOL-PM-05", "W4", ["HW-C1-05"], ["HW-C1-08"], "a W3 id in a W4 row; post-test C-1 inspectability is W3 HW-C1-08"),
+    ("AOL-M05", "cross_refs", ["W3 draft HW-C1-05"], ["W3 HW-C1-05 (keeper voltage metering)",
+                                                      "W3 HW-C1-08 (post-test C-1 inspectability)"],
+     "keeper erosion inspection is HW-C1-08; HW-C1-05 carries only the keeper-voltage trend"),
+]
+
+# Interface-row notes that described the unmerged drafts and would become false by a plain 'W3 draft' -> 'W3' edit.
+INTERFACE_NOTE_OVERRIDES_V2 = {
+    ("AOL-WC-01", "W3"): "v1 hint HW-H1-04 replaced (CHANGED); holder adopted as HW-SVC-06",
+    ("AOL-WC-01", "W4"): "merged W4 has no witness-metrology instrument",
+    ("AOL-CX-01", "W3"): "already present in W3 HW-C1-03 (daily Xe reference check)",
+}
+
+# Paths published since v1 (merged at f61912e); referenced only, not read as inputs.
+PLANNED_PATHS_V2_UPDATES = {
+    "fo_magnet_coil_qualification": "docs/experiments/magnet_coil/",
+    "fo_hallmap_schema_v2_registry": "docs/hallmap/schema_v2/",
+}
+
+V2_HARD_STATEMENT = ("v2 re-verifies every W3 / W4 id the v1 register used against the merged W3 hardware definition "
+                     "and W4 instrumentation definition (sha256-pinned in merged_inputs): see "
+                     "draft_reference_verification. The C5 adoption status of every provision is in c5_adoption_check; "
+                     "the provisions NOT adopted are listed there and are open, not waived.")
+
+V2_TO_REACH_NEXT = [
+    "owner review of this DRAFT and of AOL-OQ-01..06 (W3 recorded OQ-01, OQ-02, OQ-04 as HWQ-16, HWQ-17, HWQ-21)",
+    "W4 adopts the rows listed as NOT_ADOPTED by W4 in c5_adoption_check (the merged W4 carries no AOL provision)",
+    "owner / W5 / facility dispositions for the W3 NOT_ADOPTED items in c5_adoption_check",
+    "LOCK-1: facility and metrology-lab choice; coupon positions frozen",
+    "S1: baselines (AOL-PM-01) and first exposure data; LOCK-2 sets AOL-PT-02/03",
+    "C: pre-registered endurance segment (AOL-LF-02) plus AOL-EX-01..03 results",
+]
+
+
+def _load_merged():
+    for rel, pin in MERGED_PINS.items():
+        p = os.path.join(ROOT, rel)
+        if not os.path.exists(p):
+            raise RuntimeError(f"{rel} missing: v2 re-verifies the AO register against the merged W3/W4 files; "
+                               "it cannot be built without them.")
+        sha = _sha256_file(rel)
+        if sha != pin:
+            raise RuntimeError(f"{rel} sha256 {sha} != pinned {pin}; W3/W4 changed. Re-verify every reference "
+                               "against the new file and re-pin deliberately (new register version).")
+    with open(os.path.join(ROOT, W3_JSON_REL), encoding="utf-8") as f:
+        w3 = json.load(f)
+    with open(os.path.join(ROOT, W4_JSON_REL), encoding="utf-8") as f:
+        w4 = json.load(f)
+    with open(os.path.join(ROOT, W3_MD_REL), encoding="utf-8") as f:
+        w3_md = f.read()
+    return w3, w4, w3_md
+
+
+def _replace_strings(o, pairs):
+    if isinstance(o, str):
+        for a, b in pairs:
+            o = o.replace(a, b)
+        return o
+    if isinstance(o, list):
+        return [_replace_strings(v, pairs) for v in o]
+    if isinstance(o, dict):
+        return {k: _replace_strings(v, pairs) for k, v in o.items()}
+    return o
+
+
+def verify_draft_references(v1_ids, w3, w4, w3_md):
+    hw = {r["id"]: r for r in w3["requirements"]}
+    ins = {i["id"]: i for i in w4["instruments"]}
+    listed = [d[0] for d in DRAFT_REF_VERDICTS]
+    if sorted(listed) != sorted(v1_ids):
+        raise RuntimeError(f"DRAFT_REF_VERDICTS {sorted(set(listed) ^ set(v1_ids))} differ from the v1 "
+                           "unmerged_draft_references ids; every v1 id needs exactly one verdict.")
+    out = []
+    for rid, reg_, usage, verdict, note in DRAFT_REF_VERDICTS:
+        if rid == "W3 draft section 6":
+            ok = "## 6." in w3_md and "extra atomic O at H-1/C-1" in w3_md
+            merged = {"file": W3_MD_REL, "item": "section 6", "text_excerpt": "extra atomic O at H-1/C-1 from O₂ "
+                      "dissociation in the source (lane 19 §6)" if ok else None}
+        elif reg_ == "W3":
+            ok = rid in hw
+            merged = {"file": W3_JSON_REL, "item": hw[rid]["item"] if ok else None,
+                      "text_excerpt": hw[rid]["text"][:160] if ok else None}
+        else:
+            ok = rid in ins
+            merged = {"file": W4_JSON_REL, "item": ins[rid]["name"] if ok else None,
+                      "text_excerpt": ins[rid]["quantity"][:160] if ok else None}
+        if not ok and verdict != "ABSENT":
+            raise RuntimeError(f"{rid}: not found in the merged {reg_} file but its verdict is {verdict}")
+        if ok and verdict == "ABSENT":
+            raise RuntimeError(f"{rid}: present in the merged {reg_} file but its verdict is ABSENT")
+        w3_own = (w3["c5_integration"]["ao_register_unmerged_id_reverification"]["verdicts"].get(rid)
+                  if reg_ == "W3" else None)
+        out.append({"id": rid, "register": reg_, "v1_usage": usage, "verdict": verdict, "note": note,
+                    "merged": merged, "w3_own_verdict": w3_own})
+    return out
+
+
+def c5_adoption_check(reg1, w3, w4):
+    """Per provision: W3 disposition (from W3 c5_integration), back-trace in the W3 requirement, W4 status."""
+    hw = {r["id"]: r for r in w3["requirements"]}
+    rows_by_src = {r["source_id"]: r for r in w3["c5_integration"]["rows"]}
+    w4_blob = json.dumps(w4)
+    adopters = {}
+    for row in reg1["interface_table"]["rows"]:
+        adopters.setdefault(row["requirement"], set()).add(row["adopter"])
+    ids = ([r["id"] for r in reg1["requirements"]] + [q["id"] for q in reg1["open_owner_questions"]]
+           + [p["id"] for p in reg1["proposed_thresholds"]])
+    out, not_adopted = [], []
+    for pid in ids:
+        w3r = rows_by_src.get(pid)
+        if w3r is None:
+            w3_disp, w3_ids, w3_needed, w3_note = "MISSING_DISPOSITION", [], None, None
+        else:
+            w3_disp, w3_ids = w3r["disposition"], list(w3r["hw_requirements"])
+            w3_needed, w3_note = w3r.get("needed"), w3r.get("note")
+        missing = [h for h in w3_ids if h not in hw]
+        if missing:
+            raise RuntimeError(f"{pid}: W3 disposition names {missing}, absent from the W3 requirements")
+        back = {h: ("traces_to" if pid in hw[h]["traces_to"] else
+                    "text_only" if re.search(r"\b" + re.escape(pid) + r"\b", hw[h]["text"]) else "none")
+                for h in w3_ids}
+        w4_involved = "W4" in adopters.get(pid, set())
+        w4_status = ("REFERENCED" if re.search(r"\b" + re.escape(pid) + r"\b", w4_blob) else "NOT_ADOPTED") \
+            if w4_involved else "not_a_W4_row"
+        rec = {"id": pid, "adopters_v1": sorted(adopters.get(pid, set())), "w3_disposition": w3_disp,
+               "w3_requirement_ids": w3_ids, "w3_back_trace": back, "w3_note": w3_note, "w3_needed": w3_needed,
+               "w4_status": w4_status}
+        out.append(rec)
+        if w3_disp in ("NOT_ADOPTED", "MISSING_DISPOSITION"):
+            not_adopted.append({"id": pid, "by": "W3", "status": w3_disp,
+                                "needed": w3_needed or "TBD - owner / adopting lane"})
+        if w4_status == "NOT_ADOPTED":
+            not_adopted.append({"id": pid, "by": "W4", "status": "NOT_ADOPTED",
+                                "needed": "W4 instrumentation revision (merged W4 predates the AO register and carries "
+                                          "no AOL provision)"})
+    n_h1 = sum(1 for r in out if r["w3_disposition"] in ("ADOPTED", "ADOPTED_PARTIAL", "ALIGNED")
+               and r["w3_requirement_ids"])
+    return {
+        "control": "C5_AO_early",
+        "statement": "Checked against the pinned merged files. A provision counts as adopted into H-1 when W3 gives it "
+                     "ADOPTED, ADOPTED_PARTIAL or ALIGNED with at least one existing HW requirement id; "
+                     "w3_back_trace says whether that HW requirement names the provision in traces_to, only in its "
+                     "text, or not at all (a W3 traceability gap to fix at the next W3 revision). W4 status is "
+                     "REFERENCED only if the provision id appears anywhere in the merged W4 JSON.",
+        "counts": {
+            "provisions": len(out),
+            "with_h1_requirement_id": n_h1,
+            "w3_by_disposition": {k: sum(1 for r in out if r["w3_disposition"] == k)
+                                  for k in ("ADOPTED", "ADOPTED_PARTIAL", "ALIGNED", "NOT_ADOPTED",
+                                            "MISSING_DISPOSITION")},
+            "w4_rows_not_adopted": sum(1 for r in out if r["w4_status"] == "NOT_ADOPTED"),
+            "w3_back_trace_text_only": sum(1 for r in out for v in r["w3_back_trace"].values() if v == "text_only"),
+            "w3_back_trace_none": sum(1 for r in out for v in r["w3_back_trace"].values() if v == "none"),
+        },
+        "rows": out,
+        "not_adopted": not_adopted,
+    }
+
+
+def build_register_v2():
+    reg1 = build_register()
+    w3, w4, w3_md = _load_merged()
+    verdicts = verify_draft_references(reg1["unmerged_draft_references"]["ids"], w3, w4, w3_md)
+    vmap = {v["id"]: v for v in verdicts}
+    fixes = {(f[0], f[1]): f for f in REFERENCE_FIXES_V2}
+    c5 = c5_adoption_check(reg1, w3, w4)
+    c5map = {r["id"]: r for r in c5["rows"]}
+
+    body = {k: v for k, v in reg1.items() if k not in ("unmerged_draft_references", "planned_paths_not_read",
+                                                        "interface_table")}
+    body = _replace_strings(body, [("W3 draft section 6", "W3 section 6"), ("W3 draft ", "W3 "),
+                                   ("W4 draft ", "W4 ")])
+    # mechanism cross-ref fix (CHANGED usage)
+    for m in body["mechanisms"]:
+        f = fixes.get((m["id"], "cross_refs"))
+        if f:
+            old = [x.replace("W3 draft ", "W3 ") for x in f[2]]
+            m["cross_refs"] = [y for x in m["cross_refs"] for y in (f[3] if x in old else [x])]
+    body["hard_statements"] = body["hard_statements"][:-1] + [V2_HARD_STATEMENT]
+    body["milestones"]["to_reach_next"] = V2_TO_REACH_NEXT
+    for q in body["open_owner_questions"]:
+        r = c5map[q["id"]]
+        q["w3_disposition"] = f"{r['w3_disposition']}: {r['w3_note'] or ''}".strip().rstrip(":")
+
+    rows = []
+    for row in reg1["interface_table"]["rows"]:
+        key = (row["requirement"], row["adopter"])
+        f = fixes.get(key)
+        ids = f[3] if f else row["observed_related_ids"]
+        rel = [{"id": i, "verdict": (vmap[i]["verdict"] if i in vmap else "ADOPTING_ID"),
+                "usage_fixed_in_v2": bool(f)} for i in ids]
+        c = c5map[row["requirement"]]
+        if row["adopter"] == "W3":
+            status, adopted = c["w3_disposition"], c["w3_requirement_ids"]
+        elif row["adopter"] == "W4":
+            status, adopted = c["w4_status"], []
+        else:
+            status, adopted = "NOT_CHECKED_OUTSIDE_C5_H1_CHECK", []
+        note = INTERFACE_NOTE_OVERRIDES_V2.get(key, _replace_strings(row["note"], [("W3 draft ", "W3 "),
+                                                                                   ("W4 draft ", "W4 ")]))
+        rows.append({"requirement": row["requirement"], "adopter": row["adopter"], "target": row["target"],
+                     "related_ids": rel, "action": row["action"], "note": note,
+                     "adoption_status": status, "adopted_ids": adopted})
+
+    reg = {"schema": "ao_lifetime_register_v2", "schema_file": SCHEMA_V2_REL}
+    for k, v in body.items():
+        if k in ("schema", "schema_file"):
+            continue
+        reg[k] = v
+        if k == "repository_references":
+            reg["merged_inputs"] = {
+                "statement": "W3 and W4 are merged; v2 reads them read-only and the build refuses other bytes.",
+                "files": [{"path": p, "sha256": s} for p, s in MERGED_PINS.items()],
+                "commits": MERGED_COMMITS,
+                "w3_pins_this_register": {"source_id": "SRC-AOL", "path": V1_JSON_REL, "sha256": V1_JSON_SHA256},
+            }
+            pp = dict(PLANNED_PATHS, **PLANNED_PATHS_V2_UPDATES)
+            reg["planned_paths"] = {k2: {"path_or_status": v2, "present_in_base": (
+                v2.endswith("/") and os.path.isdir(os.path.join(ROOT, v2)))} for k2, v2 in pp.items()}
+    reg["version"] = "v2"
+    reg["supersedes"] = {"version": "v1", "path": V1_JSON_REL, "sha256": V1_JSON_SHA256,
+                         "md": "docs/experiments/lifetime_ao/AO_LIFETIME_REGISTER.md",
+                         "status": "HISTORICAL_RECORD (kept byte-identical; reproduced by this builder)"}
+    reg["change_log"] = [
+        {"version": "v1", "date": "2026-09-27", "change": "initial DRAFT; W3/W4 ids UNVERIFIED_UNMERGED_DRAFT"},
+        {"version": "v2", "date": "2026-09-27",
+         "change": "W3/W4 merged: every v1 draft id re-verified (draft_reference_verification: "
+                   f"{sum(v['verdict'] == 'VERIFIED' for v in verdicts)} VERIFIED, "
+                   f"{sum(v['verdict'] == 'CHANGED' for v in verdicts)} CHANGED, "
+                   f"{sum(v['verdict'] == 'ABSENT' for v in verdicts)} ABSENT); CHANGED usages fixed "
+                   "(reference_fixes); 'W3 draft' / 'W4 draft' wording dropped; W3/W4 pinned by sha256 "
+                   "(merged_inputs); interface table carries per-row adoption status; C5 adoption check added "
+                   "(c5_adoption_check); open owner questions carry the W3 disposition. Mechanisms, evidence, "
+                   "requirements, thresholds and derived numbers unchanged in meaning."},
+    ]
+    reg["interface_table"] = {
+        "control": "C5_AO_early",
+        "note": "Rows as in v1, re-verified against the merged W3 / W4 files (merged_inputs). related_ids carry the "
+                "draft-reference verdict (or ADOPTING_ID for an id introduced by a v2 fix); adoption_status is the W3 "
+                "disposition (W3 rows), REFERENCED / NOT_ADOPTED (W4 rows) or NOT_CHECKED_OUTSIDE_C5_H1_CHECK (W2 / "
+                "W5 rows).",
+        "rows": rows,
+    }
+    reg["draft_reference_verification"] = {
+        "statement": "Every id in v1 unmerged_draft_references, checked against the merged files. VERIFIED: exists "
+                     "with the meaning used; CHANGED: exists but a usage pointed at the wrong item (fixed, see "
+                     "reference_fixes); ABSENT: not in the merged file.",
+        "verdicts": verdicts,
+        "reference_fixes": [{"where": a, "field_or_adopter": b, "v1": c, "v2": d, "why": e}
+                            for (a, b, c, d, e) in REFERENCE_FIXES_V2],
+    }
+    reg["c5_adoption_check"] = c5
+    return reg
+
+
 # ---------------------------------------------------------------------------------------------------------------------
 # Markdown rendering
 # ---------------------------------------------------------------------------------------------------------------------
@@ -1275,13 +1610,30 @@ def _fmt(x):
 def render_md(reg):
     L = []
     a = L.append
-    a("# H-1 lifetime / atomic-oxygen degradation register (fo_ao_lifetime_register) — DRAFT")
-    a("")
-    a("Generated by `build_ao_lifetime_register.py` from the same data as "
-      "[`ao_lifetime_register_v1.json`](ao_lifetime_register_v1.json) (schema "
-      "[`ao_lifetime_register_v1.schema.json`](ao_lifetime_register_v1.schema.json)). Do not edit by hand; run "
-      "`python docs/experiments/lifetime_ao/build_ao_lifetime_register.py` (and `--check` in CI). The JSON wins.")
-    a("")
+    v2 = reg.get("version") == "v2"
+    if not v2:
+        a("# H-1 lifetime / atomic-oxygen degradation register (fo_ao_lifetime_register) — DRAFT")
+        a("")
+        a("Generated by `build_ao_lifetime_register.py` from the same data as "
+          "[`ao_lifetime_register_v1.json`](ao_lifetime_register_v1.json) (schema "
+          "[`ao_lifetime_register_v1.schema.json`](ao_lifetime_register_v1.schema.json)). Do not edit by hand; run "
+          "`python docs/experiments/lifetime_ao/build_ao_lifetime_register.py` (and `--check` in CI). The JSON wins.")
+        a("")
+    else:
+        a("# H-1 lifetime / atomic-oxygen degradation register v2 (fo_ao_lifetime_register) — DRAFT")
+        a("")
+        a("Generated by `build_ao_lifetime_register.py` from the same data as "
+          "[`ao_lifetime_register_v2.json`](ao_lifetime_register_v2.json) (schema "
+          "[`ao_lifetime_register_v2.schema.json`](ao_lifetime_register_v2.schema.json)). Do not edit by hand; run "
+          "`python docs/experiments/lifetime_ao/build_ao_lifetime_register.py` (and `--check` in CI). The JSON wins. "
+          "v1 ([`ao_lifetime_register_v1.json`](ao_lifetime_register_v1.json), "
+          "[`AO_LIFETIME_REGISTER.md`](AO_LIFETIME_REGISTER.md)) is the historical record, kept byte-identical "
+          f"(sha256 `{reg['supersedes']['sha256']}`, pinned by W3 as SRC-AOL).")
+        a("")
+        a("**Change log.**")
+        for c in reg["change_log"]:
+            a(f"- {c['version']} ({c['date']}): {c['change']}")
+        a("")
     a("**Status: DRAFT for owner review.** Lane `fo_ao_lifetime_register`, trigger `T_PIVOT_AO_LIFETIME_REGISTER`, "
       "owner disposition `od_hardware_pivot` (execution directive 2026-09-27; controls C1, C4, C5, C6). Separate from "
       "thrust performance.")
@@ -1324,16 +1676,68 @@ def render_md(reg):
     a("")
     a(reg["interface_table"]["note"])
     a("")
-    a("| requirement | adopter | target | related ids (unmerged drafts) | id status | action | note |")
-    a("|---|---|---|---|---|---|---|")
-    for row in reg["interface_table"]["rows"]:
-        a(f"| {row['requirement']} | {row['adopter']} | {row['target']} | {', '.join(row['observed_related_ids']) or '-'}"
-          f" | {row['related_ids_status']} | {row['action']} | {row['note'] or '-'} |")
-    a("")
-    ud = reg["unmerged_draft_references"]
-    a(f"**Unmerged draft references ({ud['status']}).** {ud['statement']} Re-verify: {ud['re_verify_when']}. "
-      f"Ids: {', '.join(ud['ids'])}.")
-    a("")
+    if not v2:
+        a("| requirement | adopter | target | related ids (unmerged drafts) | id status | action | note |")
+        a("|---|---|---|---|---|---|---|")
+        for row in reg["interface_table"]["rows"]:
+            a(f"| {row['requirement']} | {row['adopter']} | {row['target']} | "
+              f"{', '.join(row['observed_related_ids']) or '-'}"
+              f" | {row['related_ids_status']} | {row['action']} | {row['note'] or '-'} |")
+        a("")
+        ud = reg["unmerged_draft_references"]
+        a(f"**Unmerged draft references ({ud['status']}).** {ud['statement']} Re-verify: {ud['re_verify_when']}. "
+          f"Ids: {', '.join(ud['ids'])}.")
+        a("")
+    else:
+        a("| requirement | adopter | target | related ids (verdict) | action | adoption status | adopted ids | note |")
+        a("|---|---|---|---|---|---|---|---|")
+        for row in reg["interface_table"]["rows"]:
+            rel = ", ".join(f"{r['id']} ({r['verdict']}{', fixed v2' if r['usage_fixed_in_v2'] else ''})"
+                            for r in row["related_ids"]) or "-"
+            a(f"| {row['requirement']} | {row['adopter']} | {row['target']} | {rel} | {row['action']} | "
+              f"{row['adoption_status']} | {', '.join(row['adopted_ids']) or '-'} | {row['note'] or '-'} |")
+        a("")
+        dv = reg["draft_reference_verification"]
+        a("### 3.1 Re-verification of the v1 draft references against the merged W3 / W4")
+        a("")
+        a(dv["statement"])
+        a("")
+        a("| id | register | v1 usage | verdict | merged item | note | W3's own verdict |")
+        a("|---|---|---|---|---|---|---|")
+        for v in dv["verdicts"]:
+            a(f"| {v['id']} | {v['register']} | {v['v1_usage']} | **{v['verdict']}** | {v['merged']['item']} | "
+              f"{v['note'] or '-'} | {v['w3_own_verdict'] or '-'} |")
+        a("")
+        a("Fixes applied in v2:")
+        for f_ in dv["reference_fixes"]:
+            a(f"- {f_['where']} ({f_['field_or_adopter']}): {', '.join(f_['v1'])} → "
+              f"{', '.join(f_['v2']) or '(none)'} — {f_['why']}.")
+        a("")
+        mi = reg["merged_inputs"]
+        a("Pinned merged inputs: " + "; ".join(f"`{x['path']}` sha256 `{x['sha256']}`" for x in mi["files"]) + ".")
+        a("")
+        c5 = reg["c5_adoption_check"]
+        a("### 3.2 Control C5 adoption check (every provision → H-1 requirement id)")
+        a("")
+        a(c5["statement"])
+        a("")
+        cn = c5["counts"]
+        a(f"Provisions checked: {cn['provisions']}; with an H-1 (W3) requirement id: {cn['with_h1_requirement_id']}; "
+          "W3 dispositions: " + ", ".join(f"{k} {v}" for k, v in cn["w3_by_disposition"].items()) +
+          f"; W4 rows not adopted: {cn['w4_rows_not_adopted']}; W3 back-traces only in text: "
+          f"{cn['w3_back_trace_text_only']}, none: {cn['w3_back_trace_none']}.")
+        a("")
+        a("| provision | W3 disposition | H-1 requirement ids (back-trace) | W4 status | W3 note |")
+        a("|---|---|---|---|---|")
+        for r in c5["rows"]:
+            ids = ", ".join(f"{h} ({t})" for h, t in r["w3_back_trace"].items()) or "-"
+            a(f"| {r['id']} | {r['w3_disposition']} | {ids} | {r['w4_status']} | {r['w3_note'] or '-'} |")
+        a("")
+        a("**Not adopted (open, not waived):**")
+        a("")
+        for n in c5["not_adopted"]:
+            a(f"- {n['id']} — {n['by']}: {n['status']}; needed: {n['needed']}")
+        a("")
     a("## 4. Degradation register (H-1 DEGRADATION REGISTER)")
     a("")
     a("| id | mechanism | components | species | energy regime | evidence status | life number |")
@@ -1426,7 +1830,8 @@ def render_md(reg):
     a("")
     a("## 7. Open owner questions")
     for q in reg["open_owner_questions"]:
-        a(f"- **{q['id']}** ({q['to']}): {q['question']}")
+        a(f"- **{q['id']}** ({q['to']}): {q['question']}"
+          + (f" *W3:* {q['w3_disposition']}." if "w3_disposition" in q else ""))
     a("")
     a("## 8. Sources accessed by this lane")
     for k, s in reg["sources"].items():
@@ -1439,9 +1844,15 @@ def render_md(reg):
     a("Repository files referenced (read-only): " + ", ".join(f"`{v}`" for v in reg["repository_references"].values())
       + ".")
     a("")
-    a("Parallel workstreams referenced by planned path only (not read as inputs): " +
-      "; ".join(f"{k} `{v}`" if v.endswith("/") else f"{k} ({v})" for k, v in reg["planned_paths_not_read"].items())
-      + ".")
+    if not v2:
+        a("Parallel workstreams referenced by planned path only (not read as inputs): " +
+          "; ".join(f"{k} `{v}`" if v.endswith("/") else f"{k} ({v})" for k, v in reg["planned_paths_not_read"].items())
+          + ".")
+    else:
+        a("Parallel workstreams referenced by path (W3 / W4 are read as pinned inputs above; the others are not read): "
+          + "; ".join((f"{k} `{v['path_or_status']}`" if v["path_or_status"].endswith("/") else
+                       f"{k} ({v['path_or_status']})") + (" [present in base]" if v["present_in_base"] else "")
+                      for k, v in reg["planned_paths"].items()) + ".")
     a("")
     return "\n".join(L)
 
@@ -1453,9 +1864,15 @@ def render_json(reg):
 def main(argv):
     reg = build_register()
     js, md = render_json(reg), render_md(reg)
+    if hashlib.sha256(js.encode("utf-8")).hexdigest() != V1_JSON_SHA256:
+        raise RuntimeError("v1 register no longer reproduces its pinned sha256 (W3 SRC-AOL); v1 is the historical "
+                           "record and must not change. Put changes in a new version.")
+    reg2 = build_register_v2()
+    js2, md2 = render_json(reg2), render_md(reg2)
+    outputs = ((OUT_JSON, js), (OUT_MD, md), (OUT_JSON_V2, js2), (OUT_MD_V2, md2))
     if "--check" in argv:
         bad = []
-        for path, text in ((OUT_JSON, js), (OUT_MD, md)):
+        for path, text in outputs:
             try:
                 with open(path, encoding="utf-8") as f:
                     if f.read() != text:
@@ -1465,13 +1882,12 @@ def main(argv):
         if bad:
             print("OUT OF DATE: " + ", ".join(os.path.relpath(p, ROOT) for p in bad))
             return 1
-        print("OK: ao_lifetime_register_v1.json and AO_LIFETIME_REGISTER.md are up to date")
+        print("OK: v1 (historical) and v2 register JSON / Markdown are up to date")
         return 0
-    with open(OUT_JSON, "w", encoding="utf-8") as f:
-        f.write(js)
-    with open(OUT_MD, "w", encoding="utf-8") as f:
-        f.write(md)
-    print(f"wrote {os.path.relpath(OUT_JSON, ROOT)} and {os.path.relpath(OUT_MD, ROOT)}")
+    for path, text in outputs:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(text)
+    print("wrote " + ", ".join(os.path.relpath(p, ROOT) for p, _ in outputs))
     return 0
 
 
