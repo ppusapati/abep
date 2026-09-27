@@ -1,8 +1,13 @@
 # O4 disposition matrix — builder and procedure (S12 machinery)
 
-**Status: machinery only.** The official matrix does not exist yet and is not committed here. Trigger
-`T_O4_DISPOSITION_MATRIX` (follow-on `fo_o4_disposition_matrix`) is **not ready**: 7 required escalation datasets from
-attempt 2 are not yet scored (`hmslow` × 3, `hmshigh` × 3, `n2dication_nel_wang`). This lane does not claim that trigger.
+**Status: official matrix built, dispositions pending owner.** All 5 first stages and all 13 escalations are scored
+(the last attempt-3 datasets were scored at `bca98651b3`). `--status` reports no missing or undetermined dataset. The
+official matrix `o4_disposition_matrix_v1.json` is committed, and `--check` reproduces it byte for byte. The owner review
+is in `O4_DISPOSITION_MATRIX_REVIEW.md`: evidence per family × baseline, cross-family patterns, and the owner decisions
+with the schema definitions quoted. No disposition is recommended or recorded. The `o4_dispositions_feed` leaves every
+owner field and every `*decision_sha256` EMPTY. No `o4_dispositions_v1` file exists yet; only the owner writes one. The
+ledger records for `T_O4_DISPOSITION_MATRIX` (CLAIMED / LAUNCHED / VERIFIED) are the orchestrator's; this lane does not
+write the ledger.
 
 ## What the matrix is
 
@@ -52,9 +57,8 @@ and absolute Hall performance in the architecture comparison, is gated on the O4
 CLAUDE.md *admission/Hall maps stay gated until the O4 dispositions are complete*). It is **not** needed for
 **Milestone A** (conditional selection), which does not require Physics Baseline 1.0, and it never delays hardware
 preparation (`docs/decisions/OD_HARDWARE_PIVOT_2026_09_27.json`, W6). Indirectly it feeds Milestone C only through B.
-To contribute to B it still needs: the 7 attempt-2 escalations scored; the official matrix built under the ledger; the
-owner's dispositions recorded (with the decision hash bound then); and, separately, a transport closure that passes
-genuinely new predictive evidence. The credible set is empty today, so the matrix alone admits nothing.
+To contribute to B it still needs: the owner's dispositions recorded (with the decision hash bound then); the ledger
+records of `T_O4_DISPOSITION_MATRIX`; and, separately, a transport closure that passes genuinely new predictive evidence. The credible set is empty today, so the matrix alone admits nothing.
 
 The layout of the matrix is in `o4_disposition_matrix_schema_v1.json`.
 
@@ -63,7 +67,7 @@ The layout of the matrix is in `o4_disposition_matrix_schema_v1.json`.
 1. **Status.** `python docs/o4/disposition_matrix/build_o4_disposition_matrix.py --status` prints the required, scored,
    missing and undetermined dataset ids. "Required" means the 5 first stages, plus every escalation of a first stage whose
    scored trigger fired. An escalation is "undetermined" while its first stage is unscored.
-2. **Wait.** Wait until `missing` and `undetermined` are both empty, which means each attempt-2 escalation has been scored
+2. **Wait.** Wait until `missing` and `undetermined` are both empty, which means each required escalation has been scored
    once through the standard `scripts/score_p5_n2_staged.py freeze|score` pipeline. Until then the official build exits
    with code 2 and lists the missing ids (`MatrixRefused`).
 3. **Build.** `T_O4_DISPOSITION_MATRIX` must then be claimed through the ledger under the operating model. After that,
@@ -103,4 +107,5 @@ This is evidence for the O4 gate on admission of the ionization/discharge → ac
 - rewrite the v1 outcome (INCONCLUSIVE for all nine screening candidates, credible set ∅);
 - put any screening candidate into the credible set.
 
-Tests: `tests/test_o4_disposition_matrix.py`.
+Tests: `tests/test_o4_disposition_matrix.py`. They check that the official matrix reproduces, the feed is unbound, the review tables
+regenerate from the matrix (`python tests/test_o4_disposition_matrix.py --print-review-tables`), and no forbidden wording appears.
