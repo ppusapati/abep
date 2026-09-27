@@ -40,7 +40,7 @@
   "model-derived",
   "assumed"
  ],
- "tbd_prefix": "TBD — requires ",
+ "tbd_prefix": "TBD \u2014 requires ",
  "required_guard_categories": [
   "pressure",
   "discharge_current",
@@ -89,7 +89,7 @@
   "special_values": [
    "n/a: <reason>",
    "none: <reason>",
-   "TBD — requires <what>"
+   "TBD \u2014 requires <what>"
   ]
  },
  "transition_kinds": {
@@ -171,7 +171,7 @@
    },
    "valves": {
     "xe_cathode": "open (purge setpoint)",
-    "xe_anode": "open (purge setpoint; TBD — requires feed-system design)",
+    "xe_anode": "open (purge setpoint; TBD \u2014 requires feed-system design)",
     "atm_anode": "closed"
    },
    "compressor": "off",
@@ -185,7 +185,7 @@
     "p_Xe_line <= p_Xe_line_max",
     "I_d <= I_d_off_max"
    ],
-   "rationale": "The repository's cathode model treats atomic O as an emitter poison (abep_sim.plasma_devices:LaB6Cathode.coverage; abep_sim.aochem MATERIAL_CLASS 'LaB6 ... must be Xe-shielded'); purging before heating follows from that model. The need for, and duration of, a purge is TBD — requires cathode O-exposure test.",
+   "rationale": "The repository's cathode model treats atomic O as an emitter poison (abep_sim.plasma_devices:LaB6Cathode.coverage; abep_sim.aochem MATERIAL_CLASS 'LaB6 ... must be Xe-shielded'); purging before heating follows from that model. The need for, and duration of, a purge is TBD \u2014 requires cathode O-exposure test.",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -290,7 +290,7 @@
    "outputs": {
     "anode_hv": "off",
     "keeper": "on",
-    "heater": "per cathode design (TBD — requires cathode qualification)",
+    "heater": "per cathode design (TBD \u2014 requires cathode qualification)",
     "magnet": "off",
     "preionizer": {
      "none": "absent (hall_only)",
@@ -314,7 +314,7 @@
     "I_keeper <= I_keeper_max",
     "p_Xe_line <= p_Xe_line_max"
    ],
-   "rationale": "Seed hypothesis (lane_19 startup_reference V2; experiment-protocol draft order heater, keeper, flows, pre-ionizer, discharge). PROPOSED: whether a seed helps anode ignition, and the heater/pre-ionizer overlap it causes in P_startup_peak, are TBD — requires pre-ionizer ignition test."
+   "rationale": "Seed hypothesis (lane_19 startup_reference V2; experiment-protocol draft order heater, keeper, flows, pre-ionizer, discharge). PROPOSED: whether a seed helps anode ignition, and the heater/pre-ionizer overlap it causes in P_startup_peak, are TBD \u2014 requires pre-ionizer ignition test."
   },
   {
    "id": "XE_DISCHARGE_IGNITION",
@@ -325,7 +325,7 @@
    "outputs": {
     "anode_hv": "on",
     "keeper": "on",
-    "heater": "per cathode design (TBD — requires cathode qualification)",
+    "heater": "per cathode design (TBD \u2014 requires cathode qualification)",
     "magnet": "on",
     "preionizer": {
      "none": "absent (hall_only)",
@@ -366,7 +366,7 @@
    "description": "Xe-only discharge at the warm-up setpoint for thermal soak. Compressor spin-up is commanded on entry and the atmospheric chamber fills behind the closed atmospheric valve.",
    "outputs": {
     "anode_hv": "on",
-    "keeper": "per cathode design (TBD — requires cathode qualification)",
+    "keeper": "per cathode design (TBD \u2014 requires cathode qualification)",
     "heater": "off",
     "magnet": "on",
     "preionizer": {
@@ -440,7 +440,7 @@
     "I_d <= I_d_overcurrent_max",
     "p_atm_chamber <= p_atm_chamber_max"
    ],
-   "rationale": "Keeps the Hall stage on its demonstrated Xe state while the pre-ionizer is brought up, so that a pre-ionizer failure never coincides with the atmosphere transfer. PROPOSED ordering (lane_19 V1); TBD — requires pre-ionizer ignition test."
+   "rationale": "Keeps the Hall stage on its demonstrated Xe state while the pre-ionizer is brought up, so that a pre-ionizer failure never coincides with the atmosphere transfer. PROPOSED ordering (lane_19 V1); TBD \u2014 requires pre-ionizer ignition test."
   },
   {
    "id": "ATMOSPHERE_ADMISSION",
@@ -667,7 +667,7 @@
     "xe_anode": "open (fallback setpoint)",
     "atm_anode": "closed"
    },
-   "compressor": "idle or stopped (TBD — requires compressor restart characterization)",
+   "compressor": "idle or stopped (TBD \u2014 requires compressor restart characterization)",
    "xe_rate": "mdot_Xe_cathode + mdot_Xe_anode",
    "entry_actions": [
     "close atmospheric valve",
@@ -1710,7 +1710,7 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+    "at_transition": "TBD \u2014 requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
    },
    "rationale": "Reverts to the independent Xe path rather than shutting down.",
    "applies_to": [
@@ -1762,7 +1762,7 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+    "at_transition": "TBD \u2014 requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
    },
    "rationale": "Reverts to the independent Xe path rather than shutting down.",
    "applies_to": [
@@ -1811,7 +1811,7 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+    "at_transition": "TBD \u2014 requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
    },
    "rationale": "Reverts to the independent Xe path rather than shutting down.",
    "applies_to": [
@@ -1860,7 +1860,7 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
-    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+    "at_transition": "TBD \u2014 requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
    },
    "rationale": "Reverts to the independent Xe path rather than shutting down.",
    "applies_to": [
@@ -1909,7 +1909,7 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+    "at_transition": "TBD \u2014 requires thruster test: Xe anode flow is raised before the atmospheric valve closes so that the discharge stays lit; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
    },
    "rationale": "Reverts to the independent Xe path rather than shutting down.",
    "applies_to": [
@@ -3666,9 +3666,9 @@
    },
    "xe_consumed": {
     "in_source_state": "none: all Xe valves closed in OFF",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -3722,9 +3722,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_purge, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -3778,9 +3778,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -3834,9 +3834,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -3891,9 +3891,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -3948,9 +3948,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -4005,9 +4005,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -4062,9 +4062,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -4119,9 +4119,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -4176,9 +4176,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -4233,9 +4233,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -4290,9 +4290,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -4347,9 +4347,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -4403,9 +4403,9 @@
    },
    "xe_consumed": {
     "in_source_state": "none: all Xe valves closed in RESTART",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
-   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD — requires cathode qualification test).",
+   "rationale": "Hard faults cut power and close valves immediately; the cathode cool-down under Xe is sacrificed for safety (cathode life impact TBD \u2014 requires cathode qualification test).",
    "applies_to": [
     "hall_only",
     "rf_hall/V1",
@@ -5010,7 +5010,7 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
    "rationale": "Hard faults, including a pre-ionizer supply trip, cut power and close valves immediately.",
    "applies_to": [
@@ -5110,7 +5110,7 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD — requires feed-system line volumes"
+    "at_transition": "none: all propellant valves commanded closed (fail-closed); Xe trapped downstream of closed valves: TBD \u2014 requires feed-system line volumes"
    },
    "rationale": "Hard faults, including a pre-ionizer supply trip, cut power and close valves immediately.",
    "applies_to": [
@@ -5162,9 +5162,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+    "at_transition": "TBD \u2014 requires thruster test: Xe anode flow is raised before the atmospheric valve closes; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
    },
-   "rationale": "Loss of the pre-ionization stage returns the Hall stage to its Xe state, which the start sequence demonstrated without the pre-ionizer in V1 (V2: TBD — requires test that the Hall stage holds on Xe with the seed off).",
+   "rationale": "Loss of the pre-ionization stage returns the Hall stage to its Xe state, which the start sequence demonstrated without the pre-ionizer in V1 (V2: TBD \u2014 requires test that the Hall stage holds on Xe with the seed off).",
    "applies_to": [
     "rf_hall/V1",
     "rf_hall/V2",
@@ -5214,9 +5214,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+    "at_transition": "TBD \u2014 requires thruster test: Xe anode flow is raised before the atmospheric valve closes; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
    },
-   "rationale": "Loss of the pre-ionization stage returns the Hall stage to its Xe state, which the start sequence demonstrated without the pre-ionizer in V1 (V2: TBD — requires test that the Hall stage holds on Xe with the seed off).",
+   "rationale": "Loss of the pre-ionization stage returns the Hall stage to its Xe state, which the start sequence demonstrated without the pre-ionizer in V1 (V2: TBD \u2014 requires test that the Hall stage holds on Xe with the seed off).",
    "applies_to": [
     "rf_hall/V1",
     "rf_hall/V2",
@@ -5266,9 +5266,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+    "at_transition": "TBD \u2014 requires thruster test: Xe anode flow is raised before the atmospheric valve closes; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
    },
-   "rationale": "Loss of the pre-ionization stage returns the Hall stage to its Xe state, which the start sequence demonstrated without the pre-ionizer in V1 (V2: TBD — requires test that the Hall stage holds on Xe with the seed off).",
+   "rationale": "Loss of the pre-ionization stage returns the Hall stage to its Xe state, which the start sequence demonstrated without the pre-ionizer in V1 (V2: TBD \u2014 requires test that the Hall stage holds on Xe with the seed off).",
    "applies_to": [
     "rf_hall/V1",
     "rf_hall/V2",
@@ -5318,9 +5318,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode, t_in_state)",
-    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+    "at_transition": "TBD \u2014 requires thruster test: Xe anode flow is raised before the atmospheric valve closes; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
    },
-   "rationale": "Loss of the pre-ionization stage returns the Hall stage to its Xe state, which the start sequence demonstrated without the pre-ionizer in V1 (V2: TBD — requires test that the Hall stage holds on Xe with the seed off).",
+   "rationale": "Loss of the pre-ionization stage returns the Hall stage to its Xe state, which the start sequence demonstrated without the pre-ionizer in V1 (V2: TBD \u2014 requires test that the Hall stage holds on Xe with the seed off).",
    "applies_to": [
     "rf_hall/V1",
     "rf_hall/V2",
@@ -5370,9 +5370,9 @@
    },
    "xe_consumed": {
     "in_source_state": "integral(mdot_Xe_cathode + mdot_Xe_anode, t_in_state)",
-    "at_transition": "TBD — requires thruster test: Xe anode flow is raised before the atmospheric valve closes; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
+    "at_transition": "TBD \u2014 requires thruster test: Xe anode flow is raised before the atmospheric valve closes; the overlap Xe is bounded by mdot_Xe_anode_fallback_set times the switch time"
    },
-   "rationale": "Loss of the pre-ionization stage returns the Hall stage to its Xe state, which the start sequence demonstrated without the pre-ionizer in V1 (V2: TBD — requires test that the Hall stage holds on Xe with the seed off).",
+   "rationale": "Loss of the pre-ionization stage returns the Hall stage to its Xe state, which the start sequence demonstrated without the pre-ionizer in V1 (V2: TBD \u2014 requires test that the Hall stage holds on Xe with the seed off).",
    "applies_to": [
     "rf_hall/V1",
     "rf_hall/V2",
@@ -5479,7 +5479,7 @@
      "note": "ram atomic-O number flux for the exposure environment (not a cathode dose model)"
     }
    ],
-   "simulator_gap": "TBD — requires a cathode O-exposure dose model and test; the timer itself is controller-internal"
+   "simulator_gap": "TBD \u2014 requires a cathode O-exposure dose model and test; the timer itself is controller-internal"
   },
   "t_atm_healthy": {
    "unit": "s",
@@ -5507,7 +5507,7 @@
      "status": "available"
     }
    ],
-   "simulator_gap": "TBD — requires an eclipse-entry-time predictor (abep_sim.mission_env gives orbit-averaged eclipse fraction only)"
+   "simulator_gap": "TBD \u2014 requires an eclipse-entry-time predictor (abep_sim.mission_env gives orbit-averaged eclipse fraction only)"
   },
   "n_keeper_retry": {
    "unit": "-",
@@ -5550,10 +5550,11 @@
     {
      "ref": "abep_sim.life:cathode_life",
      "output": "cycles_ok",
-     "status": "available",
-     "note": "compares LifeInputs.cathode_starts against LifeInputs.cathode_start_limit; both are unsourced code priors (verify)"
+     "status": "input_only",
+     "note": "cathode_life takes LifeInputs.cathode_starts as an input, echoes it and returns cycles_ok = (cathode_starts <= cathode_start_limit), a boolean check; it does not compute the counter. Both values are unsourced code priors (verify)"
     }
-   ]
+   ],
+   "simulator_gap": "n/a: flight-software counter (non-volatile), not a physics quantity; the start limit n_cathode_starts_max is TBD (see parameters)"
   },
   "cmd_start": {
    "unit": "bool",
@@ -5616,7 +5617,7 @@
      "note": "sizing only; no blow-down or PVT gauging"
     }
    ],
-   "simulator_gap": "TBD — requires a Xe tank PVT/blow-down model and transducer specification"
+   "simulator_gap": "TBD \u2014 requires a Xe tank PVT/blow-down model and transducer specification"
   },
   "p_Xe_line": {
    "unit": "Pa",
@@ -5624,7 +5625,7 @@
    "description": "regulated Xe feed-line (plenum) pressure downstream of the regulator",
    "telemetry": "pressure transducer",
    "simulator_suppliers": [],
-   "simulator_gap": "TBD — requires a Xe feed-system (regulator/plenum) model; none exists in abep_sim"
+   "simulator_gap": "TBD \u2014 requires a Xe feed-system (regulator/plenum) model; none exists in abep_sim"
   },
   "m_Xe_remaining": {
    "unit": "kg",
@@ -5639,7 +5640,7 @@
      "note": "thruster.CARDS are priors calibrated partly to the withdrawn Marchioni calibration (invented geometry); structure reusable for control-logic prototyping, absolute values not quotable"
     }
    ],
-   "simulator_gap": "TBD — requires a Xe gauging method and a mission Xe budget from admitted design Hall maps"
+   "simulator_gap": "TBD \u2014 requires a Xe gauging method and a mission Xe budget from admitted design Hall maps"
   },
   "mdot_Xe_cathode": {
    "unit": "kg/s",
@@ -5680,7 +5681,7 @@
      "note": "thruster.CARDS are priors calibrated partly to the withdrawn Marchioni calibration (invented geometry); structure reusable for control-logic prototyping, absolute values not quotable"
     }
    ],
-   "simulator_gap": "n/a: commanded flow, measured by the flow controller; a thrust-based Xe topping flow needs admitted design Hall maps (TBD — requires an admitted transport-ensemble member)"
+   "simulator_gap": "n/a: commanded flow, measured by the flow controller; a thrust-based Xe topping flow needs admitted design Hall maps (TBD \u2014 requires an admitted transport-ensemble member)"
   },
   "mdot_Xe_purge": {
    "unit": "kg/s",
@@ -5688,7 +5689,7 @@
    "description": "total Xe purge flow",
    "telemetry": "flow controller telemetry",
    "simulator_suppliers": [],
-   "simulator_gap": "TBD — requires a purge procedure (flow path and setpoint) from feed-system design"
+   "simulator_gap": "TBD \u2014 requires a purge procedure (flow path and setpoint) from feed-system design"
   },
   "mdot_leak_est": {
    "unit": "kg/s",
@@ -5703,7 +5704,7 @@
      "note": "mdot_leak = chamber outflow minus anode delivery (out[s] - anode[s]): a model split of the atmospheric gas chamber outflow, not an external leak; listed for traceability only"
     }
    ],
-   "simulator_gap": "TBD — requires a feed-system leak specification and a leak-detection method (pressure decay / flow balance) for both the Xe and the atmospheric path"
+   "simulator_gap": "TBD \u2014 requires a feed-system leak specification and a leak-detection method (pressure decay / flow balance) for both the Xe and the atmospheric path"
   },
   "p_O_cathode_est": {
    "unit": "Pa",
@@ -5731,13 +5732,13 @@
     },
     {
      "ref": "abep_sim.cathode_integration:oxygen_poisoning_screen",
-     "output": "O2 screen status (NO_QUANTITATIVE_EVIDENCE for atomic O / N2)",
-     "status": "available",
+     "output": "O2 screen status (takes p_O2_Torr as an input; NO_QUANTITATIVE_EVIDENCE for atomic O / N2); not an estimate",
+     "status": "input_only",
      "lazy": true,
      "note": "lane_19; screens O2 only against recorded evidence points; atomic O is not covered by the accessed sources"
     }
    ],
-   "simulator_gap": "TBD — requires a sourced LaB6 atomic-O tolerance (lane_19 records NO_QUANTITATIVE_EVIDENCE for atomic O and N2 in the accessed sources) and a cathode O-exposure test; the estimate is a code-prior model (verify)"
+   "simulator_gap": "TBD \u2014 requires a sourced LaB6 atomic-O tolerance (lane_19 records NO_QUANTITATIVE_EVIDENCE for atomic O and N2 in the accessed sources) and a cathode O-exposure test; the estimate is a code-prior model (verify)"
   },
   "T_emitter": {
    "unit": "K",
@@ -5752,7 +5753,7 @@
      "note": "emitter temperature needed for a demanded current with O poisoning; Richardson/poisoning coefficients are code priors (verify)"
     }
    ],
-   "simulator_gap": "TBD — requires the measurement method from cathode design"
+   "simulator_gap": "TBD \u2014 requires the measurement method from cathode design"
   },
   "P_heater": {
    "unit": "W",
@@ -5769,7 +5770,8 @@
     {
      "ref": "abep_sim.plasma_devices:LaB6Cathode.operate",
      "output": "P_W",
-     "status": "available"
+     "status": "component_only",
+     "note": "P_W = heater_W*(T/1700)^4*0.6 + keeper_W is total cathode power (heater + keeper), not heater power alone; code priors (verify)"
     },
     {
      "ref": "abep_sim.cathode_integration:startup_transient",
@@ -5806,7 +5808,7 @@
      "note": "lane_19 bookkeeping of the keeper state; no keeper discharge model"
     }
    ],
-   "simulator_gap": "TBD — requires keeper discharge characterization test; abep_sim has keeper current/power bookkeeping (abep_sim.cathode_integration, lane_19) but no keeper discharge model"
+   "simulator_gap": "TBD \u2014 requires keeper discharge characterization test; abep_sim has keeper current/power bookkeeping (abep_sim.cathode_integration, lane_19) but no keeper discharge model"
   },
   "V_keeper": {
    "unit": "V",
@@ -5814,7 +5816,7 @@
    "description": "keeper voltage",
    "telemetry": "PPU telemetry",
    "simulator_suppliers": [],
-   "simulator_gap": "TBD — requires keeper discharge characterization test"
+   "simulator_gap": "TBD \u2014 requires keeper discharge characterization test"
   },
   "I_d": {
    "unit": "A",
@@ -5835,7 +5837,7 @@
      "note": "0-D Hall closure (v1.2-v1.6) superseded; absolute Hall results withdrawn (CLAUDE.md 'Superseded / withdrawn'); v1.3 hysteresis was a numerical artefact"
     }
    ],
-   "simulator_gap": "TBD — requires an admitted transport-ensemble member with design-specific Hall maps and, for atmospheric or mixed feeds, O/O2 chemistry and Xe + atmosphere mixture support; ultimately a thruster test"
+   "simulator_gap": "TBD \u2014 requires an admitted transport-ensemble member with design-specific Hall maps and, for atmospheric or mixed feeds, O/O2 chemistry and Xe + atmosphere mixture support; ultimately a thruster test"
   },
   "I_d_ref": {
    "unit": "A",
@@ -5843,7 +5845,7 @@
    "description": "reference discharge current for the current throttle setpoint",
    "telemetry": "controller throttle table",
    "simulator_suppliers": [],
-   "simulator_gap": "TBD — requires a throttle table from admitted design Hall maps and thruster test"
+   "simulator_gap": "TBD \u2014 requires a throttle table from admitted design Hall maps and thruster test"
   },
   "Id_rms_rel": {
    "unit": "-",
@@ -5858,7 +5860,7 @@
      "note": "HallMap loads admitted transport-ensemble members only; the credible set is empty (CLAUDE.md gate 3), so no design Hall map exists. HallThruster.jl reaction sets cover Xe and N2/N only: no O/O2 chemistry and no Xe + atmosphere mixture"
     }
    ],
-   "simulator_gap": "TBD — requires thruster test (oscillation behaviour on mixed and atmospheric feed is not modelled)"
+   "simulator_gap": "TBD \u2014 requires thruster test (oscillation behaviour on mixed and atmospheric feed is not modelled)"
   },
   "T_thruster": {
    "unit": "K",
@@ -5873,7 +5875,7 @@
      "note": "steady-state lumped network; no warm-up transient"
     }
    ],
-   "simulator_gap": "TBD — requires a transient thermal model or thruster thermal test for warm-up timing"
+   "simulator_gap": "TBD \u2014 requires a transient thermal model or thruster thermal test for warm-up timing"
   },
   "thermal_warn": {
    "unit": "bool",
@@ -5945,7 +5947,7 @@
      "note": "design-point checks only"
     }
    ],
-   "simulator_gap": "TBD — requires compressor FDIR design (bearing/motor telemetry)"
+   "simulator_gap": "TBD \u2014 requires compressor FDIR design (bearing/motor telemetry)"
   },
   "compressor_derated": {
    "unit": "bool",
@@ -5953,7 +5955,7 @@
    "description": "compressor running below its commanded speed/throughput but not faulted",
    "telemetry": "FDIR",
    "simulator_suppliers": [],
-   "simulator_gap": "TBD — requires compressor FDIR design"
+   "simulator_gap": "TBD \u2014 requires compressor FDIR design"
   },
   "atm_path_fault": {
    "unit": "bool",
@@ -5961,7 +5963,7 @@
    "description": "atmospheric-path anomaly other than chamber pressure (intake, filter, atmospheric valve)",
    "telemetry": "FDIR",
    "simulator_suppliers": [],
-   "simulator_gap": "TBD — requires intake/filter/valve FDIR design"
+   "simulator_gap": "TBD \u2014 requires intake/filter/valve FDIR design"
   },
   "p_atm_chamber": {
    "unit": "Pa",
@@ -6092,7 +6094,7 @@
      "status": "input_only"
     }
    ],
-   "simulator_gap": "TBD — requires the spacecraft EPS specification"
+   "simulator_gap": "TBD \u2014 requires the spacecraft EPS specification"
   },
   "ppu_fault": {
    "unit": "bool",
@@ -6107,7 +6109,7 @@
      "note": "static rating check only"
     }
    ],
-   "simulator_gap": "TBD — requires PPU FDIR design"
+   "simulator_gap": "TBD \u2014 requires PPU FDIR design"
   },
   "hv_fault": {
    "unit": "bool",
@@ -6115,7 +6117,7 @@
    "description": "high-voltage isolation or arcing fault",
    "telemetry": "PPU FDIR",
    "simulator_suppliers": [],
-   "simulator_gap": "TBD — requires PPU FDIR design"
+   "simulator_gap": "TBD \u2014 requires PPU FDIR design"
   },
   "valve_fault": {
    "unit": "bool",
@@ -6123,7 +6125,7 @@
    "description": "valve position/command disagreement on any propellant valve",
    "telemetry": "valve drivers",
    "simulator_suppliers": [],
-   "simulator_gap": "TBD — requires feed-system FDIR design"
+   "simulator_gap": "TBD \u2014 requires feed-system FDIR design"
   },
   "sensor_redundancy_lost": {
    "unit": "bool",
@@ -6131,7 +6133,7 @@
    "description": "a guard quantity has lost its redundant measurement but is still observable",
    "telemetry": "FDIR",
    "simulator_suppliers": [],
-   "simulator_gap": "TBD — requires sensor architecture and FDIR design"
+   "simulator_gap": "TBD \u2014 requires sensor architecture and FDIR design"
   },
   "watchdog_fault": {
    "unit": "bool",
@@ -6139,7 +6141,7 @@
    "description": "controller watchdog or health-check failure",
    "telemetry": "flight software",
    "simulator_suppliers": [],
-   "simulator_gap": "TBD — requires flight-software design"
+   "simulator_gap": "TBD \u2014 requires flight-software design"
   },
   "T_cmd": {
    "unit": "mN",
@@ -6174,7 +6176,7 @@
      "note": "HallMap loads admitted transport-ensemble members only; the credible set is empty (CLAUDE.md gate 3), so no design Hall map exists. HallThruster.jl reaction sets cover Xe and N2/N only: no O/O2 chemistry and no Xe + atmosphere mixture"
     }
    ],
-   "simulator_gap": "TBD — requires an on-board thrust estimator validated by thruster test on atmospheric feed"
+   "simulator_gap": "TBD \u2014 requires an on-board thrust estimator validated by thruster test on atmospheric feed"
   },
   "P_bus_avail": {
    "unit": "W",
@@ -6189,13 +6191,13 @@
      "note": "orbit-step averages; array/battery parameters are spacecraft assumptions"
     }
    ],
-   "simulator_gap": "TBD — requires the spacecraft EPS interface (battery state of charge, array power) from the spacecraft prime"
+   "simulator_gap": "TBD \u2014 requires the spacecraft EPS interface (battery state of charge, array power) from the spacecraft prime"
   },
   "I_interstage": {
    "unit": "A",
    "kind": "measured",
    "description": "net electron current collected by the pre-ionizer stage that returns through the cathode (rf_hall, ecr_hall); identically zero for hall_only (no pre-ionizer)",
-   "telemetry": "pre-ionizer return-current sensor (TBD — requires interstage circuit design)",
+   "telemetry": "pre-ionizer return-current sensor (TBD \u2014 requires interstage circuit design)",
    "simulator_suppliers": [
     {
      "ref": "abep_sim.cathode_integration:electron_current_budget",
@@ -6205,15 +6207,15 @@
      "note": "lane_19 Kirchhoff budget; the interstage topology is an input"
     }
    ],
-   "simulator_gap": "TBD — requires interstage circuit design and pre-ionizer test (lane_18_interstage)"
+   "simulator_gap": "TBD \u2014 requires interstage circuit design and pre-ionizer test (lane_18_interstage)"
   },
   "preionizer_lit": {
    "unit": "bool",
    "kind": "flag",
    "description": "plasma present in the pre-ionization stage (rf_source for rf_hall; ecr_source with ecr_magnet energised for ecr_hall); not used for hall_only",
-   "telemetry": "pre-ionizer detection method (TBD — requires pre-ionizer design: e.g. forward/reflected power or impedance signature)",
+   "telemetry": "pre-ionizer detection method (TBD \u2014 requires pre-ionizer design: e.g. forward/reflected power or impedance signature)",
    "simulator_suppliers": [],
-   "simulator_gap": "TBD — requires a pre-ionizer plasma-detection method from source design and test (docs/evidence/rf_source/, docs/evidence/ecr_source/)"
+   "simulator_gap": "TBD \u2014 requires a pre-ionizer plasma-detection method from source design and test (docs/evidence/rf_source/, docs/evidence/ecr_source/)"
   },
   "preionizer_fault": {
    "unit": "bool",
@@ -6221,7 +6223,7 @@
    "description": "pre-ionizer hard fault (rf_hall: RF generator / matching / RF supply trip; ecr_hall: microwave source, isolator or ecr_magnet supply trip); false by construction for hall_only (no hardware)",
    "telemetry": "pre-ionizer supply telemetry",
    "simulator_suppliers": [],
-   "simulator_gap": "TBD — requires pre-ionizer FDIR design"
+   "simulator_gap": "TBD \u2014 requires pre-ionizer FDIR design"
   },
   "n_preion_retry": {
    "unit": "-",
@@ -6236,7 +6238,7 @@
   "p_Xe_tank_min": {
    "unit": "Pa",
    "description": "minimum Xe storage pressure for regulated feed",
-   "value": "TBD — requires Xe feed-system design (regulator minimum inlet pressure) and a tank blow-down model",
+   "value": "TBD \u2014 requires Xe feed-system design (regulator minimum inlet pressure) and a tank blow-down model",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6244,7 +6246,7 @@
   "p_Xe_line_min": {
    "unit": "Pa",
    "description": "lower bound of the regulated Xe line pressure",
-   "value": "TBD — requires Xe feed-system design and qualification test",
+   "value": "TBD \u2014 requires Xe feed-system design and qualification test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6252,7 +6254,7 @@
   "p_Xe_line_max": {
    "unit": "Pa",
    "description": "Xe line over-pressure limit",
-   "value": "TBD — requires Xe feed-system design (relief/lock-up settings) and qualification test",
+   "value": "TBD \u2014 requires Xe feed-system design (relief/lock-up settings) and qualification test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6260,7 +6262,7 @@
   "mdot_Xe_purge_set": {
    "unit": "kg/s",
    "description": "Xe purge flow setpoint",
-   "value": "TBD — requires cathode/feed purge procedure development test",
+   "value": "TBD \u2014 requires cathode/feed purge procedure development test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6268,7 +6270,7 @@
   "mdot_Xe_cathode_set": {
    "unit": "kg/s",
    "description": "Xe cathode flow setpoint",
-   "value": "TBD — requires cathode qualification test (abep_sim cathode flows are unsourced priors, not guard values)",
+   "value": "TBD \u2014 requires cathode qualification test (abep_sim cathode flows are unsourced priors, not guard values)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6276,7 +6278,7 @@
   "mdot_Xe_cathode_min": {
    "unit": "kg/s",
    "description": "minimum Xe cathode flow for stable emission and O shielding",
-   "value": "TBD — requires cathode qualification test with atmospheric plume exposure",
+   "value": "TBD \u2014 requires cathode qualification test with atmospheric plume exposure",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6284,7 +6286,7 @@
   "mdot_Xe_anode_ign_set": {
    "unit": "kg/s",
    "description": "Xe anode flow for discharge ignition",
-   "value": "TBD — requires thruster ignition test",
+   "value": "TBD \u2014 requires thruster ignition test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6292,7 +6294,7 @@
   "mdot_Xe_anode_warm_set": {
    "unit": "kg/s",
    "description": "Xe anode flow held through warm-up and atmosphere admission",
-   "value": "TBD — requires thruster warm-up test",
+   "value": "TBD \u2014 requires thruster warm-up test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6300,7 +6302,7 @@
   "mdot_Xe_anode_fallback_set": {
    "unit": "kg/s",
    "description": "Xe anode flow in Xe fallback",
-   "value": "TBD — requires thruster test and the Xe-only throttle table from admitted design Hall maps",
+   "value": "TBD \u2014 requires thruster test and the Xe-only throttle table from admitted design Hall maps",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6308,7 +6310,7 @@
   "mdot_Xe_anode_trim_max": {
    "unit": "kg/s",
    "description": "largest Xe anode trim flow that still counts as atmosphere-dominant operation",
-   "value": "TBD — requires owner definition of the mode boundary plus thruster test",
+   "value": "TBD \u2014 requires owner definition of the mode boundary plus thruster test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6316,7 +6318,7 @@
   "mdot_Xe_closed_max": {
    "unit": "kg/s",
    "description": "flow reading below which a Xe valve is treated as closed",
-   "value": "TBD — requires flow-sensor noise floor and valve internal-leak specification",
+   "value": "TBD \u2014 requires flow-sensor noise floor and valve internal-leak specification",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6324,7 +6326,7 @@
   "mdot_atm_closed_max": {
    "unit": "kg/s",
    "description": "flow estimate below which the atmospheric valve is treated as closed",
-   "value": "TBD — requires atmospheric valve internal-leak specification and flow-estimate uncertainty",
+   "value": "TBD \u2014 requires atmospheric valve internal-leak specification and flow-estimate uncertainty",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6332,7 +6334,7 @@
   "mdot_atm_anode_min": {
    "unit": "kg/s",
    "description": "minimum atmospheric anode flow for mixed or atmosphere-dominant operation",
-   "value": "TBD — requires thruster sustainment test on atmospheric feed (no admitted Hall model; no O/O2 chemistry)",
+   "value": "TBD \u2014 requires thruster sustainment test on atmospheric feed (no admitted Hall model; no O/O2 chemistry)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6340,7 +6342,7 @@
   "flow_tol_rel": {
    "unit": "-",
    "description": "relative tolerance between commanded and measured flow",
-   "value": "TBD — requires flow-controller characterization",
+   "value": "TBD \u2014 requires flow-controller characterization",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6348,7 +6350,7 @@
   "mdot_leak_max": {
    "unit": "kg/s",
    "description": "external leak rate that declares a leak fault",
-   "value": "TBD — requires feed-system leak specification",
+   "value": "TBD \u2014 requires feed-system leak specification",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6356,7 +6358,7 @@
   "m_Xe_reserve_startup": {
    "unit": "kg",
    "description": "Xe required before a cold start (purge, conditioning, ignition, warm-up and a controlled shutdown)",
-   "value": "TBD — requires the per-transition Xe ledger in this file evaluated with qualified flows and dwell times",
+   "value": "TBD \u2014 requires the per-transition Xe ledger in this file evaluated with qualified flows and dwell times",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6364,7 +6366,7 @@
   "m_Xe_reserve_restart": {
    "unit": "kg",
    "description": "Xe required before an autonomous restart",
-   "value": "TBD — requires the per-transition Xe ledger evaluated with qualified flows and dwell times",
+   "value": "TBD \u2014 requires the per-transition Xe ledger evaluated with qualified flows and dwell times",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6372,7 +6374,7 @@
   "m_Xe_reserve_fallback": {
    "unit": "kg",
    "description": "Xe held back so that at least one Xe-fallback episode can complete; required before atmosphere admission from warm-up and for Xe topping",
-   "value": "TBD — requires owner allocation from a mission Xe budget computed with admitted design Hall maps",
+   "value": "TBD \u2014 requires owner allocation from a mission Xe budget computed with admitted design Hall maps",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6380,7 +6382,7 @@
   "m_Xe_reserve_shutdown": {
    "unit": "kg",
    "description": "Xe that must remain to execute a controlled shutdown and the allocated restarts",
-   "value": "TBD — requires the per-transition Xe ledger evaluated with qualified flows and dwell times",
+   "value": "TBD \u2014 requires the per-transition Xe ledger evaluated with qualified flows and dwell times",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6388,7 +6390,7 @@
   "p_O_cathode_max": {
    "unit": "Pa",
    "description": "largest estimated O partial pressure at the emitter at which heating may start",
-   "value": "TBD — requires a sourced LaB6 atomic-O tolerance and cathode O-poisoning test (emitter material TBD); lane_19 records NO_QUANTITATIVE_EVIDENCE for atomic O; the abep_sim coverage model is an unvalidated code prior (verify)",
+   "value": "TBD \u2014 requires a sourced LaB6 atomic-O tolerance and cathode O-poisoning test (emitter material TBD); lane_19 records NO_QUANTITATIVE_EVIDENCE for atomic O; the abep_sim coverage model is an unvalidated code prior (verify)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6396,7 +6398,7 @@
   "t_purge_min": {
    "unit": "s",
    "description": "minimum Xe purge duration",
-   "value": "TBD — requires purge procedure development test",
+   "value": "TBD \u2014 requires purge procedure development test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6404,7 +6406,7 @@
   "t_purge_validity": {
    "unit": "s",
    "description": "time after a purge within which a warm restart may skip the purge",
-   "value": "TBD — requires cathode exposure test",
+   "value": "TBD \u2014 requires cathode exposure test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6412,7 +6414,7 @@
   "t_exposure_max": {
    "unit": "s",
    "description": "largest cumulative no-flow exposure after which a purge is mandatory",
-   "value": "TBD — requires cathode O-exposure test",
+   "value": "TBD \u2014 requires cathode O-exposure test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6420,7 +6422,7 @@
   "T_emitter_ignite_min": {
    "unit": "K",
    "description": "emitter temperature required before keeper ignition",
-   "value": "TBD — requires cathode qualification test",
+   "value": "TBD \u2014 requires cathode qualification test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6428,7 +6430,7 @@
   "T_emitter_cool_max": {
    "unit": "K",
    "description": "emitter temperature below which Xe cathode flow may stop at shutdown",
-   "value": "TBD — requires cathode qualification test (oxidation at temperature without flow)",
+   "value": "TBD \u2014 requires cathode qualification test (oxidation at temperature without flow)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6436,7 +6438,7 @@
   "t_heater_soak_min": {
    "unit": "s",
    "description": "minimum heater soak",
-   "value": "TBD — requires cathode qualification test",
+   "value": "TBD \u2014 requires cathode qualification test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6444,7 +6446,7 @@
   "t_heater_max": {
    "unit": "s",
    "description": "heater time-out for reaching T_emitter_ignite_min",
-   "value": "TBD — requires cathode qualification test",
+   "value": "TBD \u2014 requires cathode qualification test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6452,7 +6454,7 @@
   "P_heater_max": {
    "unit": "W",
    "description": "heater power limit",
-   "value": "TBD — requires cathode heater rating and PPU heater converter design",
+   "value": "TBD \u2014 requires cathode heater rating and PPU heater converter design",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6460,7 +6462,7 @@
   "I_keeper_min": {
    "unit": "A",
    "description": "keeper current that confirms keeper ignition",
-   "value": "TBD — requires keeper characterization test",
+   "value": "TBD \u2014 requires keeper characterization test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6468,7 +6470,7 @@
   "I_keeper_max": {
    "unit": "A",
    "description": "keeper over-current limit",
-   "value": "TBD — requires PPU keeper converter design and keeper characterization test",
+   "value": "TBD \u2014 requires PPU keeper converter design and keeper characterization test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6476,7 +6478,7 @@
   "I_keeper_off_max": {
    "unit": "A",
    "description": "keeper current reading that confirms keeper off",
-   "value": "TBD — requires PPU keeper telemetry noise floor",
+   "value": "TBD \u2014 requires PPU keeper telemetry noise floor",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6484,7 +6486,7 @@
   "V_keeper_max": {
    "unit": "V",
    "description": "keeper voltage above which the keeper is not coupled",
-   "value": "TBD — requires keeper characterization test",
+   "value": "TBD \u2014 requires keeper characterization test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6492,7 +6494,7 @@
   "t_keeper_ignite_max": {
    "unit": "s",
    "description": "keeper ignition window per attempt",
-   "value": "TBD — requires cathode ignition test",
+   "value": "TBD \u2014 requires cathode ignition test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6500,7 +6502,7 @@
   "n_keeper_retry_max": {
    "unit": "-",
    "description": "keeper ignition attempts per start",
-   "value": "TBD — requires FDIR policy (owner) informed by cathode ignition test",
+   "value": "TBD \u2014 requires FDIR policy (owner) informed by cathode ignition test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6508,7 +6510,7 @@
   "n_cathode_starts_max": {
    "unit": "-",
    "description": "cathode ignition cycles allowed over the mission",
-   "value": "TBD — requires cathode cycle-life test (abep_sim.life:LifeInputs.cathode_start_limit is an unsourced code prior)",
+   "value": "TBD \u2014 requires cathode cycle-life test (abep_sim.life:LifeInputs.cathode_start_limit is an unsourced code prior)",
    "source": null,
    "evidence_class": null,
    "determined_by": [
@@ -6518,7 +6520,7 @@
   "V_d_ign": {
    "unit": "V",
    "description": "anode voltage applied for ignition",
-   "value": "TBD — requires thruster ignition test",
+   "value": "TBD \u2014 requires thruster ignition test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6526,7 +6528,7 @@
   "V_d_op": {
    "unit": "V",
    "description": "anode voltage for operation",
-   "value": "TBD — requires admitted design Hall maps and thruster test",
+   "value": "TBD \u2014 requires admitted design Hall maps and thruster test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6534,7 +6536,7 @@
   "I_d_detect_min": {
    "unit": "A",
    "description": "discharge current above which the anode discharge is declared lit",
-   "value": "TBD — requires PPU current telemetry characterization and ignition test",
+   "value": "TBD \u2014 requires PPU current telemetry characterization and ignition test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6542,7 +6544,7 @@
   "I_d_off_max": {
    "unit": "A",
    "description": "discharge current below which the anode discharge is declared off (extinction while V_d is commanded)",
-   "value": "TBD — requires PPU current telemetry noise floor; operational detector, distinct from the pre-registered P5-N2 O1 extinction definition",
+   "value": "TBD \u2014 requires PPU current telemetry noise floor; operational detector, distinct from the pre-registered P5-N2 O1 extinction definition",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6550,7 +6552,7 @@
   "I_d_overcurrent_max": {
    "unit": "A",
    "description": "anode over-current trip",
-   "value": "TBD — requires PPU anode converter rating (abep_sim.ppu:Converter.I_max is a sizing input) and thruster test",
+   "value": "TBD \u2014 requires PPU anode converter rating (abep_sim.ppu:Converter.I_max is a sizing input) and thruster test",
    "source": null,
    "evidence_class": null,
    "determined_by": [
@@ -6560,7 +6562,7 @@
   "dI_d_admit_max": {
    "unit": "A",
    "description": "allowed |I_d - I_d_ref| during atmosphere admission",
-   "value": "TBD — requires thruster test on mixed feed (no admitted Hall model)",
+   "value": "TBD \u2014 requires thruster test on mixed feed (no admitted Hall model)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6568,7 +6570,7 @@
   "dI_d_band_max": {
    "unit": "A",
    "description": "allowed |I_d - I_d_ref| in steady operation",
-   "value": "TBD — requires thruster test and PPU regulation design",
+   "value": "TBD \u2014 requires thruster test and PPU regulation design",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6576,7 +6578,7 @@
   "Id_rms_rel_max": {
    "unit": "-",
    "description": "allowed relative I_d oscillation",
-   "value": "TBD — requires thruster test and PPU output-filter design",
+   "value": "TBD \u2014 requires thruster test and PPU output-filter design",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6584,7 +6586,7 @@
   "t_ignite_max": {
    "unit": "s",
    "description": "anode ignition window per attempt",
-   "value": "TBD — requires thruster ignition test",
+   "value": "TBD \u2014 requires thruster ignition test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6592,7 +6594,7 @@
   "n_ignite_retry_max": {
    "unit": "-",
    "description": "anode ignition attempts per start",
-   "value": "TBD — requires FDIR policy (owner) informed by thruster ignition test",
+   "value": "TBD \u2014 requires FDIR policy (owner) informed by thruster ignition test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6600,7 +6602,7 @@
   "T_thruster_warm_min": {
    "unit": "K",
    "description": "thruster temperature that ends Xe warm-up",
-   "value": "TBD — requires thruster thermal test (abep_sim.thermal is steady-state only)",
+   "value": "TBD \u2014 requires thruster thermal test (abep_sim.thermal is steady-state only)",
    "source": null,
    "evidence_class": null,
    "determined_by": [
@@ -6610,7 +6612,7 @@
   "t_warmup_min": {
    "unit": "s",
    "description": "minimum Xe warm-up duration",
-   "value": "TBD — requires thruster thermal/transient test",
+   "value": "TBD \u2014 requires thruster thermal/transient test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6618,7 +6620,7 @@
   "t_warmup_max": {
    "unit": "s",
    "description": "warm-up time-out",
-   "value": "TBD — requires thruster thermal/transient test and FDIR policy",
+   "value": "TBD \u2014 requires thruster thermal/transient test and FDIR policy",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6626,7 +6628,7 @@
   "T_node_warn": {
    "unit": "K",
    "description": "per-node warning temperatures (vector over the monitored nodes)",
-   "value": "TBD — requires component thermal qualification (abep_sim.thermal:default_nodes T_max_K are unsourced priors)",
+   "value": "TBD \u2014 requires component thermal qualification (abep_sim.thermal:default_nodes T_max_K are unsourced priors)",
    "source": null,
    "evidence_class": null,
    "determined_by": [
@@ -6636,7 +6638,7 @@
   "T_node_trip": {
    "unit": "K",
    "description": "per-node trip temperatures (vector over the monitored nodes)",
-   "value": "TBD — requires component thermal qualification",
+   "value": "TBD \u2014 requires component thermal qualification",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6644,7 +6646,7 @@
   "compressor_speed_min": {
    "unit": "rpm",
    "description": "compressor speed at which the admission pressure is delivered",
-   "value": "TBD — requires compressor test and abep_sim.compressor evaluation at the design point",
+   "value": "TBD \u2014 requires compressor test and abep_sim.compressor evaluation at the design point",
    "source": null,
    "evidence_class": null,
    "determined_by": [
@@ -6654,7 +6656,7 @@
   "compressor_speed_max": {
    "unit": "rpm",
    "description": "compressor over-speed limit",
-   "value": "TBD — requires rotor stress qualification (model estimate abep_sim.compressor:DragCompressor.rpm_limit)",
+   "value": "TBD \u2014 requires rotor stress qualification (model estimate abep_sim.compressor:DragCompressor.rpm_limit)",
    "source": null,
    "evidence_class": null,
    "determined_by": [
@@ -6664,7 +6666,7 @@
   "p_atm_chamber_admit_min": {
    "unit": "Pa",
    "description": "atmospheric chamber pressure required before admission",
-   "value": "TBD — requires thruster sustainment test on atmospheric feed (no admitted Hall model; no O/O2 chemistry)",
+   "value": "TBD \u2014 requires thruster sustainment test on atmospheric feed (no admitted Hall model; no O/O2 chemistry)",
    "source": null,
    "evidence_class": null,
    "determined_by": [
@@ -6674,7 +6676,7 @@
   "p_atm_chamber_min_op": {
    "unit": "Pa",
    "description": "atmospheric chamber pressure below which atmospheric operation is abandoned",
-   "value": "TBD — requires thruster sustainment test on atmospheric feed",
+   "value": "TBD \u2014 requires thruster sustainment test on atmospheric feed",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6682,7 +6684,7 @@
   "p_atm_chamber_max": {
    "unit": "Pa",
    "description": "atmospheric chamber over-pressure limit",
-   "value": "TBD — requires gas-chamber and valve design pressure",
+   "value": "TBD \u2014 requires gas-chamber and valve design pressure",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6690,7 +6692,7 @@
   "t_atm_fill_max": {
    "unit": "s",
    "description": "time allowed for the atmospheric chamber to reach the admission pressure",
-   "value": "TBD — requires abep_sim.reservoir:startup_transient evaluated for the design plus compressor spin-up test",
+   "value": "TBD \u2014 requires abep_sim.reservoir:startup_transient evaluated for the design plus compressor spin-up test",
    "source": null,
    "evidence_class": null,
    "determined_by": [
@@ -6700,7 +6702,7 @@
   "t_admit_ramp": {
    "unit": "s",
    "description": "atmospheric valve opening ramp duration",
-   "value": "TBD — requires thruster test on mixed feed",
+   "value": "TBD \u2014 requires thruster test on mixed feed",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6708,7 +6710,7 @@
   "t_admit_max": {
    "unit": "s",
    "description": "admission time-out",
-   "value": "TBD — requires thruster test on mixed feed and FDIR policy",
+   "value": "TBD \u2014 requires thruster test on mixed feed and FDIR policy",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6716,7 +6718,7 @@
   "t_mixed_dwell_min": {
    "unit": "s",
    "description": "minimum mixed-stabilization dwell",
-   "value": "TBD — requires thruster test on mixed feed",
+   "value": "TBD \u2014 requires thruster test on mixed feed",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6724,7 +6726,7 @@
   "t_mixed_max": {
    "unit": "s",
    "description": "mixed-stabilization time-out",
-   "value": "TBD — requires thruster test on mixed feed and FDIR policy",
+   "value": "TBD \u2014 requires thruster test on mixed feed and FDIR policy",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6732,7 +6734,7 @@
   "t_dominant_dwell_min": {
    "unit": "s",
    "description": "minimum atmosphere-dominant dwell before closing the Xe anode valve",
-   "value": "TBD — requires thruster test on mixed feed",
+   "value": "TBD \u2014 requires thruster test on mixed feed",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6740,7 +6742,7 @@
   "x_atm_dominant_min": {
    "unit": "-",
    "description": "atmospheric anode-flow fraction that defines atmosphere-dominant operation",
-   "value": "TBD — requires owner definition of the mode boundary plus thruster test",
+   "value": "TBD \u2014 requires owner definition of the mode boundary plus thruster test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6748,7 +6750,7 @@
   "t_atm_healthy_min": {
    "unit": "s",
    "description": "atmospheric-path health persistence before re-admission",
-   "value": "TBD — requires FDIR policy (owner)",
+   "value": "TBD \u2014 requires FDIR policy (owner)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6756,7 +6758,7 @@
   "n_fallback_cycles_max": {
    "unit": "-",
    "description": "Xe-fallback entries allowed per start before staying in fallback",
-   "value": "TBD — requires FDIR policy (owner)",
+   "value": "TBD \u2014 requires FDIR policy (owner)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6764,7 +6766,7 @@
   "P_bus_alloc": {
    "unit": "W",
    "description": "propulsion P_bus allocation (bus_power_boundary_v1); must not exceed the RFP power limit",
-   "value": "TBD — requires spacecraft power budget allocation",
+   "value": "TBD \u2014 requires spacecraft power budget allocation",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6772,7 +6774,7 @@
   "P_startup_peak": {
    "unit": "W",
    "description": "peak P_bus (bus_power_boundary_v1) of the start sequence of the configuration; for V2 the heater/pre-ionizer overlap decides it (lane_19)",
-   "value": "TBD — requires a start-up profile per configuration from abep_sim.cathode_integration:startup_transient (lane_19) evaluated with abep_sim.arch_boundary:bus_power_ledger, with sourced loads and efficiencies",
+   "value": "TBD \u2014 requires a start-up profile per configuration from abep_sim.cathode_integration:startup_transient (lane_19) evaluated with abep_sim.arch_boundary:bus_power_ledger, with sourced loads and efficiencies",
    "source": null,
    "evidence_class": null,
    "determined_by": [
@@ -6783,7 +6785,7 @@
   "P_bus_min_sustain": {
    "unit": "W",
    "description": "lowest P_bus (bus_power_boundary_v1) at which a discharge can be held",
-   "value": "TBD — requires thruster throttling test",
+   "value": "TBD \u2014 requires thruster throttling test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6791,7 +6793,7 @@
   "P_bus_idle_max": {
    "unit": "W",
    "description": "P_bus (bus_power_boundary_v1) that confirms all propulsion converters off",
-   "value": "TBD — requires PPU quiescent draw specification",
+   "value": "TBD \u2014 requires PPU quiescent draw specification",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6799,7 +6801,7 @@
   "V_bus_min": {
    "unit": "V",
    "description": "bus under-voltage limit",
-   "value": "TBD — requires spacecraft EPS specification",
+   "value": "TBD \u2014 requires spacecraft EPS specification",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6807,7 +6809,7 @@
   "t_startup_budget": {
    "unit": "s",
    "description": "start-command-to-warm-up duration that must fit before eclipse entry",
-   "value": "TBD — requires the sum of qualified dwell times and time-outs",
+   "value": "TBD \u2014 requires the sum of qualified dwell times and time-outs",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6815,7 +6817,7 @@
   "t_stable_confirm": {
    "unit": "s",
    "description": "time a success condition must hold before a nominal transition fires",
-   "value": "TBD — requires FDIR design (telemetry rate, noise)",
+   "value": "TBD \u2014 requires FDIR design (telemetry rate, noise)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6823,7 +6825,7 @@
   "t_fault_confirm": {
    "unit": "s",
    "description": "persistence filter for fault and protective detection",
-   "value": "TBD — requires FDIR design (sensor noise, PPU protection response time)",
+   "value": "TBD \u2014 requires FDIR design (sensor noise, PPU protection response time)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6831,7 +6833,7 @@
   "t_restart_inhibit": {
    "unit": "s",
    "description": "minimum time between shutdown and a new start",
-   "value": "TBD — requires cathode/thruster cool-down test",
+   "value": "TBD \u2014 requires cathode/thruster cool-down test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6839,7 +6841,7 @@
   "t_restart_wait_max": {
    "unit": "s",
    "description": "time RESTART waits for eligibility before returning to OFF",
-   "value": "TBD — requires FDIR policy (owner)",
+   "value": "TBD \u2014 requires FDIR policy (owner)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6847,7 +6849,7 @@
   "n_restart_max": {
    "unit": "-",
    "description": "autonomous restarts allowed before ground intervention",
-   "value": "TBD — requires FDIR policy (owner)",
+   "value": "TBD \u2014 requires FDIR policy (owner)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6855,7 +6857,7 @@
   "t_shutdown_max": {
    "unit": "s",
    "description": "controlled-shutdown time-out",
-   "value": "TBD — requires cathode qualification test and FDIR policy",
+   "value": "TBD \u2014 requires cathode qualification test and FDIR policy",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6863,7 +6865,7 @@
   "t_cathode_cooldown_min": {
    "unit": "s",
    "description": "minimum Xe-flowing cool-down of the cathode at shutdown",
-   "value": "TBD — requires cathode qualification test",
+   "value": "TBD \u2014 requires cathode qualification test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6871,7 +6873,7 @@
   "t_clear_min": {
    "unit": "s",
    "description": "persistence of cleared degradation before recovery",
-   "value": "TBD — requires FDIR policy (owner)",
+   "value": "TBD \u2014 requires FDIR policy (owner)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6879,7 +6881,7 @@
   "T_margin": {
    "unit": "mN",
    "description": "thrust deficit that triggers Xe anode topping (hysteresis half-width)",
-   "value": "TBD — requires altitude-control law design (abep_sim.transient:run_mission alt_gain is a controller prior)",
+   "value": "TBD \u2014 requires altitude-control law design (abep_sim.transient:run_mission alt_gain is a controller prior)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6887,7 +6889,7 @@
   "t_preion_ignite_max": {
    "unit": "s",
    "description": "time allowed for a pre-ionizer ignition attempt (PREIONIZER_SEED, PREIONIZER_IGNITION)",
-   "value": "TBD — requires pre-ionizer ignition test per architecture (docs/evidence/rf_source/, docs/evidence/ecr_source/)",
+   "value": "TBD \u2014 requires pre-ionizer ignition test per architecture (docs/evidence/rf_source/, docs/evidence/ecr_source/)",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6895,7 +6897,7 @@
   "n_preion_retry_max": {
    "unit": "-",
    "description": "pre-ionizer ignition attempts per dwell",
-   "value": "TBD — requires FDIR policy (owner) informed by pre-ionizer ignition test",
+   "value": "TBD \u2014 requires FDIR policy (owner) informed by pre-ionizer ignition test",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6903,7 +6905,7 @@
   "I_interstage_max": {
    "unit": "A",
    "description": "largest |I_interstage| accepted before admitting atmosphere with the pre-ionizer on",
-   "value": "TBD — requires interstage circuit design and cathode emission margin (abep_sim.cathode_integration:electron_current_budget, lane_19; lane_18_interstage)",
+   "value": "TBD \u2014 requires interstage circuit design and cathode emission margin (abep_sim.cathode_integration:electron_current_budget, lane_19; lane_18_interstage)",
    "source": null,
    "evidence_class": null,
    "determined_by": [
@@ -6913,7 +6915,7 @@
   "mdot_Xe_anode_seed_set": {
    "unit": "kg/s",
    "description": "Xe flow through the pre-ionization stage while seeding before anode ignition (start variant V2)",
-   "value": "TBD — requires pre-ionizer seed test (V2) and feed-system design",
+   "value": "TBD \u2014 requires pre-ionizer seed test (V2) and feed-system design",
    "source": null,
    "evidence_class": null,
    "determined_by": []
@@ -6991,14 +6993,14 @@
  },
  "verification": {
   "protocol": "single-lens-v1",
-  "second_lens": "repair in progress (this revision); until the second lens passes, this machine is not decisive evidence for Milestone B or C (docs/orchestration/OPERATING_MODEL.md)"
+  "second_lens": "NOT YET PASSED. Record: first second-lens run wf_96f8f0bb-ae2 was interrupted by a session usage limit after fix round 1 (commit 1be3845); continuation run (2026-09-27) re-verifies against integrated branch d07249bef0 and this revision is its repair round 1 (Andreussi/Cifali citations corrected, Suzuki carbon attribution, supplier statuses). The lane registry (docs/orchestration/lane_registry_v1.json) is the authoritative record of the second-lens outcome; update this field only when that record shows the second lens passed. Until then this machine is not decisive evidence for Milestone B or C (docs/orchestration/OPERATING_MODEL.md)"
  },
  "preionizer_start_variants": {
   "none": "hall_only: no pre-ionizer hardware; the 'preionizer' output is 'absent' in every state",
   "V1": "V1_preionizer_after_discharge: Xe Hall discharge first (as hall_only), pre-ionizer ignited from WARM_UP in PREIONIZER_IGNITION before atmosphere admission",
   "V2": "V2_preionizer_seed_before_discharge: pre-ionizer ignited on Xe in PREIONIZER_SEED after keeper coupling and before anode ignition (seed hypothesis); PREIONIZER_IGNITION then only confirms or re-lights it",
   "source": "variant names and definitions as recorded by lane_19_cathode_integration in docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json (startup_reference: 'PROPOSED (no accessed source fixes where the pre-ionizer starts)'); the experiment-protocol draft (lane_06) orders heater, keeper, flows, pre-ionizer, discharge (= V2). Both are PROPOSED design alternatives, not results.",
-  "status": "OPEN — TBD — requires pre-ionizer ignition evidence or test (docs/evidence/rf_source/, docs/evidence/ecr_source/, lane_18_interstage) to fix or eliminate a variant per architecture"
+  "status": "OPEN \u2014 TBD \u2014 requires pre-ionizer ignition evidence or test (docs/evidence/rf_source/, docs/evidence/ecr_source/, lane_18_interstage) to fix or eliminate a variant per architecture"
  },
  "configurations": [
   {
@@ -7070,40 +7072,40 @@
  "excluded_branches": [
   {
    "id": "air_fed_cathode",
-   "status": "EXCLUDED BY DESIGN CHOICE pending test — not a physics result",
+   "status": "EXCLUDED BY DESIGN CHOICE pending test \u2014 not a physics result",
    "description": "No state feeds the cathode with atmospheric gas; the most atmospheric mode is AIR_ONLY_ANODE_XE_CATHODE.",
    "basis": "the repository's air-cathode closure did not close the discharge current at life (docs/HISTORY.md v1.1 item 3, model-derived: 'a test, not a design choice'); cathode O-poisoning is qualitative only (see literature_basis).",
    "interface_note": "schemas/interfaces/upstream_icd_v1.json (lane_33_upstream_icd) carries mdot_cathode_air_kgps (thruster boundary IF-A5). This machine holds that interface at zero; a later cathode lane must not read the omission as evidence that an air-fed cathode is infeasible.",
-   "reopen_when": "TBD — requires an air-fed cathode/neutralizer test or published evidence of air-fed operation at the RFP life"
+   "reopen_when": "TBD \u2014 requires an air-fed cathode/neutralizer test or published evidence of air-fed operation at the RFP life"
   }
  ],
  "literature_basis": {
-  "status": "This lane cites no external source directly and claims no value from literature. The design rationale rests on repository code priors and on sources recorded by other lanes; those are named here as pointers (not re-accessed by this lane: verify).",
+  "status": "This lane claims no numeric value from literature. Two open full-text sources were re-accessed by this lane on 2026-09-27 (Cifali et al. IEPC-2011-224, Andreussi et al. IEPC-2017-377) and the Crossref abstract of Suzuki et al. 2024; other pointers are as recorded by lane_19 (not re-accessed: verify).",
   "items": [
    {
-    "claim": "LaB6 emitters are poisoned by oxygen-bearing gas (motivates XE_PURGE and the Xe-fed cathode)",
+    "claim": "LaB6 emitters degrade in the presence of reactive (oxygen/carbon-bearing) species (motivates XE_PURGE and the Xe-fed cathode)",
     "pointers": [
-     "Gallagher, 'Poisoning of LaB6 cathodes', J. Appl. Phys. 40(1), 44-51 (1969), doi:10.1063/1.1657092 — recorded by lane_19 as not_accessed (DOI as listed in IEPC-2017-276)",
-     "Suzuki, Cho, Watanabe and Kinefuchi, J. Appl. Phys. 135, 103301 (2024), doi:10.1063/5.0188080 — recorded by lane_19 as abstract_only, qualitative"
+     "Gallagher, 'Poisoning of LaB6 cathodes', J. Appl. Phys. 40(1), 44-51 (1969), doi:10.1063/1.1657092 \u2014 recorded by lane_19 as not_accessed (DOI as listed in IEPC-2017-276)",
+     "Suzuki, Cho, Watanabe and Kinefuchi, J. Appl. Phys. 135, 103301 (2024), doi:10.1063/5.0188080 \u2014 abstract only (Crossref record https://api.crossref.org/works/10.1063/5.0188080, accessed 2026-09-27), qualitative: the abstract reports oxygen and carbon detected on the emitter but attributes the work-function rise and the plume-mode instability mainly to carbon (lanthanum carbide), not to oxygen"
     ],
     "record": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json (sources, poisoning evidence)",
-    "caveat": "lane_19 reports that the accessed sources give no atomic-O or N2 LaB6 threshold (oxygen_poisoning_screen returns NO_QUANTITATIVE_EVIDENCE); the purge need and duration and p_O_cathode_max remain TBD"
+    "caveat": "lane_19 reports that the accessed sources give no atomic-O or N2 LaB6 threshold (oxygen_poisoning_screen returns NO_QUANTITATIVE_EVIDENCE); the purge need and duration and p_O_cathode_max remain TBD; Suzuki 2024 is therefore not direct evidence of oxygen poisoning"
    },
    {
-    "claim": "a Hall thruster on N2-O2 needed continuous cathode Xe flow to avoid flame-out (supports the Xe-fed cathode in AIR_ONLY_ANODE_XE_CATHODE)",
+    "claim": "attempts to operate a Hall thruster (RAM-HET) on an N2-O2 mixture always required some xenon (~1.5 mg/s) to prevent flame-out; the feed path of that xenon is not stated",
     "pointers": [
-     "Andreussi et al., IEPC-2017-377, https://electricrocket.org/IEPC/IEPC_2017_377.pdf — recorded by lane_19 as open full text"
+     "Andreussi et al., 'Development and Experimental Validation of a Hall Effect Thruster RAM-EP Concept', IEPC-2017-377, https://electricrocket.org/IEPC/IEPC_2017_377.pdf (open full text, accessed 2026-09-27), sec. E: 'a certain amount of xenon (~1.5 mg/s) has always been necessary to prevent the flame out'"
     ],
     "record": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json (andreussi_ram_het_cathode)",
-    "caveat": "qualitative support only; the cited cathode failure is not attributed to poisoning in the accessed text"
+    "caveat": "qualitative only; the text does not say the xenon went to the cathode (the RAM-EP feed supplied Xe to both the cathode and the anode-side auxiliary distributor), so it does NOT support the Xe-fed cathode specifically and is equally consistent with anode-side Xe topping (a mixed feed, cf. MIXED_STABILIZATION / ATMOSPHERE_DOMINANT). The 1.5 mg/s is not used as a parameter value."
    },
    {
-    "claim": "ignite on Xe, then transition the anode to N2/O2",
+    "claim": "ignite on Xe, then transfer the anode feed smoothly to N2 or N2/O2 while the cathode continues on Xe (direct support for the start/transfer order and for AIR_ONLY_ANODE_XE_CATHODE)",
     "pointers": [
-     "Cifali 2011, as summarised by lane_19 startup_reference.hall_only.open (verify; not accessed by this lane)"
+     "Cifali, Misuri, Rossetti, Andrenucci, Valentian, Feili and Lotz, 'Experimental characterization of HET and RIT with atmospheric propellants', IEPC-2011-224, https://electricrocket.org/IEPC/IEPC-2011-224.pdf (open full text, accessed 2026-09-27): 'The PPS1350-TSD was always ignited with xenon. After ignition, a smooth transition from 100% xenon to 100% nitrogen or N2/O2 mixture at the anode was carried out; the cathode continued to work with xenon.'"
     ],
     "record": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json (startup_reference)",
-    "caveat": "phase order only; no threshold or duration taken"
+    "caveat": "phase order and feed topology only (a laboratory PPS1350-TSD test at 350 V / 1.4 kW limits); no threshold, flow, ramp rate or duration is taken"
    }
   ]
  }

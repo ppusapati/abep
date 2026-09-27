@@ -28,8 +28,11 @@ Structural checks: `tests/test_dual_feed_state_machine.py` (run `python -m pytes
   - cathode O-exposure evidence;
   - an air-fed cathode demonstrated by test;
   - a Xe cost per start or per fallback that the budget cannot carry.
-- **Verification: single-lens-v1.** v1.1 is the second-lens repair. Until the second lens passes, this machine is not
-  decisive evidence for Milestone B or C (`docs/orchestration/OPERATING_MODEL.md`).
+- **Verification: single-lens-v1; second lens NOT YET PASSED.** The first second-lens run (wf_96f8f0bb-ae2) was
+  interrupted after fix round 1 (commit 1be3845). The continuation run (2026-09-27) re-verifies against the integrated
+  branch at d07249bef0, and this revision is its repair round 1. The lane registry
+  (`docs/orchestration/lane_registry_v1.json`) is the authoritative record of the outcome. Until it shows a pass, this
+  machine is not decisive evidence for Milestone B or C (`docs/orchestration/OPERATING_MODEL.md`).
 
 ## Status and scope
 
@@ -98,6 +101,12 @@ setpoint's `P_bus`), `P_bus_avail` (spacecraft power available at the boundary),
 `P_bus_alloc <= RFP_power_max`. Reading the RFP < 1.5 kW limit as `P_bus` at this boundary is the project's boundary
 choice (verify against the RFP text).
 
+**Cross-lane divergence (flagged, not fixed here: outside this lane's paths).** At d07249bef0,
+`abep_sim/cathode_integration.py` (lane_19) defines `PREIONIZER_COMPONENTS['ecr_hall'] = ('ecr_source',)`. That omits
+`ecr_magnet`, which `abep_sim/arch_boundary.py` and this machine include for `ecr_hall`. This machine follows the
+boundary contract. Lane 19's pre-ionizer on/off checks therefore do not see an ECR magnet load; the owning lane should
+reconcile this.
+
 v1.0 used `P_prop` ("PPU input incl. compressor motor and controller"). That definition did not explicitly include the
 cathode heater and keeper, the magnets, thermal control or a pre-ionizer, so v1.1 removes it
 (`docs/orchestration/OPERATING_MODEL.md` §3 forbids substituting subsystem or incompatible power definitions).
@@ -114,15 +123,26 @@ never imported.
    `WARM_UP` → [`PREIONIZER_IGNITION`, rf_hall/ecr_hall]) never depends on the atmospheric path. Atmospheric species
    are admitted into an established discharge (`ATMOSPHERE_ADMISSION`). The anode feed is then transferred gradually
    (`MIXED_STABILIZATION` → `ATMOSPHERE_DOMINANT` → `AIR_ONLY_ANODE_XE_CATHODE`), so every step has a reversible exit
-   to `XE_FALLBACK`. Lane 19 records, as a phase order only, that Cifali 2011 ignited on Xe and then moved the anode to
-   N₂/O₂ (not accessed by this lane: verify).
+   to `XE_FALLBACK`. This order has direct published support. Cifali et al., IEPC-2011-224 (open full text,
+   https://electricrocket.org/IEPC/IEPC-2011-224.pdf, accessed 2026-09-27) write: "The PPS1350-TSD was always ignited with
+   xenon. After ignition, a smooth transition from 100% xenon to 100% nitrogen or N2/O2 mixture at the anode was
+   carried out; the cathode continued to work with xenon." The machine takes only the phase order and the feed topology
+   from this; no threshold, flow, ramp rate or duration.
 2. **Xe-fed cathode throughout; the air-fed cathode is excluded by design choice pending test.** The repository's
    cathode model treats atomic O as an emitter poison (`abep_sim.plasma_devices:LaB6Cathode.coverage`; the
    `abep_sim.aochem` material-class note says LaB6 must be Xe-shielded). These are **unsourced code priors (verify)**.
    The literature pointers are the ones lane 19 records:
    - Gallagher 1969, doi:10.1063/1.1657092, not accessed;
-   - Suzuki et al. 2024, doi:10.1063/5.0188080, abstract only, qualitative;
-   - Andreussi et al. IEPC-2017-377: a Hall thruster on N₂–O₂ needed continuous cathode Xe flow to avoid flame-out.
+   - Suzuki et al. 2024, doi:10.1063/5.0188080, abstract only (Crossref record), qualitative. The abstract reports O and
+     C on the emitter but attributes the work-function rise and the instability mainly to **carbon** (lanthanum
+     carbide), not to oxygen, so it is not direct evidence of O poisoning;
+   - Andreussi et al., IEPC-2017-377 (open full text, sec. E), as written: "a certain amount of xenon (~1.5 mg/s) has
+     always been necessary to prevent the flame out" during N₂–O₂ attempts. The text does **not** say that this Xe went
+     to the cathode. The RAM-EP feed supplied Xe to both the cathode and the anode-side auxiliary distributor, so it is
+     equally consistent with anode-side Xe topping (a mixed feed). It is not used as support for the Xe-fed cathode
+     specifically, and the 1.5 mg/s is not used as a parameter value.
+
+   The direct published support for a Xe-fed cathode with an N₂/O₂ anode is Cifali et al. IEPC-2011-224 (item 1 above).
 
    Lane 19 also records that the accessed sources give **no atomic-O or N₂ threshold for LaB6**
    (`NO_QUANTITATIVE_EVIDENCE`). The purge, its duration and `p_O_cathode_max` are therefore TBD. The air-cathode
@@ -335,7 +355,7 @@ needed (`n/a:` for flight-software timers, counters and commands).
 | `n_ignite_retry` | - | counter | none | n/a: flight-software timer/counter, not a physics quantity |
 | `n_restart_count` | - | counter | none | n/a: flight-software timer/counter, not a physics quantity |
 | `n_fallback_cycles` | - | counter | none | n/a: flight-software timer/counter, not a physics quantity |
-| `n_cathode_starts` | - | counter | `abep_sim.life:cathode_life` → cycles_ok [available] | — |
+| `n_cathode_starts` | - | counter | `abep_sim.life:cathode_life` → cycles_ok [input_only] | n/a: flight-software counter (non-volatile), not a physics quantity; the start limit n_cathode_starts_max is TBD (see parameters) |
 | `cmd_start` | bool | command | none | n/a: flight-software timer/counter, not a physics quantity |
 | `cmd_stop` | bool | command | none | n/a: flight-software timer/counter, not a physics quantity |
 | `cmd_restart` | bool | command | none | n/a: flight-software timer/counter, not a physics quantity |
@@ -349,9 +369,9 @@ needed (`n/a:` for flight-software timers, counters and commands).
 | `mdot_Xe_anode` | kg/s | measured | `abep_sim.thruster:performance` → mdot_xe_anode argument [input_only]<br>`abep_sim.thruster:xe_for_thrust` → anode Xe flow for a thrust target [withdrawn_absolute] | n/a: commanded flow, measured by the flow controller; a thrust-based Xe topping flow needs admitted design Hall maps (TBD — requires an admitted transport-ensemble member) |
 | `mdot_Xe_purge` | kg/s | measured | none | TBD — requires a purge procedure (flow path and setpoint) from feed-system design |
 | `mdot_leak_est` | kg/s | estimated | `abep_sim.reservoir:Reservoir.steady_state` → mdot_leak [proxy_not_equivalent] | TBD — requires a feed-system leak specification and a leak-detection method (pressure decay / flow balance) for both the Xe and the atmospheric path |
-| `p_O_cathode_est` | Pa | estimated | `abep_sim.plasma_devices:LaB6Cathode.operate` → p_O_at_emitter_Pa [available]<br>`abep_sim.atmosphere:atmosphere` → rho, fO (frozen NRLMSIS 2.1) [available]<br>`abep_sim.aochem:inlet_composition` → fO after wall recombination [available]<br>`abep_sim.cathode_integration:oxygen_poisoning_screen` → O2 screen status (NO_QUANTITATIVE_EVIDENCE for atomic O / N2) [available, lazy] | TBD — requires a sourced LaB6 atomic-O tolerance (lane_19 records NO_QUANTITATIVE_EVIDENCE for atomic O and N2 in the accessed sources) and a cathode O-exposure test; the estimate is a code-prior model (verify) |
+| `p_O_cathode_est` | Pa | estimated | `abep_sim.plasma_devices:LaB6Cathode.operate` → p_O_at_emitter_Pa [available]<br>`abep_sim.atmosphere:atmosphere` → rho, fO (frozen NRLMSIS 2.1) [available]<br>`abep_sim.aochem:inlet_composition` → fO after wall recombination [available]<br>`abep_sim.cathode_integration:oxygen_poisoning_screen` → O2 screen status (takes p_O2_Torr as an input; NO_QUANTITATIVE_EVIDENCE for atomic O / N2); not an estimate [input_only, lazy] | TBD — requires a sourced LaB6 atomic-O tolerance (lane_19 records NO_QUANTITATIVE_EVIDENCE for atomic O and N2 in the accessed sources) and a cathode O-exposure test; the estimate is a code-prior model (verify) |
 | `T_emitter` | K | measured | `abep_sim.plasma_devices:LaB6Cathode.operate` → T_emitter_K [available] | TBD — requires the measurement method from cathode design |
-| `P_heater` | W | measured | `abep_sim.ppu:load_modes` → startup (heater converter) [available]<br>`abep_sim.plasma_devices:LaB6Cathode.operate` → P_W [available]<br>`abep_sim.cathode_integration:startup_transient` → cathode_heater load per start-up phase and cathode energy [input_only, lazy] | — |
+| `P_heater` | W | measured | `abep_sim.ppu:load_modes` → startup (heater converter) [available]<br>`abep_sim.plasma_devices:LaB6Cathode.operate` → P_W [component_only]<br>`abep_sim.cathode_integration:startup_transient` → cathode_heater load per start-up phase and cathode energy [input_only, lazy] | — |
 | `I_keeper` | A | measured | `abep_sim.ppu:load_modes` → I_keeper argument [input_only]<br>`abep_sim.cathode_integration:electron_current_budget` → I_keeper_A in I_emit = I_d + I_keeper + I_interstage [input_only, lazy]<br>`abep_sim.cathode_integration:steady_cathode_boundary_loads_W` → cathode_keeper load [input_only, lazy] | TBD — requires keeper discharge characterization test; abep_sim has keeper current/power bookkeeping (abep_sim.cathode_integration, lane_19) but no keeper discharge model |
 | `V_keeper` | V | measured | none | TBD — requires keeper discharge characterization test |
 | `I_d` | A | measured | `abep_sim.hall_map:HallMap.__call__` → discharge_current_A [gated]<br>`abep_sim.plasma_devices:hall_run_coupled` → 0-D discharge current [superseded_do_not_use] | TBD — requires an admitted transport-ensemble member with design-specific Hall maps and, for atmospheric or mixed feeds, O/O2 chemistry and Xe + atmosphere mixture support; ultimately a thruster test |
