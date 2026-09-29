@@ -121,7 +121,7 @@
    "units": "W",
    "basis": "requirement",
    "source": "A9 decision requirement_discipline; docs/decisions/OD_2026_09_29_owner_answers_147.json row 108; RFP '< 1.5 kW' as recorded (official RFP not yet obtained, rows 1-3: verify)",
-   "evidence_class": "assumed",
+   "evidence_class": "requirement-as-recorded",
    "status": "REQUIREMENT_AS_RECORDED",
    "freeze_point": "NOW",
    "note": "gate at the spacecraft-DC propulsion boundary; no discharge-only or RF-generator-only claim is sufficient"
@@ -147,7 +147,8 @@
    "source": "TBD - requires owner decision OQ-A902-01 (H2-4 H24-37 left it TBD)",
    "evidence_class": "TBD",
    "status": "OPEN",
-   "freeze_point": "LOCK-1"
+   "freeze_point": "LOCK-1",
+   "note": "until frozen, rfp_power_gate gives a start-up step PASS only when its ledger is declared power_basis='peak_sampled' (otherwise NOT_EVALUABLE) and always reports transient_window_frozen=False"
   },
   {
    "id": "A902-04",
@@ -401,7 +402,7 @@
    "evidence_class": "owner-allocation",
    "status": "ADOPTED (capability, not a load)",
    "freeze_point": "NOW",
-   "note": "its bus power is a start-up transient of slot c1_keeper, value TBD - requires measured pulse energy"
+   "note": "its bus power is a start-up transient of slot c1_keeper, value TBD - requires measured peak draw (covered only by a peak_sampled step) and recorded pulse energy (a measurement record, PENDING A9-04; the ledger has no pulse-energy field); H2-4 H24-19 (DC ignition 10-30 W bracket) does not cover it"
   },
   {
    "id": "A902-26",
@@ -509,7 +510,7 @@
    "value": "TBD",
    "units": "-",
    "basis": "pending",
-   "source": "explicit ledger inputs with evidence class; H2-4 analog parameters H24-05..H24-11 are candidate evidence on 28 V-class / 3 kW-class bases and need re-basing to the 100 V internal bus",
+   "source": "explicit ledger inputs with evidence class. H2-4 candidate evidence: H24-05 is digitized at 25-34 V input (needs re-basing to the 100 V internal bus); H24-06..H24-11 are S-OSUGA05 (IEPC-2005-114) analogs on a regulated 100 V +/- 3 V bus (bus voltage matches) but for a 200 mN / 3 kW-class PPU and mostly minimum-efficiency specifications, so transfer to A9 load levels is not established (see h2_4_revision_flags)",
    "evidence_class": "TBD",
    "status": "OPEN",
    "freeze_point": "LOCK-2"
@@ -623,7 +624,7 @@
   {
    "slot": "c1_keeper",
    "group": "c1",
-   "load_plane": "C1 keeper terminals; includes the current-limited pulsed ignition (300-600 V class, row 89) as a start-up transient with recorded pulse energy",
+   "load_plane": "C1 keeper terminals; includes the current-limited pulsed ignition (300-600 V class, row 89) as a start-up transient: its instantaneous peak is only covered by a step declared peak_sampled; the pulse energy (row 89 'recorded pulse energy') is a measurement record of the power measurement chain (PENDING A9-04), not a ledger field",
    "rows": [
     89,
     110
@@ -812,7 +813,7 @@
   {
    "slot": "housekeeping_controls",
    "group": "common",
-   "load_plane": "propulsion controller, PPU control electronics, sensors, telemetry/command interface",
+   "load_plane": "propulsion controller, PPU control electronics, sensors, telemetry/command interface, AND the explicitly booked no-load/quiescent draw of energised-but-idle supplies and of the front end (the per-slot P/eta model gives 0 W for a 0 W output)",
    "rows": [
     114
    ],
@@ -877,7 +878,11 @@
    "PARTIAL_BOUNDARY",
    "INCOMPLETE_EVIDENCE"
   ],
-  "not_installed_rule": "a slot not installed in the configuration/variant is omitted or exactly 0 W at efficiency 1; anything else raises (matched shams carry no power)"
+  "status_taxonomy": "PARTIAL_BOUNDARY whenever the compressor LOAD is TBD (row 22; takes precedence); INCOMPLETE_EVIDENCE for any other TBD, including a known compressor load with a TBD efficiency or a TBD front-end efficiency; COMPLETE otherwise",
+  "power_basis": "each ledger declares what its step values represent: steady_state, step_average, peak_sampled or unstated (None)",
+  "no_load_losses": "excluded from the per-slot P_W/eta model (a 0 W output draws exactly 0 W); the no-load/quiescent draw of energised-but-idle supplies and of the front end must be booked explicitly in housekeeping_controls",
+  "residual_check": "bookkeeping identity sum(P_W + P_loss) - sum(P_bus); catches floating-point error only; an independent closure needs measured spacecraft-side bus V and I",
+  "not_installed_rule": "a slot not installed in the configuration/variant is omitted or exactly 0 W at efficiency 1, as full records (evidence_class + source, schema parity); anything else raises (matched shams carry no power)"
  },
  "gates_and_allocations": {
   "rfp_gate": {
@@ -892,7 +897,15 @@
     "FAIL",
     "NOT_EVALUABLE"
    ],
-   "row": 108
+   "row": 108,
+   "transient_window": {
+    "status": "TBD",
+    "item": "A902-03",
+    "owner_question": "OQ-A902-01",
+    "freeze_point": "LOCK-1",
+    "rule": "a start-up step PASSes only if declared peak_sampled; the sampling bandwidth that makes 'peak_sampled' meaningful is frozen at LOCK-2 (PROPOSED, OQ-A902-01)"
+   },
+   "startup_pass_requires_power_basis": "peak_sampled"
   },
   "design_allocation": {
    "limit_W": 1350.0,
@@ -950,7 +963,10 @@
   },
   "rules": [
    "at most one peak-class event per step (PROPOSED reading of 'avoid simultaneous peaks')",
-   "C1 heater reduced/disabled only in a step flagged keeper_stable and discharge_stable",
+   "at most one peak-class slot (active_cooling, c1_heater, c1_keeper, compressor, hall_discharge, hall_magnet_inner, icp_collector_bias, icp_rf_source) whose load rises in a step, checked on the step loads independently of event labels (PROPOSED; a TBD transition that may rise gives RULES_NOT_EVALUABLE)",
+   "C1 heater reduced/disabled only in a step flagged keeper_stable and discharge_stable; a TBD heater counts as ON with unknown power (OFF = exactly 0 W); the last known value is kept across TBD steps; an unclassifiable change gives RULES_NOT_EVALUABLE",
+   "sequence_status: SEQUENCE_RULE_VIOLATION > RULES_NOT_EVALUABLE > RULES_SATISFIED",
+   "a start-up step PASSes the transient gate only when declared power_basis='peak_sampled' (averaging window TBD, A902-03)",
    "hall_icp_neutralizer has no c1_heater slot (no thermionic heater)",
    "the last step is the steady step; the gate is applied to it and to every earlier step"
   ],
@@ -1179,15 +1195,24 @@
   {
    "from": "A9-02",
    "to": "H2-7",
-   "quantity": "PPU/RF electronics mass lines: Hall PPU (v0 allocation 2.5 kg), RF generator/matching (1.5 kg), ICP neutralizer (2.0 kg), controls/harness (1.0 kg) [row 54 allocations, not CBEs]; new lines: collector/bias supply, front-end converter, C1 reference supplies, filter/getter",
+   "quantity": "PPU/RF electronics mass lines: Hall PPU (v0 allocation 2.5 kg), RF generator/matching (1.5 kg), controls/harness (1.0 kg) [row 54 allocations, not CBEs]; new lines: collector/bias supply, front-end converter, C1 reference supplies, filter/getter",
    "value": {
     "hall_ppu_kg": 2.5,
     "rf_generator_matching_kg": 1.5,
-    "icp_neutralizer_kg": 2.0,
     "controls_harness_kg": 1.0
    },
    "units": "kg",
    "status": "OWNER_ALLOCATION (row 54; recorder flag on PPU vs 6.1 kg analog)"
+  },
+  {
+   "from": "A9-02",
+   "to": "H2-7",
+   "quantity": "ICP neutralizer SOURCE-HEAD hardware allocation (not electronics; context for the same wet-mass ledger, row 5): ICP neutralizer 2.0 kg [row 54 allocation, not a CBE]",
+   "value": {
+    "icp_neutralizer_kg": 2.0
+   },
+   "units": "kg",
+   "status": "OWNER_ALLOCATION (row 54)"
   },
   {
    "from": "H2-7",
@@ -1296,10 +1321,34 @@
    "why": "closest analog class (100 V bus) but 3 kW-class, not transferable"
   },
   {
+   "h2_4_id": "H24-07",
+   "name": "keeper-supply efficiency lower bound (analog)",
+   "disposition": "RETAINED_AS_CANDIDATE",
+   "why": "S-OSUGA05 keeper conditioner on a 100 V +/- 3 V bus (same bus voltage); steady keeper only at 25 W / 0.9-1.0 A; does not cover the row-89 pulsed 300-600 V ignition mode; transfer to C1 levels needs breadboard data (A902-35)"
+  },
+  {
+   "h2_4_id": "H24-08",
+   "name": "heater-supply efficiency (analog minimum-efficiency specification)",
+   "disposition": "RETAINED_AS_CANDIDATE",
+   "why": "S-OSUGA05 heater specification on a 100 V bus; applies to hall_c1_reference only (no ICP heater, row 112); specification, not a measurement"
+  },
+  {
    "h2_4_id": "H24-09",
    "name": "magnet-supply efficiency (analog minimum-efficiency specification)",
    "disposition": "NEEDS_REVISION",
    "why": "per-coil magnet slots (inner/outer/trim)"
+  },
+  {
+   "h2_4_id": "H24-10",
+   "name": "valve-driver (mass-flow PC) efficiency (analog minimum-efficiency specification)",
+   "disposition": "RETAINED_AS_CANDIDATE",
+   "why": "S-OSUGA05 valve-driver specification on a 100 V bus; now also covers the ICP feed valve slot flow_control_icp_feed"
+  },
+  {
+   "h2_4_id": "H24-11",
+   "name": "auxiliary / housekeeping supply efficiency (analog minimum-efficiency specification)",
+   "disposition": "RETAINED_AS_CANDIDATE",
+   "why": "S-OSUGA05 auxiliary-supply specification on a 100 V bus; housekeeping_controls must also book the no-load/quiescent draw of idle supplies explicitly"
   },
   {
    "h2_4_id": "H24-14",
@@ -1326,6 +1375,12 @@
    "why": "applies to hall_c1_reference only"
   },
   {
+   "h2_4_id": "H24-19",
+   "name": "cathode_keeper ignition load bracket (start-up)",
+   "disposition": "NEEDS_REVISION",
+   "why": "DC-ignition bracket (JPL 2 A x 5-15 V, inferred) does not describe the row-89 current-limited pulsed 300-600 V class ignition; its peak draw and pulse energy are TBD (A902-25) and the start-up step must be peak_sampled to PASS the transient gate"
+  },
+  {
    "h2_4_id": "H24-21",
    "name": "compressor bus-draw screening ceiling",
    "disposition": "NEEDS_REVISION",
@@ -1350,10 +1405,22 @@
    "why": "discharge allocation depended on the v1 A_common; with the ICP sub-allocation open (OQ-A902-03) no discharge allocation is derived here"
   },
   {
+   "h2_4_id": "H24-26",
+   "name": "flight discharge-supply output current at the allocation",
+   "disposition": "NEEDS_REVISION",
+   "why": "derived directly from H24-24 (P_d,alloc / V_d); inherits its revision, not re-derived here"
+  },
+  {
    "h2_4_id": "H24-28",
    "name": "keeper supply ignition capability",
    "disposition": "ANSWERED",
    "why": "row 89: pulsed 300-600 V class ignition required"
+  },
+  {
+   "h2_4_id": "H24-35",
+   "name": "no single-point failure in electronics",
+   "disposition": "CONSTRAINED_BY_OWNER_ANSWER",
+   "why": "row 55: LIMITED redundancy - critical sensing/FDIR redundancy, do not duplicate the full PPU or the ICP neutralizer at this stage; the RFP text itself is still to be verified"
   },
   {
    "h2_4_id": "H24-33",
@@ -1519,7 +1586,16 @@
    ],
    "owner_answer_verbatim": "YES — use a v0 dry-mass budget against a 28 kg dry target: intake/filter/duct 3.5 kg; compressor+drive 5.5; plenum/feed 1.0; Hall head+magnet 3.0; ICP neutralizer 2.0; RF generator/matching 1.5; Hall PPU 2.5; Xe hardware 1.5; controls/harness 1.0; structure/thermal 2.5. Sum 24 kg, leaving 4 kg dry development reserve. These are allocations, not CBEs.",
    "classification_by_recorder": "ENGINEERING_ALLOCATION_OR_BASIS",
-   "how_applied": "v0 dry allocations (RF generator/matching 1.5 kg, ICP neutralizer 2.0 kg, Hall PPU 2.5 kg, controls/harness 1.0 kg) passed to H2-7 as allocations, not CBEs"
+   "how_applied": "v0 dry allocations passed to H2-7 as allocations, not CBEs: electronics lines (RF generator/matching 1.5 kg, Hall PPU 2.5 kg, controls/harness 1.0 kg) and, separately, the ICP neutralizer source head (2.0 kg, not electronics)"
+  },
+  {
+   "row": 55,
+   "covers_ids": [
+    "H27-Q4"
+   ],
+   "owner_answer_verbatim": "LIMITED redundancy — dual series isolation on the high-pressure Xe path plus critical sensing/FDIR redundancy; do not duplicate the thruster, ICP neutralizer or full PPU at this stage. Revisit after failure-tree evidence.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE",
+   "how_applied": "H2-4 H24-35 (no single-point failure) flagged CONSTRAINED_BY_OWNER_ANSWER: limited redundancy, no full-PPU duplication; redundancy affects PPU mass, not the per-slot P_bus rule"
   },
   {
    "row": 56,
@@ -1602,7 +1678,7 @@
    ],
    "owner_answer_verbatim": "YES — provide current-limited pulsed keeper ignition capability in the 300–600 V class for C1 development/reference testing, with interlocks and recorded pulse energy.",
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
-   "how_applied": "c1_keeper includes current-limited pulsed ignition 300-600 V class as a start-up transient"
+   "how_applied": "c1_keeper includes current-limited pulsed ignition 300-600 V class as a start-up transient; its peak is gate-covered only by a peak_sampled step; pulse energy is a measurement record (PENDING A9-04); H2-4 H24-19 flagged NEEDS_REVISION"
   },
   {
    "row": 90,
@@ -1647,7 +1723,7 @@
    ],
    "owner_answer_verbatim": "YES — apply <1.5 kW at the spacecraft-DC propulsion-system boundary. Conservatively require startup transients also to remain below 1.5 kW unless the official RFP explicitly permits a transient exception. Use a new A9/v2 boundary without modifying v1.",
    "classification_by_recorder": "ACCEPT_YES_CHOOSE",
-   "how_applied": "rfp_power_gate applies < 1500 W to steady state and every start-up step; empty start-up refused"
+   "how_applied": "rfp_power_gate applies < 1500 W to steady state and every start-up step; empty start-up refused; a start-up step PASSes only if peak_sampled while the averaging window is TBD (A902-03)"
   },
   {
    "row": 109,
@@ -1683,7 +1759,7 @@
    ],
    "owner_answer_verbatim": "REVISE SEQ-1 — sequence to avoid simultaneous peaks, but do not force the C1 heater off before it is safe. For C1, reduce/disable heater only after keeper/discharge is stable per cathode procedure; ICP has no thermionic heater.",
    "classification_by_recorder": "AMENDED_FOR_A9",
-   "how_applied": "revised SEQ-1 templates: one peak event per step; C1 heater reduced only after keeper/discharge stable; no ICP heater"
+   "how_applied": "revised SEQ-1 templates: one peak event per step and at most one peak-class slot load rising per step; C1 heater reduced only after keeper/discharge stable (a TBD heater counts as ON; last known value kept across TBD steps); no ICP heater"
   },
   {
    "row": 113,

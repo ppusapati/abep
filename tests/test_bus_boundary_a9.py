@@ -261,9 +261,10 @@ def test_compressor_tbd_is_partial_boundary_and_lower_bound():
 
 
 # ------------------------------------------------------------------------------------------------ gates
-def _led(config, p, eta=1.0):
+def _led(config, p, eta=1.0, basis="peak_sampled"):
     loads, effs = full(config, p=p, eta=eta)
-    return B.ledger(config, loads, effs, {"value": 1.0, "evidence_class": "assumed", "source": "unit test"})
+    return B.ledger(config, loads, effs, {"value": 1.0, "evidence_class": "assumed", "source": "unit test"},
+                    power_basis=basis)
 
 
 def test_rfp_gate_steady_and_startup():
@@ -276,6 +277,22 @@ def test_rfp_gate_steady_and_startup():
     assert B.rfp_power_gate(at, [ok])["verdict"] == "FAIL"
     with pytest.raises(B.BoundaryA9Error):
         B.rfp_power_gate(ok, [])                                    # row 108: transients are part of the gate
+    assert g["transient_window_frozen"] is False and g["transient_window"]["status"] == "TBD"
+
+
+@pytest.mark.parametrize("basis", [None, "step_average", "steady_state"])
+def test_startup_pass_needs_peak_sampled_basis(basis):
+    """Averaging window TBD (A902-03): a step value below the limit cannot exclude a keeper-pulse/inrush peak."""
+    n = len(B.installed_slots("hall_c1_reference"))
+    ok = _led("hall_c1_reference", 1000.0 / n, basis=basis)
+    at = _led("hall_c1_reference", 1500.0 / n, basis=basis)
+    g = B.rfp_power_gate(ok, [ok])
+    assert g["rows"][0]["verdict"] == "PASS"                    # the steady row is unaffected
+    assert g["rows"][1]["verdict"] == "NOT_EVALUABLE" and g["rows"][1]["note"]
+    assert g["verdict"] == "NOT_EVALUABLE"
+    assert B.rfp_power_gate(ok, [at])["verdict"] == "FAIL"      # an average at the limit still fails
+    with pytest.raises(B.BoundaryA9Error):
+        _led("hall_c1_reference", 10.0, basis="rms")
 
 
 def test_gate_not_evaluable_vs_fail_on_lower_bound():
@@ -317,13 +334,14 @@ def test_rf_power_planes():
 
 
 # ------------------------------------------------------------------------------------------------ sequencing
-def _seq(config, template_events, heater=None, flags=None):
+def _seq(config, template_events, heater=None, flags=None, basis="peak_sampled"):
     steps = []
     for i, ev in enumerate(template_events):
         loads, effs = full(config, p=10.0, eta=1.0)
         if heater is not None:
-            loads["c1_heater"] = L(heater[i])
-        st = {"step_id": f"s{i}", "event": ev, "loads": loads, "efficiencies": effs}
+            h = heater[i]
+            loads["c1_heater"] = {"P_W": "TBD", "tbd_requires": "C1 heater data"} if h == "TBD" else L(h)
+        st = {"step_id": f"s{i}", "event": ev, "loads": loads, "efficiencies": effs, "power_basis": basis}
         if flags is not None:
             st["flags"] = flags[i]
         if i == len(template_events) - 1:
@@ -382,3 +400,179 @@ def test_sequence_refusals_and_transient_gate():
     r = B.check_startup_sequence("hall_icp_neutralizer", steps, FE1)
     assert r["transient_gate"]["verdict"] == "FAIL"             # transient above 1.5 kW fails even if steady passes
     assert r["transient_gate"]["rows"][0]["verdict"] == "PASS"
+
+
+C1_EVS = [s["event"] for s in B.SEQUENCE_TEMPLATES["hall_c1_reference"]]
+
+
+@pytest.mark.parametrize("heater", [
+    [0, 0, 200, "TBD", 0, 0, 0, 0],       # known -> TBD -> 0 (reviewer reproduction)
+    [0, 0, 50, 50, "TBD", 0, 0, 0],       # template events, heater 50 -> TBD -> 0
+    [0, 0, "TBD", 0, 0, 0, 0, 0],         # TBD preheat -> 0 at the next step (A902-26 is TBD today)
+    [0, 0, "TBD", "TBD", "TBD", 0, 0, 0],
+])
+def test_heater_reduction_through_tbd_is_violation(heater):
+    r = B.check_startup_sequence("hall_c1_reference", _seq("hall_c1_reference", C1_EVS, heater, [{}] * 8), FE1)
+    assert r["sequence_status"] == "SEQUENCE_RULE_VIOLATION"
+    assert any("heater" in v["rule"] for v in r["violations"])
+
+
+def test_heater_tbd_with_stability_flags_satisfied_and_unclassifiable_not_evaluable():
+    flags = [{}] * 6 + [{"keeper_stable": True, "discharge_stable": True}] * 2
+    ok = B.check_startup_sequence("hall_c1_reference",
+                                  _seq("hall_c1_reference", C1_EVS, [0, 0, "TBD", "TBD", "TBD", "TBD", 0, 0], flags),
+                                  FE1)
+    assert ok["sequence_status"] == "RULES_SATISFIED", (ok["violations"], ok["not_evaluable"])
+    ne = B.check_startup_sequence("hall_c1_reference",
+                                  _seq("hall_c1_reference", C1_EVS, [0, 0, "TBD", 40, 40, 40, 0, 0], flags), FE1)
+    assert ne["sequence_status"] == "RULES_NOT_EVALUABLE" and ne["not_evaluable"]
+    assert not ne["violations"]
+
+
+def test_undeclared_simultaneous_peak_loads_detected_by_magnitude():
+    evs = [None, "magnet_ramp", "icp_rf_ignition", "icp_collector_bias_on", "hall_discharge_ignition", None]
+    steps = _seq("hall_icp_neutralizer", evs)
+    steps[2] = copy.deepcopy(steps[2])
+    steps[2]["loads"]["compressor"] = L(200.0)                  # compressor jumps in the RF-ignition step, no label
+    steps[2]["loads"]["icp_rf_source"] = {**L(300.0), "plane": "generator_dc_input"}
+    r = B.check_startup_sequence("hall_icp_neutralizer", steps, FE1)
+    assert any("load rises" in v["rule"] for v in r["violations"]), r["violations"]
+    steps[2]["loads"]["compressor"] = {"P_W": "TBD", "tbd_requires": "compressor ICD"}
+    r2 = B.check_startup_sequence("hall_icp_neutralizer", steps, FE1)
+    assert any("load rises" in v["rule"] for v in r2["not_evaluable"]) or \
+        any("load rises" in v["rule"] for v in r2["violations"])
+
+
+def test_record_shape_refusals_schema_parity():
+    loads, effs = full("hall_icp_neutralizer")
+    for bad in ({**loads, "c1_heater": {"P_W": 0}},                        # not installed but no evidence/source
+                {**loads, "hall_discharge": {**L(1.0), "plane": "generator_dc_input"}},   # plane only on RF source
+                {**loads, "hall_discharge": {**L(1.0), "note": "x"}},       # unexpected key
+                {**loads, "hall_discharge": {"P_W": "TBD", "tbd_requires": "x", "evidence_class": "assumed"}}):
+        with pytest.raises(B.BoundaryA9Error):
+            B.ledger("hall_icp_neutralizer", bad, effs, FE)
+    with pytest.raises(B.BoundaryA9Error):
+        B.ledger("hall_icp_neutralizer", loads, {**effs, "c1_heater": 1.0}, FE)   # bare number, not a record
+    with pytest.raises(B.BoundaryA9Error):
+        B.ledger("hall_icp_neutralizer", loads, effs, {**FE, "path": "direct"})   # front end has no path
+
+
+# ---- minimal JSON-Schema subset validator (jsonschema is not a dependency); used for module/schema parity
+def _valid(inst, sch, root):
+    if "$ref" in sch:
+        return _valid(inst, root["$defs"][sch["$ref"].split("/")[-1]], root)
+    if "oneOf" in sch:
+        return sum(_valid(inst, s, root) for s in sch["oneOf"]) == 1
+    if "const" in sch and inst != sch["const"]:
+        return False
+    if "enum" in sch and inst not in sch["enum"]:
+        return False
+    t = sch.get("type")
+    if t == "object":
+        if not isinstance(inst, dict) or any(k not in inst for k in sch.get("required", [])):
+            return False
+        props = sch.get("properties", {})
+        if "propertyNames" in sch and not all(_valid(k, sch["propertyNames"], root) for k in inst):
+            return False
+        for k, v in inst.items():
+            if k in props:
+                if not _valid(v, props[k], root):
+                    return False
+            elif sch.get("additionalProperties") is False:
+                return False
+            elif isinstance(sch.get("additionalProperties"), dict) and not _valid(v, sch["additionalProperties"],
+                                                                                   root):
+                return False
+        return True
+    if t == "number":
+        if isinstance(inst, bool) or not isinstance(inst, (int, float)):
+            return False
+        if "minimum" in sch and inst < sch["minimum"]:
+            return False
+        if "maximum" in sch and inst > sch["maximum"]:
+            return False
+        if "exclusiveMinimum" in sch and inst <= sch["exclusiveMinimum"]:
+            return False
+    if t == "string" and (not isinstance(inst, str) or len(inst) < sch.get("minLength", 0)):
+        return False
+    if t == "array":
+        if not isinstance(inst, list):
+            return False
+        if sch.get("uniqueItems") and len(set(map(str, inst))) != len(inst):
+            return False
+        return all(_valid(x, sch["items"], root) for x in inst)
+    return True
+
+
+def _both_validators(doc, sch):
+    ok = _valid(doc, sch, sch)
+    try:
+        import jsonschema  # optional
+    except ImportError:
+        return ok
+    assert jsonschema.Draft202012Validator(sch).is_valid(doc) == ok
+    return ok
+
+
+RF_OK = {**L(100.0), "plane": "generator_dc_input"}
+LOAD_CASES = [("hall_discharge", L(10.0)), ("hall_discharge", {"P_W": "TBD", "tbd_requires": "x"}),
+              ("hall_discharge", {"P_W": 1.0}), ("hall_discharge", {**L(1.0), "plane": "generator_dc_input"}),
+              ("hall_discharge", {**L(1.0), "note": "x"}), ("hall_discharge", L(-1.0)),
+              ("icp_rf_source", RF_OK), ("icp_rf_source", L(100.0)), ("icp_rf_source", {**L(1.0), "plane": "forward"}),
+              ("icp_rf_source", {"P_W": "TBD", "tbd_requires": "x", "plane": "generator_dc_input"}),
+              ("icp_rf_source", {"P_W": "TBD", "tbd_requires": "x"})]
+
+
+@pytest.mark.parametrize("slot,rec", LOAD_CASES)
+def test_module_and_schema_agree_on_load_records(slot, rec):
+    sch = json.load(open(OUT_SCHEMA, encoding="utf-8"))
+    loads, effs = full("hall_icp_neutralizer")
+    loads[slot] = rec
+    doc = {"boundary_version": B.BOUNDARY_VERSION, "configuration": "hall_icp_neutralizer", "variant": [],
+           "front_end": FE, "loads": loads, "efficiencies": effs, "power_basis": "peak_sampled"}
+    try:
+        B.ledger("hall_icp_neutralizer", loads, effs, FE, power_basis="peak_sampled")
+        mod_ok = True
+    except B.BoundaryA9Error:
+        mod_ok = False
+    assert mod_ok == _both_validators(doc, sch)
+
+
+def test_module_and_schema_agree_on_not_installed_zero_record():
+    sch = json.load(open(OUT_SCHEMA, encoding="utf-8"))
+    loads, effs = full("hall_icp_neutralizer")
+    for rec, expect in ((L(0.0), True), ({"P_W": 0}, False)):
+        doc = {"boundary_version": B.BOUNDARY_VERSION, "configuration": "hall_icp_neutralizer", "variant": [],
+               "front_end": FE, "loads": {**loads, "c1_heater": rec}, "efficiencies": effs}
+        assert _both_validators(doc, sch) is expect
+        if expect:
+            B.ledger("hall_icp_neutralizer", doc["loads"], effs, FE)
+        else:
+            with pytest.raises(B.BoundaryA9Error):
+                B.ledger("hall_icp_neutralizer", doc["loads"], effs, FE)
+
+
+def test_documented_limitations(data):
+    ba = data["bus_architecture"]
+    assert "housekeeping_controls" in ba["no_load_losses"] and "floating-point" in ba["residual_check"]
+    assert "compressor LOAD" in ba["status_taxonomy"]
+    assert "pulse energy" in B.SLOTS["c1_keeper"]["load_plane"] and "not a ledger field" in \
+        B.SLOTS["c1_keeper"]["load_plane"]
+
+
+def test_h2_4_flags_and_h2_7_mass_lines(data):
+    flags = {f["h2_4_id"]: f["disposition"] for f in data["h2_4_revision_flags"]}
+    for pid in ("H24-05", "H24-06", "H24-07", "H24-08", "H24-09", "H24-10", "H24-11", "H24-19", "H24-24",
+                "H24-26", "H24-35"):
+        assert pid in flags, pid
+    assert flags["H24-26"] == "NEEDS_REVISION" and flags["H24-19"] == "NEEDS_REVISION"
+    assert flags["H24-35"] == "CONSTRAINED_BY_OWNER_ANSWER"
+    a35 = next(i for i in data["items"] if i["id"] == "A902-35")["source"]
+    assert "28 V" not in a35 and "100 V +/- 3 V" in a35
+    h27 = [x for x in data["interface_demands"] if x["from"] == "A9-02" and x["to"] == "H2-7"]
+    elec = next(x for x in h27 if x["quantity"].startswith("PPU/RF electronics"))
+    assert "icp_neutralizer_kg" not in elec["value"]
+    head = next(x for x in h27 if "SOURCE-HEAD" in x["quantity"])
+    assert head["value"] == {"icp_neutralizer_kg": 2.0}
+    a01 = next(i for i in data["items"] if i["id"] == "A902-01")
+    assert a01["evidence_class"] == "requirement-as-recorded"

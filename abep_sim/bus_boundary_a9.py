@@ -17,7 +17,12 @@ exist anywhere in this module**; a missing installed slot raises, an unknown val
 with what it requires, and the ledger then reports an incomplete status with only a known lower bound (rule 3).
 
 Conventions (per slot, see ``SLOTS``):
-  * ``P_W`` of a load record: power at the slot's load-side reference plane (time-averaged over the evaluated step).
+  * ``P_W`` of a load record: power at the slot's load-side reference plane in the evaluated step. What the step
+    value represents is declared per ledger as ``power_basis`` (``POWER_BASES``): ``steady_state``, ``step_average``
+    or ``peak_sampled``. The averaging window / bandwidth that defines start-up transient power is still TBD (item
+    A902-03, OQ-A902-01, LOCK-1 rule), so a start-up step can only PASS the transient gate when it is declared
+    ``peak_sampled`` (a step average can hide a keeper-ignition pulse or a discharge-ignition inrush), and every gate
+    result carries ``transient_window_frozen = False`` until that rule is frozen.
     For ``icp_rf_source`` the load plane is the RF generator's DC input: only that DC input crosses the bus boundary.
     Forward, reflected and delivered RF power are MEASUREMENT quantities (``rf_power_planes``; row 72: directional
     coupler primary, calorimetry cross-check) and are refused as a bus load.
@@ -28,6 +33,13 @@ Conventions (per slot, see ``SLOTS``):
   * ``P_bus_W = P_W / (eta_slot * eta_front_end)`` for internal-bus slots, ``P_W / eta_slot`` for direct slots.
   * The residual check is a bookkeeping identity (it catches floating-point error, not physics); an independent check
     needs a measured spacecraft-side bus current and voltage.
+  * No-load / quiescent converter losses are NOT produced by the per-slot model: a slot at exactly 0 W output draws
+    exactly 0 W (``P_W / eta``), even if its supply is energised. The standby draw of energised-but-idle supplies and
+    of the front end must be booked explicitly in ``housekeeping_controls`` (as its measured or cited DC draw); it is
+    otherwise excluded from the ledger. This is a stated limitation, not a hidden default.
+  * Status taxonomy: ``PARTIAL_BOUNDARY`` whenever the compressor LOAD is TBD (row 22: the compressor ICD has not
+    supplied it; takes precedence); ``INCOMPLETE_EVIDENCE`` for any other TBD, including a known compressor load whose
+    supply efficiency is TBD (the boundary is then defined, only its evidence is missing); ``COMPLETE`` otherwise.
 Allocations used by the checks (1350 W design allocation row 109; 300 W common allocation incl. the 50 W
 controls/thermal allowance row 114) are OWNER ALLOCATIONS, never predictions and never gates.
 """
@@ -52,6 +64,10 @@ RF_FREQUENCY_HZ = 13.56e6             # row 72 / A9 decision
 LAB_RF_FORWARD_W_RANGE = (0.0, 500.0) # laboratory source + inline chain sizing (row 72); not a flight allocation
 C1_KEEPER_PULSE_IGNITION_CLASS_V = (300.0, 600.0)  # current-limited pulsed keeper ignition capability (row 89)
 
+POWER_BASES = ("steady_state", "step_average", "peak_sampled")
+TRANSIENT_WINDOW = {"status": "TBD", "item": "A902-03", "owner_question": "OQ-A902-01", "freeze_point": "LOCK-1",
+                    "rule": "a start-up step PASSes only if declared peak_sampled; the sampling bandwidth that makes "
+                            "'peak_sampled' meaningful is frozen at LOCK-2 (PROPOSED, OQ-A902-01)"}
 EVIDENCE_CLASSES = ("measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed",
                     "owner-allocation")
 PATHS = ("internal_bus", "direct")
@@ -82,7 +98,9 @@ SLOTS = {
     "c1_keeper": {
         "group": "c1", "rows": [89, 110],
         "load_plane": "C1 keeper terminals; includes the current-limited pulsed ignition (300-600 V class, row 89) as a "
-                      "start-up transient with recorded pulse energy"},
+                      "start-up transient: its instantaneous peak is only covered by a step declared peak_sampled; "
+                      "the pulse energy (row 89 'recorded pulse energy') is a measurement record of the power "
+                      "measurement chain (PENDING A9-04), not a ledger field"},
     "c1_common_tie": {
         "group": "c1", "rows": [91],
         "load_plane": "DC bus draw of the isolated, selectable cathode-common/bleeder network (selector, active bias "
@@ -130,7 +148,9 @@ SLOTS = {
         "load_plane": "propulsion-subsystem heaters / active thermal control terminals in the evaluated step"},
     "housekeeping_controls": {
         "group": "common", "rows": [114], "common_allocation": True, "controls_thermal": True,
-        "load_plane": "propulsion controller, PPU control electronics, sensors, telemetry/command interface"},
+        "load_plane": "propulsion controller, PPU control electronics, sensors, telemetry/command interface, AND the "
+                      "explicitly booked no-load/quiescent draw of energised-but-idle supplies and of the front end "
+                      "(the per-slot P/eta model gives 0 W for a 0 W output)"},
     "reserved_dc_port": {
         "group": "reserved", "rows": [110],
         "load_plane": "reserved DC port output; stated explicitly (0 W when unused)"},
@@ -241,6 +261,12 @@ def installed_slots(config: str, variant: Sequence = ()) -> tuple:
     return tuple(c for c in ALL_SLOTS if c in s)
 
 
+def _keys(rec: Mapping, allowed: set, what: str) -> None:
+    extra = sorted(str(k) for k in rec if k not in allowed)
+    if extra:
+        raise BoundaryA9Error(f"{what}: unexpected key(s) {extra}; allowed {sorted(allowed)} (schema parity)")
+
+
 def _load_record(slot: str, rec) -> dict:
     what = f"load of {slot!r}"
     if not isinstance(rec, Mapping):
@@ -248,18 +274,23 @@ def _load_record(slot: str, rec) -> dict:
                               f"{{'P_W': 'TBD', 'tbd_requires'}}, got {type(rec).__name__}")
     if "P_W" not in rec:
         raise BoundaryA9Error(f"{what}: 'P_W' missing (no default)")
+    plane_key = {"plane"} if slot == "icp_rf_source" else set()
     if slot == "icp_rf_source":
         plane = rec.get("plane")
         if plane != "generator_dc_input":
             raise BoundaryA9Error(f"{what}: plane must be 'generator_dc_input' (got {plane!r}); only the RF generator "
                                   f"DC input crosses the bus boundary, forward/reflected/delivered RF power are "
                                   f"measurement quantities (row 72)")
+    elif "plane" in rec:
+        raise BoundaryA9Error(f"{what}: 'plane' is defined only for icp_rf_source")
     p = rec["P_W"]
     if isinstance(p, str):
         if p != TBD:
             raise BoundaryA9Error(f"{what}: string value must be exactly {TBD!r}, got {p!r}")
+        _keys(rec, {"P_W", "tbd_requires"} | plane_key, what)
         return {"P_W": None, "tbd_requires": _nonempty(rec, "tbd_requires", what), "evidence_class": None,
                 "source": None}
+    _keys(rec, {"P_W", "evidence_class", "source"} | plane_key, what)
     x = _real(p, what)
     if x < 0.0:
         raise BoundaryA9Error(f"{what} must be >= 0 W, got {x!r}")
@@ -282,8 +313,10 @@ def _eff_record(what: str, rec, need_path: bool = True) -> dict:
     if isinstance(v, str):
         if v != TBD:
             raise BoundaryA9Error(f"{what}: string value must be exactly {TBD!r}, got {v!r}")
+        _keys(rec, {"value", "tbd_requires"} | ({"path"} if need_path else set()), what)
         return {"value": None, "path": path, "tbd_requires": _nonempty(rec, "tbd_requires", what),
                 "evidence_class": None, "source": None}
+    _keys(rec, {"value", "evidence_class", "source"} | ({"path"} if need_path else set()), what)
     x = _real(v, what)
     if not (0.0 < x <= 1.0):
         raise BoundaryA9Error(f"{what} must be in (0, 1], got {x!r}")
@@ -295,23 +328,26 @@ def _eff_record(what: str, rec, need_path: bool = True) -> dict:
 
 
 def _not_installed_ok(slot: str, loads: Mapping, effs: Mapping, config: str) -> None:
+    """A not-installed slot is omitted, or passed as a full schema-valid record with exactly 0 W / efficiency 1."""
     if slot in loads:
         rec = loads[slot]
         p = rec.get("P_W") if isinstance(rec, Mapping) else rec
         if isinstance(p, bool) or not isinstance(p, Real) or float(p) != 0.0:
             raise BoundaryA9Error(f"slot {slot!r} is not installed in {config!r} with this variant; it may only be "
                                   f"omitted or passed as exactly 0 W (got {p!r}) - no hidden consumption")
+        _load_record(slot, rec)          # same record shape as the schema (evidence_class + source required)
     if slot in effs:
         rec = effs[slot]
         v = rec.get("value") if isinstance(rec, Mapping) else rec
         if isinstance(v, bool) or not isinstance(v, Real) or float(v) != 1.0:
             raise BoundaryA9Error(f"slot {slot!r} is not installed in {config!r}; its efficiency may only be omitted "
                                   f"or exactly 1 (got {v!r})")
+        _eff_record(f"efficiency of {slot!r}", rec)
 
 
 # ------------------------------------------------------------------------------------------------------ ledger
 def ledger(config: str, loads: Mapping, efficiencies: Mapping, front_end: Mapping, variant: Sequence = (),
-           label: str = "") -> dict:
+           label: str = "", power_basis=None) -> dict:
     """Spacecraft-side DC bus-power ledger of one configuration in one evaluated step.
 
     ``loads``/``efficiencies`` must contain every installed slot (``installed_slots(config, variant)``); slots that
@@ -321,7 +357,11 @@ def ledger(config: str, loads: Mapping, efficiencies: Mapping, front_end: Mappin
     Status: ``COMPLETE`` (P_bus known), ``PARTIAL_BOUNDARY`` (compressor draw TBD, row 22) or
     ``INCOMPLETE_EVIDENCE`` (another load or an efficiency TBD). When not complete, ``P_bus_W`` is None and
     ``P_bus_lower_bound_W`` is the rigorous lower bound (TBD loads count 0 W; a TBD efficiency counts 1).
+    ``power_basis``: what the step values represent (one of ``POWER_BASES``) or None = unstated; a start-up step
+    with a basis other than ``peak_sampled`` cannot PASS the transient gate (``rfp_power_gate``).
     """
+    if power_basis is not None and power_basis not in POWER_BASES:
+        raise BoundaryA9Error(f"power_basis must be one of {list(POWER_BASES)} or None, got {power_basis!r}")
     inst = installed_slots(config, variant)
     if not isinstance(loads, Mapping):
         raise BoundaryA9Error(f"loads must be a mapping slot -> record, got {type(loads).__name__}")
@@ -389,7 +429,7 @@ def ledger(config: str, loads: Mapping, efficiencies: Mapping, front_end: Mappin
         p_total = dest_total
     classes = sorted({it["evidence_class"] for it in items if it["evidence_class"]})
     return {"boundary_version": BOUNDARY_VERSION, "configuration": config, "variant": list(variant),
-            "label": label, "status": status, "P_bus_W": p_total, "P_bus_lower_bound_W": lower,
+            "label": label, "power_basis": power_basis, "status": status, "P_bus_W": p_total, "P_bus_lower_bound_W": lower,
             "residual_W": residual, "tbd": tbd, "load_evidence_classes": classes,
             "measured_only": classes == ["measured"],
             "front_end": {"efficiency": fe["value"], "evidence_class": fe["evidence_class"], "source": fe["source"],
@@ -418,6 +458,9 @@ def rfp_power_gate(steady: dict, startup_steps: Sequence) -> dict:
 
     PASS only if every ledger is COMPLETE and below the limit; FAIL if any known total or any lower bound reaches
     the limit; otherwise NOT_EVALUABLE. An empty start-up list is refused (the gate covers transients).
+    Transient basis: the averaging window is not frozen (``TRANSIENT_WINDOW``); a start-up step whose ledger is not
+    declared ``peak_sampled`` can FAIL (an average at/above the limit implies a peak at/above it) but never PASS -
+    it is NOT_EVALUABLE. The result always carries ``transient_window_frozen = False`` and the caveat.
     """
     if isinstance(startup_steps, (str, Mapping)) or not isinstance(startup_steps, Sequence) or not startup_steps:
         raise BoundaryA9Error("rfp_power_gate needs a non-empty sequence of start-up step ledgers (row 108: start-up "
@@ -427,14 +470,22 @@ def rfp_power_gate(steady: dict, startup_steps: Sequence) -> dict:
         if not isinstance(led, Mapping) or led.get("boundary_version") != BOUNDARY_VERSION:
             raise BoundaryA9Error(f"not a {BOUNDARY_VERSION} ledger: {led!r:.80}")
         v = _verdict_below(led["P_bus_W"], led["P_bus_lower_bound_W"], P_BUS_REQUIREMENT_W, True, "PASS", "FAIL")
-        rows.append({"role": role, "label": led["label"], "status": led["status"], "P_bus_W": led["P_bus_W"],
-                     "P_bus_lower_bound_W": led["P_bus_lower_bound_W"], "verdict": v,
-                     "measured_only": led["measured_only"]})
+        basis = led.get("power_basis")
+        note = None
+        if role == "startup" and v == "PASS" and basis != "peak_sampled":
+            v, note = "NOT_EVALUABLE", (f"start-up step value basis {basis!r} is not 'peak_sampled': a step value "
+                                        f"below the limit cannot exclude an instantaneous peak (window TBD, A902-03)")
+        rows.append({"role": role, "label": led["label"], "status": led["status"], "power_basis": basis,
+                     "P_bus_W": led["P_bus_W"], "P_bus_lower_bound_W": led["P_bus_lower_bound_W"], "verdict": v,
+                     "note": note, "measured_only": led["measured_only"]})
     vs = {r["verdict"] for r in rows}
     overall = "FAIL" if "FAIL" in vs else ("PASS" if vs == {"PASS"} else "NOT_EVALUABLE")
     return {"gate": "RFP P_bus < 1500 W (steady and start-up)", "limit_W": P_BUS_REQUIREMENT_W, "strict": True,
             "verdict": overall, "evidence_basis": "measured" if all(r["measured_only"] for r in rows)
-            else "includes non-measured loads (not a demonstration)", "rows": rows}
+            else "includes non-measured loads (not a demonstration)",
+            "transient_window_frozen": False, "transient_window": dict(TRANSIENT_WINDOW),
+            "caveat": "start-up verdict conditional on the averaging window / sampling bandwidth, TBD until LOCK-1 "
+                      "(rule) / LOCK-2 (value); a PASS is not a demonstration", "rows": rows}
 
 
 def allocation_checks(led: dict) -> dict:
@@ -500,19 +551,69 @@ def rf_power_planes(P_dc_in_W, P_forward_W, P_reflected_W, P_delivered_W, u_W) -
                         "match_and_line_loss_W": None if dl is None else net - dl}}
 
 
+def _heater_rule(sid: str, h, stable: bool, st: dict, violations: list, not_evaluable: list) -> None:
+    """Row 112 (revised SEQ-1): C1 heater reduced/disabled only after keeper and discharge are stable.
+
+    ``st`` carries the heater history: ``last_known`` (last numeric value, kept across TBD steps), ``prev_tbd``
+    (previous step TBD) and ``on`` (heater was on, known > 0 or TBD). A TBD heater is treated as ON with unknown
+    power (an OFF heater must be passed as exactly 0 W). Without both stability flags: a drop below the last known
+    value, or to 0 W after a TBD step, is a violation; a change that cannot be classified is NOT_EVALUABLE.
+    """
+    rule = "C1 heater reduced/disabled only after keeper and discharge are stable per cathode procedure (row 112)"
+    if not stable and st["on"]:
+        if h is None:
+            if not st["prev_tbd"] and st["last_known"]:
+                not_evaluable.append({"step_id": sid, "rule": rule, "detail": {
+                    "from_W": st["last_known"], "to_W": TBD, "why": "heater power TBD: a reduction cannot be excluded"}})
+        elif st["last_known"] is not None and h < st["last_known"]:
+            violations.append({"step_id": sid, "rule": rule, "detail": {"from_W": st["last_known"], "to_W": h,
+                                                                        "via_tbd": st["prev_tbd"]}})
+        elif st["prev_tbd"] and h == 0.0:
+            violations.append({"step_id": sid, "rule": rule, "detail": {"from_W": TBD, "to_W": h, "via_tbd": True}})
+        elif st["prev_tbd"]:
+            not_evaluable.append({"step_id": sid, "rule": rule, "detail": {
+                "from_W": TBD, "to_W": h, "why": "previous heater power TBD: a reduction cannot be excluded"}})
+    if h is None:
+        st["on"], st["prev_tbd"] = True, True
+    else:
+        st["on"] = st["on"] or h > 0.0
+        st["prev_tbd"] = False
+        st["last_known"] = h
+
+
+def _peak_rises(prev: dict, cur: dict, peak_slots: tuple) -> tuple:
+    """Peak-class slots whose load certainly rises (known increase, or exactly 0 W -> TBD) and those that may rise
+    (any other transition involving TBD, except TBD -> exactly 0 W)."""
+    sure, maybe = [], []
+    for s in peak_slots:
+        a, b = prev[s], cur[s]
+        if a is not None and b is not None:
+            if b > a:
+                sure.append(s)
+        elif b is None and a == 0.0:
+            sure.append(s)
+        elif b is None or b > 0.0:
+            maybe.append(s)
+    return sure, maybe
+
+
 def check_startup_sequence(config: str, steps: Sequence, front_end: Mapping, variant: Sequence = ()) -> dict:
     """Evaluate a time-ordered start-up sequence (revised SEQ-1, row 112) and the transient RFP gate (row 108).
 
     ``steps``: list of {'step_id', 'event' (a PEAK_EVENTS key or None), 'loads', 'efficiencies', optional 'flags'
-    {'keeper_stable', 'discharge_stable'}, optional 'phase' ('steady' only on the last step)}. The last step must be
-    the steady step. Rule violations (simultaneous peak events, forbidden heater reduction, enforced order) are
-    reported, not raised; malformed input raises.
+    {'keeper_stable', 'discharge_stable'}, optional 'power_basis' (``POWER_BASES``), optional 'phase' ('steady'
+    only on the last step)}. The last step must be the steady step. Rule violations (simultaneous peaks by declared
+    event AND by actual load increase, forbidden heater reduction, enforced order) are reported, not raised; rules
+    that cannot be evaluated because of TBD loads are reported as ``not_evaluable``; malformed input raises.
+    ``sequence_status``: SEQUENCE_RULE_VIOLATION > RULES_NOT_EVALUABLE > RULES_SATISFIED.
     """
     inst = installed_slots(config, variant)
     if isinstance(steps, (str, Mapping)) or not isinstance(steps, Sequence) or len(steps) < 2:
         raise BoundaryA9Error("a start-up sequence needs at least one start-up step and a final steady step")
-    ledgers, violations, seen_events, ids = [], [], {}, set()
-    heater_was_on, heater_prev = False, None
+    peak_slots = tuple(s for s in ALL_SLOTS if s in set(PEAK_EVENTS.values()) and s in inst)
+    ledgers, violations, not_evaluable, seen_events, ids = [], [], [], {}, set()
+    heater = {"last_known": None, "prev_tbd": False, "on": False}
+    prev_p = None
     for i, st in enumerate(steps):
         if not isinstance(st, Mapping):
             raise BoundaryA9Error(f"step {i} must be a mapping")
@@ -535,19 +636,23 @@ def check_startup_sequence(config: str, steps: Sequence, front_end: Mapping, var
         if len(events) > 1:
             violations.append({"step_id": sid, "rule": "one peak-class event per step (row 112)",
                                "detail": events})
-        led = ledger(config, st.get("loads"), st.get("efficiencies"), front_end, variant, label=sid)
+        led = ledger(config, st.get("loads"), st.get("efficiencies"), front_end, variant, label=sid,
+                     power_basis=st.get("power_basis"))
         ledgers.append(led)
+        cur_p = {it["slot"]: it["P_W"] for it in led["items"]}
+        if prev_p is not None:
+            sure, maybe = _peak_rises(prev_p, cur_p, peak_slots)
+            rule = "at most one peak-class slot load rises per step (row 112, by load, independent of event labels)"
+            if len(sure) > 1:
+                violations.append({"step_id": sid, "rule": rule, "detail": sure})
+            elif len(sure) + len(maybe) > 1:
+                not_evaluable.append({"step_id": sid, "rule": rule,
+                                      "detail": {"rising": sure, "TBD_may_rise": maybe}})
+        prev_p = cur_p
         if "c1_heater" in inst:
-            h = next(it for it in led["items"] if it["slot"] == "c1_heater")["P_W"]
             flags = st.get("flags") or {}
-            if heater_was_on and h is not None and heater_prev is not None and h < heater_prev:
-                if not (flags.get("keeper_stable") is True and flags.get("discharge_stable") is True):
-                    violations.append({"step_id": sid, "rule": "C1 heater reduced/disabled only after keeper and "
-                                       "discharge are stable per cathode procedure (row 112)",
-                                       "detail": {"from_W": heater_prev, "to_W": h}})
-            if h:
-                heater_was_on = True
-            heater_prev = h
+            stable = flags.get("keeper_stable") is True and flags.get("discharge_stable") is True
+            _heater_rule(sid, cur_p["c1_heater"], stable, heater, violations, not_evaluable)
     for a, b in ENFORCED_ORDER[config]:
         if a in seen_events and b in seen_events and not seen_events[a] < seen_events[b]:
             violations.append({"step_id": steps[seen_events[b]]["step_id"], "rule": f"{a} before {b}",
@@ -556,9 +661,12 @@ def check_startup_sequence(config: str, steps: Sequence, front_end: Mapping, var
             violations.append({"step_id": steps[seen_events[b]]["step_id"], "rule": f"{a} before {b}",
                                "detail": f"{a} missing"})
     gate = rfp_power_gate(ledgers[-1], ledgers[:-1])
+    status = ("SEQUENCE_RULE_VIOLATION" if violations else
+              ("RULES_NOT_EVALUABLE" if not_evaluable else "RULES_SATISFIED"))
     return {"boundary_version": BOUNDARY_VERSION, "configuration": config, "variant": list(variant),
-            "sequence_status": "SEQUENCE_RULE_VIOLATION" if violations else "RULES_SATISFIED",
-            "violations": violations, "transient_gate": gate,
+            "sequence_status": status, "violations": violations, "not_evaluable": not_evaluable,
+            "transient_gate": gate,
             "steady_allocation_checks": allocation_checks(ledgers[-1]),
-            "steps": [{"step_id": led["label"], "status": led["status"], "P_bus_W": led["P_bus_W"],
-                       "P_bus_lower_bound_W": led["P_bus_lower_bound_W"]} for led in ledgers]}
+            "steps": [{"step_id": led["label"], "status": led["status"], "power_basis": led["power_basis"],
+                       "P_bus_W": led["P_bus_W"], "P_bus_lower_bound_W": led["P_bus_lower_bound_W"]}
+                      for led in ledgers]}

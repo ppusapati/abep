@@ -96,7 +96,7 @@ LANES = {
     "M16": "docs/budgets/subsystem_maturity/",
 }
 FREEZE_POINTS = ("NOW", "LOCK-1", "LOCK-2", "after-evidence")
-EVIDENCE = B.EVIDENCE_CLASSES + ("n/a (rule)", "TBD")
+EVIDENCE = B.EVIDENCE_CLASSES + ("n/a (rule)", "requirement-as-recorded", "TBD")  # item-level classes
 
 
 def pend(lane: str, what: str = "") -> str:
@@ -194,14 +194,16 @@ def build(inp: dict) -> dict:
     items = [
         I("A902-01", "RFP bus-power requirement (strict '<')", B.P_BUS_REQUIREMENT_W, "W", "requirement",
           f"A9 decision requirement_discipline; {R(108)}; RFP '< 1.5 kW' as recorded (official RFP not yet obtained, "
-          f"rows 1-3: verify)", "assumed", "REQUIREMENT_AS_RECORDED", "NOW",
+          f"rows 1-3: verify)", "requirement-as-recorded",
+          "REQUIREMENT_AS_RECORDED", "NOW",
           "gate at the spacecraft-DC propulsion boundary; no discharge-only or RF-generator-only claim is sufficient"),
         I("A902-02", "gate scope: steady state AND start-up transients", "applies to both", "-", "owner decision",
           R(108), "n/a (rule)", "ADOPTED", "NOW",
           "unless the official RFP explicitly permits a transient exception"),
         I("A902-03", "averaging window / bandwidth defining 'start-up transient' power for the gate", "TBD",
           "s", "pending", "TBD - requires owner decision OQ-A902-01 (H2-4 H24-37 left it TBD)", "TBD", "OPEN",
-          "LOCK-1"),
+          "LOCK-1", "until frozen, rfp_power_gate gives a start-up step PASS only when its ledger is declared "
+          "power_basis='peak_sampled' (otherwise NOT_EVALUABLE) and always reports transient_window_frozen=False"),
         I("A902-04", "internal design allocation (ICP must fit inside it)", B.DESIGN_ALLOCATION_W, "W", "allocation",
           f"{R(109)} ('~1.35 kW'; do not plan to consume the 1.35 -> 1.5 kW margin nominally)", "owner-allocation",
           "ALLOCATION (not a prediction, not a gate)", "NOW"),
@@ -259,7 +261,9 @@ def build(inp: dict) -> dict:
           list(B.C1_KEEPER_PULSE_IGNITION_CLASS_V), "V", "owner decision",
           f"{R(89)}; H2-2 H22-22 {h22_22['value']} {h22_22['units']} ({h22_22['evidence_class']})",
           "owner-allocation", "ADOPTED (capability, not a load)", "NOW",
-          "its bus power is a start-up transient of slot c1_keeper, value TBD - requires measured pulse energy"),
+          "its bus power is a start-up transient of slot c1_keeper, value TBD - requires measured peak draw "
+          "(covered only by a peak_sampled step) and recorded pulse energy (a measurement record, PENDING A9-04; "
+          "the ledger has no pulse-energy field); H2-4 H24-19 (DC ignition 10-30 W bracket) does not cover it"),
         I("A902-26", "C1 heater power during preheat", "TBD", "W", "pending",
           f"TBD - requires the C1 unit selection; analog envelope only: H2-2 H22-16 {h22_16['value']} "
           f"{h22_16['units']} ({h22_16['evidence_class']} analog, not a C1 value)", "TBD", "OPEN", "after-evidence"),
@@ -289,8 +293,11 @@ def build(inp: dict) -> dict:
           f"{R(66)}: slot present only in a declared variant; context {R(86)} (>= 50 K margin, +20 % heat load); "
           + pend("H2-5"), "TBD", "OPEN", "after-evidence"),
         I("A902-35", "supply efficiencies (internal bus -> load plane), one per slot", "TBD", "-", "pending",
-          "explicit ledger inputs with evidence class; H2-4 analog parameters H24-05..H24-11 are candidate evidence "
-          "on 28 V-class / 3 kW-class bases and need re-basing to the 100 V internal bus", "TBD", "OPEN", "LOCK-2"),
+          "explicit ledger inputs with evidence class. H2-4 candidate evidence: H24-05 is digitized at 25-34 V "
+          "input (needs re-basing to the 100 V internal bus); H24-06..H24-11 are S-OSUGA05 (IEPC-2005-114) analogs "
+          "on a regulated 100 V +/- 3 V bus (bus voltage matches) but for a 200 mN / 3 kW-class PPU and mostly "
+          "minimum-efficiency specifications, so transfer to A9 load levels is not established (see "
+          "h2_4_revision_flags)", "TBD", "OPEN", "LOCK-2"),
         I("A902-36", "P_bus measurement-chain uncertainty (DC channels + RF planes)", "TBD", "relative",
           "pending", pend("A9-04") + "; historical INS-02 numbers are not carried (row 18)", "TBD", "OPEN", "LOCK-1"),
         I("A902-37", "C1 ignition-flow dwell cap in the start-up sequence", "120 s per attempt, at most two retries",
@@ -337,8 +344,11 @@ def build(inp: dict) -> dict:
         42: "sequence steps with Xe flow (purge, preheat, ignition) are flagged for PHASE_TOTAL_FLOW booking",
         46: "hall_icp_neutralizer has no C1 slots; its gas feed has its own flow_control_icp_feed slot",
         51: "filter_getter slot exists only in hall_c1_reference; value TBD until vendor/spec verification",
-        54: "v0 dry allocations (RF generator/matching 1.5 kg, ICP neutralizer 2.0 kg, Hall PPU 2.5 kg, "
-            "controls/harness 1.0 kg) passed to H2-7 as allocations, not CBEs",
+        54: "v0 dry allocations passed to H2-7 as allocations, not CBEs: electronics lines (RF generator/matching "
+            "1.5 kg, Hall PPU 2.5 kg, controls/harness 1.0 kg) and, separately, the ICP neutralizer source head "
+            "(2.0 kg, not electronics)",
+        55: "H2-4 H24-35 (no single-point failure) flagged CONSTRAINED_BY_OWNER_ANSWER: limited redundancy, no "
+            "full-PPU duplication; redundancy affects PPU mass, not the per-slot P_bus rule",
         56: "SBIR 2 kg PPU is not used as mass evidence",
         59: "new electronics lines (RF generator/matching, collector/bias supply) requested from H2-7",
         66: "new boundary version with explicit RF source/matching, collector/bias, assist-magnet and "
@@ -349,19 +359,23 @@ def build(inp: dict) -> dict:
             "crosses the boundary",
         79: "external C1: C1 slots belong to the swappable downstream module, the Hall slots are neutralizer-agnostic",
         86: "active_cooling variant slot provided for the >= 50 K margin rule if needed",
-        89: "c1_keeper includes current-limited pulsed ignition 300-600 V class as a start-up transient",
+        89: "c1_keeper includes current-limited pulsed ignition 300-600 V class as a start-up transient; its peak "
+            "is gate-covered only by a peak_sampled step; pulse energy is a measurement record (PENDING A9-04); "
+            "H2-4 H24-19 flagged NEEDS_REVISION",
         90: "flow_control_xe covers the two series isolation valves",
         91: "c1_common_tie slot, value TBD, selectable and measured",
         93: "C1 ignition dwell cap 120 s x 2 retries recorded as a sequence constraint",
         105: "discharge-supply output isolation is coordinated with the 350 V continuous / ~1 kV withstand gas "
              "isolator (interface demand to H2-3)",
-        108: "rfp_power_gate applies < 1500 W to steady state and every start-up step; empty start-up refused",
+        108: "rfp_power_gate applies < 1500 W to steady state and every start-up step; empty start-up refused; a "
+             "start-up step PASSes only if peak_sampled while the averaging window is TBD (A902-03)",
         109: "design allocation 1350 W check; ICP must fit inside; 150 W margin not planned nominally",
         110: "every active load has a slot (per-coil magnet, RF source/matching, collector/bias, C1 heater/keeper, "
              "flow/valve, housekeeping, reserved DC)",
         111: "100 V regulated internal bus; configurable spacecraft-input front end with explicit efficiency",
-        112: "revised SEQ-1 templates: one peak event per step; C1 heater reduced only after keeper/discharge stable; "
-             "no ICP heater",
+        112: "revised SEQ-1 templates: one peak event per step and at most one peak-class slot load rising per step; "
+             "C1 heater reduced only after keeper/discharge stable (a TBD heater counts as ON; last known value "
+             "kept across TBD steps); no ICP heater",
         113: "breadboard discharge supply demand (eta_d and transients before LOCK-2) passed to H3",
         114: "300 W common allocation incl. 50 W controls/thermal: allocation checks, not measured loads",
         117: "RF coax across the stand is a measurement-side item; the bus boundary is unaffected",
@@ -387,12 +401,24 @@ def build(inp: dict) -> dict:
         h24_flag("H24-05", "NEEDS_REVISION", "discharge-supply analog on a 25-34 V input; input is now the 100 V "
                  "internal bus; row 113 breadboard measures eta_d before LOCK-2"),
         h24_flag("H24-06", "RETAINED", "closest analog class (100 V bus) but 3 kW-class, not transferable"),
+        h24_flag("H24-07", "RETAINED_AS_CANDIDATE", "S-OSUGA05 keeper conditioner on a 100 V +/- 3 V bus (same bus "
+                 "voltage); steady keeper only at 25 W / 0.9-1.0 A; does not cover the row-89 pulsed 300-600 V "
+                 "ignition mode; transfer to C1 levels needs breadboard data (A902-35)"),
+        h24_flag("H24-08", "RETAINED_AS_CANDIDATE", "S-OSUGA05 heater specification on a 100 V bus; applies to "
+                 "hall_c1_reference only (no ICP heater, row 112); specification, not a measurement"),
         h24_flag("H24-09", "NEEDS_REVISION", "per-coil magnet slots (inner/outer/trim)"),
+        h24_flag("H24-10", "RETAINED_AS_CANDIDATE", "S-OSUGA05 valve-driver specification on a 100 V bus; now also "
+                 "covers the ICP feed valve slot flow_control_icp_feed"),
+        h24_flag("H24-11", "RETAINED_AS_CANDIDATE", "S-OSUGA05 auxiliary-supply specification on a 100 V bus; "
+                 "housekeeping_controls must also book the no-load/quiescent draw of idle supplies explicitly"),
         h24_flag("H24-14", "SUPERSEDED_FOR_A9", "pre-ionizer RF chain; A9 icp_rf_source books the generator DC input"),
         h24_flag("H24-15", "SUPERSEDED_FOR_A9", "ECR slot (row 68)"),
         h24_flag("H24-16", "NEEDS_REVISION", "single magnet slot with a permanent-magnet 0 W option; H-1 is EM-only "
                  "(row 78) and has one slot per coil"),
         h24_flag("H24-17", "RETAINED", "applies to hall_c1_reference only"),
+        h24_flag("H24-19", "NEEDS_REVISION", "DC-ignition bracket (JPL 2 A x 5-15 V, inferred) does not describe "
+                 "the row-89 current-limited pulsed 300-600 V class ignition; its peak draw and pulse energy are "
+                 "TBD (A902-25) and the start-up step must be peak_sampled to PASS the transient gate"),
         h24_flag("H24-21", "NEEDS_REVISION", "300 W compressor ceiling alone vs row 114: 300 W is the whole common "
                  "allocation incl. 50 W controls/thermal"),
         h24_flag("H24-22", "NEEDS_REVISION", "housekeeping envelope must fit the 50 W controls/thermal allowance "
@@ -400,7 +426,12 @@ def build(inp: dict) -> dict:
         h24_flag("H24-23", "NEEDS_REVISION", "A_common envelope replaced by the row-114 common allocation"),
         h24_flag("H24-24", "NEEDS_REVISION", "discharge allocation depended on the v1 A_common; with the ICP "
                  "sub-allocation open (OQ-A902-03) no discharge allocation is derived here"),
+        h24_flag("H24-26", "NEEDS_REVISION", "derived directly from H24-24 (P_d,alloc / V_d); inherits its "
+                 "revision, not re-derived here"),
         h24_flag("H24-28", "ANSWERED", "row 89: pulsed 300-600 V class ignition required"),
+        h24_flag("H24-35", "CONSTRAINED_BY_OWNER_ANSWER", "row 55: LIMITED redundancy - critical sensing/FDIR "
+                 "redundancy, do not duplicate the full PPU or the ICP neutralizer at this stage; the RFP text "
+                 "itself is still to be verified"),
         h24_flag("H24-33", "NEEDS_REVISION", "bus current at 24-34 V; spacecraft input configurable; internal-bus "
                  "bounds A902-14/15"),
         h24_flag("H24-36", "SUPERSEDED_FOR_A9", "row 112 revised SEQ-1"),
@@ -449,10 +480,13 @@ def build(inp: dict) -> dict:
         d("H2-4", "A9-02", "revised converter efficiencies on the 100 V internal bus; front-end topology", None, "-",
           pend("H2-4", "revision under A9-07")),
         d("A9-02", "H2-7", "PPU/RF electronics mass lines: Hall PPU (v0 allocation 2.5 kg), RF generator/matching "
-          "(1.5 kg), ICP neutralizer (2.0 kg), controls/harness (1.0 kg) [row 54 allocations, not CBEs]; new lines: "
-          "collector/bias supply, front-end converter, C1 reference supplies, filter/getter",
-          {"hall_ppu_kg": 2.5, "rf_generator_matching_kg": 1.5, "icp_neutralizer_kg": 2.0,
-           "controls_harness_kg": 1.0}, "kg", "OWNER_ALLOCATION (row 54; recorder flag on PPU vs 6.1 kg analog)"),
+          "(1.5 kg), controls/harness (1.0 kg) [row 54 allocations, not CBEs]; new lines: collector/bias supply, "
+          "front-end converter, C1 reference supplies, filter/getter",
+          {"hall_ppu_kg": 2.5, "rf_generator_matching_kg": 1.5, "controls_harness_kg": 1.0}, "kg",
+          "OWNER_ALLOCATION (row 54; recorder flag on PPU vs 6.1 kg analog)"),
+        d("A9-02", "H2-7", "ICP neutralizer SOURCE-HEAD hardware allocation (not electronics; context for the "
+          "same wet-mass ledger, row 5): ICP neutralizer 2.0 kg [row 54 allocation, not a CBE]",
+          {"icp_neutralizer_kg": 2.0}, "kg", "OWNER_ALLOCATION (row 54)"),
         d("H2-7", "A9-02", "electronics CBE masses", None, "kg", pend("H2-7") + "; " + pend("A9-06")),
         d("H2-1", "A9-02", "coil V/I/P per coil at setpoint (hot), trim use", None, "V / A / W",
           pend("H2-1", "revision under A9-07")),
@@ -621,12 +655,25 @@ def build(inp: dict) -> dict:
             "ledger_rule": "P_bus = sum over installed slots of P_W / (eta_slot x eta_front_end) (internal_bus path) "
                            "or P_W / eta_slot (direct path); every value explicit with evidence class",
             "statuses": ["COMPLETE", "PARTIAL_BOUNDARY", "INCOMPLETE_EVIDENCE"],
+            "status_taxonomy": "PARTIAL_BOUNDARY whenever the compressor LOAD is TBD (row 22; takes precedence); "
+                               "INCOMPLETE_EVIDENCE for any other TBD, including a known compressor load with a TBD "
+                               "efficiency or a TBD front-end efficiency; COMPLETE otherwise",
+            "power_basis": "each ledger declares what its step values represent: " + ", ".join(B.POWER_BASES)
+                           + " or unstated (None)",
+            "no_load_losses": "excluded from the per-slot P_W/eta model (a 0 W output draws exactly 0 W); the "
+                              "no-load/quiescent draw of energised-but-idle supplies and of the front end must be "
+                              "booked explicitly in housekeeping_controls",
+            "residual_check": "bookkeeping identity sum(P_W + P_loss) - sum(P_bus); catches floating-point error "
+                              "only; an independent closure needs measured spacecraft-side bus V and I",
             "not_installed_rule": "a slot not installed in the configuration/variant is omitted or exactly 0 W at "
-                                  "efficiency 1; anything else raises (matched shams carry no power)",
+                                  "efficiency 1, as full records (evidence_class + source, schema parity); anything "
+                                  "else raises (matched shams carry no power)",
         },
         "gates_and_allocations": {
             "rfp_gate": {"limit_W": B.P_BUS_REQUIREMENT_W, "strict": True, "applies_to": ["steady", "startup"],
-                         "verdicts": ["PASS", "FAIL", "NOT_EVALUABLE"], "row": 108},
+                         "verdicts": ["PASS", "FAIL", "NOT_EVALUABLE"], "row": 108,
+                         "transient_window": dict(B.TRANSIENT_WINDOW),
+                         "startup_pass_requires_power_basis": "peak_sampled"},
             "design_allocation": {"limit_W": B.DESIGN_ALLOCATION_W, "row": 109, "kind": "owner allocation"},
             "common_allocation": {"limit_W": B.COMMON_ALLOCATION_W,
                                   "controls_thermal_allowance_W": B.CONTROLS_THERMAL_ALLOWANCE_W, "row": 114,
@@ -637,7 +684,15 @@ def build(inp: dict) -> dict:
             "peak_events": dict(B.PEAK_EVENTS),
             "enforced_order": {c: [list(p) for p in B.ENFORCED_ORDER[c]] for c in B.CONFIGURATIONS},
             "rules": ["at most one peak-class event per step (PROPOSED reading of 'avoid simultaneous peaks')",
-                      "C1 heater reduced/disabled only in a step flagged keeper_stable and discharge_stable",
+                      "at most one peak-class slot (" + ", ".join(sorted(set(B.PEAK_EVENTS.values())))
+                      + ") whose load rises in a step, checked on the step loads independently of event labels "
+                      "(PROPOSED; a TBD transition that may rise gives RULES_NOT_EVALUABLE)",
+                      "C1 heater reduced/disabled only in a step flagged keeper_stable and discharge_stable; a TBD "
+                      "heater counts as ON with unknown power (OFF = exactly 0 W); the last known value is kept "
+                      "across TBD steps; an unclassifiable change gives RULES_NOT_EVALUABLE",
+                      "sequence_status: SEQUENCE_RULE_VIOLATION > RULES_NOT_EVALUABLE > RULES_SATISFIED",
+                      "a start-up step PASSes the transient gate only when declared power_basis='peak_sampled' "
+                      "(averaging window TBD, A902-03)",
                       "hall_icp_neutralizer has no c1_heater slot (no thermionic heater)",
                       "the last step is the steady step; the gate is applied to it and to every earlier step"],
             "templates_PROPOSED": templates,
@@ -663,17 +718,19 @@ def build(inp: dict) -> dict:
 
 # ------------------------------------------------------------------------------------------------------ schema
 def build_schema() -> dict:
-    num_or_tbd_load = {
-        "oneOf": [
-            {"type": "object", "required": ["P_W", "evidence_class", "source"],
+    def _load(rf: bool) -> dict:
+        extra = {"plane": {"const": "generator_dc_input"}} if rf else {}
+        req = ["plane"] if rf else []
+        return {"oneOf": [
+            {"type": "object", "required": ["P_W", "evidence_class", "source"] + req,
              "properties": {"P_W": {"type": "number", "minimum": 0},
                             "evidence_class": {"enum": list(B.EVIDENCE_CLASSES)},
-                            "source": {"type": "string", "minLength": 1},
-                            "plane": {"const": "generator_dc_input"}}, "additionalProperties": False},
-            {"type": "object", "required": ["P_W", "tbd_requires"],
-             "properties": {"P_W": {"const": "TBD"}, "tbd_requires": {"type": "string", "minLength": 1},
-                            "plane": {"const": "generator_dc_input"}}, "additionalProperties": False},
+                            "source": {"type": "string", "minLength": 1}, **extra}, "additionalProperties": False},
+            {"type": "object", "required": ["P_W", "tbd_requires"] + req,
+             "properties": {"P_W": {"const": "TBD"}, "tbd_requires": {"type": "string", "minLength": 1}, **extra},
+             "additionalProperties": False},
         ]}
+    num_or_tbd_load, rf_load = _load(False), _load(True)
     eff = {
         "oneOf": [
             {"type": "object", "required": ["value", "evidence_class", "source", "path"],
@@ -700,8 +757,9 @@ def build_schema() -> dict:
         "$id": "urn:abep:schemas:interfaces:bus_power_boundary_a9_v1",
         "title": "ABEP A9 spacecraft-DC propulsion bus-power boundary v1 (ledger input declaration)",
         "description": "Instance schema for one evaluated step of abep_sim.bus_boundary_a9.ledger. Installed-slot "
-                       "completeness per configuration/variant, not-installed = exactly 0 W and the icp_rf_source "
-                       "plane rule are enforced by the module. Generated by " + SCRIPT_REL + ".",
+                       "completeness per configuration/variant and not-installed = exactly 0 W / efficiency 1 are "
+                       "enforced by the module (record shapes, the icp_rf_source plane and 'plane' only on "
+                       "icp_rf_source are enforced by both). Generated by " + SCRIPT_REL + ".",
         "type": "object",
         "required": ["boundary_version", "configuration", "variant", "front_end", "loads", "efficiencies"],
         "additionalProperties": False,
@@ -711,13 +769,15 @@ def build_schema() -> dict:
             "variant": {"type": "array", "uniqueItems": True,
                         "items": {"enum": sorted({o for c in B.CONFIGURATIONS for o in B.VARIANT_OPTIONS[c]})}},
             "label": {"type": "string"},
+            "power_basis": {"enum": list(B.POWER_BASES)},
             "front_end": {"$ref": "#/$defs/front_end"},
             "loads": {"type": "object", "propertyNames": {"enum": list(B.ALL_SLOTS)},
+                      "properties": {"icp_rf_source": {"$ref": "#/$defs/rf_load"}},
                       "additionalProperties": {"$ref": "#/$defs/load"}},
             "efficiencies": {"type": "object", "propertyNames": {"enum": list(B.ALL_SLOTS)},
                              "additionalProperties": {"$ref": "#/$defs/efficiency"}},
         },
-        "$defs": {"load": num_or_tbd_load, "efficiency": eff, "front_end": fe},
+        "$defs": {"load": num_or_tbd_load, "rf_load": rf_load, "efficiency": eff, "front_end": fe},
         "x-bus-power-boundary-a9": {
             "installed_slots": {c: list(B.BASE_SLOTS[c]) for c in B.CONFIGURATIONS},
             "variant_options": {c: list(B.VARIANT_OPTIONS[c]) for c in B.CONFIGURATIONS},
@@ -774,6 +834,11 @@ def render_md(d: dict) -> str:
     L += ["", "## Gate and allocation checks", "",
           f"- RFP gate: P_bus < {g['rfp_gate']['limit_W']:g} W (strict), steady AND every start-up step (row 108); "
           f"verdicts {', '.join(g['rfp_gate']['verdicts'])}.",
+          f"- Transient basis: averaging window {g['rfp_gate']['transient_window']['status']} "
+          f"({g['rfp_gate']['transient_window']['item']}, {g['rfp_gate']['transient_window']['owner_question']}, "
+          f"{g['rfp_gate']['transient_window']['freeze_point']}); a start-up step PASSes only when declared "
+          f"`{g['rfp_gate']['startup_pass_requires_power_basis']}`, otherwise NOT_EVALUABLE; every gate result carries "
+          f"`transient_window_frozen = False`.",
           f"- Design allocation {g['design_allocation']['limit_W']:g} W (row 109): owner allocation check.",
           f"- Common allocation {g['common_allocation']['limit_W']:g} W incl. "
           f"{g['common_allocation']['controls_thermal_allowance_W']:g} W controls/thermal (row 114): owner "
