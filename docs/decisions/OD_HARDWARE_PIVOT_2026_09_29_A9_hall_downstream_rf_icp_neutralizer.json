@@ -1,0 +1,123 @@
+{
+ "schema": "owner_decision_v1",
+ "id": "OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer",
+ "decided_by": "owner",
+ "date": "2026-09-29",
+ "status": "OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE",
+ "title": "A9 - Hall + downstream 13.56 MHz RF-ICP neutralizer investigation",
+ "source": {
+  "owner_decision_pack": {
+   "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+   "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976"
+  },
+  "owner_answers_machine_readable": {
+   "path": "docs/decisions/OD_2026_09_29_owner_answers_147.json",
+   "sha256": "50e39a4deac7d4ada4710b2f641d717f1c4febd59366cbc04d8c66de6b4532b1"
+  }
+ },
+ "governing_decisions_verbatim": [
+  "1. **Primary investigation hypothesis:** Hall accelerator/discharge followed by a **downstream 13.56 MHz RF inductively coupled plasma (ICP) electron source / neutralizer**. This is the Takahashi/Watanabe-type topology: RF is downstream, not an upstream pre-ionizer and not a parallel thrust branch.",
+  "2. **Control/fallback:** conventional Hall + heated Xe-fed LaB6 C1 remains the reference/control and fallback until the ICP neutralizer demonstrates electron-current capacity, beam neutralization, power, restart and life.",
+  "3. **Old upstream RF/ECR pre-ionizer campaign:** preserve all A5/prereg/evidence artifacts as historical. Do not delete or rewrite them, but do not spend new hardware/procurement effort on them as the primary campaign.",
+  "4. **Parallel RF||Hall v2:** keep the branch and A8 as a draft/historical alternative. Do not merge it into the primary line and do not invent missing inputs to make surfaces.",
+  "5. **New decision artifact:** create **A9 — Hall + downstream RF-ICP neutralizer investigation**, status `OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE`.",
+  "6. **First decisive hardware comparison:** keep the same H-1 Hall head, feed state, Vd/B settings, stand and metrology; compare the conventional C1 electron source against the downstream ICP electron source using swappable downstream modules and matched service-line/sham controls.",
+  "7. **Evidence sequence:** first reproduce the topology on Ar as **engineering-only** evidence; then N2; then O2-bearing atmospheric surrogate; separately use a dedicated atomic-O materials/life programme. No N2+O2 test is called an AO-life test.",
+  "8. **Requirement discipline:** 25 mN, <1.5 kW and <40 kg are treated as full-system gates. No discharge-only or RF-generator-only power claim is sufficient."
+ ],
+ "primary_hypothesis": "Hall accelerator/discharge followed by a downstream 13.56 MHz RF inductively coupled plasma (ICP) electron source / neutralizer (Takahashi/Watanabe-type topology); RF is downstream, not an upstream pre-ionizer and not a parallel thrust branch.",
+ "control_fallback": "conventional Hall + heated Xe-fed LaB6 C1 (reference/control and fallback until the ICP neutralizer demonstrates electron-current capacity, beam neutralization, power, restart and life)",
+ "first_decisive_comparison": "same H-1 Hall head, feed state, Vd/B settings, stand and metrology; C1 electron source vs downstream ICP electron source on swappable downstream modules with matched service-line/sham controls",
+ "evidence_sequence": [
+  "Ar (engineering-only, topology reproduction; never counts toward DRDO atmospheric requirements)",
+  "N2",
+  "O2-bearing atmospheric surrogate (labelled NO_ATOMIC_O)",
+  "separate dedicated atomic-O materials/life programme"
+ ],
+ "requirement_discipline": "25 mN, < 1.5 kW and < 40 kg are full-system gates; no discharge-only or RF-generator-only power claim is sufficient",
+ "evidence_anchor": {
+  "citation": "K. Takahashi, H. Watanabe, Y. Nakahama, K. Kikuchi, 'Hall thruster ion acceleration neutralized by a radiofrequency inductively coupled plasma', Journal of Electric Propulsion 3, 18 (2024)",
+  "doi": "10.1007/s44205-024-00081-2",
+  "license": "CC BY-NC-ND 4.0",
+  "verified": "Crossref metadata 2026-09-29 (title, authors, journal, volume 3, article 18, published 2024-09-27, licence). Full text not yet read in this repository; its operating points are NOT evidence here until extracted with provenance.",
+  "evidence_class": "published analog (topology precedent), not validation of Vyovrinda hardware"
+ },
+ "supersession": {
+  "rule": "historical artifacts are preserved byte-for-byte and never rewritten; they are not used for the new primary architecture",
+  "superseded_for_primary_campaign": [
+   "upstream RF/ECR pre-ionizer campaign as the primary Phase-1 decision (A5 hall_only / rf_hall / ecr_hall topology; phase1_prereg_framework_v1)",
+   "LOCK-1 decisions D-01, D-02, D-03, D-04 (historical values retained for the old experiment only), D-07 numeric delta",
+   "pre-ionizer module ICD owner questions PMQ-01..PMQ-05 and HWQ-05 (ECR magnet)",
+   "OQ-H24-02 (contingency pre-ionizer power reading)",
+   "parallel RF||Hall v2 branch and A8 (kept as draft/historical alternative; not merged)"
+  ],
+  "remain_immutable": [
+   "A4-A7 decisions",
+   "P5-N2 v1 validation (INCONCLUSIVE, permanent)",
+   "O4 / S12 results",
+   "frozen data and goldens"
+  ]
+ },
+ "not_authorized": [
+  "calling A9 a flight baseline or a validated architecture",
+  "inventing missing inputs (v2 or A9) to produce surfaces",
+  "purchase orders before H3/A9 interfaces are frozen (quotations only)",
+  "calling any N2+O2 test an atomic-O life test",
+  "deleting or rewriting historical A5 / prereg / evidence artifacts"
+ ],
+ "tension_with_repository_rules": {
+  "claude_md_rule_8": "CLAUDE.md rule 8 ('no new propulsion families until the physics baseline is frozen'). A9 keeps the Hall accelerator family and changes the electron source/neutralizer; it is an explicit owner decision recorded here, not a model-side expansion. No archengine/goldens change is implied."
+ },
+ "recorder_consistency_flags_for_owner": [
+  {
+   "row": 54,
+   "issue": "v0 dry allocation 'Hall head + magnet 3.0 kg' is below the verified H2-1 magnetic parts alone (MC-1 iron 1.925 kg + copper 1.579 kg = 3.504 kg, H21-24, RP-1, f_NI 2) before body, anode, walls and fasteners.",
+   "source": "docs/hardware/h2/h2_1_hall_chamber_magnet/h2_1_hall_chamber_magnet_v1.json#H21-24"
+  },
+  {
+   "row": 54,
+   "issue": "v0 allocation 'Hall PPU 2.5 kg' is close to the NASA SBIR 2 kg target that row 56 rules out as a CBE; the only mass analog recorded by H2-4 is 6.1 kg (analog PPU).",
+   "source": "docs/hardware/h2/h2_4_ppu_bus/h2_4_ppu_bus_v1.json (IF demand to H2-7)"
+  },
+  {
+   "row": 54,
+   "issue": "v0 allocation 'Xe hardware 1.5 kg' is below the H2-7 analog range for the regulator alone (Moog XFC 0.974 kg .. ArianeGroup XRFS 5.9 kg) plus tank and valves (combined analog 4.54-12.77 kg, H2-7 ID-11).",
+   "source": "docs/hardware/h2/h2_7_mechanical_bom/h2_7_mechanical_bom_v1.json"
+  },
+  {
+   "row": 79,
+   "issue": "External C1 reference reverses the H2-1/H2-2 preliminary L-CENTRAL choice (H22-OQ-01, H2-1 Q6): H2-1 channel sizing and H2-2 integration need a revision.",
+   "source": "H2-1, H2-2 deliverables"
+  },
+  {
+   "row": 86,
+   "issue": ">= 50 K margin rule: the verified H2-5 network gives an 11.2 K worst-case BN wall margin and DESIGN_DRIVING inner-coil/pole rows, so the H-1 thermal design is not closed under the new rule (H2-1/H2-5 revision).",
+   "source": "docs/hardware/h2/h2_5_thermal_network/h2_5_thermal_network_v1.json"
+  },
+  {
+   "row": 46,
+   "issue": "The ICP neutralizer has no continuous C1 cathode Xe term, but an ICP source itself needs a gas feed; its gas species and flow must be booked (Xe ledger or atmospheric feed) - not yet assigned.",
+   "source": "A9 validation-input list (row 145)"
+  }
+ ],
+ "derived_execution_backlog_proposed_not_decided": [
+  "A9-01 Hall->ICP preregistration framework and campaign stage map (docs/experiments/hall_icp/prereg/; rows 16, 28, 34, 37, 38)",
+  "A9-02 bus_power_boundary v2 for A9 (RF source/matching, collector/bias, C1 reference supplies, assist magnet/cooling slots; v1 untouched; rows 66, 108, 110)",
+  "A9-03 downstream ICP-neutralizer ICD (mechanical, RF, electrical incl. floating body + separately biased collector, gas/plume, diagnostics; rows 61-64, 70, 71, 122)",
+  "A9-04 C1-vs-ICP uncertainty budget, stop rules and decision quantities (rows 12, 13, 18, 19, 37)",
+  "A9-05 Hall->ICP validation-input list (row 145) and Takahashi 2024 full-text evidence extraction (row 7)",
+  "A9-06 mass BOM A9 amendment + v0 dry allocation vs H2 CBE reconciliation (rows 54, 59; flags above)",
+  "A9-07 H2 revisions: external C1 (H2-1/H2-2), >= 50 K thermal margin (H2-1/H2-5), ceramic coil (H2-1), EM-only MC-1, 100 V internal bus (H2-4), revised SEQ-1",
+  "A9-08 Xe ledger updates: 20 % reserve allocation, residual line, 323 K tank sizing, 2/5/10 kg cases, 120 s x 2 ignition dwell bound (rows 43, 45, 48, 50, 93)",
+  "A9-09 RFQ specification packages for owner-sent quotations (row 8; the lanes never contact suppliers)",
+  "A9-10 governance: M16 row owners (functional roles), promote inferred gates to LOCK deadlines, RC-01..RC-10 resolution (rows 140-144)"
+ ],
+ "owner_actions_outside_the_repository": [
+  "obtain the official RFP PDF (tender 2026_DRDO_788433_1) and store it with URL/date/sha256 (rows 1-3)",
+  "lawful acquisition of the listed papers/datasheets (row 7)",
+  "send quotation requests (row 8)",
+  "request ISRO LPSC facility specifications via official channels (row 137)",
+  "written TDF/export/IP/data-custody approval before any foreign score-bearing facility (row 136)",
+  "name the oxygen-safety owner (row 107) and M16 row engineers (row 140)"
+ ]
+}

@@ -1,0 +1,1690 @@
+=== UNTRACKED docs/hardware/h2/h2_4_ppu_bus/build_h2_4_ppu_bus.py
+#!/usr/bin/env python3
+"""H2-4 PPU and bus allocation (follow-on ``fo_h2_4_ppu_bus``, trigger ``T_H2_4_PPU_BUS``, owner addendum A7).
+
+H2 hardware design / preliminary-sizing lane for the common electrical supplies PS-C of the H-1 test article and the
+flight PPU of the A5 proposal reference architecture. It is NOT an architecture-selection lane (A7 ``h2_scope``): it
+never predicts thrust, efficiency, discharge current or plasma state, never selects hall_only / rf_hall / ecr_hall and
+never uses a Hall transport closure (the credible set is empty), abep_sim/plasma_devices.py (superseded 0-D Hall) or a
+withdrawn v1.2-v1.6 number. Every number below is a requirement, an A5 allocation, a PROPOSED sub-allocation of this
+lane, a published analog (labelled with device, source and evidence class), an engineering derivation (P = V I,
+P_bus = P_load / eta, I_bus = P_bus / V_bus) or TBD / PENDING with what it requires.
+
+What it does (deterministic, standard library + the read-only boundary module ``abep_sim.arch_boundary``):
+  * refuses to run if a pinned input is missing or its sha256 differs (decision files A5/A6/A7, the G0 verification,
+    verified repository deliverables); mutable governance files are never pinned;
+  * builds the design-parameter table H24-nn, the per-component load list (ALLOCATION or PARAMETER, voltage/current
+    ranges), the STEADY / STARTUP / PEAK bus profiles, the converter-efficiency parameters, the margin table, the
+    discharge allocation (the residual of the A5 P_bus allocation, never a transport result), the reserved pre-ionizer
+    slot headroom as a function of the unknown discharge share, the PPU architecture options, the grounding scheme and
+    the H-1 ground-supply vs flight-PPU reconstruction rule for P_bus;
+  * calls ``bus_power_ledger`` with the inputs that exist and records its refusal (nothing is defaulted);
+  * writes ``h2_4_ppu_bus_v1.json`` and the companion ``H2_4_PPU_BUS.md`` (generated from the JSON).
+
+Parallel lanes (H2-1/2/3/5/6/7, the A6 pre-ionizer ICD, Xe ledger, Phase-1 framework, M16 matrix) are referenced by path
+as PENDING only; nothing here reads them. ``--pending-status`` reports lazily whether their directories exist yet; it
+never changes the JSON.
+
+    python docs/hardware/h2/h2_4_ppu_bus/build_h2_4_ppu_bus.py                    # (re)write the outputs
+    python docs/hardware/h2/h2_4_ppu_bus/build_h2_4_ppu_bus.py --check            # byte-for-byte check (exit 1 on drift)
+    python docs/hardware/h2/h2_4_ppu_bus/build_h2_4_ppu_bus.py --pending-status   # lazy presence report of PENDING lanes
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import math
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(HERE))))
+REL_HERE = "docs/hardware/h2/h2_4_ppu_bus"
+OUT_JSON = os.path.join(HERE, "h2_4_ppu_bus_v1.json")
+OUT_MD = os.path.join(HERE, "H2_4_PPU_BUS.md")
+BASE_COMMIT = "f0bdeaca5c18a6057195151653c56e2a47472def"
+
+ARCHITECTURES = ("hall_only", "rf_hall", "ecr_hall")
+EVIDENCE_CLASSES = ("measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed")
+BASIS = ("requirement", "allocation", "analog", "derived", "assumed", "pending")
+REPRESENTATIVENESS = ("FLIGHT-REPRESENTATIVE", "H-1 TEST-ARTICLE-ONLY", "GROUND/FACILITY-ONLY")
+M16_STATES = ("READY", "RUNNING", "BLOCKED", "VERIFIED")
+ROLLUP = ("architecture blocker", "hardware-definition blocker", "procurement blocker", "test-readiness blocker",
+          "proposal-only documentation gap")
+
+# ------------------------------------------------------------------------------------------------ pinned inputs
+# Immutable owner decisions and the G0 verification (cited by path AND sha256; A6 precondition met by G0 = CLEAN).
+DECISION_PINS = {
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json":
+        "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json":
+        "aaeb7c503c3791f81d4c589e8e25289befa6fcb3b16ce6f962b153715c883180",
+    "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A7_execution_model.json":
+        "dae69983d9aeeb4838d9ff973a5f824c973219f8cc528adfb12717c4bb92c925",
+    "docs/decisions/verification/A5_BASELINE_VERIFICATION.json":
+        "4bd0fb4312fba97b18bba92ca0726133947ea6d86327f5e1360ea6af2b163523",
+}
+# Verified repository deliverables read (or quoted) by this lane. Governance files (lane/trigger registries, trigger
+# ledgers, runtime_state.json) are mutable and are deliberately NOT pinned (the test enforces it).
+INPUT_PINS = {
+    "abep_sim/arch_boundary.py": (
+        "8dfc309a5d2c717913fd4961bc660f8bab92ed2c59356f5a78bff3ef4392eeae",
+        "bus_power_boundary_v1 component sets and bus_power_ledger (imported read-only)"),
+    "docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md": (
+        "2432edb7e9095fd630585768a62a811140b5230ba035afa3f0fc168636d11ca9",
+        "load planes (Sec. 3), v1 standby limitation (Sec. 2), caller rules (Sec. 5), efficiency evidence E1-E12 (Sec. 8)"),
+    "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json": (
+        "d56f700198a64a919d736c8659b6e0aaaa01cd56521885772d2f5a40de374501",
+        "entry ids HD-RH24-* (digitized discharge-supply efficiency), FC-MOOG-SPEC/I2R, CK-*, CH-*, HM-PM-OPTION, RF-*, EC-*"),
+    "docs/architecture_comparison/aux_bus/aux_bus_comparison_v1.json": (
+        "db4792bf65e041895e26206e122e54e944a742dc0aba467d7b0241706584bd57",
+        "headroom inequality P_d/eta_d + A_arch < 1500 W and the common-mode classification this lane builds on"),
+    "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json": (
+        "df020bfe3ef87b0fc6f49c56db7e38dc585c4640b5c89dd167d1f18e928dbd6f",
+        "start-up phase order, V1/V2 pre-ionizer start variants, PROPOSED startup_peak_limit 1500 W"),
+    "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md": (
+        "fa9e31d7a5ffd6389b6b200c394a009ae77356b3c3e253362a5ffe28e1764b72",
+        "Sec. 4 start-up table (heater power, preheat time, keeper ignition) and derived heater energy per start"),
+    "schemas/controls/dual_feed_state_machine_v1.json": (
+        "bc68ac0f7a35ced1c3bdcfcb1fb44880f63d57adf0e0bb22dae94d5dd07585ba",
+        "state ids and per-state converter/valve/compressor outputs used for the STARTUP sequence and valve counts"),
+    "docs/experiments/hardware/hardware_requirements_v1.json": (
+        "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0",
+        "configuration items H-1, MC-1, C-1, FS-C, PS-C, SVC-1, PIM-*, DIV-1; planes IP-UP, IP-DN, HALL_INLET_Z0; "
+        "HW-ENV-01/02/05, HW-ELEC-01..05, HW-C1-05, HW-MC-02; derived I_d bounds"),
+    "docs/experiments/instrumentation/instrumentation_definition_v1.json": (
+        "7c6d37b00f38a44cded73d92d4366739eacbf013e73e98a7bfbc3fa5a5470d96",
+        "Sec. 6 per-component bus-power metering (INS-02/INS-03), I-U-ABS-P, lab subset vs v1"),
+    "docs/experiments/experiment_plan_v1.json": (
+        "5ae075a95cc926da18470f0c8ada1b6ef8f908150d5952b9060fd77187155cbe",
+        "m_Pbus basis_single / lab_dc_input / compressor ABSENT_IN_LAB / totals"),
+    "docs/architecture_comparison/experiment_package/experiment_package_v1.json": (
+        "9278dfffe43a37a2ea71c3215ce4a7eba022fa72e007ffa24f229371e1407e84",
+        "D-10-A (contract P_bus basis) and D-11-A (PARTIAL_BOUNDARY vs V1 labels)"),
+    "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json": (
+        "79f6b28f65243b54894dc78172b708693f96c639089f472d91d070012a0e4a52",
+        "OD-C2 PROPOSED compressor screening allocation 300 W (20 % of 1.5 kW)"),
+    "docs/milestones/bundle1/bundle1_v5.json": (
+        "b61807b10fcc23e989c356b08887d6c56993f4f659900f9595dd0bfc23d822d2",
+        "Bundle 1 outcome NO_BASELINE_YET (unchanged by this lane)"),
+    "abep_sim/ppu.py": (
+        "56879d06242761774830a38b421dd2b367bc8fe16c02eab88cb40e0db7d4c521",
+        "provenance check only: every converter/controller constant is unsourced (context only, never used)"),
+}
+MUTABLE_GOVERNANCE = (
+    "docs/orchestration/lane_registry_v1.json",
+    "docs/orchestration/trigger_registry_v1.json",
+    "docs/orchestration/fired_triggers.jsonl",
+    "docs/orchestration/trigger_ledger_v2.jsonl",
+    "docs/orchestration/runtime_state.json",
+)
+
+# Parallel lanes (not in the base; PENDING by path only, never read at import/test time).
+PENDING_LANES = {
+    "H2-1": "docs/hardware/h2/h2_1_hall_chamber_magnet/",
+    "H2-2": "docs/hardware/h2/h2_2_cathode_integration/",
+    "H2-3": "docs/hardware/h2/h2_3_gas_path_plenum/",
+    "H2-5": "docs/hardware/h2/h2_5_thermal_network/",
+    "H2-6": "docs/hardware/h2/h2_6_diagnostics_fixture/",
+    "H2-7": "docs/hardware/h2/h2_7_mechanical_bom/",
+    "PMI-ICD": "docs/interfaces/preionizer_module/",
+    "XE-LEDGER": "docs/budgets/xe_ledger/",
+    "P1-PREG": "docs/experiments/phase1_prereg_framework/",
+    "M16": "docs/budgets/subsystem_maturity/",
+}
+
+
+def pending(key: str) -> str:
+    return f"PENDING {PENDING_LANES[key]}"
+
+
+# ------------------------------------------------------------------------------------------------ external sources
+# Accessed openly on 2026-09-27 by this lane (files not redistributed; sha256 of the file actually read). Sources that
+# reach this lane through a verified repository deliverable are cited by that deliverable's entry id instead.
+SOURCES = {
+    "X-RHODES24P": {
+        "citation": "C. R. Rhodes, G. F. Benavides, L. R. Pinero, 'Sub-kW Class Hall-Effect Thruster Power Processing Unit "
+                    "for Wide Output Range Applications', IEPC-2024-331, 38th International Electric Propulsion "
+                    "Conference, Toulouse, 2024 (full paper; NASA NTRS 20240006767)",
+        "url": "https://ntrs.nasa.gov/api/citations/20240006767/downloads/2024_IEPC_Paper_Final.docx",
+        "sha256_of_accessed_file": "c095a9e09d99db3e79a39f540d25e7d058066bc73eadcc9367fbaabdec3e00ca",
+        "access": "open full text (NASA NTRS), accessed 2026-09-27",
+        "used_for": "Table 1 supply ratings (keeper 0.5-1 A / 5-40 V after ignition / 25 W; electromagnets 1-5 A / 1-12 V / "
+                    "60 W; heater 1-8 A / 1-12 V / 80 W; discharge 1-5 A / 200-500 V / 1000 W; all 24-34 V input); "
+                    "topologies (LCC resonant discharge, two-switch forward magnet and heater, flyback keeper with a "
+                    "DC Cockcroft-Walton ignitor); independent auxiliary stages because simultaneous heater and magnet "
+                    "operation can be needed 'for either normal operations or to address a thruster anomaly'; "
+                    "electromagnet supply 'sized to capture the electromagnet current requirements of a variety of "
+                    "commercial sub-kW Hall thrusters'; glow-mode start (keeper, then discharge with magnets off, then "
+                    "magnets on); LCC soft start ramping the resonant current over 'the first 10's milliseconds'",
+        "evidence_level_for_vyovrinda": "3 (primary, closely similar class: sub-kW Hall PPU, 28 V bus); design ratings are "
+                                        "requirements of that PPU, not measurements of a load",
+    },
+    "X-BENAVIDES19": {
+        "citation": "G. F. Benavides, H. Kamhawi, T. M. Liu, L. R. Pinero, T. R. Verhey, C. R. Rhodes, J. T. Yim, "
+                    "J. A. Mackey, T. G. Gray, N. I. Butler-Craig, J. L. Myers, A. G. Birchenough, 'Development of a "
+                    "High-Propellant Throughput Small Spacecraft Electric Propulsion System to Enable Lower Cost NASA "
+                    "Science Missions', NASA/TM-2019-220330 (AIAA-2019-4162), NASA NTRS 20190032488",
+        "url": "https://ntrs.nasa.gov/api/citations/20190032488/downloads/20190032488.pdf",
+        "sha256_of_accessed_file": "d855582bbe9c71914681db08383335e10885e3ce6f694d1a5cfcc114649dfd97",
+        "access": "open full text (NASA NTRS), accessed 2026-09-27",
+        "used_for": "p. 6 PPU 'slices' (system control; auxiliaries for electromagnets, keeper, heater; housekeeping, flow "
+                    "control driver, input filter; one or more parallel discharge slices); p. 7 keeper and heater "
+                    "supplies 'require isolation given they float at cathode potential' and an isolated magnet supply "
+                    "as 'NASA's best practice'; discharge current-limit loop enabling glow-mode start; p. 14 'a DPS "
+                    "consuming 1 kW of power will draw 42 A of current when the bus voltage falls to 24 V'; p. 15 "
+                    "full-bridge DPS module up to 375 W / 350 V, efficiency '92 to 95 percent across the full design "
+                    "power and input bus voltage range', three modules in parallel demonstrated; p. 17 Table 2 keeper "
+                    "flyback breadboard 78.8-81.4 % at 1 A, 15 and 30 V out, 24-34 V in (resistive load; 'should be "
+                    "considered a lower bound'); keeper 'typical ... about 5 W', required 30 W at up to 40 V and 1 A "
+                    "steady state; ignition open-circuit > 100 V targeted; heritage 600 V pulsed ignitor; p. 22 thruster "
+                    "floating, thruster-ground and cathode-tied electrical configurations evaluated",
+        "evidence_level_for_vyovrinda": "3 (primary; sub-kW Hall PPU breadboards on a 24-34 V bus)",
+    },
+    "X-PINERO00": {
+        "citation": "L. R. Pinero, G. E. Bowers, E. M. Lafontaine, 'Development Status of a Power Processing Unit for Low "
+                    "Power Ion Thrusters', NASA/TM-2000-210383 (AIAA-2000-3817), NASA NTRS 20000120277",
+        "url": "https://ntrs.nasa.gov/api/citations/20000120277/downloads/20000120277.pdf",
+        "sha256_of_accessed_file": "5da8fcabf32c7a55a657e1327aa0ce2172bff2112216afa370b83c712f2e6c1b",
+        "access": "open full text (NASA NTRS, scanned), accessed 2026-09-27",
+        "used_for": "p. 4 at 28 V input: cathode discharge supply efficiency 'reached a maximum of 0.89 at an output of 32 V "
+                    "and 1 A'; neutralizer supply 'as high as 0.88 at 32 V and 200 mA'; p. 6 Table 1: heater output "
+                    "7.0 V, 4.0 A, 28 W in constant-current regulation, 24-32 V input",
+        "evidence_level_for_vyovrinda": "6 (ion-thruster PPU; low-voltage auxiliary supplies transferred across function)",
+    },
+    "X-SETS-PPU500": {
+        "citation": "SETS (Space Electric Thruster Systems), PPU-500 product web page (catalog data, reference only)",
+        "url": "https://sets.space/ppu/",
+        "sha256_of_accessed_file": None,
+        "access": "open web page read through the fetch tool on 2026-09-27; no file hash available; no supplier contact",
+        "used_for": "context only: 'Anode Power, W up to 500', 'Input Voltage, V 24 to 36', 'Efficiency, % up to 94' "
+                    "(conditions not stated); not used in any range",
+        "evidence_level_for_vyovrinda": "5 (vendor catalog, conditions not stated)",
+    },
+}
+
+# ------------------------------------------------------------------------------------------------ explicit parameters
+# Every number used in a computation is here with its source; nothing is defaulted inside a function.
+P_REQ_W = 1500.0                       # RFP < 1.5 kW, as recorded (A5 allocations_and_requirements; HW-ENV-05)
+P_ALLOC_W = (1300.0, 1350.0)           # A5 bus-power design allocation <= 1.30-1.35 kW
+THRUST_TARGET_mN = (15.0, 22.0)        # A5 thrust operating target (allocation)
+THRUST_RFP_mN = (12.0, 25.0)           # RFP absolute envelope (requirement)
+VD_SET_V = (180.0, 200.0, 250.0, 300.0, 305.0)   # HW-ENV-01 PROPOSED evaluation set (lane 17)
+VD_RATING_V = 350.0                    # HW-ENV-01 PROPOSED design rating (lane-17 relaxed upper end)
+BUS_V_OPTIONS = (24.0, 28.0, 34.0, 100.0)        # 24-34 V (Rhodes 2024 Table 1; Benavides 2019) and 100 V (BUS_POWER_BOUNDARY E3)
+# low-voltage auxiliary supply efficiency analog band (keeper: X-BENAVIDES19 Table 2 min 0.788; X-PINERO00 max 0.89)
+ETA_AUX = (0.788, 0.89)
+# discharge supply: X-BENAVIDES19 per-module upper 0.95; lower = min of the digitized HD-RH24-* points at >= 790 W (computed)
+ETA_D_BENAVIDES = (0.92, 0.95)
+RH24_MIN_POWER_W = 790.0
+# component load brackets [W] (load plane, bus_power_boundary_v1 definitions)
+MAG_W = (0.0, 60.0)          # 0 W permanent-magnet option (HM-PM-OPTION) .. 60 W SSEP electromagnet supply rating
+KEEP_STEADY_W = (0.0, 30.0)  # keeper off (CK-G&K-OFF) .. 30 W steady-state keeper requirement of the SSEP PPU
+KEEP_START_W = (9.0, 60.0)   # keeper-only discharge brackets CK-PEDRINI17-HC1 (9-20 W) and CK-PEDRINI17-HC3 (25-60 W)
+HEAT_START_W = (45.0, 305.0) # CH-PEDRINI17-HC1 45 W .. CH-MONTERO24 305 W (three LaB6 designs)
+PFCV_W = (0.4191, 1.46)      # FC-MOOG-I2R per energized Xe proportional flow control valve (coil only)
+PFCV_R_OHM = 74.5            # FC-MOOG-SPEC coil resistance at 21 C
+PFCV_I_A = (0.075, 0.14)     # FC-MOOG-SPEC input current range
+N_VALVES_CAP = 3             # xe_cathode + xe_anode + atm_anode energized together (ATMOSPHERE_ADMISSION, MIXED_STABILIZATION)
+COMP_ALLOC_BUS_W = 300.0     # OD-C2 PROPOSED screening allocation (booked here as bus draw; owner question OQ-03)
+PREHEAT_S = (200.0, 1200.0)  # SITAEL HC1 ~200 s at 60 W .. JPL 1.5-cm LaB6 18-20 min (CATHODE_INTEGRATION Sec. 4)
+HEATER_E_WH = (3.33, 7.50)   # CATHODE_INTEGRATION Sec. 4 derived (SITAEL HC1 pairs)
+STARTUP_PEAK_LIMIT_W = 1500.0  # cathode_integration proposed_thresholds.startup_peak_limit (PROPOSED)
+R_CU_FACTOR_200C = 1.7074    # electrical_closure Sec. 3 E3 (NBS HB100): R(200 C)/R(20 C) of copper
+F_D_GRID = tuple(round(0.50 + 0.05 * i, 2) for i in range(10))   # evaluation points of the discharge bus share
+U_GRID_W = (0.0, 50.0, 100.0, 150.0)   # evaluation points of the PENDING thermal_control + housekeeping bus draw
+
+
+def _r(x: float, nd: int = 4) -> float:
+    v = round(float(x), nd)
+    return 0.0 if v == 0 else v
+
+
+def _sha256(rel: str) -> str:
+    p = os.path.join(ROOT, rel)
+    if not os.path.isfile(p):
+        raise FileNotFoundError(f"pinned input missing: {rel}")
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 16), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def verify_pins() -> None:
+    bad = []
+    for rel, pin in DECISION_PINS.items():
+        got = _sha256(rel)
+        if got != pin:
+            bad.append(f"{rel}: sha256 {got} != pinned {pin}")
+    for rel, (pin, _role) in INPUT_PINS.items():
+        got = _sha256(rel)
+        if got != pin:
+            bad.append(f"{rel}: sha256 {got} != pinned {pin}")
+    if bad:
+        raise RuntimeError("pinned inputs changed or missing (no fallback):\n  " + "\n  ".join(bad))
+
+
+def _load_json(rel: str):
+    with open(os.path.join(ROOT, rel), encoding="utf-8") as f:
+        return json.load(f)
+
+
+def bus_draw(load_W: float, eta: float) -> float:
+    """P_bus = P_load / eta (bus_power_boundary_v1). Explicit inputs only; refuses invalid values."""
+    if not (isinstance(load_W, (int, float)) and math.isfinite(load_W) and load_W >= 0):
+        raise ValueError(f"load must be a finite number >= 0 W, got {load_W!r}")
+    if not (isinstance(eta, (int, float)) and 0.0 < eta <= 1.0):
+        raise ValueError(f"efficiency must be in (0, 1], got {eta!r}")
+    return load_W / eta
+
+
+def headroom_W(limit_W: float, f_d: float, aux_bus_W: float) -> float:
+    """Budget left for the reserved pre-ionizer slot: H = L (1 - f_d) - A, with f_d = P_bus[hall_discharge] / L."""
+    if not (0.0 <= f_d <= 1.0):
+        raise ValueError(f"discharge bus share must be in [0, 1], got {f_d!r}")
+    if limit_W <= 0 or aux_bus_W < 0:
+        raise ValueError("limit must be > 0 and auxiliary bus draw >= 0")
+    return limit_W * (1.0 - f_d) - aux_bus_W
+
+
+def rhodes_eta_band(ec: dict, p_min_W: float) -> dict:
+    """Min/max digitized discharge-supply efficiency of the HD-RH24-* series at P_out >= p_min_W (all inputs 25/28/34 V)."""
+    pts = []
+    for ent in ec["components"]["hall_discharge"]["entries"]:
+        if ent["id"].startswith("HD-RH24-"):
+            for p in ent["value"]:
+                pts.append((ent["id"], p["P_out_W"], p["efficiency"]))
+    if not pts:
+        raise RuntimeError("no HD-RH24-* series in the electrical-closure data")
+    sel = [p for p in pts if p[1] >= p_min_W]
+    lo = min(sel, key=lambda t: t[2])
+    hi = max(sel, key=lambda t: t[2])
+    all_lo = min(pts, key=lambda t: t[2])
+    return {"min": lo[2], "min_at": [lo[0], lo[1]], "max": hi[2], "max_at": [hi[0], hi[1]],
+            "n_points": len(sel), "p_min_W": p_min_W, "all_points_min": all_lo[2], "all_points_min_at": [all_lo[0], all_lo[1]],
+            "max_measured_P_out_W": max(p[1] for p in pts)}
+
+
+# ------------------------------------------------------------------------------------------------ content builders
+def design_parameters(eta_d: dict) -> list:
+    def row(i, name, value, units, basis, source, ev, status, rep, ci, component=None, note=None):
+        assert basis in BASIS and rep in REPRESENTATIVENESS
+        assert ev is None or ev in EVIDENCE_CLASSES
+        return {"id": f"H24-{i:02d}", "name": name, "value": value, "units": units, "basis": basis, "source": source,
+                "evidence_class": ev, "status": status, "representativeness": rep, "configuration_item": ci,
+                "bus_component": component, "note": note}
+
+    a5 = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json"
+    hw = "docs/experiments/hardware/hardware_requirements_v1.json"
+    ec = "docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json"
+    ci_doc = "docs/architecture_comparison/cathode_integration/CATHODE_INTEGRATION.md"
+    rows = [
+        row(1, "P_bus requirement (RFP '< 1.5 kW', as recorded)", P_REQ_W, "W", "requirement",
+            f"{a5} allocations_and_requirements (bus-power allocation 'leaving margin to the 1.5 kW requirement'); "
+            f"{hw} HW-ENV-05 values.power_max_W", "assumed", "INPUT (requirement; RFP text not in the repository: verify)",
+            "FLIGHT-REPRESENTATIVE", "PS-C"),
+        row(2, "P_bus design allocation (A5)", list(P_ALLOC_W), "W", "allocation",
+            f"{a5} allocations_and_requirements 'bus-power design allocation' <= 1.30-1.35 kW", "assumed",
+            "INPUT (owner allocation; never a prediction)", "FLIGHT-REPRESENTATIVE", "PS-C"),
+        row(3, "allocation margin to the requirement", [_r(P_REQ_W - P_ALLOC_W[1]), _r(P_REQ_W - P_ALLOC_W[0])], "W",
+            "derived", "H24-01 - H24-02 (this script, margin_table)", "model-derived", "PRELIMINARY",
+            "FLIGHT-REPRESENTATIVE", "PS-C"),
+        row(4, "flight spacecraft bus voltage", None, "V", "pending",
+            "options: 24-34 V unregulated (X-RHODES24P Table 1; X-BENAVIDES19 p. 14) or a regulated 100 V bus "
+            "(BUS_POWER_BOUNDARY.md Sec. 8 E3, 250 mN class); protocol_draft bus_voltage TBD", None,
+            "TBD - requires the spacecraft EPS ICD and an owner decision (OQ-01)", "FLIGHT-REPRESENTATIVE", "PS-C",
+            note="the only measured sub-kW discharge-supply efficiency data are at a 24-34 V bus"),
+        row(5, "bus input current at the allocation / requirement", "see bus_current_table", "A", "derived",
+            "I_bus = P_bus / V_bus over BUS_V_OPTIONS (this script); cross-check X-BENAVIDES19 p. 14 (1 kW at 24 V -> 42 A)",
+            "model-derived", "PRELIMINARY (bus voltage TBD, H24-04)", "FLIGHT-REPRESENTATIVE", "PS-C"),
+        row(6, "discharge-voltage evaluation set (identical in every arm)", list(VD_SET_V), "V", "requirement",
+            f"{hw} HW-ENV-01 values.V_d_proposed_set_V (lane 17 proposal, owner Q1 open)", "assumed",
+            "INPUT (PROPOSED by lane 17; owner decides)", "FLIGHT-REPRESENTATIVE", "H-1, C-1, PS-C", "hall_discharge"),
+        row(7, "discharge-supply voltage rating", VD_RATING_V, "V", "requirement",
+            f"{hw} HW-ENV-01 values.V_d_rating_upper_V (PROPOSED; HWQ-03)", "assumed", "INPUT (PROPOSED)",
+            "FLIGHT-REPRESENTATIVE", "PS-C", "hall_discharge"),
+        row(8, "H-1 ground discharge-supply current rating (bus-compliance bound at the requirement)",
+            _r(P_REQ_W / min(VD_SET_V)), "A", "derived",
+            f"{hw} HW-ENV-02 / derived_numbers.outputs.I_d_bound_at_Vd_180V_A (P_max / V_d, eta <= 1)", "model-derived",
+            "PRELIMINARY (+ transient margin TBD - requires S1 ignition/extinction transients, HW-ENV-02)",
+            "GROUND/FACILITY-ONLY", "PS-C", "hall_discharge", note="an upper bound on I_d at any compliant point; not a prediction"),
+        row(9, "flight discharge-converter current bound at the allocation (L / V_d)", "see discharge_current_bounds", "A",
+            "derived", "P_alloc / V_d with eta <= 1 and every other load >= 0 (this script)", "model-derived",
+            "PRELIMINARY", "FLIGHT-REPRESENTATIVE", "PS-C", "hall_discharge"),
+        row(10, "discharge-supply efficiency eta_d (bus input -> supply output)", [eta_d["min"], ETA_D_BENAVIDES[1]], "-",
+            "analog", f"lower: {ec} HD-RH24-* min at P_out >= {RH24_MIN_POWER_W:.0f} W ({eta_d['min_at'][0]} at "
+            f"{eta_d['min_at'][1]} W; digitized, NASA SSEP LCC breadboard); upper: X-BENAVIDES19 p. 15 full-bridge DPS "
+            "module 92-95 % (<= 375 W per module)", "digitized",
+            "PRELIMINARY PARAMETER (measured analog; above 1 kW output an extrapolation; harness to the thruster excluded "
+            "- PENDING H2-7 harness length)", "FLIGHT-REPRESENTATIVE", "PS-C", "hall_discharge",
+            note="upper end is 'measured (reported)'; lower end 'digitized'; evidence class recorded for the lower end"),
+        row(11, "discharge load allocation P_d (residual of the A5 allocation)", "see discharge_allocation_table", "W",
+            "allocation", "P_d = eta_d (L - A_aux - U - R_slot) (this script); never from a transport closure", "assumed",
+            "PRELIMINARY (depends on PENDING auxiliary loads)", "FLIGHT-REPRESENTATIVE", "H-1, PS-C", "hall_discharge"),
+        row(12, "hall_magnet load allocation", list(MAG_W), "W", "allocation",
+            f"0 W: {ec} HM-PM-OPTION (permanent magnet, boundary definition); 60 W: X-RHODES24P Table 1 electromagnet "
+            "supply maximum output (sized for commercial sub-kW Hall thrusters)", "assumed",
+            pending("H2-1") + " (coil NI, R_hot, magnet_power.electromagnet)", "FLIGHT-REPRESENTATIVE", "MC-1, PS-C",
+            "hall_magnet", note="analog rating of a sub-kW class supply; an extended-channel ~1.3 kW design may exceed it "
+                               "(then the discharge allocation shrinks)"),
+        row(13, "hall_magnet supply output range", {"V": [1.0, 12.0], "I_A": [1.0, 5.0]}, "V, A", "analog",
+            "X-RHODES24P Table 1 (electromagnets)", "assumed", pending("H2-1"), "FLIGHT-REPRESENTATIVE", "PS-C", "hall_magnet",
+            note="design rating of the analog PPU, not a Vyovrinda coil value"),
+        row(14, "hot-coil power factor at constant current (copper, 20 -> 200 C)", R_CU_FACTOR_200C, "-", "derived",
+            "docs/architecture_comparison/electrical_closure/ELECTRICAL_CLOSURE.md Sec. 3 E3 (NBS Handbook 100)",
+            "model-derived", "PRELIMINARY (coil hot-spot temperature PENDING H2-1 / H2-5)", "FLIGHT-REPRESENTATIVE",
+            "MC-1", "hall_magnet", note="current-controlled coil: the hot steady state, not the cold ramp, is the magnet peak"),
+        row(15, "cathode_keeper steady load allocation", list(KEEP_STEADY_W), "W", "allocation",
+            f"0 W: {ec} CK-G&K-OFF (keeper normally off after ignition, qualitative); 30 W: X-BENAVIDES19 p. 17 keeper "
+            "supply 'required to output 30 W at up to 40 V and 1 A steady-state'", "assumed",
+            pending("H2-2") + " (steady keeper policy; self-heating current of C-1)", "FLIGHT-REPRESENTATIVE", "C-1, PS-C",
+            "cathode_keeper"),
+        row(16, "cathode_keeper start-up (keeper-only) load bracket", list(KEEP_START_W), "W", "analog",
+            f"{ec} CK-PEDRINI17-HC1 (9-20 W) and CK-PEDRINI17-HC3 (25-60 W), keeper as the only anode, Xe", "measured",
+            pending("H2-2"), "FLIGHT-REPRESENTATIVE", "C-1, PS-C", "cathode_keeper"),
+        row(17, "keeper sustaining output range", {"V": [5.0, 40.0], "I_A": [0.5, 1.0]}, "V, A", "analog",
+            "X-RHODES24P Table 1 (keeper, after ignition); X-BENAVIDES19 p. 17 demonstrated 0.3-1 A with a low-power cathode; "
+            f"{ci_doc} Sec. 4 JPL 1.5-cm LaB6: current regulated to 2 A at ignition", "assumed", pending("H2-2"),
+            "FLIGHT-REPRESENTATIVE", "PS-C", "cathode_keeper"),
+        row(18, "keeper ignition open-circuit voltage", {"min_V": 100.0, "analog_points_V": [150.0, 300.0, 600.0]}, "V",
+            "analog", "X-BENAVIDES19 p. 17 (> 100 V targeted; heritage 600 V pulsed ignitor); "
+            f"{ci_doc} Sec. 4 (JPL 1.5-cm: 150 V applied; SITAEL HC3 < 300 V)", "assumed", pending("H2-2"),
+            "FLIGHT-REPRESENTATIVE", "PS-C", "cathode_keeper", note="DC ignitor (X-RHODES24P) or pulsed ignitor: option P-KI"),
+        row(19, "cathode_heater steady load", 0.0, "W", "analog",
+            f"{ec} CH-G&K-STEADY-OFF ('turned off once the discharge supply is turned on ... self-heating mode')", "assumed",
+            pending("H2-2") + " (condition: C-1 self-heats at the atmospheric operating current)", "FLIGHT-REPRESENTATIVE",
+            "C-1, PS-C", "cathode_heater", note="boundary convention: 0 W with efficiency 1, passed explicitly"),
+        row(20, "cathode_heater start-up load bracket", list(HEAT_START_W), "W", "analog",
+            f"{ec} CH-PEDRINI17-HC1 (about 45 W), CH-PEDRINI17-HC3 (about 60 W), CH-MONTERO24 (267-305 W)", "measured",
+            pending("H2-2") + " (C-1 selection)", "FLIGHT-REPRESENTATIVE", "C-1, PS-C", "cathode_heater"),
+        row(21, "heater supply output range and mode", {"V": [1.0, 12.0], "I_A": [1.0, 8.0], "P_max_W": 80.0,
+                                                          "analog_current_A": 13.0, "mode": "constant current"}, "V, A, W",
+            "analog", f"X-RHODES24P Table 1 (heater); {ci_doc} Sec. 4 (JPL 1.5-cm LaB6 13 A heater); X-PINERO00 Table 1 "
+            "(heaters in constant-current regulation)", "assumed",
+            pending("H2-2") + " (the 80 W analog rating does not cover the 305 W upper analog heater)", "FLIGHT-REPRESENTATIVE",
+            "PS-C", "cathode_heater", note="constant-current heater drive bounds the cold-filament inrush (PROPOSED)"),
+        row(22, "low-voltage auxiliary supply efficiency (keeper; transferred to magnet, heater, valve drivers, housekeeping)",
+            list(ETA_AUX), "-", "analog",
+            "X-BENAVIDES19 p. 17 Table 2 keeper flyback 0.788-0.814 (lower bound per source); X-PINERO00 p. 4 neutralizer "
+            "0.88 max, cathode discharge supply 0.89 max (28 V input)", "measured",
+            "PRELIMINARY PARAMETER (keeper: analog level 3; magnet/heater/valve/housekeeping: transfer across function, "
+            "level 6-7; TBD - requires the supply-efficiency measurements HM-/CK-/CH-SUPPLY-EFF, FC-DRIVER-EFF, HK-EFF)",
+            "FLIGHT-REPRESENTATIVE", "PS-C"),
+        row(23, "cathode preheat duration", list(PREHEAT_S), "s", "analog",
+            f"{ci_doc} Sec. 4 (SITAEL HC1 about 200 s at 60 W / 600 s at 45 W; JPL 1.5-cm LaB6 18-20 min)", "measured",
+            pending("H2-2"), "FLIGHT-REPRESENTATIVE", "C-1", "cathode_heater"),
+        row(24, "heater energy per start (analog pairs)", list(HEATER_E_WH), "Wh", "analog",
+            f"{ci_doc} Sec. 4 derived energies (45 W x 600 s; 60 W x 200 s)", "model-derived", pending("H2-2"),
+            "FLIGHT-REPRESENTATIVE", "C-1", "cathode_heater"),
+        row(25, "Xe PFCV coil dissipation per energized valve", list(PFCV_W), "W", "analog",
+            f"{ec} FC-MOOG-I2R (74.5 ohm at 21 C, 75-140 mA; Xe PFCV 51E339)", "inferred", "PRELIMINARY (driver loss TBD)",
+            "FLIGHT-REPRESENTATIVE", "FS-C (flight Xe path)", "flow_control"),
+        row(26, "flow_control load allocation cap (3 valves energized)", [PFCV_W[0], _r(N_VALVES_CAP * PFCV_W[1])], "W",
+            "allocation", "lower: one Xe PFCV (the cathode valve is open in every firing state, dual_feed_state_machine); "
+            "upper: xe_cathode + xe_anode + atm_anode energized together (ATMOSPHERE_ADMISSION) at the PFCV upper "
+            "dissipation; the atmospheric valve is ASSUMED PFCV-class", "assumed",
+            pending("H2-3") + " (atmospheric metering valve type and drive)", "FLIGHT-REPRESENTATIVE", "FS-C", "flow_control"),
+        row(27, "compressor bus allocation", COMP_ALLOC_BUS_W, "W", "allocation",
+            "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json owner_decisions OD-C2 "
+            "('screening level 300 W (20 %), PROPOSED; to be replaced by the owner value')", "assumed",
+            pending("H2-3") + " (motor + drive + bearing + control input; bus vs load reading OQ-03)",
+            "FLIGHT-REPRESENTATIVE", "none in H-1 (ABSENT_IN_LAB)", "compressor"),
+        row(28, "compressor spin-up (start-up) power profile", None, "W vs s", "pending", "dual_feed_state_machine WARM_UP "
+            "('Compressor spin-up is commanded on entry')", None, "TBD - requires the H2-3 motor/drive start current and "
+            "duration (" + PENDING_LANES["H2-3"] + ")", "FLIGHT-REPRESENTATIVE", "none in H-1", "compressor"),
+        row(29, "thermal_control load (propulsion heaters)", None, "W", "pending",
+            "BUS_POWER_BOUNDARY.md Sec. 3 (Xe tank/line/valve, gas-chamber, PPU heaters)", None,
+            "TBD - requires the H2-5 heater duty per mode (" + PENDING_LANES["H2-5"] + "); no range is justifiable now",
+            "FLIGHT-REPRESENTATIVE", "PS-C", "thermal_control"),
+        row(30, "housekeeping load (propulsion controller, PPU control, sensors, TM/TC)", None, "W", "pending",
+            "BUS_POWER_BOUNDARY.md Sec. 3 ('never 0'); X-BENAVIDES19 p. 6 housekeeping slice (no value)", None,
+            "TBD - requires the PPU controller selection and the H2-6 flight sensor set (" + PENDING_LANES["H2-6"] +
+            "); no range is justifiable now; abep_sim/ppu.py 8 W + 4 W are unsourced (context only)",
+            "FLIGHT-REPRESENTATIVE", "PS-C", "housekeeping"),
+        row(31, "unallocated PENDING auxiliary term U = P_bus[thermal_control] + P_bus[housekeeping]", list(U_GRID_W), "W",
+            "assumed", "evaluation points of this script (not allocations)", "assumed",
+            "PRELIMINARY (evaluation grid only)", "FLIGHT-REPRESENTATIVE", "PS-C"),
+        row(32, "reserved pre-ionizer slot headroom H_slot(f_d)", "see slot_headroom", "W", "derived",
+            "H = L (1 - f_d) - A_aux - U (this script); A7 blocker-2 context only", "model-derived",
+            "PRELIMINARY (f_d is measured by H-1 Phase 1/2; never predicted)", "FLIGHT-REPRESENTATIVE",
+            "PIM-RF, PIM-ECR (reserved)", None),
+        row(33, "PROPOSED start-up / peak bus limit", STARTUP_PEAK_LIMIT_W, "W", "requirement",
+            "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json proposed_thresholds."
+            "startup_peak_limit (interpretation that the RFP limit also bounds start-up transients)", "assumed",
+            "INPUT (PROPOSED; owner confirms, OQ-02)", "FLIGHT-REPRESENTATIVE", "PS-C"),
+        row(34, "peak averaging window and instantaneous inrush limit", None, "s, A", "pending",
+            "spacecraft EPS ICD (not in the repository)", None, "TBD - requires the spacecraft EPS ICD (OQ-07)",
+            "FLIGHT-REPRESENTATIVE", "PS-C"),
+        row(35, "discharge soft-start ramp", "tens of ms (qualitative)", "s", "analog",
+            "X-RHODES24P (LCC soft start: 'a slow ramp up of the resonant current for the first 10's milliseconds')",
+            "assumed", "PRELIMINARY (H-1 value measured in S1a/S1)", "FLIGHT-REPRESENTATIVE", "PS-C", "hall_discharge"),
+        row(36, "discharge output filter / output impedance", None, "ohm, F, H", "pending",
+            "X-BENAVIDES19 p. 15 ('Bulk capacitance across the output supports normal thruster oscillations'); "
+            "X-RHODES24P (additional output filtering planned)", None,
+            "TBD - requires the S1 oscillation characterisation; identical in every arm and recorded (stability discriminator)",
+            "FLIGHT-REPRESENTATIVE", "PS-C", "hall_discharge"),
+        row(37, "thruster body / cathode-common potential scheme", ["floating", "thruster-ground", "cathode-tied"], "-",
+            "analog", "X-BENAVIDES19 p. 22 (all three configurations evaluated on NASA-H64M-LM); "
+            f"{hw} HW-ELEC-01 (thruster floats; discharge supply anode-cathode)", "assumed",
+            pending("H2-2") + " (cathode return path) and owner (OQ-06)", "FLIGHT-REPRESENTATIVE", "H-1, C-1, PS-C"),
+        row(38, "galvanic isolation of every PPU output from the bus", "required (PROPOSED)", "-", "analog",
+            "X-BENAVIDES19 p. 7 (keeper/heater float at cathode potential; isolated magnet supply as best practice)",
+            "assumed", "PRELIMINARY (PROPOSED design rule)", "FLIGHT-REPRESENTATIVE", "PS-C"),
+        row(39, "H-1 P_bus reconstruction rule (Phase-1 T/P_bus)", "see ground_vs_flight", "-", "derived",
+            "experiment_package_v1.json D-10-A / D-11-A; experiment_plan_v1.json m_Pbus; instrumentation_definition_v1.json "
+            "Sec. 6", "model-derived", "PRELIMINARY (ledger efficiencies pre-registered at LOCK-1)", "H-1 TEST-ARTICLE-ONLY",
+            "PS-C, SVC-1"),
+        row(40, "H-1 laboratory supplies (discharge, magnet, keeper, heater)", "see h1_ground_supplies", "-", "derived",
+            f"{hw} PS-C scope and HW-ENV-01/02, HW-MC-02, HW-C1-05", "assumed", "PRELIMINARY",
+            "GROUND/FACILITY-ONLY", "PS-C"),
+        row(41, "thrust-per-bus-power floor implied by the A5 allocations (necessary, not a prediction)",
+            [_r(THRUST_TARGET_mN[0] / (P_ALLOC_W[1] / 1000.0)), _r(THRUST_TARGET_mN[1] / (P_ALLOC_W[0] / 1000.0))],
+            "mN/kW", "derived", "A5 thrust target 15-22 mN / A5 P_bus allocation 1.30-1.35 kW (this script)",
+            "model-derived", "PRELIMINARY (requirement arithmetic)", "FLIGHT-REPRESENTATIVE", "H-1"),
+        row(42, "RF chain efficiency (bus -> coil feed), reserved slot context", [0.6, 0.92], "-", "analog",
+            f"{ec} RF-VOLKMAR18 (0.60-0.70 inferred) and RF-NEWORBIT25 (0.92 nominal)", "inferred",
+            "CONTEXT ONLY (never used to conclude whether RF fits)", "FLIGHT-REPRESENTATIVE", "PIM-RF (off-module chain)",
+            "rf_source"),
+        row(43, "ECR chain efficiency (system level), alternate slot context", 0.3636, "-", "analog",
+            f"{ec} EC-HAYABUSA-TWTA (40 W RF / 110 W DC, 4.2 GHz TWT)", "inferred",
+            "CONTEXT ONLY (never used to conclude whether ECR fits)", "FLIGHT-REPRESENTATIVE", "PIM-ECR (off-module chain)",
+            "ecr_source"),
+    ]
+    return rows
+
+
+def load_list() -> list:
+    ec = "electrical_closure_data_v1.json"
+    return [
+        {"component": "hall_discharge", "kind": "ALLOCATION",
+         "load_plane": "anode-cathode terminals at H-1 (V_d x I_d, time-averaged)",
+         "voltage_V": {"operating_set": list(VD_SET_V), "rating": VD_RATING_V},
+         "current_A": "I_d <= L / V_d (bound, see discharge_current_bounds); value = P_d / V_d at the measured operating point",
+         "load_W": "residual of the A5 allocation (discharge_allocation_table); never from a transport closure",
+         "source": "H24-06, H24-07, H24-09, H24-11", "status": "PRELIMINARY ALLOCATION (Phase-1 measures the actual share)"},
+        {"component": "hall_magnet", "kind": "ALLOCATION",
+         "load_plane": "MC-1 coil terminals (I^2 R); 0 W with efficiency 1 for a permanent magnet",
+         "voltage_V": [1.0, 12.0], "current_A": [1.0, 5.0], "load_W": list(MAG_W),
+         "source": f"H24-12, H24-13 (X-RHODES24P Table 1; {ec} HM-PM-OPTION)", "status": pending("H2-1")},
+        {"component": "cathode_keeper", "kind": "ALLOCATION",
+         "load_plane": "C-1 keeper terminals",
+         "voltage_V": {"sustaining": [5.0, 40.0], "ignition_open_circuit_min": 100.0},
+         "current_A": [0.5, 1.0], "load_W": {"steady": list(KEEP_STEADY_W), "startup": list(KEEP_START_W)},
+         "source": f"H24-15..H24-18 (X-RHODES24P, X-BENAVIDES19, {ec} CK-*)", "status": pending("H2-2")},
+        {"component": "cathode_heater", "kind": "ALLOCATION",
+         "load_plane": "C-1 heater terminals in the evaluated mode",
+         "voltage_V": [1.0, 12.0], "current_A": {"analog_rating": [1.0, 8.0], "analog_large_cathode": 13.0},
+         "load_W": {"steady": 0.0, "startup": list(HEAT_START_W)},
+         "source": f"H24-19..H24-21 ({ec} CH-*; CATHODE_INTEGRATION Sec. 4; X-RHODES24P)", "status": pending("H2-2")},
+        {"component": "flow_control", "kind": "ALLOCATION",
+         "load_plane": "coil terminals of every energized propellant-feed actuator (Xe PFCVs; atmospheric metering valve)",
+         "voltage_V": [_r(PFCV_I_A[0] * PFCV_R_OHM, 3), _r(PFCV_I_A[1] * PFCV_R_OHM, 3)],
+         "current_A": list(PFCV_I_A), "load_W": {"per_Xe_PFCV": list(PFCV_W),
+                                                 "allocation_cap_3_valves": _r(N_VALVES_CAP * PFCV_W[1])},
+         "source": f"H24-25, H24-26 ({ec} FC-MOOG-SPEC, FC-MOOG-I2R; V = I R derived here)", "status": pending("H2-3")},
+        {"component": "compressor", "kind": "ALLOCATION",
+         "load_plane": "compressor motor-drive electrical input",
+         "voltage_V": "TBD - requires the H2-3 motor bus", "current_A": "TBD", "load_W": {"bus_allocation": COMP_ALLOC_BUS_W},
+         "source": "H24-27 (compressor_downselect OD-C2, PROPOSED)", "status": pending("H2-3")},
+        {"component": "thermal_control", "kind": "PARAMETER",
+         "load_plane": "propulsion-subsystem heater terminals", "voltage_V": "TBD", "current_A": "TBD",
+         "load_W": "TBD - requires the H2-5 heater duty per mode", "source": "H24-29", "status": pending("H2-5")},
+        {"component": "housekeeping", "kind": "PARAMETER",
+         "load_plane": "propulsion controller / PPU control / sensors / TM-TC", "voltage_V": "TBD", "current_A": "TBD",
+         "load_W": "TBD - requires the controller selection and the flight sensor set (never 0)", "source": "H24-30",
+         "status": pending("H2-6") + " + PPU controller design"},
+        {"component": "rf_source", "kind": "PARAMETER", "architectures": ["rf_hall"],
+         "load_plane": "net RF power at the PIM-RF coil feed terminals (reserved slot; not baseline flight hardware, A5)",
+         "voltage_V": "TBD - requires the " + PENDING_LANES["PMI-ICD"] + " power interface",
+         "current_A": "TBD", "load_W": "TBD - requires the H-1 Phase-2 measurement (never predicted here)",
+         "source": "H24-32, H24-42", "status": pending("PMI-ICD")},
+        {"component": "ecr_source", "kind": "PARAMETER", "architectures": ["ecr_hall"],
+         "load_plane": "net microwave power at the PIM-ECR coupling-structure input (alternate; not baseline)",
+         "voltage_V": "TBD", "current_A": "TBD", "load_W": "TBD - requires the H-1 Phase-2 measurement",
+         "source": "H24-32, H24-43", "status": pending("PMI-ICD")},
+        {"component": "ecr_magnet", "kind": "PARAMETER", "architectures": ["ecr_hall"],
+         "load_plane": "ECR resonance-coil terminals (0 W with efficiency 1 for a permanent magnet)",
+         "voltage_V": "TBD", "current_A": "TBD", "load_W": "0 W (PM) or TBD (electromagnet; HWQ-05)",
+         "source": f"{ec} EM-PM-OPTION / EM-MODEL", "status": pending("PMI-ICD")},
+    ]
+
+
+def efficiency_parameters(eta_d: dict) -> list:
+    return [
+        {"supply": "discharge converter", "component": "hall_discharge", "kind": "PARAMETER",
+         "range": [eta_d["min"], ETA_D_BENAVIDES[1]],
+         "analogs": [
+             {"device": "NASA SSEP LCC resonant discharge breadboard (28 V class)", "source": "electrical_closure HD-RH24-*",
+              "value": f"{eta_d['min']}-{eta_d['max']} at P_out >= {RH24_MIN_POWER_W:.0f} W (24-34 V in, 250/400 V out; "
+                       f"{eta_d['n_points']} points); {eta_d['all_points_min']} over all 200-1000 W points",
+              "evidence_class": "digitized", "level": 3},
+             {"device": "NASA SSEP full-bridge DPS module, <= 375 W, 350 V out", "source": "X-BENAVIDES19 p. 15",
+              "value": "0.92-0.95 across the design power and 24-34 V input", "evidence_class": "measured", "level": 3},
+             {"device": "SETS PPU-500 (catalog)", "source": "X-SETS-PPU500", "value": "'up to 94 %' (conditions not stated)",
+              "evidence_class": "measured", "level": 5, "use": "context only"}],
+         "limits": f"no accessed 24-34 V measurement above {eta_d['max_measured_P_out_W']} W output; harness/filters to the "
+                   "thruster excluded (bus_power_boundary_v1 needs them inside eta; PENDING H2-7 harness)",
+         "closes_with": "measured bus-to-terminal efficiency of the flight-like discharge converter at the allocation power "
+                        "(H4 EM-PPU bench test); pre-registered ledger value at LOCK-1"},
+        {"supply": "magnet supply", "component": "hall_magnet", "kind": "PARAMETER", "range": list(ETA_AUX),
+         "analogs": [{"device": "low-voltage auxiliary supplies (keeper / cathode-discharge / neutralizer)",
+                      "source": "X-BENAVIDES19 Table 2; X-PINERO00 p. 4", "value": "0.788-0.89",
+                      "evidence_class": "measured", "level": 6, "use": "transfer across function (magnet: two-switch forward "
+                                                                          "in X-RHODES24P, no efficiency published)"}],
+         "limits": "no published magnet-supply efficiency accessed (electrical_closure HM-SUPPLY-EFF TBD)",
+         "closes_with": "measured magnet-supply efficiency at the MC-1 coil current/voltage (S1a bench)"},
+        {"supply": "keeper supply", "component": "cathode_keeper", "kind": "PARAMETER", "range": list(ETA_AUX),
+         "analogs": [{"device": "SSEP flyback keeper breadboard", "source": "X-BENAVIDES19 p. 17 Table 2",
+                      "value": "0.788-0.814 at 1 A, 15-30 V out (lower bound per source)", "evidence_class": "measured",
+                      "level": 3},
+                     {"device": "low-power ion PPU neutralizer supply (28 V)", "source": "X-PINERO00 p. 4",
+                      "value": "up to 0.88 at 32 V, 0.2 A", "evidence_class": "measured", "level": 6}],
+         "limits": "resistive-load bench data; ignitor stage excluded",
+         "closes_with": "measured keeper-supply efficiency at the C-1 keeper setpoint (S1a)"},
+        {"supply": "heater supply", "component": "cathode_heater", "kind": "PARAMETER", "range": list(ETA_AUX),
+         "analogs": [{"device": "low-voltage auxiliary supplies", "source": "X-BENAVIDES19 Table 2; X-PINERO00 p. 4",
+                      "value": "0.788-0.89", "evidence_class": "measured", "level": 6,
+                      "use": "transfer across function (low-voltage, high-current output: efficiency likely lower; verify)"}],
+         "limits": "no published heater-supply efficiency accessed (CH-SUPPLY-EFF TBD)",
+         "closes_with": "measured heater-supply efficiency at the C-1 heater current (S1a)"},
+        {"supply": "valve drivers", "component": "flow_control", "kind": "PARAMETER", "range": list(ETA_AUX),
+         "analogs": [{"device": "none", "source": "none accessed", "value": "aux band used as an ASSUMED transfer",
+                      "evidence_class": "assumed", "level": 7}],
+         "limits": "linear vs switched current source not decided (FC-DRIVER-EFF TBD); effect on P_bus < 2 W at the cap",
+         "closes_with": "valve-driver design + bench measurement"},
+        {"supply": "compressor motor-bus converter", "component": "compressor", "kind": "PARAMETER", "range": None,
+         "analogs": [], "limits": "TBD - requires the H2-3 motor drive (CP-CONV-EFF); the 300 W allocation is booked as bus draw",
+         "closes_with": "motor-drive input measurement (compressor_downselect T-4)"},
+        {"supply": "heater switches / thermal converters", "component": "thermal_control", "kind": "PARAMETER",
+         "range": None, "analogs": [], "limits": "TBD - requires the H2-5 heater topology (TC-EFF)",
+         "closes_with": "heater-switch design"},
+        {"supply": "housekeeping converter", "component": "housekeeping", "kind": "PARAMETER", "range": None, "analogs": [],
+         "limits": "TBD - requires the controller selection (HK-EFF)", "closes_with": "controller + converter bench measurement"},
+        {"supply": "RF generator chain (reserved slot)", "component": "rf_source", "kind": "PARAMETER", "range": [0.6, 0.92],
+         "analogs": [{"device": "RIT-10 RFG + cables / air-fed RF thruster RFG", "source": "electrical_closure RF-VOLKMAR18, "
+                      "RF-NEWORBIT25", "value": "0.60-0.70 inferred; 0.92 nominal", "evidence_class": "inferred", "level": 3}],
+         "limits": "context only; matching loss RF-MATCH-LOSS TBD", "closes_with": "H-1 Phase-2 load-plane + DC-input metering"},
+        {"supply": "microwave chain (alternate)", "component": "ecr_source", "kind": "PARAMETER", "range": [0.3636, 0.3636],
+         "analogs": [{"device": "Hayabusa TWTA (4.2 GHz)", "source": "electrical_closure EC-HAYABUSA-TWTA", "value": "0.3636",
+                      "evidence_class": "inferred", "level": 3}],
+         "limits": "context only; stage-only values are upper bounds", "closes_with": "H-1 Phase-2 metering"},
+    ]
+
+
+def margin_table() -> list:
+    rows = []
+    for L in P_ALLOC_W:
+        rows.append({"allocation_W": L, "requirement_W": P_REQ_W, "margin_W": _r(P_REQ_W - L),
+                     "margin_fraction_of_requirement": _r((P_REQ_W - L) / P_REQ_W),
+                     "evidence_class": "model-derived", "basis": "A5 allocation vs RFP requirement (arithmetic)"})
+    return rows
+
+
+def bus_current_table() -> list:
+    out = []
+    for P in (P_ALLOC_W[0], P_ALLOC_W[1], P_REQ_W):
+        for V in BUS_V_OPTIONS:
+            out.append({"P_bus_W": P, "V_bus_V": V, "I_bus_A": _r(P / V, 3)})
+    return out
+
+
+def discharge_current_bounds() -> list:
+    out = []
+    for V in VD_SET_V + (VD_RATING_V,):
+        out.append({"V_d_V": V, "I_d_bound_at_requirement_A": _r(P_REQ_W / V, 3),
+                    "I_d_bound_at_allocation_A": [_r(P_ALLOC_W[0] / V, 3), _r(P_ALLOC_W[1] / V, 3)],
+                    "note": "upper bound (eta <= 1, other loads >= 0); not a prediction of I_d"})
+    return out
+
+
+def aux_cap_bus(eta_aux: float) -> dict:
+    """Steady auxiliary bus draw at the PROPOSED allocation caps (thermal_control and housekeeping excluded: U)."""
+    mag = bus_draw(MAG_W[1], eta_aux)
+    keep = bus_draw(KEEP_STEADY_W[1], eta_aux)
+    heat = bus_draw(0.0, 1.0)
+    flow = bus_draw(N_VALVES_CAP * PFCV_W[1], eta_aux)
+    comp = COMP_ALLOC_BUS_W
+    return {"hall_magnet": _r(mag), "cathode_keeper": _r(keep), "cathode_heater": _r(heat), "flow_control": _r(flow),
+            "compressor": _r(comp), "total_excl_U": _r(mag + keep + heat + flow + comp),
+            "loss_identified_W": _r((mag - MAG_W[1]) + (keep - KEEP_STEADY_W[1]) + (flow - N_VALVES_CAP * PFCV_W[1]))}
+
+
+def aux_floor_bus() -> dict:
+    flow = bus_draw(PFCV_W[0], ETA_AUX[1])
+    return {"hall_magnet": 0.0, "cathode_keeper": 0.0, "cathode_heater": 0.0, "flow_control": _r(flow),
+            "compressor": "C (PENDING H2-3; no floor justifiable)", "total_excl_C_and_U": _r(flow),
+            "conditions": "permanent-magnet MC-1, keeper off, heater off (self-heating), one Xe PFCV at its minimum current, "
+                          "efficiency at the upper analog 0.89"}
+
+
+def discharge_allocation_table(eta_d: dict) -> list:
+    rows = []
+    for L in P_ALLOC_W:
+        for ea in ETA_AUX:
+            A = aux_cap_bus(ea)
+            for U in U_GRID_W:
+                p_bus_d = L - A["total_excl_U"] - U
+                for ed in (eta_d["min"], ETA_D_BENAVIDES[1]):
+                    p_d = bus_draw(p_bus_d, 1.0) * ed
+                    rows.append({"allocation_W": L, "eta_aux": ea, "aux_bus_at_caps_W": A["total_excl_U"], "U_W": U,
+                                 "P_bus_discharge_W": _r(p_bus_d, 2), "eta_d": ed, "P_d_load_allocation_W": _r(p_d, 2),
+                                 "discharge_conversion_loss_W": _r(p_bus_d - p_d, 2),
+                                 "f_d": _r(p_bus_d / L),
+                                 "I_d_at_Vd_A": {str(int(v)): _r(p_d / v, 3) for v in VD_SET_V}})
+    return rows
+
+
+def slot_headroom() -> dict:
+    A_cap = aux_cap_bus(ETA_AUX[0])["total_excl_U"]
+    A_floor = aux_floor_bus()["total_excl_C_and_U"]
+    table = []
+    for f in F_D_GRID:
+        table.append({"f_d": f, **{f"H_at_{int(L)}W": _r(headroom_W(L, f, A_cap), 2) for L in P_ALLOC_W + (P_REQ_W,)}})
+    zero = {f"f_d_zero_at_{int(L)}W": _r(1.0 - A_cap / L) for L in P_ALLOC_W + (P_REQ_W,)}
+    zero_floor = {f"f_d_zero_at_{int(L)}W": _r(1.0 - A_floor / L) for L in P_ALLOC_W + (P_REQ_W,)}
+    return {
+        "definition": "f_d = P_bus[hall_discharge] / L (bus-side discharge share of the limit L); "
+                      "H_slot(f_d) = L (1 - f_d) - A_aux - U, the bus power left inside L for the reserved pre-ionizer "
+                      "slot of rf_hall (rf_source) or ecr_hall (ecr_source + ecr_magnet) plus its housekeeping increment",
+        "fit_condition_not_evaluated": "a contingency module fits only if P_bus[rf_source] + dK_preionizer <= H_slot(f_d,rf_hall) "
+                                       "or P_bus[ecr_source] + P_bus[ecr_magnet] + dK_preionizer <= H_slot(f_d,ecr_hall), "
+                                       "with f_d measured on the pre-ionized arm itself (H-1 Phase 2); this lane does not "
+                                       "evaluate it and draws no conclusion (A7 blocker 2)",
+        "coupling_plane_equivalent": "maximum net source power at the coupling plane = eta_chain x (H_slot - dK_preionizer); "
+                                     "eta_chain evidence in H24-42 / H24-43 (context only)",
+        "aux_case": {"name": "AUX-CAP", "A_aux_bus_W": A_cap, "eta_aux": ETA_AUX[0],
+                     "components": aux_cap_bus(ETA_AUX[0]),
+                     "not_included": "U = P_bus[thermal_control] + P_bus[housekeeping] (PENDING H2-5 / H2-6); subtract "
+                                     "U from every entry; if the compressor draws C < 300 W add (300 - C)"},
+        "table": table,
+        "f_d_where_headroom_vanishes_AUX_CAP_U0": zero,
+        "f_d_where_headroom_vanishes_AUX_FLOOR_excl_C_U": zero_floor,
+        "evidence_class": "model-derived",
+        "statement": "headroom stated as a function of the unknown discharge share only; no RF/ECR fit conclusion",
+    }
+
+
+def _bracket(terms_lo: list, terms_hi: list) -> list:
+    lo = sum(bus_draw(x, ETA_AUX[1]) for x in terms_lo)
+    hi = sum(bus_draw(x, ETA_AUX[0]) for x in terms_hi)
+    return [_r(lo, 2), _r(hi, 2)]
+
+
+def profiles(sm: dict) -> dict:
+    states = {s["id"]: s for s in sm["states"]}
+    def st(sid):
+        if sid not in states:
+            raise KeyError(f"state {sid} not in dual_feed_state_machine_v1")
+        s = states[sid]
+        return {"state_id": sid, "outputs": s["outputs"], "valves": s["valves"], "compressor": s["compressor"]}
+
+    pf1 = PFCV_W[0]
+    steady_sourced = _bracket([pf1], [MAG_W[1], KEEP_STEADY_W[1], 2 * PFCV_W[1]])
+    steady = {
+        "name": "STEADY", "mode": "atmospheric Hall + Xe cathode (A5 nominal mode)",
+        "state": st("AIR_ONLY_ANODE_XE_CATHODE"),
+        "components": {
+            "hall_discharge": "allocation residual P_bus,d = L - A_aux - U (discharge_allocation_table)",
+            "hall_magnet": {"load_W": list(MAG_W), "note": "hot coil (H24-14)"},
+            "cathode_keeper": {"load_W": list(KEEP_STEADY_W)},
+            "cathode_heater": {"load_W": 0.0, "efficiency": 1.0, "condition": "C-1 self-heats (PENDING H2-2)"},
+            "flow_control": {"energized": "xe_cathode (Xe PFCV) + atm_anode", "load_W": [pf1, _r(2 * PFCV_W[1])]},
+            "compressor": {"bus_allocation_W": COMP_ALLOC_BUS_W},
+            "thermal_control": "TBD (PENDING H2-5)", "housekeeping": "TBD (PENDING H2-6 + controller)"},
+        "aux_bus_sourced_W_excl_compressor_U": steady_sourced,
+        "aux_bus_at_caps_W_excl_U": aux_cap_bus(ETA_AUX[0])["total_excl_U"],
+        "rule": "STEADY P_bus <= A5 allocation 1300-1350 W (design allocation) and < 1500 W (requirement)",
+        "degraded_variant": "XE_FALLBACK (time-limited Xe contingency): atm valve closed, xe_anode at the fallback setpoint, "
+                            "compressor idle or stopped (TBD); not a nominal profile (A5 rules), checked in PEAK only if "
+                            "the compressor keeps running",
+    }
+
+    seq = []
+    def phase(i, name, sid, on, loads_lo, loads_hi, duration, notes, symbolic):
+        seq.append({"step": i, "name": name, "state": st(sid), "components_on": on,
+                    "aux_bus_sourced_W": _bracket(loads_lo, loads_hi) if loads_hi else [0.0, 0.0],
+                    "symbolic_terms": symbolic, "duration": duration, "notes": notes})
+    phase(0, "OFF", "OFF", ["housekeeping (standby, TBD)"], [], [], "-",
+          "all converters off; invariant P_bus <= P_bus_idle_max (TBD, state machine)", ["P_bus[housekeeping] standby (TBD)"])
+    phase(1, "Xe purge", "XE_PURGE", ["flow_control", "housekeeping", "thermal_control"], [pf1], [2 * PFCV_W[1]],
+          "t_purge: TBD - requires the H2-2/H2-3 purge setpoint and the Xe ledger (" + PENDING_LANES["XE-LEDGER"] + ")",
+          "xe_cathode (+ xe_anode if the feed routes it)", ["U"])
+    phase(2, "heater preheat (cathode conditioning)", "CATHODE_CONDITIONING",
+          ["cathode_heater", "flow_control", "housekeeping", "thermal_control"], [HEAT_START_W[0], pf1],
+          [HEAT_START_W[1], PFCV_W[1]], {"analog_s": list(PREHEAT_S), "status": pending("H2-2")},
+          f"heater energy per start {HEATER_E_WH[0]}-{HEATER_E_WH[1]} Wh (SITAEL HC1 analog pairs); constant-current heater "
+          "drive (PROPOSED)", ["U"])
+    phase(3, "keeper ignition", "CATHODE_IGNITION", ["cathode_heater", "cathode_keeper", "flow_control", "housekeeping"],
+          [HEAT_START_W[0], KEEP_START_W[0], pf1], [HEAT_START_W[1], KEEP_START_W[1], PFCV_W[1]],
+          "t_ignition: TBD - bounded retries (state machine); open-circuit >= 100 V then current regulation (H24-18)",
+          "keeper-only discharge brackets from CK-PEDRINI17-HC1/HC3", ["U"])
+    phase(4, "magnet ramp (entry of Xe discharge ignition)", "XE_DISCHARGE_IGNITION",
+          ["hall_magnet", "cathode_keeper", "cathode_heater (per C-1 design)", "flow_control", "housekeeping"],
+          [KEEP_START_W[0], 2 * pf1], [HEAT_START_W[1], KEEP_START_W[1], MAG_W[1], 2 * PFCV_W[1]],
+          "t_magnet_ramp: TBD - requires the MC-1 coil L/R and the supply slew (" + PENDING_LANES["H2-1"] + ")",
+          "current-controlled coil: cold-coil power <= hot steady (H24-14); lower bound with heater off, upper with heater "
+          "on; xe_anode opens to the ignition setpoint", ["U"])
+    phase(5, "Xe discharge ignition", "XE_DISCHARGE_IGNITION",
+          ["hall_discharge", "hall_magnet", "cathode_keeper", "cathode_heater (per C-1 design)", "flow_control", "housekeeping"],
+          [KEEP_START_W[0], 2 * pf1], [HEAT_START_W[1], KEEP_START_W[1], MAG_W[1], 2 * PFCV_W[1]],
+          "until lit and stable (bounded retries); soft-start ramp tens of ms (H24-35)",
+          "discharge at V_d_ign with Xe anode flow; heater off 'once the discharge starts' (Goebel & Katz p. 337 via "
+          "lane 19) unless the C-1 design keeps it on; alternative published order: glow-mode start with the magnet after "
+          "the discharge (X-RHODES24P) - an H-1 option (PK-1 applies either way)", ["P_bus[hall_discharge] at ignition "
+                                                                                  "(H-1 S1 measurement)", "U"])
+    phase(6, "Xe warm-up + compressor spin-up", "WARM_UP",
+          ["hall_discharge", "hall_magnet", "cathode_keeper (per design)", "flow_control", "compressor (spin-up)",
+           "housekeeping", "thermal_control"], [2 * pf1], [MAG_W[1], KEEP_START_W[1], 2 * PFCV_W[1]],
+          "t_warmup: TBD - requires the H2-5 thermal soak", "heater off; compressor spin-up commanded on entry",
+          ["P_bus[hall_discharge] warm-up (H-1)", "P_bus[compressor] spin-up (PENDING H2-3)", "U"])
+    phase(7, "atmosphere admission", "ATMOSPHERE_ADMISSION",
+          ["hall_discharge", "hall_magnet", "cathode_keeper (per design)", "flow_control (3 valves)", "compressor",
+           "housekeeping", "thermal_control"], [3 * pf1], [MAG_W[1], KEEP_STEADY_W[1], 3 * PFCV_W[1]],
+          "t_admit_ramp: TBD (state-machine parameter)", "Xe anode held while the atmospheric valve ramps open; I_d "
+          "excursions monitored", ["P_bus[hall_discharge] (H-1)", "P_bus[compressor] <= 300 W", "U"])
+    phase(8, "transition (mixed stabilization)", "MIXED_STABILIZATION",
+          ["hall_discharge", "hall_magnet", "cathode_keeper (per design)", "flow_control (3 valves)", "compressor",
+           "housekeeping", "thermal_control"], [3 * pf1], [MAG_W[1], KEEP_STEADY_W[1], 3 * PFCV_W[1]],
+          "TBD (closed-loop on I_d; A5: never silently a long-duration mode)", "Xe anode ramps down",
+          ["P_bus[hall_discharge] (H-1)", "P_bus[compressor] <= 300 W", "U"])
+    phase(9, "nominal (-> STEADY)", "AIR_ONLY_ANODE_XE_CATHODE",
+          ["hall_discharge", "hall_magnet", "cathode_keeper (policy)", "flow_control (2 valves)", "compressor",
+           "housekeeping", "thermal_control"], [pf1], [MAG_W[1], KEEP_STEADY_W[1], 2 * PFCV_W[1]],
+          "long-duration", "STEADY profile", ["P_bus[hall_discharge] (allocation)", "P_bus[compressor] <= 300 W", "U"])
+    startup = {"name": "STARTUP", "mode": "A5 sequence OFF -> Xe ignition/startup -> brief transition support -> "
+                                          "atmospheric Hall + Xe cathode",
+               "sequence": seq,
+               "rf_ecr_variants": "rf_hall / ecr_hall only (reserved slot): V1 inserts PREIONIZER_IGNITION after WARM_UP; "
+                                  "V2 inserts PREIONIZER_SEED after CATHODE_IGNITION (ecr_magnet before ecr_source); the "
+                                  "source bus draw then adds to steps 3-8 (cathode_integration startup_reference)",
+               "rule": "each step's P_bus <= the PROPOSED start-up limit 1500 W (H24-33) under the averaging window of H24-34"}
+
+    k1 = _bracket([HEAT_START_W[0], KEEP_START_W[0], 2 * pf1], [HEAT_START_W[1], KEEP_START_W[1], MAG_W[1], 2 * PFCV_W[1]])
+    k2 = _bracket([2 * pf1], [MAG_W[1], KEEP_START_W[1], 2 * PFCV_W[1]])
+    k3 = [_r(bus_draw(3 * pf1, ETA_AUX[1]), 2), _r(bus_draw(MAG_W[1] + KEEP_STEADY_W[1] + 3 * PFCV_W[1], ETA_AUX[0]) +
+                                                   COMP_ALLOC_BUS_W, 2)]
+    k5 = [_r(bus_draw(HEAT_START_W[0] + 2 * pf1, ETA_AUX[1]), 2),
+          _r(bus_draw(HEAT_START_W[1] + MAG_W[1] + KEEP_START_W[1] + 3 * PFCV_W[1], ETA_AUX[0]) + COMP_ALLOC_BUS_W, 2)]
+    cases = [
+        {"id": "PK-1", "name": "heater-on Xe discharge ignition", "state": "XE_DISCHARGE_IGNITION",
+         "components": ["cathode_heater", "cathode_keeper", "hall_magnet", "hall_discharge (ignition)", "flow_control (2)",
+                        "housekeeping", "thermal_control"], "aux_bus_sourced_W": k1,
+         "discharge_room_under_limit_W": f"P_bus[hall_discharge,ign] <= {_r(STARTUP_PEAK_LIMIT_W - k1[1], 2)} - U",
+         "applies_if": "the C-1 design keeps the heater on at discharge ignition (PENDING H2-2)"},
+        {"id": "PK-2", "name": "compressor spin-up during Xe warm-up", "state": "WARM_UP",
+         "components": ["hall_discharge (warm-up)", "hall_magnet", "cathode_keeper", "compressor (spin-up)", "flow_control (2)",
+                        "housekeeping", "thermal_control"], "aux_bus_sourced_W": k2,
+         "discharge_room_under_limit_W": f"P_bus[hall_discharge,warm] + P_bus[compressor,spin-up] <= "
+                                         f"{_r(STARTUP_PEAK_LIMIT_W - k2[1], 2)} - U",
+         "applies_if": "always (state machine commands spin-up on WARM_UP entry)"},
+        {"id": "PK-3", "name": "atmosphere admission / transition with discharge-current excursions",
+         "state": "ATMOSPHERE_ADMISSION / MIXED_STABILIZATION",
+         "components": ["hall_discharge (excursion)", "hall_magnet", "cathode_keeper", "compressor (running)",
+                        "flow_control (3)", "housekeeping", "thermal_control"], "aux_bus_sourced_W": k3,
+         "discharge_room_under_limit_W": f"P_bus[hall_discharge,peak] <= {_r(STARTUP_PEAK_LIMIT_W - k3[1], 2)} - U",
+         "applies_if": "always; excursion amplitude measured on H-1 (Phase 1), never predicted"},
+        {"id": "PK-4", "name": "steady + thermal-control coincidence (e.g. eclipse heater duty) with hot coil",
+         "state": "AIR_ONLY_ANODE_XE_CATHODE",
+         "components": ["all STEADY components", "thermal_control peak"], "aux_bus_sourced_W": steady_sourced,
+         "discharge_room_under_limit_W": f"dP_bus[thermal_control,peak] <= {P_REQ_W} - P_bus,steady; = "
+                                         f"{_r(P_REQ_W - P_ALLOC_W[1])}-{_r(P_REQ_W - P_ALLOC_W[0])} W when STEADY sits at the "
+                                         "A5 allocation",
+         "applies_if": "H2-5 heater duty overlaps firing (PENDING H2-5)"},
+        {"id": "PK-5", "name": "heater re-application with the discharge on (anomaly response) and compressor running",
+         "state": "any firing state (FDIR)",
+         "components": ["cathode_heater", "hall_magnet", "cathode_keeper", "hall_discharge", "compressor", "flow_control (3)",
+                        "housekeeping", "thermal_control"], "aux_bus_sourced_W": k5,
+         "discharge_room_under_limit_W": f"P_bus[hall_discharge] <= {_r(STARTUP_PEAK_LIMIT_W - k5[1], 2)} - U",
+         "applies_if": "FDIR allows heater + magnet with the discharge on (X-RHODES24P: simultaneous heater and magnet "
+                       "operation 'desirable for either normal operations or to address a thruster anomaly')"},
+        {"id": "PK-6", "name": "V2 pre-ionizer seed during heater-on ignition (rf_hall / ecr_hall only)",
+         "state": "PREIONIZER_SEED / XE_DISCHARGE_IGNITION",
+         "components": ["PK-1 set", "rf_source or ecr_source + ecr_magnet", "housekeeping increment"],
+         "aux_bus_sourced_W": k1,
+         "discharge_room_under_limit_W": "PK-1 room minus P_bus[source] (+ P_bus[ecr_magnet]) - dK_preionizer",
+         "applies_if": "reserved slot fitted and variant V2 chosen (cathode_integration startup_reference)"},
+    ]
+    transients = [
+        {"id": "TR-1", "what": "discharge ignition inrush", "bound": "TBD - requires S1a/S1 measurement of the H-1 ignition "
+         "transient", "mitigation": "current-limited soft start (X-RHODES24P tens of ms; X-BENAVIDES19 p. 7 current loop "
+         "enables glow-mode start)"},
+        {"id": "TR-2", "what": "keeper ignitor pulse", "bound": "TBD - requires the ignitor choice (P-KI)",
+         "mitigation": "DC ignitor or pulsed ignitor energy limited"},
+        {"id": "TR-3", "what": "cold heater inrush", "bound": "none under constant-current drive (PROPOSED; X-PINERO00 Table 1 "
+         "constant-current heaters)", "mitigation": "constant-current heater supply"},
+        {"id": "TR-4", "what": "magnet ramp", "bound": "cold-coil power <= hot steady at equal current (H24-14)",
+         "mitigation": "current-controlled supply with slew limit (TBD - requires MC-1 L/R, H2-1)"},
+        {"id": "TR-5", "what": "compressor motor start", "bound": "TBD - requires the H2-3 motor drive",
+         "mitigation": "soft-start motor drive with current limit (PROPOSED)"},
+        {"id": "TR-6", "what": "PPU input-filter charging at power-on", "bound": "TBD - requires the EPS ICD inrush limit",
+         "mitigation": "input inrush limiter (PROPOSED)"},
+        {"id": "TR-7", "what": "I_d excursions at atmosphere admission", "bound": "TBD - H-1 Phase-1 measurement",
+         "mitigation": "discharge current limit + state-machine guard (I_d monitored)"},
+    ]
+    peak = {"name": "PEAK", "definition": "worst simultaneous loads including transients/inrush, per case",
+            "cases": cases, "transients": transients,
+            "proposed_rules": [
+                "PR-1 (PROPOSED): every PEAK case, averaged over the EPS window (H24-34, TBD), stays below 1500 W "
+                "(H24-33, PROPOSED reading of the RFP limit); the instantaneous inrush meets the EPS ICD limit (TBD)",
+                "PR-2 (PROPOSED): the heater is off before the compressor spin-up (consistent with the state machine: heater "
+                "off in WARM_UP)",
+                "PR-3 (PROPOSED): no two high-power converters start in the same control cycle (stagger discharge, compressor "
+                "and pre-ionizer starts)",
+                "PR-4 (PROPOSED): heater re-application with the discharge on (PK-5) only at a derated discharge setpoint or "
+                "with the compressor idle; FDIR input to the control/FDIR row",
+                "PR-5 (PROPOSED): the discharge supply runs in voltage regulation with an active current limit (glow-mode "
+                "capable) so ignition and excursion transients are bounded by the limit setting"],
+            "evidence_class": "model-derived (sums of sourced brackets); every discharge term is a measured/allocated "
+                              "quantity, never predicted"}
+    return {"STEADY": steady, "STARTUP": startup, "PEAK": peak}
+
+
+def ledger_attempts(ab) -> list:
+    """Call bus_power_ledger with the inputs that exist; record the boundary's own refusal (nothing defaulted)."""
+    out = []
+    loads = {"cathode_heater": 0.0}
+    effs = {"cathode_heater": 1.0}
+    for mode in ("STEADY", "STARTUP", "PEAK"):
+        try:
+            ab.bus_power_ledger("hall_only", dict(loads) if mode == "STEADY" else {}, dict(effs) if mode == "STEADY" else {})
+            status, msg = "EVALUATED", None
+        except ValueError as exc:
+            status, msg = "NOT_EVALUABLE", str(exc)
+        missing = [c for c in ab.REQUIRED_COMPONENTS["hall_only"] if not (mode == "STEADY" and c == "cathode_heater")]
+        out.append({"architecture": "hall_only", "mode": mode, "status": status, "boundary_refusal": msg,
+                    "passed_components": ["cathode_heater"] if mode == "STEADY" else [],
+                    "blocking_components": missing,
+                    "note": "hall_discharge is an allocation residual (not a load value); the auxiliary loads are PROPOSED "
+                            "caps or PENDING; a ledger is evaluated only on measured/closed values"})
+    out.append({"architecture": "rf_hall / ecr_hall", "mode": "all", "status": "NOT_ATTEMPTED",
+                "boundary_refusal": None, "passed_components": [], "blocking_components": ["reserved slot not baseline (A5)"],
+                "note": "pre-ionized ledgers belong to H-1 Phase 2 on the same boundary; headroom only (slot_headroom)"})
+    return out
+
+
+def ppu_options() -> dict:
+    return {
+        "discharge_supply_topology": [
+            {"id": "P-DS1", "option": "single wide-range LCC resonant converter", "analog": "X-RHODES24P (1 kW, 200-500 V, "
+             "1-5 A, 24-34 V in; soft start)", "fit_to_allocation": "analog rating 1 kW / 5 A is below the upper discharge "
+             "allocation and the L / V_d bound at low V_d: a scaled design is needed (extrapolation)", "status": "OPTION"},
+            {"id": "P-DS2", "option": "parallel full-bridge discharge modules with a master current-sharing controller",
+             "analog": "X-BENAVIDES19 p. 6, 15 (375 W / 350 V modules; three in parallel demonstrated; 92-95 % per module)",
+             "fit_to_allocation": "N modules x 375 W: 3 modules = 1125 W output (analog capacity), 4 modules give margin; "
+                                  "module count TBD - requires the discharge allocation after H2-1/H2-2/H2-3/H2-5/H2-6 "
+                                  "loads close", "status": "OPTION"},
+            {"id": "P-DS3", "option": "discharge converter fed from a high-voltage spacecraft bus",
+             "analog": "BUS_POWER_BOUNDARY.md E2/E3 (100-300 V input, multi-kW class)",
+             "fit_to_allocation": "only if the EPS ICD provides a high-voltage bus (OQ-01)", "status": "OPTION (conditional)"}],
+        "magnet_supply": [
+            {"id": "P-MG1", "option": "separate isolated current-controlled magnet supply (inner/outer coils in series or "
+             "separate channels)", "analog": "X-RHODES24P (single magnet supply, coils in series, two-switch forward); "
+             "X-BENAVIDES19 p. 7 isolation", "h1": "required for H-1 (HW-MC-02 current control, B(z) traceability)"},
+            {"id": "P-MG2", "option": "coil in series with the discharge", "analog": "BUS_POWER_BOUNDARY.md Sec. 3 "
+             "(booked under hall_magnet)", "h1": "not H-1 compatible: B would follow I_d (HW-MC-02); flight-only option"},
+            {"id": "P-MG3", "option": "permanent magnet (0 W, efficiency 1)", "analog": "electrical_closure HM-PM-OPTION",
+             "h1": "then the H-1 coil supply is H-1 TEST-ARTICLE-ONLY (HWQ-19)"}],
+        "cathode_supplies": [
+            {"id": "P-CK1", "option": "separate heater and keeper stages (heater two-switch forward, keeper flyback)",
+             "analog": "X-RHODES24P (independent stages preferred for flexibility)"},
+            {"id": "P-CK2", "option": "combined heater/keeper (or heater/discharge) multi-function stage",
+             "analog": "X-PINERO00 (multi-function discharge/heater supply with relays)",
+             "constraint": "precludes heater + keeper overlap in CATHODE_IGNITION unless time-multiplexed: conflicts with "
+                           "the state-machine sequence (heater and keeper both on)"},
+            {"id": "P-KI", "option": "keeper ignitor: DC voltage multiplier vs heritage 600 V pulsed ignitor",
+             "analog": "X-RHODES24P (DC Cockcroft-Walton); X-BENAVIDES19 p. 17 (heritage 600 V pulsed)"}],
+        "shared_vs_separate": {
+            "PROPOSED": "separate discharge, magnet, keeper and heater stages plus a housekeeping / valve-driver slice "
+                        "(X-BENAVIDES19 slice architecture); the pre-ionizer generator stays off the common PPU and receives a "
+                        "switched, fused and metered bus tap defined by the PMI ICD (mass_bom books the RF generator and "
+                        "microwave source as architecture-specific items)",
+            "reason": "keeps the common PPU identical across hall_only / rf_hall / ecr_hall and every v1 component "
+                      "separately metered; any shared stage must still report per-component load-plane power"},
+        "redundancy": "TBD - requires the owner reliability policy (ppu.py 'cold-redundant' is an unsourced code assumption)",
+    }
+
+
+def grounding() -> dict:
+    return {
+        "h1": ["thruster body floating; discharge supply between anode and cathode common, same topology, grounding and "
+               "cable routing in every arm (HW-ELEC-01)",
+               "cathode-to-ground and anode-to-ground potentials recorded at every reading (HW-C1-05)",
+               "module body / interstage electrode potential declared per HWQ-07 (HW-ELEC-02)",
+               "RF and microwave returns separated from the discharge return; dummy-load pickup check (HW-ELEC-03)",
+               "keeper and heater supplies float at cathode potential (isolated outputs; X-BENAVIDES19 p. 7); coil supplies "
+               "isolated (best practice, same source)"],
+        "flight_options": ["floating", "thruster-ground", "cathode-tied"],
+        "flight_selection": pending("H2-2") + " (cathode return path) + owner (OQ-06); X-BENAVIDES19 p. 22 evaluated all three "
+                            "on a sub-kW Hall thruster",
+        "consistency_rule": "the H-1 configuration must be the flight candidate's or be varied deliberately and recorded "
+                            "(Benavides evaluated configurations at selected points); a change of body potential between "
+                            "arms is not allowed",
+    }
+
+
+def ground_vs_flight() -> dict:
+    return {
+        "principle": "H-1 uses laboratory supplies (GROUND/FACILITY-ONLY) metered at the FLIGHT-REPRESENTATIVE load planes; "
+                     "the bus side is reconstructed with pre-registered ledger efficiencies (contract basis, experiment "
+                     "package D-10-A) - never with the laboratory supply's own efficiency",
+        "bus_boundary_equivalent_point": "the set of v1 load planes (anode-cathode terminals, coil terminals, keeper and heater "
+                                         "terminals, valve coil terminals, source coupling plane) plus the pre-registered "
+                                         "bus-to-load chain efficiency of each component",
+        "reconstruction": [
+            "P_bus,lab = sum_c P_load,c(measured, INS-02 / INS-03) / eta_c(ledger, LOCK-1) + sum_c P_bus,c(ledger input) for "
+            "flow_control and housekeeping (flight actuators and controller are not in the lab; identical in every arm), and "
+            "thermal_control where the lab has no flight heater -> PARTIAL_BOUNDARY (compressor ABSENT_IN_LAB)",
+            "P_bus,v1 = P_bus,lab + P_bus,compressor(ICD, reconstructed at the point's flow and composition) -> V1 basis; "
+            "UNAVAILABLE until the ICD supplies it (D-11-A)",
+            "T/P_bus = T_measured / P_bus,v1 (V1) or labelled PARTIAL_BOUNDARY; a PARTIAL ratio is never reported as a "
+            "bus_power_boundary_v1 ratio",
+            "every v1 component row is recorded for every arm at every point; a physically absent component is 0 W with "
+            "presence ABSENT; an installed but unenergized one is measured (protocol_draft presence_rule)"],
+        "lab_dc_input": "each laboratory supply's DC input is also metered, only as efficiency evidence eta_lab = P_load / "
+                        "P_DC,in (LAB_CHAIN label; never enters T/P_bus)",
+        "uncertainty": "u(P_bus)^2 = sum_c (u(P_load,c) / eta_c)^2 from the metering; ledger-efficiency bounds and the "
+                       "reconstructed compressor draw are carried as separate conditioning terms (LOCK-1 brief; I-U-ABS-P "
+                       "0.01 relative PROPOSED by W4)",
+        "optional_em_ppu": "an engineering-model PPU (flight-like converters from the H-1 bus-voltage choice) may be run "
+                           "on H-1 as supplementary LAB_CHAIN evidence for the ledger efficiencies; it does not replace "
+                           "the contract basis (OQ-10)",
+        "phase1_quantity": "the Phase-1 decision quantity T/P_bus and the Phase-2 R_arch use this rule identically in every "
+                           "arm (" + pending("P1-PREG") + " inserts the numeric boundaries at LOCK-2)",
+        "h1_ground_supplies": [
+            {"supply": "discharge", "rating": {"V": [0.0, VD_RATING_V], "I_A_min": _r(P_REQ_W / min(VD_SET_V), 3)},
+             "features": "programmable CV with active current limit (glow-mode start), floating output, documented output "
+                         "filter identical in every arm, remote sense at the thruster terminals, logged V_d and I_d",
+             "representativeness": "GROUND/FACILITY-ONLY", "status": "PRELIMINARY (+ transient margin TBD, HW-ENV-02)"},
+            {"supply": "magnet (one per independently controlled coil)", "rating": "TBD - requires the MC-1 coil design "
+             "(NI, R_hot, L) " + pending("H2-1") + "; analog 1-5 A / 1-12 V / 60 W",
+             "features": "current control, logged current and voltage (HW-MC-02, HW-MC-14), isolated output",
+             "representativeness": "GROUND/FACILITY-ONLY", "status": pending("H2-1")},
+            {"supply": "keeper", "rating": "sustaining 5-40 V / 0.5-1 A (2 A capability for a larger LaB6), ignition >= 100 V "
+             "open circuit (150-300 V analog points) " + pending("H2-2"),
+             "features": "current regulation after ignition; logged V and I; floats at cathode potential",
+             "representativeness": "GROUND/FACILITY-ONLY", "status": pending("H2-2")},
+            {"supply": "heater", "rating": "constant current up to the C-1 heater current (analog 8-13 A), >= 305 W to cover "
+             "the analog bracket " + pending("H2-2"),
+             "features": "constant-current drive, logged power and time to ignition (HW-C1-07)",
+             "representativeness": "GROUND/FACILITY-ONLY", "status": pending("H2-2")}],
+    }
+
+
+def interface_demands() -> list:
+    H1, H2, H3, H5, H6, H7 = (PENDING_LANES[k] for k in ("H2-1", "H2-2", "H2-3", "H2-5", "H2-6", "H2-7"))
+    d = []
+    def dem(frm, to, q, v, u, s):
+        d.append({"from": frm, "to": to, "quantity": q, "value": v, "units": u, "status": s})
+    me = REL_HERE + "/"
+    dem(me, H1, "hall_magnet load allocation cap (hot coil, steady)", list(MAG_W), "W", "PROPOSED allocation; H2-1 returns the coil value")
+    dem(H1, me, "MC-1 coil I, V, R_hot, L (ramp time) and PM/EM choice", None, "A, V, ohm, H", "PENDING")
+    dem(me, H1, "discharge-supply voltage rating / anode isolation", VD_RATING_V, "V", "INPUT (HW-ENV-01 PROPOSED)")
+    dem(me, H2, "heater supply envelope: constant current, <= 12 V class, P_max to cover the selected C-1",
+        list(HEAT_START_W), "W", "analog bracket; H2-2 returns the C-1 heater profile")
+    dem(H2, me, "C-1 heater V/I/P vs time, t_preheat, heater state at discharge ignition", None, "V, A, W, s", "PENDING")
+    dem(H2, me, "steady keeper policy, keeper sustaining V/I, ignition voltage, self-heating current", None, "V, A", "PENDING")
+    dem(H2, me, "cathode return path / cathode-common connection to spacecraft ground", None, "-", "PENDING")
+    dem(me, H2, "C-1 emission capability I_emit >= I_d + I_keeper + I_interstage at the allocation bound",
+        "see discharge_current_bounds", "A", "derived bound (HW-C1-02)")
+    dem(H3, me, "valve count per mode, atmospheric valve coil R/I, Xe PFCV driver", None, "-, ohm, A", "PENDING")
+    dem(H3, me, "compressor steady bus draw and spin-up profile, motor bus voltage", None, "W, s, V", "PENDING")
+    dem(me, H3, "compressor bus allocation (OD-C2 screening)", COMP_ALLOC_BUS_W, "W", "PROPOSED (owner replaces)")
+    dem(me, H5, "PPU conversion loss to reject (discharge + identified auxiliaries) at the allocation corners",
+        "see discharge_allocation_table.discharge_conversion_loss_W + aux loss_identified_W", "W", "PRELIMINARY")
+    dem(H5, me, "thermal_control heater loads per mode and duty; PPU baseplate temperature range", None, "W, C", "PENDING")
+    dem(me, H6, "per-component load-plane metering channels (v1 ids) + DC-input metering as evidence; sampling for PEAK "
+        "transients", "INS-02 / INS-03 rows of instrumentation_definition Sec. 6", "-", "PRELIMINARY (bandwidth TBD)")
+    dem(H6, me, "flight sensor set and its housekeeping power", None, "W", "PENDING")
+    dem(me, H7, "PPU mass/volume, harness length and gauge (discharge harness loss inside eta_d)", None, "kg, m",
+        "PENDING (H2-7 owns the mass model)")
+    dem(me, PENDING_LANES["PMI-ICD"], "pre-ionizer electrical power interface: switched/fused/metered bus tap; slot "
+        "headroom H_slot(f_d); standby booked under housekeeping (v1)", "see slot_headroom", "W", "PENDING (A6 ICD lane)")
+    dem(me, PENDING_LANES["XE-LEDGER"], "start-up phase durations during which Xe flows (purge, preheat, ignition, "
+        "warm-up, transition)", {"t_preheat_s": list(PREHEAT_S)}, "s", "analog; others TBD")
+    dem(me, PENDING_LANES["P1-PREG"], "P_bus reconstruction rule for T/P_bus (PARTIAL vs V1)", "see ground_vs_flight",
+        "-", "PRELIMINARY")
+    dem(me, PENDING_LANES["M16"], "m16_rows of this lane", "see m16_rows", "-", "PRELIMINARY")
+    dem(me, "H-1 CI PS-C", "H-1 ground-supply ratings", "see ground_vs_flight.h1_ground_supplies", "V, A, W", "PRELIMINARY")
+    dem(me, "H-1 CI SVC-1", "power-line ratings across the stand: discharge >= 350 V and >= 8.333 A (+ margin)",
+        {"V": VD_RATING_V, "I_A": _r(P_REQ_W / min(VD_SET_V), 3)}, "V, A", "PRELIMINARY")
+    dem(me, "H-1 CI FS-C", "gas-isolator voltage rating >= the discharge-supply rating", VD_RATING_V, "V", "PRELIMINARY")
+    dem(me, "H-1 CI C-1 / MC-1", "load-plane terminals for keeper, heater and coil metering (HW-C1-05, HW-MC-14)", None, "-",
+        "INPUT (existing requirements)")
+    return d
+
+
+def hard_incompatibility(eta_d: dict, pk: list) -> dict:
+    A_cap = aux_cap_bus(ETA_AUX[0])["total_excl_U"]
+    return {
+        "verdict": "none found",
+        "checked": [
+            {"item": "sourced auxiliary floor vs the A5 allocation",
+             "finding": f"the justified steady auxiliary floor (excluding compressor and U) is {aux_floor_bus()['total_excl_C_and_U']} W "
+                        f"and the PROPOSED caps total {A_cap} W, both below 1300 W", "evidence_class": "model-derived",
+             "veto": False},
+            {"item": "start-up / peak auxiliaries vs the PROPOSED 1500 W peak limit",
+             "finding": "worst sourced auxiliary sums per PEAK case (bus W): " +
+                        ", ".join(f"{c['id']} {c['aux_bus_sourced_W'][1]}" for c in pk) +
+                        "; all leave a positive discharge room (sequencing rules PR-2..PR-4 keep it)",
+             "evidence_class": "model-derived", "veto": False},
+            {"item": "discharge converter at a 24-34 V bus for the allocation power",
+             "finding": f"no accessed 24-34 V measurement above {eta_d['max_measured_P_out_W']} W output; parallel "
+                        "375 W modules (X-BENAVIDES19) and a 1 kW single stage (X-RHODES24P) exist; a ~0.8-1.2 kW class "
+                        "converter is an extrapolation of measured designs, a design/procurement risk, not an incompatibility",
+             "evidence_class": "measured (analog)", "veto": False},
+            {"item": "bus current at a 28 V-class bus",
+             "finding": f"{_r(P_ALLOC_W[1] / 24.0, 2)} A at 1350 W and 24 V (harness, connector and input-filter sizing); "
+                        "engineering, not a veto", "evidence_class": "model-derived", "veto": False},
+            {"item": "high-voltage parts availability",
+             "finding": "X-BENAVIDES19 p. 7: availability of spaceflight components decreases with voltage; the 350 V rating "
+                        "is below the 500 V output of the analog SSEP design", "evidence_class": "measured (analog)",
+             "veto": False},
+            {"item": "heater supply rating vs the analog heater bracket",
+             "finding": "the 80 W analog heater supply does not cover a 267-305 W LaB6 heater; the heater supply is sized "
+                        "after the C-1 selection (PENDING H2-2); no incompatibility with the bus",
+             "evidence_class": "measured (analog)", "veto": False},
+        ],
+        "out_of_scope_referenced": "compressor_downselect CD-06 (jet-power bound at four low-flow candidate cases) is a feed-state "
+                                   "finding owned by the feed/compressor lanes (HG-5); it is neither re-derived nor a PPU "
+                                   "finding here",
+    }
+
+
+def blockers() -> list:
+    return [
+        {"blocker": 1, "text": "Hall-only sustainment at the actual atmospheric feed state", "touched": "indirectly",
+         "how": "defines how P_bus is reconstructed for the Phase-1 decision quantity T/P_bus (ground_vs_flight); does not "
+                "inform sustainment itself"},
+        {"blocker": 2, "text": "incremental RF/ECR benefit after full bus-power accounting", "touched": "yes (context)",
+         "how": "supplies the common-component loads, the PPU losses inside P_bus and the reserved-slot headroom "
+                "H_slot(f_d) as a function of the unknown discharge share; the fit condition is written, not evaluated; "
+                "no conclusion"},
+        {"blocker": 3, "text": "Xe/cathode closure", "touched": "yes (interface)",
+         "how": "cathode heater/keeper loads, preheat duration and start-up sequence durations feed the Xe ledger's "
+                "m_startup term (Xe flows during purge, preheat and ignition); no Xe mass is set here"},
+    ]
+
+
+def m16_rows() -> list:
+    rows = [
+        {"subsystem": "PPU/power distribution", "role": "primary", "proposed_state": "RUNNING",
+         "blocking_item": None, "rollup": None,
+         "matured_by_this_lane": "load list, three bus profiles, efficiency parameters, margin table, discharge allocation "
+                                 "residual, PPU options, grounding, H-1 reconstruction rule",
+         "next_gate": "flight bus voltage (OQ-01) is needed before H3 procurement of flight-like converters; if undecided at "
+                      "H3 start the row becomes BLOCKED (hardware-definition blocker)"},
+        {"subsystem": "control/FDIR", "role": "contributor", "proposed_state": "READY", "blocking_item": None, "rollup": None,
+         "matured_by_this_lane": "power-sequencing constraints PR-1..PR-5 and per-state power brackets for the guards"},
+        {"subsystem": "sensors/diagnostics", "role": "contributor", "proposed_state": "READY", "blocking_item": None,
+         "rollup": None, "matured_by_this_lane": "per-component load-plane metering list and DC-input evidence channels"},
+        {"subsystem": "thermal control", "role": "contributor", "proposed_state": "BLOCKED",
+         "blocking_item": "H2-5 heater duty per mode (thermal_control load) - " + PENDING_LANES["H2-5"],
+         "rollup": "hardware-definition blocker",
+         "matured_by_this_lane": "PPU conversion-loss heat load at the allocation corners"},
+        {"subsystem": "compressor", "role": "contributor", "proposed_state": "BLOCKED",
+         "blocking_item": "H2-3 compressor steady bus draw and spin-up profile - " + PENDING_LANES["H2-3"],
+         "rollup": "hardware-definition blocker",
+         "matured_by_this_lane": "PROPOSED 300 W bus allocation carried from OD-C2 and the PK-2 spin-up room"},
+        {"subsystem": "reserved interface: RF pre-ionization module interface", "role": "contributor",
+         "proposed_state": "BLOCKED",
+         "blocking_item": "measured discharge bus share f_d of the pre-ionized arm at the Phase-1/2 atmospheric points (H-1)",
+         "rollup": "architecture blocker",
+         "matured_by_this_lane": "slot headroom H_slot(f_d) and the power-interface demand to the PMI ICD"},
+    ]
+    for r in rows:
+        assert r["proposed_state"] in M16_STATES
+        if r["proposed_state"] == "BLOCKED":
+            assert r["blocking_item"] and r["rollup"] in ROLLUP
+    return rows
+
+
+def h3_inputs() -> list:
+    return [
+        {"item": "H-1 laboratory discharge supply", "long_lead": True, "spec_level": "0-350 V, >= 8.333 A continuous + "
+         "transient margin (TBD), CV with fast current limit, floating output, remote sense, analog/digital logging",
+         "representativeness": "GROUND/FACILITY-ONLY", "reference": "catalog data as reference only; no supplier contact",
+         "closes": "H24-08"},
+        {"item": "H-1 laboratory magnet supplies (one per coil)", "long_lead": False, "spec_level": "current-controlled, "
+         "rating after H2-1 (analog 1-5 A / 1-12 V / 60 W)", "representativeness": "GROUND/FACILITY-ONLY",
+         "reference": "X-RHODES24P Table 1 (rating analog)", "closes": "H24-12, H24-13"},
+        {"item": "H-1 keeper supply with ignitor", "long_lead": False, "spec_level": "5-40 V / 0.5-2 A sustaining, "
+         ">= 300 V open-circuit ignition (DC) or pulsed ignitor", "representativeness": "GROUND/FACILITY-ONLY",
+         "reference": "X-RHODES24P, X-BENAVIDES19", "closes": "H24-17, H24-18"},
+        {"item": "H-1 heater supply", "long_lead": False, "spec_level": "constant current to the C-1 heater current, "
+         ">= 305 W until C-1 is selected", "representativeness": "GROUND/FACILITY-ONLY", "reference": "CATHODE_INTEGRATION Sec. 4",
+         "closes": "H24-20, H24-21"},
+        {"item": "flight-like discharge converter breadboard/EM (P-DS1 or P-DS2)", "long_lead": True,
+         "spec_level": "bus voltage per OQ-01; 180-350 V out; output power per the discharge allocation (0.8-1.2 kW class); "
+                       "efficiency measured at the allocation point", "representativeness": "FLIGHT-REPRESENTATIVE",
+         "reference": "X-RHODES24P, X-BENAVIDES19 (design analogs)", "closes": "H24-10"},
+        {"item": "high-voltage EEE parts (rectifiers, switches, capacitors) for >= 350 V outputs", "long_lead": True,
+         "spec_level": "voltage rating with the owner's derating policy (TBD); spaceflight availability decreases with voltage "
+                       "(X-BENAVIDES19 p. 7)", "representativeness": "FLIGHT-REPRESENTATIVE", "reference": "X-BENAVIDES19",
+         "closes": "H24-07"},
+        {"item": "PPU input filter / inrush limiter and bus harness for 40-60 A class currents", "long_lead": False,
+         "spec_level": "after OQ-01 and the EPS inrush limit (H24-34)", "representativeness": "FLIGHT-REPRESENTATIVE",
+         "reference": "bus_current_table", "closes": "H24-05, H24-34"},
+    ]
+
+
+def h4_inputs() -> list:
+    return [
+        {"stage": "S1a", "measure": "each lab supply's load-plane V and I calibration and DC input (eta_lab evidence)",
+         "closes": ["H24-22", "H24-10 (evidence only)"]},
+        {"stage": "S1a", "measure": "C-1 heater power vs time to ignition, keeper ignition voltage and current",
+         "closes": ["H24-20", "H24-23", "H24-24", "H24-18"]},
+        {"stage": "S1a", "measure": "MC-1 coil current, voltage and hot resistance at the B(z) setpoints (bench, in vacuum)",
+         "closes": ["H24-12", "H24-14"]},
+        {"stage": "S1a", "measure": "dummy-load pickup and grounding check of the declared body potential",
+         "closes": ["H24-37"]},
+        {"stage": "S1", "measure": "discharge ignition transient (peak current, duration) and glow-mode vs magnet-first order",
+         "closes": ["H24-35", "TR-1", "PK-1"]},
+        {"stage": "S1", "measure": "keeper self-heating current (keeper-off threshold) with the thruster running",
+         "closes": ["H24-15"]},
+        {"stage": "S1", "measure": "discharge output-filter effect on oscillations (identical filter in every arm)",
+         "closes": ["H24-36"]},
+        {"stage": "S1b", "measure": "reproducibility of each P_load component across re-mounts (u(P_bus) terms)",
+         "closes": ["H24-39"]},
+        {"stage": "Phase 1", "measure": "P_load per v1 component at every knee-scan point -> measured discharge share f_d",
+         "closes": ["H24-11", "H24-32"]},
+        {"stage": "Phase 1", "measure": "I_d excursions and bus draw during atmosphere admission / transition",
+         "closes": ["PK-3", "TR-7"]},
+        {"stage": "Phase 2", "measure": "source load-plane power + DC input on the pre-ionized arms (same boundary)",
+         "closes": ["H24-42", "H24-43", "slot fit condition (not evaluated here)"]},
+    ]
+
+
+def build() -> dict:
+    verify_pins()
+    sys.path.insert(0, ROOT)
+    import importlib
+    ab = importlib.import_module("abep_sim.arch_boundary")
+    if ab.BOUNDARY_VERSION != "bus_power_boundary_v1":
+        raise RuntimeError(f"unexpected boundary version {ab.BOUNDARY_VERSION}")
+    ec = _load_json("docs/architecture_comparison/electrical_closure/electrical_closure_data_v1.json")
+    sm = _load_json("schemas/controls/dual_feed_state_machine_v1.json")
+    hw = _load_json("docs/experiments/hardware/hardware_requirements_v1.json")
+    b1 = _load_json("docs/milestones/bundle1/bundle1_v5.json")
+    comp = _load_json("docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json")
+    od_c2 = next(o for o in comp["owner_decisions"] if o["id"] == "OD-C2")
+    if "300 W" not in od_c2["proposed"]:
+        raise RuntimeError("OD-C2 no longer states the 300 W screening allocation")
+    ci_ids = [c["id"] for c in hw["configuration_items"]]
+    planes = [p["id"] for p in hw["interface_planes"]]
+    for need in ("H-1", "MC-1", "C-1", "FS-C", "PS-C", "SVC-1", "PIM-0", "PIM-RF", "PIM-ECR"):
+        if need not in ci_ids:
+            raise RuntimeError(f"configuration item {need} missing from the hardware definition")
+    eta_d = rhodes_eta_band(ec, RH24_MIN_POWER_W)
+    prof = profiles(sm)
+    doc = {
+        "schema": "h2_ppu_bus_allocation_v1",
+        "id": "fo_h2_4_ppu_bus_v1",
+        "lane": "fo_h2_4_ppu_bus",
+        "trigger": "T_H2_4_PPU_BUS",
+        "wave": "H2 hardware (owner addendum A7)",
+        "title": "H2-4 PPU and bus allocation (PS-C; bus_power_boundary_v1): load list, STEADY/STARTUP/PEAK profiles, margin "
+                 "and reserved-slot headroom",
+        "status": "DRAFT_PRELIMINARY_SIZING_PENDING_OWNER",
+        "lane_role": "H2 hardware design / preliminary-sizing lane, NOT an architecture-selection lane (A7 h2_scope); "
+                     "allocations are called allocations; no thrust, efficiency, discharge-current or plasma-state prediction",
+        "base_commit": BASE_COMMIT,
+        "generated_by": REL_HERE + "/build_h2_4_ppu_bus.py",
+        "companion_document": REL_HERE + "/H2_4_PPU_BUS.md",
+        "test": "tests/test_h2_4_ppu_bus.py",
+        "decision_pins": dict(DECISION_PINS),
+        "input_pins": {k: {"sha256": v[0], "role": v[1]} for k, v in INPUT_PINS.items()},
+        "not_pinned_mutable_governance": list(MUTABLE_GOVERNANCE),
+        "context": {
+            "a5": "proposal reference architecture: dual-feed extended-channel Hall, atmospheric primary feed, Xe for ignition, "
+                  "the shielded Xe-fed LaB6 cathode and time-limited contingency; RF pre-ionizer interface reserved (not "
+                  "baseline flight hardware), ECR alternate; allocations 15-22 mN, <= 1.30-1.35 kW, <= 34-36 kg, >= 18,000 h",
+            "bundle1_outcome": b1["outcome"]["form"],
+            "credible_hall_set": "empty (gate 3 FAIL); no transport closure is used anywhere in this lane",
+            "a7_blockers_rule": "only blockers 1-3 change the architecture; everything else vetoes it only via an explicitly "
+                                "evidenced hard incompatibility (hard_incompatibility_check)",
+        },
+        "architectures": list(ARCHITECTURES),
+        "boundary": {"version": ab.BOUNDARY_VERSION, "module": "abep_sim/arch_boundary.py (read-only)",
+                     "function": "bus_power_ledger(arch, loads, efficiencies)",
+                     "components_by_architecture": {a: list(ab.REQUIRED_COMPONENTS[a]) for a in ARCHITECTURES},
+                     "ppu_losses": "inside P_bus: P_bus = sum_c P_load,c / eta_c, P_loss = P_bus - P_load per component"},
+        "configuration_items_used": [c for c in ci_ids if c != "DIV-1"],
+        "interface_planes_used": planes,
+        "sources": SOURCES,
+        "design_parameters": design_parameters(eta_d),
+        "discharge_efficiency_band": eta_d,
+        "load_list": load_list(),
+        "efficiency_parameters": efficiency_parameters(eta_d),
+        "margin_table": margin_table(),
+        "bus_current_table": bus_current_table(),
+        "discharge_current_bounds": discharge_current_bounds(),
+        "aux_cases": {"AUX-CAP": {str(e): aux_cap_bus(e) for e in ETA_AUX}, "AUX-FLOOR": aux_floor_bus()},
+        "discharge_allocation_table": discharge_allocation_table(eta_d),
+        "slot_headroom": slot_headroom(),
+        "profiles": prof,
+        "ledger_attempts": ledger_attempts(ab),
+        "ppu_architecture_options": ppu_options(),
+        "grounding_scheme": grounding(),
+        "ground_vs_flight": ground_vs_flight(),
+        "interface_demands": interface_demands(),
+        "hard_incompatibility_check": hard_incompatibility(eta_d, prof["PEAK"]["cases"]),
+        "architecture_changing_blockers_touched": blockers(),
+        "m16_rows": m16_rows(),
+        "h3_procurement_inputs": h3_inputs(),
+        "h4_test_inputs": h4_inputs(),
+        "milestones": {
+            "supports": ["A"],
+            "A": "conditional statements: 'the A5 baseline closes its bus if the measured discharge share f_d at the atmospheric "
+                 "operating point satisfies P_bus,d <= L - A_aux - U and the auxiliary loads close within their PROPOSED caps'; "
+                 "the same form for rf_hall / ecr_hall with the slot term",
+            "to_reach_B": "measured auxiliary loads and supply efficiencies (S1a), the H2-1/H2-2/H2-3/H2-5/H2-6 load values, the "
+                          "flight bus voltage, measured f_d per arm (Phase 1/2) and a reconstructed compressor draw (V1 basis)",
+            "to_reach_C": "a flight PPU design with every ledger evaluated in every mode, EM-PPU efficiency measured at the "
+                          "allocation point, measured start-up profile and peak with the chosen ordering, thermal/life "
+                          "integration and mission closure",
+        },
+        "owner_questions": [
+            {"id": "OQ-01", "q": "Flight bus voltage (spacecraft EPS ICD): 24-34 V unregulated or a high-voltage bus?"},
+            {"id": "OQ-02", "q": "Does the A5 1.30-1.35 kW allocation bound STEADY only, with STARTUP/PEAK checked against "
+                                 "1.5 kW (lane-19 PROPOSED startup_peak_limit)?"},
+            {"id": "OQ-03", "q": "Is the OD-C2 300 W compressor allocation a bus draw or a motor-drive load?"},
+            {"id": "OQ-04", "q": "Reserve an explicit pre-ionizer slot inside the allocation now, or keep it as residual "
+                                 "headroom until Phase 1/2 measure f_d (A5: RF not baseline flight hardware)?"},
+            {"id": "OQ-05", "q": "Heater state at discharge ignition and the heater/magnet overlap rule (PK-1, PK-5)."},
+            {"id": "OQ-06", "q": "Thruster body potential: floating, thruster-ground or cathode-tied?"},
+            {"id": "OQ-07", "q": "EPS peak averaging window and inrush limit."},
+            {"id": "OQ-08", "q": "Confirm the H-1 P_bus reconstruction rule (load plane / pre-registered ledger efficiency; "
+                                 "PARTIAL vs V1) for the Phase-1 T/P_bus."},
+            {"id": "OQ-09", "q": "MC-1 electromagnet (H-1 traceable B(z)) vs flight permanent magnet: accept that the H-1 "
+                                 "coil supply is then TEST-ARTICLE-ONLY?"},
+            {"id": "OQ-10", "q": "Discharge converter: single stage (P-DS1) or parallel modules (P-DS2); run an EM PPU on "
+                                 "H-1 as LAB_CHAIN evidence?"},
+        ],
+        "not_used": [
+            {"what": "abep_sim/ppu.py converter model and constants (8 W controller, 4 W sensors, switching-loss "
+                     "parameters, 28 V bus, cold redundancy)", "why": "provenance check: seed commit, no source cited "
+                                                                          "(assumed); context only"},
+            {"what": "abep_sim/plasma_devices.py and any v1.2-v1.6 Hall number", "why": "superseded / withdrawn (CLAUDE.md)"},
+            {"what": "Hall transport closures, screening candidates, Hall maps", "why": "credible set empty; A7 h2_scope"},
+            {"what": "Fu, Zhang, Li, IEEE Trans. Power Electron. 32(7):5377-5387, 2017, DOI 10.1109/TPEL.2016.2610442 "
+                     "(coupled heater/ignitor/keeper supply)", "why": "abstract not accessible (publisher-elided metadata; "
+                                                                        "the publisher page returned a bot challenge, not "
+                                                                        "bypassed); only a search snippet was seen"},
+        ],
+        "pending_lanes": {k: {"path": v, "used_as": "PENDING reference only; never read by this builder or its test"}
+                          for k, v in PENDING_LANES.items()},
+        "compliance": {
+            "no_performance_prediction": True, "no_winner": True, "no_transport_closure": True,
+            "nuisance_never_design_variable": True, "upstream_isolation": "Hall-closure uncertainty never enters the "
+            "compressor, valve or feed values here (they are allocations or PENDING H2-3)",
+            "no_contact": True, "pure": "not wired into archengine; goldens unaffected",
+        },
+        "regenerate": "python " + REL_HERE + "/build_h2_4_ppu_bus.py  (check: --check; lazy PENDING report: --pending-status)",
+    }
+    return doc
+
+
+# ------------------------------------------------------------------------------------------------ Markdown rendering
+def _fmt(v) -> str:
+    if v is None:
+        return "—"
+    if isinstance(v, float):
+        return f"{v:g}"
+    if isinstance(v, list):
+        if len(v) == 2 and all(isinstance(x, (int, float)) for x in v):
+            return f"{_fmt(float(v[0]))}–{_fmt(float(v[1]))}"
+        return ", ".join(_fmt(x) for x in v)
+    if isinstance(v, dict):
+        return "; ".join(f"{k} {_fmt(x)}" for k, x in v.items())
+    return str(v).replace("|", "/")
+
+
+def render_md(d: dict) -> str:
+    L = []
+    a = L.append
+    a(f"# {d['title']}")
+    a("")
+    a(f"<!-- GENERATED by {d['generated_by']} from h2_4_ppu_bus_v1.json; do not edit by hand -->")
+    a("")
+    a("| item | value |")
+    a("|---|---|")
+    a(f"| lane | `{d['lane']}` (trigger `{d['trigger']}`, {d['wave']}) |")
+    a(f"| status | {d['status']} |")
+    a(f"| role | {d['lane_role']} |")
+    a(f"| base commit | `{d['base_commit']}` |")
+    a(f"| boundary | `{d['boundary']['version']}` via {d['boundary']['module']}, `{d['boundary']['function']}` |")
+    a(f"| regenerate | `{d['regenerate']}` |")
+    a("")
+    a("**Owner decisions worked under (immutable, pinned):**")
+    a("")
+    for p, s in d["decision_pins"].items():
+        a(f"- `{p}` sha256 `{s}`")
+    a("")
+    c = d["context"]
+    a(f"A5: {c['a5']}. Bundle 1 stays **{c['bundle1_outcome']}**; the credible Hall set is {c['credible_hall_set']}. "
+      "Every number here is a requirement, an A5 allocation, a PROPOSED sub-allocation of this lane, a labelled published "
+      "analog, an engineering derivation, or TBD/PENDING. Nothing predicts thrust, efficiency, discharge current or plasma "
+      "state, and nothing selects `hall_only`, `rf_hall` or `ecr_hall`.")
+    a("")
+    a("## 1. Answer in short")
+    a("")
+    mt = d["margin_table"]
+    sh = d["slot_headroom"]
+    capA = sh["aux_case"]["A_aux_bus_W"]
+    rows0 = [r for r in d["discharge_allocation_table"] if r["U_W"] == 0.0]
+    pdmin = min(r["P_d_load_allocation_W"] for r in rows0)
+    pdmax = max(r["P_d_load_allocation_W"] for r in rows0)
+    a(f"- **Margin.** The A5 allocation leaves {mt[1]['margin_W']:g}–{mt[0]['margin_W']:g} W "
+      f"({mt[1]['margin_fraction_of_requirement']:.1%}–{mt[0]['margin_fraction_of_requirement']:.1%}) to the 1.5 kW requirement.")
+    a(f"- **Auxiliaries.** At this lane's PROPOSED caps (magnet 60 W, keeper 30 W, heater 0 W steady, 3 valves, compressor "
+      f"300 W bus from OD-C2) the steady auxiliary bus draw is {capA:g} W at the low analog auxiliary efficiency 0.788, "
+      "before thermal control and housekeeping (U, PENDING H2-5/H2-6).")
+    a(f"- **Discharge allocation (residual, not a prediction).** With U = 0 the discharge load allocation is "
+      f"{pdmin:g}–{pdmax:g} W across L = 1300–1350 W, eta_aux 0.788–0.89 and eta_d "
+      f"{d['discharge_efficiency_band']['min']:g}–0.95; each 50 W of U removes 50·eta_d W.")
+    z = sh["f_d_where_headroom_vanishes_AUX_CAP_U0"]
+    a(f"- **Reserved slot headroom.** H_slot(f_d) = L(1 − f_d) − A_aux − U. At the caps it vanishes at a bus-side discharge "
+      f"share f_d = {z['f_d_zero_at_1300W']:g} (1300 W), {z['f_d_zero_at_1350W']:g} (1350 W), {z['f_d_zero_at_1500W']:g} "
+      "(1500 W). This is A7 blocker-2 context only; whether an RF or ECR module fits is not evaluated.")
+    a("- **Start-up / peak.** The worst sourced auxiliary sum is the heater-on-with-discharge anomaly case (PK-5). "
+      "Sequencing rules PR-2..PR-5 (PROPOSED) keep every case below the PROPOSED 1.5 kW start-up limit. No case is a hard "
+      "incompatibility.")
+    a("- **H-1 vs flight.** H-1 runs laboratory supplies metered at the flight load planes; P_bus is reconstructed as "
+      "Σ P_load / η_ledger (LOCK-1) + ledger inputs + the ICD compressor draw (V1), otherwise PARTIAL_BOUNDARY.")
+    a(f"- **Hard incompatibility:** {d['hard_incompatibility_check']['verdict']}.")
+    a("")
+    a("## 2. Design-parameter table (H24-nn)")
+    a("")
+    a("| id | name | value | units | basis | evidence class | status | representativeness | CI | component | source |")
+    a("|---|---|---|---|---|---|---|---|---|---|---|")
+    for r in d["design_parameters"]:
+        a(f"| {r['id']} | {_fmt(r['name'])} | {_fmt(r['value'])} | {r['units']} | {r['basis']} | {_fmt(r['evidence_class'])} | "
+          f"{_fmt(r['status'])} | {r['representativeness']} | {_fmt(r['configuration_item'])} | {_fmt(r['bus_component'])} | "
+          f"{_fmt(r['source'])} |")
+    a("")
+    a("## 3. Load list per bus_power_boundary_v1 component")
+    a("")
+    a("| component | kind | load plane | voltage [V] | current [A] | load [W] | source | status |")
+    a("|---|---|---|---|---|---|---|---|")
+    for r in d["load_list"]:
+        a(f"| `{r['component']}` | {r['kind']} | {_fmt(r['load_plane'])} | {_fmt(r['voltage_V'])} | {_fmt(r['current_A'])} | "
+          f"{_fmt(r['load_W'])} | {_fmt(r['source'])} | {_fmt(r['status'])} |")
+    a("")
+    a("Components per architecture (read from the boundary module):")
+    a("")
+    for k, v in d["boundary"]["components_by_architecture"].items():
+        a(f"- `{k}`: {', '.join(v)}")
+    a("")
+    a("## 4. Converter efficiency per supply (PARAMETER; PPU losses are inside P_bus)")
+    a("")
+    a("| supply | component | range | analogs (device; source; value; class; level) | limits | closes with |")
+    a("|---|---|---|---|---|---|")
+    for r in d["efficiency_parameters"]:
+        an = "<br>".join(f"{x['device']}; {x['source']}; {x['value']}; {x['evidence_class']}; L{x['level']}" +
+                         (f" ({x['use']})" if x.get("use") else "") for x in r["analogs"]) or "—"
+        a(f"| {r['supply']} | `{r['component']}` | {_fmt(r['range'])} | {_fmt(an)} | {_fmt(r['limits'])} | "
+          f"{_fmt(r['closes_with'])} |")
+    a("")
+    a("## 5. Margin table and bus current")
+    a("")
+    a("| allocation [W] | requirement [W] | margin [W] | margin / requirement |")
+    a("|---|---|---|---|")
+    for r in mt:
+        a(f"| {r['allocation_W']:g} | {r['requirement_W']:g} | {r['margin_W']:g} | {r['margin_fraction_of_requirement']:g} |")
+    a("")
+    a("| P_bus [W] | " + " | ".join(f"I_bus at {v:g} V [A]" for v in BUS_V_OPTIONS) + " |")
+    a("|---|" + "---|" * len(BUS_V_OPTIONS))
+    for P in (P_ALLOC_W[0], P_ALLOC_W[1], P_REQ_W):
+        vals = [x["I_bus_A"] for x in d["bus_current_table"] if x["P_bus_W"] == P]
+        a(f"| {P:g} | " + " | ".join(f"{v:g}" for v in vals) + " |")
+    a("")
+    a("Discharge current bounds (η ≤ 1, all other loads ≥ 0; bounds, not predictions):")
+    a("")
+    a("| V_d [V] | I_d bound at 1500 W [A] | I_d bound at 1300–1350 W [A] |")
+    a("|---|---|---|")
+    for r in d["discharge_current_bounds"]:
+        a(f"| {r['V_d_V']:g} | {r['I_d_bound_at_requirement_A']:g} | {_fmt(r['I_d_bound_at_allocation_A'])} |")
+    a("")
+    a("## 6. Discharge allocation = residual of the A5 allocation")
+    a("")
+    a("P_bus,d = L − A_aux(caps, η_aux) − U; P_d = η_d · P_bus,d. U = P_bus[thermal_control] + P_bus[housekeeping] "
+      "(PENDING) at evaluation points. The discharge is an allocation, never a transport result.")
+    a("")
+    a("| L [W] | η_aux | A_aux [W] | U [W] | P_bus,d [W] | η_d | P_d allocation [W] | conversion loss [W] | f_d | "
+      "I_d at 180 / 305 V [A] |")
+    a("|---|---|---|---|---|---|---|---|---|---|")
+    for r in d["discharge_allocation_table"]:
+        a(f"| {r['allocation_W']:g} | {r['eta_aux']:g} | {r['aux_bus_at_caps_W']:g} | {r['U_W']:g} | "
+          f"{r['P_bus_discharge_W']:g} | {r['eta_d']:g} | {r['P_d_load_allocation_W']:g} | "
+          f"{r['discharge_conversion_loss_W']:g} | {r['f_d']:g} | {r['I_d_at_Vd_A']['180']:g} / {r['I_d_at_Vd_A']['305']:g} |")
+    a("")
+    a("## 7. Reserved pre-ionizer slot headroom (A7 blocker-2 context; no fit conclusion)")
+    a("")
+    a(sh["definition"] + ".")
+    a("")
+    a(f"Auxiliary case {sh['aux_case']['name']}: A_aux = {sh['aux_case']['A_aux_bus_W']:g} W; "
+      f"{sh['aux_case']['not_included']}.")
+    a("")
+    a("| f_d | H_slot at 1300 W [W] | H_slot at 1350 W [W] | H_slot at 1500 W [W] |")
+    a("|---|---|---|---|")
+    for r in sh["table"]:
+        a(f"| {r['f_d']:g} | {r['H_at_1300W']:g} | {r['H_at_1350W']:g} | {r['H_at_1500W']:g} |")
+    a("")
+    a(f"- Fit condition (written, not evaluated): {sh['fit_condition_not_evaluated']}.")
+    a(f"- {sh['coupling_plane_equivalent']}.")
+    a(f"- Headroom vanishes (AUX-FLOOR, compressor and U excluded) at f_d = "
+      f"{_fmt(sh['f_d_where_headroom_vanishes_AUX_FLOOR_excl_C_U'])}.")
+    a("")
+    a("## 8. Bus profiles")
+    a("")
+    s = d["profiles"]["STEADY"]
+    a(f"### 8.1 STEADY — {s['mode']} (state `{s['state']['state_id']}`)")
+    a("")
+    for k, v in s["components"].items():
+        a(f"- `{k}`: {_fmt(v)}")
+    a(f"- sourced auxiliary bus draw (compressor and U excluded): {_fmt(s['aux_bus_sourced_W_excl_compressor_U'])} W; at "
+      f"the caps (U excluded): {s['aux_bus_at_caps_W_excl_U']:g} W")
+    a(f"- rule: {s['rule']}")
+    a(f"- degraded variant: {s['degraded_variant']}")
+    a("")
+    st = d["profiles"]["STARTUP"]
+    a(f"### 8.2 STARTUP — {st['mode']}")
+    a("")
+    a("| step | phase | state | components on | sourced aux bus [W] | symbolic terms | duration | notes |")
+    a("|---|---|---|---|---|---|---|---|")
+    for p in st["sequence"]:
+        a(f"| {p['step']} | {p['name']} | `{p['state']['state_id']}` | {_fmt(p['components_on'])} | "
+          f"{_fmt(p['aux_bus_sourced_W'])} | {_fmt(p['symbolic_terms'])} | {_fmt(p['duration'])} | {_fmt(p['notes'])} |")
+    a("")
+    a(f"- {st['rf_ecr_variants']}")
+    a(f"- rule: {st['rule']}")
+    a("")
+    pk = d["profiles"]["PEAK"]
+    a("### 8.3 PEAK — worst simultaneous loads incl. transients")
+    a("")
+    a("| case | name | state | sourced aux bus [W] | room for the rest under 1500 W | applies if |")
+    a("|---|---|---|---|---|---|")
+    for cse in pk["cases"]:
+        a(f"| {cse['id']} | {cse['name']} | {cse['state']} | {_fmt(cse['aux_bus_sourced_W'])} | "
+          f"{_fmt(cse['discharge_room_under_limit_W'])} | {_fmt(cse['applies_if'])} |")
+    a("")
+    a("| transient | what | bound | mitigation |")
+    a("|---|---|---|---|")
+    for t in pk["transients"]:
+        a(f"| {t['id']} | {t['what']} | {_fmt(t['bound'])} | {_fmt(t['mitigation'])} |")
+    a("")
+    for rr in pk["proposed_rules"]:
+        a(f"- {rr}")
+    a("")
+    a("### 8.4 Ledger attempts through `bus_power_ledger`")
+    a("")
+    a("| architecture | mode | status | blocking components |")
+    a("|---|---|---|---|")
+    for r in d["ledger_attempts"]:
+        a(f"| {r['architecture']} | {r['mode']} | {r['status']} | {_fmt(r['blocking_components'])} |")
+    a("")
+    a("The boundary refuses every incomplete ledger (it defaults nothing); the refusal texts are in the JSON.")
+    a("")
+    a("## 9. PPU architecture options")
+    a("")
+    o = d["ppu_architecture_options"]
+    for key in ("discharge_supply_topology", "magnet_supply", "cathode_supplies"):
+        a(f"**{key.replace('_', ' ')}**")
+        a("")
+        for x in o[key]:
+            extra = "; ".join(f"{k}: {v}" for k, v in x.items() if k not in ("id", "option"))
+            a(f"- {x['id']} — {x['option']}. {extra}")
+        a("")
+    a(f"- shared vs separate (PROPOSED): {o['shared_vs_separate']['PROPOSED']} Reason: {o['shared_vs_separate']['reason']}.")
+    a(f"- redundancy: {o['redundancy']}")
+    a("")
+    a("## 10. Grounding scheme")
+    a("")
+    g = d["grounding_scheme"]
+    for x in g["h1"]:
+        a(f"- H-1: {x}")
+    a(f"- flight options: {', '.join(g['flight_options'])}; selection {g['flight_selection']}")
+    a(f"- rule: {g['consistency_rule']}")
+    a("")
+    a("## 11. H-1 ground supplies vs flight PPU; P_bus reconstruction for Phase-1 T/P_bus")
+    a("")
+    gv = d["ground_vs_flight"]
+    a(gv["principle"] + ".")
+    a("")
+    a(f"- bus-boundary-equivalent point: {gv['bus_boundary_equivalent_point']}")
+    for x in gv["reconstruction"]:
+        a(f"- {x}")
+    a(f"- lab DC input: {gv['lab_dc_input']}")
+    a(f"- uncertainty: {gv['uncertainty']}")
+    a(f"- optional EM PPU: {gv['optional_em_ppu']}")
+    a(f"- Phase-1 quantity: {gv['phase1_quantity']}")
+    a("")
+    a("| H-1 supply | rating | features | representativeness | status |")
+    a("|---|---|---|---|---|")
+    for x in gv["h1_ground_supplies"]:
+        a(f"| {x['supply']} | {_fmt(x['rating'])} | {_fmt(x['features'])} | {x['representativeness']} | {_fmt(x['status'])} |")
+    a("")
+    a("## 12. Interface demands (both directions)")
+    a("")
+    a("| from | to | quantity | value | units | status |")
+    a("|---|---|---|---|---|---|")
+    for x in d["interface_demands"]:
+        a(f"| {x['from']} | {x['to']} | {_fmt(x['quantity'])} | {_fmt(x['value'])} | {x['units']} | {_fmt(x['status'])} |")
+    a("")
+    a("## 13. Hard-incompatibility check")
+    a("")
+    h = d["hard_incompatibility_check"]
+    a(f"**Verdict: {h['verdict']}.**")
+    a("")
+    for x in h["checked"]:
+        a(f"- {x['item']}: {x['finding']} ({x['evidence_class']}; veto: {x['veto']})")
+    a(f"- out of scope: {h['out_of_scope_referenced']}")
+    a("")
+    a("## 14. Architecture-changing blockers touched (A7)")
+    a("")
+    for x in d["architecture_changing_blockers_touched"]:
+        a(f"- blocker {x['blocker']} ({x['text']}): {x['touched']} — {x['how']}")
+    a("")
+    a("## 15. M16 rows")
+    a("")
+    a("| subsystem | role | proposed state | blocking item | rollup | matured by this lane |")
+    a("|---|---|---|---|---|---|")
+    for x in d["m16_rows"]:
+        a(f"| {x['subsystem']} | {x['role']} | {x['proposed_state']} | {_fmt(x['blocking_item'])} | {_fmt(x['rollup'])} | "
+          f"{_fmt(x['matured_by_this_lane'])} |")
+    a("")
+    a("## 16. H3 procurement inputs (specification level; catalog data reference only, no supplier contact)")
+    a("")
+    a("| item | long lead | specification level | representativeness | reference | closes |")
+    a("|---|---|---|---|---|---|")
+    for x in d["h3_procurement_inputs"]:
+        a(f"| {x['item']} | {x['long_lead']} | {_fmt(x['spec_level'])} | {x['representativeness']} | {_fmt(x['reference'])} | "
+          f"{_fmt(x['closes'])} |")
+    a("")
+    a("## 17. H4 test inputs (what closes each PRELIMINARY value)")
+    a("")
+    a("| stage | measure | closes |")
+    a("|---|---|---|")
+    for x in d["h4_test_inputs"]:
+        a(f"| {x['stage']} | {x['measure']} | {_fmt(x['closes'])} |")
+    a("")
+    a("## 18. Milestones")
+    a("")
+    m = d["milestones"]
+    a(f"- **Supports: {', '.join(m['supports'])}.** {m['A']}")
+    a(f"- **To reach B:** {m['to_reach_B']}")
+    a(f"- **To reach C:** {m['to_reach_C']}")
+    a("")
+    a("## 19. Owner questions (thresholds not in the RFP are PROPOSED)")
+    a("")
+    for q in d["owner_questions"]:
+        a(f"- {q['id']}: {q['q']}")
+    a("")
+    a("## 20. Sources and pinned inputs")
+    a("")
+    for k, v in d["sources"].items():
+        sha = v["sha256_of_accessed_file"] or "n/a"
+        a(f"- **{k}** — {v['citation']}. {v['url']} (sha256 `{sha}`; {v['access']}). Used for: {v['used_for']}. "
+          f"Level: {v['evidence_level_for_vyovrinda']}.")
+    a("")
+    for p, v in d["input_pins"].items():
+        a(f"- `{p}` sha256 `{v['sha256']}` — {v['role']}")
+    a("")
+    a("Not pinned (mutable governance): " + ", ".join(f"`{x}`" for x in d["not_pinned_mutable_governance"]) + ".")
+    a("")
+    a("Not used:")
+    a("")
+    for x in d["not_used"]:
+        a(f"- {x['what']}: {x['why']}")
+    a("")
+    a("PENDING lanes (referenced by path only; `--pending-status` reports presence lazily): " +
+      ", ".join(f"{k} `{v['path']}`" for k, v in d["pending_lanes"].items()) + ".")
+    a("")
+    return "\n".join(L)
+
+
+def dumps(d: dict) -> str:
+    return json.dumps(d, indent=1, ensure_ascii=False) + "\n"
+
+
+def pending_lane_status(root: str) -> dict:
+    """Lazy presence report of the PENDING lanes; never used to build the JSON."""
+    return {k: ("PRESENT" if os.path.isdir(os.path.join(root, v)) else "MISSING") for k, v in PENDING_LANES.items()}
+
+
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--check", action="store_true", help="compare a fresh build with the committed outputs")
+    ap.add_argument("--pending-status", action="store_true", help="report presence of the PENDING lane directories")
+    args = ap.parse_args(argv)
+    if args.pending_status:
+        for k, v in pending_lane_status(ROOT).items():
+            print(f"{k:10s} {v:8s} {PENDING_LANES[k]}")
+        return 0
+    doc = build()
+    js, md = dumps(doc), render_md(doc)
+    if args.check:
+        bad = []
+        for path, txt in ((OUT_JSON, js), (OUT_MD, md)):
+            if not os.path.isfile(path):
+                bad.append(f"{os.path.relpath(path, ROOT)} not committed")
+                continue
+            with open(path, encoding="utf-8") as f:
+                if f.read() != txt:
+                    bad.append(f"{os.path.relpath(path, ROOT)} differs from a fresh build")
+        for b in bad:
+            print(b)
+        print("h2_4_ppu_bus check: " + ("OK" if not bad else "DRIFT"))
+        return 1 if bad else 0
+    with open(OUT_JSON, "w", encoding="utf-8") as f:
+        f.write(js)
+    with open(OUT_MD, "w", encoding="utf-8") as f:
+        f.write(md)
+    print(f"wrote {os.path.relpath(OUT_JSON, ROOT)} and {os.path.relpath(OUT_MD, ROOT)}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

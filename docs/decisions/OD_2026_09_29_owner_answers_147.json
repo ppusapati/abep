@@ -1,0 +1,1521 @@
+{
+ "schema": "owner_answers_v1",
+ "id": "OD_2026_09_29_OWNER_ANSWERS_147",
+ "decided_by": "owner",
+ "date": "2026-09-29",
+ "source_file": {
+  "path": "docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md",
+  "sha256": "8736d88a64bf26bd06a332a68c2450a780f175fffafe5aca0625759133666976"
+ },
+ "question_list": {
+  "path": "docs/budgets/owner_decisions/OWNER_QUESTIONS_CONSOLIDATED.md",
+  "sha256": "a3d15db8bd332312a6db77a1fdd740b7e9f5972475f269fc43a76ddf7e1b062c"
+ },
+ "note": "Machine-readable transcription of the owner's answers; owner_answer_verbatim is copied character-for-character from the pinned source file. classification_by_recorder is a convenience index, not part of the decision; the verbatim text governs.",
+ "answers": [
+  {
+   "row": 1,
+   "covers_ids": [
+    "WEB-ACC-1"
+   ],
+   "area": "A. RFP / access / repo",
+   "question": "Obtain the RFP document (defproc / tdf.drdo.gov.in need a human for the captcha / are 503).",
+   "owner_answer_verbatim": "YES — obtain the canonical latest RFP PDF immediately through the legitimate owner/portal route; store the exact file, source URL/date and SHA-256. Do not freeze ambiguous RFP interpretations from secondary sources.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 2,
+   "covers_ids": [
+    "WEB-ACC-2"
+   ],
+   "area": "A. RFP / access / repo",
+   "question": "Confirm RFP number (XI/LM vs X/L/M) and bid close date (05 Oct vs 20 Oct 2026).",
+   "owner_answer_verbatim": "VERIFY-FIRST — use Tender ID `2026_DRDO_788433_1` for project tracking. Do not choose 05 Oct vs 20 Oct, or XI/LM vs X/L/M, from conflicting secondary material; freeze the exact RFP reference and bid-close date only from the official tender/RFP copy.",
+   "classification_by_recorder": "VERIFY-FIRST"
+  },
+  {
+   "row": 3,
+   "covers_ids": [
+    "WEB-RFP-1"
+   ],
+   "area": "A. RFP / access / repo",
+   "question": "Mission life: 26,000 h (repo) vs 'three years' = 26,280 h (news); and is '> 15,000 h firing' in the RFP?",
+   "owner_answer_verbatim": "ENGINEERING BASIS — use mission life ≥26,280 h until the official wording is verified because it is the conservative interpretation of 'three years' versus 26,000 h. Retain >15,000 h firing as a provisional hard requirement until the official RFP confirms it.",
+   "classification_by_recorder": "ENGINEERING_ALLOCATION_OR_BASIS"
+  },
+  {
+   "row": 4,
+   "covers_ids": [
+    "OD1"
+   ],
+   "area": "A. RFP / access / repo",
+   "question": "Meaning of '12-25 mN'.",
+   "owner_answer_verbatim": "AMEND option (ii) — plan for ≥12 mN sustained atmospheric operation and demonstrated 25 mN system capability. Do not require Xe specifically for 25 mN; Xe may be used if the RFP permits and must then be explicitly booked. The 25 mN point must still satisfy the full-system power gate.",
+   "classification_by_recorder": "AMENDED_FOR_A9"
+  },
+  {
+   "row": 5,
+   "covers_ids": [
+    "OD-XE-8",
+    "OD-M7",
+    "H27-Q3"
+   ],
+   "area": "A. RFP / access / repo",
+   "question": "Does the 40 kg include the Xe load (and tank)?",
+   "owner_answer_verbatim": "INCLUDES Xe + tank — use the conservative wet-system interpretation unless the official RFP explicitly defines the 40 kg as dry mass.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 6,
+   "covers_ids": [
+    "OD-XE-6"
+   ],
+   "area": "A. RFP / access / repo",
+   "question": "Does 'air + Xe' / 'supplemented with Xenon' require Xe-mode operation beyond ignition, cathode and contingency?",
+   "owner_answer_verbatim": "YES, bounded functional Xe mode — treat 'supplementary/alternative Xenon' as requiring a demonstrated Xe-capable operating mode beyond mere bookkeeping. It need not be continuous nominal operation; book every Xe use explicitly.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 7,
+   "covers_ids": [
+    "WEB-ACC-3",
+    "OQ-R8-3",
+    "OQ-R3-5"
+   ],
+   "area": "A. RFP / access / repo",
+   "question": "Authorize legitimate acquisition (library / ILL / purchase / owner channel) of: Li 2015 (compressor CR), Tejeda & Knoll 2023, Bayliss & Knoll IEPC-2025, Cifali 2012, Wang 1995, blocked datasheets (Combat BN, C-1 candidates).",
+   "owner_answer_verbatim": "YES — authorize lawful library/ILL/purchase/owner-channel acquisition of all listed items. Add the Takahashi/Watanabe 2024 Hall + downstream RF-ICP paper and any primary RF-plasma-cathode papers. No access bypasses or author-contact shortcuts unless separately authorized.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 8,
+   "covers_ids": [
+    "WEB-SUP-1",
+    "R6-Q5"
+   ],
+   "area": "A. RFP / access / repo",
+   "question": "Request supplier quotations at all (Xe tank 5-20 L, low-flow PMU/FCU, MFCs, thrust stand)? This means contacting suppliers.",
+   "owner_answer_verbatim": "YES, quotations only now — request quotations for Xe tank/PMU/FCU/MFCs/thrust stand and add 13.56 MHz RF generator, matching network, directional coupler, RF feedthroughs and ICP chamber components. No purchase order until H3/A9 interfaces are frozen.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 9,
+   "covers_ids": [
+    "REPO-1"
+   ],
+   "area": "A. RFP / access / repo",
+   "question": "Merge the H2 hardware wave (H2-1..H2-7, all verified; on claude/nifty-ramanujan-w68f9z) into main via a new PR?",
+   "owner_answer_verbatim": "NOT YET — do not direct-merge. First create a checkpoint PR from the execution branch, freeze new merges briefly, run full pytest + golden + integrity + GitHub CI, review the diff, then merge if green.",
+   "classification_by_recorder": "NO_OR_NOT_YET"
+  },
+  {
+   "row": 10,
+   "covers_ids": [
+    "REPO-2"
+   ],
+   "area": "A. RFP / access / repo",
+   "question": "Delete 8 leftover worktrees from failed runs (uncommitted partial edits, all superseded)?",
+   "owner_answer_verbatim": "DELETE after preservation check — first save a patch/diff or archive any unique uncommitted material, verify each worktree is superseded, then remove all eight.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 11,
+   "covers_ids": [
+    "REPO-3"
+   ],
+   "area": "A. RFP / access / repo",
+   "question": "Parallel RF||Hall v2 branch (feature/rf-hall-parallel-v2, 7335dcd, reviewed): merge, open a PR, or keep as a branch?",
+   "owner_answer_verbatim": "KEEP AS BRANCH — do not merge the parallel RF∥Hall v2 branch. Preserve it as an alternative/historical hypothesis; the primary investigation is now Hall → downstream RF/ICP neutralizer.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 12,
+   "covers_ids": [
+    "D-01"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Split of the ln R_arch uncertainty budget over variance groups G1-G5.",
+   "owner_answer_verbatim": "SUPERSEDED for the primary campaign. Preserve historical D-01-A if the old pre-ionizer experiment is ever resumed. Create a new uncertainty budget for the C1-vs-ICP neutralizer comparison.",
+   "classification_by_recorder": "SUPERSEDED"
+  },
+  {
+   "row": 13,
+   "covers_ids": [
+    "D-02"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Arm stop rule D3.",
+   "owner_answer_verbatim": "SUPERSEDED for the primary campaign. Preserve historical D-02-A only for the old experiment; define new stop rules before any Hall→ICP score-bearing data.",
+   "classification_by_recorder": "SUPERSEDED"
+  },
+  {
+   "row": 14,
+   "covers_ids": [
+    "D-03"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Must a stop from the confirmation subset rest on Hall-on data at P_lo too?",
+   "owner_answer_verbatim": "SUPERSEDED for the primary campaign. If the historical campaign is resumed, retain D-03-B; otherwise no new work.",
+   "classification_by_recorder": "SUPERSEDED"
+  },
+  {
+   "row": 15,
+   "covers_ids": [
+    "D-04"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Iso-power chord error u_interp.",
+   "owner_answer_verbatim": "HISTORICAL D-04-B if reused. For Hall→ICP, prefer measured midpoint/iso-power points over interpolation wherever practical; any interpolation uncertainty must be preregistered.",
+   "classification_by_recorder": "AMENDED_FOR_A9"
+  },
+  {
+   "row": 16,
+   "covers_ids": [
+    "D-05"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Where the signed LOCK-1/LOCK-2 files live.",
+   "owner_answer_verbatim": "KEEP historical LOCK files in `experiment_protocol/prereg`; create a separate versioned Hall→ICP preregistration path, e.g. `docs/experiments/hall_icp/prereg/`. Never overwrite the old locks.",
+   "classification_by_recorder": "AMENDED_FOR_A9"
+  },
+  {
+   "row": 17,
+   "covers_ids": [
+    "D-06",
+    "HWQ-01"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "How HW-0 / HW-RF / HW-ECR are realized on H-1; and configuration change = swap module only (H-1 stays on stand) or re-mount H-1 each time.",
+   "owner_answer_verbatim": "REPLACE old HW-0/HW-RF/HW-ECR scheme for the primary campaign. Keep H-1 fixed on the stand and swap only the downstream electron-source module: conventional Xe-fed C1 reference vs downstream 13.56 MHz ICP neutralizer, with matched sham services/fixtures.",
+   "classification_by_recorder": "AMENDED_FOR_A9"
+  },
+  {
+   "row": 18,
+   "covers_ids": [
+    "D-07",
+    "R-08"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Decision margin delta on ln R_arch, and whether effect size is a LOCK-1 rule or a LOCK-2 value (A6 forbids numeric Phase-1 thresholds now).",
+   "owner_answer_verbatim": "SUPERSEDED numeric delta — do not carry 0.05/0.1 into the new architecture automatically. Define the new decision quantities first, then freeze any effect-size margin before score-bearing data.",
+   "classification_by_recorder": "SUPERSEDED"
+  },
+  {
+   "row": 19,
+   "covers_ids": [
+    "D-08",
+    "R-03"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Admissible block counts n (n computed at LOCK-2); must n be whole replicates of the 6 sequences?",
+   "owner_answer_verbatim": "NEW CAMPAIGN RULE — use complete balanced replicate sets; minimum three complete engineering replicates, with final n determined at LOCK-2 from measured uncertainty. Preserve old D-08 only as historical.",
+   "classification_by_recorder": "AMENDED_FOR_A9"
+  },
+  {
+   "row": 20,
+   "covers_ids": [
+    "D-09",
+    "HWQ-02"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Tested Hall unit H-1: Vyovrinda design or a surrogate; definition of 'design-representative'.",
+   "owner_answer_verbatim": "D-09-A — use the actual Vyovrinda H-1 design-representative unit. A surrogate may be used only as non-scoring shakedown hardware.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 21,
+   "covers_ids": [
+    "D-10"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Adopt a single protocol basis (lane 25 + lane 06 reconciliation)?",
+   "owner_answer_verbatim": "D-10-A — adopt one reconciled protocol basis. Do not run competing protocol definitions against the same score-bearing campaign.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 22,
+   "covers_ids": [
+    "D-11"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Unmeasured common loads (compressor bus draw, valve-outlet feed state).",
+   "owner_answer_verbatim": "D-11-A — report `PARTIAL_BOUNDARY` until compressor bus draw and valve-outlet feed state are measured/provided by ICD. Do not insert guessed fixed loads.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 23,
+   "covers_ids": [
+    "D-12",
+    "H26Q-01",
+    "R5-Q3"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Facility requirements per stage, T-PB-MAX (max background pressure), number of elevated p_b levels; fallback if ~1e-5 Torr at 3.2 mg/s (~212,000 L/s N2) is unreachable - accept 5e-5 Torr (~42,000 L/s) with the S5 slope reported?",
+   "owner_answer_verbatim": "B — use two elevated background-pressure levels for facility-effect characterization. Freeze T-PB-MAX only after the low-flow knee and facility capability are known. 5e-5 Torr may be used for engineering characterization, but not silently substituted for a stricter score-bearing requirement.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 24,
+   "covers_ids": [
+    "D-13"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Measure ignition / start attempts per arm (Xe-assisted and air-only)?",
+   "owner_answer_verbatim": "B — add ignition/start attempts. For Hall→ICP, also record ICP ignition, Hall ignition with ICP electrons, restart success and cycle count; classify them per preregistration rather than hiding them as setup events.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 25,
+   "covers_ids": [
+    "D-14"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Physics track pre-registers part of the new data as held-out Hall-transport validation?",
+   "owner_answer_verbatim": "B — yes, preregister a held-out subset for Hall-transport validation before S1. No data reclassification after exposure.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 26,
+   "covers_ids": [
+    "D-15",
+    "R-14"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Scope extensions: Xe health check; Xe-augmented peak points (labelled XE_AUGMENTED_PEAK, never Case A evidence, Xe booked to the Xe ledger).",
+   "owner_answer_verbatim": "RETAIN the useful parts of D-15-C — perform a Xe health/reference check and bounded Xe peak points if permitted by the RFP. Label them explicitly and never use them as evidence for atmospheric-only performance.",
+   "classification_by_recorder": "AMENDED_FOR_A9"
+  },
+  {
+   "row": 27,
+   "covers_ids": [
+    "HWQ-10"
+   ],
+   "area": "B. LOCK-1 (experiment)",
+   "question": "Absolute gate: must 25 mN capability be shown within P_bus < 1.5 kW, or only sustained 12 mN?",
+   "owner_answer_verbatim": "25 mN — demonstrate 25 mN capability inside the same full spacecraft-DC propulsion boundary with P_bus <1.5 kW. 16.67 mN/kW is the absolute full-system floor at that point.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 28,
+   "covers_ids": [
+    "P1F-OOD-01"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "Accept the Phase-1 decision topology (cases A hall_only / B rf_hall / C ecr_hall / NO_VIABLE_CASE via P1DQ decision quantities)?",
+   "owner_answer_verbatim": "SUPERSEDED — do not execute the old hall_only / rf_hall / ecr_hall topology as the primary Phase-1 decision. New primary comparison: conventional Hall + Xe-fed C1 vs Hall + downstream RF/ICP neutralizer vs `NO_VIABLE_CASE`; retain old framework as historical.",
+   "classification_by_recorder": "SUPERSEDED"
+  },
+  {
+   "row": 29,
+   "covers_ids": [
+    "R-01"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "Configuration order: order-balanced design governs; old HW-0-first/last become reference checks?",
+   "owner_answer_verbatim": "ACCEPT — order-balanced design governs. Reference checks remain reference checks, not a substitute for balancing.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 30,
+   "covers_ids": [
+    "R-02"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "Randomization seed timing.",
+   "owner_answer_verbatim": "Draw the randomization seed at LOCK-2 after n is fixed. At LOCK-1 freeze the seed-generation procedure; at LOCK-2 publish the actual seed and hash before execution.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 31,
+   "covers_ids": [
+    "R-04"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "Condition grid fixed at LOCK-1 from W1 + anticipated knee; knee is an output per configuration?",
+   "owner_answer_verbatim": "ACCEPT — freeze the condition grid at LOCK-1 from W1 plus the anticipated knee. Treat the knee location as an output for each configuration.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 32,
+   "covers_ids": [
+    "R-05"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "eta_u has no S1b repeatability.",
+   "owner_answer_verbatim": "ADD repeatability — if eta_u/beam current is used in any decision quantity, include Faraday/ExB repeatability at S1b. Descriptive-only eta_u is insufficient for a gating comparison.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 33,
+   "covers_ids": [
+    "R-06"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "Add RR-07 module-exchange remount check (RF/ECR install reproducibility)?",
+   "owner_answer_verbatim": "YES — add RR-07, adapted to C1 ↔ ICP-neutralizer module exchange. H-1 remains fixed.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 34,
+   "covers_ids": [
+    "R-07"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "Confirm mapping: A5 'Phase 1' spans pivot Phase-1 knee, Phase-2 comparison and Phase-3 absolute gates.",
+   "owner_answer_verbatim": "SUPERSEDED for new work — retain the old A5 meaning historically, but create a separate Hall→ICP campaign stage map rather than stretching A5 terminology.",
+   "classification_by_recorder": "SUPERSEDED"
+  },
+  {
+   "row": 35,
+   "covers_ids": [
+    "R-09"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "W5 class of HW0-REF readings.",
+   "owner_answer_verbatim": "HELD-OUT custody until W5 decides; no exposure-driven reclassification.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 36,
+   "covers_ids": [
+    "R-10"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "Within-installation gas order.",
+   "owner_answer_verbatim": "Use an Ar engineering-only replication first to reproduce the Takahashi-type topology, then pure N2, then O2-bearing mixtures last; keep the Xe reference per the bounded Xe plan. Ar data do not satisfy DRDO atmospheric requirements.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 37,
+   "covers_ids": [
+    "R-11"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "Form of the Case B net system-level benefit where both sustain.",
+   "owner_answer_verbatim": "NEW `NET_BENEFIT` form — hard gates + Pareto, not a weighted score. ICP must meet electron-current/neutralization, thrust, full P_bus, stability and safety gates; then report ΔXe, ΔP_bus, Δmass, T/P_bus, restart and life burden relative to C1. No single scalar winner unless preregistered.",
+   "classification_by_recorder": "AMENDED_FOR_A9"
+  },
+  {
+   "row": 38,
+   "covers_ids": [
+    "R-12",
+    "P1F-OOD-05"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "Evidence that establishes no outcome.",
+   "owner_answer_verbatim": "`OPEN` is a status, not an outcome. If evidence cannot decide, report unresolved and identify the next discriminating test.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 39,
+   "covers_ids": [
+    "R-13"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "An arm stop breaks schedule balance.",
+   "owner_answer_verbatim": "ACCEPT — if an arm/configuration stops, mark its scheduled slots `NOT_TESTED`, keep all remaining order fixed, and report the balance loss.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 40,
+   "covers_ids": [
+    "P1F-OOD-03"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "Reference condition REF-COND (S1b re-mount point: nominal flow/voltage, N2): own installation per block, or merged into adjacent HW-0 (REF-MERGED)?",
+   "owner_answer_verbatim": "OWN installation per block — do not merge REF-COND into an adjacent configuration unless a later preregistered equivalence test supports that change.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 41,
+   "covers_ids": [
+    "P1F-OOD-04"
+   ],
+   "area": "C. Phase-1 framework",
+   "question": "MD-04: abort on a thruster/configuration limit = 'not sustained within limits' (reported with the limit)?",
+   "owner_answer_verbatim": "YES — abort/limit hit = `not sustained within registered limits`, with the exact limit and state recorded.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 42,
+   "covers_ids": [
+    "OD-XE-1",
+    "R6-Q2"
+   ],
+   "area": "D. Xe system",
+   "question": "Xe accounting convention; is Xe flowing during cathode preheat booked?",
+   "owner_answer_verbatim": "`PHASE_TOTAL_FLOW` — book all Xe during purge, preheat, ignition, keeper/cathode operation, transition and fallback. No unbooked preheat flow.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 43,
+   "covers_ids": [
+    "OD-XE-2"
+   ],
+   "area": "D. Xe system",
+   "question": "Reserve policy (form and value).",
+   "owner_answer_verbatim": "Use a separate reserve term equal to 20% of planned non-reserve mission Xe as a provisional engineering allocation. Mark it `ASSUMED_ENGINEERING_ALLOCATION` and revisit after the mission mode profile is measured.",
+   "classification_by_recorder": "ENGINEERING_ALLOCATION_OR_BASIS"
+  },
+  {
+   "row": 44,
+   "covers_ids": [
+    "OD-XE-3"
+   ],
+   "area": "D. Xe system",
+   "question": "Share of the mass reference the stored-Xe subsystem may take.",
+   "owner_answer_verbatim": "0.25 only as a screening cap, not an entitlement. It must not force the design to consume 25% of the total mass on Xe hardware/propellant.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 45,
+   "covers_ids": [
+    "OD-XE-4",
+    "H27-Q6"
+   ],
+   "area": "D. Xe system",
+   "question": "2 % residual (unusable) Xe: separate line in the Xe ledger, keep in mass BOM only, or fold into reserve?",
+   "owner_answer_verbatim": "Separate Xe-ledger line — book the 2% unusable/residual Xe once in the Xe ledger and import that total into the mass BOM. Never add a second residual in the BOM.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 46,
+   "covers_ids": [
+    "OD-XE-5"
+   ],
+   "area": "D. Xe system",
+   "question": "Firing-hours basis of the cathode term.",
+   "owner_answer_verbatim": "15,000 h for the conventional C1 reference/fallback term. The ICP-neutralizer architecture has no continuous C1-Xe cathode term, but must carry its own RF-neutralizer lifetime/cycle requirement.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 47,
+   "covers_ids": [
+    "OD-XE-7"
+   ],
+   "area": "D. Xe system",
+   "question": "Xe hardware-to-mass-BOM mapping (regulator/valves/plumbing -> xe_valve_and_flow_control, tank -> xe_tank).",
+   "owner_answer_verbatim": "ACCEPT for the C1/Xe branch; add separate ICP-neutralizer/RF-electronics BOM items rather than mapping them into the old cathode line.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 48,
+   "covers_ids": [
+    "OD-M4"
+   ],
+   "area": "D. Xe system",
+   "question": "Declare a mission Xe load (design input).",
+   "owner_answer_verbatim": "DO NOT freeze one mission Xe load yet. Run explicit 2 kg / 5 kg / 10 kg design cases for tank/interface sizing; freeze the mission load only after the required Xe operating modes and duty cycle are established.",
+   "classification_by_recorder": "NO_OR_NOT_YET"
+  },
+  {
+   "row": 49,
+   "covers_ids": [
+    "R6-Q1"
+   ],
+   "area": "D. Xe system",
+   "question": "C-1 heated or heaterless (heaterless per-start Xe 2-6x higher)?",
+   "owner_answer_verbatim": "HEATED C1 — use a heated Xe-fed LaB6 cathode for the conventional reference/fallback because it minimizes low-flow uncertainty and avoids the heaterless high-start-flow penalty. It is not automatically the final flight neutralizer.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 50,
+   "covers_ids": [
+    "R6-Q3"
+   ],
+   "area": "D. Xe system",
+   "question": "Tank sizing at a stated maximum storage temperature (1.67 g/cm3 at 323 K / 150 bar vs 1.97 at 300 K)?",
+   "owner_answer_verbatim": "Size at the stated maximum storage temperature of 323 K, using a verified Xe EOS and MEOP/safety factors. Do not size the flight tank from room-temperature density alone.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 51,
+   "covers_ids": [
+    "R6-Q4"
+   ],
+   "area": "D. Xe system",
+   "question": "Filter-getter (<= 17 W) in the Xe cathode line in scope?",
+   "owner_answer_verbatim": "YES if the C1/Xe branch remains in scope — include the filter/getter with explicit ≤17 W-class load only after vendor/spec verification; account its mass and pressure drop. It is not required for an ICP-only flight branch.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 52,
+   "covers_ids": [
+    "OD-M1",
+    "H27-Q2"
+   ],
+   "area": "E. Mass",
+   "question": "System mass margin.",
+   "owner_answer_verbatim": "20% internal development/system margin for design work; the hard external gate remains <40 kg wet. If the RFP later specifies a lower accounting margin, retain 20% internally until maturity justifies reducing it.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 53,
+   "covers_ids": [
+    "H27-Q1"
+   ],
+   "area": "E. Mass",
+   "question": "Evaluate the allocation at both ends of '<= 34-36 kg', or fix one value?",
+   "owner_answer_verbatim": "BOTH — evaluate 34 kg and 36 kg internal design allocations and keep 40 kg as the hard wet-system limit.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 54,
+   "covers_ids": [
+    "H27-Q7"
+   ],
+   "area": "E. Mass",
+   "question": "Set per-row mass allocations now (e.g. PPU, regulator) so H2-3/H2-4 size against a budget? (High analog case exceeds 40 kg on known lines.)",
+   "owner_answer_verbatim": "YES — use a v0 dry-mass budget against a 28 kg dry target: intake/filter/duct 3.5 kg; compressor+drive 5.5; plenum/feed 1.0; Hall head+magnet 3.0; ICP neutralizer 2.0; RF generator/matching 1.5; Hall PPU 2.5; Xe hardware 1.5; controls/harness 1.0; structure/thermal 2.5. Sum 24 kg, leaving 4 kg dry development reserve. These are allocations, not CBEs.",
+   "classification_by_recorder": "ENGINEERING_ALLOCATION_OR_BASIS"
+  },
+  {
+   "row": 55,
+   "covers_ids": [
+    "H27-Q4"
+   ],
+   "area": "E. Mass",
+   "question": "Redundancy policy for valves, cathode and PPU.",
+   "owner_answer_verbatim": "LIMITED redundancy — dual series isolation on the high-pressure Xe path plus critical sensing/FDIR redundancy; do not duplicate the thruster, ICP neutralizer or full PPU at this stage. Revisit after failure-tree evidence.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 56,
+   "covers_ids": [
+    "H27-Q5"
+   ],
+   "area": "E. Mass",
+   "question": "Accept NASA SBIR 2 kg PPU development target (undemonstrated) as PPU low end until H2-4 has a CBE?",
+   "owner_answer_verbatim": "NO as a CBE — NASA SBIR 2 kg PPU may remain an aspirational/screening low end only. It cannot be used as demonstrated mass evidence.",
+   "classification_by_recorder": "NO_OR_NOT_YET"
+  },
+  {
+   "row": 57,
+   "covers_ids": [
+    "OD-M2"
+   ],
+   "area": "E. Mass",
+   "question": "Maturity category for dry equipment.",
+   "owner_answer_verbatim": "PER SELECTED PART — use actual maturity/heritage where known; default new/unselected hardware to ECSS-D-like 20% equipment margin.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 58,
+   "covers_ids": [
+    "OD-M3"
+   ],
+   "area": "E. Mass",
+   "question": "Legacy uncited MGA dict in abep_sim/mass_bom.py.",
+   "owner_answer_verbatim": "RETIRE only from the new v2/A9 path; preserve the legacy uncited MGA implementation and its goldens for historical reproducibility. New models must use the evidence-controlled margin policy.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 59,
+   "covers_ids": [
+    "OD-M5"
+   ],
+   "area": "E. Mass",
+   "question": "Mass BOM item list.",
+   "owner_answer_verbatim": "ACCEPT with A9 amendment — add downstream ICP neutralizer, RF generator/matching/feedthrough and collector/bias hardware; retain C1 as reference/fallback. Remove pre-ionizer-only items from the new architecture BOM, not from historical v1.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 60,
+   "covers_ids": [
+    "OD-M6"
+   ],
+   "area": "E. Mass",
+   "question": "Harness allocation.",
+   "owner_answer_verbatim": "5% of nominal dry mass until a designed harness exists; replace the allocation with actual routed harness mass once available.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 61,
+   "covers_ids": [
+    "PMQ-01"
+   ],
+   "area": "F. Pre-ionizer ICD",
+   "question": "Size the common module envelope to the largest occupant (ECR with magnet/yoke/feed)?",
+   "owner_answer_verbatim": "SUPERSEDED — do not size a pre-ionizer common envelope around ECR. Create a dedicated downstream ICP-neutralizer mechanical/electrical/plume interface.",
+   "classification_by_recorder": "SUPERSEDED"
+  },
+  {
+   "row": 62,
+   "covers_ids": [
+    "PMQ-02"
+   ],
+   "area": "F. Pre-ionizer ICD",
+   "question": "Common control harness L1-L5 incl. MODULE_ID and blank-module termination?",
+   "owner_answer_verbatim": "SUPERSEDED old L1-L5 definition. New ICP harness must include module ID, RF forward/reflected power, RF interlock, collector/bias V/I, temperatures and command/telemetry; blank/reference termination only where the new comparison requires it.",
+   "classification_by_recorder": "SUPERSEDED"
+  },
+  {
+   "row": 63,
+   "covers_ids": [
+    "PMQ-03"
+   ],
+   "area": "F. Pre-ionizer ICD",
+   "question": "Pressure-drop class definition, matched passive inserts for the blank module if needed?",
+   "owner_answer_verbatim": "SUPERSEDED — no matched upstream pre-ionizer blank. Define and measure the downstream Hall-exhaust-to-ICP pressure/conductance interface; use a matched mechanical sham only for stand parasitics.",
+   "classification_by_recorder": "SUPERSEDED"
+  },
+  {
+   "row": 64,
+   "covers_ids": [
+    "PMQ-04"
+   ],
+   "area": "F. Pre-ionizer ICD",
+   "question": "Add S1a no-plasma module-exchange series for RF/ECR modules (cold flow, zero/tare, B(z))?",
+   "owner_answer_verbatim": "SUPERSEDED — replace RF/ECR pre-ionizer exchange with C1↔ICP neutralizer exchange checks: cold/tare, service-line parasitic, B(z) perturbation, electrical isolation and RF pickup.",
+   "classification_by_recorder": "SUPERSEDED"
+  },
+  {
+   "row": 65,
+   "covers_ids": [
+    "PMQ-05"
+   ],
+   "area": "F. Pre-ionizer ICD",
+   "question": "Time-matched Xe hold in the HW-0 start equal to the pre-ionizer dwell?",
+   "owner_answer_verbatim": "SUPERSEDED — no pre-ionizer dwell matching. Any C1-vs-ICP comparison must instead preregister equivalent startup-state and thermal-state handling.",
+   "classification_by_recorder": "SUPERSEDED"
+  },
+  {
+   "row": 66,
+   "covers_ids": [
+    "PMQ-06"
+   ],
+   "area": "F. Pre-ionizer ICD",
+   "question": "Module loads with no bus-power slot (RF assist magnet, powered interstage, coolant pump).",
+   "owner_answer_verbatim": "NEW BUS-BOUNDARY VERSION — do not prohibit legitimate loads. Add explicit components for RF source/matching, collector/bias supply, any assist magnet and active cooling if used.",
+   "classification_by_recorder": "AMENDED_FOR_A9"
+  },
+  {
+   "row": 67,
+   "covers_ids": [
+    "HWQ-04"
+   ],
+   "area": "F. Pre-ionizer ICD",
+   "question": "INV-B3 tolerance on module-induced field change; add coil-current sensitivity scan S_B to LOCK-1?",
+   "owner_answer_verbatim": "YES — add a measured B(z) perturbation/sensitivity scan with the downstream ICP module installed/energized. Freeze an allowable field-change tolerance from measured H-1 sensitivity before score-bearing comparison; do not invent a tolerance now.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 68,
+   "covers_ids": [
+    "HWQ-05"
+   ],
+   "area": "F. Pre-ionizer ICD",
+   "question": "ECR magnet type.",
+   "owner_answer_verbatim": "SUPERSEDED — ECR is not the primary architecture. Preserve the historical ECR decision only in old files.",
+   "classification_by_recorder": "SUPERSEDED"
+  },
+  {
+   "row": 69,
+   "covers_ids": [
+    "HWQ-06"
+   ],
+   "area": "F. Pre-ionizer ICD",
+   "question": "RF module magnetization.",
+   "owner_answer_verbatim": "UNMAGNETIZED 13.56 MHz ICP for v1/A9 first build. If magnetic assistance is later justified, treat it as a new controlled variant and book its power/mass explicitly.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 70,
+   "covers_ids": [
+    "HWQ-07"
+   ],
+   "area": "F. Pre-ionizer ICD",
+   "question": "Electrical potential of module body / interstage electrode.",
+   "owner_answer_verbatim": "OLD options are not adequate. Keep the ICP dielectric/body floating unless the validated circuit requires otherwise; control and measure the electron-extraction collector bias separately. Do not hard-ground the plasma body by default.",
+   "classification_by_recorder": "AMENDED_FOR_A9"
+  },
+  {
+   "row": 71,
+   "covers_ids": [
+    "HWQ-15"
+   ],
+   "area": "F. Pre-ionizer ICD",
+   "question": "Freeze module interfaces before Phase 1 even if modules arrive later?",
+   "owner_answer_verbatim": "YES — freeze the new downstream ICP mechanical, RF, electrical, gas/plume and diagnostic interfaces before score-bearing Phase 1.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 72,
+   "covers_ids": [
+    "R4-Q7"
+   ],
+   "area": "F. Pre-ionizer ICD",
+   "question": "RF/ECR: select frequency and P_hi (to specify INS-03 sensors); accept calorimetric load-plane method if inline sensors can't reach u_src?",
+   "owner_answer_verbatim": "13.56 MHz. Size laboratory RF source and inline measurement chain for 0–500 W forward power initially, with directional-coupler forward/reflected measurements. Calorimetry is an independent cross-check, not the sole primary power measurement.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 73,
+   "covers_ids": [
+    "H2-1 Q1"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "Design flow for channel sizing (delivered flow 0.38-1.29 mg/s design case up to ~3.2 mg/s): where to match channel neutral density?",
+   "owner_answer_verbatim": "Match H-1 nominal channel neutral-density sizing around ~1.3 mg/s delivered atmospheric flow, while requiring operability/thermal characterization from ~0.38 mg/s through ~3.2 mg/s. Do not claim the entire range as flight-qualified until measured.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 74,
+   "covers_ids": [
+    "H2-1 Q2"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "Keep magnetically shielded topology (T2) as H-1 baseline, with a replaceable unshielded (T1) pole set?",
+   "owner_answer_verbatim": "YES — magnetically shielded topology T2 as H-1 baseline; an unshielded pole set may be used only as an engineering comparison, not silently as the score-bearing article.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 75,
+   "covers_ids": [
+    "H2-1 Q3"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "L/h upper bound (12 proposed); allow an adjustable-anode development insert before S1?",
+   "owner_answer_verbatim": "Accept L/h ≤12. Allow an adjustable-anode development insert only before score-bearing S1; freeze the final anode position/geometry before S1 data.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 76,
+   "covers_ids": [
+    "HWQ-18",
+    "H2-1 Q4",
+    "H25-Q5",
+    "OQ-R3-1"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "Pole/core material grade (e.g. Hiperco 50 / FeCo-2V inner, pure iron outer, or 430F) and a max-use pole temperature below Curie set from B_sat(T).",
+   "owner_answer_verbatim": "ACCEPT FeCo-2V inner + pure-iron outer as the H-1 engineering baseline. Derive the hot-use limit from sourced B_sat(T)/material data and keep at least the project thermal margin below the qualified limit.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 77,
+   "covers_ids": [
+    "HWQ-20",
+    "H2-1 Q5",
+    "H25-Q2",
+    "OQ-R3-2",
+    "REFRESH-Q2"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "Coil insulation family / IEC 60085 class (ceramic Ni-clad Cu vs polyimide), hot-spot margin; accept ~150 V AC turn rating and Ni ferromagnetism if ceramic; decide before or at LOCK-1?",
+   "owner_answer_verbatim": "CERAMIC-insulated copper baseline for the hot/vacuum development coil; avoid polyimide as the primary hot/AO-adjacent solution. If Ni-clad wire is used, measure its magnetic perturbation. Treat 150 V AC turn rating as a minimum procurement screen, subject to representative-gas hipot qualification.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 78,
+   "covers_ids": [
+    "HWQ-19"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "MC-1: electromagnet only (traceable B(z) vs current) or permanent-magnet assisted?",
+   "owner_answer_verbatim": "EM ONLY for H-1 — this preserves traceable B(z)-versus-current control and sensitivity sweeps. Flight PM assistance can be evaluated later without contaminating H-1 validation.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 79,
+   "covers_ids": [
+    "H2-1 Q6",
+    "H22-OQ-01"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "Cathode location: central (L-CENTRAL; constrains mean diameter) or external (L-EXTERNAL)?",
+   "owner_answer_verbatim": "EXTERNAL C1 reference. Do not constrain the H-1 mean diameter around a central C1. Provide a downstream/coaxial interface for the ICP neutralizer and keep the Hall head neutralizer-agnostic.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 80,
+   "covers_ids": [
+    "H2-1 Q7"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "Proposed design factors: B headroom 1.5, working flux 0.7 B_sat, discharge share >= 0.5.",
+   "owner_answer_verbatim": "ACCEPT B-headroom 1.5, working flux 0.7 B_sat and discharge-share ≥0.5 as design factors, clearly tagged as engineering factors until verified.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 81,
+   "covers_ids": [
+    "HWQ-03"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "Rate H-1, C-1, supply and isolator to the relaxed 350 V V_d end?",
+   "owner_answer_verbatim": "YES — rate H-1, C1 reference, discharge supply, isolation and diagnostics to the relaxed 350 V end plus appropriate transient/qualification margin.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 82,
+   "covers_ids": [
+    "HWQ-13"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "Hot-state B reference sensor on MC-1?",
+   "owner_answer_verbatim": "YES — install a hot-state B reference sensor/measurement provision and preserve traceability to current and temperature.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 83,
+   "covers_ids": [
+    "HWQ-14"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "Spares policy: replaced/repaired H-1 or C-1 = new unit with new HW-0 reference and S1b?",
+   "owner_answer_verbatim": "YES — repaired/replaced H-1, C1 or ICP score-bearing module becomes a new serialized unit and requires a new reference/reinstallation sequence before score-bearing use.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 84,
+   "covers_ids": [
+    "H25-Q1"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "Accept a high-emittance temperature-capable exterior coating on MC-1 as a baseline requirement (bare metal is design-driving)?",
+   "owner_answer_verbatim": "YES, conditional on vacuum/AO/electrical compatibility — use a high-emittance temperature-capable exterior coating as a baseline thermal requirement and qualify it.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 85,
+   "covers_ids": [
+    "H25-Q3"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "Spacecraft thermal ICD: mounting-interface temperature and allowable heat into the spacecraft.",
+   "owner_answer_verbatim": "Do not freeze one spacecraft sink number yet. Carry 20/40/60 °C mounting-interface cases and 25/50/100 W allowable conducted-heat cases in the model; freeze the actual ICD value at spacecraft/PDR interface definition.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 86,
+   "covers_ids": [
+    "H25-Q4",
+    "H25-Q6"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "Thermal design margins below each limit (not in the RFP); apply a margin to the ~900 degC BN wall guide (current worst margin only 11.2 K)?",
+   "owner_answer_verbatim": "Require ≥50 K margin below each validated continuous-use material/insulation temperature limit plus 20% heat-load design margin. The current ~11.2 K BN-wall margin is not acceptable as a design closure.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 87,
+   "covers_ids": [
+    "OQ-R8-4"
+   ],
+   "area": "G. H-1 head / magnet / thermal",
+   "question": "Anode thermal design target (none sourced).",
+   "owner_answer_verbatim": "NO unsourced fixed anode temperature target. Derive the allowable temperature from the selected anode material's oxidation/electrical/creep data and design for ≥50 K margin to its validated continuous-use limit.",
+   "classification_by_recorder": "NO_OR_NOT_YET"
+  },
+  {
+   "row": 88,
+   "covers_ids": [
+    "HWQ-09"
+   ],
+   "area": "H. Cathode C-1",
+   "question": "Confirm Xe-fed LaB6 hollow cathode and its emission rating vs derived I_d bound + keeper + interstage currents.",
+   "owner_answer_verbatim": "CONFIRM C1 only as the conventional reference/fallback: heated Xe-fed LaB6 hollow cathode sized to the measured/derived current demand. It is not the primary flight neutralizer if the downstream ICP succeeds.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 89,
+   "covers_ids": [
+    "H22-OQ-02"
+   ],
+   "area": "H. Cathode C-1",
+   "question": "Require pulsed keeper ignition capability (300-600 V) in the supply?",
+   "owner_answer_verbatim": "YES — provide current-limited pulsed keeper ignition capability in the 300–600 V class for C1 development/reference testing, with interlocks and recorded pulse energy.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 90,
+   "covers_ids": [
+    "H22-OQ-03"
+   ],
+   "area": "H. Cathode C-1",
+   "question": "Two isolation valves in series on the flight cathode branch?",
+   "owner_answer_verbatim": "YES — two independent isolation valves in series on the flight high-pressure Xe/cathode branch.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 91,
+   "covers_ids": [
+    "H22-OQ-04"
+   ],
+   "area": "H. Cathode C-1",
+   "question": "Resistor value / switching for the cathode-common tie to ground / spacecraft common.",
+   "owner_answer_verbatim": "DO NOT freeze a resistor value yet. Use an isolated, selectable cathode-common/bleeder topology with voltage/current measurement; choose the final value/switching after EMC and discharge-stability bench tests.",
+   "classification_by_recorder": "NO_OR_NOT_YET"
+  },
+  {
+   "row": 92,
+   "covers_ids": [
+    "H22-OQ-05"
+   ],
+   "area": "H. Cathode C-1",
+   "question": "Flow step and stopping rule for the spot-mode minimum-flow search.",
+   "owner_answer_verbatim": "ADOPT 0.005 mg/s flow-step resolution for the C1 spot-mode minimum-flow search, with preregistered stopping criteria.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 93,
+   "covers_ids": [
+    "H22-OQ-06"
+   ],
+   "area": "H. Cathode C-1",
+   "question": "Purge flow/duration before heating and bound on the ignition-flow dwell (unbounded analog reaches ~21 kg Xe at heavy-restart scenario).",
+   "owner_answer_verbatim": "Use the selected cathode vendor/design-qualified purge and ignition flow; cap each ignition dwell at 120 s and allow at most two retries in the preliminary protocol, then freeze the final bound before score-bearing C1 testing. Book all Xe.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 94,
+   "covers_ids": [
+    "H22-OQ-07"
+   ],
+   "area": "H. Cathode C-1",
+   "question": "Keeper material given O-chemistry: graphite or O-resistant alternative?",
+   "owner_answer_verbatim": "Do not use graphite as the flight baseline for an O/AO-exposed keeper. Screen refractory/oxygen-resistant or ceramic-shielded alternatives with biased exposure coupons; freeze material only after erosion/oxidation evidence.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 95,
+   "covers_ids": [
+    "H22-OQ-08"
+   ],
+   "area": "H. Cathode C-1",
+   "question": "Emitter temperature floor 1843 K during O-bearing operation?",
+   "owner_answer_verbatim": "ADOPT 1843 K as the conservative C1 O-bearing experimental floor pending hardware evidence; do not present it as a demonstrated lifetime solution.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 96,
+   "covers_ids": [
+    "H22-FQ-1"
+   ],
+   "area": "H. Cathode C-1",
+   "question": "Accept conservative +-2 % FS flow class (4.0 % at 0.10 mg/s, 0.216 kg Xe over 15,000 h) as the Xe-ledger flow term until S1a shows the standard class on Xe?",
+   "owner_answer_verbatim": "ACCEPT the conservative ±2% FS class and its Xe-ledger uncertainty term until S1a demonstrates a better calibrated class on Xe.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 97,
+   "covers_ids": [
+    "H22-FQ-2"
+   ],
+   "area": "H. Cathode C-1",
+   "question": "Adopt per-block installed zero check and a declared MFC body-temperature band as a test rule?",
+   "owner_answer_verbatim": "ADOPT installed zero check per block and a declared MFC body-temperature band.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 98,
+   "covers_ids": [
+    "H22-FQ-3"
+   ],
+   "area": "H. Cathode C-1",
+   "question": "Adopt resolution requirement <= 0.0005 mg/s and digital setpoint for the cathode MFC?",
+   "owner_answer_verbatim": "ADOPT resolution ≤0.0005 mg/s and digital setpoint for the low-flow cathode MFC.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 99,
+   "covers_ids": [
+    "OQ-R8-5",
+    "HWQ-21"
+   ],
+   "area": "H. Cathode C-1",
+   "question": "Heated emitter witness near C-1 (metered heater load) or ground-only heated-emitter exposure?",
+   "owner_answer_verbatim": "GROUND-ONLY heated-emitter exposure for material/life work. Near C1 use passive/low-perturbation witnesses; do not add an extra heated emitter into the score-bearing plume unless separately preregistered.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 100,
+   "covers_ids": [
+    "GP-D01"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "Metering-valve control strategy.",
+   "owner_answer_verbatim": "CARRY BOTH strategies until the measured compressor outlet characteristic exists. Freeze the control strategy only after that evidence.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 101,
+   "covers_ids": [
+    "GP-D02"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "Adopt +-5 % / 10 % p-p cold-flow uniformity criterion (sets required plenum/compressor outlet pressure)?",
+   "owner_answer_verbatim": "ADOPT ±5% mean / 10% peak-to-peak cold-flow uniformity as the S1a engineering criterion.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 102,
+   "covers_ids": [
+    "GP-D03"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "Gas-path wall recombination policy.",
+   "owner_answer_verbatim": "INERT/low-recombination lining baseline to preserve representative atomic-O fraction as far as practical. Measure the delivered species state and retain catalytic reference coupons/sections; never assume O survival.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 103,
+   "covers_ids": [
+    "GP-D04"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "Exclude silver from wetted parts?",
+   "owner_answer_verbatim": "YES — exclude silver from oxygen/AO-wetted gas-path parts.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 104,
+   "covers_ids": [
+    "H23-Q1"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "IF-A3 at the compressor outlet flange, upstream of V0 (needs upstream ICD amendment)?",
+   "owner_answer_verbatim": "YES — place IF-A3 at the compressor outlet flange upstream of V0 and amend the upstream ICD accordingly.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 105,
+   "covers_ids": [
+    "H23-Q2"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "Gas isolator withstand margin above 350 V (Paschen minimum is crossed; segmented/porous break + gas-filled withstand test proposed).",
+   "owner_answer_verbatim": "Design the gas isolator for 350 V continuous operation and perform ~1 kV DC representative-pressure/gas withstand qualification with segmented/porous geometry as appropriate. Do not rely on simple vacuum creepage assumptions across the Paschen region.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 106,
+   "covers_ids": [
+    "HWQ-08",
+    "OQ-R8-1",
+    "OQ-R8-2",
+    "OQ-R3-3"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "Anode / distributor material: accept 316L as H-1 baseline (recorded limitation) pending coupons; which candidates on coupons (316L, chromia Ni alloy, alumina-former, Rh, Pt, Cr, IrO2/RuO2, bare W control, graphite); biased (electron-collecting) or floating coupons?",
+   "owner_answer_verbatim": "Use 316L only as the H-1 engineering baseline. Test both biased and floating coupons across the shortlisted O-resistant candidates so electrochemical/bias effects can be separated. Flight anode material remains open until coupon evidence.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 107,
+   "covers_ids": [
+    "OQ-R3-4",
+    "H26Q-07"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "O2 cleaning standard (ASTM G93 Level C?) and O2 safety-case ownership.",
+   "owner_answer_verbatim": "ADOPT ASTM G93 Level C cleaning for O2 service and assign a named oxygen-safety owner before S1a gas operation.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 108,
+   "covers_ids": [
+    "OQ-H24-01"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "Does '< 1.5 kW' apply at bus_power_boundary_v1 and to start-up transients?",
+   "owner_answer_verbatim": "YES — apply <1.5 kW at the spacecraft-DC propulsion-system boundary. Conservatively require startup transients also to remain below 1.5 kW unless the official RFP explicitly permits a transient exception. Use a new A9/v2 boundary without modifying v1.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 109,
+   "covers_ids": [
+    "OQ-H24-02"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "Must a contingency pre-ionizer fit inside the A5 power allocation, or may it use the allocation-to-requirement margin?",
+   "owner_answer_verbatim": "SUPERSEDED — the downstream ICP is a primary neutralizer candidate, not a contingency pre-ionizer. Its power must fit inside the internal ~1.35 kW design allocation; do not plan to consume the 1.35→1.5 kW margin nominally.",
+   "classification_by_recorder": "SUPERSEDED"
+  },
+  {
+   "row": 110,
+   "covers_ids": [
+    "OQ-H24-03"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "Adopt the proposed supply partition (discharge, per-coil magnet, cathode CS-A/CS-B, aux valve/housekeeping, reserved DC port)?",
+   "owner_answer_verbatim": "ADOPT with revision — partition supplies into Hall discharge, per-coil magnet, ICP RF source/matching, ICP collector/bias if required, C1 heater/keeper reference supplies, flow/valve/housekeeping and reserved DC. Every active load gets a bus slot.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 111,
+   "covers_ids": [
+    "OQ-H24-04"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "Spacecraft bus voltage and redundancy policy.",
+   "owner_answer_verbatim": "REGULATED 100 V internal propulsion bus for the breadboard/PPU architecture; keep the spacecraft-input front end configurable until the actual spacecraft bus is specified. Do not claim 100 V is an RFP spacecraft interface requirement.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 112,
+   "covers_ids": [
+    "OQ-H24-05"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "Sequencing SEQ-1: heater off before compressor spin-up and before any pre-ionizer seed?",
+   "owner_answer_verbatim": "REVISE SEQ-1 — sequence to avoid simultaneous peaks, but do not force the C1 heater off before it is safe. For C1, reduce/disable heater only after keeper/discharge is stable per cathode procedure; ICP has no thermionic heater.",
+   "classification_by_recorder": "AMENDED_FOR_A9"
+  },
+  {
+   "row": 113,
+   "covers_ids": [
+    "OQ-H24-06"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "Procure a flight-representative breadboard discharge supply so eta_d is measured before LOCK-2?",
+   "owner_answer_verbatim": "YES — procure/build a flight-representative breadboard Hall discharge supply so eta_d and transient behavior are measured before LOCK-2.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 114,
+   "covers_ids": [
+    "V2-Q1"
+   ],
+   "area": "I. Gas path / PPU / bus",
+   "question": "Does the proposed 300 W common allocation include the 50 W controls/thermal?",
+   "owner_answer_verbatim": "YES — the proposed 300 W common allocation includes the 50 W controls/thermal allowance. Treat 300 W as an upper design allocation, not a measured load.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 115,
+   "covers_ids": [
+    "OD-TS-1",
+    "H26Q-02",
+    "R4-Q5"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Thrust-stand principle.",
+   "owner_answer_verbatim": "TORSIONAL baseline. An alternate stand is allowed only if it meets the same uncertainty, payload, thermal/RF service-line and reinstallation requirements.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 116,
+   "covers_ids": [
+    "OD-TS-2"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Maximum moving mass on the stand and its spread across configurations.",
+   "owner_answer_verbatim": "Design for at least 25 kg moving payload and characterize the full actual configuration spread. If the flight-representative test article exceeds that, uprate/requalify before procurement rather than trimming hardware to fit the stand.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 117,
+   "covers_ids": [
+    "OD-TS-3"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "How service lines cross the stand (liquid-metal pots, harp routing, RF/microwave hard line with shams or wireless).",
+   "owner_answer_verbatim": "Use low-stiffness symmetric harp/slack-loop routing for gas/electrical services and flexible RF coax with matched sham routing. Avoid an uncompensated hard RF line across the moving stage; characterize residual parasitic force.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 118,
+   "covers_ids": [
+    "OD-TS-4"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Thrust stand: build / partner (DLR, ESA, Surrey) / buy (AST).",
+   "owner_answer_verbatim": "DUAL PATH — build an in-house engineering torsional stand for development/S1a and use a qualified partner/facility for independent score-bearing/qualification measurements where required. Do not depend on a single purchased black-box stand.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 119,
+   "covers_ids": [
+    "OD-TS-5"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Calibration principle and force-traceability class (CSIR-NPL/NABL E2 masses vs other).",
+   "owner_answer_verbatim": "Use in-situ force calibration with SI-traceable masses/force actuator and lever geometry, verified under relevant ISO/IEC 17025/NABL traceability. Calibrate pre/post block and record drift/hysteresis.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 120,
+   "covers_ids": [
+    "OD-TS-6"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Pre-registered S1a u_T acceptance test at 12 mN with max payload and all lines installed?",
+   "owner_answer_verbatim": "YES — preregister the S1a thrust-uncertainty acceptance test at 12 mN with maximum representative moving payload and all service lines installed.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 121,
+   "covers_ids": [
+    "OD-TS-7"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Keep 1 % absolute thrust uncertainty gate (published stands show 1.4-2.2 %) or revise?",
+   "owner_answer_verbatim": "KEEP 1% as the design/acceptance target for now. If metrology-only calibration evidence shows it is unattainable, revise before LOCK-2 and before any score-bearing physics data; never relax it after seeing propulsion results.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 122,
+   "covers_ids": [
+    "H26Q-03"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Adopt the kinematic module carrier (module weight off IP-DN, H-1 never unbolted) as the fixture concept?",
+   "owner_answer_verbatim": "ADOPT, adapted to the new architecture — H-1 remains bolted; the kinematic carrier exchanges C1 reference and ICP-neutralizer modules with repeatable datum control.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 123,
+   "covers_ids": [
+    "H26Q-04",
+    "R4-Q1"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "MFC ranges: 4 overlapping ranges per pure-gas path (20 % FS floor) vs A4 'at least three'; does A4 authorize purchase orders or only quotations?",
+   "owner_answer_verbatim": "Use 4 overlapping ranges per pure-gas path for quotation/specification; quotations only until H3 approval.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 124,
+   "covers_ids": [
+    "R4-Q2"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "MFC principle per gas path.",
+   "owner_answer_verbatim": "THERMAL own-gas-calibrated MFCs as the primary pure-gas approach. Verify mixtures through a traceable transfer/rate-of-rise method; do not use a property-library DP estimate as the primary score-bearing flow standard.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 125,
+   "covers_ids": [
+    "R4-Q3"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Cathode-Xe MFC: cover only 0.05-0.2 mg/s, or also start/diode flows (0.6-0.8 mg/s) - one or two controllers?",
+   "owner_answer_verbatim": "TWO controllers — one high-accuracy 0.05–0.2 mg/s-class C1 steady-flow controller and a separate start/diode-flow controller if 0.6–0.8 mg/s is retained.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 126,
+   "covers_ids": [
+    "R4-Q4"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "In-house rate-of-rise calibrator acceptable as S1a primary flow standard, or NABL-certified MFC calibration required?",
+   "owner_answer_verbatim": "NABL/ISO-17025 calibration is the primary score-bearing reference. The in-house rate-of-rise system is acceptable as a transfer/verification standard, not as the sole external traceability claim.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 127,
+   "covers_ids": [
+    "R4-Q6"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "RGA in the S1a minimum set? If yes, 200 or 300 amu, differential pumping?",
+   "owner_answer_verbatim": "YES — include an approximately 200 amu RGA with differential pumping and species calibration for N2/O2/O-related fragments and Xe. 300 amu is unnecessary unless later diagnostics require heavier species.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 128,
+   "covers_ids": [
+    "WEB-INS-1"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "C-1 pyrometer view (HW-C1-09(b)).",
+   "owner_answer_verbatim": "YES — provide a C1 pyrometer view where line-of-sight exists; keep the tube thermocouple mandatory and never relabel tube temperature as emitter temperature.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 129,
+   "covers_ids": [
+    "H26Q-05"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Exploratory I_d(t) chain to 60 MHz for S1b, or a narrower band recorded as such?",
+   "owner_answer_verbatim": "Use the exploratory I_d(t) chain to ~60 MHz if feasible; if hardware bandwidth is lower, declare the measured bandwidth and its anti-alias/transfer function explicitly.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 130,
+   "covers_ids": [
+    "H26Q-06"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Flight telemetry subset (ground vs flight diagnostics) as input to PPU / control-FDIR.",
+   "owner_answer_verbatim": "ACCEPT H2-6 flight telemetry subset and add ICP-specific telemetry: forward/reflected RF power, collector/bias V/I, RF source temperature and neutralizer health/interlock state.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 131,
+   "covers_ids": [
+    "H26Q-08"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Ground radiative sink temperature for the thermal model (facility cryopanel/wall).",
+   "owner_answer_verbatim": "MEASURE actual facility wall/cryopanel radiative sink temperature per run. Use ~300 K chamber walls only as a planning case, never as an unmeasured score-bearing input.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 132,
+   "covers_ids": [
+    "HWQ-11"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Atomic-O representativeness of Phase 3: accept N2 + O2 surrogate with recorded limitation, or add a dedicated atomic-O source?",
+   "owner_answer_verbatim": "ADD a dedicated AO source for separate materials/lifetime qualification. Keep N2+O2 as the performance surrogate where necessary, but label it `NO_ATOMIC_O`; never use it as AO-life proof.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 133,
+   "covers_ids": [
+    "HWQ-12"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Sham service lines on the stand in every configuration?",
+   "owner_answer_verbatim": "YES — matched sham service lines in every compared configuration.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 134,
+   "covers_ids": [
+    "HWQ-16"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Witness coupons/holders = non-functional exchangeable items (no new H-1') if B(z) and HW-0 reference unchanged?",
+   "owner_answer_verbatim": "YES — witness coupons/holders remain non-functional exchangeable items if B(z), geometry and HW reference remain within the frozen tolerances.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 135,
+   "covers_ids": [
+    "HWQ-17"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Approve alternative-grade wall sector inserts (N/O wall data, but changes design-representativeness)?",
+   "owner_answer_verbatim": "YES for engineering-only wall-sector studies before score-bearing freeze. Freeze one design-representative wall configuration before S1 and do not mix sector data into the final article unnoticed.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 136,
+   "covers_ids": [
+    "R5-Q1"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Foreign facility (e.g. SITAEL IV10) admissible for score-bearing data (TDF rules, export of H-1, data custody, competitors)?",
+   "owner_answer_verbatim": "CONDITIONAL YES — foreign score-bearing data are admissible only with written TDF/export/IP/data-custody approval and compatible raw-data access. Prefer a domestic facility when it can meet the registered requirements.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 137,
+   "covers_ids": [
+    "R5-Q2"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Request ISRO LPSC facility specifications through official channels before T-PB-MAX is fixed?",
+   "owner_answer_verbatim": "YES — request ISRO/LPSC facility specifications now through official channels before T-PB-MAX is frozen.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 138,
+   "covers_ids": [
+    "R5-Q5"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "XPS / light-element EDS: accredited lab mandatory, or academic lab with results labelled semi-quantitative?",
+   "owner_answer_verbatim": "Accredited lab for quantitative score-bearing XPS/EDS where the method/scope supports the elements. Academic-lab work is acceptable as exploratory/semi-quantitative evidence with that limitation stated.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 139,
+   "covers_ids": [
+    "R5-Q6"
+   ],
+   "area": "J. Diagnostics / stand / facility",
+   "question": "Engineering-only S1a in a smaller domestic chamber, score-bearing stages at one facility meeting REQ-FAC-05?",
+   "owner_answer_verbatim": "YES — use a smaller domestic chamber for engineering-only S1a where appropriate and one qualified facility for the score-bearing stages that meets the registered facility requirements.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 140,
+   "covers_ids": [
+    "M16-Q-01"
+   ],
+   "area": "K. Governance",
+   "question": "Assign an accountable owner to each of the 17 subsystem rows.",
+   "owner_answer_verbatim": "YES — Praveen remains accountable system owner. Assign one named responsible engineer to each M16 subsystem row before that row can become READY; until names are available use explicit functional roles, but no row may remain unowned.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 141,
+   "covers_ids": [
+    "M16-Q-02",
+    "REFRESH-Q1"
+   ],
+   "area": "K. Governance",
+   "question": "Accept the scheduler rule (READY/RUNNING/BLOCKED/VERIFIED, one blocking item per row, non-lane-input guard), per-row blocking items and A7 categories?",
+   "owner_answer_verbatim": "ACCEPT the scheduler rule, one-blocker rule, non-lane-input guard, per-row blockers and A7 roll-up categories.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 142,
+   "covers_ids": [
+    "M16-Q-03"
+   ],
+   "area": "K. Governance",
+   "question": "Accept the H2-lane-to-row mapping?",
+   "owner_answer_verbatim": "ACCEPT the H2-lane-to-row mapping, then add the new Hall→ICP/A9 lanes without rewriting historical H2 provenance.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 143,
+   "covers_ids": [
+    "M16-Q-04"
+   ],
+   "area": "K. Governance",
+   "question": "Direct owning lanes to resolve reconciliation items RC-01..RC-10 (or accept divergences).",
+   "owner_answer_verbatim": "DIRECT owning lanes to resolve RC-01..RC-10. Any accepted divergence must be explicit, justified and versioned rather than left as silent inconsistency.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 144,
+   "covers_ids": [
+    "REFRESH-Q3"
+   ],
+   "area": "K. Governance",
+   "question": "Promote inferred gates (before S1 / HRR / Phase 1) to stated deadlines by mapping them to LOCK-1/LOCK-2?",
+   "owner_answer_verbatim": "YES — promote inferred gates to explicit LOCK-1/LOCK-2 deadlines. Every blocker that can invalidate score-bearing work must have a stated latest decision point.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  },
+  {
+   "row": 145,
+   "covers_ids": [
+    "V2-Q2"
+   ],
+   "area": "L. Parallel RF||Hall v2",
+   "question": "Supply the v2 inputs listed in VALIDATION_PLAN.md (RF coupling, nozzle, Hall-Xe points, compressor, start-up Xe).",
+   "owner_answer_verbatim": "DO NOT supply or invent the old parallel RF∥Hall v2 inputs. Freeze that branch. Create a new Hall→downstream-ICP validation-input list instead: RF coupling, forward/reflected/absorbed power, electron extraction current, collector potential, neutralization margin, Hall current demand, ICP pressure/flow, startup, erosion and lifetime.",
+   "classification_by_recorder": "NO_OR_NOT_YET"
+  },
+  {
+   "row": 146,
+   "covers_ids": [
+    "V2-Q3"
+   ],
+   "area": "L. Parallel RF||Hall v2",
+   "question": "Generate hypothesis-grade sec. 45 surfaces from inputs you label ASSUMED_SCREENING_VALUE?",
+   "owner_answer_verbatim": "NO — do not generate hypothesis surfaces by manufacturing `ASSUMED_SCREENING_VALUE` inputs merely to populate plots. Generate surfaces only from explicitly approved screening assumptions with a clear decision purpose, or after real inputs exist.",
+   "classification_by_recorder": "NO_OR_NOT_YET"
+  },
+  {
+   "row": 147,
+   "covers_ids": [
+    "V2-Q4"
+   ],
+   "area": "L. Parallel RF||Hall v2",
+   "question": "A8 (parallel RF||Hall investigation) stays DRAFT_ARCHITECTURE_HYPOTHESIS, or freeze as an owner decision?",
+   "owner_answer_verbatim": "KEEP A8 PARALLEL RF∥HALL AS DRAFT/HISTORICAL — do not freeze it. Create a new A9 Hall→downstream 13.56 MHz RF-ICP neutralizer investigation addendum and authorize it as the primary investigation hypothesis, not as a validated/frozen flight architecture.",
+   "classification_by_recorder": "ACCEPT_YES_CHOOSE"
+  }
+ ]
+}

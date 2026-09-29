@@ -2299,3 +2299,13 @@ H-1 Phase 1 picks the branch: A (Hall-only), B (RF+Hall), C (ECR+Hall) or NO_VIA
 and runs Hall-only, then RF, then ECR at each point under common conditions. The discriminators are T/P_bus, sustainment, eta_u
 and envelope width. Thrust, power, mass and life figures are allocations or requirements, never predictions. Hall validation
 status is unchanged: the credible set remains empty.
+
+## 2026-09-29 — Owner decision pack (147 answers) and A9: Hall + downstream RF-ICP neutralizer
+
+The owner answered all 147 consolidated questions (`docs/decisions/OD_2026_09_29_OWNER_DECISION_PACK_147.md`, verbatim;
+machine-readable `OD_2026_09_29_owner_answers_147.json`) and created A9
+(`OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json`): the primary investigation hypothesis becomes a Hall
+discharge with a downstream 13.56 MHz RF ICP neutralizer, with Hall + heated Xe-fed LaB6 C1 as control/fallback. The upstream
+pre-ionizer campaign and the parallel RF||Hall v2 / A8 become historical (preserved, not rewritten). No model, frozen data or
+golden changed. Eight leftover worktrees were archived (`docs/orchestration/archive/leftover_worktrees_2026_09_29/`) and removed
+(row 10). The Takahashi et al. 2024 citation was verified against Crossref (CC BY-NC-ND); its data are not yet extracted.

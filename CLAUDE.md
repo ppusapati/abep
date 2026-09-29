@@ -267,3 +267,15 @@ runs; the paired design is not simplified. Part of the new data is pre-registere
 validation evidence (P5-N2 v1 unchanged). Parallel workstreams (`T_PIVOT_*`): feed-state closure, LOCK-1 brief, hardware,
 instrumentation, validation prereg, O/O2 chemistry v0, D-X5 closed-access acquisition (legitimate access only; P4 deferred).
 Modelling, O4/S12 and repository hardening continue in parallel and never gate hardware preparation.
+
+## A9 — Hall + downstream RF-ICP neutralizer (owner decision 2026-09-29, `docs/decisions/OD_HARDWARE_PIVOT_2026_09_29_A9_hall_downstream_rf_icp_neutralizer.json`)
+Status `OWNER_AUTHORIZED_INVESTIGATION_HYPOTHESIS_NOT_FLIGHT_BASELINE`. Primary investigation: Hall discharge + a **downstream 13.56 MHz
+RF ICP electron source / neutralizer** (Takahashi et al., J. Electr. Propuls. 3:18, 2024; topology precedent only). Control/fallback:
+Hall + heated Xe-fed LaB6 C1. First decisive comparison: same H-1, feed, V_d/B, stand, metrology; C1 vs ICP on swappable downstream
+modules with matched shams. Evidence order: Ar (engineering-only) → N2 → O2-bearing (label `NO_ATOMIC_O`) → separate atomic-O life
+programme. 25 mN / < 1.5 kW / < 40 kg (wet) are full-system gates. The upstream RF/ECR pre-ionizer campaign (A5 Phase-1 topology,
+phase1_prereg_framework_v1, PMQ-01..05, LOCK-1 D-01..D-04) and the parallel RF||Hall v2 branch / A8 are **historical**: preserved,
+never rewritten, not used for the primary line. All 147 owner answers: `docs/decisions/OD_2026_09_29_owner_answers_147.json`
+(verbatim pack `OD_2026_09_29_OWNER_DECISION_PACK_147.md`). Recorder flags for the owner (v0 mass allocations below verified H2
+analogs, external C1 vs H2 L-CENTRAL, ≥ 50 K thermal margin vs H2-5 11.2 K, ICP gas feed unbooked) are listed in A9. A9 keeps the
+Hall family (rule 8: no model/archengine change implied). New Hall→ICP work goes under new paths (e.g. `docs/experiments/hall_icp/`).

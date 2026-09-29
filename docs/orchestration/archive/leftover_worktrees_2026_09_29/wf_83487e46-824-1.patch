@@ -1,0 +1,2163 @@
+=== UNTRACKED docs/budgets/subsystem_maturity/build_subsystem_maturity.py
+"""Deterministic builder of the A5 subsystem maturity matrix (fo_subsystem_maturity_matrix, M16).
+
+    python docs/budgets/subsystem_maturity/build_subsystem_maturity.py           # write JSON + MD
+    python docs/budgets/subsystem_maturity/build_subsystem_maturity.py --check   # verify the committed files
+
+What it does. It reads the owner decisions A4/A5/A6 and the G0 baseline record (sha256-pinned, immutable) and the
+verified repository deliverables listed in INPUTS (sha256 recorded in the output), and it writes the central execution
+dashboard for the 16 A5 baseline subsystems plus the reserved RF pre-ionization module interface:
+subsystem_maturity_v1.json (authoritative) and SUBSYSTEM_MATURITY.md (generated from it).
+
+Evidence discipline (CLAUDE.md rules 3, 6, 10; docs/EVIDENCE.md).
+* Subsystem names, allocations, requirement values and risk texts are read from their source files, not re-typed.
+* Every curated statement carries at least one citation {path, locator, verified_tokens}. The builder checks that each
+  cited file exists and contains every verified token (ids such as HW-H1-03, S1A-C1, D-09, DI-1.4 or quoted phrases);
+  a missing token raises. Nothing is filled in: a missing input raises, it never falls back to a default.
+* Premises that a row's blocker depends on (an owner decision still open, a readiness condition still MISSING, a W3
+  requirement still TBD) are re-checked on every build; a changed premise raises so the row is revised, not silently
+  kept.
+* No allocation is invented: a sub-allocation appears only where A5 or A4 records one; everything else is
+  TO_BE_ALLOCATED. No owner is invented: no accountable party is recorded in the inputs, so every owner cell is
+  OWNER_TO_ASSIGN.
+
+Parallel lanes (A6 execution: the four build lanes run simultaneously). The pre-ionizer ICD, the parametric Xe ledger
+and the Phase-1 pre-registration framework do not exist in this lane's base. They are referenced by path as
+"pending parallel lane <id>" and re-read lazily on every build: when their paths appear, the builder records the files
+(sha256) and any declared top-level status, never their content; it never requires them.
+
+Pure standard library plus abep_sim.arch_boundary (pure; read only). Runs in about a second. No Julia, no Hall model,
+nothing wired into archengine, no golden moves.
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+REPO = HERE.parents[2]
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
+
+from abep_sim import arch_boundary  # noqa: E402  (pure accounting module, read only)
+
+OUT_JSON = HERE / "subsystem_maturity_v1.json"
+OUT_MD = HERE / "SUBSYSTEM_MATURITY.md"
+REL_DIR = "docs/budgets/subsystem_maturity"
+BASE_COMMIT = "302e1c94b3bddeb005f17bb189407f2e4641519a"
+
+# ---------------------------------------------------------------------------------------------------------------
+# Pins and inputs
+# ---------------------------------------------------------------------------------------------------------------
+A4 = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A4_owner_decisions.json"
+A5 = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A5_proposal_reference_architecture.json"
+A6 = "docs/decisions/OD_HARDWARE_PIVOT_2026_09_27_A6_a5_followon_authorization.json"
+G0 = "docs/decisions/verification/A5_BASELINE_VERIFICATION.json"
+
+# Immutable owner decisions and the G0 baseline record: hard pins (a mismatch raises).
+DECISION_PINS = {
+    A4: "beec91f9eca3ca0257c5ee88dcd193c87481660b9368b65c6d10b3b3bdae23b4",
+    A5: "0554136751f5ffc7bd7f62c1c4723acce946ef4f523f43687b95710cc8ace621",
+    A6: "aaeb7c503c3791f81d4c589e8e25289befa6fcb3b16ce6f962b153715c883180",
+    G0: "4bd0fb4312fba97b18bba92ca0726133947ea6d86327f5e1360ea6af2b163523",
+}
+
+# Verified deliverables read by this builder (merged in the base; sha256 recorded in the output at build time).
+INPUTS = {
+    "HG": "docs/architecture_comparison/hard_gates/hard_gate_matrix_v1.json",
+    "ICD": "schemas/interfaces/upstream_icd_v1.json",
+    "ICD_MD": "docs/interfaces/UPSTREAM_ICD.md",
+    "HW": "docs/experiments/hardware/hardware_requirements_v1.json",
+    "INS": "docs/experiments/instrumentation/instrumentation_definition_v1.json",
+    "MS": "docs/experiments/instrumentation/metrology_spec/metrology_measurement_spec_v1.json",
+    "S1A": "docs/experiments/s1a_readiness/s1a_readiness_conditions_v1.json",
+    "S1A_ST": "docs/experiments/s1a_readiness/s1a_readiness_status_current.json",
+    "S1": "docs/experiments/s1_readiness/s1_readiness_conditions_v1.json",
+    "S1_ST": "docs/experiments/s1_readiness/s1_readiness_status_current.json",
+    "BOM": "docs/architecture_comparison/mass_bom/mass_bom_v1.json",
+    "AUX": "docs/architecture_comparison/aux_bus/aux_bus_comparison_v1.json",
+    "AUX_MD": "docs/architecture_comparison/aux_bus/AUX_BUS_COMPARISON.md",
+    "BPB": "docs/architecture_comparison/power_boundary/BUS_POWER_BOUNDARY.md",
+    "AB": "abep_sim/arch_boundary.py",
+    "CMP": "docs/architecture_comparison/compressor_downselect/compressor_downselect_v1.json",
+    "W1": "docs/architecture_comparison/feed_state_closure/feed_state_closure_v1.json",
+    "L1": "docs/architecture_comparison/lock1/lock1_decision_brief_v1.json",
+    "VETO": "docs/architecture_comparison/veto_layer/veto_layer_v1.json",
+    "CINT": "docs/architecture_comparison/cathode_integration/cathode_integration_data_v1.json",
+    "CATH": "docs/evidence/cathode/cathode_evidence_v1.json",
+    "HSUS": "docs/evidence/hall_sustainment/hall_sustainment_matrix.json",
+    "RFEV": "docs/evidence/rf_source/rf_evidence_matrix.json",
+    "ECREV": "docs/evidence/ecr_source/ecr_evidence_matrix.json",
+    "WALL": "docs/evidence/wall_life/sputter_yield_db_v1.json",
+    "MCQ": "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json",
+    "AOL": "docs/experiments/lifetime_ao/ao_lifetime_register_v5.json",
+    "B1": "docs/milestones/bundle1/bundle1_v5.json",
+    "W5": "docs/validation/hall_transport_v2_prereg/hall_transport_v2_prereg_DRAFT.json",
+    "DFSM": "schemas/controls/dual_feed_state_machine_v1.json",
+    "THL": "docs/thermal_life/THERMAL_LIFE_FRAMEWORK.md",
+    "THL_LEDGER": "schemas/ledgers/thermal_rejection_ledger_v1.json",
+    "HREF": "docs/architecture_comparison/hall_reference/hall_reference_v1.json",
+    "ISTG": "docs/architecture_comparison/interstage/INTERSTAGE_MODEL.md",
+}
+P = dict(INPUTS, A4=A4, A5=A5, A6=A6, G0=G0)
+
+# Mutable governance files: referenced by id only, never read or pinned by this builder.
+GOVERNANCE_NOT_PINNED = [
+    "docs/orchestration/lane_registry_v1.json",
+    "docs/orchestration/trigger_registry_v1.json",
+    "docs/orchestration/trigger_ledger_v2.jsonl",
+    "docs/orchestration/fired_triggers.jsonl",
+    "docs/orchestration/runtime_state.json",
+]
+
+# The three A6 build lanes running in parallel with this one (their deliverables are not in this base).
+PARALLEL_LANES = {
+    "fo_preionizer_module_icd": {
+        "a6_name": "H1-ICD", "trigger": "T_A5_PREIONIZER_ICD",
+        "paths": ["docs/interfaces/preionizer_module/", "schemas/interfaces/preionizer_module_icd_v1.json"],
+        "what": "common H-1 pre-ionizer module interface (A6 authorized_now.fo_preionizer_module_icd)",
+    },
+    "fo_xe_system_ledger": {
+        "a6_name": "XE", "trigger": "T_A5_XE_LEDGER",
+        "paths": ["docs/budgets/xe_ledger/"],
+        "what": "parametric Xe ledger m_Xe_total and stored-Xe subsystem m_Xe_subsystem (A6 authorized_now.fo_xe_system_ledger)",
+    },
+    "fo_phase1_prereg_framework": {
+        "a6_name": "P1-PREG", "trigger": "T_A5_PHASE1_PREREG_FRAMEWORK",
+        "paths": ["docs/experiments/phase1_prereg_framework/"],
+        "what": "Phase-1 pre-registration framework: decision topology, thresholds unfrozen until LOCK-2 (A6 authorized_now.fo_phase1_prereg_framework)",
+    },
+}
+
+# ---------------------------------------------------------------------------------------------------------------
+# Vocabularies
+# ---------------------------------------------------------------------------------------------------------------
+ARCHITECTURES = ["hall_only", "rf_hall", "ecr_hall"]
+COLUMNS = ["requirement", "allocation", "interface_status", "preliminary_design", "evidence_status",
+           "procurement_status", "analysis_test_needed", "blocker", "owner"]
+COLUMN_TITLES = {
+    "requirement": "requirement", "allocation": "allocation", "interface_status": "interface status",
+    "preliminary_design": "preliminary design", "evidence_status": "evidence status",
+    "procurement_status": "procurement status", "analysis_test_needed": "analysis/test needed",
+    "blocker": "blocker", "owner": "owner",
+}
+TBA = "TO_BE_ALLOCATED"
+UNKNOWN = "UNKNOWN - owner to confirm"
+OWNER_TO_ASSIGN = "OWNER_TO_ASSIGN"
+EXPLICIT_VALUES = (TBA, UNKNOWN, OWNER_TO_ASSIGN, "NONE", "OPEN")
+INTERFACE_STATUS = {
+    "FROZEN": "every interface item of the row is in a document whose declared status is frozen/owner-approved and "
+              "none of its fields is a gap",
+    "PARTIAL": "at least one interface item is defined in a draft or proposed document (ICD fields supplied, derivable "
+               "or partial; W3 planes/requirements PROPOSED; bus_power_boundary_v1 component defined), but not frozen",
+    "OPEN": "no interface item of the row is defined: only gaps, TBD requirements or a pending parallel lane",
+}
+BLOCKER_CATEGORIES = {
+    "propulsion_physics": "propulsion physics: an open physical question that only measurement answers "
+                          "(atmospheric sustainment, T/P_bus, eta_u, stability, thruster life mechanisms)",
+    "cathode_xe": "cathode/Xe: cathode selection, operation, consumption and the Xe budget",
+    "mass": "mass: mass allocation or closure",
+    "thermal": "thermal: thermal model, design or rejection",
+    "compressor": "compressor: compressor concept evidence or design",
+    "unresolved_interface": "unresolved interface: an interface definition, interface budget or interface-level owner "
+                            "decision is open",
+    "procurement": "procurement: hardware, instrument, facility or lab not yet designed-released, procured, "
+                   "delivered or calibrated (A4 critical path: 'H-1 manufacture/configuration + facility + "
+                   "instrument procurement/calibration')",
+}
+GATE_SEQUENCE = ["S1a", "LOCK-1", "W5 freeze", "S1", "LOCK-2", "Phase 1"]
+REPORTED_GATES = ["LOCK-1", "W5 freeze", "S1", "LOCK-2", "Phase 1"]
+NONE_ON_H1_PATH = "NONE_ON_H1_PATH"
+EVIDENCE_CLASSES = ["measured", "digitized", "inferred", "reconstructed", "model-derived", "assumed"]
+PHASE1_DECISION_QUANTITIES = [
+    "sustainment", "T/P_bus", "eta_u", "operating-envelope width", "ignition/restart behaviour",
+    "stability/oscillation", "absolute thrust compatibility", "full bus-power compatibility",
+    "no continuous Xe augmentation",
+]
+# PROPOSED by this lane (owner question MQ-03): the blocker category that each A5 architecture-closing risk belongs to.
+RISK_CATEGORY = {
+    1: ("propulsion_physics", "atmospheric sustainment is a physical question that only H-1 Phase 1 measures"),
+    2: ("propulsion_physics", "anode/channel life under oxygen is a thruster life mechanism (life test)"),
+    3: ("cathode_xe", "cathode Xe consumption and oxygen isolation"),
+    4: ("mass", "total bus-power and mass closure; the A6 category list has no separate power entry, so bus-power "
+                "closure is carried here and noted"),
+}
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Low-level helpers
+# ---------------------------------------------------------------------------------------------------------------
+def sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+class Ctx:
+    """Loaded inputs. Every file is read from `root`; a missing input raises (no fallback)."""
+
+    def __init__(self, root: Path = REPO):
+        self.root = Path(root)
+        self._json: dict = {}
+        self._text: dict = {}
+        self.citations: list = []
+        self.premises: list = []
+
+    def path(self, rel: str) -> Path:
+        p = self.root / rel
+        if not p.exists():
+            raise FileNotFoundError(f"required input missing: {rel} (no fallback; CLAUDE.md rule 3)")
+        return p
+
+    def json(self, rel: str):
+        if rel not in self._json:
+            self._json[rel] = json.loads(self.path(rel).read_text(encoding="utf-8"))
+        return self._json[rel]
+
+    def text(self, rel: str) -> str:
+        if rel not in self._text:
+            raw = self.path(rel).read_text(encoding="utf-8")
+            if rel.endswith(".json"):
+                # JSON may escape non-ASCII; search both the raw text and an unescaped dump.
+                raw = raw + "\n" + json.dumps(json.loads(raw), ensure_ascii=False)
+            self._text[rel] = raw
+        return self._text[rel]
+
+    def premise(self, desc: str, ok: bool, source: str):
+        self.premises.append({"premise": desc, "source": source, "holds": bool(ok)})
+        if not ok:
+            raise RuntimeError(f"premise no longer holds, revise the affected row: {desc} ({source})")
+
+
+def cite(key_or_path: str, locator: str, *tokens: str) -> dict:
+    path = P.get(key_or_path, key_or_path)
+    return {"path": path, "locator": locator, "verified_tokens": list(tokens)}
+
+
+def pending(lane: str) -> dict:
+    spec = PARALLEL_LANES[lane]
+    return {"pending_parallel_lane": lane, "paths": list(spec["paths"])}
+
+
+def item(text: str, *sources: dict, **extra) -> dict:
+    if not sources:
+        raise ValueError(f"unsourced statement: {text!r}")
+    out = {"text": text, "sources": list(sources)}
+    out.update(extra)
+    return out
+
+
+def verify_citations(ctx: Ctx, obj) -> int:
+    """Walk obj; every {'path','verified_tokens'} citation must resolve. Returns the number of citations checked."""
+    n = 0
+    if isinstance(obj, dict):
+        if "path" in obj and "verified_tokens" in obj:
+            txt = ctx.text(obj["path"])
+            for t in obj["verified_tokens"]:
+                if t not in txt:
+                    raise ValueError(f"citation token {t!r} not found in {obj['path']} ({obj.get('locator')})")
+            return 1
+        for v in obj.values():
+            n += verify_citations(ctx, v)
+    elif isinstance(obj, list):
+        for v in obj:
+            n += verify_citations(ctx, v)
+    return n
+
+
+def lane_state(root: Path, lane: str) -> dict:
+    """Lazy re-read of a parallel lane's deliverable paths. Never interprets content; never required."""
+    spec = PARALLEL_LANES[lane]
+    root = Path(root)
+    present, files = [], []
+    for rel in spec["paths"]:
+        p = root / rel
+        if p.exists():
+            present.append(rel)
+            cands = sorted(q for q in p.rglob("*") if q.is_file()) if p.is_dir() else [p]
+            for q in cands:
+                entry = {"path": q.relative_to(root).as_posix(), "sha256": sha256_file(q)}
+                if q.suffix == ".json":
+                    try:
+                        d = json.loads(q.read_text(encoding="utf-8"))
+                    except (ValueError, UnicodeDecodeError) as exc:
+                        entry["declared_status"] = f"UNREADABLE_JSON ({type(exc).__name__})"
+                    else:
+                        st = None
+                        if isinstance(d, dict):
+                            st = d.get("status")
+                            if st is None and isinstance(d.get("x-icd"), dict):
+                                st = d["x-icd"].get("status")
+                        entry["declared_status"] = st if isinstance(st, str) else "not declared"
+                files.append(entry)
+    if not present:
+        state = "PENDING_PARALLEL_LANE"
+    elif len(present) == len(spec["paths"]):
+        state = "PRESENT"
+    else:
+        state = "PARTIALLY_PRESENT"
+    declared = sorted({f["declared_status"] for f in files if "declared_status" in f})
+    frozen = bool(declared) and all(s.upper().startswith("FROZEN") for s in declared)
+    return {"lane": lane, "a6_name": spec["a6_name"], "trigger": spec["trigger"], "what": spec["what"],
+            "paths": list(spec["paths"]), "state": state, "files": files, "declared_statuses": declared,
+            "declared_frozen": frozen and state == "PRESENT",
+            "content_interpreted": False}
+
+
+def lane_phrase(ls: dict) -> str:
+    if ls["state"] == "PENDING_PARALLEL_LANE":
+        return f"pending parallel lane {ls['lane']}"
+    st = ", ".join(ls["declared_statuses"]) or "not declared"
+    return (f"parallel lane {ls['lane']} {ls['state'].lower().replace('_', ' ')} (declared status: {st}); "
+            f"content not interpreted by this builder: integrate in the next revision")
+
+
+def fmt(x: float) -> str:
+    return f"{x:.3g}"
+
+
+def evidence_scan(obj) -> dict:
+    """Count evidence classes (keys evidence_class / quantity_type with a value in the six classes) and evidence levels."""
+    classes = {c: 0 for c in EVIDENCE_CLASSES}
+    levels: dict = {}
+
+    def walk(o):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if k in ("evidence_class", "quantity_type") and isinstance(v, str) and v in classes:
+                    classes[v] += 1
+                elif k == "evidence_level" and isinstance(v, int) and not isinstance(v, bool) and 1 <= v <= 7:
+                    levels[str(v)] = levels.get(str(v), 0) + 1
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+
+    walk(obj)
+    return {"classes": {k: v for k, v in classes.items() if v},
+            "levels": dict(sorted(levels.items())),
+            "n_classified_values": sum(classes.values()),
+            "level_1_in_house_count": levels.get("1", 0),
+            "level_2_same_hardware_count": levels.get("2", 0)}
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Interface-status helpers
+# ---------------------------------------------------------------------------------------------------------------
+def icd_item(ctx: Ctx, iface: str, fields=None, role: str = "") -> dict:
+    icd = ctx.json(P["ICD"])
+    doc_status = icd["x-icd"]["status"]
+    df = icd["$defs"][iface]
+    props = df["properties"]
+    names = list(props) if fields is None else list(fields)
+    counts: dict = {}
+    for f in names:
+        if f not in props:
+            raise KeyError(f"ICD field {iface}.{f} not found")
+        s = props[f]["x-field"]["status"]
+        counts[s] = counts.get(s, 0) + 1
+    non_gap = sum(v for k, v in counts.items() if k != "gap")
+    if doc_status.upper().startswith("FROZEN") and not counts.get("gap") and not counts.get("partial"):
+        status = "FROZEN"
+    elif non_gap:
+        status = "PARTIAL"
+    else:
+        status = "OPEN"
+    return {"document": P["ICD"], "companion": P["ICD_MD"], "item": iface if fields is None else
+            f"{iface}: " + ", ".join(names), "role": role, "document_status": doc_status,
+            "field_status_counts": dict(sorted(counts.items())), "status": status}
+
+
+def hw_item(ctx: Ctx, ids, role: str = "") -> dict:
+    hw = ctx.json(P["HW"])
+    reqs = {r["id"]: r for r in hw["requirements"]}
+    planes = {p["id"]: p for p in hw["interface_planes"]}
+    cis = {c["id"]: c for c in hw["configuration_items"]}
+    st = {}
+    for i in ids:
+        if i in reqs:
+            st[i] = reqs[i]["status"]
+        elif i in planes:
+            st[i] = "DEFINED_PLANE"
+        elif i in cis:
+            st[i] = "CONFIGURATION_ITEM"
+        else:
+            raise KeyError(f"{i} not found in {P['HW']}")
+    status = "OPEN" if all(v == "TBD" for v in st.values()) else "PARTIAL"
+    return {"document": P["HW"], "item": ", ".join(ids), "role": role, "document_status": hw["status"],
+            "item_statuses": st, "status": status}
+
+
+def bus_item(components, role: str = "") -> dict:
+    allc = set(arch_boundary.COMMON_COMPONENTS)
+    for a in arch_boundary.ARCHITECTURES:
+        allc |= set(arch_boundary.REQUIRED_COMPONENTS[a])
+    for c in components:
+        if c not in allc:
+            raise KeyError(f"{c} is not a {arch_boundary.BOUNDARY_VERSION} component")
+    return {"document": P["AB"], "companion": P["BPB"], "item": f"{arch_boundary.BOUNDARY_VERSION}: " +
+            ", ".join(components), "role": role, "document_status": "DRAFT for the owner (BUS_POWER_BOUNDARY.md)",
+            "status": "PARTIAL"}
+
+
+def doc_item(ctx: Ctx, key: str, item_desc: str, status_value: str, role: str = "") -> dict:
+    ctx.path(P[key])
+    return {"document": P[key], "item": item_desc, "role": role, "document_status": status_value, "status": "PARTIAL"}
+
+
+def lane_item(ls: dict, item_desc: str, role: str = "") -> dict:
+    if ls["state"] == "PENDING_PARALLEL_LANE":
+        status = "OPEN"
+    elif ls["declared_frozen"]:
+        status = "FROZEN"
+    else:
+        status = "PARTIAL"
+    return {"document": " + ".join(ls["paths"]), "item": item_desc, "role": role,
+            "document_status": lane_phrase(ls), "pending_parallel_lane": ls["lane"], "status": status}
+
+
+def interface_cell(items: list) -> dict:
+    sts = [i["status"] for i in items]
+    if not items:
+        raise ValueError("interface cell needs at least one item")
+    value = "FROZEN" if all(s == "FROZEN" for s in sts) else "OPEN" if all(s == "OPEN" for s in sts) else "PARTIAL"
+    return {"value": value, "items": items}
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Shared facts read from inputs
+# ---------------------------------------------------------------------------------------------------------------
+def rfp(ctx: Ctx) -> dict:
+    """RFP requirements as recorded (hard_gate_matrix_v1 rfp.recorded_in R1..R7; RFP text not in the repository)."""
+    hg = ctx.json(P["HG"])
+    rec = {r["id"]: r for r in hg["rfp"]["recorded_in"]}
+    for rid in ("R1", "R2", "R3", "R4", "R6", "R7"):
+        if rid not in rec:
+            raise KeyError(f"RFP record {rid} missing from {P['HG']}")
+    v = "(RFP as recorded in the repository; the RFP document is not in the repository: verify)"
+    return {
+        "thrust": item(f"thrust 12-25 mN {v}", cite("HG", "rfp.recorded_in R2", "thrust_min_mN 12.0", "thrust_max_mN 25.0")),
+        "power": item(f"electrical power < 1.5 kW {v}", cite("HG", "rfp.recorded_in R2", "power_max_W 1500.0")),
+        "mass": item(f"propulsion-system mass < 40 kg {v}", cite("HG", "rfp.recorded_in R2", "mass_max_kg 40.0")),
+        "mass_scope": item("mass scope as recorded: < 40 kg total incl. intake, compressor, PSE, Xe + tank, structure, "
+                           "10 % margin (recorded summary, verify)",
+                           cite("HG", "rfp.recorded_in R3", "incl. intake, compressor, PSE, Xe + tank, structure")),
+        "firing": item(f"firing life > 15,000 h {v}", cite("HG", "rfp.recorded_in R2", "ignition_hours 15000.0")),
+        "mission": item(f"mission 26,000 h (non-consumable life) {v}",
+                        cite("HG", "rfp.recorded_in R2", "mission_hours 26000.0"),
+                        cite("A5", "allocations_and_requirements 'non-consumable life'", "26,000 h mission")),
+        "altitude": item(f"operation at 180-230 km {v}", cite("HG", "rfp.recorded_in R2", "alt_min_km 180.0", "alt_max_km 230.0")),
+        "propellant": item("air + Xe; Hall preferred (RFP as recorded)", cite("HG", "rfp.recorded_in R1", "Hall preferred, air + Xe")),
+        "chain": item("element of the RFP architecture: atmospheric path intake -> filter -> compressor -> atmospheric gas "
+                      "chamber -> valve; Xe path Xe chamber -> valve (as recorded)",
+                      cite("HG", "rfp.recorded_in R4", "RFP architecture: atmospheric path intake")),
+        "ic": lambda sub: item(f"indigenous content {sub} (programmatic requirement recorded but not gated, hard-gate "
+                               "OD12; verify against the RFP)",
+                               cite("HG", "rfp.recorded_in R2; rfp_requirements_recorded_not_gated",
+                                    "ic_subsystem_min thruster 0.80, intake 0.80, compressor 0.60, pse 0.70")),
+        "spf": item("no single-point failure in electronics (recorded, verify)",
+                    cite("HG", "rfp.recorded_in R7", "no single-point failure in electronics")),
+        "ao_test": item("AO-beam test (recorded as RFP 4.1a) for AO-exposed surfaces",
+                        cite("HG", "rfp.recorded_in R6; rfp_requirements_recorded_not_gated", "AO-beam test (RFP 4.1a)")),
+        "nascent_o": item("'ionise nascent O' (carried through 'atmospheric propellant' in G1/G6; no threshold recorded)",
+                          cite("HG", "rfp.recorded_in R6", "ionise nascent O")),
+    }
+
+
+def a5_alloc(ctx: Ctx, quantity: str) -> dict:
+    for a in ctx.json(A5)["allocations_and_requirements"]:
+        if a["quantity"] == quantity:
+            return a
+    raise KeyError(f"A5 allocation {quantity!r} not found")
+
+
+def a5_risk(ctx: Ctx, rank: int) -> dict:
+    for r in ctx.json(A5)["architecture_closing_risks"]:
+        if r["rank"] == rank:
+            return r
+    raise KeyError(f"A5 risk {rank} not found")
+
+
+def s1a_state(ctx: Ctx, cid: str) -> str:
+    for c in ctx.json(P["S1A_ST"])["conditions"]:
+        if c["id"] == cid:
+            return c["state"]
+    raise KeyError(f"S1a condition {cid} not found")
+
+
+def s1_state(ctx: Ctx, cid: str) -> str:
+    for c in ctx.json(P["S1_ST"])["conditions"]:
+        if c["id"] == cid:
+            return c.get("state") or c.get("status")
+    raise KeyError(f"S1 condition {cid} not found")
+
+
+def l1_decision(ctx: Ctx, did: str) -> dict:
+    for d in ctx.json(P["L1"])["decisions"]:
+        if d["id"] == did:
+            return d
+    raise KeyError(f"LOCK-1 decision {did} not found")
+
+
+def hw_status(ctx: Ctx, rid: str) -> str:
+    for r in ctx.json(P["HW"])["requirements"]:
+        if r["id"] == rid:
+            return r["status"]
+    raise KeyError(rid)
+
+
+def ins_name(ctx: Ctx, iid: str) -> str:
+    for i in ctx.json(P["INS"])["instruments"]:
+        if i["id"] == iid:
+            return i["name"]
+    raise KeyError(f"{iid} not found in {P['INS']}")
+
+
+def bom_item(ctx: Ctx, iid: str) -> dict:
+    for i in ctx.json(P["BOM"])["items"]:
+        if i["id"] == iid:
+            return i
+    raise KeyError(f"mass_bom item {iid} not found")
+
+
+def bom_tba(ctx: Ctx, iid: str, extra: str = "") -> dict:
+    it = bom_item(ctx, iid)
+    basis = it["cbe"]["basis"]
+    ctx.premise(f"mass_bom item {iid} has no sourced CBE (basis {basis})", basis in ("TBD", "scaling_relation"), P["BOM"])
+    req = it["cbe"].get("requires", "scaling relation on TBD items")
+    return {"dimension": "mass", "value": TBA,
+            "basis": f"mass_bom_v1 item '{iid}' CBE {basis}: {req}{extra}",
+            "sources": [cite("BOM", f"items[id={iid}].cbe", f'"id": "{iid}"')]}
+
+
+def mass_system_context(ctx: Ctx) -> dict:
+    a = a5_alloc(ctx, "system mass design allocation")
+    return {"quantity": a["quantity"], "value": a["value"], "status": a["status"],
+            "note": "system-level only; A5 records no subsystem sub-allocation",
+            "sources": [cite("A5", "allocations_and_requirements 'system mass design allocation'", a["value"])]}
+
+
+def power_system_context(ctx: Ctx) -> dict:
+    a = a5_alloc(ctx, "bus-power design allocation")
+    return {"quantity": a["quantity"], "value": a["value"], "status": a["status"],
+            "note": "system-level only; A5 records no component sub-allocation",
+            "sources": [cite("A5", "allocations_and_requirements 'bus-power design allocation'", a["value"])]}
+
+
+def power_tba(component: str, extra: str = "") -> dict:
+    return {"dimension": "power", "value": TBA,
+            "basis": f"{arch_boundary.BOUNDARY_VERSION} component '{component}': no component allocation recorded "
+                     f"(aux bus: load/efficiency TBD){extra}",
+            "sources": [cite("AUX_MD", f"component table `{component}`", f"`{component}`"),
+                        cite("AB", "COMMON_COMPONENTS / PREIONIZER_COMPONENTS", f'"{component}"')]}
+
+
+def power_na(reason_src: dict, reason: str) -> dict:
+    return {"dimension": "power", "value": "NOT_APPLICABLE", "basis": reason, "sources": [reason_src]}
+
+
+def allocation_cell(ctx: Ctx, dims: list, *, system_mass=True, system_power=True) -> dict:
+    allocated = [d for d in dims if d["value"] not in (TBA, "NOT_APPLICABLE")]
+    ctx_list = []
+    if system_mass:
+        ctx_list.append(mass_system_context(ctx))
+    if system_power:
+        ctx_list.append(power_system_context(ctx))
+    return {"value": "PARTIALLY_ALLOCATED" if allocated else TBA,
+            "dimensions": dims,
+            "system_level_context_not_a_sub_allocation": ctx_list}
+
+
+def a5_allocated(ctx: Ctx, dimension: str, quantity: str, key: str | None = None, *, token: str | None = None,
+                 status_note: str | None = None) -> dict:
+    """An allocation recorded in A5 (top-level allocations or the Xe mass allocation block)."""
+    a5 = ctx.json(A5)
+    if key is None:
+        a = a5_alloc(ctx, quantity)
+        return {"dimension": dimension, "value": a["value"], "status": a["status"], "recorded_by": "A5",
+                "basis": f"A5 allocations_and_requirements '{quantity}'",
+                "sources": [cite("A5", f"allocations_and_requirements '{quantity}'", a["value"])]}
+    val = a5["xe_mass_allocation"][key]
+    return {"dimension": dimension, "value": f"{val} mg/s" if key.endswith("_mg_s") else str(val),
+            "status": status_note or "A5 design target (allocation)", "recorded_by": "A5",
+            "basis": f"A5 xe_mass_allocation.{key}",
+            "sources": [cite("A5", f"xe_mass_allocation.{key}", token or f'"{key}"')]}
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Row cells
+# ---------------------------------------------------------------------------------------------------------------
+def requirement_cell(value: str, items: list) -> dict:
+    return {"value": value, "items": items}
+
+
+def design_cell(value: str, items: list, h1_analogue: str | None = None, h1_sources: list | None = None) -> dict:
+    out = {"value": value, "items": items}
+    if h1_analogue:
+        out["h1_test_analogue"] = item(h1_analogue, *(h1_sources or []))
+    return out
+
+
+def evidence_cell(ctx: Ctx, value: str, matrices: list, items: list) -> dict:
+    summaries = []
+    for key, locator in matrices:
+        obj = ctx.json(P[key])
+        node = obj
+        if locator:
+            for part in locator.split("/"):
+                node = node[part]
+        summaries.append({"path": P[key] + (f"#/{locator}" if locator else ""), **evidence_scan(node)})
+    return {"value": value,
+            "evidence_matrix": [s["path"] for s in summaries] or None,
+            "matrix_summaries": summaries,
+            "vyovrinda_hardware_evidence": "none (evidence level 1 entries: "
+                                           f"{sum(s['level_1_in_house_count'] for s in summaries)}; no H-1/C-1 or flight "
+                                           "unit has been measured)",
+            "items": items}
+
+
+def procurement_cell(value: str, items: list) -> dict:
+    return {"value": value, "items": items}
+
+
+def analysis_cell(ctx: Ctx, *, s1a=(), s1=(), ins=(), phase1=(), other=(), pend=()) -> dict:
+    s1a_l = [{"id": c, "state": s1a_state(ctx, c), "source": P["S1A_ST"]} for c in s1a]
+    s1_l = [{"id": c, "state": s1_state(ctx, c), "source": P["S1_ST"]} for c in s1]
+    ins_l = [{"id": i, "name": ins_name(ctx, i), "source": P["INS"]} for i in ins]
+    a6txt = ctx.text(A6)
+    for q in phase1:
+        if q not in PHASE1_DECISION_QUANTITIES or q not in a6txt:
+            raise ValueError(f"Phase-1 decision quantity {q!r} not frozen by A6")
+    parts = []
+    if s1a_l:
+        parts.append(", ".join(c["id"] for c in s1a_l))
+    if s1_l:
+        parts.append(", ".join(c["id"] for c in s1_l))
+    if ins_l:
+        parts.append(", ".join(i["id"] for i in ins_l))
+    if phase1:
+        parts.append("Phase-1 DQ: " + "; ".join(phase1))
+    ids = [o["id"] for o in other]
+    if ids:
+        parts.append(", ".join(ids))
+    if pend:
+        parts.append("pending: " + ", ".join(p["lane"] for p in pend))
+    return {"value": " | ".join(parts),
+            "s1a_conditions": s1a_l, "s1_conditions": s1_l, "instruments": ins_l,
+            "phase1_decision_quantities": {"quantities": list(phase1),
+                                           "source": [cite("A6", "authorized_now.fo_phase1_prereg_framework",
+                                                           *phase1)] if phase1 else [],
+                                           "framework": lane_phrase(ctx.lanes["fo_phase1_prereg_framework"])
+                                           if phase1 else None},
+            "other": list(other), "pending_parallel": list(pend)}
+
+
+def oth(oid: str, what: str, *sources: dict) -> dict:
+    if not sources:
+        raise ValueError(f"unsourced analysis item {oid}")
+    return {"id": oid, "what": what, "sources": list(sources)}
+
+
+def pend_item(ctx: Ctx, lane: str, what: str) -> dict:
+    ls = ctx.lanes[lane]
+    return {"lane": lane, "paths": ls["paths"], "state": ls["state"], "what": what, "status_text": lane_phrase(ls)}
+
+
+def blocker_cell(item_text: str, category: str, earliest: str, basis: str, sources: list, *,
+                 outside_gate_path: str | None = None) -> dict:
+    if category not in BLOCKER_CATEGORIES:
+        raise ValueError(f"unknown blocker category {category}")
+    if earliest != NONE_ON_H1_PATH and earliest not in GATE_SEQUENCE:
+        raise ValueError(f"unknown gate {earliest}")
+    if not sources:
+        raise ValueError("unsourced blocker")
+    if earliest == NONE_ON_H1_PATH:
+        blocks = {g: False for g in REPORTED_GATES}
+        if not outside_gate_path:
+            raise ValueError("a blocker off the H-1 gate path must say what it blocks instead")
+    else:
+        k = GATE_SEQUENCE.index(earliest)
+        blocks = {g: GATE_SEQUENCE.index(g) >= k for g in REPORTED_GATES}
+    return {"value": f"{item_text}", "category": category, "category_label": BLOCKER_CATEGORIES[category].split(":")[0],
+            "earliest_blocked_step": earliest, "blocks": blocks, "basis": basis, "sources": sources,
+            "outside_gate_path": outside_gate_path}
+
+
+def owner_cell() -> dict:
+    return {"value": OWNER_TO_ASSIGN,
+            "basis": "no accountable party is recorded for this subsystem in any pinned input; the owner decisions "
+                     "that act on this row are listed in its blocker and analysis/test cells"}
+
+
+def risks(ctx: Ctx, mapping: list) -> list:
+    out = []
+    for rank, why in mapping:
+        r = a5_risk(ctx, rank)
+        out.append({"rank": rank, "risk": r["risk"], "a5_response": r["response"], "why_this_row": why,
+                    "source": cite("A5", f"architecture_closing_risks[rank={rank}]", r["risk"])})
+    return out
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# The 17 rows
+# ---------------------------------------------------------------------------------------------------------------
+def build_rows(ctx: Ctx) -> list:
+    R = rfp(ctx)
+    a5 = ctx.json(A5)
+    arch = a5["architecture"]
+    w1 = ctx.json(P["W1"])
+    cmp_ = ctx.json(P["CMP"])
+    hw = ctx.json(P["HW"])
+    L = ctx.lanes
+    pim, xel, p1f = L["fo_preionizer_module_icd"], L["fo_xe_system_ledger"], L["fo_phase1_prereg_framework"]
+
+    # ---- premises re-checked on every build (a change raises: revise the row) --------------------------------
+    for did in ("D-06", "D-09", "D-11", "D-13"):
+        ctx.premise(f"LOCK-1 decision {did} is OPEN_OWNER_DECISION", l1_decision(ctx, did)["status"] == "OPEN_OWNER_DECISION", P["L1"])
+    ctx.premise("LOCK-1 brief not signed (locked == false)", ctx.json(P["L1"])["locked"] is False, P["L1"])
+    for rid in ("HW-H1-03", "HW-ENV-03", "HW-MC-08", "HW-PIM-06"):
+        ctx.premise(f"W3 requirement {rid} is TBD", hw_status(ctx, rid) == "TBD", P["HW"])
+    ctx.premise("W3 hardware register is DRAFT_PENDING_OWNER", hw["status"] == "DRAFT_PENDING_OWNER", P["HW"])
+    ctx.premise("S1a gate verdict S1A_NOT_READY", ctx.json(P["S1A_ST"])["verdict"] == "S1A_NOT_READY", P["S1A_ST"])
+    ctx.premise("S1 (N4) gate verdict S1_NOT_READY", ctx.json(P["S1_ST"])["verdict"] == "S1_NOT_READY", P["S1_ST"])
+    ctx.premise("S1a engineering hardware record absent (S1A-C1)",
+                not (ctx.root / "docs/experiments/hardware/s1a_engineering_hardware_record.json").exists(), P["S1A"])
+    ctx.premise("A5 m_Xe_total_value is PENDING_OWNER",
+                str(a5["xe_mass_allocation"]["m_Xe_total_value"]).startswith("PENDING_OWNER"), A5)
+    ctx.premise("MCQ S1 gate items all MISSING",
+                all(x["state"] == "MISSING" for x in ctx.json(P["MCQ"])["s1_gate_items"]), P["MCQ"])
+    ctx.premise("dual-feed state machine second lens not passed",
+                "NOT YET PASSED" in ctx.json(P["DFSM"])["verification"]["second_lens"], P["DFSM"])
+    aux_sum = ctx.json(P["AUX"])["ledger_summary"]
+    ctx.premise("aux bus: no ledger evaluable", aux_sum["evaluated"] == 0, P["AUX"])
+    b1_form = ctx.json(P["B1"])["outcome"]["form"]
+    ctx.premise("Bundle 1 outcome NO_BASELINE_YET", b1_form == "NO_BASELINE_YET", P["B1"])
+
+    w1_cands = [f"{c['id']} ({w1['closure'][c['id']]['status']})" for c in w1["candidates"]]
+    rs = cmp_["requirement_summary"]
+    cr = rs["CR_required_self_consistent"]
+    s25 = rs["S_required_m3_s"]["0.25"]
+    a25 = rs["A_inlet_min_m2"]["0.25"]
+    veto = {r["id"]: r for r in ctx.json(P["VETO"])["risk_indicators"]}
+
+    def veto_item(rid: str, what: str) -> dict:
+        r = veto[rid]
+        return item(f"{rid}: {what} (evidence class {r['evidence_class']}; not verdict-bearing)",
+                    cite("VETO", f"risk_indicators[id={rid}]", rid))
+
+    rows = []
+
+    def row(rid, group, idx, cols, risk_map, h1_analogue_note=None):
+        name = arch[group][idx]
+        r = {"id": rid, "group": group, "a5_name": name,
+             "a5_source": cite("A5", f"architecture.{group}[{idx}]", name),
+             "baseline_flight_hardware": True, "reserved_interface": False,
+             "columns": {c: cols[c] for c in COLUMNS}, "a5_risk_mapping": risks(ctx, risk_map)}
+        rows.append(r)
+
+    # ======================= atmospheric branch ===========================================================
+    row("SM-ATM-01", "atmospheric_branch", 0, {
+        "requirement": requirement_cell("RFP chain element; 180-230 km; 26,000 h mission; IC intake 0.80 (verify); A4 intake sizing driver", [
+            R["chain"], R["altitude"], R["mission"], R["ic"]("intake >= 0.80"), R["ao_test"],
+            item("DERIVED (A4 intake_sizing): the molecular-entrance constraint (0.098-0.377 m2 minimum inlet at b = 0.25) "
+                 "makes intake/compressor sizing a spacecraft-level driver before the flight geometry is locked",
+                 cite("A4", "decisions.intake_sizing", "0.098-0.377 m2 minimum inlet at b = 0.25")),
+            item("DERIVED (A5 risk 1 evidence): delivered flow <= ~3.2 mg/s and delivered O2 fraction 0.42-0.60 set the "
+                 "low-flow / high-O2 condition the intake produces",
+                 cite("A5", "architecture_closing_risks[rank=1].evidence", "<= ~3.2 mg/s delivered", "0.42-0.60")),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            bom_tba(ctx, "intake"),
+            power_na(cite("ICD_MD", "IF-A1 'Not applicable here'", "shaft_power (passive element)"),
+                     "passive element: no bus_power_boundary_v1 component (ICD IF-A1 shaft_power not applicable)"),
+        ]),
+        "interface_status": interface_cell([
+            icd_item(ctx, "IF-A0", role="in: free stream -> intake aperture"),
+            icd_item(ctx, "IF-A1", role="out: intake -> filter"),
+        ]),
+        "preliminary_design": design_cell("CANDIDATE_CONCEPT", [
+            item("PROPOSED candidate intake geometries only (W1 feed-state closure candidates, closure status in "
+                 "brackets): " + "; ".join(w1_cands) + "; conditional on owner decisions DI-1.1/DI-1.2",
+                 cite("W1", "candidates; closure", *[c["id"] for c in w1["candidates"]])),
+            item("no Vyovrinda intake design: the mass BOM requires 'Vyovrinda intake geometry'; abep_sim/intake_tpmc.py "
+                 "gives collection performance, not a design", cite("BOM", "items[id=intake].cbe.requires", "Vyovrinda intake geometry")),
+        ], "none: H-1 tests use bottled N2 / N2+O2 / Xe through the lab feed system FS-C (HW-ENV-07)",
+            [cite("HW", "requirements[id=HW-ENV-07]", "HW-ENV-07", "No atomic-O source is part of the minimum hardw")]),
+        "evidence_status": evidence_cell(ctx, "MODEL_DERIVED_FROM_ASSUMED_INPUTS", [], [
+            item("valve-outlet feed states are model-derived from assumed (PROPOSED) intake/compressor/buffer/valve "
+                 "candidates on the frozen TPMC surface; nothing measured", cite("W1", "valve_outlet / flight_status_control",
+                 "model-derived (from assumed inputs)", "PROPOSED_FLIGHT_REPRESENTATIVE"), evidence_class="model-derived"),
+            item("no intake evidence matrix exists in the base (published ABEP platform comparables LIT-01.. are context only)",
+                 cite("W1", "published_comparables", "LIT-01")),
+        ]),
+        "procurement_status": procurement_cell(UNKNOWN, [
+            item("no procurement record for a flight intake in the base", cite("BOM", "items[id=intake].cbe", '"basis": "TBD"'))]),
+        "analysis_test_needed": analysis_cell(ctx, s1a=["S1A-C3"], s1=["S1-C3"], other=[
+            oth("DI-1.1", "area sizing rule and design case (owner)", cite("W1", "owner_decisions_DI1", "DI-1.1", "Area sizing rule and design case")),
+            oth("DI-1.2", "intake geometry (L/d, phi) and TPMC-surface authorisation (owner)", cite("W1", "owner_decisions_DI1", "DI-1.2")),
+            oth("DI-1.3", "surface state / accommodation for the design case (owner)", cite("W1", "owner_decisions_DI1", "DI-1.3")),
+            oth("DI-1.11", "which candidate(s) define the frozen DI-1 test-point set (owner)", cite("W1", "owner_decisions_DI1", "DI-1.11")),
+            oth("G-02", "species-selective collection lost on the production path (ICD gap register)", cite("ICD_MD", "section 7", "| G-02 |")),
+            oth("G-10", "V_rel never produced (ICD gap register)", cite("ICD_MD", "section 7", "| G-10 |")),
+            oth("RG-08", "W5: registered N2 test points require W1 and LOCK-1", cite("W5", "runnability_gates.gates[id=RG-08]", "RG-08", "TBD - requires W1 and LOCK-1")),
+            oth("RFP 4.1a", "AO-beam test for AO-exposed surfaces", cite("HG", "rfp_requirements_recorded_not_gated", "AO-beam test (recorded as RFP 4.1a)")),
+        ]),
+        "blocker": blocker_cell(
+            "Intake sizing rule/design case and geometry are open owner decisions (DI-1.1, DI-1.2), so the W1 valve-outlet "
+            "feed states and test points stay candidate-conditional (DI-1.11 open)",
+            "unresolved_interface", "LOCK-1",
+            "LOCK-1 input lock1_inputs[0] (mdot_min, mdot_nom, composition) is 'TBD - requires W1 valve-outlet test points "
+            "(IF-A5)'; the W1 test-point set is candidate-conditional until DI-1.11 is decided. S1a is not blocked: "
+            "S1A-C3 asks for owner-released GROUND_QUALIFICATION_POINTs, which do not need the flight intake",
+            [cite("L1", "lock1_inputs[0]", "TBD - requires W1 valve-outlet test points (IF-A5)"),
+             cite("W1", "owner_decisions_DI1; flight_status_control", "DI-1.11", "GROUND_QUALIFICATION_POINT")]),
+        "owner": owner_cell(),
+    }, [(1, "the intake sets the delivered flow (<= ~3.2 mg/s) and O2 fraction at which risk 1 is tested"),
+        (4, "intake mass (A4: spacecraft-level sizing driver) enters the mass closure")])
+
+    row("SM-ATM-02", "atmospheric_branch", 1, {
+        "requirement": requirement_cell("RFP chain element; 26,000 h mission; no numeric requirement recorded (TBD)", [
+            R["chain"], R["mission"],
+            item("TBD - requires a filter concept and its stated protection function (ICD open question 1: separate "
+                 "element or lumped into the intake)", cite("ICD_MD", "section 9, open question 1", "**Filter (G-01).**")),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            bom_tba(ctx, "filter"),
+            power_na(cite("BPB", "section 3, 'Not covered by v1'", "A powered filter"),
+                     "passive filter: no bus component; a powered filter is not covered by bus_power_boundary_v1 (new "
+                     "boundary version needed)"),
+        ]),
+        "interface_status": interface_cell([
+            icd_item(ctx, "IF-A1", role="in: intake -> filter"),
+            icd_item(ctx, "IF-A2", role="out: filter -> compressor"),
+        ]),
+        "preliminary_design": design_cell("NONE", [
+            item("filter concept and geometry are not defined in the repository", cite("BOM", "items[id=filter].cbe.requires",
+                 "filter concept and geometry (not defined in this repository)")),
+            item("model only: filter_transmission is a code default used only by the direct TPMC (production path: never)",
+                 cite("ICD_MD", "IF-A2 filter_transmission / G-01", "filter_transmission", "| G-01 |")),
+        ], "none: the lab feed FS-C has no filter (bottled gases, HW-ENV-07)", [cite("HW", "requirements[id=HW-ENV-07]", "HW-ENV-07")]),
+        "evidence_status": evidence_cell(ctx, "NONE", [], [
+            item("no measurement and no evidence matrix; the only filter number in code is a default (assumed)",
+                 cite("ICD_MD", "IF-A2 filter_transmission", "code default; used only by the direct TPMC"), evidence_class="assumed")]),
+        "procurement_status": procurement_cell(UNKNOWN, [item("no filter procurement record", cite("BOM", "items[id=filter]", '"id": "filter"'))]),
+        "analysis_test_needed": analysis_cell(ctx, other=[
+            oth("ICD-OQ-1", "filter as a separate element with its own transmission, or lumped (owner)", cite("ICD_MD", "section 9", "**Filter (G-01).**")),
+            oth("G-01", "filter flow effect absent on the production path", cite("ICD_MD", "section 7", "| G-01 |")),
+            oth("G-08", "no pressure-loss model (filter, feed line, valve, regulator)", cite("ICD_MD", "section 7", "| G-08 |")),
+            oth("G-11", "no contamination transport", cite("ICD_MD", "section 7", "| G-11 |")),
+            oth("G3_mass", "hard gate G3 mass (filter is a BOM item)", cite("HG", "gates[id=G3_mass]", "G3_mass")),
+        ]),
+        "blocker": blocker_cell(
+            "No filter concept: its flow effect is absent on the production path (ICD G-01) and whether it is a separate "
+            "element is an open owner question (ICD open question 1)",
+            "unresolved_interface", NONE_ON_H1_PATH,
+            "the H-1 lab feed is bottled gas through FS-C and has no filter (HW-ENV-07)",
+            [cite("ICD_MD", "section 7 G-01; section 9 open question 1", "| G-01 |", "**Filter (G-01).**"),
+             cite("HW", "requirements[id=HW-ENV-07]", "HW-ENV-07")],
+            outside_gate_path="flight delivered-feed representativeness (W1 delivered flow is an upper bound without filter "
+                              "transmission) and the mass BOM (hard gate G3)"),
+        "owner": owner_cell(),
+    }, [(1, "filter transmission is not applied, so the delivered flow that sets the risk-1 test region is an upper bound"),
+        (4, "filter mass enters the mass closure")])
+
+    row("SM-ATM-03", "atmospheric_branch", 2, {
+        "requirement": requirement_cell("RFP P_bus < 1.5 kW hard gate; IC compressor 0.60 (verify); W1-derived CR / pumping-speed envelope", [
+            R["chain"], R["power"], R["firing"], R["ic"]("compressor >= 0.60"),
+            item("A4: the hard gate remains full-system P_bus < 1.5 kW (a compressor needing more than 300 W is not "
+                 "rejected if the system closes)", cite("A4", "decisions.compressor_power_allocation", "The hard gate remains full-system P_bus < 1.5 kW")),
+            item(f"DERIVED (compressor down-selection requirement envelope, PROPOSED, model-derived): required active CR "
+                 f"{fmt(cr['min'])}-{fmt(cr['max'])} (self-consistent backflow); inlet pumping speed at b = 0.25 "
+                 f"{fmt(s25['min'])}-{fmt(s25['max'])} m3/s; minimum inlet area at b = 0.25 {fmt(a25['min'])}-{fmt(a25['max'])} m2",
+                 cite("CMP", "requirement_summary.CR_required_self_consistent / S_required_m3_s / A_inlet_min_m2",
+                      "CR_required_self_consistent", "S_required_m3_s", "A_inlet_min_m2"), evidence_class="model-derived"),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            {"dimension": "power", "value": "300 W", "status": "design/screening allocation, NOT a hard physical elimination gate",
+             "recorded_by": "A4", "basis": "A4 decisions.compressor_power_allocation",
+             "sources": [cite("A4", "decisions.compressor_power_allocation", "300 W approved as a design/screening allocation")]},
+            bom_tba(ctx, "compressor", "; compressor down-selection HG-2 'allocation TBD'"),
+        ]),
+        "interface_status": interface_cell([
+            icd_item(ctx, "IF-A2", role="in: filter -> compressor"),
+            icd_item(ctx, "IF-A3", role="out: compressor -> atmospheric gas chamber"),
+            bus_item(["compressor"], role="electrical load at the DC bus"),
+        ]),
+        "preliminary_design": design_cell("LEADING_CANDIDATE_PENDING_PRIMARY_EVIDENCE", [
+            item("C1: throat-spanning bladed turbomolecular-type first stage; A4 keeps C1 as the leading conditional "
+                 "candidate, status LEADING_CANDIDATE_PENDING_PRIMARY_EVIDENCE; DI-1.4 not frozen",
+                 cite("A4", "decisions.DI_1_4_compressor_C1", "LEADING_CANDIDATE_PENDING_PRIMARY_EVIDENCE"),
+                 cite("CMP", "recommendation.primary", '"concept": "C1"')),
+            item("C3 passive intake kept only as a reference branch; C4 cryocondensation on watch",
+                 cite("CMP", "recommendation.retained_reference / watch", '"concept": "C3"', '"concept": "C4"')),
+            item("model only: abep_sim/compressor.py DragCompressor fields are code defaults without a cited source (DI-1.4)",
+                 cite("W1", "owner_decisions_DI1[DI-1.4]", "all DragCompressor fields are code defaults without a cited source")),
+        ], "none: the lab feed is bottled gas; the unmeasured compressor bus draw is handled by LOCK-1 decision D-11",
+            [cite("L1", "decisions[id=D-11]", "D-11", "Unmeasured common loads: compressor bus draw")]),
+        "evidence_status": evidence_cell(ctx, "LITERATURE_AND_MODEL_ONLY_NO_PRIMARY_COMPRESSION_EVIDENCE", [("CMP", "evidence")], [
+            item("the only published ABEP-specific compression point (EV-08, LI2015) is a single secondary citation that "
+                 "needs first-hand verification", cite("CMP", "recommendation.primary.why", "EV-08, LI2015"),
+                 cite("A4", "decisions.DI_1_4_compressor_C1", "Li 2015 compression claim")),
+        ]),
+        "procurement_status": procurement_cell(UNKNOWN, [
+            item("no compressor procurement or breadboard record; A4 critical path lists 'primary compressor evidence'",
+                 cite("A4", "critical_path[0]", "primary compressor evidence"))]),
+        "analysis_test_needed": analysis_cell(ctx, phase1=["full bus-power compatibility"], other=[
+            *[oth(t["id"], t["what"], cite("CMP", f"minimum_data_to_freeze_DI_1_4[id={t['id']}]", f'"id": "{t["id"]}"'))
+              for t in cmp_["minimum_data_to_freeze_DI_1_4"]],
+            oth("DI-1.4", "compressor concept and parameters (owner)", cite("W1", "owner_decisions_DI1", "DI-1.4")),
+            oth("D-11", "LOCK-1: interim handling of the unmeasured compressor bus draw", cite("L1", "decisions[id=D-11]", "D-11")),
+            oth("G-03", "no convergence flag from the compressor leak fixed point", cite("ICD_MD", "section 7", "| G-03 |")),
+            oth("G-17", "compressor heat split assumed", cite("ICD_MD", "section 7", "| G-17 |")),
+            oth("A4 backflow_b", "b = 0.25 nominal conservative screening assumption, never a measured flight value",
+                cite("A4", "decisions.backflow_b", "b = 0.25 approved as the nominal conservative screening assumption")),
+        ]),
+        "blocker": blocker_cell(
+            "The C1 compression claim (Li 2015) is known only from a secondary citation; A4: DI-1.4 is not frozen until "
+            "it is verified from a first-hand source, so no compressor is sized and its bus draw is unknown",
+            "compressor", "LOCK-1",
+            "A4 critical_path places 'primary compressor evidence' in its first stage, ahead of 'S1a -> LOCK-1'; LOCK-1 "
+            "input lock1_inputs[4] (compressor bus draw per operating point, V1 basis) is 'TBD - requires upstream ICD "
+            "compressor bus power' and decision D-11 (its interim handling) is open. If the owner adopts D-11-A "
+            "(PARTIAL_BOUNDARY classes), the block moves to the Phase-1 decision quantity 'full bus-power compatibility'. "
+            "No S1a condition names the compressor",
+            [cite("A4", "decisions.DI_1_4_compressor_C1; critical_path", "DI-1.4 is NOT frozen until the Li 2015 compression claim is verified from a first-hand source", "primary compressor evidence"),
+             cite("L1", "lock1_inputs[4]; decisions[id=D-11]", "TBD - requires upstream ICD compressor bus power", "D-11-A")]),
+        "owner": owner_cell(),
+    }, [(1, "compression sets the delivered flow and O fraction of the risk-1 test region"),
+        (4, "compressor power (300 W design/screening allocation) and mass enter the bus-power and mass closure")])
+
+    row("SM-ATM-04", "atmospheric_branch", 3, {
+        "requirement": requirement_cell("RFP chain element (atmospheric gas chamber); delivers the IF-A5 feed state; 26,000 h mission", [
+            R["chain"], R["mission"],
+            item("DERIVED: delivers the valve-outlet feed state {m_dot_s, P_feed, T_feed, x_s} at IF-A5; buffer volume, wall "
+                 "material and temperature policy (DI-1.5) and the P_feed setpoint (DI-1.6) are owner decisions",
+                 cite("W1", "owner_decisions_DI1", "DI-1.5", "DI-1.6"), cite("ICD_MD", "IF-A5", "IF-A5")),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            bom_tba(ctx, "atmospheric_gas_chamber"),
+            power_tba("thermal_control", "; gas-chamber heaters are booked under thermal_control (BUS_POWER_BOUNDARY section 3)"),
+        ]),
+        "interface_status": interface_cell([
+            icd_item(ctx, "IF-A3", role="in: compressor -> atmospheric gas chamber"),
+            icd_item(ctx, "IF-A4", role="out: atmospheric gas chamber -> atmospheric valve"),
+        ]),
+        "preliminary_design": design_cell("NONE", [
+            item("no buffer design; the W1 chain evaluates abep_sim/reservoir.py Reservoir with code-default parameters "
+                 "(volume, wall, temperature: DI-1.5 open)", cite("W1", "owner_decisions_DI1", "DI-1.5"),
+                 cite("ICD_MD", "validity domain D-RESERVOIR", "D-RESERVOIR")),
+        ], "lab analogue: FS-C manifold with capacitance manometer; P_feed and T_feed measured at the manifold at every reading",
+            [cite("HW", "requirements[id=HW-ENV-04], [id=HW-FS-04]", "HW-ENV-04", "HW-FS-04")]),
+        "evidence_status": evidence_cell(ctx, "MODEL_DERIVED_FROM_ASSUMED_INPUTS", [], [
+            item("chamber state model-derived from assumed inputs; wall-collision counts are heuristics without a source",
+                 cite("W1", "valve_outlet", "model-derived (from assumed inputs)"), cite("ICD_MD", "section 7", "| G-16 |"),
+                 evidence_class="model-derived")]),
+        "procurement_status": procurement_cell(UNKNOWN, [item("no buffer procurement record", cite("BOM", "items[id=atmospheric_gas_chamber]", '"id": "atmospheric_gas_chamber"'))]),
+        "analysis_test_needed": analysis_cell(ctx, ins=["INS-06", "INS-07"], other=[
+            oth("DI-1.5", "buffer volume, wall material and temperature policy (owner)", cite("W1", "owner_decisions_DI1", "DI-1.5")),
+            oth("DI-1.6", "valve-outlet pressure setpoint P_feed (owner)", cite("W1", "owner_decisions_DI1", "DI-1.6")),
+            oth("DI-1.9", "P_feed controlled to the flight value or only measured (owner)", cite("W1", "owner_decisions_DI1", "DI-1.9")),
+            oth("DI-1.10", "feed-gas temperature conditioning on the ground (owner)", cite("W1", "owner_decisions_DI1", "DI-1.10")),
+            oth("DI-1.12", "backflow / plenum-pressure inconsistency FC-01 (owner)", cite("W1", "owner_decisions_DI1", "DI-1.12")),
+            oth("G-04", "no convergence flag from the chamber balance", cite("ICD_MD", "section 7", "| G-04 |")),
+            oth("G-05", "orifice sizing returns no residual", cite("ICD_MD", "section 7", "| G-05 |")),
+            oth("G-15", "chamber volume not linked to vessel mass", cite("ICD_MD", "section 7", "| G-15 |")),
+        ]),
+        "blocker": blocker_cell(
+            "Buffer volume, wall material and temperature policy are an open owner decision (DI-1.5); the W1 chain "
+            "evaluates the chamber with code-default parameters",
+            "unresolved_interface", NONE_ON_H1_PATH,
+            "the H-1 path measures P_feed and T_feed at the FS-C manifold at every reading (HW-ENV-04) and does not need "
+            "the flight buffer design",
+            [cite("W1", "owner_decisions_DI1", "DI-1.5"), cite("HW", "requirements[id=HW-ENV-04]", "HW-ENV-04")],
+            outside_gate_path="flight IF-A4/IF-A5 feed state (PROPOSED_FLIGHT_REPRESENTATIVE until the owner freezes DI-1, "
+                              "control C2) and the mass BOM"),
+        "owner": owner_cell(),
+    }, [(1, "the buffer delivers the IF-A5 feed state (pressure, temperature, composition) of the risk-1 condition"),
+        (4, "buffer mass and heater power enter the closure")])
+
+    row("SM-ATM-05", "atmospheric_branch", 4, {
+        "requirement": requirement_cell("RFP chain element; valve flow bracket 0.030-3.14 mg/s (~106:1, candidate range); life", [
+            R["chain"], R["firing"], R["mission"],
+            item("DERIVED (A4 MFC_ranges; W1 mfc_range_requirement): 0.030-3.14 mg/s is ~106:1 turndown; the bracket is a "
+                 "candidate range, not a flight truth", cite("A4", "decisions.MFC_ranges", "0.030-3.14 mg/s is ~106:1 turndown"),
+                 cite("CMP", "flow_range_status", "candidate range, not a flight truth")),
+            item("A5: atmospheric propellant is the primary discharge feed", cite("A5", "decision_statement", "Atmospheric propellant is the primary discharge feed")),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            bom_tba(ctx, "atmospheric_valve"),
+            power_tba("flow_control", "; atmospheric valve count and power TBD in the aux bus"),
+        ]),
+        "interface_status": interface_cell([
+            icd_item(ctx, "IF-A4", role="in: gas chamber -> atmospheric valve"),
+            icd_item(ctx, "IF-A5", role="out: THRUSTER BOUNDARY (air port)"),
+            icd_item(ctx, "commands", fields=["atm_mdot_setpoint_kgps"], role="controller -> valve setpoint"),
+            lane_item(pim, "gas-flow path, pressure boundary and allowable pressure drop into the reserved pre-ionizer "
+                           "interface (A5: between feed/plenum and Hall ionization region)", role="downstream"),
+            bus_item(["flow_control"], role="valve driver load"),
+        ]),
+        "preliminary_design": design_cell("NONE", [
+            item("no valve concept or model: valve, feed line and anode distributor are one lumped molecular-flow orifice",
+                 cite("ICD_MD", "section 7", "| G-06 |")),
+            item("mass BOM requires selected valve / flow-controller parts", cite("BOM", "items[id=atmospheric_valve].cbe.requires", "selected valve / flow-controller parts")),
+        ], "lab analogue: FS-C thermal MFCs for N2 and O2 with identical setpoints across arms (HW-FS-01); at least three "
+           "overlapping ranges per gas path in procurement planning (A4)",
+            [cite("HW", "requirements[id=HW-FS-01]", "HW-FS-01"), cite("A4", "decisions.MFC_ranges", "at least three overlapping ranges per gas path")]),
+        "evidence_status": evidence_cell(ctx, "NONE", [], [
+            item("no atmospheric-valve evidence: the aux bus records the atmospheric valve count and power as TBD",
+                 cite("AUX_MD", "component table flow_control", "count and air valve TBD"))]),
+        "procurement_status": procurement_cell(UNKNOWN, [
+            item("no flight-valve procurement record; the lab MFC range planning (A4) is tracked on the sensors/diagnostics row (INS-05)",
+                 cite("A4", "decisions.MFC_ranges", "become part of procurement planning"))]),
+        "analysis_test_needed": analysis_cell(ctx, s1a=["S1A-C4"], s1=["S1-C3"], ins=["INS-05", "INS-06"], other=[
+            oth("G-06", "no valve model", cite("ICD_MD", "section 7", "| G-06 |")),
+            oth("G-08", "no pressure-loss model", cite("ICD_MD", "section 7", "| G-08 |")),
+            oth("G-09", "flow dynamics mostly absent", cite("ICD_MD", "section 7", "| G-09 |")),
+            oth("DI-1.6", "valve-outlet pressure setpoint (owner)", cite("W1", "owner_decisions_DI1", "DI-1.6")),
+            oth("HW-ENV-03", "anode MFC ranges cover every W1 valve-outlet test point (TBD)", cite("HW", "requirements[id=HW-ENV-03]", "HW-ENV-03")),
+        ], pend=[pend_item(ctx, "fo_preionizer_module_icd", "gas-flow path, pressure boundary and allowable pressure drop")]),
+        "blocker": blocker_cell(
+            "No valve concept or model (ICD G-06): IF-A5 conductance, pressure loss and flow dynamics are gaps",
+            "unresolved_interface", NONE_ON_H1_PATH,
+            "the H-1 feed uses the FS-C MFCs (HW-FS-01); their range item HW-ENV-03 is tracked on the sensors/diagnostics row (INS-05)",
+            [cite("ICD_MD", "section 7", "| G-06 |"), cite("HW", "requirements[id=HW-FS-01]", "HW-FS-01")],
+            outside_gate_path="flight IF-A5 closure (valve conductance, pressure loss, dynamics) and the flow_control term "
+                              "of the bus-power ledger"),
+        "owner": owner_cell(),
+    }, [(1, "the valve meters the delivered atmospheric flow of the risk-1 condition"),
+        (4, "valve driver power (flow_control) and mass enter the closure")])
+
+    # ======================= Xe branch ======================================================================
+    xe = a5["xe_mass_allocation"]
+    row("SM-XE-01", "xe_branch", 0, {
+        "requirement": requirement_cell("RFP air + Xe; < 40 kg incl. Xe + tank (recorded, verify); A5 single fixed Xe allocation; A6 stored-Xe subsystem vs 40 kg", [
+            R["propellant"], R["chain"], R["mass"], R["mass_scope"],
+            item("A5 ledger: " + xe["ledger"], cite("A5", "xe_mass_allocation.ledger", "m_Xe_total = m_cathode + m_startup + m_transition + m_fallback + m_reserve")),
+            item("A6: the system decision is made on the complete stored-Xe subsystem m_Xe_subsystem = m_Xe + m_tank + "
+                 "m_regulator + m_valves + m_plumbing + m_mounting/thermal against the 40 kg requirement",
+                 cite("A6", "authorized_now.fo_xe_system_ledger", "m_Xe_subsystem = m_Xe + m_tank + m_regulator")),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            {"dimension": "Xe mass (m_Xe_total)", "value": TBA,
+             "basis": f"A5 m_Xe_total_value: {xe['m_Xe_total_value']}; A6 not_authorized: 'freezing total Xe mass'. "
+                      f"A5 reference arithmetic (cathode term only, not a tank allocation): 0.10 mg/s over 15,000 h -> "
+                      f"{xe['reference_arithmetic_15000h']['0.10_mg_s_kg']} kg",
+             "sources": [cite("A5", "xe_mass_allocation.m_Xe_total_value; reference_arithmetic_15000h", "PENDING_OWNER", '"0.10_mg_s_kg": 5.4'),
+                         cite("A6", "not_authorized", "freezing total Xe mass")]},
+            bom_tba(ctx, "xe_tank"),
+            power_tba("thermal_control", "; Xe tank heaters are booked under thermal_control (BUS_POWER_BOUNDARY section 3)"),
+        ]),
+        "interface_status": interface_cell([
+            icd_item(ctx, "IF-X1", role="out: Xe chamber (tank) -> Xe valve / regulator"),
+            lane_item(xel, "tank term m_tank and stored Xe m_Xe of m_Xe_subsystem", role="budget interface"),
+        ]),
+        "preliminary_design": design_cell("NONE", [
+            item("mass BOM: tank CBE requires the declared Xe load, storage pressure and temperature, Xe density at storage "
+                 "and a tank concept", cite("BOM", "items[id=xe_tank].cbe.requires", "declared Xe load, storage pressure and temperature")),
+            item("the legacy v1.7 tank sizing in abep_sim/mass_bom.py is not used (OD-M3)", cite("BOM", "open_owner_decisions[OD-M3]", "OD-M3")),
+        ], "lab analogue: Xe bottles in FS-C (Xe for start, transfer, health check and cathode)", [cite("HW", "requirements[id=HW-ENV-07]", "Xe for start, transfer, health check and cathode")]),
+        "evidence_status": evidence_cell(ctx, "NONE", [], [
+            veto_item("RI-MASS-CATHODE-XE", "cathode Xe alone over the minimum firing straddles the 40 kg limit at the reference flows of other cathodes")]),
+        "procurement_status": procurement_cell(UNKNOWN, [item("no tank procurement record", cite("BOM", "items[id=xe_tank]", '"id": "xe_tank"'))]),
+        "analysis_test_needed": analysis_cell(ctx, other=[
+            oth("OD-M4", "declare a mission Xe allocation (owner)", cite("BOM", "open_owner_decisions[OD-M4]", "OD-M4")),
+            oth("OD-M7", "whether the RFP 40 kg includes the Xe load (owner)", cite("BOM", "open_owner_decisions[OD-M7]", "OD-M7")),
+            oth("G-12", "Xe path has no storage state (tank EOS, regulator, shared inventory)", cite("ICD_MD", "section 7", "| G-12 |")),
+            oth("G3_mass", "hard gate G3 mass", cite("HG", "gates[id=G3_mass]", "G3_mass")),
+        ], pend=[pend_item(ctx, "fo_xe_system_ledger", "parametric m_Xe_total and m_Xe_subsystem ledger (m_tank term)")]),
+        "blocker": blocker_cell(
+            "m_Xe_total is PENDING_OWNER (A5) and may not be frozen now (A6 not_authorized); its startup, transition and "
+            "fallback terms stay symbolic until H-1/C-1 measure them, so the tank cannot be sized",
+            "cathode_xe", NONE_ON_H1_PATH,
+            "the H-1 lab Xe comes from bottles through FS-C",
+            [cite("A5", "xe_mass_allocation.m_Xe_total_value", "PENDING_OWNER"),
+             cite("A6", "not_authorized; authorized_now.fo_xe_system_ledger", "freezing total Xe mass", "Startup, transition and fallback stay symbolic or scenario-based until H-1/C-1 measure them")],
+            outside_gate_path="A5 risks 3-4 mass closure (m_Xe_subsystem against 40 kg) and Milestone C"),
+        "owner": owner_cell(),
+    }, [(3, "the tank holds the single fixed Xe allocation that the cathode draws on"),
+        (4, "stored-Xe subsystem mass (A6) enters the 40 kg closure")])
+
+    row("SM-XE-02", "xe_branch", 1, {
+        "requirement": requirement_cell("RFP Xe path element; feed pressure TBD (no regulator model); life", [
+            R["chain"], R["firing"], R["mission"],
+            item("TBD - requires a regulator concept and the Xe feed pressure (ICD IF-X2 p_feed_Pa is a gap; G-12)",
+                 cite("ICD_MD", "IF-X2 p_feed_Pa; section 7 G-12", "TBD - requires a regulator/valve model", "| G-12 |")),
+            item("A6: m_regulator is a term of m_Xe_subsystem", cite("A6", "authorized_now.fo_xe_system_ledger", "m_regulator")),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            bom_tba(ctx, "xe_valve_and_flow_control", " (the BOM lumps Xe valves, regulator and flow control in one item)"),
+            {"dimension": "power", "value": TBA, "basis": "no regulator concept exists; its bus_power_boundary_v1 booking is TBD",
+             "sources": [cite("ICD_MD", "IF-X1 regulator_conductance_m3ps", "TBD - requires a regulator model")]},
+        ]),
+        "interface_status": interface_cell([
+            icd_item(ctx, "IF-X1", fields=["regulator_conductance_m3ps", "pressure_loss_Pa"], role="regulator fields of the tank outlet"),
+            icd_item(ctx, "IF-X2", fields=["p_feed_Pa"], role="regulated feed pressure at the Xe port"),
+            lane_item(xel, "regulator term m_regulator of m_Xe_subsystem", role="budget interface"),
+        ]),
+        "preliminary_design": design_cell("NONE", [
+            item("no regulator model or concept", cite("ICD_MD", "IF-X1 description; section 7 G-12", "no storage thermodynamic state or regulator model")),
+        ], "lab analogue: FS-C Xe MFCs (anode, cathode) from bottles", [cite("HW", "requirements[id=HW-FS-01]", "HW-FS-01")]),
+        "evidence_status": evidence_cell(ctx, "NONE", [], [
+            item("no regulator evidence in the base", cite("ICD_MD", "IF-X1 regulator_conductance_m3ps", "regulator_conductance_m3ps"))]),
+        "procurement_status": procurement_cell(UNKNOWN, [item("no regulator procurement record", cite("BOM", "items[id=xe_valve_and_flow_control]", '"id": "xe_valve_and_flow_control"'))]),
+        "analysis_test_needed": analysis_cell(ctx, other=[
+            oth("ICD-OQ-6", "Xe path scope: tank EOS, regulator model, one shared inventory (owner)", cite("ICD_MD", "section 9", "**Xe path scope (G-12).**")),
+            oth("G-12", "Xe path has no storage state or regulator", cite("ICD_MD", "section 7", "| G-12 |")),
+            oth("G-08", "no pressure-loss model (incl. Xe regulator)", cite("ICD_MD", "section 7", "| G-08 |")),
+        ], pend=[pend_item(ctx, "fo_xe_system_ledger", "m_regulator term of m_Xe_subsystem")]),
+        "blocker": blocker_cell(
+            "No regulator concept or model: the regulator fields of IF-X1 and the IF-X2 feed pressure are gaps (ICD G-12; "
+            "owner open question 6)",
+            "unresolved_interface", NONE_ON_H1_PATH,
+            "the H-1 lab Xe is metered by FS-C MFCs from bottles (HW-FS-01)",
+            [cite("ICD_MD", "section 7 G-12; section 9 open question 6", "| G-12 |", "**Xe path scope (G-12).**"),
+             cite("HW", "requirements[id=HW-FS-01]", "HW-FS-01")],
+            outside_gate_path="flight Xe feed state (IF-X2) and the stored-Xe subsystem mass (A6 m_regulator)"),
+        "owner": owner_cell(),
+    }, [(3, "the regulator delivers the cathode Xe feed whose consumption is risk 3"),
+        (4, "regulator mass is a term of the stored-Xe subsystem mass")])
+
+    row("SM-XE-03", "xe_branch", 2, {
+        "requirement": requirement_cell("A5 operating-mode rules (no continuous Xe support; every Xe mode time-limited); cathode flow 0.10 mg/s design target", [
+            *[item(f"A5 operating-mode rule: {r}", cite("A5", "operating_modes.rules", r[:60])) for r in a5["operating_modes"]["rules"]],
+            item("A5: cathode flow design target 0.10 mg/s; 0.15 mg/s is an experimental upper test point only until the "
+                 "mass ledger shows it is affordable", cite("A5", "xe_mass_allocation", '"cathode_flow_design_target_mg_s": 0.1',
+                 "test point only until the mass ledger demonstrates it is affordable")),
+            R["propellant"],
+            item("W3 (PROPOSED): the cathode gas has its own MFC and line and never crosses HALL_INLET_Z0",
+                 cite("HW", "requirements[id=HW-C1-04]", "HW-C1-04")),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            a5_allocated(ctx, "Xe flow (cathode feed)", "", "cathode_flow_design_target_mg_s", token='"cathode_flow_design_target_mg_s": 0.1'),
+            {"dimension": "Xe flow and duration (ignition/transition feed)", "value": TBA,
+             "basis": "A6: startup, transition and fallback stay symbolic or scenario-based until H-1/C-1 measure them; "
+                      "freezing them without evidence is not authorized",
+             "sources": [cite("A6", "authorized_now.fo_xe_system_ledger; not_authorized", "freezing startup/transition/fallback quantities without evidence")]},
+            power_tba("flow_control"),
+            bom_tba(ctx, "xe_valve_and_flow_control"),
+        ]),
+        "interface_status": interface_cell([
+            icd_item(ctx, "IF-X2", role="out: THRUSTER BOUNDARY (Xe port: anode/ignition and cathode flows)"),
+            icd_item(ctx, "commands", fields=["xe_mdot_setpoint_kgps"], role="controller -> Xe setpoint"),
+            doc_item(ctx, "DFSM", "states/transitions of the start, transfer, fallback and shutdown sequence",
+                     ctx.json(P["DFSM"])["status"] + " v" + ctx.json(P["DFSM"])["version"], role="mode control"),
+            hw_item(ctx, ["HW-C1-04", "HW-FS-03"], role="H-1 analogue: cathode line and Xe start/transfer"),
+        ]),
+        "preliminary_design": design_cell("SPECIFICATION_DRAFT", [
+            item(f"dual-feed state machine v{ctx.json(P['DFSM'])['version']} ({ctx.json(P['DFSM'])['status']}): conceptual "
+                 f"start/transfer/fallback/shutdown logic; all {len(ctx.json(P['DFSM'])['parameters'])} parameters TBD; "
+                 "second lens NOT YET PASSED", cite("DFSM", "status_detail; parameters; verification", "Every guard is symbolic", "NOT YET PASSED")),
+        ], "lab analogue: FS-C Xe anode and Xe cathode MFCs (HW-FS-01) and the Xe start / transfer capability (HW-FS-03)",
+            [cite("HW", "requirements[id=HW-FS-01], [id=HW-FS-03]", "HW-FS-01", "HW-FS-03")]),
+        "evidence_status": evidence_cell(ctx, "INFERRED_ONLY", [], [
+            item("Xe proportional flow-control valve power 0.4191-1.46 W per energized PFCV (inferred); count TBD",
+                 cite("AUX_MD", "component table flow_control", "0.4191–1.46 W per energized Xe PFCV (inferred)"), evidence_class="inferred")]),
+        "procurement_status": procurement_cell(UNKNOWN, [
+            item("no flight Xe metering procurement record; lab MFC range planning (A4) is tracked on the sensors/diagnostics row",
+                 cite("A4", "decisions.MFC_ranges", "become part of procurement planning"))]),
+        "analysis_test_needed": analysis_cell(ctx, s1a=["S1A-C4"], ins=["INS-05"],
+                                              phase1=["ignition/restart behaviour", "no continuous Xe augmentation"], other=[
+            oth("D-13", "LOCK-1: are ignition/start attempts measured (per arm; xenon-assisted and air-only)?", cite("L1", "decisions[id=D-13]", "D-13")),
+            oth("D-15", "LOCK-1: scope extensions incl. Xe health check and Xe anode operation", cite("L1", "decisions[id=D-15]", "D-15")),
+            oth("HW-FS-03", "Xe ignition then transfer to N2 or N2/O2, reversible", cite("HW", "requirements[id=HW-FS-03]", "HW-FS-03")),
+            oth("A6 Xe terms", "m_startup = N_starts * t_startup * mdot_startup; m_transition = N_transitions * t_transition * "
+                "mdot_transition; m_fallback = t_fallback_max * mdot_fallback", cite("A6", "authorized_now.fo_xe_system_ledger", "m_startup = N_starts * t_startup * mdot_startup")),
+        ], pend=[pend_item(ctx, "fo_xe_system_ledger", "startup/transition/fallback terms of m_Xe_total"),
+                 pend_item(ctx, "fo_phase1_prereg_framework", "measurement of ignition/restart and the no-continuous-Xe rule")]),
+        "blocker": blocker_cell(
+            "Whether ignition/start attempts are measured at all is an open LOCK-1 decision (D-13); without them the startup "
+            "and transition Xe terms have no measurement route (A6: symbolic until H-1/C-1 measure them)",
+            "cathode_xe", "LOCK-1",
+            "D-13 is one of the decisions D-01..D-15 resolved before the LOCK-1 signature; option D-13-A leaves ignition unmeasured",
+            [cite("L1", "decisions[id=D-13]; phases.sequence", "D-13-A", "resolve D-01..D-15 and P-01..P-04 -> LOCK-1"),
+             cite("A6", "authorized_now.fo_xe_system_ledger", "until H-1/C-1 measure them")]),
+        "owner": owner_cell(),
+    }, [(1, "if the atmospheric discharge needs Xe support to stay lit, the atmospheric Hall concept fails its Phase-1 objective (A5 rule)"),
+        (3, "the metering sets the cathode Xe flow (0.10 mg/s design target)"),
+        (4, "every Xe-consuming mode draws on the one fixed Xe allocation (mass closure)")])
+
+    # ======================= propulsion =====================================================================
+    hsus_n = len(ctx.json(P["HSUS"])["entries"])
+    h1_ids = [r["id"] for r in hw["requirements"] if r["id"].startswith("HW-H1-")]
+    h1_tbd = [r["id"] for r in hw["requirements"] if r["id"].startswith("HW-H1-") and r["status"] == "TBD"]
+    row("SM-PROP-01", "propulsion", 0, {
+        "requirement": requirement_cell("RFP 12-25 mN, < 1.5 kW, > 15,000 h, Hall preferred; A5 atmospheric primary feed, no continuous Xe support", [
+            R["thrust"], R["power"], R["firing"], R["propellant"], R["ic"]("thruster >= 0.80"), R["nascent_o"],
+            item("A5: atmospheric propellant is the primary discharge feed; continuous Xe augmentation of the atmospheric "
+                 "discharge is not an acceptable nominal operating mode",
+                 cite("A5", "decision_statement", "continuous Xe augmentation of the atmospheric discharge is not an acceptable nominal operating mode")),
+            item("W3 (RFP-derived design target, not a prediction): H-1 designed for the RFP thrust band on the delivered "
+                 "atmospheric feed at P_bus < 1.5 kW", cite("HW", "requirements[id=HW-ENV-06]", "HW-ENV-06")),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            a5_allocated(ctx, "thrust", "thrust operating target"),
+            a5_allocated(ctx, "life", "internal design life target"),
+            power_tba("hall_discharge", "; no share of the A5 bus allocation is set for the discharge"),
+            bom_tba(ctx, "hall_thruster_head"),
+        ]),
+        "interface_status": interface_cell([
+            icd_item(ctx, "IF-A5", role="in: THRUSTER BOUNDARY (air port)"),
+            icd_item(ctx, "IF-X2", role="in: THRUSTER BOUNDARY (Xe port)"),
+            hw_item(ctx, ["IP-DN", "HALL_INLET_Z0", "HW-H1-06"], role="H-1 inlet planes (module outlet / anode plane)"),
+            doc_item(ctx, "HREF", "injection_interface HALL_INLET_Z0", ctx.json(P["HREF"])["status"], role="Hall ionization-region inlet state"),
+            lane_item(pim, "common pre-ionizer module interface at the Hall ionization region", role="reserved interface boundary"),
+            bus_item(["hall_discharge"], role="discharge load"),
+        ]),
+        "preliminary_design": design_cell("REQUIREMENTS_ONLY", [
+            item(f"H-1 requirement set {h1_ids[0]}..{h1_ids[-1]} ({len(h1_ids)} items; TBD: {', '.join(h1_tbd)}) in the W3 "
+                 f"register ({hw['status']}); no released drawing (HW-H1-03 channel geometry TBD)",
+                 cite("HW", "requirements[id=HW-H1-*]", *h1_ids)),
+            item("Vyovrinda design or surrogate is an open LOCK-1 decision (D-09) and owner question HWQ-02",
+                 cite("L1", "decisions[id=D-09]", "D-09", "Tested Hall unit H-1: Vyovrinda design or a surrogate"),
+                 cite("HW", "owner_questions[id=HWQ-02]", "HWQ-02")),
+            item("Hall accelerator reference (lane 17): interface conventions only", cite("HREF", "status", ctx.json(P["HREF"])["status"])),
+        ], "H-1 (one serial unit: channel, anode and gas distributor, wall rings, body, rear inlet flange at IP-DN)",
+            [cite("HW", "configuration_items[id=H-1]", '"id": "H-1"')]),
+        "evidence_status": evidence_cell(ctx, "LITERATURE_ONLY_NO_VYOVRINDA_HARDWARE",
+                                         [("HSUS", "entries"), ("WALL", "entries")], [
+            item(f"Hall sustainment evidence on N2/O2/air: {hsus_n} entries (evidence audit only; no architecture conclusion)",
+                 cite("HSUS", "status", "EVIDENCE AUDIT ONLY")),
+            item("A5 risk 1 evidence: " + a5_risk(ctx, 1)["evidence"], cite("A5", "architecture_closing_risks[rank=1].evidence", "all 9 air cases UNDETERMINED")),
+            item("A5 risk 2 evidence: " + a5_risk(ctx, 2)["evidence"], cite("A5", "architecture_closing_risks[rank=2].evidence", "PPS1350 on N2/O2 + 10 % Xe")),
+        ]),
+        "procurement_status": procurement_cell(UNKNOWN, [
+            item("no H-1 manufacture or procurement record; the S1a engineering hardware record "
+                 "(docs/experiments/hardware/s1a_engineering_hardware_record.json) is absent (S1A-C1 MISSING); A4 critical "
+                 "path names 'H-1 manufacture/configuration'",
+                 cite("S1A", "conditions[id=S1A-C1]", "S1A-C1"), cite("A4", "critical_path[0]", "H-1 manufacture/configuration"))]),
+        "analysis_test_needed": analysis_cell(ctx, s1a=["S1A-C1"], s1=["S1-C2"],
+                                              ins=["INS-01", "INS-02", "INS-04", "INS-10", "INS-13", "INS-15", "INS-19", "INS-20", "INS-21"],
+                                              phase1=list(PHASE1_DECISION_QUANTITIES), other=[
+            oth("D-09", "LOCK-1: Vyovrinda design (level 1) or surrogate (level 3)", cite("L1", "decisions[id=D-09]", "D-09")),
+            oth("HW-H1-03", "channel geometry released with drawing id, revision, sha256; measured as built", cite("HW", "requirements[id=HW-H1-03]", "HW-H1-03")),
+            oth("HWQ-08", "anode/gas-distributor material or coating and wall grade", cite("HW", "owner_questions[id=HWQ-08]", "HWQ-08")),
+            oth("RG-01", "W5: H-1 geometry released and measured before PF-1", cite("W5", "runnability_gates.gates[id=RG-01]", "RG-01")),
+            oth("AOL-M01", "anode / gas-distributor oxidation", cite("AOL", "mechanisms[id=AOL-M01]", "AOL-M01")),
+            oth("AOL-M02", "channel-wall sputtering by N+, N2+, O+, O2+, Xe+", cite("AOL", "mechanisms[id=AOL-M02]", "AOL-M02")),
+            oth("A5 cases", "Phase-1 outcome A_extended_hall / B_rf_hall / C_ecr_hall / NO_VIABLE_CASE (no case forced to win)",
+                cite("A5", "phase1_branch_decision.cases", "A_extended_hall", "NO_VIABLE_CASE")),
+        ], pend=[pend_item(ctx, "fo_phase1_prereg_framework", "decision topology for the nine Phase-1 decision quantities"),
+                 pend_item(ctx, "fo_preionizer_module_icd", "common interface at the Hall ionization region")]),
+        "blocker": blocker_cell(
+            "No H-1 unit exists: the channel geometry is TBD (HW-H1-03) and whether H-1 is the Vyovrinda design or a "
+            "surrogate is an open LOCK-1 decision (D-09)",
+            "procurement", "S1a",
+            "S1A-C1 requires H-1 (need not be frozen, but identified with a serial number and recorded configuration) in the "
+            "S1a engineering hardware record; S1a precedes LOCK-1 in the owner sequence (A4, A6); D-09 must also be resolved "
+            "for LOCK-1 and W5 needs RG-01",
+            [cite("S1A", "conditions[id=S1A-C1]", "S1A-C1", "H-1 need not be the frozen qualification configuration"),
+             cite("HW", "requirements[id=HW-H1-03]", "HW-H1-03"), cite("L1", "decisions[id=D-09]", "D-09"),
+             cite("A4", "critical_path[1]", "S1a -> LOCK-1 -> W5 freeze -> S1/S1b -> LOCK-2")]),
+        "owner": owner_cell(),
+    }, [(1, "the discharge chamber is where atmospheric sustainment at low flow and high O2 is decided (H-1 Phase 1)"),
+        (2, "anode/channel oxidation and erosion life"),
+        (4, "discharge power and head mass dominate the closure")])
+
+    mc_ids = [r["id"] for r in hw["requirements"] if r["id"].startswith("HW-MC-")]
+    mc_tbd = [r["id"] for r in hw["requirements"] if r["id"].startswith("HW-MC-") and r["status"] == "TBD"]
+    mcq = ctx.json(P["MCQ"])
+    row("SM-PROP-02", "propulsion", 1, {
+        "requirement": requirement_cell("W3: one circuit, identical across arms, B(z) at actual coil currents; A6 permitted field disturbance; RFP life and P_bus", [
+            item("W3 (PROPOSED): one magnetic circuit, never modified between arms; coil currents recorded with every "
+                 "reading; B(z) mapped at the actual operating coil currents", cite("HW", "requirements[id=HW-MC-01..03]", "HW-MC-01", "HW-MC-02", "HW-MC-03")),
+            item("A6: 'permitted magnetic-field disturbance' is a fixed common boundary of the pre-ionizer interface",
+                 cite("A6", "authorized_now.fo_preionizer_module_icd", "permitted magnetic-field disturbance")),
+            R["firing"], R["power"],
+        ]),
+        "allocation": allocation_cell(ctx, [
+            power_tba("hall_magnet", "; a permanent-magnet circuit is 0 W by definition (explicit), an electromagnet is TBD"),
+            bom_tba(ctx, "hall_magnets"),
+        ]),
+        "interface_status": interface_cell([
+            hw_item(ctx, ["MC-1", "HW-MC-01", "HW-MC-02", "HW-PIM-06"], role="MC-1 and the module-induced field change"),
+            bus_item(["hall_magnet"], role="coil load"),
+            lane_item(pim, "permitted magnetic-field disturbance of a pre-ionizer module", role="common boundary"),
+        ]),
+        "preliminary_design": design_cell("REQUIREMENTS_ONLY", [
+            item(f"MC-1 requirement set {mc_ids[0]}..{mc_ids[-1]} ({len(mc_ids)} items; TBD: {', '.join(mc_tbd)})",
+                 cite("HW", "requirements[id=HW-MC-*]", *mc_ids)),
+            item(f"magnet/coil qualification basis ({mcq['status']}): candidate grades, insulation systems, conductors",
+                 cite("MCQ", "title; status", "candidate grades, insulation systems, conductors")),
+            item("electromagnet only or permanent-magnet assisted (HWQ-19) and the pole/core grade (HWQ-18) are open",
+                 cite("HW", "owner_questions[id=HWQ-18], [id=HWQ-19]", "HWQ-18", "HWQ-19")),
+        ], "MC-1 common magnetic circuit (coils or permanent magnets, pole pieces, screens, coil supplies in current control)",
+            [cite("HW", "configuration_items[id=MC-1]", '"id": "MC-1"')]),
+        "evidence_status": evidence_cell(ctx, "SUPPLIER_DATA_AND_LITERATURE_ONLY", [("MCQ", "candidates")], [
+            item("no B(z) has been measured on any Vyovrinda circuit (RG-02 TBD)", cite("W5", "runnability_gates.gates[id=RG-02]", "RG-02")),
+            item("reference-only evidence (e.g. EEE-INST-002 derating) never produces a lifetime verdict", cite("MCQ", "reference_only_evidence", "never_produces_lifetime_verdict")),
+        ]),
+        "procurement_status": procurement_cell(UNKNOWN, [
+            item("no MC-1 procurement record; MC-1 is required in the S1a engineering hardware record (absent)", cite("S1A", "conditions[id=S1A-C1]", "H-1, MC-1, FS-C, PS-C, SVC-1"))]),
+        "analysis_test_needed": analysis_cell(ctx, s1a=["S1A-C1", "S1A-C4"], ins=["INS-09", "INS-24", "INS-17"],
+                                              phase1=["T/P_bus", "stability/oscillation"], other=[
+            *[oth(x["id"], x["item"], cite("MCQ", f"s1_gate_items[id={x['id']}]", x["id"])) for x in mcq["s1_gate_items"]],
+            oth("RG-02", "W5: B(z) at the actual operating coil currents (S1a, INS-09)", cite("W5", "runnability_gates.gates[id=RG-02]", "RG-02")),
+            oth("HW-MC-05", "PROPOSED S1 addition: coil-current sensitivity scan S_B", cite("HW", "requirements[id=HW-MC-05]", "HW-MC-05")),
+            oth("HWQ-18", "soft-magnetic pole/core grade", cite("HW", "owner_questions[id=HWQ-18]", "HWQ-18")),
+            oth("HWQ-19", "electromagnet only or permanent-magnet assisted", cite("HW", "owner_questions[id=HWQ-19]", "HWQ-19")),
+            oth("AOL-M06", "magnetic-circuit materials: oxidation, temperature, demagnetization", cite("AOL", "mechanisms[id=AOL-M06]", "AOL-M06")),
+        ], pend=[pend_item(ctx, "fo_preionizer_module_icd", "permitted magnetic-field disturbance")]),
+        "blocker": blocker_cell(
+            "MC-1 type (electromagnet only or permanent-magnet assisted, HWQ-19) and pole/core grade (HWQ-18) are undecided, "
+            "so no MC-1 exists to map B(z)",
+            "procurement", "S1a",
+            "S1A-C1 requires MC-1 in the S1a engineering hardware record and S1A-C4 a frozen B(z) calibration procedure; "
+            "W5 needs the S1a B(z) map at actual coil currents (RG-02)",
+            [cite("S1A", "conditions[id=S1A-C1], [id=S1A-C4]", "H-1, MC-1, FS-C, PS-C, SVC-1", "S1A-C4"),
+             cite("HW", "owner_questions[id=HWQ-18], [id=HWQ-19]", "HWQ-18", "HWQ-19"),
+             cite("W5", "runnability_gates.gates[id=RG-02]", "RG-02")]),
+        "owner": owner_cell(),
+    }, [(1, "B(z) shapes the discharge whose atmospheric sustainment is risk 1"),
+        (2, "magnetic-circuit materials oxidation and temperature (AOL-M06)"),
+        (4, "coil power (hall_magnet) and circuit mass")])
+
+    c1_ids = [r["id"] for r in hw["requirements"] if r["id"].startswith("HW-C1-")]
+    cath = ctx.json(P["CATH"])
+    row("SM-PROP-03", "propulsion", 2, {
+        "requirement": requirement_cell("A5 shielded Xe-fed LaB6; 0.10 mg/s design target; isolation from the plume; RFP firing life; P2 cathode gate (PROPOSED)", [
+            item("A5 risk-3 response: " + a5_risk(ctx, 3)["response"], cite("A5", "architecture_closing_risks[rank=3].response", "measured cathode flow at <= 0.10 mg/s design target")),
+            item("A5: 0.10 mg/s cathode flow design target; 0.15 mg/s experimental upper test point only",
+                 cite("A5", "xe_mass_allocation", '"cathode_flow_experimental_upper_test_point_mg_s": 0.15')),
+            R["firing"], R["mission"],
+            item("hard gate P2_cathode (PROPOSED): cathode life and start cycles", cite("HG", "gates[id=P2_cathode]", "P2_cathode")),
+            item("W3 (PROPOSED): emission capability covers I_emit = I_d + I_keeper + I_interstage at the discharge-current bound",
+                 cite("HW", "requirements[id=HW-C1-02]", "HW-C1-02")),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            a5_allocated(ctx, "Xe flow", "", "cathode_flow_design_target_mg_s", token='"cathode_flow_design_target_mg_s": 0.1'),
+            power_tba("cathode_keeper"), power_tba("cathode_heater"),
+            bom_tba(ctx, "cathode"),
+        ]),
+        "interface_status": interface_cell([
+            icd_item(ctx, "IF-X2", fields=["mdot_xe_cathode_kgps"], role="cathode Xe feed"),
+            bus_item(["cathode_keeper", "cathode_heater"], role="keeper and heater loads"),
+            hw_item(ctx, ["C-1", "HW-C1-01", "HW-C1-04", "HW-C1-05"], role="C-1 mount, gas line and electrical interface"),
+        ]),
+        "preliminary_design": design_cell("REQUIREMENTS_ONLY", [
+            item(f"C-1 requirement set {c1_ids[0]}..{c1_ids[-1]} ({len(c1_ids)} items, PROPOSED); owner confirmation HWQ-09 open",
+                 cite("HW", "requirements[id=HW-C1-*]; owner_questions[id=HWQ-09]", *c1_ids, "HWQ-09")),
+            item(f"dossier baseline: {cath['baseline_decision']['system_baseline_cathode']}; atmospheric-gas-fed cathode "
+                 f"operation {cath['baseline_decision']['atmospheric_gas_fed_cathode_operation']}",
+                 cite("CATH", "baseline_decision", "Xe-fed hollow cathode", "UNRESOLVED")),
+            item("shielding/isolation design: none yet; 'cathode mechanical isolation' is in the A6 planned next wave (not yet registered)",
+                 cite("A6", "next_wave_planned", "cathode mechanical isolation")),
+            item("cathode integration register (lane 19): evidence register only, no operating point",
+                 cite("CINT", "status", "no Hall prediction, no operating point")),
+        ], "C-1 (one serial hollow cathode with keeper and heater, own gas line and supplies)",
+            [cite("HW", "configuration_items[id=C-1]", '"id": "C-1"')]),
+        "evidence_status": evidence_cell(ctx, "LITERATURE_ONLY_NO_VYOVRINDA_HARDWARE", [("CATH", "candidates")], [
+            veto_item("RI-MASS-CATHODE-XE", "cathode Xe over the minimum firing straddles the 40 kg limit"),
+            veto_item("RI-LIFE-CATHODE-AIR-EXPOSURE", "cathode life under air exposure"),
+            veto_item("RI-STARTUP-CATHODE-HEATER", "cathode heater start-up"),
+        ]),
+        "procurement_status": procurement_cell(UNKNOWN, [
+            item("no C-1 procurement record; C-1 is not an item of the S1a hardware record (C-1 diode commissioning in S1a is "
+                 "allowed, NON_SCORE_BEARING_ENGINEERING_ONLY)", cite("A4", "decisions.C1_diode_in_S1a", "NON_SCORE_BEARING_ENGINEERING_ONLY"))]),
+        "analysis_test_needed": analysis_cell(ctx, s1=["S1-C2"], ins=["INS-05", "INS-22", "INS-23"],
+                                              phase1=["no continuous Xe augmentation", "ignition/restart behaviour"], other=[
+            oth("HWQ-09", "confirm the Xe-fed LaB6 hollow cathode and its emission rating", cite("HW", "owner_questions[id=HWQ-09]", "HWQ-09")),
+            oth("HW-C1-09", "tube thermocouple mandatory (A3/A4)", cite("HW", "requirements[id=HW-C1-09]", "HW-C1-09")),
+            *[oth(g, cath_gap, cite("CATH", f"hardware_test_gaps[id={g}]", f'"id": "{g}"'))
+              for g, cath_gap in [(g["id"], g["gap"]) for g in cath["hardware_test_gaps"] if g["id"] in ("G01", "G02", "G05", "G06")]],
+            oth("RI-MASS-CATHODE-XE", "to become verdict-bearing: measured spot-mode minimum flow m_c,min(I_emit) of the selected cathode",
+                cite("VETO", "risk_indicators[id=RI-MASS-CATHODE-XE].to_become_verdict_bearing", "RI-MASS-CATHODE-XE")),
+            oth("AOL-M04", "emitter poisoning by O / O2 / H2O", cite("AOL", "mechanisms[id=AOL-M04]", "AOL-M04")),
+        ], pend=[pend_item(ctx, "fo_xe_system_ledger", "m_cathode term (0.10 mg/s design target)")]),
+        "blocker": blocker_cell(
+            "C-1 is not selected: the Xe-fed LaB6 choice and its emission rating against the derived I_d bound plus keeper "
+            "and interstage currents await owner confirmation (HWQ-09, HW-C1-02), so the A5 risk-3 measurement (cathode flow "
+            "at <= 0.10 mg/s) has no unit to run on",
+            "cathode_xe", "S1",
+            "S1-C2 requires the H-1/C-1 configuration frozen for qualification and the hardware readiness review (after "
+            "LOCK-1, before S1) requires HWQ-01..HWQ-21 recorded; C-1 is not an S1a hardware-record item",
+            [cite("HW", "owner_questions[id=HWQ-09]; hardware_readiness_review.entry_criteria", "HWQ-09", "owner decisions HWQ-01..HWQ-21 recorded"),
+             cite("S1", "conditions[id=S1-C2]", "S1-C2")]),
+        "owner": owner_cell(),
+    }, [(3, "cathode Xe consumption and oxygen isolation are risk 3"),
+        (4, "keeper/heater power and cathode Xe mass enter the closure")])
+
+    # ======================= support ========================================================================
+    row("SM-SUP-01", "support", 0, {
+        "requirement": requirement_cell("RFP P_bus < 1.5 kW on bus_power_boundary_v1; no single-point failure (verify); IC PSE 0.70 (verify)", [
+            R["power"], R["spf"], R["ic"]("PSE >= 0.70"),
+            item("A5: P_bus per bus_power_boundary_v1 (all electrical power crossing the spacecraft-side DC boundary)",
+                 cite("A5", "allocations_and_requirements 'bus-power design allocation'", "P_bus per bus_power_boundary_v1")),
+            item("which boundary the RFP '< 1.5 kW' refers to is an open owner question", cite("BPB", "section 9, question 1", "Which boundary does the RFP")),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            {"dimension": "power (conversion losses / component shares)", "value": TBA,
+             "basis": "the A5 bus allocation is system-level; no component or PPU-loss sub-allocation is recorded",
+             "sources": [cite("L1", "lock1_inputs[2]", "TBD - requires the source allocation in bus_power_boundary_v1")]},
+            bom_tba(ctx, "ppu"),
+            {"dimension": "mass (harness)", "value": TBA,
+             "basis": "mass BOM carries a PROPOSED policy scaling (harness = 5 % of nominal dry mass, ESA R-M1-7 floor; owner "
+                      "decision OD-M6 open): a scaling relation on TBD items, not an owner allocation",
+             "sources": [cite("BOM", "items[id=harness]; open_owner_decisions[OD-M6]", "OD-M6", "R-M1-7")]},
+        ]),
+        "interface_status": interface_cell([
+            bus_item(list(arch_boundary.COMMON_COMPONENTS), role="every common load at the spacecraft DC bus"),
+            hw_item(ctx, ["PS-C", "HW-ELEC-01", "HW-ELEC-02", "HW-ELEC-03"], role="H-1 analogue supplies and grounding"),
+            lane_item(pim, "electrical power boundary and grounding/shielding of a pre-ionizer module", role="common boundary"),
+        ]),
+        "preliminary_design": design_cell("NONE", [
+            item("no flight PPU design; bus_power_boundary_v1 is an accounting definition only (not wired into archengine)",
+                 cite("BPB", "header", "Accounting definition only")),
+        ], "PS-C: discharge, magnet, keeper and heater supplies with load-plane metering (M2)",
+            [cite("HW", "configuration_items[id=PS-C]", '"id": "PS-C"')]),
+        "evidence_status": evidence_cell(ctx, "LITERATURE_ONLY_NO_VYOVRINDA_HARDWARE", [("AUX", "inputs")], [
+            item("conversion-efficiency evidence E1-E11 (E1 digitized Rhodes 2024 breadboard discharge supply; E9 per-supply "
+                 "efficiencies TBD)", cite("BPB", "section 8", "| E1 |", "| E9 |", "rhodes2024_lcc_discharge_supply_efficiency.csv"),
+                 evidence_class="digitized"),
+            item(f"aux bus: {aux_sum['evaluated']} of {aux_sum['attempted']} ledgers evaluable (A5 risk-4 evidence)",
+                 cite("AUX", "ledger_summary", '"evaluated": 0'), cite("A5", "architecture_closing_risks[rank=4].evidence", "aux bus: 0/6 ledgers evaluable")),
+        ]),
+        "procurement_status": procurement_cell(UNKNOWN, [
+            item("no PPU or PS-C procurement record; PS-C is required in the S1a engineering hardware record (absent)",
+                 cite("S1A", "conditions[id=S1A-C1]", "H-1, MC-1, FS-C, PS-C, SVC-1"))]),
+        "analysis_test_needed": analysis_cell(ctx, s1a=["S1A-C1", "S1A-C4"], ins=["INS-02", "INS-03", "INS-04"],
+                                              phase1=["T/P_bus", "full bus-power compatibility"], other=[
+            oth("lock1_inputs[2]", "P_hi per source arm; f_src and w_c allocations (source allocation)", cite("L1", "lock1_inputs[2]", "P_hi per source arm")),
+            oth("lock1_inputs[3]", "ledger inputs with evidence classes and T-LEDGER-SENSITIVITY bounds", cite("L1", "lock1_inputs[3]", "T-LEDGER-SENSITIVITY")),
+            oth("D-11", "unmeasured common loads", cite("L1", "decisions[id=D-11]", "D-11")),
+            oth("BPB-OQ-1", "which boundary the RFP '< 1.5 kW' refers to", cite("BPB", "section 9", "Which boundary does the RFP")),
+            oth("HW-ELEC-02", "module-body / interstage electrode potential (TBD, HWQ-07)", cite("HW", "requirements[id=HW-ELEC-02]", "HW-ELEC-02")),
+        ], pend=[pend_item(ctx, "fo_preionizer_module_icd", "electrical power boundary of a module")]),
+        "blocker": blocker_cell(
+            "The A5 bus allocation (<= 1.30-1.35 kW) is not sub-allocated to bus_power_boundary_v1 components: LOCK-1 needs "
+            "the source allocation (lock1_inputs[2]) and the ledger inputs (lock1_inputs[3]); the aux bus evaluates 0 of 6 ledgers",
+            "unresolved_interface", "LOCK-1",
+            "both items are LOCK-1 inputs recorded as TBD in the LOCK-1 brief",
+            [cite("L1", "lock1_inputs[2], [3]", "TBD - requires the source allocation in bus_power_boundary_v1", "TBD - requires an owner decision at LOCK-1"),
+             cite("AUX", "ledger_summary", '"not_evaluable": 6')]),
+        "owner": owner_cell(),
+    }, [(4, "the PPU and distribution carry the total bus-power closure (risk 4)")])
+
+    row("SM-SUP-02", "support", 1, {
+        "requirement": requirement_cell("Thermal feasibility gate P1 (PROPOSED); Q_reject mandatory field; temperature-driven life; thermal_control bus load", [
+            item("hard gate P1_thermal (PROPOSED): thermal feasibility", cite("HG", "gates[id=P1_thermal]", "P1_thermal")),
+            item("Q_reject is a mandatory comparison field (Bundle 1)", cite("B1", "mandatory_fields", "Q_reject")),
+            item("thermal_control covers Xe tank/line/valve heaters, gas-chamber heaters and PPU heaters",
+                 cite("BPB", "section 3 component table", "`thermal_control`", "Xe tank/line/valve heaters")),
+            R["firing"],
+        ]),
+        "allocation": allocation_cell(ctx, [power_tba("thermal_control"), bom_tba(ctx, "thermal_hardware")]),
+        "interface_status": interface_cell([
+            bus_item(["thermal_control"], role="heater load"),
+            doc_item(ctx, "THL_LEDGER", "per-subsystem heat-disposition fields and closure rules",
+                     ctx.json(P["THL_LEDGER"])["status"].split(" ")[0], role="thermal rejection ledger (schema only)"),
+            icd_item(ctx, "IF-A5", fields=["valve_rejected_heat_W"], role="valve heat at the air port"),
+            icd_item(ctx, "IF-A4", fields=["rejected_heat_W"], role="gas chamber heat"),
+            icd_item(ctx, "IF-X1", fields=["rejected_heat_W"], role="Xe tank heat"),
+            hw_item(ctx, ["HW-PIM-09", "HW-H1-07"], role="module waste heat path to H-1; H-1 thermocouples"),
+            lane_item(pim, "thermal rejection interface of a pre-ionizer module", role="common boundary"),
+        ]),
+        "preliminary_design": design_cell("NONE", [
+            item("framework only: abep_sim/thermal_life.py produces no thermal or life number; every design input is TBD",
+                 cite("THL", "status", "produces no thermal or life number for any Vyovrinda architecture today")),
+            item("'thermal paths' are in the A6 planned next wave (not yet registered)", cite("A6", "next_wave_planned", "thermal paths")),
+        ], "H-1 thermocouple points (anode, magnetic circuit, body) and life-mechanism thermocouples",
+            [cite("HW", "requirements[id=HW-H1-07], [id=HW-H1-12]", "HW-H1-07", "HW-H1-12")]),
+        "evidence_status": evidence_cell(ctx, "NONE", [], [
+            item("no thermal evidence for the thermal-control subsystem; the veto-layer thermal indicators concern only the "
+                 "RF/ECR source hardware", cite("VETO", "risk_indicators", "RI-THERMAL-RF-PASSIVE-COOLING", "RI-THERMAL-ECR-MICROWAVE-LINE"))]),
+        "procurement_status": procurement_cell(UNKNOWN, [item("no thermal hardware procurement record", cite("BOM", "items[id=thermal_hardware]", '"id": "thermal_hardware"'))]),
+        "analysis_test_needed": analysis_cell(ctx, ins=["INS-17", "INS-23", "INS-24"], other=[
+            oth("HWQ-20", "coil conductor/insulation family and hot-spot margin, decided once the H-1 thermal model gives a hot spot",
+                cite("HW", "owner_questions[id=HWQ-20]", "HWQ-20")),
+            oth("HW-MC-08", "coil and magnet operating limits (TBD)", cite("HW", "requirements[id=HW-MC-08]", "HW-MC-08")),
+            oth("HW-MC-14", "coil hot-spot measurement provisions", cite("HW", "requirements[id=HW-MC-14]", "HW-MC-14")),
+            oth("G-17", "compressor heat split assumed", cite("ICD_MD", "section 7", "| G-17 |")),
+        ], pend=[pend_item(ctx, "fo_preionizer_module_icd", "thermal rejection interface of a module")]),
+        "blocker": blocker_cell(
+            "No H-1 thermal model or thermal design: the coil conductor/insulation family and hot-spot margin (HWQ-20) wait "
+            "for the H-1 thermal model's hot spot",
+            "thermal", "S1",
+            "the hardware readiness review (after LOCK-1, before S1) requires HWQ-01..HWQ-21 recorded and the magnet/coil S1 "
+            "gate items MCQ-S1-01..08 closed; S1a (no Hall discharge) is not blocked by the thermal model",
+            [cite("HW", "owner_questions[id=HWQ-20]; hardware_readiness_review", "HWQ-20", "MCQ-S1-01..08 closed"),
+             cite("THL", "status", "Every design input is TBD")]),
+        "owner": owner_cell(),
+    }, [(4, "heater power (thermal_control) and thermal hardware mass enter the closure")])
+
+    dfsm = ctx.json(P["DFSM"])
+    row("SM-SUP-03", "support", 2, {
+        "requirement": requirement_cell("A5 mode sequence and rules; no single-point failure (verify); A4 minimum S1a interlocks from real ratings", [
+            item("A5 operating-mode sequence: " + " -> ".join(a5["operating_modes"]["sequence"]),
+                 cite("A5", "operating_modes.sequence", "time-limited Xe contingency/fallback")),
+            item("A5 rule: every mode that consumes Xe carries an explicit maximum duration; mixed/transition operation never "
+                 "silently becomes a long-duration mode", cite("A5", "operating_modes.rules", "explicit maximum duration", "never silently becomes a long-duration operating mode")),
+            R["spf"],
+            item("A4 S1a minimum interlocks: " + "; ".join(ctx.json(A4)["decisions"]["S1a_minimum_interlocks"]) +
+                 " (limits from real hardware/facility ratings, not invented thresholds)",
+                 cite("A4", "decisions.S1a_minimum_interlocks; S1a_interlock_limits", "explicit Hall-discharge inhibit during S1a", "limits come from real hardware/facility ratings")),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            power_tba("housekeeping", "; never 0 W"),
+            bom_tba(ctx, "ppu", " (control/housekeeping electronics are inside the PPU item)"),
+        ]),
+        "interface_status": interface_cell([
+            icd_item(ctx, "commands", role="controller -> valve setpoints"),
+            doc_item(ctx, "DFSM", "states, transitions, guards", f"{dfsm['status']} v{dfsm['version']}", role="mode logic"),
+            lane_item(pim, "control/enable/interlock lines of a pre-ionizer module", role="common boundary"),
+        ]),
+        "preliminary_design": design_cell("SPECIFICATION_DRAFT", [
+            item(f"dual-feed state machine v{dfsm['version']} ({dfsm['status']}): conceptual control logic, "
+                 f"{len(dfsm['parameters'])} parameters TBD, verification single-lens, second lens NOT YET PASSED",
+                 cite("DFSM", "status_detail; verification", "Conceptual control-logic specification", "NOT YET PASSED")),
+        ], "S1a interlock set (A4) on the lab facility and supplies", [cite("A4", "decisions.S1a_minimum_interlocks", "hardware E-stop")]),
+        "evidence_status": evidence_cell(ctx, "NONE", [], [
+            item("no measured control evidence: every guard is symbolic", cite("DFSM", "status_detail", "Every guard is symbolic"))]),
+        "procurement_status": procurement_cell(UNKNOWN, [item("no controller or interlock-hardware procurement record",
+                                                               cite("S1A", "conditions[id=S1A-C2]", "S1A-C2"))]),
+        "analysis_test_needed": analysis_cell(ctx, s1a=["S1A-C2"], s1=["S1-C8"], ins=["INS-10", "INS-18"],
+                                              phase1=["ignition/restart behaviour", "stability/oscillation", "no continuous Xe augmentation"], other=[
+            oth("D-13", "ignition / start attempts measured?", cite("L1", "decisions[id=D-13]", "D-13")),
+            oth("lane_14 second lens", "the dual-feed machine is not decisive evidence for Milestone B/C until its second lens passes",
+                cite("DFSM", "verification.second_lens", "NOT YET PASSED")),
+        ], pend=[pend_item(ctx, "fo_preionizer_module_icd", "control/enable/interlock lines")]),
+        "blocker": blocker_cell(
+            "S1a safe operational limits and interlocks are not defined or owner-approved (S1A-C2 MISSING); A4 requires the "
+            "limits to come from real hardware/facility ratings, which do not exist until hardware and facility are selected",
+            "procurement", "S1a",
+            "S1A-C2 is an S1a condition; S1a precedes LOCK-1 in the owner sequence",
+            [cite("S1A", "conditions[id=S1A-C2]", "S1A-C2", "safe operational limits defined and owner-approved"),
+             cite("A4", "decisions.S1a_interlock_limits", "limits come from real hardware/facility ratings")]),
+        "owner": owner_cell(),
+    }, [(1, "control enforces the no-continuous-Xe-support rule that defines Phase-1 success"),
+        (3, "control enforces the maximum duration of every Xe-consuming mode"),
+        (4, "housekeeping power enters the bus closure")])
+
+    ms = ctx.json(P["MS"])
+    ctx.premise("A4 approves the metrology specification as procurement specification",
+                "approved as the procurement specification now" in ctx.json(A4)["decisions"]["metrology_specification"], A4)
+    row("SM-SUP-04", "support", 3, {
+        "requirement": requirement_cell("A5 Phase-1 minimum measurements; A4 SI-traceable ISO/IEC 17025 calibration; instrumentation v1-r2", [
+            item("A5 Phase-1 minimum measurements: " + "; ".join(a5["phase1_branch_decision"]["minimum_measurements"]),
+                 cite("A5", "phase1_branch_decision.minimum_measurements", "species/acceleration diagnostics where available")),
+            item("A4: SI-traceable calibration through an ISO/IEC 17025-accredited scope; certificate, uncertainty budget, "
+                 "traceability chain and raw calibration record mandatory", cite("A4", "decisions.force_DC_RF_traceability", "ISO/IEC 17025-accredited scope")),
+            item("A4: keep instrumentation v1-r2", cite("A4", "decisions.instrumentation_version", "keep v1-r2")),
+            item("flight: propulsion controller sensors (pressure, temperature, current) are booked under housekeeping",
+                 cite("BPB", "section 3 component table", "`housekeeping`")),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            power_tba("housekeeping", " (flight sensors)"),
+            {"dimension": "mass", "value": TBA, "basis": "no sensor/diagnostic mass item in the mass BOM",
+             "sources": [cite("BOM", "architectures.hall_only.item_ids", '"item_ids"')]},
+        ]),
+        "interface_status": interface_cell([
+            doc_item(ctx, "INS", "INS-01..INS-24 measurement definitions", f"{ctx.json(P['INS'])['status']} {ctx.json(P['INS'])['revision']}", role="instrument definitions"),
+            hw_item(ctx, ["HW-H1-08", "HW-PIM-07", "HW-FS-04"], role="diagnostic access on H-1, modules and feed"),
+            lane_item(pim, "diagnostics interface of a pre-ionizer module", role="common boundary"),
+        ]),
+        "preliminary_design": design_cell("SPECIFICATION_DRAFT", [
+            item(f"instrumentation definition {ctx.json(P['INS'])['revision']} ({ctx.json(P['INS'])['status']}): instrument "
+                 "choices are principles, not product selections", cite("INS", "not_locked", "Instrument choices are principles, not product selections")),
+            item(f"metrology measurement specification ({ms['status']} in file; approved as procurement specification by A4) "
+                 "for INS-19/INS-20", cite("MS", "serves", "INS-19", "INS-20")),
+        ], "INS-01..INS-24 on the H-1 stand", [cite("INS", "instruments", "INS-01", "INS-24")]),
+        "evidence_status": evidence_cell(ctx, "CAPABILITY_NOT_DEMONSTRATED", [], [
+            item("S1-C4 'instrumentation capability demonstrated' is MISSING; A4: the metrology specification does NOT "
+                 "constitute a demonstrated measurement capability",
+                 cite("S1_ST", "conditions[id=S1-C4]", "S1-C4"), cite("A4", "decisions.metrology_specification", "does NOT constitute a demonstrated measurement capability"))]),
+        "procurement_status": procurement_cell("APPROVED_FOR_PROCUREMENT (metrology spec, INS-19/INS-20 only); PROCUREMENT_PLANNING (MFC ranges); other instruments " + UNKNOWN, [
+            item("APPROVED_FOR_PROCUREMENT: the metrology specification is approved as the procurement specification "
+                 "(authorizes quotes / lab capability) for the INS-19/INS-20 measurands",
+                 cite("A4", "decisions.metrology_specification", "approved as the procurement specification now"), cite("MS", "serves", "INS-19")),
+            item("PROCUREMENT_PLANNING: at least three overlapping MFC ranges per gas path (INS-05, 0.030-3.14 mg/s)",
+                 cite("A4", "decisions.MFC_ranges", "become part of procurement planning")),
+            item(f"every other instrument: {UNKNOWN} (no procurement record; S1A-C1 hardware record absent)",
+                 cite("S1A", "conditions[id=S1A-C1]", "INS-01, INS-02, INS-04")),
+        ]),
+        "analysis_test_needed": analysis_cell(ctx, s1a=["S1A-C1", "S1A-C4"], s1=["S1-C4", "S1-C5"],
+                                              ins=["INS-01", "INS-02", "INS-05", "INS-09", "INS-18", "INS-19", "INS-20"], other=[
+            oth("HW-ENV-03", "anode MFC ranges must cover every W1 valve-outlet test point (TBD)", cite("HW", "requirements[id=HW-ENV-03]", "HW-ENV-03")),
+            oth("capability demo", "actual-hardware capability demonstration preparation (DRAFT)", cite("CAPDEMO" if False else "S1", "conditions[id=S1-C4]", "S1-C4")),
+        ], pend=[pend_item(ctx, "fo_phase1_prereg_framework", "measured quantities and data-quality rules")]),
+        "blocker": blocker_cell(
+            "Instruments are not procured or calibrated: A4 places 'instrument procurement/calibration' on the first "
+            "critical-path stage; S1a needs the instruments in the hardware record (S1A-C1) and frozen calibration "
+            "procedures (S1A-C4), both MISSING",
+            "procurement", "S1a",
+            "S1A-C1 and S1A-C4 are S1a conditions",
+            [cite("A4", "critical_path[0]", "instrument procurement/calibration"),
+             cite("S1A", "conditions[id=S1A-C1], [id=S1A-C4]", "S1A-C1", "S1A-C4")]),
+        "owner": owner_cell(),
+    }, [(1, "the Phase-1 discriminators (sustainment, T/P_bus, eta_u, stability) are measured quantities"),
+        (2, "witness-coupon and part metrology (INS-19/INS-20) is the life-evidence route"),
+        (3, "cathode flow measurement (INS-05) retires risk 3"),
+        (4, "bus-power metering (INS-02) closes the ledger")])
+
+    row("SM-SUP-05", "support", 4, {
+        "requirement": requirement_cell("RFP < 40 kg incl. structure (verify); launch loads not in the repository (TBD); installation reproducibility (W3, PROPOSED)", [
+            R["mass"], R["mass_scope"],
+            item("TBD - requires the configuration and launch-load environment (not defined in this repository)",
+                 cite("BOM", "items[id=structure].cbe.requires", "configuration and launch-load environment (not defined in this repository)")),
+            item("W3 (PROPOSED): installation (re-mount) reproducibility of ln(T/P_bus) no worse than u_inst,max; module "
+                 "exchange changes nothing else", cite("HW", "requirements[id=HW-SVC-03], [id=HW-PIM-01]", "HW-SVC-03", "HW-PIM-01")),
+        ]),
+        "allocation": allocation_cell(ctx, [
+            bom_tba(ctx, "structure"),
+            power_na(cite("AB", "COMMON_COMPONENTS", "COMMON_COMPONENTS"), "no bus_power_boundary_v1 component (passive structure)"),
+        ]),
+        "interface_status": interface_cell([
+            hw_item(ctx, ["IP-UP", "IP-DN", "HW-PIM-01", "HW-SVC-01", "HW-SVC-03", "HW-SVC-04"], role="module planes, mount and service lines"),
+            lane_item(pim, "mechanical envelope and mounting datum; service-line routing; installation/removal reproducibility", role="common boundary"),
+        ]),
+        "preliminary_design": design_cell("NONE", [
+            item("no propulsion-module structure design", cite("BOM", "items[id=structure].cbe", '"id": "structure"')),
+        ], "IP-UP / IP-DN interface planes and the SVC-1 service-line bundle across the thrust stand",
+            [cite("HW", "interface_planes; configuration_items[id=SVC-1]", "IP-UP", '"id": "SVC-1"')]),
+        "evidence_status": evidence_cell(ctx, "NONE", [], [
+            item("no structural evidence; remount reproducibility is to be established in S1/S1b",
+                 cite("A6", "authorized_now.fo_phase1_prereg_framework", "remount reproducibility"))]),
+        "procurement_status": procurement_cell(UNKNOWN, [
+            item("no structure procurement record; SVC-1 is required in the S1a hardware record (absent)", cite("S1A", "conditions[id=S1A-C1]", "SVC-1"))]),
+        "analysis_test_needed": analysis_cell(ctx, s1a=["S1A-C1"], ins=["INS-01"], other=[
+            oth("D-06", "hardware configuration: HW-0 spacer + S1b re-mounts, OPTION-DIVERTER, or CFG-A/CFG-B", cite("L1", "decisions[id=D-06]", "D-06")),
+            oth("HWQ-01", "configuration-change procedure (module exchange only vs H-1 re-mount)", cite("HW", "owner_questions[id=HWQ-01]", "HWQ-01")),
+            oth("HWQ-12", "sham service lines in every configuration", cite("HW", "owner_questions[id=HWQ-12]", "HWQ-12")),
+            oth("HW-SVC-02", "in-situ thrust-stand calibration after every configuration change", cite("HW", "requirements[id=HW-SVC-02]", "HW-SVC-02")),
+        ], pend=[pend_item(ctx, "fo_preionizer_module_icd", "mechanical envelope, mounting datum, installation/removal reproducibility"),
+                 pend_item(ctx, "fo_phase1_prereg_framework", "repeatability/remount procedure")]),
+        "blocker": blocker_cell(
+            "How HW-0 / HW-RF / HW-ECR are realised on H-1 and C-1 (spacer + re-mounts, in-vacuum diverter, both applicators, "
+            "separate builds) is an open LOCK-1 decision (D-06), with the configuration-change procedure (HWQ-01)",
+            "unresolved_interface", "LOCK-1",
+            "D-06 is one of the decisions resolved before the LOCK-1 signature",
+            [cite("L1", "decisions[id=D-06]; phases.sequence", "D-06", "resolve D-01..D-15 and P-01..P-04 -> LOCK-1"),
+             cite("HW", "owner_questions[id=HWQ-01]", "HWQ-01")]),
+        "owner": owner_cell(),
+    }, [(4, "structure mass enters the mass closure")])
+
+    # ======================= reserved interface (17th row) ================================================
+    rsv = arch["reserved_interface"]
+    ctx.premise("A5 reserved interface is not baseline flight hardware", rsv["baseline_flight_hardware"] is False, A5)
+    pim_ids = [r["id"] for r in hw["requirements"] if r["id"].startswith("HW-PIM-")]
+    pim_tbd = [r["id"] for r in hw["requirements"] if r["id"].startswith("HW-PIM-") and r["status"] == "TBD"]
+    rf_n, ecr_n = len(ctx.json(P["RFEV"])["entries"]), len(ctx.json(P["ECREV"])["entries"])
+    if pim["state"] == "PENDING_PARALLEL_LANE":
+        rb = "The common pre-ionizer module ICD is not yet defined (pending parallel lane fo_preionizer_module_icd)"
+    else:
+        rb = f"The common pre-ionizer module ICD is {lane_phrase(pim)}"
+    rows.append({
+        "id": "SM-RES-01", "group": "reserved_interface", "a5_name": rsv["name"],
+        "a5_source": cite("A5", "architecture.reserved_interface.name", rsv["name"]),
+        "baseline_flight_hardware": False, "reserved_interface": True,
+        "flag": "reserved, not baseline flight hardware",
+        "columns": {
+            "requirement": requirement_cell("A5: ICD produced now so fitting RF after H-1 needs no thruster redesign; A6 fixed common boundaries; not secretly RF-specific", [
+                item("A5: " + rsv["requirement"] + f" (location: {rsv['location']})",
+                     cite("A5", "architecture.reserved_interface", "does not require redesigning the thruster", "between feed/plenum and Hall ionization region")),
+                item("A6: fixed common boundaries (mechanical envelope and mounting datum; gas-flow path and pressure boundary; "
+                     "electrical power boundary; control/enable/interlock lines; thermal rejection; grounding/shielding; "
+                     "diagnostics; service-line routing; permitted magnetic-field disturbance; allowable pressure drop; "
+                     "installation/removal reproducibility); RF annex primary, ECR annex alternate; HW-0 blank/spacer module",
+                     cite("A6", "authorized_now.fo_preionizer_module_icd", "mechanical envelope and mounting datum", "HW-0 uses a blank/spacer module")),
+                item("A6: the common pre-ionizer interface must not be secretly RF-specific", cite("A6", "common_interface_rule", "must not be secretly RF-specific")),
+                item("A5: ECR is an alternate test module only, not baseline installed flight hardware", cite("A5", "architecture.alternate", "alternate test module only")),
+            ]),
+            "allocation": allocation_cell(ctx, [
+                {"dimension": "power (rf_source; ecr_source + ecr_magnet)", "value": TBA,
+                 "basis": "LOCK-1 input: 'TBD - requires the source allocation in bus_power_boundary_v1'",
+                 "sources": [cite("L1", "lock1_inputs[2]", "TBD - requires the source allocation in bus_power_boundary_v1"),
+                             cite("AB", "PREIONIZER_COMPONENTS", '"rf_source"', '"ecr_source"', '"ecr_magnet"')]},
+                bom_tba(ctx, "rf_source", " (also rf_generator, rf_matching_network; ECR items ecr_source, microwave_source, waveguide, ecr_magnets: all TBD)"),
+            ]),
+            "interface_status": interface_cell([
+                lane_item(pim, "common H-1 pre-ionizer module interface (RF annex primary, ECR annex alternate, HW-0 spacer)", role="the interface itself"),
+                hw_item(ctx, ["IP-UP", "IP-DN", "PIM-0", "PIM-RF", "PIM-ECR", "HW-PIM-01", "HW-PIM-06", "HW-PIM-08"], role="W3 module planes and requirements"),
+                bus_item(["rf_source", "ecr_source", "ecr_magnet"], role="pre-ionizer loads (rf_hall / ecr_hall)"),
+            ]),
+            "preliminary_design": design_cell("REQUIREMENTS_ONLY", [
+                item(f"W3 module requirement set {pim_ids[0]}..{pim_ids[-1]} ({len(pim_ids)} items; TBD: {', '.join(pim_tbd)})",
+                     cite("HW", "requirements[id=HW-PIM-*]", *pim_ids)),
+                item("interstage model (lane 18): inlet-state definition at HALL_INLET_Z0", cite("ISTG", "document", "HALL_INLET_Z0")),
+                item("no module design; not baseline flight hardware (A5)", cite("A5", "architecture.reserved_interface.baseline_flight_hardware", '"baseline_flight_hardware": false')),
+            ], "PIM-0 (flow-equivalent spacer), PIM-RF, PIM-ECR between IP-UP and IP-DN",
+                [cite("HW", "configuration_items[id=PIM-0], [id=PIM-RF], [id=PIM-ECR]", '"id": "PIM-0"', '"id": "PIM-RF"', '"id": "PIM-ECR"')]),
+            "evidence_status": evidence_cell(ctx, "LITERATURE_ONLY_NO_VYOVRINDA_HARDWARE", [("RFEV", "entries"), ("ECREV", "entries")], [
+                item(f"RF source evidence matrix: {rf_n} entries; ECR source evidence matrix: {ecr_n} entries (evidence audits; no ranking)",
+                     cite("RFEV", "status", "No model implementation, no architecture conclusion"), cite("ECREV", "scope", "no ranking of ECR against RF")),
+                veto_item("RI-MASS-RF-HARDWARE-UNKNOWN", "RF hardware mass unknown"),
+                veto_item("RI-THERMAL-RF-PASSIVE-COOLING", "RF source passive cooling"),
+            ]),
+            "procurement_status": procurement_cell(UNKNOWN, [
+                item("no module procurement record", cite("BOM", "items[id=rf_source]", '"id": "rf_source"'))]),
+            "analysis_test_needed": analysis_cell(ctx, ins=["INS-03", "INS-15"], phase1=["T/P_bus", "sustainment", "full bus-power compatibility"], other=[
+                oth("HWQ-05", "ECR magnet: electromagnet or permanent magnet", cite("HW", "owner_questions[id=HWQ-05]", "HWQ-05")),
+                oth("HWQ-06", "RF module magnetization", cite("HW", "owner_questions[id=HWQ-06]", "HWQ-06")),
+                oth("HWQ-07", "electrical potential of module body / interstage electrode", cite("HW", "owner_questions[id=HWQ-07]", "HWQ-07")),
+                oth("HWQ-15", "freeze the module interfaces before Phase 1 even if modules are delivered later", cite("HW", "owner_questions[id=HWQ-15]", "HWQ-15")),
+                oth("A5 case B", "RF restores operation with a net system-level benefit after RF source, matching and PPU power and mass are counted",
+                    cite("A5", "phase1_branch_decision.cases.B_rf_hall", "net system-level benefit")),
+                oth("A6 execution order", "order-balanced scheme; A5's Hall-only -> RF+Hall -> ECR+Hall names the configurations, not the execution order",
+                    cite("A6", "clarification_execution_order", "it is NOT the score-bearing execution order")),
+            ], pend=[pend_item(ctx, "fo_preionizer_module_icd", "the common interface definition"),
+                     pend_item(ctx, "fo_phase1_prereg_framework", "same-condition definition and counterbalancing")]),
+            "blocker": blocker_cell(
+                rb + "; the IP-UP/IP-DN module interface control drawing must be frozen before S1 (hardware readiness review, HW-PIM-01)",
+                "unresolved_interface", "S1",
+                "the hardware readiness review (after LOCK-1, before S1) lists 'module interface control drawing for IP-UP / "
+                "IP-DN frozen (HW-PIM-01)' as an entry criterion",
+                [cite("HW", "hardware_readiness_review.entry_criteria", "module interface control drawing for IP-UP / IP-DN frozen (HW-PIM-01)"),
+                 pending("fo_preionizer_module_icd")]),
+            "owner": owner_cell(),
+        },
+        "a5_risk_mapping": risks(ctx, [(1, "RF/ECR are the A5 contingency response to risk 1"),
+                                       (4, "source power and mass count in the net system-level benefit (A5 case B/C)")]),
+    })
+    return rows
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Rollup and document
+# ---------------------------------------------------------------------------------------------------------------
+def build_rollup(ctx: Ctx, rows: list) -> dict:
+    by_cat = {c: [] for c in BLOCKER_CATEGORIES}
+    by_step = {s: {} for s in GATE_SEQUENCE + [NONE_ON_H1_PATH]}
+    for r in rows:
+        b = r["columns"]["blocker"]
+        by_cat[b["category"]].append(r["id"])
+        by_step[b["earliest_blocked_step"]].setdefault(b["category"], []).append(r["id"])
+    first = next(s for s in GATE_SEQUENCE if by_step[s])
+    gate_table = {g: {c: sorted(i for s in GATE_SEQUENCE[:GATE_SEQUENCE.index(g) + 1] for i in by_step[s].get(c, []))
+                      for c in BLOCKER_CATEGORIES} for g in REPORTED_GATES}
+    gate_table = {g: {c: v for c, v in d.items() if v} for g, d in gate_table.items()}
+    risk_rows = {}
+    for r in rows:
+        for m in r["a5_risk_mapping"]:
+            risk_rows.setdefault(m["rank"], []).append(r["id"])
+    closing = []
+    for rank in sorted(risk_rows):
+        rk = a5_risk(ctx, rank)
+        cat, why = RISK_CATEGORY[rank]
+        cur = sorted({next(x for x in rows if x["id"] == rid)["columns"]["blocker"]["category"] for rid in risk_rows[rank]})
+        closing.append({"rank": rank, "risk": rk["risk"], "category": cat, "category_basis": why,
+                        "category_mapping_status": "PROPOSED by this lane (owner question MQ-03)",
+                        "a5_response": rk["response"], "rows": risk_rows[rank],
+                        "current_blocker_categories_in_front_of_it": cur})
+    no_current = [c for c, v in by_cat.items() if not v]
+    flight_only = by_step[NONE_ON_H1_PATH]
+    order = [s for s in GATE_SEQUENCE if by_step[s]]
+    step_txt = "; ".join(f"{s}: " + ", ".join(f"{BLOCKER_CATEGORIES[c].split(':')[0]} ({len(v)})" for c, v in sorted(by_step[s].items()))
+                         for s in order)
+    statement = (
+        f"Execution toward Phase 1 is blocked first at {first} by "
+        + ", ".join(BLOCKER_CATEGORIES[c].split(":")[0] for c in sorted(by_step[first])) +
+        f" (rows {', '.join(sorted(i for v in by_step[first].values() for i in v))}). Earliest blocked step per row: {step_txt}. "
+        f"Categories with no current row blocker: {', '.join(BLOCKER_CATEGORIES[c].split(':')[0] for c in no_current) or 'none'}. "
+        "Propulsion physics (A5 risks 1-2) is the question the gate sequence leads to: only H-1 Phase 1 (and a life test) "
+        "can answer it, and it decides the branch A hall_only / B rf_hall / C ecr_hall / NO_VIABLE_CASE; no row can retire "
+        "it before Phase 1. Rows whose blocker is off the H-1 gate path ("
+        + ", ".join(sorted(i for v in flight_only.values() for i in v)) +
+        ") block only the flight closure of A5 risks 3-4 (Xe budget, mass, feed state). "
+        "No architecture is ranked, preferred or eliminated.")
+    return {
+        "question": "Which blocker category actually blocks the architecture: propulsion physics, cathode/Xe, mass, "
+                    "thermal, compressor, unresolved interface or procurement? (A6 authorized_now.fo_subsystem_maturity_matrix)",
+        "by_category": {c: v for c, v in by_cat.items()},
+        "by_earliest_step": {s: by_step[s] for s in GATE_SEQUENCE + [NONE_ON_H1_PATH]},
+        "blocked_by_gate_cumulative": gate_table,
+        "first_blocked_step": first,
+        "first_blocked_step_categories": sorted(by_step[first]),
+        "categories_without_a_current_row_blocker": no_current,
+        "flight_closure_only": flight_only,
+        "architecture_closing_risks": closing,
+        "answer": statement,
+        "gate_sequence_source": [cite("A4", "critical_path", "S1a -> LOCK-1 -> W5 freeze -> S1/S1b -> LOCK-2"),
+                                 cite("A6", "authorized_now.fo_phase1_prereg_framework", "sequence S1a -> LOCK-1 -> W5 freeze -> S1/S1b -> LOCK-2 -> Phase 1")],
+    }
+
+
+def build(root: Path = REPO) -> dict:
+    ctx = Ctx(root)
+    for rel, h in DECISION_PINS.items():
+        got = sha256_file(ctx.path(rel))
+        if got != h:
+            raise RuntimeError(f"decision pin mismatch for {rel}: {got} != {h}")
+    g0 = ctx.json(G0)
+    ctx.premise("G0 verdict CLEAN", g0["verdict"] == "CLEAN", G0)
+    ctx.premise("G0 verified the pinned A5 sha256", g0["a5_sha256"] == DECISION_PINS[A5], G0)
+    a6 = ctx.json(A6)
+    ctx.premise("A6 follows A5 at the pinned sha256", a6["follows_sha256"] == DECISION_PINS[A5], A6)
+    ctx.premise("A6 authorizes fo_subsystem_maturity_matrix", "fo_subsystem_maturity_matrix" in a6["authorized_now"], A6)
+    a5 = ctx.json(A5)
+    ctx.lanes = {lane: lane_state(ctx.root, lane) for lane in PARALLEL_LANES}
+
+    rows = build_rows(ctx)
+    arch = a5["architecture"]
+    expect = arch["atmospheric_branch"] + arch["xe_branch"] + arch["propulsion"] + arch["support"]
+    got = [r["a5_name"] for r in rows if not r["reserved_interface"]]
+    if got != expect or len(expect) != arch["baseline_subsystem_count"]:
+        raise RuntimeError("row names do not reproduce A5 'architecture' exactly")
+    input_pins = {rel: sha256_file(ctx.path(rel)) for rel in sorted(INPUTS.values())}
+    rollup = build_rollup(ctx, rows)
+    b1 = ctx.json(P["B1"])
+    doc = {
+        "schema": "subsystem_maturity_matrix_v1",
+        "id": "subsystem_maturity_v1",
+        "title": "A5 subsystem maturity matrix: central execution dashboard (16 baseline subsystems + reserved pre-ionizer interface)",
+        "follow_on": "fo_subsystem_maturity_matrix",
+        "a6_lane_name": "M16",
+        "trigger": "T_A5_SUBSYSTEM_MATURITY",
+        "status": "DRAFT_FOR_OWNER_REVIEW",
+        "base_commit": BASE_COMMIT,
+        "generated_by": f"{REL_DIR}/build_subsystem_maturity.py",
+        "companion_document": f"{REL_DIR}/SUBSYSTEM_MATURITY.md",
+        "test": "tests/test_subsystem_maturity.py",
+        "authority": {
+            "a6_text": a6["authorized_now"]["fo_subsystem_maturity_matrix"],
+            "a6_source": cite("A6", "authorized_now.fo_subsystem_maturity_matrix", "the CENTRAL execution dashboard from A6 on"),
+            "a5_status": a5["status"],
+            "g0": {"file": G0, "verdict": g0["verdict"], "verified_commit": g0["verified_commit"],
+                   "consequence": g0["consequence"],
+                   "note": "A6 execution: no deliverable pins A5/A6 until G0 passes; G0 is CLEAN, so this lane pins A5/A6"},
+        },
+        "what_it_is": "The per-subsystem maturity state of the A5 proposal reference architecture, read from the repository: "
+                      "requirement -> allocation -> interface status -> preliminary design -> evidence status -> procurement "
+                      "status -> analysis/test needed -> blocker -> owner, with a blocker-category rollup and each row's "
+                      "mapping to the A5 architecture-closing risks 1-4.",
+        "what_it_is_not": [
+            "not a design, a prediction or a validation claim: every A5 number quoted here is an allocation or a requirement",
+            "not an architecture ranking: hall_only, rf_hall and ecr_hall are not ranked, preferred or eliminated; H-1 Phase 1 decides the branch (A/B/C/NO_VIABLE_CASE)",
+            "not a Hall performance source: no Hall transport closure, screening candidate or withdrawn 0-D number is used (credible set empty)",
+            f"not a Bundle-1 verdict: Bundle 1 stays {b1['outcome']['form']}",
+            "not a sub-allocation: where A5/A4 record no subsystem allocation the cell is TO_BE_ALLOCATED",
+            "not an owner assignment: no accountable party is recorded, so every owner cell is OWNER_TO_ASSIGN",
+        ],
+        "architecture_ids": ARCHITECTURES,
+        "decision_pins": DECISION_PINS,
+        "input_pins": input_pins,
+        "governance_referenced_not_pinned": GOVERNANCE_NOT_PINNED,
+        "parallel_lanes": ctx.lanes,
+        "vocabularies": {
+            "columns": COLUMNS, "column_titles": COLUMN_TITLES, "interface_status": INTERFACE_STATUS,
+            "blocker_categories": BLOCKER_CATEGORIES, "gate_sequence": GATE_SEQUENCE, "reported_gates": REPORTED_GATES,
+            "off_gate_path": NONE_ON_H1_PATH, "explicit_values": list(EXPLICIT_VALUES),
+            "evidence_classes": EVIDENCE_CLASSES, "phase1_decision_quantities_a6": PHASE1_DECISION_QUANTITIES,
+            "rules": [
+                "blocker: the single item that currently prevents the row from advancing on the A4/A6 execution sequence; "
+                "earliest_blocked_step is the first step of S1a -> LOCK-1 -> W5 freeze -> S1 -> LOCK-2 -> Phase 1 that cannot "
+                "pass while it is open (the sequence is linear, so every later step is blocked too); NONE_ON_H1_PATH when it "
+                "gates only flight closure, with what it gates instead",
+                "interface status of a row: FROZEN if every item is FROZEN, OPEN if every item is OPEN, else PARTIAL",
+                "allocation: only values recorded by A5 (top-level allocations, Xe mass allocation) or A4 (compressor power) "
+                "are allocations; A5 system-level allocations are shown as context and are never divided",
+                "procurement: only statuses recorded in the base (A4 metrology specification, A4 MFC procurement planning, "
+                "S1a hardware record); otherwise UNKNOWN - owner to confirm",
+                "owner: OWNER_TO_ASSIGN unless an accountable party is recorded",
+            ],
+        },
+        "context": {
+            "bundle1": {"form": b1["outcome"]["form"], "source": cite("B1", "outcome.form", "NO_BASELINE_YET")},
+            "credible_hall_set": "empty (A4 project conclusion; A5 what_this_is_not)",
+            "credible_set_source": cite("A5", "what_this_is_not", "credible set remains empty"),
+            "a5_numbers": "allocations or requirements, never predictions",
+            "a5_numbers_source": cite("A5", "what_this_is_not", "all thrust, power, mass and life numbers below are allocations or requirements"),
+            "phase1_cases": list(a5["phase1_branch_decision"]["cases"].keys()),
+            "a6_not_authorized": a6["not_authorized"],
+        },
+        "rows": rows,
+        "rollup": rollup,
+        "milestones": {
+            "supports": ["A"],
+            "statement": "Milestone A (conditional selection): SUPPORTS as the execution dashboard. It names, per A5 "
+                         "subsystem, the conditions a conditional-baseline statement must carry and the gate each open "
+                         "item blocks; it adds no selection. Milestone B (physics-backed selection): NOT SUPPORTED; it needs "
+                         "H-1 Phase-1 measurements under the pre-registered framework (LOCK-1 -> W5 freeze -> S1/S1b -> "
+                         "LOCK-2), second-lens verification of single-lens inputs, and an admitted Hall closure for absolute "
+                         "performance (credible set empty). Milestone C (proposal/PDR freeze): NOT SUPPORTED; every "
+                         "TO_BE_ALLOCATED, OPEN, NONE and UNKNOWN cell must close (sub-allocations, interface freezes, "
+                         "designs, procurement, measured evidence) and the rows must be integrated in mass, power, thermal, "
+                         "life, start-up, cathode and mission closure. Bundle 1 stays NO_BASELINE_YET.",
+            "operating_model_questions": {
+                "i_conditional_selection_now": "no selection is made or implied; the matrix lists the conditions per subsystem",
+                "ii_what_blocks_physics_backed_selection": "the rollup: S1a procurement items, LOCK-1 interface/compressor/"
+                                                          "Xe-ignition decisions, S1 cathode/thermal/pre-ionizer-ICD items, then H-1 Phase 1 itself (propulsion physics)",
+                "iii_what_could_overturn": "a changed premise (an owner decision taken, a readiness condition satisfied, a "
+                                           "parallel lane delivered) makes the builder raise or restate the affected row; "
+                                           "measured H-1/C-1 evidence overturns every literature-only evidence cell",
+            },
+        },
+        "owner_questions": [
+            {"id": "MQ-01", "question": "Assign the accountable party per row (every owner cell is OWNER_TO_ASSIGN)."},
+            {"id": "MQ-02", "question": "Sub-allocate the A5 system allocations (mass <= 34-36 kg, bus power <= 1.30-1.35 kW) "
+                                        "to the rows; only the compressor power (300 W, A4) and the cathode Xe flow (0.10 mg/s, A5) "
+                                        "are allocated today."},
+            {"id": "MQ-03", "question": "Confirm the blocker taxonomy and the PROPOSED risk-to-category mapping (risk 2 life "
+                                        "booked as propulsion physics; bus-power closure booked with mass under risk 4)."},
+            {"id": "MQ-04", "question": "Confirm that an S1a blocker is reported as blocking LOCK-1 (owner sequence S1a -> "
+                                        "LOCK-1 -> W5 freeze -> S1/S1b -> LOCK-2 -> Phase 1)."},
+            {"id": "MQ-05", "question": "Confirm the bookings where A5 names no BOM item: harness under PPU/power distribution; "
+                                        "Xe regulator inside mass_bom 'xe_valve_and_flow_control'; flight sensors under housekeeping."},
+            {"id": "MQ-06", "question": "Record the procurement status of each row (only the A4 metrology specification and the "
+                                        "MFC procurement planning are recorded)."},
+        ],
+        "premises_checked": ctx.premises,
+        "compliance": [
+            "no Hall transport closure, screening candidate or withdrawn 0-D Hall number is used anywhere",
+            "no architecture is ranked, preferred or eliminated; eliminations happen only through the lane-24 hard gates",
+            "P5 calibration nuisance is never a design variable, row, column or axis here; Hall-closure uncertainty never "
+            "enters the atmospheric or Xe branch rows",
+            "no number is invented: values are read from pinned inputs; missing inputs raise",
+            "mutable governance files are referenced by id only and never pinned",
+            "pure builder: nothing wired into archengine; no frozen data, golden, prereg or campaign file touched",
+        ],
+    }
+    n = verify_citations(ctx, doc)
+    doc["citations_verified"] = n
+    return doc
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Markdown rendering
+# ---------------------------------------------------------------------------------------------------------------
+def _src(s: dict) -> str:
+    if "pending_parallel_lane" in s:
+        return f"pending parallel lane `{s['pending_parallel_lane']}`"
+    return f"`{s['path']}` ({s['locator']})"
+
+
+def _srcs(lst) -> str:
+    return "; ".join(_src(s) for s in lst)
+
+
+def _esc(t: str) -> str:
+    return str(t).replace("|", "\\|").replace("\n", " ")
+
+
+def _short_blocker(b: dict) -> str:
+    return f"**{b['category_label']}** -> {b['earliest_blocked_step']}"
+
+
+def render_md(doc: dict) -> str:
+    L = []
+    a = L.append
+    a("# A5 subsystem maturity matrix: central execution dashboard (M16)")
+    a("")
+    a("<!-- GENERATED by docs/budgets/subsystem_maturity/build_subsystem_maturity.py from subsystem_maturity_v1.json; do not edit by hand -->")
+    a("")
+    a("| item | value |")
+    a("|---|---|")
+    a(f"| follow-on | `{doc['follow_on']}` (A6 lane {doc['a6_lane_name']}, trigger `{doc['trigger']}`) |")
+    a(f"| status | {doc['status']} |")
+    a(f"| base commit | `{doc['base_commit']}` |")
+    a(f"| data | `subsystem_maturity_v1.json` (authoritative; {doc['citations_verified']} citations verified at build) |")
+    a(f"| regenerate / check | `python {doc['generated_by']}` / `--check` |")
+    a(f"| test | `{doc['test']}` |")
+    a(f"| architecture ids | {', '.join('`' + x + '`' for x in doc['architecture_ids'])} (never ranked) |")
+    a(f"| Bundle 1 | {doc['context']['bundle1']['form']} |")
+    a("")
+    a("**What it is.** " + doc["what_it_is"])
+    a("")
+    a("**What it is not.**")
+    for x in doc["what_it_is_not"]:
+        a(f"- {x}")
+    a("")
+    a("## 1. Answer in short")
+    a("")
+    ru = doc["rollup"]
+    a(ru["answer"])
+    a("")
+    a("## 2. Milestone statement")
+    a("")
+    a(doc["milestones"]["statement"])
+    a("")
+    for k, v in doc["milestones"]["operating_model_questions"].items():
+        a(f"- **{k.replace('_', ' ')}**: {v}")
+    a("")
+    a("## 3. Dashboard")
+    a("")
+    a("One row per A5 subsystem, names exactly as in A5 `architecture`; the 17th row is the reserved interface. Cells show "
+      "the status value; section 5 gives every item with its source.")
+    a("")
+    hdr = ["#", "subsystem"] + [COLUMN_TITLES[c] for c in COLUMNS]
+    a("| " + " | ".join(hdr) + " |")
+    a("|" + "---|" * len(hdr))
+    for r in doc["rows"]:
+        c = r["columns"]
+        name = r["a5_name"] + (" *(reserved, not baseline flight hardware)*" if r["reserved_interface"] else "")
+        cells = [r["id"], name, c["requirement"]["value"], c["allocation"]["value"], c["interface_status"]["value"],
+                 c["preliminary_design"]["value"], c["evidence_status"]["value"], c["procurement_status"]["value"],
+                 c["analysis_test_needed"]["value"], _short_blocker(c["blocker"]) + ": " + c["blocker"]["value"],
+                 c["owner"]["value"]]
+        a("| " + " | ".join(_esc(x) for x in cells) + " |")
+    a("")
+    a("## 4. Blocker rollup")
+    a("")
+    a(f"Question: {ru['question']}")
+    a("")
+    a("### 4.1 Current row blockers by category and earliest blocked step")
+    a("")
+    steps = GATE_SEQUENCE + [NONE_ON_H1_PATH]
+    a("| category | " + " | ".join(steps) + " | total |")
+    a("|---|" + "---|" * (len(steps) + 1))
+    for cat in BLOCKER_CATEGORIES:
+        vals = [", ".join(ru["by_earliest_step"][s].get(cat, [])) or "-" for s in steps]
+        a(f"| {BLOCKER_CATEGORIES[cat].split(':')[0]} | " + " | ".join(vals) + f" | {len(ru['by_category'][cat])} |")
+    a("")
+    a("### 4.2 What each reported gate is blocked by (cumulative: a row blocked at an earlier step also blocks it)")
+    a("")
+    a("| gate | blocked by (category: rows) |")
+    a("|---|---|")
+    for g in REPORTED_GATES:
+        d = ru["blocked_by_gate_cumulative"][g]
+        a(f"| {g} | " + "; ".join(f"{BLOCKER_CATEGORIES[c].split(':')[0]}: {', '.join(v)}" for c, v in d.items()) + " |")
+    a("")
+    a("### 4.3 A5 architecture-closing risks")
+    a("")
+    a("| rank | risk (A5) | category (PROPOSED mapping) | rows | current blocker categories in front of it | A5 response |")
+    a("|---|---|---|---|---|---|")
+    for x in ru["architecture_closing_risks"]:
+        a(f"| {x['rank']} | {_esc(x['risk'])} | {BLOCKER_CATEGORIES[x['category']].split(':')[0]} | {', '.join(x['rows'])} | "
+          f"{', '.join(BLOCKER_CATEGORIES[c].split(':')[0] for c in x['current_blocker_categories_in_front_of_it'])} | {_esc(x['a5_response'])} |")
+    a("")
+    a("## 5. Rows in detail")
+    for r in doc["rows"]:
+        c = r["columns"]
+        a("")
+        a(f"### {r['id']} {r['a5_name']}")
+        a("")
+        a(f"A5 group `{r['group']}`; source {_src(r['a5_source'])}." + (" **Reserved, not baseline flight hardware.**" if r["reserved_interface"] else ""))
+        a("")
+        a(f"- **requirement** ({c['requirement']['value']})")
+        for it in c["requirement"]["items"]:
+            a(f"  - {it['text']} [{_srcs(it['sources'])}]")
+        a(f"- **allocation**: {c['allocation']['value']}")
+        for d in c["allocation"]["dimensions"]:
+            a(f"  - {d['dimension']}: **{d['value']}** ({d.get('status', '')}{'; ' if d.get('status') else ''}{d['basis']}) [{_srcs(d['sources'])}]")
+        for d in c["allocation"]["system_level_context_not_a_sub_allocation"]:
+            a(f"  - context only (not a sub-allocation): {d['quantity']} {d['value']} ({d['status']})")
+        a(f"- **interface status**: {c['interface_status']['value']}")
+        for it in c["interface_status"]["items"]:
+            extra = it.get("field_status_counts") or it.get("item_statuses") or ""
+            a(f"  - {it['status']}: {it['item']} ({it['role']}; `{it['document']}`, {it['document_status']}){' ' + json.dumps(extra) if extra else ''}")
+        a(f"- **preliminary design**: {c['preliminary_design']['value']}")
+        for it in c["preliminary_design"]["items"]:
+            a(f"  - {it['text']} [{_srcs(it['sources'])}]")
+        if "h1_test_analogue" in c["preliminary_design"]:
+            h = c["preliminary_design"]["h1_test_analogue"]
+            a(f"  - H-1 test analogue: {h['text']} [{_srcs(h['sources'])}]")
+        ev = c["evidence_status"]
+        a(f"- **evidence status**: {ev['value']}; Vyovrinda hardware evidence: {ev['vyovrinda_hardware_evidence']}")
+        a(f"  - evidence matrix: {', '.join('`' + m + '`' for m in ev['evidence_matrix']) if ev['evidence_matrix'] else 'none exists for this subsystem'}")
+        for s in ev["matrix_summaries"]:
+            a(f"  - `{s['path']}`: classes {json.dumps(s['classes'])}, levels {json.dumps(s['levels'])}")
+        for it in ev["items"]:
+            ec = f" (evidence class {it['evidence_class']})" if it.get("evidence_class") else ""
+            a(f"  - {it['text']}{ec} [{_srcs(it['sources'])}]")
+        a(f"- **procurement status**: {c['procurement_status']['value']}")
+        for it in c["procurement_status"]["items"]:
+            a(f"  - {it['text']} [{_srcs(it['sources'])}]")
+        an = c["analysis_test_needed"]
+        a("- **analysis/test needed**")
+        if an["s1a_conditions"]:
+            a("  - S1a: " + ", ".join(f"{x['id']} ({x['state']})" for x in an["s1a_conditions"]))
+        if an["s1_conditions"]:
+            a("  - S1 (N4): " + ", ".join(f"{x['id']} ({x['state']})" for x in an["s1_conditions"]))
+        if an["instruments"]:
+            a("  - instruments: " + "; ".join(f"{x['id']} {x['name']}" for x in an["instruments"]))
+        pq = an["phase1_decision_quantities"]
+        if pq["quantities"]:
+            a(f"  - Phase-1 decision quantities (A6): {'; '.join(pq['quantities'])}; framework: {pq['framework']}")
+        for o in an["other"]:
+            a(f"  - {o['id']}: {o['what']} [{_srcs(o['sources'])}]")
+        for p in an["pending_parallel"]:
+            a(f"  - {p['status_text']}: {p['what']} (`{'`, `'.join(p['paths'])}`)")
+        b = c["blocker"]
+        blk = ", ".join(g for g, v in b["blocks"].items() if v) or "none of LOCK-1 / W5 freeze / S1 / LOCK-2 / Phase 1"
+        a(f"- **blocker** ({b['category_label']}; earliest blocked step {b['earliest_blocked_step']}; blocks: {blk}): {b['value']}")
+        a(f"  - basis: {b['basis']} [{_srcs(b['sources'])}]")
+        if b["outside_gate_path"]:
+            a(f"  - blocks instead: {b['outside_gate_path']}")
+        a(f"- **owner**: {c['owner']['value']} ({c['owner']['basis']})")
+        a("- **A5 risks**: " + "; ".join(f"{m['rank']} ({m['why_this_row']})" for m in r["a5_risk_mapping"]))
+    a("")
+    a("## 6. Parallel lanes (lazy re-read)")
+    a("")
+    a("| lane | A6 name | paths | state | files |")
+    a("|---|---|---|---|---|")
+    for lane, s in doc["parallel_lanes"].items():
+        a(f"| `{lane}` | {s['a6_name']} | {', '.join('`' + p + '`' for p in s['paths'])} | {s['state']} | {len(s['files'])} |")
+    a("")
+    a("The builder re-reads these paths on every run. It records files (sha256) and any declared top-level status, never "
+      "their content; it never requires them. When a lane delivers, rerun the builder and integrate the content in the next "
+      "revision of the affected cells.")
+    a("")
+    a("## 7. Rules and vocabularies")
+    a("")
+    for x in doc["vocabularies"]["rules"]:
+        a(f"- {x}")
+    a("")
+    a("| interface status | meaning |")
+    a("|---|---|")
+    for k, v in INTERFACE_STATUS.items():
+        a(f"| {k} | {v} |")
+    a("")
+    a("| blocker category | meaning |")
+    a("|---|---|")
+    for k, v in BLOCKER_CATEGORIES.items():
+        a(f"| `{k}` | {_esc(v)} |")
+    a("")
+    a("## 8. Owner questions")
+    a("")
+    for q in doc["owner_questions"]:
+        a(f"- **{q['id']}** {q['question']}")
+    a("")
+    a("## 9. Pins, inputs and premises")
+    a("")
+    a("Owner decisions and the G0 record (immutable, hard-pinned):")
+    a("")
+    for k, v in doc["decision_pins"].items():
+        a(f"- `{k}` sha256 `{v}`")
+    a("")
+    a(f"G0: verdict {doc['authority']['g0']['verdict']} at `{doc['authority']['g0']['verified_commit']}`; "
+      f"{doc['authority']['g0']['note']}.")
+    a("")
+    a("Verified deliverables read (sha256 at build):")
+    a("")
+    for k, v in doc["input_pins"].items():
+        a(f"- `{k}` `{v}`")
+    a("")
+    a("Governance files referenced by id only, never read or pinned: " + ", ".join(f"`{x}`" for x in doc["governance_referenced_not_pinned"]) + ".")
+    a("")
+    a(f"Premises re-checked on every build ({len(doc['premises_checked'])}; a change raises and the row is revised):")
+    a("")
+    for p in doc["premises_checked"]:
+        a(f"- {p['premise']} (`{p['source']}`)")
+    a("")
+    a("## 10. Compliance")
+    a("")
+    for x in doc["compliance"]:
+        a(f"- {x}")
+    a("")
+    return "\n".join(L)
+
+
+def dumps(obj: dict) -> str:
+    return json.dumps(obj, indent=1, ensure_ascii=False) + "\n"
+
+
+def main(argv: list) -> int:
+    doc = build()
+    js, md = dumps(doc), render_md(doc)
+    if "--check" in argv:
+        ok = True
+        for path, text in ((OUT_JSON, js), (OUT_MD, md)):
+            if not path.exists() or path.read_text(encoding="utf-8") != text:
+                print(f"MISMATCH: {path.relative_to(REPO)} is not reproduced by this script "
+                      "(inputs or a parallel lane changed: regenerate)")
+                ok = False
+        if ok:
+            print("OK")
+        return 0 if ok else 1
+    OUT_JSON.write_text(js, encoding="utf-8")
+    OUT_MD.write_text(md, encoding="utf-8")
+    print(f"wrote {OUT_JSON.relative_to(REPO)} and {OUT_MD.relative_to(REPO)}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
