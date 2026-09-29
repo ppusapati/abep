@@ -128,7 +128,10 @@ def test_needed_by_rule(doc):
     assert any(w.endswith("/requirements/58/text") for w in ins("HWQ-06"))
     assert any(w.endswith("/annexes/ANNEX-RF/deviations/0/proposed_control") for w in ins("HWQ-06"))
     assert any(w.endswith("W2_fo_lock1_decision_brief") for w in ins("HWQ-01"))
-    assert items["HWQ-15"]["needed_by"]["gates_named"] == ["LOCK-1", "LOCK-2"]
+    # 'before HRR' / 'before Phase 1' are inferred gates: listed apart, never used for the value
+    assert items["HWQ-15"]["needed_by"]["gates_named"] == ["LOCK-1"]
+    assert items["HWQ-15"]["needed_by"]["gates_inferred"] == ["LOCK-1", "LOCK-2"]
+    assert "several gates stated" in items["R-02"]["needed_by"]["value_basis"]
     assert items["R-02"]["needed_by"]["gates_named"] == ["LOCK-1", "LOCK-2"]
     assert all(v == "LOCK-1" for v in items["PMQ-07"]["needed_by"]["via_items"].values())
     assert items["PMQ-07"]["needed_by"]["value"] == "LOCK-1"      # earliest over the relayed HWQ items (HWQ-04)
@@ -185,3 +188,30 @@ def test_milestone(doc):
 def test_missing_pins_refuse(tmp_path):
     with pytest.raises(FileNotFoundError):
         B.verify_pins(str(tmp_path))
+
+
+def test_needed_by_value_only_from_stated_gates(doc):
+    for it in doc["items"]:
+        nb = it["needed_by"]
+        for m in nb["matches"]:
+            assert m["basis"] in ("stated", "inferred")
+            if m["basis"] == "inferred":
+                assert m["phrase"] not in ("NOW", "LOCK-1", "LOCK-2", "before H2 freeze")
+        stated = {m["maps_to"] for m in nb["matches"] if m["basis"] == "stated"}
+        assert set(nb["gates_named"]) == stated
+        if "via_items" not in nb:
+            assert nb["value"] == (nb["gates_named"][0] if nb["gates_named"] else "UNSTATED"), it["register_id"]
+
+
+def test_relevance_mark_basis_and_register_assigned_ids(doc):
+    s = doc["summary"]
+    for it in doc["items"]:
+        for key in ("can_change_budget", "can_change_a7_blocker"):
+            anc = it[key]["anchor"]
+            if anc:
+                assert anc["mark_basis"].startswith("ITEM_TEXT" if anc["source_calls_it"] else "REGISTER_INFERENCE")
+        assert it["id_assigned_by"].startswith("register") == it["register_id"].startswith("P1F-OOD-")
+    assert set(s["a7_marks_by_basis"]["REGISTER_INFERENCE"]) >= {"P1F-OOD-03", "P1F-OOD-04"}
+    with open(MD_PATH, encoding="utf-8") as f:
+        md = f.read()
+    assert "register-assigned" in md and "REGISTER INFERENCE" in md

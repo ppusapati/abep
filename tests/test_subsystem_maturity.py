@@ -302,3 +302,39 @@ def test_unknown_reference_raises():
 def test_missing_pins_refuse(tmp_path):
     with pytest.raises(FileNotFoundError):
         B.verify_pins(str(tmp_path))
+
+
+def test_partial_scope_rows_magnet_and_thermal_blocked(doc):
+    by = {r["key"]: r for r in doc["rows"]}
+    mc = by["magnetic_circuit"]["scheduler"]
+    assert mc["execution_state"] == "BLOCKED" and mc["worked_by"] is None and mc["waits_on"] == "owner decision"
+    assert mc["partial_scope"]["lanes"] == ["fo_h2_1_hall_chamber_magnet"]
+    mcq = {x["id"]: x for x in _load("docs/experiments/magnet_coil/magnet_coil_qualification_v1.json")["s1_gate_items"]}
+    assert mcq["MCQ-S1-01"]["item"] in mc["not_worked_reason"]
+    hw = {r["id"]: r for r in _load("docs/experiments/hardware/hardware_requirements_v1.json")["requirements"]}
+    assert "MCQ-S1-01" in hw["HW-MC-07"]["traces_to"]
+    assert mc["partial_scope"]["requires_quote"] in hw["HW-MC-07"]["text"]
+    assert "EIS" in mc["blocking_item"]["text"] and "HWQ-20" in mc["blocking_item"]["text"]
+    tc = by["thermal_control"]["scheduler"]
+    assert tc["execution_state"] == "BLOCKED" and tc["worked_by"] is None
+    assert tc["partial_scope"]["lanes"] == ["fo_h2_5_thermal_network"]
+    with open(os.path.join(ROOT, "schemas/thermal_life/inputs_v1.json"), encoding="utf-8") as f:
+        assert tc["partial_scope"]["requires_quote"] in f.read()
+
+
+def test_non_lane_input_guard_refuses_running():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "ssm_build", os.path.join(ROOT, "docs/budgets/subsystem_maturity/build_subsystem_maturity.py"))
+    b = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(b)
+    for row, lane in (("magnetic_circuit", "fo_h2_1_hall_chamber_magnet"), ("thermal_control", "fo_h2_5_thermal_network")):
+        sp = b.SCHED[row]
+        saved = dict(sp)
+        sp["worked_by"] = lane
+        sp.pop("partial_scope", None)
+        try:
+            with pytest.raises(ValueError, match="no H2 lane can produce"):
+                b.build(ROOT)
+        finally:
+            b.SCHED[row] = saved

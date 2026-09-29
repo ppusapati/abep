@@ -10,8 +10,8 @@ and the source file's sha256:
                                                    (verbatim from docs/experiments/hardware/hardware_requirements_v1.json)
   * subsystem maturity matrix v2 (M16)             open_owner_questions M16-Q-01..04
 
-Per item: needed_by (NOW / before H2 freeze / LOCK-1 / LOCK-2 / later, derived by the fixed phrase rule below from the
-source's own words, else UNSTATED), whether it can change a budget or an A7 architecture-changing blocker (with the
+Per item: needed_by (NOW / before H2 freeze / LOCK-1 / LOCK-2 / later, set only by a gate the source STATES under the
+fixed phrase rule below, else UNSTATED; gates the register merely infers from the gate sequence are listed apart), whether it can change a budget or an A7 architecture-changing blocker (with the
 reason and a verbatim anchor quote from the source), the source's proposal verbatim, and status OPEN.
 
 No owner decision is taken here and no recommendation is added: the only judgement is the marking of budget / A7
@@ -73,6 +73,9 @@ LANE_OF = {XE: "fo_xe_system_ledger", P1F: "fo_phase1_prereg_framework", PMI: "f
 # ---------------------------------------------------------------------------------------------------------------------
 NEEDED_BY_ORDER = ["NOW", "before H2 freeze", "LOCK-1", "LOCK-2", "later"]
 MASKS = ["LOCK-1 brief", "LOCK-1 drafts", "LOCK1_DRAFT"]   # document names, not timing
+# basis: "stated" = the phrase literally names a vocabulary gate; "inferred" = the phrase names another milestone and the
+# gate is the register's reading of the gate sequence (kept visible under gates_inferred, never used for the value).
+PHRASE_BASIS = {"NOW": "stated", "before H2 freeze": "stated", "LOCK-1": "stated", "LOCK-2": "stated"}
 PHRASES = [
     (r"\bNOW\b", "NOW", "the source says NOW"),
     (r"before H2 freeze", "before H2 freeze", "the source says before H2 freeze"),
@@ -83,15 +86,20 @@ PHRASES = [
     (r"before Phase 1", "LOCK-2", "'before Phase 1': LOCK-2 is the last listed gate before Phase 1 (A6 sequence)"),
 ]
 NEEDED_BY_RULE = ("scan the item's verbatim strings (and the linked source strings named per item) after masking document "
-                  "names (" + ", ".join(repr(m) for m in MASKS) + "); map each phrase by the table; needed_by = the earliest "
-                  "mapped gate in " + " < ".join(NEEDED_BY_ORDER) + "; a relay or aggregate item takes the earliest over "
+                  "names (" + ", ".join(repr(m) for m in MASKS) + "); map each phrase by the table; a phrase that literally "
+                  "names a vocabulary gate (NOW, before H2 freeze, LOCK-1, LOCK-2) or a structural listing in a source's "
+                  "LOCK-1 list is basis 'stated'; a phrase naming another milestone ('before S1', 'before HRR', 'before "
+                  "Phase 1') is basis 'inferred' (the register's reading of the gate sequence), is listed under "
+                  "gates_inferred and NEVER sets the value; needed_by = the earliest STATED gate in "
+                  + " < ".join(NEEDED_BY_ORDER) + " (value_basis says when several gates are stated, e.g. an optional "
+                  "LOCK-1 commitment with a LOCK-2 value: both stay in gates_named); a relay or aggregate item takes the earliest over "
                   "itself and the items it names; ICD-sourced items also scan the closes_at of ICD quantities whose text names "
                   "the item id; relayed HWQ items (and ICD-sourced items) also scan the deadline statements the pinned "
                   "sources make about them elsewhere: every hardware_requirements requirement whose text names the id (its "
                   "text and verification.stage), every string under the ICD common_items / annexes that names the id, and "
                   "the hardware register's routing of HWQ-01..HWQ-15 to the LOCK-1 decision brief (W2); every match is "
-                  "listed with its location, and gates_named lists every gate the matches name (the value is the earliest; "
-                  "a later gate also named, e.g. an optional LOCK-1 commitment with a LOCK-2 value, stays visible); "
+                  "listed with its location and basis, gates_named lists every STATED gate the matches name (the value is "
+                  "the earliest; a later stated gate stays visible) and gates_inferred every inferred one; "
                   "no match = UNSTATED")
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -319,20 +327,24 @@ def _needed_by(texts: list, structural: list) -> dict:
             tm = tm.replace(m, "#" * len(m))
         for rx, gate, why in PHRASES:
             for mm in re.finditer(rx, tm):
-                matches.append({"phrase": t[mm.start():mm.end()], "maps_to": gate, "why": why, "in": where})
+                ph = t[mm.start():mm.end()]
+                matches.append({"phrase": ph, "maps_to": gate, "why": why, "in": where,
+                                "basis": PHRASE_BASIS.get(ph, "inferred")})
     for where, gate, why in structural:
-        matches.append({"phrase": None, "maps_to": gate, "why": why, "in": where})
-    if not matches:
-        return {"value": "UNSTATED", "gates_named": [], "matches": []}
-    val = min((m["maps_to"] for m in matches), key=NEEDED_BY_ORDER.index)
+        matches.append({"phrase": None, "maps_to": gate, "why": why, "in": where, "basis": "stated"})
     seen, uniq = set(), []
     for m in matches:
         k = json.dumps(m, sort_keys=True)
         if k not in seen:
             seen.add(k)
             uniq.append(m)
-    named = sorted({m["maps_to"] for m in uniq}, key=NEEDED_BY_ORDER.index)
-    return {"value": val, "gates_named": named, "matches": uniq}
+    named = sorted({m["maps_to"] for m in uniq if m["basis"] == "stated"}, key=NEEDED_BY_ORDER.index)
+    inferred = sorted({m["maps_to"] for m in uniq if m["basis"] == "inferred"}, key=NEEDED_BY_ORDER.index)
+    if not named:
+        return {"value": "UNSTATED", "value_basis": "UNSTATED (no gate stated by the source)", "gates_named": [],
+                "gates_inferred": inferred, "matches": uniq}
+    basis = "stated" if len(named) == 1 else f"stated; several gates stated ({', '.join(named)}), value = the earliest"
+    return {"value": named[0], "value_basis": basis, "gates_named": named, "gates_inferred": inferred, "matches": uniq}
 
 
 def _check_anchor(rid, anchor, verbatim, src_doc, src_rel):
@@ -346,7 +358,11 @@ def _check_anchor(rid, anchor, verbatim, src_doc, src_rel):
         where = f"{src_rel}#{anchor['in']}"
     if anchor["quote"] not in hay:
         raise ValueError(f"{rid}: anchor quote not found verbatim in {where}: {anchor['quote']!r}")
-    return {"in": where, "quote": anchor["quote"], "source_calls_it": anchor["in"] == "item"}
+    in_item = anchor["in"] == "item"
+    return {"in": where, "quote": anchor["quote"], "source_calls_it": in_item,
+            "mark_basis": ("ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
+                           if in_item else
+                           "REGISTER_INFERENCE: the item itself does not state it; the anchor is elsewhere in the same source")}
 
 
 def build(root: str = ROOT_DEFAULT) -> dict:
@@ -497,6 +513,8 @@ def build(root: str = ROOT_DEFAULT) -> dict:
             "can_change_budget": budget,
             "can_change_a7_blocker": a7,
             "overlaps_with": OVERLAPS.get(rid, []),
+            "id_assigned_by": ("register (the source item has no id; source_id is its array position)"
+                               if rid.startswith("P1F-OOD-") else "source"),
             "status": "OPEN",
         })
     # relays / aggregates take the earliest over themselves and the items they name
@@ -508,7 +526,8 @@ def build(root: str = ROOT_DEFAULT) -> dict:
             vals = [nb["value"]] + [base_nb[x]["value"] for x in agg[rid]]
             known = [v for v in vals if v != "UNSTATED"]
             nb = {"value": min(known, key=NEEDED_BY_ORDER.index) if known else "UNSTATED",
-                  "gates_named": nb["gates_named"], "matches": nb["matches"],
+                  "value_basis": "relay / aggregate: earliest stated gate over the item and the items it names (via_items)",
+                  "gates_named": nb["gates_named"], "gates_inferred": nb["gates_inferred"], "matches": nb["matches"],
                   "via_items": {x: base_nb[x]["value"] for x in agg[rid]}}
         it["needed_by"] = nb
 
@@ -523,12 +542,27 @@ def build(root: str = ROOT_DEFAULT) -> dict:
         "n_items": len(items),
         "by_section": count(lambda it: it["section"]),
         "by_needed_by": count(lambda it: it["needed_by"]["value"]),
+        "needed_by_inferred_only": [it["register_id"] for it in items
+                                    if it["needed_by"]["value"] == "UNSTATED" and it["needed_by"]["gates_inferred"]],
         "by_budget_mark": count(lambda it: it["can_change_budget"]["value"]),
         "by_a7_mark": count(lambda it: it["can_change_a7_blocker"]["value"]),
         "can_change_a7_blocker": {str(b): [it["register_id"] for it in items
                                            if it["can_change_a7_blocker"]["value"] == "CAN_CHANGE" and b in it["can_change_a7_blocker"]["blockers"]]
                                   for b in (1, 2, 3)},
         "can_change_budget": [it["register_id"] for it in items if it["can_change_budget"]["value"] == "YES"],
+        "a7_marks_by_basis": {
+            "ITEM_TEXT": [it["register_id"] for it in items if it["can_change_a7_blocker"]["anchor"]
+                          and it["can_change_a7_blocker"]["anchor"]["source_calls_it"]],
+            "REGISTER_INFERENCE": [it["register_id"] for it in items if it["can_change_a7_blocker"]["anchor"]
+                                   and not it["can_change_a7_blocker"]["anchor"]["source_calls_it"]],
+            "note": "every non-NO mark is the register's reading of the source; ITEM_TEXT marks rest on a quote in the item "
+                    "itself, REGISTER_INFERENCE marks on a quote elsewhere in the same source (the item does not state the "
+                    "relevance); SEE_LINKED_ITEMS marks carry no anchor"},
+        "budget_marks_by_basis": {
+            "ITEM_TEXT": [it["register_id"] for it in items if it["can_change_budget"]["anchor"]
+                          and it["can_change_budget"]["anchor"]["source_calls_it"]],
+            "REGISTER_INFERENCE": [it["register_id"] for it in items if it["can_change_budget"]["anchor"]
+                                   and not it["can_change_budget"]["anchor"]["source_calls_it"]]},
         "all_status_open": all(it["status"] == "OPEN" for it in items),
     }
     return {
@@ -644,6 +678,17 @@ def render_md(doc: dict) -> str:
     for b, v in s["can_change_a7_blocker"].items():
         a(f"- can change A7 blocker {b}: {', '.join(v) or '-'}")
     a("")
+    a(f"- A7 marks resting on the item's own text: {', '.join(s['a7_marks_by_basis']['ITEM_TEXT']) or '-'}")
+    a(f"- A7 marks that are REGISTER INFERENCE (quote elsewhere in the source; the item does not state it): "
+      f"{', '.join(s['a7_marks_by_basis']['REGISTER_INFERENCE']) or '-'}")
+    a(f"- budget marks that are REGISTER INFERENCE: {', '.join(s['budget_marks_by_basis']['REGISTER_INFERENCE']) or '-'}")
+    a(f"- needed_by UNSTATED but with an inferred gate only (see gates_inferred): {', '.join(s['needed_by_inferred_only']) or '-'}")
+    a("")
+    a("Relevance marks: " + s["a7_marks_by_basis"]["note"] + ".")
+    a("")
+    a("Ids: `P1F-OOD-01..05` are **register-assigned** (the Phase-1 framework's open_owner_decisions entries carry no id; "
+      "source_id records the array position `open_owner_decisions[n]`). Every other id is the source's own.")
+    a("")
     a("needed_by rule: " + doc["needed_by_rule"] + ".")
     a("")
     a("## Register")
@@ -662,6 +707,8 @@ def render_md(doc: dict) -> str:
         a("")
         a(f"### {it['register_id']} ({it['section']})")
         a("")
+        if it["id_assigned_by"] != "source":
+            a(f"- id: register-assigned ({it['id_assigned_by']})")
         a(f"- source: `{it['source_path']}` pointer `{it['json_pointer']}` sha256 `{it['source_sha256']}` (lane `{it['source_lane']}`)")
         a(f"- verbatim: `{_esc(json.dumps(it['verbatim'], ensure_ascii=False))}`")
         if isinstance(it["source_proposal_verbatim"], list):
@@ -670,14 +717,15 @@ def render_md(doc: dict) -> str:
         else:
             a(f"- source proposal: {it['source_proposal_verbatim']}")
         nb = it["needed_by"]
-        a(f"- needed_by: **{nb['value']}**" + (f" (gates named: {', '.join(nb['gates_named'])})" if len(nb["gates_named"]) > 1 else "") + ("" if not nb["matches"] else " - " + "; ".join(
-            (f"'{m['phrase']}'" if m["phrase"] else "listed") + f" -> {m['maps_to']} ({m['in']})" for m in nb["matches"]))
+        a(f"- needed_by: **{nb['value']}** [{nb['value_basis']}]" + (f" (gates named: {', '.join(nb['gates_named'])})" if len(nb["gates_named"]) > 1 else "")
+          + (f" (gates inferred, not used: {', '.join(nb['gates_inferred'])})" if nb["gates_inferred"] else "") + ("" if not nb["matches"] else " - " + "; ".join(
+            (f"'{m['phrase']}'" if m["phrase"] else "listed") + f" -> {m['maps_to']} [{m['basis']}] ({m['in']})" for m in nb["matches"]))
           + ("" if "via_items" not in nb else f"; via items {json.dumps(nb['via_items'])}"))
         for key, lab in (("can_change_budget", "budget"), ("can_change_a7_blocker", "A7 blocker")):
             c = it[key]
             anc = c["anchor"]
             a(f"- {lab}: **{c['value']}**" + (f" {c.get('budgets') or c.get('blockers')}" if (c.get("budgets") or c.get("blockers")) else "")
-              + f" - {_esc(c['reason'])}" + (f" - anchor ({anc['in']}): \"{_esc(anc['quote'])}\"" if anc else ""))
+              + f" - {_esc(c['reason'])}" + (f" - anchor ({anc['in']}): \"{_esc(anc['quote'])}\" [{anc['mark_basis'].split(':')[0]}]" if anc else ""))
         if it["overlaps_with"]:
             a(f"- overlaps with: {', '.join(it['overlaps_with'])}")
         a(f"- status: **{it['status']}**")

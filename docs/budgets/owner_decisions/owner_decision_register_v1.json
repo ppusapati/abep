@@ -25,7 +25,7 @@
    "docs/experiments/hardware/hardware_requirements_v1.json": "0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0"
   },
   "computed_at_build": {
-   "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json": "f38a4caf15def1df6754318176d9de429cc183ddb578da333640d5ed32205624"
+   "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json": "b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca"
   },
   "note": "immutable inputs verified at build time; mutable governance files are never read or pinned"
  },
@@ -42,7 +42,7 @@
   "later",
   "UNSTATED"
  ],
- "needed_by_rule": "scan the item's verbatim strings (and the linked source strings named per item) after masking document names ('LOCK-1 brief', 'LOCK-1 drafts', 'LOCK1_DRAFT'); map each phrase by the table; needed_by = the earliest mapped gate in NOW < before H2 freeze < LOCK-1 < LOCK-2 < later; a relay or aggregate item takes the earliest over itself and the items it names; ICD-sourced items also scan the closes_at of ICD quantities whose text names the item id; relayed HWQ items (and ICD-sourced items) also scan the deadline statements the pinned sources make about them elsewhere: every hardware_requirements requirement whose text names the id (its text and verification.stage), every string under the ICD common_items / annexes that names the id, and the hardware register's routing of HWQ-01..HWQ-15 to the LOCK-1 decision brief (W2); every match is listed with its location, and gates_named lists every gate the matches name (the value is the earliest; a later gate also named, e.g. an optional LOCK-1 commitment with a LOCK-2 value, stays visible); no match = UNSTATED",
+ "needed_by_rule": "scan the item's verbatim strings (and the linked source strings named per item) after masking document names ('LOCK-1 brief', 'LOCK-1 drafts', 'LOCK1_DRAFT'); map each phrase by the table; a phrase that literally names a vocabulary gate (NOW, before H2 freeze, LOCK-1, LOCK-2) or a structural listing in a source's LOCK-1 list is basis 'stated'; a phrase naming another milestone ('before S1', 'before HRR', 'before Phase 1') is basis 'inferred' (the register's reading of the gate sequence), is listed under gates_inferred and NEVER sets the value; needed_by = the earliest STATED gate in NOW < before H2 freeze < LOCK-1 < LOCK-2 < later (value_basis says when several gates are stated, e.g. an optional LOCK-1 commitment with a LOCK-2 value: both stay in gates_named); a relay or aggregate item takes the earliest over itself and the items it names; ICD-sourced items also scan the closes_at of ICD quantities whose text names the item id; relayed HWQ items (and ICD-sourced items) also scan the deadline statements the pinned sources make about them elsewhere: every hardware_requirements requirement whose text names the id (its text and verification.stage), every string under the ICD common_items / annexes that names the id, and the hardware register's routing of HWQ-01..HWQ-15 to the LOCK-1 decision brief (W2); every match is listed with its location and basis, gates_named lists every STATED gate the matches name (the value is the earliest; a later stated gate stays visible) and gates_inferred every inferred one; no match = UNSTATED",
  "needed_by_phrase_table": [
   {
    "regex": "\\bNOW\\b",
@@ -120,7 +120,9 @@
    ],
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -133,7 +135,8 @@
     "anchor": {
      "in": "item",
      "quote": "books the cathode flow twice",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "can_change_a7_blocker": {
@@ -145,10 +148,12 @@
     "anchor": {
      "in": "item",
      "quote": "books the cathode flow twice",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -176,7 +181,9 @@
    ],
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -189,7 +196,8 @@
     "anchor": {
      "in": "item",
      "quote": "reserve policy (form and value)",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "can_change_a7_blocker": {
@@ -201,10 +209,12 @@
     "anchor": {
      "in": "item",
      "quote": "reserve policy (form and value)",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -228,7 +238,9 @@
    ],
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -241,7 +253,8 @@
     "anchor": {
      "in": "item",
      "quote": "share of the mass reference the stored-Xe subsystem may take",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "can_change_a7_blocker": {
@@ -253,10 +266,12 @@
     "anchor": {
      "in": "item",
      "quote": "share of the mass reference the stored-Xe subsystem may take",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -275,7 +290,9 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -288,7 +305,8 @@
     "anchor": {
      "in": "item",
      "quote": "it must not be booked twice",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "can_change_a7_blocker": {
@@ -300,10 +318,12 @@
     "anchor": {
      "in": "item",
      "quote": "it must not be booked twice",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -322,7 +342,9 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -335,7 +357,8 @@
     "anchor": {
      "in": "item",
      "quote": "would give 6.48 kg",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "can_change_a7_blocker": {
@@ -347,10 +370,12 @@
     "anchor": {
      "in": "item",
      "quote": "would give 6.48 kg",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -369,7 +394,9 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -382,7 +409,8 @@
     "anchor": {
      "in": "item",
      "quote": "it becomes a new explicit ledger term",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "can_change_a7_blocker": {
@@ -394,10 +422,12 @@
     "anchor": {
      "in": "item",
      "quote": "it becomes a new explicit ledger term",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -422,7 +452,9 @@
    ],
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -435,7 +467,8 @@
     "anchor": {
      "in": "item",
      "quote": "MGA and system margin stay in mass_bom",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "can_change_a7_blocker": {
@@ -447,10 +480,12 @@
     "anchor": {
      "in": "item",
      "quote": "MGA and system margin stay in mass_bom",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -469,7 +504,9 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -482,7 +519,8 @@
     "anchor": {
      "in": "item",
      "quote": "whether the 40 kg includes the Xe load",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "can_change_a7_blocker": {
@@ -494,10 +532,12 @@
     "anchor": {
      "in": "item",
      "quote": "whether the 40 kg includes the Xe load",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -522,7 +562,9 @@
    ],
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -541,10 +583,12 @@
     "anchor": {
      "in": "item",
      "quote": "confounds configuration with time",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -569,22 +613,26 @@
    ],
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated; several gates stated (LOCK-1, LOCK-2), value = the earliest",
     "gates_named": [
      "LOCK-1",
      "LOCK-2"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "item"
+      "in": "item",
+      "basis": "stated"
      },
      {
       "phrase": "LOCK-2",
       "maps_to": "LOCK-2",
       "why": "the source ties the item to LOCK-2",
-      "in": "item"
+      "in": "item",
+      "basis": "stated"
      }
     ]
    },
@@ -604,10 +652,12 @@
     "anchor": {
      "in": "item",
      "quote": "seed timing",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -632,22 +682,26 @@
    ],
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated; several gates stated (LOCK-1, LOCK-2), value = the earliest",
     "gates_named": [
      "LOCK-1",
      "LOCK-2"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "item"
+      "in": "item",
+      "basis": "stated"
      },
      {
       "phrase": "LOCK-2",
       "maps_to": "LOCK-2",
       "why": "the source ties the item to LOCK-2",
-      "in": "item"
+      "in": "item",
+      "basis": "stated"
      }
     ]
    },
@@ -667,10 +721,12 @@
     "anchor": {
      "in": "item",
      "quote": "complete position and carryover balance",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -695,15 +751,18 @@
    ],
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
      "LOCK-1"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "item"
+      "in": "item",
+      "basis": "stated"
      }
     ]
    },
@@ -723,10 +782,12 @@
     "anchor": {
      "in": "item",
      "quote": "a condition set must not depend on another configuration's data",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -751,7 +812,9 @@
    ],
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -769,10 +832,12 @@
     "anchor": {
      "in": "item",
      "quote": "Case A's utilization criterion",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -797,15 +862,18 @@
    ],
    "needed_by": {
     "value": "LOCK-2",
+    "value_basis": "stated",
     "gates_named": [
      "LOCK-2"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": "LOCK-2",
       "maps_to": "LOCK-2",
       "why": "the source ties the item to LOCK-2",
-      "in": "item"
+      "in": "item",
+      "basis": "stated"
      }
     ]
    },
@@ -824,12 +892,14 @@
     "anchor": {
      "in": "item",
      "quote": "installation/removal reproducibility of the RF and ECR modules",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [
     "PMQ-04"
    ],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -854,15 +924,18 @@
    ],
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
      "LOCK-1"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "item"
+      "in": "item",
+      "basis": "stated"
      }
     ]
    },
@@ -882,10 +955,12 @@
     "anchor": {
      "in": "item",
      "quote": "H-1 branch decision",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -910,22 +985,26 @@
    ],
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated; several gates stated (LOCK-1, LOCK-2), value = the earliest",
     "gates_named": [
      "LOCK-1",
      "LOCK-2"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "item"
+      "in": "item",
+      "basis": "stated"
      },
      {
       "phrase": "LOCK-2",
       "maps_to": "LOCK-2",
       "why": "the source ties the item to LOCK-2",
-      "in": "item"
+      "in": "item",
+      "basis": "stated"
      }
     ]
    },
@@ -944,10 +1023,12 @@
     "anchor": {
      "in": "item",
      "quote": "effect-size level",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -972,7 +1053,9 @@
    ],
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -988,6 +1071,7 @@
     "anchor": null
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1012,7 +1096,9 @@
    ],
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -1031,10 +1117,12 @@
     "anchor": {
      "in": "item",
      "quote": "within-installation ordering",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1059,15 +1147,18 @@
    ],
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
      "LOCK-1"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "item"
+      "in": "item",
+      "basis": "stated"
      }
     ]
    },
@@ -1086,10 +1177,12 @@
     "anchor": {
      "in": "item",
      "quote": "net system-level benefit",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1114,15 +1207,18 @@
    ],
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
      "LOCK-1"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": null,
       "maps_to": "LOCK-1",
       "why": "listed in the source's LOCK-1 fix list: 'the case logic and the OPEN status'",
-      "in": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/1"
+      "in": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/1",
+      "basis": "stated"
      }
     ]
    },
@@ -1142,12 +1238,14 @@
     "anchor": {
      "in": "item",
      "quote": "evidence that establishes no outcome",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [
     "P1F-OOD-05"
    ],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1172,7 +1270,9 @@
    ],
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -1191,10 +1291,12 @@
     "anchor": {
      "in": "item",
      "quote": "an arm stop breaks the schedule balance",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1219,7 +1321,9 @@
    ],
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -1231,7 +1335,8 @@
     "anchor": {
      "in": "item",
      "quote": "Xe consumed is booked to the single Xe allocation",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "can_change_a7_blocker": {
@@ -1244,10 +1349,12 @@
     "anchor": {
      "in": "item",
      "quote": "must not be read as atmospheric sustainment",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1262,7 +1369,11 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
+     "LOCK-1"
+    ],
+    "gates_inferred": [
      "LOCK-1"
     ],
     "matches": [
@@ -1270,13 +1381,15 @@
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "item"
+      "in": "item",
+      "basis": "stated"
      },
      {
       "phrase": "before any S1",
       "maps_to": "LOCK-1",
       "why": "'before S1': LOCK-1 is the last listed gate before S1 (A6 sequence S1a -> LOCK-1 -> W5 freeze -> S1/S1b)",
-      "in": "item"
+      "in": "item",
+      "basis": "inferred"
      }
     ]
    },
@@ -1296,10 +1409,12 @@
     "anchor": {
      "in": "item",
      "quote": "accept this topology",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "register (the source item has no id; source_id is its array position)",
    "status": "OPEN"
   },
   {
@@ -1314,7 +1429,9 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "relay / aggregate: earliest stated gate over the item and the items it names (via_items)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": [],
     "via_items": {
      "R-01": "UNSTATED",
@@ -1361,6 +1478,7 @@
     "R-13",
     "R-14"
    ],
+   "id_assigned_by": "register (the source item has no id; source_id is its array position)",
    "status": "OPEN"
   },
   {
@@ -1380,15 +1498,18 @@
    ],
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
      "LOCK-1"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": null,
       "maps_to": "LOCK-1",
       "why": "listed in the source's LOCK-1 fix list: 'REF-COND'",
-      "in": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/4"
+      "in": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/4",
+      "basis": "stated"
      }
     ]
    },
@@ -1408,10 +1529,12 @@
     "anchor": {
      "in": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/execution_design/hw0_reference_repeats/cost_note",
      "quote": "ties the reference to that installation's position",
-     "source_calls_it": false
+     "source_calls_it": false,
+     "mark_basis": "REGISTER_INFERENCE: the item itself does not state it; the anchor is elsewhere in the same source"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "register (the source item has no id; source_id is its array position)",
    "status": "OPEN"
   },
   {
@@ -1431,15 +1554,18 @@
    ],
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
      "LOCK-1"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": null,
       "maps_to": "LOCK-1",
       "why": "listed in the source's LOCK-1 fix list: 'missing-data and data-quality rule forms'",
-      "in": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/1"
+      "in": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/1",
+      "basis": "stated"
      }
     ]
    },
@@ -1458,10 +1584,12 @@
     "anchor": {
      "in": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/missing_data/3/rule",
      "quote": "treated as not sustained within limits for that reading",
-     "source_calls_it": false
+     "source_calls_it": false,
+     "mark_basis": "REGISTER_INFERENCE: the item itself does not state it; the anchor is elsewhere in the same source"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "register (the source item has no id; source_id is its array position)",
    "status": "OPEN"
   },
   {
@@ -1481,15 +1609,18 @@
    ],
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
      "LOCK-1"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": null,
       "maps_to": "LOCK-1",
       "why": "listed in the source's LOCK-1 fix list: 'the case logic and the OPEN status'",
-      "in": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/1"
+      "in": "docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/1",
+      "basis": "stated"
      }
     ]
    },
@@ -1509,12 +1640,14 @@
     "anchor": {
      "in": "item",
      "quote": "OPEN decision status",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [
     "R-12"
    ],
+   "id_assigned_by": "register (the source item has no id; source_id is its array position)",
    "status": "OPEN"
   },
   {
@@ -1532,7 +1665,9 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -1550,10 +1685,12 @@
     "anchor": {
      "in": "item",
      "quote": "largest occupant",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1571,7 +1708,9 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -1589,10 +1728,12 @@
     "anchor": {
      "in": "item",
      "quote": "common control harness",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1615,7 +1756,9 @@
    ],
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -1634,10 +1777,12 @@
     "anchor": {
      "in": "item",
      "quote": "pressure-drop class definition",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1664,7 +1809,9 @@
    ],
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -1682,12 +1829,14 @@
     "anchor": {
      "in": "item",
      "quote": "module-exchange series",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [
     "R-06"
    ],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1710,7 +1859,9 @@
    ],
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -1728,10 +1879,12 @@
     "anchor": {
      "in": "item",
      "quote": "time-matched Xe hold",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1749,15 +1902,18 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
      "LOCK-1"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "item"
+      "in": "item",
+      "basis": "stated"
      }
     ]
    },
@@ -1770,7 +1926,8 @@
     "anchor": {
      "in": "item",
      "quote": "new bus-boundary version",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "can_change_a7_blocker": {
@@ -1782,12 +1939,14 @@
     "anchor": {
      "in": "item",
      "quote": "slotless module loads",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [
     "HWQ-06"
    ],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1805,7 +1964,9 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "LOCK-1",
-    "gates_named": [
+    "value_basis": "relay / aggregate: earliest stated gate over the item and the items it names (via_items)",
+    "gates_named": [],
+    "gates_inferred": [
      "LOCK-2"
     ],
     "matches": [
@@ -1813,7 +1974,8 @@
       "phrase": "before Phase 1",
       "maps_to": "LOCK-2",
       "why": "'before Phase 1': LOCK-2 is the last listed gate before Phase 1 (A6 sequence)",
-      "in": "item"
+      "in": "item",
+      "basis": "inferred"
      }
     ],
     "via_items": {
@@ -1838,6 +2000,7 @@
     "anchor": null
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1866,15 +2029,18 @@
    ],
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
      "LOCK-1"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": null,
       "maps_to": "LOCK-1",
       "why": "routed to the LOCK-1 decision brief: 'receives HWQ-01..HWQ-15' (W2_fo_lock1_decision_brief)",
-      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief"
+      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief",
+      "basis": "stated"
      }
     ]
    },
@@ -1893,10 +2059,12 @@
     "anchor": {
      "in": "item",
      "quote": "Configuration-change procedure",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1914,34 +2082,40 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated; several gates stated (LOCK-1, LOCK-2), value = the earliest",
     "gates_named": [
      "LOCK-1",
      "LOCK-2"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "item"
+      "in": "item",
+      "basis": "stated"
      },
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/8/quantities/0/closes_at"
+      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/8/quantities/0/closes_at",
+      "basis": "stated"
      },
      {
       "phrase": "LOCK-2",
       "maps_to": "LOCK-2",
       "why": "the source ties the item to LOCK-2",
-      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/8/quantities/0/closes_at"
+      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/8/quantities/0/closes_at",
+      "basis": "stated"
      },
      {
       "phrase": null,
       "maps_to": "LOCK-1",
       "why": "routed to the LOCK-1 decision brief: 'receives HWQ-01..HWQ-15' (W2_fo_lock1_decision_brief)",
-      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief"
+      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief",
+      "basis": "stated"
      }
     ]
    },
@@ -1960,10 +2134,12 @@
     "anchor": {
      "in": "item",
      "quote": "INV-B3 tolerance on the module-induced field change",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -1981,33 +2157,39 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
      "LOCK-1"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/annexes/ANNEX-ECR/module_specific_items/2/text"
+      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/annexes/ANNEX-ECR/module_specific_items/2/text",
+      "basis": "stated"
      },
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/requirements/57/text"
+      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/requirements/57/text",
+      "basis": "stated"
      },
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/requirements/68/verification/stage"
+      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/requirements/68/verification/stage",
+      "basis": "stated"
      },
      {
       "phrase": null,
       "maps_to": "LOCK-1",
       "why": "routed to the LOCK-1 decision brief: 'receives HWQ-01..HWQ-15' (W2_fo_lock1_decision_brief)",
-      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief"
+      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief",
+      "basis": "stated"
      }
     ]
    },
@@ -2020,7 +2202,8 @@
     "anchor": {
      "in": "item",
      "quote": "booked as coil power",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "can_change_a7_blocker": {
@@ -2032,10 +2215,12 @@
     "anchor": {
      "in": "item",
      "quote": "the ledger must carry the flight value",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -2064,33 +2249,39 @@
    ],
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
      "LOCK-1"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/annexes/ANNEX-RF/deviations/0/proposed_control"
+      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/annexes/ANNEX-RF/deviations/0/proposed_control",
+      "basis": "stated"
      },
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/requirements/58/text"
+      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/requirements/58/text",
+      "basis": "stated"
      },
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/requirements/58/verification/stage"
+      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/requirements/58/verification/stage",
+      "basis": "stated"
      },
      {
       "phrase": null,
       "maps_to": "LOCK-1",
       "why": "routed to the LOCK-1 decision brief: 'receives HWQ-01..HWQ-15' (W2_fo_lock1_decision_brief)",
-      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief"
+      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief",
+      "basis": "stated"
      }
     ]
    },
@@ -2103,7 +2294,8 @@
     "anchor": {
      "in": "item",
      "quote": "where an RF assist-magnet's power is booked",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "can_change_a7_blocker": {
@@ -2115,12 +2307,14 @@
     "anchor": {
      "in": "item",
      "quote": "no slot in bus_power_boundary_v1",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [
     "PMQ-06"
    ],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -2138,21 +2332,25 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
      "LOCK-1"
     ],
+    "gates_inferred": [],
     "matches": [
      {
       "phrase": "LOCK-1",
       "maps_to": "LOCK-1",
       "why": "the source ties the item to LOCK-1",
-      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/5/quantities/0/closes_at"
+      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/5/quantities/0/closes_at",
+      "basis": "stated"
      },
      {
       "phrase": null,
       "maps_to": "LOCK-1",
       "why": "routed to the LOCK-1 decision brief: 'receives HWQ-01..HWQ-15' (W2_fo_lock1_decision_brief)",
-      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief"
+      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief",
+      "basis": "stated"
      }
     ]
    },
@@ -2171,10 +2369,12 @@
     "anchor": {
      "in": "item",
      "quote": "Electrical potential of the module body",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -2198,7 +2398,11 @@
    ],
    "needed_by": {
     "value": "LOCK-1",
+    "value_basis": "stated",
     "gates_named": [
+     "LOCK-1"
+    ],
+    "gates_inferred": [
      "LOCK-1",
      "LOCK-2"
     ],
@@ -2207,25 +2411,29 @@
       "phrase": "before Phase 1",
       "maps_to": "LOCK-2",
       "why": "'before Phase 1': LOCK-2 is the last listed gate before Phase 1 (A6 sequence)",
-      "in": "item"
+      "in": "item",
+      "basis": "inferred"
      },
      {
       "phrase": "before HRR",
       "maps_to": "LOCK-1",
       "why": "'before HRR': the HRR sits after LOCK-1 and before S1 (hardware_requirements hardware_readiness_review.position); LOCK-1 is the last listed owner gate before it",
-      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/0/quantities/0/closes_at"
+      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/0/quantities/0/closes_at",
+      "basis": "inferred"
      },
      {
       "phrase": "before Phase 1",
       "maps_to": "LOCK-2",
       "why": "'before Phase 1': LOCK-2 is the last listed gate before Phase 1 (A6 sequence)",
-      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/0/quantities/0/closes_at"
+      "in": "schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/0/quantities/0/closes_at",
+      "basis": "inferred"
      },
      {
       "phrase": null,
       "maps_to": "LOCK-1",
       "why": "routed to the LOCK-1 decision brief: 'receives HWQ-01..HWQ-15' (W2_fo_lock1_decision_brief)",
-      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief"
+      "in": "docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief",
+      "basis": "stated"
      }
     ]
    },
@@ -2244,10 +2452,12 @@
     "anchor": {
      "in": "item",
      "quote": "so that the Phase-1 HW-0 installation is valid for Phase 2",
-     "source_calls_it": true
+     "source_calls_it": true,
+     "mark_basis": "ITEM_TEXT: the anchor quote is in the item itself (the relevance reading is still the register's)"
     }
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -2257,7 +2467,7 @@
    "source_lane": "fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)",
    "source_path": "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
    "json_pointer": "/open_owner_questions/0",
-   "source_sha256": "f38a4caf15def1df6754318176d9de429cc183ddb578da333640d5ed32205624",
+   "source_sha256": "b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca",
    "verbatim": {
     "id": "M16-Q-01",
     "question": "Assign an accountable owner to each of the 17 rows (every owner cell reads OWNER_TO_ASSIGN; no accountable party is recorded in the base)."
@@ -2265,7 +2475,9 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -2281,6 +2493,7 @@
     "anchor": null
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -2290,7 +2503,7 @@
    "source_lane": "fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)",
    "source_path": "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
    "json_pointer": "/open_owner_questions/1",
-   "source_sha256": "f38a4caf15def1df6754318176d9de429cc183ddb578da333640d5ed32205624",
+   "source_sha256": "b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca",
    "verbatim": {
     "id": "M16-Q-02",
     "question": "Accept, or amend, the PROPOSED scheduler rule (execution_state READY / RUNNING / BLOCKED / VERIFIED with one blocking item per row), the per-row blocking-item selection and the per-row A7 rollup category."
@@ -2298,7 +2511,9 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -2314,6 +2529,7 @@
     "anchor": null
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -2323,7 +2539,7 @@
    "source_lane": "fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)",
    "source_path": "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
    "json_pointer": "/open_owner_questions/2",
-   "source_sha256": "f38a4caf15def1df6754318176d9de429cc183ddb578da333640d5ed32205624",
+   "source_sha256": "b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca",
    "verbatim": {
     "id": "M16-Q-03",
     "question": "Accept, or amend, the H2-lane-to-row mapping (which registered H2 lane matures which row, and which H2 lane is scoped to work a row's blocking item)."
@@ -2331,7 +2547,9 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -2347,6 +2565,7 @@
     "anchor": null
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   },
   {
@@ -2356,7 +2575,7 @@
    "source_lane": "fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)",
    "source_path": "docs/budgets/subsystem_maturity/subsystem_maturity_v2.json",
    "json_pointer": "/open_owner_questions/3",
-   "source_sha256": "f38a4caf15def1df6754318176d9de429cc183ddb578da333640d5ed32205624",
+   "source_sha256": "b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca",
    "verbatim": {
     "id": "M16-Q-04",
     "question": "Direct the owning lanes to resolve the reconciliation items RC-01..RC-10 (and the framework items R-xx that name another lane), or record that a divergence is accepted."
@@ -2364,7 +2583,9 @@
    "source_proposal_verbatim": "NONE_IN_SOURCE (no separate proposal field; see verbatim)",
    "needed_by": {
     "value": "UNSTATED",
+    "value_basis": "UNSTATED (no gate stated by the source)",
     "gates_named": [],
+    "gates_inferred": [],
     "matches": []
    },
    "can_change_budget": {
@@ -2380,6 +2601,7 @@
     "anchor": null
    },
    "overlaps_with": [],
+   "id_assigned_by": "source",
    "status": "OPEN"
   }
  ],
@@ -2398,6 +2620,7 @@
    "LOCK-2": 1,
    "UNSTATED": 23
   },
+  "needed_by_inferred_only": [],
   "by_budget_mark": {
    "NO": 29,
    "SEE_LINKED_ITEMS": 3,
@@ -2456,6 +2679,67 @@
    "HWQ-05",
    "HWQ-06"
   ],
+  "a7_marks_by_basis": {
+   "ITEM_TEXT": [
+    "OD-XE-1",
+    "OD-XE-2",
+    "OD-XE-3",
+    "OD-XE-4",
+    "OD-XE-5",
+    "OD-XE-6",
+    "OD-XE-7",
+    "OD-XE-8",
+    "R-01",
+    "R-02",
+    "R-03",
+    "R-04",
+    "R-05",
+    "R-06",
+    "R-07",
+    "R-08",
+    "R-10",
+    "R-11",
+    "R-12",
+    "R-13",
+    "R-14",
+    "P1F-OOD-01",
+    "P1F-OOD-05",
+    "PMQ-01",
+    "PMQ-02",
+    "PMQ-03",
+    "PMQ-04",
+    "PMQ-05",
+    "PMQ-06",
+    "HWQ-01",
+    "HWQ-04",
+    "HWQ-05",
+    "HWQ-06",
+    "HWQ-07",
+    "HWQ-15"
+   ],
+   "REGISTER_INFERENCE": [
+    "P1F-OOD-03",
+    "P1F-OOD-04"
+   ],
+   "note": "every non-NO mark is the register's reading of the source; ITEM_TEXT marks rest on a quote in the item itself, REGISTER_INFERENCE marks on a quote elsewhere in the same source (the item does not state the relevance); SEE_LINKED_ITEMS marks carry no anchor"
+  },
+  "budget_marks_by_basis": {
+   "ITEM_TEXT": [
+    "OD-XE-1",
+    "OD-XE-2",
+    "OD-XE-3",
+    "OD-XE-4",
+    "OD-XE-5",
+    "OD-XE-6",
+    "OD-XE-7",
+    "OD-XE-8",
+    "R-14",
+    "PMQ-06",
+    "HWQ-05",
+    "HWQ-06"
+   ],
+   "REGISTER_INFERENCE": []
+  },
   "all_status_open": true
  },
  "milestone": {

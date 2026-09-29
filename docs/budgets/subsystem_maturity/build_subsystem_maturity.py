@@ -205,9 +205,12 @@ SCHEDULER_RULE = {
                "(A7 wave H4, PLANNED_NOT_REGISTERED), a procurement action (wave H3, PLANNED_NOT_REGISTERED) or an item "
                "outside every registered scope)",
     "READY": "no open blocking item",
-    "owner_decision_items": "a blocking item whose resolved state is an open owner decision (state text matches "
-                            "'owner decision' / OPEN_OWNER_DECISION) is never RUNNING: no lane can take an owner decision; "
-                            "enforced at build time",
+    "owner_decision_items": "a blocking item whose resolved state OR requires text (derived from its defining files: MCQ "
+                            "items via the hardware_requirements_v1 requirements that trace to them; BOM items via cbe.requires; JSON paths via their "
+                            "'from' / 'now' / 'requires' strings) names an owner decision ('owner decision' / "
+                            "OPEN_OWNER_DECISION) is never RUNNING: no lane can take an owner decision; enforced at build time",
+    "non_lane_inputs": "likewise never RUNNING when that text requires a MEASURED hardware quantity (wave H4) or an ADMITTED "
+                       "Hall closure (credible set EMPTY): no registered H2 design lane produces either; enforced at build time",
     "partial_scope": "RUNNING needs registered scopes that produce EVERY missing input the blocking item names; when "
                      "registered lanes cover only part of it (checked against the item's own 'requires' text), they are "
                      "listed under partial_scope and the row stays BLOCKED",
@@ -329,7 +332,13 @@ SCHED = {
         not_worked_reason="atmospheric sustainment is measured only in H-1 Phase 1 (wave H4, PLANNED_NOT_REGISTERED); the credible Hall set is EMPTY, so no model can supply it; H2-1 sizes the chamber but never predicts sustainment (A7 h2_scope)",
         a7={"is": 1, "feeds": [1, 2], "relation": "the row's blocker IS A7 blocker 1; the same discharge carries blocker 2 (RF/ECR increment on the common H-1)"}),
     "magnetic_circuit": dict(
-        blocking_item="MCQ:MCQ-S1-01", worked_by="fo_h2_1_hall_chamber_magnet", nature="hardware-definition blocker",
+        blocking_item="MCQ:MCQ-S1-01", worked_by=None, nature="hardware-definition blocker",
+        partial_scope=dict(
+            lanes=["fo_h2_1_hall_chamber_magnet"],
+            requires_quote="The EIS family is an owner decision (HWQ-20)",
+            covered="coil design incl. 'turns, wire gauge, current, winding envelope, I^2R at hot resistance, coil temperature class' (H2-1 scope item (4))",
+            uncovered="the EIS family selection (owner decision HWQ-20, decided once the H-1 thermal model gives a hot-spot estimate), the supplier data on file, and the MEASURED hot-spot temperature (HW-MC-14) the class is compared with (wave H4, PLANNED_NOT_REGISTERED)"),
+        not_worked_reason="MCQ-S1-01 is 'H-1 coil EIS selected, with material thermal class and supplier data on file'; the hardware requirement tracing to it (HW-MC-07) states 'The EIS family is an owner decision (HWQ-20)' and compares the class with the MEASURED hot-spot temperature (HW-MC-14); H2-1 designs the coil and proposes a temperature class but does not take HWQ-20 and measures nothing; an owner-decision item is never RUNNING (scheduler rule)",
         a7={"is": None, "feeds": [1, 2], "relation": "B(z) sets the discharge regime of the blocker-1 test; the hall_magnet bus term and the module fringe-field tolerance (PMI-09) condition the blocker-2 comparison"}),
     "cathode": dict(
         blocking_item="CATHTBD:cathode_hardware", worked_by=None, nature="procurement blocker",
@@ -340,7 +349,13 @@ SCHED = {
         not_worked_reason="the blocking item is the owner bus-voltage decision plus a measured supply efficiency (aux_bus tbd_register); H2-4 carries converter efficiency only as a parameter with analog ranges",
         a7={"is": None, "feeds": [2], "relation": "PPU losses are inside the full P_bus against which RF/ECR increments are judged (blocker 2)"}),
     "thermal_control": dict(
-        blocking_item="PATH:schemas/thermal_life/inputs_v1.json", worked_by="fo_h2_5_thermal_network",
+        blocking_item="PATH:schemas/thermal_life/inputs_v1.json", worked_by=None,
+        partial_scope=dict(
+            lanes=["fo_h2_5_thermal_network"],
+            requires_quote="HallMap field wall_ion_flux_m2s of an ADMITTED ensemble member with wall_life_trustworthy = true",
+            covered="thermal node list, links, sink temperatures, node limits and a steady-state solve over a PARAMETRIC discharge-fraction load envelope (H2-5 scope items (1)-(5))",
+            uncovered="hall_discharge wall_ion_flux_m2s / wall_ion_energy_eV with wall_flux_provenance (gap G11): an ADMITTED HallMap member (credible set EMPTY) or measured hardware data (wave H4, PLANNED_NOT_REGISTERED); H2-5 is barred from transport-model predictions"),
+        not_worked_reason="the thermal_life input contract requires hall_discharge wall_ion_flux_m2s / wall_ion_energy_eV from 'an ADMITTED ensemble member with wall_life_trustworthy = true ... or measured hardware data' (now: 'credible set empty, no hardware measurement: every wall-flux input is refused today'); H2-5 supplies only a parametric discharge-fraction envelope and is barred from transport-model predictions, so it cannot produce every missing input the item names; the same contract also lists inputs whose 'from' is an owner decision / owner choice, which no lane can take",
         a7={"is": None, "feeds": [], "relation": "A7 everything_else_rule names thermal detail explicitly"}),
     "control_fdir": dict(
         blocking_item="S1A:S1A-C2", worked_by=None, nature="test-readiness blocker",
@@ -770,9 +785,9 @@ ROWS = [
                 "refs": ["MCQ:MCQ-S1-01", "MCQ:MCQ-S1-02", "MCQ:MCQ-S1-03", "MCQ:MCQ-S1-04", "MCQ:MCQ-S1-05", "MCQ:MCQ-S1-06", "MCQ:MCQ-S1-07", "MCQ:MCQ-S1-08",
                          "INS:INS-09", "INS:INS-P-07", "INS:INS-24", "S1A:S1A-C1", "S1A:S1A-C4", "P1DQ:P1DQ-STAB", "PMQTY:PMI-09.S_B"],
                 "sources": [f"{MCQ}#s1_gate_items", f"{HWDEF}#hardware_readiness_review"]},
-        blocker={"item": "MC-1 not selected: permanent magnet vs electromagnet undecided, so the coil EIS selection MCQ-S1-01 cannot close (MC-1 also required in the S1A-C1 hardware record)",
-                 "category": "procurement", "first_gate": "S1a", "beyond": None, "decision_by": f"owner ({AUX}#owner_questions)",
-                 "sources": [f"{MCQ}#s1_gate_items", f"{S1A_STAT}#missing[S1A-C1]", f"{AUX}#owner_questions"]},
+        blocker={"item": "MCQ-S1-01 MISSING: H-1 coil EIS not selected, material thermal class and supplier data not on file; the EIS family is an owner decision (HWQ-20) and the class is compared with the MEASURED hot-spot temperature (HW-MC-14) (separately, MC-1 permanent magnet vs electromagnet is undecided and MC-1 is required in the S1A-C1 hardware record)",
+                 "category": "procurement", "first_gate": "S1a", "beyond": None, "decision_by": f"owner ({HWDEF}#owner_questions[HWQ-20]; {AUX}#owner_questions)",
+                 "sources": [f"{MCQ}#s1_gate_items", f"{HWDEF}#requirements[HW-MC-07]", f"{HWDEF}#owner_questions[HWQ-20]", f"{S1A_STAT}#missing[S1A-C1]", f"{AUX}#owner_questions"]},
         risks={"1": "contributing: B(z) sets the discharge regime at which sustainment is tested", "2": "contributing: field topology and wall flux (magnetic shielding, RI-LIFE-HALL-SHIELDED-COUNTER)", "4": "contributing: hall_magnet bus term and mass"},
     ),
     _row(
@@ -1048,6 +1063,30 @@ def _json_pointer(doc, pointer: str):
     return cur
 
 
+def _strings_under(obj, keys) -> list:
+    """Every string value stored under one of ``keys`` anywhere in a JSON object (deterministic traversal order)."""
+    out = []
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if k in keys and isinstance(v, str):
+                out.append(v)
+            else:
+                out.extend(_strings_under(v, keys))
+    elif isinstance(obj, list):
+        for v in obj:
+            out.extend(_strings_under(v, keys))
+    return out
+
+
+# Inputs no H2 design lane can produce (derived guard on the blocking item's resolved state + requires text): an owner
+# decision, a MEASURED hardware quantity (wave H4) or an ADMITTED Hall closure (credible set EMPTY).
+NON_LANE_INPUT_MARKERS = {
+    "owner decision": re.compile(r"owner[ _]decision", re.I),
+    "measured hardware quantity": re.compile(r"\bMEASURED\b|measured hardware data"),
+    "admitted Hall closure": re.compile(r"ADMITTED ensemble member"),
+}
+
+
 class Registry:
     """Id sets and live states read from the base files and the merged deliverables, for reference resolution."""
 
@@ -1076,9 +1115,12 @@ class Registry:
         self.lock1 = {d["id"]: d["status"] for d in l1["decisions"]}
         self.lock1_status = l1["status"]
         self.mcq = {x["id"]: x["state"] for x in _load(root, MCQ)["s1_gate_items"]}
+        self.mcq_text = {x["id"]: x["item"] for x in _load(root, MCQ)["s1_gate_items"]}
+        self.hw_requirements = hw["requirements"]
         self.aol = {x["id"] for x in _load(root, AOL)["requirements"]}
         bom = _load(root, BOM)
         self.bom = {it["id"]: it["cbe"]["basis"] for it in bom["items"]}
+        self.bom_requires = {it["id"]: it["cbe"].get("requires") or "" for it in bom["items"]}
         self.bom_od = {d["id"] for d in bom["open_owner_decisions"]}
         self.bom_rollups = {a: bom["rollups"][a]["strict"]["status"] for a in sorted(bom["rollups"])}
         aux = _load(root, AUX)
@@ -1154,10 +1196,25 @@ class Registry:
         self.registered_titles = {x["id"]: x.get("title") for x in lr["follow_ons"]}
 
     def requires_text(self, ref: str) -> str:
-        """The item's own 'requires' text (PMQTY tbd_requires); '' when the kind carries none."""
+        """The item's own 'requires' text, derived from its defining files; '' when the kind carries none.
+
+        PMQTY: the ICD quantity's tbd_requires. BOM: the item's cbe.requires. MCQ: the MCQ s1_gate_item text plus the text and every 'requires' string
+        of each hardware_requirements_v1 requirement that traces to it. PATH (JSON): every 'from' / 'now' / 'requires'
+        string of the file (for the thermal_life input contract these name what each input must come from)."""
         kind, _, rid = ref.partition(":")
         if kind == "PMQTY" and rid in self.pmi_quantities:
             return self.pmi_quantities[rid].get("tbd_requires") or ""
+        if kind == "MCQ" and rid in self.mcq_text:
+            parts = [self.mcq_text[rid]]
+            for r in self.hw_requirements:
+                if rid in (r.get("traces_to") or []):
+                    parts.append(r.get("text") or "")
+                    parts.extend(_strings_under(r.get("values") or {}, ("requires",)))
+            return " ".join(parts)
+        if kind == "BOM" and rid in self.bom_requires:
+            return self.bom_requires[rid]
+        if kind == "PATH" and rid.endswith(".json"):
+            return " ".join(_strings_under(_load(self.root, rid), ("from", "now", "requires")))
         return ""
 
     def resolve(self, ref: str):
@@ -1379,6 +1436,8 @@ WAITS_ON = {
     "sensors_diagnostics": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
     "preionizer_interface": "design work outside every registered scope",
     "mechanical_structural": "owner decision",
+    "magnetic_circuit": "owner decision",
+    "thermal_control": "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)",
 }
 _KIND_TO_LANE = {"PMI": "fo_preionizer_module_icd", "PMQ": "fo_preionizer_module_icd", "PMQTY": "fo_preionizer_module_icd",
                  "PMDEV": "fo_preionizer_module_icd", "XEP": "fo_xe_system_ledger", "XEOD": "fo_xe_system_ledger",
@@ -1572,14 +1631,18 @@ def build(root: str = ROOT_DEFAULT) -> dict:
             raise ValueError(f"row {name}: ARCHITECTURE_CLOSURE is reserved for A7 blocker 3")
         lane = sp.get("worked_by")
         worked = None
-        if lane is not None and re.search(r"owner[ _]decision", str(bi.get("state") or ""), re.I):
-            raise ValueError(f"row {name}: blocking item {bi['ref']} is an open owner decision; it cannot be worked by {lane}")
+        req_text = str(bi.get("state") or "") + " " + str(reg.requires_text(sp["blocking_item"]))
+        if lane is not None:
+            for mk, rx in NON_LANE_INPUT_MARKERS.items():
+                if rx.search(req_text):
+                    raise ValueError(f"row {name}: blocking item {bi['ref']} requires an input no H2 lane can produce "
+                                     f"({mk}); it cannot be worked by {lane}")
         partial = None
         if sp.get("partial_scope"):
             ps = sp["partial_scope"]
             if lane is not None:
                 raise ValueError(f"row {name}: partial_scope and worked_by are exclusive")
-            if ps["requires_quote"] not in str(bi.get("state") or "") + " " + str(reg.requires_text(sp["blocking_item"])):
+            if ps["requires_quote"] not in req_text:
                 raise ValueError(f"row {name}: partial_scope requires_quote not found in the blocking item's requires text")
             for pl in ps["lanes"]:
                 if pl not in h2 or (spec["key"] not in h2[pl]["matures"] and spec["key"] not in h2[pl]["contributes"]):

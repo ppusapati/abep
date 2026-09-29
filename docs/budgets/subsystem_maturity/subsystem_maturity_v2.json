@@ -285,7 +285,8 @@
   "RUNNING": "the row's single blocking item is worked by a REGISTERED H2 follow-on: the lane id is present in docs/orchestration/lane_registry_v1.json follow_ons (read, never pinned) and its registered scope (workflow script prompt, quoted verbatim and checked at build time) produces the missing input of that item",
   "BLOCKED": "a single named blocking item exists and no registered lane works it (an owner decision, an H-1 / C-1 measurement (A7 wave H4, PLANNED_NOT_REGISTERED), a procurement action (wave H3, PLANNED_NOT_REGISTERED) or an item outside every registered scope)",
   "READY": "no open blocking item",
-  "owner_decision_items": "a blocking item whose resolved state is an open owner decision (state text matches 'owner decision' / OPEN_OWNER_DECISION) is never RUNNING: no lane can take an owner decision; enforced at build time",
+  "owner_decision_items": "a blocking item whose resolved state OR requires text (derived from its defining files: MCQ items via the hardware_requirements_v1 requirements that trace to them; BOM items via cbe.requires; JSON paths via their 'from' / 'now' / 'requires' strings) names an owner decision ('owner decision' / OPEN_OWNER_DECISION) is never RUNNING: no lane can take an owner decision; enforced at build time",
+  "non_lane_inputs": "likewise never RUNNING when that text requires a MEASURED hardware quantity (wave H4) or an ADMITTED Hall closure (credible set EMPTY): no registered H2 design lane produces either; enforced at build time",
   "partial_scope": "RUNNING needs registered scopes that produce EVERY missing input the blocking item names; when registered lanes cover only part of it (checked against the item's own 'requires' text), they are listed under partial_scope and the row stays BLOCKED",
   "one_blocker_rule": "every row carries exactly ONE blocking evidence/interface item (typed id resolved against its defining file); A7: every BLOCKED row points to exactly one item",
   "lanes_that_mature_but_do_not_work_the_blocker": "an H2 lane that matures other aspects of a row is listed under h2_lanes but does not change the execution state",
@@ -2952,13 +2953,15 @@
      ]
     },
     "blocker": {
-     "item": "MC-1 not selected: permanent magnet vs electromagnet undecided, so the coil EIS selection MCQ-S1-01 cannot close (MC-1 also required in the S1A-C1 hardware record)",
+     "item": "MCQ-S1-01 MISSING: H-1 coil EIS not selected, material thermal class and supplier data not on file; the EIS family is an owner decision (HWQ-20) and the class is compared with the MEASURED hot-spot temperature (HW-MC-14) (separately, MC-1 permanent magnet vs electromagnet is undecided and MC-1 is required in the S1A-C1 hardware record)",
      "category": "procurement",
      "first_gate": "S1a",
      "beyond": null,
-     "decision_by": "owner (docs/architecture_comparison/aux_bus/aux_bus_comparison_v1.json#owner_questions)",
+     "decision_by": "owner (docs/experiments/hardware/hardware_requirements_v1.json#owner_questions[HWQ-20]; docs/architecture_comparison/aux_bus/aux_bus_comparison_v1.json#owner_questions)",
      "sources": [
       "docs/experiments/magnet_coil/magnet_coil_qualification_v1.json#s1_gate_items",
+      "docs/experiments/hardware/hardware_requirements_v1.json#requirements[HW-MC-07]",
+      "docs/experiments/hardware/hardware_requirements_v1.json#owner_questions[HWQ-20]",
       "docs/experiments/s1a_readiness/s1a_readiness_status_current.json#missing[S1A-C1]",
       "docs/architecture_comparison/aux_bus/aux_bus_comparison_v1.json#owner_questions"
      ],
@@ -2978,21 +2981,23 @@
     }
    },
    "scheduler": {
-    "execution_state": "RUNNING",
+    "execution_state": "BLOCKED",
     "blocking_item": {
      "ref": "MCQ:MCQ-S1-01",
      "state": "MISSING",
-     "text": "MC-1 not selected: permanent magnet vs electromagnet undecided, so the coil EIS selection MCQ-S1-01 cannot close (MC-1 also required in the S1A-C1 hardware record)"
+     "text": "MCQ-S1-01 MISSING: H-1 coil EIS not selected, material thermal class and supplier data not on file; the EIS family is an owner decision (HWQ-20) and the class is compared with the MEASURED hot-spot temperature (HW-MC-14) (separately, MC-1 permanent magnet vs electromagnet is undecided and MC-1 is required in the S1A-C1 hardware record)"
     },
-    "worked_by": {
-     "lane": "fo_h2_1_hall_chamber_magnet",
-     "a7_title": "H2-1 Hall chamber + magnetic circuit",
-     "scope_quote": "(4) coil design: required ampere-turns for the peak target through the pole gap",
-     "scope_source": "docs/orchestration/workflow_scripts/h2-1-hall-chamber-magnet.js (ARGS_EMBEDDED prompt; read, not pinned)"
+    "worked_by": null,
+    "not_worked_reason": "MCQ-S1-01 is 'H-1 coil EIS selected, with material thermal class and supplier data on file'; the hardware requirement tracing to it (HW-MC-07) states 'The EIS family is an owner decision (HWQ-20)' and compares the class with the MEASURED hot-spot temperature (HW-MC-14); H2-1 designs the coil and proposes a temperature class but does not take HWQ-20 and measures nothing; an owner-decision item is never RUNNING (scheduler rule)",
+    "partial_scope": {
+     "lanes": [
+      "fo_h2_1_hall_chamber_magnet"
+     ],
+     "requires_quote": "The EIS family is an owner decision (HWQ-20)",
+     "covered": "coil design incl. 'turns, wire gauge, current, winding envelope, I^2R at hot resistance, coil temperature class' (H2-1 scope item (4))",
+     "uncovered": "the EIS family selection (owner decision HWQ-20, decided once the H-1 thermal model gives a hot-spot estimate), the supplier data on file, and the MEASURED hot-spot temperature (HW-MC-14) the class is compared with (wave H4, PLANNED_NOT_REGISTERED)"
     },
-    "not_worked_reason": null,
-    "partial_scope": null,
-    "waits_on": null,
+    "waits_on": "owner decision",
     "a7_category": "hardware-definition blocker",
     "technical_category": "procurement",
     "on_phase1_gate_path": true,
@@ -3841,21 +3846,23 @@
     }
    },
    "scheduler": {
-    "execution_state": "RUNNING",
+    "execution_state": "BLOCKED",
     "blocking_item": {
      "ref": "PATH:schemas/thermal_life/inputs_v1.json",
      "state": null,
      "text": "no thermal design inputs (thermal/life framework: every design input TBD; no admitted HallMap to supply wall heat)"
     },
-    "worked_by": {
-     "lane": "fo_h2_5_thermal_network",
-     "a7_title": "H2-5 thermal network",
-     "scope_quote": "(1) node list: anode, channel walls",
-     "scope_source": "docs/orchestration/workflow_scripts/h2-5-thermal-network.js (ARGS_EMBEDDED prompt; read, not pinned)"
+    "worked_by": null,
+    "not_worked_reason": "the thermal_life input contract requires hall_discharge wall_ion_flux_m2s / wall_ion_energy_eV from 'an ADMITTED ensemble member with wall_life_trustworthy = true ... or measured hardware data' (now: 'credible set empty, no hardware measurement: every wall-flux input is refused today'); H2-5 supplies only a parametric discharge-fraction envelope and is barred from transport-model predictions, so it cannot produce every missing input the item names; the same contract also lists inputs whose 'from' is an owner decision / owner choice, which no lane can take",
+    "partial_scope": {
+     "lanes": [
+      "fo_h2_5_thermal_network"
+     ],
+     "requires_quote": "HallMap field wall_ion_flux_m2s of an ADMITTED ensemble member with wall_life_trustworthy = true",
+     "covered": "thermal node list, links, sink temperatures, node limits and a steady-state solve over a PARAMETRIC discharge-fraction load envelope (H2-5 scope items (1)-(5))",
+     "uncovered": "hall_discharge wall_ion_flux_m2s / wall_ion_energy_eV with wall_flux_provenance (gap G11): an ADMITTED HallMap member (credible set EMPTY) or measured hardware data (wave H4, PLANNED_NOT_REGISTERED); H2-5 is barred from transport-model predictions"
     },
-    "not_worked_reason": null,
-    "partial_scope": null,
-    "waits_on": null,
+    "waits_on": "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)",
     "a7_category": "proposal-only documentation gap",
     "technical_category": "thermal",
     "on_phase1_gate_path": false,
@@ -5423,7 +5430,8 @@
     "RUNNING": "the row's single blocking item is worked by a REGISTERED H2 follow-on: the lane id is present in docs/orchestration/lane_registry_v1.json follow_ons (read, never pinned) and its registered scope (workflow script prompt, quoted verbatim and checked at build time) produces the missing input of that item",
     "BLOCKED": "a single named blocking item exists and no registered lane works it (an owner decision, an H-1 / C-1 measurement (A7 wave H4, PLANNED_NOT_REGISTERED), a procurement action (wave H3, PLANNED_NOT_REGISTERED) or an item outside every registered scope)",
     "READY": "no open blocking item",
-    "owner_decision_items": "a blocking item whose resolved state is an open owner decision (state text matches 'owner decision' / OPEN_OWNER_DECISION) is never RUNNING: no lane can take an owner decision; enforced at build time",
+    "owner_decision_items": "a blocking item whose resolved state OR requires text (derived from its defining files: MCQ items via the hardware_requirements_v1 requirements that trace to them; BOM items via cbe.requires; JSON paths via their 'from' / 'now' / 'requires' strings) names an owner decision ('owner decision' / OPEN_OWNER_DECISION) is never RUNNING: no lane can take an owner decision; enforced at build time",
+    "non_lane_inputs": "likewise never RUNNING when that text requires a MEASURED hardware quantity (wave H4) or an ADMITTED Hall closure (credible set EMPTY): no registered H2 design lane produces either; enforced at build time",
     "partial_scope": "RUNNING needs registered scopes that produce EVERY missing input the blocking item names; when registered lanes cover only part of it (checked against the item's own 'requires' text), they are listed under partial_scope and the row stays BLOCKED",
     "one_blocker_rule": "every row carries exactly ONE blocking evidence/interface item (typed id resolved against its defining file); A7: every BLOCKED row points to exactly one item",
     "lanes_that_mature_but_do_not_work_the_blocker": "an H2 lane that matures other aspects of a row is listed under h2_lanes but does not change the execution state",
@@ -5435,15 +5443,13 @@
      "rows": []
     },
     "RUNNING": {
-     "count": 3,
+     "count": 1,
      "rows": [
-      "buffer/plenum",
-      "magnetic circuit",
-      "thermal control"
+      "buffer/plenum"
      ]
     },
     "BLOCKED": {
-     "count": 14,
+     "count": 16,
      "rows": [
       "intake",
       "protective/filter stage",
@@ -5453,8 +5459,10 @@
       "Xe regulator",
       "Xe metering (splits to ignition/transition feed and cathode feed)",
       "extended-channel Hall discharge chamber/accelerator",
+      "magnetic circuit",
       "shielded Xe-fed LaB6 hollow cathode",
       "PPU/power distribution",
+      "thermal control",
       "control/FDIR",
       "sensors/diagnostics",
       "mechanical/structural interfaces",
@@ -5469,20 +5477,22 @@
   },
   "blocked_rows_wait_on": {
    "owner decision": {
-    "count": 5,
+    "count": 6,
     "rows": [
      "intake",
      "protective/filter stage",
      "atmospheric metering valve",
+     "magnetic circuit",
      "PPU/power distribution",
      "mechanical/structural interfaces"
     ]
    },
    "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)": {
-    "count": 2,
+    "count": 3,
     "rows": [
      "Xe tank",
-     "extended-channel Hall discharge chamber/accelerator"
+     "extended-channel Hall discharge chamber/accelerator",
+     "thermal control"
     ]
    },
    "procurement (wave H3, PLANNED_NOT_REGISTERED)": {
@@ -5771,9 +5781,7 @@
      "extended-channel Hall discharge chamber/accelerator",
      "magnetic circuit"
     ],
-    "works_blocking_item_of": [
-     "magnetic circuit"
-    ],
+    "works_blocking_item_of": [],
     "contributes_rows": [
      "shielded Xe-fed LaB6 hollow cathode",
      "PPU/power distribution",
@@ -5888,9 +5896,7 @@
     "matures_rows": [
      "thermal control"
     ],
-    "works_blocking_item_of": [
-     "thermal control"
-    ],
+    "works_blocking_item_of": [],
     "contributes_rows": [
      "extended-channel Hall discharge chamber/accelerator",
      "magnetic circuit",
@@ -5995,7 +6001,7 @@
   "answer": {
    "architecture_decision": "prevented by 2 architecture-blocker rows (Xe tank, extended-channel Hall discharge chamber/accelerator): A7 blocker 1 (rows: extended-channel Hall discharge chamber/accelerator) is resolvable only by H-1 Phase 1 (credible Hall set EMPTY; framework current outcome NOT_EVALUATED); A7 blocker 3 (rows: Xe tank) is the refused Xe ledger (14 missing inputs). A7 blocker 2 is the current single blocker of no row: every row on its evidence path (7 rows) is first blocked by a path item, and blocker 2 is decided by Phase-1 readings on the common H-1.",
    "path_to_h1": "the earliest blocked gate is S1a (5 rows); rows blocking a gate on the Phase-1 path by A7 category: hardware-definition blocker 3, procurement blocker 2, test-readiness blocker 3. S1a is S1A_NOT_READY (0/6), S1 is S1_NOT_READY (0/8), LOCK-1 has 15 open owner decisions.",
-   "scheduler": "3 rows RUNNING (a registered H2 lane works the blocking item), 14 BLOCKED, 0 READY, 0 VERIFIED. BLOCKED rows wait on: owner decision 5; H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED) 2; procurement (wave H3, PLANNED_NOT_REGISTERED) 4; design work outside every registered scope 2; first-hand source verification 1. The H3 procurement and H4 test waves are PLANNED_NOT_REGISTERED (A7), so no registered lane can unblock the procurement- and measurement-bound rows.",
+   "scheduler": "1 rows RUNNING (a registered H2 lane works the blocking item), 16 BLOCKED, 0 READY, 0 VERIFIED. BLOCKED rows wait on: owner decision 6; H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED) 3; procurement (wave H3, PLANNED_NOT_REGISTERED) 4; design work outside every registered scope 2; first-hand source verification 1. The H3 procurement and H4 test waves are PLANNED_NOT_REGISTERED (A7), so no registered lane can unblock the procurement- and measurement-bound rows.",
    "proposal_only": "7 rows are proposal-only documentation gaps (intake, protective/filter stage, compressor, buffer/plenum, Xe regulator, PPU/power distribution, thermal control): they gate neither H-1 nor the branch decision and veto only via an evidenced hard incompatibility. That is NOT evidence that they close: the strict mass roll-up is REFUSED and A5 risk 4 remains open.",
    "status": "PROPOSED reading for the owner (the counts are mechanical; the blocking-item selection and the category assignment are this lane's reading)"
   }

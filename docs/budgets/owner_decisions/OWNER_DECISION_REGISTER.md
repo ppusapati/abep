@@ -17,7 +17,7 @@
 - `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` - `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28`
 - `schemas/interfaces/preionizer_module_icd_v1.json` - `2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e`
 - `docs/experiments/hardware/hardware_requirements_v1.json` - `0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0`
-- `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` - `f38a4caf15def1df6754318176d9de429cc183ddb578da333640d5ed32205624` (recorded at build; produced by this lane)
+- `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` - `b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca` (recorded at build; produced by this lane)
 
 ## Milestone statement
 
@@ -40,7 +40,16 @@ What this is not: not an owner decision: every item stays OPEN; not a recommenda
 - can change A7 blocker 2: R-07, R-08, R-11, R-12, P1F-OOD-01, P1F-OOD-05, PMQ-06, HWQ-05, HWQ-06
 - can change A7 blocker 3: OD-XE-1, OD-XE-2, OD-XE-3, OD-XE-4, OD-XE-5, OD-XE-6, OD-XE-7, OD-XE-8, R-14
 
-needed_by rule: scan the item's verbatim strings (and the linked source strings named per item) after masking document names ('LOCK-1 brief', 'LOCK-1 drafts', 'LOCK1_DRAFT'); map each phrase by the table; needed_by = the earliest mapped gate in NOW < before H2 freeze < LOCK-1 < LOCK-2 < later; a relay or aggregate item takes the earliest over itself and the items it names; ICD-sourced items also scan the closes_at of ICD quantities whose text names the item id; relayed HWQ items (and ICD-sourced items) also scan the deadline statements the pinned sources make about them elsewhere: every hardware_requirements requirement whose text names the id (its text and verification.stage), every string under the ICD common_items / annexes that names the id, and the hardware register's routing of HWQ-01..HWQ-15 to the LOCK-1 decision brief (W2); every match is listed with its location, and gates_named lists every gate the matches name (the value is the earliest; a later gate also named, e.g. an optional LOCK-1 commitment with a LOCK-2 value, stays visible); no match = UNSTATED.
+- A7 marks resting on the item's own text: OD-XE-1, OD-XE-2, OD-XE-3, OD-XE-4, OD-XE-5, OD-XE-6, OD-XE-7, OD-XE-8, R-01, R-02, R-03, R-04, R-05, R-06, R-07, R-08, R-10, R-11, R-12, R-13, R-14, P1F-OOD-01, P1F-OOD-05, PMQ-01, PMQ-02, PMQ-03, PMQ-04, PMQ-05, PMQ-06, HWQ-01, HWQ-04, HWQ-05, HWQ-06, HWQ-07, HWQ-15
+- A7 marks that are REGISTER INFERENCE (quote elsewhere in the source; the item does not state it): P1F-OOD-03, P1F-OOD-04
+- budget marks that are REGISTER INFERENCE: -
+- needed_by UNSTATED but with an inferred gate only (see gates_inferred): -
+
+Relevance marks: every non-NO mark is the register's reading of the source; ITEM_TEXT marks rest on a quote in the item itself, REGISTER_INFERENCE marks on a quote elsewhere in the same source (the item does not state the relevance); SEE_LINKED_ITEMS marks carry no anchor.
+
+Ids: `P1F-OOD-01..05` are **register-assigned** (the Phase-1 framework's open_owner_decisions entries carry no id; source_id records the array position `open_owner_decisions[n]`). Every other id is the source's own.
+
+needed_by rule: scan the item's verbatim strings (and the linked source strings named per item) after masking document names ('LOCK-1 brief', 'LOCK-1 drafts', 'LOCK1_DRAFT'); map each phrase by the table; a phrase that literally names a vocabulary gate (NOW, before H2 freeze, LOCK-1, LOCK-2) or a structural listing in a source's LOCK-1 list is basis 'stated'; a phrase naming another milestone ('before S1', 'before HRR', 'before Phase 1') is basis 'inferred' (the register's reading of the gate sequence), is listed under gates_inferred and NEVER sets the value; needed_by = the earliest STATED gate in NOW < before H2 freeze < LOCK-1 < LOCK-2 < later (value_basis says when several gates are stated, e.g. an optional LOCK-1 commitment with a LOCK-2 value: both stay in gates_named); a relay or aggregate item takes the earliest over itself and the items it names; ICD-sourced items also scan the closes_at of ICD quantities whose text names the item id; relayed HWQ items (and ICD-sourced items) also scan the deadline statements the pinned sources make about them elsewhere: every hardware_requirements requirement whose text names the id (its text and verification.stage), every string under the ICD common_items / annexes that names the id, and the hardware register's routing of HWQ-01..HWQ-15 to the LOCK-1 decision brief (W2); every match is listed with its location and basis, gates_named lists every STATED gate the matches name (the value is the earliest; a later stated gate stays visible) and gates_inferred every inferred one; no match = UNSTATED.
 
 ## Register
 
@@ -98,9 +107,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/budgets/xe_ledger/xe_ledger_v1.json` pointer `/open_owner_decisions/0` sha256 `965fdafa60ae9c3ee1e36189f22ef00198ae3f8a906696213bec13bdcbfb09ad` (lane `fo_xe_system_ledger`)
 - verbatim: `{"id": "OD-XE-1", "topic": "accounting convention of the phase terms", "options": ["PHASE_TOTAL_FLOW", "CATHODE_CONTINUOUS_INCREMENTAL"], "proposed": "PHASE_TOTAL_FLOW (conservative: overlap with t_firing books the cathode flow twice, at most mdot_cathode x overlap hours); every scenario declares it explicitly"}`
 - source proposal (`docs/budgets/xe_ledger/xe_ledger_v1.json#/open_owner_decisions/0/proposed`): PHASE_TOTAL_FLOW (conservative: overlap with t_firing books the cathode flow twice, at most mdot_cathode x overlap hours); every scenario declares it explicitly
-- needed_by: **UNSTATED**
-- budget: **YES** ['Xe mass allocation', 'system mass'] - the accounting convention changes the booked Xe mass (double booking of the cathode flow) - anchor (item): "books the cathode flow twice"
-- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; the accounting convention changes the booked Xe mass (double booking of the cathode flow) - anchor (item): "books the cathode flow twice"
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
+- budget: **YES** ['Xe mass allocation', 'system mass'] - the accounting convention changes the booked Xe mass (double booking of the cathode flow) - anchor (item): "books the cathode flow twice" [ITEM_TEXT]
+- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; the accounting convention changes the booked Xe mass (double booking of the cathode flow) - anchor (item): "books the cathode flow twice" [ITEM_TEXT]
 - status: **OPEN**
 
 ### OD-XE-2 (Xe ledger (fo_xe_system_ledger))
@@ -108,9 +117,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/budgets/xe_ledger/xe_ledger_v1.json` pointer `/open_owner_decisions/1` sha256 `965fdafa60ae9c3ee1e36189f22ef00198ae3f8a906696213bec13bdcbfb09ad` (lane `fo_xe_system_ledger`)
 - verbatim: `{"id": "OD-XE-2", "topic": "reserve policy (form and value)", "options": ["fraction_of_other_terms", "absolute_mass"], "proposed": "none; the reserve is always its own term (A6); scenarios use explicit assumed values"}`
 - source proposal (`docs/budgets/xe_ledger/xe_ledger_v1.json#/open_owner_decisions/1/proposed`): none; the reserve is always its own term (A6); scenarios use explicit assumed values
-- needed_by: **UNSTATED**
-- budget: **YES** ['Xe mass allocation', 'system mass'] - the reserve is its own Xe mass term - anchor (item): "reserve policy (form and value)"
-- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; the reserve is its own Xe mass term - anchor (item): "reserve policy (form and value)"
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
+- budget: **YES** ['Xe mass allocation', 'system mass'] - the reserve is its own Xe mass term - anchor (item): "reserve policy (form and value)" [ITEM_TEXT]
+- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; the reserve is its own Xe mass term - anchor (item): "reserve policy (form and value)" [ITEM_TEXT]
 - status: **OPEN**
 
 ### OD-XE-3 (Xe ledger (fo_xe_system_ledger))
@@ -118,9 +127,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/budgets/xe_ledger/xe_ledger_v1.json` pointer `/open_owner_decisions/2` sha256 `965fdafa60ae9c3ee1e36189f22ef00198ae3f8a906696213bec13bdcbfb09ad` (lane `fo_xe_system_ledger`)
 - verbatim: `{"id": "OD-XE-3", "topic": "share of the mass reference the stored-Xe subsystem may take", "proposed": "PROPOSED screening level 0.25 (lane-19 dominance_fraction); the surfaces carry 0.25 / 0.5 / 1.0"}`
 - source proposal (`docs/budgets/xe_ledger/xe_ledger_v1.json#/open_owner_decisions/2/proposed`): PROPOSED screening level 0.25 (lane-19 dominance_fraction); the surfaces carry 0.25 / 0.5 / 1.0
-- needed_by: **UNSTATED**
-- budget: **YES** ['Xe mass allocation', 'system mass'] - the admissible share of the mass reference for the stored-Xe subsystem - anchor (item): "share of the mass reference the stored-Xe subsystem may take"
-- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; the admissible share of the mass reference for the stored-Xe subsystem - anchor (item): "share of the mass reference the stored-Xe subsystem may take"
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
+- budget: **YES** ['Xe mass allocation', 'system mass'] - the admissible share of the mass reference for the stored-Xe subsystem - anchor (item): "share of the mass reference the stored-Xe subsystem may take" [ITEM_TEXT]
+- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; the admissible share of the mass reference for the stored-Xe subsystem - anchor (item): "share of the mass reference the stored-Xe subsystem may take" [ITEM_TEXT]
 - status: **OPEN**
 
 ### OD-XE-4 (Xe ledger (fo_xe_system_ledger))
@@ -128,9 +137,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/budgets/xe_ledger/xe_ledger_v1.json` pointer `/open_owner_decisions/3` sha256 `965fdafa60ae9c3ee1e36189f22ef00198ae3f8a906696213bec13bdcbfb09ad` (lane `fo_xe_system_ledger`)
 - verbatim: `{"id": "OD-XE-4", "topic": "residual (unusable) Xe", "note": "A5/A6 define no residual term. docs/architecture_comparison/mass_bom/MASS_BOM.md books xe_residual = 0.02 x xe_load (ESA R-M1-6, a margin policy) as its own propellant item. The owner decides whether it enters this ledger as a separate term in a revision or stays in mass_bom only; it is never folded silently into m_reserve or any other term, and it must not be booked twice."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **UNSTATED**
-- budget: **YES** ['Xe mass allocation', 'system mass'] - a residual Xe term enters or stays out of the ledger - anchor (item): "it must not be booked twice"
-- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; a residual Xe term enters or stays out of the ledger - anchor (item): "it must not be booked twice"
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
+- budget: **YES** ['Xe mass allocation', 'system mass'] - a residual Xe term enters or stays out of the ledger - anchor (item): "it must not be booked twice" [ITEM_TEXT]
+- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; a residual Xe term enters or stays out of the ledger - anchor (item): "it must not be booked twice" [ITEM_TEXT]
 - status: **OPEN**
 
 ### OD-XE-5 (Xe ledger (fo_xe_system_ledger))
@@ -138,9 +147,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/budgets/xe_ledger/xe_ledger_v1.json` pointer `/open_owner_decisions/4` sha256 `965fdafa60ae9c3ee1e36189f22ef00198ae3f8a906696213bec13bdcbfb09ad` (lane `fo_xe_system_ledger`)
 - verbatim: `{"id": "OD-XE-5", "topic": "firing-hours basis of the cathode term", "note": "A5 fixes 15,000 h (5.4 kg at 0.10 mg/s); the A5 internal design life target of 18,000 h would give 6.48 kg (sensitivity only)"}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **UNSTATED**
-- budget: **YES** ['Xe mass allocation', 'system mass'] - the firing-hours basis changes the cathode term (5.4 kg vs 6.48 kg) - anchor (item): "would give 6.48 kg"
-- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; the firing-hours basis changes the cathode term (5.4 kg vs 6.48 kg) - anchor (item): "would give 6.48 kg"
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
+- budget: **YES** ['Xe mass allocation', 'system mass'] - the firing-hours basis changes the cathode term (5.4 kg vs 6.48 kg) - anchor (item): "would give 6.48 kg" [ITEM_TEXT]
+- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; the firing-hours basis changes the cathode term (5.4 kg vs 6.48 kg) - anchor (item): "would give 6.48 kg" [ITEM_TEXT]
 - status: **OPEN**
 
 ### OD-XE-6 (Xe ledger (fo_xe_system_ledger))
@@ -148,9 +157,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/budgets/xe_ledger/xe_ledger_v1.json` pointer `/open_owner_decisions/5` sha256 `965fdafa60ae9c3ee1e36189f22ef00198ae3f8a906696213bec13bdcbfb09ad` (lane `fo_xe_system_ledger`)
 - verbatim: `{"id": "OD-XE-6", "topic": "RFP 'air + Xe' Xe-mode operation", "note": "The hard-gate matrix carries G7.xenon_operation and a 25 mN peak with Xe (OD1 reading ii). If the RFP requires Xe-mode operation for a duration that consumes stored Xe beyond ignition, cathode and contingency, it becomes a new explicit ledger term (owner decision); it is never folded into m_fallback."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **UNSTATED**
-- budget: **YES** ['Xe mass allocation', 'system mass'] - Xe-mode operation beyond ignition, cathode and contingency becomes a new term - anchor (item): "it becomes a new explicit ledger term"
-- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; Xe-mode operation beyond ignition, cathode and contingency becomes a new term - anchor (item): "it becomes a new explicit ledger term"
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
+- budget: **YES** ['Xe mass allocation', 'system mass'] - Xe-mode operation beyond ignition, cathode and contingency becomes a new term - anchor (item): "it becomes a new explicit ledger term" [ITEM_TEXT]
+- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; Xe-mode operation beyond ignition, cathode and contingency becomes a new term - anchor (item): "it becomes a new explicit ledger term" [ITEM_TEXT]
 - status: **OPEN**
 
 ### OD-XE-7 (Xe ledger (fo_xe_system_ledger))
@@ -158,9 +167,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/budgets/xe_ledger/xe_ledger_v1.json` pointer `/open_owner_decisions/6` sha256 `965fdafa60ae9c3ee1e36189f22ef00198ae3f8a906696213bec13bdcbfb09ad` (lane `fo_xe_system_ledger`)
 - verbatim: `{"id": "OD-XE-7", "topic": "hardware boundary with mass_bom", "note": "m_regulator / m_valves / m_plumbing map to mass_bom xe_valve_and_flow_control, m_tank to xe_tank, m_mounting_thermal to parts of structure and thermal_hardware (PROPOSED mapping). Hardware inputs here are margin-free (CBE) unless their source says otherwise; MGA and system margin stay in mass_bom (G3 roll-up)."}`
 - source proposal (`docs/budgets/xe_ledger/xe_ledger_v1.json#/open_owner_decisions/6/note`): m_regulator / m_valves / m_plumbing map to mass_bom xe_valve_and_flow_control, m_tank to xe_tank, m_mounting_thermal to parts of structure and thermal_hardware (PROPOSED mapping). Hardware inputs here are margin-free (CBE) unless their source says otherwise; MGA and system margin stay in mass_bom (G3 roll-up).
-- needed_by: **UNSTATED**
-- budget: **YES** ['Xe mass allocation', 'system mass'] - the hardware boundary between the Xe ledger and mass_bom decides where Xe-path hardware mass and margin are booked - anchor (item): "MGA and system margin stay in mass_bom"
-- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; the hardware boundary between the Xe ledger and mass_bom decides where Xe-path hardware mass and margin are booked - anchor (item): "MGA and system margin stay in mass_bom"
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
+- budget: **YES** ['Xe mass allocation', 'system mass'] - the hardware boundary between the Xe ledger and mass_bom decides where Xe-path hardware mass and margin are booked - anchor (item): "MGA and system margin stay in mass_bom" [ITEM_TEXT]
+- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; the hardware boundary between the Xe ledger and mass_bom decides where Xe-path hardware mass and margin are booked - anchor (item): "MGA and system margin stay in mass_bom" [ITEM_TEXT]
 - status: **OPEN**
 
 ### OD-XE-8 (Xe ledger (fo_xe_system_ledger))
@@ -168,9 +177,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/budgets/xe_ledger/xe_ledger_v1.json` pointer `/open_owner_decisions/7` sha256 `965fdafa60ae9c3ee1e36189f22ef00198ae3f8a906696213bec13bdcbfb09ad` (lane `fo_xe_system_ledger`)
 - verbatim: `{"id": "OD-XE-8", "topic": "whether the 40 kg includes the Xe load", "note": "mass_bom OD-M7: included as propellant (R3 as recorded; verify against the RFP). This ledger reports shares of 40 kg on that reading."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **UNSTATED**
-- budget: **YES** ['Xe mass allocation', 'system mass'] - the reading of the 40 kg requirement decides whether Xe load counts against it - anchor (item): "whether the 40 kg includes the Xe load"
-- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; the reading of the 40 kg requirement decides whether Xe load counts against it - anchor (item): "whether the 40 kg includes the Xe load"
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
+- budget: **YES** ['Xe mass allocation', 'system mass'] - the reading of the 40 kg requirement decides whether Xe load counts against it - anchor (item): "whether the 40 kg includes the Xe load" [ITEM_TEXT]
+- A7 blocker: **CAN_CHANGE** [3] - A7 blocker 3: continuous Xe assistance is disallowed and cathode Xe must fit the system mass allocation; the reading of the 40 kg requirement decides whether Xe load counts against it - anchor (item): "whether the 40 kg includes the Xe load" [ITEM_TEXT]
 - status: **OPEN**
 
 ### R-01 (Phase-1 framework reconciliation items)
@@ -178,9 +187,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/0` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-01", "with": "lane-25 Sec. 7 / LOCK-1 brief phases.phase_2 (HW-0 first in S2 and last in S6; a seeded coin orders HW-RF and HW-ECR between them)", "issue": "campaign-level configuration order confounds configuration with time (A6 clarification)", "proposal": "the order-balanced design here governs the A5 Phase-1 readings; lane-25 S2-first / S6-last become the HW0-REF and S6 checks"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/0/proposal`): the order-balanced design here governs the A5 Phase-1 readings; lane-25 S2-first / S6-last become the HW0-REF and S6 checks
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **NO** - test design / schedule of the ground experiment; no flight allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - order balancing of the configurations (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "confounds configuration with time"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - order balancing of the configurations (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "confounds configuration with time" [ITEM_TEXT]
 - status: **OPEN**
 
 ### R-02 (Phase-1 framework reconciliation items)
@@ -188,9 +197,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/1` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-02", "with": "lane-25 Sec. 10 (seed recorded at LOCK-1)", "issue": "seed timing", "proposal": "seed drawn and recorded at LOCK-2 after n is fixed; optional sha256 commitment at LOCK-1"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/1/proposal`): seed drawn and recorded at LOCK-2 after n is fixed; optional sha256 commitment at LOCK-1
-- needed_by: **LOCK-1** (gates named: LOCK-1, LOCK-2) - 'LOCK-1' -> LOCK-1 (item); 'LOCK-2' -> LOCK-2 (item)
+- needed_by: **LOCK-1** [stated; several gates stated (LOCK-1, LOCK-2), value = the earliest] (gates named: LOCK-1, LOCK-2) - 'LOCK-1' -> LOCK-1 [stated] (item); 'LOCK-2' -> LOCK-2 [stated] (item)
 - budget: **NO** - test design / schedule of the ground experiment; no flight allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - randomization seed timing (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "seed timing"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - randomization seed timing (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "seed timing" [ITEM_TEXT]
 - status: **OPEN**
 
 ### R-03 (Phase-1 framework reconciliation items)
@@ -198,9 +207,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/2` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-03", "with": "LOCK-1 brief D-08 (even n fixed at LOCK-2 by readiness_n)", "issue": "complete position and carryover balance needs whole replicates of the six sequences", "proposal": "restrict admissible n to whole replicates, or register an incomplete-design rule at LOCK-1"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/2/proposal`): restrict admissible n to whole replicates, or register an incomplete-design rule at LOCK-1
-- needed_by: **LOCK-1** (gates named: LOCK-1, LOCK-2) - 'LOCK-1' -> LOCK-1 (item); 'LOCK-2' -> LOCK-2 (item)
+- needed_by: **LOCK-1** [stated; several gates stated (LOCK-1, LOCK-2), value = the earliest] (gates named: LOCK-1, LOCK-2) - 'LOCK-1' -> LOCK-1 [stated] (item); 'LOCK-2' -> LOCK-2 [stated] (item)
 - budget: **NO** - test design / schedule of the ground experiment; no flight allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - admissible block counts for balance (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "complete position and carryover balance"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - admissible block counts for balance (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "complete position and carryover balance" [ITEM_TEXT]
 - status: **OPEN**
 
 ### R-04 (Phase-1 framework reconciliation items)
@@ -208,9 +217,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/3` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-04", "with": "lane-25 knee-derived OP2 (S2 before S4)", "issue": "under counterbalancing a condition set must not depend on another configuration's data", "proposal": "grid fixed at LOCK-1 from W1 and the anticipated knee region; the knee is an output per configuration (P1DQ-ENVW)"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/3/proposal`): grid fixed at LOCK-1 from W1 and the anticipated knee region; the knee is an output per configuration (P1DQ-ENVW)
-- needed_by: **LOCK-1** - 'LOCK-1' -> LOCK-1 (item)
+- needed_by: **LOCK-1** [stated] - 'LOCK-1' -> LOCK-1 [stated] (item)
 - budget: **NO** - test design / schedule of the ground experiment; no flight allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - grid fixing under counterbalancing (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "a condition set must not depend on another configuration's data"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - grid fixing under counterbalancing (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "a condition set must not depend on another configuration's data" [ITEM_TEXT]
 - status: **OPEN**
 
 ### R-05 (Phase-1 framework reconciliation items)
@@ -218,9 +227,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/4` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-05", "with": "lane-25 s1_plan (S1b measures M1, M2, M3, M9, M10, M11)", "issue": "eta_u has no S1b repeatability, hence no statistical boundary", "proposal": "add Faraday / E x B repeatability at the S1b point, or report eta_u descriptively and state how Case A's utilization criterion is then judged"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/4/proposal`): add Faraday / E x B repeatability at the S1b point, or report eta_u descriptively and state how Case A's utilization criterion is then judged
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **NO** - measurement-statistics item; no allocation term
-- A7 blocker: **CAN_CHANGE** [1] - decides how Case A's utilization criterion is judged when eta_u has no statistical boundary (Case A = Hall-only satisfies the Phase-1 criteria) - anchor (item): "Case A's utilization criterion"
+- A7 blocker: **CAN_CHANGE** [1] - decides how Case A's utilization criterion is judged when eta_u has no statistical boundary (Case A = Hall-only satisfies the Phase-1 criteria) - anchor (item): "Case A's utilization criterion" [ITEM_TEXT]
 - status: **OPEN**
 
 ### R-06 (Phase-1 framework reconciliation items)
@@ -228,9 +237,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/5` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-06", "with": "lane-25 Sec. 6.4 (S1b re-mounts HW-0 only)", "issue": "the ICD installation/removal reproducibility of the RF and ECR modules is unmeasured before LOCK-2", "proposal": "RR-07 module-exchange remount check"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/5/proposal`): RR-07 module-exchange remount check
-- needed_by: **LOCK-2** - 'LOCK-2' -> LOCK-2 (item)
+- needed_by: **LOCK-2** [stated] - 'LOCK-2' -> LOCK-2 [stated] (item)
 - budget: **NO** - test design / schedule of the ground experiment; no flight allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - module-exchange reproducibility of the RF / ECR modules (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "installation/removal reproducibility of the RF and ECR modules"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - module-exchange reproducibility of the RF / ECR modules (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "installation/removal reproducibility of the RF and ECR modules" [ITEM_TEXT]
 - overlaps with: PMQ-04
 - status: **OPEN**
 
@@ -239,9 +248,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/6` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-07", "with": "od_hardware_pivot phases (Phase 1 knee, Phase 2 comparison, Phase 3 absolute)", "issue": "A5 'Phase 1' (H-1 branch decision) spans the pivot's Phase-1 knee, Phase-2 comparison and Phase-3-type absolute gates", "proposal": "the owner confirms the mapping at LOCK-1"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/6/proposal`): the owner confirms the mapping at LOCK-1
-- needed_by: **LOCK-1** - 'LOCK-1' -> LOCK-1 (item)
+- needed_by: **LOCK-1** [stated] - 'LOCK-1' -> LOCK-1 [stated] (item)
 - budget: **NO** - phase-terminology mapping; no allocation term
-- A7 blocker: **CAN_CHANGE** [1, 2] - fixes which pivot phases (knee, comparison, absolute gates) make up the A5 H-1 branch decision - anchor (item): "H-1 branch decision"
+- A7 blocker: **CAN_CHANGE** [1, 2] - fixes which pivot phases (knee, comparison, absolute gates) make up the A5 H-1 branch decision - anchor (item): "H-1 branch decision" [ITEM_TEXT]
 - status: **OPEN**
 
 ### R-08 (Phase-1 framework reconciliation items)
@@ -249,9 +258,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/7` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-08", "with": "LOCK-1 brief D-07 (delta at LOCK-1)", "issue": "A6 forbids freezing Phase-1 numeric thresholds now", "proposal": "the owner states whether an effect-size level is a LOCK-1 rule input or a LOCK-2 value; this framework fixes neither"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/7/proposal`): the owner states whether an effect-size level is a LOCK-1 rule input or a LOCK-2 value; this framework fixes neither
-- needed_by: **LOCK-1** (gates named: LOCK-1, LOCK-2) - 'LOCK-1' -> LOCK-1 (item); 'LOCK-2' -> LOCK-2 (item)
+- needed_by: **LOCK-1** [stated; several gates stated (LOCK-1, LOCK-2), value = the earliest] (gates named: LOCK-1, LOCK-2) - 'LOCK-1' -> LOCK-1 [stated] (item); 'LOCK-2' -> LOCK-2 [stated] (item)
 - budget: **NO** - decision-boundary timing; no allocation term
-- A7 blocker: **CAN_CHANGE** [2] - whether an effect-size level for the paired configuration contrast is a LOCK-1 rule input or a LOCK-2 value - anchor (item): "effect-size level"
+- A7 blocker: **CAN_CHANGE** [2] - whether an effect-size level for the paired configuration contrast is a LOCK-1 rule input or a LOCK-2 value - anchor (item): "effect-size level" [ITEM_TEXT]
 - status: **OPEN**
 
 ### R-09 (Phase-1 framework reconciliation items)
@@ -259,7 +268,7 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/8` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-09", "with": "W5 families", "issue": "W5 class of the HW0-REF readings", "proposal": "held-out custody until W5 decides"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/8/proposal`): held-out custody until W5 decides
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **NO** - W5 validation custody; no allocation term
 - A7 blocker: **NO** - classification of HW0-REF readings for the held-out Hall-transport validation (W5); not a Phase-1 case-logic input
 - status: **OPEN**
@@ -269,9 +278,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/9` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-10", "with": "lane-06 design.randomisation (fixed propellant blocks Xe reference -> N2 -> O2/N2)", "issue": "within-installation ordering", "proposal": "pure-N2 first, O2-bearing last within every installation (D-10-A); an Xe reference, if any, per D-15"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/9/proposal`): pure-N2 first, O2-bearing last within every installation (D-10-A); an Xe reference, if any, per D-15
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **NO** - test design / schedule of the ground experiment; no flight allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - propellant ordering within an installation (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "within-installation ordering"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - propellant ordering within an installation (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "within-installation ordering" [ITEM_TEXT]
 - status: **OPEN**
 
 ### R-11 (Phase-1 framework reconciliation items)
@@ -279,9 +288,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/10` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-11", "with": "A5 case B wording", "issue": "form of the net system-level benefit where both sustain", "proposal": "owner fixes the form at LOCK-1 (NET_BENEFIT)"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/10/proposal`): owner fixes the form at LOCK-1 (NET_BENEFIT)
-- needed_by: **LOCK-1** - 'LOCK-1' -> LOCK-1 (item)
+- needed_by: **LOCK-1** [stated] - 'LOCK-1' -> LOCK-1 [stated] (item)
 - budget: **NO** - form of a decision criterion; no allocation term
-- A7 blocker: **CAN_CHANGE** [2] - fixes the form of the net system-level benefit when both Hall-only and a pre-ionized configuration sustain (A5 case B wording) - anchor (item): "net system-level benefit"
+- A7 blocker: **CAN_CHANGE** [2] - fixes the form of the net system-level benefit when both Hall-only and a pre-ionized configuration sustain (A5 case B wording) - anchor (item): "net system-level benefit" [ITEM_TEXT]
 - status: **OPEN**
 
 ### R-12 (Phase-1 framework reconciliation items)
@@ -289,9 +298,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/11` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-12", "with": "A5 cases", "issue": "evidence that establishes no outcome", "proposal": "decision status OPEN (not an outcome)"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/11/proposal`): decision status OPEN (not an outcome)
-- needed_by: **LOCK-1** - listed -> LOCK-1 (docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/1)
+- needed_by: **LOCK-1** [stated] - listed -> LOCK-1 [stated] (docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/1)
 - budget: **NO** - decision-status rule; no allocation term
-- A7 blocker: **CAN_CHANGE** [1, 2] - defines that evidence establishing no A5 outcome leaves the decision OPEN (not NO_VIABLE_CASE) - anchor (item): "evidence that establishes no outcome"
+- A7 blocker: **CAN_CHANGE** [1, 2] - defines that evidence establishing no A5 outcome leaves the decision OPEN (not NO_VIABLE_CASE) - anchor (item): "evidence that establishes no outcome" [ITEM_TEXT]
 - overlaps with: P1F-OOD-05
 - status: **OPEN**
 
@@ -300,9 +309,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/12` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-13", "with": "lane-25 stop rules (G-SRC, D2, D3)", "issue": "an arm stop breaks the schedule balance", "proposal": "skip the stopped arm's slots (NOT_TESTED); keep the other configurations' pre-drawn order; report the balance loss"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/12/proposal`): skip the stopped arm's slots (NOT_TESTED); keep the other configurations' pre-drawn order; report the balance loss
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **NO** - test design / schedule of the ground experiment; no flight allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - schedule handling of a stopped arm (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "an arm stop breaks the schedule balance"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - schedule handling of a stopped arm (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (item): "an arm stop breaks the schedule balance" [ITEM_TEXT]
 - status: **OPEN**
 
 ### R-14 (Phase-1 framework reconciliation items)
@@ -310,27 +319,29 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/reconciliation_items/13` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `{"id": "R-14", "with": "LOCK-1 brief P-04-ii and D-15-C (Xe-augmented peak points)", "issue": "an Xe-augmented reading must not be read as atmospheric sustainment (A5 rule on continuous Xe)", "proposal": "label XE_AUGMENTED_PEAK; reported separately; never a nominal classification; never Case A evidence; Xe consumed is booked to the single Xe allocation (fo_xe_system_ledger)"}`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/reconciliation_items/13/proposal`): label XE_AUGMENTED_PEAK; reported separately; never a nominal classification; never Case A evidence; Xe consumed is booked to the single Xe allocation (fo_xe_system_ledger)
-- needed_by: **UNSTATED**
-- budget: **YES** ['Xe mass allocation'] - Xe consumed in Xe-augmented peak readings is booked to the single Xe allocation - anchor (item): "Xe consumed is booked to the single Xe allocation"
-- A7 blocker: **CAN_CHANGE** [1, 3] - an Xe-augmented reading must not count as atmospheric sustainment (blocker 1) and continuous Xe assistance is disallowed (blocker 3) - anchor (item): "must not be read as atmospheric sustainment"
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
+- budget: **YES** ['Xe mass allocation'] - Xe consumed in Xe-augmented peak readings is booked to the single Xe allocation - anchor (item): "Xe consumed is booked to the single Xe allocation" [ITEM_TEXT]
+- A7 blocker: **CAN_CHANGE** [1, 3] - an Xe-augmented reading must not count as atmospheric sustainment (blocker 1) and continuous Xe assistance is disallowed (blocker 3) - anchor (item): "must not be read as atmospheric sustainment" [ITEM_TEXT]
 - status: **OPEN**
 
 ### P1F-OOD-01 (Phase-1 framework open owner decisions)
 
+- id: register-assigned (register (the source item has no id; source_id is its array position))
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/open_owner_decisions/0` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `"accept this topology at LOCK-1 (or amend it by a dated addendum before any S1 data)"`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **LOCK-1** - 'LOCK-1' -> LOCK-1 (item); 'before any S1' -> LOCK-1 (item)
+- needed_by: **LOCK-1** [stated] (gates inferred, not used: LOCK-1) - 'LOCK-1' -> LOCK-1 [stated] (item); 'before any S1' -> LOCK-1 [inferred] (item)
 - budget: **NO** - decision topology; no allocation term
-- A7 blocker: **CAN_CHANGE** [1, 2] - accepting or amending the framework topology fixes the rules by which Phase 1 decides the A5 case - anchor (item): "accept this topology"
+- A7 blocker: **CAN_CHANGE** [1, 2] - accepting or amending the framework topology fixes the rules by which Phase 1 decides the A5 case - anchor (item): "accept this topology" [ITEM_TEXT]
 - status: **OPEN**
 
 ### P1F-OOD-02 (Phase-1 framework open owner decisions)
 
+- id: register-assigned (register (the source item has no id; source_id is its array position))
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/open_owner_decisions/1` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `"R-01..R-14 (reconciliation with the lane-25 / lane-06 / LOCK-1 drafts and W5)"`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **LOCK-1**; via items {"R-01": "UNSTATED", "R-02": "LOCK-1", "R-03": "LOCK-1", "R-04": "LOCK-1", "R-05": "UNSTATED", "R-06": "LOCK-2", "R-07": "LOCK-1", "R-08": "LOCK-1", "R-09": "UNSTATED", "R-10": "UNSTATED", "R-11": "LOCK-1", "R-12": "LOCK-1", "R-13": "UNSTATED", "R-14": "UNSTATED"}
+- needed_by: **LOCK-1** [relay / aggregate: earliest stated gate over the item and the items it names (via_items)]; via items {"R-01": "UNSTATED", "R-02": "LOCK-1", "R-03": "LOCK-1", "R-04": "LOCK-1", "R-05": "UNSTATED", "R-06": "LOCK-2", "R-07": "LOCK-1", "R-08": "LOCK-1", "R-09": "UNSTATED", "R-10": "UNSTATED", "R-11": "LOCK-1", "R-12": "LOCK-1", "R-13": "UNSTATED", "R-14": "UNSTATED"}
 - budget: **SEE_LINKED_ITEMS** - aggregate of R-01..R-14 (see those entries)
 - A7 blocker: **SEE_LINKED_ITEMS** - aggregate of R-01..R-14 (see those entries)
 - overlaps with: R-01, R-02, R-03, R-04, R-05, R-06, R-07, R-08, R-09, R-10, R-11, R-12, R-13, R-14
@@ -338,32 +349,35 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 
 ### P1F-OOD-03 (Phase-1 framework open owner decisions)
 
+- id: register-assigned (register (the source item has no id; source_id is its array position))
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/open_owner_decisions/2` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `"REF-COND and the REF-MERGED option"`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/execution_design/hw0_reference_repeats/reference_condition`): REF-COND = the S1b re-mount point (lane-25 OP3: m_dot_nom, V_nom, N2) so that the S1b dispersion statistics are the direct baseline of the drift check (PROPOSED)
-- needed_by: **LOCK-1** - listed -> LOCK-1 (docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/4)
+- needed_by: **LOCK-1** [stated] - listed -> LOCK-1 [stated] (docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/4)
 - budget: **NO** - reference-condition choice of the ground experiment; no allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - HW-0 reference condition and whether it is merged into an adjacent installation (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/execution_design/hw0_reference_repeats/cost_note): "ties the reference to that installation's position"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - HW-0 reference condition and whether it is merged into an adjacent installation (Phase-1 readings on the common H-1 decide A7 blockers 1 and 2 (A5 cases A / B / C / NO_VIABLE_CASE)) - anchor (docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/execution_design/hw0_reference_repeats/cost_note): "ties the reference to that installation's position" [REGISTER_INFERENCE]
 - status: **OPEN**
 
 ### P1F-OOD-04 (Phase-1 framework open owner decisions)
 
+- id: register-assigned (register (the source item has no id; source_id is its array position))
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/open_owner_decisions/3` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `"MD-04 treatment of configuration-caused limit aborts"`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/missing_data/3/rule`): PROPOSED: treated as not sustained within limits for that reading; reported with the limit that fired; limits come from the approved S1-C8 safety / operational limits
-- needed_by: **LOCK-1** - listed -> LOCK-1 (docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/1)
+- needed_by: **LOCK-1** [stated] - listed -> LOCK-1 [stated] (docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/1)
 - budget: **NO** - missing-data rule; no allocation term
-- A7 blocker: **CAN_CHANGE** [1] - a configuration-caused limit abort is treated as not sustained for that reading (MD-04 rule), i.e. it enters the sustainment classification - anchor (docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/missing_data/3/rule): "treated as not sustained within limits for that reading"
+- A7 blocker: **CAN_CHANGE** [1] - a configuration-caused limit abort is treated as not sustained for that reading (MD-04 rule), i.e. it enters the sustainment classification - anchor (docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/missing_data/3/rule): "treated as not sustained within limits for that reading" [REGISTER_INFERENCE]
 - status: **OPEN**
 
 ### P1F-OOD-05 (Phase-1 framework open owner decisions)
 
+- id: register-assigned (register (the source item has no id; source_id is its array position))
 - source: `docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json` pointer `/open_owner_decisions/4` sha256 `84ba1c382dc609b3e83ad9803a57ba471dd892fd10a6a6149285701a45a65a28` (lane `fo_phase1_prereg_framework`)
 - verbatim: `"OPEN decision status (R-12)"`
 - source proposal (`docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/case_logic/decision_status_open`): PROPOSED: if a required classification is UNRESOLVED, SUSTAINMENT_MIXED, NOT_SCOREABLE_FACILITY or missing so that none of the four outcomes is established, the decision stays OPEN (not an outcome); the blocking decision quantities go to the owner; NO_VIABLE_CASE is never a default for missing evidence (R-12)
-- needed_by: **LOCK-1** - listed -> LOCK-1 (docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/1)
+- needed_by: **LOCK-1** [stated] - listed -> LOCK-1 [stated] (docs/experiments/phase1_prereg_framework/phase1_prereg_framework_v1.json#/locks/lock1_fixes/1)
 - budget: **NO** - decision-status rule; no allocation term
-- A7 blocker: **CAN_CHANGE** [1, 2] - same content as R-12 (OPEN decision status) - anchor (item): "OPEN decision status"
+- A7 blocker: **CAN_CHANGE** [1, 2] - same content as R-12 (OPEN decision status) - anchor (item): "OPEN decision status" [ITEM_TEXT]
 - overlaps with: R-12
 - status: **OPEN**
 
@@ -372,9 +386,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `schemas/interfaces/preionizer_module_icd_v1.json` pointer `/x-preionizer-module-icd/owner_questions/0` sha256 `2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e` (lane `fo_preionizer_module_icd`)
 - verbatim: `{"id": "PMQ-01", "question": "Approve sizing the common envelope (PMI-01) to the largest occupant (ECR module with magnet/yoke and microwave feed)?"}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **NO** - ground-test module envelope; the ICD states the flight pre-ionizer ICD is Milestone C work
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - a common envelope sized to the largest occupant keeps the fixture from structurally disadvantaging a branch in the blocker-2 comparison - anchor (item): "largest occupant"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - a common envelope sized to the largest occupant keeps the fixture from structurally disadvantaging a branch in the blocker-2 comparison - anchor (item): "largest occupant" [ITEM_TEXT]
 - status: **OPEN**
 
 ### PMQ-02 (pre-ionizer module ICD owner questions)
@@ -382,9 +396,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `schemas/interfaces/preionizer_module_icd_v1.json` pointer `/x-preionizer-module-icd/owner_questions/1` sha256 `2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e` (lane `fo_preionizer_module_icd`)
 - verbatim: `{"id": "PMQ-02", "question": "Approve the common control harness L1-L5 including the MODULE_ID line and the PIM-0 termination rules (PMI-04)?"}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **NO** - ground-test harness; no allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - identical control harness on every occupant (module exchange as the controlled variable) - anchor (item): "common control harness"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - identical control harness on every occupant (module exchange as the controlled variable) - anchor (item): "common control harness" [ITEM_TEXT]
 - status: **OPEN**
 
 ### PMQ-03 (pre-ionizer module ICD owner questions)
@@ -392,9 +406,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `schemas/interfaces/preionizer_module_icd_v1.json` pointer `/x-preionizer-module-icd/owner_questions/2` sha256 `2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e` (lane `fo_preionizer_module_icd`)
 - verbatim: `{"id": "PMQ-03", "question": "Approve the pressure-drop class definition (PMI-10) and, if needed, matched passive PIM-0 inserts per class (DEV-H0-03)?"}`
 - source proposal (`schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/annexes/ANNEX-HW0/deviations/2/proposed_control`): PROPOSED passive matched inserts (PIM-0 in the RF class and in the ECR class), each checked cold in S1a; otherwise the difference is reported in R_install
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **NO** - ground-test conductance class; no allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - the pressure-drop class sets how equal the feed pressure at the distributor is across configurations - anchor (item): "pressure-drop class definition"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [1, 2] - the pressure-drop class sets how equal the feed pressure at the distributor is across configurations - anchor (item): "pressure-drop class definition" [ITEM_TEXT]
 - status: **OPEN**
 
 ### PMQ-04 (pre-ionizer module ICD owner questions)
@@ -403,9 +417,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - verbatim: `{"id": "PMQ-04", "question": "Add an S1a no-plasma module-exchange series for PIM-RF and PIM-ECR (unpowered; cold-flow, calibration zero/tare, B(z)) to cover DEV-RF-05 / DEV-ECR-07?"}`
 - source proposal (`schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/annexes/ANNEX-ECR/deviations/6/proposed_control`): PROPOSED S1a no-plasma module-exchange series with PIM-ECR unpowered (cold-flow manifold pressure, in-situ calibration zero/tare, B(z) incl. magnet); S1A-FW respected
 - source proposal (`schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/annexes/ANNEX-RF/deviations/4/proposed_control`): PROPOSED S1a no-plasma module-exchange series with PIM-RF unpowered (cold-flow manifold pressure, in-situ calibration zero/tare, B(z)); no held-out H-1 observable exposed (S1A-FW)
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **NO** - ground-test calibration series; no allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - covers the RF / ECR module-exchange reproducibility not measured by S1b - anchor (item): "module-exchange series"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - covers the RF / ECR module-exchange reproducibility not measured by S1b - anchor (item): "module-exchange series" [ITEM_TEXT]
 - overlaps with: R-06
 - status: **OPEN**
 
@@ -414,9 +428,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `schemas/interfaces/preionizer_module_icd_v1.json` pointer `/x-preionizer-module-icd/owner_questions/4` sha256 `2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e` (lane `fo_preionizer_module_icd`)
 - verbatim: `{"id": "PMQ-05", "question": "Adopt a time-matched Xe hold in the HW-0 start sequence equal to the pre-ionizer dwell (DEV-H0-05)?"}`
 - source proposal (`schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/annexes/ANNEX-HW0/deviations/4/proposed_control`): PROPOSED time-matched Xe hold in WARM_UP equal to the pre-registered pre-ionizer dwell; Xe consumed recorded against the single Xe allocation (A5 xe_mass_allocation)
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **NO** - ground-test start sequence; no flight allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - equalizes Xe exposure before the atmosphere transfer between HW-0 and the pre-ionized configurations - anchor (item): "time-matched Xe hold"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - equalizes Xe exposure before the atmosphere transfer between HW-0 and the pre-ionized configurations - anchor (item): "time-matched Xe hold" [ITEM_TEXT]
 - status: **OPEN**
 
 ### PMQ-06 (pre-ionizer module ICD owner questions)
@@ -424,9 +438,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `schemas/interfaces/preionizer_module_icd_v1.json` pointer `/x-preionizer-module-icd/owner_questions/5` sha256 `2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e` (lane `fo_preionizer_module_icd`)
 - verbatim: `{"id": "PMQ-06", "question": "Prohibit slotless module loads (RF assist magnet, powered interstage, coolant pump) in v1, or commission a new bus-boundary version before LOCK-1?"}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **LOCK-1** - 'LOCK-1' -> LOCK-1 (item)
-- budget: **YES** ['P_bus'] - a module load without a bus_power_boundary_v1 slot is either prohibited or needs a new boundary version - anchor (item): "new bus-boundary version"
-- A7 blocker: **CAN_CHANGE** [2] - A7 blocker 2 is judged after full bus-power accounting; slotless module loads decide what that accounting contains - anchor (item): "slotless module loads"
+- needed_by: **LOCK-1** [stated] - 'LOCK-1' -> LOCK-1 [stated] (item)
+- budget: **YES** ['P_bus'] - a module load without a bus_power_boundary_v1 slot is either prohibited or needs a new boundary version - anchor (item): "new bus-boundary version" [ITEM_TEXT]
+- A7 blocker: **CAN_CHANGE** [2] - A7 blocker 2 is judged after full bus-power accounting; slotless module loads decide what that accounting contains - anchor (item): "slotless module loads" [ITEM_TEXT]
 - overlaps with: HWQ-06
 - status: **OPEN**
 
@@ -435,7 +449,7 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `schemas/interfaces/preionizer_module_icd_v1.json` pointer `/x-preionizer-module-icd/owner_questions/6` sha256 `2470718e1decbde874d2362a997d1e2aaae54eb855d1ed179b930c3be6e7130e` (lane `fo_preionizer_module_icd`)
 - verbatim: `{"id": "PMQ-07", "question": "Relay of open hardware questions this ICD depends on: HWQ-01 (configuration-change procedure), HWQ-04 (INV-B3 tolerance), HWQ-05 (ECR magnet type), HWQ-06 (RF magnetization), HWQ-07 (module potential), HWQ-15 (interfaces frozen before Phase 1)."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **LOCK-1** - 'before Phase 1' -> LOCK-2 (item); via items {"HWQ-01": "LOCK-1", "HWQ-04": "LOCK-1", "HWQ-05": "LOCK-1", "HWQ-06": "LOCK-1", "HWQ-07": "LOCK-1", "HWQ-15": "LOCK-1"}
+- needed_by: **LOCK-1** [relay / aggregate: earliest stated gate over the item and the items it names (via_items)] (gates inferred, not used: LOCK-2) - 'before Phase 1' -> LOCK-2 [inferred] (item); via items {"HWQ-01": "LOCK-1", "HWQ-04": "LOCK-1", "HWQ-05": "LOCK-1", "HWQ-06": "LOCK-1", "HWQ-07": "LOCK-1", "HWQ-15": "LOCK-1"}
 - budget: **SEE_LINKED_ITEMS** - relay of HWQ-01/04/05/06/07/15 (see those entries)
 - A7 blocker: **SEE_LINKED_ITEMS** - relay of HWQ-01/04/05/06/07/15 (see those entries)
 - status: **OPEN**
@@ -446,9 +460,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - verbatim: `{"id": "HWQ-01", "question": "Configuration-change procedure: exchange only the module with H-1 left on the stand (PROPOSED, HW-SVC-04) or re-mount H-1 each time (lane 25 S1b text)? S1b must replicate the adopted procedure. Also D-06 (A spacer / B diverter / C CFG-A / D CFG-B)."}`
 - source proposal (`docs/experiments/hardware/hardware_requirements_v1.json#/owner_questions/0/question`): Configuration-change procedure: exchange only the module with H-1 left on the stand (PROPOSED, HW-SVC-04) or re-mount H-1 each time (lane 25 S1b text)? S1b must replicate the adopted procedure. Also D-06 (A spacer / B diverter / C CFG-A / D CFG-B).
 - source proposal (`docs/experiments/hardware/hardware_requirements_v1.json#/requirements/77/text`): PROPOSED configuration-change procedure: H-1 stays mounted on the stand and only the module between IP-UP and IP-DN is exchanged; the S1b re-mount cycle then replicates exactly that procedure. Lane 25 S1b currently describes removing and re-installing the spacer and the thruster mount; the owner chooses the procedure (HWQ-01), and S1b must replicate whichever is adopted.
-- needed_by: **LOCK-1** - listed -> LOCK-1 (docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief)
+- needed_by: **LOCK-1** [stated] - listed -> LOCK-1 [stated] (docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief)
 - budget: **NO** - ground-test procedure; no allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - configuration-change procedure of the paired comparison - anchor (item): "Configuration-change procedure"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - configuration-change procedure of the paired comparison - anchor (item): "Configuration-change procedure" [ITEM_TEXT]
 - status: **OPEN**
 
 ### HWQ-04 (hardware questions relayed by PMQ-07)
@@ -456,9 +470,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/hardware/hardware_requirements_v1.json` pointer `/owner_questions/3` sha256 `0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0` (lane `fo_hardware_definition (relayed by fo_preionizer_module_icd PMQ-07)`)
 - verbatim: `{"id": "HWQ-04", "question": "INV-B3 tolerance on the module-induced field change, and whether to add the S1 coil-current sensitivity scan S_B (HW-MC-05) to LOCK-1."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **LOCK-1** (gates named: LOCK-1, LOCK-2) - 'LOCK-1' -> LOCK-1 (item); 'LOCK-1' -> LOCK-1 (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/8/quantities/0/closes_at); 'LOCK-2' -> LOCK-2 (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/8/quantities/0/closes_at); listed -> LOCK-1 (docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief)
+- needed_by: **LOCK-1** [stated; several gates stated (LOCK-1, LOCK-2), value = the earliest] (gates named: LOCK-1, LOCK-2) - 'LOCK-1' -> LOCK-1 [stated] (item); 'LOCK-1' -> LOCK-1 [stated] (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/8/quantities/0/closes_at); 'LOCK-2' -> LOCK-2 [stated] (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/8/quantities/0/closes_at); listed -> LOCK-1 [stated] (docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief)
 - budget: **NO** - ground-test tolerance; no allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - tolerance on the module-induced field change that keeps configurations comparable on H-1 (the ICD records the ECR fringe field as a candidate hard incompatibility) - anchor (item): "INV-B3 tolerance on the module-induced field change"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - tolerance on the module-induced field change that keeps configurations comparable on H-1 (the ICD records the ECR fringe field as a candidate hard incompatibility) - anchor (item): "INV-B3 tolerance on the module-induced field change" [ITEM_TEXT]
 - status: **OPEN**
 
 ### HWQ-05 (hardware questions relayed by PMQ-07)
@@ -466,9 +480,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/hardware/hardware_requirements_v1.json` pointer `/owner_questions/4` sha256 `0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0` (lane `fo_hardware_definition (relayed by fo_preionizer_module_icd PMQ-07)`)
 - verbatim: `{"id": "HWQ-05", "question": "ECR magnet: electromagnet (allows M0c, booked as coil power) or permanent magnet (M0b = M0c, 0 W); must match the flight design intent or the ledger must carry the flight value."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **LOCK-1** - 'LOCK-1' -> LOCK-1 (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/annexes/ANNEX-ECR/module_specific_items/2/text); 'LOCK-1' -> LOCK-1 (docs/experiments/hardware/hardware_requirements_v1.json#/requirements/57/text); 'LOCK-1' -> LOCK-1 (docs/experiments/hardware/hardware_requirements_v1.json#/requirements/68/verification/stage); listed -> LOCK-1 (docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief)
-- budget: **YES** ['P_bus'] - an electromagnet is booked as ecr_magnet coil power, a permanent magnet as 0 W - anchor (item): "booked as coil power"
-- A7 blocker: **CAN_CHANGE** [2] - the ecr_hall bus-power term under full bus-power accounting - anchor (item): "the ledger must carry the flight value"
+- needed_by: **LOCK-1** [stated] - 'LOCK-1' -> LOCK-1 [stated] (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/annexes/ANNEX-ECR/module_specific_items/2/text); 'LOCK-1' -> LOCK-1 [stated] (docs/experiments/hardware/hardware_requirements_v1.json#/requirements/57/text); 'LOCK-1' -> LOCK-1 [stated] (docs/experiments/hardware/hardware_requirements_v1.json#/requirements/68/verification/stage); listed -> LOCK-1 [stated] (docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief)
+- budget: **YES** ['P_bus'] - an electromagnet is booked as ecr_magnet coil power, a permanent magnet as 0 W - anchor (item): "booked as coil power" [ITEM_TEXT]
+- A7 blocker: **CAN_CHANGE** [2] - the ecr_hall bus-power term under full bus-power accounting - anchor (item): "the ledger must carry the flight value" [ITEM_TEXT]
 - status: **OPEN**
 
 ### HWQ-06 (hardware questions relayed by PMQ-07)
@@ -477,9 +491,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - verbatim: `{"id": "HWQ-06", "question": "RF module magnetization: unmagnetized ICP in v1 (PROPOSED), or define with the bus-boundary lane where an RF assist-magnet's power is booked (no slot in bus_power_boundary_v1)."}`
 - source proposal (`docs/experiments/hardware/hardware_requirements_v1.json#/owner_questions/5/question`): RF module magnetization: unmagnetized ICP in v1 (PROPOSED), or define with the bus-boundary lane where an RF assist-magnet's power is booked (no slot in bus_power_boundary_v1).
 - source proposal (`docs/experiments/hardware/hardware_requirements_v1.json#/requirements/58/text`): RF module magnetization: bus_power_boundary_v1 gives rf_hall only the component rf_source (net RF power at the coil/antenna terminals), with no slot for a DC assist magnet. Published RF sources on air species used an applied field to ignite at low flow (about 5 mT 'in most cases' for O2 and Ar; N2 ignited without it; RF-IAC18-01). PROPOSED: PIM-RF v1 is unmagnetized (ICP), or the owner and the bus-boundary lane define where an RF assist magnet is booked before LOCK-1 (HWQ-06). A contract change is outside this lane.
-- needed_by: **LOCK-1** - 'LOCK-1' -> LOCK-1 (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/annexes/ANNEX-RF/deviations/0/proposed_control); 'LOCK-1' -> LOCK-1 (docs/experiments/hardware/hardware_requirements_v1.json#/requirements/58/text); 'LOCK-1' -> LOCK-1 (docs/experiments/hardware/hardware_requirements_v1.json#/requirements/58/verification/stage); listed -> LOCK-1 (docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief)
-- budget: **YES** ['P_bus'] - an RF assist magnet has no bus_power_boundary_v1 slot - anchor (item): "where an RF assist-magnet's power is booked"
-- A7 blocker: **CAN_CHANGE** [2] - the rf_hall bus-power term under full bus-power accounting - anchor (item): "no slot in bus_power_boundary_v1"
+- needed_by: **LOCK-1** [stated] - 'LOCK-1' -> LOCK-1 [stated] (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/annexes/ANNEX-RF/deviations/0/proposed_control); 'LOCK-1' -> LOCK-1 [stated] (docs/experiments/hardware/hardware_requirements_v1.json#/requirements/58/text); 'LOCK-1' -> LOCK-1 [stated] (docs/experiments/hardware/hardware_requirements_v1.json#/requirements/58/verification/stage); listed -> LOCK-1 [stated] (docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief)
+- budget: **YES** ['P_bus'] - an RF assist magnet has no bus_power_boundary_v1 slot - anchor (item): "where an RF assist-magnet's power is booked" [ITEM_TEXT]
+- A7 blocker: **CAN_CHANGE** [2] - the rf_hall bus-power term under full bus-power accounting - anchor (item): "no slot in bus_power_boundary_v1" [ITEM_TEXT]
 - overlaps with: PMQ-06
 - status: **OPEN**
 
@@ -488,9 +502,9 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/hardware/hardware_requirements_v1.json` pointer `/owner_questions/6` sha256 `0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0` (lane `fo_hardware_definition (relayed by fo_preionizer_module_icd PMQ-07)`)
 - verbatim: `{"id": "HWQ-07", "question": "Electrical potential of the module body and any interstage electrode (floating / anode / cathode common / facility ground)."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **LOCK-1** - 'LOCK-1' -> LOCK-1 (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/5/quantities/0/closes_at); listed -> LOCK-1 (docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief)
+- needed_by: **LOCK-1** [stated] - 'LOCK-1' -> LOCK-1 [stated] (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/5/quantities/0/closes_at); listed -> LOCK-1 [stated] (docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief)
 - budget: **NO** - ground-test electrical configuration; no allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - module and interstage potential identical across occupants (interstage current enters the cathode budget) - anchor (item): "Electrical potential of the module body"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - module and interstage potential identical across occupants (interstage current enters the cathode budget) - anchor (item): "Electrical potential of the module body" [ITEM_TEXT]
 - status: **OPEN**
 
 ### HWQ-15 (hardware questions relayed by PMQ-07)
@@ -498,47 +512,47 @@ needed_by rule: scan the item's verbatim strings (and the linked source strings 
 - source: `docs/experiments/hardware/hardware_requirements_v1.json` pointer `/owner_questions/14` sha256 `0b75be0a0ddc4888eb157c20e2b22dd4fce2a4bb94c4d6402cbe716ec73b0aa0` (lane `fo_hardware_definition (relayed by fo_preionizer_module_icd PMQ-07)`)
 - verbatim: `{"id": "HWQ-15", "question": "Whether the module interfaces are frozen before Phase 1 even if the modules are delivered later (PROPOSED, phases.P1), so that the Phase-1 HW-0 installation is valid for Phase 2."}`
 - source proposal (`docs/experiments/hardware/hardware_requirements_v1.json#/owner_questions/14/question`): Whether the module interfaces are frozen before Phase 1 even if the modules are delivered later (PROPOSED, phases.P1), so that the Phase-1 HW-0 installation is valid for Phase 2.
-- needed_by: **LOCK-1** (gates named: LOCK-1, LOCK-2) - 'before Phase 1' -> LOCK-2 (item); 'before HRR' -> LOCK-1 (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/0/quantities/0/closes_at); 'before Phase 1' -> LOCK-2 (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/0/quantities/0/closes_at); listed -> LOCK-1 (docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief)
+- needed_by: **LOCK-1** [stated] (gates inferred, not used: LOCK-1, LOCK-2) - 'before Phase 1' -> LOCK-2 [inferred] (item); 'before HRR' -> LOCK-1 [inferred] (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/0/quantities/0/closes_at); 'before Phase 1' -> LOCK-2 [inferred] (schemas/interfaces/preionizer_module_icd_v1.json#/x-preionizer-module-icd/common_items/0/quantities/0/closes_at); listed -> LOCK-1 [stated] (docs/experiments/hardware/hardware_requirements_v1.json#/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief)
 - budget: **NO** - interface-freeze timing; no allocation term
-- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - frozen module interfaces keep the Phase-1 HW-0 installation valid for the later comparison - anchor (item): "so that the Phase-1 HW-0 installation is valid for Phase 2"
+- A7 blocker: **MEASUREMENT_CONDITION_ONLY** [2] - frozen module interfaces keep the Phase-1 HW-0 installation valid for the later comparison - anchor (item): "so that the Phase-1 HW-0 installation is valid for Phase 2" [ITEM_TEXT]
 - status: **OPEN**
 
 ### M16-Q-01 (subsystem maturity matrix v2 (M16) open questions)
 
-- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/0` sha256 `f38a4caf15def1df6754318176d9de429cc183ddb578da333640d5ed32205624` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
+- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/0` sha256 `b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
 - verbatim: `{"id": "M16-Q-01", "question": "Assign an accountable owner to each of the 17 rows (every owner cell reads OWNER_TO_ASSIGN; no accountable party is recorded in the base)."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **NO** - accountability assignment; no allocation term
 - A7 blocker: **NO** - owner assignment only
 - status: **OPEN**
 
 ### M16-Q-02 (subsystem maturity matrix v2 (M16) open questions)
 
-- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/1` sha256 `f38a4caf15def1df6754318176d9de429cc183ddb578da333640d5ed32205624` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
+- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/1` sha256 `b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
 - verbatim: `{"id": "M16-Q-02", "question": "Accept, or amend, the PROPOSED scheduler rule (execution_state READY / RUNNING / BLOCKED / VERIFIED with one blocking item per row), the per-row blocking-item selection and the per-row A7 rollup category."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **NO** - scheduling bookkeeping; no allocation term
 - A7 blocker: **NO** - the scheduler flags record the A7 blockers, they do not define them (A7 is the definition)
 - status: **OPEN**
 
 ### M16-Q-03 (subsystem maturity matrix v2 (M16) open questions)
 
-- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/2` sha256 `f38a4caf15def1df6754318176d9de429cc183ddb578da333640d5ed32205624` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
+- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/2` sha256 `b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
 - verbatim: `{"id": "M16-Q-03", "question": "Accept, or amend, the H2-lane-to-row mapping (which registered H2 lane matures which row, and which H2 lane is scoped to work a row's blocking item)."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **NO** - lane-to-row mapping; no allocation term
 - A7 blocker: **NO** - scheduling bookkeeping
 - status: **OPEN**
 
 ### M16-Q-04 (subsystem maturity matrix v2 (M16) open questions)
 
-- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/3` sha256 `f38a4caf15def1df6754318176d9de429cc183ddb578da333640d5ed32205624` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
+- source: `docs/budgets/subsystem_maturity/subsystem_maturity_v2.json` pointer `/open_owner_questions/3` sha256 `b1dd589a01337c63866df245a36ec2dac0731011ec6b0205655fa201170856ca` (lane `fo_subsystem_maturity_matrix / fo_a6_integration_refresh (M16 v2)`)
 - verbatim: `{"id": "M16-Q-04", "question": "Direct the owning lanes to resolve the reconciliation items RC-01..RC-10 (and the framework items R-xx that name another lane), or record that a divergence is accepted."}`
 - source proposal: NONE_IN_SOURCE (no separate proposal field; see verbatim)
-- needed_by: **UNSTATED**
+- needed_by: **UNSTATED** [UNSTATED (no gate stated by the source)]
 - budget: **SEE_LINKED_ITEMS** - the RC items include P_bus accounting of ecr_magnet (RC-01) and slotless loads (RC-03)
 - A7 blocker: **SEE_LINKED_ITEMS** - see the reconciliation items RC-01..RC-10 in the M16 v2 matrix
 - status: **OPEN**
