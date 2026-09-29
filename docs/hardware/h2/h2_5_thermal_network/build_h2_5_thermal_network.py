@@ -113,6 +113,10 @@ EXTERNAL = {
         "citation": "Nicofe, ASTM A848 Type 1 Soft Magnetic Iron datasheet IAW3078 v2 (typical data)",
         "url": "https://www.nicofe.com/wp-content/uploads/2025/12/IAW3078-Nicofe-ASTM-A848-Type-1-A4-datasheet-v2.pdf",
         "access": "manufacturer datasheet", "sha256": "84be2d2f1643214bc27b85ff08265299d2b5540ffa36a28d01c2040e883fc032"},
+    "EXT-NBS-ARMCO1967": {
+        "citation": "T. W. Watson, D. R. Flynn, H. E. Robinson, 'Thermal Conductivity and Electrical Resistivity of Armco Iron', J. Research NBS 71C(4), 285-290, Oct-Dec 1967 (Table 2 smoothed values, p. 287; Curie hysteresis 754-761 degC, p. 288)",
+        "url": "https://nvlpubs.nist.gov/nistpubs/jres/71C/jresv71Cn4p285_A1b.pdf", "access": "full text (NIST open archive; retrieved 2026-09-27, re-verified by hash 2026-09-29)",
+        "sha256": "35192df233d639b49d46c715ffc3d0558ece3355c6e8f8284b69e7d9f472131d"},
     "EXT-EEE-INST-002": {
         "citation": "NASA/TP-2003-212242 EEE-INST-002 (April 2008 edition incl. Addendum 1) (also limits_v1.json source nasa_eee_inst_002)",
         "url": "https://nepp.nasa.gov/docuploads/FFB52B88-36AE-4378-A05B2C084B5EE2CC/EEE-INST-002_add1.pdf",
@@ -165,34 +169,73 @@ def nist_k(name: str, T: float) -> float:
     return 10 ** (num / den)
 
 
-# Nicofe A848 Type 1 electrical resistivity table (EXT-NICOFE-A848 'Electrical resistivity at elevated temperatures').
-FE_RHO_TABLE_C = [0, 100, 200, 300, 400, 500, 600, 700, 800]
-FE_RHO_TABLE_UOHM_CM = [9.6, 15.0, 22.6, 31.4, 43.1, 55.3, 69.8, 87.0, 105.5]
+# Armco iron, EXT-NBS-ARMCO1967 Table 2 (smoothed values; k 'estimated to be in error by not more than two percent',
+# resistivity 'not more than 2 percent, or 0.1 microohm cm'). Transcribed from the page image (p. 287).
+FE_K_TABLE_C = [-160, -150, -100, -50, 0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 640]
+FE_K_TABLE_W_CMK = [0.887, 0.873, 0.815, 0.775, 0.742, 0.712, 0.682, 0.652, 0.620, 0.587, 0.554, 0.523, 0.495, 0.469,
+                    0.443, 0.417, 0.391, 0.371]
+FE_RHO_TABLE_C = [-160, -150, -100, -50, 0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 640, 650, 700,
+                  720, 740, 750, 760, 770, 780, 800, 850, 880, 900]
+FE_RHO_TABLE_UOHM_CM = [2.8, 3.1, 5.2, 7.4, 9.9, 12.6, 15.6, 19.0, 22.9, 27.2, 31.9, 37.0, 42.6, 48.7, 55.3, 62.4, 70.0,
+                        76.6, 78.3, 87.4, 91.3, 95.5, 97.9, 100.2, 102.8, 104.4, 106.5, 109.8, 111.5, 111.8]
+FE_LORENZ_640C = 3.11e-8           # V^2/K^2, Table 2 Lorenz function at 640 degC (last tabulated k point)
+FE_CURIE_HYSTERESIS_C = [754.0, 761.0]   # p. 288: 'slight hysteresis (< 0.2%) ... between 754 and 761 C, presumably ... Curie'
+
+# Copper resistance ratio R(T)/R(0 C), limits_v1.json record copper_roeser_ratio (NBS HB100 p. 4; pinned LIMITS).
+CU_RATIO_T_C = [-100.0, 0.0, 100.0, 200.0, 300.0, 400.0, 500.0]
+CU_RATIO = [0.557, 1.0, 1.431, 1.862, 2.299, 2.747, 3.21]
 
 
-def fe_rho_ohm_m(T_K: float) -> float:
-    Tc = T_K - T0C
-    xs, ys = FE_RHO_TABLE_C, FE_RHO_TABLE_UOHM_CM
-    if not xs[0] <= Tc <= xs[-1]:
-        raise ValueError(f"iron resistivity table covers 0-800 degC only (asked {Tc:.1f} degC)")
+def _interp(xs, ys, x, what):
+    if not xs[0] <= x <= xs[-1]:
+        raise ValueError(f"{what}: table covers {xs[0]}..{xs[-1]} degC only (asked {x:.1f} degC); no extrapolation")
     for j in range(len(xs) - 1):
-        if xs[j] <= Tc <= xs[j + 1]:
-            y = ys[j] + (ys[j + 1] - ys[j]) * (Tc - xs[j]) / (xs[j + 1] - xs[j])
-            return y * 1e-8
+        if xs[j] <= x <= xs[j + 1]:
+            return ys[j] + (ys[j + 1] - ys[j]) * (x - xs[j]) / (xs[j + 1] - xs[j])
     raise AssertionError
 
 
-FE_CLAMP = {"count": 0}
+def fe_rho_ohm_m(T_K: float) -> float:
+    return _interp(FE_RHO_TABLE_C, FE_RHO_TABLE_UOHM_CM, T_K - T0C, "Armco iron resistivity") * 1e-8
 
 
-def fe_k_wf(T_K: float, mult: float) -> float:
-    """Model-derived electronic thermal conductivity of soft iron (Wiedemann-Franz, Sommerfeld Lorenz number) x mult.
-    Below 0 degC (outside the resistivity table) k is held at its 0 degC value and the use is COUNTED and reported
-    (affects only cold-case minima; every hot-case / margin solve stays inside the table or raises)."""
-    if T_K < T0C:
-        FE_CLAMP["count"] += 1
-        T_K = T0C
-    return mult * LORENZ_SOMMERFELD * T_K / fe_rho_ohm_m(T_K)
+FE_EXTRAP = {"count": 0}
+
+
+def fe_k(T_K: float, mult: float) -> float:
+    """Soft-iron thermal conductivity x grade multiplier (H25-25). Measured Armco k(T) (EXT-NBS-ARMCO1967 Table 2) from
+    -160 to 640 degC; above 640 degC (no measured k) the model-derived value L(640 C) T / rho(T) with the measured Lorenz
+    function held at its 640 degC value and the measured resistivity; each such use is flagged by the caller."""
+    Tc = T_K - T0C
+    if Tc <= FE_K_TABLE_C[-1]:
+        return mult * 100.0 * _interp(FE_K_TABLE_C, FE_K_TABLE_W_CMK, Tc, "Armco iron conductivity")
+    return mult * FE_LORENZ_640C * T_K / fe_rho_ohm_m(T_K)
+
+
+def cu_ratio(T_K: float) -> float:
+    return _interp(CU_RATIO_T_C, CU_RATIO, T_K - T0C, "copper R(T)/R0 (Roeser, limits_v1 copper_roeser_ratio)")
+
+
+CU_R20 = None
+
+
+def cu_in_domain(T_K: float) -> bool:
+    return CU_RATIO_T_C[0] <= T_K - T0C <= CU_RATIO_T_C[-1]
+
+
+def cu_factor_vs_20C(T_K: float) -> float:
+    """R(T)/R(20 degC) of the copper winding (constant-current coil supply => P = I^2 R(T)). Outside the sourced
+    -100..500 degC table: linear continuation of the end chord (model-derived). Every converged state that uses it is
+    FLAGGED by the solver ('coil_R_T_beyond_500C'); such states are already far above every coil limit (<= 350 degC)."""
+    global CU_R20
+    if CU_R20 is None:
+        CU_R20 = cu_ratio(20.0 + T0C)
+    Tc = T_K - T0C
+    if not cu_in_domain(T_K):
+        j = 0 if Tc < CU_RATIO_T_C[0] else len(CU_RATIO_T_C) - 2
+        x0, x1, y0, y1 = CU_RATIO_T_C[j], CU_RATIO_T_C[j + 1], CU_RATIO[j], CU_RATIO[j + 1]
+        return max(0.05, y0 + (y1 - y0) * (Tc - x0) / (x1 - x0)) / CU_R20
+    return cu_ratio(T_K) / CU_R20
 
 
 def slot_view_factors(L: float, h: float) -> dict:
@@ -234,7 +277,10 @@ def build_parameters() -> list:
         P("H25-02", "P_d_max_W", "bounding hall_discharge power used for the hot case (P_d <= P_bus allocation upper end)", 1350.0, "W",
           "allocation", f"{EV_S} (<= 1.30-1.35 kW); hall_discharge share PENDING docs/hardware/h2/h2_4_ppu_bus/", "assumed",
           "PENDING docs/hardware/h2/h2_4_ppu_bus/ (hall_discharge allocation); bound used now", "FLIGHT_REPRESENTATIVE",
-          "P_d cannot exceed the whole bus allocation; using it is conservative for every hot-case temperature"),
+          "P_d cannot exceed the whole bus allocation; using it is conservative for every hot-case temperature. "
+          "BOUNDING CASE OUTSIDE THE ALLOCATION: P_mag (H25-08, up to 60 W at 20 degC, more when hot) and Q_cath (H25-10, up to 101 W) are "
+          "added ON TOP of P_d = 1350 W, so the hot-corner total exceeds the 1.30-1.35 kW P_bus allocation; this is a deliberate thermal "
+          "bound, not a power budget, and never a claim that the allocation is exceeded in operation"),
         P("H25-03", "P_d_grid_frac", "evaluation grid of P_d as fractions of H25-02", [0.5, 0.75, 1.0], "-",
           "assumed", "this lane (evaluation grid only, not an allocation)", "assumed", "PRELIMINARY", "FLIGHT_REPRESENTATIVE"),
         # --- discharge heat fractions (xenon analog hardware only)
@@ -258,10 +304,15 @@ def build_parameters() -> list:
           "development Hall thrusters (10 to 25 %) ... limited, not validated'; EXT-MAZOUFFRE2005: 'around 15% of the input power' lost inside the channel",
           "inferred", "PRELIMINARY (context; the solve uses H25-04..06 whose sum reaches 0.33, above this context)", "FLIGHT_REPRESENTATIVE"),
         # --- other heat loads
-        P("H25-08", "P_mag_W", "Hall magnet coil I^2R (both coils, steady); 0 W for a permanent-magnet MC-1", [0.0, 60.0], "W",
-          "pending", "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (NI, R(T), coil count); evaluation range assumed here", "assumed",
+        P("H25-08", "P_mag_W", "Hall magnet coil I^2 R20: dissipation at the design coil current with the copper winding at 20 degC "
+          "(both coils); the solve applies R(T)/R(20 degC) at each coil's solved temperature (constant-current supply); 0 W for a "
+          "permanent-magnet MC-1", [0.0, 60.0], "W",
+          "pending", "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (NI, R20, coil count); evaluation range assumed here; R(T)/R0 from "
+          "schemas/thermal_life/limits_v1.json record copper_roeser_ratio (NBS HB100 p. 4, -100..500 degC; chord interpolation "
+          "overestimates R, conservative for heating)", "assumed",
           "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/", "FLIGHT_REPRESENTATIVE",
-          "evaluation range only; HERMeS 44.1 + 48.1 W at 12.5 kW (EXT-MYERS2016) is a different size class and not transferred"),
+          "evaluation range only (20 degC basis, NOT the hot-coil value); HERMeS 44.1 + 48.1 W at 12.5 kW (EXT-MYERS2016) is a different "
+          "size class and not transferred; a constant-voltage supply would dissipate less when hot (the constant-current basis is conservative)"),
         P("H25-09", "coil_split_inner", "inner-coil share of P_mag", 0.478, "-", "analog",
           "EXT-MYERS2016 Table 3: inner 44.1 W / (44.1 + 48.1) W", "inferred", "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/",
           "FLIGHT_REPRESENTATIVE"),
@@ -275,11 +326,12 @@ def build_parameters() -> list:
           "0 W for PIM-0 (HW-0 passive spacer, W3)", "assumed", "PENDING docs/interfaces/preionizer_module/ (PMI-05)",
           "H1_TEST_ARTICLE_ONLY", "reported as influence coefficients dT/dQ_PIM (K/W), identical for every occupant; no RF/ECR-specific value"),
         # --- geometry (ECHT analog + assumed; all PENDING H2-1 / H2-7)
-        P("H25-12", "L_ch_m", "channel length", 0.086, "m", "analog", "REF ECHT (CLAUDE.md: true ECHT 86 mm long)", "measured",
-          "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/", "FLIGHT_REPRESENTATIVE", "published analog only, not a Vyovrinda value"),
-        P("H25-13", "h_ch_m", "channel width", 0.010, "m", "analog", "REF ECHT (10 mm wide)", "measured",
+        P("H25-12", "L_ch_m", "channel length", 0.086, "m", "analog", "REF ECHT (CLAUDE.md: true ECHT 86 mm long)", "inferred",
+          "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/", "FLIGHT_REPRESENTATIVE", "published analog geometry (Marchioni 2020 thesis via the repository ECHT audit and CLAUDE.md), "
+          "evidence class 'inferred' (read from a published device description, not measured by this project); not a Vyovrinda value"),
+        P("H25-13", "h_ch_m", "channel width", 0.010, "m", "analog", "REF ECHT (10 mm wide)", "inferred",
           "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/", "FLIGHT_REPRESENTATIVE"),
-        P("H25-14", "D_out_m", "channel outer diameter", 0.100, "m", "analog", "REF ECHT (100 mm OD); D_in = D_out - 2 h", "measured",
+        P("H25-14", "D_out_m", "channel outer diameter", 0.100, "m", "analog", "REF ECHT (100 mm OD); D_in = D_out - 2 h", "inferred",
           "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/", "FLIGHT_REPRESENTATIVE"),
         P("H25-15", "t_wall_m", "channel wall thickness", [0.003, 0.006], "m", "assumed",
           "assumed; EXT-MAZOUFFRE2005 p. 4 'thickness of both inner and outer dielectric wall is a few mm' (context)", "assumed",
@@ -306,17 +358,21 @@ def build_parameters() -> list:
           "analog", "EXT-HENZE2021 row 'Thermal Conductivity at 20 degC [W/mK]': 10 (CL-S 200, perp.) .. 75 (SL-A 400, par.); "
           "EXT-MARTINEZ2014 used 29 W/(m K) for M26", "measured",
           "PRELIMINARY (temperature dependence not given: verify; grade PENDING HWQ-08)", "FLIGHT_REPRESENTATIVE", "manufacturer typical values"),
-        P("H25-25", "kFe_mult", "multiplier on the Wiedemann-Franz electronic conductivity of soft iron", [1.0, 1.25], "-",
-          "assumed", "WF (Sommerfeld L0) from EXT-NICOFE-A848 resistivity table is the electronic part only (lower bound); +25 % "
-          "upper for lattice conduction / Lorenz-number deviation is assumed (verify with a sourced k(T) of the HW-MC-13 grade)",
-          "assumed", "PRELIMINARY", "FLIGHT_REPRESENTATIVE",
-          "the datasheet's own 'Thermal conductivity 0.73 W/mK' is inconsistent with its 10.7 microohm-cm resistivity by ~90x (unit slip?): not used"),
+        P("H25-25", "kFe_mult", "grade multiplier on the measured Armco-iron conductivity k(T) (EXT-NBS-ARMCO1967 Table 2)", [0.80, 1.02], "-",
+          "assumed", "upper 1.02: the source's stated k error (<= 2 %); lower 0.80: assumed allowance for a less pure soft-magnetic grade "
+          "than Armco (verify with a sourced k(T) of the HW-MC-13 grade, HWQ-18). Replaces the v1 Wiedemann-Franz x [1, 1.25] model: "
+          "the measured Lorenz function (2.68e-8 at 0 degC .. 3.17e-8 V^2/K^2 at 500 degC) exceeds the Sommerfeld value by up to 1.30x",
+          "assumed", "PRELIMINARY (grade PENDING HWQ-18 / docs/hardware/h2/h2_1_hall_chamber_magnet/)", "FLIGHT_REPRESENTATIVE",
+          "above 640 degC (end of the measured k) k = L(640 degC) T / rho(T) with measured rho (model-derived; flagged per solve). "
+          "EXT-NICOFE-A848's own 'Thermal conductivity 0.73 W/mK' is inconsistent with its 10.7 microohm-cm resistivity by ~90x (unit slip?): not used"),
         P("H25-26", "eps_BN", "BN-SiO2 wall emissivity", 0.92, "-", "analog",
           "EXT-MAZOUFFRE2005 p. 4: 'In the 8-9 um spectral band ... the BN-SiO2 emissivity mean value is 0.92' (also EXT-MARTINEZ2014 p. 11)",
-          "measured", "PRELIMINARY (spectral band value used as total hemispherical: verify)", "FLIGHT_REPRESENTATIVE"),
+          "measured", "PRELIMINARY (spectral band value used as total hemispherical: verify)", "FLIGHT_REPRESENTATIVE",
+          "room/instrument-band value applied at 500-900 degC wall temperatures: limitation of the preliminary model (verify)"),
         P("H25-27", "eps_metal", "internal metal surfaces (poles, coil cans, cathode body) emittance", [0.14, 0.38], "-",
           "analog", "EXT-HENNINGER1984 p. 10 stainless steel machined 0.14 .. sandblasted 0.38 (room-temperature normal emittance)",
-          "measured", "PRELIMINARY (iron and elevated-temperature values: verify)", "FLIGHT_REPRESENTATIVE"),
+          "measured", "PRELIMINARY (iron and elevated-temperature values: verify)", "FLIGHT_REPRESENTATIVE",
+          "room-temperature normal emittance used as total hemispherical at operating temperature: limitation of the preliminary model (verify)"),
         P("H25-28", "eps_anode", "anode emittance", [0.14, 0.80], "-", "analog",
           "lower EXT-HENNINGER1984 machined stainless 0.14; upper EXT-MAZOUFFRE2005 p. 4 'emissivity of the latter was fixed to 0.8' (assumed there)",
           "assumed", "TBD - requires the anode material (owner question HWQ-08, W3)", "FLIGHT_REPRESENTATIVE"),
@@ -347,20 +403,37 @@ def build_parameters() -> list:
           "EXT-NASA-TM2001 sec. 3: Cold Case 1322, Median 1367, Hot Case 1414 W/m2", "measured", "PRELIMINARY", "FLIGHT_REPRESENTATIVE"),
         P("H25-38", "albedo_OLR_hot", "hot-case albedo and OLR (90-min averaging, max over the three inclination tables)", {"albedo": 0.26, "OLR_W_m2": 275.0},
           "-, W/m2", "analog", "EXT-NASA-TM2001 Tables 4.2.3-1..3, 'Combined' hot cases, 90 minute: 0.24/275 (low), 0.26/257 (medium), 0.26/244 (high); "
-          "max albedo and max OLR combined (conservative); referenced to R_E + 30 km", "measured",
+          "max albedo and max OLR combined (conservative); the TM values are referenced to R_E + 30 km (top of atmosphere) while the Earth view "
+          "factor H25-40 is computed from R_E at 180 km, which slightly understates the effective Earth view; this is covered by the per-element "
+          "F <= 1 bound and the max-albedo/max-OLR combination (conservative), not by a separate correction", "measured",
           "PRELIMINARY (orbit inclination not fixed by the RFP; thruster time constant PENDING S1)", "FLIGHT_REPRESENTATIVE"),
         P("H25-39", "OLR_cold_W_m2", "cold-case OLR (90-min, min 'Combined' cold over the three tables); eclipse => no solar/albedo", 218.0, "W/m2", "analog",
           "EXT-NASA-TM2001 Tables 4.2.3-1..3 'Combined' cold cases, 90 minute: 228, 218, 218", "measured", "PRELIMINARY", "FLIGHT_REPRESENTATIVE"),
         P("H25-40", "F_e_lateral", "Earth view factor of the body lateral surface (and front faces)", [0.0, round(eb180["F_e_lateral_upper_bound"], 4)], "-",
           "derived", f"upper bound (180 + 2 x horizon dip)/360 at 180 km, dip {eb180['horizon_dip_deg']:.3f} deg from R_E (abep_sim/constants.py R_EARTH)",
-          "model-derived", "PRELIMINARY (attitude/shadowing PENDING spacecraft ICD)", "FLIGHT_REPRESENTATIVE"),
+          "model-derived", "PRELIMINARY (attitude/shadowing PENDING spacecraft ICD)", "FLIGHT_REPRESENTATIVE",
+          "horizon dip from R_E; the NASA/TM-2001-211221 albedo/OLR reference surface is R_E + 30 km (see H25-38)"),
         P("H25-41", "F_s_lateral", "solar view factor of the body lateral surface", [0.0, round(1 / math.pi, 4)], "-", "derived",
-          "projected/total lateral area of a cylinder = 1/pi (sun normal to the axis)", "model-derived", "PRELIMINARY", "FLIGHT_REPRESENTATIVE"),
+          "projected/total lateral area of a cylinder = 1/pi (sun normal to the axis)", "model-derived", "PRELIMINARY", "FLIGHT_REPRESENTATIVE",
+          "GEOMETRICALLY INCONSISTENT BOUND: the orbit_hot corner applies F_s_lateral = 1/pi and F_s_face = 1 together although the sun cannot be "
+          "both normal to and along the axis; conservative (over-counts solar input), stated, not corrected"),
         P("H25-42", "F_s_face", "solar view factor of front faces / exit aperture", [0.0, 1.0], "-", "derived", "geometric bound", "model-derived",
-          "PRELIMINARY", "FLIGHT_REPRESENTATIVE", "solar into the aperture is booked on the anode with absorptance bounded by 1"),
+          "PRELIMINARY", "FLIGHT_REPRESENTATIVE", "solar into the aperture is booked on the anode with absorptance bounded by 1; applied "
+          "together with F_s_lateral (see H25-41: inconsistent but conservative)"),
         P("H25-43", "view_factors_channel", "channel-exit view factors (2-D crossed strings, curvature neglected)",
           {k: round(v, 5) for k, v in ex_vf.items()}, "-", "derived", "Hottel crossed-string method on L = 86 mm, h = 10 mm (H25-12, H25-13)",
           "model-derived", "PRELIMINARY", "FLIGHT_REPRESENTATIVE"),
+        P("H25-44", "wall_cond_len_frac", "effective axial conduction length of each wall to its back-pole support, as a fraction of L_ch",
+          [0.5, 1.0], "-", "derived", "0.5: heat deposited uniformly along the wall (mean path L/2); 1.0: all wall heat at the exit plane "
+          "(geometric bound for exit-concentrated deposition; EXT-MARTINEZ2014 wall-temperature results, Fig. 10 (T-140, Xe): wall temperature rises toward the exit plane, "
+          "ion heating in the downstream half of the channel and electron power peaking near the exit plane; qualitative, analog)",
+          "model-derived", "PRELIMINARY (deposition profile on N2/air measured in Phase 1)", "FLIGHT_REPRESENTATIVE",
+          "bounds the v1 L/2 uniform-deposition assumption (non-conservative for exit-peaked heating)"),
+        P("H25-45", "kBN_T_mult", "multiplier on the 20 degC BN conductivity H25-24 for wall operating temperature", [0.5, 1.0], "-",
+          "assumed", "assumed allowance for the decrease of hBN conductivity with temperature (EXT-HENZE2021 gives 20 degC values only; "
+          "no sourced k(T) for the candidate grades)", "assumed",
+          "TBD - requires a sourced k(T) of the selected BN grade (HWQ-08 / docs/hardware/h2/h2_1_hall_chamber_magnet/)", "FLIGHT_REPRESENTATIVE",
+          "bounds the v1 non-conservative use of the 20 degC value at 500-900 degC"),
     ]
     return rows
 
@@ -382,9 +455,13 @@ def build_limits() -> list:
         {"node": "CI/CO (permanent-magnet MC-1 option)", "quantity": "Sm2Co17 maximum service / use temperature", "value_C": [300.0, 350.0],
          "source": f"{lim} pm_sm2co17_recoma35e T_max_use_C 300, pm_smco_2_17_mmpa 350 (Curie 820 / 825)", "evidence_class": "measured",
          "applies": "only if HWQ-19 selects permanent magnets; irreversible-loss criterion additionally (HW-MC-09)", "live": True},
-        {"node": "PI/PO/BP", "quantity": "soft-magnetic pole/core maximum temperature", "value_C": None,
-         "source": "TBD - requires the HW-MC-13 grade (HWQ-18) with B-H and saturation vs temperature; iron Curie point 770 degC is from memory (verify) and is NOT used as a limit",
-         "evidence_class": "assumed", "applies": "no margin computed", "live": False},
+        {"node": "PI/PO/BP", "quantity": "soft-iron Curie transformation: ABSOLUTE CEILING (magnetic circuit non-functional at and above it)", "value_C": FE_CURIE_HYSTERESIS_C[0],
+         "source": "EXT-NBS-ARMCO1967 p. 288: resistivity hysteresis (< 0.2 %) 'between 754 and 761 C, presumably corresponding to the Curie transformation' (Armco iron; lower end used); grade-specific value PENDING HW-MC-13 / HWQ-18",
+         "evidence_class": "inferred",
+         "applies": "margin computed against the ceiling; it is NOT a maximum-use temperature (saturation flux density falls steeply well below Tc)", "live": True},
+        {"node": "PI/PO/BP", "quantity": "soft-magnetic pole/core maximum USE temperature (B_sat(T) / permeability criterion)", "value_C": None,
+         "source": "TBD - requires the HW-MC-13 grade (HWQ-18) with B-H and saturation flux density vs temperature up to the pole temperature envelope (interface demand to H2-1)",
+         "evidence_class": "assumed", "applies": "no margin computed; design-driving demand (design_findings F6)", "live": False},
         {"node": "AN", "quantity": "anode maximum temperature", "value_C": None,
          "source": "TBD - requires the anode material (HWQ-08) and its oxidation behaviour in O2/atomic O (AOL-M01)", "evidence_class": "assumed",
          "applies": "temperature reported for AOL-M01 only", "live": False},
@@ -393,8 +470,8 @@ def build_limits() -> list:
         {"node": "CE (emitter)", "quantity": "LaB6 temperature for O2 tolerance (a MINIMUM, not a maximum)", "value_C": 1570.0,
          "source": f"{lim} lab6_poisoning_goebel (Goebel & Katz 2008 sec. 6.8.5 p. 306: LaB6 at 1570 C withstands pO2 up to 1e-4 Torr)",
          "evidence_class": "measured", "applies": "emitter temperature is set by emission (thermal_life Richardson-Dushman), not by this network", "live": False},
-        {"node": "PPU", "quantity": "transistor junction temperature derating", "value_C": 125.0,
-         "source": "EXT-EEE-INST-002 Section S1 Table 4 'Transistor derating requirements' note 2 (p. 12 of 13): 'Do not exceed Tj = 125 C or 40 C below the manufacturer's maximum rating, whichever is lower'; microcircuits (M3 Table 4 note 2): 110 C",
+        {"node": "PPU", "quantity": "transistor junction temperature derating: Tj,derated = min(0.80 x Tj,max, 125 degC, Tj,max - 40 degC)", "value_C": 125.0,
+         "source": "EXT-EEE-INST-002 Section S1 Table 4 'Transistor derating requirements' (p. 12 of 13): stress parameter 'Junction Temperature 2/' derating factor 0.80 (All, and Power MOSFETs); note 2: 'Do not exceed Tj = 125 C or 40 C below the manufacturer's maximum rating, whichever is lower or less'. The table does not state the temperature scale of the 0.80 factor (degC as tabulated assumed: verify). 125 degC is the absolute cap; e.g. a 150 degC part gives min(120, 125, 110) = 110 degC. Microcircuits (M3 Table 4 note 2): 110 C",
          "evidence_class": "measured", "applies": "baseplate allowable = Tj,derated - junction-to-baseplate rise (PENDING H2-4 device selection)", "live": False},
         {"node": "COMP", "quantity": "compressor motor / bearing limit", "value_C": None,
          "source": "TBD - requires the compressor selection (docs/architecture_comparison/compressor_downselect/, PENDING docs/hardware/h2/h2_3_gas_path_plenum/)",
@@ -420,23 +497,31 @@ NODE_INFO = {
 }
 UNC_KEYS = ["f_anode", "f_walls", "f_pole", "P_mag_W", "Q_cath_W", "t_wall_m", "D_core_m", "L_core_m", "D_body_m", "L_body_m",
             "t_shell_m", "w_support_m", "A_cath_ext_m2", "f_open_outer", "k_BN_W_mK", "kFe_mult", "eps_metal", "eps_anode",
-            "h_contact_W_m2K", "G_anode_mount_W_K", "G_cath_mount_W_K", "G_mount_W_K"]
+            "h_contact_W_m2K", "G_anode_mount_W_K", "G_cath_mount_W_K", "G_mount_W_K", "wall_cond_len_frac", "kBN_T_mult"]
 CASE_KEYS = {"ground": ["T_env_ground_K", "T_mount_ground_K"],
              "orbit_hot": ["T_mount_orbit_K", "F_e_lateral", "F_s_lateral", "F_s_face"],
-             "orbit_cold": ["T_mount_orbit_K", "F_e_lateral"]}
+             "orbit_cold": ["T_mount_orbit_K", "F_e_lateral"],
+             "orbit_cold_off": ["T_mount_orbit_K", "F_e_lateral"]}
 
 
 def param_map(rows):
     return {r["key"]: r for r in rows}
 
 
-def ranges_for(case, pm):
+# Envelope variants (explicit overrides of parameter ranges; never silent):
+#   "pm"  : permanent-magnet MC-1 option -> no coil dissipation (H25-08 says 0 W for a PM circuit); CI/CO are the magnet nodes
+#   "off" : thruster-off survival (eclipse, orbit_cold_off case): no discharge, coil or cathode dissipation
+OVERRIDES = {None: {}, "pm": {"P_mag_W": (0.0, 0.0)}, "off": {"P_mag_W": (0.0, 0.0), "Q_cath_W": (0.0, 0.0)}}
+
+
+def ranges_for(case, pm, variant=None):
     out = {}
     for k in UNC_KEYS + CASE_KEYS[case]:
         v = pm[k]["value"]
         if not (isinstance(v, list) and len(v) == 2):
             raise ValueError(f"parameter {k} must be a [lo, hi] range")
         out[k] = (float(v[0]), float(v[1]))
+    out.update(OVERRIDES[variant])
     return out
 
 
@@ -482,12 +567,14 @@ def assemble(x, fx, case, finish, P_d):
     Pm = x["P_mag_W"]
     loads = {"AN": x["f_anode"] * P_d, "WI": x["f_walls"] * P_d * A_WI / (A_WI + A_WO),
              "WO": x["f_walls"] * P_d * A_WO / (A_WI + A_WO), "PI": x["f_pole"] * P_d,
-             "PO": 0.0, "BP": fx["Q_PIM"], "CI": fx["split_in"] * Pm, "CO": (1 - fx["split_in"]) * Pm, "CB": x["Q_cath_W"]}
+             "PO": 0.0, "BP": fx["Q_PIM"], "CI": 0.0, "CO": 0.0, "CB": x["Q_cath_W"]}
+    # coil I^2 R20 values; the solver multiplies them by R(T)/R(20 degC) at the solved coil temperature
+    coil20 = {"CI": fx["split_in"] * Pm, "CO": (1 - fx["split_in"]) * Pm}
     # --- links between nodes: ("cond", i, j, G) | ("condFe", i, j, A_over_L) | ("rad", i, j, Rsum)
     links = []
     kbn = x["k_BN_W_mK"]
     for wall, D in (("WI", Di), ("WO", Do)):
-        G_ax = kbn * math.pi * D * tw / (L / 2)
+        G_ax = kbn * x["kBN_T_mult"] * math.pi * D * tw / (x["wall_cond_len_frac"] * L)
         G_c = hc * math.pi * D * x["w_support_m"]
         links.append(("cond", wall, "BP", 1 / (1 / G_ax + 1 / G_c)))
     F_an_w = 1 - vf["F_anode_to_exit"]
@@ -522,7 +609,7 @@ def assemble(x, fx, case, finish, P_d):
              "pole_face": 1.0 * (S * x["F_s_face"] + a * S * Fe) + em * OLR * Fe,
              "aperture": 1.0 * S * x["F_s_face"]}
         rear_T = Tm
-    elif case == "orbit_cold":
+    elif case in ("orbit_cold", "orbit_cold_off"):
         Tenv, Tm = 0.0, x["T_mount_orbit_K"]
         Fe = x["F_e_lateral"]
         q = {"lat": eps_ext * fx["OLR_cold"] * Fe, "face": eps_ext * fx["OLR_cold"] * Fe,
@@ -541,15 +628,23 @@ def assemble(x, fx, case, finish, P_d):
         ("rad_env", "CB", em * x["A_cath_ext_m2"], 0.0, Tenv),
         ("cond_mount", "BP", x["G_mount_W_K"], Tm),
     ]
-    return loads, links, bnd, x["kFe_mult"]
+    return loads, links, bnd, x["kFe_mult"], coil20
 
 
-def solve(loads, links, bnd, kFe_mult, T0=450.0):
+def solve(loads, links, bnd, kFe_mult, coil20, T0=450.0):
     idx = {n: i for i, n in enumerate(NODES)}
     n = len(NODES)
 
+    def actual_loads(T):
+        ld = dict(loads)
+        for nd, p20 in coil20.items():
+            if p20 > 0.0:
+                ld[nd] = loads[nd] + p20 * cu_factor_vs_20C(T[idx[nd]])
+        return ld
+
     def flows(T):
-        r = np.array([loads[nd] for nd in NODES], dtype=float)
+        ld = actual_loads(T)
+        r = np.array([ld[nd] for nd in NODES], dtype=float)
         for lk in links:
             typ, a, b = lk[0], idx[lk[1]], idx[lk[2]]
             if typ == "cond":
@@ -558,7 +653,7 @@ def solve(loads, links, bnd, kFe_mult, T0=450.0):
                 Q = SIGMA_SB * (T[a] ** 4 - T[b] ** 4) / lk[3]
             elif typ in ("condFe", "condFe_contact"):
                 Tm = 0.5 * (T[a] + T[b])
-                G = fe_k_wf(Tm, kFe_mult) * lk[3]
+                G = fe_k(Tm, kFe_mult) * lk[3]
                 if typ == "condFe_contact":
                     G = 1 / (1 / G + 1 / lk[4])
                 Q = G * (T[a] - T[b])
@@ -593,35 +688,39 @@ def solve(loads, links, bnd, kFe_mult, T0=450.0):
             r, out = flows(T)
             if np.max(np.abs(r)) > 1e-6:
                 break
-            total_in = sum(loads.values()) + sum(bd[3] for bd in bnd if bd[0] == "rad_env")
+            ld = actual_loads(T)
+            total_in = sum(ld.values()) + sum(bd[3] for bd in bnd if bd[0] == "rad_env")
             total_out = out + sum(bd[3] for bd in bnd if bd[0] == "rad_env")
             if abs(total_in - total_out) > 1e-6 * max(1.0, total_in):
                 raise RuntimeError("energy balance does not close")
-            return {nd: float(T[i]) for i, nd in enumerate(NODES)}, {"iterations": it + 1, "load_W": sum(loads.values()),
-                                                                     "rejected_W": out, "max_residual_W": float(np.max(np.abs(r))),
-                                                                     "fe_k_held_at_0C": any(0.5 * (T[idx[lk[1]]] + T[idx[lk[2]]]) < T0C
-                                                                                            for lk in links if lk[0].startswith("condFe"))}
+            return {nd: float(T[i]) for i, nd in enumerate(NODES)}, {
+                "iterations": it + 1, "load_W": sum(ld.values()), "rejected_W": out, "max_residual_W": float(np.max(np.abs(r))),
+                "coil_W": {nd: ld[nd] - loads[nd] for nd in coil20}, "coil_W_at_20C": dict(coil20),
+                "coil_R_T_beyond_500C": any(p20 > 0.0 and not cu_in_domain(T[idx[nd]]) for nd, p20 in coil20.items()),
+                "fe_k_above_measured_640C": any(0.5 * (T[idx[lk[1]]] + T[idx[lk[2]]]) - T0C > FE_K_TABLE_C[-1]
+                                                for lk in links if lk[0].startswith("condFe"))}
     raise RuntimeError("thermal network did not converge (MODEL_ERROR); no half-converged state is returned")
 
 
-MOUNT_KEY = {"ground": "T_mount_ground_K", "orbit_hot": "T_mount_orbit_K", "orbit_cold": "T_mount_orbit_K"}
+MOUNT_KEY = {"ground": "T_mount_ground_K", "orbit_hot": "T_mount_orbit_K", "orbit_cold": "T_mount_orbit_K", "orbit_cold_off": "T_mount_orbit_K"}
 OUTS = NODES + ["Q_mount_W"]
 COIL_CLASSES_C = [180.0, 200.0, 220.0, 250.0]
 PM_LIMITS_C = [300.0, 350.0]
 WALL_LIMIT_C = 900.0
+CURIE_C = FE_CURIE_HYSTERESIS_C[0]
 
 
 def run(x, fx, case, finish, P_d):
-    loads, links, bnd, km = assemble(x, fx, case, finish, P_d)
-    T, info = solve(loads, links, bnd, km)
+    loads, links, bnd, km, coil20 = assemble(x, fx, case, finish, P_d)
+    T, info = solve(loads, links, bnd, km, coil20)
     out = dict(T)
     out["Q_mount_W"] = x["G_mount_W_K"] * (T["BP"] - x[MOUNT_KEY[case]])
     return out, info
 
 
 # ----------------------------------------------------------------------------------------------- envelope
-def envelope(pm, fx, case, finish, P_d):
-    rg = ranges_for(case, pm)
+def envelope(pm, fx, case, finish, P_d, variant=None):
+    rg = ranges_for(case, pm, variant)
     nom = {k: 0.5 * (lo + hi) for k, (lo, hi) in rg.items()}
     T_nom, _ = run(nom, fx, case, finish, P_d)
     sens = {}
@@ -645,7 +744,9 @@ def envelope(pm, fx, case, finish, P_d):
         res[o] = {"T_min_K": round(Tmin[o], 2), "T_nominal_K": round(T_nom[o], 2), "T_max_K": round(Tmax[o], 2),
                   "dominant_inputs": [{"input": k, "dT_lo_to_hi_K": round(sens[k][o], 2)} for k in dom],
                   "hot_corner_energy_balance_W": {"load": round(bal["load_W"], 3), "rejected_to_boundaries": round(bal["rejected_W"], 3)},
-                  "iron_k_held_at_0C": {"hot_corner": bal["fe_k_held_at_0C"], "cold_corner": bal_min["fe_k_held_at_0C"]}}
+                  "hot_corner_coil_W": {k: round(v, 3) for k, v in bal["coil_W"].items()},
+                  "hot_corner_coil_R_T_beyond_500C": bal["coil_R_T_beyond_500C"],
+                  "iron_k_above_measured_640C": {"hot_corner": bal["fe_k_above_measured_640C"], "cold_corner": bal_min["fe_k_above_measured_640C"]}}
     # influence coefficient of the pre-ionizer-slot heat (PMI-05) at the nominal point
     fx1 = dict(fx)
     fx1["Q_PIM"] = fx["Q_PIM"] + 1.0
@@ -663,10 +764,10 @@ def _pct(vals, q):
     return v[lo] + (v[hi] - v[lo]) * (i - lo)
 
 
-def lhs_check(fx, case, finish, P_d, env, rg, n=N_LHS):
+def lhs_check(fx, case, finish, P_d, env, rg, n=N_LHS, tag=""):
     """Seeded Latin-hypercube sample of the input box (coverage of the box, NOT a probability distribution): checks the
     corner bounds and reports sample statistics and the fraction of samples above each live limit."""
-    rnd = random.Random(f"{RNG_SEED}-{case}-{finish}-{P_d}")
+    rnd = random.Random(f"{RNG_SEED}-{case}-{finish}-{P_d}{tag}")
     keys = sorted(rg)
     perms = {k: rnd.sample(range(n), n) for k in keys}
     samples = {o: [] for o in OUTS}
@@ -679,7 +780,7 @@ def lhs_check(fx, case, finish, P_d, env, rg, n=N_LHS):
         T, _ = run(x, fx, case, finish, P_d)
         for o in OUTS:
             samples[o].append(T[o])
-    out = {"n": n, "seed": f"{RNG_SEED}-{case}-{finish}-{P_d}", "nodes": {}}
+    out = {"n": n, "seed": f"{RNG_SEED}-{case}-{finish}-{P_d}{tag}", "nodes": {}}
     for nd in NODES:
         v = samples[nd]
         out["nodes"][nd] = {"sample_min_C": round(min(v) - T0C, 1), "sample_median_C": round(_pct(v, 0.5) - T0C, 1),
@@ -695,6 +796,8 @@ def lhs_check(fx, case, finish, P_d, env, rg, n=N_LHS):
     for nd in ("CI", "CO"):
         for c in COIL_CLASSES_C + PM_LIMITS_C:
             frac[f"{nd}>{int(c)}"] = round(sum(t > c + T0C for t in samples[nd]) / n, 4)
+    for nd in ("PI", "PO", "BP"):
+        frac[f"{nd}>Curie {int(CURIE_C)}"] = round(sum(t > CURIE_C + T0C for t in samples[nd]) / n, 4)
     out["fraction_of_samples_above_limit"] = frac
     return out
 
@@ -721,6 +824,9 @@ def evaluate(rows):
                       "seeded Latin-hypercube sample of the input box at P_d max, which also gives sample statistics (box coverage, "
                       "not probabilities)"),
            "P_d_grid_W": grid, "n_lhs": N_LHS, "cases": {}}
+    out["pm_option_note"] = ("permanent-magnet MC-1 option: the same corner/LHS method at P_d max with P_mag = 0 (H25-08: 0 W for a PM "
+                             "circuit); CI/CO then represent the magnet nodes, so the Sm2Co17 limits are checked against this "
+                             "self-consistent solve, not against the coil-dissipating one")
     for case in ("ground", "orbit_hot", "orbit_cold"):
         out["cases"][case] = {}
         for finish in FINISHES:
@@ -730,7 +836,20 @@ def evaluate(rows):
                 per_pd[str(P_d)] = env
             env_max = per_pd[str(grid[-1])]
             chk = lhs_check(fx, case, finish, grid[-1], env_max, ranges_for(case, pm))
-            out["cases"][case][finish] = {"by_P_d_W": per_pd, "lhs_at_P_d_max": chk}
+            env_pm, _ = envelope(pm, fx, case, finish, grid[-1], "pm")
+            chk_pm = lhs_check(fx, case, finish, grid[-1], env_pm, ranges_for(case, pm, "pm"), tag="-pm")
+            out["cases"][case][finish] = {"by_P_d_W": per_pd, "lhs_at_P_d_max": chk,
+                                          "pm_option_at_P_d_max": {"envelope": env_pm, "lhs": chk_pm}}
+    # thruster-off survival cold case (eclipse): no internal dissipation; minima only, no limit (survival limits TBD)
+    out["survival_cold_off"] = {
+        "note": ("thruster off in eclipse (orbit_cold sinks, P_d = P_mag = Q_cath = 0): node minima for the survival-heater question; "
+                 "no survival limit is sourced here, so thermal_control heater demand stays TBD (spacecraft ICD + component minimum "
+                 "temperatures PENDING H2-1/H2-2/H2-3/H2-4)"),
+        "cases": {}}
+    for finish in FINISHES:
+        env_off, _ = envelope(pm, fx, "orbit_cold_off", finish, 0.0, "off")
+        out["survival_cold_off"]["cases"][finish] = {nd: [round(env_off[nd]["T_min_K"] - T0C, 1), round(env_off[nd]["T_max_K"] - T0C, 1)]
+                                                     for nd in NODES}
     return out
 
 
@@ -758,8 +877,14 @@ def margins(ev):
             for nd in ("CI", "CO"):
                 for c in COIL_CLASSES_C:
                     rows.append(_mrow(case, finish, nd, f"IEC 60085 class {int(c)}", c, e, fr[f"{nd}>{int(c)}"]))
+            epm = d["pm_option_at_P_d_max"]["envelope"]
+            frpm = d["pm_option_at_P_d_max"]["lhs"]["fraction_of_samples_above_limit"]
+            for nd in ("CI", "CO"):
                 for c in PM_LIMITS_C:
-                    rows.append(_mrow(case, finish, nd, f"Sm2Co17 max use {int(c)} degC (PM option)", c, e, fr[f"{nd}>{int(c)}"]))
+                    rows.append(_mrow(case, finish, nd, f"Sm2Co17 max use {int(c)} degC (PM option, P_mag = 0 solve)", c, epm, frpm[f"{nd}>{int(c)}"]))
+            for nd in ("PI", "PO", "BP"):
+                rows.append(_mrow(case, finish, nd, f"soft-iron Curie ceiling {int(CURIE_C)} degC (Armco)", CURIE_C, e,
+                                  fr[f"{nd}>Curie {int(CURIE_C)}"]))
     return rows
 
 
@@ -768,7 +893,7 @@ def hard_incompatibility(margin_rows):
     option still open (every exterior finish, and for the coils every sourced insulation class and the PM option)."""
     findings = []
     for case in ("ground", "orbit_hot", "orbit_cold"):
-        for node in ("WI", "WO", "CI", "CO"):
+        for node in ("WI", "WO", "CI", "CO", "PI", "PO", "BP"):
             rs = [r for r in margin_rows if r["case"] == case and r["node"] == node]
             if rs and all(r["verdict"] == "EXCEEDED_WHOLE_ENVELOPE" for r in rs):
                 findings.append({"case": case, "node": node, "evidence": "every option exceeds its sourced limit over the whole envelope"})
@@ -783,12 +908,18 @@ def material_table():
         rows.append({"material": name, "T_K": T, "k_W_mK": round(nist_k(name, T), 2), "source": "EXT-NIST-CRYO", "fit_range_K": f["range_K"],
                      "fit_error_pct": f["fit_error_pct"], "evidence_class": "measured (curve fit to data)",
                      "note": "value at 293.15 K; elevated-temperature k is outside the fit range: TBD - requires a sourced k(T)"})
-    for TC in (20.0, 200.0, 400.0, 600.0):
+    for TC in (0.0, 200.0, 400.0, 600.0, 640.0):
         T = TC + T0C
-        rows.append({"material": "soft iron (A848 Type 1), WF electronic part", "T_K": T, "k_W_mK": round(fe_k_wf(T, 1.0), 2),
-                     "source": "EXT-NICOFE-A848 resistivity table + Sommerfeld Lorenz number", "fit_range_K": [273.15, 1073.15],
+        rows.append({"material": "Armco iron (commercially pure), measured k", "T_K": round(T, 2), "k_W_mK": round(fe_k(T, 1.0), 2),
+                     "source": "EXT-NBS-ARMCO1967 Table 2", "fit_range_K": [113.15, 913.15],
+                     "fit_error_pct": 2, "evidence_class": "measured (smoothed values)",
+                     "note": "used with grade multiplier H25-25; soft-magnetic grade PENDING HWQ-18"})
+    for TC in (700.0, 750.0):
+        T = TC + T0C
+        rows.append({"material": "Armco iron, k above the measured range", "T_K": round(T, 2), "k_W_mK": round(fe_k(T, 1.0), 2),
+                     "source": "EXT-NBS-ARMCO1967 Table 2: Lorenz function at 640 degC x T / measured rho(T)", "fit_range_K": None,
                      "fit_error_pct": None, "evidence_class": "model-derived",
-                     "note": "lower bound of k (electronic only); used with multiplier H25-25"})
+                     "note": "used only where a pole/core link mean temperature exceeds 640 degC (flagged per solve); near the Curie ceiling"})
     rows.append({"material": "hBN solids (HeBoSint grades)", "T_K": 293.15, "k_W_mK": [10.0, 75.0], "source": "EXT-HENZE2021",
                  "fit_range_K": None, "fit_error_pct": None, "evidence_class": "measured (typical, guide only)", "note": "grade and pressing direction span"})
     return rows
@@ -802,7 +933,7 @@ def spacecraft_side_demands(pm):
         "PPU": {"load": "Q_PPU = P_bus x (1 - eta_PPU) (all conversion loss is heat at the PPU baseplate)",
                 "eta_PPU": "PENDING docs/hardware/h2/h2_4_ppu_bus/ (not selected here)",
                 "evaluation_grid": [{"eta_PPU_assumed": e, "Q_PPU_W": round(Pbus * (1 - e), 1)} for e in eta_grid],
-                "allowable": "T_baseplate <= Tj,derated - dT(junction->baseplate); Tj,derated = min(125 degC, T_j,max,rated - 40 degC) for transistors (EEE-INST-002 S1 Table 4 note 2)",
+                "allowable": "T_baseplate <= Tj,derated - dT(junction->baseplate); Tj,derated = min(0.80 x T_j,max,rated, 125 degC, T_j,max,rated - 40 degC) for transistors (EEE-INST-002 S1 Table 4 junction-temperature factor 0.80 and note 2; degC basis of the 0.80 factor: verify)",
                 "demand": "required baseplate conductance to the spacecraft sink G >= Q_PPU / (T_baseplate,allow - T_sink); T_sink PENDING spacecraft ICD",
                 "scope": "FLIGHT_REPRESENTATIVE (H-1 uses laboratory supplies outside the thermal network, W3 PS-C)"},
         "COMP": {"load": "Q_comp = P_bus[compressor] (whole electrical input booked as heat at the compressor; gas enthalpy rise carried to the plenum, conservative for the motor node)",
@@ -843,13 +974,27 @@ def design_findings(ev, mrows):
                "25 degC steps; supplier EIS and endurance evidence required, HWQ-20), a permanent-magnet inner circuit (HWQ-19) or a stronger "
                "inner conduction path (core diameter, contacts); not a hard incompatibility (best corners pass).")
     wi = [r for r in mrows if r["node"] in ("WI", "WO")]
-    out.append(f"F2 BN walls pass the 900 degC oxidizing guide value over the whole bounding envelope in every case "
-               f"(smallest worst-corner margin {min(r['margin_worst_K'] for r in wi):g} K); atomic-O / ion effects are not covered by that limit.")
+    wi_dd = [r for r in wi if r["verdict"] != "PASS_WHOLE_ENVELOPE"]
+    if not wi_dd:
+        out.append(f"F2 BN walls pass the 900 degC oxidizing guide value over the whole bounding envelope in every case "
+                   f"(smallest worst-corner margin {min(r['margin_worst_K'] for r in wi):g} K); atomic-O / ion effects are not covered by that limit.")
+    else:
+        nodes = sorted({r["node"] for r in wi_dd})
+        out.append(f"F2 BN walls vs the 900 degC oxidizing guide value: {len(wi_dd)}/{len(wi)} wall rows are DESIGN_DRIVING (nodes "
+                   f"{', '.join(nodes)}; worst corners {min(r['T_max_C'] for r in wi_dd):g}-{max(r['T_max_C'] for r in wi_dd):g} degC, nominal "
+                   f"{min(r['T_nominal_C'] for r in wi_dd):g}-{max(r['T_nominal_C'] for r in wi_dd):g} degC, LHS fraction above "
+                   f"{min(r['lhs_fraction_above_limit'] for r in wi_dd):.2%}-{max(r['lhs_fraction_above_limit'] for r in wi_dd):.2%}); "
+                   "all other wall rows pass. The worst corners combine the exit-concentrated conduction bound (H25-44 = 1.0), the assumed "
+                 "hot-BN conductivity allowance (H25-45 = 0.5) and the lowest grade conductivity; a sourced BN k(T) and the measured "
+                 "deposition profile (Phase 1) close this. Not a hard incompatibility (best corners pass). Atomic-O / ion effects are "
+                 "not covered by that limit.")
     co = [r for r in mrows if r["node"] == "CO" and r["limit"] == "IEC 60085 class 220"]
-    out.append("F3 exterior finish is design-driving for the outer coil: with the high-emittance finish the outer-coil samples above 220 degC are "
-               + ", ".join(f"{r['case']} {r['lhs_fraction_above_limit']:.0%}" for r in co if r["finish"] == "z93_white_inorganic")
-               + "; with bare machined stainless "
-               + ", ".join(f"{r['case']} {r['lhs_fraction_above_limit']:.0%}" for r in co if r["finish"] == "bare_machined_stainless") + ".")
+    out.append("F3 exterior finish is design-driving for the outer coil: fraction of input-box samples with the outer coil above 220 degC, "
+               "high-emittance (Z-93) finish: "
+               + ", ".join(f"{r['case']} {r['lhs_fraction_above_limit']:.2%}" for r in co if r["finish"] == "z93_white_inorganic")
+               + "; bare machined stainless: "
+               + ", ".join(f"{r['case']} {r['lhs_fraction_above_limit']:.2%}" for r in co if r["finish"] == "bare_machined_stainless")
+               + " (sample fractions describe box coverage, not probabilities; a non-zero fraction is not a guaranteed pass).")
     mh = mount_heat(ev)
     nom = [v["nominal_W"] for v in mh.values()]
     firsts = {}
@@ -863,10 +1008,47 @@ def design_findings(ev, mrows):
     out.append(f"F4 first-ranked dominant input over all node/case/finish envelopes at P_d max: "
                + ", ".join(f"{k} {v}/{total}" for k, v in top) + f". The nominal heat into the stand/spacecraft is "
                f"{min(nom):g}-{max(nom):g} W at P_d = {float(Pd):g} W, so the spacecraft thermal ICD (allowable heat and T_mount) is a "
-               "first-order input (H25-Q3).")
+               "first-order input (H25-Q3). G_mount (H25-33) is a purely ASSUMED range [0.2, 2] W/K: where it ranks first, the margins "
+               "are driven mainly by an assumption, not by analog evidence, until the spacecraft thermal ICD / H2-6 fixture fixes it.")
     out.append("F5 anode and cathode-body temperatures have no sourced limit (HWQ-08, cathode_assembly_temperature_limit TBD); their ranges are "
                "reported for AOL-M01/M05 only.")
+    pp = [r for r in mrows if r["node"] in ("PI", "PO", "BP")]
+    pi = [r for r in pp if r["node"] == "PI"]
+    bp = [r for r in pp if r["node"] == "BP"]
+    out.append(f"F6 magnetic-circuit poles/core are design-driving: inner core/front pole PI nominal {min(r['T_nominal_C'] for r in pi):g}-"
+               f"{max(r['T_nominal_C'] for r in pi):g} degC, worst corners {min(r['T_max_C'] for r in pi):g}-{max(r['T_max_C'] for r in pi):g} degC; "
+               f"back pole BP worst corners {min(r['T_max_C'] for r in bp):g}-{max(r['T_max_C'] for r in bp):g} degC. Against the soft-iron Curie "
+               f"ceiling {CURIE_C:g} degC (Armco, EXT-NBS-ARMCO1967, inferred) the verdicts are "
+               + ", ".join(f"{k} {v}" for k, v in sorted(_count(pp).items()))
+               + f"; LHS fraction of PI samples above the ceiling {min(r['lhs_fraction_above_limit'] for r in pi):.2%}-"
+                 f"{max(r['lhs_fraction_above_limit'] for r in pi):.2%}. The Curie point is an absolute ceiling, not a use limit: saturation "
+                 "flux density falls steeply well below it, so the practical pole limit is lower and grade-specific (TBD - HW-MC-13 / HWQ-18 "
+                 "B_sat(T)). Demand to H2-1: pole/core grade with B_sat(T) over the PI/BP envelope, and a PI conduction path (core "
+                 "diameter, core-to-back-pole joint) that keeps PI well below the grade limit. Not a hard incompatibility (best corners pass).")
+    out.append("F7 the bounding hot case lies OUTSIDE the A5 allocation: P_d = 1350 W (the whole P_bus allocation) plus P_mag (up to 60 W at "
+               "20 degC, more when hot: R(T), F8) plus Q_cath (up to 101 W); deliberate thermal bound, not a power budget (H25-02).")
+    nb = sum(1 for fins in ev["cases"].values() for d in fins.values() for env in d["by_P_d_W"].values()
+             for nd, e in env.items() if nd != "Q_mount_W" and e["hot_corner_coil_R_T_beyond_500C"])
+    nt = sum(1 for fins in ev["cases"].values() for d in fins.values() for env in d["by_P_d_W"].values() for nd in env if nd != "Q_mount_W")
+    rat = [cu_factor_vs_20C(r["T_nominal_C"] + T0C) for r in ci]
+    out.append(f"F8 coil I^2R is solved with the sourced copper R(T) (limits_v1 copper_roeser_ratio, constant-current basis): at the nominal "
+               f"point the inner-coil dissipation is {min(rat):.2f}-{max(rat):.2f} x its 20 degC value. {nb}/{nt} hot-corner solves put a dissipating coil above "
+               "500 degC (end of the sourced R(T) table; linear chord continuation, flagged 'hot_corner_coil_R_T_beyond_500C'); these states "
+               "are far above every coil limit and their absolute temperatures are indicative only.")
+    sv = ev["survival_cold_off"]["cases"]
+    mins = {nd: min(sv[f][nd][0] for f in sv) for nd in NODES}
+    out.append("F9 thruster-off eclipse survival (no dissipation): coldest corner node temperatures "
+               + ", ".join(f"{nd} {mins[nd]:g}" for nd in NODES)
+               + " degC. No survival minimum is sourced here; thermal_control heater demand stays TBD (component minimum temperatures "
+                 "and the spacecraft ICD).")
     return out
+
+
+def _count(rows):
+    c = {}
+    for r in rows:
+        c[r["verdict"]] = c.get(r["verdict"], 0) + 1
+    return c
 
 
 def build():
@@ -935,10 +1117,10 @@ def build():
                 "reason": "boundary: T_mount (H25-35 ground, H25-36 orbit) through G_mount (H25-33)"}]),
         "links": {
             "conduction": [
-                "WI->BP, WO->BP: series of axial BN conduction k_BN pi D t_w / (L/2) and support contact h_c pi D w_support",
+                "WI->BP, WO->BP: series of axial BN conduction k_BN kBN_T_mult pi D t_w / (wall_cond_len_frac L) and support contact h_c pi D w_support (H25-44: 0.5 uniform deposition .. 1.0 exit-concentrated)",
                 "AN->BP: G_anode_mount (isolators + feed tube)",
                 "CI->PI: h_c pi D_core L; CO->PO: h_c pi (D_body - 2 t_shell) L",
-                "PI->BP: k_Fe(T) pi D_core^2/4 / L_core (Wiedemann-Franz iron)",
+                "PI->BP: k_Fe(T) pi D_core^2/4 / L_core (measured Armco k(T), EXT-NBS-ARMCO1967, x grade multiplier H25-25)",
                 "PO->BP: k_Fe(T) pi D_body t_shell / L_body in series with the joint contact h_c pi D_body t_shell",
                 "CB->BP: G_cath_mount", "BP->mount: G_mount to T_mount"],
             "radiation_internal": [
@@ -949,7 +1131,12 @@ def build():
                 "PI front face (eps_metal)", "PO lateral + outer front face (exterior finish)",
                 "BP rear face: facility (ground) / spacecraft at T_mount (orbit)", "CB (eps_metal)"],
             "orbit_absorbed": "q = alpha (S F_s + a S F_e) + eps OLR F_e per unit area (NASA/TM-2001-211221 parameters); aperture solar absorbed with alpha <= 1 (bound); deep-space sink 0 K (cosmic background neglected)",
-            "k_BN_temperature_dependence": "not modelled (20 degC datasheet values; verify)",
+            "k_BN_temperature_dependence": "20 degC datasheet values x assumed allowance kBN_T_mult [0.5, 1.0] (H25-45; TBD - sourced k(T))",
+            "coil_dissipation": "P_coil = P_mag,20C x split x R(T_coil)/R(20 degC), copper R(T) from limits_v1 copper_roeser_ratio (constant-current supply; iterated inside the Newton solve)",
+            "orbit_hot_solar_geometry": "F_s_face = 1 and F_s_lateral = 1/pi applied together: geometrically inconsistent, conservative, stated (H25-41/42)",
+            "model_limitations": ["room-temperature emittances (Henninger normal emittance) and the BN 8-9 um band emissivity used as total hemispherical values at operating temperature (verify)",
+                                  "lumped nodes: no axial wall gradient, no coil hot spot (HW-MC-14)", "steady state only; transients and eclipse cycling TBD",
+                                  "pole/core k above 640 degC is model-derived (measured Lorenz function held at its 640 degC value)"],
         },
         "design_parameters": rows,
         "material_properties": material_table(),
@@ -966,7 +1153,9 @@ def build():
                      "Sm2Co17 permanent-magnet option); design-driving cases are not incompatibilities"),
             "checked": ["BN walls vs 900 degC oxidizing use limit", "coils vs IEC 60085 classes 180/200/220/250 degC and Sm2Co17 300/350 degC",
                         "ground, orbit hot, orbit cold", "three exterior finishes", "P_d up to the whole 1.35 kW bus allocation",
-                        "anode / poles / cathode body: no sourced limit (TBD) -> cannot be vetoed"],
+                        "poles/core (PI, PO, BP) vs the soft-iron Curie ceiling 754 degC (Armco, inferred; absolute ceiling, not a use limit)",
+                        "permanent-magnet option checked on its own P_mag = 0 solve",
+                        "anode / cathode body: no sourced limit (TBD) -> cannot be vetoed"],
             "findings": hic,
             "result": "none found" if not hic else "HARD_INCOMPATIBILITY_CANDIDATE",
             "evidence_class_of_envelope": "inferred (xenon analog heat fractions) + assumed geometry; air-specific heat fractions are unknown",
@@ -980,17 +1169,23 @@ def build():
             {"subsystem": "thermal control", "matured_by_this_lane": "node list, links, sinks, limits, preliminary envelope and margins",
              "proposed_state": "BLOCKED", "blocking_item": "H2-1 preliminary geometry and magnet-circuit design release (wall thickness, core/shell dimensions, coil P_mag and EIS) - PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/",
              "rollup_category": "hardware-definition blocker"},
-            {"subsystem": "magnetic circuit", "matured_by_this_lane": "coil/magnet temperature envelope vs IEC 60085 classes and Sm2Co17; EIS class demand",
-             "proposed_state": "RUNNING", "blocking_item": None, "rollup_category": None, "note": "owned by H2-1"},
+            {"subsystem": "magnetic circuit", "matured_by_this_lane": "coil/magnet temperature envelope vs IEC 60085 classes and Sm2Co17; pole/core envelope vs the Curie ceiling; EIS class and pole-grade demands",
+             "proposed_state": None, "blocking_item": None, "rollup_category": None, "state_owner": "H2-1 (docs/hardware/h2/h2_1_hall_chamber_magnet/)",
+             "note": "contribution only; this lane proposes no M16 state for a subsystem it does not own"},
             {"subsystem": "extended-channel Hall discharge chamber/accelerator", "matured_by_this_lane": "wall/anode temperature envelope; BN oxidizing-limit margin",
-             "proposed_state": "RUNNING", "blocking_item": None, "rollup_category": None, "note": "owned by H2-1"},
+             "proposed_state": None, "blocking_item": None, "rollup_category": None, "state_owner": "H2-1 (docs/hardware/h2/h2_1_hall_chamber_magnet/)",
+             "note": "contribution only; this lane proposes no M16 state for a subsystem it does not own"},
             {"subsystem": "shielded Xe-fed LaB6 hollow cathode", "matured_by_this_lane": "cathode heat into H-1 and mount conductance demand",
-             "proposed_state": "RUNNING", "blocking_item": None, "rollup_category": None, "note": "owned by H2-2"},
+             "proposed_state": None, "blocking_item": None, "rollup_category": None, "state_owner": "H2-2 (docs/hardware/h2/h2_2_cathode_integration/)",
+             "note": "contribution only; this lane proposes no M16 state for a subsystem it does not own"},
             {"subsystem": "PPU/power distribution", "matured_by_this_lane": "PPU heat demand structure (Q_PPU vs eta) and derating allowable",
-             "proposed_state": "RUNNING", "blocking_item": None, "rollup_category": None, "note": "owned by H2-4"},
+             "proposed_state": None, "blocking_item": None, "rollup_category": None, "state_owner": "H2-4 (docs/hardware/h2/h2_4_ppu_bus/)",
+             "note": "contribution only; this lane proposes no M16 state for a subsystem it does not own"},
         ],
         "interface_demands": [
-            {"from": "H2-5", "to": "H2-1 (docs/hardware/h2/h2_1_hall_chamber_magnet/)", "quantity": "wall thickness, core/shell/body dimensions, support contact widths, coil P_mag split and R(T), f_open_outer", "value": "ranges H25-15..H25-23, H25-08", "units": "m, W", "status": "PENDING"},
+            {"from": "H2-5", "to": "H2-1 (docs/hardware/h2/h2_1_hall_chamber_magnet/)", "quantity": "wall thickness, core/shell/body dimensions, support contact widths, coil split, f_open_outer", "value": "ranges H25-15..H25-23", "units": "m", "status": "PENDING"},
+            {"from": "H2-5", "to": "H2-1", "quantity": "coil dissipation stated as I^2 R20 at the design coil current (20 degC winding basis) plus winding R20 and copper grade; H2-5 applies R(T) at the solved coil temperature (constant-current supply). A hot-coil value must be labelled as such with its temperature", "value": "H25-08 evaluation range [0, 60] W at 20 degC", "units": "W, ohm", "status": "PENDING"},
+            {"from": "H2-5", "to": "H2-1", "quantity": "pole/core (HW-MC-13) grade selection is design-driving: supply the grade's Curie temperature, saturation flux density B_sat(T) and permeability vs temperature over the PI/BP envelope, and a maximum-use pole temperature; PI conduction path (core diameter, core-to-back-pole joint) sized to keep PI below it (design_findings F6)", "value": "PI/BP envelopes in margins_at_P_d_max (Curie ceiling 754 degC, Armco)", "units": "degC, T", "status": "PRELIMINARY"},
             {"from": "H2-5", "to": "H2-1", "quantity": "inner-coil thermal design: EIS class above 250 degC, permanent-magnet inner circuit, or a stronger inner conduction path (design_findings F1)", "value": "see margins_at_P_d_max (class vs finish)", "units": "degC", "status": "PRELIMINARY"},
             {"from": "H2-1", "to": "H2-5", "quantity": "selected EIS class / magnet option and coil hot-spot model (R(T), potting conductance)", "value": None, "units": "degC, ohm, W/K", "status": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/"},
             {"from": "H2-5", "to": "H2-1", "quantity": "exterior finish of MC-1 (high-emittance, temperature-capable) is design-driving", "value": "eps >= 0.9 class finish vs bare metal", "units": "-", "status": "PRELIMINARY"},
@@ -1003,7 +1198,7 @@ def build():
             {"from": "H2-5", "to": "H2-6 (docs/hardware/h2/h2_6_diagnostics_fixture/)", "quantity": "thermocouple positions at AN, WI/WO exit rings, CI/CO hot spots, PI/PO poles, BP, CB tube; facility sink and stand temperatures", "value": "node list", "units": "-", "status": "PRELIMINARY"},
             {"from": "H2-6", "to": "H2-5", "quantity": "facility radiative sink and stand interface temperatures", "value": {"T_env": [246.15, 293.15], "T_mount": [293.15, 315.15]}, "units": "K", "status": "PENDING"},
             {"from": "H2-5", "to": "H2-7 (docs/hardware/h2/h2_7_mechanical_bom/)", "quantity": "body envelope D_body, L_body and mount heat into the stand/spacecraft", "value": "H25-18/19; mount_heat_W", "units": "m, W", "status": "PENDING"},
-            {"from": "fo_preionizer_module_icd (docs/interfaces/preionizer_module/, PMI-05)", "to": "H2-5", "quantity": "occupant active heat into H-1 at IP-DN (common interface; 0 for PIM-0)", "value": None, "units": "W", "status": "PENDING"},
+            {"from": "fo_preionizer_module_icd (docs/interfaces/preionizer_module/, PMI-05)", "to": "H2-5", "quantity": "occupant active heat into H-1 at IP-DN (common interface; 0 for PIM-0). PMI-05 is cited ahead of the merge of fo_preionizer_module_icd (not an ancestor of the base commit); nothing is imported from it and the id/meaning (thermal-rejection interface) is reconciled at integration", "value": None, "units": "W", "status": "PENDING docs/interfaces/preionizer_module/"},
             {"from": "H2-5", "to": "fo_preionizer_module_icd (PMI-05)", "quantity": "H-1 sensitivity to heat at IP-DN", "value": "dT_dQ_PIM_K_per_W_nominal per node", "units": "K/W", "status": "PRELIMINARY"},
             {"from": "H2-5", "to": "fo_subsystem_maturity_matrix (docs/budgets/subsystem_maturity/)", "quantity": "m16_rows", "value": "see m16_rows", "units": "-", "status": "PRELIMINARY"},
             {"from": "H2-5", "to": "H-1 / HW-MC-08, HW-MC-14, HW-MC-16", "quantity": "coil hot-spot locations, max coil current/temperature inputs, thermal-cycle profile", "value": "CI/CO envelope", "units": "K", "status": "PRELIMINARY"},
@@ -1013,7 +1208,7 @@ def build():
             {"temperature": "WI/WO", "feeds": "AOL-M02 / AOL-M03 wall sputtering and oxidation at wall temperature; BN oxidizing 900 degC guide (lane 15)"},
             {"temperature": "CE (not solved)", "feeds": "AOL-M04 emitter poisoning (LaB6 >= 1570 degC for pO2 <= 1e-4 Torr); thermal_life cathode node (Richardson-Dushman)"},
             {"temperature": "CB", "feeds": "AOL-M05 keeper/orifice erosion context; cathode_assembly_temperature_limit (TBD in limits_v1.json)"},
-            {"temperature": "PI/PO/BP", "feeds": "AOL-M06 magnetic-circuit oxidation/temperature; HW-MC-13 grade"},
+            {"temperature": "PI/PO/BP", "feeds": "AOL-M06 magnetic-circuit oxidation/temperature; HW-MC-13 grade; Curie ceiling 754 degC (Armco) and grade B_sat(T) (TBD)"},
             {"temperature": "CI/CO", "feeds": "AOL-M07 insulation thermal ageing (IEC 60085 class); thermal_life hall_magnet: this network supplies external_heat_W and rejection_paths structure only once H2-1 defines the coil (not now)"},
             {"temperature": "exterior finish", "feeds": "AOL-M08 coatings/emissivity change; AOL-M09 ram AO on the exterior"},
             {"temperature": "all", "feeds": "thermal_life.py is NOT called: its discharge wall-heat inputs must come from an admitted Hall map or measured hardware (G11); none exists"},
@@ -1030,7 +1225,8 @@ def build():
             {"stage": "S1a", "measure": "coil hot-spot/average offset in vacuum on the bench (HW-MC-14); contact conductances of pole/coil/shell joints (bench heater test); emittance of as-built surfaces (AOL-M08 pre)", "closes": ["H25-08", "H25-30", "H25-27", "H25-29"]},
             {"stage": "S1", "measure": "thermal time constants T-SETTLE; facility sink and stand temperatures; dormant thruster temperature", "closes": ["H25-34", "H25-35", "HW-H1-07 T_SETTLE"]},
             {"stage": "S1b", "measure": "remount reproducibility of AN/WI/WO/BP temperatures at fixed setpoints", "closes": ["installation thermal term c5 (HW-SVC-03)"]},
-            {"stage": "Phase 1", "measure": "AN, WI/WO, PI/PO, CI/CO, CB temperatures vs P_d, V_d, mdot_atm, x_O2 on N2 and air; inversion of the anode and wall heat fractions by a correlated model (EXT-MYERS2016 / EXT-MAZOUFFRE2005 method)", "closes": ["H25-04", "H25-05", "H25-06"]},
+            {"stage": "Phase 1", "measure": "AN, WI/WO, PI/PO, CI/CO, CB temperatures vs P_d, V_d, mdot_atm, x_O2 on N2 and air; inversion of the anode and wall heat fractions by a correlated model (EXT-MYERS2016 / EXT-MAZOUFFRE2005 method)", "closes": ["H25-04", "H25-05", "H25-06", "H25-44"]},
+            {"stage": "S1a", "measure": "BN wall coupon conductivity vs temperature (or supplier k(T) data) and pole/core grade B_sat(T) coupon data", "closes": ["H25-45", "H25-25"]},
             {"stage": "Phase 1 (rf_hall/ecr_hall arms)", "measure": "anode/BP temperature difference between arms at the same setpoint (HW-PIM-09) and occupant heat at IP-DN", "closes": ["H25-11"]},
         ],
         "milestone_statement": {
@@ -1043,6 +1239,7 @@ def build():
             {"id": "H25-Q2", "question": "Coil EIS: which IEC 60085 class (or ceramic > 250 degC) is the design basis (HWQ-20), given the coil envelope, or a permanent-magnet MC-1 (HWQ-19)?"},
             {"id": "H25-Q3", "question": "Spacecraft thermal ICD: mounting-interface temperature and allowable heat into the spacecraft (G_mount, T_mount)."},
             {"id": "H25-Q4", "question": "PROPOSED: thermal margins (e.g. K below each limit) for PDR are not in the RFP; owner to set them."},
+            {"id": "H25-Q5", "question": "Pole/core material (HWQ-18): accept a maximum-use pole temperature below the grade Curie point as a design requirement, set from B_sat(T) of the selected grade?"},
         ],
         "compliance": {
             "no_hall_performance_source": "discharge heat = parametric fraction x P_d allocation; fractions from published xenon analog hardware only",
@@ -1077,7 +1274,7 @@ def render_md(doc):
     a("## What this is not\n")
     for s in doc["what_this_is_not"]:
         a(f"- {s}")
-    a("\n## Design findings (computed; P_d = whole 1.35 kW bus allocation, bounding)\n")
+    a("\n## Design findings (computed; P_d = whole 1.35 kW bus allocation plus coil and cathode heat: a bounding case OUTSIDE the allocation)\n")
     for f in doc["design_findings"]:
         a(f"- {f}")
     a(f"\nHard-incompatibility check: **{doc['hard_incompatibility_check']['result']}** (details below).\n")
@@ -1137,8 +1334,21 @@ def render_md(doc):
     a("| case | finish | node | " + " | ".join(f"P_d {g:g} W" for g in grid) + " |\n|---|---|---|" + "---|" * len(grid))
     for case, fins in doc["solve"]["cases"].items():
         for fin, d in fins.items():
-            for n in ("AN", "WI", "CI", "CO", "BP"):
+            for n in ("AN", "WI", "PI", "CI", "CO", "BP"):
                 a(f"| {case} | {fin} | {n} | " + " | ".join(f"{d['by_P_d_W'][str(g)][n]['T_max_K'] - T0C:.1f}" for g in grid) + " |")
+    a("\n## Permanent-magnet MC-1 option at P_d max (P_mag = 0 solve; CI/CO = magnet nodes; degC [corner min, corner max])\n")
+    a(doc["solve"]["pm_option_note"] + ".\n")
+    a("| case | finish | CI | CO | PI | BP |\n|---|---|---|---|---|---|")
+    for case, fins in doc["solve"]["cases"].items():
+        for fin, d in fins.items():
+            e = d["pm_option_at_P_d_max"]["envelope"]
+            a(f"| {case} | {fin} | " + " | ".join(f"{e[n]['T_min_K'] - T0C:.1f} .. {e[n]['T_max_K'] - T0C:.1f}" for n in ("CI", "CO", "PI", "BP")) + " |")
+    sv = doc["solve"]["survival_cold_off"]
+    a("\n## Thruster-off eclipse survival case (degC [corner min, corner max])\n")
+    a(sv["note"] + ".\n")
+    a("| finish | " + " | ".join(NODES) + " |\n|---|" + "---|" * len(NODES))
+    for fin, v in sv["cases"].items():
+        a(f"| {fin} | " + " | ".join(f"{v[n][0]:g} .. {v[n][1]:g}" for n in NODES) + " |")
     a("\n## Pre-ionizer slot influence (PMI-05, identical for every occupant)\n")
     a("dT/dQ_PIM at the nominal point (K per W entering BP at IP-DN):\n")
     Pd = str(doc["solve"]["P_d_grid_W"][-1])
@@ -1162,9 +1372,9 @@ def render_md(doc):
     for b in doc["architecture_changing_blockers_touched"]:
         a(f"- Blocker {b['blocker']}: {b['how']}")
     a("\n## M16 rows (proposed)\n")
-    a("| subsystem | matured | proposed state | blocking item | rollup |\n|---|---|---|---|---|")
+    a("| subsystem | matured | proposed state | blocking item | rollup | state owner |\n|---|---|---|---|---|---|")
     for m in doc["m16_rows"]:
-        a(f"| {m['subsystem']} | {m['matured_by_this_lane']} | {m['proposed_state']} | {fmt(m['blocking_item'])} | {fmt(m['rollup_category'])} |")
+        a(f"| {m['subsystem']} | {m['matured_by_this_lane']} | {fmt(m['proposed_state'])} | {fmt(m['blocking_item'])} | {fmt(m['rollup_category'])} | {m.get('state_owner', 'H2-5 (this lane)')} |")
     a("\n## Thermal-life link\n")
     for t in doc["thermal_life_link"]:
         a(f"- {t['temperature']}: {t['feeds']}" + (f" ({t['note']})" if t.get("note") else ""))

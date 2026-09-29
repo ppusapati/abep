@@ -10,13 +10,17 @@ Lane `fo_h2_5_thermal_network` (trigger `T_H2_5_THERMAL_NETWORK`, owner addendum
 - no Hall transport closure, screening candidate (sgb-screen-*), abep_sim/plasma_devices.py or withdrawn v1.2-v1.6 number is used
 - abep_sim/thermal.py is not used (unsourced defaults, 0-D Hall heat booking; see provenance_checks)
 
-## Design findings (computed; P_d = whole 1.35 kW bus allocation, bounding)
+## Design findings (computed; P_d = whole 1.35 kW bus allocation plus coil and cathode heat: a bounding case OUTSIDE the allocation)
 
-- F1 inner coil CI is the design-driving node: nominal (range-midpoint) temperature 232.1-302.2 degC across cases and finishes at P_d = 1350 W; 46%-77% of the input-box samples exceed IEC class 250 degC. At this bounding P_d (the whole bus allocation) the inner coil needs an insulation class above 250 degC (IEC 60085 continues in 25 degC steps; supplier EIS and endurance evidence required, HWQ-20), a permanent-magnet inner circuit (HWQ-19) or a stronger inner conduction path (core diameter, contacts); not a hard incompatibility (best corners pass).
-- F2 BN walls pass the 900 degC oxidizing guide value over the whole bounding envelope in every case (smallest worst-corner margin 25.7 K); atomic-O / ion effects are not covered by that limit.
-- F3 exterior finish is design-driving for the outer coil: with the high-emittance finish the outer-coil samples above 220 degC are ground 0%, orbit_hot 0%, orbit_cold 0%; with bare machined stainless ground 63%, orbit_hot 73%, orbit_cold 61%.
-- F4 first-ranked dominant input over all node/case/finish envelopes at P_d max: G_mount_W_K 60/81, G_cath_mount_W_K 9/81, f_anode 6/81, G_anode_mount_W_K 3/81, f_walls 3/81. The nominal heat into the stand/spacecraft is 180.92-251.23 W at P_d = 1350 W, so the spacecraft thermal ICD (allowable heat and T_mount) is a first-order input (H25-Q3).
+- F1 inner coil CI is the design-driving node: nominal (range-midpoint) temperature 264.1-348.2 degC across cases and finishes at P_d = 1350 W; 65%-86% of the input-box samples exceed IEC class 250 degC. At this bounding P_d (the whole bus allocation) the inner coil needs an insulation class above 250 degC (IEC 60085 continues in 25 degC steps; supplier EIS and endurance evidence required, HWQ-20), a permanent-magnet inner circuit (HWQ-19) or a stronger inner conduction path (core diameter, contacts); not a hard incompatibility (best corners pass).
+- F2 BN walls vs the 900 degC oxidizing guide value: 9/18 wall rows are DESIGN_DRIVING (nodes WI; worst corners 924.5-999.6 degC, nominal 309.8-376.8 degC, LHS fraction above 0.00%-0.00%); all other wall rows pass. The worst corners combine the exit-concentrated conduction bound (H25-44 = 1.0), the assumed hot-BN conductivity allowance (H25-45 = 0.5) and the lowest grade conductivity; a sourced BN k(T) and the measured deposition profile (Phase 1) close this. Not a hard incompatibility (best corners pass). Atomic-O / ion effects are not covered by that limit.
+- F3 exterior finish is design-driving for the outer coil: fraction of input-box samples with the outer coil above 220 degC, high-emittance (Z-93) finish: ground 0.39%, orbit_hot 1.17%, orbit_cold 0.00%; bare machined stainless: ground 76.56%, orbit_hot 79.69%, orbit_cold 73.83% (sample fractions describe box coverage, not probabilities; a non-zero fraction is not a guaranteed pass).
+- F4 first-ranked dominant input over all node/case/finish envelopes at P_d max: G_mount_W_K 60/81, G_cath_mount_W_K 6/81, f_anode 6/81, f_walls 6/81, G_anode_mount_W_K 3/81. The nominal heat into the stand/spacecraft is 186.39-264.82 W at P_d = 1350 W, so the spacecraft thermal ICD (allowable heat and T_mount) is a first-order input (H25-Q3). G_mount (H25-33) is a purely ASSUMED range [0.2, 2] W/K: where it ranks first, the margins are driven mainly by an assumption, not by analog evidence, until the spacecraft thermal ICD / H2-6 fixture fixes it.
 - F5 anode and cathode-body temperatures have no sourced limit (HWQ-08, cathode_assembly_temperature_limit TBD); their ranges are reported for AOL-M01/M05 only.
+- F6 magnetic-circuit poles/core are design-driving: inner core/front pole PI nominal 262-345.9 degC, worst corners 889.9-985.4 degC; back pole BP worst corners 510.4-767.3 degC. Against the soft-iron Curie ceiling 754 degC (Armco, EXT-NBS-ARMCO1967, inferred) the verdicts are DESIGN_DRIVING 12, PASS_WHOLE_ENVELOPE 15; LHS fraction of PI samples above the ceiling 0.00%-0.39%. The Curie point is an absolute ceiling, not a use limit: saturation flux density falls steeply well below it, so the practical pole limit is lower and grade-specific (TBD - HW-MC-13 / HWQ-18 B_sat(T)). Demand to H2-1: pole/core grade with B_sat(T) over the PI/BP envelope, and a PI conduction path (core diameter, core-to-back-pole joint) that keeps PI well below the grade limit. Not a hard incompatibility (best corners pass).
+- F7 the bounding hot case lies OUTSIDE the A5 allocation: P_d = 1350 W (the whole P_bus allocation) plus P_mag (up to 60 W at 20 degC, more when hot: R(T), F8) plus Q_cath (up to 101 W); deliberate thermal bound, not a power budget (H25-02).
+- F8 coil I^2R is solved with the sourced copper R(T) (limits_v1 copper_roeser_ratio, constant-current basis): at the nominal point the inner-coil dissipation is 1.97-2.32 x its 20 degC value. 237/243 hot-corner solves put a dissipating coil above 500 degC (end of the sourced R(T) table; linear chord continuation, flagged 'hot_corner_coil_R_T_beyond_500C'); these states are far above every coil limit and their absolute temperatures are indicative only.
+- F9 thruster-off eclipse survival (no dissipation): coldest corner node temperatures AN -48.3, WI -49.2, WO -73.3, PI -48.5, PO -73.1, BP -48, CI -48.5, CO -73, CB -51.1 degC. No survival minimum is sourced here; thermal_control heater demand stays TBD (component minimum temperatures and the spacecraft ICD).
 
 Hard-incompatibility check: **none found** (details below).
 
@@ -63,11 +67,14 @@ Mutable files are referenced at the base commit, not pinned: W3: docs/experiment
 
 ## Links
 
-- **conduction**: WI->BP, WO->BP: series of axial BN conduction k_BN pi D t_w / (L/2) and support contact h_c pi D w_support; AN->BP: G_anode_mount (isolators + feed tube); CI->PI: h_c pi D_core L; CO->PO: h_c pi (D_body - 2 t_shell) L; PI->BP: k_Fe(T) pi D_core^2/4 / L_core (Wiedemann-Franz iron); PO->BP: k_Fe(T) pi D_body t_shell / L_body in series with the joint contact h_c pi D_body t_shell; CB->BP: G_cath_mount; BP->mount: G_mount to T_mount
+- **conduction**: WI->BP, WO->BP: series of axial BN conduction k_BN kBN_T_mult pi D t_w / (wall_cond_len_frac L) and support contact h_c pi D w_support (H25-44: 0.5 uniform deposition .. 1.0 exit-concentrated); AN->BP: G_anode_mount (isolators + feed tube); CI->PI: h_c pi D_core L; CO->PO: h_c pi (D_body - 2 t_shell) L; PI->BP: k_Fe(T) pi D_core^2/4 / L_core (measured Armco k(T), EXT-NBS-ARMCO1967, x grade multiplier H25-25); PO->BP: k_Fe(T) pi D_body t_shell / L_body in series with the joint contact h_c pi D_body t_shell; CB->BP: G_cath_mount; BP->mount: G_mount to T_mount
 - **radiation_internal**: AN<->WI, AN<->WO: gray two-surface exchange, F = (1 - F_anode_to_exit) split by wall area; WI back <-> CI: concentric cylinders F = 1; WO back <-> CO: concentric cylinders, fraction (1 - f_open_outer)
 - **radiation_to_environment**: AN, WI, WO through the exit aperture (crossed-string F); WO back x f_open_outer; PI front face (eps_metal); PO lateral + outer front face (exterior finish); BP rear face: facility (ground) / spacecraft at T_mount (orbit); CB (eps_metal)
 - **orbit_absorbed**: q = alpha (S F_s + a S F_e) + eps OLR F_e per unit area (NASA/TM-2001-211221 parameters); aperture solar absorbed with alpha <= 1 (bound); deep-space sink 0 K (cosmic background neglected)
-- **k_BN_temperature_dependence**: not modelled (20 degC datasheet values; verify)
+- **k_BN_temperature_dependence**: 20 degC datasheet values x assumed allowance kBN_T_mult [0.5, 1.0] (H25-45; TBD - sourced k(T))
+- **coil_dissipation**: P_coil = P_mag,20C x split x R(T_coil)/R(20 degC), copper R(T) from limits_v1 copper_roeser_ratio (constant-current supply; iterated inside the Newton solve)
+- **orbit_hot_solar_geometry**: F_s_face = 1 and F_s_lateral = 1/pi applied together: geometrically inconsistent, conservative, stated (H25-41/42)
+- **model_limitations**: room-temperature emittances (Henninger normal emittance) and the BN 8-9 um band emissivity used as total hemispherical values at operating temperature (verify); lumped nodes: no axial wall gradient, no coil hot spot (HW-MC-14); steady state only; transients and eclipse cycling TBD; pole/core k above 640 degC is model-derived (measured Lorenz function held at its 640 degC value)
 
 ## Design-parameter table
 
@@ -80,13 +87,13 @@ Mutable files are referenced at the base commit, not pinned: W3: docs/experiment
 | H25-05 | fraction of P_d deposited on the channel walls (xenon analog envelope) | [0.0439, 0.15] | - | analog | inferred | PRELIMINARY (air/N2-O2 value unknown; failure_trees_v1 wall/anode node: 'not established by a cited item') | FLIGHT_REPRESENTATIVE | lower: EXT-MYERS2016 Table 3 correlated DC walls 549.1 W / 12.5 kW; upper: EXT-MARTINEZ2014 abstract 'Approximately 13 +/- 2% of the discharge power is deposited into the discharge channel wall' (T-140, Xe, M26 BN, 0.63-2.83 kW); EXT-MAZOUFFRE2005 (PPSX000, Xe) ~7 % lies inside |
 | H25-06 | fraction of P_d deposited on the inner front pole (magnetically shielded analog only) | [0, 0.01448] | - | analog | inferred | PRELIMINARY | FLIGHT_REPRESENTATIVE | EXT-MYERS2016 Table 3: inner front pole 181 W Hall2De-predicted (upper, /12.5 kW), 41.6 W correlated; lower 0 for an unshielded design (pole heat then inside f_walls) |
 | H25-07 | total plasma heat to thruster body, published context | [0.068, 0.25] | - | analog | inferred | PRELIMINARY (context; the solve uses H25-04..06 whose sum reaches 0.33, above this context) | FLIGHT_REPRESENTATIVE | EXT-MYERS2016 p. 16: 'total plasma heat load of 849 W which is ~ 6.8% of thruster discharge power ... previous NASA development Hall thrusters (10 to 25 %) ... limited, not validated'; EXT-MAZOUFFRE2005: 'around 15% of the input power' lost inside the channel |
-| H25-08 | Hall magnet coil I^2R (both coils, steady); 0 W for a permanent-magnet MC-1 | [0, 60] | W | pending | assumed | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT_REPRESENTATIVE | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (NI, R(T), coil count); evaluation range assumed here |
+| H25-08 | Hall magnet coil I^2 R20: dissipation at the design coil current with the copper winding at 20 degC (both coils); the solve applies R(T)/R(20 degC) at each coil's solved temperature (constant-current supply); 0 W for a permanent-magnet MC-1 | [0, 60] | W | pending | assumed | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT_REPRESENTATIVE | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (NI, R20, coil count); evaluation range assumed here; R(T)/R0 from schemas/thermal_life/limits_v1.json record copper_roeser_ratio (NBS HB100 p. 4, -100..500 degC; chord interpolation overestimates R, conservative for heating) |
 | H25-09 | inner-coil share of P_mag | 0.478 | - | analog | inferred | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT_REPRESENTATIVE | EXT-MYERS2016 Table 3: inner 44.1 W / (44.1 + 48.1) W |
 | H25-10 | C-1 steady heat into the H-1 environment (keeper + emitter radiation) | [9, 101] | W | pending | inferred | PENDING docs/hardware/h2/h2_2_cathode_integration/ | FLIGHT_REPRESENTATIVE | keeper: cathode_integration_data_v1.json hc1_keeper_only_power_W [9, 20] and hc3_keeper_only_power_W [25, 60] (SITAEL, stand-alone keeper, Pedrini 2017); radiated: EXT-MYERS2016 p. 8 '41 W for the BaO cathode' (HERMeS); range = 9 .. 60 + 41 |
 | H25-11 | active heat entering H-1 at IP-DN from the pre-ionizer slot occupant (PMI-05 common thermal interface) | 0 | W | pending | assumed | PENDING docs/interfaces/preionizer_module/ (PMI-05) | H1_TEST_ARTICLE_ONLY | PENDING docs/interfaces/preionizer_module/ + schemas/interfaces/preionizer_module_icd_v1.json (PMI-05); 0 W for PIM-0 (HW-0 passive spacer, W3) |
-| H25-12 | channel length | 0.086 | m | analog | measured | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT_REPRESENTATIVE | REF ECHT (CLAUDE.md: true ECHT 86 mm long) |
-| H25-13 | channel width | 0.01 | m | analog | measured | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT_REPRESENTATIVE | REF ECHT (10 mm wide) |
-| H25-14 | channel outer diameter | 0.1 | m | analog | measured | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT_REPRESENTATIVE | REF ECHT (100 mm OD); D_in = D_out - 2 h |
+| H25-12 | channel length | 0.086 | m | analog | inferred | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT_REPRESENTATIVE | REF ECHT (CLAUDE.md: true ECHT 86 mm long) |
+| H25-13 | channel width | 0.01 | m | analog | inferred | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT_REPRESENTATIVE | REF ECHT (10 mm wide) |
+| H25-14 | channel outer diameter | 0.1 | m | analog | inferred | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT_REPRESENTATIVE | REF ECHT (100 mm OD); D_in = D_out - 2 h |
 | H25-15 | channel wall thickness | [0.003, 0.006] | m | assumed | assumed | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT_REPRESENTATIVE | assumed; EXT-MAZOUFFRE2005 p. 4 'thickness of both inner and outer dielectric wall is a few mm' (context) |
 | H25-16 | inner magnetic core diameter | [0.03, 0.05] | m | assumed | assumed | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT_REPRESENTATIVE | assumed (must fit inside D_in - 2 t_wall with the inner coil) |
 | H25-17 | inner core conduction length to the back pole | [0.1, 0.12] | m | assumed | assumed | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | FLIGHT_REPRESENTATIVE | assumed (> L_ch) |
@@ -97,7 +104,7 @@ Mutable files are referenced at the base commit, not pinned: W3: docs/experiment
 | H25-22 | C-1 body external radiating area | [0.002, 0.006] | m2 | assumed | assumed | PENDING docs/hardware/h2/h2_2_cathode_integration/ | FLIGHT_REPRESENTATIVE | assumed |
 | H25-23 | fraction of the outer-wall back surface that views the environment directly (open body) | [0, 0.5] | - | assumed | assumed | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (design choice) | FLIGHT_REPRESENTATIVE | assumed; EXT-MAZOUFFRE2005 p. 5 (PPSX000 body 'open to enable the outer dielectric wall to evacuate most of its thermal power outwards', qualitative) |
 | H25-24 | boron-nitride wall conductivity (20 degC, grade and direction span) | [10, 75] | W/(m K) | analog | measured | PRELIMINARY (temperature dependence not given: verify; grade PENDING HWQ-08) | FLIGHT_REPRESENTATIVE | EXT-HENZE2021 row 'Thermal Conductivity at 20 degC [W/mK]': 10 (CL-S 200, perp.) .. 75 (SL-A 400, par.); EXT-MARTINEZ2014 used 29 W/(m K) for M26 |
-| H25-25 | multiplier on the Wiedemann-Franz electronic conductivity of soft iron | [1, 1.25] | - | assumed | assumed | PRELIMINARY | FLIGHT_REPRESENTATIVE | WF (Sommerfeld L0) from EXT-NICOFE-A848 resistivity table is the electronic part only (lower bound); +25 % upper for lattice conduction / Lorenz-number deviation is assumed (verify with a sourced k(T) of the HW-MC-13 grade) |
+| H25-25 | grade multiplier on the measured Armco-iron conductivity k(T) (EXT-NBS-ARMCO1967 Table 2) | [0.8, 1.02] | - | assumed | assumed | PRELIMINARY (grade PENDING HWQ-18 / docs/hardware/h2/h2_1_hall_chamber_magnet/) | FLIGHT_REPRESENTATIVE | upper 1.02: the source's stated k error (<= 2 %); lower 0.80: assumed allowance for a less pure soft-magnetic grade than Armco (verify with a sourced k(T) of the HW-MC-13 grade, HWQ-18). Replaces the v1 Wiedemann-Franz x [1, 1.25] model: the measured Lorenz function (2.68e-8 at 0 degC .. 3.17e-8 V^2/K^2 at 500 degC) exceeds the Sommerfeld value by up to 1.30x |
 | H25-26 | BN-SiO2 wall emissivity | 0.92 | - | analog | measured | PRELIMINARY (spectral band value used as total hemispherical: verify) | FLIGHT_REPRESENTATIVE | EXT-MAZOUFFRE2005 p. 4: 'In the 8-9 um spectral band ... the BN-SiO2 emissivity mean value is 0.92' (also EXT-MARTINEZ2014 p. 11) |
 | H25-27 | internal metal surfaces (poles, coil cans, cathode body) emittance | [0.14, 0.38] | - | analog | measured | PRELIMINARY (iron and elevated-temperature values: verify) | FLIGHT_REPRESENTATIVE | EXT-HENNINGER1984 p. 10 stainless steel machined 0.14 .. sandblasted 0.38 (room-temperature normal emittance) |
 | H25-28 | anode emittance | [0.14, 0.8] | - | analog | assumed | TBD - requires the anode material (owner question HWQ-08, W3) | FLIGHT_REPRESENTATIVE | lower EXT-HENNINGER1984 machined stainless 0.14; upper EXT-MAZOUFFRE2005 p. 4 'emissivity of the latter was fixed to 0.8' (assumed there) |
@@ -110,12 +117,14 @@ Mutable files are referenced at the base commit, not pinned: W3: docs/experiment
 | H25-35 | thrust-stand interface temperature (ground) | [293.15, 315.15] | K | analog | measured | PENDING docs/hardware/h2/h2_6_diagnostics_fixture/ | GROUND_FACILITY_ONLY | EXT-MYERS2016 p. 9: ambient 20 degC; 'stand base temperature was recorded (42 C)' |
 | H25-36 | spacecraft mounting-interface temperature (orbit) | [273.15, 323.15] | K | assumed | assumed | TBD - requires the spacecraft thermal ICD (owner) | FLIGHT_REPRESENTATIVE | assumed evaluation range |
 | H25-37 | direct solar irradiance, cold/hot | [1322, 1414] | W/m2 | analog | measured | PRELIMINARY | FLIGHT_REPRESENTATIVE | EXT-NASA-TM2001 sec. 3: Cold Case 1322, Median 1367, Hot Case 1414 W/m2 |
-| H25-38 | hot-case albedo and OLR (90-min averaging, max over the three inclination tables) | albedo: 0.26; OLR_W_m2: 275 | -, W/m2 | analog | measured | PRELIMINARY (orbit inclination not fixed by the RFP; thruster time constant PENDING S1) | FLIGHT_REPRESENTATIVE | EXT-NASA-TM2001 Tables 4.2.3-1..3, 'Combined' hot cases, 90 minute: 0.24/275 (low), 0.26/257 (medium), 0.26/244 (high); max albedo and max OLR combined (conservative); referenced to R_E + 30 km |
+| H25-38 | hot-case albedo and OLR (90-min averaging, max over the three inclination tables) | albedo: 0.26; OLR_W_m2: 275 | -, W/m2 | analog | measured | PRELIMINARY (orbit inclination not fixed by the RFP; thruster time constant PENDING S1) | FLIGHT_REPRESENTATIVE | EXT-NASA-TM2001 Tables 4.2.3-1..3, 'Combined' hot cases, 90 minute: 0.24/275 (low), 0.26/257 (medium), 0.26/244 (high); max albedo and max OLR combined (conservative); the TM values are referenced to R_E + 30 km (top of atmosphere) while the Earth view factor H25-40 is computed from R_E at 180 km, which slightly understates the effective Earth view; this is covered by the per-element F <= 1 bound and the max-albedo/max-OLR combination (conservative), not by a separate correction |
 | H25-39 | cold-case OLR (90-min, min 'Combined' cold over the three tables); eclipse => no solar/albedo | 218 | W/m2 | analog | measured | PRELIMINARY | FLIGHT_REPRESENTATIVE | EXT-NASA-TM2001 Tables 4.2.3-1..3 'Combined' cold cases, 90 minute: 228, 218, 218 |
 | H25-40 | Earth view factor of the body lateral surface (and front faces) | [0, 0.5748] | - | derived | model-derived | PRELIMINARY (attitude/shadowing PENDING spacecraft ICD) | FLIGHT_REPRESENTATIVE | upper bound (180 + 2 x horizon dip)/360 at 180 km, dip 13.462 deg from R_E (abep_sim/constants.py R_EARTH) |
 | H25-41 | solar view factor of the body lateral surface | [0, 0.3183] | - | derived | model-derived | PRELIMINARY | FLIGHT_REPRESENTATIVE | projected/total lateral area of a cylinder = 1/pi (sun normal to the axis) |
 | H25-42 | solar view factor of front faces / exit aperture | [0, 1] | - | derived | model-derived | PRELIMINARY | FLIGHT_REPRESENTATIVE | geometric bound |
 | H25-43 | channel-exit view factors (2-D crossed strings, curvature neglected) | F_anode_to_exit: 0.05794; F_wall_to_exit: 0.05477 | - | derived | model-derived | PRELIMINARY | FLIGHT_REPRESENTATIVE | Hottel crossed-string method on L = 86 mm, h = 10 mm (H25-12, H25-13) |
+| H25-44 | effective axial conduction length of each wall to its back-pole support, as a fraction of L_ch | [0.5, 1] | - | derived | model-derived | PRELIMINARY (deposition profile on N2/air measured in Phase 1) | FLIGHT_REPRESENTATIVE | 0.5: heat deposited uniformly along the wall (mean path L/2); 1.0: all wall heat at the exit plane (geometric bound for exit-concentrated deposition; EXT-MARTINEZ2014 wall-temperature results, Fig. 10 (T-140, Xe): wall temperature rises toward the exit plane, ion heating in the downstream half of the channel and electron power peaking near the exit plane; qualitative, analog) |
+| H25-45 | multiplier on the 20 degC BN conductivity H25-24 for wall operating temperature | [0.5, 1] | - | assumed | assumed | TBD - requires a sourced k(T) of the selected BN grade (HWQ-08 / docs/hardware/h2/h2_1_hall_chamber_magnet/) | FLIGHT_REPRESENTATIVE | assumed allowance for the decrease of hBN conductivity with temperature (EXT-HENZE2021 gives 20 degC values only; no sourced k(T) for the candidate grades) |
 
 ## Material properties (source-derived)
 
@@ -126,10 +135,13 @@ Mutable files are referenced at the base commit, not pinned: W3: docs/experiment
 | molybdenum | 293.15 | 138.93 | EXT-NIST-CRYO | measured (curve fit to data) | value at 293.15 K; elevated-temperature k is outside the fit range: TBD - requires a sourced k(T) |
 | Ti6Al4V | 293.15 | 7.37 | EXT-NIST-CRYO | measured (curve fit to data) | value at 293.15 K; elevated-temperature k is outside the fit range: TBD - requires a sourced k(T) |
 | Al6061_T6 | 293.15 | 154.37 | EXT-NIST-CRYO | measured (curve fit to data) | value at 293.15 K; elevated-temperature k is outside the fit range: TBD - requires a sourced k(T) |
-| soft iron (A848 Type 1), WF electronic part | 293.15 | 67.06 | EXT-NICOFE-A848 resistivity table + Sommerfeld Lorenz number | model-derived | lower bound of k (electronic only); used with multiplier H25-25 |
-| soft iron (A848 Type 1), WF electronic part | 473.15 | 51.15 | EXT-NICOFE-A848 resistivity table + Sommerfeld Lorenz number | model-derived | lower bound of k (electronic only); used with multiplier H25-25 |
-| soft iron (A848 Type 1), WF electronic part | 673.15 | 38.16 | EXT-NICOFE-A848 resistivity table + Sommerfeld Lorenz number | model-derived | lower bound of k (electronic only); used with multiplier H25-25 |
-| soft iron (A848 Type 1), WF electronic part | 873.15 | 30.56 | EXT-NICOFE-A848 resistivity table + Sommerfeld Lorenz number | model-derived | lower bound of k (electronic only); used with multiplier H25-25 |
+| Armco iron (commercially pure), measured k | 273.15 | 74.2 | EXT-NBS-ARMCO1967 Table 2 | measured (smoothed values) | used with grade multiplier H25-25; soft-magnetic grade PENDING HWQ-18 |
+| Armco iron (commercially pure), measured k | 473.15 | 62 | EXT-NBS-ARMCO1967 Table 2 | measured (smoothed values) | used with grade multiplier H25-25; soft-magnetic grade PENDING HWQ-18 |
+| Armco iron (commercially pure), measured k | 673.15 | 49.5 | EXT-NBS-ARMCO1967 Table 2 | measured (smoothed values) | used with grade multiplier H25-25; soft-magnetic grade PENDING HWQ-18 |
+| Armco iron (commercially pure), measured k | 873.15 | 39.1 | EXT-NBS-ARMCO1967 Table 2 | measured (smoothed values) | used with grade multiplier H25-25; soft-magnetic grade PENDING HWQ-18 |
+| Armco iron (commercially pure), measured k | 913.15 | 37.1 | EXT-NBS-ARMCO1967 Table 2 | measured (smoothed values) | used with grade multiplier H25-25; soft-magnetic grade PENDING HWQ-18 |
+| Armco iron, k above the measured range | 973.15 | 34.63 | EXT-NBS-ARMCO1967 Table 2: Lorenz function at 640 degC x T / measured rho(T) | model-derived | used only where a pole/core link mean temperature exceeds 640 degC (flagged per solve); near the Curie ceiling |
+| Armco iron, k above the measured range | 1023.15 | 32.5 | EXT-NBS-ARMCO1967 Table 2: Lorenz function at 640 degC x T / measured rho(T) | model-derived | used only where a pole/core link mean temperature exceeds 640 degC (flagged per solve); near the Curie ceiling |
 | hBN solids (HeBoSint grades) | 293.15 | [10, 75] | EXT-HENZE2021 | measured (typical, guide only) | grade and pressing direction span |
 
 ## Temperature limits
@@ -140,11 +152,12 @@ Mutable files are referenced at the base commit, not pinned: W3: docs/experiment
 | WI/WO | BN maximum use temperature, inert/vacuum (context only) | [1500, 2000] | False | schemas/thermal_life/limits_v1.json bn_hebosint_* T_use_max_inert_vacuum_C |
 | CI/CO | coil insulation thermal class candidates (IEC 60085 Table 1) | [180, 200, 220, 250] | True | schemas/thermal_life/limits_v1.json record iec60085_thermal_classes (classes over 250 increase in 25 degC increments) |
 | CI/CO (permanent-magnet MC-1 option) | Sm2Co17 maximum service / use temperature | [300, 350] | True | schemas/thermal_life/limits_v1.json pm_sm2co17_recoma35e T_max_use_C 300, pm_smco_2_17_mmpa 350 (Curie 820 / 825) |
-| PI/PO/BP | soft-magnetic pole/core maximum temperature | — | False | TBD - requires the HW-MC-13 grade (HWQ-18) with B-H and saturation vs temperature; iron Curie point 770 degC is from memory (verify) and is NOT used as a limit |
+| PI/PO/BP | soft-iron Curie transformation: ABSOLUTE CEILING (magnetic circuit non-functional at and above it) | 754 | True | EXT-NBS-ARMCO1967 p. 288: resistivity hysteresis (< 0.2 %) 'between 754 and 761 C, presumably corresponding to the Curie transformation' (Armco iron; lower end used); grade-specific value PENDING HW-MC-13 / HWQ-18 |
+| PI/PO/BP | soft-magnetic pole/core maximum USE temperature (B_sat(T) / permeability criterion) | — | False | TBD - requires the HW-MC-13 grade (HWQ-18) with B-H and saturation flux density vs temperature up to the pole temperature envelope (interface demand to H2-1) |
 | AN | anode maximum temperature | — | False | TBD - requires the anode material (HWQ-08) and its oxidation behaviour in O2/atomic O (AOL-M01) |
 | CB (keeper/body) | cathode assembly limiting temperature | — | False | schemas/thermal_life/limits_v1.json record cathode_assembly_temperature_limit is TBD |
 | CE (emitter) | LaB6 temperature for O2 tolerance (a MINIMUM, not a maximum) | 1570 | False | schemas/thermal_life/limits_v1.json lab6_poisoning_goebel (Goebel & Katz 2008 sec. 6.8.5 p. 306: LaB6 at 1570 C withstands pO2 up to 1e-4 Torr) |
-| PPU | transistor junction temperature derating | 125 | False | EXT-EEE-INST-002 Section S1 Table 4 'Transistor derating requirements' note 2 (p. 12 of 13): 'Do not exceed Tj = 125 C or 40 C below the manufacturer's maximum rating, whichever is lower'; microcircuits (M3 Table 4 note 2): 110 C |
+| PPU | transistor junction temperature derating: Tj,derated = min(0.80 x Tj,max, 125 degC, Tj,max - 40 degC) | 125 | False | EXT-EEE-INST-002 Section S1 Table 4 'Transistor derating requirements' (p. 12 of 13): stress parameter 'Junction Temperature 2/' derating factor 0.80 (All, and Power MOSFETs); note 2: 'Do not exceed Tj = 125 C or 40 C below the manufacturer's maximum rating, whichever is lower or less'. The table does not state the temperature scale of the 0.80 factor (degC as tabulated assumed: verify). 125 degC is the absolute cap; e.g. a 150 degC part gives min(120, 125, 110) = 110 degC. Microcircuits (M3 Table 4 note 2): 110 C |
 | COMP | compressor motor / bearing limit | — | False | TBD - requires the compressor selection (docs/architecture_comparison/compressor_downselect/, PENDING docs/hardware/h2/h2_3_gas_path_plenum/) |
 | GP | gas path / plenum / valve seal limit and T_feed band | — | False | TBD - requires valve and seal datasheets (PENDING docs/hardware/h2/h2_3_gas_path_plenum/) and the W1 feed-state T_feed (HW-ENV-04) |
 
@@ -152,15 +165,15 @@ Mutable files are referenced at the base commit, not pinned: W3: docs/experiment
 
 | case | finish | AN | WI | WO | PI | PO | BP | CI | CO | CB |
 |---|---|---|---|---|---|---|---|---|---|---|
-| ground | bare_machined_stainless | 81.8 .. 1239.2 | 73.8 .. 865 | 69.9 .. 745.7 | 58.1 .. 812.7 | 41.2 .. 575.3 | 49.2 .. 708.9 | 58.1 .. 859.1 | 41.6 .. 576.6 | 53.8 .. 1111.5 |
-| ground | sandblasted_stainless | 78.6 .. 1216.4 | 69.2 .. 830.6 | 65.6 .. 686.3 | 53.6 .. 765 | 22.7 .. 426.5 | 45.7 .. 591.9 | 53.6 .. 815.5 | 23.2 .. 427.8 | 50.4 .. 1068.2 |
-| ground | z93_white_inorganic | 71.7 .. 1186.8 | 62.1 .. 798.5 | 58.7 .. 649.9 | 46.4 .. 713.8 | 4.8 .. 302.9 | 41.4 .. 491.6 | 46.4 .. 768.8 | 5.3 .. 304 | 46 .. 1028.5 |
-| orbit_hot | bare_machined_stainless | 61.8 .. 1247.9 | 53.6 .. 874.3 | 49.5 .. 754.1 | 37.8 .. 828.9 | 17.2 .. 587.5 | 29.4 .. 715.1 | 37.8 .. 872.9 | 27.5 .. 574.8 | 33.9 .. 1113.7 |
-| orbit_hot | sandblasted_stainless | 58.6 .. 1225.5 | 49.1 .. 839.8 | 45.1 .. 692.2 | 33.2 .. 782 | -7.1 .. 436.6 | 26.1 .. 599.8 | 33.2 .. 830.1 | -6.7 .. 437.9 | 30.6 .. 1071.1 |
-| orbit_hot | z93_white_inorganic | 51.3 .. 1195.3 | 41.7 .. 807.2 | 37.9 .. 652.1 | 25.7 .. 731.1 | -35.4 .. 303.1 | 21.3 .. 496.9 | 25.7 .. 783.8 | -35 .. 304.2 | 25.7 .. 1030.3 |
-| orbit_cold | bare_machined_stainless | 61.8 .. 1239.2 | 53.6 .. 864.5 | 49.5 .. 744.7 | 37.8 .. 812.5 | 17.2 .. 574.2 | 29.5 .. 708.9 | 37.8 .. 858.8 | 17.6 .. 575.5 | 34 .. 1111.1 |
-| orbit_cold | sandblasted_stainless | 58.6 .. 1216.4 | 49.1 .. 830 | 45.1 .. 685.1 | 33.2 .. 764.8 | -7.1 .. 424.2 | 26.1 .. 591.8 | 33.2 .. 815.1 | -6.7 .. 425.5 | 30.6 .. 1067.7 |
-| orbit_cold | z93_white_inorganic | 51.3 .. 1186.8 | 41.7 .. 798.1 | 37.9 .. 648.4 | 25.7 .. 713.8 | -35.4 .. 298.5 | 21.3 .. 492.5 | 25.7 .. 768.6 | -35 .. 299.6 | 25.7 .. 1028.4 |
+| ground | bare_machined_stainless | 81.6 .. 1288.5 | 73.8 .. 991.2 | 70 .. 799.8 | 58.1 .. 974 | 44.9 .. 602.9 | 47.6 .. 767.3 | 58.2 .. 1062.4 | 44.9 .. 639 | 52.3 .. 1133.8 |
+| ground | sandblasted_stainless | 77.3 .. 1249.6 | 69.3 .. 956 | 65.6 .. 719.5 | 53.7 .. 933.8 | 22.4 .. 465.5 | 44.3 .. 633.5 | 53.7 .. 1026.4 | 22.9 .. 467.4 | 49 .. 1084.9 |
+| ground | z93_white_inorganic | 70.7 .. 1216.8 | 62.3 .. 924.9 | 58.9 .. 686.2 | 46.6 .. 890 | 4.5 .. 325.3 | 38.3 .. 510.4 | 46.6 .. 987.7 | 5 .. 326.9 | 42.9 .. 1036.6 |
+| orbit_hot | bare_machined_stainless | 61.3 .. 1272.2 | 53.8 .. 999.6 | 49.5 .. 805.9 | 37.9 .. 985.4 | 29.1 .. 604.5 | 27.9 .. 763.5 | 37.9 .. 1072 | 29.2 .. 638.1 | 32.4 .. 1132.4 |
+| orbit_hot | sandblasted_stainless | 57.8 .. 1257.5 | 49.1 .. 964.6 | 45.1 .. 724.4 | 33.3 .. 947.9 | -7.8 .. 474.9 | 24.7 .. 641 | 33.3 .. 1038.2 | -7.3 .. 476.8 | 29.2 .. 1087.5 |
+| orbit_hot | z93_white_inorganic | 50.8 .. 1225.1 | 41.9 .. 933.6 | 38.1 .. 688.8 | 25.9 .. 904.5 | -36.2 .. 325.5 | 18 .. 514.7 | 26 .. 1000.1 | -35.7 .. 327 | 22.5 .. 1038 |
+| orbit_cold | bare_machined_stainless | 61.6 .. 1288.5 | 53.6 .. 990.7 | 49.6 .. 798.8 | 37.8 .. 973.8 | 23.7 .. 601.4 | 27.9 .. 767.3 | 37.8 .. 1062.1 | 23.7 .. 637.5 | 32.4 .. 1133.4 |
+| orbit_cold | sandblasted_stainless | 57.2 .. 1249.5 | 49.1 .. 955.5 | 45.1 .. 718.1 | 33.3 .. 933.6 | -7.8 .. 463.4 | 24.7 .. 633.4 | 33.3 .. 1026.1 | -7.3 .. 465.3 | 29.2 .. 1084.4 |
+| orbit_cold | z93_white_inorganic | 50.2 .. 1216.8 | 41.9 .. 924.5 | 38.1 .. 684.7 | 25.9 .. 889.9 | -36.2 .. 321.1 | 18 .. 511.3 | 26 .. 987.5 | -35.7 .. 322.7 | 22.5 .. 1036.6 |
 
 Method: per output: one-at-a-time sensitivity (lo->hi at the range midpoints) fixes the sign of each input; the per-output hot (cold) corner puts every input at the end that raises (lowers) that output; T_max/T_min are the solves at those corners (a bounding envelope: all adverse ends together). Monotonicity is checked by a seeded Latin-hypercube sample of the input box at P_d max, which also gives sample statistics (box coverage, not probabilities).
 
@@ -168,152 +181,179 @@ Method: per output: one-at-a-time sensitivity (lo->hi at the range midpoints) fi
 
 | case | finish | AN med / p95 / max | WI med / p95 / max | WO med / p95 / max | PI med / p95 / max | PO med / p95 / max | BP med / p95 / max | CI med / p95 / max | CO med / p95 / max | CB med / p95 / max |
 |---|---|---|---|---|---|---|---|---|---|---|
-| ground | bare_machined_stainless | 466.3 / 785.1 / 1018.1 | 361.8 / 524.5 / 610.1 | 301.9 / 439.9 / 528 | 306.1 / 480.2 / 572 | 240.1 / 366.2 / 404.8 | 248 / 430.2 / 501.6 | 306.7 / 483.7 / 574.3 | 240.7 / 370.5 / 405.5 | 316.7 / 521.3 / 762.2 |
-| ground | sandblasted_stainless | 453.8 / 729.8 / 870.3 | 332.9 / 483.6 / 552.3 | 276 / 390 / 446.2 | 279.2 / 417.5 / 523.1 | 189.2 / 265.9 / 308.5 | 224 / 356 / 458.6 | 283 / 430.2 / 527.6 | 190.5 / 267 / 309.2 | 289 / 476.2 / 693.5 |
-| ground | z93_white_inorganic | 414.8 / 729.4 / 1021.8 | 300.9 / 431.7 / 531 | 255.8 / 346.9 / 448.5 | 242.3 / 355.3 / 432.6 | 134.6 / 175.7 / 211.6 | 193 / 287.1 / 349.2 | 244.6 / 360.1 / 445.8 | 135.9 / 177.8 / 212.5 | 261.6 / 428.9 / 546.9 |
-| orbit_hot | bare_machined_stainless | 469.7 / 789.9 / 940.9 | 358.2 / 539 / 627.6 | 301 / 430.6 / 572.9 | 310.2 / 494.3 / 606.8 | 248.8 / 370.8 / 464.9 | 250.9 / 430.8 / 547 | 313 / 497.4 / 608.7 | 249.2 / 371.6 / 466.1 | 326.6 / 508.9 / 707.2 |
-| orbit_hot | sandblasted_stainless | 463.9 / 712.2 / 1021.7 | 332.8 / 475.7 / 544.6 | 277.8 / 387.7 / 446.3 | 283.5 / 418.3 / 504.7 | 196.3 / 276.4 / 324.7 | 228.3 / 365 / 444.6 | 285.5 / 424.3 / 514.8 | 197.4 / 276.9 / 325.5 | 295.6 / 469.9 / 750.7 |
-| orbit_hot | z93_white_inorganic | 423.4 / 698.7 / 922.8 | 305 / 438.4 / 524.3 | 250.3 / 347.3 / 419.3 | 247.7 / 356.3 / 457.6 | 127.8 / 177.4 / 240.6 | 190.1 / 288.8 / 369.8 | 250.5 / 361.3 / 476.8 | 129.2 / 178 / 242.1 | 251.8 / 474.1 / 684.2 |
-| orbit_cold | bare_machined_stainless | 468 / 721.6 / 890.6 | 350.4 / 511 / 619.5 | 291.9 / 406.2 / 530.2 | 302.5 / 456.6 / 567 | 236.8 / 332.9 / 416.9 | 244.5 / 397 / 516.8 | 304.5 / 460.1 / 577.2 | 237.2 / 333.3 / 421.5 | 309.4 / 535 / 675.8 |
-| orbit_cold | sandblasted_stainless | 447.6 / 755.7 / 947.4 | 325.5 / 497.1 / 606.1 | 266.2 / 402.1 / 493.4 | 262.1 / 430.6 / 505 | 174.7 / 259.3 / 290.4 | 212.9 / 364.4 / 440.3 | 265.2 / 437.8 / 512.1 | 175.4 / 261.2 / 293.7 | 280.8 / 491.8 / 688.8 |
-| orbit_cold | z93_white_inorganic | 414.8 / 760.6 / 949.2 | 298.3 / 430.5 / 509.3 | 242.2 / 342.4 / 392.2 | 241.7 / 348.1 / 421.5 | 123.5 / 172.9 / 198.3 | 187.7 / 278.3 / 323.9 | 244.1 / 349.7 / 441.1 | 125.4 / 173.8 / 198.8 | 250.2 / 449 / 677.6 |
+| ground | bare_machined_stainless | 486 / 797.2 / 1027 | 403.9 / 585.1 / 672.7 | 321.1 / 462.6 / 583.9 | 353.3 / 570.4 / 676.1 | 262.1 / 395.9 / 463.7 | 260.6 / 453.2 / 545.5 | 356.8 / 586.5 / 680.2 | 264.2 / 397.4 / 464.9 | 328.3 / 537.9 / 781.1 |
+| ground | sandblasted_stainless | 462.5 / 745 / 883.5 | 378.6 / 525 / 648.3 | 297.2 / 408 / 466.5 | 320.9 / 485.6 / 635.7 | 202.8 / 280.2 / 332.5 | 234.4 / 388.7 / 485.7 | 327.2 / 494.5 / 647.1 | 203.8 / 282.2 / 333.5 | 302.7 / 485.2 / 713.1 |
+| ground | z93_white_inorganic | 422.5 / 738.5 / 1027.5 | 347.6 / 486.9 / 596.6 | 274.1 / 371.5 / 472.9 | 282.9 / 434.4 / 560.1 | 143.1 / 189 / 232.7 | 198.6 / 294.4 / 338.6 | 286.2 / 439.8 / 586 | 143.8 / 190.5 / 234 | 265.3 / 438.1 / 550.5 |
+| orbit_hot | bare_machined_stainless | 489.2 / 803.1 / 950 | 413.3 / 598.7 / 747.1 | 324.9 / 450.1 / 624.6 | 358.6 / 584.4 / 771.7 | 276.8 / 408.8 / 529.2 | 260.2 / 460.4 / 588.6 | 363.6 / 595 / 776.4 | 277.9 / 412.1 / 531.3 | 342 / 525.2 / 710.3 |
+| orbit_hot | sandblasted_stainless | 477.5 / 719.3 / 1034 | 381.3 / 528.2 / 614.6 | 297.6 / 394.8 / 481.1 | 323.8 / 504 / 599.1 | 211.2 / 295.4 / 344.4 | 235.4 / 379.8 / 487.4 | 330.7 / 512.7 / 618.4 | 211.6 / 296.8 / 345.7 | 303.3 / 496.3 / 753.9 |
+| orbit_hot | z93_white_inorganic | 431.2 / 706.5 / 926.3 | 338.9 / 479.3 / 585.5 | 265.4 / 369.2 / 454 | 287 / 428.7 / 528.4 | 135.4 / 189.1 / 254.7 | 196.1 / 299.1 / 403.7 | 292.8 / 435.1 / 563 | 136.1 / 190.8 / 256.9 | 255.6 / 480.8 / 702.2 |
+| orbit_cold | bare_machined_stainless | 483.5 / 739.4 / 900.6 | 397.6 / 564.8 / 688.2 | 313.9 / 436.8 / 533.8 | 352.5 / 544.4 / 666.8 | 264.4 / 370.9 / 474.1 | 261.4 / 433.3 / 534 | 358.7 / 551.5 / 684.5 | 264.8 / 373.3 / 481.2 | 323.3 / 539.3 / 700.2 |
+| orbit_cold | sandblasted_stainless | 459.6 / 758.8 / 951.8 | 366.6 / 544.6 / 674.6 | 281.6 / 418.5 / 517.2 | 309.7 / 509.9 / 611.5 | 189.9 / 282.2 / 316.3 | 222.7 / 377.4 / 467.1 | 312.7 / 515.5 / 622.7 | 191 / 285.3 / 320.4 | 289.8 / 501.3 / 693.9 |
+| orbit_cold | z93_white_inorganic | 425.3 / 764.6 / 954.1 | 339.2 / 471.7 / 553.6 | 264.6 / 361.3 / 430.1 | 279.7 / 401.1 / 521 | 131.8 / 179.4 / 206.9 | 193.8 / 288.9 / 332.8 | 284.1 / 406.4 / 526.1 | 133.1 / 180.2 / 208.3 | 255.7 / 450.4 / 688.7 |
 
 ## Margins to live limits at P_d max (K below the limit: worst corner / nominal / best corner; verdict on the corner envelope)
 
 | case | finish | node | limit | T corner range (degC) | T nominal | margin worst | margin nominal | margin best | LHS fraction above | verdict | dominant inputs |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| ground | bare_machined_stainless | WI | BN oxidizing max use 900 degC | 73.8 .. 865 | 329.6 | 35 | 570.4 | 826.2 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_anode |
-| ground | bare_machined_stainless | WO | BN oxidizing max use 900 degC | 69.9 .. 745.7 | 288.1 | 154.3 | 611.9 | 830.1 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_anode |
-| ground | bare_machined_stainless | CI | IEC 60085 class 180 | 58.1 .. 859.1 | 296.1 | -679.1 | -116.1 | 121.9 | 0.9492 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | bare_machined_stainless | CI | IEC 60085 class 200 | 58.1 .. 859.1 | 296.1 | -659.1 | -96.1 | 141.9 | 0.9219 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | bare_machined_stainless | CI | IEC 60085 class 220 | 58.1 .. 859.1 | 296.1 | -639.1 | -76.1 | 161.9 | 0.8633 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | bare_machined_stainless | CI | IEC 60085 class 250 | 58.1 .. 859.1 | 296.1 | -609.1 | -46.1 | 191.9 | 0.7461 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | bare_machined_stainless | CI | Sm2Co17 max use 300 degC (PM option) | 58.1 .. 859.1 | 296.1 | -559.1 | 3.9 | 241.9 | 0.5469 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | bare_machined_stainless | CI | Sm2Co17 max use 350 degC (PM option) | 58.1 .. 859.1 | 296.1 | -509.1 | 53.9 | 291.9 | 0.3438 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | bare_machined_stainless | CO | IEC 60085 class 180 | 41.6 .. 576.6 | 239.9 | -396.6 | -59.9 | 138.4 | 0.8555 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | bare_machined_stainless | CO | IEC 60085 class 200 | 41.6 .. 576.6 | 239.9 | -376.6 | -39.9 | 158.4 | 0.7656 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | bare_machined_stainless | CO | IEC 60085 class 220 | 41.6 .. 576.6 | 239.9 | -356.6 | -19.9 | 178.4 | 0.6328 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | bare_machined_stainless | CO | IEC 60085 class 250 | 41.6 .. 576.6 | 239.9 | -326.6 | 10.1 | 208.4 | 0.4531 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | bare_machined_stainless | CO | Sm2Co17 max use 300 degC (PM option) | 41.6 .. 576.6 | 239.9 | -276.6 | 60.1 | 258.4 | 0.2305 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | bare_machined_stainless | CO | Sm2Co17 max use 350 degC (PM option) | 41.6 .. 576.6 | 239.9 | -226.6 | 110.1 | 308.4 | 0.0742 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | sandblasted_stainless | WI | BN oxidizing max use 900 degC | 69.2 .. 830.6 | 305.9 | 69.4 | 594.1 | 830.8 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, h_contact_W_m2K |
-| ground | sandblasted_stainless | WO | BN oxidizing max use 900 degC | 65.6 .. 686.3 | 266.3 | 213.7 | 633.7 | 834.4 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_anode |
-| ground | sandblasted_stainless | CI | IEC 60085 class 180 | 53.6 .. 815.5 | 270.1 | -635.5 | -90.1 | 126.4 | 0.957 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | sandblasted_stainless | CI | IEC 60085 class 200 | 53.6 .. 815.5 | 270.1 | -615.5 | -70.1 | 146.4 | 0.8867 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | sandblasted_stainless | CI | IEC 60085 class 220 | 53.6 .. 815.5 | 270.1 | -595.5 | -50.1 | 166.4 | 0.8438 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | sandblasted_stainless | CI | IEC 60085 class 250 | 53.6 .. 815.5 | 270.1 | -565.5 | -20.1 | 196.4 | 0.6484 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | sandblasted_stainless | CI | Sm2Co17 max use 300 degC (PM option) | 53.6 .. 815.5 | 270.1 | -515.5 | 29.9 | 246.4 | 0.4141 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | sandblasted_stainless | CI | Sm2Co17 max use 350 degC (PM option) | 53.6 .. 815.5 | 270.1 | -465.5 | 79.9 | 296.4 | 0.1875 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | sandblasted_stainless | CO | IEC 60085 class 180 | 23.2 .. 427.8 | 189.3 | -247.8 | -9.3 | 156.8 | 0.5938 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | sandblasted_stainless | CO | IEC 60085 class 200 | 23.2 .. 427.8 | 189.3 | -227.8 | 10.7 | 176.8 | 0.4141 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | sandblasted_stainless | CO | IEC 60085 class 220 | 23.2 .. 427.8 | 189.3 | -207.8 | 30.7 | 196.8 | 0.2422 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | sandblasted_stainless | CO | IEC 60085 class 250 | 23.2 .. 427.8 | 189.3 | -177.8 | 60.7 | 226.8 | 0.0781 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | sandblasted_stainless | CO | Sm2Co17 max use 300 degC (PM option) | 23.2 .. 427.8 | 189.3 | -127.8 | 110.7 | 276.8 | 0.0039 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | sandblasted_stainless | CO | Sm2Co17 max use 350 degC (PM option) | 23.2 .. 427.8 | 189.3 | -77.8 | 160.7 | 326.8 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | z93_white_inorganic | WI | BN oxidizing max use 900 degC | 62.1 .. 798.5 | 277.8 | 101.5 | 622.2 | 837.9 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, h_contact_W_m2K |
-| ground | z93_white_inorganic | WO | BN oxidizing max use 900 degC | 58.7 .. 649.9 | 242.1 | 250.1 | 658 | 841.3 | 0 | PASS_WHOLE_ENVELOPE | f_walls, G_mount_W_K, f_anode |
-| ground | z93_white_inorganic | CI | IEC 60085 class 180 | 46.4 .. 768.8 | 238.9 | -588.8 | -58.9 | 133.6 | 0.9062 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | z93_white_inorganic | CI | IEC 60085 class 200 | 46.4 .. 768.8 | 238.9 | -568.8 | -38.9 | 153.6 | 0.8008 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | z93_white_inorganic | CI | IEC 60085 class 220 | 46.4 .. 768.8 | 238.9 | -548.8 | -18.9 | 173.6 | 0.6836 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | z93_white_inorganic | CI | IEC 60085 class 250 | 46.4 .. 768.8 | 238.9 | -518.8 | 11.1 | 203.6 | 0.4609 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | z93_white_inorganic | CI | Sm2Co17 max use 300 degC (PM option) | 46.4 .. 768.8 | 238.9 | -468.8 | 61.1 | 253.6 | 0.2188 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | z93_white_inorganic | CI | Sm2Co17 max use 350 degC (PM option) | 46.4 .. 768.8 | 238.9 | -418.8 | 111.1 | 303.6 | 0.0781 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | z93_white_inorganic | CO | IEC 60085 class 180 | 5.3 .. 304 | 137.1 | -124 | 42.9 | 174.7 | 0.0469 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | z93_white_inorganic | CO | IEC 60085 class 200 | 5.3 .. 304 | 137.1 | -104 | 62.9 | 194.7 | 0.0078 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | z93_white_inorganic | CO | IEC 60085 class 220 | 5.3 .. 304 | 137.1 | -84 | 82.9 | 214.7 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | z93_white_inorganic | CO | IEC 60085 class 250 | 5.3 .. 304 | 137.1 | -54 | 112.9 | 244.7 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | z93_white_inorganic | CO | Sm2Co17 max use 300 degC (PM option) | 5.3 .. 304 | 137.1 | -4 | 162.9 | 294.7 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| ground | z93_white_inorganic | CO | Sm2Co17 max use 350 degC (PM option) | 5.3 .. 304 | 137.1 | 46 | 212.9 | 344.7 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | bare_machined_stainless | WI | BN oxidizing max use 900 degC | 53.6 .. 874.3 | 332.5 | 25.7 | 567.5 | 846.4 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_anode |
-| orbit_hot | bare_machined_stainless | WO | BN oxidizing max use 900 degC | 49.5 .. 754.1 | 289.2 | 145.9 | 610.8 | 850.5 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_anode |
-| orbit_hot | bare_machined_stainless | CI | IEC 60085 class 180 | 37.8 .. 872.9 | 302.2 | -692.9 | -122.2 | 142.2 | 0.957 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | bare_machined_stainless | CI | IEC 60085 class 200 | 37.8 .. 872.9 | 302.2 | -672.9 | -102.2 | 162.2 | 0.9141 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | bare_machined_stainless | CI | IEC 60085 class 220 | 37.8 .. 872.9 | 302.2 | -652.9 | -82.2 | 182.2 | 0.8594 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | bare_machined_stainless | CI | IEC 60085 class 250 | 37.8 .. 872.9 | 302.2 | -622.9 | -52.2 | 212.2 | 0.7734 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | bare_machined_stainless | CI | Sm2Co17 max use 300 degC (PM option) | 37.8 .. 872.9 | 302.2 | -572.9 | -2.2 | 262.2 | 0.5742 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | bare_machined_stainless | CI | Sm2Co17 max use 350 degC (PM option) | 37.8 .. 872.9 | 302.2 | -522.9 | 47.8 | 312.2 | 0.3516 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | bare_machined_stainless | CO | IEC 60085 class 180 | 27.5 .. 574.8 | 249.9 | -394.8 | -69.9 | 152.5 | 0.8828 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | bare_machined_stainless | CO | IEC 60085 class 200 | 27.5 .. 574.8 | 249.9 | -374.8 | -49.9 | 172.5 | 0.8125 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | bare_machined_stainless | CO | IEC 60085 class 220 | 27.5 .. 574.8 | 249.9 | -354.8 | -29.9 | 192.5 | 0.7305 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | bare_machined_stainless | CO | IEC 60085 class 250 | 27.5 .. 574.8 | 249.9 | -324.8 | 0.1 | 222.5 | 0.4922 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | bare_machined_stainless | CO | Sm2Co17 max use 300 degC (PM option) | 27.5 .. 574.8 | 249.9 | -274.8 | 50.1 | 272.5 | 0.2617 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | bare_machined_stainless | CO | Sm2Co17 max use 350 degC (PM option) | 27.5 .. 574.8 | 249.9 | -224.8 | 100.1 | 322.5 | 0.0977 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | sandblasted_stainless | WI | BN oxidizing max use 900 degC | 49.1 .. 839.8 | 308 | 60.2 | 592 | 850.9 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, h_contact_W_m2K |
-| orbit_hot | sandblasted_stainless | WO | BN oxidizing max use 900 degC | 45.1 .. 692.2 | 266.4 | 207.8 | 633.7 | 854.9 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_anode |
-| orbit_hot | sandblasted_stainless | CI | IEC 60085 class 180 | 33.2 .. 830.1 | 275.5 | -650.1 | -95.5 | 146.8 | 0.9414 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | sandblasted_stainless | CI | IEC 60085 class 200 | 33.2 .. 830.1 | 275.5 | -630.1 | -75.5 | 166.8 | 0.8828 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | sandblasted_stainless | CI | IEC 60085 class 220 | 33.2 .. 830.1 | 275.5 | -610.1 | -55.5 | 186.8 | 0.7891 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | sandblasted_stainless | CI | IEC 60085 class 250 | 33.2 .. 830.1 | 275.5 | -580.1 | -25.5 | 216.8 | 0.6602 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | sandblasted_stainless | CI | Sm2Co17 max use 300 degC (PM option) | 33.2 .. 830.1 | 275.5 | -530.1 | 24.5 | 266.8 | 0.4297 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | sandblasted_stainless | CI | Sm2Co17 max use 350 degC (PM option) | 33.2 .. 830.1 | 275.5 | -480.1 | 74.5 | 316.8 | 0.2617 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | sandblasted_stainless | CO | IEC 60085 class 180 | -6.7 .. 437.9 | 196.6 | -257.9 | -16.6 | 186.7 | 0.6172 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | sandblasted_stainless | CO | IEC 60085 class 200 | -6.7 .. 437.9 | 196.6 | -237.9 | 3.4 | 206.7 | 0.4766 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | sandblasted_stainless | CO | IEC 60085 class 220 | -6.7 .. 437.9 | 196.6 | -217.9 | 23.4 | 226.7 | 0.3164 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | sandblasted_stainless | CO | IEC 60085 class 250 | -6.7 .. 437.9 | 196.6 | -187.9 | 53.4 | 256.7 | 0.1562 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | sandblasted_stainless | CO | Sm2Co17 max use 300 degC (PM option) | -6.7 .. 437.9 | 196.6 | -137.9 | 103.4 | 306.7 | 0.0117 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | sandblasted_stainless | CO | Sm2Co17 max use 350 degC (PM option) | -6.7 .. 437.9 | 196.6 | -87.9 | 153.4 | 356.7 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | z93_white_inorganic | WI | BN oxidizing max use 900 degC | 41.7 .. 807.2 | 275.7 | 92.8 | 624.3 | 858.3 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, h_contact_W_m2K, f_walls |
-| orbit_hot | z93_white_inorganic | WO | BN oxidizing max use 900 degC | 37.9 .. 652.1 | 238 | 247.9 | 662 | 862.1 | 0 | PASS_WHOLE_ENVELOPE | f_walls, G_mount_W_K, f_anode |
-| orbit_hot | z93_white_inorganic | CI | IEC 60085 class 180 | 25.7 .. 783.8 | 240 | -603.8 | -60 | 154.3 | 0.8867 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | z93_white_inorganic | CI | IEC 60085 class 200 | 25.7 .. 783.8 | 240 | -583.8 | -40 | 174.3 | 0.8086 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | z93_white_inorganic | CI | IEC 60085 class 220 | 25.7 .. 783.8 | 240 | -563.8 | -20 | 194.3 | 0.6953 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | z93_white_inorganic | CI | IEC 60085 class 250 | 25.7 .. 783.8 | 240 | -533.8 | 10 | 224.3 | 0.5078 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | z93_white_inorganic | CI | Sm2Co17 max use 300 degC (PM option) | 25.7 .. 783.8 | 240 | -483.8 | 60 | 274.3 | 0.1914 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | z93_white_inorganic | CI | Sm2Co17 max use 350 degC (PM option) | 25.7 .. 783.8 | 240 | -433.8 | 110 | 324.3 | 0.0781 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | z93_white_inorganic | CO | IEC 60085 class 180 | -35 .. 304.2 | 130.9 | -124.2 | 49.1 | 215 | 0.043 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | z93_white_inorganic | CO | IEC 60085 class 200 | -35 .. 304.2 | 130.9 | -104.2 | 69.1 | 235 | 0.0156 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | z93_white_inorganic | CO | IEC 60085 class 220 | -35 .. 304.2 | 130.9 | -84.2 | 89.1 | 255 | 0.0039 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | z93_white_inorganic | CO | IEC 60085 class 250 | -35 .. 304.2 | 130.9 | -54.2 | 119.1 | 285 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | z93_white_inorganic | CO | Sm2Co17 max use 300 degC (PM option) | -35 .. 304.2 | 130.9 | -4.2 | 169.1 | 335 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_hot | z93_white_inorganic | CO | Sm2Co17 max use 350 degC (PM option) | -35 .. 304.2 | 130.9 | 45.8 | 219.1 | 385 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | bare_machined_stainless | WI | BN oxidizing max use 900 degC | 53.6 .. 864.5 | 323.7 | 35.5 | 576.3 | 846.4 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_anode |
-| orbit_cold | bare_machined_stainless | WO | BN oxidizing max use 900 degC | 49.5 .. 744.7 | 281.8 | 155.3 | 618.2 | 850.5 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_anode |
-| orbit_cold | bare_machined_stainless | CI | IEC 60085 class 180 | 37.8 .. 858.8 | 289.7 | -678.8 | -109.7 | 142.2 | 0.9531 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | bare_machined_stainless | CI | IEC 60085 class 200 | 37.8 .. 858.8 | 289.7 | -658.8 | -89.7 | 162.2 | 0.9258 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | bare_machined_stainless | CI | IEC 60085 class 220 | 37.8 .. 858.8 | 289.7 | -638.8 | -69.7 | 182.2 | 0.8594 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | bare_machined_stainless | CI | IEC 60085 class 250 | 37.8 .. 858.8 | 289.7 | -608.8 | -39.7 | 212.2 | 0.7383 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | bare_machined_stainless | CI | Sm2Co17 max use 300 degC (PM option) | 37.8 .. 858.8 | 289.7 | -558.8 | 10.3 | 262.2 | 0.5312 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | bare_machined_stainless | CI | Sm2Co17 max use 350 degC (PM option) | 37.8 .. 858.8 | 289.7 | -508.8 | 60.3 | 312.2 | 0.2656 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | bare_machined_stainless | CO | IEC 60085 class 180 | 17.6 .. 575.5 | 233.2 | -395.5 | -53.2 | 162.4 | 0.8633 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | bare_machined_stainless | CO | IEC 60085 class 200 | 17.6 .. 575.5 | 233.2 | -375.5 | -33.2 | 182.4 | 0.7656 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | bare_machined_stainless | CO | IEC 60085 class 220 | 17.6 .. 575.5 | 233.2 | -355.5 | -13.2 | 202.4 | 0.6133 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | bare_machined_stainless | CO | IEC 60085 class 250 | 17.6 .. 575.5 | 233.2 | -325.5 | 16.8 | 232.4 | 0.4297 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | bare_machined_stainless | CO | Sm2Co17 max use 300 degC (PM option) | 17.6 .. 575.5 | 233.2 | -275.5 | 66.8 | 282.4 | 0.1719 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | bare_machined_stainless | CO | Sm2Co17 max use 350 degC (PM option) | 17.6 .. 575.5 | 233.2 | -225.5 | 116.8 | 332.4 | 0.0352 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | sandblasted_stainless | WI | BN oxidizing max use 900 degC | 49.1 .. 830 | 299.9 | 70 | 600.1 | 850.9 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, h_contact_W_m2K |
-| orbit_cold | sandblasted_stainless | WO | BN oxidizing max use 900 degC | 45.1 .. 685.1 | 259.8 | 215 | 640.2 | 854.9 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_anode |
-| orbit_cold | sandblasted_stainless | CI | IEC 60085 class 180 | 33.2 .. 815.1 | 263.5 | -635.1 | -83.5 | 146.8 | 0.9336 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | sandblasted_stainless | CI | IEC 60085 class 200 | 33.2 .. 815.1 | 263.5 | -615.1 | -63.5 | 166.8 | 0.8594 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | sandblasted_stainless | CI | IEC 60085 class 220 | 33.2 .. 815.1 | 263.5 | -595.1 | -43.5 | 186.8 | 0.7578 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | sandblasted_stainless | CI | IEC 60085 class 250 | 33.2 .. 815.1 | 263.5 | -565.1 | -13.5 | 216.8 | 0.5938 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | sandblasted_stainless | CI | Sm2Co17 max use 300 degC (PM option) | 33.2 .. 815.1 | 263.5 | -515.1 | 36.5 | 266.8 | 0.3711 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | sandblasted_stainless | CI | Sm2Co17 max use 350 degC (PM option) | 33.2 .. 815.1 | 263.5 | -465.1 | 86.5 | 316.8 | 0.2031 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | sandblasted_stainless | CO | IEC 60085 class 180 | -6.7 .. 425.5 | 181.4 | -245.5 | -1.4 | 186.7 | 0.4648 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | sandblasted_stainless | CO | IEC 60085 class 200 | -6.7 .. 425.5 | 181.4 | -225.5 | 18.6 | 206.7 | 0.3281 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | sandblasted_stainless | CO | IEC 60085 class 220 | -6.7 .. 425.5 | 181.4 | -205.5 | 38.6 | 226.7 | 0.207 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | sandblasted_stainless | CO | IEC 60085 class 250 | -6.7 .. 425.5 | 181.4 | -175.5 | 68.6 | 256.7 | 0.0938 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | sandblasted_stainless | CO | Sm2Co17 max use 300 degC (PM option) | -6.7 .. 425.5 | 181.4 | -125.5 | 118.6 | 306.7 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | sandblasted_stainless | CO | Sm2Co17 max use 350 degC (PM option) | -6.7 .. 425.5 | 181.4 | -75.5 | 168.6 | 356.7 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | z93_white_inorganic | WI | BN oxidizing max use 900 degC | 41.7 .. 798.1 | 271.5 | 101.9 | 628.5 | 858.3 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, h_contact_W_m2K, f_walls |
-| orbit_cold | z93_white_inorganic | WO | BN oxidizing max use 900 degC | 37.9 .. 648.4 | 235.1 | 251.6 | 664.9 | 862.1 | 0 | PASS_WHOLE_ENVELOPE | f_walls, G_mount_W_K, f_anode |
-| orbit_cold | z93_white_inorganic | CI | IEC 60085 class 180 | 25.7 .. 768.6 | 232.1 | -588.6 | -52.1 | 154.3 | 0.8711 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | z93_white_inorganic | CI | IEC 60085 class 200 | 25.7 .. 768.6 | 232.1 | -568.6 | -32.1 | 174.3 | 0.7734 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | z93_white_inorganic | CI | IEC 60085 class 220 | 25.7 .. 768.6 | 232.1 | -548.6 | -12.1 | 194.3 | 0.6289 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | z93_white_inorganic | CI | IEC 60085 class 250 | 25.7 .. 768.6 | 232.1 | -518.6 | 17.9 | 224.3 | 0.4688 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | z93_white_inorganic | CI | Sm2Co17 max use 300 degC (PM option) | 25.7 .. 768.6 | 232.1 | -468.6 | 67.9 | 274.3 | 0.1914 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | z93_white_inorganic | CI | Sm2Co17 max use 350 degC (PM option) | 25.7 .. 768.6 | 232.1 | -418.6 | 117.9 | 324.3 | 0.0508 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | z93_white_inorganic | CO | IEC 60085 class 180 | -35 .. 299.6 | 126.1 | -119.6 | 53.9 | 215 | 0.0312 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | z93_white_inorganic | CO | IEC 60085 class 200 | -35 .. 299.6 | 126.1 | -99.6 | 73.9 | 235 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | z93_white_inorganic | CO | IEC 60085 class 220 | -35 .. 299.6 | 126.1 | -79.6 | 93.9 | 255 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | z93_white_inorganic | CO | IEC 60085 class 250 | -35 .. 299.6 | 126.1 | -49.6 | 123.9 | 285 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | z93_white_inorganic | CO | Sm2Co17 max use 300 degC (PM option) | -35 .. 299.6 | 126.1 | 0.4 | 173.9 | 335 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
-| orbit_cold | z93_white_inorganic | CO | Sm2Co17 max use 350 degC (PM option) | -35 .. 299.6 | 126.1 | 50.4 | 223.9 | 385 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
+| ground | bare_machined_stainless | WI | BN oxidizing max use 900 degC | 73.8 .. 991.2 | 373.4 | -91.2 | 526.6 | 826.2 | 0 | DESIGN_DRIVING | G_mount_W_K, f_walls, f_anode |
+| ground | bare_machined_stainless | WO | BN oxidizing max use 900 degC | 70 .. 799.8 | 307.5 | 100.2 | 592.5 | 830 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_open_outer |
+| ground | bare_machined_stainless | CI | IEC 60085 class 180 | 58.2 .. 1062.4 | 341.3 | -882.4 | -161.3 | 121.8 | 0.9805 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | bare_machined_stainless | CI | IEC 60085 class 200 | 58.2 .. 1062.4 | 341.3 | -862.4 | -141.3 | 141.8 | 0.9531 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | bare_machined_stainless | CI | IEC 60085 class 220 | 58.2 .. 1062.4 | 341.3 | -842.4 | -121.3 | 161.8 | 0.9102 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | bare_machined_stainless | CI | IEC 60085 class 250 | 58.2 .. 1062.4 | 341.3 | -812.4 | -91.3 | 191.8 | 0.8594 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | bare_machined_stainless | CO | IEC 60085 class 180 | 44.9 .. 639 | 262.6 | -459 | -82.6 | 135.1 | 0.9062 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | bare_machined_stainless | CO | IEC 60085 class 200 | 44.9 .. 639 | 262.6 | -439 | -62.6 | 155.1 | 0.8398 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | bare_machined_stainless | CO | IEC 60085 class 220 | 44.9 .. 639 | 262.6 | -419 | -42.6 | 175.1 | 0.7656 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | bare_machined_stainless | CO | IEC 60085 class 250 | 44.9 .. 639 | 262.6 | -389 | -12.6 | 205.1 | 0.6016 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | bare_machined_stainless | CI | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 58.9 .. 740.5 | 266.6 | -440.5 | 33.4 | 241.1 | 0.3867 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| ground | bare_machined_stainless | CI | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 58.9 .. 740.5 | 266.6 | -390.5 | 83.4 | 291.1 | 0.2188 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| ground | bare_machined_stainless | CO | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 41.5 .. 549.9 | 215.5 | -249.9 | 84.5 | 258.5 | 0.1367 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| ground | bare_machined_stainless | CO | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 41.5 .. 549.9 | 215.5 | -199.9 | 134.5 | 308.5 | 0.0391 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| ground | bare_machined_stainless | PI | soft-iron Curie ceiling 754 degC (Armco) | 58.1 .. 974 | 339 | -220 | 415 | 695.9 | 0 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | bare_machined_stainless | PO | soft-iron Curie ceiling 754 degC (Armco) | 44.9 .. 602.9 | 262 | 151.2 | 492 | 709.1 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, P_mag_W, f_anode |
+| ground | bare_machined_stainless | BP | soft-iron Curie ceiling 754 degC (Armco) | 47.6 .. 767.3 | 263.2 | -13.3 | 490.8 | 706.4 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| ground | sandblasted_stainless | WI | BN oxidizing max use 900 degC | 69.3 .. 956 | 346.2 | -56 | 553.8 | 830.7 | 0 | DESIGN_DRIVING | G_mount_W_K, f_walls, f_anode |
+| ground | sandblasted_stainless | WO | BN oxidizing max use 900 degC | 65.6 .. 719.5 | 283.4 | 180.5 | 616.6 | 834.4 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_anode |
+| ground | sandblasted_stainless | CI | IEC 60085 class 180 | 53.7 .. 1026.4 | 308.6 | -846.4 | -128.6 | 126.3 | 0.9805 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | sandblasted_stainless | CI | IEC 60085 class 200 | 53.7 .. 1026.4 | 308.6 | -826.4 | -108.6 | 146.3 | 0.9492 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | sandblasted_stainless | CI | IEC 60085 class 220 | 53.7 .. 1026.4 | 308.6 | -806.4 | -88.6 | 166.3 | 0.8906 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | sandblasted_stainless | CI | IEC 60085 class 250 | 53.7 .. 1026.4 | 308.6 | -776.4 | -58.6 | 196.3 | 0.8164 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | sandblasted_stainless | CO | IEC 60085 class 180 | 22.9 .. 467.4 | 202.8 | -287.4 | -22.8 | 157.1 | 0.7031 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | sandblasted_stainless | CO | IEC 60085 class 200 | 22.9 .. 467.4 | 202.8 | -267.4 | -2.8 | 177.1 | 0.5547 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | sandblasted_stainless | CO | IEC 60085 class 220 | 22.9 .. 467.4 | 202.8 | -247.4 | 17.2 | 197.1 | 0.3672 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | sandblasted_stainless | CO | IEC 60085 class 250 | 22.9 .. 467.4 | 202.8 | -217.4 | 47.2 | 227.1 | 0.2031 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | sandblasted_stainless | CI | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 54.3 .. 707.1 | 243 | -407.1 | 57 | 245.7 | 0.2656 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| ground | sandblasted_stainless | CI | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 54.3 .. 707.1 | 243 | -357.1 | 107 | 295.7 | 0.125 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| ground | sandblasted_stainless | CO | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 22.9 .. 407.5 | 170.8 | -107.5 | 129.2 | 277.1 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| ground | sandblasted_stainless | CO | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 22.9 .. 407.5 | 170.8 | -57.5 | 179.2 | 327.1 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| ground | sandblasted_stainless | PI | soft-iron Curie ceiling 754 degC (Armco) | 53.7 .. 933.8 | 306.3 | -179.8 | 447.7 | 700.4 | 0 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | sandblasted_stainless | PO | soft-iron Curie ceiling 754 degC (Armco) | 22.4 .. 465.5 | 202.2 | 288.5 | 551.8 | 731.6 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, P_mag_W, f_anode |
+| ground | sandblasted_stainless | BP | soft-iron Curie ceiling 754 degC (Armco) | 44.3 .. 633.5 | 233.6 | 120.6 | 520.4 | 709.7 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
+| ground | z93_white_inorganic | WI | BN oxidizing max use 900 degC | 62.3 .. 924.9 | 316 | -24.9 | 584 | 837.7 | 0 | DESIGN_DRIVING | f_walls, G_mount_W_K, h_contact_W_m2K |
+| ground | z93_white_inorganic | WO | BN oxidizing max use 900 degC | 58.9 .. 686.2 | 259 | 213.8 | 641 | 841.1 | 0 | PASS_WHOLE_ENVELOPE | f_walls, G_mount_W_K, f_anode |
+| ground | z93_white_inorganic | CI | IEC 60085 class 180 | 46.6 .. 987.7 | 271.5 | -807.7 | -91.5 | 133.4 | 0.9297 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | z93_white_inorganic | CI | IEC 60085 class 200 | 46.6 .. 987.7 | 271.5 | -787.7 | -71.5 | 153.4 | 0.8828 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | z93_white_inorganic | CI | IEC 60085 class 220 | 46.6 .. 987.7 | 271.5 | -767.7 | -51.5 | 173.4 | 0.8125 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | z93_white_inorganic | CI | IEC 60085 class 250 | 46.6 .. 987.7 | 271.5 | -737.7 | -21.5 | 203.4 | 0.707 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | z93_white_inorganic | CO | IEC 60085 class 180 | 5 .. 326.9 | 144.1 | -146.9 | 35.9 | 175 | 0.1172 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| ground | z93_white_inorganic | CO | IEC 60085 class 200 | 5 .. 326.9 | 144.1 | -126.9 | 55.9 | 195 | 0.0312 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| ground | z93_white_inorganic | CO | IEC 60085 class 220 | 5 .. 326.9 | 144.1 | -106.9 | 75.9 | 215 | 0.0039 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| ground | z93_white_inorganic | CO | IEC 60085 class 250 | 5 .. 326.9 | 144.1 | -76.9 | 105.9 | 245 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| ground | z93_white_inorganic | CI | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 47.1 .. 670.9 | 214.6 | -370.9 | 85.4 | 252.9 | 0.1289 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| ground | z93_white_inorganic | CI | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 47.1 .. 670.9 | 214.6 | -320.9 | 135.4 | 302.9 | 0.0234 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| ground | z93_white_inorganic | CO | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 5 .. 288.2 | 123.2 | 11.8 | 176.8 | 295 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
+| ground | z93_white_inorganic | CO | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 5 .. 288.2 | 123.2 | 61.8 | 226.8 | 345 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
+| ground | z93_white_inorganic | PI | soft-iron Curie ceiling 754 degC (Armco) | 46.6 .. 890 | 269.4 | -136 | 484.6 | 707.4 | 0 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| ground | z93_white_inorganic | PO | soft-iron Curie ceiling 754 degC (Armco) | 4.5 .. 325.3 | 143.6 | 428.7 | 610.5 | 749.5 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, P_mag_W |
+| ground | z93_white_inorganic | BP | soft-iron Curie ceiling 754 degC (Armco) | 38.3 .. 510.4 | 200.6 | 243.6 | 553.4 | 715.7 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | bare_machined_stainless | WI | BN oxidizing max use 900 degC | 53.8 .. 999.6 | 376.8 | -99.6 | 523.2 | 846.3 | 0 | DESIGN_DRIVING | G_mount_W_K, f_walls, f_anode |
+| orbit_hot | bare_machined_stainless | WO | BN oxidizing max use 900 degC | 49.5 .. 805.9 | 308.7 | 94.1 | 591.3 | 850.5 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_open_outer |
+| orbit_hot | bare_machined_stainless | CI | IEC 60085 class 180 | 37.9 .. 1072 | 348.2 | -892 | -168.2 | 142.1 | 0.9766 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | bare_machined_stainless | CI | IEC 60085 class 200 | 37.9 .. 1072 | 348.2 | -872 | -148.2 | 162.1 | 0.957 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | bare_machined_stainless | CI | IEC 60085 class 220 | 37.9 .. 1072 | 348.2 | -852 | -128.2 | 182.1 | 0.9258 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | bare_machined_stainless | CI | IEC 60085 class 250 | 37.9 .. 1072 | 348.2 | -822 | -98.2 | 212.1 | 0.8516 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | bare_machined_stainless | CO | IEC 60085 class 180 | 29.2 .. 638.1 | 272.9 | -458.1 | -92.9 | 150.8 | 0.9375 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | bare_machined_stainless | CO | IEC 60085 class 200 | 29.2 .. 638.1 | 272.9 | -438.1 | -72.9 | 170.8 | 0.875 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | bare_machined_stainless | CO | IEC 60085 class 220 | 29.2 .. 638.1 | 272.9 | -418.1 | -52.9 | 190.8 | 0.7969 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | bare_machined_stainless | CO | IEC 60085 class 250 | 29.2 .. 638.1 | 272.9 | -388.1 | -22.9 | 220.8 | 0.6562 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | bare_machined_stainless | CI | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 38.6 .. 752 | 273.1 | -452 | 26.9 | 261.4 | 0.4492 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | bare_machined_stainless | CI | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 38.6 .. 752 | 273.1 | -402 | 76.9 | 311.4 | 0.2305 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | bare_machined_stainless | CO | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 17.4 .. 563.1 | 226.1 | -263.1 | 73.9 | 282.6 | 0.168 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | bare_machined_stainless | CO | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 17.4 .. 563.1 | 226.1 | -213.1 | 123.9 | 332.6 | 0.0312 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | bare_machined_stainless | PI | soft-iron Curie ceiling 754 degC (Armco) | 37.9 .. 985.4 | 345.9 | -231.4 | 408.1 | 716.1 | 0.0039 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | bare_machined_stainless | PO | soft-iron Curie ceiling 754 degC (Armco) | 29.1 .. 604.5 | 272.3 | 149.6 | 481.7 | 724.9 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | bare_machined_stainless | BP | soft-iron Curie ceiling 754 degC (Armco) | 27.9 .. 763.5 | 265.8 | -9.5 | 488.3 | 726.1 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| orbit_hot | sandblasted_stainless | WI | BN oxidizing max use 900 degC | 49.1 .. 964.6 | 348.9 | -64.6 | 551.1 | 850.9 | 0 | DESIGN_DRIVING | G_mount_W_K, f_walls, f_anode |
+| orbit_hot | sandblasted_stainless | WO | BN oxidizing max use 900 degC | 45.1 .. 724.4 | 283.3 | 175.6 | 616.7 | 854.9 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_open_outer |
+| orbit_hot | sandblasted_stainless | CI | IEC 60085 class 180 | 33.3 .. 1038.2 | 314.7 | -858.2 | -134.7 | 146.7 | 0.9727 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | sandblasted_stainless | CI | IEC 60085 class 200 | 33.3 .. 1038.2 | 314.7 | -838.2 | -114.7 | 166.7 | 0.9297 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | sandblasted_stainless | CI | IEC 60085 class 220 | 33.3 .. 1038.2 | 314.7 | -818.2 | -94.7 | 186.7 | 0.875 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | sandblasted_stainless | CI | IEC 60085 class 250 | 33.3 .. 1038.2 | 314.7 | -788.2 | -64.7 | 216.7 | 0.7773 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | sandblasted_stainless | CO | IEC 60085 class 180 | -7.3 .. 476.8 | 210.3 | -296.8 | -30.3 | 187.3 | 0.7383 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | sandblasted_stainless | CO | IEC 60085 class 200 | -7.3 .. 476.8 | 210.3 | -276.8 | -10.3 | 207.3 | 0.6016 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | sandblasted_stainless | CO | IEC 60085 class 220 | -7.3 .. 476.8 | 210.3 | -256.8 | 9.7 | 227.3 | 0.4531 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | sandblasted_stainless | CO | IEC 60085 class 250 | -7.3 .. 476.8 | 210.3 | -226.8 | 39.7 | 257.3 | 0.2617 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | sandblasted_stainless | CI | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 34 .. 719.1 | 248.8 | -419.1 | 51.2 | 266 | 0.2969 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | sandblasted_stainless | CI | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 34 .. 719.1 | 248.8 | -369.1 | 101.2 | 316 | 0.1328 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | sandblasted_stainless | CO | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | -7.3 .. 418.5 | 178.6 | -118.5 | 121.4 | 307.3 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | sandblasted_stainless | CO | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | -7.3 .. 418.5 | 178.6 | -68.5 | 171.4 | 357.3 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | sandblasted_stainless | PI | soft-iron Curie ceiling 754 degC (Armco) | 33.3 .. 947.9 | 312.5 | -193.8 | 441.5 | 720.7 | 0 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | sandblasted_stainless | PO | soft-iron Curie ceiling 754 degC (Armco) | -7.8 .. 474.9 | 209.7 | 279.1 | 544.3 | 761.8 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | sandblasted_stainless | BP | soft-iron Curie ceiling 754 degC (Armco) | 24.7 .. 641 | 235.4 | 113 | 518.7 | 729.3 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | z93_white_inorganic | WI | BN oxidizing max use 900 degC | 41.9 .. 933.6 | 314.5 | -33.6 | 585.5 | 858.1 | 0 | DESIGN_DRIVING | f_walls, G_mount_W_K, h_contact_W_m2K |
+| orbit_hot | z93_white_inorganic | WO | BN oxidizing max use 900 degC | 38.1 .. 688.8 | 254.8 | 211.2 | 645.2 | 861.9 | 0 | PASS_WHOLE_ENVELOPE | f_walls, G_mount_W_K, f_anode |
+| orbit_hot | z93_white_inorganic | CI | IEC 60085 class 180 | 26 .. 1000.1 | 272.9 | -820.1 | -92.9 | 154 | 0.9414 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | z93_white_inorganic | CI | IEC 60085 class 200 | 26 .. 1000.1 | 272.9 | -800.1 | -72.9 | 174 | 0.875 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | z93_white_inorganic | CI | IEC 60085 class 220 | 26 .. 1000.1 | 272.9 | -780.1 | -52.9 | 194 | 0.8164 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | z93_white_inorganic | CI | IEC 60085 class 250 | 26 .. 1000.1 | 272.9 | -750.1 | -22.9 | 224 | 0.668 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | z93_white_inorganic | CO | IEC 60085 class 180 | -35.7 .. 327 | 137.9 | -147 | 42.1 | 215.7 | 0.0859 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| orbit_hot | z93_white_inorganic | CO | IEC 60085 class 200 | -35.7 .. 327 | 137.9 | -127 | 62.1 | 235.7 | 0.0273 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| orbit_hot | z93_white_inorganic | CO | IEC 60085 class 220 | -35.7 .. 327 | 137.9 | -107 | 82.1 | 255.7 | 0.0117 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| orbit_hot | z93_white_inorganic | CO | IEC 60085 class 250 | -35.7 .. 327 | 137.9 | -77 | 112.1 | 285.7 | 0.0039 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| orbit_hot | z93_white_inorganic | CI | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 26.6 .. 683.1 | 215.6 | -383.1 | 84.4 | 273.4 | 0.1289 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | z93_white_inorganic | CI | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 26.6 .. 683.1 | 215.6 | -333.1 | 134.4 | 323.4 | 0.0469 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | z93_white_inorganic | CO | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | -35.8 .. 288.6 | 116.6 | 11.4 | 183.4 | 335.8 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | z93_white_inorganic | CO | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | -35.8 .. 288.6 | 116.6 | 61.4 | 233.4 | 385.8 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
+| orbit_hot | z93_white_inorganic | PI | soft-iron Curie ceiling 754 degC (Armco) | 25.9 .. 904.5 | 270.8 | -150.5 | 483.2 | 728.1 | 0 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_hot | z93_white_inorganic | PO | soft-iron Curie ceiling 754 degC (Armco) | -36.2 .. 325.5 | 137.3 | 428.5 | 616.7 | 790.2 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, P_mag_W |
+| orbit_hot | z93_white_inorganic | BP | soft-iron Curie ceiling 754 degC (Armco) | 18 .. 514.7 | 198.1 | 239.3 | 555.9 | 736 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | bare_machined_stainless | WI | BN oxidizing max use 900 degC | 53.6 .. 990.7 | 367.3 | -90.7 | 532.7 | 846.4 | 0 | DESIGN_DRIVING | G_mount_W_K, f_walls, f_anode |
+| orbit_cold | bare_machined_stainless | WO | BN oxidizing max use 900 degC | 49.6 .. 798.8 | 301.2 | 101.2 | 598.8 | 850.4 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_open_outer |
+| orbit_cold | bare_machined_stainless | CI | IEC 60085 class 180 | 37.8 .. 1062.1 | 334.3 | -882.1 | -154.3 | 142.2 | 0.9688 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | bare_machined_stainless | CI | IEC 60085 class 200 | 37.8 .. 1062.1 | 334.3 | -862.1 | -134.3 | 162.2 | 0.9531 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | bare_machined_stainless | CI | IEC 60085 class 220 | 37.8 .. 1062.1 | 334.3 | -842.1 | -114.3 | 182.2 | 0.918 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | bare_machined_stainless | CI | IEC 60085 class 250 | 37.8 .. 1062.1 | 334.3 | -812.1 | -84.3 | 212.2 | 0.8398 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | bare_machined_stainless | CO | IEC 60085 class 180 | 23.7 .. 637.5 | 255.8 | -457.5 | -75.8 | 156.3 | 0.8867 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | bare_machined_stainless | CO | IEC 60085 class 200 | 23.7 .. 637.5 | 255.8 | -437.5 | -55.8 | 176.3 | 0.8359 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | bare_machined_stainless | CO | IEC 60085 class 220 | 23.7 .. 637.5 | 255.8 | -417.5 | -35.8 | 196.3 | 0.7383 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | bare_machined_stainless | CO | IEC 60085 class 250 | 23.7 .. 637.5 | 255.8 | -387.5 | -5.8 | 226.3 | 0.5859 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | bare_machined_stainless | CI | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 38.6 .. 739.6 | 259.8 | -439.6 | 40.2 | 261.4 | 0.3984 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | bare_machined_stainless | CI | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 38.6 .. 739.6 | 259.8 | -389.6 | 90.2 | 311.4 | 0.2383 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | bare_machined_stainless | CO | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 17.4 .. 548.7 | 208.4 | -248.7 | 91.6 | 282.6 | 0.1016 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | bare_machined_stainless | CO | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 17.4 .. 548.7 | 208.4 | -198.7 | 141.6 | 332.6 | 0.0352 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | bare_machined_stainless | PI | soft-iron Curie ceiling 754 degC (Armco) | 37.8 .. 973.8 | 332 | -219.8 | 422.1 | 716.2 | 0 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | bare_machined_stainless | PO | soft-iron Curie ceiling 754 degC (Armco) | 23.7 .. 601.4 | 255.2 | 152.6 | 498.8 | 730.3 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | bare_machined_stainless | BP | soft-iron Curie ceiling 754 degC (Armco) | 27.9 .. 767.3 | 257.3 | -13.3 | 496.7 | 726.1 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | sandblasted_stainless | WI | BN oxidizing max use 900 degC | 49.1 .. 955.5 | 340.2 | -55.5 | 559.8 | 850.9 | 0 | DESIGN_DRIVING | G_mount_W_K, f_walls, f_anode |
+| orbit_cold | sandblasted_stainless | WO | BN oxidizing max use 900 degC | 45.1 .. 718.1 | 276.9 | 181.9 | 623.1 | 854.9 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_walls, f_anode |
+| orbit_cold | sandblasted_stainless | CI | IEC 60085 class 180 | 33.3 .. 1026.1 | 301.4 | -846.1 | -121.4 | 146.7 | 0.9609 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | sandblasted_stainless | CI | IEC 60085 class 200 | 33.3 .. 1026.1 | 301.4 | -826.1 | -101.4 | 166.7 | 0.9219 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | sandblasted_stainless | CI | IEC 60085 class 220 | 33.3 .. 1026.1 | 301.4 | -806.1 | -81.4 | 186.7 | 0.8594 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | sandblasted_stainless | CI | IEC 60085 class 250 | 33.3 .. 1026.1 | 301.4 | -776.1 | -51.4 | 216.7 | 0.7344 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | sandblasted_stainless | CO | IEC 60085 class 180 | -7.3 .. 465.3 | 194.7 | -285.3 | -14.7 | 187.3 | 0.6016 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | sandblasted_stainless | CO | IEC 60085 class 200 | -7.3 .. 465.3 | 194.7 | -265.3 | 5.3 | 207.3 | 0.4336 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | sandblasted_stainless | CO | IEC 60085 class 220 | -7.3 .. 465.3 | 194.7 | -245.3 | 25.3 | 227.3 | 0.3125 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | sandblasted_stainless | CO | IEC 60085 class 250 | -7.3 .. 465.3 | 194.7 | -215.3 | 55.3 | 257.3 | 0.1641 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | sandblasted_stainless | CI | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 34 .. 706.2 | 236.1 | -406.2 | 63.9 | 266 | 0.2617 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | sandblasted_stainless | CI | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 34 .. 706.2 | 236.1 | -356.2 | 113.9 | 316 | 0.1133 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | sandblasted_stainless | CO | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | -7.3 .. 405.1 | 162.2 | -105.1 | 137.8 | 307.3 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | sandblasted_stainless | CO | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | -7.3 .. 405.1 | 162.2 | -55.1 | 187.8 | 357.3 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | sandblasted_stainless | PI | soft-iron Curie ceiling 754 degC (Armco) | 33.3 .. 933.6 | 299.2 | -179.6 | 454.8 | 720.7 | 0 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | sandblasted_stainless | PO | soft-iron Curie ceiling 754 degC (Armco) | -7.8 .. 463.4 | 194.1 | 290.6 | 560 | 761.8 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | sandblasted_stainless | BP | soft-iron Curie ceiling 754 degC (Armco) | 24.7 .. 633.4 | 227.6 | 120.6 | 526.4 | 729.3 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | z93_white_inorganic | WI | BN oxidizing max use 900 degC | 41.9 .. 924.5 | 309.8 | -24.5 | 590.2 | 858.1 | 0 | DESIGN_DRIVING | f_walls, G_mount_W_K, h_contact_W_m2K |
+| orbit_cold | z93_white_inorganic | WO | BN oxidizing max use 900 degC | 38.1 .. 684.7 | 252.1 | 215.3 | 647.9 | 861.9 | 0 | PASS_WHOLE_ENVELOPE | f_walls, G_mount_W_K, f_anode |
+| orbit_cold | z93_white_inorganic | CI | IEC 60085 class 180 | 26 .. 987.5 | 264.1 | -807.5 | -84.1 | 154 | 0.9297 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | z93_white_inorganic | CI | IEC 60085 class 200 | 26 .. 987.5 | 264.1 | -787.5 | -64.1 | 174 | 0.8672 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | z93_white_inorganic | CI | IEC 60085 class 220 | 26 .. 987.5 | 264.1 | -767.5 | -44.1 | 194 | 0.7891 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | z93_white_inorganic | CI | IEC 60085 class 250 | 26 .. 987.5 | 264.1 | -737.5 | -14.1 | 224 | 0.6523 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | z93_white_inorganic | CO | IEC 60085 class 180 | -35.7 .. 322.7 | 132.9 | -142.7 | 47.1 | 215.7 | 0.0508 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| orbit_cold | z93_white_inorganic | CO | IEC 60085 class 200 | -35.7 .. 322.7 | 132.9 | -122.7 | 67.1 | 235.7 | 0.0156 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| orbit_cold | z93_white_inorganic | CO | IEC 60085 class 220 | -35.7 .. 322.7 | 132.9 | -102.7 | 87.1 | 255.7 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| orbit_cold | z93_white_inorganic | CO | IEC 60085 class 250 | -35.7 .. 322.7 | 132.9 | -72.7 | 117.1 | 285.7 | 0 | DESIGN_DRIVING | G_mount_W_K, f_anode, P_mag_W |
+| orbit_cold | z93_white_inorganic | CI | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | 26.6 .. 670.1 | 207.4 | -370.1 | 92.6 | 273.4 | 0.1133 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | z93_white_inorganic | CI | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | 26.6 .. 670.1 | 207.4 | -320.1 | 142.6 | 323.4 | 0.043 | DESIGN_DRIVING | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | z93_white_inorganic | CO | Sm2Co17 max use 300 degC (PM option, P_mag = 0 solve) | -35.8 .. 283.5 | 111.3 | 16.5 | 188.7 | 335.8 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | z93_white_inorganic | CO | Sm2Co17 max use 350 degC (PM option, P_mag = 0 solve) | -35.8 .. 283.5 | 111.3 | 66.5 | 238.7 | 385.8 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
+| orbit_cold | z93_white_inorganic | PI | soft-iron Curie ceiling 754 degC (Armco) | 25.9 .. 889.9 | 262 | -135.9 | 492 | 728.1 | 0 | DESIGN_DRIVING | G_mount_W_K, P_mag_W, f_anode |
+| orbit_cold | z93_white_inorganic | PO | soft-iron Curie ceiling 754 degC (Armco) | -36.2 .. 321.1 | 132.3 | 432.9 | 621.7 | 790.2 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, P_mag_W |
+| orbit_cold | z93_white_inorganic | BP | soft-iron Curie ceiling 754 degC (Armco) | 18 .. 511.3 | 194.4 | 242.7 | 559.6 | 736 | 0 | PASS_WHOLE_ENVELOPE | G_mount_W_K, f_anode, f_walls |
 
 ## Hard-incompatibility check
 
 Rule: a node is a hard-incompatibility candidate only if its sourced limit is exceeded over the WHOLE plausible envelope for EVERY still-open design option (each exterior finish; for coils each IEC 60085 class candidate up to 250 degC and the Sm2Co17 permanent-magnet option); design-driving cases are not incompatibilities.
 
-Checked: BN walls vs 900 degC oxidizing use limit; coils vs IEC 60085 classes 180/200/220/250 degC and Sm2Co17 300/350 degC; ground, orbit hot, orbit cold; three exterior finishes; P_d up to the whole 1.35 kW bus allocation; anode / poles / cathode body: no sourced limit (TBD) -> cannot be vetoed.
+Checked: BN walls vs 900 degC oxidizing use limit; coils vs IEC 60085 classes 180/200/220/250 degC and Sm2Co17 300/350 degC; ground, orbit hot, orbit cold; three exterior finishes; P_d up to the whole 1.35 kW bus allocation; poles/core (PI, PO, BP) vs the soft-iron Curie ceiling 754 degC (Armco, inferred; absolute ceiling, not a use limit); permanent-magnet option checked on its own P_mag = 0 solve; anode / cathode body: no sourced limit (TBD) -> cannot be vetoed.
 
 **Result: none found**. Envelope evidence class: inferred (xenon analog heat fractions) + assumed geometry; air-specific heat fractions are unknown.
 
@@ -322,51 +362,86 @@ Checked: BN walls vs 900 degC oxidizing use limit; coils vs IEC 60085 classes 18
 
 | case | finish | node | P_d 675 W | P_d 1012.5 W | P_d 1350 W |
 |---|---|---|---|---|---|
-| ground | bare_machined_stainless | AN | 962.8 | 1118.7 | 1239.2 |
-| ground | bare_machined_stainless | WI | 689.6 | 786.1 | 865.0 |
-| ground | bare_machined_stainless | CI | 669.6 | 781.5 | 859.1 |
-| ground | bare_machined_stainless | CO | 467.1 | 517.1 | 576.6 |
-| ground | bare_machined_stainless | BP | 571.7 | 644.4 | 708.9 |
-| ground | sandblasted_stainless | AN | 933.8 | 1092.8 | 1216.4 |
-| ground | sandblasted_stainless | WI | 649.8 | 749.3 | 830.6 |
-| ground | sandblasted_stainless | CI | 612.5 | 733.8 | 815.5 |
-| ground | sandblasted_stainless | CO | 357.9 | 395.9 | 427.8 |
-| ground | sandblasted_stainless | BP | 474.0 | 538.2 | 591.9 |
-| ground | z93_white_inorganic | AN | 896.9 | 1060.4 | 1186.8 |
-| ground | z93_white_inorganic | WI | 611.0 | 714.0 | 798.5 |
-| ground | z93_white_inorganic | CI | 582.9 | 682.4 | 768.8 |
-| ground | z93_white_inorganic | CO | 253.7 | 281.1 | 304.0 |
-| ground | z93_white_inorganic | BP | 400.7 | 450.6 | 491.6 |
-| orbit_hot | bare_machined_stainless | AN | 974.7 | 1125.7 | 1247.9 |
-| orbit_hot | bare_machined_stainless | WI | 701.4 | 795.8 | 874.3 |
-| orbit_hot | bare_machined_stainless | CI | 681.6 | 794.4 | 872.9 |
-| orbit_hot | bare_machined_stainless | CO | 466.9 | 514.2 | 574.8 |
-| orbit_hot | bare_machined_stainless | BP | 574.4 | 642.5 | 715.1 |
-| orbit_hot | sandblasted_stainless | AN | 949.1 | 1104.1 | 1225.5 |
-| orbit_hot | sandblasted_stainless | WI | 663.4 | 760.2 | 839.8 |
-| orbit_hot | sandblasted_stainless | CI | 632.6 | 751.0 | 830.1 |
-| orbit_hot | sandblasted_stainless | CO | 371.6 | 407.5 | 437.9 |
-| orbit_hot | sandblasted_stainless | BP | 485.8 | 547.7 | 599.8 |
-| orbit_hot | z93_white_inorganic | AN | 911.5 | 1070.9 | 1195.3 |
-| orbit_hot | z93_white_inorganic | WI | 623.4 | 724.3 | 807.2 |
-| orbit_hot | z93_white_inorganic | CI | 604.0 | 700.3 | 783.8 |
-| orbit_hot | z93_white_inorganic | CO | 254.5 | 281.5 | 304.2 |
-| orbit_hot | z93_white_inorganic | BP | 408.1 | 456.7 | 496.9 |
-| orbit_cold | bare_machined_stainless | AN | 962.6 | 1118.6 | 1239.2 |
-| orbit_cold | bare_machined_stainless | WI | 688.9 | 785.5 | 864.5 |
-| orbit_cold | bare_machined_stainless | CI | 669.1 | 781.1 | 858.8 |
-| orbit_cold | bare_machined_stainless | CO | 465.1 | 537.9 | 575.5 |
-| orbit_cold | bare_machined_stainless | BP | 571.5 | 644.4 | 708.9 |
-| orbit_cold | sandblasted_stainless | AN | 933.8 | 1092.8 | 1216.4 |
-| orbit_cold | sandblasted_stainless | WI | 648.9 | 748.6 | 830.0 |
-| orbit_cold | sandblasted_stainless | CI | 612.0 | 733.4 | 815.1 |
-| orbit_cold | sandblasted_stainless | CO | 354.9 | 393.4 | 425.5 |
-| orbit_cold | sandblasted_stainless | BP | 473.5 | 538.0 | 591.8 |
-| orbit_cold | z93_white_inorganic | AN | 896.9 | 1060.4 | 1186.8 |
-| orbit_cold | z93_white_inorganic | WI | 610.2 | 713.5 | 798.1 |
-| orbit_cold | z93_white_inorganic | CI | 551.0 | 682.2 | 768.6 |
-| orbit_cold | z93_white_inorganic | CO | 248.2 | 276.2 | 299.6 |
-| orbit_cold | z93_white_inorganic | BP | 401.6 | 451.5 | 492.5 |
+| ground | bare_machined_stainless | AN | 1000.2 | 1146.7 | 1288.5 |
+| ground | bare_machined_stainless | WI | 839.2 | 922.1 | 991.2 |
+| ground | bare_machined_stainless | PI | 852.1 | 919.2 | 974.0 |
+| ground | bare_machined_stainless | CI | 922.0 | 998.4 | 1062.4 |
+| ground | bare_machined_stainless | CO | 543.1 | 583.6 | 639.0 |
+| ground | bare_machined_stainless | BP | 638.1 | 697.3 | 767.3 |
+| ground | sandblasted_stainless | AN | 975.6 | 1129.0 | 1249.6 |
+| ground | sandblasted_stainless | WI | 796.9 | 884.1 | 956.0 |
+| ground | sandblasted_stainless | PI | 804.2 | 874.6 | 933.8 |
+| ground | sandblasted_stainless | CI | 877.4 | 957.9 | 1026.4 |
+| ground | sandblasted_stainless | CO | 401.8 | 436.7 | 467.4 |
+| ground | sandblasted_stainless | BP | 524.1 | 582.1 | 633.5 |
+| ground | z93_white_inorganic | AN | 931.2 | 1091.7 | 1216.8 |
+| ground | z93_white_inorganic | WI | 755.3 | 848.6 | 924.9 |
+| ground | z93_white_inorganic | PI | 748.1 | 825.7 | 890.0 |
+| ground | z93_white_inorganic | CI | 825.2 | 913.6 | 987.7 |
+| ground | z93_white_inorganic | CO | 278.7 | 304.9 | 326.9 |
+| ground | z93_white_inorganic | BP | 431.6 | 474.7 | 510.4 |
+| orbit_hot | bare_machined_stainless | AN | 1014.2 | 1158.9 | 1272.2 |
+| orbit_hot | bare_machined_stainless | WI | 852.3 | 932.6 | 999.6 |
+| orbit_hot | bare_machined_stainless | PI | 870.4 | 934.4 | 985.4 |
+| orbit_hot | bare_machined_stainless | CI | 938.2 | 1011.4 | 1072.0 |
+| orbit_hot | bare_machined_stainless | CO | 556.5 | 603.9 | 638.1 |
+| orbit_hot | bare_machined_stainless | BP | 648.1 | 711.4 | 763.5 |
+| orbit_hot | sandblasted_stainless | AN | 989.4 | 1139.1 | 1257.5 |
+| orbit_hot | sandblasted_stainless | WI | 810.1 | 894.4 | 964.6 |
+| orbit_hot | sandblasted_stainless | PI | 823.2 | 890.6 | 947.9 |
+| orbit_hot | sandblasted_stainless | CI | 894.5 | 971.8 | 1038.2 |
+| orbit_hot | sandblasted_stainless | CO | 401.3 | 447.3 | 476.8 |
+| orbit_hot | sandblasted_stainless | BP | 534.7 | 590.7 | 641.0 |
+| orbit_hot | z93_white_inorganic | AN | 945.3 | 1102.6 | 1225.1 |
+| orbit_hot | z93_white_inorganic | WI | 768.3 | 859.0 | 933.6 |
+| orbit_hot | z93_white_inorganic | PI | 768.1 | 842.6 | 904.5 |
+| orbit_hot | z93_white_inorganic | CI | 843.5 | 928.4 | 1000.1 |
+| orbit_hot | z93_white_inorganic | CO | 279.5 | 305.3 | 327.0 |
+| orbit_hot | z93_white_inorganic | BP | 437.7 | 479.7 | 514.7 |
+| orbit_cold | bare_machined_stainless | AN | 999.9 | 1146.5 | 1288.5 |
+| orbit_cold | bare_machined_stainless | WI | 838.5 | 921.5 | 990.7 |
+| orbit_cold | bare_machined_stainless | PI | 851.6 | 918.9 | 973.8 |
+| orbit_cold | bare_machined_stainless | CI | 921.4 | 997.9 | 1062.1 |
+| orbit_cold | bare_machined_stainless | CO | 541.0 | 581.8 | 637.5 |
+| orbit_cold | bare_machined_stainless | BP | 637.9 | 697.2 | 767.3 |
+| orbit_cold | sandblasted_stainless | AN | 975.5 | 1128.9 | 1249.5 |
+| orbit_cold | sandblasted_stainless | WI | 796.1 | 883.4 | 955.5 |
+| orbit_cold | sandblasted_stainless | PI | 803.9 | 874.4 | 933.6 |
+| orbit_cold | sandblasted_stainless | CI | 877.0 | 957.6 | 1026.1 |
+| orbit_cold | sandblasted_stainless | CO | 399.1 | 434.4 | 465.3 |
+| orbit_cold | sandblasted_stainless | BP | 523.8 | 581.9 | 633.4 |
+| orbit_cold | z93_white_inorganic | AN | 931.1 | 1091.7 | 1216.8 |
+| orbit_cold | z93_white_inorganic | WI | 754.6 | 848.1 | 924.5 |
+| orbit_cold | z93_white_inorganic | PI | 748.0 | 825.6 | 889.9 |
+| orbit_cold | z93_white_inorganic | CI | 824.9 | 913.4 | 987.5 |
+| orbit_cold | z93_white_inorganic | CO | 273.5 | 300.3 | 322.7 |
+| orbit_cold | z93_white_inorganic | BP | 432.5 | 475.6 | 511.3 |
+
+## Permanent-magnet MC-1 option at P_d max (P_mag = 0 solve; CI/CO = magnet nodes; degC [corner min, corner max])
+
+permanent-magnet MC-1 option: the same corner/LHS method at P_d max with P_mag = 0 (H25-08: 0 W for a PM circuit); CI/CO then represent the magnet nodes, so the Sm2Co17 limits are checked against this self-consistent solve, not against the coil-dissipating one.
+
+| case | finish | CI | CO | PI | BP |
+|---|---|---|---|---|---|
+| ground | bare_machined_stainless | 58.9 .. 740.5 | 41.5 .. 549.9 | 58.9 .. 679.4 | 47.7 .. 685.8 |
+| ground | sandblasted_stainless | 54.3 .. 707.1 | 22.9 .. 407.5 | 54.3 .. 644.2 | 44.3 .. 572.5 |
+| ground | z93_white_inorganic | 47.1 .. 670.9 | 5.0 .. 288.2 | 47.1 .. 605.6 | 38.1 .. 478.6 |
+| orbit_hot | bare_machined_stainless | 38.6 .. 752.0 | 17.4 .. 563.1 | 38.6 .. 692.2 | 28.1 .. 696.2 |
+| orbit_hot | sandblasted_stainless | 34.0 .. 719.1 | -7.3 .. 418.5 | 34.0 .. 657.5 | 24.7 .. 581.2 |
+| orbit_hot | z93_white_inorganic | 26.6 .. 683.1 | -35.8 .. 288.6 | 26.6 .. 619.2 | 17.9 .. 484.1 |
+| orbit_cold | bare_machined_stainless | 38.6 .. 739.6 | 17.4 .. 548.7 | 38.6 .. 678.6 | 28.1 .. 685.8 |
+| orbit_cold | sandblasted_stainless | 34.0 .. 706.2 | -7.3 .. 405.1 | 34.0 .. 643.4 | 24.7 .. 572.3 |
+| orbit_cold | z93_white_inorganic | 26.6 .. 670.1 | -35.8 .. 283.5 | 26.6 .. 605.0 | 17.9 .. 479.4 |
+
+## Thruster-off eclipse survival case (degC [corner min, corner max])
+
+thruster off in eclipse (orbit_cold sinks, P_d = P_mag = Q_cath = 0): node minima for the survival-heater question; no survival limit is sourced here, so thermal_control heater demand stays TBD (spacecraft ICD + component minimum temperatures PENDING H2-1/H2-2/H2-3/H2-4).
+
+| finish | AN | WI | WO | PI | PO | BP | CI | CO | CB |
+|---|---|---|---|---|---|---|---|---|---|
+| bare_machined_stainless | -30 .. 47.8 | -29 .. 47.1 | -60.8 .. 47 | -30.4 .. 47.5 | -38 .. 45.3 | -29.7 .. 47.9 | -30.4 .. 47.4 | -38 .. 45.3 | -33.9 .. 47.8 |
+| sandblasted_stainless | -38.3 .. 46.6 | -36.5 .. 45.2 | -66.7 .. 45 | -38.5 .. 46.3 | -54.3 .. 40.2 | -38 .. 46.7 | -38.5 .. 46.2 | -54.2 .. 40.2 | -41.7 .. 46.6 |
+| z93_white_inorganic | -48.3 .. 45.3 | -49.2 .. 42.1 | -73.3 .. 41.9 | -48.5 .. 45 | -73.1 .. 31 | -48 .. 45.4 | -48.5 .. 44.9 | -73 .. 31 | -51.1 .. 45.3 |
 
 ## Pre-ionizer slot influence (PMI-05, identical for every occupant)
 
@@ -374,33 +449,33 @@ dT/dQ_PIM at the nominal point (K per W entering BP at IP-DN):
 
 | case | finish | AN | WI | WO | PI | PO | BP | CI | CO | CB |
 |---|---|---|---|---|---|---|---|---|---|---|
-| ground | bare_machined_stainless | 0.4861 | 0.5182 | 0.4003 | 0.5646 | 0.4225 | 0.5588 | 0.5652 | 0.4227 | 0.5363 |
-| ground | sandblasted_stainless | 0.4373 | 0.4658 | 0.353 | 0.5121 | 0.3072 | 0.4985 | 0.5126 | 0.3077 | 0.4809 |
-| ground | z93_white_inorganic | 0.384 | 0.4078 | 0.3092 | 0.4535 | 0.2144 | 0.433 | 0.454 | 0.2149 | 0.4199 |
-| orbit_hot | bare_machined_stainless | 0.4804 | 0.5151 | 0.3985 | 0.558 | 0.4125 | 0.5538 | 0.5585 | 0.4127 | 0.5313 |
-| orbit_hot | sandblasted_stainless | 0.4327 | 0.4637 | 0.3515 | 0.5072 | 0.2997 | 0.4946 | 0.5077 | 0.3002 | 0.477 |
-| orbit_hot | z93_white_inorganic | 0.3873 | 0.4139 | 0.3146 | 0.4591 | 0.221 | 0.4374 | 0.4595 | 0.2215 | 0.4244 |
-| orbit_cold | bare_machined_stainless | 0.4924 | 0.5248 | 0.4084 | 0.5727 | 0.4314 | 0.5648 | 0.5733 | 0.4317 | 0.5427 |
-| orbit_cold | sandblasted_stainless | 0.4446 | 0.4734 | 0.3618 | 0.5214 | 0.3175 | 0.5058 | 0.5219 | 0.3179 | 0.4884 |
-| orbit_cold | z93_white_inorganic | 0.3927 | 0.417 | 0.3192 | 0.4646 | 0.227 | 0.442 | 0.4651 | 0.2276 | 0.4291 |
+| ground | bare_machined_stainless | 0.5009 | 0.5255 | 0.3612 | 0.6261 | 0.4353 | 0.5761 | 0.628 | 0.4358 | 0.5516 |
+| ground | sandblasted_stainless | 0.4489 | 0.4684 | 0.3106 | 0.5682 | 0.3154 | 0.5116 | 0.5701 | 0.316 | 0.4928 |
+| ground | z93_white_inorganic | 0.3932 | 0.4053 | 0.2679 | 0.4989 | 0.2192 | 0.443 | 0.5006 | 0.2199 | 0.4292 |
+| orbit_hot | bare_machined_stainless | 0.4941 | 0.5223 | 0.3596 | 0.6176 | 0.4228 | 0.5699 | 0.6193 | 0.4232 | 0.5454 |
+| orbit_hot | sandblasted_stainless | 0.4438 | 0.4668 | 0.3095 | 0.5623 | 0.3061 | 0.5071 | 0.564 | 0.3068 | 0.4883 |
+| orbit_hot | z93_white_inorganic | 0.3965 | 0.4116 | 0.2732 | 0.5039 | 0.2266 | 0.4472 | 0.5057 | 0.2273 | 0.4335 |
+| orbit_cold | bare_machined_stainless | 0.5079 | 0.533 | 0.3695 | 0.6384 | 0.4461 | 0.5828 | 0.6403 | 0.4466 | 0.5588 |
+| orbit_cold | sandblasted_stainless | 0.4566 | 0.4756 | 0.3192 | 0.5783 | 0.3273 | 0.5192 | 0.5802 | 0.328 | 0.5007 |
+| orbit_cold | z93_white_inorganic | 0.4023 | 0.4139 | 0.2774 | 0.5104 | 0.2338 | 0.4522 | 0.5123 | 0.2345 | 0.4387 |
 
 ## Heat into the mounting interface at P_d max (W)
 
 | case / finish | corner min | nominal | corner max | LHS median | LHS max |
 |---|---|---|---|---|---|
-| ground/bare_machined_stainless | 23.67 | 242.1 | 534.69 | 221.9 | 428.7 |
-| ground/sandblasted_stainless | 17.08 | 214.07 | 497.31 | 205 | 379.6 |
-| ground/z93_white_inorganic | 8.29 | 181.1 | 428.85 | 166.2 | 323.8 |
-| orbit_hot/bare_machined_stainless | 21.91 | 251.23 | 558.8 | 230.4 | 435.5 |
-| orbit_hot/sandblasted_stainless | 15.49 | 222.4 | 520.19 | 202.7 | 365 |
-| orbit_hot/z93_white_inorganic | 6.03 | 184.77 | 444.58 | 170.5 | 323.3 |
-| orbit_cold/bare_machined_stainless | 21.95 | 242.23 | 539.62 | 224.9 | 396.1 |
-| orbit_cold/sandblasted_stainless | 15.49 | 214.1 | 503.53 | 199 | 364.3 |
-| orbit_cold/z93_white_inorganic | 6.03 | 180.92 | 436.62 | 165.4 | 364.2 |
+| ground/bare_machined_stainless | 23.09 | 255.44 | 591.7 | 236.5 | 449.5 |
+| ground/sandblasted_stainless | 16.56 | 222.86 | 539.09 | 211.6 | 389.5 |
+| ground/z93_white_inorganic | 7.14 | 186.53 | 462.77 | 168 | 330 |
+| orbit_hot/bare_machined_stainless | 22.73 | 264.82 | 619.61 | 241.9 | 473.5 |
+| orbit_hot/sandblasted_stainless | 15.04 | 231.38 | 561.95 | 211 | 384.9 |
+| orbit_hot/z93_white_inorganic | 4.98 | 190.38 | 478.55 | 174.5 | 315.3 |
+| orbit_cold/bare_machined_stainless | 21.45 | 255.51 | 594.93 | 236.5 | 437.8 |
+| orbit_cold/sandblasted_stainless | 15.04 | 222.87 | 544.16 | 209.1 | 385.3 |
+| orbit_cold/z93_white_inorganic | 4.98 | 186.39 | 471.36 | 169.3 | 381.8 |
 
 ## Spacecraft-side demand nodes
 
-- **PPU**: load: Q_PPU = P_bus x (1 - eta_PPU) (all conversion loss is heat at the PPU baseplate); eta_PPU: PENDING docs/hardware/h2/h2_4_ppu_bus/ (not selected here); evaluation_grid: [{"eta_PPU_assumed": 0.8, "Q_PPU_W": 270.0}, {"eta_PPU_assumed": 0.85, "Q_PPU_W": 202.5}, {"eta_PPU_assumed": 0.9, "Q_PPU_W": 135.0}, {"eta_PPU_assumed": 0.95, "Q_PPU_W": 67.5}]; allowable: T_baseplate <= Tj,derated - dT(junction->baseplate); Tj,derated = min(125 degC, T_j,max,rated - 40 degC) for transistors (EEE-INST-002 S1 Table 4 note 2); demand: required baseplate conductance to the spacecraft sink G >= Q_PPU / (T_baseplate,allow - T_sink); T_sink PENDING spacecraft ICD; scope: FLIGHT_REPRESENTATIVE (H-1 uses laboratory supplies outside the thermal network, W3 PS-C)
+- **PPU**: load: Q_PPU = P_bus x (1 - eta_PPU) (all conversion loss is heat at the PPU baseplate); eta_PPU: PENDING docs/hardware/h2/h2_4_ppu_bus/ (not selected here); evaluation_grid: [{"eta_PPU_assumed": 0.8, "Q_PPU_W": 270.0}, {"eta_PPU_assumed": 0.85, "Q_PPU_W": 202.5}, {"eta_PPU_assumed": 0.9, "Q_PPU_W": 135.0}, {"eta_PPU_assumed": 0.95, "Q_PPU_W": 67.5}]; allowable: T_baseplate <= Tj,derated - dT(junction->baseplate); Tj,derated = min(0.80 x T_j,max,rated, 125 degC, T_j,max,rated - 40 degC) for transistors (EEE-INST-002 S1 Table 4 junction-temperature factor 0.80 and note 2; degC basis of the 0.80 factor: verify); demand: required baseplate conductance to the spacecraft sink G >= Q_PPU / (T_baseplate,allow - T_sink); T_sink PENDING spacecraft ICD; scope: FLIGHT_REPRESENTATIVE (H-1 uses laboratory supplies outside the thermal network, W3 PS-C)
 - **COMP**: load: Q_comp = P_bus[compressor] (whole electrical input booked as heat at the compressor; gas enthalpy rise carried to the plenum, conservative for the motor node); value: PENDING docs/hardware/h2/h2_3_gas_path_plenum/ and docs/architecture_comparison/compressor_downselect/; limit: TBD (motor / bearing / seal limits of the selected compressor); scope: FLIGHT_REPRESENTATIVE
 - **GP**: load: compressed-gas enthalpy + conduction from the compressor and from H-1 through the feed line; coupling_to_H1: the only H-1-side path is the anode gas feed (inside G_anode_mount, H25-31) and the IP-UP/IP-DN module slot (PMI-05); heat conducted from the anode into the feed line changes T_feed at HALL_INLET_Z0 - a measured result, never a Hall-closure input upstream; limit: TBD (valve/seal ratings; W1 T_feed band, HW-ENV-04); scope: FLIGHT_REPRESENTATIVE
 - **MI**: quantity: heat conducted into the spacecraft through the thruster mount, Q_mount = G_mount (T_BP - T_mount); status: TBD - requires the spacecraft thermal ICD (allowable heat flux and interface temperature); scope: FLIGHT_REPRESENTATIVE
@@ -409,7 +484,9 @@ dT/dQ_PIM at the nominal point (K per W entering BP at IP-DN):
 
 | from | to | quantity | value | units | status |
 |---|---|---|---|---|---|
-| H2-5 | H2-1 (docs/hardware/h2/h2_1_hall_chamber_magnet/) | wall thickness, core/shell/body dimensions, support contact widths, coil P_mag split and R(T), f_open_outer | ranges H25-15..H25-23, H25-08 | m, W | PENDING |
+| H2-5 | H2-1 (docs/hardware/h2/h2_1_hall_chamber_magnet/) | wall thickness, core/shell/body dimensions, support contact widths, coil split, f_open_outer | ranges H25-15..H25-23 | m | PENDING |
+| H2-5 | H2-1 | coil dissipation stated as I^2 R20 at the design coil current (20 degC winding basis) plus winding R20 and copper grade; H2-5 applies R(T) at the solved coil temperature (constant-current supply). A hot-coil value must be labelled as such with its temperature | H25-08 evaluation range [0, 60] W at 20 degC | W, ohm | PENDING |
+| H2-5 | H2-1 | pole/core (HW-MC-13) grade selection is design-driving: supply the grade's Curie temperature, saturation flux density B_sat(T) and permeability vs temperature over the PI/BP envelope, and a maximum-use pole temperature; PI conduction path (core diameter, core-to-back-pole joint) sized to keep PI below it (design_findings F6) | PI/BP envelopes in margins_at_P_d_max (Curie ceiling 754 degC, Armco) | degC, T | PRELIMINARY |
 | H2-5 | H2-1 | inner-coil thermal design: EIS class above 250 degC, permanent-magnet inner circuit, or a stronger inner conduction path (design_findings F1) | see margins_at_P_d_max (class vs finish) | degC | PRELIMINARY |
 | H2-1 | H2-5 | selected EIS class / magnet option and coil hot-spot model (R(T), potting conductance) | — | degC, ohm, W/K | PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ |
 | H2-5 | H2-1 | exterior finish of MC-1 (high-emittance, temperature-capable) is design-driving | eps >= 0.9 class finish vs bare metal | - | PRELIMINARY |
@@ -422,7 +499,7 @@ dT/dQ_PIM at the nominal point (K per W entering BP at IP-DN):
 | H2-5 | H2-6 (docs/hardware/h2/h2_6_diagnostics_fixture/) | thermocouple positions at AN, WI/WO exit rings, CI/CO hot spots, PI/PO poles, BP, CB tube; facility sink and stand temperatures | node list | - | PRELIMINARY |
 | H2-6 | H2-5 | facility radiative sink and stand interface temperatures | T_env: [246.15, 293.15]; T_mount: [293.15, 315.15] | K | PENDING |
 | H2-5 | H2-7 (docs/hardware/h2/h2_7_mechanical_bom/) | body envelope D_body, L_body and mount heat into the stand/spacecraft | H25-18/19; mount_heat_W | m, W | PENDING |
-| fo_preionizer_module_icd (docs/interfaces/preionizer_module/, PMI-05) | H2-5 | occupant active heat into H-1 at IP-DN (common interface; 0 for PIM-0) | — | W | PENDING |
+| fo_preionizer_module_icd (docs/interfaces/preionizer_module/, PMI-05) | H2-5 | occupant active heat into H-1 at IP-DN (common interface; 0 for PIM-0). PMI-05 is cited ahead of the merge of fo_preionizer_module_icd (not an ancestor of the base commit); nothing is imported from it and the id/meaning (thermal-rejection interface) is reconciled at integration | — | W | PENDING docs/interfaces/preionizer_module/ |
 | H2-5 | fo_preionizer_module_icd (PMI-05) | H-1 sensitivity to heat at IP-DN | dT_dQ_PIM_K_per_W_nominal per node | K/W | PRELIMINARY |
 | H2-5 | fo_subsystem_maturity_matrix (docs/budgets/subsystem_maturity/) | m16_rows | see m16_rows | - | PRELIMINARY |
 | H2-5 | H-1 / HW-MC-08, HW-MC-14, HW-MC-16 | coil hot-spot locations, max coil current/temperature inputs, thermal-cycle profile | CI/CO envelope | K | PRELIMINARY |
@@ -435,13 +512,13 @@ dT/dQ_PIM at the nominal point (K per W entering BP at IP-DN):
 
 ## M16 rows (proposed)
 
-| subsystem | matured | proposed state | blocking item | rollup |
-|---|---|---|---|---|
-| thermal control | node list, links, sinks, limits, preliminary envelope and margins | BLOCKED | H2-1 preliminary geometry and magnet-circuit design release (wall thickness, core/shell dimensions, coil P_mag and EIS) - PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | hardware-definition blocker |
-| magnetic circuit | coil/magnet temperature envelope vs IEC 60085 classes and Sm2Co17; EIS class demand | RUNNING | — | — |
-| extended-channel Hall discharge chamber/accelerator | wall/anode temperature envelope; BN oxidizing-limit margin | RUNNING | — | — |
-| shielded Xe-fed LaB6 hollow cathode | cathode heat into H-1 and mount conductance demand | RUNNING | — | — |
-| PPU/power distribution | PPU heat demand structure (Q_PPU vs eta) and derating allowable | RUNNING | — | — |
+| subsystem | matured | proposed state | blocking item | rollup | state owner |
+|---|---|---|---|---|---|
+| thermal control | node list, links, sinks, limits, preliminary envelope and margins | BLOCKED | H2-1 preliminary geometry and magnet-circuit design release (wall thickness, core/shell dimensions, coil P_mag and EIS) - PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ | hardware-definition blocker | H2-5 (this lane) |
+| magnetic circuit | coil/magnet temperature envelope vs IEC 60085 classes and Sm2Co17; pole/core envelope vs the Curie ceiling; EIS class and pole-grade demands | — | — | — | H2-1 (docs/hardware/h2/h2_1_hall_chamber_magnet/) |
+| extended-channel Hall discharge chamber/accelerator | wall/anode temperature envelope; BN oxidizing-limit margin | — | — | — | H2-1 (docs/hardware/h2/h2_1_hall_chamber_magnet/) |
+| shielded Xe-fed LaB6 hollow cathode | cathode heat into H-1 and mount conductance demand | — | — | — | H2-2 (docs/hardware/h2/h2_2_cathode_integration/) |
+| PPU/power distribution | PPU heat demand structure (Q_PPU vs eta) and derating allowable | — | — | — | H2-4 (docs/hardware/h2/h2_4_ppu_bus/) |
 
 ## Thermal-life link
 
@@ -449,7 +526,7 @@ dT/dQ_PIM at the nominal point (K per W entering BP at IP-DN):
 - WI/WO: AOL-M02 / AOL-M03 wall sputtering and oxidation at wall temperature; BN oxidizing 900 degC guide (lane 15)
 - CE (not solved): AOL-M04 emitter poisoning (LaB6 >= 1570 degC for pO2 <= 1e-4 Torr); thermal_life cathode node (Richardson-Dushman)
 - CB: AOL-M05 keeper/orifice erosion context; cathode_assembly_temperature_limit (TBD in limits_v1.json)
-- PI/PO/BP: AOL-M06 magnetic-circuit oxidation/temperature; HW-MC-13 grade
+- PI/PO/BP: AOL-M06 magnetic-circuit oxidation/temperature; HW-MC-13 grade; Curie ceiling 754 degC (Armco) and grade B_sat(T) (TBD)
 - CI/CO: AOL-M07 insulation thermal ageing (IEC 60085 class); thermal_life hall_magnet: this network supplies external_heat_W and rejection_paths structure only once H2-1 defines the coil (not now)
 - exterior finish: AOL-M08 coatings/emissivity change; AOL-M09 ram AO on the exterior
 - all: thermal_life.py is NOT called: its discharge wall-heat inputs must come from an admitted Hall map or measured hardware (G11); none exists
@@ -468,7 +545,8 @@ dT/dQ_PIM at the nominal point (K per W entering BP at IP-DN):
 - **S1a**: coil hot-spot/average offset in vacuum on the bench (HW-MC-14); contact conductances of pole/coil/shell joints (bench heater test); emittance of as-built surfaces (AOL-M08 pre) (closes H25-08, H25-30, H25-27, H25-29)
 - **S1**: thermal time constants T-SETTLE; facility sink and stand temperatures; dormant thruster temperature (closes H25-34, H25-35, HW-H1-07 T_SETTLE)
 - **S1b**: remount reproducibility of AN/WI/WO/BP temperatures at fixed setpoints (closes installation thermal term c5 (HW-SVC-03))
-- **Phase 1**: AN, WI/WO, PI/PO, CI/CO, CB temperatures vs P_d, V_d, mdot_atm, x_O2 on N2 and air; inversion of the anode and wall heat fractions by a correlated model (EXT-MYERS2016 / EXT-MAZOUFFRE2005 method) (closes H25-04, H25-05, H25-06)
+- **Phase 1**: AN, WI/WO, PI/PO, CI/CO, CB temperatures vs P_d, V_d, mdot_atm, x_O2 on N2 and air; inversion of the anode and wall heat fractions by a correlated model (EXT-MYERS2016 / EXT-MAZOUFFRE2005 method) (closes H25-04, H25-05, H25-06, H25-44)
+- **S1a**: BN wall coupon conductivity vs temperature (or supplier k(T) data) and pole/core grade B_sat(T) coupon data (closes H25-45, H25-25)
 - **Phase 1 (rf_hall/ecr_hall arms)**: anode/BP temperature difference between arms at the same setpoint (HW-PIM-09) and occupant heat at IP-DN (closes H25-11)
 
 ## Milestone statement
@@ -483,6 +561,7 @@ dT/dQ_PIM at the nominal point (K per W entering BP at IP-DN):
 - H25-Q2: Coil EIS: which IEC 60085 class (or ceramic > 250 degC) is the design basis (HWQ-20), given the coil envelope, or a permanent-magnet MC-1 (HWQ-19)?
 - H25-Q3: Spacecraft thermal ICD: mounting-interface temperature and allowable heat into the spacecraft (G_mount, T_mount).
 - H25-Q4: PROPOSED: thermal margins (e.g. K below each limit) for PDR are not in the RFP; owner to set them.
+- H25-Q5: Pole/core material (HWQ-18): accept a maximum-use pole temperature below the grade Curie point as a design requirement, set from B_sat(T) of the selected grade?
 
 ## External sources accessed (2026-09-27)
 
@@ -494,4 +573,5 @@ dT/dQ_PIM at the nominal point (K per W entering BP at IP-DN):
 - EXT-NASA-TM2001: B. J. Anderson, C. G. Justus, G. W. Batts, 'Guidelines for the Selection of Near-Earth Thermal Environment Parameters for Spacecraft Design', NASA/TM-2001-211221, October 2001. https://ntrs.nasa.gov/api/citations/20020004360/downloads/20020004360.pdf (full text (NTRS); sha256 a6ea8902b65e59ef3932d1a1f84c5b3a45938f240344b1d8a7465e79a625467e)
 - EXT-NIST-CRYO: NIST Cryogenics Technologies Group, Material Properties (thermal-conductivity curve fits): OFHC copper, 304 stainless steel, molybdenum, Ti-6Al-4V, 6061-T6 aluminum. https://trc.nist.gov/cryogenics/materials/materialproperties.htm (open web pages (fit coefficients transcribed 2026-09-27); sha256 HTML pages; coefficients transcribed below verbatim, no file hash)
 - EXT-NICOFE-A848: Nicofe, ASTM A848 Type 1 Soft Magnetic Iron datasheet IAW3078 v2 (typical data). https://www.nicofe.com/wp-content/uploads/2025/12/IAW3078-Nicofe-ASTM-A848-Type-1-A4-datasheet-v2.pdf (manufacturer datasheet; sha256 84be2d2f1643214bc27b85ff08265299d2b5540ffa36a28d01c2040e883fc032)
+- EXT-NBS-ARMCO1967: T. W. Watson, D. R. Flynn, H. E. Robinson, 'Thermal Conductivity and Electrical Resistivity of Armco Iron', J. Research NBS 71C(4), 285-290, Oct-Dec 1967 (Table 2 smoothed values, p. 287; Curie hysteresis 754-761 degC, p. 288). https://nvlpubs.nist.gov/nistpubs/jres/71C/jresv71Cn4p285_A1b.pdf (full text (NIST open archive; retrieved 2026-09-27, re-verified by hash 2026-09-29); sha256 35192df233d639b49d46c715ffc3d0558ece3355c6e8f8284b69e7d9f472131d)
 - EXT-EEE-INST-002: NASA/TP-2003-212242 EEE-INST-002 (April 2008 edition incl. Addendum 1) (also limits_v1.json source nasa_eee_inst_002). https://nepp.nasa.gov/docuploads/FFB52B88-36AE-4378-A05B2C084B5EE2CC/EEE-INST-002_add1.pdf (full text (NASA NEPP); sha256 4bd84c11401d51613911a4cdfd4afaacefc113e7b538fd86b2a60f99afa1d3dd)

@@ -200,7 +200,8 @@ def test_energy_closure_and_envelope_consistency(doc):
                     assert e["T_min_K"] <= e["T_nominal_K"] <= e["T_max_K"], (case, fin, pd, n)
                     b = e["hot_corner_energy_balance_W"]
                     assert abs(b["load"] - b["rejected_to_boundaries"]) <= 1e-3 + 1e-6 * b["load"]
-                    assert e["iron_k_held_at_0C"]["hot_corner"] is False
+                    assert isinstance(e["iron_k_above_measured_640C"]["hot_corner"], bool)
+                    assert isinstance(e["hot_corner_coil_R_T_beyond_500C"], bool)
             lhs = d["lhs_at_P_d_max"]
             for n, st in lhs["nodes"].items():
                 assert st["max_sample_above_corner_T_max_K"] <= 1e-6, (case, fin, n)
@@ -259,6 +260,10 @@ def test_interface_demands(doc):
 def test_blockers_m16_procurement_tests_milestones(doc):
     assert sorted(b["blocker"] for b in doc["architecture_changing_blockers_touched"]) == [1, 2, 3]
     for m in doc["m16_rows"]:
+        if m["subsystem"] != "thermal control":
+            # other lanes' subsystems: contribution only, no state proposed outside this lane's ownership
+            assert m["proposed_state"] is None and m["state_owner"].startswith("H2-")
+            continue
         assert m["proposed_state"] in M16_STATES
         if m["proposed_state"] == "BLOCKED":
             assert isinstance(m["blocking_item"], str) and m["blocking_item"]
@@ -282,3 +287,76 @@ def test_markdown_names_every_parameter(doc):
         assert r["id"] in md
     for n in ("H25-Q1", "H25-Q2", "H25-Q3", "H25-Q4"):
         assert n in md
+
+
+# ------------------------------------------------------------------------------------------- repair-round checks
+def test_copper_rt_matches_pinned_limits_record(gen):
+    with open(os.path.join(ROOT, "schemas", "thermal_life", "limits_v1.json"), encoding="utf-8") as f:
+        rec = json.load(f)["records"]["copper_roeser_ratio"]["values"]
+    assert gen.CU_RATIO_T_C == rec["T_C"]["value"]
+    assert gen.CU_RATIO == rec["R_over_R0"]["value"]
+    assert abs(gen.cu_factor_vs_20C(20.0 + gen.T0C) - 1.0) < 1e-12
+    assert gen.cu_factor_vs_20C(250.0 + gen.T0C) > 1.8
+
+
+def test_coil_dissipation_follows_temperature(gen):
+    rows = gen.build_parameters()
+    pm = gen.param_map(rows)
+    assert "20 degC" in pm["P_mag_W"]["name"]
+    fx = gen.fixed_inputs(pm)
+    x = {k: 0.5 * (lo + hi) for k, (lo, hi) in gen.ranges_for("ground", pm).items()}
+    T, info = gen.run(x, fx, "ground", "z93_white_inorganic", 1350.0)
+    for nd in ("CI", "CO"):
+        ratio = info["coil_W"][nd] / info["coil_W_at_20C"][nd]
+        assert abs(ratio - gen.cu_factor_vs_20C(T[nd])) < 1e-9
+        assert ratio > 1.0
+    assert abs(info["load_W"] - info["rejected_W"]) < 1e-6 * info["load_W"]
+
+
+def test_iron_conductivity_is_measured_table(gen):
+    assert len(gen.FE_K_TABLE_C) == len(gen.FE_K_TABLE_W_CMK)
+    assert len(gen.FE_RHO_TABLE_C) == len(gen.FE_RHO_TABLE_UOHM_CM)
+    assert abs(gen.fe_k(gen.T0C, 1.0) - 74.2) < 1e-9                 # Table 2: 0.742 W/cm deg at 0 C
+    assert abs(gen.fe_k(400.0 + gen.T0C, 1.0) - 49.5) < 1e-9         # 0.495 at 400 C
+    k640 = gen.fe_k(640.0 + gen.T0C, 1.0)
+    assert abs(k640 - 37.1) < 1e-9
+    # continuation above 640 C is the measured Lorenz function x T / rho: continuous within the table's own 2 %
+    assert abs(gen.fe_k(640.01 + gen.T0C, 1.0) / k640 - 1.0) < 0.02
+    assert gen.EXTERNAL["EXT-NBS-ARMCO1967"]["sha256"] == "35192df233d639b49d46c715ffc3d0558ece3355c6e8f8284b69e7d9f472131d"
+
+
+def test_pm_option_uses_its_own_zero_coil_solve(doc):
+    for case, fins in doc["solve"]["cases"].items():
+        for fin, d in fins.items():
+            env = d["pm_option_at_P_d_max"]["envelope"]
+            for nd in ("CI", "CO"):
+                assert env[nd]["hot_corner_coil_W"] == {"CI": 0.0, "CO": 0.0}
+            rows = [r for r in doc["margins_at_P_d_max"] if r["case"] == case and r["finish"] == fin and "PM option" in r["limit"]]
+            assert len(rows) == 4
+            for r in rows:
+                assert abs(r["T_max_C"] - round(env[r["node"]]["T_max_K"] - 273.15, 1)) < 1e-9
+
+
+def test_pole_curie_ceiling_rows_and_demand(doc):
+    rows = [r for r in doc["margins_at_P_d_max"] if r["node"] in ("PI", "PO", "BP")]
+    assert len(rows) == 3 * 3 * 3
+    assert all(r["limit_C"] == 754.0 for r in rows)
+    assert any(f.startswith("F6") and "Curie" in f for f in doc["design_findings"])
+    assert any(d["to"].startswith("H2-1") and "B_sat(T)" in d["quantity"] for d in doc["interface_demands"])
+    lim = [l for l in doc["limits"] if l["node"] == "PI/PO/BP" and l["live"]]
+    assert lim and "EXT-NBS-ARMCO1967" in lim[0]["source"]
+
+
+def test_repair_disclosures(doc):
+    pm = {r["key"]: r for r in doc["design_parameters"]}
+    assert "OUTSIDE THE ALLOCATION" in pm["P_d_max_W"]["note"]
+    assert "INCONSISTENT" in pm["F_s_lateral"]["note"]
+    assert pm["wall_cond_len_frac"]["value"] == [0.5, 1.0]
+    assert pm["kBN_T_mult"]["status"].startswith("TBD")
+    for k in ("L_ch_m", "h_ch_m", "D_out_m"):
+        assert pm[k]["evidence_class"] == "inferred"
+    ppu = [l for l in doc["limits"] if l["node"] == "PPU"][0]
+    assert "0.80" in ppu["source"] and "0.80" in doc["spacecraft_side_demands"]["PPU"]["allowable"]
+    f3 = [f for f in doc["design_findings"] if f.startswith("F3")][0]
+    assert " 0%" not in f3                                     # fractions printed to 0.01 %, never rounded to a guaranteed pass
+    assert doc["solve"]["survival_cold_off"]["cases"]
