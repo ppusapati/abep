@@ -285,6 +285,8 @@
   "RUNNING": "the row's single blocking item is worked by a REGISTERED H2 follow-on: the lane id is present in docs/orchestration/lane_registry_v1.json follow_ons (read, never pinned) and its registered scope (workflow script prompt, quoted verbatim and checked at build time) produces the missing input of that item",
   "BLOCKED": "a single named blocking item exists and no registered lane works it (an owner decision, an H-1 / C-1 measurement (A7 wave H4, PLANNED_NOT_REGISTERED), a procurement action (wave H3, PLANNED_NOT_REGISTERED) or an item outside every registered scope)",
   "READY": "no open blocking item",
+  "owner_decision_items": "a blocking item whose resolved state is an open owner decision (state text matches 'owner decision' / OPEN_OWNER_DECISION) is never RUNNING: no lane can take an owner decision; enforced at build time",
+  "partial_scope": "RUNNING needs registered scopes that produce EVERY missing input the blocking item names; when registered lanes cover only part of it (checked against the item's own 'requires' text), they are listed under partial_scope and the row stays BLOCKED",
   "one_blocker_rule": "every row carries exactly ONE blocking evidence/interface item (typed id resolved against its defining file); A7: every BLOCKED row points to exactly one item",
   "lanes_that_mature_but_do_not_work_the_blocker": "an H2 lane that matures other aspects of a row is listed under h2_lanes but does not change the execution state",
   "live_execution_state_of_lanes": "not read: the trigger ledgers are mutable and time-varying; RUNNING means 'assigned by registration and scope', not 'an agent is executing now'"
@@ -473,6 +475,7 @@
     },
     "worked_by": null,
     "not_worked_reason": "owner decision (feed-state closure DI-1.1); H2-3 covers compressor outlet -> anode manifold and only the interface to the intake",
+    "partial_scope": null,
     "waits_on": "owner decision",
     "a7_category": "proposal-only documentation gap",
     "technical_category": "unresolved interface",
@@ -653,6 +656,7 @@
     },
     "worked_by": null,
     "not_worked_reason": "no filter concept in any registered scope; upstream ICD owner question 1",
+    "partial_scope": null,
     "waits_on": "owner decision",
     "a7_category": "proposal-only documentation gap",
     "technical_category": "unresolved interface",
@@ -921,6 +925,7 @@
     },
     "worked_by": null,
     "not_worked_reason": "first-hand verification of a published source (A4: DI-1.4 not frozen until verified); A7 lists compressor refinement under everything_else_rule; no registered lane",
+    "partial_scope": null,
     "waits_on": "first-hand source verification",
     "a7_category": "proposal-only documentation gap",
     "technical_category": "compressor",
@@ -1115,6 +1120,7 @@
      "scope_source": "docs/orchestration/workflow_scripts/h2-3-gas-path-plenum.js (ARGS_EMBEDDED prompt; read, not pinned)"
     },
     "not_worked_reason": null,
+    "partial_scope": null,
     "waits_on": null,
     "a7_category": "proposal-only documentation gap",
     "technical_category": "unresolved interface",
@@ -1408,6 +1414,7 @@
     },
     "worked_by": null,
     "not_worked_reason": "owner release of GROUND_QUALIFICATION_POINT feed points (S1A-C3); H2-3 places measurement locations but does not release test points",
+    "partial_scope": null,
     "waits_on": "owner decision",
     "a7_category": "test-readiness blocker",
     "technical_category": "unresolved interface",
@@ -1717,6 +1724,7 @@
     },
     "worked_by": null,
     "not_worked_reason": "the ledger refusal closes only with H-1 / C-1 measured startup/transition/fallback Xe (wave H4, PLANNED_NOT_REGISTERED), owner policy (OD-XE-2/3) and procured hardware masses (wave H3); H2-7 carries the hardware-mass rows but cannot close the measured terms",
+    "partial_scope": null,
     "waits_on": "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)",
     "a7_category": "architecture blocker",
     "technical_category": "cathode-Xe",
@@ -1936,6 +1944,7 @@
     },
     "worked_by": null,
     "not_worked_reason": "no regulator concept in any registered scope (H2-2 covers the cathode feed branch downstream of the Xe metering); upstream ICD owner question OQ6",
+    "partial_scope": null,
     "waits_on": "design work outside every registered scope",
     "a7_category": "proposal-only documentation gap",
     "technical_category": "unresolved interface",
@@ -2222,6 +2231,7 @@
     },
     "worked_by": null,
     "not_worked_reason": "identifying available FS-C MFC units for S1a is procurement (wave H3, PLANNED_NOT_REGISTERED); H2-2 specifies the 0.10-0.15 mg/s flow-measurement capability but does not identify units",
+    "partial_scope": null,
     "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
     "a7_category": "procurement blocker",
     "technical_category": "procurement",
@@ -2641,6 +2651,7 @@
     },
     "worked_by": null,
     "not_worked_reason": "atmospheric sustainment is measured only in H-1 Phase 1 (wave H4, PLANNED_NOT_REGISTERED); the credible Hall set is EMPTY, so no model can supply it; H2-1 sizes the chamber but never predicts sustainment (A7 h2_scope)",
+    "partial_scope": null,
     "waits_on": "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)",
     "a7_category": "architecture blocker",
     "technical_category": "propulsion physics",
@@ -2980,6 +2991,7 @@
      "scope_source": "docs/orchestration/workflow_scripts/h2-1-hall-chamber-magnet.js (ARGS_EMBEDDED prompt; read, not pinned)"
     },
     "not_worked_reason": null,
+    "partial_scope": null,
     "waits_on": null,
     "a7_category": "hardware-definition blocker",
     "technical_category": "procurement",
@@ -3312,6 +3324,7 @@
     },
     "worked_by": null,
     "not_worked_reason": "C-1 selection ('emitting area, insert density and usable thickness, orifice') is cathode-hardware procurement (wave H3, PLANNED_NOT_REGISTERED); H2-2 integrates the selected type but does not select the unit",
+    "partial_scope": null,
     "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
     "a7_category": "procurement blocker",
     "technical_category": "cathode-Xe",
@@ -3587,6 +3600,7 @@
     },
     "worked_by": null,
     "not_worked_reason": "the blocking item is the owner bus-voltage decision plus a measured supply efficiency (aux_bus tbd_register); H2-4 carries converter efficiency only as a parameter with analog ranges",
+    "partial_scope": null,
     "waits_on": "owner decision",
     "a7_category": "proposal-only documentation gap",
     "technical_category": "unresolved interface",
@@ -3840,6 +3854,7 @@
      "scope_source": "docs/orchestration/workflow_scripts/h2-5-thermal-network.js (ARGS_EMBEDDED prompt; read, not pinned)"
     },
     "not_worked_reason": null,
+    "partial_scope": null,
     "waits_on": null,
     "a7_category": "proposal-only documentation gap",
     "technical_category": "thermal",
@@ -4123,6 +4138,7 @@
     },
     "worked_by": null,
     "not_worked_reason": "owner-approved limits must come from real hardware/facility ratings (A4), i.e. procured units; no registered lane produces them",
+    "partial_scope": null,
     "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
     "a7_category": "test-readiness blocker",
     "technical_category": "procurement",
@@ -4419,6 +4435,7 @@
     },
     "worked_by": null,
     "not_worked_reason": "frozen calibration procedures for identified instruments; H2-6 maps measurements to decision quantities and qualification steps but its scope does not freeze calibration procedures, and the instruments are not procured (wave H3)",
+    "partial_scope": null,
     "waits_on": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
     "a7_category": "test-readiness blocker",
     "technical_category": "procurement",
@@ -4708,20 +4725,16 @@
     }
    },
    "scheduler": {
-    "execution_state": "RUNNING",
+    "execution_state": "BLOCKED",
     "blocking_item": {
      "ref": "LOCK1:D-06",
      "state": "OPEN_OWNER_DECISION",
      "text": "LOCK-1 D-06 (hardware configuration and configuration-change procedure) open"
     },
-    "worked_by": {
-     "lane": "fo_h2_6_diagnostics_fixture",
-     "a7_title": "H2-6 diagnostics + H-1 fixture",
-     "scope_quote": "the pre-ionizer module slot on its own kinematic/repeatable interface",
-     "scope_source": "docs/orchestration/workflow_scripts/h2-6-diagnostics-fixture.js (ARGS_EMBEDDED prompt; read, not pinned)"
-    },
-    "not_worked_reason": null,
-    "waits_on": null,
+    "worked_by": null,
+    "not_worked_reason": "the blocking item is an OPEN owner decision (LOCK-1 D-06: HW-0 spacer + S1b re-mounts / OPTION-DIVERTER / CFG-A/B separate builds); H2-6 designs the module slot on a kinematic/repeatable interface (it matures this row) but does not produce the D-06 decision and presupposes one of its options; an owner-decision item is never RUNNING (scheduler rule)",
+    "partial_scope": null,
+    "waits_on": "owner decision",
     "a7_category": "hardware-definition blocker",
     "technical_category": "unresolved interface",
     "on_phase1_gate_path": true,
@@ -5258,6 +5271,15 @@
     },
     "worked_by": null,
     "not_worked_reason": "the ICD states it requires 'the H-1 rear-flange design and the module designs'; H2-6 designs the module slot and H2-1 the HALL_INLET_Z0 relation, but no registered lane designs the RF / ECR modules (RF contingency components: wave H3, PLANNED_NOT_REGISTERED); PMQ-01 (envelope sized to the largest occupant) is open",
+    "partial_scope": {
+     "lanes": [
+      "fo_h2_1_hall_chamber_magnet",
+      "fo_h2_6_diagnostics_fixture"
+     ],
+     "requires_quote": "the H-1 rear-flange design and the module designs",
+     "covered": "H-1 rear flange / HALL_INLET_Z0 relation (H2-1) and the module slot on a kinematic/repeatable interface (H2-6)",
+     "uncovered": "the RF / ECR module designs (no registered scope; RF contingency components: wave H3, PLANNED_NOT_REGISTERED)"
+    },
     "waits_on": "design work outside every registered scope",
     "a7_category": "hardware-definition blocker",
     "technical_category": "unresolved interface",
@@ -5401,6 +5423,8 @@
     "RUNNING": "the row's single blocking item is worked by a REGISTERED H2 follow-on: the lane id is present in docs/orchestration/lane_registry_v1.json follow_ons (read, never pinned) and its registered scope (workflow script prompt, quoted verbatim and checked at build time) produces the missing input of that item",
     "BLOCKED": "a single named blocking item exists and no registered lane works it (an owner decision, an H-1 / C-1 measurement (A7 wave H4, PLANNED_NOT_REGISTERED), a procurement action (wave H3, PLANNED_NOT_REGISTERED) or an item outside every registered scope)",
     "READY": "no open blocking item",
+    "owner_decision_items": "a blocking item whose resolved state is an open owner decision (state text matches 'owner decision' / OPEN_OWNER_DECISION) is never RUNNING: no lane can take an owner decision; enforced at build time",
+    "partial_scope": "RUNNING needs registered scopes that produce EVERY missing input the blocking item names; when registered lanes cover only part of it (checked against the item's own 'requires' text), they are listed under partial_scope and the row stays BLOCKED",
     "one_blocker_rule": "every row carries exactly ONE blocking evidence/interface item (typed id resolved against its defining file); A7: every BLOCKED row points to exactly one item",
     "lanes_that_mature_but_do_not_work_the_blocker": "an H2 lane that matures other aspects of a row is listed under h2_lanes but does not change the execution state",
     "live_execution_state_of_lanes": "not read: the trigger ledgers are mutable and time-varying; RUNNING means 'assigned by registration and scope', not 'an agent is executing now'"
@@ -5411,16 +5435,15 @@
      "rows": []
     },
     "RUNNING": {
-     "count": 4,
+     "count": 3,
      "rows": [
       "buffer/plenum",
       "magnetic circuit",
-      "thermal control",
-      "mechanical/structural interfaces"
+      "thermal control"
      ]
     },
     "BLOCKED": {
-     "count": 13,
+     "count": 14,
      "rows": [
       "intake",
       "protective/filter stage",
@@ -5434,6 +5457,7 @@
       "PPU/power distribution",
       "control/FDIR",
       "sensors/diagnostics",
+      "mechanical/structural interfaces",
       "RF pre-ionization module interface"
      ]
     },
@@ -5445,12 +5469,13 @@
   },
   "blocked_rows_wait_on": {
    "owner decision": {
-    "count": 4,
+    "count": 5,
     "rows": [
      "intake",
      "protective/filter stage",
      "atmospheric metering valve",
-     "PPU/power distribution"
+     "PPU/power distribution",
+     "mechanical/structural interfaces"
     ]
    },
    "H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED)": {
@@ -5898,9 +5923,7 @@
      "sensors/diagnostics",
      "mechanical/structural interfaces"
     ],
-    "works_blocking_item_of": [
-     "mechanical/structural interfaces"
-    ],
+    "works_blocking_item_of": [],
     "contributes_rows": [
      "RF pre-ionization module interface",
      "atmospheric metering valve",
@@ -5972,7 +5995,7 @@
   "answer": {
    "architecture_decision": "prevented by 2 architecture-blocker rows (Xe tank, extended-channel Hall discharge chamber/accelerator): A7 blocker 1 (rows: extended-channel Hall discharge chamber/accelerator) is resolvable only by H-1 Phase 1 (credible Hall set EMPTY; framework current outcome NOT_EVALUATED); A7 blocker 3 (rows: Xe tank) is the refused Xe ledger (14 missing inputs). A7 blocker 2 is the current single blocker of no row: every row on its evidence path (7 rows) is first blocked by a path item, and blocker 2 is decided by Phase-1 readings on the common H-1.",
    "path_to_h1": "the earliest blocked gate is S1a (5 rows); rows blocking a gate on the Phase-1 path by A7 category: hardware-definition blocker 3, procurement blocker 2, test-readiness blocker 3. S1a is S1A_NOT_READY (0/6), S1 is S1_NOT_READY (0/8), LOCK-1 has 15 open owner decisions.",
-   "scheduler": "4 rows RUNNING (a registered H2 lane works the blocking item), 13 BLOCKED, 0 READY, 0 VERIFIED. BLOCKED rows wait on: owner decision 4; H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED) 2; procurement (wave H3, PLANNED_NOT_REGISTERED) 4; design work outside every registered scope 2; first-hand source verification 1. The H3 procurement and H4 test waves are PLANNED_NOT_REGISTERED (A7), so no registered lane can unblock the procurement- and measurement-bound rows.",
+   "scheduler": "3 rows RUNNING (a registered H2 lane works the blocking item), 14 BLOCKED, 0 READY, 0 VERIFIED. BLOCKED rows wait on: owner decision 5; H-1 / C-1 measurement (wave H4, PLANNED_NOT_REGISTERED) 2; procurement (wave H3, PLANNED_NOT_REGISTERED) 4; design work outside every registered scope 2; first-hand source verification 1. The H3 procurement and H4 test waves are PLANNED_NOT_REGISTERED (A7), so no registered lane can unblock the procurement- and measurement-bound rows.",
    "proposal_only": "7 rows are proposal-only documentation gaps (intake, protective/filter stage, compressor, buffer/plenum, Xe regulator, PPU/power distribution, thermal control): they gate neither H-1 nor the branch decision and veto only via an evidenced hard incompatibility. That is NOT evidence that they close: the strict mass roll-up is REFUSED and A5 risk 4 remains open.",
    "status": "PROPOSED reading for the owner (the counts are mechanical; the blocking-item selection and the category assignment are this lane's reading)"
   }
@@ -6372,7 +6395,7 @@
   "statement": "Milestone A (conditional selection): SUPPORTED as an execution input only. The v2 matrix states, per A5 subsystem, the single item that blocks it, whether a registered H2 lane is working that item, and whether the item is one of the three A7 architecture-changing blockers; it selects no architecture branch and leaves Bundle 1 at NO_BASELINE_YET. Milestone B (physics-backed selection): NOT supported - it needs an admitted Hall closure or H-1 Phase-1 data (credible set EMPTY; framework outcome NOT_EVALUATED). Milestone C (proposal/PDR freeze): input only - it lists the TO_BE_ALLOCATED / TBD / UNKNOWN cells, the refused Xe ledger and the proposal-only gaps that must close.",
   "three_questions": {
    "i_conditional_selection_now": "none; A5 is a frozen proposal reference, the branch (hall_only / rf_hall / ecr_hall / NO_VIABLE_CASE) is open until H-1 Phase 1",
-   "ii_what_blocks_physics_backed_selection": "A7 blocker 1 (Hall-only sustainment at the delivered feed state, H-1 Phase 1 only) and A7 blocker 3 (Xe ledger refused); on the path to H-1: hardware-definition, procurement and test-readiness items at S1a, LOCK-1 and S1/S1b",
+   "ii_what_blocks_physics_backed_selection": "all three A7 architecture-changing blockers: blocker 1 (Hall-only sustainment at the delivered feed state, H-1 Phase 1 only), blocker 2 (incremental RF/ECR benefit after full bus-power accounting, decided only by Phase-1/2 readings on the common H-1; it is the single blocker of no row because every row on its evidence path is first blocked by a path item) and blocker 3 (Xe ledger refused); on the path to H-1: hardware-definition, procurement and test-readiness items at S1a, LOCK-1 and S1/S1b",
    "iii_what_could_overturn": "A5 risks 2-4 and any evidenced hard incompatibility from the proposal-only rows (thermal, mass, compressor, life); the ICD's candidate incompatibility: ECR fringe field versus INV-B3 (PMI-09)"
   },
   "unlocks": [

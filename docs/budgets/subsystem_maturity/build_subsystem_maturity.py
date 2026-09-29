@@ -205,6 +205,12 @@ SCHEDULER_RULE = {
                "(A7 wave H4, PLANNED_NOT_REGISTERED), a procurement action (wave H3, PLANNED_NOT_REGISTERED) or an item "
                "outside every registered scope)",
     "READY": "no open blocking item",
+    "owner_decision_items": "a blocking item whose resolved state is an open owner decision (state text matches "
+                            "'owner decision' / OPEN_OWNER_DECISION) is never RUNNING: no lane can take an owner decision; "
+                            "enforced at build time",
+    "partial_scope": "RUNNING needs registered scopes that produce EVERY missing input the blocking item names; when "
+                     "registered lanes cover only part of it (checked against the item's own 'requires' text), they are "
+                     "listed under partial_scope and the row stays BLOCKED",
     "one_blocker_rule": "every row carries exactly ONE blocking evidence/interface item (typed id resolved against its "
                         "defining file); A7: every BLOCKED row points to exactly one item",
     "lanes_that_mature_but_do_not_work_the_blocker": "an H2 lane that matures other aspects of a row is listed under "
@@ -345,10 +351,16 @@ SCHED = {
         not_worked_reason="frozen calibration procedures for identified instruments; H2-6 maps measurements to decision quantities and qualification steps but its scope does not freeze calibration procedures, and the instruments are not procured (wave H3)",
         a7={"is": None, "feeds": [1, 2, 3], "relation": "measures every Phase-1 decision quantity (P1DQ-*) that decides blockers 1 and 2, and the cathode flow of blocker 3"}),
     "mechanical_structural": dict(
-        blocking_item="LOCK1:D-06", worked_by="fo_h2_6_diagnostics_fixture", nature="hardware-definition blocker",
+        blocking_item="LOCK1:D-06", worked_by=None, nature="hardware-definition blocker",
+        not_worked_reason="the blocking item is an OPEN owner decision (LOCK-1 D-06: HW-0 spacer + S1b re-mounts / OPTION-DIVERTER / CFG-A/B separate builds); H2-6 designs the module slot on a kinematic/repeatable interface (it matures this row) but does not produce the D-06 decision and presupposes one of its options; an owner-decision item is never RUNNING (scheduler rule)",
         a7={"is": None, "feeds": [2], "relation": "configuration change and remount reproducibility condition the paired blocker-2 comparison"}),
     "preionizer_interface": dict(
         blocking_item="PMQTY:PMI-01.interface_dimensions", worked_by=None, nature="hardware-definition blocker",
+        partial_scope=dict(
+            lanes=["fo_h2_1_hall_chamber_magnet", "fo_h2_6_diagnostics_fixture"],
+            requires_quote="the H-1 rear-flange design and the module designs",
+            covered="H-1 rear flange / HALL_INLET_Z0 relation (H2-1) and the module slot on a kinematic/repeatable interface (H2-6)",
+            uncovered="the RF / ECR module designs (no registered scope; RF contingency components: wave H3, PLANNED_NOT_REGISTERED)"),
         not_worked_reason="the ICD states it requires 'the H-1 rear-flange design and the module designs'; H2-6 designs the module slot and H2-1 the HALL_INLET_Z0 relation, but no registered lane designs the RF / ECR modules (RF contingency components: wave H3, PLANNED_NOT_REGISTERED); PMQ-01 (envelope sized to the largest occupant) is open",
         a7={"is": None, "feeds": [2], "relation": "the common interface makes blocker 2 measurable on one H-1 without structurally disadvantaging a branch (A6); the ICD records one candidate hard incompatibility: the ECR fringe field versus INV-B3 (PMI-09)"}),
 }
@@ -1141,6 +1153,13 @@ class Registry:
         self.registered = {x["id"] for x in lr["follow_ons"]} | {x["id"] for x in lr["lanes"]}
         self.registered_titles = {x["id"]: x.get("title") for x in lr["follow_ons"]}
 
+    def requires_text(self, ref: str) -> str:
+        """The item's own 'requires' text (PMQTY tbd_requires); '' when the kind carries none."""
+        kind, _, rid = ref.partition(":")
+        if kind == "PMQTY" and rid in self.pmi_quantities:
+            return self.pmi_quantities[rid].get("tbd_requires") or ""
+        return ""
+
     def resolve(self, ref: str):
         """Return {'ref', 'state'?} for a typed reference. Raises KeyError on an unknown id."""
         kind, _, rid = ref.partition(":")
@@ -1359,6 +1378,7 @@ WAITS_ON = {
     "control_fdir": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
     "sensors_diagnostics": "procurement (wave H3, PLANNED_NOT_REGISTERED)",
     "preionizer_interface": "design work outside every registered scope",
+    "mechanical_structural": "owner decision",
 }
 _KIND_TO_LANE = {"PMI": "fo_preionizer_module_icd", "PMQ": "fo_preionizer_module_icd", "PMQTY": "fo_preionizer_module_icd",
                  "PMDEV": "fo_preionizer_module_icd", "XEP": "fo_xe_system_ledger", "XEOD": "fo_xe_system_ledger",
@@ -1552,6 +1572,19 @@ def build(root: str = ROOT_DEFAULT) -> dict:
             raise ValueError(f"row {name}: ARCHITECTURE_CLOSURE is reserved for A7 blocker 3")
         lane = sp.get("worked_by")
         worked = None
+        if lane is not None and re.search(r"owner[ _]decision", str(bi.get("state") or ""), re.I):
+            raise ValueError(f"row {name}: blocking item {bi['ref']} is an open owner decision; it cannot be worked by {lane}")
+        partial = None
+        if sp.get("partial_scope"):
+            ps = sp["partial_scope"]
+            if lane is not None:
+                raise ValueError(f"row {name}: partial_scope and worked_by are exclusive")
+            if ps["requires_quote"] not in str(bi.get("state") or "") + " " + str(reg.requires_text(sp["blocking_item"])):
+                raise ValueError(f"row {name}: partial_scope requires_quote not found in the blocking item's requires text")
+            for pl in ps["lanes"]:
+                if pl not in h2 or (spec["key"] not in h2[pl]["matures"] and spec["key"] not in h2[pl]["contributes"]):
+                    raise ValueError(f"row {name}: partial_scope lane {pl} is not an H2 lane of this row")
+            partial = dict(ps)
         if lane is not None:
             if lane not in h2 or spec["key"] not in h2[lane]["matures"]:
                 raise ValueError(f"row {name}: worked_by lane {lane} does not mature this row")
@@ -1593,6 +1626,7 @@ def build(root: str = ROOT_DEFAULT) -> dict:
             "blocking_item": {"ref": bi["ref"], "state": bi.get("state"), "text": b["item"]},
             "worked_by": worked,
             "not_worked_reason": sp.get("not_worked_reason"),
+            "partial_scope": partial,
             "waits_on": waits,
             "a7_category": category,
             "technical_category": b["category"],
@@ -1820,7 +1854,7 @@ def _milestone() -> dict:
             "must close."),
         "three_questions": {
             "i_conditional_selection_now": "none; A5 is a frozen proposal reference, the branch (hall_only / rf_hall / ecr_hall / NO_VIABLE_CASE) is open until H-1 Phase 1",
-            "ii_what_blocks_physics_backed_selection": "A7 blocker 1 (Hall-only sustainment at the delivered feed state, H-1 Phase 1 only) and A7 blocker 3 (Xe ledger refused); on the path to H-1: hardware-definition, procurement and test-readiness items at S1a, LOCK-1 and S1/S1b",
+            "ii_what_blocks_physics_backed_selection": "all three A7 architecture-changing blockers: blocker 1 (Hall-only sustainment at the delivered feed state, H-1 Phase 1 only), blocker 2 (incremental RF/ECR benefit after full bus-power accounting, decided only by Phase-1/2 readings on the common H-1; it is the single blocker of no row because every row on its evidence path is first blocked by a path item) and blocker 3 (Xe ledger refused); on the path to H-1: hardware-definition, procurement and test-readiness items at S1a, LOCK-1 and S1/S1b",
             "iii_what_could_overturn": "A5 risks 2-4 and any evidenced hard incompatibility from the proposal-only rows (thermal, mass, compressor, life); the ICD's candidate incompatibility: ECR fringe field versus INV-B3 (PMI-09)",
         },
         "unlocks": [
@@ -1952,6 +1986,10 @@ def render_md(doc: dict) -> str:
     for k, v in ro["architecture_changing_blockers"].items():
         a(f"| {k} | {_esc(v['blocker'])} | {', '.join(v['rows_whose_blocker_is_it']) or '-'} | {', '.join(v['rows_on_its_evidence_path']) or '-'} |")
     a("")
+    a("Blocker 2 has no row whose single blocker IS it. This is deliberate, not an omission: blocker 2 (incremental RF/ECR "
+      "benefit after full bus-power accounting) is decided only by the Phase-1/2 readings on the common H-1, and every row on "
+      "its evidence path is first blocked by an earlier item on the path to H-1 (one blocking item per row).")
+    a("")
     a("Every other row: " + VETO_ONLY + ".")
     a("")
     a("### Secondary: v1 technical categories and gates")
@@ -2039,6 +2077,10 @@ def render_md(doc: dict) -> str:
           + (f" ({_esc(s['blocking_item']['state'])})" if s["blocking_item"].get("state") else "")
           + (f"; worked by `{s['worked_by']['lane']}` - scope: \"{_esc(s['worked_by']['scope_quote'])}\"" if s["worked_by"] else
              f"; not worked: {_esc(s['not_worked_reason'])} (waits on: {s['waits_on']})"))
+        if s.get("partial_scope"):
+            ps = s["partial_scope"]
+            a(f"- **partial scope (stays BLOCKED)**: item requires \"{_esc(ps['requires_quote'])}\"; covered by "
+              f"{', '.join(f'`{x}`' for x in ps['lanes'])}: {_esc(ps['covered'])}; uncovered: {_esc(ps['uncovered'])}")
         ac = s["architecture_changing"]
         a(f"- **A7**: {s['a7_category']} (technical: {s['technical_category']}); "
           + (f"IS A7 blocker {ac['a7_blocker']}" if ac["is_a7_architecture_changing_blocker"] else "veto only")

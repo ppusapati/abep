@@ -78,6 +78,7 @@ PHRASES = [
     (r"before H2 freeze", "before H2 freeze", "the source says before H2 freeze"),
     (r"LOCK-1", "LOCK-1", "the source ties the item to LOCK-1"),
     (r"before (any )?S1\b", "LOCK-1", "'before S1': LOCK-1 is the last listed gate before S1 (A6 sequence S1a -> LOCK-1 -> W5 freeze -> S1/S1b)"),
+    (r"before HRR\b", "LOCK-1", "'before HRR': the HRR sits after LOCK-1 and before S1 (hardware_requirements hardware_readiness_review.position); LOCK-1 is the last listed owner gate before it"),
     (r"LOCK-2", "LOCK-2", "the source ties the item to LOCK-2"),
     (r"before Phase 1", "LOCK-2", "'before Phase 1': LOCK-2 is the last listed gate before Phase 1 (A6 sequence)"),
 ]
@@ -85,7 +86,13 @@ NEEDED_BY_RULE = ("scan the item's verbatim strings (and the linked source strin
                   "names (" + ", ".join(repr(m) for m in MASKS) + "); map each phrase by the table; needed_by = the earliest "
                   "mapped gate in " + " < ".join(NEEDED_BY_ORDER) + "; a relay or aggregate item takes the earliest over "
                   "itself and the items it names; ICD-sourced items also scan the closes_at of ICD quantities whose text names "
-                  "the item id; no match = UNSTATED")
+                  "the item id; relayed HWQ items (and ICD-sourced items) also scan the deadline statements the pinned "
+                  "sources make about them elsewhere: every hardware_requirements requirement whose text names the id (its "
+                  "text and verification.stage), every string under the ICD common_items / annexes that names the id, and "
+                  "the hardware register's routing of HWQ-01..HWQ-15 to the LOCK-1 decision brief (W2); every match is "
+                  "listed with its location, and gates_named lists every gate the matches name (the value is the earliest; "
+                  "a later gate also named, e.g. an optional LOCK-1 commitment with a LOCK-2 value, stays visible); "
+                  "no match = UNSTATED")
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Relevance marks (curated; every non-NO mark carries a verbatim anchor quote checked at build time)
@@ -212,6 +219,10 @@ LINKS = {
     "P1F-OOD-04": ["/missing_data/3/rule"],
     "P1F-OOD-05": ["/case_logic/decision_status_open"],
 }
+# The hardware register routes HWQ-01..HWQ-15 to the LOCK-1 decision brief (checked verbatim at build time).
+W2_PTR = "/cross_references/parallel_workstreams_planned/W2_fo_lock1_decision_brief"
+W2_QUOTE = "receives HWQ-01..HWQ-15"
+
 # Structural needed_by bases: the item is listed in the framework's LOCK-1 fix list (checked verbatim).
 STRUCTURAL = {
     "P1F-OOD-03": [("/locks/lock1_fixes/4", "REF-COND")],
@@ -289,6 +300,17 @@ def verify_pins(root: str) -> dict:
     return out
 
 
+def _walk(o, p=""):
+    if isinstance(o, dict):
+        for k in o:
+            yield from _walk(o[k], f"{p}/{k}")
+    elif isinstance(o, list):
+        for i, v in enumerate(o):
+            yield from _walk(v, f"{p}/{i}")
+    elif isinstance(o, str):
+        yield p, o
+
+
 def _needed_by(texts: list, structural: list) -> dict:
     matches = []
     for where, t in texts:
@@ -301,7 +323,7 @@ def _needed_by(texts: list, structural: list) -> dict:
     for where, gate, why in structural:
         matches.append({"phrase": None, "maps_to": gate, "why": why, "in": where})
     if not matches:
-        return {"value": "UNSTATED", "matches": []}
+        return {"value": "UNSTATED", "gates_named": [], "matches": []}
     val = min((m["maps_to"] for m in matches), key=NEEDED_BY_ORDER.index)
     seen, uniq = set(), []
     for m in matches:
@@ -309,7 +331,8 @@ def _needed_by(texts: list, structural: list) -> dict:
         if k not in seen:
             seen.add(k)
             uniq.append(m)
-    return {"value": val, "matches": uniq}
+    named = sorted({m["maps_to"] for m in uniq}, key=NEEDED_BY_ORDER.index)
+    return {"value": val, "gates_named": named, "matches": uniq}
 
 
 def _check_anchor(rid, anchor, verbatim, src_doc, src_rel):
@@ -345,6 +368,11 @@ def build(root: str = ROOT_DEFAULT) -> dict:
         for i, m in enumerate(a["module_specific_items"]):
             for j, q in enumerate(m.get("quantities", [])):
                 icd_q.append((f"{PMI}#{PMI_ROOT}/annexes/{an}/module_specific_items/{i}/quantities/{j}", q))
+    w2 = _ptr(hw, W2_PTR)
+    if W2_QUOTE not in w2:
+        raise ValueError("hardware register W2 routing changed; revise this register")
+    lo, hi = (int(x) for x in re.search(r"HWQ-(\d\d)\.\.HWQ-(\d\d)", W2_QUOTE).groups())
+    w2_ids = {f"HWQ-{i:02d}" for i in range(lo, hi + 1)}
     deviations = {}
     for an, a in pmi["annexes"].items():
         for i, d in enumerate(a.get("deviations", [])):
@@ -399,9 +427,23 @@ def build(root: str = ROOT_DEFAULT) -> dict:
                 raise ValueError(f"{rid}: structural basis {sp} does not contain {quote!r}")
             structural.append((f"{src}#{sp}", "LOCK-1", f"listed in the source's LOCK-1 fix list: {quote!r}"))
         if src in (PMI, HWDEF):
+            idrx = rf"\b{re.escape(sid)}\b"
             for where, q in icd_q:
-                if re.search(rf"\b{re.escape(sid)}\b", json.dumps(q)) and q.get("closes_at"):
+                if re.search(idrx, json.dumps(q)) and q.get("closes_at"):
                     texts.append((f"{where}/closes_at", q["closes_at"]))
+            for sec in ("common_items", "annexes"):
+                for sp_, t in _walk(pmi[sec], f"{PMI_ROOT}/{sec}"):
+                    if not sp_.endswith("/closes_at") and re.search(idrx, t):
+                        texts.append((f"{PMI}#{sp_}", t))
+            for i, rq in enumerate(hw["requirements"]):
+                if re.search(idrx, rq.get("text", "")):
+                    texts.append((f"{HWDEF}#/requirements/{i}/text", rq["text"]))
+                    stage = rq.get("verification", {}).get("stage")
+                    if stage:
+                        texts.append((f"{HWDEF}#/requirements/{i}/verification/stage", stage))
+        if src == HWDEF and sid in w2_ids:
+            structural.append((f"{HWDEF}#{W2_PTR}", "LOCK-1",
+                               f"routed to the LOCK-1 decision brief: {W2_QUOTE!r} (W2_fo_lock1_decision_brief)"))
         base_nb[rid] = _needed_by(texts, structural)
 
         proposals = []
@@ -414,6 +456,16 @@ def build(root: str = ROOT_DEFAULT) -> dict:
             t = _ptr(doc, lp)
             if isinstance(t, str) and "PROPOSED" in t:
                 proposals.append({"in": f"{src}#{lp}", "text": t})
+        if src in (XE, HWDEF):
+            covered = {p_["text"] for p_ in proposals}
+            for sp_, t in _walk(verbatim, pointer):
+                if "PROPOSED" in t and t not in covered and sp_ != f"{pointer}/id":
+                    proposals.append({"in": f"{src}#{sp_}", "text": t, "form": "inline PROPOSED in the item"})
+        if src == HWDEF:
+            for i, rq in enumerate(hw["requirements"]):
+                if re.search(rf"\b{re.escape(sid)}\b", rq.get("text", "")) and "PROPOSED" in rq["text"]:
+                    proposals.append({"in": f"{HWDEF}#/requirements/{i}/text", "text": rq["text"],
+                                      "form": f"PROPOSED text of {rq['id']}, which names {sid}"})
         if src == PMI:
             for dev in sorted(set(re.findall(r"DEV-[A-Z0-9]+-\d\d", verbatim["question"]))):
                 dp, d = deviations[dev]
@@ -456,7 +508,8 @@ def build(root: str = ROOT_DEFAULT) -> dict:
             vals = [nb["value"]] + [base_nb[x]["value"] for x in agg[rid]]
             known = [v for v in vals if v != "UNSTATED"]
             nb = {"value": min(known, key=NEEDED_BY_ORDER.index) if known else "UNSTATED",
-                  "matches": nb["matches"], "via_items": {x: base_nb[x]["value"] for x in agg[rid]}}
+                  "gates_named": nb["gates_named"], "matches": nb["matches"],
+                  "via_items": {x: base_nb[x]["value"] for x in agg[rid]}}
         it["needed_by"] = nb
 
     def count(f):
@@ -617,7 +670,7 @@ def render_md(doc: dict) -> str:
         else:
             a(f"- source proposal: {it['source_proposal_verbatim']}")
         nb = it["needed_by"]
-        a(f"- needed_by: **{nb['value']}**" + ("" if not nb["matches"] else " - " + "; ".join(
+        a(f"- needed_by: **{nb['value']}**" + (f" (gates named: {', '.join(nb['gates_named'])})" if len(nb["gates_named"]) > 1 else "") + ("" if not nb["matches"] else " - " + "; ".join(
             (f"'{m['phrase']}'" if m["phrase"] else "listed") + f" -> {m['maps_to']} ({m['in']})" for m in nb["matches"]))
           + ("" if "via_items" not in nb else f"; via items {json.dumps(nb['via_items'])}"))
         for key, lab in (("can_change_budget", "budget"), ("can_change_a7_blocker", "A7 blocker")):

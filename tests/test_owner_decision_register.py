@@ -112,11 +112,25 @@ def test_needed_by_rule(doc):
         nb = it["needed_by"]
         assert nb["value"] in NEEDED_BY
         if nb["value"] == "UNSTATED":
-            assert not nb["matches"] and "via_items" not in nb
+            assert not nb["matches"] and not nb["gates_named"] and "via_items" not in nb
+        else:
+            assert nb["value"] == (nb["gates_named"] or [nb["value"]])[0] or "via_items" in nb
     # spot checks against the sources' own words
     assert items["P1F-OOD-01"]["needed_by"]["value"] == "LOCK-1"
     assert items["R-11"]["needed_by"]["value"] == "LOCK-1"
-    assert items["HWQ-15"]["needed_by"]["value"] == "LOCK-2"
+    # relayed HWQ items: the sources' own deadline statements (hardware register stage / HW-PIM texts, ICD annex texts,
+    # W2 routing of HWQ-01..HWQ-15 to the LOCK-1 decision brief)
+    for h in ("HWQ-01", "HWQ-04", "HWQ-05", "HWQ-06", "HWQ-07", "HWQ-15"):
+        assert items[h]["needed_by"]["value"] == "LOCK-1", h
+    ins = lambda h: {m["in"] for m in items[h]["needed_by"]["matches"]}
+    assert any(w.endswith("/requirements/68/verification/stage") for w in ins("HWQ-05"))
+    assert any(w.endswith("/annexes/ANNEX-ECR/module_specific_items/2/text") for w in ins("HWQ-05"))
+    assert any(w.endswith("/requirements/58/text") for w in ins("HWQ-06"))
+    assert any(w.endswith("/annexes/ANNEX-RF/deviations/0/proposed_control") for w in ins("HWQ-06"))
+    assert any(w.endswith("W2_fo_lock1_decision_brief") for w in ins("HWQ-01"))
+    assert items["HWQ-15"]["needed_by"]["gates_named"] == ["LOCK-1", "LOCK-2"]
+    assert items["R-02"]["needed_by"]["gates_named"] == ["LOCK-1", "LOCK-2"]
+    assert all(v == "LOCK-1" for v in items["PMQ-07"]["needed_by"]["via_items"].values())
     assert items["PMQ-07"]["needed_by"]["value"] == "LOCK-1"      # earliest over the relayed HWQ items (HWQ-04)
     assert items["R-14"]["needed_by"]["value"] == "UNSTATED"      # 'LOCK-1 brief' is a document name, masked
     assert all(items[f"OD-XE-{i}"]["needed_by"]["value"] == "UNSTATED" for i in range(1, 9))
@@ -150,8 +164,17 @@ def test_proposals_verbatim(doc):
         props = items[d["id"]]["source_proposal_verbatim"]
         if "proposed" in d:
             assert props[0]["text"] == d["proposed"]
+        elif "PROPOSED" in json.dumps(d):
+            assert any("PROPOSED" in p["text"] for p in props)
         else:
             assert props.startswith("NONE_IN_SOURCE")
+    # inline PROPOSED text in relayed HWQ items (and the requirement text that names them) is extracted
+    for h, want in (("HWQ-01", "requirements/77/text"), ("HWQ-06", "requirements/58/text"), ("HWQ-15", None)):
+        props = items[h]["source_proposal_verbatim"]
+        assert isinstance(props, list) and any("PROPOSED" in p["text"] for p in props), h
+        if want:
+            assert any(p["in"].endswith(want) for p in props), h
+    assert isinstance(items["OD-XE-7"]["source_proposal_verbatim"], list)
 
 
 def test_milestone(doc):

@@ -8,6 +8,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import re
 
 import pytest
 
@@ -170,6 +171,29 @@ def test_scheduler_states_and_one_blocker(doc):
     rows = doc["blocker_rollup"]["execution_states"]["rows"]
     assert list(rows) == STATES and sum(v["count"] for v in rows.values()) == 17
     assert rows["VERIFIED"]["count"] == 0  # nothing is owner-frozen with S1a/S1 evidence recorded
+
+
+def test_owner_decision_blockers_never_running(doc):
+    by = {r["key"]: r for r in doc["rows"]}
+    for r in doc["rows"]:
+        s = r["scheduler"]
+        if re.search(r"owner[ _]decision", str(s["blocking_item"]["state"] or ""), re.I):
+            assert s["execution_state"] == "BLOCKED" and s["worked_by"] is None, r["key"]
+    ms = by["mechanical_structural"]["scheduler"]
+    assert ms["blocking_item"]["ref"] == "LOCK1:D-06" and ms["execution_state"] == "BLOCKED" and ms["waits_on"] == "owner decision"
+    pi = by["preionizer_interface"]["scheduler"]
+    assert pi["execution_state"] == "BLOCKED" and pi["worked_by"] is None
+    assert set(pi["partial_scope"]["lanes"]) == {"fo_h2_1_hall_chamber_magnet", "fo_h2_6_diagnostics_fixture"}
+    icd = _load("schemas/interfaces/preionizer_module_icd_v1.json")["x-preionizer-module-icd"]
+    q = next(q for q in icd["common_items"][0]["quantities"] if q["name"] == "interface_dimensions")
+    assert pi["partial_scope"]["requires_quote"] in q["tbd_requires"]
+
+
+def test_blocker2_stated_in_milestone_and_md(doc):
+    assert "blocker 2" in doc["milestone"]["three_questions"]["ii_what_blocks_physics_backed_selection"]
+    assert doc["blocker_rollup"]["architecture_changing_blockers"]["2"]["rows_whose_blocker_is_it"] == []
+    with open(MD_PATH, encoding="utf-8") as f:
+        assert "Blocker 2 has no row whose single blocker IS it. This is deliberate, not an omission" in f.read()
 
 
 def test_a7_categories_and_rule(doc):
