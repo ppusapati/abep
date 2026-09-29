@@ -1,0 +1,189 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "bus_power_v2",
+ "title": "Bus-power ledger, boundary v2 (parallel RF||Hall)",
+ "description": "Output of abep_sim.bus_power_v2.ledger. P_bus = sum P_load/eta over every installed component; disabled-branch components are exactly 0 W / efficiency 1; a TBD load makes the ledger INCOMPLETE_EVIDENCE (P_bus_W null). bus_power_boundary_v1 is untouched.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "boundary_version",
+  "architecture",
+  "mode",
+  "status",
+  "P_bus_W",
+  "P_bus_known_lower_bound_W",
+  "missing_evidence",
+  "group_P_bus_W",
+  "items",
+  "residual_W"
+ ],
+ "properties": {
+  "boundary_version": {
+   "const": "bus_power_boundary_v2"
+  },
+  "architecture": {
+   "enum": [
+    "rf_only",
+    "hall_only",
+    "rf_hall_parallel"
+   ]
+  },
+  "mode": {
+   "enum": [
+    "OFF",
+    "RF_ATM",
+    "RF_XE",
+    "HALL_ATM",
+    "HALL_XE",
+    "RF_ATM_HALL_ATM",
+    "RF_ATM_HALL_XE"
+   ]
+  },
+  "status": {
+   "enum": [
+    "PASS",
+    "INCOMPLETE_EVIDENCE"
+   ]
+  },
+  "P_bus_W": {
+   "type": [
+    "number",
+    "null"
+   ]
+  },
+  "P_bus_known_lower_bound_W": {
+   "type": "number",
+   "minimum": 0
+  },
+  "missing_evidence": {
+   "type": "array",
+   "items": {
+    "enum": [
+     "compressor",
+     "atmospheric_flow_control",
+     "xe_flow_control",
+     "thermal_control",
+     "housekeeping",
+     "rf_source",
+     "rf_magnet",
+     "hall_discharge",
+     "hall_magnet",
+     "cathode_keeper",
+     "cathode_heater"
+    ]
+   }
+  },
+  "group_P_bus_W": {
+   "type": "object",
+   "additionalProperties": {
+    "type": [
+     "number",
+     "null"
+    ]
+   }
+  },
+  "items": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "component",
+     "branch",
+     "active",
+     "P_load_W",
+     "efficiency",
+     "load_evidence",
+     "efficiency_evidence",
+     "P_bus_W",
+     "P_loss_W"
+    ],
+    "properties": {
+     "component": {
+      "enum": [
+       "compressor",
+       "atmospheric_flow_control",
+       "xe_flow_control",
+       "thermal_control",
+       "housekeeping",
+       "rf_source",
+       "rf_magnet",
+       "hall_discharge",
+       "hall_magnet",
+       "cathode_keeper",
+       "cathode_heater"
+      ]
+     },
+     "branch": {
+      "enum": [
+       "common",
+       "rf",
+       "hall"
+      ]
+     },
+     "active": {
+      "type": "boolean"
+     },
+     "P_load_W": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "object",
+        "required": [
+         "TBD",
+         "name",
+         "requires"
+        ]
+       }
+      ]
+     },
+     "efficiency": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "object",
+        "required": [
+         "TBD",
+         "name",
+         "requires"
+        ]
+       }
+      ]
+     },
+     "load_evidence": {
+      "type": [
+       "object",
+       "null"
+      ]
+     },
+     "efficiency_evidence": {
+      "type": [
+       "object",
+       "null"
+      ]
+     },
+     "P_bus_W": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "P_loss_W": {
+      "type": [
+       "number",
+       "null"
+      ]
+     }
+    }
+   }
+  },
+  "residual_W": {
+   "type": "number"
+  }
+ }
+}
