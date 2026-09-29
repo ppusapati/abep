@@ -1,0 +1,231 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "rf_map_v1",
+ "title": "RF response map v1 (parallel RF||Hall v2)",
+ "description": "Immutable RF performance map over (mdot_kg_s, P_dc_W, B0_T) with the admitted domain in composition, pressure and temperature. Identity = sha256 of the file; admission lives only in the RF registry. Null = not measured. Interpolation only inside the domain (abep_sim.rf_map).",
+ "type": "object",
+ "required": [
+  "meta",
+  "axes",
+  "fields",
+  "uncertainty_1sigma",
+  "domain"
+ ],
+ "properties": {
+  "meta": {
+   "type": "object",
+   "required": [
+    "schema",
+    "map_id",
+    "propellant_family",
+    "frequency_Hz",
+    "magnetic_geometry_id",
+    "antenna_geometry_id",
+    "facility",
+    "test_article",
+    "measurement_method",
+    "evidence_class",
+    "applicability_domain",
+    "validation_status",
+    "source",
+    "created"
+   ],
+   "properties": {
+    "schema": {
+     "const": "rf_map_v1"
+    },
+    "propellant_family": {
+     "enum": [
+      "atmospheric",
+      "xe"
+     ]
+    },
+    "frequency_Hz": {
+     "type": "number",
+     "minimum": 0
+    },
+    "evidence_class": {
+     "enum": [
+      "measured",
+      "digitized",
+      "inferred",
+      "reconstructed",
+      "model-derived",
+      "assumed"
+     ]
+    }
+   }
+  },
+  "axes": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "mdot_kg_s",
+    "P_dc_W",
+    "B0_T"
+   ],
+   "properties": {
+    "mdot_kg_s": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "number"
+     }
+    },
+    "P_dc_W": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "number"
+     }
+    },
+    "B0_T": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "number"
+     }
+    }
+   }
+  },
+  "fields": {
+   "type": "object",
+   "required": [
+    "thrust_N",
+    "P_bus_W",
+    "P_magnet_bus_W",
+    "P_forward_W",
+    "P_reflected_W",
+    "P_absorbed_W",
+    "Te_eV",
+    "ne_m3",
+    "utilization",
+    "Isp_s",
+    "plume_divergence_deg",
+    "stable",
+    "ignited"
+   ],
+   "additionalProperties": {
+    "type": "array",
+    "items": {
+     "type": [
+      "number",
+      "null"
+     ]
+    }
+   }
+  },
+  "uncertainty_1sigma": {
+   "type": "object",
+   "required": [
+    "thrust_N",
+    "P_bus_W"
+   ],
+   "additionalProperties": {
+    "type": "array",
+    "items": {
+     "type": [
+      "number",
+      "null"
+     ]
+    }
+   }
+  },
+  "domain": {
+   "type": "object",
+   "required": [
+    "mdot_kg_s",
+    "P_dc_W",
+    "B0_T",
+    "pressure_Pa",
+    "temperature_K",
+    "composition_mass_fraction"
+   ],
+   "properties": {
+    "mdot_kg_s": {
+     "type": "array",
+     "minItems": 2,
+     "items": {
+      "type": "number"
+     }
+    },
+    "P_dc_W": {
+     "type": "array",
+     "minItems": 2,
+     "items": {
+      "type": "number"
+     }
+    },
+    "B0_T": {
+     "type": "array",
+     "minItems": 2,
+     "items": {
+      "type": "number"
+     }
+    },
+    "pressure_Pa": {
+     "type": "array",
+     "minItems": 2,
+     "items": {
+      "type": "number"
+     }
+    },
+    "temperature_K": {
+     "type": "array",
+     "minItems": 2,
+     "items": {
+      "type": "number"
+     }
+    },
+    "composition_mass_fraction": {
+     "type": "object",
+     "required": [
+      "O",
+      "O2",
+      "N2",
+      "N",
+      "Xe"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "O": {
+       "type": "array",
+       "minItems": 2,
+       "items": {
+        "type": "number"
+       }
+      },
+      "O2": {
+       "type": "array",
+       "minItems": 2,
+       "items": {
+        "type": "number"
+       }
+      },
+      "N2": {
+       "type": "array",
+       "minItems": 2,
+       "items": {
+        "type": "number"
+       }
+      },
+      "N": {
+       "type": "array",
+       "minItems": 2,
+       "items": {
+        "type": "number"
+       }
+      },
+      "Xe": {
+       "type": "array",
+       "minItems": 2,
+       "items": {
+        "type": "number"
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

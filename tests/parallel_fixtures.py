@@ -38,3 +38,33 @@ def nozzle(R_m=2.0):
 def rf_config(R_m=2.0):
     return RFBranchConfig(CHAMBER, COUPLING, nozzle(R_m), q(0.0, "W"), q(1.0, "1"), (1.0, 0.0, 0.0),
                           TBD("startup_energy_J", "test"), TBD("startup_time_s", "test"))
+
+
+def synthetic_rf_map(path, *, family="atmospheric", hole=None):
+    """A SYNTHETIC map (TEST_FIXTURE): thrust = 1e-6 * P_dc * (mdot/1e-6) * (1 + B0) on a 2x2x2 grid. Not evidence."""
+    import itertools, json
+    axes = {"mdot_kg_s": [1.0e-6, 2.0e-6], "P_dc_W": [400.0, 800.0], "B0_T": [0.02, 0.06]}
+    pts = list(itertools.product(*axes.values()))
+    T = [1e-6 * p * (m / 1e-6) * (1 + b) for m, p, b in pts]
+    f = {"thrust_N": T, "P_bus_W": [p + 10.0 for _, p, _ in pts], "P_magnet_bus_W": [10.0] * 8,
+         "P_forward_W": [0.9 * p for _, p, _ in pts], "P_reflected_W": [0.05 * p for _, p, _ in pts],
+         "P_absorbed_W": [0.7 * p for _, p, _ in pts], "Te_eV": [5.0] * 8, "ne_m3": [1e17] * 8,
+         "utilization": [0.3] * 8, "Isp_s": [1000.0] * 8, "plume_divergence_deg": [30.0] * 8,
+         "stable": [1] * 8, "ignited": [1] * 8}
+    if hole is not None:
+        f["thrust_N"][hole] = None
+    comp = ({"O": [0.0, 0.6], "O2": [0.0, 0.6], "N2": [0.0, 1.0], "N": [0.0, 0.2], "Xe": [0.0, 0.0]}
+            if family == "atmospheric" else {"O": [0, 0], "O2": [0, 0], "N2": [0, 0], "N": [0, 0], "Xe": [1, 1]})
+    doc = {"meta": {"schema": "rf_map_v1", "map_id": "synthetic-test-map", "propellant_family": family,
+                    "frequency_Hz": 13.56e6, "magnetic_geometry_id": "test-magnet", "antenna_geometry_id": "test-antenna",
+                    "facility": "none (synthetic)", "test_article": "none (synthetic)",
+                    "measurement_method": "synthetic TEST_FIXTURE", "evidence_class": "assumed",
+                    "applicability_domain": "unit tests only", "validation_status": "TEST_FIXTURE",
+                    "source": "tests/parallel_fixtures.py", "created": "2026-09-29"},
+           "axes": axes, "fields": f,
+           "uncertainty_1sigma": {"thrust_N": [1e-5] * 8, "P_bus_W": [5.0] * 8},
+           "domain": {"mdot_kg_s": [1.0e-6, 2.0e-6], "P_dc_W": [400.0, 800.0], "B0_T": [0.02, 0.06],
+                      "pressure_Pa": [0.05, 1.0], "temperature_K": [250.0, 600.0], "composition_mass_fraction": comp}}
+    with open(path, "w") as fh:
+        json.dump(doc, fh)
+    return path
