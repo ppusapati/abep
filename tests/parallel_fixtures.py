@@ -68,3 +68,19 @@ def synthetic_rf_map(path, *, family="atmospheric", hole=None):
     with open(path, "w") as fh:
         json.dump(doc, fh)
     return path
+
+
+def hall_config():
+    from abep_sim.hall_branch_adapter import HallBranchConfig
+    return HallBranchConfig(q(0.93, "1"), q(20.0, "W"), q(0.8, "1"), q(10.0, "W"), q(0.8, "1"), q(0.0, "W"),
+                            q(1.0, "1"), (1.0, 0.0, 0.0), TBD("startup_energy_J", "test"),
+                            TBD("startup_time_s", "test"))
+
+
+def hall_point(family="xe", hardware="analog:test-device", thrust=0.015):
+    """A TEST_FIXTURE Hall point (not evidence about any device)."""
+    from abep_sim.hall_branch_adapter import HallPoint
+    return HallPoint("test-point", hardware, family, q(1.0e-6, "kg/s"), q(250.0, "W"), q(250.0, "V"),
+                     q(thrust, "N"), q(40.0, "deg"),
+                     {"anode_mdot_kg_s": [0.9e-6, 1.1e-6], "P_discharge_W": [240.0, 260.0], "V_d_V": [240.0, 260.0]},
+                     "test fixture")
