@@ -84,3 +84,11 @@ def hall_point(family="xe", hardware="analog:test-device", thrust=0.015):
                      q(thrust, "N"), q(40.0, "deg"),
                      {"anode_mdot_kg_s": [0.9e-6, 1.1e-6], "P_discharge_W": [240.0, 260.0], "V_d_V": [240.0, 260.0]},
                      "test fixture")
+
+
+def common_state(compressor=150.0):
+    from abep_sim.parallel_system import CommonState
+    loads = {"compressor": compressor, "atmospheric_flow_control": 5.0, "xe_flow_control": 5.0,
+             "thermal_control": 20.0, "housekeeping": 25.0}
+    effs = {k: 0.9 for k in loads}
+    return CommonState(loads, effs)
