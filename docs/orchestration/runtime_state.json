@@ -102,7 +102,22 @@
     "no merge conflict"
    ],
    "excluded": "H2 deliverables are not part of the checkpoint; they merge afterwards",
-   "not_a_standing_approval": "later merges to main need a new owner approval"
+   "not_a_standing_approval": "later merges to main need a new owner approval",
+   "executed": {
+    "status": "CONSUMED",
+    "pr": "https://github.com/ppusapati/abep/pull/31",
+    "pr_head": "4c1352d90031f012c9db3a071d65e83ada9d78fe",
+    "merge_commit_on_main": "15981ae1b31aa00e48fe1745a07e8a3784608320",
+    "utc": "2026-09-29",
+    "conditions_met": [
+     "four A6 lanes verified and merged",
+     "fo_a6_integration_refresh verified (219a290) and merged (ebfdda3)",
+     "full suite 1720 passed / 5 skipped / 1 xfailed, golden OK, ci_checks 10/10 at 4c1352d",
+     "GitHub CI green (6/6 checks) on 4c1352d",
+     "mergeable_state clean"
+    ],
+    "after": "H2-1..H2-7 (all verified) merged onto the execution branch after the checkpoint per A7 h2_merge_order; they are NOT on main. Any further merge to main needs a new owner approval."
+   }
   }
  },
  "known_limitations": [
