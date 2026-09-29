@@ -241,7 +241,9 @@ def cu_factor_vs_20C(T_K: float) -> float:
 def slot_view_factors(L: float, h: float) -> dict:
     """2-D Hottel crossed-string view factors of an annular channel treated as a planar slot (curvature neglected)."""
     diag = math.sqrt(L * L + h * h)
-    return {"F_anode_to_exit": (diag - L) / h, "F_wall_to_exit": (L + h - diag) / (2 * L)}
+    F_we = (L + h - diag) / (2 * L)
+    # each wall sees the anode, the exit aperture and the opposite wall; by symmetry F_wall_to_anode = F_wall_to_exit
+    return {"F_anode_to_exit": (diag - L) / h, "F_wall_to_exit": F_we, "F_wall_to_opposite_wall": 1.0 - 2.0 * F_we}
 
 
 def earth_view_bound(h_km: float) -> dict:
@@ -355,7 +357,7 @@ def build_parameters() -> list:
           "assumed", "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/ (design choice)", "FLIGHT_REPRESENTATIVE"),
         # --- material properties
         P("H25-24", "k_BN_W_mK", "boron-nitride wall conductivity (20 degC, grade and direction span)", [10.0, 75.0], "W/(m K)",
-          "analog", "EXT-HENZE2021 row 'Thermal Conductivity at 20 degC [W/mK]': 10 (CL-S 200, perp.) .. 75 (SL-A 400, par.); "
+          "analog", "EXT-HENZE2021 row 'Thermal Conductivity at 20 degC [W/mK]': 10 (CL-S 200, parallel to the pressing direction, column II) .. 75 (SL-A 400, perpendicular, column \u22a5; the datasheet column order is II then \u22a5); "
           "EXT-MARTINEZ2014 used 29 W/(m K) for M26", "measured",
           "PRELIMINARY (temperature dependence not given: verify; grade PENDING HWQ-08)", "FLIGHT_REPRESENTATIVE", "manufacturer typical values"),
         P("H25-25", "kFe_mult", "grade multiplier on the measured Armco-iron conductivity k(T) (EXT-NBS-ARMCO1967 Table 2)", [0.80, 1.02], "-",
@@ -392,8 +394,11 @@ def build_parameters() -> list:
           "TBD - requires the spacecraft thermal ICD (flight) / H2-6 fixture design (ground)", "FLIGHT_REPRESENTATIVE"),
         # --- sinks
         P("H25-34", "T_env_ground_K", "facility radiative sink temperature (ground test)", [246.15, 293.15], "K", "analog",
-          "EXT-MYERS2016 p. 9: VF-5 dormant thruster -27 degC (cryopanel environment) .. ambient 20 degC", "measured",
-          "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/ (facility)", "GROUND_FACILITY_ONLY"),
+          "EXT-MYERS2016 p. 9: lower bound = the measured temperature of a DORMANT HERMeS thruster in VF-5 (-27 degC), which Myers matched with a "
+          "full tank submodel and notes that a single sink temperature is less accurate; it is a proxy for, NOT a measurement of, the effective "
+          "cryopanel/wall sink temperature; upper bound ambient 20 degC", "inferred",
+          "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/ (facility)", "GROUND_FACILITY_ONLY",
+          "the lower bound affects only the cold-side (T_min) corners; hot-side margins use the 20 degC upper value"),
         P("H25-35", "T_mount_ground_K", "thrust-stand interface temperature (ground)", [293.15, 315.15], "K", "analog",
           "EXT-MYERS2016 p. 9: ambient 20 degC; 'stand base temperature was recorded (42 C)'", "measured",
           "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/", "GROUND_FACILITY_ONLY"),
@@ -443,17 +448,17 @@ def build_limits() -> list:
     lim = "schemas/thermal_life/limits_v1.json"
     return [
         {"node": "WI/WO", "quantity": "BN wall maximum use temperature, oxidizing atmosphere", "value_C": 900.0,
-         "source": f"{lim} records bn_hebosint_* T_use_max_oxidizing_C ('~ 900', EXT-HENZE2021)", "evidence_class": "measured",
+         "source": f"{lim} records bn_hebosint_* T_use_max_oxidizing_C ('~ 900', EXT-HENZE2021; quantity_type 'assumed': manufacturer recommended use limit, typical data)", "evidence_class": "assumed",
          "applies": "O-bearing feed: the oxidizing value applies (conservative); atomic O and ion bombardment not covered (AOL-M02/M03)",
          "live": True},
         {"node": "WI/WO", "quantity": "BN maximum use temperature, inert/vacuum (context only)", "value_C": [1500.0, 2000.0],
-         "source": f"{lim} bn_hebosint_* T_use_max_inert_vacuum_C", "evidence_class": "measured", "applies": "not used (air feed)", "live": False},
+         "source": f"{lim} bn_hebosint_* T_use_max_inert_vacuum_C (quantity_type 'assumed')", "evidence_class": "assumed", "applies": "not used (air feed)", "live": False},
         {"node": "CI/CO", "quantity": "coil insulation thermal class candidates (IEC 60085 Table 1)", "value_C": [180.0, 200.0, 220.0, 250.0],
-         "source": f"{lim} record iec60085_thermal_classes (classes over 250 increase in 25 degC increments)", "evidence_class": "measured",
+         "source": f"{lim} record iec60085_thermal_classes (classes over 250 increase in 25 degC increments; quantity_type 'assumed': normative designation)", "evidence_class": "assumed",
          "applies": "compared with the lumped coil temperature; hot-spot offset TBD (HW-MC-14); the EIS family is HWQ-20; EEE-INST-002 derating is reference only (HW-MC-08)",
          "live": True},
         {"node": "CI/CO (permanent-magnet MC-1 option)", "quantity": "Sm2Co17 maximum service / use temperature", "value_C": [300.0, 350.0],
-         "source": f"{lim} pm_sm2co17_recoma35e T_max_use_C 300, pm_smco_2_17_mmpa 350 (Curie 820 / 825)", "evidence_class": "measured",
+         "source": f"{lim} pm_sm2co17_recoma35e T_max_use_C 300, pm_smco_2_17_mmpa 350 (Curie 820 / 825); T_max_use quantity_type 'assumed' (manufacturer recommended)", "evidence_class": "assumed",
          "applies": "only if HWQ-19 selects permanent magnets; irreversible-loss criterion additionally (HW-MC-09)", "live": True},
         {"node": "PI/PO/BP", "quantity": "soft-iron Curie transformation: ABSOLUTE CEILING (magnetic circuit non-functional at and above it)", "value_C": FE_CURIE_HYSTERESIS_C[0],
          "source": "EXT-NBS-ARMCO1967 p. 288: resistivity hysteresis (< 0.2 %) 'between 754 and 761 C, presumably corresponding to the Curie transformation' (Armco iron; lower end used); grade-specific value PENDING HW-MC-13 / HWQ-18",
@@ -582,6 +587,8 @@ def assemble(x, fx, case, finish, P_d):
         share = A / (A_WI + A_WO)
         links.append(("rad", "AN", wall, two_surface_R(ean, A_an, eBN, A, F_an_w * share)))
     links.append(("cond", "AN", "BP", x["G_anode_mount_W_K"]))
+    # inner wall <-> outer wall across the channel gap (planar-slot F = 1 - 2 F_wall_to_exit, referenced to the inner wall)
+    links.append(("rad", "WI", "WO", two_surface_R(eBN, A_WI, eBN, A_WO, vf["F_wall_to_opposite_wall"])))
     links.append(("rad", "WI", "CI", two_surface_R(eBN, A_WIb, em, A_CIo, 1.0)))
     fo = x["f_open_outer"]
     if fo < 1.0:
@@ -931,6 +938,7 @@ def spacecraft_side_demands(pm):
     eta_grid = [0.80, 0.85, 0.90, 0.95]
     return {
         "PPU": {"load": "Q_PPU = P_bus x (1 - eta_PPU) (all conversion loss is heat at the PPU baseplate)",
+                "basis": "CONSERVATIVE UPPER BOUND: under bus_power_boundary_v1 P_bus also contains loads that may not pass through the PPU converters (compressor, thermal_control, housekeeping); the true PPU loss is (sum of loads converted by the PPU) x (1/eta - 1) per converter, PENDING docs/hardware/h2/h2_4_ppu_bus/",
                 "eta_PPU": "PENDING docs/hardware/h2/h2_4_ppu_bus/ (not selected here)",
                 "evaluation_grid": [{"eta_PPU_assumed": e, "Q_PPU_W": round(Pbus * (1 - e), 1)} for e in eta_grid],
                 "allowable": "T_baseplate <= Tj,derated - dT(junction->baseplate); Tj,derated = min(0.80 x T_j,max,rated, 125 degC, T_j,max,rated - 40 degC) for transistors (EEE-INST-002 S1 Table 4 junction-temperature factor 0.80 and note 2; degC basis of the 0.80 factor: verify)",
@@ -977,7 +985,10 @@ def design_findings(ev, mrows):
     wi_dd = [r for r in wi if r["verdict"] != "PASS_WHOLE_ENVELOPE"]
     if not wi_dd:
         out.append(f"F2 BN walls pass the 900 degC oxidizing guide value over the whole bounding envelope in every case "
-                   f"(smallest worst-corner margin {min(r['margin_worst_K'] for r in wi):g} K); atomic-O / ion effects are not covered by that limit.")
+                   f"(smallest worst-corner margin {min(r['margin_worst_K'] for r in wi):g} K, a small margin at the bounding corner). "
+                   "The WI<->WO radiative exchange across the channel gap (F = 1 - 2 F_wall_to_exit) is included; it moves heat from the "
+                   "inner to the outer wall, so the outer wall and outer coil carry part of the inner-wall load. Atomic-O / ion effects are not "
+                   "covered by that limit.")
     else:
         nodes = sorted({r["node"] for r in wi_dd})
         out.append(f"F2 BN walls vs the 900 degC oxidizing guide value: {len(wi_dd)}/{len(wi)} wall rows are DESIGN_DRIVING (nodes "
@@ -1010,8 +1021,13 @@ def design_findings(ev, mrows):
                f"{min(nom):g}-{max(nom):g} W at P_d = {float(Pd):g} W, so the spacecraft thermal ICD (allowable heat and T_mount) is a "
                "first-order input (H25-Q3). G_mount (H25-33) is a purely ASSUMED range [0.2, 2] W/K: where it ranks first, the margins "
                "are driven mainly by an assumption, not by analog evidence, until the spacecraft thermal ICD / H2-6 fixture fixes it.")
+    an = [ev["cases"][c][f]["by_P_d_W"][Pd]["AN"]["T_max_K"] - T0C for c in ev["cases"] for f in ev["cases"][c]]
+    cb = [ev["cases"][c][f]["by_P_d_W"][Pd]["CB"]["T_max_K"] - T0C for c in ev["cases"] for f in ev["cases"][c]]
     out.append("F5 anode and cathode-body temperatures have no sourced limit (HWQ-08, cathode_assembly_temperature_limit TBD); their ranges are "
-               "reported for AOL-M01/M05 only.")
+               f"reported for AOL-M01/M05 only. CAVEAT: the hot corners (AN up to {max(an):.0f} degC, CB up to {max(cb):.0f} degC) lie beyond the "
+               "plausible service range of any non-refractory anode or body metal and are driven mainly by the ASSUMED mount conductances "
+               "G_anode_mount / G_cath_mount (H25-31/32); they are demands on H2-1/H2-2/H2-3 (conduction path or refractory material), not "
+               "physical predictions and not a hard incompatibility.")
     pp = [r for r in mrows if r["node"] in ("PI", "PO", "BP")]
     pi = [r for r in pp if r["node"] == "PI"]
     bp = [r for r in pp if r["node"] == "BP"]
@@ -1124,7 +1140,8 @@ def build():
                 "PO->BP: k_Fe(T) pi D_body t_shell / L_body in series with the joint contact h_c pi D_body t_shell",
                 "CB->BP: G_cath_mount", "BP->mount: G_mount to T_mount"],
             "radiation_internal": [
-                "AN<->WI, AN<->WO: gray two-surface exchange, F = (1 - F_anode_to_exit) split by wall area",
+                "AN<->WI, AN<->WO: gray two-surface exchange, F = (1 - F_anode_to_exit) split by wall area (two-surface formula applied per pair: an approximation of the three-surface enclosure)",
+                "WI<->WO across the channel gap: gray two-surface exchange referenced to the inner-wall area, F = 1 - 2 F_wall_to_exit (planar slot, curvature neglected)",
                 "WI back <-> CI: concentric cylinders F = 1", "WO back <-> CO: concentric cylinders, fraction (1 - f_open_outer)"],
             "radiation_to_environment": [
                 "AN, WI, WO through the exit aperture (crossed-string F)", "WO back x f_open_outer",
@@ -1135,7 +1152,12 @@ def build():
             "coil_dissipation": "P_coil = P_mag,20C x split x R(T_coil)/R(20 degC), copper R(T) from limits_v1 copper_roeser_ratio (constant-current supply; iterated inside the Newton solve)",
             "orbit_hot_solar_geometry": "F_s_face = 1 and F_s_lateral = 1/pi applied together: geometrically inconsistent, conservative, stated (H25-41/42)",
             "model_limitations": ["room-temperature emittances (Henninger normal emittance) and the BN 8-9 um band emissivity used as total hemispherical values at operating temperature (verify)",
-                                  "lumped nodes: no axial wall gradient, no coil hot spot (HW-MC-14)", "steady state only; transients and eclipse cycling TBD",
+                                  "lumped nodes: no axial wall gradient, no coil hot spot (HW-MC-14)",
+                                  "wall node: its conduction path uses the effective length wall_cond_len_frac x L, so with uniform deposition (0.5) the node temperature represents the PEAK (exit-end) rise, not the mean; the same node temperature radiates, so wall radiation (and the anode/wall/coil exchange) is slightly overestimated at the uniform-deposition corner",
+                                  "planar-slot view factors: annulus curvature neglected; the inner (convex) and outer (concave) walls are treated symmetrically",
+                                  "cathode: keeper lumped into the body node CB, emitter CE not solved (emission-set); separate emitter/keeper/body nodes PENDING docs/hardware/h2/h2_2_cathode_integration/",
+                                  "hot-corner coil/pole temperatures above ~500-640 degC rest on model-derived continuations (copper R(T) end chord above 500 degC; iron k above 640 degC with the Lorenz function held constant): indicative only, not physical values to quote",
+                                  "hot-corner anode (AN) and cathode-body (CB) temperatures above ~1000 degC exceed the plausible service range of non-refractory anode/body metals; they are set mainly by the ASSUMED mount conductances G_anode_mount / G_cath_mount (H25-31/32) and are not physical predictions", "steady state only; transients and eclipse cycling TBD",
                                   "pole/core k above 640 degC is model-derived (measured Lorenz function held at its 640 degC value)"],
         },
         "design_parameters": rows,

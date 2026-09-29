@@ -360,3 +360,24 @@ def test_repair_disclosures(doc):
     f3 = [f for f in doc["design_findings"] if f.startswith("F3")][0]
     assert " 0%" not in f3                                     # fractions printed to 0.01 %, never rounded to a guaranteed pass
     assert doc["solve"]["survival_cold_off"]["cases"]
+
+
+def test_inter_wall_radiation_link_and_labels(gen, doc):
+    vf = gen.slot_view_factors(0.086, 0.010)
+    assert abs(vf["F_wall_to_opposite_wall"] - (1.0 - 2.0 * vf["F_wall_to_exit"])) < 1e-12
+    assert 0.88 < vf["F_wall_to_opposite_wall"] < 0.90
+    pm = gen.param_map(gen.build_parameters())
+    fx = gen.fixed_inputs(pm)
+    x = {k: 0.5 * (lo + hi) for k, (lo, hi) in gen.ranges_for("ground", pm).items()}
+    _, links, _, _, _ = gen.assemble(x, fx, "ground", "z93_white_inorganic", 1350.0)
+    assert any(l[0] == "rad" and {l[1], l[2]} == {"WI", "WO"} for l in links)
+    assert any("WI<->WO" in s for s in doc["links"]["radiation_internal"])
+    assert any("PEAK" in s for s in doc["links"]["model_limitations"])
+    bn = [l for l in doc["limits"] if l["node"] == "WI/WO"]
+    assert bn and all(l["evidence_class"] == "assumed" for l in bn)
+    rows = {r["key"]: r for r in doc["design_parameters"]}
+    assert rows["T_env_ground_K"]["evidence_class"] == "inferred"
+    assert "column II" in rows["k_BN_W_mK"]["source"] and "SL-A 400, perpendicular" in rows["k_BN_W_mK"]["source"]
+    assert "CONSERVATIVE UPPER BOUND" in doc["spacecraft_side_demands"]["PPU"]["basis"]
+    f5 = [f for f in doc["design_findings"] if f.startswith("F5")][0]
+    assert "CAVEAT" in f5
