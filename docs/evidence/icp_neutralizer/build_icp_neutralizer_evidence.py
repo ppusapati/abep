@@ -96,13 +96,16 @@ EXTRACTION = [
      "p. 4 text; Fig. 2 labels", "reported", "measured",
      "Permanent-magnet circuit: no coil-current B(z) control (contrast owner answer row 78, H-1 EM only)."),
     ("TK-02", "HET", "discharge-cavity walls and anode material",
-     "stainless-steel (SUS304) cavity, inner wall coated with an insulator (silicone resin) against short circuit; "
-     "SUS304 anode located behind the peak-field region; Al2O3 parts at the exit face (Fig. 2)", None,
-     "p. 4 text; Fig. 2 labels", "reported", "measured", ""),
+     "stainless-steel cavity, inner wall coated with an insulator (silicone resin) against short circuit; "
+     "stainless-steel anode located behind the peak-field region; Al2O3 parts at the exit face (Fig. 2)", None,
+     "p. 4 text (stainless steel, silicone resin, anode position); Fig. 2 labels (Al2O3); Fig. 5 caption p. 8 "
+     "(grade SUS304)", "reported", "measured",
+     "The grade SUS304 is named only in the Fig. 5 caption (p. 8) for 'the sputtered stainless steel'; applying it to "
+     "the HET anode/cavity is this lane's inference (verify)."),
     ("TK-03", "HET", "peak radial magnetic field in the cavity (calculated)", "0.1-0.15 at z ~ -10 mm", "T",
      "Abstract p. 1; p. 4 text; Fig. 2", "reported", "model-derived",
      "Authors' magnetostatic calculation, not a measured map."),
-    ("TK-04", "HET", "propellant injection", "four small holes on the anode electrode", None, "p. 2-3 text",
+    ("TK-04", "HET", "propellant injection", "four holes on an anode electrode", None, "p. 3 text",
      "reported", "measured", ""),
     ("TK-05", "HET", "thrust-class / power-class designation", None, None, "whole paper", "not_reported", None,
      "No thrust, mass, power class or name of the HET is given."),
@@ -373,9 +376,16 @@ SURVEY = [
           "locator": "Abstract; Sec. 3.4 p. Pb_81, Eqs. (1)-(3), Fig. 10", "value_basis": "reported"},
      ],
      "derived": [
-         {"q": "gas utilization factor U_e = I_a / (0.073 A per mg/s x mdot) at the 3.3 A point",
-          "formula": "3.3 / (0.073 * 0.3)", "value_fn": "watanabe_ue", "unit": "-",
-          "locator": "Eq. (1) p. Pb_81 applied to the reported point"},
+         {"q": "gas utilization factor U_e = I_a / (0.73 A per mg/s x mdot) at the 3.3 A point",
+          "formula": "3.3 / (0.73 * 0.3)", "value_fn": "watanabe_ue", "unit": "-",
+          "locator": "Sec. 3.4 text p. Pb_81 ('0.1 mg/s of the xenon ... is equivalent to 0.073 A', i.e. 0.73 A "
+                     "per mg/s) applied to the reported point",
+          "note": "SOURCE TYPO: the printed Eq. (1) on p. Pb_81 shows '0.073 [A/mg/s]', which contradicts the same "
+                  "paragraph (0.073 A per 0.1 mg/s) and first principles (e / m_Xe x 1 mg/s = 1.602e-19 C / "
+                  "(131.29 x 1.6605e-27 kg) x 1e-6 kg/s = 0.735 A). This lane uses 0.73 A per mg/s; the literal "
+                  "Eq. (1) constant would give ~151, ten times too high. Consistent with the text statement that the "
+                  "outer-coil U_e is 'comparable to that for the hollow cathode' (HCN-252, Fig. 10); the Fig. 10 "
+                  "axis values were not digitized by this lane (verify)."},
          {"q": "electron production cost C_e = (I_a V_a + P_rf) / I_a at the 3.3 A point",
           "formula": "(3.3 * 58 + 140) / 3.3", "value_fn": "watanabe_ce", "unit": "W/A",
           "locator": "Eq. (2) p. Pb_81 applied to the reported point"},
@@ -508,7 +518,7 @@ SURVEY = [
 ]
 
 DERIVED_FNS = {
-    "watanabe_ue": lambda: 3.3 / (0.073 * 0.3),
+    "watanabe_ue": lambda: 3.3 / (0.73 * 0.3),
     "watanabe_ce": lambda: (3.3 * 58 + 140) / 3.3,
     "watanabe_wpa": lambda: 140 / 3.3,
     "xu_wpa": lambda: 270 / 1.03,
@@ -536,7 +546,7 @@ TOPIC_SUMMARY = {
                    "efficiencies; forward/net RF power is not absorbed power (Takahashi eta_p ~0.1). Context only; "
                    "no Vyovrinda value can be taken from it."},
     "gas_flow_per_ampere": {
-        "analog_points": ["S-01 (0.3 mg/s Xe for 3.3 A; U_e ~150)", "S-04 (2 sccm Xe for 30 A; U_e 180)",
+        "analog_points": ["S-01 (0.3 mg/s Xe for 3.3 A; U_e ~15, derived, orifice-type)", "S-04 (2 sccm Xe for 30 A; U_e 180, reported, abstract)",
                           "S-02 (2.766 sccm Xe for 1.03 A)", "D-01 (0.018 mg/s N2/O2 for up to 0.45 A)",
                           "TK-31 (Takahashi: no separate ICP feed; 2.1 mg/s Ar shared with the HET)"],
         "reading": "orifice-type RF cathodes run on a dedicated low flow; the Takahashi topology re-uses Hall "
@@ -712,6 +722,11 @@ def build():
             {"id": "OQ-EV-02", "question": "Acquisition priority for LA-01..LA-09",
              "proposed_answer": "P1: LA-01, LA-02, LA-03 (coupled Hall + RF-cathode data); P2: LA-04, LA-06, LA-07, "
                                 "LA-08; P3: LA-05, LA-09", "status": "owner call"},
+            {"id": "OQ-EV-03", "question": "S-02 (Xu 2022) values were read from the full text that the journal's "
+                                           "own website serves publicly (IOP/HIPS copyright, not an open licence). "
+                                           "Is citing values from it acceptable under the row-7 lawful-access rule?",
+             "proposed_answer": "YES for citation of reported values with locators (publisher-served, no bypass); "
+                                "the PDF itself is not redistributed", "status": "owner call"},
         ],
         "historical_reuse": [
             {"path": "docs/evidence/cathode/cathode_evidence_v1.json",
@@ -845,6 +860,8 @@ def render_md(doc):
         for d in s["derived"]:
             a("- derived (this lane): %s = %s %s (`%s`; %s)" % (d["q"], d["value"], d["unit"], d["formula"],
                                                                  d["locator"]))
+            if d.get("note"):
+                a("  - note: %s" % d["note"])
         a("- limits: %s" % s["limits"])
         if s.get("relation"):
             a("- relation: %s" % s["relation"])

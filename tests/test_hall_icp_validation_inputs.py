@@ -161,7 +161,7 @@ def test_survey_bounded_and_labelled(ev):
             assert d["value_basis"] == "derived" and d["formula"]
     by = {s["id"]: s for s in srcs}
     d = {x["value"] for x in by["S-01"]["derived"]}
-    assert 150.7 in d and 100.4 in d
+    assert 15.1 in d and 100.4 in d
 
 
 def test_lawful_acquisition_list(ev):

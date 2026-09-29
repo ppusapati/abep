@@ -74,7 +74,7 @@
  ],
  "evidence_input": {
   "path": "docs/evidence/icp_neutralizer/icp_neutralizer_evidence_v1.json",
-  "sha256": "2982a162afbded0ba4b3cf7afffcca2fd100f973af4e5f05109db44c8ba11b80",
+  "sha256": "541f6568043f129b5bfaec9afc73e4838816b5183701fbf68be02388dd7dadeb",
   "note": "same lane (part 1); regenerated first"
  },
  "replaces": "the frozen parallel RF||Hall v2 input list for the primary line (row 145); v2 inputs are never supplied or invented (row 146)",
@@ -1397,7 +1397,7 @@
     "P-DXE"
    ],
    "decision_quantity_ids": "PENDING docs/experiments/hall_icp/uncertainty_budget/ (A9-04 measurement chain / decision quantity)",
-   "analog_bound": "survey: U_e ~150-180 on Xe for orifice/NES sources (S-01, S-04) - context only",
+   "analog_bound": "survey: U_e ~15 (derived, orifice-type RF cathode, S-01) and 180 (reported, abstract, S-04) on Xe - an order of magnitude apart; context only",
    "supply": "analog can bound (context only); value from H-1 hardware"
   },
   {

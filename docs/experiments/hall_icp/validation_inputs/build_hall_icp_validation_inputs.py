@@ -342,7 +342,7 @@ ITEMS = [
     ("VI-GAS-06", "gas", "gas flow per ampere / gas utilization of the electron source", "mdot / I_e",
      "electron-source gas flow per extracted ampere (ICP: dedicated flow share; C1: cathode Xe flow)", "mg/(s A)",
      BOTH, "derived", "VI-GAS-02 / VI-EX-01; C1: VI-SU-05 flow term", ["S-01", "S-04"],
-     "survey: U_e ~150-180 on Xe for orifice/NES sources (S-01, S-04) - context only", ["AR", "N2", "O2"],
+     "survey: U_e ~15 (derived, orifice-type RF cathode, S-01) and 180 (reported, abstract, S-04) on Xe - an order of magnitude apart; context only", ["AR", "N2", "O2"],
      "TBD - requires hardware", "measured (future)", ["P-DXE"], "after-evidence", "HARDWARE_ONLY", "derived",
      "owner answer row 37"),
     ("VI-GAS-07", "gas", "delivered feed state to H-1 (common to both configurations)", "mdot_s, P_feed, T_feed, x_s",
@@ -772,7 +772,7 @@ def render_md(doc):
                        dv["net_benefit_form"], dv["full_vocabulary"], dv["winner"]))
     a("")
     c = doc["summary_counts"]
-    a("**Counts:** %d inputs; %d H-1-hardware-only; %d with published-analog context; %d owner-given values; %d TBD." % (
+    a("**Counts:** %d inputs; %d H-1-hardware-only; %d carrying published-analog context refs (includes owner-supplied items with analog refs; this is not a count of analog-boundable measured inputs); %d owner-given values; %d TBD." % (
         c["items"], c["hardware_only"], c["analog_can_bound_context"], c["owner_given_value"], c["tbd"]))
     a("")
     a("## Evidence steps (from A9 and owner answers; not stage ids)")

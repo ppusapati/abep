@@ -99,13 +99,13 @@
    "id": "TK-02",
    "group": "HET",
    "quantity": "discharge-cavity walls and anode material",
-   "value": "stainless-steel (SUS304) cavity, inner wall coated with an insulator (silicone resin) against short circuit; SUS304 anode located behind the peak-field region; Al2O3 parts at the exit face (Fig. 2)",
+   "value": "stainless-steel cavity, inner wall coated with an insulator (silicone resin) against short circuit; stainless-steel anode located behind the peak-field region; Al2O3 parts at the exit face (Fig. 2)",
    "unit": null,
-   "locator": "p. 4 text; Fig. 2 labels",
+   "locator": "p. 4 text (stainless steel, silicone resin, anode position); Fig. 2 labels (Al2O3); Fig. 5 caption p. 8 (grade SUS304)",
    "value_basis": "reported",
    "epistemic": "measured",
    "evidence_class": "published analog",
-   "note": ""
+   "note": "The grade SUS304 is named only in the Fig. 5 caption (p. 8) for 'the sputtered stainless steel'; applying it to the HET anode/cavity is this lane's inference (verify)."
   },
   {
    "id": "TK-03",
@@ -123,9 +123,9 @@
    "id": "TK-04",
    "group": "HET",
    "quantity": "propellant injection",
-   "value": "four small holes on the anode electrode",
+   "value": "four holes on an anode electrode",
    "unit": null,
-   "locator": "p. 2-3 text",
+   "locator": "p. 3 text",
    "value_basis": "reported",
    "epistemic": "measured",
    "evidence_class": "published analog",
@@ -1002,11 +1002,12 @@
     ],
     "derived": [
      {
-      "q": "gas utilization factor U_e = I_a / (0.073 A per mg/s x mdot) at the 3.3 A point",
-      "formula": "3.3 / (0.073 * 0.3)",
+      "q": "gas utilization factor U_e = I_a / (0.73 A per mg/s x mdot) at the 3.3 A point",
+      "formula": "3.3 / (0.73 * 0.3)",
       "unit": "-",
-      "locator": "Eq. (1) p. Pb_81 applied to the reported point",
-      "value": 150.7,
+      "locator": "Sec. 3.4 text p. Pb_81 ('0.1 mg/s of the xenon ... is equivalent to 0.073 A', i.e. 0.73 A per mg/s) applied to the reported point",
+      "note": "SOURCE TYPO: the printed Eq. (1) on p. Pb_81 shows '0.073 [A/mg/s]', which contradicts the same paragraph (0.073 A per 0.1 mg/s) and first principles (e / m_Xe x 1 mg/s = 1.602e-19 C / (131.29 x 1.6605e-27 kg) x 1e-6 kg/s = 0.735 A). This lane uses 0.73 A per mg/s; the literal Eq. (1) constant would give ~151, ten times too high. Consistent with the text statement that the outer-coil U_e is 'comparable to that for the hollow cathode' (HCN-252, Fig. 10); the Fig. 10 axis values were not digitized by this lane (verify).",
+      "value": 15.1,
       "value_basis": "derived",
       "epistemic": "inferred"
      },
@@ -1307,8 +1308,8 @@
    },
    "gas_flow_per_ampere": {
     "analog_points": [
-     "S-01 (0.3 mg/s Xe for 3.3 A; U_e ~150)",
-     "S-04 (2 sccm Xe for 30 A; U_e 180)",
+     "S-01 (0.3 mg/s Xe for 3.3 A; U_e ~15, derived, orifice-type)",
+     "S-04 (2 sccm Xe for 30 A; U_e 180, reported, abstract)",
      "S-02 (2.766 sccm Xe for 1.03 A)",
      "D-01 (0.018 mg/s N2/O2 for up to 0.45 A)",
      "TK-31 (Takahashi: no separate ICP feed; 2.1 mg/s Ar shared with the HET)"
@@ -1496,6 +1497,12 @@
    "id": "OQ-EV-02",
    "question": "Acquisition priority for LA-01..LA-09",
    "proposed_answer": "P1: LA-01, LA-02, LA-03 (coupled Hall + RF-cathode data); P2: LA-04, LA-06, LA-07, LA-08; P3: LA-05, LA-09",
+   "status": "owner call"
+  },
+  {
+   "id": "OQ-EV-03",
+   "question": "S-02 (Xu 2022) values were read from the full text that the journal's own website serves publicly (IOP/HIPS copyright, not an open licence). Is citing values from it acceptable under the row-7 lawful-access rule?",
+   "proposed_answer": "YES for citation of reported values with locators (publisher-served, no bypass); the PDF itself is not redistributed",
    "status": "owner call"
   }
  ],
