@@ -1,0 +1,520 @@
+{
+ "fig2": {
+  "al2o3_cols_px": [
+   849,
+   962
+  ],
+  "anode_bbox_px": {
+   "x": [
+    375,
+    490
+   ],
+   "y": [
+    404,
+    566
+   ]
+  },
+  "calibration": {
+   "r_mm": {
+    "px": [
+     817.5,
+     110.5
+    ],
+    "unit": "mm",
+    "value": [
+     0.0,
+     30.0
+    ]
+   },
+   "z_mm": {
+    "px": [
+     259.5,
+     967.5
+    ],
+    "unit": "mm",
+    "value": [
+     -30.0,
+     0.0
+    ]
+   }
+  },
+  "channel_back_col_px": [
+   302,
+   305
+  ],
+  "channel_wall_rows_px": [
+   [
+    384,
+    386
+   ],
+   [
+    594,
+    597
+   ]
+  ],
+  "image_px": [
+   1417,
+   956
+  ],
+  "image_sha256": "8eeb99907278ab5bb9e183732cb599eb14346a87f60a4d79929826cde493ef0a"
+ },
+ "fig4": {
+  "calibration": {
+   "a_y_V": {
+    "px": [
+     35.5,
+     663.5
+    ],
+    "unit": "V",
+    "value": [
+     150.0,
+     -100.0
+    ]
+   },
+   "b_y_ID": {
+    "px": [
+     1442.5,
+     1062.0
+    ],
+    "unit": "A",
+    "value": [
+     0.0,
+     1.0
+    ]
+   },
+   "b_y_Ic60": {
+    "px": [
+     1442.5,
+     872.0
+    ],
+    "unit": "arb. units",
+    "value": [
+     0.0,
+     1.0
+    ]
+   },
+   "x_VD": {
+    "px": [
+     318.5,
+     961.5
+    ],
+    "unit": "V",
+    "value": [
+     0.0,
+     200.0
+    ]
+   }
+  },
+  "frame_rows_px": {
+   "a": [
+    [
+     34,
+     37
+    ],
+    [
+     662,
+     665
+    ]
+   ],
+   "b": [
+    [
+     870,
+     874
+    ],
+    [
+     1498,
+     1501
+    ]
+   ]
+  },
+  "image_px": [
+   1417,
+   1685
+  ],
+  "image_sha256": "f1afd498d398ff260ead7b7b325b320340c2877e487435e5e55cc06c981e70d4",
+  "markers": [
+   {
+    "ID_b": null,
+    "Ic60_b": {
+     "body_run_px": [
+      1432,
+      1451
+     ],
+     "cap_runs_px": [],
+     "centre_y_px": 1441.5
+    },
+    "VD_nominal_V": 0,
+    "VK_a": {
+     "bbox_y_px": [
+      386,
+      422
+     ]
+    },
+    "Vmax_a": {
+     "body_run_px": [
+      275,
+      303
+     ],
+     "cap_runs_px": [],
+     "centre_y_px": 289.0
+    },
+    "x_px": 318
+   },
+   {
+    "ID_b": {
+     "runs_px": [
+      [
+       1283,
+       1313
+      ]
+     ]
+    },
+    "Ic60_b": {
+     "body_run_px": [
+      1368,
+      1395
+     ],
+     "cap_runs_px": [],
+     "centre_y_px": 1381.5
+    },
+    "VD_nominal_V": 140,
+    "VK_a": {
+     "bbox_y_px": [
+      403,
+      435
+     ]
+    },
+    "Vmax_a": {
+     "body_run_px": [
+      141,
+      162
+     ],
+     "cap_runs_px": [
+      [
+       124,
+       127
+      ],
+      [
+       176,
+       179
+      ]
+     ],
+     "centre_y_px": 151.5
+    },
+    "x_px": 769
+   },
+   {
+    "ID_b": {
+     "runs_px": [
+      [
+       1207,
+       1237
+      ]
+     ]
+    },
+    "Ic60_b": {
+     "body_run_px": [
+      1299,
+      1320
+     ],
+     "cap_runs_px": [
+      [
+       1281,
+       1284
+      ],
+      [
+       1334,
+       1337
+      ]
+     ],
+     "centre_y_px": 1309.5
+    },
+    "VD_nominal_V": 160,
+    "VK_a": {
+     "bbox_y_px": [
+      423,
+      455
+     ]
+    },
+    "Vmax_a": {
+     "body_run_px": [
+      112,
+      132
+     ],
+     "cap_runs_px": [
+      [
+       92,
+       95
+      ],
+      [
+       150,
+       153
+      ]
+     ],
+     "centre_y_px": 122.0
+    },
+    "x_px": 833
+   },
+   {
+    "ID_b": {
+     "runs_px": [
+      [
+       1142,
+       1172
+      ]
+     ]
+    },
+    "Ic60_b": {
+     "body_run_px": [
+      1223,
+      1243
+     ],
+     "cap_runs_px": [
+      [
+       1189,
+       1192
+      ],
+      [
+       1273,
+       1276
+      ]
+     ],
+     "centre_y_px": 1233.0
+    },
+    "VD_nominal_V": 180,
+    "VK_a": {
+     "bbox_y_px": [
+      451,
+      483
+     ]
+    },
+    "Vmax_a": {
+     "body_run_px": [
+      95,
+      114
+     ],
+     "cap_runs_px": [
+      [
+       72,
+       75
+      ],
+      [
+       134,
+       137
+      ]
+     ],
+     "centre_y_px": 104.5
+    },
+    "x_px": 897
+   },
+   {
+    "ID_b": {
+     "runs_px": [
+      [
+       1013,
+       1043
+      ]
+     ]
+    },
+    "Ic60_b": {
+     "body_run_px": [
+      1076,
+      1098
+     ],
+     "cap_runs_px": [
+      [
+       1156,
+       1160
+      ]
+     ],
+     "centre_y_px": 1087.0
+    },
+    "VD_nominal_V": 200,
+    "VK_a": {
+     "bbox_y_px": [
+      458,
+      490
+     ]
+    },
+    "Vmax_a": {
+     "body_run_px": [
+      96,
+      117
+     ],
+     "cap_runs_px": [
+      [
+       74,
+       78
+      ],
+      [
+       136,
+       139
+      ]
+     ],
+     "centre_y_px": 106.5
+    },
+    "x_px": 962
+   },
+   {
+    "ID_b": {
+     "runs_px": [
+      [
+       1068,
+       1074
+      ]
+     ]
+    },
+    "Ic60_b": {
+     "body_run_px": [
+      1041,
+      1061
+     ],
+     "cap_runs_px": [
+      [
+       971,
+       975
+      ],
+      [
+       1128,
+       1131
+      ]
+     ],
+     "centre_y_px": 1051.0
+    },
+    "VD_nominal_V": 220,
+    "VK_a": {
+     "bbox_y_px": [
+      504,
+      536
+     ]
+    },
+    "Vmax_a": {
+     "body_run_px": [
+      84,
+      105
+     ],
+     "cap_runs_px": [
+      [
+       61,
+       64
+      ],
+      [
+       125,
+       128
+      ]
+     ],
+     "centre_y_px": 94.5
+    },
+    "x_px": 1026
+   },
+   {
+    "ID_b": {
+     "runs_px": [
+      [
+       1055,
+       1085
+      ]
+     ]
+    },
+    "Ic60_b": {
+     "body_run_px": [
+      1099,
+      1118
+     ],
+     "cap_runs_px": [
+      [
+       1040,
+       1043
+      ],
+      [
+       1174,
+       1177
+      ]
+     ],
+     "centre_y_px": 1108.5
+    },
+    "VD_nominal_V": 240,
+    "VK_a": {
+     "bbox_y_px": [
+      572,
+      603
+     ]
+    },
+    "Vmax_a": {
+     "body_run_px": [
+      94,
+      113
+     ],
+     "cap_runs_px": [
+      [
+       71,
+       75
+      ],
+      [
+       133,
+       136
+      ]
+     ],
+     "centre_y_px": 103.5
+    },
+    "x_px": 1090
+   },
+   {
+    "ID_b": {
+     "runs_px": [
+      [
+       1078,
+       1108
+      ]
+     ]
+    },
+    "Ic60_b": {
+     "body_run_px": [
+      1125,
+      1143
+     ],
+     "cap_runs_px": [
+      [
+       1071,
+       1074
+      ],
+      [
+       1194,
+       1197
+      ]
+     ],
+     "centre_y_px": 1134.0
+    },
+    "VD_nominal_V": 260,
+    "VK_a": {
+     "bbox_y_px": [
+      632,
+      664
+     ]
+    },
+    "Vmax_a": {
+     "body_run_px": [
+      86,
+      105
+     ],
+     "cap_runs_px": [
+      [
+       62,
+       65
+      ],
+      [
+       126,
+       129
+      ]
+     ],
+     "centre_y_px": 95.5
+    },
+    "x_px": 1154
+   }
+  ],
+  "square_half_height_px": 15.0
+ },
+ "schema": "takahashi2024_fig_pixels_v1",
+ "source_pdf_sha256": "1e4778559d61509d520fac91798f7ed9ebb92d18a31a2e9b9f2598a8894d6e1f",
+ "tool": "pdfimages -png (poppler)"
+}
