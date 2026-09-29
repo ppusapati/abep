@@ -2942,50 +2942,97 @@
    "H2-1": {
     "lane": "fo_h2_1_hall_chamber_magnet",
     "path": "docs/hardware/h2/h2_1_hall_chamber_magnet/",
-    "state": "ABSENT",
-    "status": "PENDING docs/hardware/h2/h2_1_hall_chamber_magnet/"
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "h2_1_hall_chamber_magnet_v1.json",
+      "sha256_observed": "49b9a45e9347b141bf8bd1122ffba3ae038c9f088041e4410525e4ab8695b82d"
+     }
+    ],
+    "n_demands_to_h2_7": 1
    },
    "H2-2": {
     "lane": "fo_h2_2_cathode_integration",
     "path": "docs/hardware/h2/h2_2_cathode_integration/",
-    "state": "ABSENT",
-    "status": "PENDING docs/hardware/h2/h2_2_cathode_integration/"
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "h2_2_cathode_integration_v1.json",
+      "sha256_observed": "8436008ac458d4e7467a9c7c9592d5312b3912b918d584ceaf3ac8cb2745a971"
+     }
+    ],
+    "n_demands_to_h2_7": 1
    },
    "H2-3": {
     "lane": "fo_h2_3_gas_path_plenum",
     "path": "docs/hardware/h2/h2_3_gas_path_plenum/",
-    "state": "ABSENT",
-    "status": "PENDING docs/hardware/h2/h2_3_gas_path_plenum/"
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "h2_3_gas_path_plenum_v1.json",
+      "sha256_observed": "f32b05bd03aad2a09a1d9b90ee5f9423e733e6ea4cb94814c92b500590d43a7b"
+     }
+    ],
+    "n_demands_to_h2_7": 1
    },
    "H2-4": {
     "lane": "fo_h2_4_ppu_bus",
     "path": "docs/hardware/h2/h2_4_ppu_bus/",
-    "state": "ABSENT",
-    "status": "PENDING docs/hardware/h2/h2_4_ppu_bus/"
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "h2_4_ppu_bus_v1.json",
+      "sha256_observed": "5c6623612ee9ec22899083201416f7b51a10a2d7e88456d372783ce2edde26ef"
+     }
+    ],
+    "n_demands_to_h2_7": 1
    },
    "H2-5": {
     "lane": "fo_h2_5_thermal_network",
     "path": "docs/hardware/h2/h2_5_thermal_network/",
-    "state": "ABSENT",
-    "status": "PENDING docs/hardware/h2/h2_5_thermal_network/"
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "h2_5_thermal_network_v1.json",
+      "sha256_observed": "68c5be61443d0ef1c7308c4aba265426137292dcf9363e57903e0a1f6c8bc083"
+     }
+    ],
+    "n_demands_to_h2_7": 1
    },
    "H2-6": {
     "lane": "fo_h2_6_diagnostics_fixture",
     "path": "docs/hardware/h2/h2_6_diagnostics_fixture/",
-    "state": "ABSENT",
-    "status": "PENDING docs/hardware/h2/h2_6_diagnostics_fixture/"
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "h2_6_diagnostics_fixture_v1.json",
+      "sha256_observed": "bc7d6b049067c6fbd5489bda32ee9c8c1af36508576db4619b08d2c4ec196a56"
+     }
+    ],
+    "n_demands_to_h2_7": 1
    },
    "PIM-ICD": {
     "lane": "fo_preionizer_module_icd",
     "path": "docs/interfaces/preionizer_module/",
-    "state": "ABSENT",
-    "status": "PENDING docs/interfaces/preionizer_module/"
+    "state": "PRESENT",
+    "files": [],
+    "n_demands_to_h2_7": 0
    },
    "M16": {
     "lane": "fo_subsystem_maturity_matrix",
     "path": "docs/budgets/subsystem_maturity/",
-    "state": "ABSENT",
-    "status": "PENDING docs/budgets/subsystem_maturity/"
+    "state": "PRESENT",
+    "files": [
+     {
+      "name": "subsystem_maturity_v1.json",
+      "sha256_observed": "20114a8074f9d616c0358b7dd5f874abfb569ce2f6ae4354a0d49b15aa646770"
+     },
+     {
+      "name": "subsystem_maturity_v2.json",
+      "sha256_observed": "a82b1acd118b26e89edd4fa467bec778fa410470cca5eb6f684e6553eadaf23c"
+     }
+    ],
+    "n_demands_to_h2_7": 0
    },
    "P1-PREG": {
     "lane": "fo_phase1_prereg_framework",
@@ -3000,7 +3047,114 @@
     "n_demands_to_h2_7": 0
    }
   },
-  "demands": [],
+  "demands": [
+   {
+    "lane": "H2-1",
+    "file": "h2_1_hall_chamber_magnet_v1.json",
+    "demand": {
+     "from": "H2-1",
+     "to": "docs/hardware/h2/h2_7_mechanical_bom/",
+     "quantity": "H-1/MC-1 envelope and mass (RP-1, f_NI 2)",
+     "value": {
+      "body_OD_mm": 122.0,
+      "length_mm": 108.2,
+      "iron_kg": 1.925,
+      "copper_kg": 1.579
+     },
+     "units": "mm, kg",
+     "status": "PRELIMINARY (magnetic parts only)"
+    },
+    "adopted": false,
+    "reason": "no 'h2_7_line_item' naming an existing line item"
+   },
+   {
+    "lane": "H2-2",
+    "file": "h2_2_cathode_integration_v1.json",
+    "demand": {
+     "id": "IFD-13",
+     "from": "H2-2",
+     "to": "H2-7 (docs/hardware/h2/h2_7_mechanical_bom/)",
+     "quantity": "C-1 mass, envelope and mount",
+     "value": {
+      "analog_mass_g_without_cables": {
+       "SITAEL HC1": 30.0,
+       "SITAEL HC3": 50.0
+      },
+      "mount": "cantilever from the back pole (L-CENTRAL) - vibration check",
+      "disassembly": "HW-C1-08"
+     },
+     "units": "g",
+     "status": "PENDING C-1 selection (IEPC2017_365 pp. 5, 8 analog masses)"
+    },
+    "adopted": false,
+    "reason": "no 'h2_7_line_item' naming an existing line item"
+   },
+   {
+    "lane": "H2-3",
+    "file": "h2_3_gas_path_plenum_v1.json",
+    "demand": {
+     "from": "H2-3",
+     "to": "H2-7 (mechanical/BOM; mass_bom atmospheric_gas_chamber, atmospheric_valve)",
+     "quantity": "plenum volume range (minimum-volume range) and line routing lengths",
+     "value": [
+      0.0,
+      0.006165
+     ],
+     "units": "m^3",
+     "status": "PRELIMINARY"
+    },
+    "adopted": false,
+    "reason": "no 'h2_7_line_item' naming an existing line item"
+   },
+   {
+    "lane": "H2-4",
+    "file": "h2_4_ppu_bus_v1.json",
+    "demand": {
+     "from": "H2-4",
+     "to": "H2-7",
+     "quantity": "PPU mass (analog only) and bus harness current",
+     "value": {
+      "analog_ppu_mass_kg": 6.1,
+      "I_bus_A": [
+       38.2353,
+       62.5
+      ]
+     },
+     "units": "kg / A",
+     "status": "PRELIMINARY"
+    },
+    "adopted": false,
+    "reason": "no 'h2_7_line_item' naming an existing line item"
+   },
+   {
+    "lane": "H2-5",
+    "file": "h2_5_thermal_network_v1.json",
+    "demand": {
+     "from": "H2-5",
+     "to": "H2-7 (docs/hardware/h2/h2_7_mechanical_bom/)",
+     "quantity": "body envelope D_body, L_body and mount heat into the stand/spacecraft",
+     "value": "H25-18/19; mount_heat_W",
+     "units": "m, W",
+     "status": "PENDING"
+    },
+    "adopted": false,
+    "reason": "no 'h2_7_line_item' naming an existing line item"
+   },
+   {
+    "lane": "H2-6",
+    "file": "h2_6_diagnostics_fixture_v1.json",
+    "demand": {
+     "from": "fo_h2_6_diagnostics_fixture",
+     "to": "fo_h2_7_mechanical_bom",
+     "quantity": "fixture items are test-article/ground-only and excluded from the flight mass model (FX-01..FX-10)",
+     "value": "excluded",
+     "units": "-",
+     "status": "PRELIMINARY"
+    },
+    "adopted": false,
+    "reason": "no 'h2_7_line_item' naming an existing line item"
+   }
+  ],
   "adopted_line_items": []
  },
  "interface_demands": [

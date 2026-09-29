@@ -195,14 +195,14 @@ A demand is ADOPTED only if: (1) its 'to' names H2-7 (H2-7, H2_7, fo_h2_7_mechan
 
 | lane | path | state | demands to H2-7 |
 |---|---|---|---|
-| H2-1 | `docs/hardware/h2/h2_1_hall_chamber_magnet/` | ABSENT | — |
-| H2-2 | `docs/hardware/h2/h2_2_cathode_integration/` | ABSENT | — |
-| H2-3 | `docs/hardware/h2/h2_3_gas_path_plenum/` | ABSENT | — |
-| H2-4 | `docs/hardware/h2/h2_4_ppu_bus/` | ABSENT | — |
-| H2-5 | `docs/hardware/h2/h2_5_thermal_network/` | ABSENT | — |
-| H2-6 | `docs/hardware/h2/h2_6_diagnostics_fixture/` | ABSENT | — |
-| PIM-ICD | `docs/interfaces/preionizer_module/` | ABSENT | — |
-| M16 | `docs/budgets/subsystem_maturity/` | ABSENT | — |
+| H2-1 | `docs/hardware/h2/h2_1_hall_chamber_magnet/` | PRESENT | 1 |
+| H2-2 | `docs/hardware/h2/h2_2_cathode_integration/` | PRESENT | 1 |
+| H2-3 | `docs/hardware/h2/h2_3_gas_path_plenum/` | PRESENT | 1 |
+| H2-4 | `docs/hardware/h2/h2_4_ppu_bus/` | PRESENT | 1 |
+| H2-5 | `docs/hardware/h2/h2_5_thermal_network/` | PRESENT | 1 |
+| H2-6 | `docs/hardware/h2/h2_6_diagnostics_fixture/` | PRESENT | 1 |
+| PIM-ICD | `docs/interfaces/preionizer_module/` | PRESENT | 0 |
+| M16 | `docs/budgets/subsystem_maturity/` | PRESENT | 0 |
 | P1-PREG | `docs/experiments/phase1_prereg_framework/` | PRESENT | 0 |
 
 Adopted line items: none.
