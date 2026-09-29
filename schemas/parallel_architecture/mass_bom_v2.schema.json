@@ -1,0 +1,121 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "mass_bom_v2",
+ "title": "Installed-mass BOM v2 roll-up",
+ "description": "Output of abep_sim.mass_bom_v2.rollup. Installed mass depends on architecture only; TBD items refuse the MEV (partial = known sums, not an MEV); targets (28/35 kg PROPOSED) separate from the RFP requirement; mass_bom_v1 untouched.",
+ "type": "object",
+ "required": [
+  "bom_version",
+  "architecture",
+  "status",
+  "complete",
+  "missing_items",
+  "items",
+  "cbe_dry_kg",
+  "nominal_dry_kg",
+  "system_margin_kg",
+  "propellant_kg",
+  "dry_mev_kg",
+  "mev_kg",
+  "design_targets"
+ ],
+ "properties": {
+  "bom_version": {
+   "const": "mass_bom_v2"
+  },
+  "architecture": {
+   "enum": [
+    "rf_only",
+    "hall_only",
+    "rf_hall_parallel"
+   ]
+  },
+  "status": {
+   "enum": [
+    "PASS",
+    "INCOMPLETE_EVIDENCE",
+    "INFEASIBLE_MASS"
+   ]
+  },
+  "complete": {
+   "type": "boolean"
+  },
+  "missing_items": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "items": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": [
+     "id",
+     "name",
+     "scope",
+     "mass_class",
+     "maturity_category",
+     "cbe",
+     "mga",
+     "cbe_kg",
+     "with_mga_kg"
+    ],
+    "properties": {
+     "scope": {
+      "enum": [
+       "common",
+       "rf",
+       "hall",
+       "xe_system"
+      ]
+     },
+     "mass_class": {
+      "enum": [
+       "dry",
+       "propellant"
+      ]
+     },
+     "cbe_kg": {
+      "type": [
+       "number",
+       "null"
+      ]
+     }
+    }
+   }
+  },
+  "cbe_dry_kg": {
+   "type": "number",
+   "minimum": 0
+  },
+  "nominal_dry_kg": {
+   "type": "number",
+   "minimum": 0
+  },
+  "system_margin_kg": {
+   "type": "number",
+   "minimum": 0
+  },
+  "propellant_kg": {
+   "type": "number",
+   "minimum": 0
+  },
+  "dry_mev_kg": {
+   "type": [
+    "number",
+    "null"
+   ]
+  },
+  "mev_kg": {
+   "type": [
+    "number",
+    "null"
+   ]
+  },
+  "design_targets": {
+   "type": "object"
+  }
+ }
+}
