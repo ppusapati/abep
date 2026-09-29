@@ -49,6 +49,11 @@ class Status(str, Enum):
     INFEASIBLE_FLOW = "INFEASIBLE_FLOW"
     INFEASIBLE_THERMAL = "INFEASIBLE_THERMAL"
     INFEASIBLE_MASS = "INFEASIBLE_MASS"
+    # additions beyond the minimum taxonomy (sec. 20 'at least'):
+    NOT_SUSTAINED = "NOT_SUSTAINED"      # the model finds no sustained discharge at this point (a model result, not a
+                                         # numerical failure and not a validation failure)
+    MODEL_ERROR = "MODEL_ERROR"          # the model violated a physical bound (e.g. jet power above the energy
+                                         # available); the result is withheld, never clipped
 
 
 class FeasibilityVerdict(str, Enum):
@@ -353,3 +358,83 @@ def investigation_constraints(allowed_modes: tuple) -> SystemConstraints:
                              _RFP_STATUS + "; news text says 'three years' (26,280 h)"),
         allowed_modes=tuple(allowed_modes),
     )
+
+
+# ----------------------------------------------------------------------------------------------- branch result
+
+BRANCH_IDS = ("rf", "hall")
+MISSING = "TBD"      # marker for a quantity the branch cannot supply (never replaced by zero)
+
+
+def _maybe(v, what: str):
+    """A number, a TBD, or None-free: numbers are validated, TBD kept, anything else refused."""
+    if isinstance(v, TBD):
+        return v
+    return real(v, what)
+
+
+@dataclass(frozen=True)
+class BranchResult:
+    """Common abstract result of the RF and Hall branches (spec sec. 16). A missing quantity is a TBD, never 0
+    unless zero is physically established (e.g. zero Xe flow in an atmosphere-only RF mode)."""
+    branch_id: str
+    operating_mode: str
+    propellant_source: str                  # "atmosphere" | "xe_tank" | "none"
+    thrust_vector_N: tuple                  # 3 components, or TBD
+    thrust_axial_N: object                  # float or TBD
+    P_loads: Mapping                        # bus_power_v2 component -> {"P_load_W": .., "efficiency": ..}
+    P_bus_W: object                         # float or TBD
+    mdot_atm_kg_s: float
+    mdot_xe_kg_s: float
+    mdot_cathode_xe_kg_s: float
+    Isp_s: object
+    utilization: object
+    heat_loads_W: Mapping
+    plume_divergence_deg: object
+    startup_energy_J: object
+    startup_time_s: object
+    status: Status
+    evidence_class: str
+    applicability_domain: str
+    validation_status: str
+    score_bearing: bool
+    provenance: Mapping
+    limitations: tuple = field(default_factory=tuple)
+
+    def __post_init__(self):
+        if self.branch_id not in BRANCH_IDS:
+            raise ContractError(f"branch_id must be one of {BRANCH_IDS}, got {self.branch_id!r}")
+        nonempty(self.operating_mode, "BranchResult.operating_mode")
+        if self.propellant_source not in ("atmosphere", "xe_tank", "none"):
+            raise ContractError(f"propellant_source must be atmosphere / xe_tank / none, got {self.propellant_source!r}")
+        if isinstance(self.thrust_vector_N, TBD):
+            pass
+        else:
+            if len(self.thrust_vector_N) != 3:
+                raise ContractError("thrust_vector_N must have 3 components")
+            object.__setattr__(self, "thrust_vector_N",
+                               tuple(real(c, "thrust vector component") for c in self.thrust_vector_N))
+        for f_ in ("thrust_axial_N", "P_bus_W", "Isp_s", "utilization", "plume_divergence_deg", "startup_energy_J",
+                   "startup_time_s"):
+            object.__setattr__(self, f_, _maybe(getattr(self, f_), f"BranchResult.{f_}"))
+        for f_ in ("mdot_atm_kg_s", "mdot_xe_kg_s", "mdot_cathode_xe_kg_s"):
+            object.__setattr__(self, f_, nonneg(getattr(self, f_), f"BranchResult.{f_}"))
+        if not isinstance(self.status, Status):
+            raise ContractError("BranchResult.status must be a Status")
+        evidence_class(self.evidence_class, "BranchResult.evidence_class")
+        nonempty(self.applicability_domain, "BranchResult.applicability_domain")
+        nonempty(self.validation_status, "BranchResult.validation_status")
+        if not isinstance(self.score_bearing, bool):
+            raise ContractError("BranchResult.score_bearing must be a bool")
+        object.__setattr__(self, "P_loads", MappingProxyType(dict(self.P_loads)))
+        object.__setattr__(self, "heat_loads_W", MappingProxyType(dict(self.heat_loads_W)))
+        object.__setattr__(self, "provenance", MappingProxyType(dict(self.provenance)))
+        object.__setattr__(self, "limitations", tuple(self.limitations))
+
+    def to_dict(self) -> dict:
+        d = {k: serialise(getattr(self, k)) for k in (
+            "branch_id", "operating_mode", "propellant_source", "thrust_vector_N", "thrust_axial_N", "P_loads",
+            "P_bus_W", "mdot_atm_kg_s", "mdot_xe_kg_s", "mdot_cathode_xe_kg_s", "Isp_s", "utilization",
+            "heat_loads_W", "plume_divergence_deg", "startup_energy_J", "startup_time_s", "status", "evidence_class",
+            "applicability_domain", "validation_status", "score_bearing", "provenance", "limitations")}
+        return d

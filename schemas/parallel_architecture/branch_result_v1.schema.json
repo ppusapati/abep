@@ -1,0 +1,243 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "branch_result_v1",
+ "title": "BranchResult v1 (parallel RF||Hall v2)",
+ "description": "Common result of the RF and Hall branches (abep_sim.parallel_contracts.BranchResult). Missing quantities are TBD objects, never silently 0.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "branch_id",
+  "operating_mode",
+  "propellant_source",
+  "thrust_vector_N",
+  "thrust_axial_N",
+  "P_loads",
+  "P_bus_W",
+  "mdot_atm_kg_s",
+  "mdot_xe_kg_s",
+  "mdot_cathode_xe_kg_s",
+  "Isp_s",
+  "utilization",
+  "heat_loads_W",
+  "plume_divergence_deg",
+  "startup_energy_J",
+  "startup_time_s",
+  "status",
+  "evidence_class",
+  "applicability_domain",
+  "validation_status",
+  "score_bearing",
+  "provenance",
+  "limitations"
+ ],
+ "properties": {
+  "branch_id": {
+   "enum": [
+    "rf",
+    "hall"
+   ]
+  },
+  "operating_mode": {
+   "enum": [
+    "RF_ATM",
+    "RF_XE",
+    "HALL_ATM",
+    "HALL_XE",
+    "RF_ATM_HALL_ATM",
+    "RF_ATM_HALL_XE"
+   ]
+  },
+  "propellant_source": {
+   "enum": [
+    "atmosphere",
+    "xe_tank",
+    "none"
+   ]
+  },
+  "thrust_vector_N": {
+   "anyOf": [
+    {
+     "type": "array",
+     "minItems": 3,
+     "items": {
+      "type": "number"
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "TBD"
+     ]
+    }
+   ]
+  },
+  "thrust_axial_N": {
+   "anyOf": [
+    {
+     "type": "number"
+    },
+    {
+     "type": "object",
+     "required": [
+      "TBD",
+      "name",
+      "requires"
+     ]
+    }
+   ]
+  },
+  "P_loads": {
+   "type": "object"
+  },
+  "P_bus_W": {
+   "anyOf": [
+    {
+     "type": "number"
+    },
+    {
+     "type": "object",
+     "required": [
+      "TBD",
+      "name",
+      "requires"
+     ]
+    }
+   ]
+  },
+  "mdot_atm_kg_s": {
+   "type": "number",
+   "minimum": 0
+  },
+  "mdot_xe_kg_s": {
+   "type": "number",
+   "minimum": 0
+  },
+  "mdot_cathode_xe_kg_s": {
+   "type": "number",
+   "minimum": 0
+  },
+  "Isp_s": {
+   "anyOf": [
+    {
+     "type": "number"
+    },
+    {
+     "type": "object",
+     "required": [
+      "TBD",
+      "name",
+      "requires"
+     ]
+    }
+   ]
+  },
+  "utilization": {
+   "anyOf": [
+    {
+     "type": "number"
+    },
+    {
+     "type": "object",
+     "required": [
+      "TBD",
+      "name",
+      "requires"
+     ]
+    }
+   ]
+  },
+  "heat_loads_W": {
+   "type": "object"
+  },
+  "plume_divergence_deg": {
+   "anyOf": [
+    {
+     "type": "number"
+    },
+    {
+     "type": "object",
+     "required": [
+      "TBD",
+      "name",
+      "requires"
+     ]
+    }
+   ]
+  },
+  "startup_energy_J": {
+   "anyOf": [
+    {
+     "type": "number"
+    },
+    {
+     "type": "object",
+     "required": [
+      "TBD",
+      "name",
+      "requires"
+     ]
+    }
+   ]
+  },
+  "startup_time_s": {
+   "anyOf": [
+    {
+     "type": "number"
+    },
+    {
+     "type": "object",
+     "required": [
+      "TBD",
+      "name",
+      "requires"
+     ]
+    }
+   ]
+  },
+  "status": {
+   "enum": [
+    "PASS",
+    "FAIL_VALIDATION",
+    "OUT_OF_DOMAIN",
+    "NUMERICAL_FAILURE",
+    "INCOMPLETE_EVIDENCE",
+    "INFEASIBLE_POWER",
+    "INFEASIBLE_FLOW",
+    "INFEASIBLE_THERMAL",
+    "INFEASIBLE_MASS",
+    "NOT_SUSTAINED",
+    "MODEL_ERROR"
+   ]
+  },
+  "evidence_class": {
+   "enum": [
+    "measured",
+    "digitized",
+    "inferred",
+    "reconstructed",
+    "model-derived",
+    "assumed"
+   ]
+  },
+  "applicability_domain": {
+   "type": "string",
+   "minLength": 1
+  },
+  "validation_status": {
+   "type": "string",
+   "minLength": 1
+  },
+  "score_bearing": {
+   "type": "boolean"
+  },
+  "provenance": {
+   "type": "object"
+  },
+  "limitations": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  }
+ }
+}
