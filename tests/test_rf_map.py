@@ -92,3 +92,54 @@ def test_hardware_mismatch_and_bad_document(tmp_path):
     d = json.load(open(p)); d["domain"]["P_dc_W"] = [100.0, 800.0]; json.dump(d, open(p, "w"))
     with pytest.raises(RFMapError, match="beyond the measured grid"):
         RFMap(p)
+
+
+def test_bus_power_consistency_and_mode_jump(tmp_path):
+    p = os.path.join(str(tmp_path), "m.json")
+    F.synthetic_rf_map(p)
+    d = json.load(open(p)); d["fields"]["P_bus_W"][0] += 50.0; json.dump(d, open(p, "w"))
+    with pytest.raises(RFMapError, match="3 sigma"):
+        RFMap(p)
+    F.synthetic_rf_map(p)
+    d = json.load(open(p)); d["fields"]["discharge_mode"] = ["inductive"] * 7 + ["helicon"]
+    json.dump(d, open(p, "w"))
+    m = RFMap(p)
+    r = evaluate(F.air(1.5e-6), Mode.RF_ATM, 600.0, cfg(0.04), source=ADMITTED_RF_MAP, rf_map=m)
+    assert r.status.value == "OUT_OF_DOMAIN" and "mode" in r.provenance["reasons"][0]
+    r = evaluate(F.air(1.1e-6), Mode.RF_ATM, 450.0, cfg(0.03), source=ADMITTED_RF_MAP, rf_map=m)
+    assert r.status.value == "OUT_OF_DOMAIN"               # the same cell (all corners) still spans the jump
+
+
+def test_isp_derived_from_thrust(tmp_path):
+    m = admitted_map(tmp_path)
+    r = evaluate(F.air(1.5e-6), Mode.RF_ATM, 600.0, cfg(0.04), source=ADMITTED_RF_MAP, rf_map=m)
+    assert r.Isp_s == pytest.approx(r.thrust_axial_N / (1.5e-6 * 9.80665))
+
+
+def test_ood_never_score_bearing_and_registry_chain(tmp_path):
+    m = admitted_map(tmp_path)
+    r = evaluate(F.air(2.5e-6), Mode.RF_ATM, 600.0, cfg(), source=ADMITTED_RF_MAP, rf_map=m, score_bearing=True)
+    assert r.status.value == "OUT_OF_DOMAIN" and r.score_bearing is False
+    rdir = os.path.join(str(tmp_path), "registry")
+    pinned = reg.head(rdir)
+    rd = os.path.join(rdir, "records")
+    os.remove(os.path.join(rd, sorted(os.listdir(rd))[-1]))        # truncate: delete the newest (ADMIT) record
+    assert reg.state(rdir, m.sha256) == "REGISTERED_NOT_ADMITTED"   # chain alone: a valid, shorter history
+    with pytest.raises(reg.RFRegistryError, match="pinned head"):
+        reg.verify(rdir, str(tmp_path), expected_head_sha256=pinned)
+
+
+def test_forged_admit_and_deleted_decision(tmp_path):
+    m = admitted_map(tmp_path)
+    os.remove(os.path.join(str(tmp_path), "dec.json"))
+    with pytest.raises(reg.RFRegistryError, match="decision file"):
+        RFMap(os.path.join(str(tmp_path), "map.json"), os.path.join(str(tmp_path), "registry"))
+    rd = os.path.join(str(tmp_path), "reg2")
+    reg._append(rd, {"action": "ADMIT", "map_sha256": m.sha256, "decision_file": "x", "decision_sha256": "0" * 64})
+    with pytest.raises(reg.RFRegistryError, match="illegal"):
+        reg.state(rd, m.sha256)
+    rd3 = os.path.join(str(tmp_path), "registry", "records")
+    names = sorted(os.listdir(rd3))
+    os.remove(os.path.join(rd3, names[0]))                  # delete the REGISTER record: chain breaks
+    with pytest.raises(reg.RFRegistryError, match="chain"):
+        reg.records(os.path.join(str(tmp_path), "registry"))

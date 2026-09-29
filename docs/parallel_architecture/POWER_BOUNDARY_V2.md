@@ -13,7 +13,12 @@ unchanged.
 - A component of a branch the mode does not enable must be passed as exactly 0 W at η = 1. Any power on it raises:
   there is no hidden consumption.
 - A `TBD` load gives status `INCOMPLETE_EVIDENCE`: `P_bus_W` is null and only the known lower bound is reported.
-- The conservation residual closes to 1e-12 relative.
+- The "conservation" check is a **bookkeeping identity** (Σ p + Σ(p/η − p) ≡ Σ p/η): it catches only
+  floating-point error, not physics. An independent check needs a measured bus current or power.
+- **OFF-mode policy:** common components are caller-stated in every mode, including OFF (standby heaters,
+  controller, plenum filling); v2 never assumes them to be zero.
+- `xe_flow_control` must be exactly 0 W at η = 1 when no Xe system is installed.
+- Each branch's own P_bus must equal its ledger group; a mismatch is `MODEL_ERROR`.
 
 **Proposed allocations** (`PROPOSED_ENGINEERING_ALLOCATION`; reported, not gating):
 

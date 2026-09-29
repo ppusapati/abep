@@ -25,11 +25,23 @@ Every one of these inputs is a `Quantity` with evidence, or the named unvalidate
 
 P_kin = I_exit · E_i ≤ P_abs − P_ionization/excitation − P_dissociation − P_wall, and T ≤ √(2 ṁ_i P_kin,max).
 
-A violation is `MODEL_ERROR` and the thrust is withheld, never clipped. At the global model's own power balance,
-P_kin,max equals its exit-electron energy flux (2 T_e per electron). So with γ = 1.2 the polytropic
-E_i = T_e[½ + γ/(γ−1)(1 − R_m^(1−γ))] exceeds the available energy beyond R_m ≈ 3–5; on the test fixture the
-bound fires between R_m = 3 and 5. This is an inconsistency between the source model and the nozzle relation.
-The bound exposes it instead of hiding it.
+A violation is `MODEL_ERROR` and the thrust is withheld, never clipped. The tolerance is relative to P_kin,max
+itself (1e-9, or 10× the solver's energy residual), not to P_abs.
+
+At the global model's own power balance, P_kin,max equals its exit-electron energy flux exactly (2 T_e per exiting
+electron), so the bound reduces analytically to E_i ≤ 2 T_e, i.e.
+
+R_m ≤ R_m* = [1 − 1.5(γ−1)/γ]^(−1/(γ−1)) = **4.214 at γ = 1.2** (4.33 at 1.1, 4.05 at 1.4, 3.95 at 5/3),
+
+independent of chamber and flow (`rf_reduced.R_m_star`). Beyond R_m* the polytropic relation asks for more ion
+energy than the source model supplies. This is an inconsistency between the source model and the nozzle relation;
+the bound exposes it instead of hiding it.
+
+Inside the admissible window, the archengine reference detachment η_det = 1 − 0.9/√R_m is at most 0.56 (at
+R_m*). That caps reduced-model RF thrust by construction; state it whenever RF hypotheses are mapped.
+
+`P_jet_W` is defined as T²/(2ṁ_i), which is consistent with the reported thrust. The routed feed's pressure and
+temperature are not used; the chamber gas temperature comes from the chamber specification.
 
 ## Unresolved physics (propagated in every result's `limitations`)
 

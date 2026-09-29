@@ -4,7 +4,7 @@
 
 | Layer | Evidence status | May be score-bearing? |
 |---|---|---|
-| contracts, router, bus ledger, Xe ledger, BOM | exact bookkeeping (tested conservation) | n/a (no physics) |
+| contracts, router, bus ledger, Xe ledger, BOM | exact bookkeeping identities (catch contract and rounding errors, not physics) | n/a (no physics) |
 | reduced RF model | model-derived, UNVALIDATED | **never** |
 | admitted RF map | measured or admitted external data | yes, inside its domain only |
 | Hall transport closure | credible set = ∅ | no (refused in every use) |

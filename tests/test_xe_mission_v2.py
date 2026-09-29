@@ -60,3 +60,18 @@ def test_depletion_flagged_and_v1_untouched():
     s = led.summary(reserve=q(0.0, "1"), residual=q(0.0, "1"))
     assert s["status"] == "INFEASIBLE_FLOW" and s["depleted_at_s"] is not None
     assert xe_ledger.LEDGER_VERSION == "xe_ledger_v1"
+
+
+def test_review_fixes_policies_cathode_times():
+    led = XeMissionLedger(q(1.0, "kg"))
+    with pytest.raises(ContractError, match="cathode"):
+        led.add_interval(0.0, 100.0, Mode.HALL_XE, {"hall_xe_anode": 1e-6})
+    led.add_interval(0.0, 100.0, Mode.HALL_XE, {"hall_xe_anode": 9e-3, "hall_cathode": 1e-5})
+    with pytest.raises(ContractError, match=">= 0"):
+        led.summary(reserve=q(-0.5, "1"), residual=q(0.0, "1"))
+    s = led.summary(reserve=q(0.3, "1"), residual=q(0.0, "1"))
+    assert s["status"] == "INFEASIBLE_FLOW" and "required total" in s["infeasible_reason"]
+    with pytest.raises(ContractError, match="event time"):
+        led.add_event(1e9, "hall_startup", q(1e-5, "kg"))
+    with pytest.raises(ContractError):
+        XeMissionLedger(q(-3.0, "kg"))

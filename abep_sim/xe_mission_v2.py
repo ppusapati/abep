@@ -38,6 +38,9 @@ class XeMissionLedger:
         """``loaded_kg``: the Xe loaded at mission start (Quantity), or None when the loaded mass is what is being
         sized (then remaining is not tracked, only consumption)."""
         self.loaded = None if loaded_kg is None else value_of(loaded_kg, "loaded Xe", "kg")
+        if self.loaded is not None and self.loaded < 0:
+            raise ContractError("loaded Xe must be >= 0 kg")
+        self.unbooked_events = []
         self.loaded_q = loaded_kg
         self.t_end = 0.0
         self.by_cause = {c: 0.0 for c in CAUSES if c not in POLICY_CAUSES}
@@ -71,6 +74,8 @@ class XeMissionLedger:
         bad = [c for c in flows_kg_s if c not in CONTINUOUS_CAUSES]
         if bad:
             raise ContractError(f"not continuous Xe causes: {bad}; use add_event for start-ups")
+        if mode_spec(m).hall_cathode_required and not flows_kg_s.get("hall_cathode", 0.0) > 0:
+            raise ContractError(f"mode {m.value} runs the Hall branch: the cathode Xe flow must be booked (> 0)")
         booked = 0.0
         for c, rate in flows_kg_s.items():
             r = nonneg(rate, f"{c} flow")
@@ -88,6 +93,9 @@ class XeMissionLedger:
             raise ContractError(f"event cause must be one of {EVENT_CAUSES}")
         if not isinstance(count, int) or count < 1:
             raise ContractError("count must be a positive int")
+        t_ev = real(t_s, "t_s")
+        if not 0.0 <= t_ev <= self.t_end + 1e-9:
+            raise ContractError(f"event time {t_ev!r} must lie within the booked history [0, {self.t_end!r}]")
         m = value_of(mass_kg, f"{cause} event mass", "kg")
         if m < 0:
             raise ContractError("event mass must be >= 0")
@@ -97,6 +105,16 @@ class XeMissionLedger:
                                     "mass_kg_each": mass_kg.to_dict()})
         self._consume(t_s, m * count)
 
+    def add_unbooked_event(self, t_s: float, cause: str, requires: str, count: int = 1) -> None:
+        """An event whose Xe mass is TBD: it is counted and makes the total INCOMPLETE (never booked as 0 kg)."""
+        if cause not in EVENT_CAUSES:
+            raise ContractError(f"event cause must be one of {EVENT_CAUSES}")
+        t_ev = real(t_s, "t_s")
+        if not 0.0 <= t_ev <= self.t_end + 1e-9:
+            raise ContractError(f"event time {t_ev!r} must lie within the booked history [0, {self.t_end!r}]")
+        self.starts[cause] += count
+        self.unbooked_events.append({"t_s": t_ev, "cause": cause, "count": count, "requires": requires})
+
     def summary(self, reserve, residual) -> dict:
         """``reserve``/``residual``: Quantity with unit '1' (fraction of consumption) or 'kg', or TBD."""
         consumed = self.consumed_kg
@@ -104,13 +122,13 @@ class XeMissionLedger:
         for name, p in (("reserve", reserve), ("residual", residual)):
             if isinstance(p, TBD):
                 pol[name] = p
-            elif isinstance(p, Quantity) and p.unit == "1":
-                pol[name] = consumed * p.value
-            elif isinstance(p, Quantity) and p.unit == "kg":
-                pol[name] = p.value
+            elif isinstance(p, Quantity) and p.unit in ("1", "kg"):
+                if p.value < 0:
+                    raise ContractError(f"{name} policy must be >= 0, got {p.value!r}")
+                pol[name] = consumed * p.value if p.unit == "1" else p.value
             else:
                 raise ContractError(f"{name} policy must be a Quantity in '1' or 'kg', or TBD (never implicit)")
-        complete = not any(isinstance(v, TBD) for v in pol.values())
+        complete = not any(isinstance(v, TBD) for v in pol.values()) and not self.unbooked_events
         total = consumed + math.fsum(v for v in pol.values() if not isinstance(v, TBD))
         T = self.t_end
         hall_t = sum(t for m, t in self.time_by_mode.items() if mode_spec(m).hall_enabled)
@@ -138,6 +156,9 @@ class XeMissionLedger:
             "remaining_kg": None if self.loaded is None else self.loaded - consumed,
             "depleted_at_s": self.depleted_at_s,
         }
-        if self.loaded is not None and self.loaded - consumed < 0:
+        out["unbooked_events"] = list(self.unbooked_events)
+        if self.loaded is not None and (self.loaded - consumed < 0 or (complete and total > self.loaded)):
             out["status"] = Status.INFEASIBLE_FLOW.value
+            out["infeasible_reason"] = ("consumption exceeds loaded Xe" if self.loaded - consumed < 0 else
+                                        "required total (incl. reserve/residual) exceeds loaded Xe")
         return out

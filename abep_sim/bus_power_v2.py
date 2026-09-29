@@ -16,6 +16,10 @@ must be passed as exactly 0 W with efficiency 1 (genuinely unpowered); any power
 (inactive components may not consume hidden power). A load given as ``TBD`` makes the ledger INCOMPLETE_EVIDENCE:
 the total is not reported, only the known lower bound.
 
+OFF-mode policy: common components (compressor, flow control, thermal control, housekeeping) are caller-stated in
+EVERY mode including OFF (standby heaters, controller, plenum filling may draw power); v2 never assumes them zero.
+xe_flow_control must be exactly 0 W / efficiency 1 when no Xe system is installed.
+
 RF load plane: net RF power (forward minus reflected) at the antenna/coupler feed terminal of the standalone RF
 thruster. Generator, matching network, filters and harness are inside the bus-to-load efficiency. Hall load planes
 keep the v1 terminology. rf_magnet: RF magnetic-nozzle / source coil terminals (0 W, efficiency 1 for a permanent
@@ -102,6 +106,9 @@ def ledger(architecture: InstalledArchitecture, mode, loads: Mapping, efficienci
         p, p_ev = _num(loads[comp], f"load of {comp!r}")
         eta, eta_ev = _num(efficiencies[comp], f"efficiency of {comp!r}")
         branch = BRANCH_OF[comp]
+        if comp == "xe_flow_control" and not architecture.xe_system_installed:
+            if isinstance(p, TBD) or isinstance(eta, TBD) or p != 0.0 or eta != 1.0:
+                raise IllegalModeError("xe_flow_control must be 0 W / efficiency 1 when no Xe system is installed")
         if not enabled[branch]:
             if isinstance(p, TBD) or isinstance(eta, TBD) or p != 0.0 or eta != 1.0:
                 raise IllegalModeError(f"{comp!r} belongs to the {branch} branch, which mode {spec.mode.value} does "

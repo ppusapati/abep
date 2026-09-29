@@ -20,6 +20,17 @@ Sweep ṁ × P_RF × B × x_s over N₂, O₂, O where experimentally possible, 
 - Path to use: REGISTER → owner ADMIT (a sha-pinned decision file) → use. A WITHDRAW record revokes admission.
 - Interpolation happens only inside the domain. Outside any axis, on different hardware, or in a cell with an
   unmeasured, unstable or unignited corner, the result is `OUT_OF_DOMAIN`. Nothing is clipped.
+- Values are validated when the map is loaded: finite, non-negative, `stable`/`ignited` ∈ {0, 1}, and a
+  finite 1σ wherever a value was measured.
+- Measured P_bus must equal P_dc + P_magnet_bus within 3σ. The branch reports that ledger identity, and the
+  measured value is kept in provenance.
+- An optional `discharge_mode` field (capacitive / inductive / helicon) forbids interpolation across a mode jump.
+- Isp is derived from interpolated thrust, never interpolated on its own.
+- **Registry:**
+  - records form a hash chain (seq plus previous sha), so deletion, insertion and reordering are detected;
+  - transitions are validated (ADMIT only after REGISTER, and so on);
+  - `RFMap` re-verifies files before it reports ADMITTED;
+  - deleting the newest record is detectable only against a pinned head (`rf_registry.head`) or git history.
 - **No RF map is labelled admitted before this evidence path exists.**
 
 ## Hall evidence
@@ -27,7 +38,11 @@ Sweep ṁ × P_RF × B × x_s over N₂, O₂, O where experimentally possible, 
 - `HallPoint` records cover measured Vyovrinda points or published analog points, each with its own declared
   domain. There is no interpolation or scaling between points.
 - Analog points are never score-bearing.
-- A Vyovrinda point is score-bearing only under a sha-pinned owner admission.
+- A Vyovrinda point is score-bearing only under an owner admission. The decision file must be inside the root,
+  and its path and sha256 are recorded in provenance.
+- A matched point supplies all of its own measured numbers: thrust, discharge power (for P_bus) and anode flow
+  (for Isp). The query only selects the point, and its offset from the point is reported.
+- Hall heat is `TBD`; it is never omitted as 0.
 - Transport closures always go through `hall_ensemble.require_admitted`. Screening candidates are refused in every
   use, and the credible set is empty.
 

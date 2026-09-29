@@ -2316,7 +2316,14 @@ the goldens, the Hall ensemble and P5-N₂.
   fixtures and is not physical validation.
 - **Reduced-RF finding:** the enforced energy bound
   P_kin ≤ P_abs − P_iz − P_diss − P_wall
-  shows that the global model's exit budget (2 T_e per exiting electron) cannot supply the polytropic nozzle ion
-  energy beyond R_m ≈ 3–5 (γ = 1.2). Such points are MODEL_ERROR, and their thrust is withheld, never clipped.
+  reduces at the global model's balance to E_i ≤ 2 T_e. The polytropic nozzle relation therefore exceeds the source
+  budget for R_m > R_m* = [1 − 1.5(γ−1)/γ]^(−1/(γ−1)), which is 4.214 at γ = 1.2. Such points are MODEL_ERROR, and
+  their thrust is withheld, never clipped.
+- **Review gate (§43, 2026-09-29):**
+  - Two independent reviews ran, one structural and one scientific.
+  - Every blocker and major was fixed: the map P_bus consistency, stopping on Xe exhaustion and on infeasible
+    steps, TBD start masses making the total incomplete, the registry hash chain and transition validation,
+    recorded Hall admission, Hall heat as TBD, the Xe-ledger policy and cathode checks, nozzle range checks, the
+    energy-bound tolerance, Hall point-evidence consistency, and the solar geometry. Minors were fixed as well.
 - **Deferred:** the §45 surfaces need evidence inputs that do not yet exist (RF coupling, nozzle, Hall-Xe points,
   compressor power, start-up Xe). v2 stops rather than invent them.

@@ -7,7 +7,8 @@ invents powers or flows), it returns:
 * feasible candidates with their metrics (thrust, P_bus, T/P_bus, Xe rate, atmospheric consumption, heat, active
   components as the life-consumption proxy),
 * infeasible candidates with their reasons (status categories kept),
-* the Pareto (non-dominated) set over (P_bus min, Xe rate min, heat min, thrust max).
+* the Pareto (non-dominated) set over (P_bus min, Xe rate min, heat min, thrust max). Heat is the KNOWN lower bound;
+  ``heat_complete`` says whether any branch heat is TBD (Hall point evidence carries no heat).
 
 It never selects a mode and never ranks architectures with weights. A selection is made only by an owner
 PREREGISTERED policy (``PreregisteredPolicy``: a sha-pinned owner decision file), which this module does not
@@ -22,7 +23,7 @@ import os
 from dataclasses import dataclass
 
 from . import parallel_system
-from .parallel_contracts import ContractError, Status, SystemConstraints, real
+from .parallel_contracts import ContractError, Status, SystemConstraints, TBD, real
 from .propellant_router import FlowRequest
 from .propulsion_modes import InstalledArchitecture, Mode
 
@@ -87,10 +88,19 @@ def evaluate_candidates(architecture: InstalledArchitecture, candidates, *, requ
             reasons.append(f"P_bus {P:.4g} W > available {avail:.4g} W")
         heat = o.get("heat_loads_W", {})
         heat_tot = sum(v for v in heat.values() if isinstance(v, (int, float))) if heat else 0.0
+        heat_complete = not any(isinstance(v, TBD) for v in heat.values())
         if thermal_limits_W:
             for key, lim in thermal_limits_W.items():
-                v = heat.get(key)
-                if isinstance(v, (int, float)) and v > lim:
+                if key not in heat:
+                    active = [b for b in ("rf", "hall") if (b == "rf" and spec.rf_enabled) or (b == "hall" and spec.hall_enabled)]
+                    if key.split(":")[0] in active:
+                        raise ContractError(f"thermal limit on unknown heat key {key!r}; known keys {sorted(heat)}")
+                    continue
+                v = heat[key]
+                if isinstance(v, TBD):
+                    statuses.append(Status.INCOMPLETE_EVIDENCE.value)
+                    reasons.append(f"heat {key} is TBD; its thermal limit cannot be checked")
+                elif v > lim:
                     statuses.append(Status.INFEASIBLE_THERMAL.value)
                     reasons.append(f"heat {key} {v:.4g} W > limit {lim:.4g} W")
         rec = {"label": c.label, "mode": o["mode"], "status": statuses[0] if statuses else o.get("status"),
@@ -99,7 +109,7 @@ def evaluate_candidates(architecture: InstalledArchitecture, candidates, *, requ
             T = o["T_total_axial_N"]
             rec.update(T_total_axial_N=T, P_total_bus_W=P, T_per_Pbus_N_W=o["T_per_Pbus_N_W"],
                        mdot_xe_total_kg_s=o["mdot_xe_total_kg_s"], mdot_atm_total_kg_s=o["mdot_atm_total_kg_s"],
-                       heat_total_W=heat_tot, active_components=o["active_components"],
+                       heat_total_W=heat_tot, heat_complete=heat_complete, active_components=o["active_components"],
                        score_bearing=o["score_bearing"])
             feasible.append(rec)
         else:

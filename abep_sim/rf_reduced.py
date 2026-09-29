@@ -17,7 +17,9 @@ Energy bound (enforced; a violation is MODEL_ERROR, never clipped):
     P_kin = I_exit * E_i  <=  P_kin,max = P_absorbed - P_ionization/excitation - P_dissociation - P_wall
 where P_wall (ion + electron wall losses of the global model) is the unavoidable loss of this reduced model. At the
 global model's own balance P_kin,max equals its exit-electron energy flux (2 T_e per exiting electron), so with
-gamma = 1.2 the polytropic relation violates the bound once R_m exceeds ~3 - an inconsistency of the reduced model
+the bound reduces analytically to E_i <= 2 T_e, i.e. R_m <= R_m* = [1 - 1.5 (gamma-1)/gamma]^(-1/(gamma-1))
+(4.214 at gamma = 1.2; 4.33 at 1.1, 4.05 at 1.4, 3.95 at 5/3), independent of chamber and flow. Beyond R_m* the
+polytropic relation asks for more ion energy than the source model supplies - an inconsistency of the reduced model
 that the bound exposes instead of hiding. Thrust bound (directed-flow): T <= sqrt(2 mdot_i P_kin,max).
 
 Every coefficient is an explicit input (a Quantity with evidence, or a named reference model). There are no
@@ -105,17 +107,32 @@ class RFNozzleSpec:
 def _eta_det(spec: RFNozzleSpec, R_m: float):
     if spec.detachment == REFERENCE_DETACHMENT:
         return max(1 - 0.9 / math.sqrt(R_m), 0.0), {"model": REFERENCE_DETACHMENT, "source": _ARCH_REF}
-    return value_of(spec.detachment, "detachment efficiency", "1"), spec.detachment.to_dict()
+    e = value_of(spec.detachment, "detachment efficiency", "1")
+    if not 0.0 <= e <= 1.0:
+        raise ContractError(f"detachment efficiency must be in [0, 1], got {e!r}")
+    return e, spec.detachment.to_dict()
 
 
 def _divergence(spec: RFNozzleSpec, R_m: float):
     if spec.divergence == REFERENCE_DIVERGENCE:
         return 45.0 / (1 + 0.05 * R_m), {"model": REFERENCE_DIVERGENCE, "source": _ARCH_REF}
-    return value_of(spec.divergence, "plume divergence", "deg"), spec.divergence.to_dict()
+    d = value_of(spec.divergence, "plume divergence", "deg")
+    if not 0.0 <= d < 90.0:
+        raise ContractError(f"plume divergence half-angle must be in [0, 90) deg, got {d!r}")
+    return d, spec.divergence.to_dict()
 
 
 def _tbd(name, requires):
     return TBD(name, requires)
+
+
+def R_m_star(gamma: float) -> float:
+    """Analytic expansion-ratio limit of the polytropic relation under the global model's exit budget (E_i <= 2 T_e)."""
+    g = real(gamma, "gamma")
+    if g <= 1.0:
+        raise ContractError("gamma must be > 1")
+    base = 1 - 1.5 * (g - 1) / g
+    return math.inf if base <= 0 else base ** (-1 / (g - 1))
 
 
 def run(feed: FeedState, P_dc_W: float, chamber: RFChamberSpec, coupling: RFCoupling, nozzle: RFNozzleSpec,
@@ -134,6 +151,10 @@ def run(feed: FeedState, P_dc_W: float, chamber: RFChamberSpec, coupling: RFCoup
             raise ContractError(f"{n} must be in (0, 1], got {e!r}")
     P_net = P_dc * eta_feed
     P_abs = P_net * eta_ant
+    if isinstance(coupling.eta_generator, Quantity):
+        eg = value_of(coupling.eta_generator, "eta_generator", "1")
+        if not 0.0 < eg <= 1.0:
+            raise ContractError(f"eta_generator must be in (0, 1], got {eg!r}")
     if isinstance(coupling.eta_generator, Quantity) and isinstance(coupling.P_reflected_W, Quantity):
         P_fwd = P_dc * value_of(coupling.eta_generator, "eta_generator", "1")
         P_refl = value_of(coupling.P_reflected_W, "P_reflected_W", "W")
@@ -152,6 +173,10 @@ def run(feed: FeedState, P_dc_W: float, chamber: RFChamberSpec, coupling: RFCoup
         raise ContractError("gamma must be > 1 and R_m >= 1")
 
     ch = chamber.chamber()
+    # the routed feed's pressure/temperature are not used: the chamber gas temperature is the chamber spec's T_gas_K
+    unmapped = [s for s, m in feed.species_mdot_kg_s().items() if m > 0 and s not in M_NEUT]
+    if unmapped:
+        raise ContractError(f"species {unmapped} are not represented in plasma_chem (M_NEUT)")
     inflow = {s: m for s, m in feed.species_mdot_kg_s().items() if s in M_NEUT}
     base = {
         "model_id": MODEL_ID, "evidence_class": EVIDENCE_CLASS, "validation_status": VALIDATION_STATUS,
@@ -195,7 +220,7 @@ def run(feed: FeedState, P_dc_W: float, chamber: RFChamberSpec, coupling: RFCoup
     T_raw = sum((st.ion_exit_A[i] / E_CHARGE) * M_ION[i] * math.sqrt(2 * E_CHARGE * E_i / M_ION[i])
                 for i in st.ion_exit_A)
     T = T_raw * eta_det * cos_div
-    P_jet = P_kin * eta_det * cos_div
+    P_jet = (T * T / (2 * mdot_i)) if mdot_i > 0 else 0.0     # directed jet power consistent with the reported T
     T_bound = math.sqrt(2 * mdot_i * max(P_kin_max, 0.0)) * eta_det * cos_div
 
     # neutral effusion and mass balance (same conductance as solve_global)
@@ -212,14 +237,14 @@ def run(feed: FeedState, P_dc_W: float, chamber: RFChamberSpec, coupling: RFCoup
            "power_partition_W": {"ionization_excitation": P_iz, "dissociation": P_diss, "wall": P_wall,
                                  "electron_exit": P_exit_e},
            "P_kinetic_W": P_kin, "P_kinetic_max_W": P_kin_max, "E_i_eV": E_i,
-           "magnetic_nozzle_efficiency": (P_jet / P_abs) if P_abs > 0 else 0.0,
+           "magnetic_nozzle_efficiency": (P_jet / P_abs) if P_abs > 0 else 0.0,   # T^2/(2 mdot_i) / P_abs
            "detachment_efficiency": eta_det, "detachment_evidence": det_ev,
            "plume_divergence_deg": div, "divergence_evidence": div_ev,
            "thrust_bound_N": T_bound,
            "mdot_ion_kg_s": m_ion_out, "mdot_neutral_out_kg_s": m_neut_out,
            "mass_balance_residual": mass_residual / feed.mdot_total_kg_s,
            "energy_balance_residual": energy_residual / P_abs}
-    tol_E = 1e-3 * P_abs
+    tol_E = max(1e-9 * P_kin_max, 10.0 * abs(energy_residual))   # relative to the bound itself, not to P_abs
     if P_kin > P_kin_max + tol_E or T > T_bound * (1 + 1e-9) + 1e-15:
         return {**out, "model_status": Status.MODEL_ERROR.value, "thrust_N": TBD("thrust_N", "reduced model "
                 "violated its energy bound; result withheld"),
@@ -255,7 +280,8 @@ class RFCouplingRecord:
     def __post_init__(self):
         from .parallel_contracts import evidence_class as _ev, nonempty as _ne
         real(self.frequency_Hz, "frequency_Hz")
-        real(self.P_dc_W, "P_dc_W")
+        if real(self.P_dc_W, "P_dc_W") < 0:
+            raise ContractError("P_dc_W must be >= 0")
         _ne(self.antenna_geometry_id, "antenna_geometry_id")
         _ne(self.magnetic_geometry_id, "magnetic_geometry_id")
         _ne(self.source, "source")

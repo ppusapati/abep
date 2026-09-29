@@ -47,7 +47,7 @@ status and verdict.
 | `parallel_system` | evaluator for one operating point |
 | `xe_mission_v2`, `mass_bom_v2` | Xe by cause from the mode history; installed-mass BOM |
 | `mode_controller` | feasible set, reasons, Pareto; no automatic selection |
-| `mission_parallel` | mission loop with mode history, battery, hours, starts; coverage |
+| `mission_parallel` | mission loop with mode history, battery, hours, starts; coverage. Stops on unavailable thrust, any INFEASIBLE_* step, Xe exhaustion, battery exhaustion or re-entry. The Xe supply follows the ledger. Solar geometry uses days since the vernal equinox. The battery is orbit-averaged when dt exceeds an orbit, so per-orbit depth of discharge is not resolved. |
 | `golden_parallel` | software-regression vectors (not validation) |
 
 Schemas are in `schemas/parallel_architecture/`. Baseline P0: `BASELINE_P0.json`.

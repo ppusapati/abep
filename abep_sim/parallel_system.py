@@ -70,6 +70,8 @@ def evaluate(architecture: InstalledArchitecture, mode, *, atm_feed: FeedState |
              constraints: SystemConstraints, required_thrust_N: float, score_bearing: bool = False) -> dict:
     spec = architecture.check_mode(mode)
     req_T = real(required_thrust_N, "required_thrust_N")
+    if req_T < 0:
+        raise ContractError("required_thrust_N must be >= 0")
     out = {"architecture": architecture.kind.value, "mode": spec.mode.value, "statuses": [], "failure_reasons": []}
 
     def fail(status: Status, why: str):
@@ -134,6 +136,11 @@ def evaluate(architecture: InstalledArchitecture, mode, *, atm_feed: FeedState |
         loads.update(l)
         effs.update(e)
     led = bus_power_v2.ledger(architecture, spec.mode, loads, effs)
+    for b, br in branches.items():                       # a branch's own P_bus must equal its ledger group
+        g = led["group_P_bus_W"].get(b)
+        if g is not None and not isinstance(br.P_bus_W, TBD) and abs(br.P_bus_W - g) > 1e-6 * max(g, 1.0):
+            fail(Status.MODEL_ERROR, f"{b} branch reports P_bus {br.P_bus_W:.6g} W but its load planes give "
+                                     f"{g:.6g} W (inconsistent branch power evidence)")
     out["power_ledger"] = led
     out["power_balance_residual_W"] = led["residual_W"]
     if led["status"] == Status.INCOMPLETE_EVIDENCE.value:
@@ -151,6 +158,9 @@ def evaluate(architecture: InstalledArchitecture, mode, *, atm_feed: FeedState |
     # 6. status, feasibility, verdict
     status = out["statuses"][0] if out["statuses"] else Status.PASS.value
     thrust_ok = (not isinstance(T_ax, TBD)) and T_ax >= req_T
+    if not isinstance(T_ax, TBD) and T_ax > constraints.thrust_max_N.value:
+        out["flags"] = [f"T_axial {T_ax:.4g} N above the RFP range maximum {constraints.thrust_max_N.value:g} N "
+                        "(meaning of the 12-25 mN range is owner decision OD1; flagged, not failed)"]
     if not isinstance(T_ax, TBD) and not thrust_ok:
         out["failure_reasons"].append({"status": "THRUST_BELOW_REQUIREMENT",
                                        "reason": f"T_axial {T_ax:.4g} N < required {req_T:.4g} N"})

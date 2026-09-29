@@ -67,3 +67,17 @@ def test_coupling_record_interface():
     with pytest.raises(ContractError, match="energy"):
         R.RFCouplingRecord(13.56e6, "ant", "mag", 700.0, 650.0, 30.0, TBD("S11", "x"), 600.0, 60.0, 50.0,
                            TBD("Z", "x"), "t", "model-derived")
+
+
+def test_analytic_rm_star_and_tight_bound():
+    assert R.R_m_star(1.2) == pytest.approx(4.214, abs=2e-3)
+    assert R.R_m_star(5 / 3) == pytest.approx(3.95, abs=1e-2)
+    rs = R.R_m_star(1.2)
+    assert run(air(), R_m=rs * 0.999)["model_status"] == "PASS"
+    o = run(air(), R_m=rs * 1.005)                         # a 0.5 % step past R_m* must already fail
+    assert o["model_status"] == "MODEL_ERROR"
+
+
+def test_jet_power_consistent_with_thrust():
+    o = run(air())
+    assert o["P_jet_W"] == pytest.approx(o["thrust_N"] ** 2 / (2 * o["mdot_ion_kg_s"]))

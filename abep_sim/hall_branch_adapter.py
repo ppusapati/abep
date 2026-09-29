@@ -12,7 +12,9 @@ Sources
 * ``POINT_EVIDENCE`` - explicit operating points (``HallPoint``: measured Vyovrinda hardware or published analog
   hardware), each with its own declared domain. A query must fall inside one point's domain; there is NO
   interpolation and NO scaling between points (that would be an unvalidated model). Outside every point:
-  OUT_OF_DOMAIN.
+  OUT_OF_DOMAIN. A matched point supplies ALL performance numbers from its own measurement (thrust, discharge
+  power for P_bus, anode flow for Isp); the query only selects it, and the query's offset from the measured point is
+  reported (the declared domain width is the owner's stated applicability, not a model).
 
 Score-bearing rule
 * analog hardware: never score-bearing;
@@ -100,12 +102,20 @@ def check_transport_closure(member_id: str, ensemble: dict | None = None) -> Non
         raise HallEvidenceError(f"Hall transport closure {member_id!r} may not be used in v2: {exc}") from None
 
 
-def _admitted(point: HallPoint, admission_file: str | None, root: str | None) -> bool:
+def _admission(point: HallPoint, admission_file: str | None, root: str | None):
+    """(admitted, record): the owner decision must be inside ``root``, contain decided_by 'owner' and the point's
+    canonical sha256; the record pins the decision file by its own sha256 (returned for provenance)."""
     if admission_file is None:
-        return False
-    p = os.path.join(root or ".", admission_file)
-    dec = json.load(open(p))
-    return dec.get("decided_by") == "owner" and dec.get("admits_hall_evidence_sha256") == point.canonical_sha256()
+        return False, None
+    base = os.path.abspath(root or ".")
+    p = os.path.abspath(os.path.join(base, admission_file))
+    if os.path.commonpath([p, base]) != base or not os.path.isfile(p):
+        raise HallEvidenceError(f"admission file {admission_file!r} is outside the root or missing")
+    raw = open(p, "rb").read()
+    dec = json.loads(raw)
+    ok = dec.get("decided_by") == "owner" and dec.get("admits_hall_evidence_sha256") == point.canonical_sha256()
+    return ok, {"decision_file": os.path.relpath(p, base), "decision_sha256": hashlib.sha256(raw).hexdigest(),
+                "admits_hall_evidence_sha256": dec.get("admits_hall_evidence_sha256")}
 
 
 def evaluate(feed: FeedState | None, mode, cathode_xe_kg_s: float, P_discharge_W: float, V_d_V: float,
@@ -139,18 +149,28 @@ def evaluate(feed: FeedState | None, mode, cathode_xe_kg_s: float, P_discharge_W
     q = {"anode_mdot_kg_s": feed.mdot_total_kg_s, "P_discharge_W": P_discharge_W, "V_d_V": V_d_V}
     match = [p for p in points if p.propellant_family == family
              and all(p.domain[k][0] <= v <= p.domain[k][1] for k, v in q.items())]
-    loads = {"hall_discharge": {"P_load_W": P_discharge_W, "efficiency": config.eta_discharge_supply.to_dict()},
-             "hall_magnet": {"P_load_W": value_of(config.P_magnet_W, "P_magnet_W", "W"),
-                             "efficiency": config.eta_magnet_supply.to_dict()},
-             "cathode_keeper": {"P_load_W": value_of(config.P_keeper_W, "P_keeper_W", "W"),
-                                "efficiency": config.eta_keeper_supply.to_dict()},
-             "cathode_heater": {"P_load_W": value_of(config.P_heater_W, "P_heater_W", "W"),
-                                "efficiency": config.eta_heater_supply.to_dict()}}
-    P_bus = sum(v["P_load_W"] / e for v, e in (
-        (loads["hall_discharge"], value_of(config.eta_discharge_supply, "eta_d", "1")),
-        (loads["hall_magnet"], value_of(config.eta_magnet_supply, "eta_mag", "1")),
-        (loads["cathode_keeper"], value_of(config.eta_keeper_supply, "eta_k", "1")),
-        (loads["cathode_heater"], value_of(config.eta_heater_supply, "eta_h", "1"))))
+
+    def _loads(P_d):
+        return {"hall_discharge": {"P_load_W": P_d, "efficiency": config.eta_discharge_supply.to_dict()},
+                "hall_magnet": {"P_load_W": value_of(config.P_magnet_W, "P_magnet_W", "W"),
+                                "efficiency": config.eta_magnet_supply.to_dict()},
+                "cathode_keeper": {"P_load_W": value_of(config.P_keeper_W, "P_keeper_W", "W"),
+                                   "efficiency": config.eta_keeper_supply.to_dict()},
+                "cathode_heater": {"P_load_W": value_of(config.P_heater_W, "P_heater_W", "W"),
+                                   "efficiency": config.eta_heater_supply.to_dict()}}
+
+    def _bus(ld):
+        return sum(v["P_load_W"] / e for v, e in (
+            (ld["hall_discharge"], value_of(config.eta_discharge_supply, "eta_d", "1")),
+            (ld["hall_magnet"], value_of(config.eta_magnet_supply, "eta_mag", "1")),
+            (ld["cathode_keeper"], value_of(config.eta_keeper_supply, "eta_k", "1")),
+            (ld["cathode_heater"], value_of(config.eta_heater_supply, "eta_h", "1"))))
+
+    # a matched point supplies its OWN measured discharge power and anode flow (no hold of thrust against a
+    # different commanded power); an unmatched query books the commanded power
+    P_d_used = value_of(match[0].P_discharge_W, "P_discharge_W", "W") if len(match) == 1 else P_discharge_W
+    loads = _loads(P_d_used)
+    P_bus = _bus(loads)
     common = dict(branch_id="hall", operating_mode=spec.mode.value,
                   propellant_source="xe_tank" if family == "xe" else "atmosphere",
                   mdot_atm_kg_s=feed.mdot_total_kg_s if family == "atmospheric" else 0.0,
@@ -158,10 +178,10 @@ def evaluate(feed: FeedState | None, mode, cathode_xe_kg_s: float, P_discharge_W
                   mdot_cathode_xe_kg_s=cathode_xe_kg_s, P_loads=loads, P_bus_W=P_bus,
                   startup_energy_J=getattr(config.startup_energy_J, "value", config.startup_energy_J),
                   startup_time_s=getattr(config.startup_time_s, "value", config.startup_time_s),
-                  heat_loads_W={}, utilization=TBD("utilization", "not part of the point evidence"))
+                  heat_loads_W={"discharge_heat_W": TBD("Hall discharge heat", "not part of the point evidence; "
+                                                        "needs H-1 thermal measurement (H2-5 fractions are analog)")},
+                  utilization=TBD("utilization", "not part of the point evidence"))
     if not match:
-        if score_bearing:
-            raise HallEvidenceError("no admitted Hall evidence covers this operating point")
         t = TBD("thrust_N", "OUT_OF_DOMAIN: no Hall evidence point covers this anode flow / power / voltage")
         return BranchResult(thrust_vector_N=t, thrust_axial_N=t, Isp_s=TBD("Isp_s", "out of domain"),
                             plume_divergence_deg=TBD("plume_divergence_deg", "out of domain"),
@@ -174,7 +194,7 @@ def evaluate(feed: FeedState | None, mode, cathode_xe_kg_s: float, P_discharge_W
                                 f"({[p.point_id for p in match]}); domains must not overlap")
     p = match[0]
     analog = p.hardware.startswith("analog:")
-    admitted = (not analog) and _admitted(p, admission_file, root)
+    admitted, adm_rec = (False, None) if analog else _admission(p, admission_file, root)
     if score_bearing and not admitted:
         raise HallEvidenceError(f"Hall point {p.point_id} ({p.hardware}) is not admitted Vyovrinda evidence; "
                                 "it cannot be score-bearing" + (" (analog hardware never is)" if analog else ""))
@@ -182,7 +202,7 @@ def evaluate(feed: FeedState | None, mode, cathode_xe_kg_s: float, P_discharge_W
     from .constants import G0
     return BranchResult(
         thrust_vector_N=tuple(T * a for a in axis), thrust_axial_N=T * axis[0],
-        Isp_s=T / ((feed.mdot_total_kg_s + cathode_xe_kg_s) * G0),
+        Isp_s=T / ((value_of(p.anode_mdot_kg_s, "anode_mdot_kg_s", "kg/s") + cathode_xe_kg_s) * G0),
         plume_divergence_deg=getattr(p.plume_divergence_deg, "value", p.plume_divergence_deg),
         status=Status.PASS, evidence_class=p.thrust_N.quantity_type,
         applicability_domain=f"point {p.point_id} domain {p.domain} ({p.hardware})",
@@ -191,7 +211,14 @@ def evaluate(feed: FeedState | None, mode, cathode_xe_kg_s: float, P_discharge_W
         score_bearing=bool(score_bearing and admitted),
         provenance={"source": POINT_EVIDENCE, "point_id": p.point_id, "hardware": p.hardware,
                     "evidence_sha256": p.canonical_sha256(), "evidence_source": p.source,
-                    "isp_basis": "anode + cathode flow"},
+                    "isp_basis": "measured anode flow of the point + booked cathode flow",
+                    "admission": adm_rec,
+                    "performance_basis": "measured point values (thrust, discharge power, anode flow); the query "
+                                         "only selects the point",
+                    "query_offset_from_point": {
+                        "anode_mdot_rel": feed.mdot_total_kg_s / p.anode_mdot_kg_s.value - 1,
+                        "P_discharge_rel": P_discharge_W / p.P_discharge_W.value - 1,
+                        "V_d_rel": V_d_V / p.V_d_V.value - 1}},
         limitations=("point evidence only; no interpolation or scaling between points",
                      "analog hardware is not Vyovrinda hardware" if analog else "measured Vyovrinda point"),
         **common)

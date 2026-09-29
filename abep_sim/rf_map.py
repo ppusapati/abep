@@ -17,8 +17,10 @@ from __future__ import annotations
 import itertools
 import json
 import math
+import os
 
 from . import rf_registry
+from .constants import G0
 from .parallel_contracts import (SPECIES, BranchResult, ContractError, FeedState, Status, TBD, value_of)
 
 MAP_SCHEMA = "rf_map_v1"
@@ -67,10 +69,26 @@ def load_document(path: str) -> dict:
     for f, vals in fields.items():
         if len(vals) != n:
             raise RFMapError(f"field {f} has {len(vals)} values, grid has {n}")
+    NONNEG = ("thrust_N", "P_bus_W", "P_magnet_bus_W", "P_forward_W", "P_reflected_W", "P_absorbed_W", "Te_eV",
+              "ne_m3", "utilization", "Isp_s", "plume_divergence_deg")
+    for f in NONNEG:
+        for i, x in enumerate(fields[f]):
+            if x is None:
+                continue
+            if isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x) or x < 0:
+                raise RFMapError(f"field {f}[{i}] = {x!r} must be a finite number >= 0 or null")
+    for f in ("stable", "ignited"):
+        if any(x not in (0, 1) for x in fields[f]):
+            raise RFMapError(f"field {f} must contain only 0 or 1")
     unc = doc.get("uncertainty_1sigma", {})
     for f in UNCERTAINTY_FIELDS:
         if f not in unc or len(unc[f]) != n:
             raise RFMapError(f"uncertainty_1sigma.{f} is required on every grid point")
+    for f in UNCERTAINTY_FIELDS:
+        for i, x in enumerate(unc[f]):
+            if fields[f][i] is not None and (x is None or isinstance(x, bool) or not isinstance(x, (int, float))
+                                             or not math.isfinite(x) or x < 0):
+                raise RFMapError(f"uncertainty_1sigma.{f}[{i}] must be a finite number >= 0 where {f} is measured")
     dom = doc.get("domain", {})
     for a in AXES:
         lo, hi = _range(dom.get(a), f"domain.{a}")
@@ -83,10 +101,17 @@ def load_document(path: str) -> dict:
         raise RFMapError(f"domain.composition_mass_fraction must give a range for every species {SPECIES}")
     for s in SPECIES:
         _range(comp[s], f"composition range of {s}")
+    grid = list(itertools.product(*(axes[a] for a in AXES)))
     for i in range(n):
-        pb, pd = fields["P_bus_W"][i], None
-        if pb is not None and fields["P_magnet_bus_W"][i] is not None and pb + 1e-9 < fields["P_magnet_bus_W"][i]:
-            raise RFMapError(f"grid point {i}: P_bus_W below the magnet bus draw")
+        pb, pm, sig = fields["P_bus_W"][i], fields["P_magnet_bus_W"][i], unc["P_bus_W"][i]
+        if pb is None or pm is None:
+            continue
+        expect = grid[i][1] + pm                      # P_dc axis (rf_source bus draw) + magnet bus draw
+        if abs(pb - expect) > 3.0 * (sig or 0.0) + 1e-9 * max(expect, 1.0):
+            raise RFMapError(f"grid point {i}: measured P_bus_W {pb!r} != P_dc {grid[i][1]!r} + P_magnet_bus "
+                             f"{pm!r} beyond 3 sigma; the RF branch bus boundary is inconsistent")
+    if "discharge_mode" in fields and any(not isinstance(x, (str, type(None))) for x in fields["discharge_mode"]):
+        raise RFMapError("discharge_mode values must be strings (e.g. capacitive / inductive / helicon) or null")
     return doc
 
 
@@ -94,10 +119,24 @@ class RFMap:
     def __init__(self, path: str, registry_dir: str | None = None):
         self.doc = load_document(path)
         self.sha256 = rf_registry.sha256_file(path)
-        self.registry_state = rf_registry.state(registry_dir, self.sha256) if registry_dir else "UNREGISTERED"
+        if registry_dir:
+            self.registry_state = rf_registry.state(registry_dir, self.sha256)
+            if self.registry_state == "ADMITTED":
+                rf_registry.verify(registry_dir, self._root(registry_dir, path))   # re-hash map + decision files
+        else:
+            self.registry_state = "UNREGISTERED"
         self.meta, self.axes, self.fields = self.doc["meta"], self.doc["axes"], self.doc["fields"]
         self.unc, self.domain = self.doc["uncertainty_1sigma"], self.doc["domain"]
         self.shape = tuple(len(self.axes[a]) for a in AXES)
+
+    @staticmethod
+    def _root(registry_dir: str, path: str) -> str:
+        """The repository root the registry records are relative to: the REGISTER record's map_file must resolve
+        to this map file."""
+        for rec in rf_registry.records(registry_dir):
+            if rec["action"] == "REGISTER" and os.path.abspath(path).endswith(os.sep + rec["map_file"]):
+                return os.path.abspath(path)[: -len(rec["map_file"]) - 1] or os.sep
+        raise RFMapError("map file is not the registered file of any REGISTER record")
 
     @property
     def admitted(self) -> bool:
@@ -166,8 +205,12 @@ class RFMap:
                or not self.fields["ignited"][i]]
         if bad:
             return [f"cell has unmeasured / unstable / unignited grid points {sorted(set(bad))}"]
+        if "discharge_mode" in self.fields:
+            modes = {self.fields["discharge_mode"][i] for i, _ in corners}
+            if len(modes) != 1 or None in modes:
+                return [f"cell spans discharge modes {sorted(map(str, modes))}; no interpolation across a mode jump"]
         vals = {}
-        for f in REQUIRED_FIELDS:
+        for f in REQUIRED_FIELDS:   # Isp is re-derived from interpolated thrust (not interpolated independently)
             if any(self.fields[f][i] is None for i, _ in corners):
                 vals[f] = TBD(f, "not measured at every corner of this cell")
             else:
@@ -194,7 +237,7 @@ class RFMap:
                       evidence_class=self.meta["evidence_class"],
                       applicability_domain=self.meta["applicability_domain"],
                       validation_status=f"RF_MAP_{self.registry_state}; {self.meta['validation_status']}",
-                      score_bearing=bool(score_bearing and self.admitted),
+                      score_bearing=bool(score_bearing and self.admitted and not reasons),
                       startup_energy_J=getattr(config.startup_energy_J, "value", config.startup_energy_J),
                       startup_time_s=getattr(config.startup_time_s, "value", config.startup_time_s),
                       limitations=("interpolation inside the admitted domain only",))
@@ -216,8 +259,11 @@ class RFMap:
                                TBD("eta_rf_source", "not measured")},
                  "rf_magnet": {"P_load_W": v["P_magnet_bus_W"] * eta_mag, "efficiency": config.eta_magnet_supply.to_dict()}}
         return BranchResult(thrust_vector_N=tuple(T * a for a in axis), thrust_axial_N=T * axis[0], P_loads=loads,
-                            P_bus_W=v["P_bus_W"], Isp_s=v["Isp_s"], utilization=v["utilization"],
+                            P_bus_W=P_dc_W + v["P_magnet_bus_W"], Isp_s=T / (feed.mdot_total_kg_s * G0),
+                            utilization=v["utilization"],
                             heat_loads_W={}, plume_divergence_deg=v["plume_divergence_deg"], status=Status.PASS,
                             provenance={**prov, "interpolated": {k: (x if not isinstance(x, TBD) else x.to_dict())
-                                                                 for k, x in v.items()}, "sigma_1": sig},
+                                                                 for k, x in v.items()}, "sigma_1": sig,
+                                        "P_bus_basis": "P_dc + P_magnet_bus (ledger identity); the measured P_bus_W "
+                                                       "is in 'interpolated' and agrees within 3 sigma (load check)"},
                             **common)

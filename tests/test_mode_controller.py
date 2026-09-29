@@ -75,3 +75,11 @@ def test_policy_must_be_owner_preregistered(tmp_path):
     sha = hashlib.sha256(rule.read_bytes()).hexdigest()
     json.dump({"decided_by": "owner", "preregistered_mode_policy_sha256": sha}, open(tmp_path / "d.json", "w"))
     assert run(0.001, policy=pol, root=str(tmp_path))["selection"] in {"rf", "boost", "hall"}
+
+
+def test_thermal_limits_unknown_key_and_tbd_heat():
+    with pytest.raises(ContractError, match="unknown heat key"):
+        run(0.001, thermal_limits_W={"hall:anything": 0.0})
+    r = run(0.001, thermal_limits_W={"hall:discharge_heat_W": 1.0})
+    hall_like = {x["label"]: x for x in r["infeasible"]}
+    assert "INCOMPLETE_EVIDENCE" in hall_like["hall"]["statuses"]

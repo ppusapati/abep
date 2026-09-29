@@ -49,25 +49,31 @@ def _rel(root: str, path: str) -> str:
 
 
 def records(registry_dir: str) -> list[dict]:
+    """All records, verified as an unbroken hash chain: each record's body hashes to its record_sha256, seq equals
+    its position, and prev_record_sha256 equals the previous record's sha (a deleted or reordered record breaks it)."""
     d = os.path.join(registry_dir, "records")
     if not os.path.isdir(d):
         return []
-    out = []
-    for name in sorted(os.listdir(d)):
-        if name.endswith(".json"):
-            rec = json.load(open(os.path.join(d, name)))
-            body = {k: v for k, v in rec.items() if k != "record_sha256"}
-            if hashlib.sha256(_canon(body)).hexdigest() != rec.get("record_sha256"):
-                raise RFRegistryError(f"record {name} was modified (record_sha256 mismatch)")
-            out.append(rec)
+    out, prev = [], None
+    for pos, name in enumerate(sorted(n for n in os.listdir(d) if n.endswith(".json"))):
+        rec = json.load(open(os.path.join(d, name)))
+        body = {k: v for k, v in rec.items() if k != "record_sha256"}
+        if hashlib.sha256(_canon(body)).hexdigest() != rec.get("record_sha256"):
+            raise RFRegistryError(f"record {name} was modified (record_sha256 mismatch)")
+        if rec.get("seq") != pos or rec.get("prev_record_sha256") != prev:
+            raise RFRegistryError(f"record chain broken at {name} (a record was deleted, inserted or reordered)")
+        prev = rec["record_sha256"]
+        out.append(rec)
     return out
 
 
 def _append(registry_dir: str, body: dict) -> dict:
     d = os.path.join(registry_dir, "records")
     os.makedirs(d, exist_ok=True)
-    seq = len([n for n in os.listdir(d) if n.endswith(".json")])
-    body = dict(body, registry_version=REGISTRY_VERSION, seq=seq)
+    existing = records(registry_dir)
+    seq = len(existing)
+    body = dict(body, registry_version=REGISTRY_VERSION, seq=seq,
+                prev_record_sha256=existing[-1]["record_sha256"] if existing else None)
     rec = dict(body, record_sha256=hashlib.sha256(_canon(body)).hexdigest())
     path = os.path.join(d, f"{seq:04d}_{rec['record_sha256'][:16]}.json")
     with open(path, "x") as f:                                  # never overwrite
@@ -76,12 +82,22 @@ def _append(registry_dir: str, body: dict) -> dict:
     return rec
 
 
+_TRANSITIONS = {("UNREGISTERED", "REGISTER"): "REGISTERED_NOT_ADMITTED",
+                ("REGISTERED_NOT_ADMITTED", "ADMIT"): "ADMITTED",
+                ("REGISTERED_NOT_ADMITTED", "WITHDRAW"): "WITHDRAWN",
+                ("ADMITTED", "WITHDRAW"): "WITHDRAWN"}
+
+
 def state(registry_dir: str, map_sha256: str) -> str:
+    """State from a validated transition sequence; an illegal transition (e.g. ADMIT without REGISTER) raises."""
     st = "UNREGISTERED"
     for rec in records(registry_dir):
         if rec["map_sha256"] != map_sha256:
             continue
-        st = {"REGISTER": "REGISTERED_NOT_ADMITTED", "ADMIT": "ADMITTED", "WITHDRAW": "WITHDRAWN"}[rec["action"]]
+        nxt = _TRANSITIONS.get((st, rec["action"]))
+        if nxt is None:
+            raise RFRegistryError(f"illegal registry transition {st} --{rec['action']}--> for {map_sha256[:12]}")
+        st = nxt
     return st
 
 
@@ -116,8 +132,19 @@ def withdraw(registry_dir: str, map_sha256: str, reason: str) -> dict:
     return _append(registry_dir, {"action": "WITHDRAW", "map_sha256": map_sha256, "reason": reason})
 
 
-def verify(registry_dir: str, root: str) -> dict:
-    """Re-hash every referenced map and decision file. Returns {map_sha: state}; raises on any mismatch."""
+def head(registry_dir: str) -> str | None:
+    """sha256 of the newest record (the chain head); pin it (e.g. in a commit message or decision) to detect tail
+    truncation, which the chain alone cannot see."""
+    recs = records(registry_dir)
+    return recs[-1]["record_sha256"] if recs else None
+
+
+def verify(registry_dir: str, root: str, expected_head_sha256: str | None = None) -> dict:
+    """Re-hash every referenced map and decision file and validate every transition. Returns {map_sha: state};
+    raises on any mismatch. LIMIT: deleting the newest record(s) leaves a valid shorter chain; that is detected
+    only against an externally pinned head (``expected_head_sha256``) or the git history of the registry."""
+    if expected_head_sha256 is not None and head(registry_dir) != expected_head_sha256:
+        raise RFRegistryError("registry head does not match the pinned head (records truncated or appended)")
     for rec in records(registry_dir):
         if rec["action"] == "REGISTER":
             p = os.path.join(root, rec["map_file"])
@@ -128,4 +155,6 @@ def verify(registry_dir: str, root: str) -> dict:
             if not os.path.isfile(p) or sha256_file(p) != rec["decision_sha256"]:
                 raise RFRegistryError(f"decision file {rec['decision_file']} missing or modified")
     shas = {r["map_sha256"] for r in records(registry_dir)}
+    for s_ in shas:
+        state(registry_dir, s_)                                  # validates the transition sequence
     return {s: state(registry_dir, s) for s in sorted(shas)}

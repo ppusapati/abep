@@ -73,3 +73,31 @@ def test_overlapping_points_refused():
     a, b = F.hall_point(), F.hall_point()
     with pytest.raises(HallEvidenceError, match="ambiguous"):
         ev(F.xe(1e-6), Mode.HALL_XE, points=(a, b))
+
+
+def test_point_supplies_its_own_performance_numbers():
+    lo = evaluate(F.xe(0.9e-6), Mode.HALL_XE, 1e-8, 240.0, 250.0, F.hall_config(), source=POINT_EVIDENCE,
+                  points=(F.hall_point(),))
+    hi = evaluate(F.xe(1.1e-6), Mode.HALL_XE, 1e-8, 260.0, 250.0, F.hall_config(), source=POINT_EVIDENCE,
+                  points=(F.hall_point(),))
+    assert lo.Isp_s == hi.Isp_s and lo.P_bus_W == hi.P_bus_W          # no hold-against-query distortion
+    assert hi.provenance["query_offset_from_point"]["P_discharge_rel"] == pytest.approx(0.04)
+
+
+def test_admission_recorded_and_confined(tmp_path):
+    p = F.hall_point(hardware="vyovrinda:H-1")
+    json.dump({"decided_by": "owner", "admits_hall_evidence_sha256": p.canonical_sha256()},
+              open(tmp_path / "adm.json", "w"))
+    r = ev(F.xe(1e-6), Mode.HALL_XE, points=(p,), score_bearing=True, admission_file="adm.json", root=str(tmp_path))
+    adm = r.provenance["admission"]
+    assert adm["decision_file"] == "adm.json" and len(adm["decision_sha256"]) == 64
+    sub = tmp_path / "sub"; sub.mkdir()
+    with pytest.raises(HallEvidenceError, match="outside"):
+        ev(F.xe(1e-6), Mode.HALL_XE, points=(p,), admission_file="../adm.json", root=str(sub))
+
+
+def test_out_of_domain_consistent_and_heat_tbd():
+    r = ev(F.xe(1.5e-6), Mode.HALL_XE, points=(F.hall_point(),), score_bearing=True)
+    assert r.status.value == "OUT_OF_DOMAIN" and r.score_bearing is False
+    r = ev(F.xe(1e-6), Mode.HALL_XE, points=(F.hall_point(),))
+    assert isinstance(r.heat_loads_W["discharge_heat_W"], TBD)

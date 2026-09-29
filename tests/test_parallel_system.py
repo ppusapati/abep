@@ -26,11 +26,11 @@ def hall_cmd(P=250.0):
 
 def test_rf_only_point():
     o = evaluate(RFO, Mode.RF_ATM, atm_feed=F.air(1.5e-6), xe_supply=None, request=req(rf_atm=1.5e-6),
-                 rf=RFCommand(700.0, F.rf_config()), hall=None, common=F.common_state(), constraints=C,
+                 rf=RFCommand(700.0, F.rf_config()), hall=None, common=F.common_state(xe_installed=False), constraints=C,
                  required_thrust_N=0.012)
     assert o["status"] == "PASS" and o["T_H_N"] == 0.0
     assert o["T_total_axial_N"] == pytest.approx(o["T_RF_N"])
-    assert o["P_total_bus_W"] == pytest.approx(700.0 + (150 + 5 + 5 + 20 + 25) / 0.9)
+    assert o["P_total_bus_W"] == pytest.approx(700.0 + (150 + 5 + 20 + 25) / 0.9)
     assert abs(o["power_balance_residual_W"]) < 1e-9
     assert o["verdict"] in ("UNRESOLVED", "INFEASIBLE") and o["verdict"] != "FEASIBLE"   # reduced model only
 
@@ -72,8 +72,20 @@ def test_out_of_domain_and_incomplete_are_not_converted():
                  rf=None, hall=hall_cmd(), common=F.common_state(), constraints=C, required_thrust_N=0.012)
     assert o["status"] == "OUT_OF_DOMAIN" and o["verdict"] == "OUT_OF_DOMAIN"
     assert isinstance(o["T_total_axial_N"], TBD)
-    cs = F.common_state(compressor=TBD("compressor", "C1 evidence"))
+    cs = F.common_state(compressor=TBD("compressor", "C1 evidence"), xe_installed=False)
     o = evaluate(RFO, Mode.RF_ATM, atm_feed=F.air(1.5e-6), xe_supply=None, request=req(rf_atm=1.5e-6),
                  rf=RFCommand(700.0, F.rf_config()), hall=None, common=cs, constraints=C, required_thrust_N=0.001)
     assert o["status"] == "INCOMPLETE_EVIDENCE" and o["P_total_bus_W"] is None
     assert o["verdict"] == "INCOMPLETE_EVIDENCE"
+
+
+def test_negative_thrust_request_refused_and_max_flagged():
+    from abep_sim.parallel_contracts import ContractError
+    with pytest.raises(ContractError):
+        evaluate(HO, Mode.HALL_XE, atm_feed=None, xe_supply=F.XE_SUPPLY, request=req(hall_xe=1e-6, cathode_xe=1e-8),
+                 rf=None, hall=hall_cmd(), common=F.common_state(), constraints=C, required_thrust_N=-1.0)
+    big = F.hall_point(thrust=0.2)
+    o = evaluate(HO, Mode.HALL_XE, atm_feed=None, xe_supply=F.XE_SUPPLY, request=req(hall_xe=1e-6, cathode_xe=1e-8),
+                 rf=None, hall=HallCommand(250.0, 250.0, F.hall_config(), POINT_EVIDENCE, points=(big,)),
+                 common=F.common_state(), constraints=C, required_thrust_N=0.012)
+    assert o["flags"] and "OD1" in o["flags"][0]

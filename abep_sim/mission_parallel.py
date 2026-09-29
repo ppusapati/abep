@@ -10,16 +10,20 @@ At each step the loop determines the atmospheric state, captured flow, drag, arr
 bookkeeping, remaining Xe and available modes, then records WHATEVER candidate the supplied mode policy requests. It
 never chooses a mode itself.
 
-Battery:  dE/dt = P_array - P_spacecraft - P_propulsion. The battery never bypasses the RFP instantaneous limit
-(the system evaluator applies P_bus < 1500 W at every step); it only tracks eclipse/boost energy and recharge.
+Battery:  dE/dt = P_array - P_spacecraft - P_propulsion. The battery never bypasses the RFP instantaneous limit: a
+step whose requested mode is INFEASIBLE_* (incl. P_bus >= 1500 W) stops the run and its thrust is never integrated.
+LIMITATION: with steps longer than an orbit the array power is orbit-averaged (the eclipse FRACTION enters via
+array_power_fn), so per-orbit depth of discharge is not resolved; resolve it with dt << orbit and an illumination-
+aware array_power_fn, or a separate per-orbit DoD check.
 
 Stop conditions (reported, never papered over): a step whose thrust is not available (OUT_OF_DOMAIN, MODEL_ERROR,
-NOT_SUSTAINED without thrust, TBD), battery exhaustion, re-entry below the stated floor.
+NOT_SUSTAINED without thrust, TBD), an INFEASIBLE_* step, Xe exhaustion, battery exhaustion, re-entry below the
+stated floor. The Xe supply passed to each step carries the ledger's remaining mass.
 """
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from . import parallel_system
 from .constants import MU_EARTH, R_EARTH
@@ -42,7 +46,7 @@ class MissionInputs:
     spacecraft_mass_kg: Quantity
     inclination_deg: Quantity
     raan0_deg: Quantity
-    epoch_day: Quantity
+    days_since_vernal_equinox: Quantity     # sun longitude = 360 d / 365.25 (NOT day-of-year)
     alt0_km: float
     atmosphere_fn: object
     intake_fn: object
@@ -67,7 +71,7 @@ def run(architecture: InstalledArchitecture, inputs: MissionInputs, *, xe_supply
     m_sc = value_of(inputs.spacecraft_mass_kg, "spacecraft mass", "kg")
     inc = value_of(inputs.inclination_deg, "inclination", "deg")
     raan = value_of(inputs.raan0_deg, "RAAN0", "deg")
-    epoch = value_of(inputs.epoch_day, "epoch day", "day")
+    epoch = value_of(inputs.days_since_vernal_equinox, "days since vernal equinox", "day")
     P_sc = value_of(inputs.spacecraft_bus_power_W, "spacecraft bus power", "W")
     E_cap = value_of(inputs.battery_capacity_J, "battery capacity", "J")
     E = value_of(inputs.battery_initial_J, "battery initial energy", "J")
@@ -84,7 +88,7 @@ def run(architecture: InstalledArchitecture, inputs: MissionInputs, *, xe_supply
         step = min(dt, T_end - t)
         a = R_EARTH + alt * 1e3
         nmo = math.sqrt(MU_EARTH / a ** 3)
-        raan += math.degrees(-1.5 * nmo * J2 * (R_EARTH / a) ** 2 * math.cos(math.radians(inc)) * step)
+        raan_dot_deg_s = math.degrees(-1.5 * nmo * J2 * (R_EARTH / a) ** 2 * math.cos(math.radians(inc)))
         day = epoch + t / 86400.0
         sun_lon = (day / 365.25 * 360.0) % 360
         sun_dec = 23.44 * math.sin(math.radians(sun_lon))
@@ -100,13 +104,21 @@ def run(architecture: InstalledArchitecture, inputs: MissionInputs, *, xe_supply
                  "eclipse_frac": f_ecl, "allowed_modes": [m.value for m in architecture.allowed_modes()]}
         cand = inputs.policy_fn(state)
         spec = architecture.check_mode(cand.mode)
-        o = parallel_system.evaluate(architecture, cand.mode, atm_feed=feed, xe_supply=xe_supply,
+        supply = xe_supply
+        if xe_supply is not None and xe.loaded is not None:          # the supply tracks the ledger
+            supply = replace(xe_supply, remaining_kg=max(xe.loaded - xe.consumed_kg, 0.0))
+        o = parallel_system.evaluate(architecture, cand.mode, atm_feed=feed, xe_supply=supply,
                                      request=cand.request, rf=cand.rf, hall=cand.hall, common=common,
                                      constraints=constraints, required_thrust_N=T_req)
         T = o.get("T_total_axial_N")
         P_prop = o.get("P_total_bus_W")
         if isinstance(T, TBD) or T is None or P_prop is None:
             stop = {"t_s": t, "reason": f"step status {o.get('status')}: thrust or bus power not available",
+                    "statuses": o.get("statuses")}
+            break
+        infeasible = [s_ for s_ in o.get("statuses", []) if s_.startswith("INFEASIBLE")]
+        if infeasible:                       # never integrate thrust from an infeasible point (e.g. P_bus >= RFP limit)
+            stop = {"t_s": t, "reason": f"requested mode is infeasible at this step: {infeasible}",
                     "statuses": o.get("statuses")}
             break
         # starts (transition into a branch-enabled mode)
@@ -120,6 +132,7 @@ def run(architecture: InstalledArchitecture, inputs: MissionInputs, *, xe_supply
                     continue
                 if isinstance(ev_mass, TBD):
                     unbooked_starts.append({"t_s": t, "branch": b, "requires": ev_mass.requires})
+                    xe.add_unbooked_event(t, "hall_startup" if b == "hall" else "rf_startup", ev_mass.requires)
                 else:
                     xe.add_event(t, "hall_startup" if b == "hall" else "rf_startup", ev_mass)
         # Xe flows by cause
@@ -155,7 +168,11 @@ def run(architecture: InstalledArchitecture, inputs: MissionInputs, *, xe_supply
             stop = {"t_s": t + step, "reason": "battery exhausted (energy balance negative)"}
             break
         alt += a_dot * step / 1e3
+        raan += raan_dot_deg_s * step
         t += step
+        if xe.depleted_at_s is not None:
+            stop = {"t_s": t, "reason": "Xe exhausted (ledger remaining < 0)"}
+            break
         prev_spec = spec
         if alt < inputs.reentry_floor_km:
             stop = {"t_s": t, "reason": f"altitude below the stated floor {inputs.reentry_floor_km} km"}

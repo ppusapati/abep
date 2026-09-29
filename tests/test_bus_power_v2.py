@@ -25,6 +25,8 @@ def point(arch, mode, active_load=10.0, eta=0.9):
     for c in REQUIRED_COMPONENTS[arch.kind]:
         b = "common" if c in COMMON else ("rf" if c in RF else "hall")
         loads[c], effs[c] = (active_load, eta) if on[b] else (0.0, 1.0)
+    if not arch.xe_system_installed:
+        loads["xe_flow_control"], effs["xe_flow_control"] = 0.0, 1.0
     return loads, effs
 
 
@@ -93,3 +95,10 @@ def test_v1_boundary_untouched():
     assert arch_boundary.BOUNDARY_VERSION == "bus_power_boundary_v1"
     assert arch_boundary.ARCHITECTURES == ("hall_only", "rf_hall", "ecr_hall")
     assert "rf_magnet" not in arch_boundary.ALL_COMPONENTS
+
+
+def test_xe_flow_control_zero_without_xe_system():
+    loads, effs = point(RFO, Mode.RF_ATM)
+    loads["xe_flow_control"] = 50.0
+    with pytest.raises(IllegalModeError, match="no Xe system"):
+        ledger(RFO, Mode.RF_ATM, loads, effs)

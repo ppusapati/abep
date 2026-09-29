@@ -167,12 +167,12 @@ def route(atm_feed: FeedState | None, xe_supply: XeSupply | None, mode, request:
         if spec.rf_atm_allowed:
             rf_feed = atm_feed.with_mdot(req["rf_atm"], source_suffix="routed to RF") if atm_feed else None
         elif spec.rf_xe_allowed:
-            rf_feed = xe_feed(req["rf_xe"], "RF")
+            rf_feed = xe_feed(req["rf_xe"], "RF") if xe_supply is not None else None
     if spec.hall_enabled:
         if spec.hall_atm_allowed:
             hall_feed = atm_feed.with_mdot(req["hall_atm"], source_suffix="routed to Hall anode") if atm_feed else None
         elif spec.hall_xe_allowed:
-            hall_feed = xe_feed(req["hall_xe"], "Hall anode")
+            hall_feed = xe_feed(req["hall_xe"], "Hall anode") if xe_supply is not None else None
     return RouterResult(spec.mode.value, rf_feed, hall_feed, req["cathode_xe"], atm_in, xe_avail,
                         unalloc_atm, unalloc_xe, atm_res, xe_res)
 

@@ -21,7 +21,7 @@ BOOST = Candidate("boost", Mode.RF_ATM_HALL_XE, FlowRequest(1.5e-6, 0, 0, 1e-6, 
 def inputs(policy, hall_start=F.q(3.6e-5, "kg")):
     return MissionInputs(
         spacecraft_mass_kg=F.q(150.0, "kg"), inclination_deg=F.q(96.0, "deg"), raan0_deg=F.q(0.0, "deg"),
-        epoch_day=F.q(80.0, "day"), alt0_km=200.0,
+        days_since_vernal_equinox=F.q(0.0, "day"), alt0_km=200.0,
         atmosphere_fn=lambda alt, t: {"rho": 3e-10},
         intake_fn=lambda atm: F.air(1.5e-6),
         drag_fn=lambda alt, t, atm: 0.010,
@@ -62,6 +62,9 @@ def test_tbd_start_mass_is_reported_not_zeroed():
             xe_supply=F.XE_SUPPLY, xe_loaded_kg=None, common=F.common_state(), constraints=C,
             duration_s=1800.0, dt_s=300.0)
     assert len(r["unbooked_start_events"]) == r["starts"]["hall"] > 0
+    sm = r["xe_mission"].summary(reserve=F.q(0.0, "1"), residual=F.q(0.0, "1"))
+    assert sm["status"] == "INCOMPLETE_EVIDENCE" and sm["xe_total_required_kg"] is None
+    assert sm["hall_starts"] == r["starts"]["hall"]
 
 
 def test_stop_on_unavailable_thrust():
@@ -78,3 +81,29 @@ def test_coverage_fractions():
     cov = coverage(conds, ev(lambda c: c < 0.004), ev(lambda c: c < 0.01))
     assert cov["rf_alone_closes"] == pytest.approx(1 / 3) and cov["rf_plus_hall_closes"] == pytest.approx(1 / 3)
     assert cov["neither_closes"] == pytest.approx(1 / 3) and cov["closing_on_admitted_evidence"] == 0
+
+
+def test_xe_exhaustion_and_infeasible_steps_stop_the_run():
+    r = run(PAR, inputs(lambda s: BOOST), xe_supply=F.XE_SUPPLY, xe_loaded_kg=F.q(1e-4, "kg"),
+            common=F.common_state(), constraints=C, duration_s=3600.0, dt_s=300.0)
+    assert not r["completed"] and ("Xe exhausted" in r["stop"]["reason"] or "exhausted" in r["stop"]["reason"])
+    assert all(h["xe_remaining_kg"] >= -1e-3 for h in r["history"])
+    hot = Candidate("hot", Mode.RF_ATM_HALL_XE, FlowRequest(1.5e-6, 0, 0, 1e-6, 1e-8),
+                    rf=RFCommand(1300.0, F.rf_config()), hall=HALL)
+    r = run(PAR, inputs(lambda s: hot), xe_supply=F.XE_SUPPLY, xe_loaded_kg=None, common=F.common_state(),
+            constraints=C, duration_s=900.0, dt_s=300.0)
+    assert not r["completed"] and "INFEASIBLE_POWER" in r["stop"]["reason"] and r["history"] == []
+
+
+def test_equinox_geometry():
+    captured = []
+    def arr(t, alt, beta, fe):
+        captured.append((beta, fe))
+        return 1600.0
+    i = inputs(lambda s: RF_ONLY)
+    from dataclasses import replace as _r
+    i = _r(i, array_power_fn=arr, inclination_deg=F.q(96.0, "deg"), raan0_deg=F.q(0.0, "deg"))
+    run(PAR, i, xe_supply=F.XE_SUPPLY, xe_loaded_kg=None, common=F.common_state(), constraints=C,
+        duration_s=300.0, dt_s=300.0)
+    beta, fe = captured[0]
+    assert abs(beta) < 1.0 and fe > 0.4                    # equinox, RAAN 0: noon-midnight plane, max eclipse
